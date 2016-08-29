@@ -1,0 +1,32 @@
+{
+    "0": {
+        "id": 0,
+        "cooldown": 1,
+        "state": "off"
+    },
+    "1": {
+        "id": 1,
+        "cooldown": 1,
+        "state": "off"
+    },
+    "2": {
+        "id": 2,
+        "cooldown": 1,
+        "state": "off"
+    },
+    "3": {
+        "id": 3,
+        "cooldown": 1,
+        "state": "off"
+    },
+    "4": {
+        "id": 4,
+        "cooldown": 1,
+        "state": "off"
+    },
+    "5": {
+        "id": 5,
+        "cooldown": 1,
+        "state": "off"
+    }
+}

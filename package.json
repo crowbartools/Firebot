@@ -1,19 +1,22 @@
 {
-  "name": "firebot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "scripts": {
-	"required": "npm install t2-cli -g"
-  },
-  "dependencies": {
-    "johnny-five": "^0.10.0",
-    "tessel-io": "^0.7.2"
-  }
+    "name": "firebot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "interactive.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "scripts": {
+        "required": "npm install t2-cli -g"
+    },
+    "dependencies": {
+        "johnny-five": "^0.10.0",
+        "tessel-io": "^0.7.2",
+        "beam-client-node": "^0.5.3",
+        "beam-interactive-node": "^0.3.2",
+        "node-json-db": "^0.7.3"
+    }
 }
