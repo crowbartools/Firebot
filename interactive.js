@@ -1,21 +1,19 @@
-const JsonDB = require('node-json-db');
-const Tessel = require("tessel-io");
-const five = require("johnny-five");
-const WebSocket = require('ws');
 const Beam = require('beam-client-node');
 const Interactive = require('beam-interactive-node');
 const Packets = require('beam-interactive-node/dist/robot/packets').default;
 const beam = new Beam();
+const WebSocket = require('ws');
+const WebSocketServer = require('ws').Server,
+	wss = new WebSocketServer({
+		port: 8080
+	});
+const JsonDB = require('node-json-db');
 
-// Connects to tessel
-firebot = new five.Board({
-    io: new Tessel()
-});
+    var dbAuth = new JsonDB("./settings/auth", true, false);
+    var dbControls = new JsonDB('./controls/controls', true, false);
 
 // Connects to interactive
 function beamConnect() {
-    var dbAuth = new JsonDB("./settings/auth", true, false);
-    var dbControls = new JsonDB('./controls/controls', true, false);
 
     // Global Vars
     // Use this link to get your oauth token and put it in auth.json.
@@ -46,9 +44,6 @@ function beamConnect() {
             }
             throw err;
         });
-
-    // Connect to scotty.
-    wsconnect();
 };
 
 // Creating Robot
@@ -101,8 +96,6 @@ function setupRobotEvents(robot) {
     robot = robot;
 }
 
-// Set up WS connection to scottybot.
-function wsconnect() {
     ws = new WebSocket('wss://api.scottybot.net/websocket/control');
     ws.on('open', function open() {
         ws.send('{"event":"auth", "msgid": "UUID", "data": "' + app.auth['scottybot'] + '"}');
@@ -124,7 +117,31 @@ function wsconnect() {
         console.error('Socket encountered error.');
         ws.close()
     })
-}
+	ws.on('message', function(response) {
+		var data = JSON.parse(response);
+		var cmdtype = data.event;
+
+		if (cmdtype == "logon") {
+			console.log('Logged in to Scottybot.');
+			scottyLightGame();
+		}
+	});
+	
+	// Websocket Server
+	// This allows for the wss.broadcast call to send out data via websocket.
+	wss.broadcast = function broadcast(data) {
+		wss.clients.forEach(function each(client) {
+			client.send(data);
+		});
+	};
+	// This allows the websocket server to accept incoming packets from overlay.
+	wss.on('connection', function connection(ws) {
+	  ws.on('message', function incoming(message) {
+		var message = JSON.parse(message);
+		var eventType = message.event;
+		
+	  });
+	});
 
 ////////////////////
 // Handlers
@@ -138,7 +155,7 @@ function tactile(tactile) {
         var rawid = tactile[i].id;
         var holding = tactile[i].holding;
         var press = tactile[i].pressFrequency;
-        var button = app.controls[rawid];
+        var button = app.controls.tactile[rawid];
 
         // DO SOME STUFF WITH THE BUTTONS
         if (button !== undefined && button !== null) {
@@ -160,18 +177,6 @@ function joystick(report) {
 function screen(report) {
     // DO SOMETHING WITH SCREEN REPORT.
 }
-
-// Scottybot Handler
-// This accepts all scotty responses and determines what to do with them.
-ws.on('message', function(response) {
-    var data = JSON.parse(response);
-    var cmdtype = data.event;
-
-    if (cmdtype == "logon") {
-        console.log('Logged in to Scottybot.');
-        scottyLightGame();
-    }
-});
 
 ////////////////////
 // Progress Updates
@@ -284,54 +289,55 @@ function tactilePress(rawid) {
     var controls = app.controls;
     var button = controls.tactile[rawid];
     var buttonState = button['state'];
-    var led = new five.Led("a" + rawid);
+	
+	wss.broadcast('{"key": "' + rawid + '", "event": "off"}');
 
     if (buttonState == "off") {
-        led.off();
+        wss.broadcast('{"key": "' + rawid + '", "event": "off"}');
 
         // Prepare for next state.
-        dbControls.push('/' + rawid + '/state', "pulse");
+        dbControls.push('/tactile/' + rawid + '/state', "pulse");
     } else if (buttonState == "pulse") {
-        led.pulse(500);
+        wss.broadcast('{"key": "' + rawid + '", "event": "pulse"}');
 
         // Prepare for next state.
-        dbControls.push('/' + rawid + '/state', "blink");
+        dbControls.push('/tactile/' + rawid + '/state', "blink");
     } else if (buttonState == "blink") {
-        led.blink(250);
+        wss.broadcast('{"key": "' + rawid + '", "event": "blink"}');
 
         // Prepare for next state.
-        dbControls.push('/' + rawid + '/state', "on");
+        dbControls.push('/tactile/' + rawid + '/state', "on");
     } else if (buttonState == "on") {
-        led.on();
+		wss.broadcast('{"key": "' + rawid + '", "event": "on"}');
 
         // Prepare for next state.
-        dbControls.push('/' + rawid + '/state', "off");
+        dbControls.push('/tactile/' + rawid + '/state', "off");
     }
+	
+	console.log(buttonState);
 }
 
 // Scotty Light Game
 function scottyLightGame() {
-    setInterval(function() {
         // Clear challenge check if it's running.
         if (challengeCheck) {
             clearInterval(challengeCheck);
         }
 
         // Choose a random challenge and broadcast it.
-        var states = ["off", "pulse", "blink", "on"];
+        var states = ["pulse", "blink", "on"];
         var challenge = states[Math.floor(Math.random() * states.length)];
-        sendBroadcast("Firebot Challenge: Change all lights to " + challenge + ". Doing so earns you 1 coin per 5 seconds!");
+        // sendBroadcast("Firebot Challenge: Change all lights to " + challenge + ". Doing so earns you 1 coin per 5 seconds!");
 
         // Start checking for win condition.
-        var challengeCheck = setInterval(function(states, challenge) {
-            var challengeControls = dbControls.getData('/');
-            var numberOfLed = Object.keys(challengeControls).length;
+        var challengeCheck = setInterval(function() {
+            var challengeControls = dbControls.getData('/tactile');
             var wins = 0;
 
             // Loop through JSON and check state of each LED.
             for (var key in challengeControls) {
                 if (challengeControls.hasOwnProperty(key)) {
-                    var button = app.controls[key];
+                    var button = dbControls.getData('/tactile/'+key);
                     var currentState = button.state;
                     if (currentState == challenge) {
                         var wins = wins + 1;
@@ -340,8 +346,8 @@ function scottyLightGame() {
             }
 
             // Awards?
-            if (wins === numberOfLed) {
-                ws.send('{"event": "giveallpoints","msgid": "UUID","data": 1}');
+            if (wins === 5) {
+                //ws.send('{"event": "giveallpoints","msgid": "UUID","data": 1}');
 
                 var d = new Date();
                 var hours = d.getHours();
@@ -352,6 +358,9 @@ function scottyLightGame() {
             }
 
         }, 5000);
+		
+	setInterval(function() {
+		scottyLightGame();
     }, 300000);
 }
 
@@ -371,10 +380,4 @@ function giveallPoints(points) {
 }
 
 
-////////////////////
-// Let's Get Going!
-///////////////////
-
-firebot.on("ready", () => {
-    beamConnect();
-});
+beamConnect();
