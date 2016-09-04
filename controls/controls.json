@@ -1,1 +1,77 @@
-{"tactile":{"0":{"id":0,"cooldown":1,"state":"on"},"1":{"id":1,"cooldown":1,"state":"blink"},"2":{"id":2,"cooldown":1,"state":"blink"},"3":{"id":3,"cooldown":1,"state":"pulse"},"4":{"id":4,"cooldown":1,"state":"blink"},"5":{"id":5,"cooldown":1,"state":"on"}}}
+{
+	"tactile":{
+		"1":{
+			"id":1,
+			"cooldown":0,
+			"event": "nothing"
+		},
+		"2":{
+			"id":2,
+			"cooldown":60,
+			"event": "soundboard"
+		},
+		"3":{
+			"id":3,
+			"cooldown":60,
+			"event": "soundboard"
+		},
+		"4":{
+			"id":4,
+			"cooldown":60,
+			"event": "soundboard"
+		},
+		"5":{
+			"id":5,
+			"cooldown":60,
+			"event": "soundboard"
+		},
+		"6":{
+			"id":6,
+			"cooldown":300,
+			"event": "soundboard"
+		},
+		"7":{
+			"id":7,
+			"cooldown":300,
+			"event": "soundboard"
+		},
+		"8":{
+			"id":8,
+			"cooldown":0,
+			"event": "nothing"
+		},
+		"9":{
+			"id":9,
+			"cooldown":300,
+			"coins": 50,
+			"event": "coins"
+		},
+		"10":{
+			"id":10,
+			"cooldown":300,
+			"coins": 100,
+			"event": "coins"
+		},
+		"11":{
+			"id":11,
+			"cooldown":300,
+			"coins": 200,
+			"event": "coins"
+		},
+		"12":{
+			"id":12,
+			"cooldown":0,
+			"event": "nothing"
+		},
+		"13":{
+			"id":3,
+			"cooldown":300,
+			"event": "clickerBoss"
+		},
+		"14":{
+			"id":14,
+			"cooldown":300,
+			"event": "quotes"
+		}
+	}
+}

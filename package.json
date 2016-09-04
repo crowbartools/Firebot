@@ -12,9 +12,9 @@
   "dependencies": {
     "beam-client-node": "^0.5.3",
     "beam-interactive-node": "^0.3.2",
-    "johnny-five": "^0.10.0",
     "node-json-db": "^0.7.3",
-    "tessel-io": "^0.7.2",
+    "request": "^2.74.0",
+    "say": "^0.9.1",
     "ws": "^1.1.1"
   }
 }

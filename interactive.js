@@ -8,9 +8,12 @@ const WebSocketServer = require('ws').Server,
 		port: 8080
 	});
 const JsonDB = require('node-json-db');
+const say = require('say');
+const request = require('request');
 
-    var dbAuth = new JsonDB("./settings/auth", true, false);
-    var dbControls = new JsonDB('./controls/controls', true, false);
+var dbAuth = new JsonDB("./settings/auth", true, false);
+var dbControls = new JsonDB('./controls/controls', true, false);
+var dbClickerBoss = new JsonDB('./settings/clickerBoss', true, false);
 
 // Connects to interactive
 function beamConnect() {
@@ -21,6 +24,7 @@ function beamConnect() {
     app = {
         auth: dbAuth.getData('/'),
         controls: dbControls.getData('/'),
+		clickerBoss: dbClickerBoss.getData('/'),
         clientID: "f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9"
     }
 
@@ -123,13 +127,24 @@ function setupRobotEvents(robot) {
 
 		if (cmdtype == "logon") {
 			console.log('Logged in to Scottybot.');
-			scottyLightGame();
+		}
+		if (cmdtype == "cmdran") {
+			var username = data.data["username"];
+			var command = data.data["command"];
+			var userid = data.data["userid"];
+			var rawcommand = data.data["rawcommand"];
+			var whisper = data.data["whisper"];
+			var isMod = data.data["isMod"];
+			var isStreamer = data.data["isStreamer"];
+
+			scottyCommands(username, userid, command, rawcommand, isMod);
+
 		}
 	});
 	
 	// Websocket Server
-	// This allows for the wss.broadcast call to send out data via websocket.
-	wss.broadcast = function broadcast(data) {
+	// This allows for the guiBroadcast call to send out data via websocket.
+	guiBroadcast = function broadcast(data) {
 		wss.clients.forEach(function each(client) {
 			client.send(data);
 		});
@@ -139,13 +154,25 @@ function setupRobotEvents(robot) {
 	  ws.on('message', function incoming(message) {
 		var message = JSON.parse(message);
 		var eventType = message.event;
-		
+		if(eventType == "bossFightEnd"){
+			bossFightEnd(message.data);
+		}
 	  });
 	});
 
 ////////////////////
 // Handlers
 ////////////////////
+
+// Scotty Commands
+function scottyCommands (username, userid, command, rawcommand, isMod){
+	
+	if (command == "quote-stop" && isMod === true){
+		say.stop();
+		sendBroadcast('Sorry, I could not control my mouth for a second.');
+	}
+	
+}
 
 // Tactile Handler
 function tactile(tactile) {
@@ -176,6 +203,13 @@ function joystick(report) {
 // Screen Controls
 function screen(report) {
     // DO SOMETHING WITH SCREEN REPORT.
+	var mean = report.coordMean;
+	var horizontal = 1920*mean.x;
+	var vertical = 1080*mean.y;
+	var clicks = report.clicks;
+	if (isNaN(horizontal) === false && isNaN(vertical) === false){
+		guiBroadcast('{ "event": "mouseclick", "mousex": '+horizontal+', "mousey": '+vertical+', "clicks": '+clicks+'}');
+	}
 }
 
 ////////////////////
@@ -193,8 +227,6 @@ function progressUpdate(robot) {
         "screen": screen,
         "joystick": joystick
     }
-
-    //console.log(progress);
 
     robot.send(new Packets.ProgressUpdate(progress));
     app.tactileProgress = [];
@@ -288,82 +320,38 @@ function joystickProgress(joystick) {
 function tactilePress(rawid) {
     var controls = app.controls;
     var button = controls.tactile[rawid];
-    var buttonState = button['state'];
+	var buttonEvent = button.event;
 	
-	wss.broadcast('{"key": "' + rawid + '", "event": "off"}');
-
-    if (buttonState == "off") {
-        wss.broadcast('{"key": "' + rawid + '", "event": "off"}');
-
-        // Prepare for next state.
-        dbControls.push('/tactile/' + rawid + '/state', "pulse");
-    } else if (buttonState == "pulse") {
-        wss.broadcast('{"key": "' + rawid + '", "event": "pulse"}');
-
-        // Prepare for next state.
-        dbControls.push('/tactile/' + rawid + '/state', "blink");
-    } else if (buttonState == "blink") {
-        wss.broadcast('{"key": "' + rawid + '", "event": "blink"}');
-
-        // Prepare for next state.
-        dbControls.push('/tactile/' + rawid + '/state', "on");
-    } else if (buttonState == "on") {
-		wss.broadcast('{"key": "' + rawid + '", "event": "on"}');
-
-        // Prepare for next state.
-        dbControls.push('/tactile/' + rawid + '/state', "off");
-    }
+	if( buttonEvent == "clickerBoss" ){
+		// Boss Battle
+		console.log('Someone pushed the boss battle button.');
+		sendBroadcast("Scouts report a monster is approaching the city and will be here in 10 seconds. Prepare to fight!");
+		say.speak('There is a boss approaching. Prepare to defend!');
+		setTimeout(function(){
+			bossFightStart(); 
+		}, 10000);
+	}
 	
-	console.log(buttonState);
+	if ( buttonEvent == "soundboard" ){
+		// Soundboard
+		console.log('Someone pressed soundboard key #'+rawid+'.');
+		guiBroadcast('{ "event": "soundboard", "id": "'+rawid+'"}');
+	}
+	
+	if ( buttonEvent == "coins"){
+		// Give Coins
+		var coinAmount = button.coins;
+		console.log('Someone gave everyone '+coinAmount+' coins!');
+		sendBroadcast('Someone gave everyone '+coinAmount+' coins!');
+		giveallPoints(coinAmount);		
+	}
+	
+	if ( buttonEvent == "quotes"){
+		// TTS Quotes
+		ttsQuotes();
+	}
+    
 }
-
-// Scotty Light Game
-function scottyLightGame() {
-        // Clear challenge check if it's running.
-        if (challengeCheck) {
-            clearInterval(challengeCheck);
-        }
-
-        // Choose a random challenge and broadcast it.
-        var states = ["pulse", "blink", "on"];
-        var challenge = states[Math.floor(Math.random() * states.length)];
-        // sendBroadcast("Firebot Challenge: Change all lights to " + challenge + ". Doing so earns you 1 coin per 5 seconds!");
-
-        // Start checking for win condition.
-        var challengeCheck = setInterval(function() {
-            var challengeControls = dbControls.getData('/tactile');
-            var wins = 0;
-
-            // Loop through JSON and check state of each LED.
-            for (var key in challengeControls) {
-                if (challengeControls.hasOwnProperty(key)) {
-                    var button = dbControls.getData('/tactile/'+key);
-                    var currentState = button.state;
-                    if (currentState == challenge) {
-                        var wins = wins + 1;
-                    }
-                }
-            }
-
-            // Awards?
-            if (wins === 5) {
-                //ws.send('{"event": "giveallpoints","msgid": "UUID","data": 1}');
-
-                var d = new Date();
-                var hours = d.getHours();
-                var minutes = d.getMinutes();
-                console.log('WIN on challenge ' + challenge + '! -> Time:' + hours + ':' + minutes);
-            } else {
-                console.log('Challenge ' + challenge + ' only had ' + wins + '/6 lights completed.');
-            }
-
-        }, 5000);
-		
-	setInterval(function() {
-		scottyLightGame();
-    }, 300000);
-}
-
 
 ////////////////////
 // Helpers
@@ -377,6 +365,81 @@ function sendBroadcast(message) {
 // Scottbot Giveall Points
 function giveallPoints(points) {
     ws.send('{"event": "giveallpoints","msgid": "UUID","data": ' + points + '}');
+}
+
+// Broadcast to UI
+function guiBroadcast(message){
+	guiBroadcast(message);
+}
+
+/////////////////////////
+// Interactive Games
+/////////////////////////
+function bossFightStart(){
+	// Pick a boss at random from DB.
+	var beamUsername = app.auth['username'];
+	var bossList = app.clickerBoss['bossFight'];
+	var boss = bossList[Math.floor(Math.random() * bossList.length)];
+	var bossName = boss.name;
+	var bossClicksRaw = boss.clicksPerPerson;
+	var reward = boss.reward;
+	request('https://beam.pro/api/v1/channels/'+beamUsername+'?fields=viewersCurrent', function(error, response, body) {
+		if (!error && response.statusCode == 200) {
+			var data = JSON.parse(body);
+			var viewers = data.viewersCurrent;
+			if(viewers === 0 ){
+				var bossClicks = bossClicksRaw;
+			} else {
+				var bossClicks = bossClicksRaw * viewers;
+			}
+			console.log("Boss fight started against a "+bossName+" with "+viewers+" viewers.");
+			// Save boss to DB area to compare against after fight. Calculate required clicks based on viewer count.
+			dbClickerBoss.push("/bossFightStats/name", bossName);
+			dbClickerBoss.push("/bossFightStats/clicksNeeded", bossClicks);
+			dbClickerBoss.push("/bossFightStats/reward", reward);
+			dbClickerBoss.push("/bossFightStats/defeated", false);
+			
+			sendBroadcast("A wild "+bossName+" has appeared requiring "+bossClicks+" clicks to kill. Click it to death!");
+			guiBroadcast('{ "event": "bossFight", "name": "'+bossName+'"}');	
+		}else{
+			console.log('Error contacting beam api. Canceling boss fight.');
+		}
+	});
+}
+function bossFightEnd(timesClicked){
+	// Check against saved boss to see if number of clicks reached.
+	var bossName = dbClickerBoss.getData("/bossFightStats/name");
+	var bossClicksNeeded = dbClickerBoss.getData("/bossFightStats/clicksNeeded");
+	var reward = dbClickerBoss.getData("/bossFightStats/reward");
+	var defeated = dbClickerBoss.getData("/bossFightStats/defeated");
+	
+	// Did they get enough clicks?
+	if (timesClicked >= bossClicksNeeded && defeated === false){
+		// Win!
+		console.log('Players killed the '+bossName+'.');
+		sendBroadcast("The "+bossName+" was defeated ("+timesClicked+"/"+bossClicksNeeded+")! Everyone gets "+reward+" coins.");
+		giveallPoints(reward);
+	} else if (timesClicked < bossClicksNeeded && defeated === false) {
+		// Fail!
+		console.log('Players lost to the '+bossName+'.');
+		sendBroadcast("The "+bossName+" has destroyed the party ("+timesClicked+"/"+bossClicksNeeded+"). Everyone meets at the tavern for a sad drink.")
+	}	
+}
+function ttsQuotes(){
+	var chanid = app.auth['channelID'];
+	var quotePage = "https://api.scottybot.net/showquotes?chanid="+chanid+"&output=json";
+	request(quotePage, function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		var items = JSON.parse(body);
+		var item = items[Math.floor(Math.random() * items.length)];
+		var quoteText = item.quote;
+		console.log('Quote: '+quoteText);
+		say.speak(quoteText);
+		sendBroadcast(quoteText);
+	  } else {
+		  console.log('Error getting scotty quotes.');
+	  }
+	})
 }
 
 

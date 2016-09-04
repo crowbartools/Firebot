@@ -1,0 +1,43 @@
+@font-face {
+    font-family: ProximaNovaBold;
+    src: url(../fonts/ProximaNovaBold.otf) format("opentype");
+}
+html, body{
+	background-color:transparent;
+	margin:0px;
+	padding:0px;
+}
+.wrapper{
+	position:relative;
+	font-family: ProximaNovaBold, Times New Roman, Verdana;
+	font-size:18pt;
+	overflow:hidden;
+	color:white;
+	height:100vh;
+	width:100vw;
+}
+.error{
+	width:500px;
+	padding:10px;
+	border:1px solid black;
+	background-color:white;
+	color:black;
+	margin:auto;
+	text-align:center;
+	box-shadow: 2px 2px 2px #888888;
+}
+.looter{
+	background-color:#ffcb05;
+	color:#00213d;
+	border-radius: 10px;	
+	font-size:1.25em;
+	padding:10px;
+	text-align:center;
+	position:absolute;
+	z-index:2;
+	top:300px;
+	right:50px;
+}
+.audio-wrap{
+	display:none;
+}
