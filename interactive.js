@@ -269,6 +269,7 @@ function tactileProgress(tactile) {
 
 // Screen
 function screenProgress(screen) {
+	
     var json = [];
     var rawid = screen.id;
     var mean = screen.coordMean;

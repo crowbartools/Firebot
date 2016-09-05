@@ -1,1 +1,1 @@
-{"bossFight":[{"name":"Balrog","clicksPerPerson":15,"reward":400},{"name":"Beholder","clicksPerPerson":10,"reward":350},{"name":"Zombie Horde","clicksPerPerson":5,"reward":300}],"bossFightStats":{"name":"Zombie Horde","clicksNeeded":100,"reward":300,"defeated":false}}
+{"bossFight":[{"name":"Balrog","clicksPerPerson":15,"reward":400},{"name":"Beholder","clicksPerPerson":10,"reward":350},{"name":"Zombie Horde","clicksPerPerson":5,"reward":300}],"bossFightStats":{"name":"Balrog","clicksNeeded":270,"reward":400,"defeated":false}}

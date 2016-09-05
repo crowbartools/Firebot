@@ -70,7 +70,7 @@
 		},
 		"14":{
 			"id":14,
-			"cooldown":300,
+			"cooldown":60,
 			"event": "quotes"
 		}
 	}
