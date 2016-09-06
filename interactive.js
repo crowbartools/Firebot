@@ -442,6 +442,7 @@ function ttsQuotes() {
             var items = JSON.parse(body);
             var item = items[Math.floor(Math.random() * items.length)];
             var quoteText = item.quote;
+            var quoteText = quoteText.replace(/"/g, "");
             console.log('Quote: ' + quoteText);
             say.speak(quoteText);
             sendBroadcast(quoteText);

@@ -1,14 +1,14 @@
 {
-	"bossFight":[
-		{"name":"Firebot","clicksPerPerson":6,"reward":200},
-		{"name":"Waterbot","clicksPerPerson":9,"reward":250},
-		{"name":"NotoriousNetwork","clicksPerPerson":12,"reward":300},
-		{"name":"Bill","clicksPerPerson":15,"reward":350}
-	],
-	"bossFightStats":{
-		"name":"Balrog","
-		clicksNeeded":270,
-		"reward":400,
-		"defeated":false
-	}
+    "bossFight": [
+        { "name": "Firebot", "clicksPerPerson": 6, "reward": 200 },
+        { "name": "Waterbot", "clicksPerPerson": 9, "reward": 250 },
+        { "name": "NotoriousNetwork", "clicksPerPerson": 12, "reward": 300 },
+        { "name": "Bill", "clicksPerPerson": 15, "reward": 350 }
+    ],
+    "bossFightStats": {
+        "name": "Balrog",
+        "clicksNeeded": 270,
+        "reward": 400,
+        "defeated": false
+    }
 }
