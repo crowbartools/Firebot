@@ -4,9 +4,9 @@ const Packets = require('beam-interactive-node/dist/robot/packets').default;
 const beam = new Beam();
 const WebSocket = require('ws');
 const WebSocketServer = require('ws').Server,
-	wss = new WebSocketServer({
-		port: 8080
-	});
+    wss = new WebSocketServer({
+        port: 8080
+    });
 const JsonDB = require('node-json-db');
 const say = require('say');
 const request = require('request');
@@ -24,8 +24,9 @@ function beamConnect() {
     app = {
         auth: dbAuth.getData('/'),
         controls: dbControls.getData('/'),
-		clickerBoss: dbClickerBoss.getData('/'),
-        clientID: "f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9"
+        clickerBoss: dbClickerBoss.getData('/'),
+        clientID: "f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9",
+        progress: ""
     }
 
     const channelId = app.auth['channelID'];
@@ -100,78 +101,78 @@ function setupRobotEvents(robot) {
     robot = robot;
 }
 
-    ws = new WebSocket('wss://api.scottybot.net/websocket/control');
-    ws.on('open', function open() {
-        ws.send('{"event":"auth", "msgid": "UUID", "data": "' + app.auth['scottybot'] + '"}');
-        ws.send('{"event": "subscribe","msgid": "UUID","data": "commands"}');
-        ws.send('{"event": "subscribe","msgid": "UUID","data": "points"}');
-        // Heartbeat
-        setInterval(function() {
-            ws.send('{"heartbeat": "Still alive!"}');
+ws = new WebSocket('wss://api.scottybot.net/websocket/control');
+ws.on('open', function open() {
+    ws.send('{"event":"auth", "msgid": "UUID", "data": "' + app.auth['scottybot'] + '"}');
+    ws.send('{"event": "subscribe","msgid": "UUID","data": "commands"}');
+    ws.send('{"event": "subscribe","msgid": "UUID","data": "points"}');
+    // Heartbeat
+    setInterval(function() {
+        ws.send('{"heartbeat": "Still alive!"}');
 
-            // Debug, do something every 15 seconds.
+        // Debug, do something every 15 seconds.
 
-        }, 15000);
+    }, 15000);
 
+});
+ws.on('close', function close() {
+    console.log('Socket closed! UH OH.');
+})
+ws.on('error', function error() {
+    console.error('Socket encountered error.');
+    ws.close()
+})
+ws.on('message', function(response) {
+    var data = JSON.parse(response);
+    var cmdtype = data.event;
+
+    if (cmdtype == "logon") {
+        console.log('Logged in to Scottybot.');
+    }
+    if (cmdtype == "cmdran") {
+        var username = data.data["username"];
+        var command = data.data["command"];
+        var userid = data.data["userid"];
+        var rawcommand = data.data["rawcommand"];
+        var whisper = data.data["whisper"];
+        var isMod = data.data["isMod"];
+        var isStreamer = data.data["isStreamer"];
+
+        scottyCommands(username, userid, command, rawcommand, isMod);
+
+    }
+});
+
+// Websocket Server
+// This allows for the guiBroadcast call to send out data via websocket.
+guiBroadcast = function broadcast(data) {
+    wss.clients.forEach(function each(client) {
+        client.send(data);
     });
-    ws.on('close', function close() {
-        console.log('Socket closed! UH OH.');
-    })
-    ws.on('error', function error() {
-        console.error('Socket encountered error.');
-        ws.close()
-    })
-	ws.on('message', function(response) {
-		var data = JSON.parse(response);
-		var cmdtype = data.event;
-
-		if (cmdtype == "logon") {
-			console.log('Logged in to Scottybot.');
-		}
-		if (cmdtype == "cmdran") {
-			var username = data.data["username"];
-			var command = data.data["command"];
-			var userid = data.data["userid"];
-			var rawcommand = data.data["rawcommand"];
-			var whisper = data.data["whisper"];
-			var isMod = data.data["isMod"];
-			var isStreamer = data.data["isStreamer"];
-
-			scottyCommands(username, userid, command, rawcommand, isMod);
-
-		}
-	});
-	
-	// Websocket Server
-	// This allows for the guiBroadcast call to send out data via websocket.
-	guiBroadcast = function broadcast(data) {
-		wss.clients.forEach(function each(client) {
-			client.send(data);
-		});
-	};
-	// This allows the websocket server to accept incoming packets from overlay.
-	wss.on('connection', function connection(ws) {
-	  ws.on('message', function incoming(message) {
-		var message = JSON.parse(message);
-		var eventType = message.event;
-		if(eventType == "bossFightEnd"){
-			bossFightEnd(message.data);
-		}
-	  });
-	});
+};
+// This allows the websocket server to accept incoming packets from overlay.
+wss.on('connection', function connection(ws) {
+    ws.on('message', function incoming(message) {
+        var message = JSON.parse(message);
+        var eventType = message.event;
+        if (eventType == "bossFightEnd") {
+            bossFightEnd(message.data);
+        }
+    });
+});
 
 ////////////////////
 // Handlers
 ////////////////////
 
 // Scotty Commands
-function scottyCommands (username, userid, command, rawcommand, isMod){
-	
-	if (command == "quote-stop" && isMod === true){
-		say.stop();
-		sendBroadcast('Sorry, I could not control my mouth for a second.');
-	}
-	
+function scottyCommands(username, userid, command, rawcommand, isMod) {
+
+    if (command == "quote-stop" && isMod === true) {
+        say.stop();
+        sendBroadcast('Sorry, I could not control my mouth for a second.');
+    }
+
 }
 
 // Tactile Handler
@@ -203,13 +204,13 @@ function joystick(report) {
 // Screen Controls
 function screen(report) {
     // DO SOMETHING WITH SCREEN REPORT.
-	var mean = report.coordMean;
-	var horizontal = 1920*mean.x;
-	var vertical = 1080*mean.y;
-	var clicks = report.clicks;
-	if (isNaN(horizontal) === false && isNaN(vertical) === false){
-		guiBroadcast('{ "event": "mouseclick", "mousex": '+horizontal+', "mousey": '+vertical+', "clicks": '+clicks+'}');
-	}
+    var mean = report.coordMean;
+    var horizontal = 1920 * mean.x;
+    var vertical = 1080 * mean.y;
+    var clicks = report.clicks;
+    if (isNaN(horizontal) === false && isNaN(vertical) === false) {
+        guiBroadcast('{ "event": "mouseclick", "mousex": ' + horizontal + ', "mousey": ' + vertical + ', "clicks": ' + clicks + '}');
+    }
 }
 
 ////////////////////
@@ -228,7 +229,12 @@ function progressUpdate(robot) {
         "joystick": joystick
     }
 
-    robot.send(new Packets.ProgressUpdate(progress));
+    // Send progress update if it has any new info.
+    if (app.progress !== progress) {
+        robot.send(new Packets.ProgressUpdate(progress));
+        app.progress = progress;
+    }
+
     app.tactileProgress = [];
     app.screenProgress = [];
     app.joystickProgress = [];
@@ -269,7 +275,7 @@ function tactileProgress(tactile) {
 
 // Screen
 function screenProgress(screen) {
-	
+
     var json = [];
     var rawid = screen.id;
     var mean = screen.coordMean;
@@ -321,37 +327,37 @@ function joystickProgress(joystick) {
 function tactilePress(rawid) {
     var controls = app.controls;
     var button = controls.tactile[rawid];
-	var buttonEvent = button.event;
-	
-	if( buttonEvent == "clickerBoss" ){
-		// Boss Battle
-		console.log('Someone pushed the boss battle button.');
-		sendBroadcast("Scouts report a monster is approaching the city and will be here in 10 seconds. Prepare to fight!");
-		say.speak('There is a boss approaching. Prepare to defend!');
-		setTimeout(function(){
-			bossFightStart(); 
-		}, 10000);
-	}
-	
-	if ( buttonEvent == "soundboard" ){
-		// Soundboard
-		console.log('Someone pressed soundboard key #'+rawid+'.');
-		guiBroadcast('{ "event": "soundboard", "id": "'+rawid+'"}');
-	}
-	
-	if ( buttonEvent == "coins"){
-		// Give Coins
-		var coinAmount = button.coins;
-		console.log('Someone gave everyone '+coinAmount+' coins!');
-		sendBroadcast('Someone gave everyone '+coinAmount+' coins!');
-		giveallPoints(coinAmount);		
-	}
-	
-	if ( buttonEvent == "quotes"){
-		// TTS Quotes
-		ttsQuotes();
-	}
-    
+    var buttonEvent = button.event;
+
+    if (buttonEvent == "clickerBoss") {
+        // Boss Battle
+        console.log('Someone pushed the boss battle button.');
+        sendBroadcast("Scouts report a monster is approaching the city and will be here in 10 seconds. Prepare to fight!");
+        say.speak('There is a boss approaching. Prepare to defend!');
+        setTimeout(function() {
+            bossFightStart();
+        }, 10000);
+    }
+
+    if (buttonEvent == "soundboard") {
+        // Soundboard
+        console.log('Someone pressed soundboard key #' + rawid + '.');
+        guiBroadcast('{ "event": "soundboard", "id": "' + rawid + '"}');
+    }
+
+    if (buttonEvent == "coins") {
+        // Give Coins
+        var coinAmount = button.coins;
+        console.log('Someone gave everyone ' + coinAmount + ' coins!');
+        sendBroadcast('Someone gave everyone ' + coinAmount + ' coins!');
+        giveallPoints(coinAmount);
+    }
+
+    if (buttonEvent == "quotes") {
+        // TTS Quotes
+        ttsQuotes();
+    }
+
 }
 
 ////////////////////
@@ -369,78 +375,80 @@ function giveallPoints(points) {
 }
 
 // Broadcast to UI
-function guiBroadcast(message){
-	guiBroadcast(message);
+function guiBroadcast(message) {
+    guiBroadcast(message);
 }
 
 /////////////////////////
 // Interactive Games
 /////////////////////////
-function bossFightStart(){
-	// Pick a boss at random from DB.
-	var beamUsername = app.auth['username'];
-	var bossList = app.clickerBoss['bossFight'];
-	var boss = bossList[Math.floor(Math.random() * bossList.length)];
-	var bossName = boss.name;
-	var bossClicksRaw = boss.clicksPerPerson;
-	var reward = boss.reward;
-	request('https://beam.pro/api/v1/channels/'+beamUsername+'?fields=viewersCurrent', function(error, response, body) {
-		if (!error && response.statusCode == 200) {
-			var data = JSON.parse(body);
-			var viewers = data.viewersCurrent;
-			if(viewers === 0 ){
-				var bossClicks = bossClicksRaw;
-			} else {
-				var bossClicks = bossClicksRaw * viewers;
-			}
-			console.log("Boss fight started against a "+bossName+" with "+viewers+" viewers.");
-			// Save boss to DB area to compare against after fight. Calculate required clicks based on viewer count.
-			dbClickerBoss.push("/bossFightStats/name", bossName);
-			dbClickerBoss.push("/bossFightStats/clicksNeeded", bossClicks);
-			dbClickerBoss.push("/bossFightStats/reward", reward);
-			dbClickerBoss.push("/bossFightStats/defeated", false);
-			
-			sendBroadcast("A wild "+bossName+" has appeared requiring "+bossClicks+" clicks to kill. Click it to death!");
-			guiBroadcast('{ "event": "bossFight", "name": "'+bossName+'"}');	
-		}else{
-			console.log('Error contacting beam api. Canceling boss fight.');
-		}
-	});
+function bossFightStart() {
+    // Pick a boss at random from DB.
+    var beamUsername = app.auth['username'];
+    var bossList = app.clickerBoss['bossFight'];
+    var boss = bossList[Math.floor(Math.random() * bossList.length)];
+    var bossName = boss.name;
+    var bossClicksRaw = boss.clicksPerPerson;
+    var reward = boss.reward;
+    request('https://beam.pro/api/v1/channels/' + beamUsername + '?fields=viewersCurrent', function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var data = JSON.parse(body);
+            var viewers = data.viewersCurrent;
+            if (viewers === 0) {
+                var bossClicks = bossClicksRaw;
+            } else {
+                var bossClicks = bossClicksRaw * viewers;
+            }
+            console.log("Boss fight started against a " + bossName + " with " + viewers + " viewers.");
+            // Save boss to DB area to compare against after fight. Calculate required clicks based on viewer count.
+            dbClickerBoss.push("/bossFightStats/name", bossName);
+            dbClickerBoss.push("/bossFightStats/clicksNeeded", bossClicks);
+            dbClickerBoss.push("/bossFightStats/reward", reward);
+            dbClickerBoss.push("/bossFightStats/defeated", false);
+
+            sendBroadcast("A wild " + bossName + " has appeared requiring " + bossClicks + " clicks to kill. Click it to death!");
+            guiBroadcast('{ "event": "bossFight", "name": "' + bossName + '"}');
+        } else {
+            console.log('Error contacting beam api. Canceling boss fight.');
+        }
+    });
 }
-function bossFightEnd(timesClicked){
-	// Check against saved boss to see if number of clicks reached.
-	var bossName = dbClickerBoss.getData("/bossFightStats/name");
-	var bossClicksNeeded = dbClickerBoss.getData("/bossFightStats/clicksNeeded");
-	var reward = dbClickerBoss.getData("/bossFightStats/reward");
-	var defeated = dbClickerBoss.getData("/bossFightStats/defeated");
-	
-	// Did they get enough clicks?
-	if (timesClicked >= bossClicksNeeded && defeated === false){
-		// Win!
-		console.log('Players killed the '+bossName+'.');
-		sendBroadcast("The "+bossName+" was defeated ("+timesClicked+"/"+bossClicksNeeded+")! Everyone gets "+reward+" coins.");
-		giveallPoints(reward);
-	} else if (timesClicked < bossClicksNeeded && defeated === false) {
-		// Fail!
-		console.log('Players lost to the '+bossName+'.');
-		sendBroadcast("The "+bossName+" has destroyed the party ("+timesClicked+"/"+bossClicksNeeded+"). Everyone meets at the tavern for a sad drink.")
-	}	
+
+function bossFightEnd(timesClicked) {
+    // Check against saved boss to see if number of clicks reached.
+    var bossName = dbClickerBoss.getData("/bossFightStats/name");
+    var bossClicksNeeded = dbClickerBoss.getData("/bossFightStats/clicksNeeded");
+    var reward = dbClickerBoss.getData("/bossFightStats/reward");
+    var defeated = dbClickerBoss.getData("/bossFightStats/defeated");
+
+    // Did they get enough clicks?
+    if (timesClicked >= bossClicksNeeded && defeated === false) {
+        // Win!
+        console.log('Players killed the ' + bossName + '.');
+        sendBroadcast("The " + bossName + " was defeated (" + timesClicked + "/" + bossClicksNeeded + ")! Everyone gets " + reward + " coins.");
+        giveallPoints(reward);
+    } else if (timesClicked < bossClicksNeeded && defeated === false) {
+        // Fail!
+        console.log('Players lost to the ' + bossName + '.');
+        sendBroadcast("The " + bossName + " has destroyed the party (" + timesClicked + "/" + bossClicksNeeded + "). Everyone meets at the tavern for a sad drink.")
+    }
 }
-function ttsQuotes(){
-	var chanid = app.auth['channelID'];
-	var quotePage = "https://api.scottybot.net/showquotes?chanid="+chanid+"&output=json";
-	request(quotePage, function (error, response, body) {
-	  if (!error && response.statusCode == 200) {
-		var items = JSON.parse(body);
-		var item = items[Math.floor(Math.random() * items.length)];
-		var quoteText = item.quote;
-		console.log('Quote: '+quoteText);
-		say.speak(quoteText);
-		sendBroadcast(quoteText);
-	  } else {
-		  console.log('Error getting scotty quotes.');
-	  }
-	})
+
+function ttsQuotes() {
+    var chanid = app.auth['channelID'];
+    var quotePage = "https://api.scottybot.net/showquotes?chanid=" + chanid + "&output=json";
+    request(quotePage, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var items = JSON.parse(body);
+            var item = items[Math.floor(Math.random() * items.length)];
+            var quoteText = item.quote;
+            console.log('Quote: ' + quoteText);
+            say.speak(quoteText);
+            sendBroadcast(quoteText);
+        } else {
+            console.log('Error getting scotty quotes.');
+        }
+    })
 }
 
 
