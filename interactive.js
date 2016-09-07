@@ -230,11 +230,10 @@ function progressUpdate(robot) {
     }
 
     // Send progress update if it has any new info.
-    if (app.progress !== progress) {
-        robot.send(new Packets.ProgressUpdate(progress));
-        app.progress = progress;
-    }
-
+	if(tactile != "" && tactile !== undefined || screen != "" && screen !== undefined || joystick != "" && joystick !== undefined){
+		robot.send(new Packets.ProgressUpdate(progress));
+	}
+    
     app.tactileProgress = [];
     app.screenProgress = [];
     app.joystickProgress = [];
@@ -262,13 +261,7 @@ function tactileProgress(tactile) {
                 "fired": true,
                 "progress": 1
             });
-        } else {
-            json.push({
-                "id": rawid,
-                "fired": false,
-                "progress": 0
-            });
-        }
+        };
     }
     app.tactileProgress = json;
 }
