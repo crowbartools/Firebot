@@ -10,6 +10,7 @@ const WebSocketServer = require('ws').Server,
 const JsonDB = require('node-json-db');
 const say = require('say');
 const request = require('request');
+const parseString = require('xml2js').parseString;
 
 var dbAuth = new JsonDB("./settings/auth", true, false);
 var dbControls = new JsonDB('./controls/controls', true, false);
@@ -350,6 +351,21 @@ function tactilePress(rawid) {
         // TTS Quotes
         ttsQuotes();
     }
+	
+	if ( buttonEvent == "joke"){
+		// Random Joke
+		randomJoke();
+	}
+	
+	if ( buttonEvent == "catpic"){
+		// Random Cat Pic
+		randomCat();
+	}
+	
+	if ( buttonEvent == "catfact"){
+		// Random Cat Fact
+		randomCatFact();
+	}
 
 }
 
@@ -437,7 +453,8 @@ function ttsQuotes() {
             var quoteText = item.quote;
             var quoteText = quoteText.replace(/"/g, "");
             console.log('Quote: ' + quoteText);
-            say.speak(quoteText);
+			// Commented out TTS for horror month.
+		    // say.speak(quoteText);
             sendBroadcast(quoteText);
         } else {
             console.log('Error getting scotty quotes.');
@@ -445,5 +462,54 @@ function ttsQuotes() {
     })
 }
 
+function randomJoke(){
+	//http://tambal.azurewebsites.net/joke/random
+	var url = "http://tambal.azurewebsites.net/joke/random";
+	request(url, function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		var json = JSON.parse(body);
+		var joke = json.joke;
+		console.log('Joke: '+joke);
+		sendBroadcast(joke);
+	  } else {
+		  console.log('Error getting joke.');
+	  }
+	})
+}
+
+function randomCat(){
+	//http://thecatapi.com/api/images/get?format=xml&results_per_page=1
+	var url = "http://thecatapi.com/api/images/get?format=xml&results_per_page=1";
+	request(url, function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		var xml = body;
+		parseString(xml, function (err, result) {
+			var catImg = result.response.data[0];
+			var catImg2 = catImg.images[0];
+			var cat = catImg2.image[0].url;
+			console.log('Cat: '+cat);
+			sendBroadcast('Random Cat: '+cat);
+		});
+	  } else {
+		  console.log('Error getting cat picture.');
+	  }
+	})
+}
+
+function randomCatFact(){
+	//http://catfacts-api.appspot.com/api/facts
+	var url = "http://catfacts-api.appspot.com/api/facts";
+	request(url, function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		var json = JSON.parse(body);
+		var factUnclean = json.facts[0];
+		var fact = addslashes(factUnclean);
+		console.log('Joke: '+fact);
+		sendBroadcast('Cat Fact: '+fact);
+	  } else {
+		  console.log('Error getting cat picture.');
+	  }
+	})
+}
 
 beamConnect();
