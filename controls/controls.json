@@ -12,27 +12,27 @@
 		},
 		"3":{
 			"id":3,
-			"cooldown":60,
+			"cooldown":120,
 			"event": "soundboard"
 		},
 		"4":{
 			"id":4,
-			"cooldown":60,
+			"cooldown":120,
 			"event": "soundboard"
 		},
 		"5":{
 			"id":5,
-			"cooldown":60,
+			"cooldown":120,
 			"event": "soundboard"
 		},
 		"6":{
 			"id":6,
-			"cooldown":300,
+			"cooldown":600,
 			"event": "soundboard"
 		},
 		"7":{
 			"id":7,
-			"cooldown":300,
+			"cooldown":600,
 			"event": "soundboard"
 		},
 		"8":{
@@ -42,19 +42,19 @@
 		},
 		"9":{
 			"id":9,
-			"cooldown":300,
+			"cooldown":600,
 			"coins": 50,
 			"event": "coins"
 		},
 		"10":{
 			"id":10,
-			"cooldown":300,
+			"cooldown":600,
 			"coins": 100,
 			"event": "coins"
 		},
 		"11":{
 			"id":11,
-			"cooldown":300,
+			"cooldown":600,
 			"coins": 200,
 			"event": "coins"
 		},
@@ -65,13 +65,28 @@
 		},
 		"13":{
 			"id":3,
-			"cooldown":300,
+			"cooldown":600,
 			"event": "clickerBoss"
 		},
 		"14":{
 			"id":14,
-			"cooldown":60,
+			"cooldown":120,
 			"event": "quotes"
+		},
+		"15":{
+			"id":15,
+			"cooldown":600,
+			"event": "joke"
+		},
+		"16":{
+			"id":16,
+			"cooldown":600,
+			"event": "catpic"
+		},
+		"17":{
+			"id":17,
+			"cooldown":600,
+			"event": "catfact"
 		}
 	}
 }

@@ -1,1 +1,15 @@
-{"bossFight":[{"name":"Firebot","clicksPerPerson":6,"reward":200},{"name":"Waterbot","clicksPerPerson":9,"reward":250},{"name":"NotoriousNetwork","clicksPerPerson":12,"reward":300},{"name":"Bill","clicksPerPerson":15,"reward":350}],"bossFightStats":{"name":"NotoriousNetwork","clicksNeeded":456,"reward":300,"defeated":false}}
+{
+	"bossFight":[
+		{"name":"Luchabot","clicksPerPerson":6,"reward":200},
+		{"name":"Batbot","clicksPerPerson":9,"reward":250},
+		{"name":"NotoriousVampire","clicksPerPerson":12,"reward":300},
+		{"name":"Maeka","clicksPerPerson":13,"reward":350},
+		{"name":"BillTheHuman","clicksPerPerson":15,"reward":400}
+	],
+	"bossFightStats":{
+		"name":"Balrog",
+		"clicksNeeded":270,
+		"reward":400,
+		"defeated":false
+	}
+}
