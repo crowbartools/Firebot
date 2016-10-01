@@ -9,6 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "start": "node interactive.js"
+  },
   "dependencies": {
     "beam-client-node": "^0.5.3",
     "beam-interactive-node": "^0.3.2",
