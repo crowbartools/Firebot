@@ -4,20 +4,18 @@
   "description": "",
   "main": "interactive.js",
   "scripts": {
-    "required": "npm install t2-cli -g"
+    "start": "node interactive.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "scripts": {
-    "start": "node interactive.js"
-  },
   "dependencies": {
     "beam-client-node": "^0.5.3",
     "beam-interactive-node": "^0.3.2",
     "node-json-db": "^0.7.3",
     "request": "^2.74.0",
     "say": "^0.9.1",
+    "validator": "^6.0.0",
     "ws": "^1.1.1",
     "xml2js": "^0.4.17"
   }

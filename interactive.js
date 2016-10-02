@@ -11,6 +11,7 @@ const JsonDB = require('node-json-db');
 const say = require('say');
 const request = require('request');
 const parseString = require('xml2js').parseString;
+const validator = require('validator');
 
 var dbAuth = new JsonDB("./settings/auth", true, false);
 var dbControls = new JsonDB('./controls/controls', true, false);
@@ -451,7 +452,7 @@ function ttsQuotes() {
             var items = JSON.parse(body);
             var item = items[Math.floor(Math.random() * items.length)];
             var quoteText = item.quote;
-            var quoteText = quoteText.replace(/"/g, "");
+            var quoteText = validator.blacklist(quoteText, /["']/g);
             console.log('Quote: ' + quoteText);
 			// Commented out TTS for horror month.
 		    // say.speak(quoteText);
@@ -468,7 +469,7 @@ function randomJoke(){
 	request(url, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 		var json = JSON.parse(body);
-		var joke = json.joke;
+		var joke = validator.blacklist( json.joke , /["']/g);
 		console.log('Joke: '+joke);
 		sendBroadcast(joke);
 	  } else {
@@ -503,7 +504,7 @@ function randomCatFact(){
 	  if (!error && response.statusCode == 200) {
 		var json = JSON.parse(body);
 		var factUnclean = json.facts[0];
-		var fact = addslashes(factUnclean);
+		var fact = validator.blacklist( factUnclean, /["']/g);
 		console.log('Joke: '+fact);
 		sendBroadcast('Cat Fact: '+fact);
 	  } else {
