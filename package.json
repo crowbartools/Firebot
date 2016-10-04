@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "beam-client-node": "^0.5.3",
+    "beam-client-node": "^0.8.0",
     "beam-interactive-node": "^0.3.2",
     "node-json-db": "^0.7.3",
     "request": "^2.74.0",
