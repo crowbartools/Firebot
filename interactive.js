@@ -355,7 +355,7 @@ function tactilePress(rawid) {
 	
 	if ( buttonEvent == "joke"){
 		// Random Joke
-		randomJoke();
+		randomAdvice();
 	}
 	
 	if ( buttonEvent == "catpic"){
@@ -463,32 +463,18 @@ function ttsQuotes() {
     })
 }
 
-function randomJoke(){
-	var chanid = app.auth['channelID'];
-    var beamapi = "https://beam.pro/api/v1/chats/"+chanid+"/users?limit=100";
-	request(beamapi, function (error, response, body) {
+function randomAdvice(){
+    var url = "http://api.adviceslip.com/advice";
+	request(url, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 		var json = JSON.parse(body);
-		var personObj = json[Math.floor(Math.random()*json.length)];
-		var username = personObj["userName"];
-
-		//http://www.icndb.com/api/
-		var url = "http://api.icndb.com/jokes/random?escape=javascript&firstName="+username+"&lastName=";
-		request(url, function (error, response, body) {
-		  if (!error && response.statusCode == 200) {
-			var json = JSON.parse(body);
-			var content = json.value;
-			var joke = validator.blacklist( content.joke , /["']/g);
-			try{
-				console.log('Joke: '+joke);
-				sendBroadcast(joke);
-			}catch(err){
-				randomJoke();
-			}		
-		  } else {
-			  console.log('Error getting joke.');
-		  }
-		})
+        var advice = json.slip["advice"];
+        try{
+            console.log('Advice: '+advice);
+            sendBroadcast('Advice: '+advice);
+        } catch (err){
+            randomAdvice();
+        }   
 
 	  } else {
 		  console.log('Error getting userlist from beam api for joke.');
