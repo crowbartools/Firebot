@@ -464,16 +464,34 @@ function ttsQuotes() {
 }
 
 function randomJoke(){
-	//http://tambal.azurewebsites.net/joke/random
-	var url = "http://tambal.azurewebsites.net/joke/random";
-	request(url, function (error, response, body) {
+	var chanid = app.auth['channelID'];
+    var beamapi = "https://beam.pro/api/v1/chats/"+chanid+"/users?limit=100";
+	request(beamapi, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 		var json = JSON.parse(body);
-		var joke = validator.blacklist( json.joke , /["']/g);
-		console.log('Joke: '+joke);
-		sendBroadcast(joke);
+		var personObj = json[Math.floor(Math.random()*json.length)];
+		var username = personObj["userName"];
+
+		//http://www.icndb.com/api/
+		var url = "http://api.icndb.com/jokes/random?escape=javascript&firstName="+username+"&lastName=";
+		request(url, function (error, response, body) {
+		  if (!error && response.statusCode == 200) {
+			var json = JSON.parse(body);
+			var content = json.value;
+			var joke = validator.blacklist( content.joke , /["']/g);
+			try{
+				console.log('Joke: '+joke);
+				sendBroadcast(joke);
+			}catch(err){
+				randomJoke();
+			}		
+		  } else {
+			  console.log('Error getting joke.');
+		  }
+		})
+
 	  } else {
-		  console.log('Error getting joke.');
+		  console.log('Error getting userlist from beam api for joke.');
 	  }
 	})
 }
@@ -505,8 +523,12 @@ function randomCatFact(){
 		var json = JSON.parse(body);
 		var factUnclean = json.facts[0];
 		var fact = validator.blacklist( factUnclean, /["']/g);
-		console.log('Joke: '+fact);
-		sendBroadcast('Cat Fact: '+fact);
+		try{
+			console.log('Joke: '+fact);
+			sendBroadcast('Cat Fact: '+fact);
+		} catch (err){
+			randomCatFact();
+		}		
 	  } else {
 		  console.log('Error getting cat picture.');
 	  }
