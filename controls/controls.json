@@ -7,7 +7,7 @@
 		},
 		"2":{
 			"id":2,
-			"cooldown":60,
+			"cooldown":120,
 			"event": "soundboard"
 		},
 		"3":{
@@ -27,12 +27,12 @@
 		},
 		"6":{
 			"id":6,
-			"cooldown":600,
+			"cooldown":120,
 			"event": "soundboard"
 		},
 		"7":{
 			"id":7,
-			"cooldown":600,
+			"cooldown":120,
 			"event": "soundboard"
 		},
 		"8":{

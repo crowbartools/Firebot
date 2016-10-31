@@ -296,7 +296,9 @@ function progressUpdate(robot) {
     var tactile = app.tactileProgress;
     var screen = app.screenProgress;
     var joystick = app.joystickProgress;
+    var lastProgress = app.lastProgress
 
+    // Compile report.
     var progress = {
         "tactile": tactile,
         "screen": screen,
@@ -304,10 +306,14 @@ function progressUpdate(robot) {
     }
 
     // Send progress update if it has any new info.
-	if(tactile != "" && tactile !== undefined || screen != "" && screen !== undefined || joystick != "" && joystick !== undefined){
+	if( isEmpty(tactile) === false || isEmpty(screen) === false || isEmpty(joystick) === false ){
 		robot.send(new Packets.ProgressUpdate(progress));
 	}
+
+    // Save progress update for comparison next round.
+    app.lastProgress = progress;
     
+    // Clear temp progress reports.
     app.tactileProgress = [];
     app.screenProgress = [];
     app.joystickProgress = [];
@@ -316,6 +322,13 @@ function progressUpdate(robot) {
 // Tactile
 function tactileProgress(tactile) {
     var json = [];
+
+    // Events fired this report.
+    var soundboardFired = false;
+    var coinsFired = false;
+    var funFired = false;
+
+    // Loop through report.
     for (i = 0; i < tactile.length; i++) {
         var rawid = tactile[i].id;
         var holding = tactile[i].holding;
@@ -324,17 +337,55 @@ function tactileProgress(tactile) {
         var controls = app.controls;
         var button = controls.tactile[rawid];
         var cooldown = button['cooldown'];
+        var event = button['event'];
 
         // Convert JSON Cooldown Number to Milliseconds
         var cooldown = parseInt(cooldown) * 1000;
 
         if (isNaN(holding) === false && holding > 0 || isNaN(press) === false && press > 0) {
-            json.push({
-                "id": rawid,
-                "cooldown": cooldown,
-                "fired": true,
-                "progress": 1
-            });
+            if(event == "soundboard" && soundboardFired == false){
+                // Soundboard hit! 
+                // Cooldown IDs between 2 through 7.
+                i = 2;
+                while (i < 8) {
+                    json.push({
+                        "id": i,
+                        "cooldown": cooldown,
+                        "fired": true,
+                        "progress": 1
+                    });
+                    i++;
+                }
+                var soundboardFired = true;
+            } else if (event == "coins" && coinsFired == false){
+                // Coins hit! 
+                // Cooldown IDs between 9 through 11.
+                i = 9;
+                while (i < 12) {
+                    json.push({
+                        "id": i,
+                        "cooldown": cooldown,
+                        "fired": true,
+                        "progress": 1
+                    });
+                    i++;
+                }
+                var coinsFired = true;
+            } else if(event == "clickerBoss" && funFired == false || event == "quotes"  && funFired == false || event == "joke"  && funFired == false || event == "catpic"  && funFired == false || event == "catfact"  && funFired == false) {
+                // Fun hit! 
+                // Cooldown IDs between 13 through 17.
+                i = 13;
+                while (i < 18) {
+                    json.push({
+                        "id": i,
+                        "cooldown": cooldown,
+                        "fired": true,
+                        "progress": 1
+                    });
+                    i++;
+                }
+                var funFired = true;
+            }
         };
     }
     app.tactileProgress = json;
@@ -572,6 +623,16 @@ function randomCatFact(){
 		  console.log('Error getting cat picture.');
 	  }
 	})
+}
+
+// Check if object empty.
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+
+    return true;
 }
 
 beamConnect();
