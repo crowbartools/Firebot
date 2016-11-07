@@ -127,7 +127,7 @@ function bossStart(){
 		}));
 		timesClicked = 0;
 		context.clearRect(0, 0, 1920, 1080);
-	}, 11000);
+	}, 20000);
 }
 
 ////////////////////////
