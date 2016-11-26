@@ -12,6 +12,7 @@ const say = require('say');
 const request = require('request');
 const parseString = require('xml2js').parseString;
 const validator = require('validator');
+const randomPuppy = require('random-puppy');
 
 var dbAuth = new JsonDB("./settings/auth", true, false);
 var dbControls = new JsonDB('./controls/controls', true, false);
@@ -143,12 +144,19 @@ function streamerBroadcast(message){
 
 // Give all ponts
 function giveallPoints(points){
-	streamerWhisper(app.auth['botName'], '!coins add +viewers('+points+')' );
+	setTimeout(function(){ 
+			streamerWhisper(app.auth['botName'], '!coins add +viewers('+points+')' );
+	}, 1250);
 }
 
 // Broadcast to UI
 function guiBroadcast(message) {
     guiBroadcast(message);
+}
+
+// Capitalize Name
+function toTitleCase(str){
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
 
@@ -371,11 +379,11 @@ function tactileProgress(tactile) {
                     i++;
                 }
                 var coinsFired = true;
-            } else if(event == "clickerBoss" && funFired == false || event == "quotes"  && funFired == false || event == "joke"  && funFired == false || event == "catpic"  && funFired == false || event == "catfact"  && funFired == false) {
+            } else if(event == "advice"  && funFired == false || event == "catpic"  && funFired == false || event == "dogpic"  && funFired == false  || event == "aww"  && funFired == false) {
                 // Fun hit! 
                 // Cooldown IDs between 13 through 17.
-                i = 13;
-                while (i < 18) {
+                i = 14;
+                while (i < 19) {
                     json.push({
                         "id": i,
                         "cooldown": cooldown,
@@ -385,7 +393,14 @@ function tactileProgress(tactile) {
                     i++;
                 }
                 var funFired = true;
-            }
+            } else {
+				json.push({
+					"id": rawid,
+					"cooldown": cooldown,
+					"fired": true,
+					"progress": 1
+				});
+			}
         };
     }
     app.tactileProgress = json;
@@ -476,19 +491,39 @@ function tactilePress(rawid) {
         ttsQuotes();
     }
 	
-	if ( buttonEvent == "joke"){
-		// Random Joke
-		randomAdvice();
-	}
-	
 	if ( buttonEvent == "catpic"){
 		// Random Cat Pic
 		randomCat();
 	}
 	
+	if ( buttonEvent == "dogpic"){
+		// Random Dog Pic
+		randomDog();
+	}
+	
+	if ( buttonEvent == "aww"){
+		// Random Aww pic
+		randomAww();
+	}
+	
+	if ( buttonEvent == "pokemon"){
+		// Random pokemon
+		randomPokemon();
+	}
+	
 	if ( buttonEvent == "catfact"){
 		// Random Cat Fact
 		randomCatFact();
+	}
+	
+	if ( buttonEvent == "catdog"){
+		// Random Cat Fact
+		randomDogFact();
+	}
+
+	if ( buttonEvent == "advice"){
+		// Random Cat Fact
+		randomAdvice();
 	}
 
 }
@@ -587,22 +622,27 @@ function randomAdvice(){
 }
 
 function randomCat(){
-	//http://thecatapi.com/api/images/get?format=xml&results_per_page=1
-	var url = "http://thecatapi.com/api/images/get?format=xml&results_per_page=1";
-	request(url, function (error, response, body) {
-	  if (!error && response.statusCode == 200) {
-		var xml = body;
-		parseString(xml, function (err, result) {
-			var catImg = result.response.data[0];
-			var catImg2 = catImg.images[0];
-			var cat = catImg2.image[0].url;
-			console.log('Cat: '+cat);
-			botBroadcast('Random Cat: '+cat);
-		});
-	  } else {
-		  console.log('Error getting cat picture.');
-	  }
-	})
+	randomPuppy('catpictures')
+		.then(url => {
+			try{
+				console.log('Random Cat: '+url);
+				botBroadcast('Random Cat: '+url);
+			} catch (err){
+				randomCat();
+			}	
+	})	
+}
+
+function randomDog(){
+	randomPuppy('dogpictures')
+		.then(url => {
+			try{
+				console.log('Random Dog: '+url);
+				botBroadcast('Random Dog: '+url);
+			} catch (err){
+				randomDog();
+			}	
+	})		
 }
 
 function randomCatFact(){
@@ -614,15 +654,77 @@ function randomCatFact(){
 		var factUnclean = json.facts[0];
 		var fact = validator.blacklist( factUnclean, /["']/g);
 		try{
-			console.log('Joke: '+fact);
+			console.log('Cat Fact: '+fact);
 			botBroadcast('Cat Fact: '+fact);
 		} catch (err){
 			randomCatFact();
 		}		
 	  } else {
-		  console.log('Error getting cat picture.');
+		  console.log('Error getting cat fact.');
 	  }
 	})
+}
+
+function randomDogFact(){
+	//https://dog-api.kinduff.com/api/facts
+	var url = "https://dog-api.kinduff.com/api/facts";
+	request(url, function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		var json = JSON.parse(body);
+		var factUnclean = json.facts[0];
+		var fact = validator.blacklist( factUnclean, /["']/g);
+		try{
+			console.log('Dog Fact: '+fact);
+			botBroadcast('Dog Fact: '+fact);
+		} catch (err){
+			randomDogFact();
+		}		
+	  } else {
+		  console.log('Error getting dog fact.');
+	  }
+	})
+}
+
+function randomPokemon(){
+	//http://pokeapi.co/api/v2/pokemon/NUMBER (811 max)
+	var random = Math.floor(Math.random() * 721) + 1;
+	var url = "http://pokeapi.co/api/v2/pokemon/"+random+"/";
+	request(url, function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		var json = JSON.parse(body);
+		var name = json.name;
+		var nameCap = toTitleCase(name);
+		var info = "http://pokemondb.net/pokedex/"+name;
+		
+		var moveset = json.moves;
+		var movedata = moveset[Math.floor(Math.random()*moveset.length)];
+		var move = movedata['move'];
+		var movename = move.name;
+		
+		try{
+			var text = "I choose you "+nameCap+"! "+nameCap+" used "+movename+"! "+info 
+			
+			console.log('Pokemon: '+text);
+			botBroadcast('Pokemon: '+text);
+		} catch (err){
+			randomPokemon();
+		}		
+	  } else {
+		  console.log('Error getting pokemon');
+	  }
+	})
+}
+
+function randomAww(){
+	randomPuppy('aww')
+		.then(url => {
+			try{
+				console.log('Random Aww: '+url);
+				botBroadcast('Random Aww: '+url);
+			} catch (err){
+				randomAww();
+			}	
+	})				
 }
 
 // Check if object empty.

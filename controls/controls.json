@@ -71,22 +71,27 @@
 		"14":{
 			"id":14,
 			"cooldown":120,
-			"event": "quotes"
+			"event": "advice"
 		},
 		"15":{
 			"id":15,
-			"cooldown":600,
-			"event": "joke"
+			"cooldown":300,
+			"event": "aww"
 		},
 		"16":{
 			"id":16,
-			"cooldown":600,
+			"cooldown":300,
 			"event": "catpic"
 		},
 		"17":{
 			"id":17,
-			"cooldown":600,
-			"event": "catfact"
+			"cooldown":300,
+			"event": "dogpic"
+		},
+		"18":{
+			"id":18,
+			"cooldown":300,
+			"event": "pokemon"
 		}
 	}
 }
