@@ -526,9 +526,9 @@ function tactilePress(rawid) {
 		randomAdvice();
 	}
 
-    if (buttonEvent == "numberTriva"){
+    if (buttonEvent == "numberTrivia"){
         // Number Trivia
-        numberTriva();
+        numberTrivia();
     }
 }
 
