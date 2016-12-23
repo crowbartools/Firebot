@@ -71,12 +71,12 @@
 		"14":{
 			"id":14,
 			"cooldown":120,
-			"event": "advice"
+			"event": "dogfact"
 		},
 		"15":{
 			"id":15,
 			"cooldown":300,
-			"event": "aww"
+			"event": "catfact"
 		},
 		"16":{
 			"id":16,
@@ -91,7 +91,7 @@
 		"18":{
 			"id":18,
 			"cooldown":300,
-			"event": "pokemon"
+			"event": "numberTrivia"
 		}
 	}
 }

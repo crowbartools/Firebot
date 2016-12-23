@@ -379,7 +379,7 @@ function tactileProgress(tactile) {
                     i++;
                 }
                 var coinsFired = true;
-            } else if(event == "advice"  && funFired == false || event == "catpic"  && funFired == false || event == "dogpic"  && funFired == false  || event == "aww"  && funFired == false) {
+            } else if(event == "advice"  && funFired == false || event == "catpic"  && funFired == false || event == "dogpic"  && funFired == false  || event == "aww"  && funFired == false || event == "dogfact"  && funFired == false || event == "catfact"  && funFired == false || event == "numberTrivia"  && funFired == false ) {
                 // Fun hit! 
                 // Cooldown IDs between 13 through 17.
                 i = 14;
@@ -516,8 +516,8 @@ function tactilePress(rawid) {
 		randomCatFact();
 	}
 	
-	if ( buttonEvent == "catdog"){
-		// Random Cat Fact
+	if ( buttonEvent == "dogfact"){
+		// Random Dog Fact
 		randomDogFact();
 	}
 
@@ -526,6 +526,10 @@ function tactilePress(rawid) {
 		randomAdvice();
 	}
 
+    if (buttonEvent == "numberTriva"){
+        // Number Trivia
+        numberTriva();
+    }
 }
 
 /////////////////////////
@@ -725,6 +729,19 @@ function randomAww(){
 				randomAww();
 			}	
 	})				
+}
+
+function numberTriva(){
+	//http://numbersapi.com/random
+	var url = "http://numbersapi.com/random";
+	request(url, function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		console.log('Random Number Trivia:'+body);
+        botBroadcast('Number Trivia: '+body);
+	  } else {
+		  console.log('Error getting number trivia.');
+	  }
+	})
 }
 
 // Check if object empty.
