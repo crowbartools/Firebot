@@ -731,8 +731,8 @@ function randomAww(){
 	})				
 }
 
-function numberTriva(){
-	//http://numbersapi.com/random
+function numberTrivia(){
+	// http://numbersapi.com/random
 	var url = "http://numbersapi.com/random";
 	request(url, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
