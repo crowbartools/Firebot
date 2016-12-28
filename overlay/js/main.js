@@ -154,7 +154,7 @@ function fireworks(){
 	$('.fireworks').append('<img src="./images/effects/fireworks.gif" width="1920" height="1080">');
 	setTimeout(function(){ 
 		$('.fireworks').empty();
-	}, 27000);
+	}, 6000);
 }
 
 function confetti(){
