@@ -145,7 +145,7 @@ function streamerBroadcast(message){
 // Give all ponts
 function giveallPoints(points){
 	setTimeout(function(){ 
-			streamerWhisper(app.auth['botName'], '!coins add +viewers('+points+')' );
+			streamerBroadcast('!coins add +viewers('+points+')' );
 	}, 1250);
 }
 
