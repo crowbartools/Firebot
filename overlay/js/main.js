@@ -152,15 +152,17 @@ function soundboard(obj){
 ///////////////////////
 function fireworks(){
 	$('.fireworks').append('<img src="./images/effects/fireworks.gif" width="1920" height="1080">');
+	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
-		$('.fireworks').empty();
+		$('.fireworks img').remove();
 	}, 6000);
 }
 
 function confetti(){
 	$('.confetti').append('<img src="./images/effects/confetti.gif" width="1920" height="1080">');
+	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
-		$('.confetti').empty();
+		$('.confetti img').remove();
 	}, 7000);
 }
 
