@@ -755,17 +755,11 @@ function numberTrivia(){
 }
 
 function fireworks(){
-	$('.fireworks').append('<img src="./images/effects/fireworks.gif" width="1920" height="1080">');
-	setTimeout(function(){ 
-		$('.fireworks').empty();
-	}, 27000);
+	guiBroadcast('{ "event": "fireworks"}');
 }
 
 function confetti(){
-	$('.confetti').append('<img src="./images/effects/confetti.gif" width="1920" height="1080">');
-	setTimeout(function(){ 
-		$('.confetti').empty();
-	}, 7000);
+	guiBroadcast('{ "event": "confetti"}');
 }
 
 // Check if object empty.

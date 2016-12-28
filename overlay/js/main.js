@@ -28,6 +28,15 @@ function beamSocketConnect(){
 				bossRender();
 				bossStart();
 			}
+			
+			if(event == "fireworks"){
+				fireworks();
+			}
+			
+			if (event == "confetti"){
+				confetti();
+			}
+			
 			if (event == "soundboard"){
 				// Play a sound!
 				soundboard(obj);
@@ -136,6 +145,23 @@ function bossStart(){
 function soundboard(obj){
     var soundId = obj.id;
 	$('.soundboard'+soundId).trigger("play");
+}
+
+////////////////////////
+// Effects
+///////////////////////
+function fireworks(){
+	$('.fireworks').append('<img src="./images/effects/fireworks.gif" width="1920" height="1080">');
+	setTimeout(function(){ 
+		$('.fireworks').empty();
+	}, 27000);
+}
+
+function confetti(){
+	$('.confetti').append('<img src="./images/effects/confetti.gif" width="1920" height="1080">');
+	setTimeout(function(){ 
+		$('.confetti').empty();
+	}, 7000);
 }
 
 
