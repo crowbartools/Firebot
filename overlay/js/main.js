@@ -151,8 +151,8 @@ function soundboard(obj){
 // Effects
 ///////////////////////
 function fireworks(){
-	$('.wrapper').append('<div class="fireworks" style="display:none"><img src="./images/effects/fireworks.gif" width="1920" height="1080"></div>');
-	$('.fireworks img').prop('src',function(){return this.src;});
+	var image = "./images/effects/fireworks.gif"+"?a="+Math.random();
+	$('.wrapper').append('<div class="fireworks" style="display:none"><img src="'+image+'" width="1920" height="1080"></div>');
 	$('.fireworks').fadeIn('fast');
 	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
@@ -162,8 +162,8 @@ function fireworks(){
 }
 
 function confetti(){
-	$('.wrapper').append('<div class="confetti" style="display:none"><img src="./images/effects/confetti.gif" width="1920" height="1080"></div>');
-	$('.confetti img').prop('src',function(){return this.src;});
+	var image = "./images/effects/confetti.gif"+"?a="+Math.random();
+	$('.wrapper').append('<div class="confetti" style="display:none"><img src="'+image+'" width="1920" height="1080"></div>');
 	$('.confetti').fadeIn('fast');
 	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
