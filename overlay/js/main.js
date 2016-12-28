@@ -151,24 +151,25 @@ function soundboard(obj){
 // Effects
 ///////////////////////
 function fireworks(){
-	var d = new Date(); 
-	$('.wrapper').append('<div class="fireworks" style="display:none"><img src="./images/effects/fireworks.gif?nocache='+d.getTime()+'" width="1920" height="1080"></div>')
+	$('.wrapper').append('<div class="fireworks" style="display:none"><img src="./images/effects/fireworks.gif" width="1920" height="1080"></div>');
+	$('.fireworks img').prop('src',function(){return this.src;});
 	$('.fireworks').fadeIn('fast');
 	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
 		$('.fireworks').fadeOut('fast');
 		$('.fireworks').remove();
-	}, 6000);
+	}, 6250);
 }
 
 function confetti(){
-	$('.wrapper').append('<div class="confetti" style="display:none"><img src="./images/effects/confetti.gif?nocache='+d.getTime()+' width="1920" height="1080"></div>');
+	$('.wrapper').append('<div class="confetti" style="display:none"><img src="./images/effects/confetti.gif" width="1920" height="1080"></div>');
+	$('.confetti img').prop('src',function(){return this.src;});
 	$('.confetti').fadeIn('fast');
 	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
 		$('.confetti').fadeOut('fast');
 		$('.confetti').remove();
-	}, 7000);
+	}, 7250);
 }
 
 
