@@ -70,13 +70,13 @@
 		},
 		"14":{
 			"id":14,
-			"cooldown":120,
-			"event": "dogfact"
+			"cooldown":10,
+			"event": "confetti"
 		},
 		"15":{
 			"id":15,
-			"cooldown":300,
-			"event": "catfact"
+			"cooldown":10,
+			"event": "fireworks"
 		},
 		"16":{
 			"id":16,

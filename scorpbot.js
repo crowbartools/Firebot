@@ -530,6 +530,16 @@ function tactilePress(rawid) {
         // Number Trivia
         numberTrivia();
     }
+	
+    if (buttonEvent == "fireworks"){
+        // Fireworks
+        fireworks();
+    }
+	
+    if (buttonEvent == "confetti"){
+        // Confetti
+        confetti();
+    }
 }
 
 /////////////////////////
@@ -742,6 +752,20 @@ function numberTrivia(){
 		  console.log('Error getting number trivia.');
 	  }
 	})
+}
+
+function fireworks(){
+	$('.fireworks').append('<img src="./images/effects/fireworks.gif" width="1920" height="1080">');
+	setTimeout(function(){ 
+		$('.fireworks').empty();
+	}, 27000);
+}
+
+function confetti(){
+	$('.confetti').append('<img src="./images/effects/confetti.gif" width="1920" height="1080">');
+	setTimeout(function(){ 
+		$('.confetti').empty();
+	}, 7000);
 }
 
 // Check if object empty.
