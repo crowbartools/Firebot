@@ -151,17 +151,19 @@ function soundboard(obj){
 // Effects
 ///////////////////////
 function fireworks(){
-	$('.fireworks').append('<img src="./images/effects/fireworks.gif" width="1920" height="1080">');
+	$('.fireworks').append('<img src="./images/effects/fireworks.gif" width="1920" height="1080">').fadeIn('fast');
 	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
+		$('.fireworks').fadeOut('fast');
 		$('.fireworks img').remove();
 	}, 6000);
 }
 
 function confetti(){
-	$('.confetti').append('<img src="./images/effects/confetti.gif" width="1920" height="1080">');
+	$('.confetti').append('<img src="./images/effects/confetti.gif" width="1920" height="1080">').fadeIn('fast');
 	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
+		$('.confetti').fadeOut('fast');
 		$('.confetti img').remove();
 	}, 7000);
 }
