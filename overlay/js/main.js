@@ -151,20 +151,22 @@ function soundboard(obj){
 // Effects
 ///////////////////////
 function fireworks(){
-	$('.fireworks').append('<img src="./images/effects/fireworks.gif" width="1920" height="1080">').fadeIn('fast');
+	$('.wrapper').append('<div class="fireworks" style="display:none"><img src="./images/effects/fireworks.gif" width="1920" height="1080"></div>')
+	$('.fireworks').fadeIn('fast');
 	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
 		$('.fireworks').fadeOut('fast');
-		$('.fireworks img').remove();
+		$('.fireworks').remove();
 	}, 6000);
 }
 
 function confetti(){
-	$('.confetti').append('<img src="./images/effects/confetti.gif" width="1920" height="1080">').fadeIn('fast');
+	$('.wrapper').append('<div class="confetti" style="display:none"><img src="./images/effects/confetti.gif" width="1920" height="1080"></div>');
+	$('.confetti').fadeIn('fast');
 	$('.party-sound').trigger('play');
 	setTimeout(function(){ 
 		$('.confetti').fadeOut('fast');
-		$('.confetti img').remove();
+		$('.confetti').remove();
 	}, 7000);
 }
 
