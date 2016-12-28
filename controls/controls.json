@@ -70,12 +70,12 @@
 		},
 		"14":{
 			"id":14,
-			"cooldown":10,
+			"cooldown":600,
 			"event": "confetti"
 		},
 		"15":{
 			"id":15,
-			"cooldown":10,
+			"cooldown":600,
 			"event": "fireworks"
 		},
 		"16":{

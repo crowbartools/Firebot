@@ -379,10 +379,24 @@ function tactileProgress(tactile) {
                     i++;
                 }
                 var coinsFired = true;
-            } else if(event == "advice"  && funFired == false || event == "catpic"  && funFired == false || event == "dogpic"  && funFired == false  || event == "aww"  && funFired == false || event == "dogfact"  && funFired == false || event == "catfact"  && funFired == false || event == "numberTrivia"  && funFired == false ) {
+            } else if (event == "fireworks"  && funFired == false || event == "confetti"  && funFired == false ){
+				// Effects Hit!
+				// Cooldown IDs between 14 through 15.
+				i = 14;
+                while (i < 16) {
+                    json.push({
+                        "id": i,
+                        "cooldown": cooldown,
+                        "fired": true,
+                        "progress": 1
+                    });
+                    i++;
+                }
+                var funFired = true;
+			} else if(event == "advice"  && funFired == false || event == "catpic"  && funFired == false || event == "dogpic"  && funFired == false  || event == "aww"  && funFired == false || event == "dogfact"  && funFired == false || event == "catfact"  && funFired == false || event == "numberTrivia"  && funFired == false) {
                 // Fun hit! 
-                // Cooldown IDs between 13 through 17.
-                i = 14;
+                // Cooldown IDs between 16 through 18.
+                i = 16;
                 while (i < 19) {
                     json.push({
                         "id": i,
