@@ -1,23 +1,21 @@
 {
-  "name": "firebot",
+  "name": "Firebot",
   "version": "1.0.0",
-  "description": "",
-  "main": "interactive.js",
+  "description": "An application for Beam.pro that celebrates and promotes interactive controls.",
+  "main": "main.js",
   "scripts": {
-    "start": "node interactive.js"
+    "start": "electron ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "beam-client-node": "^0.8.0",
-    "beam-interactive-node": "^0.3.2",
-    "node-json-db": "^0.7.3",
-    "random-puppy": "^1.1.0",
-    "request": "^2.74.0",
-    "say": "^0.9.1",
-    "validator": "^6.0.0",
-    "ws": "^1.1.1",
-    "xml2js": "^0.4.17"
+  "repository": "https://github.com/Firebottle/Firebot",
+  "keywords": [
+    "Electron",
+    "beam.pro",
+    "interactive",
+    "streaming"
+  ],
+  "author": "@Firebottletv",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^1.4.1"
   }
 }
