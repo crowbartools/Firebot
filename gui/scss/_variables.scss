@@ -1,0 +1,21 @@
+@font-face {
+    font-family: OpenSansCond;
+    src: url('../fonts/OpenSans-CondLight.ttf');
+}
+@font-face {
+    font-family: Lora;
+    src: url('../fonts/Lora-Regular.ttf');
+}
+
+$main-color: #273b48;
+$secondary-color: #1b2935;
+$highlight-color: #ffcb05;
+$non-highlight-color: #888c90;
+
+$text-color-white: #ffffff;
+$text-color-primary: #ffffff;
+$text-color-secondary: #cecece;
+$font-primary: OpenSans, sans-serif;
+$font-secondary: Lora, serif;
+
+$main-bg-image: url(../images/bg.jpg);

@@ -1,0 +1,9 @@
+
+// Gradient 
+@mixin gradient ($main-color, $secondary-color){
+    background: $main-color; /* Old Browsers */
+    background: -webkit-linear-gradient(bottom right,$main-color,$secondary-color); /*Safari 5.1-6*/
+    background: -o-linear-gradient(bottom right,$main-color,$secondary-color); /*Opera 11.1-12*/
+    background: -moz-linear-gradient(bottom right,$main-color,$secondary-color); /*Fx 3.6-15*/
+    background: linear-gradient(bottom right, $main-color, $secondary-color); /*Standard*/
+}

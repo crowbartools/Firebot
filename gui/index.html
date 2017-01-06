@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Firebot Remastered</title>
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
+  </head>
+  <body>
+
+    <div id="header">
+      <div class="main-image">
+          <a href="#main-menu" class="menu-toggle menu-hamburger">
+            <i class="fa fa-bars" aria-hidden="true"></i>
+          </a>
+      </div>
+    </div>
+
+    <div id="main-menu">
+      <div class="login-info">
+        Login info goes here.
+      </div>
+      <div class="navigation">
+        <ul>
+          <li><a data="start" href="#">Home</a></li>
+          <li><a data="interactive" href="#">Boards</a></li>
+          <li><a data="logger" href="#">Log</a></li>
+          <li><a data="bug-report" href="#">Bug Report</a></li>
+          <li><a data="credits" href="#">Credits</a></li>
+        </ul>
+      </div>
+      <div class="status">
+        Status info goes here.
+      </div>
+    </div>
+
+    <div id="content">
+    
+      <section class="start page current">
+        <div class="main-content">
+            <img src="./images/logo.jpg" class="logo">
+            <h1>Firebot</h1>
+            <p>Interactivity for Beam.pro</p>
+            <a href="#main-menu" class="menu-toggle"><button>Start</button></a>
+        </div>
+      </section>
+
+      <section class="interactive page">
+        <div class="main-content">
+            Interactive Board coming soon...
+        </div>
+      </section>
+
+      <section class="logger page">
+        <div class="main-content">
+            Logger coming soon...
+        </div>
+      </section>
+
+      <section class="bug-report page">
+        <div class="main-content">
+            Bug Report info coming soon...
+        </div>
+      </section>
+
+      <section class="credits page">
+        <div class="main-content">
+            Credits page coming soon....
+        </div>
+      </section>
+
+    </div> <!-- End Content -->
+  </body>
+
+  <script>
+    // Require other files here.
+    window.$ = window.jQuery = require('jquery');
+    require('./js/jquery.sidr.min.js')
+    require('./js/renderer.js')
+  </script>
+</html>

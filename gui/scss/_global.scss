@@ -1,0 +1,57 @@
+// Global
+body{
+    color: $text-color-secondary;
+    font-family: $font-secondary;
+    background-image: $main-bg-image;
+    background-size:100%;
+    background-repeat:no-repeat;
+    background-position:top right;
+    background-color:#1d2e38;
+}
+h1, h2, h3, h4, h5{
+    color: $text-color-primary;
+    font-family: $font-primary;
+}
+a{
+    color:$text-color-white;
+    &:hover{
+        color:$text-color-secondary;
+    }
+}
+button{
+    background-color: $highlight-color;
+    color:$text-color-primary;
+    padding:1% 2%;
+    border:none;
+    border-radius: 10px;
+    text-transform: uppercase;
+    font-weight:bold;
+    font-family: $font-primary;
+    cursor: pointer;
+    margin:2%;
+    &:hover{
+        background-color: $non-highlight-color;
+    }
+}
+
+
+// Layout
+#header{
+    padding:1%;
+
+    .menu-hamburger{
+        font-size:1.5em;
+    }
+}
+.sidr{
+    @include gradient($main-color, $secondary-color);
+}
+.page{
+    display:none;
+    &.current{
+        display:block;
+    }
+    .main-content{
+        padding:2%;
+    }
+}

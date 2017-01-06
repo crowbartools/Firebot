@@ -1,0 +1,26 @@
+@import 'normalize';
+@import 'variables';
+@import 'mixins';
+@import 'font-awesome.min';
+@import 'plugins';
+@import 'global';
+
+// Start Page
+.start{
+    text-align:center;
+    .logo{
+        border-radius:50%;
+        padding:5px;
+        border: 2px solid white;
+        width:150px;
+    }
+    h1{
+        font-size:4em;
+        padding:0px;
+        margin:0px;
+    }
+    p{
+        margin:0px;
+        padding:0px;
+    }
+}
