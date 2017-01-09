@@ -49,20 +49,20 @@
         <div class="main-content">
             <div class="streamer">
               <div class="avatar"><img src="./images/placeholders/default.jpg" class="streamer-avatar"></div>
-              <div class="username"><h2>Firebottle</h2></div>
+              <div class="username"><h2>Streamer</h2></div>
               <div class="loginOrOut">
-                <button>Logout</button>
+                <button class="streamer-login" data="streamer">Login</button>
               </div>
             </div>
             <div class="bot">
               <div class="avatar"><img src="./images/placeholders/default.jpg" class="bot-avatar"></div>
-              <div class="username"><h2>Firebot</h2></div>
+              <div class="username"><h2>Bot</h2></div>
               <div class="loginOrOut">
-                <button>Logout</button>
+                <button class="bot-login" data="bot">Login</button>
               </div>
             </div>
             <div class="botType">
-              What type of bot are you running?
+              <p>What type of bot are you running?</p>
               <select>
                 <option>Scorpbot</option>
                 <option>Scottybot</option>
@@ -125,7 +125,8 @@
   <script>
     // Require other files here.
     window.$ = window.jQuery = require('jquery');
-    require('./js/jquery.sidr.min.js')
-    require('./js/renderer.js')
+    require('./js/jquery.sidr.min.js');
+    require('./js/global.js');
+    require('./js/login.js');
   </script>
 </html>
