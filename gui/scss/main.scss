@@ -24,3 +24,28 @@
         padding:0px;
     }
 }
+
+
+// Login Page
+.login{
+    .main-content{
+        text-align:center;
+    }
+    .streamer, .bot{
+        margin:0% 5%;
+        display:inline-block;
+        vertical-align:top;
+    }
+    .streamer-avatar, .bot-avatar{
+        border-radius:50%;
+        padding:5px;
+        border: 2px solid white;
+        width:150px;
+    }
+    .loginOrOut button{
+        padding:5%;
+    }
+    .botType{
+        margin:2% 0% 0% 0%;
+    }
+}

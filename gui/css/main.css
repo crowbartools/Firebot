@@ -4170,7 +4170,7 @@ template {
 body {
   color: #cecece;
   font-family: Lora, serif;
-  background-image: url(../images/bg.jpg);
+  background-image: url(../images/bg/5.jpg);
   background-size: 100%;
   background-repeat: no-repeat;
   background-position: top right;
@@ -4204,22 +4204,24 @@ button {
   font-family: OpenSans, sans-serif;
   cursor: pointer;
   margin: 2%;
+  outline: none;
+  text-shadow: 1px 1px 2px #969696;
 }
-/* line 32, ../scss/_global.scss */
+/* line 34, ../scss/_global.scss */
 button:hover {
   background-color: #888c90;
 }
 
-/* line 39, ../scss/_global.scss */
+/* line 41, ../scss/_global.scss */
 #header {
   padding: 1%;
 }
-/* line 42, ../scss/_global.scss */
+/* line 44, ../scss/_global.scss */
 #header .menu-hamburger {
   font-size: 1.5em;
 }
 
-/* line 46, ../scss/_global.scss */
+/* line 48, ../scss/_global.scss */
 .sidr {
   background: #273b48;
   /* Old Browsers */
@@ -4233,15 +4235,15 @@ button:hover {
   /*Standard*/
 }
 
-/* line 49, ../scss/_global.scss */
+/* line 51, ../scss/_global.scss */
 .page {
   display: none;
 }
-/* line 51, ../scss/_global.scss */
+/* line 53, ../scss/_global.scss */
 .page.current {
   display: block;
 }
-/* line 54, ../scss/_global.scss */
+/* line 56, ../scss/_global.scss */
 .page .main-content {
   padding: 2%;
 }
@@ -4267,4 +4269,30 @@ button:hover {
 .start p {
   margin: 0px;
   padding: 0px;
+}
+
+/* line 31, ../scss/main.scss */
+.login .main-content {
+  text-align: center;
+}
+/* line 34, ../scss/main.scss */
+.login .streamer, .login .bot {
+  margin: 0% 5%;
+  display: inline-block;
+  vertical-align: top;
+}
+/* line 39, ../scss/main.scss */
+.login .streamer-avatar, .login .bot-avatar {
+  border-radius: 50%;
+  padding: 5px;
+  border: 2px solid white;
+  width: 150px;
+}
+/* line 45, ../scss/main.scss */
+.login .loginOrOut button {
+  padding: 5%;
+}
+/* line 48, ../scss/main.scss */
+.login .botType {
+  margin: 2% 0% 0% 0%;
 }
