@@ -21,34 +21,94 @@ function requestBeamData(token, streamOrBot) {
         }
     }, function(err, res) {
         var data = JSON.parse(res.body);
-        //Save Login Info
-        if (streamOrBot == "streamer"){
-            dbAuth.push('/streamer', { "channelID": data.channel.id, "username": data.username, "token": token, "avatarUrl": data.avatarUrl });
-        } else {
-            dbAuth.push('/bot', { "botChannelID": data.channel.id, "botUsername": data.username, "botToken": token, "botAvatarUrl": data.avatarUrl });
-        }
-        
-        //Load up avatar and such on login page. 
-        savedLogin(streamOrBot, data.channel.id, data.username, data.avatarUrl);
 
+        //Load up avatar and such on login page. 
+        login(streamOrBot, data.channel.id, data.username, token, data.avatarUrl);
     });
 };
 
-// Saved Login Post
+// Log in
 // This takes the saved login info and puts things onto the login page such as the user avatar.
-function savedLogin(streamOrBot, channelID, username, avatarUrl){
-    if(streamOrBot == "streamer"){
-        // Put streamer info on page.
-        console.log(streamOrBot, channelID, username, avatarUrl);
-    } else {
-        // Put bot info on page.
+function login(streamOrBot, channelID, username, token, avatar){
 
+    if (streamOrBot == "streamer"){
+        dbAuth.push('/streamer', { "channelID": channelID, "username": username, "token": token, "avatarUrl": avatar });
+    } else if (streamOrBot == "bot") {
+        dbAuth.push('/bot', { "channelID": channelID, "username": username, "token": token, "avatarUrl": avatar });
+    }
+
+    if(streamOrBot == "streamer"){
+        $('.streamer .username h2').text(username);
+        $('.streamer .avatar img').attr('src', avatar);
+        $('.streamer .loginOrOut button').text('Logout').attr('status', 'logout');
+    } else if (streamOrBot == "bot"){
+        $('.bot .username h2').text(username);
+        $('.bot .avatar img').attr('src', avatar);
+        $('.bot .loginOrOut button').text('Logout').attr('status', 'logout');
     }
 }
 
-// Login Pressed
-// This sends an alert to the main process that the login button was pressed and we need the oauth info to be sent back.
+// Log out
+// This sets everything back to default and deletes relevant user info.
+function logout(streamOrBot){
+    var defaultAvatar = "./images/placeholders/default.jpg";
+
+    if (streamOrBot == "streamer"){
+        dbAuth.delete('/streamer');
+    } else if (streamOrBot == "bot") {
+        dbAuth.delete('/bot');
+    }
+
+    if(streamOrBot == "streamer"){
+        $('.streamer .username h2').text('Streamer');
+        $('.streamer .avatar img').attr('src', defaultAvatar);
+        $('.streamer .loginOrOut button').text('Login').attr('status', 'login');
+    } else if (streamOrBot == "bot") {
+        $('.bot .username h2').text('Bot');
+        $('.bot .avatar img').attr('src', defaultAvatar);
+        $('.bot .loginOrOut button').text('Login').attr('status', 'login');
+    }
+}
+
+// Initial Load
+// Checks to see if there is any login info saved, and if so then load up related ui elements.
+function initialLogin(){
+    try {
+        var streamer = dbAuth.getData("/streamer");
+        var username = streamer.username;
+        var avatar = streamer.avatarUrl;
+        $('.streamer .username h2').text(username);
+        $('.streamer .avatar img').attr('src', avatar);
+        $('.streamer .loginOrOut button').text('Logout').attr('status', 'logout');
+    } catch(error) {
+        console.log(error);
+    }
+
+    try {
+        var bot = dbAuth.getData("/bot");
+        var username = bot.username;
+        var avatar = bot.avatarUrl;
+        $('.bot .username h2').text(username);
+        $('.bot .avatar img').attr('src', avatar);
+        $('.bot .loginOrOut button').text('Logout').attr('status', 'logout');
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+// Login or out button pressed
+// This checks if button is logging in or out a person or bot. If logging in then it sends message to main process.
 $( ".streamer-login, .bot-login" ).click(function() {
     var streamOrBot = $(this).attr('data');
-    ipcRenderer.send('oauth-login', streamOrBot);
+    var status = $(this).attr('status');
+
+    if(status == "login"){
+        ipcRenderer.send('oauth-login', streamOrBot);
+    } else if (status == "logout"){
+        logout(streamOrBot);
+    }
 });
+
+
+// Run on App Load
+initialLogin();
