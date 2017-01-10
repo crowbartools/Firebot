@@ -34,6 +34,16 @@
       </div>
     </div>
 
+    <div id="button-menu">
+      BUTTONS FOR EVERYONE!
+      <a href="#button-menu"><button onclick="$.sidr('close', 'button-menu');">Save</button></a>
+      <a href="#button-menu"><button onclick="$.sidr('close', 'button-menu');">Cancel</button></a>
+    </div>
+
+
+
+
+
     <div id="content">
     
       <section class="start page current">
@@ -77,21 +87,39 @@
       <section class="interactive page">
         <div class="main-content">
             <div class="interactive-top">
-                <h1>Interactive Boards</h1>
-                <p>Choose a saved interactive board or build a new one!</p>
                 <select>
                   <option>one</option>
                   <option>two</option>
                 </select>
-                <button>Go</button>
+                <button>Load</button>
+                <button>New</button>
             </div>
             <div class="interactive-buttons">
                 <div class="iButton">
-                  <div class="button-id">0</div>
-                  <div class="button-content">Content</div>
-                  <div class="button-options">
-                    <div class="button-edit">Edit</div>
-                    <div class="button-logger">Log</div>
+                  <div class="button-title">
+                    <div class="button-log button-icon">
+                      <a href="#">
+                        <i class="fa fa-list" aria-hidden="true"></i>
+                      </a>
+                    </div>
+                    <div class="button-edit button-icon">
+                      <a href="#">
+                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                      </a>
+                    </div>
+                    <div class="button-id button-icon">
+                      <span>ID:0</span>
+                    </div>
+                    <div class="button-del button-icon">
+                      <a href="#">
+                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <div class="button-content">
+                    <a href="#">
+                      <i class="fa fa-plus-square-o button-menu-toggle" aria-hidden="true"></i>
+                    </a>
                   </div>
                 </div>
             </div>
@@ -119,6 +147,8 @@
         </div>
       </section>
 
+
+
     </div> <!-- End Content -->
   </body>
 
@@ -128,5 +158,6 @@
     require('./js/jquery.sidr.min.js');
     require('./js/global.js');
     require('./js/login.js');
+    require('./js/interactive-board.js');
   </script>
 </html>

@@ -49,3 +49,48 @@
         margin:2% 0% 0% 0%;
     }
 }
+
+// Interactive Board @page
+.interactive{
+    .interactive-buttons{
+        display:flex;
+        flex-wrap: wrap;
+        max-width:100%;
+    }
+    .iButton{
+        display: inline-block;
+        margin: .35%;
+
+        .button-title{
+            background-color: $highlight-color;
+            padding:1% 2%;
+            width:150px;
+            border-radius: 10px 10px 0px 0px;
+            border: 1px dotted #ffffff;
+            margin: 1%;
+
+            .button-icon{
+                display:inline-block;
+                color: $main-color;
+                a{
+                    color: $main-color;
+                    &:hover{
+                        color: $non-highlight-color;
+                    }
+                }
+            }
+            .button-del{
+                float:right;
+            }
+        }
+
+        .button-content{
+            text-align:center;
+            border-radius: 0px 0px 10px 10px;
+            border: 1px dotted #ffffff;
+            margin: 1%;
+            width:150px;
+            padding: 5% 2%;
+        }
+    }
+}
