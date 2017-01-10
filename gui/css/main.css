@@ -4316,19 +4316,18 @@ select {
   min-height: 100px;
   padding: 1% 0%;
   border-top: 1px solid #cecece;
-  border-bottom: 1px solid #cecece;
 }
-/* line 64, ../scss/main.scss */
+/* line 63, ../scss/main.scss */
 .interactive .interactive-buttons select {
   width: 268px;
 }
-/* line 68, ../scss/main.scss */
+/* line 67, ../scss/main.scss */
 .interactive .interactive-buttons .iButton {
   display: inline-block;
   margin: .35%;
   font-family: OpenSans, sans-serif;
 }
-/* line 73, ../scss/main.scss */
+/* line 72, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title {
   background-color: #ffcb05;
   padding: 1% 2%;
@@ -4337,28 +4336,28 @@ select {
   border: 1px dotted #ffffff;
   margin: 1%;
 }
-/* line 81, ../scss/main.scss */
+/* line 80, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-icon {
   display: inline-block;
   color: #273b48;
 }
-/* line 84, ../scss/main.scss */
+/* line 83, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-icon a {
   color: #273b48;
 }
-/* line 86, ../scss/main.scss */
+/* line 85, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-icon a:hover {
   color: #888c90;
 }
-/* line 91, ../scss/main.scss */
+/* line 90, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-id {
   font-weight: bold;
 }
-/* line 94, ../scss/main.scss */
+/* line 93, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-del {
   float: right;
 }
-/* line 99, ../scss/main.scss */
+/* line 98, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-content {
   text-align: center;
   border-radius: 0px 0px 10px 10px;
@@ -4368,22 +4367,35 @@ select {
   padding: 5% 2%;
 }
 
-/* line 111, ../scss/main.scss */
+/* line 110, ../scss/main.scss */
 #button-menu .sidr-inner {
   padding: 10px;
 }
-/* line 114, ../scss/main.scss */
+/* line 112, ../scss/main.scss */
 #button-menu .sidr-inner label {
   display: block;
   padding: 5px 0px;
 }
-/* line 118, ../scss/main.scss */
+/* line 116, ../scss/main.scss */
 #button-menu .sidr-inner .button-section {
   margin-bottom: 10px;
 }
-/* line 121, ../scss/main.scss */
+/* line 119, ../scss/main.scss */
 #button-menu .sidr-inner .button-general-settings {
   border-bottom: 1px dotted #ffffff;
+}
+/* line 122, ../scss/main.scss */
+#button-menu .sidr-inner .button-specific-settings {
   padding-bottom: 10px;
   margin-bottom: 10px;
+}
+/* line 126, ../scss/main.scss */
+#button-menu .sidr-inner .game-opposite-select, #button-menu .sidr-inner .game-press-select {
+  overflow-y: scroll;
+  width: 200px;
+  border-radius: 0px;
+}
+/* line 132, ../scss/main.scss */
+#button-menu .button-save-close {
+  margin-top: 10px;
 }

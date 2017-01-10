@@ -32,6 +32,7 @@
     <!-- Button Menu -->
     <div id="button-menu">
       <div class="button-general-settings">
+        <h3>General Settings</h3>
         <div class="button-id button-section">
           <label>Button ID</label>
           <input type="text" placeholder="1">
@@ -40,6 +41,10 @@
           <label>Type</label>
           <select>
             <option value="game-controls">Game Control</option>
+            <option value="api-buttons">API Button</option>
+            <option value="chat-currency-buttons">Chat Currency</option>
+            <option value="media-buttons">Media</option>
+            <option value="clickerboss-buttons">Clicker Boss</option>
           </select>
         </div>
         <div class="button-cooldown button-section">
@@ -57,15 +62,39 @@
       </div>
       <div class="button-specific-settings">
         <!-- These divs are shown based on the selected button type -->
-        
-        <div class="button-game-controls">
+        <h3>Type Specific</h3>
 
+        <div class="game-controls button-specific">
+          <div class="game-button-pressed">
+            <label>Button to Press</label>
+            <input type="text" placeholder="W">
+          </div>
+          <div class="game-button-counter">
+            <label>Opposite Button</label>
+            <input type="text" placeholder="S">
+          </div>
+        </div>
+
+        <div class="api-buttons button-specific" style="display:none">
+          API Buttons coming soon...
+        </div>
+
+        <div class="chat-currency-buttons button-specific" style="display:none">
+          Currency Buttons coming soon...
+        </div>
+
+        <div class="media-buttons button-specific" style="display:none">
+          Media Buttons coming soon...
+        </div>
+
+        <div class="clickerboss-buttons button-specific" style="display:none">
+          Clickerboss Buttons coming soon...
         </div>
 
       </div>
       <div class="button-save-close">
-        <a href="#button-menu"><button onclick="$.sidr('close', 'button-menu');">Save</button></a>
-        <a href="#button-menu"><button onclick="$.sidr('close', 'button-menu');">Cancel</button></a>
+        <a href="#button-menu"><button class="button-save">Save</button></a>
+        <a href="#button-menu"><button class="button-cancel" onclick="$.sidr('close', 'button-menu');">Cancel</button></a>
       </div>
     </div>
 
@@ -116,9 +145,7 @@
       <section class="interactive page">
         <div class="main-content">
             <div class="interactive-top">
-                <select>
-                  <option>one</option>
-                  <option>two</option>
+                <select class="interactive-board-select">
                 </select>
                 <button>Load Board</button>
                 <button>New Board</button>
@@ -151,9 +178,6 @@
                     <div class="notes">(Notes Here)</div>
                   </div>
                 </div>
-            </div>
-            <div class="interactive-save">
-              <button>Save</button>
             </div>
         </div>
       </section>

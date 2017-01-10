@@ -3,7 +3,7 @@ const request = require('request');
 const {ipcRenderer} = require('electron')
 
 // JSON DBs
-var dbAuth = new JsonDB("./json/auth", true, false);
+var dbAuth = new JsonDB("./user-settings/auth", true, false);
 
 // Beam OAuth
 // Takes info recieved from main process and processes it to save oauth info and such.

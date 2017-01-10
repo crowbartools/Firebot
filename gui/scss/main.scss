@@ -59,7 +59,6 @@
         min-height:100px;
         padding: 1% 0%;
         border-top: 1px solid #cecece;
-        border-bottom: 1px solid #cecece;
 
         select{
             width: 268px;  
@@ -110,7 +109,6 @@
 #button-menu{
     .sidr-inner{
         padding: 10px;
-
         label{
             display:block;
             padding:5px 0px;
@@ -120,8 +118,18 @@
         }
         .button-general-settings{
             border-bottom:1px dotted #ffffff;
+        }
+        .button-specific-settings{
             padding-bottom:10px;
             margin-bottom:10px;
         }
+        .game-opposite-select, .game-press-select{
+            overflow-y:scroll;
+            width:200px;
+            border-radius:0px;
+        }
+    }
+    .button-save-close{
+        margin-top:10px;
     }
 }
