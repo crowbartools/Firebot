@@ -50,47 +50,78 @@
     }
 }
 
-// Interactive Board @page
+// Interactive Board page
 .interactive{
     .interactive-buttons{
         display:flex;
         flex-wrap: wrap;
         max-width:100%;
-    }
-    .iButton{
-        display: inline-block;
-        margin: .35%;
+        min-height:100px;
+        padding: 1% 0%;
+        border-top: 1px solid #cecece;
+        border-bottom: 1px solid #cecece;
 
-        .button-title{
-            background-color: $highlight-color;
-            padding:1% 2%;
-            width:150px;
-            border-radius: 10px 10px 0px 0px;
-            border: 1px dotted #ffffff;
-            margin: 1%;
-
-            .button-icon{
-                display:inline-block;
-                color: $main-color;
-                a{
-                    color: $main-color;
-                    &:hover{
-                        color: $non-highlight-color;
-                    }
-                }
-            }
-            .button-del{
-                float:right;
-            }
+        select{
+            width: 268px;  
         }
 
-        .button-content{
-            text-align:center;
-            border-radius: 0px 0px 10px 10px;
-            border: 1px dotted #ffffff;
-            margin: 1%;
-            width:150px;
-            padding: 5% 2%;
+        .iButton{
+            display: inline-block;
+            margin: .35%;
+            font-family: $font-primary;
+
+            .button-title{
+                background-color: $highlight-color;
+                padding:1% 2%;
+                width:150px;
+                border-radius: 10px 10px 0px 0px;
+                border: 1px dotted #ffffff;
+                margin: 1%;
+
+                .button-icon{
+                    display:inline-block;
+                    color: $main-color;
+                    a{
+                        color: $main-color;
+                        &:hover{
+                            color: $non-highlight-color;
+                        }
+                    }
+                }
+                .button-id{
+                    font-weight:bold;
+                }
+                .button-del{
+                    float:right;
+                }
+            }
+
+            .button-content{
+                text-align:center;
+                border-radius: 0px 0px 10px 10px;
+                border: 1px dotted #ffffff;
+                margin: 1%;
+                width:150px;
+                padding: 5% 2%;
+            }
+        }
+    }
+}
+#button-menu{
+    .sidr-inner{
+        padding: 10px;
+
+        label{
+            display:block;
+            padding:5px 0px;
+        }
+        .button-section{
+            margin-bottom:10px;
+        }
+        .button-general-settings{
+            border-bottom:1px dotted #ffffff;
+            padding-bottom:10px;
+            margin-bottom:10px;
         }
     }
 }

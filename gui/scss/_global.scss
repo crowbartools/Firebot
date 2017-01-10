@@ -14,6 +14,7 @@ h1, h2, h3, h4, h5{
 }
 a{
     color:$text-color-white;
+    outline:none;
     &:hover{
         color:$text-color-secondary;
     }
@@ -28,12 +29,21 @@ button{
     font-weight:bold;
     font-family: $font-primary;
     cursor: pointer;
-    margin:2%;
+    margin:1%;
     outline:none;
     text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
     &:hover{
         background-color: $non-highlight-color;
     }
+}
+
+select {
+   border: none;
+   font-size: 1em;
+   padding:1% 2%;  
+   border-radius: 10px;
+   outline: none;
+   cursor: pointer;
 }
 
 

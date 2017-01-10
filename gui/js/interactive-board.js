@@ -1,41 +1,20 @@
-
-// Add New Interactive Button
-// Adds a new button to the interactive board.
-function addNewButton(){
-
-    var buttonID = 1;
-    var buttonHtml = `<div class="iButton">
-                        <div class="button-title">
-                            <div class="button-log button-icon">
-                            <a href="#">
-                                <i class="fa fa-list" aria-hidden="true"></i>
-                            </a>
-                            </div>
-                            <div class="button-edit button-icon">
-                            <a href="#">
-                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                            </a>
-                            </div>
-                            <div class="button-id button-icon">
-                            <span>ID:${buttonID}</span>
-                            </div>
-                            <div class="button-del button-icon">
-                            <a href="#">
-                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                            </a>
-                            </div>
-                        </div>
-                        <div class="button-content">
-                            Not Set
-                        </div>`; 
-
-
-}
-
-// Add New Button Watcher
-$('.button-menu-toggle').sidr({
+// Initialize the Button Menu
+// This starts up sidr to create the side button menu.
+$('.hidden').sidr({
     name: 'button-menu',
     source: '#button-menu',
     side: 'right',
-    renaming: false
+    renaming: false,
+    onOpen: function(){
+        // Stuff happens here when menu opens.
+    }
 });
+
+// Add New Button
+// These functions work together to open the button menu with full options for adding a new button.
+$( ".add-new-button" ).click(function() {
+  addNewButton();
+});
+function addNewButton(){
+    $.sidr('open', 'button-menu');
+}
