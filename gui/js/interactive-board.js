@@ -136,7 +136,7 @@ function boardBuilder(){
                                     </a>
                                     </div>
                                     <div class="button-edit button-icon">
-                                    <a href="#">
+                                    <a href="#" class="button-edit-${buttonID}">
                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                                     </a>
                                     </div>
@@ -160,11 +160,48 @@ function boardBuilder(){
 
             // Bind click event to delete.
             $( ".button-del-"+buttonID ).click(function() {
-                $('.button'+buttonID).remove();
-                 dbControls.delete("/tactile/"+buttonID);
+                try{
+                    $('.button'+buttonID).remove();
+                    dbControls.delete("/tactile/"+buttonID);
+                } catch(error){
+                    console.log("Error deleting buton.");
+                }
+            });
+
+            // Bind click event to edit.
+            $( ".button-edit-"+buttonID ).click(function() {
+                editButton(buttonID);
             });
     });
 }
+
+// Edit Button
+// This function grabs button details and populates the button menu.
+function editButton(buttonID){
+    var selectedBoard = $('.interactive-board-select').val();
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+    var tactile = dbControls.getData("/tactile/"+buttonID);
+
+    var buttonType = tactile.type;
+    var buttonCooldown = tactile.cooldown;
+    var cooldownButtons = tactile.cooldownButtons;
+    var buttonNotes = tactile.notes;
+
+    // Throw button info into button menu.
+    $('.button-id input').val(buttonID);
+    $('.button-type select').val(buttonType);
+    $('.button-cooldown input').val(buttonCooldown);
+    $('.button-cooldown-buddies input').val(cooldownButtons);
+    $('.button-notes input').val(buttonNotes);
+
+    // Show button specific menu based on the new type.
+    buttonSpecific();
+
+    // Open Menu
+    $.sidr('open', 'button-menu');
+}
+
+
 
 ///////////
 // Events
