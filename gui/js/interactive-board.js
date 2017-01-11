@@ -14,6 +14,18 @@ $('.hidden').sidr({
     }
 });
 
+// Initialize the Board Menu
+// This starts up sidr to create the side board menu.
+$('.hidden').sidr({
+    name: 'board-menu',
+    source: '#board-menu',
+    side: 'right',
+    renaming: false,
+    onOpen: function(){
+        // Stuff happens here when menu opens.
+    }
+});
+
 // Add New Button
 // This function opens the new button menu.
 function addNewButton(){
@@ -68,8 +80,90 @@ function buttonSubmission(){
     // Type Settings push to db.
     dbControls.push("/tactile/" + buttonID +"/typeSettings", typeSettings);
 
+    // Build out the board.
+    boardBuilder();
+
     // Close menu.
     $.sidr('close', 'button-menu');
+}
+
+// Add New Board Button
+// This function opens the new board menu.
+function addNewBoardButton(){
+    $.sidr('open', 'board-menu');
+}
+
+// New Board Submission
+// This monitors new board button, and on press create a new controls file.
+function newBoardSubmission(){
+    var boardName = $('.board-name input').val();
+    fs.writeFile('./user-settings/controls/'+boardName+'.json',"{}", function (err) {
+        if(err){
+            alert("An error ocurred creating the file "+ err.message)
+        }
+        
+        // Sync up profile list.
+        gameProfileList();
+        
+        // Build out the board.
+        boardBuilder();
+
+        // Close menu
+        $.sidr('close', 'board-menu');
+    });
+}
+
+// Board Builder
+// Takes a look at the controls file and populates the board ui.
+function boardBuilder(){
+    $('.interactive-buttons').empty();
+
+    var selectedBoard = $('.interactive-board-select').val();
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+    var tactile = dbControls.getData("tactile");
+    var tactileButtons = tactile['tactile'];
+    
+    $.each(tactileButtons, function(){
+        var buttonID = this.id;
+        var buttonType = this.type;
+        var buttonNotes = this.notes;
+        
+        var buttonTemplate = `<div class="iButton button${buttonID}">
+                                <div class="button-title">
+                                    <div class="button-log button-icon">
+                                    <a href="#">
+                                        <i class="fa fa-list" aria-hidden="true"></i>
+                                    </a>
+                                    </div>
+                                    <div class="button-edit button-icon">
+                                    <a href="#">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                    </a>
+                                    </div>
+                                    <div class="button-id button-icon">
+                                    <span>ID:${buttonID}</span>
+                                    </div>
+                                    <div class="button-del button-icon">
+                                    <a href="#" class="button-del-${buttonID}" data="${buttonID}">
+                                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                                    </a>
+                                    </div>
+                                </div>
+                                <div class="button-content">
+                                    <div class="type">${buttonType}</div>
+                                    <div class="notes">${buttonNotes}</div>
+                                </div>
+                               </div>`;
+
+            // Push template to ui.
+            $('.interactive-buttons').append(buttonTemplate);
+
+            // Bind click event to delete.
+            $( ".button-del-"+buttonID ).click(function() {
+                $('.button'+buttonID).remove();
+                 dbControls.delete("/tactile/"+buttonID);
+            });
+    });
 }
 
 ///////////
@@ -94,7 +188,26 @@ $( ".button-save" ).click(function() {
   buttonSubmission();
 });
 
+// New Board Button
+// This monitors the new board button and creates a new board on click.
+$(".add-new-board").click(function(){
+    addNewBoardButton();
+});
+
+// Board Menu Save
+// This monitors save button on the board menu and saves button info to controls file.
+$( ".board-save" ).click(function() {
+  newBoardSubmission();
+});
+
+// Monitor Board Select
+// This monitors the button type selector to show or hide button specific controls.
+$( ".interactive-board-select" ).change(function() {
+  boardBuilder();
+});
+
 ///////////////////
 // Run on App Start
 ///////////////////
 gameProfileList();
+boardBuilder()

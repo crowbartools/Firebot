@@ -1,4 +1,2 @@
 node_modules
 *.scssc
-json/auth.json
-user-settings/auth.json
