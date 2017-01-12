@@ -83,8 +83,8 @@ function buttonSubmission(){
     // Build out the board.
     boardBuilder();
 
-    // Close menu.
-    $.sidr('close', 'button-menu');
+    // Reset Menu
+    clearButtonMenu();
 }
 
 // Add New Board Button
@@ -108,8 +108,8 @@ function newBoardSubmission(){
         // Build out the board.
         boardBuilder();
 
-        // Close menu
-        $.sidr('close', 'board-menu');
+        // Clear Menu
+        clearButtonMenu();
     });
 }
 
@@ -201,7 +201,14 @@ function editButton(buttonID){
     $.sidr('open', 'button-menu');
 }
 
+// Clear Button Menu
+// This function clears all of text in the button menu.
+function clearButtonMenu(){
+    $.sidr('close', 'board-menu');
+    $.sidr('close', 'button-menu');
 
+    $('.sidr-inner input').val('');
+}
 
 ///////////
 // Events
@@ -225,6 +232,12 @@ $( ".button-save" ).click(function() {
   buttonSubmission();
 });
 
+// Button Menu Cancel
+// This monitors save button on the board menu and saves button info to controls file.
+$( ".button-cancel" ).click(function() {
+  clearButtonMenu();
+});
+
 // New Board Button
 // This monitors the new board button and creates a new board on click.
 $(".add-new-board").click(function(){
@@ -235,6 +248,12 @@ $(".add-new-board").click(function(){
 // This monitors save button on the board menu and saves button info to controls file.
 $( ".board-save" ).click(function() {
   newBoardSubmission();
+});
+
+// Board Menu Cancel
+// This monitors save button on the board menu and saves button info to controls file.
+$( ".board-cancel" ).click(function() {
+  clearButtonMenu();
 });
 
 // Monitor Board Select

@@ -1,1 +1,1 @@
-{"tactile":{"0":{"id":"0","type":"game-controls","cooldown":"120","cooldownButtons":"1,3,45","notes":"fart","typeSettings":{"press":"w","opposite":"s"}},"1":{"id":"1","type":"game-controls","cooldown":"123","cooldownButtons":"1","notes":"fart","typeSettings":{"press":"w","opposite":"s"}},"2":{"id":"2","type":"api-buttons","cooldown":"123","cooldownButtons":"1","notes":"fart"}}}
+{"tactile":{"0":{"id":"0","type":"media-buttons","cooldown":"120","cooldownButtons":"","notes":"Yay!"}}}
