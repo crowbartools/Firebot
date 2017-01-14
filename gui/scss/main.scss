@@ -52,6 +52,11 @@
 
 // Interactive Board page
 .interactive{
+    .interactive-top{
+        .launch-interactive{
+            float:right;
+        }
+    }
     .interactive-buttons{
         display:flex;
         flex-wrap: wrap;

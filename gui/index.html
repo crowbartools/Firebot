@@ -13,6 +13,9 @@
             <i class="fa fa-bars" aria-hidden="true"></i>
           </a>
       </div>
+      <div class="interactive-status" style="display:none">
+        Disconnected
+      </div>
     </div>
 
     <!-- Main Menu -->
@@ -159,19 +162,23 @@
             <div class="interactive-top">
                 <select class="interactive-board-select">
                 </select>
-                <button class="add-new-board"><i class="fa fa-th" aria-hidden="true"></i></button>
-                <button class="add-new-button"><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+                <button class="add-new-board" title="Add new board."><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+                <button class="delete-board" title="Delete current board."><i class="fa fa-minus-square-o" aria-hidden="true"></i></button>
+                <div class="seperator"></div>
+                <button class="add-new-button" title="Add new button."><i class="fa fa-gamepad" aria-hidden="true"></i></button>
+                <div class="seperator"></div>
+                <button class="launch-interactive" title="Launch current board."><i class="fa fa-rocket" aria-hidden="true"></i></button>
             </div>
             <div class="interactive-buttons">
                 <div class="iButton">
                   <div class="button-title">
                     <div class="button-log button-icon">
-                      <a href="#">
+                      <a href="#" title="Button log.">
                         <i class="fa fa-list" aria-hidden="true"></i>
                       </a>
                     </div>
                     <div class="button-edit button-icon">
-                      <a href="#">
+                      <a href="#" title="Edit this button.">
                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                       </a>
                     </div>
@@ -179,7 +186,7 @@
                       <span>ID:0</span>
                     </div>
                     <div class="button-del button-icon">
-                      <a href="#">
+                      <a href="#" title="Delete this button.">
                         <i class="fa fa-minus-circle" aria-hidden="true"></i>
                       </a>
                     </div>

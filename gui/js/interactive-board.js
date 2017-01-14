@@ -93,6 +93,23 @@ function addNewBoardButton(){
     $.sidr('open', 'board-menu');
 }
 
+// Remove Board Button
+// This function deletes the current board.
+function deleteBoardButton(){
+    var boardName = $('.interactive-board-select').val();
+    var filepath = './user-settings/controls/'+boardName+'.json';
+    fs.exists(filepath, function(exists) {
+        if(exists) {
+                // File exists deletings
+                fs.unlink(filepath,function(err){
+                    gameProfileList();
+                });
+        } else {
+            console.log("This file doesn't exist, cannot delete");
+        }
+    });
+}
+
 // New Board Submission
 // This monitors new board button, and on press create a new controls file.
 function newBoardSubmission(){
@@ -242,6 +259,12 @@ $( ".button-cancel" ).click(function() {
 // This monitors the new board button and creates a new board on click.
 $(".add-new-board").click(function(){
     addNewBoardButton();
+});
+
+// Delete Board Button
+// This monitors the delete board button and deletes a new board on click.
+$(".delete-board").click(function(){
+    deleteBoardButton();
 });
 
 // Board Menu Save

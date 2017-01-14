@@ -21,7 +21,7 @@ a{
 }
 button{
     background-color: $highlight-color;
-    color:$text-color-primary;
+    color:$button-color;
     padding:1% 2%;
     border:none;
     border-radius: 10px;
@@ -31,7 +31,6 @@ button{
     cursor: pointer;
     margin:1%;
     outline:none;
-    text-shadow: 1px 1px 2px rgba(150, 150, 150, 1);
     &:hover{
         background-color: $non-highlight-color;
     }
@@ -40,10 +39,22 @@ button{
 select {
    border: none;
    font-size: 1em;
-   padding:1% 2%;  
+   padding:1% 2%; 
+   margin:1%; 
    border-radius: 10px;
    outline: none;
    cursor: pointer;
+}
+
+input{
+    border-radius:10px;
+    padding:5px;
+    border:none;
+}
+
+.seperator{
+    display:inline-block;
+    padding: 0px 15px;
 }
 
 
@@ -51,8 +62,53 @@ select {
 #header{
     padding:1%;
 
+    .main-image{
+        display:inline-block;
+    }
+
     .menu-hamburger{
         font-size:1.5em;
+    }
+
+    .interactive-status{
+        float:right;
+        display:inline-block;
+        background-color: $status-offline-color;
+        color: $text-color-white;
+        border:none;
+        border-radius: 10px;
+        text-transform: uppercase;
+        font-family: $font-primary;
+        margin:1%;
+        padding:4px;
+        font-size: .75em;
+        &.online{
+            color: $status-online-color;
+        }
+    }
+
+}
+.navigation{
+    ul{
+        list-style:none;
+        margin:0px;
+        padding:0px;
+        li{
+            a{
+                display:block;
+                width:100%;
+                text-transform: uppercase;
+                text-decoration: none;
+                font-family: $font-primary;
+                font-weight:bold;
+                padding: 4% 2%;
+                border-bottom:1px dotted #ffffff;
+                &:hover{
+                    background-color:$highlight-color;
+                    color:$secondary-color;
+                }
+            }
+        }
     }
 }
 .sidr{

@@ -27,6 +27,14 @@ function pageNavigation(){
         $('.current').slideToggle(500).removeClass('current');
         $('.'+nextup).slideToggle(500).addClass('current');
         $.sidr('close','main-menu');
+
+        // If the selected page is 
+        if (nextup !== "start" && nextup !== "login"){
+            $('.interactive-status').fadeIn('fast');
+        } else {
+            $('.interactive-status').fadeOut('fast');
+        }
+
         return false; 
     } );
 }
