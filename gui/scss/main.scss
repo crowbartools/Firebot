@@ -53,7 +53,7 @@
 // Interactive Board page
 .interactive{
     .interactive-top{
-        .launch-interactive{
+        .launch-interactive, .disconnect-interactive{
             float:right;
         }
     }
@@ -107,6 +107,10 @@
                 margin: 1%;
                 width:150px;
                 padding: 5% 2%;
+
+                .type{
+                    font-size: .7em;
+                }
             }
         }
     }

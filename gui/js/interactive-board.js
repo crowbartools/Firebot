@@ -43,6 +43,17 @@ function gameProfileList() {
         for (var i = 0, length = games.length; i < length; i++) {
             $(".interactive-board-select").append('<option value="' + games[i].split('.')[0] + '">' + games[i].split('.')[0] + '</option>');
         }
+
+        // We have a profile! Show related buttons.
+        $('.add-new-button, .delete-board').fadeIn('fast');
+    } else {
+        // No control files found, delete anything in the dropdown.
+        $(".interactive-board-select option").each(function() {
+            $(this).remove();
+        });
+
+        // No profiles. Unneeded buttons.
+        $('.add-new-button, .delete-board').fadeOut('fast');
     }
 }
 
@@ -71,7 +82,7 @@ function buttonSubmission(){
     dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldown": buttonCooldown, "cooldownButtons": cooldownButtons, "notes": buttonNotes});
 
     // Button Specific settings
-    if (buttonType == "game-controls"){
+    if (buttonType == "Game Controls"){
         var buttonPressed = $('.game-button-pressed input').val();
         var buttonOpposite = $('.game-button-counter input').val();
         var typeSettings = { "press": buttonPressed, "opposite": buttonOpposite}
@@ -134,62 +145,65 @@ function newBoardSubmission(){
 // Takes a look at the controls file and populates the board ui.
 function boardBuilder(){
     $('.interactive-buttons').empty();
-
     var selectedBoard = $('.interactive-board-select').val();
-    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
-    var tactile = dbControls.getData("tactile");
-    var tactileButtons = tactile['tactile'];
-    
-    $.each(tactileButtons, function(){
-        var buttonID = this.id;
-        var buttonType = this.type;
-        var buttonNotes = this.notes;
+
+    // If there is a board...
+    if (selectedBoard !== null && selectedBoard !== undefined){
+        var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+        var tactile = dbControls.getData("tactile");
+        var tactileButtons = tactile['tactile'];
         
-        var buttonTemplate = `<div class="iButton button${buttonID}">
-                                <div class="button-title">
-                                    <div class="button-log button-icon">
-                                    <a href="#">
-                                        <i class="fa fa-list" aria-hidden="true"></i>
-                                    </a>
+        $.each(tactileButtons, function(){
+            var buttonID = this.id;
+            var buttonType = this.type;
+            var buttonNotes = this.notes;
+            
+            var buttonTemplate = `<div class="iButton button${buttonID}">
+                                    <div class="button-title">
+                                        <div class="button-log button-icon">
+                                        <a href="#">
+                                            <i class="fa fa-list" aria-hidden="true"></i>
+                                        </a>
+                                        </div>
+                                        <div class="button-edit button-icon">
+                                        <a href="#" class="button-edit-${buttonID}">
+                                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                        </a>
+                                        </div>
+                                        <div class="button-id button-icon">
+                                        <span>ID:${buttonID}</span>
+                                        </div>
+                                        <div class="button-del button-icon">
+                                        <a href="#" class="button-del-${buttonID}" data="${buttonID}">
+                                            <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                                        </a>
+                                        </div>
                                     </div>
-                                    <div class="button-edit button-icon">
-                                    <a href="#" class="button-edit-${buttonID}">
-                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                    </a>
+                                    <div class="button-content">
+                                        <div class="notes">${buttonNotes}</div>
+                                        <div class="type">${buttonType}</div>
                                     </div>
-                                    <div class="button-id button-icon">
-                                    <span>ID:${buttonID}</span>
-                                    </div>
-                                    <div class="button-del button-icon">
-                                    <a href="#" class="button-del-${buttonID}" data="${buttonID}">
-                                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                                    </a>
-                                    </div>
-                                </div>
-                                <div class="button-content">
-                                    <div class="type">${buttonType}</div>
-                                    <div class="notes">${buttonNotes}</div>
-                                </div>
-                               </div>`;
+                                </div>`;
 
-            // Push template to ui.
-            $('.interactive-buttons').append(buttonTemplate);
+                // Push template to ui.
+                $('.interactive-buttons').append(buttonTemplate);
 
-            // Bind click event to delete.
-            $( ".button-del-"+buttonID ).click(function() {
-                try{
-                    $('.button'+buttonID).remove();
-                    dbControls.delete("/tactile/"+buttonID);
-                } catch(error){
-                    console.log("Error deleting buton.");
-                }
-            });
+                // Bind click event to delete.
+                $( ".button-del-"+buttonID ).click(function() {
+                    try{
+                        $('.button'+buttonID).remove();
+                        dbControls.delete("/tactile/"+buttonID);
+                    } catch(error){
+                        console.log("Error deleting buton.");
+                    }
+                });
 
-            // Bind click event to edit.
-            $( ".button-edit-"+buttonID ).click(function() {
-                editButton(buttonID);
-            });
-    });
+                // Bind click event to edit.
+                $( ".button-edit-"+buttonID ).click(function() {
+                    editButton(buttonID);
+                });
+        });
+    }
 }
 
 // Edit Button

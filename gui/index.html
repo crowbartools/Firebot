@@ -55,11 +55,11 @@
         <div class="button-type button-section">
           <label>Type</label>
           <select>
-            <option value="game-controls">Game Control</option>
-            <option value="api-buttons">API Button</option>
-            <option value="chat-currency-buttons">Chat Currency</option>
-            <option value="media-buttons">Media</option>
-            <option value="clickerboss-buttons">Clicker Boss</option>
+            <option value="Game Controls">Game Control</option>
+            <option value="Api Buttons">API Button</option>
+            <option value="Chat Currency">Chat Currency</option>
+            <option value="Media">Media</option>
+            <option value="Clicker Boss">Clicker Boss</option>
           </select>
         </div>
         <div class="button-cooldown button-section">
@@ -168,35 +168,9 @@
                 <button class="add-new-button" title="Add new button."><i class="fa fa-gamepad" aria-hidden="true"></i></button>
                 <div class="seperator"></div>
                 <button class="launch-interactive" title="Launch current board."><i class="fa fa-rocket" aria-hidden="true"></i></button>
+                <button class="disconnect-interactive" title="Stop current board." style="display:none"><i class="fa fa-chain-broken" aria-hidden="true"></i></button>
             </div>
-            <div class="interactive-buttons">
-                <div class="iButton">
-                  <div class="button-title">
-                    <div class="button-log button-icon">
-                      <a href="#" title="Button log.">
-                        <i class="fa fa-list" aria-hidden="true"></i>
-                      </a>
-                    </div>
-                    <div class="button-edit button-icon">
-                      <a href="#" title="Edit this button.">
-                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                      </a>
-                    </div>
-                    <div class="button-id button-icon">
-                      <span>ID:0</span>
-                    </div>
-                    <div class="button-del button-icon">
-                      <a href="#" title="Delete this button.">
-                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                      </a>
-                    </div>
-                  </div>
-                  <div class="button-content">
-                    <div class="type">API: Dog Facts</div>
-                    <div class="notes">(Notes Here)</div>
-                  </div>
-                </div>
-            </div>
+            <div class="interactive-buttons"></div>
         </div>
       </section>
 
@@ -231,5 +205,6 @@
     require('./js/global.js');
     require('./js/login.js');
     require('./js/interactive-board.js');
+    require('../lib/interactive/beam-connect.js');
   </script>
 </html>

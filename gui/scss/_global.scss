@@ -83,7 +83,7 @@ input{
         padding:4px;
         font-size: .75em;
         &.online{
-            color: $status-online-color;
+            background-color: $status-online-color;
         }
     }
 
