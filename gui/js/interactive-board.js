@@ -125,20 +125,13 @@ function deleteBoardButton(){
 // This monitors new board button, and on press create a new controls file.
 function newBoardSubmission(){
     var boardName = $('.board-name input').val();
-    fs.writeFile('./user-settings/controls/'+boardName+'.json',"{}", function (err) {
-        if(err){
-            alert("An error ocurred creating the file "+ err.message)
-        }
-        
-        // Sync up profile list.
-        gameProfileList();
-        
-        // Build out the board.
-        boardBuilder();
+    new JsonDB("./user-settings/controls/"+boardName, true, false);
+    
+    // Sync up profile list.
+    gameProfileList();
 
-        // Clear Menu
-        clearButtonMenu();
-    });
+    // Clear Menu
+    clearButtonMenu();
 }
 
 // Board Builder
