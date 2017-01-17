@@ -59,4 +59,7 @@ app.on('activate', function () {
 // code. You can also put them in separate files and require them here.
 
 // JS related to logging in and getting OAuth Info.
-require('./lib/main-process/login.js');
+require('./lib/login/login.js');
+
+// Interactive handler
+require('./lib/interactive/beam-connect.js');

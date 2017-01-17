@@ -1,6 +1,7 @@
 // Requirements
 const fs = require('fs');
 const JsonDB = require('node-json-db');
+const {ipcRenderer} = require('electron')
 
 // Initialize the Button Menu
 // This starts up sidr to create the side button menu.
@@ -69,7 +70,7 @@ function buttonSpecific(){
 // This function submits all of the button information to the controls file when save is pressed.
 function buttonSubmission(){
     var selectedBoard = $('.interactive-board-select').val();
-    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+    var dbControls = new JsonDB("/user-settings/controls/"+selectedBoard, true, false);
 
     // General settings
     var buttonID = $('.button-id input').val();
@@ -77,6 +78,8 @@ function buttonSubmission(){
     var buttonCooldown = $('.button-cooldown input').val();
     var cooldownButtons = $('.button-cooldown-buddies input').val();
     var buttonNotes = $('.button-notes input').val();
+
+    console.log(buttonID, buttonType);
 
     // Push general settings to db.
     dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldown": buttonCooldown, "cooldownButtons": cooldownButtons, "notes": buttonNotes});
@@ -108,7 +111,7 @@ function addNewBoardButton(){
 // This function deletes the current board.
 function deleteBoardButton(){
     var boardName = $('.interactive-board-select').val();
-    var filepath = './user-settings/controls/'+boardName+'.json';
+    var filepath = '/user-settings/controls/'+boardName+'.json';
     fs.exists(filepath, function(exists) {
         if(exists) {
                 // File exists deletings
@@ -125,7 +128,7 @@ function deleteBoardButton(){
 // This monitors new board button, and on press create a new controls file.
 function newBoardSubmission(){
     var boardName = $('.board-name input').val();
-    new JsonDB("./user-settings/controls/"+boardName, true, false);
+    new JsonDB("/user-settings/controls/"+boardName, true, false);
     
     // Sync up profile list.
     gameProfileList();
@@ -142,7 +145,7 @@ function boardBuilder(){
 
     // If there is a board...
     if (selectedBoard !== null && selectedBoard !== undefined){
-        var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+        var dbControls = new JsonDB("/user-settings/controls/"+selectedBoard, true, false);
         var tactile = dbControls.getData("tactile");
         var tactileButtons = tactile['tactile'];
         
@@ -195,6 +198,11 @@ function boardBuilder(){
                 $( ".button-edit-"+buttonID ).click(function() {
                     editButton(buttonID);
                 });
+
+                // Save active board to json.
+                var dbSettings = new JsonDB("./user-settings/settings", true, false);
+                dbSettings.push("/interactive/activeBoard", selectedBoard);
+
         });
     }
 }
@@ -203,7 +211,7 @@ function boardBuilder(){
 // This function grabs button details and populates the button menu.
 function editButton(buttonID){
     var selectedBoard = $('.interactive-board-select').val();
-    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+    var dbControls = new JsonDB("/user-settings/controls/"+selectedBoard, true, false);
     var tactile = dbControls.getData("/tactile/"+buttonID);
 
     var buttonType = tactile.type;
@@ -233,6 +241,22 @@ function clearButtonMenu(){
 
     $('.sidr-inner input').val('');
 }
+
+// Connect/Disconnect UI Flipper
+// Changes UI elements depending on if we're connected or disconnected from beam.
+function connectFlipper(status){
+    if(status == "disconnected"){
+        $('.disconnect-interactive').fadeOut('fast', function(){
+            $('.launch-interactive').fadeIn('fast');
+            $('.interactive-status').removeClass('online').text('Disconnected');
+        });
+    } else if (status == "connected"){
+        $('.launch-interactive').fadeOut('fast', function(){
+            $('.disconnect-interactive').fadeIn('fast');
+            $('.interactive-status').addClass('online').text('Connected');
+        });
+    }
+};
 
 ///////////
 // Events
@@ -291,6 +315,25 @@ $( ".board-cancel" ).click(function() {
 $( ".interactive-board-select" ).change(function() {
   boardBuilder();
 });
+
+// Launch Interactive
+// Launch interactive when button is clicked.
+$( ".launch-interactive" ).click(function() {
+    ipcRenderer.send('beamInteractive', 'connect');
+});
+
+// Disconnect Interactive
+// Disconnect interactive when button is clicked.
+$( ".disconnect-interactive" ).click(function() {
+    ipcRenderer.send('beamInteractive', 'disconnect');
+});
+
+// Online and Offline Status
+// Flips ui elements to online or offline depending on status.
+ipcRenderer.on('beamInteractive', function (event, status){
+    connectFlipper(status);
+})
+
 
 ///////////////////
 // Run on App Start
