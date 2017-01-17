@@ -55,11 +55,11 @@
         <div class="button-type button-section">
           <label>Type</label>
           <select>
-            <option value="Game Controls">Game Control</option>
-            <option value="Api Buttons">API Button</option>
-            <option value="Chat Currency">Chat Currency</option>
-            <option value="Media">Media</option>
-            <option value="Clicker Boss">Clicker Boss</option>
+            <option value="Game Controls" data="game-controls">Game Control</option>
+            <option value="Api Buttons" data="api-buttons">API Button</option>
+            <option value="Chat Currency" data="chat-currency-buttons">Chat Currency</option>
+            <option value="Media" data="media-buttons">Media</option>
+            <option value="Clicker Boss" data="clickerboss-buttons">Clicker Boss</option>
           </select>
         </div>
         <div class="button-cooldown button-section">
@@ -79,6 +79,7 @@
         <!-- These divs are shown based on the selected button type -->
         <h3>Type Specific</h3>
 
+        <!-- Game Controls -->
         <div class="game-controls button-specific">
           <div class="game-button-pressed">
             <label>Button to Press</label>
@@ -90,18 +91,54 @@
           </div>
         </div>
 
+        <!-- API Buttons -->
         <div class="api-buttons button-specific" style="display:none">
-          API Buttons coming soon...
+          <div class="api-select">
+            <label>Type</label>
+            <select>
+              <option value="Advice">Advice</option>
+              <option value="TTS Quotes">TTS Quotes</option>
+              <option value="Cat Picture">Cat Picture</option>
+              <option value="Cat Fact">Cat Fact</option>
+              <option value="Dog Picture">Dog Picture</option>
+              <option value="Dog Fact">Dog Fact</option>
+              <option value="Aww">Aww</option>
+              <option value="Pokemon">Pokemon</option>
+              <option value="Number Trivia">Number Trivia</option>
+            </select>
+          </div>
+          <div class="api-notice">
+            Note: APIs are remote and I can't control the quality, type, or maturity level of what it may give you.
+          </div>
         </div>
 
+        <!-- Currency Buttons -->
         <div class="chat-currency-buttons button-specific" style="display:none">
-          Currency Buttons coming soon...
+          <div class="image-position">
+            <label>Currency Name</label>
+            <input type="text" name="currency-name" placeholder="coins">
+          </div>
         </div>
 
+        <!-- Media Buttons -->
         <div class="media-buttons button-specific" style="display:none">
-          Media Buttons coming soon...
+          <div class="sound-file">
+            <label>Audio File</label>
+            <input type="file" name="audio-file">
+          </div>
+          <div class="image-file">
+            <label>Image File</label>
+            <input type="file" name="img">
+          </div>
+          <div class="image-position">
+            <label>X Position</label>
+            <input type="text" name="imagex" placeholder="800">
+            <label>Y Position</label>
+            <input type="text" name="imagey" placeholder="600">
+          </div>
         </div>
 
+        <!-- Click Boss -->
         <div class="clickerboss-buttons button-specific" style="display:none">
           Clickerboss Buttons coming soon...
         </div>

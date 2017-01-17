@@ -61,7 +61,7 @@ function gameProfileList() {
 // Button Specific Controls
 // This function shows or hides button specific controls in the button menu based on the button type selected.
 function buttonSpecific(){
-    var type = $('.button-type select').val();
+    var type = $('.button-type select option:selected').attr('data');
     $('.button-specific').css('display','none');
     $('.'+type).fadeIn('fast');
 }
