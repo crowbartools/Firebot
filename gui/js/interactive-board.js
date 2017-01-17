@@ -70,7 +70,7 @@ function buttonSpecific(){
 // This function submits all of the button information to the controls file when save is pressed.
 function buttonSubmission(){
     var selectedBoard = $('.interactive-board-select').val();
-    var dbControls = new JsonDB("/user-settings/controls/"+selectedBoard, true, false);
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
 
     // General settings
     var buttonID = $('.button-id input').val();
@@ -111,7 +111,7 @@ function addNewBoardButton(){
 // This function deletes the current board.
 function deleteBoardButton(){
     var boardName = $('.interactive-board-select').val();
-    var filepath = '/user-settings/controls/'+boardName+'.json';
+    var filepath = './user-settings/controls/'+boardName+'.json';
     fs.exists(filepath, function(exists) {
         if(exists) {
                 // File exists deletings
@@ -128,7 +128,7 @@ function deleteBoardButton(){
 // This monitors new board button, and on press create a new controls file.
 function newBoardSubmission(){
     var boardName = $('.board-name input').val();
-    new JsonDB("/user-settings/controls/"+boardName, true, false);
+    new JsonDB("./user-settings/controls/"+boardName, true, false);
     
     // Sync up profile list.
     gameProfileList();
@@ -145,7 +145,7 @@ function boardBuilder(){
 
     // If there is a board...
     if (selectedBoard !== null && selectedBoard !== undefined){
-        var dbControls = new JsonDB("/user-settings/controls/"+selectedBoard, true, false);
+        var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
         var tactile = dbControls.getData("tactile");
         var tactileButtons = tactile['tactile'];
         
@@ -211,7 +211,7 @@ function boardBuilder(){
 // This function grabs button details and populates the button menu.
 function editButton(buttonID){
     var selectedBoard = $('.interactive-board-select').val();
-    var dbControls = new JsonDB("/user-settings/controls/"+selectedBoard, true, false);
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
     var tactile = dbControls.getData("/tactile/"+buttonID);
 
     var buttonType = tactile.type;
@@ -334,6 +334,16 @@ ipcRenderer.on('beamInteractive', function (event, status){
     connectFlipper(status);
 })
 
+// Kill Switch Toggle
+// This recieves an event from the global killswitch in beam-connect.js, then sends an event back to confirm.
+ipcRenderer.on('killSwitch', function (event, status){
+    connectFlipper(status);
+    if(status == "connect"){
+        ipcRenderer.send('beamInteractive', 'connect');
+    } else {
+        ipcRenderer.send('beamInteractive', 'disconnect');
+    }
+})
 
 ///////////////////
 // Run on App Start

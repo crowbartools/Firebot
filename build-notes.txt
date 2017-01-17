@@ -1,0 +1,10 @@
+During Compile -
+1. Go to KBM-Robot module and open up the main js file.
+2. Edit the java path under startJar to point to root java folder.
+3. Run build.
+4. Copy java folder and paste it into the root of the build folders.
+
+Rebuild Robotjs -
+1. set PYTHON = path to python
+2. cd in to the node_modules robotjs folder
+3. Run "node-gyp rebuild --runtime=electron --target=1.4.1 --arch=x64 --dist-url=https://atom.io/download/atom-shell"

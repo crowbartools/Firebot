@@ -15,14 +15,21 @@
   ],
   "author": "@Firebottletv",
   "license": "MIT",
+  "scripts":{
+    "start": "electron .",
+    "rebuild" : "node-gyp rebuild --runtime=electron --target=1.4.1 --arch=x64 --dist-url=https://atom.io/download/atom-shell"
+  },
   "devDependencies": {
-    "electron": "^1.4.1"
+    "electron": "^1.4.1",
+    "electron-rebuild": "^1.5.6"
   },
   "dependencies": {
     "beam-client-node": "^0.10.4",
     "beam-interactive-node": "^0.3.2",
     "jquery": "^3.1.1",
+    "kbm-robot": "0.0.4",
     "node-json-db": "^0.7.3",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "robotjs": "^0.4.5"
   }
 }
