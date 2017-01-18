@@ -156,11 +156,6 @@ function boardBuilder(){
             
             var buttonTemplate = `<div class="iButton button${buttonID}">
                                     <div class="button-title">
-                                        <div class="button-log button-icon">
-                                        <a href="#">
-                                            <i class="fa fa-list" aria-hidden="true"></i>
-                                        </a>
-                                        </div>
                                         <div class="button-edit button-icon">
                                         <a href="#" class="button-edit-${buttonID}">
                                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i>

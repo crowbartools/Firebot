@@ -1,6 +1,4 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// All of the Node.js APIs are available in this process.
+const shell = require('electron').shell;
 
 // Random BG Image
 function randomBG(){
@@ -39,3 +37,16 @@ function pageNavigation(){
     } );
 }
 pageNavigation();
+
+// Launches tooltip
+// This initializes all tooltips
+$(document).ready(function() {
+    $('.tooltip').tooltipster();
+});
+
+// Open Link In Browser
+// This opens link in system default browser.
+$(document).on('click', 'a[href^="http"]', function(event) {
+    event.preventDefault();
+    shell.openExternal(this.href);
+});

@@ -57,6 +57,17 @@ input{
     padding: 0px 15px;
 }
 
+.tooltipster-base{
+    background-color:#ffcb05;
+    color: #273b48;
+    border-radius:5px;
+    padding:2px;
+    font-family: $font-primary;
+    .tooltopster-box{
+        padding:2px;
+    }
+}
+
 
 // Layout
 #header{
@@ -116,6 +127,7 @@ input{
 }
 .page{
     display:none;
+    width:100%;
     &.current{
         display:block;
     }
