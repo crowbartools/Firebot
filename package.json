@@ -4,7 +4,8 @@
   "description": "An application for Beam.pro that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "rebuild": "node-gyp rebuild --runtime=electron --target=1.4.1 --arch=x64 --dist-url=https://atom.io/download/atom-shell"
   },
   "repository": "https://github.com/Firebottle/Firebot",
   "keywords": [
@@ -15,10 +16,6 @@
   ],
   "author": "@Firebottletv",
   "license": "MIT",
-  "scripts":{
-    "start": "electron .",
-    "rebuild" : "node-gyp rebuild --runtime=electron --target=1.4.1 --arch=x64 --dist-url=https://atom.io/download/atom-shell"
-  },
   "devDependencies": {
     "electron": "^1.4.1",
     "electron-rebuild": "^1.5.6"
