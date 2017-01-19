@@ -46,7 +46,7 @@ function gameProfileList() {
         }
 
         // We have a profile! Show related buttons.
-        $('.add-new-button, .delete-board').fadeIn('fast');
+        $('.add-new-button, .delete-board, .launch-interactive').fadeIn('fast');
     } else {
         // No control files found, delete anything in the dropdown.
         $(".interactive-board-select option").each(function() {
@@ -54,8 +54,12 @@ function gameProfileList() {
         });
 
         // No profiles. Unneeded buttons.
-        $('.add-new-button, .delete-board').fadeOut('fast');
+        $('.add-new-button, .delete-board, .launch-interactive, .disconnect-interactive').fadeOut('fast');
+
+        // Force disconnected if they delete board while connected.
+        ipcRenderer.send('beamInteractive', 'disconnect');
     }
+    
     boardBuilder();
 }
 
@@ -79,8 +83,6 @@ function buttonSubmission(){
     var buttonCooldown = $('.button-cooldown input').val();
     var cooldownButtons = $('.button-cooldown-buddies input').val();
     var buttonNotes = $('.button-notes input').val();
-
-    console.log(buttonID, buttonType);
 
     // Push general settings to db.
     dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldown": buttonCooldown, "cooldownButtons": cooldownButtons, "notes": buttonNotes});
@@ -115,7 +117,7 @@ function deleteBoardButton(){
     var filepath = './user-settings/controls/'+boardName+'.json';
     fs.exists(filepath, function(exists) {
         if(exists) {
-                // File exists deletings
+                // File exists deleting
                 fs.unlink(filepath,function(err){
                     gameProfileList();
                 });
