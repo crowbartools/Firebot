@@ -25,6 +25,7 @@
           <li><a data="start" href="#">Home</a></li>
           <li><a data="login" href="#">Login</a></li>
           <li><a data="interactive" href="#">Boards</a></li>
+          <li><a data="settings" href="#">Settings</a></li>
           <li><a data="bug-report" href="#">Bug Report</a></li>
           <li><a data="credits" href="#">Credits</a></li>
         </ul>
@@ -182,16 +183,6 @@
                 <button class="bot-login" data="bot" status="login">Login</button>
               </div>
             </div>
-            <div class="botType">
-              <p>What type of bot are you running?</p>
-              <select>
-                <option>Scorpbot</option>
-                <option>Scottybot</option>
-              </select>
-            </div>
-            <div class="login-save">
-              <button>Save</button>
-            </div>
         </div>
       </section>
 
@@ -209,6 +200,46 @@
                 <button class="disconnect-interactive tooltip" title="Stop current board." style="display:none"><i class="fa fa-chain-broken" aria-hidden="true"></i></button>
             </div>
             <div class="interactive-buttons"></div>
+        </div>
+      </section>
+
+      <section class="settings page">
+        <div class="main-content">
+          <div class="settings-general settings-section">
+            <h3>General</h3>
+            <div class="botType setting">
+              <label>Bot Type</label>
+              <select>
+                <option value="scorpbot">Scorpbot</option>
+                <option value="scottybot">Scottybot</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-game-controls settings-section">
+            <h3>Game Controls</h3>
+            <div class="emulation-type setting">
+              <label>Keyboard/Mouse Emulator</label>
+              <select>
+                <option value="robotjs">robotjs</option>
+                <option value="kbm">kbm-robot</option>
+              </select>
+            </div>
+            <div class="mouse-clicks setting">
+              <label>Enable Mouse Clicks</label>
+              <select>
+                <option value="disabled">Disabled</option>
+                <option value="enabled">Enabled</option>
+              </select>
+            </div>
+            <div class="mouse-speed setting">
+              <label>Mouse Speed</label>
+              <input type="text" name="mouse-speed" placeholder="50">
+            </div>
+          </div>
+          <div class="settings-save-close">
+            <button class="settings-save">Save</button>
+            <button class="settings-cancel">Cancel</button>
+          </div>
         </div>
       </section>
 
@@ -244,5 +275,6 @@
     require('./js/global.js');
     require('./js/login.js');
     require('./js/interactive-board.js');
+    require('./js/settings.js');
   </script>
 </html>

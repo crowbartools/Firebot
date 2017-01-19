@@ -143,3 +143,30 @@
         margin-top:10px;
     }
 }
+
+// Settings Page
+.settings{
+    .settings-section{
+        border-bottom: 1px dotted #ffffff;
+        margin-bottom:10px;
+        padding-bottom:10px;
+        display:flex;
+        flex-wrap: wrap;
+    }
+    .setting{
+        padding: 0px 10px 10px 0px;
+        flex-grow:1;
+    }
+    h3{
+        width:100%;
+        margin-bottom:2%;
+        padding-bottom:0px;
+    }
+    label{
+        display:block;
+        padding:1% 1% 1% 0%;
+    }
+    select, input{
+        margin: 1% 0%;
+    }
+}

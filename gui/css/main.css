@@ -4556,6 +4556,26 @@ input {
   padding: 2%;
 }
 
+/* line 141, ../scss/_global.scss */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #F5F5F5;
+}
+
+/* line 147, ../scss/_global.scss */
+::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5;
+}
+
+/* line 152, ../scss/_global.scss */
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #888c90;
+}
+
 /* line 10, ../scss/main.scss */
 .start {
   text-align: center;
@@ -4703,4 +4723,33 @@ input {
 /* line 142, ../scss/main.scss */
 #button-menu .button-save-close {
   margin-top: 10px;
+}
+
+/* line 149, ../scss/main.scss */
+.settings .settings-section {
+  border-bottom: 1px dotted #ffffff;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+/* line 156, ../scss/main.scss */
+.settings .setting {
+  padding: 0px 10px 10px 0px;
+  flex-grow: 1;
+}
+/* line 160, ../scss/main.scss */
+.settings h3 {
+  width: 100%;
+  margin-bottom: 2%;
+  padding-bottom: 0px;
+}
+/* line 165, ../scss/main.scss */
+.settings label {
+  display: block;
+  padding: 1% 1% 1% 0%;
+}
+/* line 169, ../scss/main.scss */
+.settings select, .settings input {
+  margin: 1% 0%;
 }
