@@ -56,6 +56,7 @@ function gameProfileList() {
         // No profiles. Unneeded buttons.
         $('.add-new-button, .delete-board').fadeOut('fast');
     }
+    boardBuilder();
 }
 
 // Button Specific Controls

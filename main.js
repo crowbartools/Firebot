@@ -58,6 +58,11 @@ function createWindow () {
     }
   })
 
+  process.on('uncaughtException', function(error) {
+      // Handle the error
+      console.error(error);
+  });
+
   // When Quittin.
   app.on('will-quit', () => {
     // Unregister all shortcuts.
