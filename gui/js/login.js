@@ -24,8 +24,12 @@ function requestBeamData(token, streamOrBot) {
 
         //Load up avatar and such on login page. 
         login(streamOrBot, data.channel.id, data.username, token, data.avatarUrl);
+
+        // Close auth window
+        ipcRenderer.send('auth-close');
     });
 };
+
 
 // Log in
 // This takes the saved login info and puts things onto the login page such as the user avatar.
