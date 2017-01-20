@@ -6,5 +6,4 @@ During Compile -
 
 Rebuild Robotjs -
 1. set PYTHON=D:\Python\bin\Python.exe
-2. cd in to the node_modules robotjs folder
-3. Run "node-gyp rebuild --runtime=electron --target=1.4.1 --arch=x64 --dist-url=https://atom.io/download/atom-shell"
+2. Run "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=1.4.1 --arch=x64 --dist-url=https://atom.io/download/atom-shell"
