@@ -15,11 +15,16 @@ function settingsSave(){
     dbSettings.push("/interactive/mouse/mouseClick", mouseClick);
     dbSettings.push("/interactive/mouse/mouseSpeed", mouseSpeed);
 
+    // Fade the button row out and back in again to give the user
+    // a form of feedback that the button(s) has been activated.
+    $(".settings-save-close").fadeOut(500).delay(1000).fadeIn(1500);
+
+    // Call reload of data from database after saving.
     settingsReset();
 }
 
 // Settings Reset
-function settingsReset(){
+function settingsReset($cancelled){
     var dbSettings = new JsonDB("./user-settings/settings", true, false);
 
     var botType = dbSettings.getData('/botType');
@@ -31,6 +36,16 @@ function settingsReset(){
     $('.emulation-type select option[value='+gameEmulator+']').prop('selected', true);
     $('.mouse-clicks select option[value='+mouseClick+']').prop('selected', true);
     $('.mouse-speed input').val(mouseSpeed);
+
+    // Check if user pushed the cancel button to trigger settingReset or not.
+    // If the button was used, trigger an animation of the button row.
+    if($cancelled === 1){
+
+      // Fade the button row out and back in again to give the user
+      // a form of feedback that the button(s) has been activated.
+      $(".settings-save-close").fadeOut(500).delay(0).fadeIn(1500);
+
+    }
 }
 
 // Settings Save
@@ -42,7 +57,8 @@ $( ".settings-save" ).click(function() {
 // Settings Cancel
 // This monitors the cancel button and clears all fields or set them to default.
 $( ".settings-cancel" ).click(function() {
-    settingsReset();
+    var $cancelled = 1;
+    settingsReset($cancelled);
 });
 
 // Run on app start

@@ -1,4 +1,4 @@
-node_modules
 *.scssc
+node_modules
+dist
 user-settings
-auth.json

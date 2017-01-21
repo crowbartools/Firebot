@@ -1,11 +1,11 @@
 {
   "name": "Firebot",
-  "version": "1.0.0",
+  "version": "1.0.01",
   "description": "An application for Beam.pro that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "rebuild": "node-gyp rebuild --runtime=electron --target=1.4.1 --arch=x64 --dist-url=https://atom.io/download/atom-shell"
+    "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=1.4.1 --arch=x64 --dist-url=https://atom.io/download/atom-shell"
   },
   "repository": "https://github.com/Firebottle/Firebot",
   "keywords": [
