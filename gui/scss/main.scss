@@ -138,9 +138,15 @@
             width:200px;
             border-radius:0px;
         }
-    }
-    .button-save-close{
-        margin-top:10px;
+        .game-button-pressed, .game-button-counter{
+            position:relative;
+        }
+        .button-save-close{
+            margin-top:10px;
+            a{
+                color:transparent;
+            }
+        }
     }
 }
 

@@ -1,0 +1,148 @@
+const jqValidate = require('./jquery.validate.min.js');
+
+
+// Button Menu Form Validation
+// This function kicks off the form validation for the button menu.
+function buttonMenuValidate(){
+    $("#new-button-form").validate({
+        rules: {
+            buttonID:{
+                required: true,
+                number: true
+            },
+            buttonName:{
+                required: true
+            },
+            cooldownButtons:{
+                required: true,
+                commaNumbers: true
+            },
+            cooldownLength:{
+                required: true,
+                positiveNumbers: true
+            },
+            buttonPress:{
+                required: true
+            }
+        }
+    });
+}
+
+// Comma Separated Number List Validation
+jQuery.validator.addMethod("commaNumbers", function(value, element) {
+  return this.optional( element ) || /^\d+(,\d+)*$/.test( value );
+}, 'Incorrect value.');
+
+// Postitive Numbers Only
+jQuery.validator.addMethod("positiveNumbers", function(value, element) {
+    return Number(value) > 0;
+}, 'Incorrect value.');
+
+// Clear Form
+function clearValidate(form){
+    setTimeout(function(){ 
+        if (form == "new-button-form"){
+            console.log(form);
+            var validator = $('#new-button-form').validate();
+            validator.resetForm();
+        }
+    }, 500);
+}
+
+// Load up autocomplete for game buttons
+  $( function() {
+    // This is a list of all valid buttons for bot robotjs and kbm robot.
+    var availableButtons = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "0",
+    "backspace",
+    "delete",
+    "enter",
+    "space",
+    "tab",
+    "escape",
+    "up",
+    "down",
+    "left",
+    "right",
+    "home",
+    "end",
+    "pageup",
+    "pagedown",
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "f5",
+    "f6",
+    "f7",
+    "f8",
+    "f9",
+    "f10",
+    "f11",
+    "f12",
+    "alt",
+    "control",
+    "shift",
+    "numpad_0",
+    "numpad_1",
+    "numpad_2",
+    "numpad_3",
+    "numpad_4",
+    "numpad_5",
+    "numpad_6",
+    "numpad_7",
+    "numpad_8",
+    "numpad_9"
+    ];
+    $( ".game-button-pressed input" ).autocomplete({
+      source: availableButtons,
+      appendTo: ".game-button-pressed"
+    });
+    $( ".game-button-counter input" ).autocomplete({
+      source: availableButtons,
+      appendTo: ".game-button-counter"
+    });
+  });
+
+// Exports
+exports.clearValidate = clearValidate;
+
+// On App Load
+$(document).ready(function () {
+    buttonMenuValidate();
+});

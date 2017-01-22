@@ -1,280 +1,295 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <title>Firebot Remastered</title>
     <link rel="stylesheet" type="text/css" href="./css/main.css">
-  </head>
-  <body>
+</head>
+
+<body>
 
     <div id="header">
-      <div class="main-image">
-          <a href="#main-menu" class="menu-toggle menu-hamburger">
-            <i class="fa fa-bars" aria-hidden="true"></i>
-          </a>
-      </div>
-      <div class="interactive-status" style="display:none">
-        Disconnected
-      </div>
+        <div class="main-image">
+            <a href="#main-menu" class="menu-toggle menu-hamburger">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </a>
+        </div>
+        <div class="interactive-status" style="display:none">
+            Disconnected
+        </div>
     </div>
 
     <!-- Main Menu -->
     <div id="main-menu">
-      <div class="navigation">
-        <ul>
-          <li><a data="start" href="#">Home</a></li>
-          <li><a data="login" href="#">Login</a></li>
-          <li><a data="interactive" href="#">Boards</a></li>
-          <li><a data="settings" href="#">Settings</a></li>
-          <li><a data="bug-report" href="#">Bug Report</a></li>
-          <li><a data="credits" href="#">Credits</a></li>
-        </ul>
-      </div>
+        <div class="navigation">
+            <ul>
+                <li><a data="start" href="#">Home</a></li>
+                <li><a data="login" href="#">Login</a></li>
+                <li><a data="interactive" href="#">Boards</a></li>
+                <li><a data="settings" href="#">Settings</a></li>
+                <li><a data="bug-report" href="#">Bug Report</a></li>
+                <li><a data="credits" href="#">Credits</a></li>
+            </ul>
+        </div>
     </div>
 
     <!-- New Board Menu -->
     <div id="board-menu">
-      <div class="board-name button-section">
-          <label>Board Name</label>
-          <input type="text" placeholder="Overwatch">
-      </div>
-      <div class="button-save-close">
-        <a href="#board-menu"><button class="board-save">Save</button></a>
-        <a href="#board-menu"><button class="board-cancel">Cancel</button></a>
-      </div>
+        <div class="board-name button-section">
+            <label>Board Name</label>
+            <input type="text" placeholder="Overwatch">
+        </div>
+        <div class="button-save-close">
+            <a href="#board-menu">
+                <button class="board-save">Save</button>
+            </a>
+            <a href="#board-menu">
+                <button class="board-cancel">Cancel</button>
+            </a>
+        </div>
     </div>
 
     <!-- Button Menu -->
     <div id="button-menu">
-      <div class="button-general-settings">
-        <h3>General Settings</h3>
-        <form id="new-button-form">
-          <div class="button-id button-section">
-            <label>Button ID</label>
-            <input type="text" placeholder="1" class="tooltip" title="ID should match the button on the dev board.">
-          </div>
-          <div class="button-type button-section">
-            <label>Type</label>
-            <select>
-              <option value="Game Controls" data="game-controls">Game Control</option>
-              <option value="Api Buttons" data="api-buttons">API Button</option>
-              <option value="Chat Currency" data="chat-currency-buttons">Chat Currency</option>
-              <option value="Media" data="media-buttons">Media</option>
-              <option value="Clicker Boss" data="clickerboss-buttons">Clicker Boss</option>
-            </select>
-          </div>
-          <div class="button-cooldown button-section">
-            <label>Cooldown</label>
-            <input type="text" placeholder="120" class="tooltip" title="Cooldown in seconds.">
-          </div>
-          <div class="button-cooldown-buddies button-section">
-            <label>Cooldown Buttons</label>
-            <input type="text" placeholder="1,3,10" class="tooltip" title="Comma separated ids of buttons that should cooldown at the same time.">
-          </div>
-          <div class="button-notes button-section">
-            <label>Name</label>
-            <input type="text" placeholder="Fart Sound" class="tooltip" title="For your own reference.">
-          </div>
+      <form id="new-button-form">
+        <div class="button-general-settings">
+            <h3>General Settings</h3>
+                <div class="button-id button-section">
+                    <label>Button ID</label>
+                    <input type="text" placeholder="1" class="tooltip" name="buttonID" title="ID should match the button on the dev board.">
+                </div>
+                <div class="button-notes button-section">
+                    <label>Button Name</label>
+                    <input type="text" placeholder="Fart Sound" class="tooltip" name="buttonName" title="For your own reference.">
+                </div>
+                <div class="button-type button-section">
+                    <label>Type</label>
+                    <select>
+                        <option value="Game Controls" data="game-controls">Game Control</option>
+                        <option value="Api Buttons" data="api-buttons">API Button</option>
+                        <option value="Chat Currency" data="chat-currency-buttons">Chat Currency</option>
+                        <option value="Media" data="media-buttons">Media</option>
+                        <option value="Clicker Boss" data="clickerboss-buttons">Clicker Boss</option>
+                    </select>
+                </div>
+                <div class="button-cooldown-buddies button-section">
+                    <label>Cooldown Buttons</label>
+                    <input type="text" placeholder="1,3,10" class="tooltip" name="cooldownButtons" title="Comma separated ids of buttons that should cooldown at the same time.">
+                </div>
+                <div class="button-cooldown button-section">
+                    <label>Cooldown Length (sec)</label>
+                    <input type="text" placeholder="120" class="tooltip" name="cooldownLength" title="Cooldown in seconds.">
+                </div>
         </div>
         <div class="button-specific-settings">
-          <!-- These divs are shown based on the selected button type -->
-          <h3>Type Specific</h3>
+            <!-- These divs are shown based on the selected button type -->
+            <h3>Type Specific</h3>
 
-          <!-- Game Controls -->
-          <div class="game-controls button-specific">
-            <div class="game-button-pressed">
-              <label>Button to Press</label>
-              <input type="text" placeholder="W" class="tooltip" title="The key that will be pressed.">
+            <!-- Game Controls -->
+            <div class="game-controls button-specific">
+                <div class="game-button-pressed">
+                    <label>Button to Press</label>
+                    <input type="text" placeholder="W" class="tooltip" name="buttonPress" title="The key that will be pressed.">
+                </div>
+                <div class="game-button-counter">
+                    <label>Opposite Button</label>
+                    <input type="text" placeholder="S" class="tooltip" title="The key to compare against.">
+                </div>
             </div>
-            <div class="game-button-counter">
-              <label>Opposite Button</label>
-              <input type="text" placeholder="S" class="tooltip" title="The key to compare against.">
-            </div>
-          </div>
 
-          <!-- API Buttons -->
-          <div class="api-buttons button-specific" style="display:none">
-            <div class="api-select">
-              <label>Type</label>
-              <select>
-                <option value="Advice">Advice</option>
-                <option value="TTS Quotes">TTS Quotes</option>
-                <option value="Cat Picture">Cat Picture</option>
-                <option value="Cat Fact">Cat Fact</option>
-                <option value="Dog Picture">Dog Picture</option>
-                <option value="Dog Fact">Dog Fact</option>
-                <option value="Aww">Aww</option>
-                <option value="Pokemon">Pokemon</option>
-                <option value="Number Trivia">Number Trivia</option>
-              </select>
+            <!-- API Buttons -->
+            <div class="api-buttons button-specific" style="display:none">
+                <div class="api-select">
+                    <label>Type</label>
+                    <select>
+                        <option value="Advice">Advice</option>
+                        <option value="TTS Quotes">TTS Quotes</option>
+                        <option value="Cat Picture">Cat Picture</option>
+                        <option value="Cat Fact">Cat Fact</option>
+                        <option value="Dog Picture">Dog Picture</option>
+                        <option value="Dog Fact">Dog Fact</option>
+                        <option value="Aww">Aww</option>
+                        <option value="Pokemon">Pokemon</option>
+                        <option value="Number Trivia">Number Trivia</option>
+                    </select>
+                </div>
+                <div class="api-notice">
+                    Note: APIs are remote and I can't control the quality, type, or maturity level of what it may give you.
+                </div>
             </div>
-            <div class="api-notice">
-              Note: APIs are remote and I can't control the quality, type, or maturity level of what it may give you.
-            </div>
-          </div>
 
-          <!-- Currency Buttons -->
-          <div class="chat-currency-buttons button-specific" style="display:none">
-            <div class="image-position">
-              <label>Currency Name</label>
-              <input type="text" name="currency-name" placeholder="coins">
+            <!-- Currency Buttons -->
+            <div class="chat-currency-buttons button-specific" style="display:none">
+                <div class="image-position">
+                    <label>Currency Name</label>
+                    <input type="text" name="currency-name" placeholder="coins">
+                </div>
             </div>
-          </div>
 
-          <!-- Media Buttons -->
-          <div class="media-buttons button-specific" style="display:none">
-            <div class="sound-file">
-              <label>Audio File</label>
-              <input type="file" name="audio-file">
+            <!-- Media Buttons -->
+            <div class="media-buttons button-specific" style="display:none">
+                <div class="sound-file">
+                    <label>Audio File</label>
+                    <input type="file" name="audio-file">
+                </div>
+                <div class="image-file">
+                    <label>Image File</label>
+                    <input type="file" name="img">
+                </div>
+                <div class="image-position">
+                    <label>X Position</label>
+                    <input type="text" name="imagex" placeholder="800">
+                    <label>Y Position</label>
+                    <input type="text" name="imagey" placeholder="600">
+                </div>
             </div>
-            <div class="image-file">
-              <label>Image File</label>
-              <input type="file" name="img">
-            </div>
-            <div class="image-position">
-              <label>X Position</label>
-              <input type="text" name="imagex" placeholder="800">
-              <label>Y Position</label>
-              <input type="text" name="imagey" placeholder="600">
-            </div>
-          </div>
 
-          <!-- Click Boss -->
-          <div class="clickerboss-buttons button-specific" style="display:none">
-            Clickerboss Buttons coming soon...
-          </div>
+            <!-- Click Boss -->
+            <div class="clickerboss-buttons button-specific" style="display:none">
+                Clickerboss Buttons coming soon...
+            </div>
 
         </div>
         <div class="button-save-close">
-          <a href="#button-menu"><button class="button-save">Save</button></a>
-          <a href="#button-menu"><button class="button-cancel" onclick="$.sidr('close', 'button-menu');">Cancel</button></a>
+            <a href="#button-menu">
+                <button class="button-save" type="submit">Save</button>
+            </a>
+            <a href="#button-menu">
+                <button class="button-cancel" onclick="$.sidr('close', 'button-menu');">Cancel</button>
+            </a>
         </div>
-      </form>
+        </form>
     </div>
-
-
-
 
     <!-- Start Content -->
     <div id="content">
-    
-      <section class="start page current">
-        <div class="main-content">
-            <img src="./images/logo.jpg" class="logo">
-            <h1>Firebot</h1>
-            <p>Interactivity for Beam.pro</p>
-            <a href="#main-menu" class="menu-toggle"><button>Start</button></a>
-        </div>
-      </section>
 
-      <section class="login page">
-        <div class="main-content">
-            <div class="streamer">
-              <div class="avatar"><img src="./images/placeholders/default.jpg" class="streamer-avatar"></div>
-              <div class="username"><h2>Streamer</h2></div>
-              <div class="loginOrOut">
-                <button class="streamer-login" data="streamer" status="login">Login</button>
-              </div>
+        <section class="start page current">
+            <div class="main-content">
+                <img src="./images/logo.jpg" class="logo">
+                <h1>Firebot</h1>
+                <p>Interactivity for Beam.pro</p>
+                <a href="#main-menu" class="menu-toggle">
+                    <button>Start</button>
+                </a>
             </div>
-            <div class="bot">
-              <div class="avatar"><img src="./images/placeholders/default.jpg" class="bot-avatar"></div>
-              <div class="username"><h2>Bot</h2></div>
-              <div class="loginOrOut">
-                <button class="bot-login" data="bot" status="login">Login</button>
-              </div>
-            </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="interactive page">
-        <div class="main-content">
-            <div class="interactive-top">
-                <select class="interactive-board-select">
-                </select>
-                <button class="add-new-board tooltip" title="Add new board."><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
-                <button class="delete-board tooltip" title="Delete current board."><i class="fa fa-minus-square-o" aria-hidden="true"></i></button>
-                <div class="seperator"></div>
-                <button class="add-new-button tooltip" title="Add new button."><i class="fa fa-gamepad" aria-hidden="true"></i></button>
-                <div class="seperator"></div>
-                <button class="launch-interactive tooltip" title="Launch current board."><i class="fa fa-rocket" aria-hidden="true"></i></button>
-                <button class="disconnect-interactive tooltip" title="Stop current board." style="display:none"><i class="fa fa-chain-broken" aria-hidden="true"></i></button>
+        <section class="login page">
+            <div class="main-content">
+                <div class="streamer">
+                    <div class="avatar"><img src="./images/placeholders/default.jpg" class="streamer-avatar"></div>
+                    <div class="username">
+                        <h2>Streamer</h2></div>
+                    <div class="loginOrOut">
+                        <button class="streamer-login" data="streamer" status="login">Login</button>
+                    </div>
+                </div>
+                <div class="bot">
+                    <div class="avatar"><img src="./images/placeholders/default.jpg" class="bot-avatar"></div>
+                    <div class="username">
+                        <h2>Bot</h2></div>
+                    <div class="loginOrOut">
+                        <button class="bot-login" data="bot" status="login">Login</button>
+                    </div>
+                </div>
             </div>
-            <div class="interactive-buttons"></div>
-        </div>
-      </section>
+        </section>
 
-      <section class="settings page">
-        <div class="main-content">
-          <div class="settings-general settings-section">
-            <h3>General</h3>
-            <div class="botType setting">
-              <label>Bot Type</label>
-              <select>
-                <option value="scorpbot">Scorpbot</option>
-                <option value="scottybot">Scottybot</option>
-              </select>
+        <section class="interactive page">
+            <div class="main-content">
+                <div class="interactive-top">
+                    <select class="interactive-board-select">
+                    </select>
+                    <button class="add-new-board tooltip" title="Add new board."><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
+                    <button class="delete-board tooltip" title="Delete current board."><i class="fa fa-minus-square-o" aria-hidden="true"></i></button>
+                    <div class="seperator"></div>
+                    <button class="add-new-button tooltip" title="Add new button."><i class="fa fa-gamepad" aria-hidden="true"></i></button>
+                    <div class="seperator"></div>
+                    <button class="launch-interactive tooltip" title="Launch current board."><i class="fa fa-rocket" aria-hidden="true"></i></button>
+                    <button class="disconnect-interactive tooltip" title="Stop current board." style="display:none"><i class="fa fa-chain-broken" aria-hidden="true"></i></button>
+                </div>
+                <div class="interactive-buttons"></div>
             </div>
-          </div>
-          <div class="settings-game-controls settings-section">
-            <h3>Game Controls</h3>
-            <div class="emulation-type setting">
-              <label>Keyboard/Mouse Emulator</label>
-              <select>
-                <option value="robotjs">robotjs</option>
-                <option value="kbm">kbm-robot</option>
-              </select>
-            </div>
-            <div class="mouse-clicks setting">
-              <label>Enable Mouse Clicks</label>
-              <select>
-                <option value="disabled">Disabled</option>
-                <option value="enabled">Enabled</option>
-              </select>
-            </div>
-            <div class="mouse-speed setting">
-              <label>Mouse Speed</label>
-              <input type="text" name="mouse-speed" placeholder="50">
-            </div>
-          </div>
-          <div class="settings-save-close">
-            <button class="settings-save">Save</button>
-            <button class="settings-cancel">Cancel</button>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="bug-report page">
-        <div class="main-content">
-            <h2>Bug Reporting</h2>
-            <p>If you run into any issues while using the app, please use the links below to let me know. Entering issues on github helps me keep track of everything, and it gives you notifications when I reply or change the status of your issue.</p>
-            <p>Please try to provide as much information as possible about what you were doing and when the error occured.</p>
-            <div class="links">
-              <a href="https://github.com/Firebottle/Firebot/issues">View all issues</a> <br>
-              <a href="https://github.com/Firebottle/Firebot/issues/new">Open an Issue</a>
+        <section class="settings page">
+            <div class="main-content">
+                <div class="settings-general settings-section">
+                    <h3>General</h3>
+                    <div class="botType setting">
+                        <label>Bot Type</label>
+                        <select>
+                            <option value="scorpbot">Scorpbot</option>
+                            <option value="scottybot">Scottybot</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-game-controls settings-section">
+                    <h3>Game Controls</h3>
+                    <div class="emulation-type setting">
+                        <label>Keyboard/Mouse Emulator</label>
+                        <select>
+                            <option value="robotjs">robotjs</option>
+                            <option value="kbm">kbm-robot</option>
+                        </select>
+                    </div>
+                    <div class="mouse-clicks setting">
+                        <label>Enable Mouse Clicks</label>
+                        <select>
+                            <option value="disabled">Disabled</option>
+                            <option value="enabled">Enabled</option>
+                        </select>
+                    </div>
+                    <div class="mouse-speed setting">
+                        <label>Mouse Speed</label>
+                        <input type="text" name="mouse-speed" placeholder="50">
+                    </div>
+                </div>
+                <div class="settings-save-close">
+                    <button class="settings-save">Save</button>
+                    <button class="settings-cancel">Cancel</button>
+                </div>
             </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="credits page">
-        <div class="main-content">
-            Credits page coming soon....
-        </div>
-      </section>
+        <section class="bug-report page">
+            <div class="main-content">
+                <h2>Bug Reporting</h2>
+                <p>If you run into any issues while using the app, please use the links below to let me know. Entering issues on github helps me keep track of everything, and it gives you notifications when I reply or change the status of your issue.</p>
+                <p>Please try to provide as much information as possible about what you were doing and when the error occured.</p>
+                <div class="links">
+                    <a href="https://github.com/Firebottle/Firebot/issues">View all issues</a>
+                    <br>
+                    <a href="https://github.com/Firebottle/Firebot/issues/new">Open an Issue</a>
+                </div>
+            </div>
+        </section>
 
+        <section class="credits page">
+            <div class="main-content">
+                Credits page coming soon....
+            </div>
+        </section>
 
-    </div> <!-- End Content -->
+    </div>
+    <!-- End Content -->
 
     <div class="hidden" style="display:none"></div>
-  </body>
+</body>
 
-  <script>
+<script>
     // Require other files here.
     window.$ = window.jQuery = require('jquery');
     require('./js/jquery.sidr.min.js');
     require('./js/tooltipster.bundle.min.js');
+    require('./js/jquery-ui.min.js');
     require('./js/global.js');
     require('./js/login.js');
     require('./js/interactive-board.js');
     require('./js/settings.js');
-  </script>
+    require('./js/form-validation.js');
+</script>
+
 </html>

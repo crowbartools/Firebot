@@ -1,7 +1,8 @@
 // Requirements
 const fs = require('fs');
 const JsonDB = require('node-json-db');
-const {ipcRenderer} = require('electron')
+const jqValidate = require('./form-validation.js');
+const {ipcRenderer} = require('electron');
 
 // Initialize the Button Menu
 // This starts up sidr to create the side button menu.
@@ -74,34 +75,39 @@ function buttonSpecific(){
 // Button Submission
 // This function submits all of the button information to the controls file when save is pressed.
 function buttonSubmission(){
-    var selectedBoard = $('.interactive-board-select').val();
-    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
 
-    // General settings
-    var buttonID = $('.button-id input').val();
-    var buttonType = $('.button-type select').val();
-    var buttonCooldown = $('.button-cooldown input').val();
-    var cooldownButtons = $('.button-cooldown-buddies input').val();
-    var buttonNotes = $('.button-notes input').val();
+    var validated = $("#new-button-form").valid();
+    
+    if (validated === true){
+        var selectedBoard = $('.interactive-board-select').val();
+        var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
 
-    // Push general settings to db.
-    dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldown": buttonCooldown, "cooldownButtons": cooldownButtons, "notes": buttonNotes});
+        // General settings
+        var buttonID = $('.button-id input').val();
+        var buttonType = $('.button-type select').val();
+        var buttonCooldown = $('.button-cooldown input').val();
+        var cooldownButtons = $('.button-cooldown-buddies input').val();
+        var buttonNotes = $('.button-notes input').val();
 
-    // Button Specific settings
-    if (buttonType == "Game Controls"){
-        var buttonPressed = $('.game-button-pressed input').val();
-        var buttonOpposite = $('.game-button-counter input').val();
-        var typeSettings = { "press": buttonPressed, "opposite": buttonOpposite}
+        // Push general settings to db.
+        dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldown": buttonCooldown, "cooldownButtons": cooldownButtons, "notes": buttonNotes});
+
+        // Button Specific settings
+        if (buttonType == "Game Controls"){
+            var buttonPressed = $('.game-button-pressed input').val();
+            var buttonOpposite = $('.game-button-counter input').val();
+            var typeSettings = { "press": buttonPressed, "opposite": buttonOpposite}
+        }
+
+        // Type Settings push to db.
+        dbControls.push("/tactile/" + buttonID +"/typeSettings", typeSettings);
+
+        // Build out the board.
+        boardBuilder();
+
+        // Reset Menu
+        clearButtonMenu();
     }
-
-    // Type Settings push to db.
-    dbControls.push("/tactile/" + buttonID +"/typeSettings", typeSettings);
-
-    // Build out the board.
-    boardBuilder();
-
-    // Reset Menu
-    clearButtonMenu();
 }
 
 // Add New Board Button
@@ -238,6 +244,9 @@ function clearButtonMenu(){
     $.sidr('close', 'button-menu');
 
     $('.sidr-inner input').val('');
+
+    // Clear validation
+    jqValidate.clearValidate('new-button-form');
 }
 
 // Connect/Disconnect UI Flipper

@@ -46,10 +46,23 @@ select {
    cursor: pointer;
 }
 
-input{
+input, input:focus{
     border-radius:10px;
     padding:5px;
     border:none;
+}
+.ui-autocomplete{
+    border-radius:10px;
+    padding:5px;
+    border:none;
+    background-color: $text-color-white;
+    list-style:none;
+    color:$secondary-color;
+    position:absolute;
+    z-index:5;
+}
+.ui-helper-hidden-accessible{
+    display:none;
 }
 
 .seperator{
@@ -67,6 +80,15 @@ input{
         padding:2px;
     }
 }
+label.error{
+    color:red;
+    font-weight:bold;
+    font-size: .75em;
+}
+input.error{
+    border: 1px solid red;
+}
+
 
 
 // Layout
