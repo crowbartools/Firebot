@@ -18,6 +18,9 @@
         <div class="interactive-status" style="display:none">
             Disconnected
         </div>
+        <div class="updated-version" style="display:none">
+            <a href="https://github.com/Firebottle/Firebot/releases">Update Available</a>
+        </div>
     </div>
 
     <!-- Main Menu -->
@@ -75,7 +78,7 @@
                 </div>
                 <div class="button-cooldown-buddies button-section">
                     <label>Cooldown Buttons</label>
-                    <input type="text" placeholder="1,3,10" class="tooltip" name="cooldownButtons" title="Comma separated ids of buttons that should cooldown at the same time.">
+                    <input type="text" placeholder="1,3,10" class="tooltip" name="cooldownButtons" title="Comma separated ids of buttons that will cooldown. Note: Dont cooldown buttons that will be held down.">
                 </div>
                 <div class="button-cooldown button-section">
                     <label>Cooldown Length (sec)</label>
@@ -173,6 +176,9 @@
                 <a href="#main-menu" class="menu-toggle">
                     <button>Start</button>
                 </a>
+                <div class="xtremes-logo">
+                    <a href="http://xtremes.pro"><img src="./images/login/xtremes.PNG"></a>
+                </div>
             </div>
         </section>
 
@@ -220,7 +226,7 @@
                     <h3>General</h3>
                     <div class="botType setting">
                         <label>Bot Type</label>
-                        <select>
+                        <select title="Select your bot!" class="tooltip">
                             <option value="scorpbot">Scorpbot</option>
                             <option value="scottybot">Scottybot</option>
                         </select>
@@ -230,21 +236,21 @@
                     <h3>Game Controls</h3>
                     <div class="emulation-type setting">
                         <label>Keyboard/Mouse Emulator</label>
-                        <select>
+                        <select title="Adjust this if game controls dont work in your game." class="tooltip">
                             <option value="robotjs">robotjs</option>
                             <option value="kbm">kbm-robot</option>
                         </select>
                     </div>
                     <div class="mouse-clicks setting">
                         <label>Enable Mouse Clicks</label>
-                        <select>
+                        <select title="Careful! This will enable mouse clicks with screen controls." class="tooltip">
                             <option value="disabled">Disabled</option>
                             <option value="enabled">Enabled</option>
                         </select>
                     </div>
                     <div class="mouse-speed setting">
                         <label>Mouse Speed</label>
-                        <input type="text" name="mouse-speed" placeholder="50">
+                        <input type="text" name="mouse-speed" placeholder="50" title="Mouse sensitivity for joystick controls. Higher is faster." class="tooltip">
                     </div>
                 </div>
                 <div class="settings-save-close">
@@ -269,27 +275,42 @@
 
         <section class="credits page">
             <div class="main-content">
-                Credits page coming soon....
+                <h2>Credits</h2>
+                <p>Many people worked together to make this app possible.<p>
+                <ul>
+                    <li><a href="https://beam.pro/firebottle">Firebottle</a></li>
+                    <li><a href="https://beam.pro/theperry">ThePerry</a></li>
+                    <li><a href="https://beam.pro/Mi5terme">Mi5terme</a></li>
+                    <li><a href="https://beam.pro/ProbablePrime">ProbablePrime</a></li>
+                </ul>
+                <p>Other Credits</p>
+                <ul>
+                    <li><a href="https://www.pexels.com">Pexels</a></li>
+                    <li><a href="http://xtremes.pro">Xtremes Stream Team</a></li>
+                </ul>
             </div>
         </section>
 
     </div>
     <!-- End Content -->
 
+    <div id="error-log" title="Error"></div>
     <div class="hidden" style="display:none"></div>
 </body>
 
 <script>
     // Require other files here.
     window.$ = window.jQuery = require('jquery');
-    require('./js/jquery.sidr.min.js');
-    require('./js/tooltipster.bundle.min.js');
-    require('./js/jquery-ui.min.js');
+    require('./js/plugins/jquery.sidr.min.js');
+    require('./js/plugins/tooltipster.bundle.min.js');
+    require('./js/plugins/jquery-ui.min.js');
     require('./js/global.js');
     require('./js/login.js');
-    require('./js/interactive-board.js');
+    require('./js/interactive/interactive-board.js');
     require('./js/settings.js');
     require('./js/form-validation.js');
+    require('./js/error-logging/error-logging.js');
+    require('./js/updates/update-checker.js');
 </script>
 
 </html>

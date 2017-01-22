@@ -21,7 +21,8 @@ function createWindow () {
     mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, './gui/index.html'),
       protocol: 'file:',
-      slashes: true
+      slashes: true,
+      icon: path.join(__dirname, './gui/images/logo.png')
     }))
 
     // Open dev tools
@@ -35,8 +36,11 @@ function createWindow () {
       mainWindow = null
     })
 
+    // Global var for main window.
+    global.renderWindow = mainWindow;
+
     // Register the Kill Switch
-    beamConnect.shortcut(mainWindow);
+    beamConnect.shortcut();
 }
 
   // This method will be called when Electron has finished
@@ -48,9 +52,9 @@ function createWindow () {
   app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
   })
 
   app.on('activate', function () {
@@ -72,7 +76,13 @@ function createWindow () {
     globalShortcut.unregisterAll()
   });
 
-
+  // Update Checker
+  // When window is done loading, check for updates.
+  app.on('ready', () =>{
+    renderWindow.webContents.on('did-finish-load', function() {
+      updateChecker.check(app.getVersion());
+    });
+  })
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
@@ -82,3 +92,7 @@ const login = require('./lib/login/login.js');
 
 // Interactive handler
 const beamConnect = require('./lib/interactive/beam-connect.js');
+
+// Update Checker
+// Sends version number to gui for displaying update notices.
+const updateChecker = require('./lib/updates/update-check.js');

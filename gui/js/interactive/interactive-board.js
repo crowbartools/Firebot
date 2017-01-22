@@ -1,8 +1,9 @@
 // Requirements
 const fs = require('fs');
 const JsonDB = require('node-json-db');
-const jqValidate = require('./form-validation.js');
+const jqValidate = require('../form-validation.js');
 const {ipcRenderer} = require('electron');
+const errorLogger = require('../error-logging/error-logging.js');
 
 // Initialize the Button Menu
 // This starts up sidr to create the side button menu.
@@ -128,6 +129,7 @@ function deleteBoardButton(){
                     gameProfileList();
                 });
         } else {
+            errorLogger.log("The board you tried to delete doesnt exist. Restart the app.")
             console.log("This file doesn't exist, cannot delete");
         }
     });
@@ -194,7 +196,8 @@ function boardBuilder(){
                         $('.button'+buttonID).remove();
                         dbControls.delete("/tactile/"+buttonID);
                     } catch(error){
-                        console.log("Error deleting buton.");
+                        errorLogger.log("There was an error deleting the button. Restart the app.")
+                        console.log("Error deleting button.");
                     }
                 });
 

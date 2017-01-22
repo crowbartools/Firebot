@@ -1,4 +1,4 @@
-const jqValidate = require('./jquery.validate.min.js');
+const jqValidate = require('./plugins/jquery.validate.min.js');
 
 
 // Button Menu Form Validation
@@ -18,7 +18,6 @@ function buttonMenuValidate(){
                 commaNumbers: true
             },
             cooldownLength:{
-                required: true,
                 positiveNumbers: true
             },
             buttonPress:{

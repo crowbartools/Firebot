@@ -17,7 +17,10 @@ function settingsSave(){
 
     // Fade the button row out and back in again to give the user
     // a form of feedback that the button(s) has been activated.
-    $(".settings-save-close").fadeOut(500).delay(1000).fadeIn(1500);
+    $(".settings-save").empty().html('<i class="fa fa-thumbs-up" aria-hidden="true"></i>');
+    setTimeout(function () {
+        $('.settings-save').html('Save');
+    }, 1000);
 
     // Call reload of data from database after saving.
     settingsReset();
@@ -41,9 +44,10 @@ function settingsReset($cancelled){
     // If the button was used, trigger an animation of the button row.
     if($cancelled === 1){
 
-      // Fade the button row out and back in again to give the user
-      // a form of feedback that the button(s) has been activated.
-      $(".settings-save-close").fadeOut(500).delay(0).fadeIn(1500);
+        $(".settings-cancel").empty().html('<i class="fa fa-thumbs-up" aria-hidden="true"></i>');
+        setTimeout(function () {
+            $('.settings-cancel').html('Cancel');
+        }, 1000);
 
     }
 }

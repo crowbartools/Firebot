@@ -41,7 +41,15 @@ pageNavigation();
 // Launches tooltip
 // This initializes all tooltips
 $(document).ready(function() {
-    $('.tooltip').tooltipster();
+    $('.tooltip').tooltipster({
+        delay: 100,
+        maxWidth: 500,
+        speed: 300,
+        interactive: true,
+        animation: 'grow',
+        maxWidth: 200,
+        theme : 'tooltipster-punk'
+    });
 });
 
 // Open Link In Browser

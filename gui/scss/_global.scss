@@ -70,16 +70,6 @@ input, input:focus{
     padding: 0px 15px;
 }
 
-.tooltipster-base{
-    background-color:#ffcb05;
-    color: #273b48;
-    border-radius:5px;
-    padding:2px;
-    font-family: $font-primary;
-    .tooltopster-box{
-        padding:2px;
-    }
-}
 label.error{
     color:red;
     font-weight:bold;
@@ -89,6 +79,41 @@ input.error{
     border: 1px solid red;
 }
 
+// Error dialog
+.ui-dialog{
+    background-color:white;
+    color:$main-color;
+    border: 1px solid $highlight-color;
+    .ui-dialog-titlebar{
+        background-color:$highlight-color;
+        color:$main-color;
+        font-weight:bold;
+        padding:5px 10px 10px 10px;
+        height:20px;
+        cursor:move;
+        button{
+            padding:2px 5px;
+            margin:0px;
+            font-size:.9em;
+        }
+    }
+    .ui-dialog-content{
+        padding:10px;
+        .facepalm{
+            width:75px;
+            display:block;
+            margin:auto;
+        }
+    }
+    .ui-button{
+        background-color:$main-color;
+        color:$text-color-white;
+        float:right;
+        &:hover{
+            background-color:$non-highlight-color;
+        }
+    }
+}
 
 
 // Layout
@@ -119,7 +144,25 @@ input.error{
             background-color: $status-online-color;
         }
     }
-
+    .updated-version{
+        float:right;
+        display:inline-block;
+        background-color: $highlight-color;
+        border:none;
+        border-radius: 10px;
+        text-transform: uppercase;
+        font-family: $font-primary;
+        margin:1%;
+        padding:4px;
+        font-size: .75em;
+        a{
+            color: $secondary-color;
+            text-decoration: none;
+            &:hover{
+                color:$non-highlight-color;
+            }
+        }
+    }
 }
 .navigation{
     ul{
@@ -175,4 +218,18 @@ input.error{
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: $non-highlight-color;
+}
+
+// Tooltips
+.tooltipster-punk {
+	border-radius: 5px; 
+	border-bottom: 3px solid $highlight-color;
+	background: $non-highlight-color;
+	color: #fff;
+}
+.tooltipster-punk .tooltipster-content {
+	font-family: $font-secondary;
+	font-size: 14px;
+	line-height: 16px;
+	padding: 8px 10px;
 }
