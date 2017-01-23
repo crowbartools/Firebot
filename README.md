@@ -8,6 +8,6 @@ The original Firebot was just a plain js file that I kept building on. This vers
 Nope. It's not yet released to the public. But... it will be soon! Once this is released it will replace BeamChatPlays.
 
 ## License
-This code is provided under the GNU General Public License v3.0. This means that you're free to take the code and modify it in whatever way you like and distribute this code for any purpose. However, if you release it then it must be under this same license, make it open source, and provide documentation of changes made.
+This code (everything in the repository) is provided under the GNU General Public License v3.0. This means that you're free to take the code in this repository and modify it in whatever way you like and distribute this code for any purpose. However, if you release it then it must be under this same license, make it open source, and provide documentation of changes made. All version must have copyright credit pointing back to this source.
 
-Anything using this code must be open source if released.
+Anything using this code must be open source if released, and a copyright credit must point back here.
