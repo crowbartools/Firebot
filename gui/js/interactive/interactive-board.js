@@ -251,10 +251,13 @@ function clearButtonMenu(){
     $.sidr('close', 'board-menu');
     $.sidr('close', 'button-menu');
 
-    $('.sidr-inner input').val('');
+    $( ".sidr-inner" ).fadeOut( "fast", function() {
+        // Clear validation
+        $('.sidr-inner input').val('');
+        $('.sidr-inner').fadeIn('fast');
+        jqValidate.clearValidate('new-button-form');
+    });
 
-    // Clear validation
-    jqValidate.clearValidate('new-button-form');
 }
 
 // Connect/Disconnect UI Flipper
