@@ -30,7 +30,6 @@
     "kbm-robot": "0.0.4",
     "node-json-db": "^0.7.3",
     "request": "^2.79.0",
-    "robotjs": "^0.4.5",
-    "version": "^0.1.2"
+    "robotjs": "^0.4.5"
   }
 }
