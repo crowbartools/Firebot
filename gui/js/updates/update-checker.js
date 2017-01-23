@@ -27,4 +27,14 @@ function updateChecker(version){
             }
         }
     })
+    
+    $('title').text('Firebot Interactive || v'+version+' || @firebottletv');
 }
+
+
+
+
+
+
+
+    

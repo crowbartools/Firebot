@@ -1,6 +1,6 @@
 During Compile -
 1. Go to KBM-Robot module and open up the main js file.
-2. Edit the java path under startJar to point to root java folder.
+2. Edit the java path under startJar to point to root java folder."var jarPath = path.join("./kbm-java", "robot" + JRE_ver + ".jar");"
 3. Run build.
 4. Copy java folder and paste it into the root of the build folders.
 

@@ -85,7 +85,7 @@ function initialLogin(){
         $('.streamer .avatar img').attr('src', avatar);
         $('.streamer .loginOrOut button').text('Logout').attr('status', 'logout');
     } catch(error) {
-        console.log(error);
+
     }
 
     try {
@@ -96,7 +96,7 @@ function initialLogin(){
         $('.bot .avatar img').attr('src', avatar);
         $('.bot .loginOrOut button').text('Logout').attr('status', 'logout');
     } catch(error) {
-        console.log(error);
+
     }
 }
 
