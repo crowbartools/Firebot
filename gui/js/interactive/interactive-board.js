@@ -38,8 +38,13 @@ function addNewButton(){
 // Game Profile List
 // This function grabs a list of all saved game profiles and populates selection.
 function gameProfileList() {
-    var games = fs.readdirSync('./user-settings/controls');
-    if(games.length !== 0){
+    try{
+        var games = fs.readdirSync('./user-settings/controls');
+    }catch(err){
+        var games = 0;
+    }
+
+    if(games !== 0){
         $(".interactive-board-select option").each(function() {
             $(this).remove();
         });
