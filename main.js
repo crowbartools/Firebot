@@ -76,14 +76,6 @@ function createWindow () {
     globalShortcut.unregisterAll()
   });
 
-  // Update Checker
-  // When window is done loading, check for updates.
-  app.on('ready', () =>{
-    renderWindow.webContents.on('did-finish-load', function() {
-      updateChecker.check(app.getVersion());
-    });
-  })
-
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
@@ -92,7 +84,3 @@ const login = require('./lib/login/login.js');
 
 // Interactive handler
 const beamConnect = require('./lib/interactive/beam-connect.js');
-
-// Update Checker
-// Sends version number to gui for displaying update notices.
-const updateChecker = require('./lib/updates/update-check.js');
