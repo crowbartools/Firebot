@@ -15,7 +15,12 @@ let mainWindow
 
 function createWindow () {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 1000, height: 600, resizable: false})
+    mainWindow = new BrowserWindow({
+      width: 1000, 
+      height: 600, 
+      resizable: false,
+      show: false
+    })
 
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
@@ -46,7 +51,12 @@ function createWindow () {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on('ready', createWindow)
+  app.on('ready', function(){
+    createWindow()
+    renderWindow.webContents.on('did-finish-load', function() {
+        renderWindow.show();
+    });
+  })
 
   // Quit when all windows are closed.
   app.on('window-all-closed', function () {
