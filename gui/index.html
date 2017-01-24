@@ -73,10 +73,11 @@
                     <label>Type</label>
                     <select  title="Choose type of controls for the button" class="tooltip">
                         <option value="Game Controls" data="game-controls">Game Control</option>
-                        <option value="Api Buttons" data="api-buttons">API Button</option>
-                        <option value="Chat Currency" data="chat-currency-buttons">Chat Currency</option>
-                        <option value="Media" data="media-buttons">Media</option>
-                        <option value="Clicker Boss" data="clickerboss-buttons">Clicker Boss</option>
+                        <option value="Sound" data="sound-buttons">Sound</option>
+                        <option value="Api Buttons" data="api-buttons" disabled>API Button</option>
+                        <option value="Chat Currency" data="chat-currency-buttons" disabled>Chat Currency</option>
+                        <option value="Clicker Boss" data="clickerboss-buttons" disabled>Clicker Boss</option>
+                        <option value="Nothing" data="nothing">Nothing</option>
                     </select>
                 </div>
                 <div class="button-cooldown-buddies button-section">
@@ -133,21 +134,16 @@
                 </div>
             </div>
 
-            <!-- Media Buttons -->
-            <div class="media-buttons button-specific" style="display:none">
+            <!-- Sound Buttons -->
+            <div class="sound-buttons button-specific" style="display:none">
                 <div class="sound-file">
                     <label>Audio File</label>
-                    <input type="file" name="audio-file">
+                    <input type="text" name="soundPath" placeholder="C:\" class="tooltip" title="Choose your audio file. mp3, wav, or ogg">
+                    <button class="sound-selector">Choose</button>
                 </div>
-                <div class="image-file">
-                    <label>Image File</label>
-                    <input type="file" name="img">
-                </div>
-                <div class="image-position">
-                    <label>X Position</label>
-                    <input type="text" name="imagex" placeholder="800">
-                    <label>Y Position</label>
-                    <input type="text" name="imagey" placeholder="600">
+                <div class="sound-volume">
+                    <label>Volume</label>
+                    <input type="text" name="soundVolume" placeholder="0.5" class="tooltip" title="0.5 is 50% volume, 0.2 is 20%, etc...">
                 </div>
             </div>
 
@@ -200,7 +196,7 @@
                     <div class="username">
                         <h2>Bot</h2></div>
                     <div class="loginOrOut">
-                        <button class="bot-login" data="bot" status="login">Login</button>
+                        <button class="bot-login" data="bot" status="login">Soon!</button>
                     </div>
                 </div>
             </div>
@@ -311,6 +307,7 @@
     require('./js/global.js');
     require('./js/login.js');
     require('./js/interactive/interactive-board.js');
+    require('./js/interactive/soundboard.js');
     require('./js/settings.js');
     require('./js/form-validation.js');
     require('./js/error-logging/error-logging.js');

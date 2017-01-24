@@ -48,7 +48,8 @@ $(document).ready(function() {
         interactive: true,
         animation: 'grow',
         maxWidth: 200,
-        theme : 'tooltipster-punk'
+        theme : 'tooltipster-punk',
+        side: "left"
     });
 });
 

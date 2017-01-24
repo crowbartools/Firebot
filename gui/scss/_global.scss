@@ -79,6 +79,21 @@ input.error{
     border: 1px solid red;
 }
 
+// Auto Complete 
+.ui-autocomplete{
+    li{
+        cursor:pointer;
+        div{
+            padding:5px;
+            margin:2px;
+        }
+    }
+    li:hover{
+        background-color: $highlight-color;
+        color: $main-color;
+    }
+}
+
 // Error dialog
 .ui-dialog{
     background-color:white;
