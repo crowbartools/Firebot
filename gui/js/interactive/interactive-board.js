@@ -103,6 +103,14 @@ function buttonSubmission(){
             var buttonPressed = $('.game-button-pressed input').val();
             var buttonOpposite = $('.game-button-counter input').val();
             var typeSettings = { "press": buttonPressed, "opposite": buttonOpposite}
+
+        } else if (buttonType == "Sound"){
+            var filePath = $('.sound-file input').val();
+            var fileVolume = $('.sound-volume input').val();
+            var typeSettings = { "filePath": filePath, "volume": fileVolume}
+
+        } else if (buttonType == "Nothing"){
+            var typeSettings = {};
         }
 
         // Type Settings push to db.
@@ -253,7 +261,6 @@ function clearButtonMenu(){
 
     $('.sidr-inner input').val('');
     jqValidate.clearValidate('new-button-form');
-
 }
 
 // Connect/Disconnect UI Flipper
