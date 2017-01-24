@@ -5,6 +5,11 @@ const jqValidate = require('./plugins/jquery.validate.min.js');
 // This function kicks off the form validation for the button menu.
 function buttonMenuValidate(){
     $("#new-button-form").validate({
+        settings:{
+            onfocusout: false,
+            onkeyup: false,
+            onclick: false
+        },
         rules: {
             buttonID:{
                 required: true,
@@ -22,6 +27,9 @@ function buttonMenuValidate(){
             },
             buttonPress:{
                 required: true
+            },
+            soundPath:{
+                required:true
             }
         }
     });
