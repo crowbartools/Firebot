@@ -14,7 +14,7 @@ function updateChecker(){
             var json = JSON.parse(body);
             var jsonVersion = json.version;
             var versionOverride = json.versionOverride;
-            
+
             // Check if version matches.
             if (version !== jsonVersion || versionOverride === true){
                 $('.updated-version a').append(' ('+jsonVersion+')');
@@ -32,10 +32,3 @@ function updateChecker(){
 
 // Run on app start
 updateChecker();
-
-
-
-
-
-
-    
