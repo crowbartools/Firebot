@@ -251,12 +251,8 @@ function clearButtonMenu(){
     $.sidr('close', 'board-menu');
     $.sidr('close', 'button-menu');
 
-    $( ".sidr-inner" ).fadeOut( "fast", function() {
-        // Clear validation
-        $('.sidr-inner input').val('');
-        $('.sidr-inner').fadeIn('fast');
-        jqValidate.clearValidate('new-button-form');
-    });
+    $('.sidr-inner input').val('');
+    jqValidate.clearValidate('new-button-form');
 
 }
 

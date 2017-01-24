@@ -18,7 +18,7 @@ function buttonMenuValidate(){
                 commaNumbers: true
             },
             cooldownLength:{
-                positiveNumbers: true
+                number: true
             },
             buttonPress:{
                 required: true
@@ -30,11 +30,6 @@ function buttonMenuValidate(){
 // Comma Separated Number List Validation
 jQuery.validator.addMethod("commaNumbers", function(value, element) {
   return this.optional( element ) || /^\d+(,\d+)*$/.test( value );
-}, 'Incorrect value.');
-
-// Postitive Numbers Only
-jQuery.validator.addMethod("positiveNumbers", function(value, element) {
-    return Number(value) > 0;
 }, 'Incorrect value.');
 
 // Clear Form

@@ -187,6 +187,13 @@ input.error{
         }
     }
 }
+.xtremes-logo{
+    position:absolute;
+    bottom:10px;
+    img{
+        max-width:100%;
+    }
+}
 .sidr{
     @include gradient($main-color, $secondary-color);
 }
