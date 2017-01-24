@@ -12,4 +12,5 @@ This code (everything in the repository) is provided under the GNU General Publi
 
 **Anything using this code must be open source if released, and a copyright credit must point back here.**
 
-![Firebot Screenshot](http://firebottle.tv/Firebot/v1screen/1.jpg "Firebot")
+![Firebot Screenshot](http://firebottle.tv/Firebot/v1screen/1.png "Firebot")
+![Firebot Screenshot](http://firebottle.tv/Firebot/v1screen/2.png "Firebot")
