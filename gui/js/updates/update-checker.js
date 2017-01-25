@@ -7,6 +7,7 @@ const appVersion = require('electron').remote.app.getVersion();
 // This will compare the app version number in package.json to the version number in json at firebottle.tv
 // If they are different then it'll show a "new version available" link.
 function updateChecker(){
+    
     request('http://firebottle.tv/Firebot/update-checker.json', function (error, response, body) {
         if (!error && response.statusCode == 200) {
             var version = appVersion;
