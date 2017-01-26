@@ -19,7 +19,7 @@ startMenu();
 
 // Navigates between various main pages.
 function pageNavigation(){
-    $('.navigation a').click( function(e) {
+    $('.navigation a, .nav').click( function(e) {
         e.preventDefault(); 
         var nextup = $(this).attr('data');
         $('.current').slideToggle(500).removeClass('current');
@@ -27,7 +27,7 @@ function pageNavigation(){
         $.sidr('close','main-menu');
 
         // If the selected page is 
-        if (nextup !== "start" && nextup !== "login"){
+        if (nextup !== "start" && nextup !== "login" && nextup !== "updates"){
             $('.interactive-status').fadeIn('fast');
         } else {
             $('.interactive-status').fadeOut('fast');
