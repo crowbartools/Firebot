@@ -19,7 +19,7 @@
             Disconnected
         </div>
         <div class="updated-version" style="display:none">
-            <a href="https://github.com/Firebottle/Firebot/releases">Update Available</a>
+            <a href="#" data="updates">Update Available</a>
         </div>
     </div>
 
@@ -32,6 +32,7 @@
                 <li><a data="interactive" href="#">Boards</a></li>
                 <li><a data="settings" href="#">Settings</a></li>
                 <li><a data="bug-report" href="#">Bug Report</a></li>
+                <li><a data="updates" href="#">Latest Update</a></li>
                 <li><a data="credits" href="#">Credits</a></li>
             </ul>
         </div>
@@ -223,6 +224,13 @@
             <div class="main-content">
                 <div class="settings-general settings-section">
                     <h3>General</h3>
+                    <div class="betaOptIn setting">
+                        <label>Beta Tester</label>
+                        <select title="Get an alert when there are new beta versions." class="tooltip">
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
                     <div class="botType setting">
                         <label>Bot Type</label>
                         <select title="Select your bot!" class="tooltip">
@@ -268,6 +276,18 @@
                     <a href="https://github.com/Firebottle/Firebot/issues">View all issues</a>
                     <br>
                     <a href="https://github.com/Firebottle/Firebot/issues/new">Open an Issue</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="updates page">
+            <div class="main-content">
+                <h2>Latest Update</h2>
+                <div class="latest-update"></div>
+                <div class="release-date"></div>
+                <div class="update-notes"></div>
+                <div class="update-buttons">
+                    <a href="" class="github-link">Download on Github</a>
                 </div>
             </div>
         </section>

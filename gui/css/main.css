@@ -4883,3 +4883,12 @@ input.error {
 .settings select, .settings input {
   margin: 1% 0%;
 }
+
+/* line 182, ../scss/main.scss */
+.updates .latest-update {
+  font-weight: bold;
+}
+/* line 185, ../scss/main.scss */
+.updates .update-notes {
+  margin: 10px 0px;
+}
