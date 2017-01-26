@@ -4396,29 +4396,30 @@ body {
   color: #cecece;
   font-family: Lora, serif;
   background-image: url(../images/bg/5.jpg);
+  background-attachment: fixed;
   background-size: 100%;
   background-repeat: no-repeat;
   background-position: top right;
   background-color: #1d2e38;
 }
 
-/* line 11, ../scss/_global.scss */
+/* line 12, ../scss/_global.scss */
 h1, h2, h3, h4, h5 {
   color: white;
   font-family: OpenSans, sans-serif;
 }
 
-/* line 15, ../scss/_global.scss */
+/* line 16, ../scss/_global.scss */
 a {
   color: white;
   outline: none;
 }
-/* line 18, ../scss/_global.scss */
+/* line 19, ../scss/_global.scss */
 a:hover {
   color: #cecece;
 }
 
-/* line 22, ../scss/_global.scss */
+/* line 23, ../scss/_global.scss */
 button {
   background-color: #ffcb05;
   color: #273b48;
@@ -4432,12 +4433,12 @@ button {
   margin: 1%;
   outline: none;
 }
-/* line 34, ../scss/_global.scss */
+/* line 35, ../scss/_global.scss */
 button:hover {
   background-color: #888c90;
 }
 
-/* line 39, ../scss/_global.scss */
+/* line 40, ../scss/_global.scss */
 select {
   border: none;
   font-size: 1em;
@@ -4448,14 +4449,14 @@ select {
   cursor: pointer;
 }
 
-/* line 49, ../scss/_global.scss */
+/* line 50, ../scss/_global.scss */
 input, input:focus {
   border-radius: 10px;
   padding: 5px;
   border: none;
 }
 
-/* line 54, ../scss/_global.scss */
+/* line 55, ../scss/_global.scss */
 .ui-autocomplete {
   border-radius: 10px;
   padding: 5px;
@@ -4467,51 +4468,51 @@ input, input:focus {
   z-index: 5;
 }
 
-/* line 64, ../scss/_global.scss */
+/* line 65, ../scss/_global.scss */
 .ui-helper-hidden-accessible {
   display: none;
 }
 
-/* line 68, ../scss/_global.scss */
+/* line 69, ../scss/_global.scss */
 .seperator {
   display: inline-block;
   padding: 0px 15px;
 }
 
-/* line 73, ../scss/_global.scss */
+/* line 74, ../scss/_global.scss */
 label.error {
   color: red;
   font-weight: bold;
   font-size: .75em;
 }
 
-/* line 78, ../scss/_global.scss */
+/* line 79, ../scss/_global.scss */
 input.error {
   border: 1px solid red;
 }
 
-/* line 84, ../scss/_global.scss */
+/* line 85, ../scss/_global.scss */
 .ui-autocomplete li {
   cursor: pointer;
 }
-/* line 86, ../scss/_global.scss */
+/* line 87, ../scss/_global.scss */
 .ui-autocomplete li div {
   padding: 5px;
   margin: 2px;
 }
-/* line 91, ../scss/_global.scss */
+/* line 92, ../scss/_global.scss */
 .ui-autocomplete li:hover {
   background-color: #ffcb05;
   color: #273b48;
 }
 
-/* line 98, ../scss/_global.scss */
+/* line 99, ../scss/_global.scss */
 .ui-dialog {
   background-color: white;
   color: #273b48;
   border: 1px solid #ffcb05;
 }
-/* line 102, ../scss/_global.scss */
+/* line 103, ../scss/_global.scss */
 .ui-dialog .ui-dialog-titlebar {
   background-color: #ffcb05;
   color: #273b48;
@@ -4520,46 +4521,46 @@ input.error {
   height: 20px;
   cursor: move;
 }
-/* line 109, ../scss/_global.scss */
+/* line 110, ../scss/_global.scss */
 .ui-dialog .ui-dialog-titlebar button {
   padding: 2px 5px;
   margin: 0px;
   font-size: .9em;
 }
-/* line 115, ../scss/_global.scss */
+/* line 116, ../scss/_global.scss */
 .ui-dialog .ui-dialog-content {
   padding: 10px;
 }
-/* line 117, ../scss/_global.scss */
+/* line 118, ../scss/_global.scss */
 .ui-dialog .ui-dialog-content .facepalm {
   width: 75px;
   display: block;
   margin: auto;
 }
-/* line 123, ../scss/_global.scss */
+/* line 124, ../scss/_global.scss */
 .ui-dialog .ui-button {
   background-color: #273b48;
   color: white;
   float: right;
 }
-/* line 127, ../scss/_global.scss */
+/* line 128, ../scss/_global.scss */
 .ui-dialog .ui-button:hover {
   background-color: #888c90;
 }
 
-/* line 135, ../scss/_global.scss */
+/* line 136, ../scss/_global.scss */
 #header {
   padding: 1%;
 }
-/* line 138, ../scss/_global.scss */
+/* line 139, ../scss/_global.scss */
 #header .main-image {
   display: inline-block;
 }
-/* line 142, ../scss/_global.scss */
+/* line 143, ../scss/_global.scss */
 #header .menu-hamburger {
   font-size: 1.5em;
 }
-/* line 146, ../scss/_global.scss */
+/* line 147, ../scss/_global.scss */
 #header .interactive-status {
   float: right;
   display: inline-block;
@@ -4573,11 +4574,11 @@ input.error {
   padding: 4px;
   font-size: .75em;
 }
-/* line 158, ../scss/_global.scss */
+/* line 159, ../scss/_global.scss */
 #header .interactive-status.online {
   background-color: #177c09;
 }
-/* line 162, ../scss/_global.scss */
+/* line 163, ../scss/_global.scss */
 #header .updated-version {
   float: right;
   display: inline-block;
@@ -4590,23 +4591,23 @@ input.error {
   padding: 4px;
   font-size: .75em;
 }
-/* line 173, ../scss/_global.scss */
+/* line 174, ../scss/_global.scss */
 #header .updated-version a {
   color: #1b2935;
   text-decoration: none;
 }
-/* line 176, ../scss/_global.scss */
+/* line 177, ../scss/_global.scss */
 #header .updated-version a:hover {
   color: #888c90;
 }
 
-/* line 183, ../scss/_global.scss */
+/* line 184, ../scss/_global.scss */
 .navigation ul {
   list-style: none;
   margin: 0px;
   padding: 0px;
 }
-/* line 188, ../scss/_global.scss */
+/* line 189, ../scss/_global.scss */
 .navigation ul li a {
   display: block;
   width: 100%;
@@ -4617,23 +4618,23 @@ input.error {
   padding: 4% 2%;
   border-bottom: 1px dotted #ffffff;
 }
-/* line 197, ../scss/_global.scss */
+/* line 198, ../scss/_global.scss */
 .navigation ul li a:hover {
   background-color: #ffcb05;
   color: #1b2935;
 }
 
-/* line 205, ../scss/_global.scss */
+/* line 206, ../scss/_global.scss */
 .xtremes-logo {
   position: absolute;
   bottom: 10px;
 }
-/* line 208, ../scss/_global.scss */
+/* line 209, ../scss/_global.scss */
 .xtremes-logo img {
   max-width: 100%;
 }
 
-/* line 212, ../scss/_global.scss */
+/* line 213, ../scss/_global.scss */
 .sidr {
   background: #273b48;
   /* Old Browsers */
@@ -4647,41 +4648,41 @@ input.error {
   /*Standard*/
 }
 
-/* line 215, ../scss/_global.scss */
+/* line 216, ../scss/_global.scss */
 .page {
   display: none;
   width: 100%;
 }
-/* line 218, ../scss/_global.scss */
+/* line 219, ../scss/_global.scss */
 .page.current {
   display: block;
 }
-/* line 221, ../scss/_global.scss */
+/* line 222, ../scss/_global.scss */
 .page .main-content {
   padding: 2%;
 }
 
-/* line 228, ../scss/_global.scss */
+/* line 229, ../scss/_global.scss */
 ::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
   background-color: #F5F5F5;
 }
 
-/* line 234, ../scss/_global.scss */
+/* line 235, ../scss/_global.scss */
 ::-webkit-scrollbar {
   width: 12px;
   background-color: #F5F5F5;
 }
 
-/* line 239, ../scss/_global.scss */
+/* line 240, ../scss/_global.scss */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: #888c90;
 }
 
-/* line 246, ../scss/_global.scss */
+/* line 247, ../scss/_global.scss */
 .tooltipster-punk {
   border-radius: 5px;
   border-bottom: 3px solid #ffcb05;
@@ -4689,7 +4690,7 @@ input.error {
   color: #fff;
 }
 
-/* line 252, ../scss/_global.scss */
+/* line 253, ../scss/_global.scss */
 .tooltipster-punk .tooltipster-content {
   font-family: Lora, serif;
   font-size: 14px;
