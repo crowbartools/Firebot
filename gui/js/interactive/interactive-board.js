@@ -249,6 +249,22 @@ function editButton(buttonID){
     // Show button specific menu based on the new type.
     buttonSpecific();
 
+    // Now it's time to load up button type specific settings.
+    var typeSettings = tactile.typeSettings;
+
+    if(buttonType === "Game Controls"){
+        var press = typeSettings.press;
+        var opposite = typeSettings.opposite;
+        $('.game-button-pressed input').val(press);
+        $('.game-button-counter input').val(opposite);
+
+    } else if (buttonType == "Sound"){
+        var filepath = typeSettings.filePath;
+        var volume = typeSettings.volume;
+        $('.sound-file input').val(filepath);
+        $('.sound-volume input').val(volume);
+    }
+
     // Open Menu
     $.sidr('open', 'button-menu');
 }
