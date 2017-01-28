@@ -79,6 +79,9 @@ label.error{
 input.error{
     border: 1px solid red;
 }
+textarea {
+    resize: none;
+}
 
 // Auto Complete 
 .ui-autocomplete{
