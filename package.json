@@ -1,6 +1,6 @@
 {
   "name": "Firebot",
-  "version": "1.1.0-beta.3",
+  "version": "1.1.0",
   "description": "An application for Beam.pro that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
@@ -30,6 +30,7 @@
     "howler": "^2.0.2",
     "jquery": "^3.1.1",
     "kbm-robot": "0.0.4",
+    "keycode": "^2.1.8",
     "node-json-db": "^0.7.3",
     "request": "^2.79.0",
     "robotjs": "^0.4.5"

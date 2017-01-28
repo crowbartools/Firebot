@@ -4,6 +4,7 @@ const JsonDB = require('node-json-db');
 const jqValidate = require('../form-validation.js');
 const {ipcRenderer} = require('electron');
 const errorLogger = require('../error-logging/error-logging.js');
+const jsonImporter = require('./json-importer');
 
 // Initialize the Button Menu
 // This starts up sidr to create the side button menu.
@@ -22,6 +23,18 @@ $('.hidden').sidr({
 $('.hidden').sidr({
     name: 'board-menu',
     source: '#board-menu',
+    side: 'right',
+    renaming: false,
+    onOpen: function(){
+        // Stuff happens here when menu opens.
+    }
+});
+
+// Initialize the Board Menu
+// This starts up sidr to create the side board menu.
+$('.hidden').sidr({
+    name: 'json-import-menu',
+    source: '#json-import-menu',
     side: 'right',
     renaming: false,
     onOpen: function(){
@@ -53,7 +66,7 @@ function gameProfileList() {
         }
 
         // We have a profile! Show related buttons.
-        $('.add-new-button, .delete-board, .launch-interactive').fadeIn('fast');
+        $('.add-new-button, .delete-board, .launch-interactive, .import-board').fadeIn('fast');
     } else {
         // No control files found, delete anything in the dropdown.
         $(".interactive-board-select option").each(function() {
@@ -61,7 +74,7 @@ function gameProfileList() {
         });
 
         // No profiles. Unneeded buttons.
-        $('.add-new-button, .delete-board, .launch-interactive, .disconnect-interactive').fadeOut('fast');
+        $('.add-new-button, .delete-board, .launch-interactive, .disconnect-interactive, .import-board').fadeOut('fast');
 
         // Force disconnected if they delete board while connected.
         ipcRenderer.send('beamInteractive', 'disconnect');
@@ -274,6 +287,7 @@ function editButton(buttonID){
 function clearButtonMenu(){
     $.sidr('close', 'board-menu');
     $.sidr('close', 'button-menu');
+    $.sidr('close', 'json-import-menu');
 
     $('.sidr-inner input').val('');
     jqValidate.clearValidate('new-button-form');
@@ -351,6 +365,30 @@ $( ".board-cancel" ).click(function() {
 // This monitors the button type selector to show or hide button specific controls.
 $( ".interactive-board-select" ).change(function() {
   boardBuilder();
+});
+
+// JSON Import Button
+// This monitors the import json button and runs a function to open up the menu.
+$( ".import-board" ).click(function() {
+    $.sidr('open', 'json-import-menu');
+});
+
+// Import Menu Save
+// This monitors save button on the board menu and saves button info to controls file.
+$( ".import-save" ).click(function() {
+    jsonImporter.convert();
+
+    // Build out the board.
+    boardBuilder();
+
+    // Reset Menu
+    clearButtonMenu();
+});
+
+// Import Menu Cancel
+// This monitors the cancel button and closes the board menu.
+$( ".import-cancel" ).click(function() {
+  clearButtonMenu();
 });
 
 // Launch Interactive
