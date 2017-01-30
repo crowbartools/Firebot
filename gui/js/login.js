@@ -23,7 +23,7 @@ function requestBeamData(token, streamOrBot) {
         var data = JSON.parse(res.body);
 
         //Load up avatar and such on login page. 
-        login(streamOrBot, data.channel.id, data.username, token, data.avatarUrl);
+        login(streamOrBot, data.id, data.channel.id, data.username, token, data.avatarUrl);
 
         // Close auth window
         ipcRenderer.send('auth-close');
@@ -33,12 +33,12 @@ function requestBeamData(token, streamOrBot) {
 
 // Log in
 // This takes the saved login info and puts things onto the login page such as the user avatar.
-function login(streamOrBot, channelID, username, token, avatar){
+function login(streamOrBot, userID, channelID, username, token, avatar){
 
     if (streamOrBot == "streamer"){
-        dbAuth.push('/streamer', { "channelID": channelID, "username": username, "token": token, "avatarUrl": avatar });
+        dbAuth.push('/streamer', { "channelID": channelID, "userID":userID, "username": username, "token": token, "avatarUrl": avatar });
     } else if (streamOrBot == "bot") {
-        dbAuth.push('/bot', { "channelID": channelID, "username": username, "token": token, "avatarUrl": avatar });
+        dbAuth.push('/bot', { "channelID": channelID, "userID":userID, "username": username, "token": token, "avatarUrl": avatar });
     }
 
     if(streamOrBot == "streamer"){

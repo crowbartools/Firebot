@@ -19,7 +19,6 @@ function buttonMenuValidate(){
                 required: true
             },
             cooldownButtons:{
-                required: true,
                 commaNumbers: true
             },
             cooldownLength:{
