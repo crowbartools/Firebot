@@ -28,9 +28,9 @@ function pageNavigation(){
 
         // If the selected page is 
         if (nextup !== "start" && nextup !== "login" && nextup !== "updates"){
-            $('.interactive-status').fadeIn('fast');
+            $('.interactive-status, .chat-status').fadeIn('fast');
         } else {
-            $('.interactive-status').fadeOut('fast');
+            $('.interactive-status, .chat-status').fadeOut('fast');
         }
 
         return false; 

@@ -147,7 +147,7 @@ textarea {
         font-size:1.5em;
     }
 
-    .interactive-status{
+    .interactive-status, .chat-status{
         float:right;
         display:inline-block;
         background-color: $status-offline-color;
@@ -156,8 +156,8 @@ textarea {
         border-radius: 10px;
         text-transform: uppercase;
         font-family: $font-primary;
-        margin:1%;
-        padding:4px;
+        margin:10px;
+        padding:4px 10px;
         font-size: .75em;
         &.online{
             background-color: $status-online-color;

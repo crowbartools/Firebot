@@ -122,6 +122,9 @@ function buttonSubmission(){
             var fileVolume = $('.sound-volume input').val();
             var typeSettings = { "filePath": filePath, "volume": fileVolume}
 
+        } else if (buttonType == "Api Buttons"){
+            var apiType = $('.api-select select option:selected').val();
+            var typeSettings = { "apiType": apiType,}
         } else if (buttonType == "Nothing"){
             var typeSettings = {};
         }
@@ -299,14 +302,22 @@ function connectFlipper(status){
     if(status == "disconnected"){
         $('.disconnect-interactive').fadeOut('fast', function(){
             $('.launch-interactive').fadeIn('fast');
-            $('.interactive-status').removeClass('online').text('Disconnected');
+            $('.interactive-status').removeClass('online');
+            $('.chat-status').removeClass('online');
         });
     } else if (status == "connected"){
         $('.launch-interactive').fadeOut('fast', function(){
             $('.disconnect-interactive').fadeIn('fast');
-            $('.interactive-status').addClass('online').text('Connected');
+            $('.interactive-status').addClass('online');
+            $('.chat-status').addClass('online');
         });
     }
+};
+
+// Disconnected for chat
+// Changes chat ui element if it disconnects or errors out.
+function chatDisconnected(status){
+    $('.chat-status').removeClass('online');
 };
 
 ///////////
@@ -407,6 +418,12 @@ $( ".disconnect-interactive" ).click(function() {
 // Flips ui elements to online or offline depending on status.
 ipcRenderer.on('beamInteractive', function (event, status){
     connectFlipper(status);
+})
+
+// Chat Disconnect
+// Flips ui elements if chat disconnects due to error.
+ipcRenderer.on('chat-disconnect', function (event, status){
+    chatDisconnected();
 })
 
 // Kill Switch Toggle
