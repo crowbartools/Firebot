@@ -79,7 +79,7 @@
                         <option value="Game Controls" data="game-controls">Game Control</option>
                         <option value="Sound" data="sound-buttons">Sound</option>
                         <option value="Api Buttons" data="api-buttons">API Button</option>
-                        <option value="Chat Currency" data="chat-currency-buttons" disabled>Chat Currency</option>
+                        <option value="Text Buttons" data="text-buttons">Text</option>
                         <option value="Clicker Boss" data="clickerboss-buttons" disabled>Clicker Boss</option>
                         <option value="Nothing" data="nothing">Nothing</option>
                     </select>
@@ -124,16 +124,34 @@
                         <option value="Number Trivia">Number Trivia</option>
                     </select>
                 </div>
+                <div class="api-send-as">
+                    <label>Send As</label>
+                    <select class="tooltip" title="Who should send this message to chat?">
+                        <option value="Bot">Bot</option>
+                        <option value="Streamer">Streamer</option>
+                    </select>
+                </div>
                 <div class="api-notice">
                     Note: APIs are remote and I can't control the quality, type, or maturity level of what it may give you.
                 </div>
             </div>
 
-            <!-- Currency Buttons -->
-            <div class="chat-currency-buttons button-specific" style="display:none">
-                <div class="image-position">
-                    <label>Currency Name</label>
-                    <input type="text" name="currency-name" placeholder="coins">
+            <!-- Text Buttons -->
+            <div class="text-buttons button-specific" style="display:none">
+                <div class="text-line">
+                    <label>Text</label>
+                    <input type="text" placeholder="!points add 100" class="tooltip" title="The line of text you'd like to send to chat.">
+                </div>
+                <div class="text-whisper-to">
+                    <label>Whisper to</label>
+                    <input type="text" placeholder="Firebot" class="tooltip" title="Leave blank to broadcast to everyone. Otherwise, enter a name to whisper someone.">
+                </div>
+                <div class="text-send-as">
+                    <label>Send As</label>
+                    <select class="tooltip" title="Who should send this message to chat?">
+                        <option value="Bot">Bot</option>
+                        <option value="Streamer">Streamer</option>
+                    </select>
                 </div>
             </div>
 

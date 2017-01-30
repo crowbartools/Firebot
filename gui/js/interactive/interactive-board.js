@@ -124,9 +124,18 @@ function buttonSubmission(){
 
         } else if (buttonType == "Api Buttons"){
             var apiType = $('.api-select select option:selected').val();
-            var typeSettings = { "apiType": apiType,}
+            var sendAs = $('.api-send-as select option:selected').val();
+            var typeSettings = { "apiType": apiType, "sendAs":sendAs}
+
+        } else if (buttonType == "Text Buttons"){
+            var textLine = $('.text-line input').val();
+            var whisperTo = $('.text-whisper-to input').val();
+            var sendAs = $('.text-send-as select option:selected').val();
+            var typeSettings = { "textLine": textLine, "sendAs":sendAs, "whisperTo":whisperTo}
+
         } else if (buttonType == "Nothing"){
             var typeSettings = {};
+
         }
 
         // Type Settings push to db.
@@ -279,6 +288,21 @@ function editButton(buttonID){
         var volume = typeSettings.volume;
         $('.sound-file input').val(filepath);
         $('.sound-volume input').val(volume);
+
+    } else if (buttonType == "Api Buttons"){
+        var apiType = typeSettings.apiType;
+        var sendAs = typeSettings.sendAs;
+        $('.api-select select').val(apiType);
+        $('.api-send-as select').val(sendAs);
+
+    } else if (buttonType == "Text Buttons"){
+        var textLine = typeSettings.textLine;
+        var whisperTo = typeSettings.whisperTo;
+        var sendAs = typeSettings.sendAs;
+        $('.text-line input').val(textLine);
+        $('.text-whisper-to input').val(whisperTo);
+        $('.text-send-as select').val(sendAs);
+        
     }
 
     // Open Menu
