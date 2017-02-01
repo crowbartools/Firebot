@@ -8,6 +8,7 @@ const {ipcMain} = require('electron')
 
 const path = require('path')
 const url = require('url')
+const iconPath = path.join(__dirname, '/gui/images/logo.png')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -16,9 +17,10 @@ let mainWindow
 function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-      width: 1000, 
-      height: 600, 
+      width: 1000,
+      height: 600,
       resizable: false,
+      icon: iconPath,
       show: false
     })
 
@@ -26,8 +28,7 @@ function createWindow () {
     mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, './gui/index.html'),
       protocol: 'file:',
-      slashes: true,
-      icon: path.join(__dirname, './gui/images/logo.png')
+      slashes: true
     }))
 
     // Open dev tools
