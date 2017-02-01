@@ -84,13 +84,9 @@
                         <option value="Nothing" data="nothing">Nothing</option>
                     </select>
                 </div>
-                <div class="button-cooldown-buddies button-section">
-                    <label>Cooldown Buttons</label>
-                    <input type="text" placeholder="1,3,10" class="tooltip" name="cooldownButtons" title="Comma separated ids of buttons that will cooldown. Note: Dont cooldown buttons that will be held down.">
-                </div>
                 <div class="button-cooldown button-section">
                     <label>Cooldown Length (sec)</label>
-                    <input type="text" placeholder="120" class="tooltip" name="cooldownLength" title="Cooldown in seconds.">
+                    <input type="text" placeholder="120" class="tooltip" name="cooldownLength" title="Cooldown in seconds. This will be overridden by any group cooldown settings.">
                 </div>
         </div>
         <div class="button-specific-settings">
@@ -249,11 +245,21 @@
                     <button class="delete-board tooltip" title="Delete current board."><i class="fa fa-minus-square-o" aria-hidden="true"></i></button>
                     <div class="seperator"></div>
                     <button class="add-new-button tooltip" title="Add new button."><i class="fa fa-gamepad" aria-hidden="true"></i></button>
+                    <button class="add-new-cooldown-group tooltip" title="Add a new cooldown group."><i class="fa fa-hourglass-o" aria-hidden="true"></i></button>
                     <div class="seperator"></div>
                     <button class="launch-interactive tooltip" title="Launch current board."><i class="fa fa-rocket" aria-hidden="true"></i></button>
                     <button class="disconnect-interactive tooltip" title="Stop current board." style="display:none"><i class="fa fa-chain-broken" aria-hidden="true"></i></button>
                 </div>
-                <div class="interactive-buttons"></div>
+                <div class="interactive-buttons">
+                    <div class="cooldown-group-wrap solo-wrap">
+                        <div class="cooldown-group-title">
+                            <div class="cooldown-group-info cooldown-icon">
+                                <span class="cooldown-id">Individual Cooldowns</span>
+                            </div>
+                        </div>
+                        <ul class="cooldown-group solo-group" data="solo"></ul>
+                    </div>
+                </div>
             </div>
         </section>
 

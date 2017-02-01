@@ -59,29 +59,69 @@
         }
     }
     .interactive-buttons{
-        display:flex;
-        flex-wrap: wrap;
         max-width:100%;
         min-height:100px;
         padding: 1% 0%;
-        border-top: 1px solid #cecece;
+        border-top: 1px solid white;
 
         select{
             width: 268px;  
         }
 
+        .cooldown-group-wrap{
+            margin-top:10px;
+
+            .cooldown-group-title{
+                background-color: $highlight-color;
+                padding:5px;
+                border-radius: 10px 10px 0px 0px;
+                border: 1px dotted #ffffff;
+                color: $main-color;
+
+                .cooldown-icon{
+                    display:inline-block;
+                    color: $main-color;
+                    a{
+                        color: $main-color;
+                        &:hover{
+                            color: $non-highlight-color;
+                        }
+                    }
+                }
+                .cooldown-id{
+                    font-weight:bold;
+                }
+                .cooldown-del{
+                    float:right;
+                }
+            }
+
+            .cooldown-group{
+                display:flex;
+                flex-wrap: wrap;
+                margin:0px;
+                padding:5px;
+                border:1px solid $highlight-color;
+                background:rgba(255,255,255,0.3);
+                box-shadow: 3px 3px 10px #000000;
+                border-radius: 0px 0px 10px 10px;
+                min-height:90px;
+            }
+        }
+
         .iButton{
             display: inline-block;
-            margin-right: 10px;
             font-family: $font-primary;
+            margin:5px;
 
             .button-title{
                 background-color: $highlight-color;
                 padding:1% 2%;
-                width:150px;
+                width:140px;
                 border-radius: 10px 10px 0px 0px;
                 border: 1px dotted #ffffff;
                 margin: 1%;
+                cursor: grabbing;
 
                 .button-icon{
                     display:inline-block;
@@ -105,9 +145,11 @@
                 text-align:center;
                 border-radius: 0px 0px 10px 10px;
                 border: 1px dotted #ffffff;
+                background-color:white;
                 margin: 1%;
-                width:150px;
+                width:140px;
                 padding: 5% 2%;
+                color: $main-color;
 
                 .type{
                     font-size: .7em;

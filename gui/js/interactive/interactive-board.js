@@ -57,7 +57,7 @@ function gameProfileList() {
         var games = 0;
     }
 
-    if(games !== 0){
+    if(games.length !== 0){
         $(".interactive-board-select option").each(function() {
             $(this).remove();
         });
@@ -66,7 +66,7 @@ function gameProfileList() {
         }
 
         // We have a profile! Show related buttons.
-        $('.add-new-button, .delete-board, .launch-interactive, .import-board').fadeIn('fast');
+        $('.add-new-button, .delete-board, .launch-interactive, .import-board, .add-new-cooldown-group').fadeIn('fast');
     } else {
         // No control files found, delete anything in the dropdown.
         $(".interactive-board-select option").each(function() {
@@ -74,7 +74,7 @@ function gameProfileList() {
         });
 
         // No profiles. Unneeded buttons.
-        $('.add-new-button, .delete-board, .launch-interactive, .disconnect-interactive, .import-board').fadeOut('fast');
+        $('.add-new-button, .delete-board, .launch-interactive, .disconnect-interactive, .import-board, .add-new-cooldown-group').fadeOut('fast');
 
         // Force disconnected if they delete board while connected.
         ipcRenderer.send('beamInteractive', 'disconnect');
@@ -105,11 +105,10 @@ function buttonSubmission(){
         var buttonID = parseInt( $('.button-id input').val() );
         var buttonType = $('.button-type select').val();
         var buttonCooldown = convertTime( $('.button-cooldown input').val() );
-        var cooldownButtons = parseBuddies( $('.button-cooldown-buddies input').val() );
         var buttonNotes = $('.button-notes input').val();
 
         // Push general settings to db.
-        dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldown": buttonCooldown, "cooldownButtons": cooldownButtons, "notes": buttonNotes});
+        dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldownGroup": "solo", "cooldown": buttonCooldown, "notes": buttonNotes});
 
         // Button Specific settings
         if (buttonType == "Game Controls"){
@@ -146,26 +145,6 @@ function buttonSubmission(){
 
         // Reset Menu
         clearButtonMenu();
-    }
-}
-
-// Parse Cooldown Buddies
-// This takes the cooldown buddy list and returns a clean array.
-function parseBuddies(buttons){
-    if (buttons !== undefined && buttons !== null && buttons !== ""){
-        // Take cooldown list for this button and turn it into an array.
-        var cooldownArray = buttons.replace(/ /g,'').split(',');
-        // Then remove empty values from the array.
-        var cooldownArray = cooldownArray.filter(entry => /\S/.test(entry));
-        // Turn each into numbers.
-        for(var i = 0; i < cooldownArray.length; i++) {
-            cooldownArray[i] = parseInt(cooldownArray[i]);
-        }
-        return cooldownArray;
-    } else {
-        var buttons = parseInt(buttons);
-        var cooldownArray = [buttons];
-        return cooldownArray;
     }
 }
 
@@ -220,12 +199,17 @@ function newBoardSubmission(){
 // Board Builder
 // Takes a look at the controls file and populates the board ui.
 function boardBuilder(){
-    $('.interactive-buttons').empty();
+    // Wipe the slate clean.
+    $('.interactive-buttons cooldown-group-wrap').not('.solo-wrap').remove();
+    $('.cooldown-group li').remove();
+
+    // Now lets start...
     var selectedBoard = $('.interactive-board-select').val();
 
     // If there is a board...
     if (selectedBoard !== null && selectedBoard !== undefined){
         var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+
         var tactile = dbControls.getData("tactile");
         var tactileButtons = tactile['tactile'];
         
@@ -233,8 +217,9 @@ function boardBuilder(){
             var buttonID = this.id;
             var buttonType = this.type;
             var buttonNotes = this.notes;
+            var buttonCooldownGroup = this.cooldownGroup;
             
-            var buttonTemplate = `<div class="iButton button${buttonID}">
+            var buttonTemplate = `<li class="iButton button${buttonID}" data=${buttonID}>
                                     <div class="button-title">
                                         <div class="button-edit button-icon">
                                         <a href="#" class="button-edit-${buttonID}">
@@ -254,10 +239,20 @@ function boardBuilder(){
                                         <div class="notes">${buttonNotes}</div>
                                         <div class="type">${buttonType}</div>
                                     </div>
-                                </div>`;
+                                </li>`;
 
                 // Push template to ui.
-                $('.interactive-buttons').append(buttonTemplate);
+                if(buttonCooldownGroup !== "solo" && $('.group-'+buttonCooldownGroup).length !== 1){
+                    // This button is in a group, but the group isn't on the page. Create it!
+                    cooldownUIBuilder(buttonCooldownGroup);
+                    $('.interactive-buttons .group-'+buttonCooldownGroup).append(buttonTemplate);
+                } else if (buttonCooldownGroup !== "solo") {
+                    // This button is in a group, but the group is already on the page.
+                    $('.interactive-buttons .group-'+buttonCooldownGroup).append(buttonTemplate);
+                } else {
+                    // This button is a solo button.
+                    $('.interactive-buttons .solo-group').append(buttonTemplate);
+                }
 
                 // Bind click event to delete.
                 $( ".button-del-"+buttonID ).click(function() {
@@ -299,7 +294,6 @@ function editButton(buttonID){
     $('.button-id input').val(buttonID);
     $('.button-type select').val(buttonType);
     $('.button-cooldown input').val(buttonCooldown);
-    $('.button-cooldown-buddies input').val(cooldownButtons);
     $('.button-notes input').val(buttonNotes);
 
     // Show button specific menu based on the new type.
@@ -349,6 +343,174 @@ function clearButtonMenu(){
 
     $('.sidr-inner input').val('');
     jqValidate.clearValidate('new-button-form');
+}
+
+// Add New Cooldown Group 
+// This adds a new cooldown group and sets it up so items can be dragged into it.
+function newCooldownGroup(){
+    var selectedBoard = $('.interactive-board-select').val();
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+
+    // See if there are any groups already. If not, push the first one to the controls file.
+    // If there are then increment that by one.
+    try{
+        var groupid = dbControls.getData('/cooldowns/groupCount');
+        var groupid = groupid + 1;
+        dbControls.push('/cooldowns/groupCount', groupid);
+    }catch(err){
+        var groupid = 1;
+        dbControls.push('/cooldowns/groupCount', groupid);
+    }
+
+    // Set default cooldown and push value to JSON for that group.
+    var cooldownTime = "5000";
+    dbControls.push("/cooldowns/"+groupid+"/cooldown", cooldownTime);
+    dbControls.push("/cooldowns/"+groupid+"/progress", []);
+    dbControls.push("/cooldowns/"+groupid+"/id", groupid);
+
+    // Add group to interactive board.
+    cooldownUIBuilder(groupid);
+}
+
+// Cooldown UI Builder
+// This puts the cooldown group UI elements onto the page.
+function cooldownUIBuilder(groupid){
+    var selectedBoard = $('.interactive-board-select').val();
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+
+    // If we have something to work with...
+    if (groupid !== undefined){
+        var cooldownTime = dbControls.getData('/cooldowns/'+groupid+'/cooldown');
+
+        // Build the template
+        var cooldownTemplate = `<div class="cooldown-group-wrap group-${groupid}-wrap">
+                                    <div class="cooldown-group-title">
+                                        <div class="cooldown-edit cooldown-icon">
+                                            <a href="#" class="cooldown-edit-${groupid}">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                        <div class="cooldown-group-info cooldown-icon">
+                                            <span class="cooldown-id">Cooldown group for ${cooldownTime} milliseconds</span>
+                                        </div>
+                                        <div class="cooldown-del cooldown-icon">
+                                            <a href="#" class="cooldown-del-${groupid}" data="${groupid}">
+                                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <ul class="cooldown-group group-${groupid}" data="${groupid}"></ul>
+                                </div>`;
+
+        // Put at bottom of interactive board page.
+        $('.interactive-buttons').append(cooldownTemplate);
+        
+        // Setup sortable lists.
+        $( ".cooldown-group" ).sortable({
+        connectWith: ".cooldown-group",
+        receive: function(event, ui){
+            cooldownProgressBuilder()
+        }
+        }).disableSelection();
+
+        // Bind click event to delete.
+        $( ".cooldown-del-"+groupid ).click(function() {
+            try{
+                // Cycle through buttons in that cooldown group and move them to the individual cooldown group.
+                $('.group-'+groupid+'-wrap .cooldown-group li').each(function( index ) {
+                    $(this).appendTo('ul.solo-group');
+                });
+
+                // Delete old group from ui.
+                $('.group-'+groupid+'-wrap').remove();
+
+                // Trigger receive event for sortable to grab new items.
+                var widget = $('.cooldown-group').data('ui-sortable');
+                if (widget) widget._trigger("receive", null, widget._uiHash(widget));
+
+                // Delete group from controls file.
+                dbControls.delete("/cooldowns/"+groupid);
+                
+                // Rebuild Progress Reports 
+                cooldownProgressBuilder();
+            } catch(error){
+                // errorLogger.log("There was an error deleting the cooldown group. Restart the app.")
+                console.log("Error deleting cooldown group from JSON or it didn't exist.");
+            }
+        });
+    }
+}
+
+
+// Cooldown Progress Builder
+// This waits for the user to stop sorting items on the interactive page.
+// Once done it looks at all buttons and builds the tactile cooldown for storage in controls file.
+function cooldownProgressBuilder(){
+    var selectedBoard = $('.interactive-board-select').val();
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+
+    var cooldownGroups = dbControls.getData("/cooldowns");
+    $.each(cooldownGroups, function(i, val){
+        var groupid = val.id;
+        if(groupid !== undefined){
+            dbControls.delete("/cooldowns/"+groupid+"/progress");
+        }
+    });
+
+    // For each button in each group
+    $('.cooldown-group li').each(function( index ) {
+        // Get Button ID and group number.
+        var buttonid = $(this).attr('data');
+        var groupid = $(this).closest('.cooldown-group').attr('data');
+
+        // Then push this info to the appropriate cooldown group if it isn't a "solo" button.
+        if (groupid !== "solo"){
+            // Push this info to the controls file for the button.
+            dbControls.push("/tactile/"+buttonid+"/cooldownGroup", groupid);
+
+            // Get group info
+            var cooldownGroup = dbControls.getData("/cooldowns/"+groupid);
+            var cooldown = cooldownGroup.cooldown;
+            var cooldownReport = cooldownGroup.progress;
+
+
+            // Create progress report format.
+            var progressFormat = {
+                            "id": parseInt(buttonid),
+                            "cooldown": parseInt(cooldown),
+                            "fired": false,
+                            "progress": 0
+                        }
+            
+            // Push these to group in JSON.
+            dbControls.push("/cooldowns/"+groupid+"/progress[]", progressFormat);
+
+            // Clean the array of duplicates.
+            var currentArray = dbControls.getData("/cooldowns/"+groupid+"/progress")
+            var cleanArray = remove_duplicates(currentArray);
+
+            // Push Final
+            dbControls.push("/cooldowns/"+groupid+"/progress", cleanArray);
+        } else {
+            // Push this info to the controls file for the button.
+            dbControls.push("/tactile/"+buttonid+"/cooldownGroup", groupid);
+        }
+    });
+}
+
+// Remove Duplicates from array
+// This checks an array and removes any duplicates.
+function remove_duplicates(objectsArray) {
+    var usedObjects = {};
+    for (var i=objectsArray.length - 1;i>=0;i--) {
+        var so = JSON.stringify(objectsArray[i]);
+        if (usedObjects[so]) {
+            objectsArray.splice(i, 1);
+        } else {
+            usedObjects[so] = true;          
+        }
+    }
+    return objectsArray;
 }
 
 // Connect/Disconnect UI Flipper
@@ -433,6 +595,12 @@ $( ".interactive-board-select" ).change(function() {
   boardBuilder();
 });
 
+// Cooldown Group Add
+// This monitors the cooldown add button and adds a new cooldown group to the page.
+$( ".add-new-cooldown-group" ).click(function() {
+    newCooldownGroup();
+});
+
 // JSON Import Button
 // This monitors the import json button and runs a function to open up the menu.
 $( ".import-board" ).click(function() {
@@ -496,4 +664,3 @@ ipcRenderer.on('killSwitch', function (event, status){
 // Run on App Start
 ///////////////////
 gameProfileList();
-boardBuilder()

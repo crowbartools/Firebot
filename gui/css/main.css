@@ -4758,109 +4758,155 @@ textarea {
 }
 /* line 61, ../scss/main.scss */
 .interactive .interactive-buttons {
-  display: flex;
-  flex-wrap: wrap;
   max-width: 100%;
   min-height: 100px;
   padding: 1% 0%;
-  border-top: 1px solid #cecece;
+  border-top: 1px solid white;
 }
-/* line 69, ../scss/main.scss */
+/* line 67, ../scss/main.scss */
 .interactive .interactive-buttons select {
   width: 268px;
 }
-/* line 73, ../scss/main.scss */
+/* line 71, ../scss/main.scss */
+.interactive .interactive-buttons .cooldown-group-wrap {
+  margin-top: 10px;
+}
+/* line 74, ../scss/main.scss */
+.interactive .interactive-buttons .cooldown-group-wrap .cooldown-group-title {
+  background-color: #ffcb05;
+  padding: 5px;
+  border-radius: 10px 10px 0px 0px;
+  border: 1px dotted #ffffff;
+  color: #273b48;
+}
+/* line 81, ../scss/main.scss */
+.interactive .interactive-buttons .cooldown-group-wrap .cooldown-group-title .cooldown-icon {
+  display: inline-block;
+  color: #273b48;
+}
+/* line 84, ../scss/main.scss */
+.interactive .interactive-buttons .cooldown-group-wrap .cooldown-group-title .cooldown-icon a {
+  color: #273b48;
+}
+/* line 86, ../scss/main.scss */
+.interactive .interactive-buttons .cooldown-group-wrap .cooldown-group-title .cooldown-icon a:hover {
+  color: #888c90;
+}
+/* line 91, ../scss/main.scss */
+.interactive .interactive-buttons .cooldown-group-wrap .cooldown-group-title .cooldown-id {
+  font-weight: bold;
+}
+/* line 94, ../scss/main.scss */
+.interactive .interactive-buttons .cooldown-group-wrap .cooldown-group-title .cooldown-del {
+  float: right;
+}
+/* line 99, ../scss/main.scss */
+.interactive .interactive-buttons .cooldown-group-wrap .cooldown-group {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0px;
+  padding: 5px;
+  border: 1px solid #ffcb05;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 3px 3px 10px #000000;
+  border-radius: 0px 0px 10px 10px;
+  min-height: 90px;
+}
+/* line 112, ../scss/main.scss */
 .interactive .interactive-buttons .iButton {
   display: inline-block;
-  margin-right: 10px;
   font-family: OpenSans, sans-serif;
+  margin: 5px;
 }
-/* line 78, ../scss/main.scss */
+/* line 117, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title {
   background-color: #ffcb05;
   padding: 1% 2%;
-  width: 150px;
+  width: 140px;
   border-radius: 10px 10px 0px 0px;
   border: 1px dotted #ffffff;
   margin: 1%;
+  cursor: grabbing;
 }
-/* line 86, ../scss/main.scss */
+/* line 126, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-icon {
   display: inline-block;
   color: #273b48;
 }
-/* line 89, ../scss/main.scss */
+/* line 129, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-icon a {
   color: #273b48;
 }
-/* line 91, ../scss/main.scss */
+/* line 131, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-icon a:hover {
   color: #888c90;
 }
-/* line 96, ../scss/main.scss */
+/* line 136, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-id {
   font-weight: bold;
 }
-/* line 99, ../scss/main.scss */
+/* line 139, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-title .button-del {
   float: right;
 }
-/* line 104, ../scss/main.scss */
+/* line 144, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-content {
   text-align: center;
   border-radius: 0px 0px 10px 10px;
   border: 1px dotted #ffffff;
+  background-color: white;
   margin: 1%;
-  width: 150px;
+  width: 140px;
   padding: 5% 2%;
+  color: #273b48;
 }
-/* line 112, ../scss/main.scss */
+/* line 154, ../scss/main.scss */
 .interactive .interactive-buttons .iButton .button-content .type {
   font-size: .7em;
 }
 
-/* line 120, ../scss/main.scss */
+/* line 162, ../scss/main.scss */
 #button-menu .sidr-inner {
   padding: 10px;
 }
-/* line 122, ../scss/main.scss */
+/* line 164, ../scss/main.scss */
 #button-menu .sidr-inner label {
   display: block;
   padding: 5px 0px;
 }
-/* line 126, ../scss/main.scss */
+/* line 168, ../scss/main.scss */
 #button-menu .sidr-inner .button-section {
   margin-bottom: 10px;
 }
-/* line 129, ../scss/main.scss */
+/* line 171, ../scss/main.scss */
 #button-menu .sidr-inner .button-general-settings {
   border-bottom: 1px dotted #ffffff;
 }
-/* line 132, ../scss/main.scss */
+/* line 174, ../scss/main.scss */
 #button-menu .sidr-inner .button-specific-settings {
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
-/* line 136, ../scss/main.scss */
+/* line 178, ../scss/main.scss */
 #button-menu .sidr-inner .game-opposite-select, #button-menu .sidr-inner .game-press-select {
   overflow-y: scroll;
   width: 200px;
   border-radius: 0px;
 }
-/* line 141, ../scss/main.scss */
+/* line 183, ../scss/main.scss */
 #button-menu .sidr-inner .game-button-pressed, #button-menu .sidr-inner .game-button-counter {
   position: relative;
 }
-/* line 144, ../scss/main.scss */
+/* line 186, ../scss/main.scss */
 #button-menu .sidr-inner .button-save-close {
   margin-top: 10px;
 }
-/* line 146, ../scss/main.scss */
+/* line 188, ../scss/main.scss */
 #button-menu .sidr-inner .button-save-close a {
   color: transparent;
 }
 
-/* line 155, ../scss/main.scss */
+/* line 197, ../scss/main.scss */
 .settings .settings-section {
   border-bottom: 1px dotted #ffffff;
   margin-bottom: 10px;
@@ -4868,32 +4914,32 @@ textarea {
   display: flex;
   flex-wrap: wrap;
 }
-/* line 162, ../scss/main.scss */
+/* line 204, ../scss/main.scss */
 .settings .setting {
   padding: 0px 10px 10px 0px;
   flex-grow: 1;
 }
-/* line 166, ../scss/main.scss */
+/* line 208, ../scss/main.scss */
 .settings h3 {
   width: 100%;
   margin-bottom: 2%;
   padding-bottom: 0px;
 }
-/* line 171, ../scss/main.scss */
+/* line 213, ../scss/main.scss */
 .settings label {
   display: block;
   padding: 1% 1% 1% 0%;
 }
-/* line 175, ../scss/main.scss */
+/* line 217, ../scss/main.scss */
 .settings select, .settings input {
   margin: 1% 0%;
 }
 
-/* line 182, ../scss/main.scss */
+/* line 224, ../scss/main.scss */
 .updates .latest-update {
   font-weight: bold;
 }
-/* line 185, ../scss/main.scss */
+/* line 227, ../scss/main.scss */
 .updates .update-notes {
   margin: 10px 0px;
 }
