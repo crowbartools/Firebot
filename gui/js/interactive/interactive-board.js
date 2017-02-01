@@ -102,10 +102,10 @@ function buttonSubmission(){
         var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
 
         // General settings
-        var buttonID = $('.button-id input').val();
+        var buttonID = parseInt( $('.button-id input').val() );
         var buttonType = $('.button-type select').val();
-        var buttonCooldown = $('.button-cooldown input').val();
-        var cooldownButtons = $('.button-cooldown-buddies input').val();
+        var buttonCooldown = convertTime( $('.button-cooldown input').val() );
+        var cooldownButtons = parseBuddies( $('.button-cooldown-buddies input').val() );
         var buttonNotes = $('.button-notes input').val();
 
         // Push general settings to db.
@@ -146,6 +146,37 @@ function buttonSubmission(){
 
         // Reset Menu
         clearButtonMenu();
+    }
+}
+
+// Parse Cooldown Buddies
+// This takes the cooldown buddy list and returns a clean array.
+function parseBuddies(buttons){
+    if (buttons !== undefined && buttons !== null && buttons !== ""){
+        // Take cooldown list for this button and turn it into an array.
+        var cooldownArray = buttons.replace(/ /g,'').split(',');
+        // Then remove empty values from the array.
+        var cooldownArray = cooldownArray.filter(entry => /\S/.test(entry));
+        // Turn each into numbers.
+        for(var i = 0; i < cooldownArray.length; i++) {
+            cooldownArray[i] = parseInt(cooldownArray[i]);
+        }
+        return cooldownArray;
+    } else {
+        var buttons = parseInt(buttons);
+        var cooldownArray = [buttons];
+        return cooldownArray;
+    }
+}
+
+// Convert to Milliseconds
+// This takes a number in seconds and converts it to Milliseconds
+function convertTime(time){
+    if (time !== ""){
+        var newTime = parseInt( time ) * 1000;
+        return newTime;
+    } else {
+        return 0;
     }
 }
 

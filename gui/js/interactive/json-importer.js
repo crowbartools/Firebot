@@ -83,19 +83,16 @@ function convertBeamJson() {
 			if (keypress == "numpad 9") {
                 var keypress = "numpad_9";
             }
-			
-            // Convert cooldown to seconds
-            var cooldown = cooldown / 1000;
 
             console.log(keypress);
 
             // Push to DB if button checks out.
             if (holding === true && keypress !== undefined || frequency === true && keypress !== undefined) {
                 // Assume its a game button
-                dbControls.push("/tactile/" + buttonid, { "id": buttonid.toString(),"type":"Game Controls", "cooldown": cooldown.toString(), "cooldownButtons": buttonid.toString(), "notes": buttonText, "typeSettings":{"press": keypress, "opposite": movementCounter}});
+                dbControls.push("/tactile/" + buttonid, { "id": buttonid,"type":"Game Controls", "cooldown": cooldown, "cooldownButtons": [buttonid], "notes": buttonText, "typeSettings":{"press": keypress, "opposite": movementCounter}});
             }else if(holding === true && keypress === undefined || frequency === true && keypress === undefined){
                 // Set as nothing
-                dbControls.push("/tactile/" + buttonid, { "id": buttonid.toString(),"type":"Nothing", "cooldown": cooldown.toString(), "cooldownButtons": buttonid.toString(), "notes": buttonText, "typeSettings":{}});
+                dbControls.push("/tactile/" + buttonid, { "id": buttonid,"type":"Nothing", "cooldown": cooldown, "cooldownButtons": [buttonid], "notes": buttonText, "typeSettings":{}});
             } else {
                 // ERROR WITH BUTTON SETUP. Button does not have holding or press frequency checked.
                 // TO DO: Handle this error gracefully.
