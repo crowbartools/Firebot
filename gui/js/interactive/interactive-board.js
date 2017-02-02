@@ -33,6 +33,18 @@ $('.hidden').sidr({
 // Initialize the Board Menu
 // This starts up sidr to create the side board menu.
 $('.hidden').sidr({
+    name: 'cooldown-menu',
+    source: '#cooldown-menu',
+    side: 'right',
+    renaming: false,
+    onOpen: function(){
+        // Stuff happens here when menu opens.
+    }
+});
+
+// Initialize the Board Menu
+// This starts up sidr to create the side board menu.
+$('.hidden').sidr({
     name: 'json-import-menu',
     source: '#json-import-menu',
     side: 'right',
@@ -340,6 +352,7 @@ function clearButtonMenu(){
     $.sidr('close', 'board-menu');
     $.sidr('close', 'button-menu');
     $.sidr('close', 'json-import-menu');
+    $.sidr('close', 'cooldown-menu');
 
     $('.sidr-inner input').val('');
     jqValidate.clearValidate('new-button-form');
@@ -381,6 +394,7 @@ function cooldownUIBuilder(groupid){
     // If we have something to work with...
     if (groupid !== undefined){
         var cooldownTime = dbControls.getData('/cooldowns/'+groupid+'/cooldown');
+        var cooldownTime = cooldownTime / 1000;
 
         // Build the template
         var cooldownTemplate = `<div class="cooldown-group-wrap group-${groupid}-wrap">
@@ -391,7 +405,7 @@ function cooldownUIBuilder(groupid){
                                             </a>
                                         </div>
                                         <div class="cooldown-group-info cooldown-icon">
-                                            <span class="cooldown-id">Cooldown group for ${cooldownTime} milliseconds</span>
+                                            <span class="cooldown-id">Cooldown group for ${cooldownTime} seconds.</span>
                                         </div>
                                         <div class="cooldown-del cooldown-icon">
                                             <a href="#" class="cooldown-del-${groupid}" data="${groupid}">
@@ -412,6 +426,11 @@ function cooldownUIBuilder(groupid){
             cooldownProgressBuilder()
         }
         }).disableSelection();
+
+        // Bind click event to edit.
+        $( ".cooldown-edit-"+groupid ).click(function() {
+            editCooldown(groupid);
+        });
 
         // Bind click event to delete.
         $( ".cooldown-del-"+groupid ).click(function() {
@@ -440,7 +459,6 @@ function cooldownUIBuilder(groupid){
         });
     }
 }
-
 
 // Cooldown Progress Builder
 // This waits for the user to stop sorting items on the interactive page.
@@ -511,6 +529,39 @@ function remove_duplicates(objectsArray) {
         }
     }
     return objectsArray;
+}
+
+// New Cooldown Submission 
+// This takes the value in the current cooldown field and saves it for that group.
+function newCooldownSubmission(){
+    var selectedBoard = $('.interactive-board-select').val();
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+
+    // Get info from menu
+    var groupid = $('.cooldown-amount input').attr('data');
+    var cooldown = $('.cooldown-amount input').val();
+    var cooldown = cooldown * 1000;
+
+    // submits
+    dbControls.push("/cooldowns/"+groupid+"/cooldown", cooldown)
+}
+
+// Edit Cooldown
+// This function throws the cooldown amount for this group into a side menu and opens it.
+function editCooldown(groupid){
+    var selectedBoard = $('.interactive-board-select').val();
+    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+    var cooldown = dbControls.getData("/cooldowns/"+groupid+"/cooldown");
+    var cooldown = cooldown / 1000;
+
+    // Throw button info into button menu.
+    $('.cooldown-amount input').val(cooldown);
+
+    // Put group id on data for input so we can use it when saving.
+    $('.cooldown-amount input').attr('data',groupid);
+
+    // Open Menu
+    $.sidr('open', 'cooldown-menu');
 }
 
 // Connect/Disconnect UI Flipper
@@ -599,6 +650,24 @@ $( ".interactive-board-select" ).change(function() {
 // This monitors the cooldown add button and adds a new cooldown group to the page.
 $( ".add-new-cooldown-group" ).click(function() {
     newCooldownGroup();
+});
+
+// Cooldown Save
+// This monitors save button on the cooldown menu and saves button info to controls file.
+$( ".cooldown-save" ).click(function() {
+    newCooldownSubmission()
+
+    // Build out the board.
+    boardBuilder();
+
+    // Reset Menu
+    clearButtonMenu();
+});
+
+// Cooldown Cancel
+// This monitors save button on the board menu and saves button info to controls file.
+$( ".cooldown-cancel" ).click(function() {
+  clearButtonMenu();
 });
 
 // JSON Import Button
