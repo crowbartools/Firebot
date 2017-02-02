@@ -281,12 +281,11 @@ function boardBuilder(){
                 $( ".button-edit-"+buttonID ).click(function() {
                     editButton(buttonID);
                 });
-
-                // Save active board to json.
-                var dbSettings = new JsonDB("./user-settings/settings", true, false);
-                dbSettings.push("/interactive/activeBoard", selectedBoard);
-
         });
+
+        // Save active board to json.
+        var dbSettings = new JsonDB("./user-settings/settings", true, false);
+        dbSettings.push("/interactive/activeBoard", selectedBoard);
     }
 }
 
