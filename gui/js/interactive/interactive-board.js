@@ -216,6 +216,7 @@ function boardBuilder(){
     $('.interactive-buttons .cooldown-group-wrap').not('.solo-wrap').remove();
     $('.cooldown-group li').remove();
 
+    // Lets put our cooldown groups on the page first.
     cooldownUIBuilder();
 
     // Now lets start...
@@ -387,82 +388,87 @@ function newCooldownGroup(){
 // Cooldown UI Builder
 // This puts the cooldown group UI elements onto the page.
 function cooldownUIBuilder(){
-    var selectedBoard = $('.interactive-board-select').val();
-    var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
-    var cooldownGroups = dbControls.getData('/cooldowns');
+    // Check to see if this board has cooldown groups on it, otherwise ignore.
+    try{
+        var selectedBoard = $('.interactive-board-select').val();
+        var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+        var cooldownGroups = dbControls.getData('/cooldowns');
 
-    // Loop through cooldown boards
-    $.each(cooldownGroups, function(i, val){
-        var groupid = val.id;
-        
-        if(groupid !== undefined){
-            var cooldownTime = dbControls.getData('/cooldowns/'+groupid+'/cooldown');
-            var cooldownTime = cooldownTime / 1000;
+        // Loop through cooldown boards
+        $.each(cooldownGroups, function(i, val){
+            var groupid = val.id;
+            
+            if(groupid !== undefined){
+                var cooldownTime = dbControls.getData('/cooldowns/'+groupid+'/cooldown');
+                var cooldownTime = cooldownTime / 1000;
 
-            // Build the template
-            var cooldownTemplate = `<div class="cooldown-group-wrap group-${groupid}-wrap">
-                                        <div class="cooldown-group-title">
-                                            <div class="cooldown-edit cooldown-icon">
-                                                <a href="#" class="cooldown-edit-${groupid}">
-                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                                                </a>
+                // Build the template
+                var cooldownTemplate = `<div class="cooldown-group-wrap group-${groupid}-wrap">
+                                            <div class="cooldown-group-title">
+                                                <div class="cooldown-edit cooldown-icon">
+                                                    <a href="#" class="cooldown-edit-${groupid}">
+                                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="cooldown-group-info cooldown-icon">
+                                                    <span class="cooldown-id">Cooldown group for ${cooldownTime} seconds.</span>
+                                                </div>
+                                                <div class="cooldown-del cooldown-icon">
+                                                    <a href="#" class="cooldown-del-${groupid}" data="${groupid}">
+                                                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                                                    </a>
+                                                </div>
                                             </div>
-                                            <div class="cooldown-group-info cooldown-icon">
-                                                <span class="cooldown-id">Cooldown group for ${cooldownTime} seconds.</span>
-                                            </div>
-                                            <div class="cooldown-del cooldown-icon">
-                                                <a href="#" class="cooldown-del-${groupid}" data="${groupid}">
-                                                    <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <ul class="cooldown-group group-${groupid}" data="${groupid}"></ul>
-                                    </div>`;
+                                            <ul class="cooldown-group group-${groupid}" data="${groupid}"></ul>
+                                        </div>`;
 
-            // Put at bottom of interactive board page.
-            $('.interactive-buttons').append(cooldownTemplate);
+                // Put at bottom of interactive board page.
+                $('.interactive-buttons').append(cooldownTemplate);
 
-            // Bind click event to edit.
-            $( ".cooldown-edit-"+groupid ).click(function() {
-                editCooldown(groupid);
-            });
+                // Bind click event to edit.
+                $( ".cooldown-edit-"+groupid ).click(function() {
+                    editCooldown(groupid);
+                });
 
-            // Bind click event to delete.
-            $( ".cooldown-del-"+groupid ).click(function() {
-                try{
-                    // Cycle through buttons in that cooldown group and move them to the individual cooldown group.
-                    $('.group-'+groupid+'-wrap .cooldown-group li').each(function( index ) {
-                        $(this).appendTo('ul.solo-group');
-                    });
+                // Bind click event to delete.
+                $( ".cooldown-del-"+groupid ).click(function() {
+                    try{
+                        // Cycle through buttons in that cooldown group and move them to the individual cooldown group.
+                        $('.group-'+groupid+'-wrap .cooldown-group li').each(function( index ) {
+                            $(this).appendTo('ul.solo-group');
+                        });
 
-                    // Delete old group from ui.
-                    $('.group-'+groupid+'-wrap').remove();
+                        // Delete old group from ui.
+                        $('.group-'+groupid+'-wrap').remove();
 
-                    // Trigger receive event for sortable to grab new items.
-                    var widget = $('.cooldown-group').data('ui-sortable');
-                    if (widget) widget._trigger("receive", null, widget._uiHash(widget));
+                        // Trigger receive event for sortable to grab new items.
+                        var widget = $('.cooldown-group').data('ui-sortable');
+                        if (widget) widget._trigger("receive", null, widget._uiHash(widget));
 
-                    // Delete group from controls file.
-                    dbControls.delete("/cooldowns/"+groupid);
-                    
-                    // Rebuild Progress Reports 
-                    cooldownProgressBuilder();
-                } catch(error){
-                    // errorLogger.log("There was an error deleting the cooldown group. Restart the app.")
-                    console.log("Error deleting cooldown group from JSON or it didn't exist.");
-                }
-            });
-        };
-    });
+                        // Delete group from controls file.
+                        dbControls.delete("/cooldowns/"+groupid);
+                        
+                        // Rebuild Progress Reports 
+                        cooldownProgressBuilder();
+                    } catch(error){
+                        // errorLogger.log("There was an error deleting the cooldown group. Restart the app.")
+                        console.log("Error deleting cooldown group from JSON or it didn't exist.");
+                    }
+                });
+            };
+        });
 
-    // Okay, we're done looping. Setup our sortable lists.
-    // Setup sortable lists.
-    $( ".cooldown-group" ).sortable({
-    connectWith: ".cooldown-group",
-    receive: function(event, ui){
-        cooldownProgressBuilder()
+        // Okay, we're done looping. Setup our sortable lists.
+        // Setup sortable lists.
+        $( ".cooldown-group" ).sortable({
+        connectWith: ".cooldown-group",
+        receive: function(event, ui){
+            cooldownProgressBuilder()
+        }
+        }).disableSelection();
+    }catch(err){
+        // No cooldown groups on this board yet.
     }
-    }).disableSelection();
 }
 
 // Cooldown Progress Builder

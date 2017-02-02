@@ -24,6 +24,11 @@ function convertBeamJson() {
             var holding = button.analysis['holding'];
             var frequency = button.analysis['frequency'];
 
+            // If there is no button text, then we'll set a default.
+            if(buttonText === undefined){
+                var buttonText = "Button "+buttonid;
+            }
+
             // Check to make sure keycode module didn't blow it. If it did, just use the beam key name.
             if (keypress === undefined || keypress === null) {
                 var keypress = buttonKeyNum;
