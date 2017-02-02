@@ -119,6 +119,11 @@ function buttonSubmission(){
         var buttonCooldown = convertTime( $('.button-cooldown input').val() );
         var buttonNotes = $('.button-notes input').val();
 
+        // Set minimum api cooldown to 1 minute
+        if(buttonType == "Api Buttons" && buttonCooldown < 15000){
+            var buttonCooldown = 15000;
+        }
+
         // Push general settings to db.
         dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldownGroup": "solo", "cooldown": buttonCooldown, "notes": buttonNotes});
 
@@ -298,7 +303,7 @@ function editButton(buttonID){
     var tactile = dbControls.getData("/tactile/"+buttonID);
 
     var buttonType = tactile.type;
-    var buttonCooldown = tactile.cooldown;
+    var buttonCooldown = tactile.cooldown / 1000;
     var cooldownButtons = tactile.cooldownButtons;
     var buttonNotes = tactile.notes;
 
