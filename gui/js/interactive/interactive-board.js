@@ -54,7 +54,7 @@ function gameProfileList() {
     try{
         var games = fs.readdirSync('./user-settings/controls');
     }catch(err){
-        var games = 0;
+        var games = [];
     }
 
     if(games.length !== 0){
