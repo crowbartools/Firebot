@@ -4,10 +4,11 @@ body{
     font-family: $font-secondary;
     background-image: $main-bg-image;
     background-attachment: fixed;
-    background-size:100%;
+    background-size:cover;
     background-repeat:no-repeat;
-    background-position:top right;
+    background-position:center;
     background-color:#1d2e38;
+    min-width:510px;
 }
 h1, h2, h3, h4, h5{
     color: $text-color-primary;

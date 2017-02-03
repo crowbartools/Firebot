@@ -4397,29 +4397,30 @@ body {
   font-family: Lora, serif;
   background-image: url(../images/bg/5.jpg);
   background-attachment: fixed;
-  background-size: 100%;
+  background-size: cover;
   background-repeat: no-repeat;
-  background-position: top right;
+  background-position: center;
   background-color: #1d2e38;
+  min-width: 510px;
 }
 
-/* line 12, ../scss/_global.scss */
+/* line 13, ../scss/_global.scss */
 h1, h2, h3, h4, h5 {
   color: white;
   font-family: OpenSans, sans-serif;
 }
 
-/* line 16, ../scss/_global.scss */
+/* line 17, ../scss/_global.scss */
 a {
   color: white;
   outline: none;
 }
-/* line 19, ../scss/_global.scss */
+/* line 20, ../scss/_global.scss */
 a:hover {
   color: #cecece;
 }
 
-/* line 23, ../scss/_global.scss */
+/* line 24, ../scss/_global.scss */
 button {
   background-color: #ffcb05;
   color: #273b48;
@@ -4433,12 +4434,12 @@ button {
   margin: 1%;
   outline: none;
 }
-/* line 35, ../scss/_global.scss */
+/* line 36, ../scss/_global.scss */
 button:hover {
   background-color: #888c90;
 }
 
-/* line 40, ../scss/_global.scss */
+/* line 41, ../scss/_global.scss */
 select {
   border: none;
   font-size: 1em;
@@ -4449,14 +4450,14 @@ select {
   cursor: pointer;
 }
 
-/* line 50, ../scss/_global.scss */
+/* line 51, ../scss/_global.scss */
 input, input:focus {
   border-radius: 10px;
   padding: 5px;
   border: none;
 }
 
-/* line 55, ../scss/_global.scss */
+/* line 56, ../scss/_global.scss */
 .ui-autocomplete {
   border-radius: 10px;
   padding: 5px;
@@ -4468,56 +4469,56 @@ input, input:focus {
   z-index: 5;
 }
 
-/* line 65, ../scss/_global.scss */
+/* line 66, ../scss/_global.scss */
 .ui-helper-hidden-accessible {
   display: none;
 }
 
-/* line 69, ../scss/_global.scss */
+/* line 70, ../scss/_global.scss */
 .seperator {
   display: inline-block;
   padding: 0px 15px;
 }
 
-/* line 74, ../scss/_global.scss */
+/* line 75, ../scss/_global.scss */
 label.error {
   color: red;
   font-weight: bold;
   font-size: .75em;
 }
 
-/* line 79, ../scss/_global.scss */
+/* line 80, ../scss/_global.scss */
 input.error {
   border: 1px solid red;
 }
 
-/* line 82, ../scss/_global.scss */
+/* line 83, ../scss/_global.scss */
 textarea {
   resize: none;
 }
 
-/* line 88, ../scss/_global.scss */
+/* line 89, ../scss/_global.scss */
 .ui-autocomplete li {
   cursor: pointer;
 }
-/* line 90, ../scss/_global.scss */
+/* line 91, ../scss/_global.scss */
 .ui-autocomplete li div {
   padding: 5px;
   margin: 2px;
 }
-/* line 95, ../scss/_global.scss */
+/* line 96, ../scss/_global.scss */
 .ui-autocomplete li:hover {
   background-color: #ffcb05;
   color: #273b48;
 }
 
-/* line 102, ../scss/_global.scss */
+/* line 103, ../scss/_global.scss */
 .ui-dialog {
   background-color: white;
   color: #273b48;
   border: 1px solid #ffcb05;
 }
-/* line 106, ../scss/_global.scss */
+/* line 107, ../scss/_global.scss */
 .ui-dialog .ui-dialog-titlebar {
   background-color: #ffcb05;
   color: #273b48;
@@ -4526,46 +4527,46 @@ textarea {
   height: 20px;
   cursor: move;
 }
-/* line 113, ../scss/_global.scss */
+/* line 114, ../scss/_global.scss */
 .ui-dialog .ui-dialog-titlebar button {
   padding: 2px 5px;
   margin: 0px;
   font-size: .9em;
 }
-/* line 119, ../scss/_global.scss */
+/* line 120, ../scss/_global.scss */
 .ui-dialog .ui-dialog-content {
   padding: 10px;
 }
-/* line 121, ../scss/_global.scss */
+/* line 122, ../scss/_global.scss */
 .ui-dialog .ui-dialog-content .facepalm {
   width: 75px;
   display: block;
   margin: auto;
 }
-/* line 127, ../scss/_global.scss */
+/* line 128, ../scss/_global.scss */
 .ui-dialog .ui-button {
   background-color: #273b48;
   color: white;
   float: right;
 }
-/* line 131, ../scss/_global.scss */
+/* line 132, ../scss/_global.scss */
 .ui-dialog .ui-button:hover {
   background-color: #888c90;
 }
 
-/* line 139, ../scss/_global.scss */
+/* line 140, ../scss/_global.scss */
 #header {
   padding: 1%;
 }
-/* line 142, ../scss/_global.scss */
+/* line 143, ../scss/_global.scss */
 #header .main-image {
   display: inline-block;
 }
-/* line 146, ../scss/_global.scss */
+/* line 147, ../scss/_global.scss */
 #header .menu-hamburger {
   font-size: 1.5em;
 }
-/* line 150, ../scss/_global.scss */
+/* line 151, ../scss/_global.scss */
 #header .interactive-status, #header .chat-status {
   float: right;
   display: inline-block;
@@ -4579,11 +4580,11 @@ textarea {
   padding: 4px 10px;
   font-size: .75em;
 }
-/* line 162, ../scss/_global.scss */
+/* line 163, ../scss/_global.scss */
 #header .interactive-status.online, #header .chat-status.online {
   background-color: #177c09;
 }
-/* line 166, ../scss/_global.scss */
+/* line 167, ../scss/_global.scss */
 #header .updated-version {
   float: right;
   display: inline-block;
@@ -4596,23 +4597,23 @@ textarea {
   padding: 4px;
   font-size: .75em;
 }
-/* line 177, ../scss/_global.scss */
+/* line 178, ../scss/_global.scss */
 #header .updated-version a {
   color: #1b2935;
   text-decoration: none;
 }
-/* line 180, ../scss/_global.scss */
+/* line 181, ../scss/_global.scss */
 #header .updated-version a:hover {
   color: #888c90;
 }
 
-/* line 187, ../scss/_global.scss */
+/* line 188, ../scss/_global.scss */
 .navigation ul {
   list-style: none;
   margin: 0px;
   padding: 0px;
 }
-/* line 192, ../scss/_global.scss */
+/* line 193, ../scss/_global.scss */
 .navigation ul li a {
   display: block;
   width: 100%;
@@ -4623,23 +4624,23 @@ textarea {
   padding: 4% 2%;
   border-bottom: 1px dotted #ffffff;
 }
-/* line 201, ../scss/_global.scss */
+/* line 202, ../scss/_global.scss */
 .navigation ul li a:hover {
   background-color: #ffcb05;
   color: #1b2935;
 }
 
-/* line 209, ../scss/_global.scss */
+/* line 210, ../scss/_global.scss */
 .xtremes-logo {
   position: absolute;
   bottom: 10px;
 }
-/* line 212, ../scss/_global.scss */
+/* line 213, ../scss/_global.scss */
 .xtremes-logo img {
   max-width: 100%;
 }
 
-/* line 216, ../scss/_global.scss */
+/* line 217, ../scss/_global.scss */
 .sidr {
   background: #273b48;
   /* Old Browsers */
@@ -4653,41 +4654,41 @@ textarea {
   /*Standard*/
 }
 
-/* line 219, ../scss/_global.scss */
+/* line 220, ../scss/_global.scss */
 .page {
   display: none;
   width: 100%;
 }
-/* line 222, ../scss/_global.scss */
+/* line 223, ../scss/_global.scss */
 .page.current {
   display: block;
 }
-/* line 225, ../scss/_global.scss */
+/* line 226, ../scss/_global.scss */
 .page .main-content {
   padding: 2%;
 }
 
-/* line 232, ../scss/_global.scss */
+/* line 233, ../scss/_global.scss */
 ::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
   background-color: #F5F5F5;
 }
 
-/* line 238, ../scss/_global.scss */
+/* line 239, ../scss/_global.scss */
 ::-webkit-scrollbar {
   width: 12px;
   background-color: #F5F5F5;
 }
 
-/* line 243, ../scss/_global.scss */
+/* line 244, ../scss/_global.scss */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: #888c90;
 }
 
-/* line 250, ../scss/_global.scss */
+/* line 251, ../scss/_global.scss */
 .tooltipster-punk {
   border-radius: 5px;
   border-bottom: 3px solid #ffcb05;
@@ -4695,7 +4696,7 @@ textarea {
   color: #fff;
 }
 
-/* line 256, ../scss/_global.scss */
+/* line 257, ../scss/_global.scss */
 .tooltipster-punk .tooltipster-content {
   font-family: Lora, serif;
   font-size: 14px;
