@@ -375,10 +375,10 @@ function newCooldownGroup(){
     }
 
     // Set default cooldown and push value to JSON for that group.
-    var cooldownTime = "5000";
+    var cooldownTime = 5000;
     dbControls.push("/cooldowns/"+groupid+"/cooldown", cooldownTime);
-    dbControls.push("/cooldowns/"+groupid+"/progress", []);
     dbControls.push("/cooldowns/"+groupid+"/id", groupid);
+    dbControls.push("/cooldowns/"+groupid+"/buttons", []);
 
     // Rebuild Board
     boardBuilder();
@@ -481,7 +481,7 @@ function cooldownProgressBuilder(){
     $.each(cooldownGroups, function(i, val){
         var groupid = val.id;
         if(groupid !== undefined){
-            dbControls.delete("/cooldowns/"+groupid+"/progress");
+            dbControls.delete("/cooldowns/"+groupid+"/buttons");
         }
     });
 
@@ -495,30 +495,16 @@ function cooldownProgressBuilder(){
         if (groupid !== "solo"){
             // Push this info to the controls file for the button.
             dbControls.push("/tactile/"+buttonid+"/cooldownGroup", groupid);
-
-            // Get group info
-            var cooldownGroup = dbControls.getData("/cooldowns/"+groupid);
-            var cooldown = cooldownGroup.cooldown;
-            var cooldownReport = cooldownGroup.progress;
-
-
-            // Create progress report format.
-            var progressFormat = {
-                            "id": parseInt(buttonid),
-                            "cooldown": parseInt(cooldown),
-                            "fired": false,
-                            "progress": 0
-                        }
             
-            // Push these to group in JSON.
-            dbControls.push("/cooldowns/"+groupid+"/progress[]", progressFormat);
+            // Push button id to buttons array for this cooldown group.
+            dbControls.push("/cooldowns/"+groupid+"/buttons[]", parseInt(buttonid));
 
             // Clean the array of duplicates.
-            var currentArray = dbControls.getData("/cooldowns/"+groupid+"/progress")
+            var currentArray = dbControls.getData("/cooldowns/"+groupid+"/buttons")
             var cleanArray = remove_duplicates(currentArray);
 
             // Push Final
-            dbControls.push("/cooldowns/"+groupid+"/progress", cleanArray);
+            dbControls.push("/cooldowns/"+groupid+"/buttons", cleanArray);
         } else {
             // Push this info to the controls file for the button.
             dbControls.push("/tactile/"+buttonid+"/cooldownGroup", groupid);
