@@ -216,15 +216,18 @@ function boardBuilder(){
     $('.interactive-buttons .cooldown-group-wrap').not('.solo-wrap').remove();
     $('.cooldown-group li').remove();
 
-    // Lets put our cooldown groups on the page first.
-    cooldownUIBuilder();
-
     // Now lets start...
     var selectedBoard = $('.interactive-board-select').val();
 
     // If there is a board...
     if (selectedBoard !== null && selectedBoard !== undefined){
+        // Save active board to json.
+        var dbSettings = new JsonDB("./user-settings/settings", true, false);
+        dbSettings.push("/interactive/activeBoard", selectedBoard);
         var dbControls = new JsonDB("./user-settings/controls/"+selectedBoard, true, false);
+
+        // Lets put our cooldown groups on the page first.
+        cooldownUIBuilder();
 
         var tactile = dbControls.getData("tactile");
         var tactileButtons = tactile['tactile'];
@@ -282,10 +285,6 @@ function boardBuilder(){
                     editButton(buttonID);
                 });
         });
-
-        // Save active board to json.
-        var dbSettings = new JsonDB("./user-settings/settings", true, false);
-        dbSettings.push("/interactive/activeBoard", selectedBoard);
     }
 }
 
