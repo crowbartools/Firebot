@@ -19,6 +19,7 @@ function createWindow () {
     mainWindow = new BrowserWindow({
       width: 1000,
       height: 600,
+      minWidth: 600,
       icon: iconPath,
       show: false
     })

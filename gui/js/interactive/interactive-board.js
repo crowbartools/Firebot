@@ -244,7 +244,7 @@ function boardBuilder(){
             var buttonNotes = this.notes;
             var buttonCooldownGroup = this.cooldownGroup;
             
-            var buttonTemplate = `<li class="iButton button${buttonID}" data=${buttonID}>
+            var buttonTemplate = `<li class="iButton button${buttonID} col-sm-6 col-md-3 col-lg-2" data=${buttonID}>
                                     <div class="button-title">
                                         <div class="button-edit button-icon">
                                         <a href="#" class="button-edit-${buttonID}">
@@ -407,7 +407,7 @@ function cooldownUIBuilder(){
                 var cooldownTime = cooldownTime / 1000;
 
                 // Build the template
-                var cooldownTemplate = `<div class="cooldown-group-wrap group-${groupid}-wrap">
+                var cooldownTemplate = `<div class="cooldown-group-wrap group-${groupid}-wrap col-12">
                                             <div class="cooldown-group-title">
                                                 <div class="cooldown-edit cooldown-icon">
                                                     <a href="#" class="cooldown-edit-${groupid}">

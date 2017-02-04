@@ -1,14 +1,19 @@
 // Global
-body{
-    color: $text-color-secondary;
-    font-family: $font-secondary;
+html{
+    width:100%;
+    height:100%;
     background-image: $main-bg-image;
     background-attachment: fixed;
     background-size:cover;
     background-repeat:no-repeat;
     background-position:center;
     background-color:#1d2e38;
-    min-width:510px;
+}
+body{
+    background-color:none;
+    color: $text-color-secondary;
+    font-family: $font-secondary;
+    margin:.5%;
 }
 h1, h2, h3, h4, h5{
     color: $text-color-primary;
@@ -17,41 +22,82 @@ h1, h2, h3, h4, h5{
 a{
     color:$text-color-white;
     outline:none;
-    &:hover{
+    &:hover, &:focus{
         color:$text-color-secondary;
     }
 }
-button{
-    background-color: $highlight-color;
-    color:$button-color;
-    padding:1% 2%;
-    border:none;
-    border-radius: 10px;
-    text-transform: uppercase;
+.btn{
+    font-family: $font-secondary;
     font-weight:bold;
-    font-family: $font-primary;
-    cursor: pointer;
-    margin:1%;
-    outline:none;
-    &:hover{
-        background-color: $non-highlight-color;
+    color:$secondary-color;
+    background-color: $highlight-color;
+    &:focus, &:hover{
+        background-color:$non-highlight-color;
     }
 }
-
-select {
-   border: none;
-   font-size: 1em;
-   padding:1% 2%; 
-   margin:1%; 
-   border-radius: 10px;
-   outline: none;
-   cursor: pointer;
+.input-group-addon{
+    font-family: $font-secondary;
+    font-weight:bold;
+    color:$secondary-color;
+    background-color: $highlight-color; 
 }
 
-input, input:focus{
-    border-radius:10px;
-    padding:5px;
-    border:none;
+// Responsive Font Sizes
+@media screen and (max-width: 767px) {
+    body {
+        font-size: 0.9em;
+        h1{
+            font-size: 2.5em;
+        }
+        h2{
+            font-size: 2em;
+        }
+        h3{
+            font-size: 1.2em;
+        }
+    }
+}
+@media screen and (min-width: 768px) {
+    body {
+        font-size: 1em;
+        h1{
+            font-size: 3em;
+        }
+        h2{
+            font-size: 2.5em;
+        }
+        h3{
+            font-size: 1.2em;
+        }
+    }
+}
+@media screen and (min-width: 992px) {
+    body {
+        font-size: 1.2em;
+        h1{
+            font-size: 3.5em;
+        }
+        h2{
+            font-size: 3em;
+        }
+        h3{
+            font-size: 1.3em;
+        }
+    }
+}
+@media screen and (min-width: 1200px) {
+    body {
+        font-size: 1.3em;
+        h1{
+            font-size: 4em;
+        }
+        h2{
+            font-size: 3em;
+        }
+        h3{
+            font-size: 1.5em;
+        }
+    }
 }
 .ui-autocomplete{
     border-radius:10px;
@@ -75,7 +121,6 @@ input, input:focus{
 label.error{
     color:red;
     font-weight:bold;
-    font-size: .75em;
 }
 input.error{
     border: 1px solid red;

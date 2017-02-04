@@ -1,8 +1,7 @@
-@import 'normalize';
+@import 'bootstrap';
 @import 'variables';
 @import 'mixins';
 @import 'font-awesome.min';
-@import 'tooltipster';
 @import 'plugins';
 @import 'global';
 
@@ -13,16 +12,13 @@
         border-radius:50%;
         padding:5px;
         border: 2px solid white;
-        width:150px;
+        width:200px;
+        @media screen and (max-width: 500px) {
+            width:50%;
+        }
     }
-    h1{
-        font-size:4em;
-        padding:0px;
-        margin:0px;
-    }
-    p{
-        margin:0px;
-        padding:0px;
+    .interactive-tip{
+        margin-top:2%;
     }
 }
 
@@ -33,21 +29,13 @@
         text-align:center;
     }
     .streamer, .bot{
-        margin:0% 5%;
-        display:inline-block;
-        vertical-align:top;
+        margin-top:5%;
     }
     .streamer-avatar, .bot-avatar{
         border-radius:50%;
         padding:5px;
         border: 2px solid white;
-        width:150px;
-    }
-    .loginOrOut button{
-        padding:5%;
-    }
-    .botType{
-        margin:2% 0% 0% 0%;
+        width:175px;
     }
 }
 
@@ -57,17 +45,16 @@
         .launch-interactive, .disconnect-interactive{
             float:right;
         }
+        .action-button{
+            justify-content: flex-end;
+        }
+        .interactive-board-select{
+           border-radius: 0px .25rem .25rem 0px;
+           overflow:hidden;
+           text-overflow: ellipsis;
+        }
     }
     .interactive-buttons{
-        max-width:100%;
-        min-height:100px;
-        padding: 1% 0%;
-        border-top: 1px solid white;
-
-        select{
-            width: 268px;  
-        }
-
         .cooldown-group-wrap{
             margin-top:10px;
 
@@ -99,6 +86,7 @@
             .cooldown-group{
                 display:flex;
                 flex-wrap: wrap;
+                list-style: none;
                 margin:0px;
                 padding:5px;
                 border:1px solid $highlight-color;
@@ -110,14 +98,13 @@
         }
 
         .iButton{
-            display: inline-block;
             font-family: $font-primary;
-            margin:5px;
+            padding: 5px 5px 5px 5px;
 
             .button-title{
                 background-color: $highlight-color;
                 padding:1% 2%;
-                width:140px;
+                width:100%;
                 border-radius: 10px 10px 0px 0px;
                 border: 1px dotted #ffffff;
                 margin: 1%;
@@ -147,7 +134,7 @@
                 border: 1px dotted #ffffff;
                 background-color:white;
                 margin: 1%;
-                width:140px;
+                width:100%;
                 padding: 5% 2%;
                 color: $main-color;
 
@@ -161,10 +148,6 @@
 #button-menu{
     .sidr-inner{
         padding: 10px;
-        label{
-            display:block;
-            padding:5px 0px;
-        }
         .button-section{
             margin-bottom:10px;
         }
@@ -216,6 +199,9 @@
     }
     select, input{
         margin: 1% 0%;
+    }
+    .settings-save-close button{
+        margin-right:5px;
     }
 }
 

@@ -3,7 +3,7 @@ const shell = require('electron').shell;
 // Random BG Image
 function randomBG(){
     var random = Math.floor(Math.random() * 5) + 1 ;
-    $('body').css('background-image', 'url("./images/bg/'+random+'.jpg")');
+    $('html').css('background-image', 'url("./images/bg/'+random+'.jpg")');
 }
 randomBG();
 

@@ -46,32 +46,34 @@
 
     <!-- New Board Menu -->
     <div id="board-menu">
+        <h3>Board Menu</h3>
         <div class="board-name button-section">
-            <label>Board Name</label>
-            <input type="text" placeholder="Overwatch" title="Name your board for your own reference." class="tooltip">
+            <label class="col-form-label">Board Name</label>
+            <input class="form-control" type="text" placeholder="Overwatch" title="Name your board for your own reference." maxlength="25">
         </div>
         <div class="button-save-close">
             <a href="#board-menu">
-                <button class="board-save">Save</button>
+                <button class="board-save btn">Save</button>
             </a>
             <a href="#board-menu">
-                <button class="board-cancel">Cancel</button>
+                <button class="board-cancel btn">Cancel</button>
             </a>
         </div>
     </div>
 
     <!-- New Cooldown Menu -->
     <div id="cooldown-menu">
+        <h3>Cooldown Group</h3>
         <div class="cooldown-amount button-section">
-            <label>Cooldown (sec)</label>
-            <input type="text" placeholder="5" title="How long will this group cool down for?" class="tooltip">
+            <label class="col-form-label">Cooldown (sec)</label>
+            <input class="form-control" type="text" placeholder="5" title="How long will this group cool down for?">
         </div>
         <div class="cooldown-save-close">
             <a href="#cooldown-menu">
-                <button class="cooldown-save">Save</button>
+                <button class="cooldown-save btn">Save</button>
             </a>
             <a href="#cooldown-menu">
-                <button class="cooldown-cancel">Cancel</button>
+                <button class="cooldown-cancel  btn">Cancel</button>
             </a>
         </div>
     </div>
@@ -82,50 +84,50 @@
         <div class="button-general-settings">
             <h3>General Settings</h3>
                 <div class="button-id button-section">
-                    <label>Button ID</label>
-                    <input type="text" placeholder="1" class="tooltip" name="buttonID" title="ID should match the button on the dev board.">
+                    <label class="col-form-label">Button ID</label>
+                    <input class="form-control" type="text" placeholder="1" name="buttonID" title="ID should match the button on the dev board.">
                 </div>
                 <div class="button-notes button-section">
-                    <label>Button Name</label>
-                    <input type="text" placeholder="Fart Sound" class="tooltip" name="buttonName" title="For your own reference.">
+                    <label class="col-form-label">Button Name</label>
+                    <input class="form-control" type="text" placeholder="Fart Sound" name="buttonName" title="For your own reference.">
                 </div>
                 <div class="button-type button-section">
-                    <label>Type</label>
-                    <select  title="Choose type of controls for the button" class="tooltip">
+                    <label class="col-form-label">Type</label>
+                    <select class="form-control" title="Choose type of controls for the button">
                         <option value="Game Controls" data="game-controls">Game Control</option>
                         <option value="Sound" data="sound-buttons">Sound</option>
                         <option value="Api Buttons" data="api-buttons">API Button</option>
                         <option value="Text Buttons" data="text-buttons">Text</option>
-                        <option value="Clicker Boss" data="clickerboss-buttons" disabled>Clicker Boss</option>
                         <option value="Nothing" data="nothing">Nothing</option>
                     </select>
                 </div>
                 <div class="button-cooldown button-section">
-                    <label>Cooldown Length (sec)</label>
-                    <input type="text" placeholder="120" class="tooltip" name="cooldownLength" title="Cooldown in seconds. This will be overridden by any group cooldown settings.">
+                    <label class="col-form-label">Cooldown Length (sec)</label>
+                    <input class="form-control" type="text" placeholder="120" name="cooldownLength" title="Cooldown in seconds. This will be overridden by any group cooldown settings.">
                 </div>
         </div>
         <div class="button-specific-settings">
             <!-- These divs are shown based on the selected button type -->
-            <h3>Type Specific</h3>
 
             <!-- Game Controls -->
             <div class="game-controls button-specific">
+                <h3>Type Specific</h3>
                 <div class="game-button-pressed">
-                    <label>Button to Press</label>
-                    <input type="text" placeholder="W" class="tooltip" name="buttonPress" title="The key that will be pressed.">
+                    <label class="col-form-label">Button to Press</label>
+                    <input class="form-control" type="text" placeholder="W" name="buttonPress" title="The key that will be pressed.">
                 </div>
                 <div class="game-button-counter">
-                    <label>Opposite Button</label>
-                    <input type="text" placeholder="S" class="tooltip" title="The key to compare against.">
+                    <label class="col-form-label">Opposite Button</label>
+                    <input class="form-control" type="text" placeholder="S" title="The key to compare against.">
                 </div>
             </div>
 
             <!-- API Buttons -->
             <div class="api-buttons button-specific" style="display:none">
+                <h3>Type Specific</h3>
                 <div class="api-select">
-                    <label>Type</label>
-                    <select>
+                    <label class="col-form-label">Type</label>
+                    <select class="form-control">
                         <option value="Advice">Advice</option>
                         <option value="Cat Picture">Cat Picture</option>
                         <option value="Cat Fact">Cat Fact</option>
@@ -137,8 +139,8 @@
                     </select>
                 </div>
                 <div class="api-send-as">
-                    <label>Send As</label>
-                    <select class="tooltip" title="Who should send this message to chat?">
+                    <label class="col-form-label">Send As</label>
+                    <select class="form-control" title="Who should send this message to chat?">
                         <option value="Bot">Bot</option>
                         <option value="Streamer">Streamer</option>
                     </select>
@@ -150,17 +152,18 @@
 
             <!-- Text Buttons -->
             <div class="text-buttons button-specific" style="display:none">
+                <h3>Type Specific</h3>
                 <div class="text-line">
-                    <label>Text</label>
-                    <input type="text" placeholder="!points add 100" class="tooltip" title="The line of text you'd like to send to chat.">
+                    <label class="col-form-label">Text</label>
+                    <input class="form-control" type="text" placeholder="!points add 100" title="The line of text you'd like to send to chat.">
                 </div>
                 <div class="text-whisper-to">
-                    <label>Whisper to</label>
-                    <input type="text" placeholder="Firebot" class="tooltip" title="Leave blank to broadcast to everyone. Otherwise, enter a name to whisper someone.">
+                    <label class="col-form-label">Whisper to</label>
+                    <input class="form-control" type="text" placeholder="Firebot" title="Leave blank to broadcast to everyone. Otherwise, enter a name to whisper someone.">
                 </div>
                 <div class="text-send-as">
-                    <label>Send As</label>
-                    <select class="tooltip" title="Who should send this message to chat?">
+                    <label class="col-form-label">Send As</label>
+                    <select class="form-control" title="Who should send this message to chat?">
                         <option value="Bot">Bot</option>
                         <option value="Streamer">Streamer</option>
                     </select>
@@ -169,14 +172,15 @@
 
             <!-- Sound Buttons -->
             <div class="sound-buttons button-specific" style="display:none">
+                <h3>Type Specific</h3>
                 <div class="sound-file">
-                    <label>Audio File</label>
-                    <input type="text" name="soundPath" placeholder="C:\" class="tooltip" title="Choose your audio file. mp3, wav, or ogg">
+                    <label class="col-form-label">Audio File</label>
+                    <input class="form-control" type="text" name="soundPath" placeholder="C:\" title="Choose your audio file. mp3, wav, or ogg">
                     <button class="sound-selector">Choose</button>
                 </div>
                 <div class="sound-volume">
-                    <label>Volume</label>
-                    <input type="text" name="soundVolume" placeholder="0.5" class="tooltip" title="0.5 is 50% volume, 0.2 is 20%, etc...">
+                    <label class="col-form-label">Volume</label>
+                    <input class="form-control" type="text" name="soundVolume" placeholder="0.5" title="0.5 is 50% volume, 0.2 is 20%, etc...">
                 </div>
             </div>
 
@@ -188,10 +192,10 @@
         </div>
         <div class="button-save-close">
             <a href="#button-menu">
-                <button class="button-save" type="submit">Save</button>
+                <button class="button-save btn" type="submit">Save</button>
             </a>
             <a href="#button-menu">
-                <button class="button-cancel" onclick="$.sidr('close', 'button-menu');">Cancel</button>
+                <button class="button-cancel btn" onclick="$.sidr('close', 'button-menu');">Cancel</button>
             </a>
         </div>
         </form>
@@ -205,10 +209,10 @@
         </div>
         <div class="button-save-close">
             <a href="#json-import-menu">
-                <button class="import-save">Save</button>
+                <button class="import-save btn">Save</button>
             </a>
             <a href="#json-import-menu">
-                <button class="import-cancel">Cancel</button>
+                <button class="import-cancel btn">Cancel</button>
             </a>
         </div>
     </div>
@@ -217,111 +221,136 @@
     <div id="content">
 
         <section class="start page current">
-            <div class="main-content">
-                <img src="./images/logo.jpg" class="logo">
-                <h1>Firebot</h1>
-                <p>Interactivity for Beam.pro</p>
-                <a href="#main-menu" class="menu-toggle">
-                    <button>Start</button>
-                </a>
-                <div class="interactive-tip">
-                   TIP: Press CTRL + ALT + F12 to toggle interactive on or off at any time, even while in a game!
+            <div class="main-content container">
+                <div class="row">
+                    <div class="col-12">
+                        <img src="./images/logo.jpg" class="logo">
+                    </div>
+                    <div class="col-12">
+                        <h1>Firebot</h1>
+                    </div>
+                    <div class="col-12">
+                        <p>Interactivity for Beam.pro</p>
+                    </div>
+                    <div class="col-12">
+                        <a href="#main-menu" class="menu-toggle">
+                            <button class="btn">Start</button>
+                        </a>
+                    </div>
+                    <div class="interactive-tip col-12">
+                        TIP: Press CTRL + ALT + F12 to toggle interactive on or off at any time, even while in a game!
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="login page">
-            <div class="main-content">
-                <div class="streamer">
-                    <div class="avatar"><img src="./images/placeholders/default.jpg" class="streamer-avatar"></div>
-                    <div class="username">
-                        <h2>Streamer</h2></div>
-                    <div class="loginOrOut">
-                        <button class="streamer-login" data="streamer" status="login">Login</button>
+            <div class="main-content container">
+                <div class="row">
+                    <div class="streamer col-6">
+                        <div class="avatar"><img src="./images/placeholders/default.jpg" class="streamer-avatar"></div>
+                        <div class="username">
+                            <h2>Streamer</h2></div>
+                        <div class="loginOrOut">
+                            <button class="streamer-login btn" data="streamer" status="login">Login</button>
+                        </div>
                     </div>
-                </div>
-                <div class="bot">
-                    <div class="avatar"><img src="./images/placeholders/default.jpg" class="bot-avatar"></div>
-                    <div class="username">
-                        <h2>Bot</h2></div>
-                    <div class="loginOrOut">
-                        <button class="bot-login" data="bot" status="login">Login</button>
+                    <div class="bot col-6">
+                        <div class="avatar"><img src="./images/placeholders/default.jpg" class="bot-avatar"></div>
+                        <div class="username">
+                            <h2>Bot</h2></div>
+                        <div class="loginOrOut">
+                            <button class="bot-login btn" data="bot" status="login">Login</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="interactive page">
-            <div class="main-content">
-                <div class="interactive-top">
-                    <select class="interactive-board-select">
-                    </select>
-                    <button class="add-new-board tooltip" title="Add new board."><i class="fa fa-plus-square-o" aria-hidden="true"></i></button>
-                    <button class="import-board tooltip" title="Import Beam JSON."><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i></button>
-                    <button class="delete-board tooltip" title="Delete current board."><i class="fa fa-minus-square-o" aria-hidden="true"></i></button>
-                    <div class="seperator"></div>
-                    <button class="add-new-button tooltip" title="Add new button."><i class="fa fa-gamepad" aria-hidden="true"></i></button>
-                    <button class="add-new-cooldown-group tooltip" title="Add a new cooldown group."><i class="fa fa-hourglass-o" aria-hidden="true"></i></button>
-                    <div class="seperator"></div>
-                    <button class="launch-interactive tooltip" title="Launch current board."><i class="fa fa-rocket" aria-hidden="true"></i></button>
-                    <button class="disconnect-interactive tooltip" title="Stop current board." style="display:none"><i class="fa fa-chain-broken" aria-hidden="true"></i></button>
+            <div class="main-content container">
+                <div class="row interactive-top">
+                    <div class="col-9">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="board-select">Board</span>
+                            <select class="form-control interactive-board-select" aria-describedby="board-select"></select>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group action-button">
+                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span>Actions</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#" data="add-new-board">Add Board</a>
+                                <a class="dropdown-item" href="#" data="import-board">Import Board</a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data="add-button">Add Button</a>
+                                <a class="dropdown-item" href="#" data="add-cooldown-group">Add Cooldown Group</a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data="add-cooldown-group">Launch Interactive</a>
+                                <div role="separator" class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data="delete-board">Delete Board</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="interactive-buttons">
-                    <div class="cooldown-group-wrap solo-wrap">
+                <div class="interactive-buttons row">
+                    <div class="cooldown-group-wrap solo-wrap col-12">
                         <div class="cooldown-group-title">
                             <div class="cooldown-group-info cooldown-icon">
                                 <span class="cooldown-id">Individual Cooldowns</span>
                             </div>
                         </div>
-                        <ul class="cooldown-group solo-group" data="solo"></ul>
+                        <ul class="cooldown-group solo-group row" data="solo"></ul>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="settings page">
-            <div class="main-content">
-                <div class="settings-general settings-section">
+            <div class="main-content container">
+                <div class="settings-general settings-section row">
                     <h3>General</h3>
-                    <div class="betaOptIn setting">
-                        <label>Beta Tester</label>
-                        <select title="Get an alert when there are new beta versions." class="tooltip">
+                    <div class="betaOptIn setting col-sm-12 col-md-6 col-lg-4">
+                        <label class="col-form-label">Beta Tester</label>
+                        <select class="form-control" title="Get an alert when there are new beta versions.">
                             <option value="no">No</option>
                             <option value="yes">Yes</option>
                         </select>
                     </div>
                 </div>
-                <div class="settings-game-controls settings-section">
+                <div class="settings-game-controls settings-section row">
                     <h3>Game Controls</h3>
-                    <div class="emulation-type setting">
-                        <label>Keyboard/Mouse Emulator</label>
-                        <select title="Adjust this if game controls dont work in your game." class="tooltip">
+                    <div class="emulation-type setting col-sm-12 col-md-6 col-lg-4">
+                        <label class="col-form-label">Keyboard/Mouse Emulator</label>
+                        <select class="form-control" title="Adjust this if game controls dont work in your game.">
                             <option value="robotjs">robotjs</option>
                             <option value="kbm">kbm-robot</option>
                         </select>
                     </div>
-                    <div class="mouse-clicks setting">
-                        <label>Enable Mouse Clicks</label>
-                        <select title="Careful! This will enable mouse clicks with screen controls." class="tooltip">
+                    <div class="mouse-clicks setting col-sm-12 col-md-6 col-lg-4">
+                        <label class="col-form-label">Enable Mouse Clicks</label>
+                        <select class="form-control" title="Careful! This will enable mouse clicks with screen controls.">
                             <option value="disabled">Disabled</option>
                             <option value="enabled">Enabled</option>
                         </select>
                     </div>
-                    <div class="mouse-speed setting">
-                        <label>Mouse Speed</label>
-                        <input type="text" name="mouse-speed" placeholder="50" title="Mouse sensitivity for joystick controls. Higher is faster." class="tooltip">
+                    <div class="mouse-speed setting col-sm-12 col-md-6 col-lg-4">
+                        <label class="col-form-label">Mouse Speed</label>
+                        <input class="form-control" type="text" name="mouse-speed" placeholder="50" title="Mouse sensitivity for joystick controls. Higher is faster.">
                     </div>
                 </div>
-                <div class="settings-save-close">
-                    <button class="settings-save">Save</button>
-                    <button class="settings-cancel">Cancel</button>
+                <div class="settings-save-close row">
+                    <button class="settings-save btn">Save</button>
+                    <button class="settings-cancel btn">Cancel</button>
                 </div>
             </div>
         </section>
 
         <section class="bug-report page">
-            <div class="main-content">
-                <h2>Bug Reporting</h2>
+            <div class="main-content container">
+                <h3>Bug Reporting</h3>
                 <p>If you run into any issues while using the app, please use the links below to let me know. Entering issues on github helps me keep track of everything, and it gives you notifications when I reply or change the status of your issue.</p>
                 <p>Please try to provide as much information as possible about what you were doing and when the error occured.</p>
                 <div class="links">
@@ -333,8 +362,8 @@
         </section>
 
         <section class="updates page">
-            <div class="main-content">
-                <h2>Latest Update</h2>
+            <div class="main-content container">
+                <h3>Latest Update</h3>
                 <div class="latest-update"></div>
                 <div class="release-date"></div>
                 <div class="update-notes"></div>
@@ -345,14 +374,16 @@
         </section>
 
         <section class="credits page">
-            <div class="main-content">
-                <h2>Credits</h2>
+            <div class="main-content container">
+                <h3>Credits</h3>
                 <p>Many people worked together to make this app possible.<p>
                 <ul>
                     <li><a href="https://beam.pro/firebottle">Firebottle</a></li>
                     <li><a href="https://beam.pro/theperry">ThePerry</a></li>
                     <li><a href="https://beam.pro/Mi5terme">Mi5terme</a></li>
                     <li><a href="https://beam.pro/ProbablePrime">ProbablePrime</a></li>
+                    <li><a href="https://beam.pro/FierySama">FierySama</a></li>
+                    <li><a href="https://beam.pro/UnknownTBeast">UnknownTBeast</a></li>
                     <li><a href="https://github.com/DeekyJay/SoundwaveInteractive/releases">Deeky</a></li>
                     <li>and the Firebots...</li>
                 </ul>
@@ -371,11 +402,12 @@
     <div class="hidden" style="display:none"></div>
 </body>
 
+<script src="./js/plugins/tether.min.js"></script>
 <script>
     // Require other files here.
     window.$ = window.jQuery = require('jquery');
     require('./js/plugins/jquery.sidr.min.js');
-    require('./js/plugins/tooltipster.bundle.min.js');
+    require('./js/plugins/bootstrap.min.js');
     require('./js/plugins/jquery-ui.min.js');
     require('./js/global.js');
     require('./js/settings.js');
