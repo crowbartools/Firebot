@@ -119,9 +119,15 @@ function buttonSubmission(){
         var buttonCooldown = convertTime( $('.button-cooldown input').val() );
         var buttonNotes = $('.button-notes input').val();
 
-
+        // See if we're editing a button, if we are we want to keep the cooldown group.
+        try{
+            var cooldownGroup = dbControls.getData('/tactile/'+buttonID+'/cooldownGroup');
+        } catch(err){
+            var cooldownGroup = "solo";
+        }
+        
         // Push general settings to db.
-        dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldownGroup": "solo", "cooldown": buttonCooldown, "notes": buttonNotes});
+        dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldownGroup": cooldownGroup, "cooldown": buttonCooldown, "notes": buttonNotes});
 
         // Button Specific settings
         if (buttonType == "Game Controls"){
