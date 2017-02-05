@@ -184,9 +184,25 @@ function addNewBoardButton(){
     $.sidr('open', 'board-menu');
 }
 
+// Delete Board confirm
+// This pops up confirmation to delete the board.
+function deleteBoardPopup(){
+    $('#delete-confirm').dialog( "open" );
+};
+
+// Delete Board Cancel
+// This cancels the delete confirmation.
+function cancelDeleteBoardPopup(){
+    $('#delete-confirm').dialog( "close" );
+}
+
 // Remove Board Button
 // This function deletes the current board.
 function deleteBoardButton(){
+    // Close Popup
+    $('#delete-confirm').dialog( "close" );
+
+    // Delete board.
     var boardName = $('.interactive-board-select').val();
     var filepath = './user-settings/controls/'+boardName+'.json';
     fs.exists(filepath, function(exists) {
@@ -569,17 +585,11 @@ function editCooldown(groupid){
 // Changes UI elements depending on if we're connected or disconnected from beam.
 function connectFlipper(status){
     if(status == "disconnected"){
-        $('.disconnect-interactive').fadeOut('fast', function(){
-            $('.launch-interactive').fadeIn('fast');
-            $('.interactive-status').removeClass('online');
-            $('.chat-status').removeClass('online');
-        });
+        $('.disconnect-interactive').removeClass('disconnect-interactive').addClass('launch-interactive').text('Launch Interactive')
+        $('.chat-status, .interactive-status').removeClass('online');
     } else if (status == "connected"){
-        $('.launch-interactive').fadeOut('fast', function(){
-            $('.disconnect-interactive').fadeIn('fast');
-            $('.interactive-status').addClass('online');
-            $('.chat-status').addClass('online');
-        });
+        $('.launch-interactive').removeClass('launch-interactive').addClass('disconnect-interactive').text('Disconnect Interactive')
+        $('.chat-status, .interactive-status').addClass('online');
     }
 };
 
@@ -621,6 +631,18 @@ $( ".button-cancel" ).click(function() {
 // This monitors the new board button and creates a new board on click.
 $(".add-new-board").click(function(){
     addNewBoardButton();
+});
+
+// Cancel Delete Board Popup Button
+// This monitors the cancel button and closes confirmation
+$(".delete-board-popup").click(function(){
+    deleteBoardPopup();
+});
+
+// Delete Board Cancel
+// This monitors the delete board button and deletes a new board on click.
+$(".dont-delete-board").click(function(){
+    cancelDeleteBoardPopup();
 });
 
 // Delete Board Button
@@ -697,14 +719,12 @@ $( ".import-cancel" ).click(function() {
 
 // Launch Interactive
 // Launch interactive when button is clicked.
-$( ".launch-interactive" ).click(function() {
-    ipcRenderer.send('beamInteractive', 'connect');
-});
-
-// Disconnect Interactive
-// Disconnect interactive when button is clicked.
-$( ".disconnect-interactive" ).click(function() {
-    ipcRenderer.send('beamInteractive', 'disconnect');
+$( ".interactive-connector" ).click(function() {
+    if ($('.interactive-connector').hasClass('launch-interactive')){
+        ipcRenderer.send('beamInteractive', 'connect');
+    } else if ($('.interactive-connector').hasClass('disconnect-interactive')){
+        ipcRenderer.send('beamInteractive', 'disconnect');
+    }
 });
 
 // Online and Offline Status
@@ -734,3 +754,13 @@ ipcRenderer.on('killSwitch', function (event, status){
 // Run on App Start
 ///////////////////
 gameProfileList();
+
+
+// Initialize Plugin
+// On app start initialize the dialog window.
+$( document ).ready(function() {
+    $( "#delete-confirm" ).dialog({
+        closeText: "X",
+        autoOpen: false
+    });
+});

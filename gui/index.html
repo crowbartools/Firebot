@@ -282,15 +282,15 @@
                                 <span>Actions</span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#" data="add-new-board">Add Board</a>
-                                <a class="dropdown-item" href="#" data="import-board">Import Board</a>
+                                <a class="dropdown-item add-new-board" href="#">Add Board</a>
+                                <a class="dropdown-item import-board" href="#">Import Board</a>
                                 <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data="add-button">Add Button</a>
-                                <a class="dropdown-item" href="#" data="add-cooldown-group">Add Cooldown Group</a>
+                                <a class="dropdown-item add-new-button" href="#">Add Button</a>
+                                <a class="dropdown-item add-new-cooldown-group" href="#">Add Cooldown Group</a>
                                 <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data="add-cooldown-group">Launch Interactive</a>
+                                <a class="dropdown-item interactive-connector launch-interactive" href="#">Launch Interactive</a>
                                 <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data="delete-board">Delete Board</a>
+                                <a class="dropdown-item delete-board-popup" href="#">Delete Board</a>
                             </div>
                         </div>
                     </div>
@@ -399,6 +399,12 @@
     <!-- End Content -->
 
     <div id="error-log" title="Error"></div>
+    <div id="delete-confirm" title="Delete?">
+        <img src="./images/dialog/face.png" class="facepalm">
+        <p>Are you sure you want to delete this board?</p>
+        <button class="delete-board btn">Yes</button>
+        <button class="dont-delete-board btn">OMG NO</button>
+    </div>
     <div class="hidden" style="display:none"></div>
 </body>
 

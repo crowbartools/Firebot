@@ -38,21 +38,6 @@ function pageNavigation(){
 }
 pageNavigation();
 
-// Launches tooltip
-// This initializes all tooltips
-$(document).ready(function() {
-    $('.tooltip').tooltipster({
-        delay: 100,
-        maxWidth: 500,
-        speed: 300,
-        interactive: true,
-        animation: 'grow',
-        maxWidth: 200,
-        theme : 'tooltipster-punk',
-        side: "left"
-    });
-});
-
 // Open Link In Browser
 // This opens link in system default browser.
 $(document).on('click', 'a[href^="http"]', function(event) {

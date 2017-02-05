@@ -154,16 +154,17 @@ textarea {
         color:$main-color;
         font-weight:bold;
         padding:5px 10px 10px 10px;
-        height:20px;
         cursor:move;
         button{
-            padding:2px 5px;
+            border-radius:50%;
+            border:none;
             margin:0px;
             font-size:.9em;
         }
     }
     .ui-dialog-content{
         padding:10px;
+        text-align:center;
         .facepalm{
             width:75px;
             display:block;
