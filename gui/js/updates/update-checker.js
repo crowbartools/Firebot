@@ -3,6 +3,7 @@ const request = require('request');
 const JsonDB = require('node-json-db');
 const appVersion = require('electron').remote.app.getVersion();
 const compareVersions = require('compare-versions');
+const marked = require('marked');
 
 // Update Checker
 // This will compare the app version number in package.json to the version number in json at firebottle.tv
@@ -49,7 +50,7 @@ function updateChecker(){
                 var gitName = gitNewest.name;
                 var gitDate = parseISOLocal(gitNewest.created_at);
                 var gitLink = gitNewest.html_url;
-                var gitNotes = gitNewest.body;
+                var gitNotes = marked(gitNewest.body);
 
                 // Output all to updates page.
                 $('.updates .latest-update').text(gitName);

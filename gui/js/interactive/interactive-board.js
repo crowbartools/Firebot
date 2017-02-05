@@ -339,6 +339,13 @@ function boardBuilder(){
                     editButton(buttonID);
                 });
         });
+
+        // Set cursor to move if it can be moved.
+        if( $('.cooldown-group').length > 1){
+            $('.button-title').css('cursor', 'move');
+        } else {
+            $('.button-title').css('cursor', 'default');
+        }
     }
 }
 
@@ -514,8 +521,15 @@ function cooldownUIBuilder(){
                         // Delete group from controls file.
                         dbControls.delete("/cooldowns/"+groupid);
                         
-                        // Rebuild Progress Reports 
+                        // Rebuild Cooldown Info
                         cooldownProgressBuilder();
+
+                        // Set cursor to move if it can be moved.
+                        if( $('.cooldown-group').length > 1){
+                            $('.button-title').css('cursor', 'move');
+                        } else {
+                            $('.button-title').css('cursor', 'default');
+                        }
                     } catch(error){
                         // errorLogger.log("There was an error deleting the cooldown group. Restart the app.")
                         console.log("Error deleting cooldown group from JSON or it didn't exist.");
@@ -527,11 +541,15 @@ function cooldownUIBuilder(){
         // Okay, we're done looping. Setup our sortable lists.
         // Setup sortable lists.
         $( ".cooldown-group" ).sortable({
-        connectWith: ".cooldown-group",
-        receive: function(event, ui){
-            cooldownProgressBuilder()
-        }
+            connectWith: ".cooldown-group",
+            placeholder: "ui-state-highlight",
+            opacity: 0.75,
+            forcePlaceholderSize: true,
+            receive: function(event, ui){
+                cooldownProgressBuilder()
+            }
         }).disableSelection();
+
     }catch(err){
         // No cooldown groups on this board yet.
     }

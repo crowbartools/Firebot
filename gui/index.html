@@ -233,9 +233,6 @@
                             <button class="btn">Start</button>
                         </a>
                     </div>
-                    <div class="interactive-tip col-12">
-                        TIP: Press CTRL + ALT + F12 to toggle interactive on or off at any time, even while in a game!
-                    </div>
                 </div>
             </div>
         </section>
@@ -350,9 +347,8 @@
                 <p>If you run into any issues while using the app, please use the links below to let me know. Entering issues on github helps me keep track of everything, and it gives you notifications when I reply or change the status of your issue.</p>
                 <p>Please try to provide as much information as possible about what you were doing and when the error occured.</p>
                 <div class="links">
-                    <a href="https://github.com/Firebottle/Firebot/issues">View all issues</a>
-                    <br>
-                    <a href="https://github.com/Firebottle/Firebot/issues/new">Open an Issue</a>
+                    <a href="https://github.com/Firebottle/Firebot/issues/new"><button class="btn">Open an Issue</button></a>
+                    <a href="https://github.com/Firebottle/Firebot/issues"><button class="btn">View all issues</button></a>
                 </div>
             </div>
         </section>
@@ -364,32 +360,62 @@
                 <div class="release-date"></div>
                 <div class="update-notes"></div>
                 <div class="update-buttons">
-                    <a href="" class="github-link">Download on Github</a>
+                    <a href="" class="github-link"><button class="btn">Download on Github</button></a>
                 </div>
             </div>
         </section>
 
         <section class="credits page">
             <div class="main-content container">
-                <h3>Credits</h3>
-                <p>Many people worked together to make this app possible.<p>
-                <ul>
-                    <li><a href="https://beam.pro/firebottle">Firebottle</a></li>
-                    <li><a href="https://beam.pro/theperry">ThePerry</a></li>
-                    <li><a href="https://beam.pro/Mi5terme">Mi5terme</a></li>
-                    <li><a href="https://beam.pro/ProbablePrime">ProbablePrime</a></li>
-                    <li><a href="https://beam.pro/FierySama">FierySama</a></li>
-                    <li><a href="https://beam.pro/UnknownTBeast">UnknownTBeast</a></li>
-                    <li><a href="https://github.com/DeekyJay/SoundwaveInteractive/releases">Deeky</a></li>
-                    <li>and the Firebots...</li>
-                </ul>
-                <p>Other Credits</p>
-                <ul>
-                    <li><a href="https://www.pexels.com">Pexels</a></li>
-                    <li><a href="http://xtremes.pro">Xtremes Stream Team</a></li>
-                </ul>
+                <div class="row">
+                    <div class="col-6">
+                        <h3>Credits</h3>
+                        <p>Many people worked together to make this app possible.<p>
+                        <ul>
+                            <li><a href="https://beam.pro/firebottle">Firebottle</a></li>
+                            <li><a href="https://beam.pro/theperry">ThePerry</a></li>
+                            <li><a href="https://beam.pro/Mi5terme">Mi5terme</a></li>
+                            <li><a href="https://beam.pro/ProbablePrime">ProbablePrime</a></li>
+                            <li><a href="https://beam.pro/FierySama">FierySama</a></li>
+                            <li><a href="https://beam.pro/UnknownTBeast">UnknownTBeast</a></li>
+                            <li><a href="https://github.com/DeekyJay/SoundwaveInteractive/releases">Deeky</a></li>
+                            <li>and the Firebots...</li>
+                        </ul>
+                        <p>Other Credits</p>
+                        <ul>
+                            <li><a href="https://www.pexels.com">Pexels</a></li>
+                            <li><a href="http://xtremes.pro">Xtremes Stream Team</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-6">
+                        <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/firebottletv" data-widget-id="707259165681422336">Tweets by @firebottletv</a>
+                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                    </div>
+                </div>
             </div>
         </section>
+
+        <div class="interactive-tip">
+            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active">
+                        TIP: Press CTRL + ALT + F12 to toggle interactive on or off at any time, even while in a game!
+                    </div>
+                    <div class="carousel-item">
+                        The "text" button type lets you whisper commands to your bot such as !coins add 100.
+                    </div>
+                    <div class="carousel-item">
+                        Game controls not working? Try switching the emulation type on the settings page.
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <span aria-hidden="true"><i class="fa fa-arrow-left" aria-hidden="true"></i></span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <span aria-hidden="true"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>
+                </a>
+            </div>
+        </div>
 
     </div>
     <!-- End Content -->

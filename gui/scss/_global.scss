@@ -9,16 +9,20 @@ html{
     background-position:center;
     background-color:#1d2e38;
 }
+
 body{
+    height:100%;
+    width:100%;
     background-color:none;
     color: $text-color-secondary;
     font-family: $font-secondary;
-    margin:.5%;
 }
+
 h1, h2, h3, h4, h5{
     color: $text-color-primary;
     font-family: $font-primary;
 }
+
 a{
     color:$text-color-white;
     outline:none;
@@ -26,23 +30,41 @@ a{
         color:$text-color-secondary;
     }
 }
+
 select, input{
-    font-family: $font-primary;    
+    font-family: $font-primary;
 }
+
+input::-webkit-input-placeholder {
+color:#C0C0C0 !important;
+}
+
 .btn{
     font-family: $font-secondary;
     font-weight:bold;
     color:$secondary-color;
     background-color: $highlight-color;
+    cursor: pointer;
     &:focus, &:hover{
         background-color:$non-highlight-color;
     }
 }
+
 .input-group-addon{
     font-family: $font-secondary;
     font-weight:bold;
     color:$secondary-color;
     background-color: $highlight-color; 
+}
+
+.interactive-tip{
+    position:absolute;
+    bottom:0px;
+    width:100%;
+    color: $secondary-color;
+    background-color:$highlight-color;
+    padding:5px;
+    text-align:center;
 }
 
 // Responsive Font Sizes
@@ -62,7 +84,7 @@ select, input{
 }
 @media screen and (min-width: 768px) {
     body {
-        font-size: 1em;
+        font-size: .9em;
         h1{
             font-size: 3em;
         }
@@ -76,7 +98,7 @@ select, input{
 }
 @media screen and (min-width: 992px) {
     body {
-        font-size: 1.2em;
+        font-size: 1em;
         h1{
             font-size: 3.5em;
         }
@@ -90,7 +112,7 @@ select, input{
 }
 @media screen and (min-width: 1200px) {
     body {
-        font-size: 1.3em;
+        font-size: 1.1em;
         h1{
             font-size: 4em;
         }
@@ -114,6 +136,10 @@ select, input{
 }
 .ui-helper-hidden-accessible{
     display:none;
+}
+
+.ui-state-highlight{
+    background-color:$non-highlight-color;
 }
 
 .seperator{
@@ -217,12 +243,13 @@ textarea {
         float:right;
         display:inline-block;
         background-color: $highlight-color;
+        color: $text-color-white;
         border:none;
         border-radius: 10px;
         text-transform: uppercase;
         font-family: $font-primary;
-        margin:1%;
-        padding:4px;
+        margin:10px;
+        padding:4px 10px;
         font-size: .75em;
         a{
             color: $secondary-color;
@@ -296,16 +323,24 @@ textarea {
 	background-color: $non-highlight-color;
 }
 
-// Tooltips
-.tooltipster-punk {
-	border-radius: 5px; 
-	border-bottom: 3px solid $highlight-color;
-	background: $non-highlight-color;
-	color: #fff;
+// Tip Slider
+.interactive-tip{
+    @media only screen and (max-width : 940px) {
+        display:none;
+    }
 }
-.tooltipster-punk .tooltipster-content {
-	font-family: $font-secondary;
-	font-size: 14px;
-	line-height: 16px;
-	padding: 8px 10px;
+.carousel-inner{
+    font-style: $font-primary;
+    width:75%;
+    margin:auto;
+    .carousel-item{
+        text-align:center;
+    }
+}
+.carousel-control-prev, .carousel-control-next{
+    opacity:1;
+    .fa{
+        color: $secondary-color;
+        opacity: 1;
+    }
 }
