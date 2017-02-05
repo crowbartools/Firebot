@@ -29,14 +29,28 @@
     <!-- Main Menu -->
     <div id="main-menu">
         <div class="navigation">
-            <ul>
-                <li><a data="start" href="#">Home</a></li>
-                <li><a data="login" href="#">Login</a></li>
-                <li><a data="interactive" href="#">Boards</a></li>
-                <li><a data="settings" href="#">Settings</a></li>
-                <li><a data="bug-report" href="#">Bug Report</a></li>
-                <li><a data="updates" href="#">Latest Update</a></li>
-                <li><a data="credits" href="#">Credits</a></li>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a data="start" href="#" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a data="login" href="#" class="nav-link">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a data="interactive" href="#" class="nav-link">Boards</a>
+                </li>
+                <li class="nav-item">
+                    <a data="settings" href="#" class="nav-link">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a data="bug-report" href="#" class="nav-link">Bug Report</a>
+                </li>
+                <li class="nav-item">
+                    <a data="updates" href="#" class="nav-link">Latest Update</a>
+                </li>
+                <li class="nav-item">
+                    <a data="credits" href="#" class="nav-link">Credits</a>
+                </li>
             </ul>
         </div>
         <div class="xtremes-logo">
@@ -201,7 +215,7 @@
     <div id="json-import-menu">
         <h3>Beam JSON Import</h3>
         <div class="import-fields" data-toggle="tooltip" data-placement="left" title="Copy and Paste the JSON from the beam dev lab.">
-            <textarea rows="20" cols="29" class="json-import-area"></textarea>
+            <textarea class="json-import-area"></textarea>
         </div>
         <div class="button-save-close">
             <a href="#json-import-menu">
@@ -263,13 +277,13 @@
         <section class="interactive page">
             <div class="main-content container">
                 <div class="row interactive-top">
-                    <div class="col-9">
+                    <div class="col-7">
                         <div class="input-group">
-                            <span class="input-group-addon" id="board-select">Board</span>
+                            <span class="input-group-addon" id="board-select">Current Board</span>
                             <select class="form-control interactive-board-select" aria-describedby="board-select"></select>
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-5">
                         <div class="input-group action-button">
                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span>Actions</span>
