@@ -139,7 +139,7 @@ input::-webkit-input-placeholder {
 }
 
 .ui-state-highlight{
-    background-color:$non-highlight-color;
+    border:1px dotted $highlight-color;
 }
 
 .seperator{
