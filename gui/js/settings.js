@@ -37,7 +37,7 @@ function settingsReset(cancelled){
         var mouseSpeed = dbSettings.getData('/interactive/mouse/mouseSpeed');
 
         $('.betaOptIn select option[value='+betaOptIn+']').prop('selected', true);
-        $('.showTips select option[value='+betaOptIn+']').prop('selected', true);
+        $('.showTips select option[value='+showTips+']').prop('selected', true);
         $('.emulation-type select option[value='+gameEmulator+']').prop('selected', true);
         $('.mouse-clicks select option[value='+mouseClick+']').prop('selected', true);
         $('.mouse-speed input').val(mouseSpeed);
