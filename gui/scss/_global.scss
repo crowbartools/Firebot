@@ -26,6 +26,9 @@ a{
         color:$text-color-secondary;
     }
 }
+select, input{
+    font-family: $font-primary;    
+}
 .btn{
     font-family: $font-secondary;
     font-weight:bold;

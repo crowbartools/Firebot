@@ -85,40 +85,40 @@
             <h3>General Settings</h3>
                 <div class="button-id button-section">
                     <label class="col-form-label">Button ID</label>
-                    <input class="form-control" type="text" placeholder="1" name="buttonID" title="ID should match the button on the dev board.">
+                    <input class="form-control" type="text" placeholder="1" name="buttonID" data-toggle="tooltip" data-placement="left" title="ID should match the button on the dev board.">
                 </div>
                 <div class="button-notes button-section">
                     <label class="col-form-label">Button Name</label>
-                    <input class="form-control" type="text" placeholder="Fart Sound" name="buttonName" title="For your own reference.">
+                    <input class="form-control" type="text" placeholder="Fart Sound" name="buttonName" data-toggle="tooltip" data-placement="left" title="For your own reference.">
                 </div>
                 <div class="button-type button-section">
                     <label class="col-form-label">Type</label>
-                    <select class="form-control" title="Choose type of controls for the button">
+                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="Choose type of controls for the button">
+                        <option value="Nothing" data="nothing">Nothing</option>
                         <option value="Game Controls" data="game-controls">Game Control</option>
                         <option value="Sound" data="sound-buttons">Sound</option>
                         <option value="Api Buttons" data="api-buttons">API Button</option>
                         <option value="Text Buttons" data="text-buttons">Text</option>
-                        <option value="Nothing" data="nothing">Nothing</option>
                     </select>
                 </div>
                 <div class="button-cooldown button-section">
                     <label class="col-form-label">Cooldown Length (sec)</label>
-                    <input class="form-control" type="text" placeholder="120" name="cooldownLength" title="Cooldown in seconds. This will be overridden by any group cooldown settings.">
+                    <input class="form-control" type="text" placeholder="120" name="cooldownLength" data-toggle="tooltip" data-placement="left" title="Cooldown in seconds. This will be overridden by any group cooldown settings.">
                 </div>
         </div>
         <div class="button-specific-settings">
             <!-- These divs are shown based on the selected button type -->
 
             <!-- Game Controls -->
-            <div class="game-controls button-specific">
+            <div class="game-controls button-specific" style="display:none">
                 <h3>Type Specific</h3>
                 <div class="game-button-pressed">
                     <label class="col-form-label">Button to Press</label>
-                    <input class="form-control" type="text" placeholder="W" name="buttonPress" title="The key that will be pressed.">
+                    <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="The key that will be pressed.">
                 </div>
                 <div class="game-button-counter">
                     <label class="col-form-label">Opposite Button</label>
-                    <input class="form-control" type="text" placeholder="S" title="The key to compare against.">
+                    <input class="form-control" type="text" placeholder="S" data-toggle="tooltip" data-placement="left" title="The key to compare against.">
                 </div>
             </div>
 
@@ -127,7 +127,7 @@
                 <h3>Type Specific</h3>
                 <div class="api-select">
                     <label class="col-form-label">Type</label>
-                    <select class="form-control">
+                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="These pull from a 3rd party service. Please read the notice below.">
                         <option value="Advice">Advice</option>
                         <option value="Cat Picture">Cat Picture</option>
                         <option value="Cat Fact">Cat Fact</option>
@@ -140,7 +140,7 @@
                 </div>
                 <div class="api-send-as">
                     <label class="col-form-label">Send As</label>
-                    <select class="form-control" title="Who should send this message to chat?">
+                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="Who should send this message to chat?">
                         <option value="Bot">Bot</option>
                         <option value="Streamer">Streamer</option>
                     </select>
@@ -155,15 +155,15 @@
                 <h3>Type Specific</h3>
                 <div class="text-line">
                     <label class="col-form-label">Text</label>
-                    <input class="form-control" type="text" placeholder="!points add 100" title="The line of text you'd like to send to chat.">
+                    <input class="form-control" type="text" placeholder="!points add 100" data-toggle="tooltip" data-placement="left" title="The line of text you'd like to send to chat.">
                 </div>
                 <div class="text-whisper-to">
                     <label class="col-form-label">Whisper to</label>
-                    <input class="form-control" type="text" placeholder="Firebot" title="Leave blank to broadcast to everyone. Otherwise, enter a name to whisper someone.">
+                    <input class="form-control" type="text" placeholder="Firebot" data-toggle="tooltip" data-placement="left" title="Leave blank to broadcast to everyone. Otherwise, enter a name to whisper someone.">
                 </div>
                 <div class="text-send-as">
                     <label class="col-form-label">Send As</label>
-                    <select class="form-control" title="Who should send this message to chat?">
+                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="Who should send this message to chat?">
                         <option value="Bot">Bot</option>
                         <option value="Streamer">Streamer</option>
                     </select>
@@ -175,12 +175,12 @@
                 <h3>Type Specific</h3>
                 <div class="sound-file">
                     <label class="col-form-label">Audio File</label>
-                    <input class="form-control" type="text" name="soundPath" placeholder="C:\" title="Choose your audio file. mp3, wav, or ogg">
+                    <input class="form-control" type="text" name="soundPath" placeholder="C:\" data-toggle="tooltip" data-placement="left" title="Choose your audio file. mp3, wav, or ogg">
                     <button class="sound-selector">Choose</button>
                 </div>
                 <div class="sound-volume">
                     <label class="col-form-label">Volume</label>
-                    <input class="form-control" type="text" name="soundVolume" placeholder="0.5" title="0.5 is 50% volume, 0.2 is 20%, etc...">
+                    <input class="form-control" type="text" name="soundVolume" placeholder="0.5" data-toggle="tooltip" data-placement="left" title="0.5 is 50% volume, 0.2 is 20%, etc...">
                 </div>
             </div>
 
@@ -191,12 +191,8 @@
 
         </div>
         <div class="button-save-close">
-            <a href="#button-menu">
-                <button class="button-save btn" type="submit">Save</button>
-            </a>
-            <a href="#button-menu">
-                <button class="button-cancel btn" onclick="$.sidr('close', 'button-menu');">Cancel</button>
-            </a>
+            <button type="button" class="button-save btn">Save</button>
+            <button type="button" class="button-cancel btn" onclick="$.sidr('close', 'button-menu');">Cancel</button>
         </div>
         </form>
     </div>
@@ -204,15 +200,15 @@
     <!-- JSON Import Menu-->
     <div id="json-import-menu">
         <h3>Beam JSON Import</h3>
-        <div class="import-fields">
+        <div class="import-fields" data-toggle="tooltip" data-placement="left" title="Copy and Paste the JSON from the beam dev lab.">
             <textarea rows="20" cols="29" class="json-import-area"></textarea>
         </div>
         <div class="button-save-close">
             <a href="#json-import-menu">
-                <button class="import-save btn">Save</button>
+                <button type="button" class="import-save btn">Save</button>
             </a>
             <a href="#json-import-menu">
-                <button class="import-cancel btn">Cancel</button>
+                <button type="button" class="import-cancel btn">Cancel</button>
             </a>
         </div>
     </div>
@@ -282,15 +278,15 @@
                                 <span>Actions</span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item add-new-board" href="#">Add Board</a>
-                                <a class="dropdown-item import-board" href="#">Import Board</a>
+                                <a class="dropdown-item add-new-board" href="#" data-toggle="tooltip" data-placement="left" title="Add a new board.">Add Board</a>
+                                <a class="dropdown-item import-board" href="#" data-toggle="tooltip" data-placement="left" title="Import Beam JSON.">Import Board</a>
                                 <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item add-new-button" href="#">Add Button</a>
-                                <a class="dropdown-item add-new-cooldown-group" href="#">Add Cooldown Group</a>
+                                <a class="dropdown-item add-new-button" href="#" data-toggle="tooltip" data-placement="left" title="Add button to board.">Add Button</a>
+                                <a class="dropdown-item add-new-cooldown-group" href="#" data-toggle="tooltip" data-placement="left" title="Add cooldown group.">Add Cooldown Group</a>
                                 <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item interactive-connector launch-interactive" href="#">Launch Interactive</a>
+                                <a class="dropdown-item interactive-connector launch-interactive" href="#" data-toggle="tooltip" data-placement="left" title="Toggle interactive.">Launch Interactive</a>
                                 <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item delete-board-popup" href="#">Delete Board</a>
+                                <a class="dropdown-item delete-board-popup" href="#" data-toggle="tooltip" data-placement="left" title="Delete current board.">Delete Board</a>
                             </div>
                         </div>
                     </div>
@@ -314,7 +310,7 @@
                     <h3>General</h3>
                     <div class="betaOptIn setting col-sm-12 col-md-6 col-lg-4">
                         <label class="col-form-label">Beta Tester</label>
-                        <select class="form-control" title="Get an alert when there are new beta versions.">
+                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Get an alert when there are new beta versions.">
                             <option value="no">No</option>
                             <option value="yes">Yes</option>
                         </select>
@@ -324,26 +320,26 @@
                     <h3>Game Controls</h3>
                     <div class="emulation-type setting col-sm-12 col-md-6 col-lg-4">
                         <label class="col-form-label">Keyboard/Mouse Emulator</label>
-                        <select class="form-control" title="Adjust this if game controls dont work in your game.">
+                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Adjust this if game controls dont work in your game.">
                             <option value="robotjs">robotjs</option>
                             <option value="kbm">kbm-robot</option>
                         </select>
                     </div>
                     <div class="mouse-clicks setting col-sm-12 col-md-6 col-lg-4">
                         <label class="col-form-label">Enable Mouse Clicks</label>
-                        <select class="form-control" title="Careful! This will enable mouse clicks with screen controls.">
+                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Careful! This will enable mouse clicks with screen controls.">
                             <option value="disabled">Disabled</option>
                             <option value="enabled">Enabled</option>
                         </select>
                     </div>
                     <div class="mouse-speed setting col-sm-12 col-md-6 col-lg-4">
                         <label class="col-form-label">Mouse Speed</label>
-                        <input class="form-control" type="text" name="mouse-speed" placeholder="50" title="Mouse sensitivity for joystick controls. Higher is faster.">
+                        <input class="form-control" type="text" name="mouse-speed" placeholder="50" data-toggle="tooltip" data-placement="bottom" title="Mouse sensitivity for joystick controls. Higher is faster.">
                     </div>
                 </div>
                 <div class="settings-save-close row">
-                    <button class="settings-save btn">Save</button>
-                    <button class="settings-cancel btn">Cancel</button>
+                    <button class="settings-save btn" type="button">Save</button>
+                    <button class="settings-cancel btn" type="button">Cancel</button>
                 </div>
             </div>
         </section>
@@ -405,7 +401,7 @@
         <button class="delete-board btn">Yes</button>
         <button class="dont-delete-board btn">OMG NO</button>
     </div>
-    <div class="hidden" style="display:none"></div>
+    <div id="hidden" class="hidden" style="display:none"></div>
 </body>
 
 <script src="./js/plugins/tether.min.js"></script>

@@ -15,6 +15,10 @@ $('.hidden').sidr({
     renaming: false,
     onOpen: function(){
         // Stuff happens here when menu opens.
+    },
+    onCloseEnd: function(){
+        forceRedraw();
+        clearValidation();
     }
 });
 
@@ -27,6 +31,10 @@ $('.hidden').sidr({
     renaming: false,
     onOpen: function(){
         // Stuff happens here when menu opens.
+    },
+    onCloseEnd: function(){
+        forceRedraw();
+        clearValidation();
     }
 });
 
@@ -39,6 +47,10 @@ $('.hidden').sidr({
     renaming: false,
     onOpen: function(){
         // Stuff happens here when menu opens.
+    },
+    onCloseEnd: function(){
+        forceRedraw();
+        clearValidation();
     }
 });
 
@@ -51,8 +63,28 @@ $('.hidden').sidr({
     renaming: false,
     onOpen: function(){
         // Stuff happens here when menu opens.
+    },
+    onCloseEnd: function(){
+        forceRedraw();
+        clearValidation();
     }
 });
+
+// Force Redraw
+// Need to force a redraw after menu close to fix tooltips and scrollbar weirdness.
+function forceRedraw(){
+    var element = document.getElementById('hidden');
+    var n = document.createTextNode(' ');
+    var disp = element.style.display;  // don't worry about previous display style
+
+    element.appendChild(n);
+    element.style.display = 'none';
+
+    setTimeout(function(){
+        element.style.display = disp;
+        n.parentNode.removeChild(n);
+    },20); // you can play with this timeout to make it as short as possible
+}
 
 // Add New Button
 // This function opens the new button menu.
@@ -163,7 +195,7 @@ function buttonSubmission(){
         boardBuilder();
 
         // Reset Menu
-        clearButtonMenu();
+        closeButtonMenu("button-menu");
     }
 }
 
@@ -228,7 +260,7 @@ function newBoardSubmission(){
     gameProfileList();
 
     // Clear Menu
-    clearButtonMenu();
+    closeButtonMenu("board-menu");
 }
 
 // Board Builder
@@ -368,12 +400,26 @@ function editButton(buttonID){
 
 // Clear Button Menu
 // This function clears all of text in the button menu.
-function clearButtonMenu(){
-    $.sidr('close', 'board-menu');
-    $.sidr('close', 'button-menu');
-    $.sidr('close', 'json-import-menu');
-    $.sidr('close', 'cooldown-menu');
+function closeButtonMenu(menu){
+    switch(menu) {
+    case "board-menu":
+        $.sidr('close', 'board-menu');
+        break;
+    case "button-menu":
+        $.sidr('close', 'button-menu');
+        break;
+    case "json-import-menu":
+        $.sidr('close', 'json-import-menu');
+        break;
+    case "cooldown-menu":
+        $.sidr('close', 'cooldown-menu');
+        break;
+    }
+}
 
+// Clear validation
+// Clears field validation for new-button-form
+function clearValidation(){
     $('.sidr-inner input').val('');
     jqValidate.clearValidate('new-button-form');
 }
@@ -624,7 +670,7 @@ $( ".button-save" ).click(function() {
 // Button Menu Cancel
 // This monitors save button on the board menu and saves button info to controls file.
 $( ".button-cancel" ).click(function() {
-  clearButtonMenu();
+  closeButtonMenu("button-menu");
 });
 
 // New Board Button
@@ -660,7 +706,7 @@ $( ".board-save" ).click(function() {
 // Board Menu Cancel
 // This monitors save button on the board menu and saves button info to controls file.
 $( ".board-cancel" ).click(function() {
-  clearButtonMenu();
+  closeButtonMenu('board-menu');
 });
 
 // Monitor Board Select
@@ -684,13 +730,13 @@ $( ".cooldown-save" ).click(function() {
     boardBuilder();
 
     // Reset Menu
-    clearButtonMenu();
+    closeButtonMenu('cooldown-menu');
 });
 
 // Cooldown Cancel
 // This monitors save button on the board menu and saves button info to controls file.
 $( ".cooldown-cancel" ).click(function() {
-  clearButtonMenu();
+  closeButtonMenu('cooldown-menu');
 });
 
 // JSON Import Button
@@ -708,13 +754,13 @@ $( ".import-save" ).click(function() {
     boardBuilder();
 
     // Reset Menu
-    clearButtonMenu();
+    closeButtonMenu();
 });
 
 // Import Menu Cancel
 // This monitors the cancel button and closes the board menu.
 $( ".import-cancel" ).click(function() {
-  clearButtonMenu();
+  closeButtonMenu('json-import-menu');
 });
 
 // Launch Interactive

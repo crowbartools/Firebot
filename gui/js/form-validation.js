@@ -41,13 +41,8 @@ jQuery.validator.addMethod("commaNumbers", function(value, element) {
 
 // Clear Form
 function clearValidate(form){
-    setTimeout(function(){ 
-        if (form == "new-button-form"){
-            console.log(form);
-            var validator = $('#new-button-form').validate();
-            validator.resetForm();
-        }
-    }, 500);
+    var validator = $('#new-button-form').validate();
+    validator.resetForm();
 }
 
 // Load up autocomplete for game buttons

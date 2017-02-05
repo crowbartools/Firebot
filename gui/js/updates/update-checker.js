@@ -61,8 +61,6 @@ function updateChecker(){
                 var gitVersion = gitNewest.tag_name;
                 var versionCompare = compareVersions(gitVersion, version);
 
-                console.log(gitVersion, version, versionCompare);
-
                 // If there is a newer version, show the alert.
                 if (versionCompare > 0){
                     $('.updated-version a').append(' ('+gitVersion+')');

@@ -38,6 +38,11 @@ function pageNavigation(){
 }
 pageNavigation();
 
+// Initialize Tooltips
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
 // Open Link In Browser
 // This opens link in system default browser.
 $(document).on('click', 'a[href^="http"]', function(event) {
