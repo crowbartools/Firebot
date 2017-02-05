@@ -6,11 +6,13 @@ function settingsSave(){
     var dbSettings = new JsonDB("./user-settings/settings", true, false);
 
     var betaOptIn = $('.betaOptIn select option:selected').val();
+    var showTips = $('.showTips select option:selected').val();
     var gameEmulator = $('.emulation-type select option:selected').val();
     var mouseClick = $('.mouse-clicks select option:selected').val();
     var mouseSpeed = $('.mouse-speed input').val();
 
     dbSettings.push("/betaOptIn", betaOptIn);
+    dbSettings.push("/showTips", showTips);
     dbSettings.push("/interactive/emulator", gameEmulator);
     dbSettings.push("/interactive/mouse/mouseClick", mouseClick);
     dbSettings.push("/interactive/mouse/mouseSpeed", mouseSpeed);
@@ -29,11 +31,13 @@ function settingsReset(cancelled){
 
     try{
         var betaOptIn = dbSettings.getData('/betaOptIn');
+        var showTips = dbSettings.getData('/showTips');
         var gameEmulator = dbSettings.getData('/interactive/emulator');
         var mouseClick = dbSettings.getData('/interactive/mouse/mouseClick');
         var mouseSpeed = dbSettings.getData('/interactive/mouse/mouseSpeed');
 
         $('.betaOptIn select option[value='+betaOptIn+']').prop('selected', true);
+        $('.showTips select option[value='+betaOptIn+']').prop('selected', true);
         $('.emulation-type select option[value='+gameEmulator+']').prop('selected', true);
         $('.mouse-clicks select option[value='+mouseClick+']').prop('selected', true);
         $('.mouse-speed input').val(mouseSpeed);
@@ -43,6 +47,14 @@ function settingsReset(cancelled){
         if(cancelled == 'cancelled'){
             $(".settings-save-close").fadeOut(500).delay(500).fadeIn(1000);
         }
+
+        // Show or hide tip based on settings.
+        if(showTips == "no"){
+            $('.interactive-tip').fadeOut('fast');
+        } else {
+            $('.interactive-tip').fadeIn('fast');
+        }
+
     } catch(err){
         console.log(err);
     }
