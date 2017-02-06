@@ -27,7 +27,7 @@ function pageNavigation(){
         $.sidr('close','main-menu');
 
         // If the selected page is 
-        if (nextup !== "start" && nextup !== "login" && nextup !== "updates"){
+        if (nextup !== "login" && nextup !== "updates"){
             $('.interactive-status, .chat-status').fadeIn('fast');
         } else {
             $('.interactive-status, .chat-status').fadeOut('fast');
