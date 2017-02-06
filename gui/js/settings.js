@@ -51,8 +51,10 @@ function settingsReset(cancelled){
         // Show or hide tip based on settings.
         if(showTips == "no"){
             $('.interactive-tip').fadeOut('fast');
+            $('.row').css('margin-bottom','0px');
         } else {
             $('.interactive-tip').fadeIn('fast');
+            $('.row').css('margin-bottom','20px');
         }
 
     } catch(err){
