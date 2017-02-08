@@ -59,16 +59,6 @@ input::-webkit-input-placeholder {
     background-color: $highlight-color; 
 }
 
-.interactive-tip{
-    position:absolute;
-    bottom:0px;
-    width:100%;
-    color: $secondary-color;
-    background-color:$highlight-color;
-    padding:5px;
-    text-align:center;
-}
-
 // Responsive Font Sizes
 @media screen and (max-width: 767px) {
     body {
@@ -126,16 +116,6 @@ input::-webkit-input-placeholder {
         }
     }
 }
-.ui-autocomplete{
-    border-radius:10px;
-    padding:5px;
-    border:none;
-    background-color: $text-color-white;
-    list-style:none;
-    color:$secondary-color;
-    position:absolute;
-    z-index:5;
-}
 .ui-helper-hidden-accessible{
     display:none;
 }
@@ -162,6 +142,18 @@ textarea {
 
 // Auto Complete 
 .ui-autocomplete{
+    border-radius:10px;
+    padding:5px;
+    border:none;
+    background-color: #cecece;
+    list-style:none;
+    color:$main-color;
+    font-family: $font-primary;
+    font-weight:bold;
+    border: 1px solid $non-highlight-color;
+    position:absolute;
+    z-index:5;
+    box-shadow: 2px 2px 5px #000;
     li{
         cursor:pointer;
         div{
@@ -170,9 +162,10 @@ textarea {
         }
     }
     li:hover{
-        background-color: $highlight-color;
-        color: $main-color;
+        background-color: $non-highlight-color;
+        color: $text-color-white;
     }
+
 }
 
 // Error dialog
@@ -329,6 +322,11 @@ textarea {
 .interactive-tip{
     position:fixed;
     bottom:0px;
+    width:100%;
+    color: $secondary-color;
+    background-color:$highlight-color;
+    padding:5px;
+    text-align:center;
     @media only screen and (max-width : 940px) {
         display:none;
     }
@@ -347,4 +345,8 @@ textarea {
         color: $secondary-color;
         opacity: 1;
     }
+}
+
+.tooltip{
+    z-index:9999999!important;
 }

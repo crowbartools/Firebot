@@ -126,13 +126,31 @@
             <!-- Game Controls -->
             <div class="game-controls button-specific" style="display:none">
                 <h3>Type Specific</h3>
-                <div class="game-button-pressed">
-                    <label class="col-form-label">Button to Press</label>
-                    <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="The key that will be pressed.">
+                <div class="game-control-type">
+                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="Is this a single key press or multi-key?">
+                        <option value="Single" data="single">Single</option>
+                        <option value="Multi-key" data="multi-key">Multi-key</option>
+                    </select>
                 </div>
-                <div class="game-button-counter">
-                    <label class="col-form-label">Opposite Button</label>
-                    <input class="form-control" type="text" placeholder="S" data-toggle="tooltip" data-placement="left" title="The key to compare against.">
+                <div class="single-button">
+                    <div class="game-button-pressed">
+                        <label class="col-form-label">Button to Press</label>
+                        <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="The key that will be pressed.">
+                    </div>
+                    <div class="game-button-counter">
+                        <label class="col-form-label">Opposite Button</label>
+                        <input class="form-control" type="text" placeholder="S" data-toggle="tooltip" data-placement="left" title="The key to compare against.">
+                    </div>
+                </div>
+                <div class="multi-button" style="display:none">
+                    <label class="col-form-label">Buttons to Press</label>
+                    <div class="multi-button-array">
+                        <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="A key that will be pressed.">
+                    </div>
+                    <div class="multi-button-add-wrap">
+                        <button class="btn multi-button-add" type="button" data-toggle="tooltip" data-placement="left" title="Add another key."><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                        <button class="btn multi-button-del" type="button" data-toggle="tooltip" data-placement="bottom" title="Delete last key."><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+                    </div>
                 </div>
             </div>
 

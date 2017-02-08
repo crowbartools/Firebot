@@ -46,8 +46,10 @@ function clearValidate(form){
 }
 
 // Load up autocomplete for game buttons
-  $( function() {
-    // This is a list of all valid buttons for bot robotjs and kbm robot.
+function gameButtonValidation(){
+    // First destory any pre-existing auto completes.
+
+   // This is a list of all valid buttons for bot robotjs and kbm robot.
     var availableButtons = [
     "a",
     "b",
@@ -133,12 +135,18 @@ function clearValidate(form){
       source: availableButtons,
       appendTo: ".game-button-counter"
     });
-  });
+    $( ".multi-button-array input" ).autocomplete({
+      source: availableButtons,
+      appendTo: ".multi-button-array"
+    });
+}
 
 // Exports
+exports.gameValidate = gameButtonValidation;
 exports.clearValidate = clearValidate;
 
 // On App Load
 $(document).ready(function () {
     buttonMenuValidate();
+    gameButtonValidation();
 });

@@ -135,6 +135,40 @@ function buttonSpecific(){
     $('.'+type).fadeIn('fast');
 }
 
+// Game Control Type selector
+// This monitors the dropdown for the game control single or multi-button selector.
+function gameControlTypeSelect(){
+    var val = $('.game-control-type select option:selected').attr('data');
+    if (val == "single"){
+        $('.multi-button').css('display','none');
+        $('.single-button').fadeIn('fast');
+    } else {
+        $('.single-button').css('display','none');
+        $('.multi-button').fadeIn('fast');
+    }
+}
+
+// Game Control Multi Add
+// This throws in a new input field for the multi button game controls.
+function gameControlMultiAdd(){
+    var itemHTML = `
+        <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="A key that will be pressed.">
+    `;
+    $('.multi-button-array').append(itemHTML);
+
+    // Setup autocomplete on new field.
+    jqValidate.gameValidate();
+
+    // Setup tooltips
+    $('.multi-button-array input[data-toggle="tooltip"]').tooltip()
+}
+
+// Game Control Multi Delete
+// This just deletes the last field in the multi button field list.
+function gameControlMultiDel(){
+    $('.multi-button-array input').last().remove();
+}
+
 // Button Submission
 // This function submits all of the button information to the controls file when save is pressed.
 function buttonSubmission(){
@@ -163,10 +197,20 @@ function buttonSubmission(){
 
         // Button Specific settings
         if (buttonType == "Game Controls"){
-            var buttonPressed = $('.game-button-pressed input').val();
-            var buttonOpposite = $('.game-button-counter input').val();
-            var typeSettings = { "press": buttonPressed, "opposite": buttonOpposite}
-
+            if ( $('.single-button').is(':visible') ){
+                // User is choosing the single button option.
+                var buttonPressed = $('.game-button-pressed input').val();
+                var buttonOpposite = $('.game-button-counter input').val();
+                var typeSettings = { "press": buttonPressed, "opposite": buttonOpposite};
+            } else {
+                // User has chosen the multi button option.
+                var buttonArray = [];
+                $('.multi-button-array > input').each(function(){
+                    var val = $(this).val();
+                    buttonArray.push(val);
+                }) 
+                var typeSettings = { "press": buttonArray, "opposite": ""};
+            }
         } else if (buttonType == "Sound"){
             var filePath = $('.sound-file input').val();
             var fileVolume = $('.sound-volume input').val();
@@ -376,8 +420,31 @@ function editButton(buttonID){
     if(buttonType === "Game Controls"){
         var press = typeSettings.press;
         var opposite = typeSettings.opposite;
-        $('.game-button-pressed input').val(press);
-        $('.game-button-counter input').val(opposite);
+        if(press instanceof Array){
+            // Multi Button
+
+            // Clear everything already there.
+            $('.multi-button-array').empty();
+
+            // Add in the appropriate html.
+            for(var item in press){
+                var key = press[item];
+
+                // Add in a new input field.
+                gameControlMultiAdd();
+
+                // Populate it with the next key in the array.
+                $('.multi-button-array input').last().val(key);
+            }
+
+            // Then switch to the multi button menu.
+            $('.game-control-type select option[value="Multi-key"]').prop('selected','true');
+            gameControlTypeSelect();
+        } else {
+            // Single Button
+            $('.game-button-pressed input').val(press);
+            $('.game-button-counter input').val(opposite);
+        }
 
     } else if (buttonType == "Sound"){
         var filepath = typeSettings.filePath;
@@ -671,6 +738,24 @@ function chatDisconnected(status){
 // This monitors the button type selector to show or hide button specific controls.
 $( ".button-type select" ).change(function() {
   buttonSpecific();
+});
+
+// Monitor Game Control Type
+// This monitors the the single or multi-button game dropdown and shows or hides divs as needed.
+$( ".game-control-type select" ).change(function() {
+  gameControlTypeSelect();
+});
+
+// Multi Button Add
+// This monitors the add button for multi button game controls and throws another input field up.
+$( ".multi-button-add" ).click(function() {
+  gameControlMultiAdd();
+});
+
+// Multi Button Delete
+// This monitors the delete button and removes the last multi button field.
+$( ".multi-button-del" ).click(function() {
+  gameControlMultiDel();
 });
 
 // Button Menu Toggle

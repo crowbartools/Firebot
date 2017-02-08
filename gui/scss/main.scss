@@ -143,20 +143,18 @@
 }
 #button-menu{
     .sidr-inner{
-        .button-section{
+        .button-section, .multi-button-array input{
             margin-bottom:10px;
         }
         .button-general-settings{
             border-bottom:1px dotted #ffffff;
         }
         .button-specific-settings{
-            padding-bottom:10px;
+            padding:10px 0px 10px 0px;
             margin-bottom:10px;
         }
         .game-opposite-select, .game-press-select{
             overflow-y:scroll;
-            width:200px;
-            border-radius:0px;
         }
         .game-button-pressed, .game-button-counter{
             position:relative;
