@@ -481,6 +481,8 @@ function closeButtonMenu(menu){
         break;
     case "button-menu":
         $.sidr('close', 'button-menu');
+        // Scroll menu back to top.
+        $('#button-menu').scrollTop(0);
         break;
     case "json-import-menu":
         $.sidr('close', 'json-import-menu');
