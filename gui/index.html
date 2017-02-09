@@ -143,9 +143,13 @@
                     </div>
                 </div>
                 <div class="multi-button" style="display:none">
-                    <label class="col-form-label">Buttons to Press</label>
-                    <div class="multi-button-array">
+                    <div class="multi-button-key">
+                        <label class="col-form-label">Primary Key</label>
                         <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="A key that will be pressed.">
+                    </div>
+                    <div class="multi-button-array">
+                        <label class="col-form-label">Modifiers</label>
+                        <input class="form-control" type="text" placeholder="shift" name="buttonPress" data-toggle="tooltip" data-placement="left" title="A modifier to press with the primary key. Accepts: control, alt, shift, or command(mac).">
                     </div>
                     <div class="multi-button-add-wrap">
                         <button class="btn multi-button-add" type="button" data-toggle="tooltip" data-placement="left" title="Add another key."><i class="fa fa-plus-circle" aria-hidden="true"></i></button>

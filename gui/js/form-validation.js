@@ -135,6 +135,23 @@ function gameButtonValidation(){
       source: availableButtons,
       appendTo: ".game-button-counter"
     });
+    $( ".multi-button-key input" ).autocomplete({
+      source: availableButtons,
+      appendTo: ".multi-button-key"
+    });
+}
+
+// Load up autocomplete for game buttons
+function gameButtonModifierValidation(){
+    // First destory any pre-existing auto completes.
+
+   // This is a list of all valid buttons for bot robotjs and kbm robot.
+    var availableButtons = [
+    "alt",
+    "control",
+    "command",
+    "shift",
+    ];
     $( ".multi-button-array input" ).autocomplete({
       source: availableButtons,
       appendTo: ".multi-button-array"
@@ -143,10 +160,12 @@ function gameButtonValidation(){
 
 // Exports
 exports.gameValidate = gameButtonValidation;
+exports.gameModifierValidate = gameButtonModifierValidation;
 exports.clearValidate = clearValidate;
 
 // On App Load
 $(document).ready(function () {
     buttonMenuValidate();
     gameButtonValidation();
+    gameButtonModifierValidation();
 });

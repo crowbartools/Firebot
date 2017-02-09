@@ -151,22 +151,29 @@ function gameControlTypeSelect(){
 // Game Control Multi Add
 // This throws in a new input field for the multi button game controls.
 function gameControlMultiAdd(){
-    var itemHTML = `
-        <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="A key that will be pressed.">
-    `;
-    $('.multi-button-array').append(itemHTML);
+    if( $('.multi-button-array input').length < 3){
+        var itemHTML = `
+        <input class="form-control" type="text" placeholder="shift" name="buttonPress" data-toggle="tooltip" data-placement="left" title="A modifier to press with the primary key. Accepts: control, alt, shift, or command(mac).">
+        `;
+        $('.multi-button-array').append(itemHTML);
 
-    // Setup autocomplete on new field.
-    jqValidate.gameValidate();
+        // Setup autocomplete on new field.
+        jqValidate.gameModifierValidate();
 
-    // Setup tooltips
-    $('.multi-button-array input[data-toggle="tooltip"]').tooltip()
+        // Setup tooltips
+        $('.multi-button-array input[data-toggle="tooltip"]').tooltip()
+    } else {
+        errorLogger.log("Sorry, you can only have three modifiers per button.");
+    }
 }
 
 // Game Control Multi Delete
 // This just deletes the last field in the multi button field list.
 function gameControlMultiDel(){
-    $('.multi-button-array input').last().remove();
+    // Dont delete the last one.
+    if( $('.multi-button-array input').length > 1){
+        $('.multi-button-array input').last().remove();
+    }
 }
 
 // Button Submission
@@ -204,12 +211,13 @@ function buttonSubmission(){
                 var typeSettings = { "press": buttonPressed, "opposite": buttonOpposite};
             } else {
                 // User has chosen the multi button option.
+                var buttonPressed = $('.multi-button-key input').val();
                 var buttonArray = [];
                 $('.multi-button-array > input').each(function(){
                     var val = $(this).val();
                     buttonArray.push(val);
                 }) 
-                var typeSettings = { "press": buttonArray, "opposite": ""};
+                var typeSettings = { "press": buttonPressed, "opposite": "", "modifiers": buttonArray};
             }
         } else if (buttonType == "Sound"){
             var filePath = $('.sound-file input').val();
@@ -420,15 +428,17 @@ function editButton(buttonID){
     if(buttonType === "Game Controls"){
         var press = typeSettings.press;
         var opposite = typeSettings.opposite;
-        if(press instanceof Array){
+        var modifiers = typeSettings.modifiers;
+        if(modifiers instanceof Array){
             // Multi Button
 
             // Clear everything already there.
-            $('.multi-button-array').empty();
+            $('.multi-button-key input').val(press);
+            $('.multi-button-array input').remove();
 
             // Add in the appropriate html.
-            for(var item in press){
-                var key = press[item];
+            for(var item in modifiers){
+                var key = modifiers[item];
 
                 // Add in a new input field.
                 gameControlMultiAdd();
