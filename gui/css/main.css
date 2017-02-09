@@ -15543,12 +15543,13 @@ textarea {
   margin: 10px;
   padding: 4px 10px;
   font-size: .75em;
+  cursor: pointer;
 }
-/* line 233, ../scss/_global.scss */
+/* line 234, ../scss/_global.scss */
 #header .interactive-status.online, #header .chat-status.online {
   background-color: #177c09;
 }
-/* line 237, ../scss/_global.scss */
+/* line 238, ../scss/_global.scss */
 #header .updated-version {
   float: right;
   display: inline-block;
@@ -15561,24 +15562,25 @@ textarea {
   margin: 10px;
   padding: 4px 10px;
   font-size: .75em;
+  cursor: pointer;
 }
-/* line 249, ../scss/_global.scss */
+/* line 251, ../scss/_global.scss */
 #header .updated-version a {
   color: #1b2935;
   text-decoration: none;
 }
-/* line 252, ../scss/_global.scss */
+/* line 254, ../scss/_global.scss */
 #header .updated-version a:hover {
   color: #888c90;
 }
 
-/* line 259, ../scss/_global.scss */
+/* line 261, ../scss/_global.scss */
 .navigation ul {
   list-style: none;
   margin: 0px;
   padding: 0px;
 }
-/* line 264, ../scss/_global.scss */
+/* line 266, ../scss/_global.scss */
 .navigation ul li a {
   display: block;
   width: 100%;
@@ -15589,23 +15591,23 @@ textarea {
   padding: 4% 2%;
   border-bottom: 1px dotted #ffffff;
 }
-/* line 273, ../scss/_global.scss */
+/* line 275, ../scss/_global.scss */
 .navigation ul li a:hover {
   background-color: #ffcb05;
   color: #1b2935;
 }
 
-/* line 281, ../scss/_global.scss */
+/* line 283, ../scss/_global.scss */
 .xtremes-logo {
   position: absolute;
   bottom: 10px;
 }
-/* line 284, ../scss/_global.scss */
+/* line 286, ../scss/_global.scss */
 .xtremes-logo img {
   max-width: 100%;
 }
 
-/* line 288, ../scss/_global.scss */
+/* line 290, ../scss/_global.scss */
 .sidr {
   background: #273b48;
   /* Old Browsers */
@@ -15619,41 +15621,41 @@ textarea {
   /*Standard*/
 }
 
-/* line 291, ../scss/_global.scss */
+/* line 293, ../scss/_global.scss */
 .page {
   display: none;
   width: 100%;
 }
-/* line 294, ../scss/_global.scss */
+/* line 296, ../scss/_global.scss */
 .page.current {
   display: block;
 }
-/* line 297, ../scss/_global.scss */
+/* line 299, ../scss/_global.scss */
 .page .main-content {
   padding: 2%;
 }
 
-/* line 304, ../scss/_global.scss */
+/* line 306, ../scss/_global.scss */
 ::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
   background-color: #F5F5F5;
 }
 
-/* line 310, ../scss/_global.scss */
+/* line 312, ../scss/_global.scss */
 ::-webkit-scrollbar {
   width: 12px;
   background-color: #F5F5F5;
 }
 
-/* line 315, ../scss/_global.scss */
+/* line 317, ../scss/_global.scss */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: #888c90;
 }
 
-/* line 322, ../scss/_global.scss */
+/* line 324, ../scss/_global.scss */
 .interactive-tip {
   position: fixed;
   bottom: 0px;
@@ -15664,34 +15666,34 @@ textarea {
   text-align: center;
 }
 @media only screen and (max-width: 940px) {
-  /* line 322, ../scss/_global.scss */
+  /* line 324, ../scss/_global.scss */
   .interactive-tip {
     display: none;
   }
 }
 
-/* line 334, ../scss/_global.scss */
+/* line 336, ../scss/_global.scss */
 .carousel-inner {
   font-style: OpenSans, sans-serif;
   width: 75%;
   margin: auto;
 }
-/* line 338, ../scss/_global.scss */
+/* line 340, ../scss/_global.scss */
 .carousel-inner .carousel-item {
   text-align: center;
 }
 
-/* line 342, ../scss/_global.scss */
+/* line 344, ../scss/_global.scss */
 .carousel-control-prev, .carousel-control-next {
   opacity: 1;
 }
-/* line 344, ../scss/_global.scss */
+/* line 346, ../scss/_global.scss */
 .carousel-control-prev .fa, .carousel-control-next .fa {
   color: #1b2935;
   opacity: 1;
 }
 
-/* line 350, ../scss/_global.scss */
+/* line 352, ../scss/_global.scss */
 .tooltip {
   z-index: 9999999!important;
 }

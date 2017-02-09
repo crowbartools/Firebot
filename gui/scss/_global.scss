@@ -230,6 +230,7 @@ textarea {
         margin:10px;
         padding:4px 10px;
         font-size: .75em;
+        cursor:pointer;
         &.online{
             background-color: $status-online-color;
         }
@@ -246,6 +247,7 @@ textarea {
         margin:10px;
         padding:4px 10px;
         font-size: .75em;
+        cursor:pointer;
         a{
             color: $secondary-color;
             text-decoration: none;
