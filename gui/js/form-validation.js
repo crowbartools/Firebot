@@ -19,7 +19,6 @@ function buttonMenuValidate(){
                 required: true
             },
             cooldownButtons:{
-                required: true,
                 commaNumbers: true
             },
             cooldownLength:{
@@ -42,18 +41,15 @@ jQuery.validator.addMethod("commaNumbers", function(value, element) {
 
 // Clear Form
 function clearValidate(form){
-    setTimeout(function(){ 
-        if (form == "new-button-form"){
-            console.log(form);
-            var validator = $('#new-button-form').validate();
-            validator.resetForm();
-        }
-    }, 500);
+    var validator = $('#new-button-form').validate();
+    validator.resetForm();
 }
 
 // Load up autocomplete for game buttons
-  $( function() {
-    // This is a list of all valid buttons for bot robotjs and kbm robot.
+function gameButtonValidation(){
+    // First destory any pre-existing auto completes.
+
+   // This is a list of all valid buttons for bot robotjs and kbm robot.
     var availableButtons = [
     "a",
     "b",
@@ -139,12 +135,37 @@ function clearValidate(form){
       source: availableButtons,
       appendTo: ".game-button-counter"
     });
-  });
+    $( ".multi-button-key input" ).autocomplete({
+      source: availableButtons,
+      appendTo: ".multi-button-key"
+    });
+}
+
+// Load up autocomplete for game buttons
+function gameButtonModifierValidation(){
+    // First destory any pre-existing auto completes.
+
+   // This is a list of all valid buttons for bot robotjs and kbm robot.
+    var availableButtons = [
+    "alt",
+    "control",
+    "command",
+    "shift",
+    ];
+    $( ".multi-button-array input" ).autocomplete({
+      source: availableButtons,
+      appendTo: ".multi-button-array"
+    });
+}
 
 // Exports
+exports.gameValidate = gameButtonValidation;
+exports.gameModifierValidate = gameButtonModifierValidation;
 exports.clearValidate = clearValidate;
 
 // On App Load
 $(document).ready(function () {
     buttonMenuValidate();
+    gameButtonValidation();
+    gameButtonModifierValidation();
 });

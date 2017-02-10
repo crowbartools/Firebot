@@ -1,69 +1,127 @@
 // Global
-body{
-    color: $text-color-secondary;
-    font-family: $font-secondary;
+html{
+    width:100%;
+    height:100%;
     background-image: $main-bg-image;
     background-attachment: fixed;
-    background-size:100%;
+    background-size:cover;
     background-repeat:no-repeat;
-    background-position:top right;
+    background-position:center;
     background-color:#1d2e38;
 }
+
+body{
+    height:100%;
+    width:100%;
+    background-color:none;
+    color: $text-color-secondary;
+    font-family: $font-secondary;
+}
+
 h1, h2, h3, h4, h5{
     color: $text-color-primary;
     font-family: $font-primary;
 }
+
 a{
     color:$text-color-white;
     outline:none;
-    &:hover{
+    &:hover, &:focus{
         color:$text-color-secondary;
     }
 }
-button{
-    background-color: $highlight-color;
-    color:$button-color;
-    padding:1% 2%;
-    border:none;
-    border-radius: 10px;
-    text-transform: uppercase;
-    font-weight:bold;
+
+select, input{
     font-family: $font-primary;
+}
+
+input::-webkit-input-placeholder {
+    color:#C0C0C0 !important;
+}
+.dropdown-item.active, .dropdown-item:active{
+    background-color:$text-color-secondary;
+}
+.btn{
+    font-family: $font-secondary;
+    font-weight:bold;
+    color:$secondary-color;
+    background-color: $highlight-color;
     cursor: pointer;
-    margin:1%;
-    outline:none;
-    &:hover{
-        background-color: $non-highlight-color;
+    &:focus, &:hover{
+        background-color:$non-highlight-color;
     }
 }
 
-select {
-   border: none;
-   font-size: 1em;
-   padding:1% 2%; 
-   margin:1%; 
-   border-radius: 10px;
-   outline: none;
-   cursor: pointer;
+.input-group-addon{
+    font-family: $font-secondary;
+    font-weight:bold;
+    color:$secondary-color;
+    background-color: $highlight-color; 
 }
 
-input, input:focus{
-    border-radius:10px;
-    padding:5px;
-    border:none;
+// Responsive Font Sizes
+@media screen and (max-width: 767px) {
+    body {
+        font-size: 0.9em;
+        h1{
+            font-size: 2.5em;
+        }
+        h2{
+            font-size: 2em;
+        }
+        h3{
+            font-size: 1.2em;
+        }
+    }
 }
-.ui-autocomplete{
-    border-radius:10px;
-    padding:5px;
-    border:none;
-    background-color: $text-color-white;
-    list-style:none;
-    color:$secondary-color;
-    position:absolute;
-    z-index:5;
+@media screen and (min-width: 768px) {
+    body {
+        font-size: .9em;
+        h1{
+            font-size: 3em;
+        }
+        h2{
+            font-size: 2.5em;
+        }
+        h3{
+            font-size: 1.2em;
+        }
+    }
+}
+@media screen and (min-width: 992px) {
+    body {
+        font-size: 1em;
+        h1{
+            font-size: 3.5em;
+        }
+        h2{
+            font-size: 3em;
+        }
+        h3{
+            font-size: 1.3em;
+        }
+    }
+}
+@media screen and (min-width: 1200px) {
+    body {
+        font-size: 1.1em;
+        h1{
+            font-size: 4em;
+        }
+        h2{
+            font-size: 3em;
+        }
+        h3{
+            font-size: 1.5em;
+        }
+    }
 }
 .ui-helper-hidden-accessible{
     display:none;
+}
+
+.ui-state-highlight{
+    border:1px dotted $highlight-color;
 }
 
 .seperator{
@@ -74,7 +132,6 @@ input, input:focus{
 label.error{
     color:red;
     font-weight:bold;
-    font-size: .75em;
 }
 input.error{
     border: 1px solid red;
@@ -85,6 +142,18 @@ textarea {
 
 // Auto Complete 
 .ui-autocomplete{
+    border-radius:10px;
+    padding:5px;
+    border:none;
+    background-color: #cecece;
+    list-style:none;
+    color:$main-color;
+    font-family: $font-primary;
+    font-weight:bold;
+    border: 1px solid $non-highlight-color;
+    position:absolute;
+    z-index:5;
+    box-shadow: 2px 2px 5px #000;
     li{
         cursor:pointer;
         div{
@@ -93,9 +162,10 @@ textarea {
         }
     }
     li:hover{
-        background-color: $highlight-color;
-        color: $main-color;
+        background-color: $non-highlight-color;
+        color: $text-color-white;
     }
+
 }
 
 // Error dialog
@@ -108,16 +178,17 @@ textarea {
         color:$main-color;
         font-weight:bold;
         padding:5px 10px 10px 10px;
-        height:20px;
         cursor:move;
         button{
-            padding:2px 5px;
+            border-radius:50%;
+            border:none;
             margin:0px;
             font-size:.9em;
         }
     }
     .ui-dialog-content{
         padding:10px;
+        text-align:center;
         .facepalm{
             width:75px;
             display:block;
@@ -147,7 +218,7 @@ textarea {
         font-size:1.5em;
     }
 
-    .interactive-status{
+    .interactive-status, .chat-status{
         float:right;
         display:inline-block;
         background-color: $status-offline-color;
@@ -156,9 +227,10 @@ textarea {
         border-radius: 10px;
         text-transform: uppercase;
         font-family: $font-primary;
-        margin:1%;
-        padding:4px;
+        margin:10px;
+        padding:4px 10px;
         font-size: .75em;
+        cursor:pointer;
         &.online{
             background-color: $status-online-color;
         }
@@ -167,13 +239,15 @@ textarea {
         float:right;
         display:inline-block;
         background-color: $highlight-color;
+        color: $text-color-white;
         border:none;
         border-radius: 10px;
         text-transform: uppercase;
         font-family: $font-primary;
-        margin:1%;
-        padding:4px;
+        margin:10px;
+        padding:4px 10px;
         font-size: .75em;
+        cursor:pointer;
         a{
             color: $secondary-color;
             text-decoration: none;
@@ -246,16 +320,35 @@ textarea {
 	background-color: $non-highlight-color;
 }
 
-// Tooltips
-.tooltipster-punk {
-	border-radius: 5px; 
-	border-bottom: 3px solid $highlight-color;
-	background: $non-highlight-color;
-	color: #fff;
+// Tip Slider
+.interactive-tip{
+    position:fixed;
+    bottom:0px;
+    width:100%;
+    color: $secondary-color;
+    background-color:$highlight-color;
+    padding:5px;
+    text-align:center;
+    @media only screen and (max-width : 940px) {
+        display:none;
+    }
 }
-.tooltipster-punk .tooltipster-content {
-	font-family: $font-secondary;
-	font-size: 14px;
-	line-height: 16px;
-	padding: 8px 10px;
+.carousel-inner{
+    font-style: $font-primary;
+    width:75%;
+    margin:auto;
+    .carousel-item{
+        text-align:center;
+    }
+}
+.carousel-control-prev, .carousel-control-next{
+    opacity:1;
+    .fa{
+        color: $secondary-color;
+        opacity: 1;
+    }
+}
+
+.tooltip{
+    z-index:9999999!important;
 }

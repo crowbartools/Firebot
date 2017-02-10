@@ -1,8 +1,7 @@
-@import 'normalize';
+@import 'bootstrap';
 @import 'variables';
 @import 'mixins';
 @import 'font-awesome.min';
-@import 'tooltipster';
 @import 'plugins';
 @import 'global';
 
@@ -13,16 +12,10 @@
         border-radius:50%;
         padding:5px;
         border: 2px solid white;
-        width:150px;
-    }
-    h1{
-        font-size:4em;
-        padding:0px;
-        margin:0px;
-    }
-    p{
-        margin:0px;
-        padding:0px;
+        width:200px;
+        @media screen and (max-width: 500px) {
+            width:50%;
+        }
     }
 }
 
@@ -33,52 +26,79 @@
         text-align:center;
     }
     .streamer, .bot{
-        margin:0% 5%;
-        display:inline-block;
-        vertical-align:top;
+        margin-top:5%;
     }
     .streamer-avatar, .bot-avatar{
         border-radius:50%;
         padding:5px;
         border: 2px solid white;
-        width:150px;
-    }
-    .loginOrOut button{
-        padding:5%;
-    }
-    .botType{
-        margin:2% 0% 0% 0%;
+        width:175px;
     }
 }
 
 // Interactive Board page
 .interactive{
     .interactive-top{
-        .launch-interactive, .disconnect-interactive{
-            float:right;
+        .action-button{
+            justify-content: flex-end;
+        }
+        .interactive-board-select{
+           border-radius: 0px .25rem .25rem 0px;
+           overflow:hidden;
+           text-overflow: ellipsis;
         }
     }
     .interactive-buttons{
-        display:flex;
-        flex-wrap: wrap;
-        max-width:100%;
-        min-height:100px;
-        padding: 1% 0%;
-        border-top: 1px solid #cecece;
+        .cooldown-group-wrap{
+            margin-top:10px;
 
-        select{
-            width: 268px;  
+            .cooldown-group-title{
+                background-color: $highlight-color;
+                padding:5px;
+                border-radius: 10px 10px 0px 0px;
+                border: 1px dotted #ffffff;
+                color: $main-color;
+
+                .cooldown-icon{
+                    display:inline-block;
+                    color: $main-color;
+                    a{
+                        color: $main-color;
+                        &:hover{
+                            color: $non-highlight-color;
+                        }
+                    }
+                }
+                .cooldown-id{
+                    font-weight:bold;
+                }
+                .cooldown-del{
+                    float:right;
+                }
+            }
+
+            .cooldown-group{
+                display:flex;
+                flex-wrap: wrap;
+                list-style: none;
+                margin:0px;
+                padding:5px;
+                border:1px solid $highlight-color;
+                background:rgba(255,255,255,0.3);
+                box-shadow: 3px 3px 10px #000000;
+                border-radius: 0px 0px 10px 10px;
+                min-height:115px;
+            }
         }
 
         .iButton{
-            display: inline-block;
-            margin-right: 10px;
             font-family: $font-primary;
+            padding: 5px 5px 5px 5px;
 
             .button-title{
                 background-color: $highlight-color;
                 padding:1% 2%;
-                width:150px;
+                width:100%;
                 border-radius: 10px 10px 0px 0px;
                 border: 1px dotted #ffffff;
                 margin: 1%;
@@ -105,9 +125,11 @@
                 text-align:center;
                 border-radius: 0px 0px 10px 10px;
                 border: 1px dotted #ffffff;
+                background-color:white;
                 margin: 1%;
-                width:150px;
+                width:100%;
                 padding: 5% 2%;
+                color: $main-color;
 
                 .type{
                     font-size: .7em;
@@ -116,27 +138,23 @@
         }
     }
 }
+.sidr-inner{
+    padding:10px;
+}
 #button-menu{
     .sidr-inner{
-        padding: 10px;
-        label{
-            display:block;
-            padding:5px 0px;
-        }
-        .button-section{
+        .button-section, .multi-button-array input{
             margin-bottom:10px;
         }
         .button-general-settings{
             border-bottom:1px dotted #ffffff;
         }
         .button-specific-settings{
-            padding-bottom:10px;
+            padding:10px 0px 10px 0px;
             margin-bottom:10px;
         }
         .game-opposite-select, .game-press-select{
             overflow-y:scroll;
-            width:200px;
-            border-radius:0px;
         }
         .game-button-pressed, .game-button-counter{
             position:relative;
@@ -148,6 +166,10 @@
             }
         }
     }
+}
+.json-import-area{
+    width:100%;
+    height:300px;
 }
 
 // Settings Page
@@ -174,6 +196,9 @@
     }
     select, input{
         margin: 1% 0%;
+    }
+    .settings-save-close button{
+        margin-right:5px;
     }
 }
 
