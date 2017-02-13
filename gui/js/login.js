@@ -1,6 +1,7 @@
 const JsonDB = require('node-json-db');
 const request = require('request');
-const {ipcRenderer} = require('electron')
+const {ipcRenderer} = require('electron');
+const shell = require('electron').shell;
 
 // JSON DBs
 var dbAuth = new JsonDB("./user-settings/auth", true, false);
@@ -100,6 +101,57 @@ function initialLogin(){
     }
 }
 
+// Alternative Login External Page 
+// This opens up the external auth page for people with alternative logins.
+function altLoginUrl(){
+
+    // If these options are changed they also need to be adjusted in the lib login.js for the main login process.
+    var options = {
+        client_id: 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9',
+        scopes: ["user:details:self", "interactive:manage:self", "interactive:robot:self", "chat:connect", "chat:bypass_slowchat", "chat:bypass_links", "chat:chat", "chat:whisper"] // Scopes limit access for OAuth tokens.
+    };
+
+    // Piece together URL and send them to auth page. Then redirect to firebottle.tv to copy/paste their token.
+    var url = "https://beam.pro/oauth/authorize?";
+    var authUrl = url + "client_id=" + options.client_id + "&scope=" + options.scopes.join(' ') + "&redirect_uri=http://firebottle.tv/Firebot/oauth" + "&response_type=token";
+
+    shell.openExternal(encodeURI(authUrl));
+}
+
+
+// Alternative Login Finished
+// This take the auth code in the field and kicks off the login process.
+function altLoginFinish(streamOrBot){
+    if(streamOrBot == "streamer"){
+        var token = $('.streamer .auth-code input').val();
+
+        // Switch back to regular clean login.
+        $('.streamer .alternative-login').fadeOut('fast', function(){
+            $('.streamer .beam-login').fadeIn('fast');
+        })
+
+        // Start up login process
+        requestBeamData(token, streamOrBot)
+
+        // Clear token field.
+        $('.streamer .auth-code input').val('');
+    } else {
+        var token = $('.bot .auth-code input').val();
+
+        // Switch back to regular clean login.
+        $('.bot .alternative-login').fadeOut('fast', function(){
+            $('.bot .beam-login').fadeIn('fast');
+        })
+
+        // Start up login process
+        requestBeamData(token, streamOrBot)
+
+        // Clear token field.
+        $('.bot .auth-code input').val('');
+    }
+}
+
+
 // Login or out button pressed
 // This checks if button is logging in or out a person or bot. If logging in then it sends message to main process.
 $( ".streamer-login, .bot-login" ).click(function() {
@@ -113,6 +165,51 @@ $( ".streamer-login, .bot-login" ).click(function() {
     }
 });
 
+// Alternative Login Link
+// This checks if the alternative login link has been clicked. 
+// It will open up the auth page on click and swap out the fields on the login page to prepare.
+$( ".streamer .alt-login-link a").click(function() {
+    $('.streamer .beam-login').fadeOut('fast', function(){
+        $('.streamer .alternative-login').fadeIn('fast');
+    })
+});
+$( ".bot .alt-login-link a").click(function() {
+    $('.bot .beam-login').fadeOut('fast', function(){
+        $('.bot .alternative-login').fadeIn('fast');
+    })
+});
+
+// Beam Login Link
+// This checks if the beam login link has been clicked. 
+// This just switches back to the regular login buttons.
+$( ".streamer .beam-login-link a").click(function() {
+    $('.streamer .alternative-login').fadeOut('fast', function(){
+        $('.streamer .beam-login').fadeIn('fast');
+    })
+});
+$( ".bot .beam-login-link a").click(function() {
+    $('.bot .alternative-login').fadeOut('fast', function(){
+        $('.bot .beam-login').fadeIn('fast');
+    })
+});
+
+// Beam Alternative Login Button
+// This checks if the beam login link has been clicked. 
+// This just switches back to the regular login buttons.
+$( ".streamer-alt-login").click(function() {
+    var streamOrBot = $(this).attr('data');
+    altLoginFinish(streamOrBot)
+});
+$( ".bot-alt-login").click(function() {
+    var streamOrBot = $(this).attr('data');
+    altLoginFinish(streamOrBot)
+});
+
+// Get Alternative Auth Code
+// This checks if the get code button was clicked, and if so it opens up the external url to start that process.
+$( ".get-auth-code").click(function() {
+    altLoginUrl();
+});
 
 // Run on App Load
 initialLogin();
