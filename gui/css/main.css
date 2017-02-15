@@ -15698,6 +15698,107 @@ textarea {
   z-index: 9999999!important;
 }
 
+/* line 358, ../scss/_global.scss */
+.ui-slider {
+  position: relative;
+  text-align: left;
+  background-color: #888c90;
+}
+
+/* line 363, ../scss/_global.scss */
+.hidden-volume {
+  display: none;
+}
+
+/* line 366, ../scss/_global.scss */
+.ui-slider .ui-slider-handle {
+  position: absolute;
+  z-index: 2;
+  width: 1.2em;
+  height: 1.2em;
+  cursor: default;
+  -ms-touch-action: none;
+  touch-action: none;
+  background-color: #ffcb05;
+  border-radius: 50%;
+  box-shadow: 2px 2px 25px #000;
+  cursor: pointer;
+}
+
+/* line 379, ../scss/_global.scss */
+.ui-slider .ui-slider-range {
+  position: absolute;
+  z-index: 1;
+  font-size: .7em;
+  display: block;
+  border: 0;
+  background-position: 0 0;
+  background-color: #cecece;
+}
+
+/* support: IE8 - See #6727 */
+/* line 391, ../scss/_global.scss */
+.ui-slider.ui-state-disabled .ui-slider-handle,
+.ui-slider.ui-state-disabled .ui-slider-range {
+  filter: inherit;
+}
+
+/* line 395, ../scss/_global.scss */
+.ui-slider-horizontal {
+  height: .8em;
+}
+
+/* line 398, ../scss/_global.scss */
+.ui-slider-horizontal .ui-slider-handle {
+  top: -0.3em;
+  margin-left: -0.6em;
+}
+
+/* line 402, ../scss/_global.scss */
+.ui-slider-horizontal .ui-slider-range {
+  top: 0;
+  height: 100%;
+}
+
+/* line 406, ../scss/_global.scss */
+.ui-slider-horizontal .ui-slider-range-min {
+  left: 0;
+}
+
+/* line 409, ../scss/_global.scss */
+.ui-slider-horizontal .ui-slider-range-max {
+  right: 0;
+}
+
+/* line 413, ../scss/_global.scss */
+.ui-slider-vertical {
+  width: .8em;
+  height: 100px;
+}
+
+/* line 417, ../scss/_global.scss */
+.ui-slider-vertical .ui-slider-handle {
+  left: -0.3em;
+  margin-left: 0;
+  margin-bottom: -0.6em;
+}
+
+/* line 422, ../scss/_global.scss */
+.ui-slider-vertical .ui-slider-range {
+  left: 0;
+  width: 100%;
+}
+
+/* line 426, ../scss/_global.scss */
+.ui-slider-vertical .ui-slider-range-min {
+  bottom: 0;
+}
+
+/* line 429, ../scss/_global.scss */
+.ui-slider-vertical .ui-slider-range-max {
+  top: 0;
+}
+
 /* line 9, ../scss/main.scss */
 .start {
   text-align: center;

@@ -2,11 +2,13 @@ html, body{
 	background-color:transparent;
 	margin:0px;
 	padding:0px;
+	height:100vh;
+	width:100vw;
+	overflow-x:hidden;
+	overflow-y:hidden;
 }
 .wrapper{
 	position:relative;
-	font-family: ProximaNovaBold, Times New Roman, Verdana;
-	font-size:18pt;
 	overflow:hidden;
 	color:white;
 	height:100vh;

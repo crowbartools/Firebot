@@ -136,8 +136,9 @@
                             <button type="button" class="sound-selector btn">Choose</button>
                         </div>
                         <div class="sound-volume">
-                            <label class="col-form-label">Volume</label>
-                            <input class="form-control" type="text" name="soundVolume" placeholder="0.5" data-toggle="tooltip" data-placement="left" title="0.5 is 50% volume, 0.2 is 20%, etc...">
+                            <label class="col-form-label">Volume <span class="current-volume">(100)</span></label>
+                            <div class="volume-slider" data-toggle="tooltip" data-placement="left" title="Turn it up to 11?"></div>
+                            <input class="form-control hidden-volume" type="text" name="soundVolume" value="1">
                         </div>
                     </div>
                     <div class="button-section">

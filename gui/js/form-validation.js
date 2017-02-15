@@ -26,6 +26,18 @@ function buttonMenuValidate(){
             },
             buttonPress:{
                 required: true
+            },
+            soundVolume:{
+                number: true
+            },
+            imageX:{
+                number: true
+            },
+            imageY:{
+                number: true
+            },
+            imageDuration:{
+                number: true
             }
         }
     });

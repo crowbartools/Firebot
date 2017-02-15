@@ -204,11 +204,16 @@ function buttonSubmission(){
 
         // Optional Media
         var soundPath = $('.sound-file input').val();
-        var soundVolume = parseInt( $('.sound-volume input').val() );
+        var soundVolume = parseFloat( $('.sound-volume input').val() );
         var imagePath = $('.image-popup input').val();
         var imageX = parseInt( $('.image-location input[name="imageX"]').val() );
         var imageY = parseInt( $('.image-location input[name="imageY"]').val() );
         var imageDuration = parseInt( $('.image-duration input').val() ) * 1000;
+
+        // If no volume is entered, then push full volume.
+        if(isNaN(soundVolume) === true){
+            var soundVolume = 1;
+        }
 
         // Push Optional Media to db
         dbControls.push("/tactile/" + buttonID + "/media", {"soundPath":soundPath, "soundVolume":soundVolume, "imagePath":imagePath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration})
@@ -434,8 +439,29 @@ function editButton(buttonID){
         $('.image-location input[name="imageX"]').val(mediaSettings.imageX);
         $('.image-location input[name="imageY"]').val(mediaSettings.imageY);
         $('.image-duration input').val(mediaSettings.imageDuration / 1000);
+
+        // Expand media area if there is anything to show.
+        if(mediaSettings.soundPath !== "" || mediaSettings.imagePath !== ""){
+            $('#media-content').addClass('show');
+        } else {
+            $('#media-content').removeClass('show');
+        }
     }catch(err){
+        // Error geting media settings. Just keep the media area closed.
+        $('#media-content').removeClass('show');
         console.log(err);
+    }
+
+    // Set volume slider.
+    var volumeSlider = parseFloat( $('.hidden-volume').val() ) * 100;
+    if (isNaN(volumeSlider)){
+        // No saved volume for this button. set to defaults.
+        $('.volume-slider').slider('value', 100);
+        $('.current-volume').text("(100)");
+    } else {
+        // This button has a saved volume. Set it.
+        $('.volume-slider').slider('value', volumeSlider);
+        $('.current-volume').text(volumeSlider);
     }
 
     // Show button specific menu based on the new type.
@@ -931,10 +957,28 @@ gameProfileList();
 
 
 // Initialize Plugin
-// On app start initialize the dialog window.
 $( document ).ready(function() {
+    // On app start initialize the dialog window.
     $( "#delete-confirm" ).dialog({
         closeText: "X",
         autoOpen: false
+    });
+
+    // Initialize Volume Slider
+    $(".volume-slider").slider({
+        range: "min",
+        value: 100,
+        min: 0,
+        max: 100,
+        //this gets a live reading of the value and prints it on the page
+        slide: function(event, ui) {
+            $(".current-volume").text('('+ui.value+'%)');
+        },
+        //this updates the value of your hidden field when user stops dragging
+        change: function(event, ui) {
+            // Convert to decimal for saving.
+            var newVal = ui.value / 100;
+            $('.hidden-volume').val(newVal);
+        }
     });
 });
