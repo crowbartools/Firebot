@@ -93,9 +93,13 @@ function convertBeamJson() {
             if (holding === true && keypress !== undefined || frequency === true && keypress !== undefined) {
                 // Assume its a game button
                 dbControls.push("/tactile/" + buttonid, { "id": buttonid,"type":"Game Controls", "cooldown": cooldown, "cooldownGroup": "solo", "notes": buttonText, "typeSettings":{"press": keypress, "opposite": movementCounter}});
+                // Push media controls
+                dbControls.push("/tactile/" + buttonid + "/media", {"soundPath":"", "soundVolume":"", "imagePath":"", "imageX":"", "imageY":"", "imageDuration":""});
             }else if(holding === true && keypress === undefined || frequency === true && keypress === undefined){
                 // Set as nothing
                 dbControls.push("/tactile/" + buttonid, { "id": buttonid,"type":"Nothing", "cooldown": cooldown, "cooldownGroup": "solo", "notes": buttonText, "typeSettings":{}});
+                // Push media controls
+                dbControls.push("/tactile/" + buttonid + "/media", {"soundPath":"", "soundVolume":"", "imagePath":"", "imageX":"", "imageY":"", "imageDuration":""});
             } else {
                 // ERROR WITH BUTTON SETUP. Button does not have holding or press frequency checked.
                 // TO DO: Handle this error gracefully.

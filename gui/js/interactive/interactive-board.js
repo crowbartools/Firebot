@@ -208,10 +208,10 @@ function buttonSubmission(){
         var imagePath = $('.image-popup input').val();
         var imageX = parseInt( $('.image-location input[name="imageX"]').val() );
         var imageY = parseInt( $('.image-location input[name="imageY"]').val() );
-        var imageDuration = parseInt( $('.image-duration input').val() );
+        var imageDuration = parseInt( $('.image-duration input').val() ) * 1000;
 
         // Push Optional Media to db
-        dbControls.push("tactile/" + buttonID + "/media", {"soundPath":soundPath, "soundVolume":soundVolume, "imagePath":imagePath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration})
+        dbControls.push("/tactile/" + buttonID + "/media", {"soundPath":soundPath, "soundVolume":soundVolume, "imagePath":imagePath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration})
 
         // Button Specific settings
         if (buttonType == "Game Controls"){
@@ -426,13 +426,17 @@ function editButton(buttonID){
     $('.button-notes input').val(buttonNotes);
 
     // Optional Media
-    var mediaSettings = tactile.media;
-    $('.sound-file input').val(mediaSettings.soundPath);
-    $('.sound-volume input').val(mediaSettings.soundVolume);
-    $('.image-popup input').val(mediaSettings.imagePath);
-    $('.image-location input[name="imageX"]').val(mediaSettings.imageX);
-    $('.image-location input[name="imageY"]').val(mediaSettings.imageY);
-    $('.image-duration input').val(mediaSettings.imageDuration);
+    try{
+        var mediaSettings = tactile['media'];
+        $('.sound-file input').val(mediaSettings.soundPath);
+        $('.sound-volume input').val(mediaSettings.soundVolume);
+        $('.image-popup input').val(mediaSettings.imagePath);
+        $('.image-location input[name="imageX"]').val(mediaSettings.imageX);
+        $('.image-location input[name="imageY"]').val(mediaSettings.imageY);
+        $('.image-duration input').val(mediaSettings.imageDuration / 1000);
+    }catch(err){
+        console.log(err);
+    }
 
     // Show button specific menu based on the new type.
     buttonSpecific();

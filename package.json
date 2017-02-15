@@ -1,6 +1,6 @@
 {
   "name": "Firebot",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "An application for Beam.pro that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "streaming"
   ],
   "author": "@Firebottletv",
-  "license": "GNU GPL v3",
+  "license": "GPL-3.0",
   "devDependencies": {
     "electron": "1.4.15",
     "electron-packager": "^8.5.1",
@@ -46,6 +46,7 @@
     "random-puppy": "^1.1.0",
     "request": "^2.79.0",
     "robotjs": "^0.4.5",
-    "validator": "^6.2.1"
+    "validator": "^6.2.1",
+    "ws": "^2.0.3"
   }
 }
