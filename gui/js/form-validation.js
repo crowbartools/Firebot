@@ -26,9 +26,6 @@ function buttonMenuValidate(){
             },
             buttonPress:{
                 required: true
-            },
-            soundPath:{
-                required:true
             }
         }
     });

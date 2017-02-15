@@ -202,6 +202,17 @@ function buttonSubmission(){
         // Push general settings to db.
         dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldownGroup": cooldownGroup, "cooldown": buttonCooldown, "notes": buttonNotes});
 
+        // Optional Media
+        var soundPath = $('.sound-file input').val();
+        var soundVolume = parseInt( $('.sound-volume input').val() );
+        var imagePath = $('.image-popup input').val();
+        var imageX = parseInt( $('.image-location input[name="imageX"]').val() );
+        var imageY = parseInt( $('.image-location input[name="imageY"]').val() );
+        var imageDuration = parseInt( $('.image-duration input').val() );
+
+        // Push Optional Media to db
+        dbControls.push("tactile/" + buttonID + "/media", {"soundPath":soundPath, "soundVolume":soundVolume, "imagePath":imagePath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration})
+
         // Button Specific settings
         if (buttonType == "Game Controls"){
             if ( $('.single-button').is(':visible') ){
@@ -219,11 +230,6 @@ function buttonSubmission(){
                 }) 
                 var typeSettings = { "press": buttonPressed, "opposite": "", "modifiers": buttonArray};
             }
-        } else if (buttonType == "Sound"){
-            var filePath = $('.sound-file input').val();
-            var fileVolume = $('.sound-volume input').val();
-            var typeSettings = { "filePath": filePath, "volume": fileVolume}
-
         } else if (buttonType == "Api Buttons"){
             var apiType = $('.api-select select option:selected').val();
             var sendAs = $('.api-send-as select option:selected').val();
@@ -235,7 +241,7 @@ function buttonSubmission(){
             var sendAs = $('.text-send-as select option:selected').val();
             var typeSettings = { "textLine": textLine, "sendAs":sendAs, "whisperTo":whisperTo}
 
-        } else if (buttonType == "Nothing"){
+        } else {
             var typeSettings = {};
 
         }
@@ -419,6 +425,15 @@ function editButton(buttonID){
     $('.button-cooldown input').val(buttonCooldown);
     $('.button-notes input').val(buttonNotes);
 
+    // Optional Media
+    var mediaSettings = tactile.media;
+    $('.sound-file input').val(mediaSettings.soundPath);
+    $('.sound-volume input').val(mediaSettings.soundVolume);
+    $('.image-popup input').val(mediaSettings.imagePath);
+    $('.image-location input[name="imageX"]').val(mediaSettings.imageX);
+    $('.image-location input[name="imageY"]').val(mediaSettings.imageY);
+    $('.image-duration input').val(mediaSettings.imageDuration);
+
     // Show button specific menu based on the new type.
     buttonSpecific();
 
@@ -455,12 +470,6 @@ function editButton(buttonID){
             $('.game-button-pressed input').val(press);
             $('.game-button-counter input').val(opposite);
         }
-
-    } else if (buttonType == "Sound"){
-        var filepath = typeSettings.filePath;
-        var volume = typeSettings.volume;
-        $('.sound-file input').val(filepath);
-        $('.sound-volume input').val(volume);
 
     } else if (buttonType == "Api Buttons"){
         var apiType = typeSettings.apiType;
