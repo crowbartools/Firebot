@@ -110,15 +110,51 @@
                     <select class="form-control" data-toggle="tooltip" data-placement="left" title="Choose type of controls for the button">
                         <option value="Nothing" data="nothing">Nothing</option>
                         <option value="Game Controls" data="game-controls">Game Control</option>
-                        <option value="Sound" data="sound-buttons">Sound</option>
+                        <option value="Media" data="media-buttons">Media</option>
                         <option value="Api Buttons" data="api-buttons">API Button</option>
                         <option value="Text Buttons" data="text-buttons">Text</option>
                     </select>
                 </div>
                 <div class="button-cooldown button-section">
-                    <label class="col-form-label">Cooldown Length (sec)</label>
+                    <label class="col-form-label">Solo Cooldown Length (sec)</label>
                     <input class="form-control" type="text" placeholder="120" name="cooldownLength" data-toggle="tooltip" data-placement="left" title="Cooldown in seconds. This will be overridden by any group cooldown settings.">
                 </div>
+            
+            <div id="media-accordion" role="tablist" aria-multiselectable="true">
+                <label class="col-form-label">Image and Sound</label>
+                <div class="media-header" role="tab">
+                    <a data-toggle="collapse" data-parent="#media-accordion" href="#media-content" aria-expanded="false" aria-controls="media-content">
+                        <button type="menu" class="btn" data-toggle="tooltip" data-placement="left" title="Optional. Attach a sound or image popup to this button.">Attach Media</button>
+                    </a>
+                </div>
+                <div id="media-content" class="collapse" role="tabpanel" aria-labelledby="media-header">
+                    <div class="button-section">
+                        <h3>Sound</h3>
+                        <div class="sound-file">
+                            <label class="col-form-label">Audio File</label>
+                            <input class="form-control" type="text" name="soundPath" placeholder="C:\" data-toggle="tooltip" data-placement="left" title="Choose your audio file. mp3, wav, or ogg">
+                            <button class="sound-selector">Choose</button>
+                        </div>
+                        <div class="sound-volume">
+                            <label class="col-form-label">Volume</label>
+                            <input class="form-control" type="text" name="soundVolume" placeholder="0.5" data-toggle="tooltip" data-placement="left" title="0.5 is 50% volume, 0.2 is 20%, etc...">
+                        </div>
+                    </div>
+                    <div class="button-section">
+                        <h3>Image</h3>
+                        <div class="image-popup">
+                            <label class="col-form-label">Image File</label>
+                            <input class="form-control" type="text" name="imagePath" placeholder="C:\" data-toggle="tooltip" data-placement="left" title="Choose an image to display when button is pressed.">
+                            <button class="image-selector">Choose</button>
+                        </div>
+                        <div class="image-location">
+                            <label class="col-form-label">Image Position</label>
+                            <input class="form-control" type="text" name="imageX" placeholder="800" data-toggle="tooltip" data-placement="left" title="The X position of the image.">
+                            <input class="form-control" type="text" name="imageY" placeholder="600" data-toggle="tooltip" data-placement="left" title="The Y position of the image.">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="button-specific-settings">
             <!-- These divs are shown based on the selected button type -->
@@ -207,22 +243,9 @@
             </div>
 
             <!-- Sound Buttons -->
-            <div class="sound-buttons button-specific" style="display:none">
-                <h3>Type Specific</h3>
-                <div class="sound-file">
-                    <label class="col-form-label">Audio File</label>
-                    <input class="form-control" type="text" name="soundPath" placeholder="C:\" data-toggle="tooltip" data-placement="left" title="Choose your audio file. mp3, wav, or ogg">
-                    <button class="sound-selector">Choose</button>
-                </div>
-                <div class="sound-volume">
-                    <label class="col-form-label">Volume</label>
-                    <input class="form-control" type="text" name="soundVolume" placeholder="0.5" data-toggle="tooltip" data-placement="left" title="0.5 is 50% volume, 0.2 is 20%, etc...">
-                </div>
-            </div>
-
-            <!-- Click Boss -->
-            <div class="clickerboss-buttons button-specific" style="display:none">
-                Clickerboss Buttons coming soon...
+            <div class="media-buttons button-specific" style="display:none">
+                <!-- Does not need type specific settings because images and sounds are defaults-->
+                Attach a sound file and image via the attach image button.
             </div>
 
         </div>

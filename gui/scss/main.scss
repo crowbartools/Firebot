@@ -141,13 +141,15 @@
 .sidr-inner{
     padding:10px;
 }
+
 #button-menu{
     .sidr-inner{
         .button-section, .multi-button-array input{
-            margin-bottom:10px;
+            margin:5px 0px 5px 0px;
         }
         .button-general-settings{
             border-bottom:1px dotted #ffffff;
+            padding-bottom:10px;
         }
         .button-specific-settings{
             padding:10px 0px 10px 0px;
@@ -163,6 +165,13 @@
             margin-top:10px;
             a{
                 color:transparent;
+            }
+        }
+        #media-content{
+            margin-top:10px;
+            .button-section{
+                border-top: 1px dotted #ffffff;
+                padding: 10px 0px 10px 0px;
             }
         }
     }
