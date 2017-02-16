@@ -33,8 +33,7 @@ function playSound(data){
 function showImage(data){
     var buttonID = data.buttonID;
     var filepath = data.filepath;
-    var imageX = data.imageX;
-    var imageY = data.imageY;
+    var imagePosition = data.imagePosition;
     var imageDuration = data.imageDuration;
 
     if (filepath !== null){
@@ -50,7 +49,7 @@ function showImage(data){
         }
 
         // Compile data and send to overlay.
-        var data = {"event":"image","filepath":filepath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration};
+        var data = {"event":"image","filepath":filepath, "imagePosition":imagePosition, "imageDuration":imageDuration};
         webSocket.broadcast(data);
     } else {
         errorLogger.log('Button #'+buttonID+' does not have an image file loaded.')

@@ -150,8 +150,17 @@
                         </div>
                         <div class="image-location">
                             <label class="col-form-label">Image Position</label>
-                            <input class="form-control" type="text" name="imageX" placeholder="800" data-toggle="tooltip" data-placement="left" title="The X position of the image.">
-                            <input class="form-control" type="text" name="imageY" placeholder="600" data-toggle="tooltip" data-placement="left" title="The Y position of the image.">
+                            <select class="form-control" data-toggle="tooltip" data-placement="left" title="Where would you like the image to display?">
+                                <option value="top-middle">Middle Top </option>
+                                <option value="middle">Middle</option>
+                                <option value="bottom-middle">Middle Bottom</option>
+                                <option value="top-left">Left Top</option>
+                                <option value="middle-left">Left Middle</option>
+                                <option value="bottom-left">Left Bottom</option>
+                                <option value="top-right">Right Top</option>
+                                <option value="middle-right">Right Middle</option>
+                                <option value="bottom-right">Right Bottom</option>        
+                            </select>
                         </div>
                         <div class="image-duration">
                             <label class="col-form-label">Image Duration</label>

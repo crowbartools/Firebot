@@ -206,8 +206,7 @@ function buttonSubmission(){
         var soundPath = $('.sound-file input').val();
         var soundVolume = parseFloat( $('.sound-volume input').val() );
         var imagePath = $('.image-popup input').val();
-        var imageX = parseInt( $('.image-location input[name="imageX"]').val() );
-        var imageY = parseInt( $('.image-location input[name="imageY"]').val() );
+        var imagePosition = $('.image-location select').val();
         var imageDuration = parseInt( $('.image-duration input').val() ) * 1000;
 
         // If no volume is entered, then push full volume.
@@ -216,7 +215,7 @@ function buttonSubmission(){
         }
 
         // Push Optional Media to db
-        dbControls.push("/tactile/" + buttonID + "/media", {"soundPath":soundPath, "soundVolume":soundVolume, "imagePath":imagePath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration})
+        dbControls.push("/tactile/" + buttonID + "/media", {"soundPath":soundPath, "soundVolume":soundVolume, "imagePath":imagePath, "imagePosition":imagePosition, "imageDuration":imageDuration})
 
         // Button Specific settings
         if (buttonType == "Game Controls"){
@@ -436,9 +435,12 @@ function editButton(buttonID){
         $('.sound-file input').val(mediaSettings.soundPath);
         $('.sound-volume input').val(mediaSettings.soundVolume);
         $('.image-popup input').val(mediaSettings.imagePath);
-        $('.image-location input[name="imageX"]').val(mediaSettings.imageX);
-        $('.image-location input[name="imageY"]').val(mediaSettings.imageY);
+        $('.image-location select').val(mediaSettings.imagePosition);
         $('.image-duration input').val(mediaSettings.imageDuration / 1000);
+
+        if (mediaSettings.imagePosition === undefined || mediaSettings.imagePosition === null){
+            $('.image-location select').val("top-middle");
+        }
 
         // Expand media area if there is anything to show.
         if(mediaSettings.soundPath !== "" || mediaSettings.imagePath !== ""){

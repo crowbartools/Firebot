@@ -36,15 +36,14 @@ function showImage(data){
 	// Image Packet...
 	// {"event":"image","filepath":filepath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration};
 	var filepath = data.filepath;
-	var imageX = data.imageX;
-	var imageY = data.imageY;
+	var imagePosition = data.imagePosition;
 	var imageDuration = data.imageDuration;
 
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
 	var divClass = d.getTime();
 
-	var imageFinal = '<div class="'+divClass+'-image" style="display:none; position:absolute; top:'+imageY+'px; left:'+imageX+'px;"><img src="'+filepath+'"></div>';
+	var imageFinal = '<div class="'+divClass+'-image '+imagePosition+'" style="display:none;"><img src="'+filepath+'"></div>';
 
 	$('body').append(imageFinal);
 	$('.'+divClass+'-image').fadeIn('fast');
