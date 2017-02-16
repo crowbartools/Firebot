@@ -109,9 +109,10 @@
                     <label class="col-form-label">Type</label>
                     <select class="form-control" data-toggle="tooltip" data-placement="left" title="Choose type of controls for the button">
                         <option value="Nothing" data="nothing">Nothing</option>
+                        <option value="Api Buttons" data="api-buttons">API Button</option>
+                        <option value="Celebration" data="celebration-buttons">Celebration</option>
                         <option value="Game Controls" data="game-controls">Game Control</option>
                         <option value="Media" data="media-buttons">Media</option>
-                        <option value="Api Buttons" data="api-buttons">API Button</option>
                         <option value="Text Buttons" data="text-buttons">Text</option>
                     </select>
                 </div>
@@ -236,6 +237,24 @@
                 </div>
                 <div class="api-notice">
                     Note: APIs are remote and I can't control the quality, type, or maturity level of what it may give you.
+                </div>
+            </div>
+
+            <!-- Celebration Buttons -->
+            <div class="celebration-buttons button-specific" style="display:none">
+                <h3>Type Specific</h3>
+                <div class="celebration-type">
+                    <label class="col-form-label">Type</label>
+                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="How would you like to celebrate?">
+                        <option value="fireworks">Fireworks</option>
+                    </select>
+                </div>
+                <div class="celebration-duration">
+                    <label class="col-form-label">Duration</label>
+                    <input class="form-control" type="text" placeholder="Firebot" data-toggle="tooltip" data-placement="left" title="Duration of celebration effects.">
+                </div>
+                <div class="notice">
+                    Note: Celebration effects require the overlay file to be loaded in your streaming software.
                 </div>
             </div>
 
@@ -553,6 +572,7 @@
     require('./js/login.js');
     require('./js/interactive/interactive-board.js');
     require('./js/interactive/media.js');
+    require('./js/interactive/celebration.js');
     require('./js/form-validation.js');
     require('./js/error-logging/error-logging.js');
 </script>

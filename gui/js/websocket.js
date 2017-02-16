@@ -8,6 +8,7 @@ const WebSocketServer = require('ws').Server,
 // This allows for the guiBroadcast call to send out data via websocket.
 function broadcast(data) {
     var data = JSON.stringify(data);
+    console.log(data);
     wss.clients.forEach(function each(client) {
         client.send(data);
     });

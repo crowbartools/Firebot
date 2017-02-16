@@ -237,14 +237,19 @@ function buttonSubmission(){
         } else if (buttonType == "Api Buttons"){
             var apiType = $('.api-select select option:selected').val();
             var sendAs = $('.api-send-as select option:selected').val();
-            var typeSettings = { "apiType": apiType, "sendAs":sendAs}
+            var typeSettings = {"apiType": apiType, "sendAs":sendAs}
 
         } else if (buttonType == "Text Buttons"){
             var textLine = $('.text-line input').val();
             var whisperTo = $('.text-whisper-to input').val();
             var sendAs = $('.text-send-as select option:selected').val();
-            var typeSettings = { "textLine": textLine, "sendAs":sendAs, "whisperTo":whisperTo}
+            var typeSettings = {"textLine": textLine, "sendAs":sendAs, "whisperTo":whisperTo}
 
+        } else if (buttonType == "Celebration"){
+            var celebrationType = $('.celebration-type select option:selected').val();
+            var celebrationDuration = parseInt( $('.celebration-duration input').val() ) * 1000;
+            var typeSettings = {"celebrationType": celebrationType, "celebrationDuration":celebrationDuration}
+        
         } else {
             var typeSettings = {};
 
@@ -517,6 +522,12 @@ function editButton(buttonID){
         $('.text-whisper-to input').val(whisperTo);
         $('.text-send-as select').val(sendAs);
         
+    } else if (buttonType == "Celebration"){
+        var celebrationType = typeSettings.celebrationType;
+        var celebrationDuration = typeSettings.celebrationDuration;
+        $('.celebration-type select').val(celebrationType);
+        $('.celebration-duration input').val(celebrationDuration / 1000);
+
     }
 
     // Open Menu

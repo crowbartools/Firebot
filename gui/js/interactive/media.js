@@ -11,7 +11,6 @@ function playSound(data){
     var buttonID = data.buttonID;
 
     // Check if volume was entered.
-    console.log(volume);
     if (volume === null || volume == ""){
         var volume = 1;
     }
@@ -38,11 +37,8 @@ function showImage(data){
 
     if (filepath !== null){
         // Set defaults if they werent filled out.
-        if(imageX == "" || imageX === null){
-            var imageX = 0;
-        }
-        if(imageY == "" || imageY === null){
-            var imageY = 0;
+        if(imagePosition == "" || imagePosition === null){
+            var imageX = "top-middle";
         }
         if(imageDuration == "" || imageDuration === null){
             var imageDuration = 5;
