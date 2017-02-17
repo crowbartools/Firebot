@@ -173,6 +173,7 @@ textarea {
     background-color:white;
     color:$main-color;
     border: 1px solid $highlight-color;
+    box-shadow: 3px 3px 10px #888888;
     .ui-dialog-titlebar{
         background-color:$highlight-color;
         color:$main-color;
