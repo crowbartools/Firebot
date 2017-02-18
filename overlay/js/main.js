@@ -132,7 +132,6 @@ function fireworks(){
 	var currentHue = options.startingHue;
 	var clickLimiterTick = 0;
 	var timerTick = 0;
-	var cntRocketsLaunched = 0;
 
 	// Helper function for canvas animations
 	window.requestAnimFrame = (function() {
@@ -194,9 +193,6 @@ function fireworks(){
 		this.hue = currentHue;
 		this.targetRadius = 1;
 		this.targetDirection = false;  // false = Radius is getting bigger, true = Radius is getting smaller
-		
-		// Increase the rockets launched counter
-		cntRocketsLaunched++;
 	};
 
 	// This method should be called each frame to update the firework
@@ -385,11 +381,6 @@ function fireworks(){
 			particles[i].draw();
 			particles[i].update(i);
 		}
-		
-		// Draw some text
-		canvasCtx.fillStyle = 'white';
-		canvasCtx.font = '14px Arial';
-		canvasCtx.fillText('Rockets launched: ' + cntRocketsLaunched, 10, 24);
 		
 		// Launch fireworks automatically to random coordinates, if the user does not interact with the scene
 		if(timerTick >= options.timerInterval) {
