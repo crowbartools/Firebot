@@ -27,8 +27,17 @@ function buttonMenuValidate(){
             buttonPress:{
                 required: true
             },
-            soundPath:{
-                required:true
+            soundVolume:{
+                number: true
+            },
+            imageX:{
+                number: true
+            },
+            imageY:{
+                number: true
+            },
+            imageDuration:{
+                number: true
             }
         }
     });

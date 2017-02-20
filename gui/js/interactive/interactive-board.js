@@ -202,6 +202,21 @@ function buttonSubmission(){
         // Push general settings to db.
         dbControls.push("/tactile/" + buttonID, { "id": buttonID, "type": buttonType, "cooldownGroup": cooldownGroup, "cooldown": buttonCooldown, "notes": buttonNotes});
 
+        // Optional Media
+        var soundPath = $('.sound-file input').val();
+        var soundVolume = parseFloat( $('.sound-volume input').val() );
+        var imagePath = $('.image-popup input').val();
+        var imagePosition = $('.image-location select').val();
+        var imageDuration = parseInt( $('.image-duration input').val() ) * 1000;
+
+        // If no volume is entered, then push full volume.
+        if(isNaN(soundVolume) === true){
+            var soundVolume = 1;
+        }
+
+        // Push Optional Media to db
+        dbControls.push("/tactile/" + buttonID + "/media", {"soundPath":soundPath, "soundVolume":soundVolume, "imagePath":imagePath, "imagePosition":imagePosition, "imageDuration":imageDuration})
+
         // Button Specific settings
         if (buttonType == "Game Controls"){
             if ( $('.single-button').is(':visible') ){
@@ -219,23 +234,23 @@ function buttonSubmission(){
                 }) 
                 var typeSettings = { "press": buttonPressed, "opposite": "", "modifiers": buttonArray};
             }
-        } else if (buttonType == "Sound"){
-            var filePath = $('.sound-file input').val();
-            var fileVolume = $('.sound-volume input').val();
-            var typeSettings = { "filePath": filePath, "volume": fileVolume}
-
         } else if (buttonType == "Api Buttons"){
             var apiType = $('.api-select select option:selected').val();
             var sendAs = $('.api-send-as select option:selected').val();
-            var typeSettings = { "apiType": apiType, "sendAs":sendAs}
+            var typeSettings = {"apiType": apiType, "sendAs":sendAs}
 
         } else if (buttonType == "Text Buttons"){
             var textLine = $('.text-line input').val();
             var whisperTo = $('.text-whisper-to input').val();
             var sendAs = $('.text-send-as select option:selected').val();
-            var typeSettings = { "textLine": textLine, "sendAs":sendAs, "whisperTo":whisperTo}
+            var typeSettings = {"textLine": textLine, "sendAs":sendAs, "whisperTo":whisperTo}
 
-        } else if (buttonType == "Nothing"){
+        } else if (buttonType == "Celebration"){
+            var celebrationType = $('.celebration-type select option:selected').val();
+            var celebrationDuration = parseInt( $('.celebration-duration input').val() ) * 1000;
+            var typeSettings = {"celebrationType": celebrationType, "celebrationDuration":celebrationDuration}
+        
+        } else {
             var typeSettings = {};
 
         }
@@ -419,6 +434,43 @@ function editButton(buttonID){
     $('.button-cooldown input').val(buttonCooldown);
     $('.button-notes input').val(buttonNotes);
 
+    // Optional Media
+    try{
+        var mediaSettings = tactile['media'];
+        $('.sound-file input').val(mediaSettings.soundPath);
+        $('.sound-volume input').val(mediaSettings.soundVolume);
+        $('.image-popup input').val(mediaSettings.imagePath);
+        $('.image-location select').val(mediaSettings.imagePosition);
+        $('.image-duration input').val(mediaSettings.imageDuration / 1000);
+
+        if (mediaSettings.imagePosition === undefined || mediaSettings.imagePosition === null){
+            $('.image-location select').val("top-middle");
+        }
+
+        // Expand media area if there is anything to show.
+        if(mediaSettings.soundPath !== "" || mediaSettings.imagePath !== ""){
+            $('#media-content').addClass('show');
+        } else {
+            $('#media-content').removeClass('show');
+        }
+    }catch(err){
+        // Error geting media settings. Just keep the media area closed.
+        $('#media-content').removeClass('show');
+        console.log(err);
+    }
+
+    // Set volume slider.
+    var volumeSlider = parseFloat( $('.hidden-volume').val() ) * 100;
+    if (isNaN(volumeSlider)){
+        // No saved volume for this button. set to defaults.
+        $('.volume-slider').slider('value', 100);
+        $('.current-volume').text("(100)");
+    } else {
+        // This button has a saved volume. Set it.
+        $('.volume-slider').slider('value', volumeSlider);
+        $('.current-volume').text(volumeSlider);
+    }
+
     // Show button specific menu based on the new type.
     buttonSpecific();
 
@@ -456,12 +508,6 @@ function editButton(buttonID){
             $('.game-button-counter input').val(opposite);
         }
 
-    } else if (buttonType == "Sound"){
-        var filepath = typeSettings.filePath;
-        var volume = typeSettings.volume;
-        $('.sound-file input').val(filepath);
-        $('.sound-volume input').val(volume);
-
     } else if (buttonType == "Api Buttons"){
         var apiType = typeSettings.apiType;
         var sendAs = typeSettings.sendAs;
@@ -476,6 +522,12 @@ function editButton(buttonID){
         $('.text-whisper-to input').val(whisperTo);
         $('.text-send-as select').val(sendAs);
         
+    } else if (buttonType == "Celebration"){
+        var celebrationType = typeSettings.celebrationType;
+        var celebrationDuration = typeSettings.celebrationDuration;
+        $('.celebration-type select').val(celebrationType);
+        $('.celebration-duration input').val(celebrationDuration / 1000);
+
     }
 
     // Open Menu
@@ -918,10 +970,28 @@ gameProfileList();
 
 
 // Initialize Plugin
-// On app start initialize the dialog window.
 $( document ).ready(function() {
+    // On app start initialize the dialog window.
     $( "#delete-confirm" ).dialog({
         closeText: "X",
         autoOpen: false
+    });
+
+    // Initialize Volume Slider
+    $(".volume-slider").slider({
+        range: "min",
+        value: 100,
+        min: 0,
+        max: 100,
+        //this gets a live reading of the value and prints it on the page
+        slide: function(event, ui) {
+            $(".current-volume").text('('+ui.value+'%)');
+        },
+        //this updates the value of your hidden field when user stops dragging
+        change: function(event, ui) {
+            // Convert to decimal for saving.
+            var newVal = ui.value / 100;
+            $('.hidden-volume').val(newVal);
+        }
     });
 });

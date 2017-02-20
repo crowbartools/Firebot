@@ -1,8 +1,11 @@
 During Compile -
 1. Go to KBM-Robot module and open up the main js file.
 2. Edit the java path under startJar to point to root java folder."var jarPath = path.join("./kbm-java", "robot" + JRE_ver + ".jar");"
-3. Run build.
-4. Copy java folder and paste it into the root of the build folders.
+3. Cut the "user-settings", "overlay", and "java" folders from the root and put them somewhere.
+4. Run build.
+5. Paste "overlay" and "java" into the dist folder.
+6. Zip up the dist for distribution.
+7. For testing the build, paste in your user-settings. Just make sure not to zip that folder up.
 
 Rebuild Robotjs -
 1. set PYTHON=D:\Python\bin\Python.exe

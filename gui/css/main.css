@@ -15480,8 +15480,9 @@ textarea {
   background-color: white;
   color: #273b48;
   border: 1px solid #ffcb05;
+  box-shadow: 3px 3px 10px #888888;
 }
-/* line 176, ../scss/_global.scss */
+/* line 177, ../scss/_global.scss */
 .ui-dialog .ui-dialog-titlebar {
   background-color: #ffcb05;
   color: #273b48;
@@ -15489,48 +15490,48 @@ textarea {
   padding: 5px 10px 10px 10px;
   cursor: move;
 }
-/* line 182, ../scss/_global.scss */
+/* line 183, ../scss/_global.scss */
 .ui-dialog .ui-dialog-titlebar button {
   border-radius: 50%;
   border: none;
   margin: 0px;
   font-size: .9em;
 }
-/* line 189, ../scss/_global.scss */
+/* line 190, ../scss/_global.scss */
 .ui-dialog .ui-dialog-content {
   padding: 10px;
   text-align: center;
 }
-/* line 192, ../scss/_global.scss */
+/* line 193, ../scss/_global.scss */
 .ui-dialog .ui-dialog-content .facepalm {
   width: 75px;
   display: block;
   margin: auto;
 }
-/* line 198, ../scss/_global.scss */
+/* line 199, ../scss/_global.scss */
 .ui-dialog .ui-button {
   background-color: #273b48;
   color: white;
   float: right;
 }
-/* line 202, ../scss/_global.scss */
+/* line 203, ../scss/_global.scss */
 .ui-dialog .ui-button:hover {
   background-color: #888c90;
 }
 
-/* line 210, ../scss/_global.scss */
+/* line 211, ../scss/_global.scss */
 #header {
   padding: 1%;
 }
-/* line 213, ../scss/_global.scss */
+/* line 214, ../scss/_global.scss */
 #header .main-image {
   display: inline-block;
 }
-/* line 217, ../scss/_global.scss */
+/* line 218, ../scss/_global.scss */
 #header .menu-hamburger {
   font-size: 1.5em;
 }
-/* line 221, ../scss/_global.scss */
+/* line 222, ../scss/_global.scss */
 #header .interactive-status, #header .chat-status {
   float: right;
   display: inline-block;
@@ -15545,11 +15546,11 @@ textarea {
   font-size: .75em;
   cursor: pointer;
 }
-/* line 234, ../scss/_global.scss */
+/* line 235, ../scss/_global.scss */
 #header .interactive-status.online, #header .chat-status.online {
   background-color: #177c09;
 }
-/* line 238, ../scss/_global.scss */
+/* line 239, ../scss/_global.scss */
 #header .updated-version {
   float: right;
   display: inline-block;
@@ -15564,23 +15565,23 @@ textarea {
   font-size: .75em;
   cursor: pointer;
 }
-/* line 251, ../scss/_global.scss */
+/* line 252, ../scss/_global.scss */
 #header .updated-version a {
   color: #1b2935;
   text-decoration: none;
 }
-/* line 254, ../scss/_global.scss */
+/* line 255, ../scss/_global.scss */
 #header .updated-version a:hover {
   color: #888c90;
 }
 
-/* line 261, ../scss/_global.scss */
+/* line 262, ../scss/_global.scss */
 .navigation ul {
   list-style: none;
   margin: 0px;
   padding: 0px;
 }
-/* line 266, ../scss/_global.scss */
+/* line 267, ../scss/_global.scss */
 .navigation ul li a {
   display: block;
   width: 100%;
@@ -15591,23 +15592,23 @@ textarea {
   padding: 4% 2%;
   border-bottom: 1px dotted #ffffff;
 }
-/* line 275, ../scss/_global.scss */
+/* line 276, ../scss/_global.scss */
 .navigation ul li a:hover {
   background-color: #ffcb05;
   color: #1b2935;
 }
 
-/* line 283, ../scss/_global.scss */
+/* line 284, ../scss/_global.scss */
 .xtremes-logo {
   position: absolute;
   bottom: 10px;
 }
-/* line 286, ../scss/_global.scss */
+/* line 287, ../scss/_global.scss */
 .xtremes-logo img {
   max-width: 100%;
 }
 
-/* line 290, ../scss/_global.scss */
+/* line 291, ../scss/_global.scss */
 .sidr {
   background: #273b48;
   /* Old Browsers */
@@ -15621,41 +15622,41 @@ textarea {
   /*Standard*/
 }
 
-/* line 293, ../scss/_global.scss */
+/* line 294, ../scss/_global.scss */
 .page {
   display: none;
   width: 100%;
 }
-/* line 296, ../scss/_global.scss */
+/* line 297, ../scss/_global.scss */
 .page.current {
   display: block;
 }
-/* line 299, ../scss/_global.scss */
+/* line 300, ../scss/_global.scss */
 .page .main-content {
   padding: 2%;
 }
 
-/* line 306, ../scss/_global.scss */
+/* line 307, ../scss/_global.scss */
 ::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
   background-color: #F5F5F5;
 }
 
-/* line 312, ../scss/_global.scss */
+/* line 313, ../scss/_global.scss */
 ::-webkit-scrollbar {
   width: 12px;
   background-color: #F5F5F5;
 }
 
-/* line 317, ../scss/_global.scss */
+/* line 318, ../scss/_global.scss */
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: #888c90;
 }
 
-/* line 324, ../scss/_global.scss */
+/* line 325, ../scss/_global.scss */
 .interactive-tip {
   position: fixed;
   bottom: 0px;
@@ -15666,36 +15667,137 @@ textarea {
   text-align: center;
 }
 @media only screen and (max-width: 940px) {
-  /* line 324, ../scss/_global.scss */
+  /* line 325, ../scss/_global.scss */
   .interactive-tip {
     display: none;
   }
 }
 
-/* line 336, ../scss/_global.scss */
+/* line 337, ../scss/_global.scss */
 .carousel-inner {
   font-style: OpenSans, sans-serif;
   width: 75%;
   margin: auto;
 }
-/* line 340, ../scss/_global.scss */
+/* line 341, ../scss/_global.scss */
 .carousel-inner .carousel-item {
   text-align: center;
 }
 
-/* line 344, ../scss/_global.scss */
+/* line 345, ../scss/_global.scss */
 .carousel-control-prev, .carousel-control-next {
   opacity: 1;
 }
-/* line 346, ../scss/_global.scss */
+/* line 347, ../scss/_global.scss */
 .carousel-control-prev .fa, .carousel-control-next .fa {
   color: #1b2935;
   opacity: 1;
 }
 
-/* line 352, ../scss/_global.scss */
+/* line 353, ../scss/_global.scss */
 .tooltip {
   z-index: 9999999!important;
+}
+
+/* line 359, ../scss/_global.scss */
+.ui-slider {
+  position: relative;
+  text-align: left;
+  background-color: #888c90;
+}
+
+/* line 364, ../scss/_global.scss */
+.hidden-volume {
+  display: none;
+}
+
+/* line 367, ../scss/_global.scss */
+.ui-slider .ui-slider-handle {
+  position: absolute;
+  z-index: 2;
+  width: 1.2em;
+  height: 1.2em;
+  cursor: default;
+  -ms-touch-action: none;
+  touch-action: none;
+  background-color: #ffcb05;
+  border-radius: 50%;
+  box-shadow: 2px 2px 25px #000;
+  cursor: pointer;
+}
+
+/* line 380, ../scss/_global.scss */
+.ui-slider .ui-slider-range {
+  position: absolute;
+  z-index: 1;
+  font-size: .7em;
+  display: block;
+  border: 0;
+  background-position: 0 0;
+  background-color: #cecece;
+}
+
+/* support: IE8 - See #6727 */
+/* line 392, ../scss/_global.scss */
+.ui-slider.ui-state-disabled .ui-slider-handle,
+.ui-slider.ui-state-disabled .ui-slider-range {
+  filter: inherit;
+}
+
+/* line 396, ../scss/_global.scss */
+.ui-slider-horizontal {
+  height: .8em;
+}
+
+/* line 399, ../scss/_global.scss */
+.ui-slider-horizontal .ui-slider-handle {
+  top: -0.3em;
+  margin-left: -0.6em;
+}
+
+/* line 403, ../scss/_global.scss */
+.ui-slider-horizontal .ui-slider-range {
+  top: 0;
+  height: 100%;
+}
+
+/* line 407, ../scss/_global.scss */
+.ui-slider-horizontal .ui-slider-range-min {
+  left: 0;
+}
+
+/* line 410, ../scss/_global.scss */
+.ui-slider-horizontal .ui-slider-range-max {
+  right: 0;
+}
+
+/* line 414, ../scss/_global.scss */
+.ui-slider-vertical {
+  width: .8em;
+  height: 100px;
+}
+
+/* line 418, ../scss/_global.scss */
+.ui-slider-vertical .ui-slider-handle {
+  left: -0.3em;
+  margin-left: 0;
+  margin-bottom: -0.6em;
+}
+
+/* line 423, ../scss/_global.scss */
+.ui-slider-vertical .ui-slider-range {
+  left: 0;
+  width: 100%;
+}
+
+/* line 427, ../scss/_global.scss */
+.ui-slider-vertical .ui-slider-range-min {
+  bottom: 0;
+}
+
+/* line 430, ../scss/_global.scss */
+.ui-slider-vertical .ui-slider-range-max {
+  top: 0;
 }
 
 /* line 9, ../scss/main.scss */
@@ -15844,43 +15946,53 @@ textarea {
   padding: 10px;
 }
 
-/* line 146, ../scss/main.scss */
+/* line 147, ../scss/main.scss */
 #button-menu .sidr-inner .button-section, #button-menu .sidr-inner .multi-button-array input {
-  margin-bottom: 10px;
+  margin: 5px 0px 5px 0px;
 }
-/* line 149, ../scss/main.scss */
+/* line 150, ../scss/main.scss */
 #button-menu .sidr-inner .button-general-settings {
   border-bottom: 1px dotted #ffffff;
+  padding-bottom: 10px;
 }
-/* line 152, ../scss/main.scss */
+/* line 154, ../scss/main.scss */
 #button-menu .sidr-inner .button-specific-settings {
   padding: 10px 0px 10px 0px;
   margin-bottom: 10px;
 }
-/* line 156, ../scss/main.scss */
+/* line 158, ../scss/main.scss */
 #button-menu .sidr-inner .game-opposite-select, #button-menu .sidr-inner .game-press-select {
   overflow-y: scroll;
 }
-/* line 159, ../scss/main.scss */
+/* line 161, ../scss/main.scss */
 #button-menu .sidr-inner .game-button-pressed, #button-menu .sidr-inner .game-button-counter {
   position: relative;
 }
-/* line 162, ../scss/main.scss */
+/* line 164, ../scss/main.scss */
 #button-menu .sidr-inner .button-save-close {
   margin-top: 10px;
 }
-/* line 164, ../scss/main.scss */
+/* line 166, ../scss/main.scss */
 #button-menu .sidr-inner .button-save-close a {
   color: transparent;
 }
-
 /* line 170, ../scss/main.scss */
+#button-menu .sidr-inner #media-content {
+  margin-top: 10px;
+}
+/* line 172, ../scss/main.scss */
+#button-menu .sidr-inner #media-content .button-section {
+  border-top: 1px dotted #ffffff;
+  padding: 10px 0px 10px 0px;
+}
+
+/* line 179, ../scss/main.scss */
 .json-import-area {
   width: 100%;
   height: 300px;
 }
 
-/* line 177, ../scss/main.scss */
+/* line 186, ../scss/main.scss */
 .settings .settings-section {
   border-bottom: 1px dotted #ffffff;
   margin-bottom: 10px;
@@ -15888,36 +16000,36 @@ textarea {
   display: flex;
   flex-wrap: wrap;
 }
-/* line 184, ../scss/main.scss */
+/* line 193, ../scss/main.scss */
 .settings .setting {
   padding: 0px 10px 10px 0px;
   flex-grow: 1;
 }
-/* line 188, ../scss/main.scss */
+/* line 197, ../scss/main.scss */
 .settings h3 {
   width: 100%;
   margin-bottom: 2%;
   padding-bottom: 0px;
 }
-/* line 193, ../scss/main.scss */
+/* line 202, ../scss/main.scss */
 .settings label {
   display: block;
   padding: 1% 1% 1% 0%;
 }
-/* line 197, ../scss/main.scss */
+/* line 206, ../scss/main.scss */
 .settings select, .settings input {
   margin: 1% 0%;
 }
-/* line 200, ../scss/main.scss */
+/* line 209, ../scss/main.scss */
 .settings .settings-save-close button {
   margin-right: 5px;
 }
 
-/* line 207, ../scss/main.scss */
+/* line 216, ../scss/main.scss */
 .updates .latest-update {
   font-weight: bold;
 }
-/* line 210, ../scss/main.scss */
+/* line 219, ../scss/main.scss */
 .updates .update-notes {
   margin: 10px 0px;
 }
