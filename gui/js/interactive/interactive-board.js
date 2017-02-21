@@ -5,6 +5,7 @@ const jqValidate = require('../form-validation.js');
 const {ipcRenderer} = require('electron');
 const errorLogger = require('../error-logging/error-logging.js');
 const jsonImporter = require('./json-importer');
+const webSocket = require('../websocket.js');
 
 // Initialize the Button Menu
 // This starts up sidr to create the side button menu.
