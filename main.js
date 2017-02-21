@@ -8,7 +8,7 @@ const {ipcMain} = require('electron')
 
 const path = require('path')
 const url = require('url')
-const iconPath = path.join(__dirname, '/gui/images/logo.png')
+const iconPath = path.join(__dirname, '/gui/images/logo.ico')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
