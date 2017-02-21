@@ -922,7 +922,7 @@ $( ".import-save" ).click(function() {
     boardBuilder();
 
     // Reset Menu
-    closeButtonMenu();
+    closeButtonMenu('json-import-menu');
 });
 
 // Import Menu Cancel
