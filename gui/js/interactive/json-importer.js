@@ -89,26 +89,33 @@ function convertBeamJson() {
                 var keypress = "numpad_9";
             }
 
-            // Push to DB if button checks out.
-            if (holding === true && keypress !== undefined || frequency === true && keypress !== undefined) {
-                // Assume its a game button
-                dbControls.push("/tactile/" + buttonid, { "id": buttonid,"type":"Game Controls", "cooldown": cooldown, "cooldownGroup": "solo", "notes": buttonText, "typeSettings":{"press": keypress, "opposite": movementCounter}});
-                // Push media controls
-                dbControls.push("/tactile/" + buttonid + "/media", {"soundPath":"", "soundVolume":"", "imagePath":"", "imagePosition":"top-middle", "imageDuration":""});
-            }else if(holding === true && keypress === undefined || frequency === true && keypress === undefined){
-                // Set as nothing
-                dbControls.push("/tactile/" + buttonid, { "id": buttonid,"type":"Nothing", "cooldown": cooldown, "cooldownGroup": "solo", "notes": buttonText, "typeSettings":{}});
-                // Push media controls
-                dbControls.push("/tactile/" + buttonid + "/media", {"soundPath":"", "soundVolume":"", "imagePath":"", "imagePosition":"top-middle", "imageDuration":""});
-            } else {
-                // ERROR WITH BUTTON SETUP. Button does not have holding or press frequency checked.
-                // TO DO: Handle this error gracefully.
-                errorLogger.log('Button #' + buttonid + ' does not have holding or frequency checked in devlab. For the button to work, one of these must be checked.');
+            // Test to see if this button is loaded into the controls file already.
+            try{
+                // If this works, then the button already exists for this board.
+                var test = dbControls.getData("/tactile/" + buttonid);
+            }catch(err){
+                // If it fails, we can push this new button to the board.
+                if(holding === true && frequency === true){
+                    // This button has both holding and press frequency checked. Give warning.
+                    errorLogger.log('Button #' + buttonid + ' has both holding and press frequency checked in the devlab. Please select one or the other.');
+                } else if (holding === true && keypress !== undefined || frequency === true && keypress !== undefined) {
+                    // Assume its a game button
+                    dbControls.push("/tactile/" + buttonid, { "id": buttonid,"type":"Game Controls", "cooldown": cooldown, "cooldownGroup": "solo", "notes": buttonText, "typeSettings":{"press": keypress, "opposite": movementCounter}});
+                    // Push media controls
+                    dbControls.push("/tactile/" + buttonid + "/media", {"soundPath":"", "soundVolume":"", "imagePath":"", "imagePosition":"top-middle", "imageDuration":""});
+                } else if (holding === true && keypress === undefined || frequency === true && keypress === undefined){
+                    // Set as nothing
+                    dbControls.push("/tactile/" + buttonid, { "id": buttonid,"type":"Nothing", "cooldown": cooldown, "cooldownGroup": "solo", "notes": buttonText, "typeSettings":{}});
+                    // Push media controls
+                    dbControls.push("/tactile/" + buttonid + "/media", {"soundPath":"", "soundVolume":"", "imagePath":"", "imagePosition":"top-middle", "imageDuration":""});
+                } else {
+                    // ERROR WITH BUTTON SETUP. Button does not have holding or press frequency checked.
+                    errorLogger.log('Button #' + buttonid + ' does not have holding or frequency checked in devlab. For the button to work, one of these must be checked.');
+                }
             }
         }
     } catch (e) {
         // ERROR IN THE JSON.
-        // TO DO: Handle this gracefully.
         console.log(e);
         errorLogger.log('Error: JSON is not formatted correctly. Make sure you copy/paste the entire controls JSON from the devlab.');
     }

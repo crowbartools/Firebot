@@ -786,6 +786,10 @@ function connectFlipper(status){
     } else if (status == "connected"){
         $('.launch-interactive').removeClass('launch-interactive').addClass('disconnect-interactive').text('Disconnect Interactive')
         $('.chat-status, .interactive-status').addClass('online');
+
+        // Dismiss any errors that are showing upon reconnecting.
+        // This likely means auto-reconnect happened.
+        $('#error-log').dialog('close');
     }
 };
 
@@ -922,7 +926,7 @@ $( ".import-save" ).click(function() {
     boardBuilder();
 
     // Reset Menu
-    closeButtonMenu();
+    closeButtonMenu('json-import-menu');
 });
 
 // Import Menu Cancel
