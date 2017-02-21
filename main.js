@@ -19,7 +19,7 @@ function createWindow () {
       width: 1000,
       height: 600,
       minWidth: 600,
-      icon: path.join(__dirname, './gui/images/logo.png'),
+      icon: path.join(__dirname, './gui/images/logo.ico'),
       show: false
     })
 
