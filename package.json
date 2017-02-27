@@ -1,6 +1,6 @@
 {
   "name": "Firebot",
-  "version": "2.2.2",
+  "version": "2.2.3-beta.1",
   "description": "An application for Beam.pro that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
