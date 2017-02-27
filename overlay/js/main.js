@@ -75,7 +75,7 @@ function showImage(data){
 	var d = new Date();
 	var divClass = d.getTime();
 
-	var imageFinal = '<div class="'+divClass+'-image '+imagePosition+'" style="display:none;"><img src="file:///'+filepathNew+'?time='+divClass+'"></div>';
+	var imageFinal = '<div class="'+divClass+'-image '+imagePosition+'" style="display:none;"><img src="'+filepathNew+'?time='+divClass+'"></div>';
 	
 	$('body').append(imageFinal);
 	$('.'+divClass+'-image').fadeIn('fast');
