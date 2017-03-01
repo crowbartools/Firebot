@@ -10,6 +10,7 @@ function playSound(data){
     var filepath = data.filepath;
     var volume = data.volume;
     var buttonID = data.buttonID;
+    var soundTime = Date.now();
 
     // Check if volume was entered.
     if (volume === null || volume == ""){
@@ -17,12 +18,12 @@ function playSound(data){
     }
     
     if (filepath !== null){
-        var sound = new Howl({
+        var soundTime = new Howl({
             src: [filepath],
             volume: volume
         });
 
-        sound.play();
+        soundTime.play();
     } else {
         errorLogger.log('Button #'+buttonID+' does not have a audio file loaded.')
     }
