@@ -10,6 +10,7 @@ const marked = require('marked');
 // If they are different then it'll show a "new version available" link.
 function updateChecker(){
     var dbSettings = new JsonDB("./user-settings/settings", true, false);
+
     try{
         var betaOptIn = dbSettings.getData('/betaOptIn');
     } catch (err){
@@ -64,8 +65,11 @@ function updateChecker(){
 
                 // If there is a newer version, show the alert.
                 if (versionCompare > 0){
-                    $('.updated-version a').append(' ('+gitVersion+')');
-                    $('.updated-version').fadeIn('fast');
+                    var updateNotify = dbSettings.getData('/updateNotify');
+                    if(updateNotify !== "no"){
+                        $('.updated-version a').append(' ('+gitVersion+')');
+                        $('.updated-version').fadeIn('fast');
+                    }
                 }
             } else {
                 console.log(error, response, body);

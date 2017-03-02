@@ -65,13 +65,6 @@ function settingsReset(cancelled){
             $('.row').css('margin-bottom','20px');
         }
 
-        // Show or hide update based on settings
-        if(updateNotify == "no"){
-            $('.updated-version').fadeOut('fast');
-        } else {
-            $('.updated-version').fadeIn('fast');
-        }
-
     } catch(err){
         console.log(err);
     }
