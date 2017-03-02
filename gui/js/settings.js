@@ -6,6 +6,7 @@ function settingsSave(){
     var dbSettings = new JsonDB("./user-settings/settings", true, false);
 
     var betaOptIn = $('.betaOptIn select option:selected').val();
+    var updateNotify = $('.updateNotify select option:selected').val();
     var showTips = $('.showTips select option:selected').val();
     var mediaCompatibility = $('.image-compatibility select option:selected').val();
     var gameEmulator = $('.emulation-type select option:selected').val();
@@ -13,6 +14,7 @@ function settingsSave(){
     var mouseSpeed = $('.mouse-speed input').val();
 
     dbSettings.push("/betaOptIn", betaOptIn);
+    dbSettings.push("/updateNotify", updateNotify)
     dbSettings.push("/showTips", showTips);
     dbSettings.push("/interactive/mediaCompatibility", mediaCompatibility);
     dbSettings.push("/interactive/emulator", gameEmulator);
@@ -33,6 +35,7 @@ function settingsReset(cancelled){
 
     try{
         var betaOptIn = dbSettings.getData('/betaOptIn');
+        var updateNotify = dbSettings.getData('/updateNotify');
         var showTips = dbSettings.getData('/showTips');
         var mediaCompatibility = dbSettings.getData("/interactive/mediaCompatibility");
         var gameEmulator = dbSettings.getData('/interactive/emulator');
@@ -40,6 +43,7 @@ function settingsReset(cancelled){
         var mouseSpeed = dbSettings.getData('/interactive/mouse/mouseSpeed');
 
         $('.betaOptIn select option[value='+betaOptIn+']').prop('selected', true);
+        $('.updateNotify select option[value='+updateNotify+']').prop('selected', true);
         $('.showTips select option[value='+showTips+']').prop('selected', true);
         $('.image-compatibility select option[value='+mediaCompatibility+']').prop('selected', true);
         $('.emulation-type select option[value='+gameEmulator+']').prop('selected', true);
@@ -59,6 +63,13 @@ function settingsReset(cancelled){
         } else {
             $('.interactive-tip').fadeIn('fast');
             $('.row').css('margin-bottom','20px');
+        }
+
+        // Show or hide update based on settings
+        if(updateNotify == "no"){
+            $('.updated-version').fadeOut('fast');
+        } else {
+            $('.updated-version').fadeIn('fast');
         }
 
     } catch(err){
