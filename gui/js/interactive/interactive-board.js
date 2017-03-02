@@ -106,10 +106,20 @@ function gameProfileList() {
         $(".interactive-board-select option").each(function() {
             $(this).remove();
         });
+
         for (var i = 0, length = games.length; i < length; i++) {
             $(".interactive-board-select").append('<option value="' + games[i].split('.')[0] + '">' + games[i].split('.')[0] + '</option>');
         }
 
+        // Now see if we had an active board before and set the value to that by default.
+        var dbSettings = new JsonDB("./user-settings/settings", true, false);
+        try{
+            var activeBoard = dbSettings.getData('./interactive/activeBoard');
+            $('.interactive-board-select').val(activeBoard);
+        }catch(err){
+
+        }
+        
         // We have a profile! Show related buttons.
         $('.add-new-button, .delete-board, .launch-interactive, .import-board, .add-new-cooldown-group').fadeIn('fast');
     } else {
