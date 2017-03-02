@@ -793,6 +793,10 @@ function connectFlipper(status){
     if(status == "disconnected"){
         $('.disconnect-interactive').removeClass('disconnect-interactive').addClass('launch-interactive').text('Launch Interactive')
         $('.chat-status, .interactive-status').removeClass('online');
+
+        // Reset user counters.
+        $('.usersConnected').text('0');
+        $('.usersActive').text('0');
     } else if (status == "connected"){
         $('.launch-interactive').removeClass('launch-interactive').addClass('disconnect-interactive').text('Disconnect Interactive')
         $('.chat-status, .interactive-status').addClass('online');
@@ -975,6 +979,24 @@ ipcRenderer.on('killSwitch', function (event, status){
         ipcRenderer.send('beamInteractive', 'connect');
     } else {
         ipcRenderer.send('beamInteractive', 'disconnect');
+    }
+})
+
+// Connected Count
+// This updates the connected count number.
+ipcRenderer.on('usersConnected', function (event, data){
+    var lastConnected = $('.usersConnected').text();
+    var usersConnected = data.userCount;
+
+    var lastActive = $('.usersActive').text();
+    var usersActive = data.active;
+    
+    if(usersConnected !== lastConnected){
+        $('.usersConnected').text(usersConnected);
+    }
+
+    if (usersActive !== lastActive){
+        $('.usersActive').text(usersActive);
     }
 })
 
