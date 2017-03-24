@@ -796,7 +796,6 @@ function connectFlipper(status){
 
         // Reset user counters.
         $('.usersConnected').text('0');
-        $('.usersActive').text('0');
     } else if (status == "connected"){
         $('.launch-interactive').removeClass('launch-interactive').addClass('disconnect-interactive').text('Disconnect Interactive')
         $('.chat-status, .interactive-status').addClass('online');
@@ -987,16 +986,9 @@ ipcRenderer.on('killSwitch', function (event, status){
 ipcRenderer.on('usersConnected', function (event, data){
     var lastConnected = $('.usersConnected').text();
     var usersConnected = data.userCount;
-
-    var lastActive = $('.usersActive').text();
-    var usersActive = data.active;
     
     if(usersConnected !== lastConnected){
         $('.usersConnected').text(usersConnected);
-    }
-
-    if (usersActive !== lastActive){
-        $('.usersActive').text(usersActive);
     }
 })
 
