@@ -1,11 +1,12 @@
-/* line 2, ../scss/_login.scss */
+/* line 2, C:/GitHub/Personal/firebot/gui/scss/_login.scss */
 .login-page .page-content {
   text-align: center;
 }
-/* line 5, ../scss/_login.scss */
+/* line 5, C:/GitHub/Personal/firebot/gui/scss/_login.scss */
 .login-page .page-content .login-pic {
   border-radius: 50%;
   border: 2px solid #292b2c;
+  width: 220px;
 }
 
 /* line 8, ../scss/main.scss */

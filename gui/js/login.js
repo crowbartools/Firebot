@@ -2,6 +2,7 @@ const JsonDB = require('node-json-db');
 const request = require('request');
 
 var dbSettings = new JsonDB("./app-settings/settings", true, false);
+var dbAuth = new JsonDB("./user-settings/auth", true, false);
 
 // Options
 var options = {
@@ -10,7 +11,7 @@ var options = {
 };
 
 // Login Kickoff
-function login(){
+function login(type){
     // Make a request to get a shortcode.
     request.post({url:'https://beam.pro/api/v1/oauth/shortcode', form: {client_id: options.client_id, scope: options.scopes}}, function(err,httpResponse,body){
         if (err === null){
@@ -24,9 +25,7 @@ function login(){
 
             // Start check loop every second until we either get a 403, 404, or 200 response.
             // Once response is received close the popup window.
-            loginLoop(handle);
-
-            // Log info into auth file for interactive connection and change login page info.
+            loginLoop(handle, type);
 
         } else {
             console.log(err);
@@ -35,6 +34,7 @@ function login(){
 }
 
 // Login Modal
+// This function pop up a modal with the six digit code to approve access.
 function loginModal(code){
     var modalTemplate = `<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -64,7 +64,8 @@ function loginModal(code){
 }
 
 // Login Loop
-function loginLoop(handle){
+// The login loop waits for the user to put in the six digit code, then grabs auth tokens.
+function loginLoop(handle, type){
 
     var refreshInterval = setInterval(function(){
         request.get('https://beam.pro/api/v1/oauth/shortcode/check/'+handle, function (error, response, body) {
@@ -97,7 +98,7 @@ function loginLoop(handle){
                         var tokenType = body.token_type;
 
                         // Awesome, we got the auth token. Now to save it out for later.
-                        console.log(accessToken, expires, refreshToken, tokenType);               
+                        userInfo(type, accessToken, expires, refreshToken);              
 
                     } else {
                         console.log(err);
@@ -115,5 +116,120 @@ function loginLoop(handle){
 
 }
 
+// User Info
+// This function grabs info from the currently logged in user.
+function userInfo(type, accessToken, expires, refreshToken){
 
-login();
+    // Request user info and save out everything to auth file.
+    request({
+        url: 'https://beam.pro/api/v1/users/current',
+        auth: {
+            'bearer': accessToken
+        }
+    }, function(err, res) {
+        var data = JSON.parse(res.body);
+
+        // Calc token expire time in milliseconds.
+        var curTime = new Date().getTime();
+        var expireTime = curTime + 21599000;
+
+        // Push all to db.
+        dbAuth.push('./'+type+'/username', data.username);
+        dbAuth.push('./'+type+'/userId',data.id);
+        dbAuth.push('./'+type+'/channelId',data.channel.id);
+        dbAuth.push('./'+type+'/avatar',data.avatarUrl);
+        dbAuth.push('./'+type+'/accessToken',accessToken);
+        dbAuth.push('./'+type+'/refreshToken',refreshToken);
+        dbAuth.push('./'+type+'/tokenExpires',expireTime);
+
+        // Style up the login page.
+        loadLogin();
+    });
+}
+
+// Load Login
+// This function styles up the login page if there is info saved for anyone.
+function loadLogin(){
+    // Get streamer info.
+    try {
+        var streamer = dbAuth.getData('/streamer');
+    } catch(error) {
+        console.log('No streamer logged into the app.')
+        var streamer = '';
+    }
+    // Get bot info
+    try {
+        var bot = dbAuth.getData('/bot');
+    } catch(error) {
+        console.log('No bot logged into the app.')
+        var bot = '';
+    }
+
+    if (streamer !== ''){
+        var username = dbAuth.getData('/streamer/username');
+        var avatar = dbAuth.getData('/streamer/avatar');
+
+        // Put avatar and username on page.
+        $('.streamer-login h2').text(username);
+        $('.streamer-login img').attr('src', avatar);
+
+        // Flip the login button.
+        $('.streamer-login button').removeClass('btn-success').addClass('btn-danger').text('Logout').attr('action','logout');
+
+    }
+
+    if (bot !== ''){
+        var username = dbAuth.getData('/bot/username');
+        var avatar = dbAuth.getData('/bot/avatar');
+
+        $('.bot-login h2').text(username);
+        $('.bot-login img').attr('src', avatar);
+
+        // Flip the login button.
+        $('.bot-login button').removeClass('btn-success').addClass('btn-danger').text('Logout').attr('action','logout');
+    }
+}
+
+// Logout
+// This will remove user info and log someone out.
+function logout(type){
+    if(type == "streamer"){
+        $('.streamer-login h2').text('Broadcaster');
+        $('.streamer-login img').attr('src','./images/placeholders/default.jpg');
+
+        // Flip login button
+        $('.streamer-login button').addClass('btn-success').removeClass('btn-danger').text('Login').attr('action','login');
+
+        // Delete Info
+        dbAuth.delete('/streamer');
+    } else {
+        $('.bot-login h2').text('Broadcaster');
+        $('.bot-login img').attr('src','./images/placeholders/default.jpg');
+
+        // Flip login button
+        $('.bot-login button').addClass('btn-success').removeClass('btn-danger').text('Login').attr('action','login');
+
+        // Delete Info
+        dbAuth.delete('/bot');
+    }
+}
+
+
+// Click Handlers
+// Handle login buttons
+$( ".loginBtn" ).click(function() {
+    // Get data attr to see which button was clicked.
+    var type = $(this).attr('data');
+    var action = $(this).attr('action');
+
+    // If button is ready for login...
+    if(action == 'login'){
+        login(type);
+    } else {
+        logout(type);
+    }
+});
+
+
+// On App Load
+loadLogin()
