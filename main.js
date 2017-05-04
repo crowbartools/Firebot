@@ -45,7 +45,7 @@ function createWindow () {
     global.renderWindow = mainWindow;
 
     // Register the Kill Switch
-    beamConnect.shortcut();
+    // beamConnect.shortcut();
 }
 
   // This method will be called when Electron has finished
@@ -90,7 +90,7 @@ function createWindow () {
 // code. You can also put them in separate files and require them here.
 
 // JS related to log in and getting OAuth Info.
-const login = require('./lib/login/login.js');
+// const login = require('./lib/login/login.js');
 
 // Interactive handler
-const beamConnect = require('./lib/interactive/beam-connect.js');
+// const beamConnect = require('./lib/interactive/beam-connect.js');

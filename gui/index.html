@@ -1,601 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
 
-<head>
-    <meta charset="UTF-8">
     <title>Firebot Interactive</title>
-    <link rel="stylesheet" type="text/css" href="./css/main.css">
-</head>
 
-<body>
+    <!-- Bootstrap core CSS -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
 
-    <div id="header">
-        <div class="main-image">
-            <a href="#main-menu" class="menu-toggle menu-hamburger">
-                <i class="fa fa-bars" aria-hidden="true"></i>
-            </a>
-        </div>
-        <div class="interactive-status interactive-connector">
-            Interactive ( <span class="usersConnected">0</span> )
-        </div>
-        <div class="chat-status interactive-connector">
-            Chat
-        </div>
-        <div class="updated-version" style="display:none">
-            <a href="#" data="updates" class="nav">Update Available</a>
-        </div>
-    </div>
+    <!-- Custom styles for this template -->
+    <link href="./css/main.css" rel="stylesheet">
+  </head>
 
-    <!-- Main Menu -->
-    <div id="main-menu">
-        <div class="navigation">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a data="start" href="#" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a data="login" href="#" class="nav-link">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a data="interactive" href="#" class="nav-link">Boards</a>
-                </li>
-                <li class="nav-item">
-                    <a data="settings" href="#" class="nav-link">Settings</a>
-                </li>
-                <li class="nav-item">
-                    <a data="bug-report" href="#" class="nav-link">Bug Report</a>
-                </li>
-                <li class="nav-item">
-                    <a data="updates" href="#" class="nav-link">Latest Update</a>
-                </li>
-                <li class="nav-item">
-                    <a data="credits" href="#" class="nav-link">Credits</a>
-                </li>
-            </ul>
-        </div>
-        <div class="xtremes-logo">
-            <a href="http://xtremes.pro"><img src="./images/login/xtremes.PNG"></a>
-        </div>
-    </div>
+  <body>
 
-    <!-- New Board Menu -->
-    <div id="board-menu">
-        <h3>Board Menu</h3>
-        <div class="board-name button-section">
-            <label class="col-form-label">Board Name</label>
-            <input class="form-control" type="text" placeholder="Overwatch" title="Name your board for your own reference." maxlength="25">
-        </div>
-        <div class="button-save-close">
-            <a href="#board-menu">
-                <button class="board-save btn" type="button">Save</button>
-            </a>
-            <a href="#board-menu">
-                <button class="board-cancel btn" type="button">Cancel</button>
-            </a>
-        </div>
-    </div>
+    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="#">Firebot <span class="version">v3.0.0-beta.1</span></a>
 
-    <!-- New Cooldown Menu -->
-    <div id="cooldown-menu">
-        <h3>Cooldown Group</h3>
-        <div class="cooldown-amount button-section">
-            <label class="col-form-label">Cooldown (sec)</label>
-            <input class="form-control" type="text" placeholder="5" title="How long will this group cool down for?">
-        </div>
-        <div class="cooldown-save-close">
-            <a href="#cooldown-menu">
-                <button class="cooldown-save btn" type="button">Save</button>
-            </a>
-            <a href="#cooldown-menu">
-                <button class="cooldown-cancel btn" type="button">Cancel</button>
-            </a>
-        </div>
-    </div>
-
-    <!-- Button Menu -->
-    <div id="button-menu">
-      <form id="new-button-form">
-        <div class="button-general-settings">
-            <h3>General Settings</h3>
-                <div class="button-id button-section">
-                    <label class="col-form-label">Button ID</label>
-                    <input class="form-control" type="text" placeholder="1" name="buttonID" data-toggle="tooltip" data-placement="left" title="ID should match the button on the dev board.">
-                </div>
-                <div class="button-notes button-section">
-                    <label class="col-form-label">Button Name</label>
-                    <input class="form-control" type="text" placeholder="Fart Sound" name="buttonName" data-toggle="tooltip" data-placement="left" title="For your own reference.">
-                </div>
-                <div class="button-type button-section">
-                    <label class="col-form-label">Type</label>
-                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="Choose type of controls for the button">
-                        <option value="Nothing" data="nothing">Nothing</option>
-                        <option value="Api Buttons" data="api-buttons">API Button</option>
-                        <option value="Celebration" data="celebration-buttons">Celebration</option>
-                        <option value="Game Controls" data="game-controls">Game Control</option>
-                        <option value="Media" data="media-buttons">Media</option>
-                        <option value="Text Buttons" data="text-buttons">Text</option>
-                    </select>
-                </div>
-                <div class="button-cooldown button-section">
-                    <label class="col-form-label">Solo Cooldown Length (sec)</label>
-                    <input class="form-control" type="text" placeholder="120" name="cooldownLength" data-toggle="tooltip" data-placement="left" title="Cooldown in seconds. This will be overridden by any group cooldown settings.">
-                </div>
-            
-            <div id="media-accordion" role="tablist" aria-multiselectable="true">
-                <label class="col-form-label">Image and Sound</label>
-                <div class="media-header" role="tab">
-                    <a data-toggle="collapse" data-parent="#media-accordion" href="#media-content" aria-expanded="false" aria-controls="media-content">
-                        <button type="button" class="btn" data-toggle="tooltip" data-placement="left" title="Optional. Attach a sound or image popup to this button.">Attach Media</button>
-                    </a>
-                </div>
-                <div id="media-content" class="collapse" role="tabpanel" aria-labelledby="media-header">
-                    <div class="button-section">
-                        <h3>Sound</h3>
-                        <div class="sound-file">
-                            <label class="col-form-label">Audio File</label>
-                            <input class="form-control" type="text" name="soundPath" placeholder="C:\" data-toggle="tooltip" data-placement="left" title="Choose your audio file. mp3, wav, or ogg">
-                            <button type="button" class="sound-selector btn">Choose</button>
-                        </div>
-                        <div class="sound-volume">
-                            <label class="col-form-label">Volume <span class="current-volume">(100)</span></label>
-                            <div class="volume-slider" data-toggle="tooltip" data-placement="left" title="Turn it up to 11?"></div>
-                            <input class="form-control hidden-volume" type="text" name="soundVolume" value="1">
-                        </div>
-                    </div>
-                    <div class="button-section">
-                        <h3>Image</h3>
-                        <div class="image-popup">
-                            <label class="col-form-label">Image File</label>
-                            <input class="form-control" type="text" name="imagePath" placeholder="C:\" data-toggle="tooltip" data-placement="left" title="Choose an image to display when button is pressed.">
-                            <button type="button" class="image-selector btn">Choose</button>
-                        </div>
-                        <div class="image-location">
-                            <label class="col-form-label">Image Position</label>
-                            <select class="form-control" data-toggle="tooltip" data-placement="left" title="Where would you like the image to display?">
-                                <option value="top-middle">Middle Top </option>
-                                <option value="middle">Middle</option>
-                                <option value="bottom-middle">Middle Bottom</option>
-                                <option value="top-left">Left Top</option>
-                                <option value="middle-left">Left Middle</option>
-                                <option value="bottom-left">Left Bottom</option>
-                                <option value="top-right">Right Top</option>
-                                <option value="middle-right">Right Middle</option>
-                                <option value="bottom-right">Right Bottom</option>        
-                            </select>
-                        </div>
-                        <div class="image-duration">
-                            <label class="col-form-label">Image Duration</label>
-                            <input class="form-control" type="text" name="imageDuration" placeholder="5" data-toggle="tooltip" data-placement="left" title="Seconds to show the image.">
-                        </div>
-                        <div class="image-tip">
-                            To use image popups you'll need to load the overlay.html file, located in the Firebot overlay folder, into your streaming software.
-                        </div>
-                    </div>
-                </div>
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Login<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
             </div>
-        </div>
-        <div class="button-specific-settings">
-            <!-- These divs are shown based on the selected button type -->
+          </li>
+        </ul>
+      </div>
+    </nav>
 
-            <!-- Game Controls -->
-            <div class="game-controls button-specific" style="display:none">
-                <h3>Type Specific</h3>
-                <div class="game-control-type">
-                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="Is this a single key press or multi-key?">
-                        <option value="Single" data="single">Single</option>
-                        <option value="Multi-key" data="multi-key">Multi-key</option>
-                    </select>
-                </div>
-                <div class="single-button">
-                    <div class="game-button-pressed">
-                        <label class="col-form-label">Button to Press</label>
-                        <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="The key that will be pressed.">
-                    </div>
-                    <div class="game-button-counter">
-                        <label class="col-form-label">Opposite Button</label>
-                        <input class="form-control" type="text" placeholder="S" data-toggle="tooltip" data-placement="left" title="The key to compare against.">
-                    </div>
-                </div>
-                <div class="multi-button" style="display:none">
-                    <div class="multi-button-key">
-                        <label class="col-form-label">Primary Key</label>
-                        <input class="form-control" type="text" placeholder="W" name="buttonPress" data-toggle="tooltip" data-placement="left" title="A key that will be pressed.">
-                    </div>
-                    <div class="multi-button-array">
-                        <label class="col-form-label">Modifiers</label>
-                        <input class="form-control" type="text" placeholder="shift" name="buttonPress" data-toggle="tooltip" data-placement="left" title="A modifier to press with the primary key. Accepts: control, alt, shift, or command(mac).">
-                    </div>
-                    <div class="multi-button-add-wrap">
-                        <button class="btn multi-button-add" type="button" data-toggle="tooltip" data-placement="left" title="Add another key."><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                        <button class="btn multi-button-del" type="button" data-toggle="tooltip" data-placement="bottom" title="Delete last key."><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
-                    </div>
-                </div>
+    <div class="container">
+
+      <!-- Login Page -->
+      <section class="login-page">
+        <div class="page-header row">
+          <div class="btn-group mr-2">
+            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Profile
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">Profile 1</a>
+              <a class="dropdown-item" href="#">Profile 2</a>
+              <a class="dropdown-item" href="#">Profile 3</a>
             </div>
 
-            <!-- API Buttons -->
-            <div class="api-buttons button-specific" style="display:none">
-                <h3>Type Specific</h3>
-                <div class="api-select">
-                    <label class="col-form-label">Type</label>
-                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="These pull from a 3rd party service. Please read the notice below.">
-                        <option value="Advice">Advice</option>
-                        <option value="Cat Picture">Cat Picture</option>
-                        <option value="Cat Fact">Cat Fact</option>
-                        <option value="Dog Picture">Dog Picture</option>
-                        <option value="Dog Fact">Dog Fact</option>
-                        <option value="Aww">Aww</option>
-                        <option value="Pokemon">Pokemon</option>
-                        <option value="Number Trivia">Number Trivia</option>
-                    </select>
-                </div>
-                <div class="api-send-as">
-                    <label class="col-form-label">Send As</label>
-                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="Who should send this message to chat?">
-                        <option value="Bot">Bot</option>
-                        <option value="Streamer">Streamer</option>
-                    </select>
-                </div>
-                <div class="api-notice">
-                    Note: APIs are remote and I can't control the quality, type, or maturity level of what it may give you.
-                </div>
-            </div>
-
-            <!-- Celebration Buttons -->
-            <div class="celebration-buttons button-specific" style="display:none">
-                <h3>Type Specific</h3>
-                <div class="celebration-type">
-                    <label class="col-form-label">Type</label>
-                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="How would you like to celebrate?">
-                        <option value="fireworks">Fireworks</option>
-                    </select>
-                </div>
-                <div class="celebration-duration">
-                    <label class="col-form-label">Duration</label>
-                    <input class="form-control" type="text" placeholder="Firebot" data-toggle="tooltip" data-placement="left" title="Duration of celebration effects.">
-                </div>
-                <div class="notice">
-                    Note: Celebration effects require the overlay file to be loaded in your streaming software.
-                </div>
-            </div>
-
-            <!-- Text Buttons -->
-            <div class="text-buttons button-specific" style="display:none">
-                <h3>Type Specific</h3>
-                <div class="text-line">
-                    <label class="col-form-label">Text</label>
-                    <input class="form-control" type="text" placeholder="!points add 100" data-toggle="tooltip" data-placement="left" title="The line of text you'd like to send to chat.">
-                </div>
-                <div class="text-whisper-to">
-                    <label class="col-form-label">Whisper to</label>
-                    <input class="form-control" type="text" placeholder="Firebot" data-toggle="tooltip" data-placement="left" title="Leave blank to broadcast to everyone. Otherwise, enter a name to whisper someone.">
-                </div>
-                <div class="text-send-as">
-                    <label class="col-form-label">Send As</label>
-                    <select class="form-control" data-toggle="tooltip" data-placement="left" title="Who should send this message to chat?">
-                        <option value="Bot">Bot</option>
-                        <option value="Streamer">Streamer</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Sound Buttons -->
-            <div class="media-buttons button-specific" style="display:none">
-                <!-- Does not need type specific settings because images and sounds are defaults-->
-                Attach a sound file and image via the attach image button.
-            </div>
-
-        </div>
-        <div class="button-save-close">
-            <button type="button" class="button-save btn">Save</button>
-            <button type="button" class="button-cancel btn" onclick="$.sidr('close', 'button-menu');">Cancel</button>
-        </div>
-        </form>
-    </div>
-
-    <!-- JSON Import Menu-->
-    <div id="json-import-menu">
-        <h3>Beam JSON Import</h3>
-        <div class="import-fields" data-toggle="tooltip" data-placement="left" title="Copy and Paste the JSON from the beam dev lab.">
-            <textarea class="json-import-area"></textarea>
-        </div>
-        <div class="button-save-close">
-            <a href="#json-import-menu">
-                <button type="button" class="import-save btn">Save</button>
-            </a>
-            <a href="#json-import-menu">
-                <button type="button" class="import-cancel btn">Cancel</button>
-            </a>
-        </div>
-    </div>
-
-    <!-- Start Content -->
-    <div id="content">
-
-        <section class="start page current">
-            <div class="main-content container">
-                <div class="row">
-                    <div class="col-12">
-                        <img src="./images/logo.jpg" class="logo">
-                    </div>
-                    <div class="col-12">
-                        <h1>Firebot</h1>
-                    </div>
-                    <div class="col-12">
-                        <p>
-                            <a href="https://github.com/Firebottle/Firebot/wiki/Getting-Started">
-                                First time? Click here for the tutorial.
-                            </a>
-                        </p>
-                    </div>
-                    <div class="col-12">
-                        <a href="#main-menu" class="menu-toggle">
-                            <button type="button" class="btn">Start</button>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="login page">
-            <div class="main-content container">
-                <div class="row">
-                    <div class="streamer col-6">
-                        <div class="avatar"><img src="./images/placeholders/default.jpg" class="streamer-avatar"></div>
-                        <div class="username">
-                            <h2>Streamer</h2>
-                        </div>
-                        <div class="loginOrOut beam-login">
-                            <button type="button" class="streamer-login btn" data="streamer" status="login">Login</button>
-                            <div class="alt-login-link"><a href="#">Not working?</a></div>
-                        </div>
-                        <div class="alternative-login" style="display:none">
-                            <div class="auth-code">
-                                <label class="col-form-label">Auth Code</label>
-                                <input class="form-control" type="password" placeholder="Auth Code" data-toggle="tooltip" data-placement="left" title="Paste in auth code.">
-                            </div>
-                            <div class="login-buttons">
-                                <button type="button" class="get-auth-code btn">Get Code</button>
-                                <button type="button" class="streamer-alt-login btn" data="streamer" status="login">Login</button>
-                                <div class="beam-login-link"><a href="#">Back to default.</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bot col-6">
-                        <div class="avatar"><img src="./images/placeholders/default.jpg" class="bot-avatar"></div>
-                        <div class="username">
-                            <h2>Bot</h2>
-                        </div>
-                        <div class="loginOrOut beam-login">
-                            <button type="button" class="bot-login btn" data="bot" status="login">Login</button>
-                            <div class="alt-login-link"><a href="#">Not working?</a></div>
-                        </div>
-                        <div class="alternative-login" style="display:none">
-                            <div class="auth-code">
-                                <label class="col-form-label">Auth Code</label>
-                                <input class="form-control" type="password" placeholder="Auth Code" data-toggle="tooltip" data-placement="left" title="Paste in auth code.">
-                            </div>
-                            <div class="login-buttons">
-                                <button type="button" class="get-auth-code btn">Get Code</button>
-                                <button type="button" class="bot-alt-login btn" data="bot" status="login">Login</button>
-                                <div class="beam-login-link"><a href="#">Back to default.</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="interactive page">
-            <div class="main-content container">
-                <div class="row interactive-top">
-                    <div class="col-7">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="board-select">Current Board</span>
-                            <select class="form-control interactive-board-select" aria-describedby="board-select"></select>
-                        </div>
-                    </div>
-                    <div class="col-5">
-                        <div class="input-group action-button">
-                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span>Actions</span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item add-new-board" href="#" data-toggle="tooltip" data-placement="left" title="Add a new board.">Add Board</a>
-                                <a class="dropdown-item import-board" href="#" data-toggle="tooltip" data-placement="left" title="Import Beam JSON.">Import Board</a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item add-new-button" href="#" data-toggle="tooltip" data-placement="left" title="Add button to board.">Add Button</a>
-                                <a class="dropdown-item add-new-cooldown-group" href="#" data-toggle="tooltip" data-placement="left" title="Add cooldown group.">Add Cooldown Group</a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item interactive-connector launch-interactive" href="#" data-toggle="tooltip" data-placement="left" title="Toggle interactive.">Launch Interactive</a>
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item delete-board-popup" href="#" data-toggle="tooltip" data-placement="left" title="Delete current board.">Delete Board</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="interactive-buttons row">
-                    <div class="cooldown-group-wrap solo-wrap col-12">
-                        <div class="cooldown-group-title">
-                            <div class="cooldown-group-info cooldown-icon">
-                                <span class="cooldown-id">Individual Cooldowns</span>
-                            </div>
-                        </div>
-                        <ul class="cooldown-group solo-group row" data="solo"></ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="settings page">
-            <div class="main-content container">
-                <div class="settings-general settings-section row">
-                    <h3>General</h3>
-                    <div class="betaOptIn setting col-sm-12 col-md-6 col-lg-4">
-                        <label class="col-form-label">Beta Tester</label>
-                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Get an alert when there are new beta versions.">
-                            <option value="no">No</option>
-                            <option value="yes">Yes</option>
-                        </select>
-                    </div>
-                    <div class="updateNotify setting col-sm-12 col-md-6 col-lg-4">
-                        <label class="col-form-label">Notify of Available Updates</label>
-                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Show notification when update available.">
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                    <div class="showTips setting col-sm-12 col-md-6 col-lg-4">
-                        <label class="col-form-label">Show Tips</label>
-                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Would you like to see the tips bar?">
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="settings-media settings-section row">
-                    <h3>Media Controls</h3>
-                    <div class="image-compatibility setting col-sm-12 col-md-6 col-lg-4">
-                        <label class="col-form-label">Software Compatibility</label>
-                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Adjust this if images arent showing in the overlay.">
-                            <option value="default">Default</option>
-                            <option value="obs">OBS Compatibility</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="settings-game-controls settings-section row">
-                    <h3>Game Controls</h3>
-                    <div class="emulation-type setting col-sm-12 col-md-6 col-lg-4">
-                        <label class="col-form-label">Keyboard/Mouse Emulator</label>
-                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Adjust this if game controls dont work in your game.">
-                            <option value="robotjs">robotjs</option>
-                            <option value="kbm">kbm-robot</option>
-                        </select>
-                    </div>
-                    <div class="mouse-clicks setting col-sm-12 col-md-6 col-lg-4">
-                        <label class="col-form-label">Enable Mouse Clicks</label>
-                        <select class="form-control" data-toggle="tooltip" data-placement="bottom" title="Careful! This will enable mouse clicks with screen controls.">
-                            <option value="disabled">Disabled</option>
-                            <option value="enabled">Enabled</option>
-                        </select>
-                    </div>
-                    <div class="mouse-speed setting col-sm-12 col-md-6 col-lg-4">
-                        <label class="col-form-label">Mouse Speed</label>
-                        <input class="form-control" type="text" name="mouse-speed" placeholder="50" data-toggle="tooltip" data-placement="bottom" title="Mouse sensitivity for joystick controls. Higher is faster.">
-                    </div>
-                </div>
-                <div class="settings-save-close row">
-                    <button type="button" class="settings-save btn" type="button">Save</button>
-                    <button type="button" class="settings-cancel btn" type="button">Cancel</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="bug-report page">
-            <div class="main-content container">
-                <h3>Bug Reporting</h3>
-                <p>If you run into any issues while using the app, please use the links below to let me know. Entering issues on github helps me keep track of everything, and it gives you notifications when I reply or change the status of your issue.</p>
-                <p>Please try to provide as much information as possible about what you were doing and when the error occured.</p>
-                <div class="links">
-                    <a href="https://github.com/Firebottle/Firebot/issues/new"><button class="btn" type="button">Open an Issue</button></a>
-                    <a href="https://github.com/Firebottle/Firebot/issues"><button class="btn" type="button">View all issues</button></a>
-                </div>
-            </div>
-        </section>
-
-        <section class="updates page">
-            <div class="main-content container">
-                <h3>Latest Update</h3>
-                <div class="latest-update"></div>
-                <div class="release-date"></div>
-                <div class="update-notes"></div>
-                <div class="update-buttons">
-                    <a href="" class="github-link"><button type="button" class="btn">Download on Github</button></a>
-                </div>
-            </div>
-        </section>
-
-        <section class="credits page">
-            <div class="main-content container">
-                <div class="row">
-                    <div class="col-6">
-                        <h3>Credits</h3>
-                        <p>Many people worked together to make this app possible.<p>
-                        <ul>
-                            <li><a href="https://beam.pro/firebottle">Firebottle</a></li>
-                            <li><a href="https://beam.pro/theperry">ThePerry</a></li>
-                            <li><a href="https://beam.pro/Mi5terme">Mi5terme</a></li>
-                            <li><a href="https://beam.pro/ProbablePrime">ProbablePrime</a></li>
-                            <li><a href="https://beam.pro/FierySama">FierySama</a></li>
-                            <li><a href="https://beam.pro/UnknownTBeast">UnknownTBeast</a></li>
-                            <li><a href="https://github.com/DeekyJay/SoundwaveInteractive/releases">Deeky</a></li>
-                            <li>and the Firebots...</li>
-                        </ul>
-                        <p>Other Credits</p>
-                        <ul>
-                            <li><a href="https://www.pexels.com">Pexels</a></li>
-                            <li><a href="http://xtremes.pro">Xtremes Stream Team</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-6">
-                        <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/firebottletv" data-widget-id="707259165681422336">Tweets by @firebottletv</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="interactive-tip">
-            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner" role="listbox">
-                    <div class="carousel-item active">
-                        TIP: Press CTRL + ALT + F12 to toggle interactive on or off at any time, even while in a game!
-                    </div>
-                    <div class="carousel-item">
-                        The "text" button type lets you whisper commands to your bot such as !coins add 100.
-                    </div>
-                    <div class="carousel-item">
-                        Game controls not working? Try switching the emulation type on the settings page.
-                    </div>
-                </div>
-                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                    <span aria-hidden="true"><i class="fa fa-arrow-left" aria-hidden="true"></i></span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                    <span aria-hidden="true"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>
-                </a>
-            </div>
+            <button type="button" class="btn btn-success">New Profile</button>
+            <button type="button" class="btn btn-danger">Delete Profile</button>
+          </div>
         </div>
 
-    </div>
-    <!-- End Content -->
+        <div class="page-content row">
+          <div class="col-sm-12 col-md-6 streamer-login top-padding">
+            <img class="login-pic" src="./images/placeholders/default.jpg">
+            <h2>Broadcaster</h2>
+            <button type="button" class="btn btn-success">Login</button>
+          </div>
+          <div class="col-sm-12 col-md-6 streamer-login top-padding">
+            <img class="login-pic" src="./images/placeholders/default.jpg">
+            <h2>Bot</h2>
+            <button type="button" class="btn btn-success">Login</button>
+          </div>
+        </div>
+      </section>
 
-    <div id="error-log" title="Error" style="display:none"></div>
-    <div id="delete-confirm" title="Delete?" style="display:none">
-        <img src="./images/dialog/face.png" class="facepalm">
-        <p>Are you sure you want to delete this board?</p>
-        <button class="delete-board btn" type="button">Yes</button>
-        <button class="dont-delete-board btn" type="button">OMG NO</button>
-    </div>
-    <div id="hidden" class="hidden" style="display:none"></div>
-</body>
+    </div><!-- /.container -->
 
-<script src="./js/plugins/tether.min.js"></script>
-<script>
-    // Require other files here.
-    window.$ = window.jQuery = require('jquery');
-    require('./js/plugins/jquery.sidr.min.js');
-    require('./js/plugins/bootstrap.min.js');
-    require('./js/plugins/jquery-ui.min.js');
-    require('./js/global.js');
-    require('./js/settings.js');
-    require('./js/websocket.js');
-    require('./js/updates/update-checker.js');
-    require('./js/login.js');
-    require('./js/interactive/interactive-board.js');
-    require('./js/interactive/media.js');
-    require('./js/interactive/celebration.js');
-    require('./js/form-validation.js');
-    require('./js/error-logging/error-logging.js');
-</script>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/global.js"></script>
 
+    <script src="./js/login.js"></script>
+  </body>
 </html>

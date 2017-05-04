@@ -1,24 +1,5 @@
-@font-face {
-    font-family: OpenSansCond;
-    src: url('../fonts/OpenSans-CondLight.ttf');
-}
-@font-face {
-    font-family: Lora;
-    src: url('../fonts/Lora-Regular.ttf');
-}
 
-$main-color: #273b48;
-$secondary-color: #1b2935;
-$highlight-color: #ffcb05;
-$non-highlight-color: #888c90;
-$button-color: #273b48;
 
-$text-color-white: #ffffff;
-$text-color-primary: #ffffff;
-$text-color-secondary: #cecece;
-$font-primary: OpenSans, sans-serif;
-$font-secondary: Lora, serif;
-$status-offline-color: #7c0909;
-$status-online-color: #177c09;
+$main-color: #292b2c;
 
-$main-bg-image: url(../images/bg/5.jpg);
+$text-color-light: white;

@@ -1,6 +1,6 @@
 {
   "name": "Firebot",
-  "version": "2.3.0-beta.2",
+  "version": "3.0.0-beta.1",
   "description": "An application for Beam.pro that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
@@ -34,19 +34,8 @@
     "electron-rebuild": "^1.5.6"
   },
   "dependencies": {
-    "beam-client-node": "^0.10.4",
-    "beam-interactive-node": "^0.3.2",
-    "compare-versions": "^3.0.0",
-    "howler": "^2.0.2",
-    "jquery": "^3.1.1",
-    "kbm-robot": "0.0.4",
-    "keycode": "^2.1.8",
-    "marked": "^0.3.6",
+    "beam-interactive-node2": "^0.10.1",
     "node-json-db": "^0.7.3",
-    "random-puppy": "^1.1.0",
-    "request": "^2.79.0",
-    "robotjs": "^0.4.5",
-    "validator": "^6.2.1",
-    "ws": "^2.0.3"
+    "request": "^2.81.0"
   }
 }
