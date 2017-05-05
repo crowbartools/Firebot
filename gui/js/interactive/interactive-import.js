@@ -33,7 +33,7 @@ function boardBuilder(versionid){
         $('.board-title a').attr('href', 'https://beam.pro/i/studio').text(gameName);
 
         // Add to board menu.
-
+        
     });
 }
 

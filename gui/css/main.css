@@ -1,33 +1,38 @@
-/* line 2, ../scss/_login.scss */
+/* line 2, C:/GitHub/Personal/firebot/gui/scss/_login.scss */
 .login-page .page-content {
   text-align: center;
 }
-/* line 5, ../scss/_login.scss */
+/* line 5, C:/GitHub/Personal/firebot/gui/scss/_login.scss */
 .login-page .page-content .login-pic {
   border-radius: .25rem;
   border: 2px solid #292b2c;
   width: 220px;
 }
 
-/* line 8, ../scss/main.scss */
+/* line 3, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+.interactive-header .board-title a {
+  font-size: 2em;
+}
+
+/* line 9, ../scss/main.scss */
 body {
   padding-top: 5rem;
 }
 
-/* line 11, ../scss/main.scss */
+/* line 12, ../scss/main.scss */
 .page-header {
   padding-bottom: 1em;
   margin-bottom: 1em;
   border-bottom: 1px solid #292b2c;
 }
 
-/* line 16, ../scss/main.scss */
+/* line 17, ../scss/main.scss */
 .page-content {
   width: 100%;
   min-height: 300px;
 }
 
-/* line 24, ../scss/main.scss */
+/* line 25, ../scss/main.scss */
 .top-padding {
   padding-top: 1em;
 }
