@@ -13,6 +13,10 @@ body {
     margin-bottom: 1em;
     border-bottom: 1px solid $main-color;
 }
+.page-content{
+    width:100%;
+    min-height:300px;
+}
 
 /////////////////
 // Helper Classes

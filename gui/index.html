@@ -18,32 +18,26 @@
 
   <body>
 
-    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <a class="navbar-brand" href="#">Firebot <span class="version">v3.0.0-beta.1</span></a>
-
-      <div class="collapse navbar-collapse" id="navbarsDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#" slide="0">Login<span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" slide="1">Link</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </li>
-        </ul>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Firebot v3.0.0-beta.1</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="height: 0.8px;">
+          <ul class="nav navbar-nav">
+            <li><a href="#" slide="0">Login</a></li>
+            <li><a href="#" slide="1">Interactive Boards</a></li>
+            <li><a href="#" slide="2">Groups</a></li>
+            <li><a href="#" slide="3">Moderation</a></li>
+            <li><a href="#" slide="4">Bug Report</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
     </nav>
 
@@ -52,7 +46,7 @@
         <div class="carousel-inner" role="listbox">
 
           <!-- Login Page -->
-          <section class="login-page carousel-item active">
+          <section class="login-page item active">
             <div class="page-content row">
               <div class="col-sm-12 col-md-6 streamer-login top-padding">
                 <img class="login-pic" src="./images/placeholders/default.jpg">
@@ -67,14 +61,121 @@
             </div>
           </section>
 
-          <!-- Page -->
-          <section class="carousel-item">
-            test
+          <!-- Interactive Board -->
+          <section class="item">
+            <div class="page-content">
+              <div class="row interactive-header page-header">
+                <div class="col-sm-6">
+                  <div class="board-title">
+                    <a href=""></a>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="dropdown pull-right">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      Actions
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                      <li><a href="#">Add Cooldown Group</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#">Launch Interactive</a></li>
+                      <li><a href="#">Stop Interactive</a></li>
+                    </ul>
+                  </div>
+                  <div class="dropdown pull-right">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      Select a board
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <li><a href="#" data-toggle="modal" data-target="#add-new-board-modal">Add New Board</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#">Board One</a></li>
+                      <li><a href="#">Board Two</a></li>
+                      <li><a href="#">Board Three</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#" data-toggle="modal" data-target="#delete-board-modal">Delete Board</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="row interactive-board-container">
+
+              </div>
+            </div>
           </section>
 
+          <!-- Groups Board -->
+          <section class="item">
+            - Active participant list to drag from.
+            - Add person to group.
+            - Remove person from group.
+            - Add Group
+            - Delete Group
+            - Auto group based on roles (regular, sub)
+          </section>
+
+          <!-- Moderation Board -->
+          <section class="item">
+            - Log of what buttons are being pressed along with the user who pressed them.
+            - Add user to ban list to ignore them.
+            - Remove user from ban list.
+          </section>
+
+          <!-- Bugs / Credits -->
+          <section class="item">
+            Another screen to hold credits and bug report information.
+          </section>
 
         </div>
       </div>
+
+      <div class="interactive-modals">
+
+        <!-- Modal for adding new boards to the interactive page-->
+        <div class="modal fade" id="add-new-board-modal" tabindex="-1" role="dialog" aria-labelledby="addInteractiveBoardLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addInteractiveBoardLabel">Add New Board</h4>
+              </div>
+              <div class="modal-body">
+                <p>To add a board to Firebot go to the <a href="https://beam.pro/i/studio">Beam interactive studio</a> and create a project. Organize and create buttons however you want. Once done, you'll be given a five digit number in the "code" tab. Copy and paste that below.</p>
+                <p>This will overwite all settings on the current board.</p>
+                <div class="input-group">
+                  <input type="text" class="form-control add-new-board-code" placeholder="Enter code">
+                </div><!-- /input-group -->
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary add-new-board-save" data-dismiss="modal">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal for deleting boards to the interactive page-->
+        <div class="modal fade" id="delete-board-modal" tabindex="-1" role="dialog" aria-labelledby="deleteBoardLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="deleteBoardLabel">Delete Board</h4>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you'd like to delete this board?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /.container -->
 
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
@@ -84,5 +185,7 @@
     <script src="./js/global.js"></script>
 
     <script src="./js/login.js"></script>
+    <script src="./js/interactive/interactive-board.js"></script>
+    <script src="./js/interactive/interactive-import.js"></script>
   </body>
 </html>

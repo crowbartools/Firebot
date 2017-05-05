@@ -12,6 +12,6 @@ $(document).on('click', 'a[href^="http"]', function(event) {
 $("nav").find("li").on("click", "a", function () {
     var slide = parseInt( $(this).attr('slide') );
     $('.carousel').carousel(slide);
-
+    $('.carousel').carousel('pause');
     $('.navbar-collapse').collapse('hide');
 });
