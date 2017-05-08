@@ -54,6 +54,7 @@ function addMoreFunctionality(){
                         </button>
                         <ul class="dropdown-menu effects-menu">
                             <li><a href="#" uniqueid="${uniqueid}" effect="API Button">API Button</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Change Scene">Change Scene</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Cooldown">Cooldown</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Delay">Delay</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Fireworks">Fireworks</a></li>
