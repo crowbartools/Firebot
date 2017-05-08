@@ -56,12 +56,14 @@ function addMoreFunctionality(){
                             <li><a href="#" uniqueid="${uniqueid}" effect="API Button">API Button</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Change Scene">Change Scene</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Cooldown">Cooldown</a></li>
-                            <li><a href="#" uniqueid="${uniqueid}" effect="Delay">Delay</a></li>
-                            <li><a href="#" uniqueid="${uniqueid}" effect="Fireworks">Fireworks</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Celebration">Celebration</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Game Control">Game Control</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Play Sound">Play Sound</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Show Image">Show Image</a></li>
                         </ul>
+                    </div>
+                    <div class="effect-settings-panel">
+                        <div class="effect-specific-title"><h4>Please select an effect.</h4></div>
                     </div>
                 </div>
             </div>
@@ -88,16 +90,142 @@ function addMoreFunctionality(){
     });
 }
 
+// Functionality Switcher
+// This swaps out all of the settings in a panel when the type is changed.
+function functionalitySwitcher(uniqueid, effect){
+    $('.effect-dropdown[uniqueid="'+uniqueid+'"], .panel'+uniqueid+' .panel-title a').text(effect);
+
+    // Clear panel.
+    $('.panel'+uniqueid+' .effect-settings-panel').empty();
+
+    switch(effect) {
+    case "API Button":
+        var effectTemplate = apiButtonSettings();
+        break;
+    case "Change Scene":
+        var effectTemplate = changeSceneSettings();
+        break;
+    case "Cooldown":
+        var effectTemplate = cooldownSettings();
+        break;
+    case "Celebration":
+        var effectTemplate = celebrationSettings();
+        break;
+    case "Game Control":
+        var effectTemplate = gameControlSettings();
+        break;
+    case "Play Sound":
+        var effectTemplate = playSoundSettings();
+        break;
+    case "Show Image":
+        var effectTemplate = showImageSettings();
+        break;
+    }
+
+    $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
+}
+
+// API Button Settings
+// Loads up the settings for the api effect type.
+function apiButtonSettings(){
+
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Which API should I use?</h4></div>
+        <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="api-effect-type">Pick One</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+        </ul>
+        </div>
+    `;
+
+    return effectTemplate;
+}
+
+// Change Scene Settings
+// Loads up the settings for the change scene effect type.
+function changeSceneSettings(){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Which scene should I switch to?</h4></div>
+        <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="api-effect-type">Pick One</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+        </ul>
+        </div>
+    `;
+    return effectTemplate;
+}
+
+// Cooldown Button Settings
+// Loads up the settings for the cooldown effect type.
+function cooldownSettings(){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Which buttons should I put on cooldown?</h4></div>
+
+        <div class="effect-specific-title"><h4>How long should these cooldown for?</h4></div>
+    `;
+    return effectTemplate;
+}
+
+// Celebration Button Settings
+// Loads up the settings for the celebration effect type.
+function celebrationSettings(){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>How should we celebrate?</h4></div>
+
+        <div class="effect-specific-title"><h4>How many seconds should the party last?</h4></div>
+    `;
+    return effectTemplate;
+}
+
+// Game Control Button Settings
+// Loads up the settings for the game control effect type.
+function gameControlSettings(){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Which button should I press?</h4></div>
+
+        <div class="effect-specific-title"><h4>Does this button have an opposite button?</h4></div>
+    `;
+    return effectTemplate;
+}
+
+// Play Sound Settings
+// Loads up the settings for the play sound effect type.
+function playSoundSettings(){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>What sound should I play?</h4></div>
+
+        <div class="effect-specific-title"><h4>How loud should it be?</h4></div>
+    `;
+    return effectTemplate;
+}
+
+// Show Image Settings
+// Loads up the settings for the show image effect type.
+function showImageSettings(){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Which image should I show?</h4></div>
+
+        <div class="effect-specific-title"><h4>What location should it show in?</h4></div>
+
+        <div class="effect-specific-title"><h4>How long should it show?</h4></div>
+    `;
+    return effectTemplate;
+}
+
 // Delete Functionality
 // This button deletes functionality on the button settings page.
 function deleteFunctionality(uniqueid){
     $('.panel'+uniqueid).remove();
-}
-
-// Functionality Switcher
-// This swaps out all of the settings in a panel whtn the type is changed.
-function functionalitySwitcher(uniqueid, effect){
-    $('.effect-dropdown[uniqueid="'+uniqueid+'"], .panel'+uniqueid+' .panel-title a').text(effect);
 }
 
 //////////////////////

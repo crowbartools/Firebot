@@ -3700,6 +3700,11 @@
   margin: -10px -15px;
   line-height: 1.75;
 }
+/* line 51, ../scss/_interactive.scss */
+.functionality-settings .effect-settings-panel {
+  border-top: 1px solid #adadad;
+  margin-top: 1em;
+}
 
 /* line 10, ../scss/main.scss */
 body {
