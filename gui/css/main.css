@@ -3705,6 +3705,29 @@
   border-top: 1px solid #adadad;
   margin-top: 1em;
 }
+/* line 55, ../scss/_interactive.scss */
+.functionality-settings .effect-settings-panel .selected-cooldown-buttons {
+  display: flex;
+  padding-top: .75em;
+}
+/* line 59, ../scss/_interactive.scss */
+.functionality-settings .effect-settings-panel .selected-cooldown-buttons .selected-cooldown-button {
+  background-color: #0e162a;
+  color: white;
+  padding: .75em;
+  margin: .75em;
+  border-radius: 2rem;
+  text-align: center;
+}
+/* line 66, ../scss/_interactive.scss */
+.functionality-settings .effect-settings-panel .selected-cooldown-buttons .selected-cooldown-button span {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+/* line 70, ../scss/_interactive.scss */
+.functionality-settings .effect-settings-panel .selected-cooldown-buttons .selected-cooldown-button .remove-cooldown button {
+  padding: 0px 5px;
+}
 
 /* line 10, ../scss/main.scss */
 body {

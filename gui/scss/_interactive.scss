@@ -51,5 +51,26 @@
     .effect-settings-panel{
         border-top: 1px solid $light-highlight;
         margin-top: 1em;
+
+        .selected-cooldown-buttons{
+            display: flex;
+            padding-top:.75em;
+
+            .selected-cooldown-button{
+                background-color: $beam-main;
+                color:white;
+                padding:.75em;
+                margin: .75em;
+                border-radius:2rem;
+                text-align:center;
+                span{
+                    font-size: 1.2em;
+                    font-weight:bold;
+                }
+                .remove-cooldown button{
+                    padding:0px 5px;
+                }
+            }
+        }
     }
 }

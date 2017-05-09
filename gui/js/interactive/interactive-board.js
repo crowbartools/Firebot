@@ -69,9 +69,9 @@ function backendBuilder(gameName, gameJson, versionid){
                     }
                 }
                 // Push to db
-                dbControls.push('/firebot/controls/'+controlID+'/text', controlID);
-                dbControls.push('/firebot/controls/'+controlID+'/text', text);
-                dbControls.push('/firebot/controls/'+controlID+'/cost', cost);
+                dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
+                dbControls.push('./firebot/controls/'+controlID+'/text', text);
+                dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
             }catch(err){
                 console.log('Problem getting button info to save to json.')
             };
