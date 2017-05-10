@@ -5,7 +5,8 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 // IPC for conveying events between main process and render processes.
 const {ipcMain} = require('electron')
-
+const firebotlog = console.log
+const fireboterror = console.error
 const path = require('path')
 const url = require('url')
 
@@ -77,7 +78,7 @@ function createWindow () {
 
   process.on('uncaughtException', function(error) {
       // Handle the error
-      console.error(error);
+      fireboterror(error);
   });
 
   // When Quittin.
