@@ -91,20 +91,24 @@ function sceneBuilder(gameName){
     // Template for tabs.
     var boardTemplate = `
     <ul class="nav nav-tabs interactive-tab-nav" role="tablist">
-        <li role="presentation" class="active"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+        <li role="presentation" class="active"><a href="#board-settings" aria-controls="board-settings" role="tab" data-toggle="tab">Settings</a></li>
     </ul>
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="settings">
+        <div role="tabpanel" class="tab-pane active" id="board-settings">
             <div class="general-board-settings">
                 <h3>General Settings</h3>
                 <div class="board-group-defaults">
-                    Here we'll list out each scene and put a dropdown next to it to you can pick your default scene for each group.
+                    <p>Here you can specify which scenes certain groups use as their "default".</p>
+                    <div class="board-group-defaults-settings clearfix">
+                    </div>
                 </div>
             </div>
             <div class="board-cooldown-group-settings">
                 <h3>Cooldown Groups</h3>
-                <div class="board-group-defaults">
-                    Here we'll list out all button id's with the ability to drag them to cooldown groups you create.
+                <div class="board-cooldown-defaults">
+                    <p>Cooldown groups make it easy to group multiple buttons together so that they all cooldown anytime one is clicked.</p>
+                    <div class="board-cooldown-defaults">
+                    </div>
                 </div>
             </div>
         </div>
@@ -133,9 +137,59 @@ function sceneBuilder(gameName){
         $(this).tab('show')
     })
 
+    // Add in the board settings.
+    boardGroupSettings(scenes);
+
     // Next Step: Start up the button builder
     buttonBuilder(scenes);
 };
+
+// Board General Group Settings
+// This puts all scenes into the general board settings along with a dropdown so you can defaults.
+function boardGroupSettings(scenes){
+
+    // Loop through scenes
+    for (scene of scenes){
+        var uniqueid = new Date().getTime().toString();
+        var sceneName = scene.sceneID;
+        var groupSettingTemplate = `
+            <div class="board-group board-group${uniqueid} col-sm-6 col-md-2">
+                <div class="board-group-scene">${sceneName}</div>
+                <div class="board-group-scene-dropdown">
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="sceneGroupDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="selected-scene-group">None</span>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu scene-group-dropdown" aria-labelledby="sceneGroupDropdown">
+                            <li><a href="#" uniqueid="${uniqueid}">None</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}">Viewers</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}">Pro</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}">Subscribers</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}">Moderators</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Throw it onto the page.
+        $('.board-group-defaults-settings').append(groupSettingTemplate);
+
+        // TODO: Load up all custom made groups.
+
+        // TODO: Change each dropdown if there is a setting saved for it.
+
+        // When an effect is clicked, change the dropdown title.
+        $( ".scene-group-dropdown a" ).click(function() {
+            var text = $(this).text();
+            var uniqueid = $(this).attr('uniqueid');
+            $(".board-group"+uniqueid+" .selected-scene-group").text(text);
+            // TODO: Push update to json db.
+
+        });
+    }
+}
 
 // Button Builder
 // This takes the scenes json and puts in all of the buttons.
@@ -167,10 +221,18 @@ function buttonBuilder(scenes){
                 // The html template for the buttons.
                 var buttonTemplate = `
                     <div class="interactive-button col-sm-6 col-md-3">
-                        <div class="controlID">${controlID}</div>
-                        <div class="buttontext">${buttontext}</div>
-                        <div class="sparkcost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> ${sparkcost}</div>
-                        <div class="edit-interactive-control"><button class="edit-control btn btn-default" controlid="${controlID}">Edit</button></div>
+                        <div class="interactive-button-header">
+                            <div class="controlID pull-left">${controlID}</div>
+                            <div class="edit-interactive-control pull-right">
+                                <button class="edit-control btn btn-default" controlid="${controlID}">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="interactive-button-body">
+                            <div class="buttontext">${buttontext}</div>
+                            <div class="sparkcost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> ${sparkcost}</div>
+                        </div>
                     </div>
                 `;
 

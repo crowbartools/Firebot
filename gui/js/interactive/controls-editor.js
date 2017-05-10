@@ -479,7 +479,6 @@ function saveControls(){
 // This function kickstarts the process of loading already saved settings on edit.
 function loadSettings(controlId, button){
     var effects = button.effects;
-    console.log(effects);
 
     // Load up general settings
     $('.edit-title-controlid').text(controlId);

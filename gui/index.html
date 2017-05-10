@@ -78,6 +78,8 @@
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="actionMenu">
+                      <li><a href="#">Add Cooldown Group</a></li>
+                      <li role="separator" class="divider"></li>
                       <li><a href="#">Launch Interactive</a></li>
                       <li><a href="#">Stop Interactive</a></li>
                     </ul>
@@ -103,12 +105,29 @@
 
           <!-- Groups Board -->
           <section class="item">
-            - Active participant list to drag from.
-            - Add person to group.
-            - Remove person from group.
-            - Add Group
-            - Delete Group
-            - Auto group based on roles (regular, sub)
+            <div class="page-content">
+              <div class="row interactive-group-header page-header">
+                <div class="col-sm-6">
+                  <div class="page-title">
+                    <h3>Custom Groups</h3>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="dropdown pull-right">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      Actions
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="actionMenu">
+                      <li><a href="#" class="add-group">Add Group</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="row interactive-group-container">
+                
+              </div>
+            </div>
           </section>
 
           <!-- Moderation Board -->
@@ -174,65 +193,69 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Modal for editing interactive buttons-->
-      <div class="modal fade" id="edit-controls-modal" tabindex="-1" role="dialog" aria-labelledby="editControlsLabel">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="editControlsLabel">Edit Button - <span class="edit-title-controlid"></span></h4>
-            </div>
-            <div class="modal-body">
-              
-              <div class="general-button-settings">
-                <div class="settings-title">
-                  <h3>General Settings</h3>
-                </div>
-
-                <div class="input-group settings-controlid">
-                  <span class="input-group-addon" id="basic-addon3">Control Id</span>
-                  <input type="text" class="form-control" disabled aria-describedby="basic-addon3">
-                </div>
-
-                <div class="input-group settings-buttontext">
-                  <span class="input-group-addon" id="basic-addon3">Button Text</span>
-                  <input type="text" class="form-control" aria-describedby="basic-addon3">
-                </div>
-
-                <div class="input-group settings-sparkcost">
-                  <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
-                  <input type="text" class="form-control" aria-describedby="basic-addon3">
-                </div>
+        <!-- Modal for editing interactive buttons-->
+        <div class="modal fade" id="edit-controls-modal" tabindex="-1" role="dialog" aria-labelledby="editControlsLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="editControlsLabel">Edit Button - <span class="edit-title-controlid"></span></h4>
               </div>
-              <div class="function-button-settings">
-                <div class="settings-title">
-                  <h3>What should this button do?</h3>
-                </div>
-
-                <div class="functionality-settings">
-                  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                    
+              <div class="modal-body">
+                
+                <div class="general-button-settings">
+                  <div class="settings-title">
+                    <h3>General Settings</h3>
                   </div>
-                  <div class="add-more-functionality">
-                    <button type="button" class="btn btn-primary">
-                      Add Effect
-                    </button>
+
+                  <div class="input-group settings-controlid">
+                    <span class="input-group-addon" id="basic-addon3">Control Id</span>
+                    <input type="text" class="form-control" disabled aria-describedby="basic-addon3">
+                  </div>
+
+                  <div class="input-group settings-buttontext">
+                    <span class="input-group-addon" id="basic-addon3">Button Text</span>
+                    <input type="text" class="form-control" aria-describedby="basic-addon3">
+                  </div>
+
+                  <div class="input-group settings-sparkcost">
+                    <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
+                    <input type="text" class="form-control" aria-describedby="basic-addon3">
                   </div>
                 </div>
+                <div class="function-button-settings">
+                  <div class="settings-title">
+                    <h3>What should this button do?</h3>
+                  </div>
 
+                  <div class="functionality-settings">
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                      
+                    </div>
+                    <div class="add-more-functionality">
+                      <button type="button" class="btn btn-primary">
+                        Add Effect
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary add-new-board-save" data-dismiss="modal">Save changes</button>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary add-new-board-save" data-dismiss="modal">Save changes</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
+      </div> <!-- End interactive modals -->
+
+      <div class="group-modals">
+
+
+      </div> <!-- End group modals -->
     </div><!-- /.container -->
 
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
@@ -244,5 +267,6 @@
     <script src="./js/login.js"></script>
     <script src="./js/interactive/interactive-board.js"></script>
     <script src="./js/interactive/controls-editor.js"></script>
+    <script src="./js/interactive/groups.js"></script>
   </body>
 </html>
