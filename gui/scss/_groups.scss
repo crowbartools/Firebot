@@ -1,0 +1,25 @@
+
+.group-user-list-container{
+    .user-list-header{
+        margin-bottom:1em;
+    }
+    #group-user-list{
+        .list{
+            list-style:none;
+            margin:0px;
+            padding:0px;
+            .group-item{
+                background-color: $beam-main;
+                color:white;
+                margin: 1em 0em;
+                border-radius:.5em;
+                .username{
+                    display:inline-block;
+                    padding: .5em;
+                    font-size:1em;
+                    margin:0px;
+                }
+            }
+        }
+    }
+}

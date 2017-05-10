@@ -44,6 +44,7 @@ function backendBuilder(gameName, gameJson, versionid){
     
     // Build Firebot controls
     for (var i = 0; i < gameJson.length; i++) {
+        var scenename = gameJson[i].sceneID;
         var sceneControls = gameJson[i].controls;
 
         // Loop through controls for this scene.
@@ -70,6 +71,7 @@ function backendBuilder(gameName, gameJson, versionid){
                 }
                 // Push to db
                 dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
+                dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
                 dbControls.push('./firebot/controls/'+controlID+'/text', text);
                 dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
             }catch(err){
@@ -150,10 +152,10 @@ function boardGroupSettings(scenes){
 
     // Loop through scenes
     for (scene of scenes){
-        var uniqueid = new Date().getTime().toString();
+        var uniqueid = getUniqueId();
         var sceneName = scene.sceneID;
         var groupSettingTemplate = `
-            <div class="board-group board-group${uniqueid} col-sm-6 col-md-2">
+            <div class="board-group board-group${uniqueid} col-sm-6 col-md-3">
                 <div class="board-group-scene">${sceneName}</div>
                 <div class="board-group-scene-dropdown">
                     <div class="dropdown">
@@ -186,7 +188,7 @@ function boardGroupSettings(scenes){
             var uniqueid = $(this).attr('uniqueid');
             $(".board-group"+uniqueid+" .selected-scene-group").text(text);
             // TODO: Push update to json db.
-
+            
         });
     }
 }
@@ -302,14 +304,10 @@ function gameSelector(){
 // Last Board Loader
 // This loads up the last board that was selected.
 function loadLastBoard(){
-    var dbSettings = new JsonDB("./app-settings/settings", true, true);
 
     try{
-        // Get last board name.
-        var gameName = dbSettings.getData('/interactive/lastBoard');
-
         // Get settings for last board.
-        var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
+        var dbControls = getCurrentBoard();
         var versionid = dbControls.getData('/versionid');
 
         // Pull new json from beam.

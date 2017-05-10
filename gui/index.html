@@ -254,6 +254,54 @@
 
       <div class="group-modals">
 
+        <!-- Edit Group Modal-->
+        <div class="modal fade" id="edit-group-modal" tabindex="-1" role="dialog" aria-labelledby="editGroupLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="editGroupLabel">Edit Group - <span class="edit-group-groupid"></span></h4>
+              </div>
+              <div class="modal-body">
+                <div class="general-group-settings">
+                  <div class="settings-title">
+                    <h3>General Settings</h3>
+                  </div>
+
+                  <div class="input-group settings-groupid">
+                    <span class="input-group-addon" id="basic-addon3">Group Id</span>
+                    <input type="text" class="form-control interactive-group-id" aria-describedby="basic-addon3">
+                  </div>
+                </div>
+                <div class="group-user-list-container">
+                  <div class="user-list-header">
+                    <div class="settings-title">
+                      <h3>Included Users</h3>
+                    </div>
+                    <div class="input-group user-group-addition">
+                      <input type="text" class="form-control" placeholder="Username">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">Add</button>
+                      </span>
+                    </div><!-- /input-group -->
+                  </div>
+                  <div id="group-user-list">
+                      <div class="input-group user-group-addition">
+                        <span class="input-group-addon" id="basic-addon1">Search</span>
+                        <input type="text" class="form-control fuzzy-search" placeholder="Search">
+                      </div><!-- /input-group -->
+                      <ul class="list"></ul>
+                      <ul class="pagination"></div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary group-edit-save" data-dismiss="modal">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </div> <!-- End group modals -->
     </div><!-- /.container -->

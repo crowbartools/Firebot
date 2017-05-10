@@ -15,3 +15,41 @@ $("nav").find("li").on("click", "a", function () {
     $('.carousel').carousel('pause');
     $('.navbar-collapse').collapse('hide');
 });
+
+
+///////////////
+// Helper 
+//////////////
+
+// Get Current Board
+// This function returns the db for the currently selected board.
+function getCurrentBoard(){
+    // Get the current board.
+    var dbSettings = new JsonDB("./app-settings/settings", true, true);
+    try{
+        // Get last board name.
+        var gameName = dbSettings.getData('/interactive/lastBoard');
+
+        // Get settings for last board.
+        var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
+
+        return dbControls;
+    } catch(err){};
+}
+
+// Get Unique Id
+// This function returns a string to be used as a unique id for settings.
+function getUniqueId(){
+
+    var uniqueid =String.fromCharCode(Math.floor((Math.random()*25)+65));
+    do {                
+        // between numbers and characters (48 is 0 and 90 is Z (42-48 = 90)
+        var ascicode=Math.floor((Math.random()*42)+48);
+        if (ascicode<58 || ascicode>64){
+            // exclude all chars between : (58) and @ (64)
+           uniqueid+=String.fromCharCode(ascicode);    
+        }                
+    } while (uniqueid.length<32);
+
+    return uniqueid;
+}

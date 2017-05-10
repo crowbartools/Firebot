@@ -181,13 +181,10 @@ function changeSceneSettings(uniqueid){
     $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
 
     // Pull in all scenes for selected board.
-    var dbSettings = new JsonDB("./app-settings/settings", true, true);
     try{
-        // Get last board name.
-        var gameName = dbSettings.getData('/interactive/lastBoard');
 
         // Get settings for last board.
-        var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
+        var dbControls = getCurrentBoard();
 
         // Get settings for this button.
         var scenes = dbControls.getData('./beam');
@@ -234,13 +231,9 @@ function cooldownSettings(uniqueid){
     $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate);
 
     // Pull in all buttons for selected board.
-    var dbSettings = new JsonDB("./app-settings/settings", true, true);
     try{
-        // Get last board name.
-        var gameName = dbSettings.getData('/interactive/lastBoard');
-
         // Get settings for last board.
-        var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
+        var dbControls = getCurrentBoard();
 
         // Get settings for this button.
         var scenes = dbControls.getData('./beam');
@@ -402,14 +395,7 @@ function deleteFunctionality(uniqueid){
 function saveControls(){
 
     // Get the current board.
-    var dbSettings = new JsonDB("./app-settings/settings", true, true);
-    try{
-        // Get last board name.
-        var gameName = dbSettings.getData('/interactive/lastBoard');
-
-        // Get settings for last board.
-        var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);       
-    } catch(err){};
+    var dbControls = getCurrentBoard();
 
     // General Settings
     var controlID = $('.settings-controlid input').val();
@@ -493,7 +479,7 @@ function loadSettings(controlId, button){
             var effectType = effect.type; 
 
             // Create panels
-            var uniqueid = new Date().getTime().toString();
+            var uniqueid = getUniqueId();
             addMoreFunctionality(uniqueid);
             functionalitySwitcher(uniqueid, effectType);
 
@@ -554,6 +540,6 @@ function loadSettings(controlId, button){
 
 // Button that adds more functionality in settings area.
 $( ".add-more-functionality button" ).click(function() {
-    var uniqueid = new Date().getTime().toString();
+    var uniqueid = getUniqueId();
     addMoreFunctionality(uniqueid);
 });
