@@ -91,6 +91,7 @@ function loginLoop(handle, type){
                     if (err === null){
                         console.log('Success! Trying to get token...');
                         var body = JSON.parse(body);
+                        console.log(body);
                         // Success!
                         var accessToken = body.access_token;
                         var expires = body.expires_in;

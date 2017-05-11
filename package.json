@@ -34,9 +34,10 @@
     "electron-rebuild": "^1.5.6"
   },
   "dependencies": {
-    "beam-interactive-node2": "^0.10.1",
+    "beam-interactive-node2": "^1.0.1",
     "list.js": "^1.5.0",
     "node-json-db": "^0.7.3",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "ws": "^2.3.1"
   }
 }

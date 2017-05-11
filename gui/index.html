@@ -80,8 +80,8 @@
                     <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="actionMenu">
                       <li><a href="#">Add Cooldown Group</a></li>
                       <li role="separator" class="divider"></li>
-                      <li><a href="#">Launch Interactive</a></li>
-                      <li><a href="#">Stop Interactive</a></li>
+                      <li><a href="#" class="interactive-connector launch-interactive">Launch Interactive</a></li>
+                      <li><a href="#" class="interactive-connector disconnect-interactive">Stop Interactive</a></li>
                     </ul>
                   </div>
                   <div class="dropdown pull-right">
@@ -260,7 +260,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="editGroupLabel">Edit Group - <span class="edit-group-groupid"></span></h4>
+                <h4 class="modal-title" id="editGroupLabel">Add Group</h4>
               </div>
               <div class="modal-body">
                 <div class="general-group-settings">
@@ -295,6 +295,7 @@
                   </div>
                 </div>
                 <div class="modal-footer">
+                  <button type="button" class="btn btn-danger delete-group-button pull-left" data-dismiss="modal">Delete</button>
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                   <button type="button" class="btn btn-primary group-edit-save" data-dismiss="modal">Save changes</button>
                 </div>

@@ -8,10 +8,12 @@ function groupModal(){
     // Clear saved settings
     $('.interactive-group-id').text('');
     $('#group-user-list .list').empty();
+    $('#editGroupLabel').text('Add Group');
+    $('.delete-group-button').hide();
 
     // Set default variable for listjs
     var usernames = [];
-
+    
     // Set options for the list.
     var options = {
         valueNames: [ 'username' ],
@@ -35,8 +37,9 @@ function groupModal(){
 
     // Save group modal on click.
     $( ".group-edit-save" ).click(function() {
-        var groupName = $('.interactive-group-id').text();
+        var groupName = $('.interactive-group-id').val();
         saveGroupUserlist(userList, groupName);
+        refreshGroups();
     });
 
     // Show modal
@@ -46,35 +49,42 @@ function groupModal(){
 // Add New Group
 // This button adds a new group to the app.
 function refreshGroups(){
+    var dbGroup = new JsonDB("./user-settings/groups", true, true);
 
     // TODO: Clear groups in ui, then loop through json and add in all groups.
+    $('.interactive-group-container').empty();
 
-    var uniqueid = getUniqueId();
+    // Loop through json.
+    var groups = dbGroup.getData('/');
+    for(group in groups){
+        var uniqueid = getUniqueId();
+        var groupName = group;
 
-    var groupTemplate = `
-        <div class="interactive-group-wrap col-sm-12 col-md-3 group${uniqueid}">
-            <div class="interactive-groupheader">
-            <div class="interactive-group-name pull-left">
-                Unnamed
-            </div>
-            <div class="interactive-group-controls pull-right">
-                <div class="edit-interactive-control">
-                <button class="edit-group btn btn-default" group="${uniqueid}">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                </button>
+        var groupTemplate = `
+            <div class="interactive-group-wrap col-sm-12 col-md-3 group${uniqueid}">
+                <div class="interactive-groupheader">
+                <div class="interactive-group-name pull-left">
+                    ${groupName}
+                </div>
+                <div class="interactive-group-controls pull-right">
+                    <div class="edit-interactive-control">
+                    <button class="edit-group btn btn-default" group="${uniqueid}">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </button>
+                    </div>
+                </div>
+                </div>
+                <div class="interactive-group-main">
+                <div class="description">
+                    Custom Group
+                </div>
                 </div>
             </div>
-            </div>
-            <div class="interactive-group-main">
-            <div class="description">
-                Custom Userlist
-            </div>
-            </div>
-        </div>
-    `;
+        `;
 
-    // Throw it onto the page.
-    $('.interactive-group-container').append(groupTemplate);
+        // Throw it onto the page.
+        $('.interactive-group-container').append(groupTemplate);
+    }
 
     // Edit group on click.
     $( ".edit-group" ).click(function() {
@@ -86,6 +96,61 @@ function refreshGroups(){
 // Edit Group
 // This function edits a group.
 function editGroupModal(uniqueid){
+    var dbGroup = new JsonDB("./user-settings/groups", true, true);
+    var groupName = $('.group'+uniqueid+' .interactive-group-name').text().trim();
+    var group = dbGroup.getData('/'+groupName);
+
+    // Load up group name.
+    $('.interactive-group-id').val(groupName);
+    $('#group-user-list .list').empty();
+
+    // Load up userlist.
+    var usernames = []
+    for (user of group.users){
+        usernames.push( {username: user} );
+    }
+    
+    // Set options for the list.
+    var options = {
+        valueNames: [ 'username' ],
+        page: 10,
+        pagination: true,
+        item: '<li class="group-item"><p class="username"></p><button class="btn btn-danger remove-group-user pull-right">X</button></li>'
+    };
+
+    // Initalize List
+    var userList = new List('group-user-list', options, usernames);
+
+    // Initialize Remove Button
+    $('.remove-group-user').click(function() {
+        removeGroupUsername(userList);
+    });
+
+    // Initialize Add Button
+    $('.user-group-addition button').click(function() {
+        addGroupUsername(userList);
+    });
+
+    // Save group modal on click.
+    $( ".group-edit-save" ).click(function() {
+        var groupName = $('.interactive-group-id').val();
+        saveGroupUserlist(userList, groupName);
+        refreshGroups();
+    });
+
+    // Initialize Delete Button
+    $('.delete-group-button').click(function() {
+        deleteGroup();
+    });
+
+    // Change modal title to edit.
+    $('#editGroupLabel').text('Edit Group');
+
+    // Show delete button.
+    $('.delete-group-button').show();
+
+    // Show modal
+    $('#edit-group-modal').modal('toggle');
 
 }
 
@@ -121,8 +186,22 @@ function saveGroupUserlist(userList, groupName){
     }
 
     // Push to db
-    dbGroup.push('./'+groupName+'/groupName', groupname);
+    dbGroup.push('./'+groupName+'/groupName', groupName);
     dbGroup.push('./'+groupName+'/users', users);
+}
+
+// Delete Group
+function deleteGroup(){
+    var dbGroup = new JsonDB("./user-settings/groups", true, true);
+
+    // Get name of current board
+    var groupName = $('.interactive-group-id').val();
+
+    // Delete it
+    dbGroup.delete('/'+groupName);
+
+    // Refresh the list.
+    refreshGroups();
 }
 
 //////////////////////
@@ -131,5 +210,11 @@ function saveGroupUserlist(userList, groupName){
 
 // Add in a new group on click.
 $( ".add-group" ).click(function() {
-    groupModal();
+    groupModal('new');
 });
+
+
+//////////////////////
+// On App start
+/////////////////////
+refreshGroups();

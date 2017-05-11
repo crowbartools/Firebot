@@ -1,4 +1,5 @@
 const fs = require('fs');
+const {ipcRenderer} = require('electron');
 
 // Import Board Modal
 // This grabs the version id from the new board modal and passes it off.
@@ -149,23 +150,33 @@ function sceneBuilder(gameName){
 // Board General Group Settings
 // This puts all scenes into the general board settings along with a dropdown so you can defaults.
 function boardGroupSettings(scenes){
+    var dbControls = getCurrentBoard();
 
     // Loop through scenes
     for (scene of scenes){
         var uniqueid = getUniqueId();
         var sceneName = scene.sceneID;
+
+        // Look to see if we have saved settings for this one.
+        try{
+            var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName);
+            var selectedOption = sceneSettings.default;
+        }catch(err){
+            var selectedOption = "None"
+        }
+
         var groupSettingTemplate = `
             <div class="board-group board-group${uniqueid} col-sm-6 col-md-3">
                 <div class="board-group-scene">${sceneName}</div>
                 <div class="board-group-scene-dropdown">
                     <div class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="sceneGroupDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="selected-scene-group">None</span>
+                            <span class="selected-scene-group">${selectedOption}</span>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu scene-group-dropdown" aria-labelledby="sceneGroupDropdown">
                             <li><a href="#" uniqueid="${uniqueid}">None</a></li>
-                            <li><a href="#" uniqueid="${uniqueid}">Viewers</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}">Default</a></li>
                             <li><a href="#" uniqueid="${uniqueid}">Pro</a></li>
                             <li><a href="#" uniqueid="${uniqueid}">Subscribers</a></li>
                             <li><a href="#" uniqueid="${uniqueid}">Moderators</a></li>
@@ -178,17 +189,29 @@ function boardGroupSettings(scenes){
         // Throw it onto the page.
         $('.board-group-defaults-settings').append(groupSettingTemplate);
 
-        // TODO: Load up all custom made groups.
+        // Load up all custom made groups in each dropdown.
+        var dbGroup = new JsonDB("./user-settings/groups", true, true);
+        try{
+            var groups = dbGroup.getData('/');
+            for (var group in groups){
+                var template = `
+                    <li><a href="#" uniqueid="${uniqueid}">${group}</a></li>
+                `;
+                $('.board-group'+uniqueid+' .scene-group-dropdown').append(template);
+            }
+        }catch(err){console.log(err)};
 
-        // TODO: Change each dropdown if there is a setting saved for it.
 
         // When an effect is clicked, change the dropdown title.
         $( ".scene-group-dropdown a" ).click(function() {
             var text = $(this).text();
             var uniqueid = $(this).attr('uniqueid');
             $(".board-group"+uniqueid+" .selected-scene-group").text(text);
-            // TODO: Push update to json db.
-            
+
+            //Push update to json db.
+            var scene = $(this).closest('.board-group').find('.board-group-scene').text();
+            dbControls.push('./firebot/scenes/'+scene+'/default', text);
+            dbControls.push('./firebot/scenes/'+scene+'/sceneName', scene);
         });
     }
 }
@@ -358,6 +381,15 @@ $( ".add-new-board-save" ).click(function() {
 // Delete current board
 $( ".deleteBoard" ).click(function() {
     deleteBoard();
+});
+
+// Launch interactive
+$( ".interactive-connector" ).click(function() {
+    if ( $(this).hasClass('launch-interactive') ){
+        ipcRenderer.send('beamInteractive', 'connect');
+    } else {
+        ipcRenderer.send('beamInteractive', 'disconnect');
+    }
 });
 
 ////////////////////////
