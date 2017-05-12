@@ -3657,87 +3657,23 @@
   font-size: 2em;
 }
 
-/* line 10, ../scss/_interactive.scss */
-.interactive-button-holder .interactive-button {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 1.5em;
-  color: white;
-  border: 1px solid white;
-  text-align: center;
-  font-size: 1.2em;
-}
-/* line 19, ../scss/_interactive.scss */
-.interactive-button-holder .interactive-button .interactive-button-header {
-  background-color: #007eff;
-  font-weight: bold;
-  height: 2.5em;
-  padding: .5em 0em;
-  border-radius: .5em .5em 0em 0em;
-}
-/* line 25, ../scss/_interactive.scss */
-.interactive-button-holder .interactive-button .interactive-button-header .controlID {
-  text-align: left;
-  width: 75%;
-  display: inline;
-  padding: .2em 0em 0em .5em;
-}
-/* line 31, ../scss/_interactive.scss */
-.interactive-button-holder .interactive-button .interactive-button-header .edit-interactive-control {
-  display: inline;
-  width: 25%;
-}
-/* line 34, ../scss/_interactive.scss */
-.interactive-button-holder .interactive-button .interactive-button-header .edit-interactive-control .btn {
-  padding: 3px 10px;
-}
-/* line 39, ../scss/_interactive.scss */
-.interactive-button-holder .interactive-button .interactive-button-body {
-  background-color: #0e162a;
-  padding: .5em 0em;
-  border-radius: 0em 0em .5em .5em;
-}
-
-/* line 47, ../scss/_interactive.scss */
+/* line 9, ../scss/_interactive.scss */
 .general-button-settings .input-group {
   padding-bottom: 1em;
 }
 
-/* line 53, ../scss/_interactive.scss */
+/* line 15, ../scss/_interactive.scss */
 .functionality-settings .panel-title button {
   margin: -10px -15px;
   line-height: 1.75;
 }
-/* line 58, ../scss/_interactive.scss */
+/* line 20, ../scss/_interactive.scss */
 .functionality-settings .effect-settings-panel {
   border-top: 1px solid #adadad;
   margin-top: 1em;
 }
-/* line 62, ../scss/_interactive.scss */
-.functionality-settings .effect-settings-panel .selected-cooldown-buttons {
-  display: flex;
-  padding-top: .75em;
-}
-/* line 66, ../scss/_interactive.scss */
-.functionality-settings .effect-settings-panel .selected-cooldown-buttons .selected-cooldown-button {
-  background-color: #0e162a;
-  color: white;
-  padding: .75em;
-  margin: .75em;
-  border-radius: 2rem;
-  text-align: center;
-}
-/* line 73, ../scss/_interactive.scss */
-.functionality-settings .effect-settings-panel .selected-cooldown-buttons .selected-cooldown-button span {
-  font-size: 1.2em;
-  font-weight: bold;
-}
-/* line 77, ../scss/_interactive.scss */
-.functionality-settings .effect-settings-panel .selected-cooldown-buttons .selected-cooldown-button .remove-cooldown button {
-  padding: 0px 5px;
-}
 
-/* line 88, ../scss/_interactive.scss */
+/* line 29, ../scss/_interactive.scss */
 #board-settings .board-group-defaults-settings .board-group .board-group-scene {
   background-color: #007eff;
   padding: .5em;
@@ -3746,7 +3682,7 @@
   font-weight: bold;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 96, ../scss/_interactive.scss */
+/* line 37, ../scss/_interactive.scss */
 #board-settings .board-group-defaults-settings .board-group .board-group-scene-dropdown {
   background-color: #0e162a;
   padding: .5em;
@@ -3754,7 +3690,7 @@
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 107, ../scss/_interactive.scss */
+/* line 48, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3764,7 +3700,7 @@
   text-align: center;
   font-size: 1.2em;
 }
-/* line 115, ../scss/_interactive.scss */
+/* line 56, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-groupheader {
   background-color: #007eff;
   font-weight: bold;
@@ -3772,23 +3708,23 @@
   padding: .5em 0em;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 121, ../scss/_interactive.scss */
+/* line 62, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-name {
   text-align: left;
   width: 75%;
   display: inline;
   padding: .2em 0em 0em .5em;
 }
-/* line 127, ../scss/_interactive.scss */
+/* line 68, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-controls {
   display: inline;
   width: 25%;
 }
-/* line 130, ../scss/_interactive.scss */
+/* line 71, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-controls .btn {
   padding: 3px 10px;
 }
-/* line 135, ../scss/_interactive.scss */
+/* line 76, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-group-main {
   background-color: #0e162a;
   padding: .5em 0em;
@@ -3804,20 +3740,6 @@
   list-style: none;
   margin: 0px;
   padding: 0px;
-}
-/* line 11, ../scss/_groups.scss */
-.group-user-list-container #group-user-list .list .group-item {
-  background-color: #0e162a;
-  color: white;
-  margin: 1em 0em;
-  border-radius: .5em;
-}
-/* line 16, ../scss/_groups.scss */
-.group-user-list-container #group-user-list .list .group-item .username {
-  display: inline-block;
-  padding: .5em;
-  font-size: 1em;
-  margin: 0px;
 }
 
 /* line 11, ../scss/main.scss */
@@ -3838,7 +3760,65 @@ body {
   min-height: 500px;
 }
 
-/* line 27, ../scss/main.scss */
+/* line 25, ../scss/main.scss */
+.tile {
+  margin-top: 1.5em;
+  color: white;
+  border: 1px solid white;
+  text-align: center;
+  font-size: 1.2em;
+}
+/* line 32, ../scss/main.scss */
+.tile.no-top {
+  margin-top: .5em;
+}
+/* line 36, ../scss/main.scss */
+.tile .tile-header {
+  background-color: #007eff;
+  font-weight: bold;
+  height: 2.5em;
+  padding: .5em 0em;
+  border-radius: .5em .5em 0em 0em;
+}
+/* line 42, ../scss/main.scss */
+.tile .tile-header .tileID {
+  text-align: left;
+  width: 75%;
+  display: inline;
+  padding: .2em 0em 0em .5em;
+}
+/* line 48, ../scss/main.scss */
+.tile .tile-header .tile-edit {
+  display: inline;
+  width: 25%;
+}
+/* line 51, ../scss/main.scss */
+.tile .tile-header .tile-edit .btn {
+  padding: 3px 10px;
+}
+/* line 56, ../scss/main.scss */
+.tile .tile-body {
+  background-color: #0e162a;
+  padding: .5em 0em;
+  border-radius: 0em 0em .5em .5em;
+}
+
+/* line 64, ../scss/main.scss */
+.pill {
+  background-color: #0e162a;
+  color: white;
+  margin: 1em 0em;
+  border-radius: .5em;
+}
+/* line 69, ../scss/main.scss */
+.pill .content {
+  display: inline-block;
+  padding: .5em;
+  font-size: 1em;
+  margin: 0px;
+}
+
+/* line 80, ../scss/main.scss */
 .top-padding {
   padding-top: 1em;
 }

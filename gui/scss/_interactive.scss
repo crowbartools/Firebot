@@ -1,48 +1,10 @@
-
+// Other styles
 .interactive-header{
     .board-title a{
         font-size:2em;
     }
 }
 
-.interactive-button-holder{
-
-    .interactive-button{
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-top:1.5em;
-        color:white;
-        border:1px solid white;
-        text-align:center;
-        font-size:1.2em;
-
-        .interactive-button-header{
-            background-color: $beam-highlight;
-            font-weight:bold;
-            height:2.5em;
-            padding: .5em 0em;
-            border-radius: .5em .5em 0em 0em;
-            .controlID{
-                text-align:left;
-                width: 75%;
-                display:inline;
-                padding:.2em 0em 0em .5em;
-            }
-            .edit-interactive-control{
-                display:inline;
-                width: 25%;
-                .btn{
-                    padding:3px 10px;
-                }
-            }
-        }
-        .interactive-button-body{
-            background-color: $beam-main;
-            padding: .5em 0em;
-            border-radius: 0em 0em .5em .5em;
-        }
-    }
-}
 .general-button-settings{
     .input-group{
         padding-bottom:1em;
@@ -58,27 +20,6 @@
     .effect-settings-panel{
         border-top: 1px solid $light-highlight;
         margin-top: 1em;
-
-        .selected-cooldown-buttons{
-            display: flex;
-            padding-top:.75em;
-
-            .selected-cooldown-button{
-                background-color: $beam-main;
-                color:white;
-                padding:.75em;
-                margin: .75em;
-                border-radius:2rem;
-                text-align:center;
-                span{
-                    font-size: 1.2em;
-                    font-weight:bold;
-                }
-                .remove-cooldown button{
-                    padding:0px 5px;
-                }
-            }
-        }
     }
 }
 

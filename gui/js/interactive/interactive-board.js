@@ -9,7 +9,9 @@ function importBoardModal(){
     var versionid = $('.add-new-board-code').val().trim();
 
     // Send it off to import board function.
-    boardBuilder(versionid);
+    if(versionid !== ""){
+        boardBuilder(versionid);
+    }
 
     // Clear version field and close the modal.
     $('.add-new-board-code').val('');
@@ -115,7 +117,7 @@ function sceneBuilder(gameName){
                 </div>
             </div>
             <div class="board-cooldown-group-settings">
-                <h3>Cooldown Groups <button class="btn btn-default add-new-cooldown" data-toggle="modal" data-target="#new-cooldown-group-modal">Add New</button></h3>
+                <h3>Cooldown Groups <button class="btn btn-default add-new-cooldown-group" data-toggle="modal" data-target="#new-cooldown-group-modal">Add New</button></h3>
                 <div class="board-cooldown-content">
                     <p>Cooldown groups make it easy to group multiple buttons together so that they all cooldown anytime one is clicked.</p>
                     <div class="board-cooldown-groups">
@@ -149,11 +151,20 @@ function sceneBuilder(gameName){
         $(this).tab('show')
     })
 
+    // Initialize cooldown group button.
+    $( ".add-new-cooldown-group" ).click(function() {
+        addCooldownGroup()
+    });
+
     // Add in the board settings.
     boardGroupSettings(scenes);
 
+    // Next Step: Load up the cooldown groups.
+    loadCooldownGroups();
+
     // Next Step: Start up the button builder
     buttonBuilder(scenes);
+    
 };
 
 // Board General Group Settings
@@ -175,21 +186,25 @@ function boardGroupSettings(scenes){
         }
 
         var groupSettingTemplate = `
-            <div class="board-group board-group${uniqueid} col-sm-6 col-md-3">
-                <div class="board-group-scene">${sceneName}</div>
-                <div class="board-group-scene-dropdown">
-                    <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="sceneGroupDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span class="selected-scene-group">${selectedOption}</span>
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu scene-group-dropdown" aria-labelledby="sceneGroupDropdown">
-                            <li><a href="#" uniqueid="${uniqueid}">None</a></li>
-                            <li><a href="#" uniqueid="${uniqueid}">Default</a></li>
-                            <li><a href="#" uniqueid="${uniqueid}">Pro</a></li>
-                            <li><a href="#" uniqueid="${uniqueid}">Subscribers</a></li>
-                            <li><a href="#" uniqueid="${uniqueid}">Moderators</a></li>
-                        </ul>
+            <div class="board-group board-group${uniqueid} tile no-top col-sm-6 col-md-3">
+                <div class="tile-header">
+                    <div class="board-groupscene">${sceneName}</div>
+                </div>
+                <div class="board-group-scene-body tile-body">
+                    <div class="board-group-scene-dropdown">
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="sceneGroupDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="selected-scene-group">${selectedOption}</span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu scene-group-dropdown" aria-labelledby="sceneGroupDropdown">
+                                <li><a href="#" uniqueid="${uniqueid}">None</a></li>
+                                <li><a href="#" uniqueid="${uniqueid}">Default</a></li>
+                                <li><a href="#" uniqueid="${uniqueid}">Pro</a></li>
+                                <li><a href="#" uniqueid="${uniqueid}">Subscribers</a></li>
+                                <li><a href="#" uniqueid="${uniqueid}">Moderators</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -254,16 +269,16 @@ function buttonBuilder(scenes){
 
                 // The html template for the buttons.
                 var buttonTemplate = `
-                    <div class="interactive-button col-sm-6 col-md-3">
-                        <div class="interactive-button-header">
-                            <div class="controlID pull-left">${controlID}</div>
-                            <div class="edit-interactive-control pull-right">
+                    <div class="interactive-button tile col-sm-6 col-md-3">
+                        <div class="interactive-button-header tile-header">
+                            <div class="controlID tileID pull-left">${controlID}</div>
+                            <div class="edit-interactive-control tile-edit pull-right">
                                 <button class="edit-control btn btn-default" controlid="${controlID}">
                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="interactive-button-body">
+                        <div class="interactive-button-body tile-body">
                             <div class="buttontext">${buttontext}</div>
                             <div class="sparkcost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> ${sparkcost}</div>
                         </div>
@@ -281,6 +296,192 @@ function buttonBuilder(scenes){
         // Get the controlId and pass it off to the edit function.
         var controlId = $(this).attr('controlid');
         editButton(controlId); // This function is in controls-editor.js.
+    });
+}
+
+// Add Cooldown Group
+// This controls the actions on the cooldown group module.
+function addCooldownGroup(){
+    // Clear old settings.
+    $(".cooldown-groupid").val('');
+    $(".cooldown-group-length").val('');
+    $(".selected-cooldown-group-buttons").empty();
+    $('.cooldown-group-dropdown').empty();
+
+    // Pull in all buttons for selected board.
+    try{
+        // Get settings for last board.
+        var dbControls = getCurrentBoard();
+
+        // Get settings for this button.
+        var scenes = dbControls.getData('./beam');
+
+        // Loop through scenes and put buttons into dropdown menu.
+        for (scene of scenes){
+            var controls = scene.controls;
+            for (button of controls){
+                var name = button.controlID;
+                var dropdowntemplate = `<li><a href="#">${name}</a></li>`;
+                $(".cooldown-group-dropdown").append(dropdowntemplate);
+            }
+        }
+    } catch(err){};
+
+    // Add in a new button when one is selected.
+    $( ".cooldown-group-dropdown a" ).click(function() {
+        var text = $(this).text();
+        var template = `<div class="selected-cooldown-group-button pill">
+                            <p class="content"><span>${button}</span></p>
+                            <div class="remove-cooldown-group-button pull-right">
+                                <button class="btn btn-danger">X</button>
+                            </div>
+                        </div>`;
+        $(".selected-cooldown-group-buttons").append(template);
+
+        // When X is clicked, remove button from list.
+        $(".remove-cooldown-group-button button").click(function(){
+            $(this).closest(".selected-cooldown-group-button").remove();
+        });
+    });
+}
+
+// Edit Cooldown Group
+// This will fill in info on the cooldown group so it can be edited.
+function editCooldownGroup(sceneid){
+    var dbControls = getCurrentBoard();
+    var scene = dbControls.getData('./firebot/cooldownGroups/'+sceneid);
+    var length = scene.length;
+    var buttons = scene.buttons;
+
+    // Clear old settings.
+    $(".cooldown-groupid").val('');
+    $(".cooldown-group-length").val('');
+    $(".selected-cooldown-group-buttons").empty();
+    $('.cooldown-group-dropdown').empty();
+
+
+    // Load easy info
+    $('.cooldown-groupid').val(sceneid);
+    $('.cooldown-group-length').val(length);
+
+    // Loop through buttons and add them in.
+    for (button of buttons){
+        var template = `<div class="selected-cooldown-group-button pill">
+                            <p class="content"><span>${button}</span></p>
+                            <div class="remove-cooldown-group-button pull-right">
+                                <button class="btn btn-danger">X</button>
+                            </div>
+                        </div>`;
+        $(".selected-cooldown-group-buttons").append(template);
+    }
+
+    // Pull in all buttons for selected board.
+    try{
+        // Get settings for last board.
+        var dbControls = getCurrentBoard();
+
+        // Get settings for this button.
+        var scenes = dbControls.getData('./beam');
+
+        // Loop through scenes and put buttons into dropdown menu.
+        for (scene of scenes){
+            var controls = scene.controls;
+            for (button of controls){
+                var name = button.controlID;
+                var dropdowntemplate = `<li><a href="#">${name}</a></li>`;
+                $(".cooldown-group-dropdown").append(dropdowntemplate);
+            }
+        }
+    } catch(err){};
+
+    // Add in a new button when one is selected.
+    $( ".cooldown-group-dropdown a" ).click(function() {
+        var text = $(this).text();
+        var template = `<div class="selected-cooldown-group-button pill">
+                            <p class="content"><span>${button}</span></p>
+                            <div class="remove-cooldown-group-button pull-right">
+                                <button class="btn btn-danger">X</button>
+                            </div>
+                        </div>`;
+        $(".selected-cooldown-group-buttons").append(template);
+
+        // When X is clicked, remove button from list.
+        $(".remove-cooldown-group-button button").click(function(){
+            $(this).closest(".selected-cooldown-group-button").remove();
+        });
+    });
+
+    // Show Modal
+    $('#new-cooldown-group-modal').modal('toggle')
+}
+
+// Save Cooldown Group
+// This takes settings for cooldown group modal and saves it.
+function saveCooldownGroup(){
+    var dbControls = getCurrentBoard();
+    var cooldownButtons = [];
+
+    // Get group id.
+    var groupID = $('.cooldown-groupid').val();
+    var cooldownLength = $('.cooldown-group-length').val();
+
+    // Loop through selected buttons and get control id.
+    $( ".selected-cooldown-group-buttons" ).find('.selected-cooldown-group-button').each(function( index ) {
+        var text = $(this).find('span').text();
+        cooldownButtons.push(text);
+
+        // Push group info to db for each control.
+        dbControls.push('./firebot/controls/'+text+'/cooldownGroup', groupID);
+    });
+
+    // Push cooldown group info to db.
+    dbControls.push('./firebot/cooldownGroups/'+groupID, {groupName: groupID, length: cooldownLength, buttons: cooldownButtons});
+
+    // reload groups
+    loadCooldownGroups();
+}
+
+// Load Cooldown Group
+// This goes through the cooldown group info and loads it into the ui.
+function loadCooldownGroups(){
+    var dbControls = getCurrentBoard();
+
+    // Clear old groups
+    $('.board-cooldown-groups').empty();
+    
+    // Loop through cooldown groups.
+    var groups = dbControls.getData('./firebot/cooldownGroups');
+    for (item in groups){
+        var group = groups[item];
+        var groupid = group.groupName;
+        var cooldown = group.length;
+        var buttons = group.buttons;
+        var buttonLength = buttons.length + 1;
+        var cooldownGroupTemplate = `
+            <div class="cooldown-group tile no-top col-sm-6 col-md-3">
+                <div class="cooldown-group-header tile-header">
+                    <div class="groupID tileID pull-left">${groupid}</div>
+                    <div class="edit-cooldown-group-wrap tile-edit pull-right">
+                        <button class="edit-cooldown-group btn btn-default" groupid="${groupid}">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="cooldown-group-body tile-body">
+                    <p>Buttons: ${buttonLength}</p>
+                    <p>Seconds: ${cooldown}</p>
+                </div>
+            </div>
+        `;
+
+        // Throw onto the page.
+        $('.board-cooldown-groups').append(cooldownGroupTemplate);
+    }
+
+    // Initialize the edit buttons.
+    $( ".edit-cooldown-group" ).click(function() {
+        var groupid = $(this).attr('groupid');
+        editCooldownGroup(groupid);
     });
 }
 
@@ -385,6 +586,11 @@ function clearBoard(){
 // Kick off import script on save button press.
 $( ".add-new-board-save" ).click(function() {
     importBoardModal();
+});
+
+// Save cooldown group modal window
+$( ".save-cooldown-group" ).click(function() {
+    saveCooldownGroup();
 });
 
 // Delete current board

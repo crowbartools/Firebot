@@ -19,28 +19,11 @@ function groupModal(){
         valueNames: [ 'username' ],
         page: 10,
         pagination: true,
-        item: '<li class="group-item"><p class="username"></p><button class="btn btn-danger remove-group-user pull-right">X</button></li>'
+        item: '<li class="group-item pill"><p class="content username"></p><button class="btn btn-danger remove-group-user pull-right">X</button></li>'
     };
 
     // Initalize List
-    var userList = new List('group-user-list', options, usernames);
-
-    // Initialize Remove Button
-    $('.remove-group-user').click(function() {
-        removeGroupUsername(userList);
-    });
-
-    // Initialize Add Button
-    $('.user-group-addition button').click(function() {
-        addGroupUsername(userList);
-    });
-
-    // Save group modal on click.
-    $( ".group-edit-save" ).click(function() {
-        var groupName = $('.interactive-group-id').val();
-        saveGroupUserlist(userList, groupName);
-        refreshGroups();
-    });
+    groupUserList = new List('group-user-list', options, usernames);
 
     // Show modal
     $('#edit-group-modal').modal('toggle');
@@ -104,7 +87,7 @@ function editGroupModal(uniqueid){
     $('.interactive-group-id').val(groupName);
     $('#group-user-list .list').empty();
 
-    // Load up userlist.
+    // Load up UserList.
     var usernames = []
     for (user of group.users){
         usernames.push( {username: user} );
@@ -115,33 +98,12 @@ function editGroupModal(uniqueid){
         valueNames: [ 'username' ],
         page: 10,
         pagination: true,
-        item: '<li class="group-item"><p class="username"></p><button class="btn btn-danger remove-group-user pull-right">X</button></li>'
+        item: '<li class="group-item pill"><p class="content username"></p><button class="btn btn-danger remove-group-user pull-right">X</button></li>'
     };
 
     // Initalize List
-    var userList = new List('group-user-list', options, usernames);
+    groupUserList = new List('group-user-list', options, usernames);
 
-    // Initialize Remove Button
-    $('.remove-group-user').click(function() {
-        removeGroupUsername(userList);
-    });
-
-    // Initialize Add Button
-    $('.user-group-addition button').click(function() {
-        addGroupUsername(userList);
-    });
-
-    // Save group modal on click.
-    $( ".group-edit-save" ).click(function() {
-        var groupName = $('.interactive-group-id').val();
-        saveGroupUserlist(userList, groupName);
-        refreshGroups();
-    });
-
-    // Initialize Delete Button
-    $('.delete-group-button').click(function() {
-        deleteGroup();
-    });
 
     // Change modal title to edit.
     $('#editGroupLabel').text('Edit Group');
@@ -156,32 +118,27 @@ function editGroupModal(uniqueid){
 
 // Add Username
 // This adds a username to the current list.
-function addGroupUsername(userList){
+function addGroupUsername(groupUserList){
     var inputData = $('.user-group-addition input').val();
     var username = {username: inputData};
+    console.log(username);
+
+    // Add user to list and json.
+    groupUserList.add(username);
 
     // Clear Field
     $('.user-group-addition input').val('');
 
-    // Add user to list and json.
-    userList.add(username);
-};
-
-// Remove Username
-// Removes a username from the list
-function removeGroupUsername(userList){
-    var username = $(this).closest('.group-item').find('.username').text();
-    userList.remove('username', username);
 };
 
 // Save List
 // Takes the entire finished list and saves it.
-function saveGroupUserlist(userList, groupName){
+function saveGroupUserlist(groupUserList, groupName){
     var dbGroup = new JsonDB("./user-settings/groups", true, true);
     var users = [];
 
     // Loop through final list.
-    for(user of userList.items){
+    for(user of groupUserList.items){
         users.push( user['_values'].username );
     }
 
@@ -213,6 +170,28 @@ $( ".add-group" ).click(function() {
     groupModal('new');
 });
 
+// Initialize Remove Button
+$('.remove-group-user').click(function() {
+    var username = $(this).closest('.group-item').find('.username').text();
+    groupUserList.remove('username', username);
+});
+
+// Initialize Add Button
+$('.user-group-addition button').click(function() {
+    addGroupUsername(groupUserList);
+});
+
+// Save group modal on click.
+$( ".group-edit-save" ).click(function() {
+    var groupName = $('.interactive-group-id').val();
+    saveGroupUserlist(groupUserList, groupName);
+    refreshGroups();
+});
+
+// Initialize Delete Button
+$('.delete-group-button').click(function() {
+    deleteGroup();
+});
 
 //////////////////////
 // On App start

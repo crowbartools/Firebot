@@ -287,9 +287,9 @@ function cooldownSettings(uniqueid){
     // Add in a new button when one is selected.
     $( ".cooldown-button-effect-dropdown a" ).click(function() {
         var text = $(this).text();
-        var template = `<div class="selected-cooldown-button cooldown-`+uniqueid+`">
-                            <span>${text}</span>
-                            <div class="remove-cooldown">
+        var template = `<div class="selected-cooldown-button pill cooldown-`+uniqueid+`">
+                            <p class="content"><span>${text}</span></p>
+                            <div class="remove-cooldown pull-right">
                                 <button class="btn btn-danger">X</button>
                             </div>
                         </div>`;
@@ -563,9 +563,9 @@ function loadSettings(controlId, button){
                 var cooldownButtons = effect.buttons;
                 for (button of cooldownButtons){
                     var text = button;
-                    var template = `<div class="selected-cooldown-button cooldown-`+uniqueid+`">
-                                        <span>${text}</span>
-                                        <div class="remove-cooldown">
+                    var template = `<div class="selected-cooldown-button pill cooldown-`+uniqueid+`">
+                                        <p class="content"><span>${text}</span></p>
+                                        <div class="remove-cooldown pull-right">
                                             <button class="btn btn-danger">X</button>
                                         </div>
                                     </div>`;

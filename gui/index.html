@@ -320,24 +320,27 @@
                       <span class="input-group-addon" id="basic-addon3">Group Name</span>
                       <input type="text" class="form-control cooldown-groupid" aria-describedby="basic-addon3">
                     </div>
+                    <div class="input-group settings-cooldown-length">
+                      <span class="input-group-addon" id="basic-addon3">Cooldown(sec)</span>
+                      <input type="text" class="form-control cooldown-group-length" aria-describedby="basic-addon3">
+                    </div>
                   </div>
 
                   <div class="cooldown-group-button-container">
                     <h3>Which buttons should cool down together?</h3>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="cooldown-button-effect-type">Pick One</span> <span class="caret"></span>
+                            <span class="cooldown-group-type">Pick One</span> <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu cooldown-button-effect-dropdown"></ul>
+                        <ul class="dropdown-menu cooldown-group-dropdown"></ul>
                     </div>
                     <div class="selected-cooldown-group-buttons"></div>
                   </div>
 
-
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary add-new-cooldown" data-dismiss="modal">Save Changes</button>
+                  <button type="button" class="btn btn-primary save-cooldown-group" data-dismiss="modal">Save Changes</button>
                 </div>
               </div>
             </div>
