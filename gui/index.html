@@ -78,8 +78,6 @@
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="actionMenu">
-                      <li><a href="#">Add Cooldown Group</a></li>
-                      <li role="separator" class="divider"></li>
                       <li><a href="#" class="interactive-connector launch-interactive">Launch Interactive</a></li>
                       <li><a href="#" class="interactive-connector disconnect-interactive">Stop Interactive</a></li>
                     </ul>
@@ -162,7 +160,6 @@
               </div>
               <div class="modal-body">
                 <p>To add a board to Firebot go to the <a href="https://beam.pro/i/studio">Beam interactive studio</a> and create a project. Organize and create buttons however you want. Once done, you'll be given a five digit number in the "code" tab. Copy and paste that below.</p>
-                <p>This will overwite all settings on the current board.</p>
                 <div class="input-group">
                   <input type="text" class="form-control add-new-board-code" placeholder="Enter code">
                 </div><!-- /input-group -->
@@ -279,10 +276,10 @@
                       <h3>Included Users</h3>
                     </div>
                     <div class="input-group user-group-addition">
-                      <input type="text" class="form-control" placeholder="Username">
                       <span class="input-group-btn">
                         <button class="btn btn-default" type="button">Add</button>
                       </span>
+                      <input type="text" class="form-control" placeholder="Username">
                     </div><!-- /input-group -->
                   </div>
                   <div id="group-user-list">
@@ -302,10 +299,52 @@
               </div>
             </div>
           </div>
-        </div>
+        </div><!-- End group modals-->
 
-      </div> <!-- End group modals -->
-    </div><!-- /.container -->
+        <div class="cooldown-group-modals">
+
+          <!-- Modal for adding a new cooldown group to a board-->
+          <div class="modal fade" id="new-cooldown-group-modal" tabindex="-1" role="dialog" aria-labelledby="newCooldownGroupLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="newCooldownGroupLabel">Add New Cooldown Group</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="general-group-settings">
+                    <div class="settings-title">
+                      <h3>General Settings</h3>
+                    </div>
+                    <div class="input-group settings-cooldown-groupid">
+                      <span class="input-group-addon" id="basic-addon3">Group Name</span>
+                      <input type="text" class="form-control cooldown-groupid" aria-describedby="basic-addon3">
+                    </div>
+                  </div>
+
+                  <div class="cooldown-group-button-container">
+                    <h3>Which buttons should cool down together?</h3>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="cooldown-button-effect-type">Pick One</span> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu cooldown-button-effect-dropdown"></ul>
+                    </div>
+                    <div class="selected-cooldown-group-buttons"></div>
+                  </div>
+
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary add-new-cooldown" data-dismiss="modal">Save Changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- End cooldown group modals-->
+
+      </div> <!-- Container -->
 
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

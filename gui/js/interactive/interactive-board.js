@@ -78,6 +78,14 @@ function backendBuilder(gameName, gameJson, versionid){
             }catch(err){
                 console.log('Problem getting button info to save to json.')
             };
+
+            // Setup scenes in Firebot json if they haven't been made yet.
+            try{
+                dbControls.getData('./firebot/scenes/'+scenename);
+            }catch(err){
+                dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
+                dbControls.push('./firebot/scenes/'+scenename+'/default', 'None');
+            }
         }
     }
 
@@ -107,10 +115,11 @@ function sceneBuilder(gameName){
                 </div>
             </div>
             <div class="board-cooldown-group-settings">
-                <h3>Cooldown Groups</h3>
-                <div class="board-cooldown-defaults">
+                <h3>Cooldown Groups <button class="btn btn-default add-new-cooldown" data-toggle="modal" data-target="#new-cooldown-group-modal">Add New</button></h3>
+                <div class="board-cooldown-content">
                     <p>Cooldown groups make it easy to group multiple buttons together so that they all cooldown anytime one is clicked.</p>
-                    <div class="board-cooldown-defaults">
+                    <div class="board-cooldown-groups">
+
                     </div>
                 </div>
             </div>
@@ -148,7 +157,7 @@ function sceneBuilder(gameName){
 };
 
 // Board General Group Settings
-// This puts all scenes into the general board settings along with a dropdown so you can defaults.
+// This puts all scenes into the general board settings along with a dropdown so you can set defaults.
 function boardGroupSettings(scenes){
     var dbControls = getCurrentBoard();
 

@@ -60,6 +60,7 @@ function addMoreFunctionality(uniqueid){
                         <ul class="dropdown-menu effects-menu">
                             <li><a href="#" uniqueid="${uniqueid}" effect="API Button">API Button</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Change Scene">Change Scene</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Chat">Chat</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Cooldown">Cooldown</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Celebration">Celebration</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Game Control">Game Control</a></li>
@@ -110,6 +111,9 @@ function functionalitySwitcher(uniqueid, effect){
         break;
     case "Change Scene":
         var effectTemplate = changeSceneSettings(uniqueid);
+        break;
+    case "Chat":
+        var effectTemplate = chatSettings(uniqueid);
         break;
     case "Cooldown":
         var effectTemplate = cooldownSettings(uniqueid);
@@ -204,18 +208,49 @@ function changeSceneSettings(uniqueid){
     });
 }
 
+// Chat Settings
+// Loads up settings for the chat effect type.
+function chatSettings(uniqueid){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Who should I chat as?</h4></div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="chat-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu chat-effect-dropdown">
+                <li><a href="#">Streamer</a></li>
+                <li><a href="#">Bot</a></li>
+            </ul>
+        </div>
+        <div class="effect-specific-title"><h4>What should I say?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="chat-text-effect-type">Message</span>
+            <input type="text" class="form-control" id="chat-text-setting" aria-describedby="chat-text-effect-type">
+        </div>
+    `;
+
+    // Put onto the page.
+    $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
+
+    // When an effect is clicked, change the dropdown title.
+    $( ".panel"+uniqueid+" .chat-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .chat-effect-type").text(text);
+    });
+}
+
 // Cooldown Button Settings
 // Loads up the settings for the cooldown effect type.
 function cooldownSettings(uniqueid){
     var effectTemplate = `
         <div class="effect-specific-title"><h4>Which buttons should I put on cooldown?</h4></div>
         <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="cooldown-button-effect-type">Pick One</span> <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu cooldown-button-effect-dropdown">
-            <li><a href="#">All</a></li>
-        </ul>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="cooldown-button-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu cooldown-button-effect-dropdown">
+                <li><a href="#">All</a></li>
+            </ul>
         </div>
         <div class="selected-cooldown-buttons">
         </div>
@@ -324,7 +359,12 @@ function gameControlSettings(uniqueid){
 function playSoundSettings(uniqueid){
     var effectTemplate = `
         <div class="effect-specific-title"><h4>What sound should I play?</h4></div>
-        <input class="form-control sound-file-type" type="file" id="file">
+        <div class="input-group">
+            <span class="input-group-btn">
+            <button class="btn btn-default play-sound-effect-chooser" type="button">Choose</button>
+            </span>
+            <input type="text" class="form-control play-sound-effect-input">
+        </div><!-- /input-group -->
 
         <div class="effect-specific-title"><h4>How loud should it be?</h4></div>
         <div class="input-group">
@@ -335,6 +375,13 @@ function playSoundSettings(uniqueid){
 
     // Put onto the page.
     $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate);
+
+    // Audio File Selector
+    // This monitors the audio file select box and when it is clicked sends request to main process to open dialog.
+    $(".panel"+uniqueid+" .play-sound-effect-chooser" ).click(function() {
+        ipcRenderer.send('getSoundPath', uniqueid);
+    });
+
 }
 
 // Show Image Settings
@@ -342,7 +389,12 @@ function playSoundSettings(uniqueid){
 function showImageSettings(uniqueid){
     var effectTemplate = `
         <div class="effect-specific-title"><h4>Which image should I show?</h4></div>
-        <input class="form-control image-file" type="file" id="file">
+        <div class="input-group">
+            <span class="input-group-btn">
+            <button class="btn btn-default show-image-effect-chooser" type="button">Choose</button>
+            </span>
+            <input type="text" class="form-control show-image-effect-input">
+        </div><!-- /input-group -->
 
         <div class="effect-specific-title"><h4>What location should it show in?</h4></div>
         <div class="btn-group">
@@ -376,6 +428,12 @@ function showImageSettings(uniqueid){
     $( ".panel"+uniqueid+" .image-placement-effect-dropdown a" ).click(function() {
         var text = $(this).text();
         $(".panel"+uniqueid+" .image-placement-effect-type").text(text);
+    });
+
+    // Image File Selector
+    // This monitors the audio file select box and when it is clicked sends request to main process to open dialog.
+    $(".panel"+uniqueid+" .show-image-effect-chooser" ).click(function() {
+        ipcRenderer.send('getImagePath', uniqueid);
     });
 }
 
@@ -421,6 +479,11 @@ function saveControls(){
             var sceneChange = $(this).find('.change-scene-effect-type').text();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Scene", "scene": sceneChange});
             break;
+        case "Chat":
+            var chatter = $(this).find('.chat-effect-type').text();
+            var message = $(this).find('#chat-text-setting').val();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Chat", "chatter": chatter, "message": message});
+            break;
         case "Cooldown":
             // Cycle through selected buttons and push to array.
             var cooldownButtons = [];
@@ -442,12 +505,12 @@ function saveControls(){
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Game Control", "press": buttonPress, "opposite": oppositeButton});
             break;
         case "Play Sound":
-            var soundFile = $(this).find('.sound-file-type').val();
+            var soundFile = $(this).find('.play-sound-effect-input').val();
             var soundVolume = $(this).find('#sound-volume-setting').val();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Play Sound", "file": soundFile, "volume": soundVolume});
             break;
         case "Show Image":
-            var imageFile = $(this).find('.image-file').val();
+            var imageFile = $(this).find('.show-image-effect-input').val();
             var imagePlacement = $(this).find('.image-placement-effect-type').text();
             var imageLength = $(this).find('#image-length-setting').val();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "length": imageLength});
@@ -491,6 +554,10 @@ function loadSettings(controlId, button){
             case "Change Scene":
                 $('.panel'+uniqueid+' .change-scene-effect-type').text(effect.scene);
                 break;
+            case "Chat":
+                $('.panel'+uniqueid+' .chat-effect-type').text(effect.chatter);
+                $('.panel'+uniqueid+' #chat-text-setting').val(effect.message);
+                break;
             case "Cooldown":
                 // Cycle through selected buttons and push to array.
                 var cooldownButtons = effect.buttons;
@@ -520,11 +587,11 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' #game-control-opposite-setting').val(effect.opposite);
                 break;
             case "Play Sound":
-                //$('.panel'+uniqueid+' .sound-file-type').val(effect.file);
+                $('.panel'+uniqueid+' .play-sound-effect-input').val(effect.file);
                 $('.panel'+uniqueid+' #sound-volume-setting').val(effect.volume);
                 break;
             case "Show Image":
-                //$('.panel'+uniqueid+' .image-file').val(effect.file);
+                $('.panel'+uniqueid+' .show-image-effect-input').val(effect.file);
                 $('.panel'+uniqueid+' .image-placement-effect-type').text(effect.position);
                 $('.panel'+uniqueid+' #image-length-setting').val(effect.length);
                 break;
@@ -533,6 +600,19 @@ function loadSettings(controlId, button){
     }
 }
 
+// Got Sound File Path
+// Recieves event from main process that a sound file path has been recieved.
+ipcRenderer.on('gotSoundFilePath', function (event, data){
+    var uniqueid = data.id;
+    $('.panel'+uniqueid+' .play-sound-effect-input').val(data.path[0]);
+});
+
+// Got Image File Path
+// Recieves event from main process that an image file path has been recieved.
+ipcRenderer.on('gotImageFilePath', function (event, data){
+    var uniqueid = data.id;
+    $('.panel'+uniqueid+' .show-image-effect-input').val(data.path[0]);
+});
 
 //////////////////////
 // On Click Functions
