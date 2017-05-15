@@ -12,6 +12,7 @@ var options = {
 
 // Login Kickoff
 function login(type){
+
     // Make a request to get a shortcode.
     request.post({url:'https://beam.pro/api/v1/oauth/shortcode', form: {client_id: options.client_id, scope: options.scopes}}, function(err,httpResponse,body){
         if (err === null){
@@ -91,15 +92,13 @@ function loginLoop(handle, type){
                     if (err === null){
                         console.log('Success! Trying to get token...');
                         var body = JSON.parse(body);
-                        console.log(body);
+
                         // Success!
                         var accessToken = body.access_token;
-                        var expires = body.expires_in;
                         var refreshToken = body.refresh_token;
-                        var tokenType = body.token_type;
 
                         // Awesome, we got the auth token. Now to save it out for later.
-                        userInfo(type, accessToken, expires, refreshToken);              
+                        userInfo(type, accessToken, refreshToken);              
 
                     } else {
                         console.log(err);
@@ -119,7 +118,7 @@ function loginLoop(handle, type){
 
 // User Info
 // This function grabs info from the currently logged in user.
-function userInfo(type, accessToken, expires, refreshToken){
+function userInfo(type, accessToken, refreshToken){
 
     // Request user info and save out everything to auth file.
     request({
@@ -130,10 +129,6 @@ function userInfo(type, accessToken, expires, refreshToken){
     }, function(err, res) {
         var data = JSON.parse(res.body);
 
-        // Calc token expire time in milliseconds.
-        var curTime = new Date().getTime();
-        var expireTime = curTime + 21599000;
-
         // Push all to db.
         dbAuth.push('./'+type+'/username', data.username);
         dbAuth.push('./'+type+'/userId',data.id);
@@ -141,7 +136,6 @@ function userInfo(type, accessToken, expires, refreshToken){
         dbAuth.push('./'+type+'/avatar',data.avatarUrl);
         dbAuth.push('./'+type+'/accessToken',accessToken);
         dbAuth.push('./'+type+'/refreshToken',refreshToken);
-        dbAuth.push('./'+type+'/tokenExpires',expireTime);
 
         // Style up the login page.
         loadLogin();
@@ -188,6 +182,73 @@ function loadLogin(){
 
         // Flip the login button.
         $('.bot-login button').removeClass('btn-success').addClass('btn-danger').text('Logout').attr('action','logout');
+    }
+}
+
+// Refresh Token
+// This will get a new access token when connecting to interactive.
+function refreshToken(){
+
+    // Refresh streamer token if the streamer is logged in.
+    try{
+        var refresh = dbAuth.getData('./streamer/refreshToken');
+
+        // Send off request for new tokens.
+        request.post({url:'https://beam.pro/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
+            if (err === null){
+                console.log('Refreshing tokens for streamer!');
+                var body = JSON.parse(body);
+
+                // Success!
+                var accessToken = body.access_token;
+                var refreshToken = body.refresh_token;
+
+                // Awesome, we got the auth token. Now to save it out for later.
+                // Push all to db.
+                dbAuth.push('./streamer/accessToken',accessToken);
+                dbAuth.push('./streamer/refreshToken',refreshToken);                
+
+                // Refresh bot token if the bot is logged in.
+                try{
+                    var bot = dbAuth.getData('./bot/refreshToken');
+
+                    // Send off request for new tokens.
+                    request.post({url:'https://beam.pro/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
+                        if (err === null){
+                            console.log('Refreshing tokens for bot!');
+                            var body = JSON.parse(body);
+
+                            // Success!
+                            var accessToken = body.access_token;
+                            var refreshToken = body.refresh_token;
+
+                            // Awesome, we got the auth token. Now to save it out for later.
+                            // Push all to db.
+                            dbAuth.push('./bot/accessToken',accessToken);
+                            dbAuth.push('./bot/refreshToken',refreshToken);
+
+                            // Okay, we have both streamer and bot tokens now. Start up the login process.
+                            ipcRenderer.send('gotRefreshToken');
+
+                        } else {
+                            // There was an error getting the bot token.
+                            console.log(err);
+                        }
+                    })
+                }catch(err){
+                    console.log('No bot logged in. Skipping refresh token.')
+
+                    // We have the streamer token, but there is no bot logged in. So... start up the login process.
+                    ipcRenderer.send('gotRefreshToken');
+                }
+            } else {
+                // There was an error getting the streamer token.
+                console.log(err);
+            }
+        })
+    }catch(err){
+        // The streamer isn't logged in... stop everything.
+        console.log('No streamer logged in. Skipping refresh token.')
     }
 }
 

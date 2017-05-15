@@ -601,8 +601,10 @@ $( ".deleteBoard" ).click(function() {
 // Launch interactive
 $( ".interactive-connector" ).click(function() {
     if ( $(this).hasClass('launch-interactive') ){
-        ipcRenderer.send('beamInteractive', 'connect');
+        // Refresh tokens and kick off auth process.
+        refreshToken();
     } else {
+        // Let backend know to kill connection.
         ipcRenderer.send('beamInteractive', 'disconnect');
     }
 });
