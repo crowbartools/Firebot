@@ -155,6 +155,16 @@ function apiButtonSettings(uniqueid){
             <li><a href="#">Number Trivia</a></li>
         </ul>
         </div>
+        <div class="effect-specific-title"><h4>Who should I send this as?</h4></div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="api-chat-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu api-chat-effect-dropdown">
+                <li><a href="#">Streamer</a></li>
+                <li><a href="#">Bot</a></li>
+            </ul>
+        </div>
     `;
 
     // Put onto the page.
@@ -164,6 +174,12 @@ function apiButtonSettings(uniqueid){
     $( ".panel"+uniqueid+" .api-effect-dropdown a" ).click(function() {
         var text = $(this).text();
         $(".panel"+uniqueid+" .api-effect-type").text(text);
+    });
+
+    // When an effect is clicked, change the dropdown title.
+    $( ".panel"+uniqueid+" .api-chat-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .api-chat-effect-type").text(text);
     });
 }
 
@@ -226,6 +242,11 @@ function chatSettings(uniqueid){
         <div class="input-group">
             <span class="input-group-addon" id="chat-text-effect-type">Message</span>
             <input type="text" class="form-control" id="chat-text-setting" aria-describedby="chat-text-effect-type">
+        </div>
+        <div class="effect-specific-title"><h4>Who should I whisper this to? Leave blank to broadcast to everyone.</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="chat-whisper-effect-type">Whisper</span>
+            <input type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type">
         </div>
     `;
 
@@ -473,7 +494,8 @@ function saveControls(){
         switch(effect) {
         case "API Button":
             var apiType = $(this).find('.api-effect-type').text();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "API Button", "api": apiType});
+            var chatter = $(this).find('.api-chat-effect-type').text();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "API Button", "api": apiType, "chatter": chatter});
             break;
         case "Change Scene":
             var sceneChange = $(this).find('.change-scene-effect-type').text();
@@ -482,7 +504,8 @@ function saveControls(){
         case "Chat":
             var chatter = $(this).find('.chat-effect-type').text();
             var message = $(this).find('#chat-text-setting').val();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Chat", "chatter": chatter, "message": message});
+            var whisper = $(this).find('#chat-whisper-setting').val();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Chat", "chatter": chatter, "message": message, "whisper": whisper});
             break;
         case "Cooldown":
             // Cycle through selected buttons and push to array.
@@ -550,6 +573,7 @@ function loadSettings(controlId, button){
             switch(effectType) {
             case "API Button":
                 $('.panel'+uniqueid+' .api-effect-type').text(effect.api);
+                $('.panel'+uniqueid+' .api-chat-effect-type').text(effect.chatter);
                 break;
             case "Change Scene":
                 $('.panel'+uniqueid+' .change-scene-effect-type').text(effect.scene);
@@ -557,6 +581,7 @@ function loadSettings(controlId, button){
             case "Chat":
                 $('.panel'+uniqueid+' .chat-effect-type').text(effect.chatter);
                 $('.panel'+uniqueid+' #chat-text-setting').val(effect.message);
+                $('.panel'+uniqueid+' #chat-whisper-setting').val(effect.whisper);
                 break;
             case "Cooldown":
                 // Cycle through selected buttons and push to array.
