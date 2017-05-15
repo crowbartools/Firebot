@@ -1,6 +1,3 @@
-const JsonDB = require('node-json-db');
-const request = require('request');
-
 var dbSettings = new JsonDB("./app-settings/settings", true, false);
 var dbAuth = new JsonDB("./user-settings/auth", true, false);
 

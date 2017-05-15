@@ -1,6 +1,3 @@
-const fs = require('fs');
-const {ipcRenderer} = require('electron');
-
 // Import Board Modal
 // This grabs the version id from the new board modal and passes it off.
 function importBoardModal(){

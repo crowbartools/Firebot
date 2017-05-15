@@ -1,4 +1,16 @@
 const shell = require('electron').shell;
+const fs = require('fs');
+const {ipcRenderer} = require('electron');
+const JsonDB = require('node-json-db');
+const request = require('request');
+const List = require('list.js');
+
+const WebSocket = require('ws');
+const WebSocketServer = require('ws').Server,
+    wss = new WebSocketServer({
+        port: 8080
+    });
+
 
 // Open Link In Browser
 // This opens link in system default browser.

@@ -1,5 +1,3 @@
-const List = require('list.js');
-
 // Group Modal
 // This opens up the group modal.
 function groupModal(){
