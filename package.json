@@ -36,6 +36,7 @@
   "dependencies": {
     "beam-client-node": "^0.13.0",
     "beam-interactive-node2": "^1.0.1",
+    "howler": "^2.0.3",
     "list.js": "^1.5.0",
     "node-json-db": "^0.7.3",
     "request": "^2.81.0",

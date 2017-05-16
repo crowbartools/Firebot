@@ -480,8 +480,12 @@ function saveControls(){
     var controlID = $('.settings-controlid input').val();
     var buttontext = $('.settings-buttontext input').val();
     var sparkcost = $('.settings-sparkcost input').val();
+    var cooldown = $('.settings-cooldown input').val();
 
     // TO DO: Push new values to beam.
+
+    // Push new values to settings.
+    dbControls.push('./firebot/controls/'+controlID, {"controlId": controlID, "text": buttontext, "cost": sparkcost, "cooldown": cooldown});
 
     // Clear all previously saved effects.
     dbControls.delete('./firebot/controls/'+controlID+'/effects');
@@ -557,6 +561,7 @@ function loadSettings(controlId, button){
     $('.settings-controlid input').val(controlId);
     $('.settings-buttontext input').val(button.text);
     $('.settings-sparkcost input').val(button.cost);
+    $('.settings-cooldown input').val(button.cooldown);
 
     // Start on the effects.
     if (effects !== undefined){

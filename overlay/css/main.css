@@ -23,52 +23,52 @@ canvas{
 }
 
 /*** Image Position ***/
-.top-middle{
-	position:absolute;
-	top: 10px;
-	left:50%;
-	transform: translate(-50%, 0%);
-}
-.middle{
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-.bottom-middle{
-	position:absolute;
-	bottom: 10px;
-	left:50%;
-	transform: translate(-50%, 0%);
-}
-.top-left{
+.imageOverlay[position="Top Left"]{
 	position:absolute;
 	top: 10px;
 	left: 10px;
 }
-.middle-left{
+.imageOverlay[position="Top Middle"]{
+	position:absolute;
+	top: 10px;
+	left:50%;
+	transform: translate(-50%, 0%);
+}
+.imageOverlay[position="Top Right"]{
+	position:absolute;
+	top: 10px;
+	right: 10px;
+}
+.imageOverlay[position="Middle Left"]{
 	position:absolute;
 	left:10px;
 	top: 50%;
 	transform: translate(0%, -50%);
 }
-.bottom-left{
-	position:absolute;
-	bottom: 10px;
-	left: 10px;
+.imageOverlay[position="Middle"]{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
-.top-right{
-	position:absolute;
-	top: 10px;
-	right: 10px;
-}
-.middle-right{
+.imageOverlay[position="Middle Right"]{
 	position:absolute;
 	right:10px;
 	top: 50%;
 	transform: translate(0%, -50%);
 }
-.bottom-right{
+.imageOverlay[position="Bottom Left"]{
+	position:absolute;
+	bottom: 10px;
+	left: 10px;
+}
+.imageOverlay[position="Bottom Middle"]{
+	position:absolute;
+	bottom: 10px;
+	left:50%;
+	transform: translate(-50%, 0%);
+}
+.imageOverlay[position="Bottom Right"]{
 	position:absolute;
 	bottom: 10px;
 	right: 10px;

@@ -4,6 +4,8 @@ const {ipcRenderer} = require('electron');
 const JsonDB = require('node-json-db');
 const request = require('request');
 const List = require('list.js');
+const howler = require('howler');
+//const beamInteractive = require('../lib/interactive/beam-interactive.js');
 
 const WebSocket = require('ws');
 const WebSocketServer = require('ws').Server,

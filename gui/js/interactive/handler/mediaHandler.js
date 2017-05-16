@@ -57,5 +57,5 @@ function showImage(data){
 
     // Compile data and send to overlay.
     var data = {"event":"image","filepath":filepath, "imagePosition":imagePosition, "imageDuration":imageDuration};
-    webSocket.broadcast(data);
+    broadcast(data);
 }

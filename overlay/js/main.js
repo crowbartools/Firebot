@@ -10,6 +10,7 @@ function beamSocketConnect(){
 		ws.onmessage = function (evt){
 			var data = JSON.parse(evt.data);
 			var event = data.event;
+			console.log(data);
 			
 			// Route events to certain functions
 			if (event == "image"){
@@ -36,7 +37,6 @@ beamSocketConnect();
 // Celebration Handler
 // This will take the celebration request and decide what to do with it.
 function celebrate(data){
-	console.log(data);
 	// Celebrate Packet
 	//{"event": "celebration", "celebrationType": celebrationType, "celebrationDuration":celebrationDuration};
 	var type = data.celebrationType;
@@ -70,13 +70,13 @@ function showImage(data){
 	var filepath = data.filepath;
 	var filepathNew = filepath.replace(/\\/g,"/");
 	var imagePosition = data.imagePosition;
-	var imageDuration = data.imageDuration;
+	var imageDuration = parseInt(data.imageDuration) * 1000;
 
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
 	var divClass = d.getTime();
 
-	var imageFinal = '<div class="'+divClass+'-image '+imagePosition+'" style="display:none;"><img src="'+filepathNew+'?time='+divClass+'"></div>';
+	var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:none;"><img src="'+filepathNew+'?time='+divClass+'"></div>';
 	
 	$('#wrapper').append(imageFinal);
 	$('.'+divClass+'-image').fadeIn('fast');
