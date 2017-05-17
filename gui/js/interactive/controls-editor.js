@@ -29,7 +29,7 @@ function editButton(controlId){
             saveControls();
         });
     } catch(err){
-        console.log('Unable to find control to edit.')
+        errorLog('Oops, there was an error editing this control.')
         console.log(err);
     };
 }

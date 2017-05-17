@@ -150,6 +150,24 @@
 
       <div class="interactive-modals">
 
+        <!-- Error Modal-->
+        <div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="errorLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="errorLabel">Error</h4>
+              </div>
+              <div class="modal-body">
+                <p></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Modal for adding new boards to the interactive page-->
         <div class="modal fade" id="add-new-board-modal" tabindex="-1" role="dialog" aria-labelledby="addInteractiveBoardLabel">
           <div class="modal-dialog" role="document">
@@ -359,6 +377,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/global.js"></script>
+    <script src="./js/errorlogging.js"></script>
     <script src="./js/websocket.js"></script>
 
     <script src="./js/login.js"></script>

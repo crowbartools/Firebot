@@ -536,7 +536,9 @@ function gameSelector(){
 
             // Pull new json from beam.
             boardBuilder(versionid);        
-        } catch(err){};
+        } catch(err){
+            renderWindow.webContents.send('error', "Unable to load this board. Try restarting the app.");
+        };
     });
 }
 
@@ -571,6 +573,7 @@ function deleteBoard(){
                         clearBoard();
                     });
             } else {
+                renderWindow.webContents.send('error', "Well this is weird. The board you tried to delete is already gone. Try restarting the app.");
                 console.log("This file doesn't exist, cannot delete");
             }
         });
