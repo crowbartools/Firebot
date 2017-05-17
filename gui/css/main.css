@@ -3742,25 +3742,45 @@
   padding: 0px;
 }
 
-/* line 11, ../scss/main.scss */
+/* line 2, ../scss/_moderation.scss */
+#event-log .event-sort {
+  margin: .5em;
+}
+/* line 5, ../scss/_moderation.scss */
+#event-log .list {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+/* line 11, ../scss/_moderation.scss */
+#event-log .list .event-item span {
+  display: inline-block;
+  padding: .5em;
+}
+/* line 15, ../scss/_moderation.scss */
+#event-log .list .event-item .milliseconds {
+  display: none;
+}
+
+/* line 12, ../scss/main.scss */
 body {
   padding-top: 5rem;
 }
 
-/* line 14, ../scss/main.scss */
+/* line 15, ../scss/main.scss */
 .page-header {
   padding-bottom: 1em;
   margin-bottom: 1em;
   border-bottom: 1px solid #292b2c;
 }
 
-/* line 19, ../scss/main.scss */
+/* line 20, ../scss/main.scss */
 .page-content {
   width: 100%;
   min-height: 500px;
 }
 
-/* line 25, ../scss/main.scss */
+/* line 26, ../scss/main.scss */
 .tile {
   margin-top: 1.5em;
   color: white;
@@ -3768,11 +3788,11 @@ body {
   text-align: center;
   font-size: 1.2em;
 }
-/* line 32, ../scss/main.scss */
+/* line 33, ../scss/main.scss */
 .tile.no-top {
   margin-top: .5em;
 }
-/* line 36, ../scss/main.scss */
+/* line 37, ../scss/main.scss */
 .tile .tile-header {
   background-color: #007eff;
   font-weight: bold;
@@ -3780,37 +3800,37 @@ body {
   padding: .5em 0em;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 42, ../scss/main.scss */
+/* line 43, ../scss/main.scss */
 .tile .tile-header .tileID {
   text-align: left;
   width: 75%;
   display: inline;
   padding: .2em 0em 0em .5em;
 }
-/* line 48, ../scss/main.scss */
+/* line 49, ../scss/main.scss */
 .tile .tile-header .tile-edit {
   display: inline;
   width: 25%;
 }
-/* line 51, ../scss/main.scss */
+/* line 52, ../scss/main.scss */
 .tile .tile-header .tile-edit .btn {
   padding: 3px 10px;
 }
-/* line 56, ../scss/main.scss */
+/* line 57, ../scss/main.scss */
 .tile .tile-body {
   background-color: #0e162a;
   padding: .5em 0em;
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 64, ../scss/main.scss */
+/* line 65, ../scss/main.scss */
 .pill {
   background-color: #0e162a;
   color: white;
   margin: 1em 0em;
   border-radius: .5em;
 }
-/* line 69, ../scss/main.scss */
+/* line 70, ../scss/main.scss */
 .pill .content {
   display: inline-block;
   padding: .5em;
@@ -3818,7 +3838,7 @@ body {
   margin: 0px;
 }
 
-/* line 80, ../scss/main.scss */
+/* line 81, ../scss/main.scss */
 .top-padding {
   padding-top: 1em;
 }

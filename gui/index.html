@@ -36,7 +36,7 @@
             <li><a href="#" slide="2">Groups</a></li>
             <li><a href="#" slide="3">Moderation</a></li>
             <li><a href="#" slide="4">Settings</a></li>
-            <li><a href="#" slide="5">Bug Report</a></li>
+            <li><a href="#" slide="5">Info</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -130,19 +130,63 @@
 
           <!-- Moderation Board -->
           <section class="item">
-            - Log of what buttons are being pressed along with the user who pressed them.
-            - Add user to ban list to ignore them.
-            - Remove user from ban list.
+            <div class="page-content">
+              <div class="row page-header">
+                <div class="col-sm-12">
+                  <div class="page-title">
+                    <h3>Moderation</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="event-log-wrap col-sm-12 col-md-6">
+                  <p>Event Log</p>
+                  <div id="event-log">
+                    <div class="input-group">
+                      <span class="input-group-addon" id="basic-addon1">Search</span>
+                      <input type="text" class="form-control fuzzy-search" placeholder="Search">
+                    </div><!-- /input-group -->
+                    <ul class="list"></ul>
+                    <ul class="pagination"></ul>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                  Banned user list will go here.
+                </div>
+              </div>
+            </div>
           </section>
 
           <!-- Settings Board -->
           <section class="item">
-            - This is where all app settings will go.
+            <div class="page-content">
+              <div class="row page-header">
+                <div class="col-sm-12">
+                  <div class="page-title">
+                    <h3>Settings</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                - This is where all app settings will go.
+              </div>
+            </div>
           </section>
 
           <!-- Bugs / Credits -->
           <section class="item">
-            Another screen to hold credits and bug report information.
+            <div class="page-content">
+              <div class="row page-header">
+                <div class="col-sm-12">
+                  <div class="page-title">
+                    <h3>Info</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                - Another screen to hold credits and bug report information.
+              </div>
+            </div>
           </section>
 
         </div>
@@ -311,7 +355,7 @@
                         <input type="text" class="form-control fuzzy-search" placeholder="Search">
                       </div><!-- /input-group -->
                       <ul class="list"></ul>
-                      <ul class="pagination"></div>
+                      <ul class="pagination"></ul>
                   </div>
                 </div>
                 <div class="modal-footer">
@@ -378,6 +422,7 @@
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/global.js"></script>
     <script src="./js/errorlogging.js"></script>
+    <script src="./js/moderation.js"></script>
     <script src="./js/websocket.js"></script>
 
     <script src="./js/login.js"></script>
