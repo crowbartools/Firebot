@@ -270,7 +270,6 @@ function cooldownSettings(uniqueid){
                 <span class="cooldown-button-effect-type">Pick One</span> <span class="caret"></span>
             </button>
             <ul class="dropdown-menu cooldown-button-effect-dropdown">
-                <li><a href="#">All</a></li>
             </ul>
         </div>
         <div class="selected-cooldown-buttons">

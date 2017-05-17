@@ -370,6 +370,11 @@ function editCooldownGroup(sceneid){
                             </div>
                         </div>`;
         $(".selected-cooldown-group-buttons").append(template);
+
+        // Intialize delete button.
+        $(".remove-cooldown-group-button button").click(function(){
+            $(this).closest(".selected-cooldown-group-button").remove();
+        });
     }
 
     // Pull in all buttons for selected board.
@@ -395,7 +400,7 @@ function editCooldownGroup(sceneid){
     $( ".cooldown-group-dropdown a" ).click(function() {
         var text = $(this).text();
         var template = `<div class="selected-cooldown-group-button pill">
-                            <p class="content"><span>${button}</span></p>
+                            <p class="content"><span>${text}</span></p>
                             <div class="remove-cooldown-group-button pull-right">
                                 <button class="btn btn-danger">X</button>
                             </div>
