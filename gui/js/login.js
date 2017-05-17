@@ -18,6 +18,11 @@ function login(type){
             var handle = body.handle;
             var code = body.code;
 
+            if(code === undefined){
+                console.log('Something went wrong with the oauth shortcode!');
+                return;
+            }
+
             // Display a popup with the six digit code and instructions.
             loginModal(code);
 

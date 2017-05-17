@@ -447,39 +447,43 @@ function loadCooldownGroups(){
     $('.board-cooldown-groups').empty();
     
     // Loop through cooldown groups.
-    var groups = dbControls.getData('./firebot/cooldownGroups');
-    for (item in groups){
-        var group = groups[item];
-        var groupid = group.groupName;
-        var cooldown = group.length;
-        var buttons = group.buttons;
-        var buttonLength = buttons.length + 1;
-        var cooldownGroupTemplate = `
-            <div class="cooldown-group tile no-top col-sm-6 col-md-3">
-                <div class="cooldown-group-header tile-header">
-                    <div class="groupID tileID pull-left">${groupid}</div>
-                    <div class="edit-cooldown-group-wrap tile-edit pull-right">
-                        <button class="edit-cooldown-group btn btn-default" groupid="${groupid}">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                        </button>
+    try{
+        var groups = dbControls.getData('./firebot/cooldownGroups');
+        for (item in groups){
+            var group = groups[item];
+            var groupid = group.groupName;
+            var cooldown = group.length;
+            var buttons = group.buttons;
+            var buttonLength = buttons.length + 1;
+            var cooldownGroupTemplate = `
+                <div class="cooldown-group tile no-top col-sm-6 col-md-3">
+                    <div class="cooldown-group-header tile-header">
+                        <div class="groupID tileID pull-left">${groupid}</div>
+                        <div class="edit-cooldown-group-wrap tile-edit pull-right">
+                            <button class="edit-cooldown-group btn btn-default" groupid="${groupid}">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="cooldown-group-body tile-body">
+                        <p>Buttons: ${buttonLength}</p>
+                        <p>Seconds: ${cooldown}</p>
                     </div>
                 </div>
-                <div class="cooldown-group-body tile-body">
-                    <p>Buttons: ${buttonLength}</p>
-                    <p>Seconds: ${cooldown}</p>
-                </div>
-            </div>
-        `;
+            `;
 
-        // Throw onto the page.
-        $('.board-cooldown-groups').append(cooldownGroupTemplate);
+            // Throw onto the page.
+            $('.board-cooldown-groups').append(cooldownGroupTemplate);
+        }
+
+        // Initialize the edit buttons.
+        $( ".edit-cooldown-group" ).click(function() {
+            var groupid = $(this).attr('groupid');
+            editCooldownGroup(groupid);
+        });
+    }catch(err){
+        console.log('No cooldown groups to load.');
     }
-
-    // Initialize the edit buttons.
-    $( ".edit-cooldown-group" ).click(function() {
-        var groupid = $(this).attr('groupid');
-        editCooldownGroup(groupid);
-    });
 }
 
 // Menu Manager
