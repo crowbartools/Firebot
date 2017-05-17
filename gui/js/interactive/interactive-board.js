@@ -230,7 +230,7 @@ function boardGroupSettings(scenes){
             $(".board-group"+uniqueid+" .selected-scene-group").text(text);
 
             //Push update to json db.
-            var scene = $(this).closest('.board-group').find('.board-group-scene').text();
+            var scene = $(this).closest('.board-group').find('.board-groupscene').text();
             dbControls.push('./firebot/scenes/'+scene+'/default', text);
             dbControls.push('./firebot/scenes/'+scene+'/sceneName', scene);
         });
@@ -328,7 +328,7 @@ function addCooldownGroup(){
     $( ".cooldown-group-dropdown a" ).click(function() {
         var text = $(this).text();
         var template = `<div class="selected-cooldown-group-button pill">
-                            <p class="content"><span>${button}</span></p>
+                            <p class="content"><span>${text}</span></p>
                             <div class="remove-cooldown-group-button pull-right">
                                 <button class="btn btn-danger">X</button>
                             </div>
@@ -454,7 +454,7 @@ function loadCooldownGroups(){
             var groupid = group.groupName;
             var cooldown = group.length;
             var buttons = group.buttons;
-            var buttonLength = buttons.length + 1;
+            var buttonLength = buttons.length;
             var cooldownGroupTemplate = `
                 <div class="cooldown-group tile no-top col-sm-6 col-md-3">
                     <div class="cooldown-group-header tile-header">
