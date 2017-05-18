@@ -3731,6 +3731,17 @@
   border-radius: 0em 0em .5em .5em;
 }
 
+/* line 84, ../scss/_interactive.scss */
+.playbutton {
+  background: none;
+  border: none;
+  font-size: 2em;
+}
+/* line 88, ../scss/_interactive.scss */
+.playbutton:hover {
+  color: #adadad;
+}
+
 /* line 3, ../scss/_groups.scss */
 .group-user-list-container .user-list-header {
   margin-bottom: 1em;
@@ -3762,25 +3773,46 @@
   display: none;
 }
 
-/* line 12, ../scss/main.scss */
-body {
-  padding-top: 5rem;
+/* line 2, ../scss/_statusbar.scss */
+.status-bar {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 2.5em;
+  line-height: 2.5em;
+  color: #9d9d9d;
+}
+/* line 10, ../scss/_statusbar.scss */
+.status-bar .connection-indicator {
+  text-align: right;
+  cursor: pointer;
+}
+/* line 13, ../scss/_statusbar.scss */
+.status-bar .connection-indicator.online {
+  color: #5cb85c;
 }
 
-/* line 15, ../scss/main.scss */
+/* line 13, ../scss/main.scss */
+body {
+  padding-top: 5rem;
+  padding-bottom: 4em;
+}
+
+/* line 17, ../scss/main.scss */
 .page-header {
   padding-bottom: 1em;
   margin-bottom: 1em;
   border-bottom: 1px solid #292b2c;
 }
 
-/* line 20, ../scss/main.scss */
+/* line 22, ../scss/main.scss */
 .page-content {
   width: 100%;
   min-height: 500px;
 }
 
-/* line 26, ../scss/main.scss */
+/* line 28, ../scss/main.scss */
 .tile {
   margin-top: 1.5em;
   color: white;
@@ -3788,11 +3820,11 @@ body {
   text-align: center;
   font-size: 1.2em;
 }
-/* line 33, ../scss/main.scss */
+/* line 35, ../scss/main.scss */
 .tile.no-top {
   margin-top: .5em;
 }
-/* line 37, ../scss/main.scss */
+/* line 39, ../scss/main.scss */
 .tile .tile-header {
   background-color: #007eff;
   font-weight: bold;
@@ -3800,37 +3832,37 @@ body {
   padding: .5em 0em;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 43, ../scss/main.scss */
+/* line 45, ../scss/main.scss */
 .tile .tile-header .tileID {
   text-align: left;
   width: 75%;
   display: inline;
   padding: .2em 0em 0em .5em;
 }
-/* line 49, ../scss/main.scss */
+/* line 51, ../scss/main.scss */
 .tile .tile-header .tile-edit {
   display: inline;
   width: 25%;
 }
-/* line 52, ../scss/main.scss */
+/* line 54, ../scss/main.scss */
 .tile .tile-header .tile-edit .btn {
   padding: 3px 10px;
 }
-/* line 57, ../scss/main.scss */
+/* line 59, ../scss/main.scss */
 .tile .tile-body {
   background-color: #0e162a;
   padding: .5em 0em;
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 65, ../scss/main.scss */
+/* line 67, ../scss/main.scss */
 .pill {
   background-color: #0e162a;
   color: white;
   margin: 1em 0em;
   border-radius: .5em;
 }
-/* line 70, ../scss/main.scss */
+/* line 72, ../scss/main.scss */
 .pill .content {
   display: inline-block;
   padding: .5em;
@@ -3838,7 +3870,7 @@ body {
   margin: 0px;
 }
 
-/* line 81, ../scss/main.scss */
+/* line 83, ../scss/main.scss */
 .top-padding {
   padding-top: 1em;
 }

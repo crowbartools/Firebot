@@ -16,7 +16,7 @@ function eventLoggerKickoff(){
     eventUserList = new List('event-log', options, events);
 
     // Run log cleaner every 60 seconds.
-    setInterval(function(){ 
+    setInterval(function(){
         logCleaner();
     }, 60000);
 }

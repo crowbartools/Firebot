@@ -4,6 +4,7 @@
 @import 'interactive';
 @import 'groups';
 @import 'moderation';
+@import 'statusbar';
 
 /////////////////
 // GLOBAL STYLES
@@ -11,6 +12,7 @@
 
 body {
   padding-top: 5rem;
+  padding-bottom:4em;
 }
 .page-header{
     padding-bottom: 1em;

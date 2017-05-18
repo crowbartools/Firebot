@@ -112,6 +112,11 @@ function editGroupModal(uniqueid){
     // Show modal
     $('#edit-group-modal').modal('toggle');
 
+    // Initialize Remove Button
+    $('.remove-group-user').click(function() {
+        var username = $(this).closest('.group-item').find('.username').text();
+        groupUserList.remove('username', username);
+    });
 }
 
 // Add Username
@@ -127,6 +132,11 @@ function addGroupUsername(groupUserList){
     // Clear Field
     $('.user-group-addition input').val('');
 
+    // Initialize Remove Button
+    $('.remove-group-user').click(function() {
+        var username = $(this).closest('.group-item').find('.username').text();
+        groupUserList.remove('username', username);
+    });
 };
 
 // Save List
@@ -166,12 +176,6 @@ function deleteGroup(){
 // Add in a new group on click.
 $( ".add-group" ).click(function() {
     groupModal('new');
-});
-
-// Initialize Remove Button
-$('.remove-group-user').click(function() {
-    var username = $(this).closest('.group-item').find('.username').text();
-    groupUserList.remove('username', username);
 });
 
 // Initialize Add Button

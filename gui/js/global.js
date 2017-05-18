@@ -5,7 +5,6 @@ const JsonDB = require('node-json-db');
 const request = require('request');
 const List = require('list.js');
 const howler = require('howler');
-//const beamInteractive = require('../lib/interactive/beam-interactive.js');
 
 const WebSocket = require('ws');
 const WebSocketServer = require('ws').Server,
@@ -39,7 +38,7 @@ $("nav").find("li").on("click", "a", function () {
 // This function returns the db for the currently selected board.
 function getCurrentBoard(){
     // Get the current board.
-    var dbSettings = new JsonDB("./app-settings/settings", true, true);
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
     try{
         // Get last board name.
         var gameName = dbSettings.getData('/interactive/lastBoard');

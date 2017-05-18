@@ -1,10 +1,10 @@
-var dbSettings = new JsonDB("./app-settings/settings", true, false);
+var dbSettings = new JsonDB("./user-settings/settings", true, false);
 var dbAuth = new JsonDB("./user-settings/auth", true, false);
 
 // Options
 var options = {
-    client_id: dbSettings.getData('/client_Id'),
-    scopes: dbSettings.getData('/scopes')
+    client_id: "",
+    scopes: "user:details:self interactive:manage:self interactive:robot:self chat:connect chat:chat chat:whisper"
 };
 
 // Login Kickoff
@@ -251,8 +251,24 @@ function refreshToken(){
     }catch(err){
         // The streamer isn't logged in... stop everything.
         console.log('No streamer logged in. Skipping refresh token.')
+        return;
     }
 }
+
+// Connect Request
+// Recieves an event from the main process when the global hotkey is hit for connecting.
+ipcRenderer.on('getRefreshToken', function (event, data){
+    var status = $('.connection-text').text();
+            
+    // Send event to render process.
+    if (status === "Connected."){
+        // Disconnect!
+        ipcRenderer.send('beamInteractive', 'disconnect');
+    } else {
+        // Let's connect! Get new tokens and connect.
+        refreshToken();
+    }
+})
 
 // Logout
 // This will remove user info and log someone out.

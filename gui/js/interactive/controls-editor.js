@@ -7,7 +7,7 @@ function editButton(controlId){
     $('#edit-controls-modal .panel').remove();
 
     // Get last board settings to plug into edit modal.
-    var dbSettings = new JsonDB("./app-settings/settings", true, true);
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
     try{
         // Get last board name.
         var gameName = dbSettings.getData('/interactive/lastBoard');
@@ -165,6 +165,9 @@ function apiButtonSettings(uniqueid){
                 <li><a href="#">Bot</a></li>
             </ul>
         </div>
+        <div class="effect-info">
+            Warning: These API's pull from a third party and I have no control over the quality or content.
+        </div>
     `;
 
     // Put onto the page.
@@ -194,6 +197,9 @@ function changeSceneSettings(uniqueid){
         </button>
         <ul class="dropdown-menu change-scene-effect-dropdown">
         </ul>
+        </div>
+        <div class="effect-info">
+            Changing scenes is not currently support be Beam in Node.js
         </div>
     `;
 
@@ -248,6 +254,9 @@ function chatSettings(uniqueid){
             <span class="input-group-addon" id="chat-whisper-effect-type">Whisper</span>
             <input type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type">
         </div>
+        <div class="effect-info">
+            The variable $(user) will be replaced by the participants username. EX: If Firebottle hits a button you can whisper him.
+        </div>
     `;
 
     // Put onto the page.
@@ -279,6 +288,9 @@ function cooldownSettings(uniqueid){
         <div class="input-group">
             <span class="input-group-addon" id="cooldown-amount-effect-type">Seconds</span>
             <input type="text" class="form-control" id="cooldown-amount-setting" aria-describedby="cooldown-amount-effect-type">
+        </div>
+        <div class="effect-info">
+            If you want to cool down a lot of buttons at the same time, give the cooldown groups a try in the board main settings!
         </div>
     `;
 
@@ -367,6 +379,9 @@ function gameControlSettings(uniqueid){
         <div class="input-group">
             <span class="input-group-addon" id="opposite-button-effect-type">Opposite</span>
             <input type="text" class="form-control" id="game-control-opposite-setting" aria-describedby="opposite-button-effect-type">
+        </div>
+        <div class="effect-info">
+            Note that game controls do not work in every game or with every program. These are emulated controls.
         </div>
     `;
 

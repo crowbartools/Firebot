@@ -80,3 +80,12 @@
         }
     }
 }
+
+.playbutton{
+    background:none;
+    border:none;
+    font-size:2em;
+    &:hover{
+        color:$light-highlight;
+    }
+}

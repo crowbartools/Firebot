@@ -133,7 +133,7 @@ function sceneBuilder(gameName){
     $('.board-title a').attr('href', 'https://beam.pro/i/studio').text(gameName);
 
     // Set as last used board.
-    var dbSettings = new JsonDB("./app-settings/settings", true, true);
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
     dbSettings.push('/interactive/lastBoard', gameName);
 
     // For every scene in the JSON put in a tab.
@@ -277,6 +277,7 @@ function buttonBuilder(scenes){
                         </div>
                         <div class="interactive-button-body tile-body">
                             <div class="buttontext">${buttontext}</div>
+                            <div class="playbuttonwrap"><button class="playbutton" control="${controlID}"><i class="fa fa-play-circle" aria-hidden="true"></i></button></div>
                             <div class="sparkcost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> ${sparkcost}</div>
                         </div>
                     </div>
@@ -294,11 +295,30 @@ function buttonBuilder(scenes){
         var controlId = $(this).attr('controlid');
         editButton(controlId); // This function is in controls-editor.js.
     });
+
+    // Initialize button play
+    $( ".playbutton" ).click(function() {
+        var button = $(this);
+        fireButton( button.attr('control') );
+        button.find('i').removeClass('fa-play-circle').addClass('fa-spinner');
+        setTimeout(function(){
+            playFinished(button);
+        }, 2000);
+    });
+}
+
+// Play Finished
+// This returns the play button back to normal after it becomes a spinner;
+function playFinished(button){
+    button.find('i').removeClass('fa-spinner').addClass('fa-play-circle');
 }
 
 // Add Cooldown Group
 // This controls the actions on the cooldown group module.
 function addCooldownGroup(){
+    // Change title of modal
+    $('#newCooldownGroupLabel').text('Add New Cooldown Group');
+
     // Clear old settings.
     $(".cooldown-groupid").val('');
     $(".cooldown-group-length").val('');
@@ -340,6 +360,9 @@ function addCooldownGroup(){
             $(this).closest(".selected-cooldown-group-button").remove();
         });
     });
+
+    // Hide delete button;
+    $('.remove-cooldown-group').hide();
 }
 
 // Edit Cooldown Group
@@ -356,8 +379,8 @@ function editCooldownGroup(sceneid){
     $(".selected-cooldown-group-buttons").empty();
     $('.cooldown-group-dropdown').empty();
 
-
     // Load easy info
+    $('#newCooldownGroupLabel').text('Edit Cooldown Group');
     $('.cooldown-groupid').val(sceneid);
     $('.cooldown-group-length').val(length);
 
@@ -411,6 +434,19 @@ function editCooldownGroup(sceneid){
         $(".remove-cooldown-group-button button").click(function(){
             $(this).closest(".selected-cooldown-group-button").remove();
         });
+    });
+
+    // We're editing, so show the delete button.
+    $('.remove-cooldown-group').show();
+    $(".remove-cooldown-group").click(function(){
+        var sceneid = $('.cooldown-groupid').val();
+        try{
+            // Delete and reload groups.
+            dbControls.delete('./firebot/cooldownGroups/'+sceneid);
+            loadCooldownGroups();
+        }catch(err){
+            renderWindow.webContents.send('error', "Error deleting this cooldown group.");
+        }
     });
 
     // Show Modal
@@ -559,7 +595,7 @@ function loadLastBoard(){
 // Delete Board
 // This deletes the currently selected board on confirmation.
 function deleteBoard(){
-    var dbSettings = new JsonDB("./app-settings/settings", true, true);
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
 
     // Check for last board and load ui if one exists.
     try{
@@ -578,6 +614,12 @@ function deleteBoard(){
             }
         });
     } catch(err){};
+}
+
+// Fire Button
+// This function will active a button when clicked.
+function fireButton(controlID){
+    ipcRenderer.send('manualButton', controlID);
 }
 
 // Board Clear
@@ -610,13 +652,29 @@ $( ".deleteBoard" ).click(function() {
 // Launch interactive
 $( ".interactive-connector" ).click(function() {
     if ( $(this).hasClass('launch-interactive') ){
+        $(this).removeClass('launch-interactive');
+
         // Refresh tokens and kick off auth process.
         refreshToken();
     } else {
+        $(this).addClass('launch-interactive');
+
         // Let backend know to kill connection.
         ipcRenderer.send('beamInteractive', 'disconnect');
     }
 });
+
+// Connection Monitor
+// Recieves event from main process that connection has been established or disconnected.
+ipcRenderer.on('connection', function (event, data){
+    if(data == "Online"){
+        $('.connection-indicator').addClass('online');
+        $('.connection-text').text('Connected.');
+    } else {
+        $('.connection-indicator').removeClass('online');
+        $('.connection-text').text('Click me to connect!');
+    }
+})
 
 ////////////////////////
 // On App Load Functions

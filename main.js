@@ -45,7 +45,7 @@ function createWindow () {
     global.renderWindow = mainWindow;
 
     // Register the Kill Switch
-    // beamConnect.shortcut();
+    beamConnect.shortcut();
 }
 
   // This method will be called when Electron has finished

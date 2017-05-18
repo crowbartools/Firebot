@@ -18,7 +18,7 @@
 
   <body>
 
-  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -72,16 +72,6 @@
                   </div>
                 </div>
                 <div class="col-sm-6">
-                  <div class="dropdown pull-right">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      Actions
-                      <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="actionMenu">
-                      <li><a href="#" class="interactive-connector launch-interactive">Launch Interactive</a></li>
-                      <li><a href="#" class="interactive-connector disconnect-interactive">Stop Interactive</a></li>
-                    </ul>
-                  </div>
                   <div class="dropdown pull-right">
                     <button class="btn btn-default dropdown-toggle" type="button" id="interactiveMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                       Select a board
@@ -168,7 +158,51 @@
                 </div>
               </div>
               <div class="row">
-                - This is where all app settings will go.
+                <div class="setting col-sm-6">
+                  <div class="setting-heading">Overlay Compatibility</div>
+                  <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="options-overlay-compat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      OBS
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-overlay-compat">
+                      <li><a href="#" class="obs-compat">OBS</a></li>
+                      <li><a href="#" class="other-compat">Other</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="setting col-sm-6">
+                  <div class="setting-heading">Beta Tester</div>
+                  <div class="setting-description">Would you like to help test the newest features? Opt in to get notifications for beta releases.</div>
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="options-beta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      No
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-beta">
+                      <li><a href="#" class="obs-compat">No</a></li>
+                      <li><a href="#" class="other-compat">Yes</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="setting col-sm-6">
+                  <div class="setting-heading">Control Emulation</div>
+                  <div class="setting-description">Firebot has two different control emulators built in. If one doesn't work for you, try the other one!</div>
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      Robotjs
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-emulation">
+                      <li><a href="#" class="robotjs">Robotjs</a></li>
+                      <li><a href="#" class="kbmrobot">KBMRobot</a></li>
+                    </ul>
+                  </div>
+                </div>
+
               </div>
             </div>
           </section>
@@ -189,6 +223,15 @@
             </div>
           </section>
 
+        </div>
+      </div>
+
+      <div class="status-bar navbar-inverse">
+        <div class="container">
+          <div class="row">
+            <div class="status-content col-sm-9">Ctrl + Alt + F12 will connect or disconnect interactive. Even when in a game!</div>
+            <div class="connection-indicator interactive-connector launch-interactive col-sm-3"><span class="connection-text">Click me to connect!</span> <i class="fa fa-power-off" aria-hidden="true"></i></div>
+          </div>
         </div>
       </div>
 
@@ -406,6 +449,7 @@
 
                 </div>
                 <div class="modal-footer">
+                  <button type="button" class="btn btn-danger remove-cooldown-group pull-left" data-dismiss="modal">Delete</button>
                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                   <button type="button" class="btn btn-primary save-cooldown-group" data-dismiss="modal">Save Changes</button>
                 </div>
