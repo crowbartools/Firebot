@@ -36,10 +36,16 @@
   "dependencies": {
     "beam-client-node": "^0.13.0",
     "beam-interactive-node2": "^1.0.1",
+    "compare-versions": "^3.0.1",
     "howler": "^2.0.3",
+    "kbm-robot": "0.0.4",
     "list.js": "^1.5.0",
+    "marked": "^0.3.6",
     "node-json-db": "^0.7.3",
+    "random-puppy": "^1.1.0",
     "request": "^2.81.0",
+    "robotjs": "^0.4.7",
+    "validator": "^7.0.0",
     "ws": "^2.3.1"
   }
 }

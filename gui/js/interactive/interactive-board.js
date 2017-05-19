@@ -174,67 +174,98 @@ function boardGroupSettings(scenes){
         var uniqueid = getUniqueId();
         var sceneName = scene.sceneID;
 
-        // Look to see if we have saved settings for this one.
-        try{
-            var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName);
-            var selectedOption = sceneSettings.default;
-        }catch(err){
-            var selectedOption = "None"
-        }
-
         var groupSettingTemplate = `
             <div class="board-group board-group${uniqueid} tile no-top col-sm-6 col-md-3">
                 <div class="tile-header">
-                    <div class="board-groupscene">${sceneName}</div>
-                </div>
-                <div class="board-group-scene-body tile-body">
-                    <div class="board-group-scene-dropdown">
-                        <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="sceneGroupDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                <span class="selected-scene-group">${selectedOption}</span>
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu scene-group-dropdown" aria-labelledby="sceneGroupDropdown">
-                                <li><a href="#" uniqueid="${uniqueid}">None</a></li>
-                                <li><a href="#" uniqueid="${uniqueid}">Default</a></li>
-                                <li><a href="#" uniqueid="${uniqueid}">Pro</a></li>
-                                <li><a href="#" uniqueid="${uniqueid}">Subscribers</a></li>
-                                <li><a href="#" uniqueid="${uniqueid}">Moderators</a></li>
-                            </ul>
-                        </div>
+                    <div class="board-groupscene tileID pull-left">${sceneName}</div>
+                    <div class="edit-groupscene tile-edit pull-right">
+                        <button class="edit-groupscene-btn btn btn-default" sceneunique="${uniqueid}">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
+                <div class="board-group-scene-body tile-body"></div>
             </div>
         `;
 
         // Throw it onto the page.
         $('.board-group-defaults-settings').append(groupSettingTemplate);
 
-        // Load up all custom made groups in each dropdown.
-        var dbGroup = new JsonDB("./user-settings/groups", true, true);
+        // Load up already saved settings.
         try{
-            var groups = dbGroup.getData('/');
-            for (var group in groups){
-                var template = `
-                    <li><a href="#" uniqueid="${uniqueid}">${group}</a></li>
-                `;
-                $('.board-group'+uniqueid+' .scene-group-dropdown').append(template);
+            var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName+'/default');
+            for (group of sceneSettings){
+                $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
             }
-        }catch(err){console.log(err)};
+        }catch(err){console.log(err)}
 
-
-        // When an effect is clicked, change the dropdown title.
-        $( ".scene-group-dropdown a" ).click(function() {
-            var text = $(this).text();
-            var uniqueid = $(this).attr('uniqueid');
-            $(".board-group"+uniqueid+" .selected-scene-group").text(text);
-
-            //Push update to json db.
-            var scene = $(this).closest('.board-group').find('.board-groupscene').text();
-            dbControls.push('./firebot/scenes/'+scene+'/default', text);
-            dbControls.push('./firebot/scenes/'+scene+'/sceneName', scene);
+        // Edit Scenegroup
+        $( ".board-group"+uniqueid+" .edit-groupscene-btn" ).click(function() {
+            // Get the controlId and pass it off to the edit function.
+            var sceneunique = $(this).attr('sceneunique');
+            editGroupScene(sceneunique); // This function is in controls-editor.js.
         });
     }
+}
+
+// Edit Groupscene
+// This opens up and manages the modal for editing scene group defaults for a board.
+function editGroupScene(uniqueid){
+     var dbControls = getCurrentBoard();
+     var sceneName = $('.board-group'+uniqueid+' .tileID').text();
+
+    // Clear 
+    $('.custom-scenegroup').remove();
+    $('.scenegroup-option input').prop('checked', false);
+
+    // Load up all custom made groups in each dropdown.
+    var dbGroup = new JsonDB("./user-settings/groups", true, true);
+    try{
+        var groups = dbGroup.getData('/');
+        for (var group in groups){
+            var template = `
+                <div class="scenegroup-option custom-scenegroup">
+                    <input type="checkbox" group="${group}" aria-label="..."> <span>${group}</span>
+                </div>
+            `;
+            $('.edit-scenegroup-defaults').append(template);
+        }
+    }catch(err){console.log(err)};
+
+    // Load up any existing settings
+    try{
+        var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName+'/default');
+        for (group of sceneSettings){
+            $('.scenegroup-option input[group = '+group+']').prop('checked', true);
+        }
+    }catch(err){}
+    
+    // Save Scenegroup
+    $( ".edit-scenegroup-save" ).click(function() {
+        var saveArray = [];
+
+        // For each option in the edit modal check to see if it's checked or not.
+        $('.scenegroup-option input').each(function(){
+            if( $(this).prop('checked') === true ){
+                saveArray.push( $(this).attr('group') );
+
+                // Push to db
+                dbControls.push('/firebot/scenes/'+sceneName+'/default', saveArray);
+
+                // Load up new settings
+                try{
+                    $('.board-group'+uniqueid+' .board-group-scene-body').empty();
+                    for (group of saveArray){
+                        $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
+                    }
+                }catch(err){console.log(err)}
+
+            }
+        });
+    });
+
+    // Show modal
+    $('#edit-scenegroup-modal').modal('toggle');
 }
 
 // Button Builder

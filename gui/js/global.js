@@ -5,6 +5,8 @@ const JsonDB = require('node-json-db');
 const request = require('request');
 const List = require('list.js');
 const howler = require('howler');
+const compareVersions = require('compare-versions');
+const marked = require('marked');
 
 const WebSocket = require('ws');
 const WebSocketServer = require('ws').Server,

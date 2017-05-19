@@ -36,7 +36,7 @@
             <li><a href="#" slide="2">Groups</a></li>
             <li><a href="#" slide="3">Moderation</a></li>
             <li><a href="#" slide="4">Settings</a></li>
-            <li><a href="#" slide="5">Info</a></li>
+            <li><a href="#" slide="5">Info<span class="badge updates-badge"></span></a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -161,9 +161,9 @@
                 <div class="setting col-sm-6">
                   <div class="setting-heading">Overlay Compatibility</div>
                   <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>
-                  <div class="dropdown">
+                  <div class="dropdown options-overlay-compat-dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="options-overlay-compat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      OBS
+                      <span class="dropdown-text">OBS</span>
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="options-overlay-compat">
@@ -175,9 +175,9 @@
                 <div class="setting col-sm-6">
                   <div class="setting-heading">Beta Tester</div>
                   <div class="setting-description">Would you like to help test the newest features? Opt in to get notifications for beta releases.</div>
-                  <div class="dropdown">
+                  <div class="dropdown options-beta-dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="options-beta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      No
+                      <span class="dropdown-text">No</span>
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="options-beta">
@@ -191,9 +191,9 @@
                 <div class="setting col-sm-6">
                   <div class="setting-heading">Control Emulation</div>
                   <div class="setting-description">Firebot has two different control emulators built in. If one doesn't work for you, try the other one!</div>
-                  <div class="dropdown">
+                  <div class="dropdown options-emulation-dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      Robotjs
+                      <span class="dropdown-text">Robotjs</span>
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="options-emulation">
@@ -208,17 +208,29 @@
           </section>
 
           <!-- Bugs / Credits -->
-          <section class="item">
+          <section class="item info-page">
             <div class="page-content">
               <div class="row page-header">
                 <div class="col-sm-12">
                   <div class="page-title">
-                    <h3>Info</h3>
+                    <h3>Updates</h3>
                   </div>
                 </div>
               </div>
               <div class="row">
-                - Another screen to hold credits and bug report information.
+                <div class="col-sm-12 col-md-12 update-wrapper">
+                  <div class="latest-update"></div>
+                  <div class="release-date"></div>
+                  <div class="update-notes"></div>
+                  <div class="update-buttons">
+                    <a href="#"><button class="btn btn-primary">Download</button></a>
+                    <a href="https://github.com/Firebottle/Firebot/issues"><button class="btn btn-danger">Report Bugs</button></a>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 col-md-12 bug-report-wrapper"></div>
+                <div class="col-sm-12 col-md-12 credits-wrapper"></div>
               </div>
             </div>
           </section>
@@ -357,6 +369,41 @@
           </div>
         </div>
 
+        <!-- Modal for editing group defaults on interactive-->
+        <div class="modal fade" id="edit-scenegroup-modal" tabindex="-1" role="dialog" aria-labelledby="editScenegroupLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="editScenegroupLabel">Edit Group Defaults</h4>
+              </div>
+              <div class="modal-body">
+                <div class="settings-title">
+                  <h3>Which groups should use this scene as their default scene?</h3>
+                </div>
+                <div class="edit-scenegroup-defaults">
+                  <div class="scenegroup-option">
+                    <input type="checkbox" group="None" aria-label="..."> <span>None</span>
+                  </div>
+                  <div class="scenegroup-option">
+                    <input type="checkbox" group="Default" aria-label="..."> <span>Default</span>
+                  </div>
+                  <div class="scenegroup-option">
+                    <input type="checkbox" group="Subscribers" aria-label="..."> <span>Subscribers</span>
+                  </div>
+                  <div class="scenegroup-option">
+                    <input type="checkbox" group="Moderators" aria-label="..."> <span>Moderators</span>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary edit-scenegroup-save" data-dismiss="modal">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div> <!-- End interactive modals -->
 
       <div class="group-modals">
@@ -468,6 +515,8 @@
     <script src="./js/errorlogging.js"></script>
     <script src="./js/moderation.js"></script>
     <script src="./js/websocket.js"></script>
+    <script src="./js/settings.js"></script>
+    <script src="./js/updates.js"></script>
 
     <script src="./js/login.js"></script>
     <script src="./js/interactive/interactive-board.js"></script>

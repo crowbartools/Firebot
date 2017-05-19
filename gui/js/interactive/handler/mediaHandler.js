@@ -43,15 +43,15 @@ function showImage(data){
 
     // Setup filepath based on compatibility settings.
     try{
-        var compatibility = dbSettings.getData('/interactive/mediaCompatibility');
+        var compatibility = dbSettings.getData('./settings/overlayImages');
     } catch (err){
-        var compatibility = "default";
+        var compatibility = "OBS";
     }
     
-    if(compatibility == "obs"){
-        var filepath = "http://absolute/"+filepath;
-    }else{
+    if(compatibility == "Other"){
         var filepath = "file:///"+filepath;
+    }else{
+        var filepath = "http://absolute/"+filepath;
     }
 
     // Compile data and send to overlay.

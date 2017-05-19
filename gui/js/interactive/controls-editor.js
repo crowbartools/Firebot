@@ -199,7 +199,7 @@ function changeSceneSettings(uniqueid){
         </ul>
         </div>
         <div class="effect-info">
-            Changing scenes is not currently support be Beam in Node.js
+            Changing scenes is not currently support be Beam in Node.js. So, this button is coming soon!
         </div>
     `;
 
@@ -255,7 +255,7 @@ function chatSettings(uniqueid){
             <input type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type">
         </div>
         <div class="effect-info">
-            The variable $(user) will be replaced by the participants username. EX: If Firebottle hits a button you can whisper him.
+            The variable $(user) will be replaced by the username of the person who pressed the button. EX: If Firebottle hits a button you can whisper him.
         </div>
     `;
 
@@ -353,6 +353,9 @@ function celebrationSettings(uniqueid){
             <span class="input-group-addon" id="celebration-length-effect-type">Seconds</span>
             <input type="text" class="form-control" id="celebration-amount-setting" aria-describedby="celebration-length-effect-type">
         </div>
+        <div class="effect-info">
+            This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html".
+        </div>
     `;
 
     // Put onto the page.
@@ -380,13 +383,31 @@ function gameControlSettings(uniqueid){
             <span class="input-group-addon" id="opposite-button-effect-type">Opposite</span>
             <input type="text" class="form-control" id="game-control-opposite-setting" aria-describedby="opposite-button-effect-type">
         </div>
+
+        <div class="effect-specific-title"><h4>Is this a button that should be held down?</h4></div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="holding-button-effect-type">No</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu holding-button-effect-dropdown">
+                <li><a href="#">No</a></li>
+                <li><a href="#">Yes</a></li>
+            </ul>
+        </div>
+
         <div class="effect-info">
-            Note that game controls do not work in every game or with every program. These are emulated controls.
+            Note that game controls do not work in every game or with every program. These are emulated controls. If the controls aren't working on your game or app try changing the emulator in the app settings.
         </div>
     `;
 
     // Put onto the page.
     $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate);
+
+    // When an effect is clicked, change the dropdown title.
+    $( ".panel"+uniqueid+" .holding-button-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .holding-button-effect-type").text(text);
+    });
 }
 
 // Play Sound Settings
@@ -405,6 +426,9 @@ function playSoundSettings(uniqueid){
         <div class="input-group">
             <span class="input-group-addon" id="volume-effect-type">1-10</span>
             <input type="text" class="form-control" id="sound-volume-setting" aria-describedby="volume-effect-type">
+        </div>
+        <div class="effect-info">
+            FYI, sounds are played through the Firebot app itself and not the overlay file.
         </div>
     `;
 
@@ -433,26 +457,29 @@ function showImageSettings(uniqueid){
 
         <div class="effect-specific-title"><h4>What location should it show in?</h4></div>
         <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="image-placement-effect-type">Pick One</span> <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu image-placement-effect-dropdown">
-            <li><a href="#">Top Left</a></li>
-            <li><a href="#">Top Middle</a></li>
-            <li><a href="#">Top Right</a></li>
-            <li><a href="#">Middle Left</a></li>
-            <li><a href="#">Middle</a></li>
-            <li><a href="#">Middle Right</a></li>
-            <li><a href="#">Bottom Left</a></li>
-            <li><a href="#">Bottom Middle</a></li>
-            <li><a href="#">Bottom Right</a></li>
-        </ul>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="image-placement-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu image-placement-effect-dropdown">
+                <li><a href="#">Top Left</a></li>
+                <li><a href="#">Top Middle</a></li>
+                <li><a href="#">Top Right</a></li>
+                <li><a href="#">Middle Left</a></li>
+                <li><a href="#">Middle</a></li>
+                <li><a href="#">Middle Right</a></li>
+                <li><a href="#">Bottom Left</a></li>
+                <li><a href="#">Bottom Middle</a></li>
+                <li><a href="#">Bottom Right</a></li>
+            </ul>
         </div>
 
         <div class="effect-specific-title"><h4>How long should it show?</h4></div>
         <div class="input-group">
             <span class="input-group-addon" id="image-length-effect-type">Seconds</span>
             <input type="text" class="form-control" id="image-length-setting" aria-describedby="image-length-effect-type">
+        </div>
+        <div class="effect-info">
+            This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html".
         </div>
     `;
 
@@ -543,7 +570,8 @@ function saveControls(){
         case "Game Control":
             var buttonPress = $(this).find('#game-control-press-setting').val();
             var oppositeButton = $(this).find('#game-control-opposite-setting').val();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Game Control", "press": buttonPress, "opposite": oppositeButton});
+            var holdingButton = $(this).find('.holding-button-effect-type').text();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Game Control", "press": buttonPress, "opposite": oppositeButton, "holding": holdingButton});
             break;
         case "Play Sound":
             var soundFile = $(this).find('.play-sound-effect-input').val();
@@ -629,6 +657,7 @@ function loadSettings(controlId, button){
             case "Game Control":
                 $('.panel'+uniqueid+' #game-control-press-setting').val(effect.press);
                 $('.panel'+uniqueid+' #game-control-opposite-setting').val(effect.opposite);
+                $('.panel'+uniqueid+' .holding-button-effect-type').text(effect.holding);
                 break;
             case "Play Sound":
                 $('.panel'+uniqueid+' .play-sound-effect-input').val(effect.file);

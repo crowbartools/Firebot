@@ -3672,8 +3672,12 @@
   border-top: 1px solid #adadad;
   margin-top: 1em;
 }
+/* line 24, ../scss/_interactive.scss */
+.functionality-settings .effect-info {
+  padding: .5em 0em;
+}
 
-/* line 29, ../scss/_interactive.scss */
+/* line 32, ../scss/_interactive.scss */
 #board-settings .board-group-defaults-settings .board-group .board-group-scene {
   background-color: #007eff;
   padding: .5em;
@@ -3682,7 +3686,7 @@
   font-weight: bold;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 37, ../scss/_interactive.scss */
+/* line 40, ../scss/_interactive.scss */
 #board-settings .board-group-defaults-settings .board-group .board-group-scene-dropdown {
   background-color: #0e162a;
   padding: .5em;
@@ -3690,7 +3694,7 @@
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 48, ../scss/_interactive.scss */
+/* line 51, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3700,7 +3704,7 @@
   text-align: center;
   font-size: 1.2em;
 }
-/* line 56, ../scss/_interactive.scss */
+/* line 59, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-groupheader {
   background-color: #007eff;
   font-weight: bold;
@@ -3708,36 +3712,36 @@
   padding: .5em 0em;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 62, ../scss/_interactive.scss */
+/* line 65, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-name {
   text-align: left;
   width: 75%;
   display: inline;
   padding: .2em 0em 0em .5em;
 }
-/* line 68, ../scss/_interactive.scss */
+/* line 71, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-controls {
   display: inline;
   width: 25%;
 }
-/* line 71, ../scss/_interactive.scss */
+/* line 74, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-controls .btn {
   padding: 3px 10px;
 }
-/* line 76, ../scss/_interactive.scss */
+/* line 79, ../scss/_interactive.scss */
 .interactive-group-container .interactive-group-wrap .interactive-group-main {
   background-color: #0e162a;
   padding: .5em 0em;
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 84, ../scss/_interactive.scss */
+/* line 87, ../scss/_interactive.scss */
 .playbutton {
   background: none;
   border: none;
   font-size: 2em;
 }
-/* line 88, ../scss/_interactive.scss */
+/* line 91, ../scss/_interactive.scss */
 .playbutton:hover {
   color: #adadad;
 }
@@ -3793,26 +3797,55 @@
   color: #5cb85c;
 }
 
-/* line 13, ../scss/main.scss */
+/* line 1, ../scss/_settings.scss */
+.setting {
+  margin-bottom: 1em;
+}
+/* line 3, ../scss/_settings.scss */
+.setting .setting-heading {
+  font-size: 1.5em;
+}
+/* line 6, ../scss/_settings.scss */
+.setting .setting-description {
+  padding: .5em 0em;
+}
+
+/* line 3, ../scss/_info.scss */
+.info-page .update-wrapper .latest-update {
+  font-size: 1.75em;
+  margin-top: .3em;
+}
+/* line 7, ../scss/_info.scss */
+.info-page .update-wrapper .release-date {
+  margin-bottom: 1em;
+}
+
+/* line 13, ../scss/_info.scss */
+.updates-badge {
+  background-color: #007eff;
+  margin-left: 5px;
+}
+
+/* line 15, ../scss/main.scss */
 body {
   padding-top: 5rem;
   padding-bottom: 4em;
 }
 
-/* line 17, ../scss/main.scss */
+/* line 19, ../scss/main.scss */
 .page-header {
   padding-bottom: 1em;
   margin-bottom: 1em;
   border-bottom: 1px solid #292b2c;
 }
 
-/* line 22, ../scss/main.scss */
+/* line 24, ../scss/main.scss */
 .page-content {
   width: 100%;
   min-height: 500px;
 }
 
-/* line 28, ../scss/main.scss */
+/* line 30, ../scss/main.scss */
 .tile {
   margin-top: 1.5em;
   color: white;
@@ -3820,11 +3853,11 @@ body {
   text-align: center;
   font-size: 1.2em;
 }
-/* line 35, ../scss/main.scss */
+/* line 37, ../scss/main.scss */
 .tile.no-top {
   margin-top: .5em;
 }
-/* line 39, ../scss/main.scss */
+/* line 41, ../scss/main.scss */
 .tile .tile-header {
   background-color: #007eff;
   font-weight: bold;
@@ -3832,37 +3865,37 @@ body {
   padding: .5em 0em;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 45, ../scss/main.scss */
+/* line 47, ../scss/main.scss */
 .tile .tile-header .tileID {
   text-align: left;
   width: 75%;
   display: inline;
   padding: .2em 0em 0em .5em;
 }
-/* line 51, ../scss/main.scss */
+/* line 53, ../scss/main.scss */
 .tile .tile-header .tile-edit {
   display: inline;
   width: 25%;
 }
-/* line 54, ../scss/main.scss */
+/* line 56, ../scss/main.scss */
 .tile .tile-header .tile-edit .btn {
   padding: 3px 10px;
 }
-/* line 59, ../scss/main.scss */
+/* line 61, ../scss/main.scss */
 .tile .tile-body {
   background-color: #0e162a;
   padding: .5em 0em;
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 67, ../scss/main.scss */
+/* line 69, ../scss/main.scss */
 .pill {
   background-color: #0e162a;
   color: white;
   margin: 1em 0em;
   border-radius: .5em;
 }
-/* line 72, ../scss/main.scss */
+/* line 74, ../scss/main.scss */
 .pill .content {
   display: inline-block;
   padding: .5em;
@@ -3870,7 +3903,7 @@ body {
   margin: 0px;
 }
 
-/* line 83, ../scss/main.scss */
+/* line 85, ../scss/main.scss */
 .top-padding {
   padding-top: 1em;
 }
