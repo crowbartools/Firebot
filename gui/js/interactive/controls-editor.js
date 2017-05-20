@@ -287,7 +287,7 @@ function cooldownSettings(uniqueid){
         <div class="effect-specific-title"><h4>How long should these cooldown for?</h4></div>
         <div class="input-group">
             <span class="input-group-addon" id="cooldown-amount-effect-type">Seconds</span>
-            <input type="text" class="form-control" id="cooldown-amount-setting" aria-describedby="cooldown-amount-effect-type">
+            <input type="text" class="form-control" id="cooldown-amount-setting" aria-describedby="cooldown-amount-effect-type" type="number">
         </div>
         <div class="effect-info">
             If you want to cool down a lot of buttons at the same time, give the cooldown groups a try in the board main settings!
@@ -351,7 +351,7 @@ function celebrationSettings(uniqueid){
         <div class="effect-specific-title"><h4>How many seconds should the party last?</h4></div>
         <div class="input-group">
             <span class="input-group-addon" id="celebration-length-effect-type">Seconds</span>
-            <input type="text" class="form-control" id="celebration-amount-setting" aria-describedby="celebration-length-effect-type">
+            <input type="text" class="form-control" id="celebration-amount-setting" aria-describedby="celebration-length-effect-type" type="number">
         </div>
         <div class="effect-info">
             This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html".
@@ -425,7 +425,7 @@ function playSoundSettings(uniqueid){
         <div class="effect-specific-title"><h4>How loud should it be?</h4></div>
         <div class="input-group">
             <span class="input-group-addon" id="volume-effect-type">1-10</span>
-            <input type="text" class="form-control" id="sound-volume-setting" aria-describedby="volume-effect-type">
+            <input type="text" class="form-control" id="sound-volume-setting" aria-describedby="volume-effect-type" type="number" min="1" max="10">
         </div>
         <div class="effect-info">
             FYI, sounds are played through the Firebot app itself and not the overlay file.
@@ -476,7 +476,7 @@ function showImageSettings(uniqueid){
         <div class="effect-specific-title"><h4>How long should it show?</h4></div>
         <div class="input-group">
             <span class="input-group-addon" id="image-length-effect-type">Seconds</span>
-            <input type="text" class="form-control" id="image-length-setting" aria-describedby="image-length-effect-type">
+            <input type="text" class="form-control" id="image-length-setting" aria-describedby="image-length-effect-type" type="number">
         </div>
         <div class="effect-info">
             This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html".

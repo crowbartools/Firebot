@@ -8,5 +8,6 @@ During Compile -
 7. For testing the build, paste in your user-settings. Just make sure not to zip that folder up.
 
 Rebuild Robotjs -
-1. set PYTHON=D:\Python\bin\Python.exe
-2. Run npm run rebuild
+1. in admin powershell npm install -g windows-build-tools
+2. set PYTHON=D:\Python\bin\Python.exe
+3. Run npm run rebuild

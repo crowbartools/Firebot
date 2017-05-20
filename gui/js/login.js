@@ -212,7 +212,7 @@ function refreshToken(){
 
                 // Refresh bot token if the bot is logged in.
                 try{
-                    var bot = dbAuth.getData('./bot/refreshToken');
+                    var refresh = dbAuth.getData('./bot/refreshToken');
 
                     // Send off request for new tokens.
                     request.post({url:'https://beam.pro/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
