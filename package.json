@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "beam-client-node": "^0.13.0",
-    "beam-interactive-node2": "^1.0.1",
+    "beam-interactive-node2": "^2.0.0",
     "compare-versions": "^3.0.1",
     "howler": "^2.0.3",
     "kbm-robot": "0.0.4",

@@ -191,6 +191,8 @@ function loadLogin(){
 // This will get a new access token when connecting to interactive.
 function refreshToken(){
 
+    console.log('Trying to get refresh tokens...')
+
     // Refresh streamer token if the streamer is logged in.
     try{
         var refresh = dbAuth.getData('./streamer/refreshToken');
@@ -207,8 +209,13 @@ function refreshToken(){
 
                 // Awesome, we got the auth token. Now to save it out for later.
                 // Push all to db.
-                dbAuth.push('./streamer/accessToken',accessToken);
-                dbAuth.push('./streamer/refreshToken',refreshToken);                
+                if (accessToken !== null && accessToken !== undefined && accessToken !== ""){
+                    dbAuth.push('./streamer/accessToken',accessToken);
+                    dbAuth.push('./streamer/refreshToken',refreshToken);     
+                }else{
+                    console.log('something went wrong with streamer refresh token.')
+                    console.log(body);
+                }
 
                 // Refresh bot token if the bot is logged in.
                 try{
@@ -226,8 +233,13 @@ function refreshToken(){
 
                             // Awesome, we got the auth token. Now to save it out for later.
                             // Push all to db.
-                            dbAuth.push('./bot/accessToken',accessToken);
-                            dbAuth.push('./bot/refreshToken',refreshToken);
+                            if (accessToken !== null && accessToken !== undefined && accessToken !== ""){
+                                dbAuth.push('./bot/accessToken',accessToken);
+                                dbAuth.push('./bot/refreshToken',refreshToken);
+                            }else{
+                                console.log('something went wrong with bot refresh token.')
+                                console.log(body);
+                            }
 
                             // Okay, we have both streamer and bot tokens now. Start up the login process.
                             ipcRenderer.send('gotRefreshToken');
@@ -283,7 +295,7 @@ function logout(type){
         // Delete Info
         dbAuth.delete('/streamer');
     } else {
-        $('.bot-login h2').text('Broadcaster');
+        $('.bot-login h2').text('Bot');
         $('.bot-login img').attr('src','./images/placeholders/default.jpg');
 
         // Flip login button

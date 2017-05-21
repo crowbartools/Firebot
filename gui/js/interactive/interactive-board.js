@@ -61,7 +61,7 @@ function backendBuilder(gameName, gameJson, versionid){
                     try{
                         var text = button.text;
                     }catch(err){
-                        var text="None"
+                        var text= "None";
                     }
                     try{
                         var cost = button.cost;
@@ -83,7 +83,7 @@ function backendBuilder(gameName, gameJson, versionid){
                 dbControls.getData('./firebot/scenes/'+scenename);
             }catch(err){
                 dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
-                dbControls.push('./firebot/scenes/'+scenename+'/default', 'None');
+                dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
             }
         }
     }
@@ -241,7 +241,7 @@ function editGroupScene(uniqueid){
     }catch(err){}
     
     // Save Scenegroup
-    $( ".edit-scenegroup-save" ).click(function() {
+    $( ".edit-scenegroup-save" ).off().click(function() {
         var saveArray = [];
 
         // For each option in the edit modal check to see if it's checked or not.
