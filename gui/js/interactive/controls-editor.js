@@ -59,7 +59,7 @@ function addMoreFunctionality(uniqueid){
                         </button>
                         <ul class="dropdown-menu effects-menu">
                             <li><a href="#" uniqueid="${uniqueid}" effect="API Button">API Button</a></li>
-                            <li><a href="#" uniqueid="${uniqueid}" effect="Change Scene">Change Scene</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Change Group">Change Group</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Chat">Chat</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Cooldown">Cooldown</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Celebration">Celebration</a></li>
@@ -109,8 +109,8 @@ function functionalitySwitcher(uniqueid, effect){
     case "API Button":
         var effectTemplate = apiButtonSettings(uniqueid);
         break;
-    case "Change Scene":
-        var effectTemplate = changeSceneSettings(uniqueid);
+    case "Change Group":
+        var effectTemplate = changeGroupSettings(uniqueid);
         break;
     case "Chat":
         var effectTemplate = chatSettings(uniqueid);
@@ -188,9 +188,9 @@ function apiButtonSettings(uniqueid){
 
 // Change Scene Settings
 // Loads up the settings for the change scene effect type.
-function changeSceneSettings(uniqueid){
+function changeGroupSettings(uniqueid){
     var effectTemplate = `
-        <div class="effect-specific-title"><h4>Which scene should I switch to?</h4></div>
+        <div class="effect-specific-title"><h4>Which group should I switch the person to?</h4></div>
         <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="change-scene-effect-type">Pick One</span> <span class="caret"></span>
@@ -199,7 +199,7 @@ function changeSceneSettings(uniqueid){
         </ul>
         </div>
         <div class="effect-info">
-            Changing scenes is not currently support be Beam in Node.js. So, this button is coming soon!
+            This button will move whoever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group.
         </div>
     `;
 
@@ -210,18 +210,18 @@ function changeSceneSettings(uniqueid){
     try{
 
         // Get settings for last board.
-        var dbControls = getCurrentBoard();
+        var dbGroups = new JsonDB("./user-settings/groups", true, true);
 
         // Get settings for this button.
-        var scenes = dbControls.getData('./beam');
+        var groups = dbGroups.getData('/');
 
         // Loop through scenes and get names.
-        for (scene of scenes){
-            var name = scene.sceneID;
+        for (group in groups){
+            var name = group;
             var dropdowntemplate = `<li><a href="#">${name}</a></li>`
             $(".panel"+uniqueid+" .change-scene-effect-dropdown").append(dropdowntemplate);
         }
-    } catch(err){};
+    } catch(err){console.log(err)};
 
     // When an effect is clicked, change the dropdown title.
     $(".panel"+uniqueid+" .change-scene-effect-dropdown a" ).click(function() {
@@ -636,9 +636,9 @@ function saveControls(){
             var chatter = $(this).find('.api-chat-effect-type').text();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "API Button", "api": apiType, "chatter": chatter});
             break;
-        case "Change Scene":
+        case "Change Group":
             var sceneChange = $(this).find('.change-scene-effect-type').text();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Scene", "scene": sceneChange});
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Group", "scene": sceneChange});
             break;
         case "Chat":
             var chatter = $(this).find('.chat-effect-type').text();
@@ -716,7 +716,7 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' .api-effect-type').text(effect.api);
                 $('.panel'+uniqueid+' .api-chat-effect-type').text(effect.chatter);
                 break;
-            case "Change Scene":
+            case "Change Group":
                 $('.panel'+uniqueid+' .change-scene-effect-type').text(effect.scene);
                 break;
             case "Chat":
