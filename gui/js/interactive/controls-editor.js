@@ -373,13 +373,13 @@ function celebrationSettings(uniqueid){
 function gameControlSettings(uniqueid){
     var effectTemplate = `
         <div class="effect-specific-title"><h4>Which button should I press?</h4></div>
-        <div class="input-group">
+        <div class="input-group game-press">
             <span class="input-group-addon" id="button-press-effect-type">Press</span>
             <input type="text" class="form-control" id="game-control-press-setting" aria-describedby="button-press-effect-type">
         </div>
 
         <div class="effect-specific-title"><h4>Does this button have an opposite button?</h4></div>
-        <div class="input-group">
+        <div class="input-group game-opposite">
             <span class="input-group-addon" id="opposite-button-effect-type">Opposite</span>
             <input type="text" class="form-control" id="game-control-opposite-setting" aria-describedby="opposite-button-effect-type">
         </div>
@@ -402,6 +402,17 @@ function gameControlSettings(uniqueid){
 
     // Put onto the page.
     $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate);
+
+    // Apply autocomplete
+    $(".panel"+uniqueid+" #game-control-press-setting").autocomplete({
+      source: gameAutoComplete(),
+      appendTo: ".panel"+uniqueid+" .game-press"
+    });
+    $(".panel"+uniqueid+" #game-control-opposite-setting").autocomplete({
+      source: gameAutoComplete(),
+      appendTo: ".panel"+uniqueid+" .game-opposite"
+    });
+
 
     // When an effect is clicked, change the dropdown title.
     $( ".panel"+uniqueid+" .holding-button-effect-dropdown a" ).click(function() {
@@ -497,6 +508,89 @@ function showImageSettings(uniqueid){
     $(".panel"+uniqueid+" .show-image-effect-chooser" ).click(function() {
         ipcRenderer.send('getImagePath', uniqueid);
     });
+}
+
+// Game Button Autocomplete
+function gameAutoComplete(){
+    var availableButtons = [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "0",
+        "backspace",
+        "delete",
+        "enter",
+        "space",
+        "tab",
+        "escape",
+        "up",
+        "down",
+        "left",
+        "right",
+        "home",
+        "end",
+        "pageup",
+        "pagedown",
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7",
+        "f8",
+        "f9",
+        "f10",
+        "f11",
+        "f12",
+        "alt",
+        "control",
+        "shift",
+        "numpad_0",
+        "numpad_1",
+        "numpad_2",
+        "numpad_3",
+        "numpad_4",
+        "numpad_5",
+        "numpad_6",
+        "numpad_7",
+        "numpad_8",
+        "numpad_9"
+    ];
+
+    return availableButtons;
 }
 
 // Delete Functionality

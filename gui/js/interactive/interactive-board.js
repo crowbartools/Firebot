@@ -633,6 +633,9 @@ function deleteBoard(){
         var gameName = dbSettings.getData('/interactive/lastBoard');
         var filepath = './user-settings/controls/'+gameName+'.json';
 
+        // Remove last board
+        dbSettings.delete('/interactive/lastBoard')
+
         fs.exists(filepath, function(exists) {
             if(exists) {
                     // File exists deleting

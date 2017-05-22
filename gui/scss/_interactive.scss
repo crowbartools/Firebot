@@ -92,3 +92,30 @@
         color:$light-highlight;
     }
 }
+
+.ui-autocomplete{
+    border-radius:10px;
+    padding:5px;
+    border:none;
+    background-color: #ddd;
+    list-style:none;
+    color:$beam-main;
+    font-weight:bold;
+    position:absolute;
+    z-index:5;
+    box-shadow: 2px 2px 5px #000;
+    height:150px;
+    overflow-y: scroll;
+    li{
+        cursor:pointer;
+        div{
+            padding:5px;
+            margin:2px;
+        }
+    }
+    li:hover{
+        color:white;
+        background-color: $beam-highlight;
+    }
+
+}

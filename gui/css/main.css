@@ -3746,6 +3746,36 @@
   color: #adadad;
 }
 
+/* line 96, ../scss/_interactive.scss */
+.ui-autocomplete {
+  border-radius: 10px;
+  padding: 5px;
+  border: none;
+  background-color: #ddd;
+  list-style: none;
+  color: #0e162a;
+  font-weight: bold;
+  position: absolute;
+  z-index: 5;
+  box-shadow: 2px 2px 5px #000;
+  height: 150px;
+  overflow-y: scroll;
+}
+/* line 109, ../scss/_interactive.scss */
+.ui-autocomplete li {
+  cursor: pointer;
+}
+/* line 111, ../scss/_interactive.scss */
+.ui-autocomplete li div {
+  padding: 5px;
+  margin: 2px;
+}
+/* line 116, ../scss/_interactive.scss */
+.ui-autocomplete li:hover {
+  color: white;
+  background-color: #007eff;
+}
+
 /* line 3, ../scss/_groups.scss */
 .group-user-list-container .user-list-header {
   margin-bottom: 1em;
