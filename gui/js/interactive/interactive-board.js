@@ -19,8 +19,8 @@ function importBoardModal(){
 // This takes the interactive json and throws all the buttons onto the board.
 function boardBuilder(versionid){
 
-    // Hit up Beam for the latest json.
-    $.getJSON( "https://beam.pro/api/v1/interactive/versions/"+versionid, function( data ) {
+    // Hit up mixer for the latest json.
+    $.getJSON( "https://mixer.pro/api/v1/interactive/versions/"+versionid, function( data ) {
         var gameName = data.game.name;
         var gameJson = data.controls.scenes;
 
@@ -34,13 +34,13 @@ function boardBuilder(versionid){
 }
 
 // Backend Controls Builder
-// This takes the beam json and builds out the structure for the controls file.
+// This takes the mixer json and builds out the structure for the controls file.
 function backendBuilder(gameName, gameJson, versionid){
     var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
 
-    // Push Beam Json to controls file.
+    // Push mixer Json to controls file.
     dbControls.push('/versionid', parseInt(versionid) );
-    dbControls.push('/beam', gameJson);
+    dbControls.push('/mixer', gameJson);
     
     // Build Firebot controls
     for (var i = 0; i < gameJson.length; i++) {
@@ -96,7 +96,7 @@ function backendBuilder(gameName, gameJson, versionid){
 // This takes info and builds out scenes.
 function sceneBuilder(gameName){
     var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
-    var scenes = dbControls.getData('/beam');
+    var scenes = dbControls.getData('/mixer');
 
     // Template for tabs.
     var boardTemplate = `
@@ -130,7 +130,7 @@ function sceneBuilder(gameName){
     $('.interactive-board-container').html(boardTemplate);
 
     // Throw the board title onto the page.
-    $('.board-title a').attr('href', 'https://beam.pro/i/studio').text(gameName);
+    $('.board-title a').attr('href', 'https://mixer.pro/i/studio').text(gameName);
 
     // Set as last used board.
     var dbSettings = new JsonDB("./user-settings/settings", true, true);
@@ -362,7 +362,7 @@ function addCooldownGroup(){
         var dbControls = getCurrentBoard();
 
         // Get settings for this button.
-        var scenes = dbControls.getData('./beam');
+        var scenes = dbControls.getData('./mixer');
 
         // Loop through scenes and put buttons into dropdown menu.
         for (scene of scenes){
@@ -437,7 +437,7 @@ function editCooldownGroup(sceneid){
         var dbControls = getCurrentBoard();
 
         // Get settings for this button.
-        var scenes = dbControls.getData('./beam');
+        var scenes = dbControls.getData('./mixer');
 
         // Loop through scenes and put buttons into dropdown menu.
         for (scene of scenes){
@@ -601,7 +601,7 @@ function gameSelector(){
             var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
             var versionid = dbControls.getData('/versionid');
 
-            // Pull new json from beam.
+            // Pull new json from mixer.
             boardBuilder(versionid);        
         } catch(err){
             renderWindow.webContents.send('error', "Unable to load this board. Try restarting the app.");
@@ -618,7 +618,7 @@ function loadLastBoard(){
         var dbControls = getCurrentBoard();
         var versionid = dbControls.getData('/versionid');
 
-        // Pull new json from beam.
+        // Pull new json from mixer.
         boardBuilder(versionid);        
     } catch(err){};
 }
@@ -694,7 +694,7 @@ $( ".interactive-connector" ).click(function() {
         $(this).addClass('launch-interactive');
 
         // Let backend know to kill connection.
-        ipcRenderer.send('beamInteractive', 'disconnect');
+        ipcRenderer.send('mixerInteractive', 'disconnect');
     }
 });
 

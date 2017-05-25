@@ -303,7 +303,7 @@ function cooldownSettings(uniqueid){
         var dbControls = getCurrentBoard();
 
         // Get settings for this button.
-        var scenes = dbControls.getData('./beam');
+        var scenes = dbControls.getData('./mixer');
 
         // Loop through scenes and put buttons into dropdown menu.
         for (scene of scenes){
@@ -617,7 +617,7 @@ function saveControls(){
     var sparkcost = $('.settings-sparkcost input').val();
     var cooldown = $('.settings-cooldown input').val();
 
-    // TO DO: Push new values to beam.
+    // TO DO: Push new values to mixer.
 
     // Push new values to settings.
     dbControls.push('./firebot/controls/'+controlID, {"controlId": controlID, "text": buttontext, "cost": sparkcost, "cooldown": cooldown});

@@ -1,4 +1,4 @@
-function beamSocketConnect(){
+function mixerSocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
 		ws = new ReconnectingWebSocket("ws://localhost:8080");
@@ -32,7 +32,7 @@ function beamSocketConnect(){
 		console.error("Woah, something broke. Abandon ship!");
 	}
 }
-beamSocketConnect();
+mixerSocketConnect();
 
 // Celebration Handler
 // This will take the celebration request and decide what to do with it.

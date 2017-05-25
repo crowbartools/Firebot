@@ -39,7 +39,7 @@ body {
     }
 
     .tile-header{
-        background-color: $beam-highlight;
+        background-color: $mixer-highlight;
         font-weight:bold;
         height:2.5em;
         padding: .5em 0em;
@@ -59,7 +59,7 @@ body {
         }
     }
     .tile-body{
-        background-color: $beam-main;
+        background-color: $mixer-main;
         padding: .5em 0em;
         border-radius: 0em 0em .5em .5em;
     }
@@ -67,7 +67,7 @@ body {
 
 // Standard styling for pill buttons such as the group viewer list and cooldown buttons.
 .pill{
-    background-color: $beam-main;
+    background-color: $mixer-main;
     color:white;
     margin: 1em 0em;
     border-radius:.5em;

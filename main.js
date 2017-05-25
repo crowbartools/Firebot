@@ -45,7 +45,7 @@ function createWindow () {
     global.renderWindow = mainWindow;
 
     // Register the Kill Switch
-    beamConnect.shortcut();
+    mixerConnect.shortcut();
 }
 
   // This method will be called when Electron has finished
@@ -90,4 +90,4 @@ function createWindow () {
 // code. You can also put them in separate files and require them here.
 
 // Interactive handler
-const beamConnect = require('./lib/interactive/beam-interactive.js');
+const mixerConnect = require('./lib/interactive/mixer-interactive.js');
