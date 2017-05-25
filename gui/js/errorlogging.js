@@ -2,7 +2,7 @@ function errorLog(error){
     console.log(error);
 
     // Kill all connections
-    ipcRenderer.send('beamInteractive', 'disconnect');
+    ipcRenderer.send('mixerInteractive', 'disconnect');
 
     // Place text into modal
     $('#error-modal .modal-body p').text(error);
