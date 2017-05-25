@@ -1,7 +1,7 @@
 {
   "name": "Firebot",
   "version": "3.0.0-beta.1",
-  "description": "An application for mixer.pro that celebrates and promotes interactive controls.",
+  "description": "An application for mixer.com that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -22,7 +22,7 @@
   "repository": "https://github.com/Firebottle/Firebot",
   "keywords": [
     "Electron",
-    "mixer.pro",
+    "mixer.com",
     "interactive",
     "streaming"
   ],

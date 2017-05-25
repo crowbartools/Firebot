@@ -20,7 +20,7 @@ function importBoardModal(){
 function boardBuilder(versionid){
 
     // Hit up mixer for the latest json.
-    $.getJSON( "https://mixer.pro/api/v1/interactive/versions/"+versionid, function( data ) {
+    $.getJSON( "https://mixer.com/api/v1/interactive/versions/"+versionid, function( data ) {
         var gameName = data.game.name;
         var gameJson = data.controls.scenes;
 
@@ -130,7 +130,7 @@ function sceneBuilder(gameName){
     $('.interactive-board-container').html(boardTemplate);
 
     // Throw the board title onto the page.
-    $('.board-title a').attr('href', 'https://mixer.pro/i/studio').text(gameName);
+    $('.board-title a').attr('href', 'https://mixer.com/i/studio').text(gameName);
 
     // Set as last used board.
     var dbSettings = new JsonDB("./user-settings/settings", true, true);

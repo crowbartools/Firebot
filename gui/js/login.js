@@ -11,7 +11,7 @@ var options = {
 function login(type){
 
     // Make a request to get a shortcode.
-    request.post({url:'https://mixer.pro/api/v1/oauth/shortcode', form: {client_id: options.client_id, scope: options.scopes}}, function(err,httpResponse,body){
+    request.post({url:'https://mixer.com/api/v1/oauth/shortcode', form: {client_id: options.client_id, scope: options.scopes}}, function(err,httpResponse,body){
         if (err === null){
             // Success!
             var body = JSON.parse(body);
@@ -50,7 +50,7 @@ function loginModal(code){
                                     </div>
                                     <div class="modal-body">
                                         <p>Click the code below to be taken to an authorization page. On the auth page please paste in the code to give Firebot access to run on your account.</p>
-                                        <div class="login-code">Code: <br> <a href="https://mixer.pro/go">${code}</a></div>
+                                        <div class="login-code">Code: <br> <a href="https://mixer.com/go">${code}</a></div>
                                     </div>
                                 </div>
                             </div>
@@ -71,7 +71,7 @@ function loginModal(code){
 function loginLoop(handle, type){
 
     var refreshInterval = setInterval(function(){
-        request.get('https://mixer.pro/api/v1/oauth/shortcode/check/'+handle, function (error, response, body) {
+        request.get('https://mixer.com/api/v1/oauth/shortcode/check/'+handle, function (error, response, body) {
             var status = response.statusCode;
 
             // User denied access or key expired.
@@ -90,7 +90,7 @@ function loginLoop(handle, type){
                 var code = body.code;
 
                 // Take the code and send it off for the auth tokens info.
-                request.post({url:'https://mixer.pro/api/v1/oauth/token', form: {client_id: options.client_id, code: code, grant_type: "authorization_code"}}, function(err,response,body){
+                request.post({url:'https://mixer.com/api/v1/oauth/token', form: {client_id: options.client_id, code: code, grant_type: "authorization_code"}}, function(err,response,body){
                     if (err === null){
                         console.log('Success! Trying to get token...');
                         var body = JSON.parse(body);
@@ -124,7 +124,7 @@ function userInfo(type, accessToken, refreshToken){
 
     // Request user info and save out everything to auth file.
     request({
-        url: 'https://mixer.pro/api/v1/users/current',
+        url: 'https://mixer.com/api/v1/users/current',
         auth: {
             'bearer': accessToken
         }
@@ -198,7 +198,7 @@ function refreshToken(){
         var refresh = dbAuth.getData('./streamer/refreshToken');
 
         // Send off request for new tokens.
-        request.post({url:'https://mixer.pro/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
+        request.post({url:'https://mixer.com/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
             if (err === null){
                 console.log('Refreshing tokens for streamer!');
                 var body = JSON.parse(body);
@@ -222,7 +222,7 @@ function refreshToken(){
                     var refresh = dbAuth.getData('./bot/refreshToken');
 
                     // Send off request for new tokens.
-                    request.post({url:'https://mixer.pro/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
+                    request.post({url:'https://mixer.com/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
                         if (err === null){
                             console.log('Refreshing tokens for bot!');
                             var body = JSON.parse(body);
