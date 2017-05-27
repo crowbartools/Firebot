@@ -247,7 +247,7 @@ function chatSettings(uniqueid){
         <div class="effect-specific-title"><h4>What should I say?</h4></div>
         <div class="input-group">
             <span class="input-group-addon" id="chat-text-effect-type">Message</span>
-            <input type="text" class="form-control" id="chat-text-setting" aria-describedby="chat-text-effect-type">
+            <input type="text" class="form-control" id="chat-text-setting" aria-describedby="chat-text-effect-type" maxlength="360">
         </div>
         <div class="effect-specific-title"><h4>Who should I whisper this to? Leave blank to broadcast to everyone.</h4></div>
         <div class="input-group">
