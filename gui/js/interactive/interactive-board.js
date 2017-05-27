@@ -703,10 +703,10 @@ $( ".interactive-connector" ).click(function() {
 ipcRenderer.on('connection', function (event, data){
     if(data == "Online"){
         $('.connection-indicator').addClass('online');
-        $('.connection-text').text('Connected.');
+        $('.connection-text').text('Connected - Click to Disconnect');
     } else {
         $('.connection-indicator').removeClass('online');
-        $('.connection-text').text('Click me to connect!');
+        $('.connection-text').text('Disconnected - Click to Launch Board');
     }
 })
 
