@@ -85,6 +85,17 @@ function editGroupModal(uniqueid){
     $('.interactive-group-id').val(groupName);
     $('#group-user-list .list').empty();
 
+    // Disable spaces in group id
+    $('.interactive-group-id').on({
+        keydown: function(e) {
+            if (e.which === 32)
+            return false;
+        },
+        change: function() {
+            this.value = this.value.replace(/\s/g, "");
+        }
+    });
+
     // Load up UserList.
     var usernames = []
     for (user of group.users){

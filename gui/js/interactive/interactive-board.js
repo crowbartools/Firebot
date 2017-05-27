@@ -21,16 +21,20 @@ function boardBuilder(versionid){
 
     // Hit up mixer for the latest json.
     $.getJSON( "https://mixer.com/api/v1/interactive/versions/"+versionid, function( data ) {
-        var gameName = data.game.name;
-        var gameJson = data.controls.scenes;
+        if(data.game === null){
+            errorLog("This board seems to have been deleted from Mixer. If you are sure you want to remove all the settings. Go to your Firebot folder /user-settings/controls and delete the control file.");
+        } else {
+            var gameName = data.game.name;
+            var gameJson = data.controls.scenes;
 
-        // Push to Json
-        backendBuilder(gameName, gameJson, versionid);
+            // Push to Json
+            backendBuilder(gameName, gameJson, versionid);
 
-        // Add to board menu.
-        menuManager();
+            // Add to board menu.
+            menuManager();
+        }
 
-    });
+    })
 }
 
 // Backend Controls Builder
@@ -476,7 +480,7 @@ function editCooldownGroup(sceneid){
             dbControls.delete('./firebot/cooldownGroups/'+sceneid);
             loadCooldownGroups();
         }catch(err){
-            renderWindow.webContents.send('error', "Error deleting this cooldown group.");
+            errorLog("Error deleting this cooldown group.")
         }
     });
 
@@ -604,7 +608,7 @@ function gameSelector(){
             // Pull new json from mixer.
             boardBuilder(versionid);        
         } catch(err){
-            renderWindow.webContents.send('error', "Unable to load this board. Try restarting the app.");
+            errorLog("Unable to load this board. Try restarting the app.")
         };
     });
 }
