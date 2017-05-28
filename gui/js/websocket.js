@@ -1,9 +1,3 @@
-const WebSocket = require('ws');
-const WebSocketServer = require('ws').Server,
-    wss = new WebSocketServer({
-        port: 8080
-    });
-
 // Websocket Server
 // This allows for the guiBroadcast call to send out data via websocket.
 function broadcast(data) {
@@ -23,5 +17,3 @@ wss.on('connection', function connection(ws) {
     });
 });
 
-// Export Functions
-exports.broadcast = broadcast;

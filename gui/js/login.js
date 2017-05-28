@@ -1,215 +1,329 @@
-const JsonDB = require('node-json-db');
-const request = require('request');
-const {ipcRenderer} = require('electron');
-const shell = require('electron').shell;
-
-// JSON DBs
+var dbSettings = new JsonDB("./user-settings/settings", true, false);
 var dbAuth = new JsonDB("./user-settings/auth", true, false);
 
-// Beam OAuth
-// Takes info recieved from main process and processes it to save oauth info and such.
-ipcRenderer.on('oauth-complete', function (event, token, streamOrBot){
-    requestBeamData(token, streamOrBot);
-})
+// Options
+var options = {
+    client_id: "",
+    scopes: "user:details:self interactive:manage:self interactive:robot:self chat:connect chat:chat chat:whisper"
+};
 
-// Beam User Info
-// After OAuth is successful, this will grab info and save it. Then kick off putting info on the page.
-function requestBeamData(token, streamOrBot) {
+// Login Kickoff
+function login(type){
+
+    // Make a request to get a shortcode.
+    request.post({url:'https://mixer.com/api/v1/oauth/shortcode', form: {client_id: options.client_id, scope: options.scopes}}, function(err,httpResponse,body){
+        if (err === null){
+            // Success!
+            var body = JSON.parse(body);
+            var handle = body.handle;
+            var code = body.code;
+
+            if(code === undefined){
+                console.log('Something went wrong with the oauth shortcode!');
+                return;
+            }
+
+            // Display a popup with the six digit code and instructions.
+            loginModal(code);
+
+            // Start check loop every second until we either get a 403, 404, or 200 response.
+            // Once response is received close the popup window.
+            loginLoop(handle, type);
+
+        } else {
+            console.log(err);
+        }
+    })
+}
+
+// Login Modal
+// This function pop up a modal with the six digit code to approve access.
+function loginModal(code){
+    var modalTemplate = `<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Login Code</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Click the code below to be taken to an authorization page. On the auth page please paste in the code to give Firebot access to run on your account.</p>
+                                        <div class="login-code">Code: <br> <a href="https://mixer.com/go">${code}</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+
+    // Put it in the html and render it.
+    $('body').append(modalTemplate);
+    $('#loginModal').modal(options);
+
+    // When this modal gets hidden, remove it from the html.
+    $('#loginModal').on('hidden.bs.modal', function (e) {
+        $('#loginModal').remove();
+    })
+}
+
+// Login Loop
+// The login loop waits for the user to put in the six digit code, then grabs auth tokens.
+function loginLoop(handle, type){
+
+    var refreshInterval = setInterval(function(){
+        request.get('https://mixer.com/api/v1/oauth/shortcode/check/'+handle, function (error, response, body) {
+            var status = response.statusCode;
+
+            // User denied access or key expired.
+            if(status === 403 || status === 404){
+
+                // Close and remove modal.
+                $('#loginModal').modal('hide');
+
+                // Stop loop
+                clearInterval(refreshInterval);
+            }
+
+            // User Approved Access
+            if(status === 200){
+                var body = JSON.parse(body);
+                var code = body.code;
+
+                // Take the code and send it off for the auth tokens info.
+                request.post({url:'https://mixer.com/api/v1/oauth/token', form: {client_id: options.client_id, code: code, grant_type: "authorization_code"}}, function(err,response,body){
+                    if (err === null){
+                        console.log('Success! Trying to get token...');
+                        var body = JSON.parse(body);
+
+                        // Success!
+                        var accessToken = body.access_token;
+                        var refreshToken = body.refresh_token;
+
+                        // Awesome, we got the auth token. Now to save it out for later.
+                        userInfo(type, accessToken, refreshToken);              
+
+                    } else {
+                        console.log(err);
+                    }
+                })
+
+                // Close and remove modal.
+                $('#loginModal').modal('hide');
+
+                // Stop loop
+                clearInterval(refreshInterval);
+            } else {
+                console.log('error checking shortcode')
+            }
+        })
+    }, 2000);
+
+}
+
+// User Info
+// This function grabs info from the currently logged in user.
+function userInfo(type, accessToken, refreshToken){
+
+    // Request user info and save out everything to auth file.
     request({
-        url: 'https://beam.pro/api/v1/users/current',
+        url: 'https://mixer.com/api/v1/users/current',
         auth: {
-            'bearer': token
+            'bearer': accessToken
         }
     }, function(err, res) {
         var data = JSON.parse(res.body);
 
-        //Load up avatar and such on login page. 
-        login(streamOrBot, data.id, data.channel.id, data.username, token, data.avatarUrl);
+        // Push all to db.
+        dbAuth.push('./'+type+'/username', data.username);
+        dbAuth.push('./'+type+'/userId',data.id);
+        dbAuth.push('./'+type+'/channelId',data.channel.id);
+        dbAuth.push('./'+type+'/avatar',data.avatarUrl);
+        dbAuth.push('./'+type+'/accessToken',accessToken);
+        dbAuth.push('./'+type+'/refreshToken',refreshToken);
 
-        // Close auth window
-        ipcRenderer.send('auth-close');
+        // Style up the login page.
+        loadLogin();
     });
-};
+}
 
-
-// Log in
-// This takes the saved login info and puts things onto the login page such as the user avatar.
-function login(streamOrBot, userID, channelID, username, token, avatar){
-
-    if (streamOrBot == "streamer"){
-        dbAuth.push('/streamer', { "channelID": channelID, "userID":userID, "username": username, "token": token, "avatarUrl": avatar });
-    } else if (streamOrBot == "bot") {
-        dbAuth.push('/bot', { "channelID": channelID, "userID":userID, "username": username, "token": token, "avatarUrl": avatar });
+// Load Login
+// This function styles up the login page if there is info saved for anyone.
+function loadLogin(){
+    // Get streamer info.
+    try {
+        var streamer = dbAuth.getData('/streamer');
+    } catch(error) {
+        console.log('No streamer logged into the app.')
+        var streamer = '';
+    }
+    // Get bot info
+    try {
+        var bot = dbAuth.getData('/bot');
+    } catch(error) {
+        console.log('No bot logged into the app.')
+        var bot = '';
     }
 
-    if(streamOrBot == "streamer"){
-        $('.streamer .username h2').text(username);
-        $('.streamer .avatar img').attr('src', avatar);
-        $('.streamer .loginOrOut button').text('Logout').attr('status', 'logout');
-    } else if (streamOrBot == "bot"){
-        $('.bot .username h2').text(username);
-        $('.bot .avatar img').attr('src', avatar);
-        $('.bot .loginOrOut button').text('Logout').attr('status', 'logout');
+    if (streamer !== ''){
+        var username = dbAuth.getData('/streamer/username');
+        var avatar = dbAuth.getData('/streamer/avatar');
+
+        // Put avatar and username on page.
+        $('.streamer-login h2').text(username);
+        $('.streamer-login img').attr('src', avatar);
+
+        // Flip the login button.
+        $('.streamer-login button').removeClass('btn-success').addClass('btn-danger').text('Logout').attr('action','logout');
+
+    }
+
+    if (bot !== ''){
+        var username = dbAuth.getData('/bot/username');
+        var avatar = dbAuth.getData('/bot/avatar');
+
+        $('.bot-login h2').text(username);
+        $('.bot-login img').attr('src', avatar);
+
+        // Flip the login button.
+        $('.bot-login button').removeClass('btn-success').addClass('btn-danger').text('Logout').attr('action','logout');
     }
 }
 
-// Log out
-// This sets everything back to default and deletes relevant user info.
-function logout(streamOrBot){
-    var defaultAvatar = "./images/placeholders/default.jpg";
+// Refresh Token
+// This will get a new access token when connecting to interactive.
+function refreshToken(){
 
-    if (streamOrBot == "streamer"){
+    console.log('Trying to get refresh tokens...')
+
+    // Refresh streamer token if the streamer is logged in.
+    try{
+        var refresh = dbAuth.getData('./streamer/refreshToken');
+
+        // Send off request for new tokens.
+        request.post({url:'https://mixer.com/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
+            if (err === null){
+                console.log('Refreshing tokens for streamer!');
+                var body = JSON.parse(body);
+
+                // Success!
+                var accessToken = body.access_token;
+                var refreshToken = body.refresh_token;
+
+                // Awesome, we got the auth token. Now to save it out for later.
+                // Push all to db.
+                if (accessToken !== null && accessToken !== undefined && accessToken !== ""){
+                    dbAuth.push('./streamer/accessToken',accessToken);
+                    dbAuth.push('./streamer/refreshToken',refreshToken);     
+                }else{
+                    console.log('something went wrong with streamer refresh token.')
+                    console.log(body);
+                }
+
+                // Refresh bot token if the bot is logged in.
+                try{
+                    var refresh = dbAuth.getData('./bot/refreshToken');
+
+                    // Send off request for new tokens.
+                    request.post({url:'https://mixer.com/api/v1/oauth/token', form: {client_id: options.client_id, grant_type: "refresh_token", refresh_token: refresh}}, function(err,response,body){
+                        if (err === null){
+                            console.log('Refreshing tokens for bot!');
+                            var body = JSON.parse(body);
+
+                            // Success!
+                            var accessToken = body.access_token;
+                            var refreshToken = body.refresh_token;
+
+                            // Awesome, we got the auth token. Now to save it out for later.
+                            // Push all to db.
+                            if (accessToken !== null && accessToken !== undefined && accessToken !== ""){
+                                dbAuth.push('./bot/accessToken',accessToken);
+                                dbAuth.push('./bot/refreshToken',refreshToken);
+                            }else{
+                                console.log('something went wrong with bot refresh token.')
+                                console.log(body);
+                            }
+
+                            // Okay, we have both streamer and bot tokens now. Start up the login process.
+                            ipcRenderer.send('gotRefreshToken');
+
+                        } else {
+                            // There was an error getting the bot token.
+                            console.log(err);
+                        }
+                    })
+                }catch(err){
+                    console.log('No bot logged in. Skipping refresh token.')
+
+                    // We have the streamer token, but there is no bot logged in. So... start up the login process.
+                    ipcRenderer.send('gotRefreshToken');
+                }
+            } else {
+                // There was an error getting the streamer token.
+                console.log(err);
+            }
+        })
+    }catch(err){
+        // The streamer isn't logged in... stop everything.
+        console.log('No streamer logged in. Skipping refresh token.')
+        return;
+    }
+}
+
+// Connect Request
+// Recieves an event from the main process when the global hotkey is hit for connecting.
+ipcRenderer.on('getRefreshToken', function (event, data){
+    var status = $('.connection-text').text();
+            
+    // Send event to render process.
+    if (status === "Connected."){
+        // Disconnect!
+        ipcRenderer.send('mixerInteractive', 'disconnect');
+    } else {
+        // Let's connect! Get new tokens and connect.
+        refreshToken();
+    }
+})
+
+// Logout
+// This will remove user info and log someone out.
+function logout(type){
+    if(type == "streamer"){
+        $('.streamer-login h2').text('Broadcaster');
+        $('.streamer-login img').attr('src','./images/placeholders/default.jpg');
+
+        // Flip login button
+        $('.streamer-login button').addClass('btn-success').removeClass('btn-danger').text('Login').attr('action','login');
+
+        // Delete Info
         dbAuth.delete('/streamer');
-    } else if (streamOrBot == "bot") {
+    } else {
+        $('.bot-login h2').text('Bot');
+        $('.bot-login img').attr('src','./images/placeholders/default.jpg');
+
+        // Flip login button
+        $('.bot-login button').addClass('btn-success').removeClass('btn-danger').text('Login').attr('action','login');
+
+        // Delete Info
         dbAuth.delete('/bot');
     }
-
-    if(streamOrBot == "streamer"){
-        $('.streamer .username h2').text('Streamer');
-        $('.streamer .avatar img').attr('src', defaultAvatar);
-        $('.streamer .loginOrOut button').text('Login').attr('status', 'login');
-    } else if (streamOrBot == "bot") {
-        $('.bot .username h2').text('Bot');
-        $('.bot .avatar img').attr('src', defaultAvatar);
-        $('.bot .loginOrOut button').text('Login').attr('status', 'login');
-    }
-}
-
-// Initial Load
-// Checks to see if there is any login info saved, and if so then load up related ui elements.
-function initialLogin(){
-    try {
-        var streamer = dbAuth.getData("/streamer");
-        var username = streamer.username;
-        var avatar = streamer.avatarUrl;
-        $('.streamer .username h2').text(username);
-        $('.streamer .avatar img').attr('src', avatar);
-        $('.streamer .loginOrOut button').text('Logout').attr('status', 'logout');
-    } catch(error) {
-
-    }
-
-    try {
-        var bot = dbAuth.getData("/bot");
-        var username = bot.username;
-        var avatar = bot.avatarUrl;
-        $('.bot .username h2').text(username);
-        $('.bot .avatar img').attr('src', avatar);
-        $('.bot .loginOrOut button').text('Logout').attr('status', 'logout');
-    } catch(error) {
-
-    }
-}
-
-// Alternative Login External Page 
-// This opens up the external auth page for people with alternative logins.
-function altLoginUrl(){
-
-    // If these options are changed they also need to be adjusted in the lib login.js for the main login process.
-    var options = {
-        client_id: 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9',
-        scopes: ["user:details:self", "interactive:manage:self", "interactive:robot:self", "chat:connect", "chat:bypass_slowchat", "chat:bypass_links", "chat:chat", "chat:whisper"] // Scopes limit access for OAuth tokens.
-    };
-
-    // Piece together URL and send them to auth page. Then redirect to firebottle.tv to copy/paste their token.
-    var url = "https://beam.pro/oauth/authorize?";
-    var authUrl = url + "client_id=" + options.client_id + "&scope=" + options.scopes.join(' ') + "&redirect_uri=http://firebottle.tv/Firebot/oauth" + "&response_type=token";
-
-    shell.openExternal(encodeURI(authUrl));
 }
 
 
-// Alternative Login Finished
-// This take the auth code in the field and kicks off the login process.
-function altLoginFinish(streamOrBot){
-    if(streamOrBot == "streamer"){
-        var token = $('.streamer .auth-code input').val();
+// Click Handlers
+// Handle login buttons
+$( ".loginBtn" ).click(function() {
+    // Get data attr to see which button was clicked.
+    var type = $(this).attr('data');
+    var action = $(this).attr('action');
 
-        // Switch back to regular clean login.
-        $('.streamer .alternative-login').fadeOut('fast', function(){
-            $('.streamer .beam-login').fadeIn('fast');
-        })
-
-        // Start up login process
-        requestBeamData(token, streamOrBot)
-
-        // Clear token field.
-        $('.streamer .auth-code input').val('');
+    // If button is ready for login...
+    if(action == 'login'){
+        login(type);
     } else {
-        var token = $('.bot .auth-code input').val();
-
-        // Switch back to regular clean login.
-        $('.bot .alternative-login').fadeOut('fast', function(){
-            $('.bot .beam-login').fadeIn('fast');
-        })
-
-        // Start up login process
-        requestBeamData(token, streamOrBot)
-
-        // Clear token field.
-        $('.bot .auth-code input').val('');
-    }
-}
-
-
-// Login or out button pressed
-// This checks if button is logging in or out a person or bot. If logging in then it sends message to main process.
-$( ".streamer-login, .bot-login" ).click(function() {
-    var streamOrBot = $(this).attr('data');
-    var status = $(this).attr('status');
-
-    if(status == "login"){
-        ipcRenderer.send('oauth-login', streamOrBot);
-    } else if (status == "logout"){
-        logout(streamOrBot);
+        logout(type);
     }
 });
 
-// Alternative Login Link
-// This checks if the alternative login link has been clicked. 
-// It will open up the auth page on click and swap out the fields on the login page to prepare.
-$( ".streamer .alt-login-link a").click(function() {
-    $('.streamer .beam-login').fadeOut('fast', function(){
-        $('.streamer .alternative-login').fadeIn('fast');
-    })
-});
-$( ".bot .alt-login-link a").click(function() {
-    $('.bot .beam-login').fadeOut('fast', function(){
-        $('.bot .alternative-login').fadeIn('fast');
-    })
-});
 
-// Beam Login Link
-// This checks if the beam login link has been clicked. 
-// This just switches back to the regular login buttons.
-$( ".streamer .beam-login-link a").click(function() {
-    $('.streamer .alternative-login').fadeOut('fast', function(){
-        $('.streamer .beam-login').fadeIn('fast');
-    })
-});
-$( ".bot .beam-login-link a").click(function() {
-    $('.bot .alternative-login').fadeOut('fast', function(){
-        $('.bot .beam-login').fadeIn('fast');
-    })
-});
-
-// Beam Alternative Login Button
-// This checks if the beam login link has been clicked. 
-// This just switches back to the regular login buttons.
-$( ".streamer-alt-login").click(function() {
-    var streamOrBot = $(this).attr('data');
-    altLoginFinish(streamOrBot)
-});
-$( ".bot-alt-login").click(function() {
-    var streamOrBot = $(this).attr('data');
-    altLoginFinish(streamOrBot)
-});
-
-// Get Alternative Auth Code
-// This checks if the get code button was clicked, and if so it opens up the external url to start that process.
-$( ".get-auth-code").click(function() {
-    altLoginUrl();
-});
-
-// Run on App Load
-initialLogin();
+// On App Load
+loadLogin()

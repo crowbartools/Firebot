@@ -1,82 +1,70 @@
-// Requirements
-const JsonDB = require('node-json-db');
 
-// Settings Save
-function settingsSave(){
-    var dbSettings = new JsonDB("./user-settings/settings", true, false);
 
-    var betaOptIn = $('.betaOptIn select option:selected').val();
-    var showTips = $('.showTips select option:selected').val();
-    var mediaCompatibility = $('.image-compatibility select option:selected').val();
-    var gameEmulator = $('.emulation-type select option:selected').val();
-    var mouseClick = $('.mouse-clicks select option:selected').val();
-    var mouseSpeed = $('.mouse-speed input').val();
+// Overlay Compatibility
+$( ".options-overlay-compat-dropdown ul a" ).click(function() {
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    var setting = $(this).text();
 
-    dbSettings.push("/betaOptIn", betaOptIn);
-    dbSettings.push("/showTips", showTips);
-    dbSettings.push("/interactive/mediaCompatibility", mediaCompatibility);
-    dbSettings.push("/interactive/emulator", gameEmulator);
-    dbSettings.push("/interactive/mouse/mouseClick", mouseClick);
-    dbSettings.push("/interactive/mouse/mouseSpeed", mouseSpeed);
+    // Push to db.
+    dbSettings.push('./settings/overlayImages', setting);
 
-    // Fade the button row out and back in again to give the user
-    // a form of feedback that the button(s) has been activated.
-    $(".settings-save-close").fadeOut(500).delay(500).fadeIn(1000);
+    // Change dropdown text
+    $('.options-overlay-compat-dropdown button .dropdown-text').text(setting);
+});
 
-    // Call reload of data from database after saving.
-    settingsReset();
-}
+// Beta Tester
+$( ".options-beta-dropdown ul a" ).click(function() {
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    var setting = $(this).text();
 
-// Settings Reset
-function settingsReset(cancelled){
-    var dbSettings = new JsonDB("./user-settings/settings", true, false);
+    // Push to db.
+    dbSettings.push('./settings/beta', setting);
+
+    // Change dropdown text
+    $('.options-beta-dropdown button .dropdown-text').text(setting);
+});
+
+// Control Emulation
+$( ".options-emulation-dropdown ul a" ).click(function() {
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    var setting = $(this).text();
+
+    // Push to db.
+    dbSettings.push('./settings/emulation', setting);
+
+    // Change dropdown text
+    $('.options-emulation-dropdown button .dropdown-text').text(setting);
+});
+
+// Load Settings
+// This loads up all usersettings into the UI on app load.
+function loadUserSettings(){
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+
+    // Grab settings and set defaults
+    try{
+        var overlayCompat = dbSettings.getData('./settings/overlayImages');
+    }catch(err){
+        var overlayCompat = "OBS";
+    }
 
     try{
-        var betaOptIn = dbSettings.getData('/betaOptIn');
-        var showTips = dbSettings.getData('/showTips');
-        var mediaCompatibility = dbSettings.getData("/interactive/mediaCompatibility");
-        var gameEmulator = dbSettings.getData('/interactive/emulator');
-        var mouseClick = dbSettings.getData('/interactive/mouse/mouseClick');
-        var mouseSpeed = dbSettings.getData('/interactive/mouse/mouseSpeed');
-
-        $('.betaOptIn select option[value='+betaOptIn+']').prop('selected', true);
-        $('.showTips select option[value='+showTips+']').prop('selected', true);
-        $('.image-compatibility select option[value='+mediaCompatibility+']').prop('selected', true);
-        $('.emulation-type select option[value='+gameEmulator+']').prop('selected', true);
-        $('.mouse-clicks select option[value='+mouseClick+']').prop('selected', true);
-        $('.mouse-speed input').val(mouseSpeed);
-
-        // Check if user pushed the cancel button to trigger settingReset or not.
-        // If the button was used, trigger an animation of the button row.
-        if(cancelled == 'cancelled'){
-            $(".settings-save-close").fadeOut(500).delay(500).fadeIn(1000);
-        }
-
-        // Show or hide tip based on settings.
-        if(showTips == "no"){
-            $('.interactive-tip').fadeOut('fast');
-            $('.row').css('margin-bottom','0px');
-        } else {
-            $('.interactive-tip').fadeIn('fast');
-            $('.row').css('margin-bottom','20px');
-        }
-
-    } catch(err){
-        console.log(err);
+        var betaTester = dbSettings.getData('./settings/beta');
+    }catch(err){
+        var betaTester = "No"
     }
+
+    try{
+        var controlEmulation = dbSettings.getData('./settings/emulation');
+    }catch(err){
+        var controlEmulation = "Robotjs"
+    }
+    
+    // Throw into ui
+    $('.options-overlay-compat-dropdown button .dropdown-text').text(overlayCompat);
+    $('.options-beta-dropdown button .dropdown-text').text(betaTester);
+    $('.options-emulation-dropdown button .dropdown-text').text(controlEmulation);
 }
 
-// Settings Save
-// This monitors the save button and saves settings on press.
-$( ".settings-save" ).click(function() {
-    settingsSave();
-});
-
-// Settings Cancel
-// This monitors the cancel button and clears all fields or set them to default.
-$( ".settings-cancel" ).click(function() {
-    settingsReset('cancelled');
-});
-
-// Run on app start
-settingsReset();
+// On App Load
+loadUserSettings();

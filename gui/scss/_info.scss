@@ -1,0 +1,16 @@
+.info-page{
+    .update-wrapper{
+        .latest-update{
+            font-size: 1.75em;
+            margin-top:.3em;
+        }
+        .release-date{
+            margin-bottom: 1em;
+        }
+    }
+}
+
+.updates-badge{
+    background-color: $mixer-highlight;
+    margin-left: 5px;
+}

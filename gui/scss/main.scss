@@ -1,222 +1,87 @@
-@import 'bootstrap';
 @import 'variables';
-@import 'mixins';
-@import 'font-awesome.min';
-@import 'plugins';
-@import 'global';
+@import 'font-awesome';
+@import 'login';
+@import 'interactive';
+@import 'groups';
+@import 'moderation';
+@import 'statusbar';
+@import 'settings';
+@import 'info';
 
-// Start Page
-.start{
-    text-align:center;
-    .logo{
-        border-radius:50%;
-        padding:5px;
-        border: 2px solid white;
-        width:200px;
-        @media screen and (max-width: 500px) {
-            width:50%;
-        }
-    }
+/////////////////
+// GLOBAL STYLES
+////////////////
+
+body {
+  padding-top: 5rem;
+  padding-bottom:4em;
 }
-
-
-// Login Page
-.login{
-    .main-content{
-        text-align:center;
-    }
-    .streamer, .bot{
-        margin-top:5%;
-    }
-    .streamer-avatar, .bot-avatar{
-        border-radius:50%;
-        padding:5px;
-        border: 2px solid white;
-        width:175px;
-    }
+.page-header{
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid $main-color;
 }
-
-// Interactive Board page
-.interactive{
-    .interactive-top{
-        .action-button{
-            justify-content: flex-end;
-        }
-        .interactive-board-select{
-           border-radius: 0px .25rem .25rem 0px;
-           overflow:hidden;
-           text-overflow: ellipsis;
-        }
-    }
-    .interactive-buttons{
-        .cooldown-group-wrap{
-            margin-top:10px;
-
-            .cooldown-group-title{
-                background-color: $highlight-color;
-                padding:5px;
-                border-radius: 10px 10px 0px 0px;
-                border: 1px dotted #ffffff;
-                color: $main-color;
-
-                .cooldown-icon{
-                    display:inline-block;
-                    color: $main-color;
-                    a{
-                        color: $main-color;
-                        &:hover{
-                            color: $non-highlight-color;
-                        }
-                    }
-                }
-                .cooldown-id{
-                    font-weight:bold;
-                }
-                .cooldown-del{
-                    float:right;
-                }
-            }
-
-            .cooldown-group{
-                display:flex;
-                flex-wrap: wrap;
-                list-style: none;
-                margin:0px;
-                padding:5px;
-                border:1px solid $highlight-color;
-                background:rgba(255,255,255,0.3);
-                box-shadow: 3px 3px 10px #000000;
-                border-radius: 0px 0px 10px 10px;
-                min-height:115px;
-            }
-        }
-
-        .iButton{
-            font-family: $font-primary;
-            padding: 5px 5px 5px 5px;
-
-            .button-title{
-                background-color: $highlight-color;
-                padding:1% 2%;
-                width:100%;
-                border-radius: 10px 10px 0px 0px;
-                border: 1px dotted #ffffff;
-                margin: 1%;
-
-                .button-icon{
-                    display:inline-block;
-                    color: $main-color;
-                    a{
-                        color: $main-color;
-                        &:hover{
-                            color: $non-highlight-color;
-                        }
-                    }
-                }
-                .button-id{
-                    font-weight:bold;
-                }
-                .button-del{
-                    float:right;
-                }
-            }
-
-            .button-content{
-                text-align:center;
-                border-radius: 0px 0px 10px 10px;
-                border: 1px dotted #ffffff;
-                background-color:white;
-                margin: 1%;
-                width:100%;
-                padding: 5% 2%;
-                color: $main-color;
-
-                .type{
-                    font-size: .7em;
-                }
-            }
-        }
-    }
-}
-.sidr-inner{
-    padding:10px;
-}
-
-#button-menu{
-    .sidr-inner{
-        .button-section, .multi-button-array input{
-            margin:5px 0px 5px 0px;
-        }
-        .button-general-settings{
-            border-bottom:1px dotted #ffffff;
-            padding-bottom:10px;
-        }
-        .button-specific-settings{
-            padding:10px 0px 10px 0px;
-            margin-bottom:10px;
-        }
-        .game-opposite-select, .game-press-select{
-            overflow-y:scroll;
-        }
-        .game-button-pressed, .game-button-counter{
-            position:relative;
-        }
-        .button-save-close{
-            margin-top:10px;
-            a{
-                color:transparent;
-            }
-        }
-        #media-content{
-            margin-top:10px;
-            .button-section{
-                border-top: 1px dotted #ffffff;
-                padding: 10px 0px 10px 0px;
-            }
-        }
-    }
-}
-.json-import-area{
+.page-content{
     width:100%;
-    height:300px;
+    min-height:500px;
 }
 
-// Settings Page
-.settings{
-    .settings-section{
-        border-bottom: 1px dotted #ffffff;
-        margin-bottom:10px;
-        padding-bottom:10px;
-        display:flex;
-        flex-wrap: wrap;
-    }
-    .setting{
-        padding: 0px 10px 10px 0px;
-        flex-grow:1;
-    }
-    h3{
-        width:100%;
-        margin-bottom:2%;
-        padding-bottom:0px;
-    }
-    label{
-        display:block;
-        padding:1% 1% 1% 0%;
-    }
-    select, input{
-        margin: 1% 0%;
-    }
-    .settings-save-close button{
-        margin-right:5px;
-    }
-}
+// Standard styling for tiles such as interactive board buttons.
+.tile{
+    margin-top:1.5em;
+    color:white;
+    border:1px solid white;
+    text-align:center;
+    font-size:1.2em;
 
-// Updates
-.updates{
-    .latest-update{
+    &.no-top{
+        margin-top:.5em;
+    }
+
+    .tile-header{
+        background-color: $mixer-highlight;
         font-weight:bold;
+        height:2.5em;
+        padding: .5em 0em;
+        border-radius: .5em .5em 0em 0em;
+        .tileID{
+            text-align:left;
+            width: 75%;
+            display:inline;
+            padding:.2em 0em 0em .5em;
+        }
+        .tile-edit{
+            display:inline;
+            width: 25%;
+            .btn{
+                padding:3px 10px;
+            }
+        }
     }
-    .update-notes{
-        margin:10px 0px;
+    .tile-body{
+        background-color: $mixer-main;
+        padding: .5em 0em;
+        border-radius: 0em 0em .5em .5em;
     }
+}
+
+// Standard styling for pill buttons such as the group viewer list and cooldown buttons.
+.pill{
+    background-color: $mixer-main;
+    color:white;
+    margin: 1em 0em;
+    border-radius:.5em;
+    .content{
+        display:inline-block;
+        padding: .5em;
+        font-size:1em;
+        margin:0px;
+    }
+}
+
+/////////////////
+// Helper Classes
+/////////////////
+.top-padding{
+    padding-top:1em;
 }

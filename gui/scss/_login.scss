@@ -1,0 +1,14 @@
+.login-page{
+    .page-content{
+        text-align:center;
+
+        .login-pic{
+            border-radius:.25rem;
+            border: 2px solid $main-color;
+            width: 220px;
+        }
+    }
+    .getting-started{
+        margin-top:1em;
+    }
+}
