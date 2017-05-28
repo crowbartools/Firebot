@@ -32,7 +32,7 @@ function groupModal(){
 function refreshGroups(){
     var dbGroup = new JsonDB("./user-settings/groups", true, true);
 
-    // TODO: Clear groups in ui, then loop through json and add in all groups.
+    // Clear groups in ui, then loop through json and add in all groups.
     $('.interactive-group-container').empty();
 
     // Loop through json.
@@ -41,30 +41,33 @@ function refreshGroups(){
         var uniqueid = getUniqueId();
         var groupName = group;
 
-        var groupTemplate = `
-            <div class="interactive-group-wrap col-sm-12 col-md-3 group${uniqueid}">
-                <div class="interactive-groupheader">
-                <div class="interactive-group-name pull-left">
-                    ${groupName}
-                </div>
-                <div class="interactive-group-controls pull-right">
-                    <div class="edit-interactive-control">
-                    <button class="edit-group btn btn-default" group="${uniqueid}">
-                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                    </button>
+        // Throw the group into the UI unless it is the "banned" usergroup.
+        if(groupName !== "banned"){
+            var groupTemplate = `
+                <div class="interactive-group-wrap col-sm-12 col-md-3 group${uniqueid}">
+                    <div class="interactive-groupheader">
+                    <div class="interactive-group-name pull-left">
+                        ${groupName}
+                    </div>
+                    <div class="interactive-group-controls pull-right">
+                        <div class="edit-interactive-control">
+                        <button class="edit-group btn btn-default" group="${uniqueid}">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </button>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="interactive-group-main">
+                    <div class="description">
+                        Custom Group
+                    </div>
                     </div>
                 </div>
-                </div>
-                <div class="interactive-group-main">
-                <div class="description">
-                    Custom Group
-                </div>
-                </div>
-            </div>
-        `;
+            `;
 
-        // Throw it onto the page.
-        $('.interactive-group-container').append(groupTemplate);
+            // Throw it onto the page.
+            $('.interactive-group-container').append(groupTemplate);
+        }
     }
 
     // Edit group on click.
@@ -135,7 +138,6 @@ function editGroupModal(uniqueid){
 function addGroupUsername(groupUserList){
     var inputData = $('.user-group-addition input').val();
     var username = {username: inputData};
-    console.log(username);
 
     // Add user to list and json.
     groupUserList.add(username);

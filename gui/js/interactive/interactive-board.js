@@ -227,12 +227,16 @@ function editGroupScene(uniqueid){
     try{
         var groups = dbGroup.getData('/');
         for (var group in groups){
-            var template = `
-                <div class="scenegroup-option custom-scenegroup">
-                    <input type="checkbox" group="${group}" aria-label="..."> <span>${group}</span>
-                </div>
-            `;
-            $('.edit-scenegroup-defaults').append(template);
+
+            // Ignore the "banned" group when placing selectable options.
+            if(group !== "banned"){
+                var template = `
+                    <div class="scenegroup-option custom-scenegroup">
+                        <input type="checkbox" group="${group}" aria-label="..."> <span>${group}</span>
+                    </div>
+                `;
+                $('.edit-scenegroup-defaults').append(template);
+            }
         }
     }catch(err){console.log(err)};
 

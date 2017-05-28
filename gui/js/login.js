@@ -112,6 +112,8 @@ function loginLoop(handle, type){
 
                 // Stop loop
                 clearInterval(refreshInterval);
+            } else {
+                console.log('error checking shortcode')
             }
         })
     }, 2000);

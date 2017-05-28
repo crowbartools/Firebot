@@ -80,11 +80,97 @@ function timeStamp() {
     return time.join(":") + " " + suffix;
 }
 
-// Watches for an error event from main process
+// Watches for an event from main process
 ipcRenderer.on('eventlog', function (event, data){
     eventLogger(data);
 })
 
 
+
+// Banned Userlist Kickoff
+// This should be run on app load and initializes the banned user list.
+function bannedUserKickoff(){
+    // See if we have any banned users saved from last time.
+    try{
+        // We have banned users.
+        var dbGroup = new JsonDB("./user-settings/groups", true, true);
+        var bannedSaved = dbGroup.getData('/banned/users');
+        var banned = [];
+        for (user of bannedSaved){
+            banned.push( {username: user} );
+        }
+    }catch(err){
+        // Set default variable for listjs
+        var banned = [];
+    }
+
+    console.log(banned);
+
+    // Set options for the list.
+    var options = {
+        valueNames: ['username'],
+        page: 10,
+        pagination: true,
+        item: '<li class="event-item banned-user-item pill"><p class="content username"></p><button class="btn btn-danger remove-banned-user pull-right">X</button></li>'
+    };
+
+    // Initalize List
+    bannedUserList = new List('banned-users', options, banned);
+
+    // Initialize Remove Button
+    $('.remove-banned-user').click(function() {
+        var username = $(this).closest('.banned-user-item').find('.username').text();
+        bannedUserList.remove('username', username);
+        saveBannedUserlist();
+    });
+}
+
+// Add Banned Username
+// This adds a username to the banned userlist
+function addBannedUsername(){
+    var inputData = $('.banned-username-input').val();
+    var username = {username: inputData};
+
+    // Add user to list and json.
+    bannedUserList.add(username);
+
+    // Clear Field
+    $('.banned-username-input').val('');
+
+    // Initialize Remove Button
+    $('.remove-banned-user').click(function() {
+        var username = $(this).closest('.banned-user-item').find('.username').text();
+        bannedUserList.remove('username', username);
+        saveBannedUserlist();
+    });
+
+    // Push to Banned Group
+    saveBannedUserlist();
+};
+
+// Save List
+// Takes the entire finished list and saves it.
+function saveBannedUserlist(){
+    var dbGroup = new JsonDB("./user-settings/groups", true, true);
+    var users = [];
+
+    // Loop through final list.
+    for(user of bannedUserList.items){
+        users.push( user['_values'].username );
+    }
+
+    // Push to db
+    dbGroup.push('./banned/groupName', 'banned');
+    dbGroup.push('./banned/users', users);
+}
+
+// On Click
+
+// Add in a new banned user on click.
+$( ".add-banned-user" ).click(function() {
+    addBannedUsername();
+});
+
 // ON APP START
 eventLoggerKickoff();
+bannedUserKickoff();

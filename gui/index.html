@@ -141,7 +141,21 @@
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-6">
-                  Banned user list will go here.
+                  <p>Banned Users</p>
+                  <div id="banned-users">
+                    <div class="input-group">
+                      <span class="input-group-btn">
+                        <button class="btn btn-default add-banned-user" type="button">Add</button>
+                      </span>
+                      <input type="text" class="form-control banned-username-input" placeholder="Add User">
+                    </div>
+                    <div class="input-group">
+                      <span class="input-group-addon" id="basic-addon1">Search</span>
+                      <input type="text" class="form-control fuzzy-search" placeholder="Search">
+                    </div><!-- /input-group -->
+                    <ul class="list"></ul>
+                    <ul class="pagination"></ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -512,9 +526,9 @@
 
       </div> <!-- Container -->
 
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="./js/plugins/jquery-3.1.1.slim.min.js"></script>
+    <script src="./js/plugins/jquery.min.js"></script>
+    <script src="./js/plugins/tether.min.js"></script>
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/plugins/jquery-ui.min.js"></script>
     <script src="./js/global.js"></script>
