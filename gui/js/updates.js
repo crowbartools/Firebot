@@ -58,6 +58,7 @@ function updateChecker(){
                 var versionCompare = compareVersions(gitVersion, version);
 
                 // If there is a newer version, show the alert.
+                console.log('Git Version: '+gitVersion+' || App Version: '+version+' || Compare: '+versionCompare);
                 if (versionCompare > 0){
                     // Show the update alert.
                     $('.updates-badge').show().text('!');

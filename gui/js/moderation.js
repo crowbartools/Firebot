@@ -104,8 +104,6 @@ function bannedUserKickoff(){
         var banned = [];
     }
 
-    console.log(banned);
-
     // Set options for the list.
     var options = {
         valueNames: ['username'],
