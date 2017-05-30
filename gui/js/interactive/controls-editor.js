@@ -60,6 +60,7 @@ function addMoreFunctionality(uniqueid){
                         <ul class="dropdown-menu effects-menu">
                             <li><a href="#" uniqueid="${uniqueid}" effect="API Button">API Button</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Change Group">Change Group</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Change Scene">Change Scene</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Chat">Chat</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Cooldown">Cooldown</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Celebration">Celebration</a></li>
@@ -111,6 +112,9 @@ function functionalitySwitcher(uniqueid, effect){
         break;
     case "Change Group":
         var effectTemplate = changeGroupSettings(uniqueid);
+        break;
+    case "Change Scene":
+        var effectTemplate = changeSceneSettings(uniqueid);
         break;
     case "Chat":
         var effectTemplate = chatSettings(uniqueid);
@@ -192,14 +196,18 @@ function changeGroupSettings(uniqueid){
     var effectTemplate = `
         <div class="effect-specific-title"><h4>Which group should I switch the person to?</h4></div>
         <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="change-scene-effect-type">Pick One</span> <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu change-scene-effect-dropdown">
-        </ul>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="change-group-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu change-group-effect-dropdown">
+                <li><a href="#">Pro</a></li>
+                <li><a href="#">Subscribers</a></li>
+                <li><a href="#">Moderators</a></li>
+                <li><a href="#">Staff</a></li>
+            </ul>
         </div>
         <div class="effect-info">
-            This button will move whoever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group.
+            This button will move whoever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group. If no groups are listed, that means you need to create a new custom group.
         </div>
     `;
 
@@ -219,14 +227,132 @@ function changeGroupSettings(uniqueid){
         for (group in groups){
             var name = group;
             var dropdowntemplate = `<li><a href="#">${name}</a></li>`
-            $(".panel"+uniqueid+" .change-scene-effect-dropdown").append(dropdowntemplate);
+            $(".panel"+uniqueid+" .change-group-effect-dropdown").append(dropdowntemplate);
         }
     } catch(err){console.log(err)};
 
     // When an effect is clicked, change the dropdown title.
-    $(".panel"+uniqueid+" .change-scene-effect-dropdown a" ).click(function() {
+    $(".panel"+uniqueid+" .change-group-effect-dropdown a" ).click(function() {
         var text = $(this).text();
-        $(".panel"+uniqueid+" .change-scene-effect-type").text(text);
+        $(".panel"+uniqueid+" .change-group-effect-type").text(text);
+    });
+}
+
+// Change Scene Settings
+// Loads up the settings for the change scene effect type.
+function changeSceneSettings(uniqueid){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Will we be resetting scenes to default or changing them?</h4></div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="change-scene-type-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu change-scene-type-effect-dropdown">
+                <li><a href="#">Change Scenes</a></li>
+                <li><a href="#">Reset Scenes</a></li>
+            </ul>
+        </div>
+        <div class="change-scene-wrap" style="display:none">
+            <div class="effect-specific-title"><h4>Which group(s) should change scenes?</h4></div>
+            <div class="change-scene-effect-group-select">
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="Pro" aria-label="..."> <span>Pro</span>
+                </div>
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="Subscribers" aria-label="..."> <span>Subscribers</span>
+                </div>
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="Moderators" aria-label="..."> <span>Moderators</span>
+                </div>
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="Staff" aria-label="..."> <span>Staff</span>
+                </div>
+            </div>
+            <div class="effect-specific-title"><h4>Which scene should we change to?</h4></div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="change-scene-to-effect-type">Pick One</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu change-scene-to-effect-dropdown"></ul>
+            </div>
+            <div class="effect-info">
+                This button will change the default scene for a group. This means that everyone in that group will get the buttons from whatever scene you select.
+            </div>
+        </div>
+        <div class="reset-scene-wrap" style="display:none">
+            <div class="effect-specific-title"><h4>Which group(s) should we reset?</h4></div>
+            <div class="reset-scene-effect-group-select">
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="Pro" aria-label="..."> <span>Pro</span>
+                </div>
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="Subscribers" aria-label="..."> <span>Subscribers</span>
+                </div>
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="Moderators" aria-label="..."> <span>Moderators</span>
+                </div>
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="Staff" aria-label="..."> <span>Staff</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Put onto the page.
+    $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
+
+    // When the change scene type is picked, show settings if not reset scenes.
+    $(".panel"+uniqueid+" .change-scene-type-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .change-scene-type-effect-type").text(text);
+        if(text !== "Reset Scenes"){
+            $('.change-scene-wrap').show();
+            $('.reset-scene-wrap').hide();
+        } else {
+            $('.change-scene-wrap').hide();
+            $('.reset-scene-wrap').show();
+        }
+    });
+
+    // Load up all custom made groups in the groups select list.
+    var dbGroup = new JsonDB("./user-settings/groups", true, true);
+    try{
+        var groups = dbGroup.getData('/');
+        for (group in groups){
+
+            // Ignore the "banned" group when placing selectable options.
+            if(group !== "banned"){
+                var template = `
+                    <div class="change-scene-effect-group-option custom-change-scene-group">
+                        <input type="checkbox" group="${group}" aria-label="..."> <span>${group}</span>
+                    </div>
+                `;
+                $('.change-scene-effect-group-select, .reset-scene-effect-group-select').append(template);
+            }
+        }
+    }catch(err){console.log(err)};
+
+    // Load up all scenes into the scene dropdown.
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    try{
+        // Get last board name.
+        var gameName = dbSettings.getData('/interactive/lastBoard');
+        // Get settings for last board.
+        var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
+        var scenes = dbControls.getData('./firebot/scenes');
+
+        // Throw scenes onto the page.
+        for(scene in scenes){
+            var template = `<li><a href="#">${scene}</a></li>`;
+            $('.change-scene-to-effect-dropdown').append(template);
+        }
+    } catch(err){console.log(err);};
+
+
+    // When a scene is clicked, change the dropdown title.
+    $(".panel"+uniqueid+" .change-scene-to-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .change-scene-to-effect-type").text(text);
     });
 }
 
@@ -637,8 +763,11 @@ function saveControls(){
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "API Button", "api": apiType, "chatter": chatter});
             break;
         case "Change Group":
-            var sceneChange = $(this).find('.change-scene-effect-type').text();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Group", "scene": sceneChange});
+            var groupChange = $(this).find('.change-group-effect-type').text();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Group", "scene": groupChange});
+            break;
+        case "Change Scene":
+            //TODO
             break;
         case "Chat":
             var chatter = $(this).find('.chat-effect-type').text();
@@ -717,7 +846,10 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' .api-chat-effect-type').text(effect.chatter);
                 break;
             case "Change Group":
-                $('.panel'+uniqueid+' .change-scene-effect-type').text(effect.scene);
+                $('.panel'+uniqueid+' .change-group-effect-type').text(effect.scene);
+                break;
+            case "Change Scene":
+                //TODO
                 break;
             case "Chat":
                 $('.panel'+uniqueid+' .chat-effect-type').text(effect.chatter);
