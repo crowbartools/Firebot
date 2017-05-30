@@ -872,7 +872,30 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' .change-group-effect-type').text(effect.scene);
                 break;
             case "Change Scene":
-                //TODO
+                if ( effect.reset === true){
+                    // We're loading up the reset settings.
+                    $('.change-scene-type-effect-type').text('Reset Scenes');
+                    $('.reset-scene-wrap').show();
+                    $('.change-scene-wrap').hide();
+
+                    // Loop through and check groups.
+                    for (group of effect.groups){
+                        $('.reset-scene-effect-group-option input[group = '+group+']').prop('checked', true);
+                    }
+                } else if (effect.reset === false){
+                    // We're loading up the change scene settings.
+                    $('.change-scene-type-effect-type').text('Change Scenes');
+                    $('.reset-scene-wrap').hide();
+                    $('.change-scene-wrap').show();
+
+                    // Loop through and check groups.
+                    for (group of effect.groups){
+                        $('.change-scene-effect-group-option input[group = '+group+']').prop('checked', true);
+                    }
+
+                    // Change scene select dropdown.
+                    $('.change-scene-to-effect-type').text(effect.scene);
+                }
                 break;
             case "Chat":
                 $('.panel'+uniqueid+' .chat-effect-type').text(effect.chatter);
