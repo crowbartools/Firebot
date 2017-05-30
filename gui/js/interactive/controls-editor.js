@@ -256,6 +256,9 @@ function changeSceneSettings(uniqueid){
             <div class="effect-specific-title"><h4>Which group(s) should change scenes?</h4></div>
             <div class="change-scene-effect-group-select">
                 <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="default" aria-label="..."> <span>Default</span>
+                </div>
+                <div class="change-scene-effect-group-option custom-change-scene-group">
                     <input type="checkbox" group="Pro" aria-label="..."> <span>Pro</span>
                 </div>
                 <div class="change-scene-effect-group-option custom-change-scene-group">
@@ -282,6 +285,9 @@ function changeSceneSettings(uniqueid){
         <div class="reset-scene-wrap" style="display:none">
             <div class="effect-specific-title"><h4>Which group(s) should we reset?</h4></div>
             <div class="reset-scene-effect-group-select">
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="default" aria-label="..."> <span>Default</span>
+                </div>
                 <div class="reset-scene-effect-group-option custom-reset-scene-group">
                     <input type="checkbox" group="Pro" aria-label="..."> <span>Pro</span>
                 </div>
