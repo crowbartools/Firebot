@@ -282,16 +282,16 @@ function changeSceneSettings(uniqueid){
         <div class="reset-scene-wrap" style="display:none">
             <div class="effect-specific-title"><h4>Which group(s) should we reset?</h4></div>
             <div class="reset-scene-effect-group-select">
-                <div class="change-scene-effect-group-option custom-change-scene-group">
+                <div class="reset-scene-effect-group-option custom-reset-scene-group">
                     <input type="checkbox" group="Pro" aria-label="..."> <span>Pro</span>
                 </div>
-                <div class="change-scene-effect-group-option custom-change-scene-group">
+                <div class="reset-scene-effect-group-option custom-reset-scene-group">
                     <input type="checkbox" group="Subscribers" aria-label="..."> <span>Subscribers</span>
                 </div>
-                <div class="change-scene-effect-group-option custom-change-scene-group">
+                <div class="reset-scene-effect-group-option custom-reset-scene-group">
                     <input type="checkbox" group="Moderators" aria-label="..."> <span>Moderators</span>
                 </div>
-                <div class="change-scene-effect-group-option custom-change-scene-group">
+                <div class="reset-scene-effect-group-option custom-reset-scene-group">
                     <input type="checkbox" group="Staff" aria-label="..."> <span>Staff</span>
                 </div>
             </div>
@@ -767,7 +767,30 @@ function saveControls(){
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Group", "scene": groupChange});
             break;
         case "Change Scene":
-            //TODO
+            var changeSceneType = $(this).find('.change-scene-type-effect-type').text();
+            // Change scene or reset scene?
+            if(changeSceneType == "Change Scenes"){
+                // Loop through and grab groups.
+                var changeSceneGroups = [];
+                $(this).find('.change-scene-effect-group-option input').each(function( index ) {
+                    if( $(this).prop('checked') === true ){
+                        changeSceneGroups.push( $(this).attr('group') );
+                    }
+                });
+                // Grab scene to switch to and then push to db.
+                var scene = $('.change-scene-to-effect-type').text();
+                dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Scene", "scene": scene, "groups": changeSceneGroups, "reset": false});
+            } else if (changeSceneType == "Reset Scenes"){
+                // Loop through and grab groups.
+                var resetSceneGroups = [];
+                $(this).find('.reset-scene-effect-group-option input').each(function( index ) {
+                    if( $(this).prop('checked') === true ){
+                        resetSceneGroups.push( $(this).attr('group') );
+                    }
+                });
+                // Push to db.
+                dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Scene", "groups": resetSceneGroups, "reset": true});
+            }
             break;
         case "Chat":
             var chatter = $(this).find('.chat-effect-type').text();
