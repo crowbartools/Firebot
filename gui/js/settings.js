@@ -36,6 +36,18 @@ $( ".options-emulation-dropdown ul a" ).click(function() {
     $('.options-emulation-dropdown button .dropdown-text').text(setting);
 });
 
+// Sounds
+$( ".options-sounds-dropdown ul a" ).click(function() {
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    var setting = $(this).text();
+
+    // Push to db.
+    dbSettings.push('./settings/sounds', setting);
+
+    // Change dropdown text
+    $('.options-sounds-dropdown button .dropdown-text').text(setting);
+});
+
 // Load Settings
 // This loads up all usersettings into the UI on app load.
 function loadUserSettings(){
@@ -59,11 +71,18 @@ function loadUserSettings(){
     }catch(err){
         var controlEmulation = "Robotjs"
     }
-    
+
+    try{
+        var controlSounds = dbSettings.getData('./settings/sounds');
+    }catch(err){
+        var controlSounds = "On"
+    }
+
     // Throw into ui
     $('.options-overlay-compat-dropdown button .dropdown-text').text(overlayCompat);
     $('.options-beta-dropdown button .dropdown-text').text(betaTester);
     $('.options-emulation-dropdown button .dropdown-text').text(controlEmulation);
+    $('.options-sounds-dropdown button .dropdown-text').text(controlSounds);
 }
 
 // On App Load

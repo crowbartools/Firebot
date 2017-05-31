@@ -672,6 +672,23 @@ function clearBoard(){
     $('.interactive-board-container').empty();
 }
 
+// Connection Sounds
+function connectSound(type){
+    if(type == "Online"){
+        var sound = new Howl({
+            src: ["./sounds/online.mp3"],
+            volume: 0.4
+        });
+    } else {
+        var sound = new Howl({
+            src: ["./sounds/offline.mp3"],
+            volume: 0.4
+        });
+    }
+    // Play sound
+    sound.play();
+}
+
 //////////////////////
 // On Click Functions
 /////////////////////
@@ -712,9 +729,28 @@ ipcRenderer.on('connection', function (event, data){
     if(data == "Online"){
         $('.connection-indicator').addClass('online');
         $('.connection-text').text('Connected - Click to Disconnect');
+
+        // See if we should play a sound or not.
+        try{
+            var dbSettings = new JsonDB("./user-settings/settings", true, true);
+            var soundSetting = dbSettings.getData('./settings/sounds');
+            if(soundSetting == "On"){
+                connectSound("Online");
+            }
+        } catch(err){}
+        
     } else {
         $('.connection-indicator').removeClass('online');
         $('.connection-text').text('Disconnected - Click to Launch Board');
+
+        // See if we should play a sound or not.
+        try{
+            var dbSettings = new JsonDB("./user-settings/settings", true, true);
+            var soundSetting = dbSettings.getData('./settings/sounds');
+            if(soundSetting == "On"){
+                connectSound("Offline");
+            }
+        } catch(err){}
     }
 })
 
