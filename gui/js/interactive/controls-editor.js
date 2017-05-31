@@ -207,7 +207,7 @@ function changeGroupSettings(uniqueid){
             </ul>
         </div>
         <div class="effect-info">
-            This button will move whoever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group. If no groups are listed, that means you need to create a new custom group.
+            This button will move whoever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group. If no groups are listed, that means you need to create a new custom group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
         </div>
     `;
 
@@ -279,7 +279,7 @@ function changeSceneSettings(uniqueid){
                 <ul class="dropdown-menu change-scene-to-effect-dropdown"></ul>
             </div>
             <div class="effect-info">
-                This button will change the default scene for a group. This means that everyone in that group will get the buttons from whatever scene you select.
+                This button will change the default scene for a group. This means that everyone in that group will get the buttons from whatever scene you select. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
             </div>
         </div>
         <div class="reset-scene-wrap" style="display:none">
@@ -301,7 +301,11 @@ function changeSceneSettings(uniqueid){
                     <input type="checkbox" group="Staff" aria-label="..."> <span>Staff</span>
                 </div>
             </div>
+            <div class="effect-info">
+                This button will reset any groups you choose back to their default scene. This applies to everyone in the group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
+            </div>
         </div>
+
     `;
 
     // Put onto the page.
