@@ -78,8 +78,6 @@ function createWindow () {
   process.on('uncaughtException', function(error) {
       // Handle the error
       console.error(error);
-      // Log Event
-      renderWindow.webContents.send('error', 'Unhandled error. Double check your board settings.');
   });
 
   // When Quittin.
