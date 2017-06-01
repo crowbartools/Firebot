@@ -803,7 +803,7 @@ function saveControls(){
             } else if (changeSceneType == "Reset Scenes"){
                 // Loop through and grab groups.
                 var resetSceneGroups = [];
-                $(this).find('.reset-scene-effect-group-option input').each(function( index ) {
+                $(this).find('.change-scene-effect-group-option input').each(function( index ) {
                     if( $(this).prop('checked') === true && $(this).is(":visible") ){
                         resetSceneGroups.push( $(this).attr('group') );
                     }
@@ -905,7 +905,7 @@ function loadSettings(controlId, button){
 
                     // Loop through and check groups.
                     for (group of effect.groups){
-                        $('.reset-scene-effect-group-option input[group = '+group+']').prop('checked', true);
+                        $('.change-scene-effect-group-option input[group = '+group+']').prop('checked', true);
                     }
                 } else if (effect.reset === false){
                     // We're loading up the change scene settings.
