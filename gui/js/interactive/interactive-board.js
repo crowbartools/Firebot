@@ -215,7 +215,7 @@ function sceneBuilder(gameName){
             <div class="general-board-settings">
                 <h3>Group Settings</h3>
                 <div class="board-group-defaults">
-                    <p>All of your scenes are listed below. Here you can select which groups you want to use and which scenes they will use as their starting point.</p>
+                    <p>All of your scenes are listed below. Here you can select which groups you want to use and which scenes they will use as their starting point. Groups are only "active" if selected here, otherwise they will not be used.</p>
                     <div class="board-group-defaults-settings clearfix">
                     </div>
                 </div>
