@@ -300,12 +300,15 @@ function boardGroupSettings(scenes){
 
         // Load up already saved settings.
         try{
+            // Loop through saved groups and load them into ui for this scene.
             var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName+'/default');
             for (group of sceneSettings){
-                if(group == "default"){
-                    var group = "Default";
-                }
                 $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
+            }
+
+            // Always put "Default" as a group for the "default" scene
+            if(sceneName == "default"){
+                $('.board-group'+uniqueid+' .board-group-scene-body').prepend('<div class="board-groupscene-group">Default</div>');
             }
         }catch(err){console.log(err)}
 
@@ -378,20 +381,23 @@ function editGroupScene(uniqueid){
         // For each option in the edit modal check to see if it's checked or not.
         $('.scenegroup-option input').each(function(){
             if( $(this).prop('checked') === true ){
-                saveArray.push( $(this).attr('group') );
-
+                if($(this).attr('group') !== "default"){
+                    saveArray.push( $(this).attr('group') );
+                }
+                
                 // Push to db
                 dbControls.push('/firebot/scenes/'+sceneName+'/default', saveArray);
 
                 // Load up new settings
                 try{
+                    // Loop through saved groups and load into the ui.
                     $('.board-group'+uniqueid+' .board-group-scene-body').empty();
                     for (group of saveArray){
-                        if(group == "default"){
-                            var group = "Default";
-                        }
                         $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
                     }
+
+                    // Load "Default" into ui for the "default" scene.
+                    $('.board-group'+uniqueid+' .board-group-scene-body').prepend('<div class="board-groupscene-group">Default</div>');
                 }catch(err){console.log(err)}
 
             }
