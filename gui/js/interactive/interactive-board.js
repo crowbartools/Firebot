@@ -272,7 +272,7 @@ function sceneBuilder(gameName){
 };
 
 // Board General Group Settings
-// This puts all scenes into the general board settings along with a dropdown so you can set defaults.
+// This puts all scenes into the general board settings.
 function boardGroupSettings(scenes){
     var dbControls = getCurrentBoard();
 
@@ -396,8 +396,10 @@ function editGroupScene(uniqueid){
                         $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
                     }
 
-                    // Load "Default" into ui for the "default" scene.
-                    $('.board-group'+uniqueid+' .board-group-scene-body').prepend('<div class="board-groupscene-group">Default</div>');
+                    // Always put "Default" as a group for the "default" scene
+                    if(sceneName == "default"){
+                        $('.board-group'+uniqueid+' .board-group-scene-body').prepend('<div class="board-groupscene-group">Default</div>');
+                    };
                 }catch(err){console.log(err)}
 
             }
