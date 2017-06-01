@@ -783,7 +783,7 @@ function saveControls(){
                 // Loop through and grab groups.
                 var changeSceneGroups = [];
                 $(this).find('.change-scene-effect-group-option input').each(function( index ) {
-                    if( $(this).prop('checked') === true ){
+                    if( $(this).prop('checked') === true && $(this).is(":visible") ){
                         changeSceneGroups.push( $(this).attr('group') );
                     }
                 });
@@ -794,7 +794,7 @@ function saveControls(){
                 // Loop through and grab groups.
                 var resetSceneGroups = [];
                 $(this).find('.reset-scene-effect-group-option input').each(function( index ) {
-                    if( $(this).prop('checked') === true ){
+                    if( $(this).prop('checked') === true && $(this).is(":visible") ){
                         resetSceneGroups.push( $(this).attr('group') );
                     }
                 });
