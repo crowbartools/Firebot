@@ -289,7 +289,9 @@ function changeSceneSettings(uniqueid){
         <div class="reset-scene-wrap" style="display:none">
             <div class="effect-specific-title"><h4>Which group(s) should we reset?</h4></div>
             <div class="reset-scene-effect-group-select">
-
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="default" aria-label="..."> <span>Default</span>
+                </div>
             </div>
             <div class="effect-info">
                 This button will reset any groups you choose back to their default scene. This applies to everyone in the group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
