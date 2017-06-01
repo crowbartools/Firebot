@@ -339,7 +339,7 @@ function buttonBuilder(scenes){
     $( ".playbutton" ).click(function() {
         var button = $(this);
         fireButton( button.attr('control') );
-        button.find('i').removeClass('fa-play-circle').addClass('fa-spinner');
+        button.find('i').removeClass('fa-play-circle').addClass('fa-spinner fa-pulse');
         setTimeout(function(){
             playFinished(button);
         }, 2000);
@@ -349,7 +349,7 @@ function buttonBuilder(scenes){
 // Play Finished
 // This returns the play button back to normal after it becomes a spinner;
 function playFinished(button){
-    button.find('i').removeClass('fa-spinner').addClass('fa-play-circle');
+    button.find('i').removeClass('fa-spinner fa-pulse').addClass('fa-play-circle');
 }
 
 // Add Cooldown Group
