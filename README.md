@@ -1,8 +1,8 @@
 # Firebot
-An app to run various interactive buttons for mixer.com streamers.
+An app to run various interactive buttons for beam.pro streamers.
 
-## Remastered?
-The original Firebot was just a plain js file that I kept building on. This version, the remastered edition, takes what I built and layers it on top of my other project mixerChatPlays. All of this will run as a desktop app and allow people to use a multitude of different types of interactive buttons.
+## What is this?
+Firebot is an app for use by streamers on Beam.pro. It allows any streamer to quickly and easily setup interactive controls for their channel. It supports sound board buttons, api buttons, game controls, and more all on the same interactive board at the same time. This allows any user to have a variety of fun buttons for their audience to interact with at any time.
 
 ## Can I use it now?
 Yes, just head on over to [the releases page](https://github.com/Firebottle/Firebot/releases) and download the newest version!
@@ -12,5 +12,5 @@ This code (everything in the repository) is provided under the GNU General Publi
 
 **Anything using this code must be open source if released, and a copyright credit must point back here.**
 
-![Firebot Screenshot](http://firebottle.tv/Firebot/v1screen/1.png "Firebot")
-![Firebot Screenshot](http://firebottle.tv/Firebot/v1screen/2.png "Firebot")
+![Firebot Screenshot](http://firebottle.tv/Firebot/v2screen/1.JPG "Firebot")
+![Firebot Screenshot](http://firebottle.tv/Firebot/v2screen/2.JPG "Firebot")

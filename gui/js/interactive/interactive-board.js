@@ -45,14 +45,14 @@ function backendBuilder(gameName, gameJson, versionid){
     // Push mixer Json to controls file.
     dbControls.push('/versionid', parseInt(versionid) );
     dbControls.push('/mixer', gameJson);
-    
+
     // Build Firebot controls
     for (var i = 0; i < gameJson.length; i++) {
         var scenename = gameJson[i].sceneID;
         var sceneControls = gameJson[i].controls;
 
         // Loop through controls for this scene.
-        for (var a = 0; a < sceneControls.length; a++) { 
+        for (var a = 0; a < sceneControls.length; a++) {
             var button = sceneControls[a];
 
             // Try to get info for button. If there is nothing it errors out.
@@ -141,7 +141,7 @@ function sceneBuilder(gameName){
     dbSettings.push('/interactive/lastBoard', gameName);
 
     // For every scene in the JSON put in a tab.
-    for (var i = 0; i < scenes.length; i++) { 
+    for (var i = 0; i < scenes.length; i++) {
         $('.interactive-tab-nav').append('<li role="presentation"><a href="#'+i+'-scene" aria-controls="'+i+'-scene" scene="'+scenes[i].sceneID+'" role="tab" data-toggle="tab">'+scenes[i].sceneID+'</a></li>');
         $('.tab-content').append('<div role="tabpanel" class="tab-pane interactive-button-holder" id="'+i+'-scene" scene="'+scenes[i].sceneID+'"></div>');
     }
@@ -165,7 +165,7 @@ function sceneBuilder(gameName){
 
     // Next Step: Start up the button builder
     buttonBuilder(scenes);
-    
+
 };
 
 // Board General Group Settings
@@ -218,7 +218,7 @@ function editGroupScene(uniqueid){
      var dbControls = getCurrentBoard();
      var sceneName = $('.board-group'+uniqueid+' .tileID').text();
 
-    // Clear 
+    // Clear
     $('.custom-scenegroup').remove();
     $('.scenegroup-option input').prop('checked', false);
 
@@ -247,7 +247,7 @@ function editGroupScene(uniqueid){
             $('.scenegroup-option input[group = '+group+']').prop('checked', true);
         }
     }catch(err){}
-    
+
     // Save Scenegroup
     $( ".edit-scenegroup-save" ).off().click(function() {
         var saveArray = [];
@@ -339,7 +339,7 @@ function buttonBuilder(scenes){
     $( ".playbutton" ).click(function() {
         var button = $(this);
         fireButton( button.attr('control') );
-        button.find('i').removeClass('fa-play-circle').addClass('fa-spinner');
+        button.find('i').removeClass('fa-play-circle').addClass('fa-spinner fa-pulse');
         setTimeout(function(){
             playFinished(button);
         }, 2000);
@@ -349,7 +349,7 @@ function buttonBuilder(scenes){
 // Play Finished
 // This returns the play button back to normal after it becomes a spinner;
 function playFinished(button){
-    button.find('i').removeClass('fa-spinner').addClass('fa-play-circle');
+    button.find('i').removeClass('fa-spinner fa-pulse').addClass('fa-play-circle');
 }
 
 // Add Cooldown Group
@@ -525,7 +525,7 @@ function loadCooldownGroups(){
 
     // Clear old groups
     $('.board-cooldown-groups').empty();
-    
+
     // Loop through cooldown groups.
     try{
         var groups = dbControls.getData('./firebot/cooldownGroups');
@@ -610,7 +610,7 @@ function gameSelector(){
             var versionid = dbControls.getData('/versionid');
 
             // Pull new json from mixer.
-            boardBuilder(versionid);        
+            boardBuilder(versionid);
         } catch(err){
             errorLog("Unable to load this board. Try restarting the app.")
         };
@@ -627,7 +627,7 @@ function loadLastBoard(){
         var versionid = dbControls.getData('/versionid');
 
         // Pull new json from mixer.
-        boardBuilder(versionid);        
+        boardBuilder(versionid);
     } catch(err){};
 }
 
