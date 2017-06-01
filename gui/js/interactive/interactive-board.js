@@ -44,7 +44,7 @@ function backendBuilder(gameNameId, gameJsonInfo, versionIdInfo){
     const gameJson = gameJsonInfo;
     const versionid = versionIdInfo
 
-    var dbControls = getCurrentBoard();
+    var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
 
     // Push mixer Json to controls file.
     dbControls.push('/versionid', parseInt(versionid) );
