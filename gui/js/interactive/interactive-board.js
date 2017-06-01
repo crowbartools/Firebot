@@ -302,6 +302,9 @@ function boardGroupSettings(scenes){
         try{
             var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName+'/default');
             for (group of sceneSettings){
+                if(group == "default"){
+                    var group = "Default";
+                }
                 $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
             }
         }catch(err){console.log(err)}
@@ -320,6 +323,9 @@ function boardGroupSettings(scenes){
 function editGroupScene(uniqueid){
      var dbControls = getCurrentBoard();
      var sceneName = $('.board-group'+uniqueid+' .tileID').text();
+
+     // Set unique id for easy editing.
+     $('.edit-scenegroup-defaults').attr('uniqueid', uniqueid);
 
     // Clear 
     $('.custom-scenegroup').remove();
@@ -341,13 +347,27 @@ function editGroupScene(uniqueid){
                 $('.edit-scenegroup-defaults').append(template);
             }
         }
+
+        // If this scene is the default one put in an perma checked default group label.
+        // Then remove the "None" option.
+        if(sceneName == "default"){
+            var template = `
+                <div class="scenegroup-option custom-scenegroup">
+                    <input type="checkbox" group="default" aria-label="..." checked disabled> <span>Default</span>
+                </div>
+            `;
+            $('.edit-scenegroup-defaults').prepend(template);
+
+            // Remove none
+            $('.edit-scenegroup-defaults[uniqueid="'+uniqueid+'"').find('.scenegroup-option input[group="None"]').parent().remove();
+        }
     }catch(err){console.log(err)};
 
     // Load up any existing settings
     try{
         var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName+'/default');
         for (group of sceneSettings){
-            $('.scenegroup-option input[group = '+group+']').prop('checked', true);
+            $('.edit-scenegroup-defaults[uniqueid="'+uniqueid+'"').find('.scenegroup-option input[group = '+group+']').prop('checked', true);
         }
     }catch(err){}
     
@@ -367,6 +387,9 @@ function editGroupScene(uniqueid){
                 try{
                     $('.board-group'+uniqueid+' .board-group-scene-body').empty();
                     for (group of saveArray){
+                        if(group == "default"){
+                            var group = "Default";
+                        }
                         $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
                     }
                 }catch(err){console.log(err)}
