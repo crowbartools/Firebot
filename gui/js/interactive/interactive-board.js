@@ -39,61 +39,164 @@ function boardBuilder(versionid){
 
 // Backend Controls Builder
 // This takes the mixer json and builds out the structure for the controls file.
-function backendBuilder(gameName, gameJson, versionid){
-    var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
+function backendBuilder(gameNameId, gameJsonInfo, versionIdInfo){
+    const gameName = gameNameId;
+    const gameJson = gameJsonInfo;
+    const versionid = versionIdInfo
+
+    var dbControls = getCurrentBoard();
 
     // Push mixer Json to controls file.
     dbControls.push('/versionid', parseInt(versionid) );
     dbControls.push('/mixer', gameJson);
-    
-    // Build Firebot controls
-    for (var i = 0; i < gameJson.length; i++) {
-        var scenename = gameJson[i].sceneID;
-        var sceneControls = gameJson[i].controls;
 
-        // Loop through controls for this scene.
-        for (var a = 0; a < sceneControls.length; a++) { 
-            var button = sceneControls[a];
+    // Cleanup Firebot Controls
+    backendCleanup(dbControls)
+    .then((res) => {
+        // Build Firebot controls
+        for (var i = 0; i < gameJson.length; i++) {
+            var scenename = gameJson[i].sceneID;
+            var sceneControls = gameJson[i].controls;
 
-            // Try to get info for button. If there is nothing it errors out.
-            try{
-                var type = button.kind;
-                if(type == "button"){
-                    try{
-                        var controlID = button.controlID;
-                    }catch(err){}
-                    try{
-                        var text = button.text;
-                    }catch(err){
-                        var text= "None";
+            // Loop through controls for this scene.
+            for (var a = 0; a < sceneControls.length; a++) { 
+                var button = sceneControls[a];
+
+                // Try to get info for button. If there is nothing it errors out.
+                try{
+                    var type = button.kind;
+                    if(type == "button"){
+                        try{
+                            var controlID = button.controlID;
+                        }catch(err){}
+                        try{
+                            var text = button.text;
+                        }catch(err){
+                            var text= "None";
+                        }
+                        try{
+                            var cost = button.cost;
+                        }catch(err){
+                            var cost = 0;
+                        }
                     }
-                    try{
-                        var cost = button.cost;
-                    }catch(err){
-                        var cost = 0;
-                    }
+                    // Push to db
+                    dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
+                    dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
+                    dbControls.push('./firebot/controls/'+controlID+'/text', text);
+                    dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
+                }catch(err){
+                    console.log('Problem getting button info to save to json.')
+                };
+
+                // Setup scenes in Firebot json if they haven't been made yet.
+                try{
+                    dbControls.getData('./firebot/scenes/'+scenename);
+                }catch(err){
+                    dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
+                    dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
                 }
-                // Push to db
-                dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
-                dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
-                dbControls.push('./firebot/controls/'+controlID+'/text', text);
-                dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
-            }catch(err){
-                console.log('Problem getting button info to save to json.')
-            };
-
-            // Setup scenes in Firebot json if they haven't been made yet.
-            try{
-                dbControls.getData('./firebot/scenes/'+scenename);
-            }catch(err){
-                dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
-                dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
             }
         }
-    }
 
-    // Next step, setup the ui using the controls file.
-    sceneBuilder(gameName);
+        // Next step, setup the ui using the controls file.
+        sceneBuilder(gameName);
+    })
+}
+
+// Backend Cleanup
+// This takes the mixer json and compares it against the Firebot json to remove any items no longer needed.
+function backendCleanup(dbControls){
+    return new Promise((resolve, reject) => {
+
+        // Check if Firebot settings exist
+        try{
+
+            // We have saved settings. Time to clean up!
+            var mixerSettings = dbControls.getData('./mixer');
+            var firebotSettings = dbControls.getData('./firebot');
+
+
+            // Make an array containing all of the buttons and scenes from each json so we can compare.
+            var mixerButtonArray = [];
+            var firebotButtonArray = [];
+            var mixerSceneArray = [];
+            var firebotSceneArray = [];
+
+            // Add mixer stuff to mixer arrays for comparison.
+            for(scene of mixerSettings){
+                // Save Scenes
+                var sceneID = scene.sceneID;
+                mixerSceneArray.push(sceneID);
+
+                // Save Buttons
+                var controls = scene.controls;
+                for (control of controls){
+                    var controlID = control.controlID;
+                    mixerButtonArray.push(controlID);
+                }
+            }
+
+            // Add Firebot scenes to firebot array.
+            for (scene in firebotSettings.scenes){
+                firebotSceneArray.push(scene);
+            }
+
+            // Add Firebot buttons to firebot array for comparison.
+            for(control in firebotSettings.controls){
+                firebotButtonArray.push(control);
+            }
+
+            // Filter out all buttons that match. Anything left in the firebotButtonArray no longer exists on the mixer board.
+            firebotButtonArray = firebotButtonArray.filter(val => !mixerButtonArray.includes(val));
+
+            // Filter out all scenes that match. Anything left in the firebotScenenArray no longer exists on the mixer board.
+            firebotSceneArray = firebotSceneArray.filter(val => !mixerSceneArray.includes(val));
+
+            // Remove buttons that are no longer needed.
+            // If a scene was deleted from Mixer, the buttons for that scene should be gone as well.
+            for (button of firebotButtonArray){
+                try{
+                    dbControls.delete('./firebot/controls/'+button);
+                    console.log('Button '+button+' is not on the mixer board. Deleting.');
+
+                    // Go through cooldown groups and remove the button if it is listed there.
+                    for(cooldown in firebotSettings.cooldownGroups){
+                        var cooldownButtons = dbControls.getData('./firebot/cooldownGroups/'+cooldown+'/buttons');
+                        var i = cooldownButtons.length
+                        while (i--) {
+                            if (cooldownButtons[i] == button) {
+                                cooldownButtons.splice(i,1);
+                                console.log('Removing '+button+' from cooldown group '+cooldown+'.');
+                                break;
+                            }
+                        }
+
+                        // Push corrected cooldown array to db.
+                        dbControls.push('./firebot/cooldownGroups/'+cooldown+'/buttons', cooldownButtons);
+                    }
+                }catch(err){
+                    console.log(err);
+                }   
+            }
+
+            // Remove scenes that are no longer needed.
+            for (scene of firebotSceneArray){
+                try{
+                    dbControls.delete('./firebot/scenes/'+scene)
+                    console.log('Scene '+scene+' is not on the mixer board. Deleting.');
+                }catch(err){
+                    console.log(err);
+                }
+            }
+
+            resolve(true);
+        }catch(err){
+            // We don't have any saved settings yet. Resolve this and don't cleanup anything.
+            console.log(err);
+            resolve(true);
+        }
+    })
 }
 
 // UI Controls Builder
