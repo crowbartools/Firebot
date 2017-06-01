@@ -213,9 +213,9 @@ function sceneBuilder(gameName){
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="board-settings">
             <div class="general-board-settings">
-                <h3>General Settings</h3>
+                <h3>Group Settings</h3>
                 <div class="board-group-defaults">
-                    <p>Here you can specify which scenes certain groups use as their "default".</p>
+                    <p>All of your scenes are listed below. Here you can select which groups you want to use and which scenes they will use as their starting point.</p>
                     <div class="board-group-defaults-settings clearfix">
                     </div>
                 </div>
