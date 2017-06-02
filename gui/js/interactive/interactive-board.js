@@ -39,61 +39,168 @@ function boardBuilder(versionid){
 
 // Backend Controls Builder
 // This takes the mixer json and builds out the structure for the controls file.
-function backendBuilder(gameName, gameJson, versionid){
+function backendBuilder(gameNameId, gameJsonInfo, versionIdInfo){
+    const gameName = gameNameId;
+    const gameJson = gameJsonInfo;
+    const versionid = versionIdInfo
+
     var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
 
     // Push mixer Json to controls file.
     dbControls.push('/versionid', parseInt(versionid) );
     dbControls.push('/mixer', gameJson);
-    
-    // Build Firebot controls
-    for (var i = 0; i < gameJson.length; i++) {
-        var scenename = gameJson[i].sceneID;
-        var sceneControls = gameJson[i].controls;
 
-        // Loop through controls for this scene.
-        for (var a = 0; a < sceneControls.length; a++) { 
-            var button = sceneControls[a];
+    // Cleanup Firebot Controls
+    backendCleanup(dbControls)
+    .then((res) => {
+        // Build Firebot controls
+        for (var i = 0; i < gameJson.length; i++) {
+            var scenename = gameJson[i].sceneID;
+            var sceneControls = gameJson[i].controls;
 
-            // Try to get info for button. If there is nothing it errors out.
-            try{
-                var type = button.kind;
-                if(type == "button"){
-                    try{
-                        var controlID = button.controlID;
-                    }catch(err){}
-                    try{
-                        var text = button.text;
-                    }catch(err){
-                        var text= "None";
+            // Loop through controls for this scene.
+            for (var a = 0; a < sceneControls.length; a++) { 
+                var button = sceneControls[a];
+
+                // Try to get info for button. If there is nothing it errors out.
+                try{
+                    var type = button.kind;
+                    if(type == "button"){
+                        try{
+                            var controlID = button.controlID;
+                        }catch(err){}
+                        try{
+                            var text = button.text;
+                        }catch(err){
+                            var text= "None";
+                        }
+                        try{
+                            var cost = button.cost;
+                        }catch(err){
+                            var cost = 0;
+                        }
                     }
-                    try{
-                        var cost = button.cost;
-                    }catch(err){
-                        var cost = 0;
+                    // Push to db
+                    dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
+                    dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
+                    dbControls.push('./firebot/controls/'+controlID+'/text', text);
+                    dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
+                }catch(err){
+                    console.log('Problem getting button info to save to json.')
+                };
+
+                // Setup scenes in Firebot json if they haven't been made yet.
+                try{
+                    dbControls.getData('./firebot/scenes/'+scenename);
+                }catch(err){
+                    dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
+                    if(scenename !== "default"){
+                        dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
+                    } else {
+                        dbControls.push('./firebot/scenes/'+scenename+'/default', []);
                     }
                 }
-                // Push to db
-                dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
-                dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
-                dbControls.push('./firebot/controls/'+controlID+'/text', text);
-                dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
-            }catch(err){
-                console.log('Problem getting button info to save to json.')
-            };
-
-            // Setup scenes in Firebot json if they haven't been made yet.
-            try{
-                dbControls.getData('./firebot/scenes/'+scenename);
-            }catch(err){
-                dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
-                dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
             }
         }
-    }
 
-    // Next step, setup the ui using the controls file.
-    sceneBuilder(gameName);
+        // Next step, setup the ui using the controls file.
+        sceneBuilder(gameName);
+    })
+}
+
+// Backend Cleanup
+// This takes the mixer json and compares it against the Firebot json to remove any items no longer needed.
+function backendCleanup(dbControls){
+    return new Promise((resolve, reject) => {
+
+        // Check if Firebot settings exist
+        try{
+
+            // We have saved settings. Time to clean up!
+            var mixerSettings = dbControls.getData('./mixer');
+            var firebotSettings = dbControls.getData('./firebot');
+
+
+            // Make an array containing all of the buttons and scenes from each json so we can compare.
+            var mixerButtonArray = [];
+            var firebotButtonArray = [];
+            var mixerSceneArray = [];
+            var firebotSceneArray = [];
+
+            // Add mixer stuff to mixer arrays for comparison.
+            for(scene of mixerSettings){
+                // Save Scenes
+                var sceneID = scene.sceneID;
+                mixerSceneArray.push(sceneID);
+
+                // Save Buttons
+                var controls = scene.controls;
+                for (control of controls){
+                    var controlID = control.controlID;
+                    mixerButtonArray.push(controlID);
+                }
+            }
+
+            // Add Firebot scenes to firebot array.
+            for (scene in firebotSettings.scenes){
+                firebotSceneArray.push(scene);
+            }
+
+            // Add Firebot buttons to firebot array for comparison.
+            for(control in firebotSettings.controls){
+                firebotButtonArray.push(control);
+            }
+
+            // Filter out all buttons that match. Anything left in the firebotButtonArray no longer exists on the mixer board.
+            firebotButtonArray = firebotButtonArray.filter(val => !mixerButtonArray.includes(val));
+
+            // Filter out all scenes that match. Anything left in the firebotScenenArray no longer exists on the mixer board.
+            firebotSceneArray = firebotSceneArray.filter(val => !mixerSceneArray.includes(val));
+
+            // Remove buttons that are no longer needed.
+            // If a scene was deleted from Mixer, the buttons for that scene should be gone as well.
+            for (button of firebotButtonArray){
+                try{
+                    dbControls.delete('./firebot/controls/'+button);
+                    console.log('Button '+button+' is not on the mixer board. Deleting.');
+
+                    // Go through cooldown groups and remove the button if it is listed there.
+                    for(cooldown in firebotSettings.cooldownGroups){
+                        var cooldownButtons = dbControls.getData('./firebot/cooldownGroups/'+cooldown+'/buttons');
+                        var i = cooldownButtons.length
+                        while (i--) {
+                            if (cooldownButtons[i] == button) {
+                                cooldownButtons.splice(i,1);
+                                console.log('Removing '+button+' from cooldown group '+cooldown+'.');
+                                break;
+                            }
+                        }
+
+                        // Push corrected cooldown array to db.
+                        dbControls.push('./firebot/cooldownGroups/'+cooldown+'/buttons', cooldownButtons);
+                    }
+                }catch(err){
+                    console.log(err);
+                }   
+            }
+
+            // Remove scenes that are no longer needed.
+            for (scene of firebotSceneArray){
+                try{
+                    dbControls.delete('./firebot/scenes/'+scene)
+                    console.log('Scene '+scene+' is not on the mixer board. Deleting.');
+                }catch(err){
+                    console.log(err);
+                }
+            }
+
+            resolve(true);
+        }catch(err){
+            // We don't have any saved settings yet. Resolve this and don't cleanup anything.
+            console.log(err);
+            resolve(true);
+        }
+    })
 }
 
 // UI Controls Builder
@@ -110,9 +217,9 @@ function sceneBuilder(gameName){
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="board-settings">
             <div class="general-board-settings">
-                <h3>General Settings</h3>
+                <h3>Group Settings</h3>
                 <div class="board-group-defaults">
-                    <p>Here you can specify which scenes certain groups use as their "default".</p>
+                    <p>All of your scenes are listed below. Here you can select which groups you want to use and which scenes they will use as their starting point. Groups are only "active" if selected here, otherwise they will not be used.</p>
                     <div class="board-group-defaults-settings clearfix">
                     </div>
                 </div>
@@ -169,7 +276,7 @@ function sceneBuilder(gameName){
 };
 
 // Board General Group Settings
-// This puts all scenes into the general board settings along with a dropdown so you can set defaults.
+// This puts all scenes into the general board settings.
 function boardGroupSettings(scenes){
     var dbControls = getCurrentBoard();
 
@@ -197,9 +304,15 @@ function boardGroupSettings(scenes){
 
         // Load up already saved settings.
         try{
+            // Loop through saved groups and load them into ui for this scene.
             var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName+'/default');
             for (group of sceneSettings){
                 $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
+            }
+
+            // Always put "Default" as a group for the "default" scene
+            if(sceneName == "default"){
+                $('.board-group'+uniqueid+' .board-group-scene-body').prepend('<div class="board-groupscene-group">Default</div>');
             }
         }catch(err){console.log(err)}
 
@@ -217,6 +330,9 @@ function boardGroupSettings(scenes){
 function editGroupScene(uniqueid){
      var dbControls = getCurrentBoard();
      var sceneName = $('.board-group'+uniqueid+' .tileID').text();
+
+     // Set unique id for easy editing.
+     $('.edit-scenegroup-defaults').attr('uniqueid', uniqueid);
 
     // Clear 
     $('.custom-scenegroup').remove();
@@ -238,13 +354,30 @@ function editGroupScene(uniqueid){
                 $('.edit-scenegroup-defaults').append(template);
             }
         }
+
+        // If this scene is the default one put in an perma checked default group label.
+        // Then remove the "None" option.
+        if(sceneName == "default"){
+            var template = `
+                <div class="scenegroup-option custom-scenegroup">
+                    <input type="checkbox" group="default" aria-label="..." checked disabled> <span>Default</span>
+                </div>
+            `;
+            $('.edit-scenegroup-defaults').prepend(template);
+
+            // Remove none
+            $('.edit-scenegroup-defaults[uniqueid="'+uniqueid+'"').find('.scenegroup-option input[group="None"]').parent().hide();
+        } else {
+            // Show none
+            $('.edit-scenegroup-defaults[uniqueid="'+uniqueid+'"').find('.scenegroup-option input[group="None"]').parent().show();
+        }
     }catch(err){console.log(err)};
 
     // Load up any existing settings
     try{
         var sceneSettings = dbControls.getData('/firebot/scenes/'+sceneName+'/default');
         for (group of sceneSettings){
-            $('.scenegroup-option input[group = '+group+']').prop('checked', true);
+            $('.edit-scenegroup-defaults[uniqueid="'+uniqueid+'"').find('.scenegroup-option input[group = '+group+']').prop('checked', true);
         }
     }catch(err){}
     
@@ -255,17 +388,25 @@ function editGroupScene(uniqueid){
         // For each option in the edit modal check to see if it's checked or not.
         $('.scenegroup-option input').each(function(){
             if( $(this).prop('checked') === true ){
-                saveArray.push( $(this).attr('group') );
-
+                if($(this).attr('group') !== "default"){
+                    saveArray.push( $(this).attr('group') );
+                }
+                
                 // Push to db
                 dbControls.push('/firebot/scenes/'+sceneName+'/default', saveArray);
 
                 // Load up new settings
                 try{
+                    // Loop through saved groups and load into the ui.
                     $('.board-group'+uniqueid+' .board-group-scene-body').empty();
                     for (group of saveArray){
                         $('.board-group'+uniqueid+' .board-group-scene-body').append('<div class="board-groupscene-group">'+group+'</div>');
                     }
+
+                    // Always put "Default" as a group for the "default" scene
+                    if(sceneName == "default"){
+                        $('.board-group'+uniqueid+' .board-group-scene-body').prepend('<div class="board-groupscene-group">Default</div>');
+                    };
                 }catch(err){console.log(err)}
 
             }
@@ -339,7 +480,7 @@ function buttonBuilder(scenes){
     $( ".playbutton" ).click(function() {
         var button = $(this);
         fireButton( button.attr('control') );
-        button.find('i').removeClass('fa-play-circle').addClass('fa-spinner');
+        button.find('i').removeClass('fa-play-circle').addClass('fa-spinner fa-pulse');
         setTimeout(function(){
             playFinished(button);
         }, 2000);
@@ -349,7 +490,7 @@ function buttonBuilder(scenes){
 // Play Finished
 // This returns the play button back to normal after it becomes a spinner;
 function playFinished(button){
-    button.find('i').removeClass('fa-spinner').addClass('fa-play-circle');
+    button.find('i').removeClass('fa-spinner fa-pulse').addClass('fa-play-circle');
 }
 
 // Add Cooldown Group
@@ -672,6 +813,23 @@ function clearBoard(){
     $('.interactive-board-container').empty();
 }
 
+// Connection Sounds
+function connectSound(type){
+    if(type == "Online"){
+        var sound = new Howl({
+            src: ["./sounds/online.mp3"],
+            volume: 0.4
+        });
+    } else {
+        var sound = new Howl({
+            src: ["./sounds/offline.mp3"],
+            volume: 0.4
+        });
+    }
+    // Play sound
+    sound.play();
+}
+
 //////////////////////
 // On Click Functions
 /////////////////////
@@ -712,9 +870,28 @@ ipcRenderer.on('connection', function (event, data){
     if(data == "Online"){
         $('.connection-indicator').addClass('online');
         $('.connection-text').text('Connected - Click to Disconnect');
+
+        // See if we should play a sound or not.
+        try{
+            var dbSettings = new JsonDB("./user-settings/settings", true, true);
+            var soundSetting = dbSettings.getData('./settings/sounds');
+            if(soundSetting == "On"){
+                connectSound("Online");
+            }
+        } catch(err){}
+        
     } else {
         $('.connection-indicator').removeClass('online');
         $('.connection-text').text('Disconnected - Click to Launch Board');
+
+        // See if we should play a sound or not.
+        try{
+            var dbSettings = new JsonDB("./user-settings/settings", true, true);
+            var soundSetting = dbSettings.getData('./settings/sounds');
+            if(soundSetting == "On"){
+                connectSound("Offline");
+            }
+        } catch(err){}
     }
 })
 

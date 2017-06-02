@@ -60,6 +60,7 @@ function addMoreFunctionality(uniqueid){
                         <ul class="dropdown-menu effects-menu">
                             <li><a href="#" uniqueid="${uniqueid}" effect="API Button">API Button</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Change Group">Change Group</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Change Scene">Change Scene</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Chat">Chat</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Cooldown">Cooldown</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Celebration">Celebration</a></li>
@@ -111,6 +112,9 @@ function functionalitySwitcher(uniqueid, effect){
         break;
     case "Change Group":
         var effectTemplate = changeGroupSettings(uniqueid);
+        break;
+    case "Change Scene":
+        var effectTemplate = changeSceneSettings(uniqueid);
         break;
     case "Chat":
         var effectTemplate = chatSettings(uniqueid);
@@ -192,14 +196,15 @@ function changeGroupSettings(uniqueid){
     var effectTemplate = `
         <div class="effect-specific-title"><h4>Which group should I switch the person to?</h4></div>
         <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="change-scene-effect-type">Pick One</span> <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu change-scene-effect-dropdown">
-        </ul>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="change-group-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu change-group-effect-dropdown">
+                <li><a href="#" group="default">Default</a></li>
+            </ul>
         </div>
         <div class="effect-info">
-            This button will move whoever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group.
+            This button will move whoever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group. If no groups are listed, that means you need to create a new custom group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
         </div>
     `;
 
@@ -207,26 +212,167 @@ function changeGroupSettings(uniqueid){
     $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
 
     // Pull in all scenes for selected board.
+    // Then see which groups are using this scene as default. Get those and output to page as a selectable option.
     try{
+        var usedGroups = [];
 
         // Get settings for last board.
-        var dbGroups = new JsonDB("./user-settings/groups", true, true);
+        var dbControls = getCurrentBoard();
+        var scenes = dbControls.getData('./firebot/scenes');
 
-        // Get settings for this button.
-        var groups = dbGroups.getData('/');
-
-        // Loop through scenes and get names.
-        for (group in groups){
-            var name = group;
-            var dropdowntemplate = `<li><a href="#">${name}</a></li>`
-            $(".panel"+uniqueid+" .change-scene-effect-dropdown").append(dropdowntemplate);
+        // Loop through scenes and make array of currently used groups.
+        for(scene in scenes){
+            var defaults = scenes[scene].default;
+            for (item of defaults){
+                if(item !== "None"){
+                    usedGroups.push(item);
+                }
+            }
         }
+
+        // Remove duplicates from array
+        var usedGroups = usedGroups.filter(function(elem, pos) {
+            return usedGroups.indexOf(elem) == pos;
+        })
+
+        // Output to page
+        for (group of usedGroups){
+            var dropdowntemplate = `<li><a href="#">${group}</a></li>`
+            $(".panel"+uniqueid+" .change-group-effect-dropdown").append(dropdowntemplate);
+        }
+
     } catch(err){console.log(err)};
 
     // When an effect is clicked, change the dropdown title.
-    $(".panel"+uniqueid+" .change-scene-effect-dropdown a" ).click(function() {
+    $(".panel"+uniqueid+" .change-group-effect-dropdown a" ).click(function() {
         var text = $(this).text();
-        $(".panel"+uniqueid+" .change-scene-effect-type").text(text);
+        if(text == "Default"){
+            $(".panel"+uniqueid+" .change-group-effect-type").attr('group','default').text(text);
+        } else {
+            $(".panel"+uniqueid+" .change-group-effect-type").attr('group',text).text(text);
+        }  
+    });
+}
+
+// Change Scene Settings
+// Loads up the settings for the change scene effect type.
+function changeSceneSettings(uniqueid){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Will we be resetting scenes to default or changing them?</h4></div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="change-scene-type-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu change-scene-type-effect-dropdown">
+                <li><a href="#">Change Scenes</a></li>
+                <li><a href="#">Reset Scenes</a></li>
+            </ul>
+        </div>
+        <div class="change-scene-wrap" style="display:none">
+            <div class="effect-specific-title"><h4>Which group(s) should change scenes?</h4></div>
+            <div class="change-scene-effect-group-select">
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="default" aria-label="..."> <span>Default</span>
+                </div>
+            </div>
+            <div class="effect-specific-title"><h4>Which scene should we change to?</h4></div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="change-scene-to-effect-type">Pick One</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu change-scene-to-effect-dropdown"></ul>
+            </div>
+            <div class="effect-info">
+                This button will change the default scene for a group. This means that everyone in that group will get the buttons from whatever scene you select. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
+            </div>
+        </div>
+        <div class="reset-scene-wrap" style="display:none">
+            <div class="effect-specific-title"><h4>Which group(s) should we reset?</h4></div>
+            <div class="reset-scene-effect-group-select">
+                <div class="change-scene-effect-group-option custom-change-scene-group">
+                    <input type="checkbox" group="default" aria-label="..."> <span>Default</span>
+                </div>
+            </div>
+            <div class="effect-info">
+                This button will reset any groups you choose back to their default scene. This applies to everyone in the group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
+            </div>
+        </div>
+
+    `;
+
+    // Put onto the page.
+    $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
+
+    // When the change scene type is picked, show settings if not reset scenes.
+    $(".panel"+uniqueid+" .change-scene-type-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .change-scene-type-effect-type").text(text);
+        if(text !== "Reset Scenes"){
+            $('.change-scene-wrap').show();
+            $('.reset-scene-wrap').hide();
+        } else {
+            $('.change-scene-wrap').hide();
+            $('.reset-scene-wrap').show();
+        }
+    });
+
+    // Pull in all scenes for selected board.
+	// Then see which groups are using this scene as default. Get those and output to page as a selectable option.
+    try{
+        var usedGroups = [];
+
+        // Get settings for last board.
+        var dbControls = getCurrentBoard();
+        var scenes = dbControls.getData('./firebot/scenes');
+
+        // Loop through scenes and make array of currently used groups.
+        for(scene in scenes){
+            var defaults = scenes[scene].default;
+            for (item of defaults){
+                if(item !== "None"){
+                    usedGroups.push(item);
+                }
+            }
+        }
+
+        // Remove duplicates from array
+        var usedGroups = usedGroups.filter(function(elem, pos) {
+            return usedGroups.indexOf(elem) == pos;
+        })
+
+        // Output to page
+        for (group of usedGroups){
+            var template = `
+				<div class="change-scene-effect-group-option custom-change-scene-group">
+					<input type="checkbox" group="${group}" aria-label="..."> <span>${group}</span>
+				</div>
+			`;
+			$('.change-scene-effect-group-select, .reset-scene-effect-group-select').append(template);
+        }
+
+    } catch(err){console.log(err)};
+
+    // Load up all scenes into the scene dropdown.
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    try{
+        // Get last board name.
+        var gameName = dbSettings.getData('/interactive/lastBoard');
+        // Get settings for last board.
+        var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
+        var scenes = dbControls.getData('./firebot/scenes');
+
+        // Throw scenes onto the page.
+        for(scene in scenes){
+            var template = `<li><a href="#">${scene}</a></li>`;
+            $('.change-scene-to-effect-dropdown').append(template);
+        }
+    } catch(err){console.log(err);};
+
+
+    // When a scene is clicked, change the dropdown title.
+    $(".panel"+uniqueid+" .change-scene-to-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .change-scene-to-effect-type").text(text);
     });
 }
 
@@ -587,7 +733,10 @@ function gameAutoComplete(){
         "numpad_6",
         "numpad_7",
         "numpad_8",
-        "numpad_9"
+        "numpad_9",
+        "leftmouse",
+        "middlemouse",
+        "rightmouse"
     ];
 
     return availableButtons;
@@ -637,8 +786,34 @@ function saveControls(){
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "API Button", "api": apiType, "chatter": chatter});
             break;
         case "Change Group":
-            var sceneChange = $(this).find('.change-scene-effect-type').text();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Group", "scene": sceneChange});
+            var groupChange = $(this).find('.change-group-effect-type').attr('group');
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Group", "scene": groupChange});
+            break;
+        case "Change Scene":
+            var changeSceneType = $(this).find('.change-scene-type-effect-type').text();
+            // Change scene or reset scene?
+            if(changeSceneType == "Change Scenes"){
+                // Loop through and grab groups.
+                var changeSceneGroups = [];
+                $(this).find('.change-scene-effect-group-option input').each(function( index ) {
+                    if( $(this).prop('checked') === true && $(this).is(":visible") ){
+                        changeSceneGroups.push( $(this).attr('group') );
+                    }
+                });
+                // Grab scene to switch to and then push to db.
+                var scene = $('.change-scene-to-effect-type').text();
+                dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Scene", "scene": scene, "groups": changeSceneGroups, "reset": false});
+            } else if (changeSceneType == "Reset Scenes"){
+                // Loop through and grab groups.
+                var resetSceneGroups = [];
+                $(this).find('.change-scene-effect-group-option input').each(function( index ) {
+                    if( $(this).prop('checked') === true && $(this).is(":visible") ){
+                        resetSceneGroups.push( $(this).attr('group') );
+                    }
+                });
+                // Push to db.
+                dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Change Scene", "groups": resetSceneGroups, "reset": true});
+            }
             break;
         case "Chat":
             var chatter = $(this).find('.chat-effect-type').text();
@@ -717,7 +892,38 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' .api-chat-effect-type').text(effect.chatter);
                 break;
             case "Change Group":
-                $('.panel'+uniqueid+' .change-scene-effect-type').text(effect.scene);
+                var scene = effect.scene;
+                if(scene == "default"){
+                    $('.panel'+uniqueid+' .change-group-effect-type').attr('group', scene).text('Default');
+                } else {
+                    $('.panel'+uniqueid+' .change-group-effect-type').attr('group', scene).text(effect.scene);
+                }
+                break;
+            case "Change Scene":
+                if ( effect.reset === true){
+                    // We're loading up the reset settings.
+                    $('.change-scene-type-effect-type').text('Reset Scenes');
+                    $('.reset-scene-wrap').show();
+                    $('.change-scene-wrap').hide();
+
+                    // Loop through and check groups.
+                    for (group of effect.groups){
+                        $('.change-scene-effect-group-option input[group = '+group+']').prop('checked', true);
+                    }
+                } else if (effect.reset === false){
+                    // We're loading up the change scene settings.
+                    $('.change-scene-type-effect-type').text('Change Scenes');
+                    $('.reset-scene-wrap').hide();
+                    $('.change-scene-wrap').show();
+
+                    // Loop through and check groups.
+                    for (group of effect.groups){
+                        $('.change-scene-effect-group-option input[group = '+group+']').prop('checked', true);
+                    }
+
+                    // Change scene select dropdown.
+                    $('.change-scene-to-effect-type').text(effect.scene);
+                }
                 break;
             case "Chat":
                 $('.panel'+uniqueid+' .chat-effect-type').text(effect.chatter);
