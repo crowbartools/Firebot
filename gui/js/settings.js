@@ -75,7 +75,7 @@ function loadUserSettings(){
     try{
         var controlSounds = dbSettings.getData('./settings/sounds');
     }catch(err){
-        var controlSounds = "On"
+        var controlSounds = "Off"
     }
 
     // Throw into ui
