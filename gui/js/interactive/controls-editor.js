@@ -733,7 +733,10 @@ function gameAutoComplete(){
         "numpad_6",
         "numpad_7",
         "numpad_8",
-        "numpad_9"
+        "numpad_9",
+        "leftmouse",
+        "middlemouse",
+        "rightmouse"
     ];
 
     return availableButtons;
