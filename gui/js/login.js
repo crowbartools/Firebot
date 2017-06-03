@@ -4,12 +4,13 @@ var dbSettings = new JsonDB("./user-settings/settings", true, false);
 var dbAuth = new JsonDB("./user-settings/auth", true, false);
 
 // Options
-var scopes = "user:details:self interactive:manage:self interactive:robot:self chat:connect chat:chat chat:whisper"
+var streamerScopes = "user:details:self interactive:manage:self interactive:robot:self chat:connect chat:chat chat:whisper"
+var botScopes = "chat:connect chat:chat chat:whisper"
 
 
 var authInfo = {
-    clientId: "",
-    clientSecret: "",
+    clientId: "1f83d8d113b080677a2c7e8d81ca028df2a173e908a51046",
+    clientSecret: "2f6b01791e622b069de3adc1870d1587afc10bb6841aa0a2d9dc8c84eed95abb",
     authorizationUrl: "https://mixer.com/oauth/authorize",
     tokenUrl: "https://mixer.com/api/v1/oauth/token",
     useBasicAuthorizationHeader: false,
@@ -20,21 +21,26 @@ var authWindowParams = {
     alwaysOnTop: true,
     autoHideMenuBar: true,
     webPreferences: {
-        nodeIntegration: false
+        nodeIntegration: false,
+        partition: 'default'
     }
 };
 
-const oauthProvider = electronOauth2(authInfo, authWindowParams);
+
+
 
 // Login Kickoff
 function login(type) {
-    oauthProvider.getAccessToken(scopes)
-    .then(token => {
-        userInfo(type, token.access_token, token.refresh_token);
-    }, err => {
-        //error requesting access 
-        console.log(err);
-    })
+    scopes = type == "streamer" ? streamerScopes : botScopes;
+    authWindowParams.webPreferences.partition = type;
+    const oauthProvider = electronOauth2(authInfo, authWindowParams);
+    oauthProvider.getAccessToken({ scope: scopes })
+        .then(token => {
+            userInfo(type, token.access_token, token.refresh_token);
+        }, err => {
+            //error requesting access 
+            console.log(err);
+        })
 }
 
 
@@ -116,8 +122,11 @@ function refreshToken() {
     // Refresh streamer token if the streamer is logged in.
     try {
         var refresh = dbAuth.getData('./streamer/refreshToken');
+        authWindowParams.webPreferences.partition = 'refreshStreamer';
+        var oauthProvider = electronOauth2(authInfo, authWindowParams);
         oauthProvider.refreshToken(refresh)
             .then(token => {
+                
 
                 // Success!
                 var accessToken = token.access_token;
@@ -137,10 +146,11 @@ function refreshToken() {
                 try {
                     var refresh = dbAuth.getData('./bot/refreshToken');
                     oauthProvider.refreshToken(refresh).then(token => {
+                        
 
                         // Success!
-                        var accessToken = body.access_token;
-                        var refreshToken = body.refresh_token;
+                        var accessToken = token.access_token;
+                        var refreshToken = token.refresh_token;
 
                         // Awesome, we got the auth token. Now to save it out for later.
                         // Push all to db.
@@ -149,7 +159,7 @@ function refreshToken() {
                             dbAuth.push('./bot/refreshToken', refreshToken);
                         } else {
                             console.log('something went wrong with bot refresh token.')
-                            console.log(body);
+                            console.log(token);
                         }
 
                         // Okay, we have both streamer and bot tokens now. Start up the login process.
@@ -161,7 +171,7 @@ function refreshToken() {
                         console.log(err);
                     });
                 } catch (err) {
-                    console.log('No bot logged in. Skipping refresh token.')
+                    console.log('No bot logged in. Skipping refresh token.', err)
 
                     // We have the streamer token, but there is no bot logged in. So... start up the login process.
                     ipcRenderer.send('gotRefreshToken');
@@ -174,7 +184,7 @@ function refreshToken() {
             })
     } catch (err) {
         // The streamer isn't logged in... stop everything.
-        console.log('No streamer logged in. Skipping refresh token.')
+        console.log('No streamer logged in. Skipping refresh token.', err)
         return;
     }
 }
