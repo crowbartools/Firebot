@@ -9,8 +9,8 @@ var botScopes = "chat:connect chat:chat chat:whisper"
 
 
 var authInfo = {
-    clientId: "1f83d8d113b080677a2c7e8d81ca028df2a173e908a51046",
-    clientSecret: "2f6b01791e622b069de3adc1870d1587afc10bb6841aa0a2d9dc8c84eed95abb",
+    clientId: "",
+    clientSecret: "",
     authorizationUrl: "https://mixer.com/oauth/authorize",
     tokenUrl: "https://mixer.com/api/v1/oauth/token",
     useBasicAuthorizationHeader: false,
@@ -126,7 +126,7 @@ function refreshToken() {
         var oauthProvider = electronOauth2(authInfo, authWindowParams);
         oauthProvider.refreshToken(refresh)
             .then(token => {
-                
+
 
                 // Success!
                 var accessToken = token.access_token;
@@ -146,7 +146,7 @@ function refreshToken() {
                 try {
                     var refresh = dbAuth.getData('./bot/refreshToken');
                     oauthProvider.refreshToken(refresh).then(token => {
-                        
+
 
                         // Success!
                         var accessToken = token.access_token;
