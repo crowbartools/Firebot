@@ -10,7 +10,6 @@ var botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypa
 
 var authInfo = {
     clientId: "",
-    clientSecret: "",
     authorizationUrl: "https://mixer.com/oauth/authorize",
     tokenUrl: "https://mixer.com/api/v1/oauth/token",
     useBasicAuthorizationHeader: false,
