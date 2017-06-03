@@ -4,8 +4,8 @@ var dbSettings = new JsonDB("./user-settings/settings", true, false);
 var dbAuth = new JsonDB("./user-settings/auth", true, false);
 
 // Options
-var streamerScopes = "user:details:self interactive:manage:self interactive:robot:self chat:connect chat:chat chat:whisper"
-var botScopes = "chat:connect chat:chat chat:whisper"
+var streamerScopes = "user:details:self interactive:manage:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat"
+var botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat"
 
 
 var authInfo = {
