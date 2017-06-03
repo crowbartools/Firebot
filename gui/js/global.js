@@ -33,7 +33,7 @@ $("nav").find("li").on("click", "a", function () {
 
 
 ///////////////
-// Helper 
+// Helper
 //////////////
 
 // Get Current Board
@@ -57,14 +57,25 @@ function getCurrentBoard(){
 function getUniqueId(){
 
     var uniqueid =String.fromCharCode(Math.floor((Math.random()*25)+65));
-    do {                
+    do {
         // between numbers and characters (48 is 0 and 90 is Z (42-48 = 90)
         var ascicode=Math.floor((Math.random()*42)+48);
         if (ascicode<58 || ascicode>64){
             // exclude all chars between : (58) and @ (64)
-           uniqueid+=String.fromCharCode(ascicode);    
-        }                
+           uniqueid+=String.fromCharCode(ascicode);
+        }
     } while (uniqueid.length<32);
 
     return uniqueid;
 }
+
+
+//Create the scripts folder if it doesn't exist
+fs.access("./scripts/", (err) => {
+  if(err) {
+    if(err.code === 'ENOENT') {
+      console.log("Can't find the scripts folder, creating one now...");
+      fs.mkdir("./scripts");
+    }
+  }
+});
