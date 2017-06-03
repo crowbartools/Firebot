@@ -94,7 +94,11 @@ function backendBuilder(gameNameId, gameJsonInfo, versionIdInfo){
                     dbControls.getData('./firebot/scenes/'+scenename);
                 }catch(err){
                     dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
-                    dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
+                    if(scenename !== "default"){
+                        dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
+                    } else {
+                        dbControls.push('./firebot/scenes/'+scenename+'/default', []);
+                    }
                 }
             }
         }
@@ -362,7 +366,10 @@ function editGroupScene(uniqueid){
             $('.edit-scenegroup-defaults').prepend(template);
 
             // Remove none
-            $('.edit-scenegroup-defaults[uniqueid="'+uniqueid+'"').find('.scenegroup-option input[group="None"]').parent().remove();
+            $('.edit-scenegroup-defaults[uniqueid="'+uniqueid+'"').find('.scenegroup-option input[group="None"]').parent().hide();
+        } else {
+            // Show none
+            $('.edit-scenegroup-defaults[uniqueid="'+uniqueid+'"').find('.scenegroup-option input[group="None"]').parent().show();
         }
     }catch(err){console.log(err)};
 
