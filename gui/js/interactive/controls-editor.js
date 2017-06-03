@@ -524,7 +524,16 @@ function gameControlSettings(uniqueid){
             <input type="text" class="form-control" id="game-control-press-setting" aria-describedby="button-press-effect-type">
         </div>
 
-        <div class="effect-specific-title"><h4>Does this button have an opposite button?</h4></div>
+        <div class="effect-specific-title"><h4>Should we press any modifiers also?</h4></div>
+        <div class="button-press-modifier-effect-type">
+            <div class="button-press-modifier-effect-inputs">
+                <input type="checkbox" key="control" aria-label="..."> <span>Control</span> <br>
+                <input type="checkbox" key="alt" aria-label="..."> <span>Alt</span> <br>
+                <input type="checkbox" key="shift" aria-label="..."> <span>Shift</span>
+            </div>
+        </div>
+
+        <div class="effect-specific-title"><h4>Does this button have an opposite button? (EX: Game Movement)</h4></div>
         <div class="input-group game-opposite">
             <span class="input-group-addon" id="opposite-button-effect-type">Opposite</span>
             <input type="text" class="form-control" id="game-control-opposite-setting" aria-describedby="opposite-button-effect-type">
@@ -542,7 +551,7 @@ function gameControlSettings(uniqueid){
         </div>
 
         <div class="effect-info">
-            Note that game controls do not work in every game or with every program. These are emulated controls. If the controls aren't working on your game or app try changing the emulator in the app settings.
+            Game controls do not work in every game or with every program. These are emulated controls. If the controls aren't working on your game or app try changing the emulator in the app settings.
         </div>
     `;
 
@@ -840,7 +849,16 @@ function saveControls(){
             var buttonPress = $(this).find('#game-control-press-setting').val();
             var oppositeButton = $(this).find('#game-control-opposite-setting').val();
             var holdingButton = $(this).find('.holding-button-effect-type').text();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Game Control", "press": buttonPress, "opposite": oppositeButton, "holding": holdingButton});
+
+            // Get modifiers
+            var modifierButtons = [];
+            $(this).find('.button-press-modifier-effect-inputs input').each(function( index ) {
+                if( $(this).prop('checked') === true && $(this).is(":visible") ){
+                    modifierButtons.push( $(this).attr('key') );
+                }
+            });
+
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Game Control", "press": buttonPress, "modifiers": modifierButtons, "opposite": oppositeButton, "holding": holdingButton});
             break;
         case "Play Sound":
             var soundFile = $(this).find('.play-sound-effect-input').val();
@@ -958,6 +976,11 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' #game-control-press-setting').val(effect.press);
                 $('.panel'+uniqueid+' #game-control-opposite-setting').val(effect.opposite);
                 $('.panel'+uniqueid+' .holding-button-effect-type').text(effect.holding);
+                // Loop through and check groups.
+                for (modifier of effect.modifiers){
+                    $('.button-press-modifier-effect-inputs input[key = '+modifier+']').prop('checked', true);
+                }
+
                 break;
             case "Play Sound":
                 $('.panel'+uniqueid+' .play-sound-effect-input').val(effect.file);
