@@ -29,6 +29,7 @@ function playSound(data){
 function showImage(data){
     var filepath = data.filepath;
     var imagePosition = data.imagePosition;
+    var imageSize = data.imageSize;
     var imageDuration = parseInt(data.imageDuration);
 
     var dbSettings = new JsonDB("./user-settings/settings", true, false);
@@ -36,6 +37,9 @@ function showImage(data){
     // Set defaults if they werent filled out.
     if(imagePosition == "" || imagePosition === null){
         var imageX = "Top Middle";
+    }
+    if(imageSize == "" || imageSize === null){
+        var imageSize = "100";
     }
     if(imageDuration == "" || imageDuration === null){
         var imageDuration = 5;
@@ -55,6 +59,6 @@ function showImage(data){
     }
 
     // Compile data and send to overlay.
-    var data = {"event":"image","filepath":filepath, "imagePosition":imagePosition, "imageDuration":imageDuration};
+    var data = {"event":"image","filepath":filepath, "imagePosition":imagePosition, "imageSize":imageSize, "imageDuration":imageDuration};
     broadcast(data);
 }

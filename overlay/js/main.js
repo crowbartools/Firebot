@@ -70,6 +70,7 @@ function showImage(data){
 	var filepath = data.filepath;
 	var filepathNew = filepath.replace(/\\/g,"/");
 	var imagePosition = data.imagePosition;
+	var imageSize = data.imageSize;
 	var imageDuration = parseInt(data.imageDuration) * 1000;
 
 	// Get time in milliseconds to use as class name.
@@ -77,6 +78,7 @@ function showImage(data){
 	var divClass = d.getTime();
 
 	var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:none;"><img src="'+filepathNew+'?time='+divClass+'"></div>';
+	//var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:none;width:'+ imageSize +'%"><img src="'+filepathNew+'?time='+divClass+'" style="width:'+ imageSize +'%;vertical-align: middle;"></div>';
 	
 	$('#wrapper').append(imageFinal);
 	$('.'+divClass+'-image').fadeIn('fast');
