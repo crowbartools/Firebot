@@ -20,6 +20,10 @@ function mixerSocketConnect(){
 			if (event == "celebration"){
 				celebrate(data);
 			}
+
+			if(event == "html"){
+				showHtml(data);
+			}
 		};
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.
@@ -70,13 +74,14 @@ function showImage(data){
 	var filepath = data.filepath;
 	var filepathNew = filepath.replace(/\\/g,"/");
 	var imagePosition = data.imagePosition;
+	var imageSize = data.imageSize;
 	var imageDuration = parseInt(data.imageDuration) * 1000;
 
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
 	var divClass = d.getTime();
 
-	var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:none;"><img src="'+filepathNew+'?time='+divClass+'"></div>';
+	var imageFinal = '<div class="'+divClass+'-image imageOverlayContainer" style="display:none;"><img class="imageOverlay" position="'+imagePosition+'" src="'+filepathNew+'?time='+divClass+'" style="width:'+ imageSize +'%;vertical-align: middle;"></div>';
 	
 	$('#wrapper').append(imageFinal);
 	$('.'+divClass+'-image').fadeIn('fast');
@@ -86,6 +91,26 @@ function showImage(data){
 			$('.'+divClass+'-image').remove();
 		});
 	}, imageDuration);
+}
+
+// Show HTML
+// This will take the data that is sent to it from the GUI and render on the overlay.
+function showHtml(data){
+	// HTML Packet...
+	// {"event":"html","html": HTML, "length": length, "removal": removal}
+    var HTML = data.html;
+    var length = parseInt(data.length) * 1000;
+    var mainClass = data.removal;
+
+	// Throw HTML on page.
+	$('#wrapper').append(HTML);
+
+	// In X time remove it.
+	setTimeout(function(){ 
+		$('.'+mainClass).fadeOut('fast', function(){
+			$('.'+mainClass).remove();
+		});
+	}, length);
 }
 
 // Error Handling & Keep Alive

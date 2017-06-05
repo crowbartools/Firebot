@@ -91,6 +91,9 @@ function loadLogin() {
         var username = dbAuth.getData('/streamer/username');
         var avatar = dbAuth.getData('/streamer/avatar');
 
+        if (avatar == null) {
+            avatar = './images/placeholders/default.jpg'
+        }
         // Put avatar and username on page.
         $('.streamer-login h2').text(username);
         $('.streamer-login img').attr('src', avatar);
@@ -104,6 +107,9 @@ function loadLogin() {
         var username = dbAuth.getData('/bot/username');
         var avatar = dbAuth.getData('/bot/avatar');
 
+        if (avatar == null) {
+            avatar = './images/placeholders/default.jpg'
+        }
         $('.bot-login h2').text(username);
         $('.bot-login img').attr('src', avatar);
 
