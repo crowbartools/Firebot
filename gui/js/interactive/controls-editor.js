@@ -66,6 +66,7 @@ function addMoreFunctionality(uniqueid){
                             <li><a href="#" uniqueid="${uniqueid}" effect="Celebration">Celebration</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Dice">Dice</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Game Control">Game Control</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="HTML">HTML</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Play Sound">Play Sound</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Show Image">Show Image</a></li>
                         </ul>
@@ -131,6 +132,9 @@ function functionalitySwitcher(uniqueid, effect){
         break;
     case "Game Control":
         var effectTemplate = gameControlSettings(uniqueid);
+        break;
+    case "HTML":
+        var effectTemplate = htmlSettings(uniqueid);
         break;
     case "Play Sound":
         var effectTemplate = playSoundSettings(uniqueid);
@@ -619,6 +623,36 @@ function gameControlSettings(uniqueid){
     });
 }
 
+// Show HTML Settings
+// Loads up the settings for the show HTML effect type.
+function htmlSettings(uniqueid){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>What HTML should we output?</h4></div>
+        <div class="input-group">
+            <textarea class="form-control" id="html-effect-html-field" name="text" placeholder="Input your HTML" rows="5" cols="40" width="100%"></textarea>
+        </div><!-- /input-group -->
+
+        <div class="effect-specific-title"><h4>How long should it show?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="html-length-effect-type">Seconds</span>
+            <input type="text" class="form-control" id="html-length-setting" aria-describedby="html-length-effect-type" type="number">
+        </div>
+
+        <div class="effect-specific-title"><h4>What item should I remove after the show timer expires?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="html-selector-effect-type">CSS Class</span>
+            <input type="text" class="form-control" id="html-selector-setting" aria-describedby="html-selector-effect-type">
+        </div>
+
+        <div class="effect-info">
+            This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html". Also, please be aware that this button is EXTREMELY prone to error due to open ended nature.
+        </div>
+    `;
+
+    // Put onto the page.
+    $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate);
+}
+
 // Play Sound Settings
 // Loads up the settings for the play sound effect type.
 function playSoundSettings(uniqueid){
@@ -918,6 +952,12 @@ function saveControls(){
 
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Game Control", "press": buttonPress, "modifiers": modifierButtons, "opposite": oppositeButton, "holding": holdingButton});
             break;
+        case "HTML":
+            var html = $(this).find('#html-effect-html-field').val();
+            var showtime = $(this).find('#html-length-setting').val();
+            var removal = $(this).find('#html-selector-setting').val();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "HTML", "html": html, "length": showtime, "removal": removal});
+            break;
         case "Play Sound":
             var soundFile = $(this).find('.play-sound-effect-input').val();
             var soundVolume = $(this).find('#sound-volume-setting').val();
@@ -1045,6 +1085,11 @@ function loadSettings(controlId, button){
                     $('.button-press-modifier-effect-inputs input[key = '+modifier+']').prop('checked', true);
                 }
 
+                break;
+            case "HTML":
+                $('.panel'+uniqueid+' #html-effect-html-field').val(effect.html);
+                $('.panel'+uniqueid+' #html-length-setting').val(effect.length);
+                $('.panel'+uniqueid+' #html-selector-setting').val(effect.removal);
                 break;
             case "Play Sound":
                 $('.panel'+uniqueid+' .play-sound-effect-input').val(effect.file);
