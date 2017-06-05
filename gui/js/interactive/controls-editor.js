@@ -639,6 +639,15 @@ function showImageSettings(uniqueid){
             </ul>
         </div>
 
+        <div class="effect-specific-title"><h4>How big should it be?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="image-size-type">Size (in percent)</span>
+            <input type="text" class="form-control" id="image-size-setting" aria-describeby="image-size-setting-type" type="number">
+        </div>
+        <div class="effect-info">
+            Just put the number in this field, do not enter the percent sign.
+        </div>
+
         <div class="effect-specific-title"><h4>How long should it show?</h4></div>
         <div class="input-group">
             <span class="input-group-addon" id="image-length-effect-type">Seconds</span>
@@ -868,8 +877,9 @@ function saveControls(){
         case "Show Image":
             var imageFile = $(this).find('.show-image-effect-input').val();
             var imagePlacement = $(this).find('.image-placement-effect-type').text();
+            var imageSize = $(this).find('#image-size-setting').val();
             var imageLength = $(this).find('#image-length-setting').val();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "length": imageLength});
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "size": imageSize, "length": imageLength});
             break;
         }
         i++
@@ -989,6 +999,7 @@ function loadSettings(controlId, button){
             case "Show Image":
                 $('.panel'+uniqueid+' .show-image-effect-input').val(effect.file);
                 $('.panel'+uniqueid+' .image-placement-effect-type').text(effect.position);
+                $('.panel'+uniqueid+' #image-size-setting').val(effect.size);
                 $('.panel'+uniqueid+' #image-length-setting').val(effect.length);
                 break;
             }
