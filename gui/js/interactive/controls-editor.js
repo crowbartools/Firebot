@@ -64,6 +64,7 @@ function addMoreFunctionality(uniqueid){
                             <li><a href="#" uniqueid="${uniqueid}" effect="Chat">Chat</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Cooldown">Cooldown</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Celebration">Celebration</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Dice">Dice</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Game Control">Game Control</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Play Sound">Play Sound</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Show Image">Show Image</a></li>
@@ -124,6 +125,9 @@ function functionalitySwitcher(uniqueid, effect){
         break;
     case "Celebration":
         var effectTemplate = celebrationSettings(uniqueid);
+        break;
+    case "Dice":
+        var effectTemplate = diceSettings(uniqueid);
         break;
     case "Game Control":
         var effectTemplate = gameControlSettings(uniqueid);
@@ -514,6 +518,45 @@ function celebrationSettings(uniqueid){
     });
 }
 
+// Dice Settings
+// Loads up settings for the dice effect type.
+function diceSettings(uniqueid){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Who should I announce the roll as?</h4></div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="dice-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dice-effect-dropdown">
+                <li><a href="#">Streamer</a></li>
+                <li><a href="#">Bot</a></li>
+            </ul>
+        </div>
+        <div class="effect-specific-title"><h4>Who should I whisper this to? Leave blank to broadcast to everyone.</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="dice-whisper-effect-type">Whisper</span>
+            <input type="text" class="form-control" id="dice-whisper-setting" aria-describedby="dice-text-effect-type">
+        </div>
+        <div class="effect-specific-title"><h4>What should I roll?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="dice-text-effect-type">Dice</span>
+            <input type="text" class="form-control" id="dice-text-setting" aria-describedby="dice-text-effect-type" placeholder="2d20 or 2d10+1d12 or 1d10+3">
+        </div>
+        <div class="effect-info">
+            The variable $(user) will be replaced by the username of the person who pressed the button. EX: If Firebottle hits a button you can whisper him.
+        </div>
+    `;
+
+    // Put onto the page.
+    $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
+
+    // When an effect is clicked, change the dropdown title.
+    $( ".panel"+uniqueid+" .dice-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .dice-effect-type").text(text);
+    });
+}
+
 // Game Control Button Settings
 // Loads up the settings for the game control effect type.
 function gameControlSettings(uniqueid){
@@ -854,6 +897,12 @@ function saveControls(){
             var celebrationLength = $(this).find('#celebration-amount-setting').val();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Celebration", "celebration": celebration, "length": celebrationLength});
             break;
+        case "Dice":
+            var chatter = $(this).find('.dice-effect-type').text();
+            var whisper = $(this).find('#dice-whisper-setting').val();
+            var dice = $(this).find('#dice-text-setting').val();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Dice", "chatter": chatter, "dice": dice, "whisper": whisper});
+            break;
         case "Game Control":
             var buttonPress = $(this).find('#game-control-press-setting').val();
             var oppositeButton = $(this).find('#game-control-opposite-setting').val();
@@ -981,6 +1030,11 @@ function loadSettings(controlId, button){
             case "Celebration":
                 $('.panel'+uniqueid+' .celebrate-effect-type').text(effect.celebration);
                 $('.panel'+uniqueid+' #celebration-amount-setting').val(effect.length);
+                break;
+            case "Dice":
+                $('.panel'+uniqueid+' .dice-effect-type').text(effect.chatter);
+                $('.panel'+uniqueid+' #dice-text-setting').val(effect.dice);
+                $('.panel'+uniqueid+' #dice-whisper-setting').val(effect.whisper);
                 break;
             case "Game Control":
                 $('.panel'+uniqueid+' #game-control-press-setting').val(effect.press);

@@ -46,6 +46,7 @@
     "random-puppy": "^1.1.0",
     "request": "^2.81.0",
     "robotjs": "^0.4.7",
+    "roll": "^1.2.0",
     "validator": "^7.0.0",
     "ws": "^2.3.1"
   }
