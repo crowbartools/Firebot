@@ -127,10 +127,12 @@ function editGroupModal(uniqueid){
     $('#edit-group-modal').modal('toggle');
 
     // Initialize Remove Button
-    $('.remove-group-user').click(function() {
-        var username = $(this).closest('.group-item').find('.username').text();
-        groupUserList.remove('username', username);
-    });
+    groupUserList.on('updated', function(){
+        $('.remove-group-user').click(function() {
+            var username = $(this).closest('.group-item').find('.username').text();
+            groupUserList.remove('username', username);
+        });
+    })
 }
 
 // Add Username
@@ -144,12 +146,6 @@ function addGroupUsername(groupUserList){
 
     // Clear Field
     $('.user-group-addition input').val('');
-
-    // Initialize Remove Button
-    $('.remove-group-user').click(function() {
-        var username = $(this).closest('.group-item').find('.username').text();
-        groupUserList.remove('username', username);
-    });
 };
 
 // Save List
