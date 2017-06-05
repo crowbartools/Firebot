@@ -77,8 +77,7 @@ function showImage(data){
 	var d = new Date();
 	var divClass = d.getTime();
 
-	var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:none;"><img src="'+filepathNew+'?time='+divClass+'"></div>';
-	//var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:none;width:'+ imageSize +'%"><img src="'+filepathNew+'?time='+divClass+'" style="width:'+ imageSize +'%;vertical-align: middle;"></div>';
+	var imageFinal = '<div class="'+divClass+'-image imageOverlayContainer" style="display:none;"><img class="imageOverlay" position="'+imagePosition+'" src="'+filepathNew+'?time='+divClass+'" style="width:'+ imageSize +'%;vertical-align: middle;"></div>';
 	
 	$('#wrapper').append(imageFinal);
 	$('.'+divClass+'-image').fadeIn('fast');
