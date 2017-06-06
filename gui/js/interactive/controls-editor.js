@@ -47,9 +47,9 @@ function addMoreFunctionality(uniqueid){
         (dbSettings.getData('./settings/runCustomScripts') === true);
       if(runCustomScripts) {
         customScriptOptionHtml = 
-          "<li><a href="#" uniqueid="${uniqueid}" effect="Custom Script">Custom Script</a></li>"
+          `<li><a href="#" uniqueid="${uniqueid}" effect="Custom Script">Custom Script</a></li>`
       }
-    } catch {}
+    } catch(err) {}
 
     // Build our template.
     var panelTemplate = `
@@ -158,11 +158,11 @@ function functionalitySwitcher(uniqueid, effect){
 function customScriptSettings(uniqueid) {
   var files = fs.readdirSync("./scripts/");
 
-  var jsFileList = "";
+  var jsFileList = '';
   for(var i in files) {
-    var fileName = files[i];
-    if(fileName.trim().toLowerCase().endsWith(".js")) {
-      jsFileList =+ "<li><a href="#">" + fileName +"</a></li>";
+    var fileName = files[i].trim();
+    if(fileName.toLowerCase().endsWith(".js")) {
+      jsFileList =+ '<li><a href="#">' + fileName + '</a></li>';
     }
   }
   
@@ -172,17 +172,13 @@ function customScriptSettings(uniqueid) {
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="script-type">Pick One</span> <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu script-dropdown">
-      `
-        + jsFileList +
-      `
-      </ul>
+      <ul class="dropdown-menu script-dropdown">${jsFileList}</ul>
       </div>
-      <div class="effect-info" style="color:red">
+      <div class="effect-info">
           Place scripts in the "scripts" folder of the Firebot directory
       </div>
       <div class="effect-info" style="color:red">
-          Warning: <strong>Only</strong> use scripts from sources you absolutely trust!
+          <strong>Warning:</strong> Only use scripts from sources you absolutely trust!
       </div>
   `;
   

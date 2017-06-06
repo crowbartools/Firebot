@@ -53,10 +53,6 @@ $( ".options-customscript-dropdown ul a" ).click(function() {
     var dbSettings = new JsonDB("./user-settings/settings", true, true);
     var setting = $(this).text();
 
-
-
-    
-    return runCustomScripts;
     // Push to db.
     dbSettings.push('./settings/runCustomScripts', (setting == 'On'));
 
