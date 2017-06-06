@@ -861,10 +861,18 @@ function saveControls(){
     var sparkcost = $('.settings-sparkcost input').val();
     var cooldown = $('.settings-cooldown input').val();
 
-    // TO DO: Push new values to mixer.
+    // TO DO: Push new values to mixer for sparkcost and button text.
+
+    // Make sure we don't lose any settings that are set in places other than the individual button settings.
+    // Ex: Cooldown Groups
+    try{
+        var cooldownGroup = dbControls.getData('./firebot/controls/'+controlID+'/cooldownGroup');
+    }catch(err){
+        var cooldownGroup = "";
+    }
 
     // Push new values to settings.
-    dbControls.push('./firebot/controls/'+controlID, {"controlId": controlID, "text": buttontext, "cost": sparkcost, "cooldown": cooldown});
+    dbControls.push('./firebot/controls/'+controlID, {"controlId": controlID, "text": buttontext, "cost": sparkcost, "cooldown": cooldown, "cooldownGroup": cooldownGroup});
 
     // Clear all previously saved effects.
     dbControls.delete('./firebot/controls/'+controlID+'/effects');
