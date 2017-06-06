@@ -8,6 +8,7 @@ const {ipcMain} = require('electron')
 
 const path = require('path')
 const url = require('url')
+const fs = require('fs')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -52,6 +53,18 @@ function createWindow () {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', function(){
+    
+    // Create the scripts folder if it doesn't exist
+    fs.access("./scripts/", (err) => {
+      if(err) {
+        //ENOENT means Error NO ENTity found, aka the folder doesn't exist.
+        if(err.code === 'ENOENT') {
+          console.log("Can't find the scripts folder, creating one now...");
+          fs.mkdir("./scripts");
+        }
+      }
+    });
+    
     createWindow()
     renderWindow.webContents.on('did-finish-load', function() {
         renderWindow.show();

@@ -70,12 +70,3 @@ function getUniqueId(){
 }
 
 
-//Create the scripts folder if it doesn't exist
-fs.access("./scripts/", (err) => {
-  if(err) {
-    if(err.code === 'ENOENT') {
-      console.log("Can't find the scripts folder, creating one now...");
-      fs.mkdir("./scripts");
-    }
-  }
-});

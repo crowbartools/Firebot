@@ -38,7 +38,18 @@ function editButton(controlId){
 // This button adds another pane to the settings menu.
 function addMoreFunctionality(uniqueid){
     // Collapse other panels.
-    $('.collapse').collapse()
+    $('.collapse').collapse();
+    
+    var customScriptOptionHtml = "";
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    try{
+    	var runCustomScripts = 
+        (dbSettings.getData('./settings/runCustomScripts') === true);
+      if(runCustomScripts) {
+        customScriptOptionHtml = 
+          "<li><a href="#" uniqueid="${uniqueid}" effect="Custom Script">Custom Script</a></li>"
+      }
+    } catch {}
 
     // Build our template.
     var panelTemplate = `
@@ -67,6 +78,8 @@ function addMoreFunctionality(uniqueid){
                             <li><a href="#" uniqueid="${uniqueid}" effect="Game Control">Game Control</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Play Sound">Play Sound</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Show Image">Show Image</a></li>
+                            ` + customScriptOptionHtml +
+                            `
                         </ul>
                     </div>
                     <div class="effect-settings-panel">
@@ -134,7 +147,52 @@ function functionalitySwitcher(uniqueid, effect){
     case "Show Image":
         var effectTemplate = showImageSettings(uniqueid);
         break;
+    case "Custom Script":
+        customScriptSettings(uniqueid);
+        break;
     }
+}
+
+// Custom Script Button Settings
+// Loads up the settings for custom scripts
+function customScriptSettings(uniqueid) {
+  var files = fs.readdirSync("./scripts/");
+
+  var jsFileList = "";
+  for(var i in files) {
+    var fileName = files[i];
+    if(fileName.trim().toLowerCase().endsWith(".js")) {
+      jsFileList =+ "<li><a href="#">" + fileName +"</a></li>";
+    }
+  }
+  
+  var effectTemplate = `
+      <div class="effect-specific-title"><h4>Which script would you like to use?</h4></div>
+      <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="script-type">Pick One</span> <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu script-dropdown">
+      `
+        + jsFileList +
+      `
+      </ul>
+      </div>
+      <div class="effect-info" style="color:red">
+          Place scripts in the "scripts" folder of the Firebot directory
+      </div>
+      <div class="effect-info" style="color:red">
+          Warning: <strong>Only</strong> use scripts from sources you absolutely trust!
+      </div>
+  `;
+  
+  $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
+
+  // When an effect is clicked, change the dropdown title.
+  $( ".panel"+uniqueid+" .script-dropdown a" ).click(function() {
+      var text = $(this).text();
+      $(".panel"+uniqueid+" .script-type").text(text);
+  });
 
 }
 

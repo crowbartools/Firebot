@@ -3,3 +3,5 @@ node_modules
 dist
 user-settings
 app-settings
+scripts
+test.js
