@@ -864,15 +864,21 @@ function saveControls(){
     // TO DO: Push new values to mixer for sparkcost and button text.
 
     // Make sure we don't lose any settings that are set in places other than the individual button settings.
-    // Ex: Cooldown Groups
+    // Check for pre-existing Cooldown Groups
     try{
         var cooldownGroup = dbControls.getData('./firebot/controls/'+controlID+'/cooldownGroup');
     }catch(err){
         var cooldownGroup = "";
     }
+    // Check for pre-existing Scenes
+    try{
+        var scene = dbControls.getData('./firebot/controls/'+controlID+'/scene');
+    }catch(err){
+        var scene= "default";
+    }
 
     // Push new values to settings.
-    dbControls.push('./firebot/controls/'+controlID, {"controlId": controlID, "text": buttontext, "cost": sparkcost, "cooldown": cooldown, "cooldownGroup": cooldownGroup});
+    dbControls.push('./firebot/controls/'+controlID, {"controlId": controlID, "text": buttontext, "cost": sparkcost, "scene": scene, "cooldown": cooldown, "cooldownGroup": cooldownGroup});
 
     // Clear all previously saved effects.
     dbControls.delete('./firebot/controls/'+controlID+'/effects');
