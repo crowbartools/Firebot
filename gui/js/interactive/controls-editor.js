@@ -75,7 +75,9 @@ function addMoreFunctionality(uniqueid){
                             <li><a href="#" uniqueid="${uniqueid}" effect="Chat">Chat</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Cooldown">Cooldown</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Celebration">Celebration</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Dice">Dice</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Game Control">Game Control</a></li>
+                            <li><a href="#" uniqueid="${uniqueid}" effect="HTML">HTML</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Play Sound">Play Sound</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Show Image">Show Image</a></li>
                             ` + customScriptOptionHtml +
@@ -138,8 +140,14 @@ function functionalitySwitcher(uniqueid, effect){
     case "Celebration":
         var effectTemplate = celebrationSettings(uniqueid);
         break;
+    case "Dice":
+        var effectTemplate = diceSettings(uniqueid);
+        break;
     case "Game Control":
         var effectTemplate = gameControlSettings(uniqueid);
+        break;
+    case "HTML":
+        var effectTemplate = htmlSettings(uniqueid);
         break;
     case "Play Sound":
         var effectTemplate = playSoundSettings(uniqueid);
@@ -568,6 +576,45 @@ function celebrationSettings(uniqueid){
     });
 }
 
+// Dice Settings
+// Loads up settings for the dice effect type.
+function diceSettings(uniqueid){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>Who should I announce the roll as?</h4></div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="dice-effect-type">Pick One</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dice-effect-dropdown">
+                <li><a href="#">Streamer</a></li>
+                <li><a href="#">Bot</a></li>
+            </ul>
+        </div>
+        <div class="effect-specific-title"><h4>Who should I whisper this to? Leave blank to broadcast to everyone.</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="dice-whisper-effect-type">Whisper</span>
+            <input type="text" class="form-control" id="dice-whisper-setting" aria-describedby="dice-text-effect-type">
+        </div>
+        <div class="effect-specific-title"><h4>What should I roll?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="dice-text-effect-type">Dice</span>
+            <input type="text" class="form-control" id="dice-text-setting" aria-describedby="dice-text-effect-type" placeholder="2d20 or 2d10+1d12 or 1d10+3">
+        </div>
+        <div class="effect-info">
+            The variable $(user) will be replaced by the username of the person who pressed the button. EX: If Firebottle hits a button you can whisper him.
+        </div>
+    `;
+
+    // Put onto the page.
+    $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
+
+    // When an effect is clicked, change the dropdown title.
+    $( ".panel"+uniqueid+" .dice-effect-dropdown a" ).click(function() {
+        var text = $(this).text();
+        $(".panel"+uniqueid+" .dice-effect-type").text(text);
+    });
+}
+
 // Game Control Button Settings
 // Loads up the settings for the game control effect type.
 function gameControlSettings(uniqueid){
@@ -578,7 +625,16 @@ function gameControlSettings(uniqueid){
             <input type="text" class="form-control" id="game-control-press-setting" aria-describedby="button-press-effect-type">
         </div>
 
-        <div class="effect-specific-title"><h4>Does this button have an opposite button?</h4></div>
+        <div class="effect-specific-title"><h4>Should we press any modifiers also?</h4></div>
+        <div class="button-press-modifier-effect-type">
+            <div class="button-press-modifier-effect-inputs">
+                <input type="checkbox" key="control" aria-label="..."> <span>Control</span> <br>
+                <input type="checkbox" key="alt" aria-label="..."> <span>Alt</span> <br>
+                <input type="checkbox" key="shift" aria-label="..."> <span>Shift</span>
+            </div>
+        </div>
+
+        <div class="effect-specific-title"><h4>Does this button have an opposite button? (EX: Game Movement)</h4></div>
         <div class="input-group game-opposite">
             <span class="input-group-addon" id="opposite-button-effect-type">Opposite</span>
             <input type="text" class="form-control" id="game-control-opposite-setting" aria-describedby="opposite-button-effect-type">
@@ -596,7 +652,7 @@ function gameControlSettings(uniqueid){
         </div>
 
         <div class="effect-info">
-            Note that game controls do not work in every game or with every program. These are emulated controls. If the controls aren't working on your game or app try changing the emulator in the app settings.
+            Game controls do not work in every game or with every program. These are emulated controls. If the controls aren't working on your game or app try changing the emulator in the app settings.
         </div>
     `;
 
@@ -619,6 +675,36 @@ function gameControlSettings(uniqueid){
         var text = $(this).text();
         $(".panel"+uniqueid+" .holding-button-effect-type").text(text);
     });
+}
+
+// Show HTML Settings
+// Loads up the settings for the show HTML effect type.
+function htmlSettings(uniqueid){
+    var effectTemplate = `
+        <div class="effect-specific-title"><h4>What HTML should we output?</h4></div>
+        <div class="input-group">
+            <textarea class="form-control" id="html-effect-html-field" name="text" placeholder="Input your HTML" rows="5" cols="40" width="100%"></textarea>
+        </div><!-- /input-group -->
+
+        <div class="effect-specific-title"><h4>How long should it show?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="html-length-effect-type">Seconds</span>
+            <input type="text" class="form-control" id="html-length-setting" aria-describedby="html-length-effect-type" type="number">
+        </div>
+
+        <div class="effect-specific-title"><h4>What item should I remove after the show timer expires?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="html-selector-effect-type">CSS Class</span>
+            <input type="text" class="form-control" id="html-selector-setting" aria-describedby="html-selector-effect-type">
+        </div>
+
+        <div class="effect-info">
+            This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html". Also, please be aware that this button is EXTREMELY prone to error due to open ended nature.
+        </div>
+    `;
+
+    // Put onto the page.
+    $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate);
 }
 
 // Play Sound Settings
@@ -682,6 +768,15 @@ function showImageSettings(uniqueid){
                 <li><a href="#">Bottom Middle</a></li>
                 <li><a href="#">Bottom Right</a></li>
             </ul>
+        </div>
+
+        <div class="effect-specific-title"><h4>How big should it be?</h4></div>
+        <div class="input-group">
+            <span class="input-group-addon" id="image-size-type">Size (in percent)</span>
+            <input type="text" class="form-control" id="image-size-setting" aria-describeby="image-size-setting-type" type="number">
+        </div>
+        <div class="effect-info">
+            Just put the number in this field, do not enter the percent sign.
         </div>
 
         <div class="effect-specific-title"><h4>How long should it show?</h4></div>
@@ -820,10 +915,24 @@ function saveControls(){
     var sparkcost = $('.settings-sparkcost input').val();
     var cooldown = $('.settings-cooldown input').val();
 
-    // TO DO: Push new values to mixer.
+    // TO DO: Push new values to mixer for sparkcost and button text.
+
+    // Make sure we don't lose any settings that are set in places other than the individual button settings.
+    // Check for pre-existing Cooldown Groups
+    try{
+        var cooldownGroup = dbControls.getData('./firebot/controls/'+controlID+'/cooldownGroup');
+    }catch(err){
+        var cooldownGroup = "";
+    }
+    // Check for pre-existing Scenes
+    try{
+        var scene = dbControls.getData('./firebot/controls/'+controlID+'/scene');
+    }catch(err){
+        var scene= "default";
+    }
 
     // Push new values to settings.
-    dbControls.push('./firebot/controls/'+controlID, {"controlId": controlID, "text": buttontext, "cost": sparkcost, "cooldown": cooldown});
+    dbControls.push('./firebot/controls/'+controlID, {"controlId": controlID, "text": buttontext, "cost": sparkcost, "scene": scene, "cooldown": cooldown, "cooldownGroup": cooldownGroup});
 
     // Clear all previously saved effects.
     dbControls.delete('./firebot/controls/'+controlID+'/effects');
@@ -890,11 +999,32 @@ function saveControls(){
             var celebrationLength = $(this).find('#celebration-amount-setting').val();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Celebration", "celebration": celebration, "length": celebrationLength});
             break;
+        case "Dice":
+            var chatter = $(this).find('.dice-effect-type').text();
+            var whisper = $(this).find('#dice-whisper-setting').val();
+            var dice = $(this).find('#dice-text-setting').val();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Dice", "chatter": chatter, "dice": dice, "whisper": whisper});
+            break;
         case "Game Control":
             var buttonPress = $(this).find('#game-control-press-setting').val();
             var oppositeButton = $(this).find('#game-control-opposite-setting').val();
             var holdingButton = $(this).find('.holding-button-effect-type').text();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Game Control", "press": buttonPress, "opposite": oppositeButton, "holding": holdingButton});
+
+            // Get modifiers
+            var modifierButtons = [];
+            $(this).find('.button-press-modifier-effect-inputs input').each(function( index ) {
+                if( $(this).prop('checked') === true && $(this).is(":visible") ){
+                    modifierButtons.push( $(this).attr('key') );
+                }
+            });
+
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Game Control", "press": buttonPress, "modifiers": modifierButtons, "opposite": oppositeButton, "holding": holdingButton});
+            break;
+        case "HTML":
+            var html = $(this).find('#html-effect-html-field').val();
+            var showtime = $(this).find('#html-length-setting').val();
+            var removal = $(this).find('#html-selector-setting').val();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "HTML", "html": html, "length": showtime, "removal": removal});
             break;
         case "Play Sound":
             var soundFile = $(this).find('.play-sound-effect-input').val();
@@ -904,8 +1034,9 @@ function saveControls(){
         case "Show Image":
             var imageFile = $(this).find('.show-image-effect-input').val();
             var imagePlacement = $(this).find('.image-placement-effect-type').text();
+            var imageSize = $(this).find('#image-size-setting').val();
             var imageLength = $(this).find('#image-length-setting').val();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "length": imageLength});
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "size": imageSize, "length": imageLength});
             break;
         case "Custom Script":
             var scriptName = $(this).find('.script-type').text();
@@ -1011,10 +1142,25 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' .celebrate-effect-type').text(effect.celebration);
                 $('.panel'+uniqueid+' #celebration-amount-setting').val(effect.length);
                 break;
+            case "Dice":
+                $('.panel'+uniqueid+' .dice-effect-type').text(effect.chatter);
+                $('.panel'+uniqueid+' #dice-text-setting').val(effect.dice);
+                $('.panel'+uniqueid+' #dice-whisper-setting').val(effect.whisper);
+                break;
             case "Game Control":
                 $('.panel'+uniqueid+' #game-control-press-setting').val(effect.press);
                 $('.panel'+uniqueid+' #game-control-opposite-setting').val(effect.opposite);
                 $('.panel'+uniqueid+' .holding-button-effect-type').text(effect.holding);
+                // Loop through and check groups.
+                for (modifier of effect.modifiers){
+                    $('.button-press-modifier-effect-inputs input[key = '+modifier+']').prop('checked', true);
+                }
+
+                break;
+            case "HTML":
+                $('.panel'+uniqueid+' #html-effect-html-field').val(effect.html);
+                $('.panel'+uniqueid+' #html-length-setting').val(effect.length);
+                $('.panel'+uniqueid+' #html-selector-setting').val(effect.removal);
                 break;
             case "Play Sound":
                 $('.panel'+uniqueid+' .play-sound-effect-input').val(effect.file);
@@ -1023,6 +1169,7 @@ function loadSettings(controlId, button){
             case "Show Image":
                 $('.panel'+uniqueid+' .show-image-effect-input').val(effect.file);
                 $('.panel'+uniqueid+' .image-placement-effect-type').text(effect.position);
+                $('.panel'+uniqueid+' #image-size-setting').val(effect.size);
                 $('.panel'+uniqueid+' #image-length-setting').val(effect.length);
                 break;
             case "Custom Script":
