@@ -183,7 +183,7 @@ function customScriptSettings(uniqueid) {
       <ul class="dropdown-menu script-dropdown">${jsFileList}</ul>
       </div>
       <div class="effect-info">
-          Place scripts in the "scripts" folder of the Firebot directory
+          Place scripts in the "scripts" folder of the root Firebot directory, then reopen this effect page.
       </div>
       <div class="effect-info" style="color:red">
           <strong>Warning:</strong> Only use scripts from sources you absolutely trust!
