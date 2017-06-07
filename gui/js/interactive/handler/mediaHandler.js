@@ -39,8 +39,11 @@ function showImage(data){
     if(imagePosition == "" || imagePosition === null){
         var imageX = "Top Middle";
     }
-    if(imageSize == "" || imageSize === null){
-        var imageSize = "100";
+    if(imageHeight == "" || imageHeight === null){
+        var imageHeight = "100";
+    }
+    if(imageWidth == "" || imageWidth === null){
+        var imageWidth = "100";
     }
     if(imageDuration == "" || imageDuration === null){
         var imageDuration = 5;
