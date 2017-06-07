@@ -44,23 +44,17 @@ function refreshGroups(){
         // Throw the group into the UI unless it is the "banned" usergroup.
         if(groupName !== "banned"){
             var groupTemplate = `
-                <div class="interactive-group-wrap col-sm-12 col-md-3 group${uniqueid}">
-                    <div class="interactive-groupheader">
-                    <div class="interactive-group-name pull-left">
-                        ${groupName}
-                    </div>
-                    <div class="interactive-group-controls pull-right">
-                        <div class="edit-interactive-control">
-                        <button class="edit-group btn btn-default" group="${uniqueid}">
-                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                        </button>
+                <div class="interactive-group-wrap tile group${uniqueid}">
+                    <div class="interactive-groupheader tile-header">
+                        <div class="interactive-group-name tileID">${groupName}</div>
+                        <div class="edit-interactive-control tile-edit">
+                            <button class="edit-group btn btn-default" group="${uniqueid}">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
-                    </div>
-                    <div class="interactive-group-main">
-                    <div class="description">
+                    <div class="interactive-group-main tile-body">
                         Custom Group
-                    </div>
                     </div>
                 </div>
             `;

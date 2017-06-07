@@ -10,7 +10,7 @@
   font-style: normal;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa {
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
@@ -20,52 +20,52 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-lg {
   font-size: 1.33333333em;
   line-height: .75em;
   vertical-align: -15%;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-2x {
   font-size: 2em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-3x {
   font-size: 3em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-4x {
   font-size: 4em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-5x {
   font-size: 5em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fw {
   width: 1.28571429em;
   text-align: center;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ul {
   padding-left: 0;
   margin-left: 2.14285714em;
   list-style-type: none;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ul > li {
   position: relative;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-li {
   position: absolute;
   left: -2.14286em;
@@ -74,78 +74,78 @@
   text-align: center;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-li.fa-lg {
   left: -1.85714em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-border {
   padding: .2em .25em .15em;
   border: solid .08em #eee;
   border-radius: .1em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pull-left {
   float: left;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pull-right {
   float: right;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa.fa-pull-left {
   margin-right: .3em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa.fa-pull-right {
   margin-left: .3em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .pull-right {
   float: right;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .pull-left {
   float: left;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa.pull-left {
   margin-right: .3em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa.pull-right {
   margin-left: .3em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-spin {
   -webkit-animation: fa-spin 2s infinite linear;
   animation: fa-spin 2s infinite linear;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pulse {
   -webkit-animation: fa-spin 1s infinite steps(8);
   animation: fa-spin 1s infinite steps(8);
 }
 
 @-webkit-keyframes fa-spin {
-  /* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+  /* line 4, ../scss/_font-awesome.scss */
   0% {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
 
-  /* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+  /* line 4, ../scss/_font-awesome.scss */
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
@@ -153,20 +153,20 @@
 }
 
 @keyframes fa-spin {
-  /* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+  /* line 4, ../scss/_font-awesome.scss */
   0% {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
 
-  /* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+  /* line 4, ../scss/_font-awesome.scss */
   100% {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-rotate-90 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
   -webkit-transform: rotate(90deg);
@@ -174,7 +174,7 @@
   transform: rotate(90deg);
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-rotate-180 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
   -webkit-transform: rotate(180deg);
@@ -182,7 +182,7 @@
   transform: rotate(180deg);
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-rotate-270 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
   -webkit-transform: rotate(270deg);
@@ -190,7 +190,7 @@
   transform: rotate(270deg);
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-flip-horizontal {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1)";
   -webkit-transform: scale(-1, 1);
@@ -198,7 +198,7 @@
   transform: scale(-1, 1);
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-flip-vertical {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
   -webkit-transform: scale(1, -1);
@@ -206,12 +206,12 @@
   transform: scale(1, -1);
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 :root .fa-rotate-90, :root .fa-rotate-180, :root .fa-rotate-270, :root .fa-flip-horizontal, :root .fa-flip-vertical {
   filter: none;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stack {
   position: relative;
   display: inline-block;
@@ -221,7 +221,7 @@
   vertical-align: middle;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stack-1x, .fa-stack-2x {
   position: absolute;
   left: 0;
@@ -229,3397 +229,3397 @@
   text-align: center;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stack-1x {
   line-height: inherit;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stack-2x {
   font-size: 2em;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-inverse {
   color: #fff;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-glass:before {
   content: "\f000";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-music:before {
   content: "\f001";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-search:before {
   content: "\f002";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-envelope-o:before {
   content: "\f003";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-heart:before {
   content: "\f004";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-star:before {
   content: "\f005";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-star-o:before {
   content: "\f006";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-user:before {
   content: "\f007";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-film:before {
   content: "\f008";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-th-large:before {
   content: "\f009";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-th:before {
   content: "\f00a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-th-list:before {
   content: "\f00b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-check:before {
   content: "\f00c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-remove:before, .fa-close:before, .fa-times:before {
   content: "\f00d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-search-plus:before {
   content: "\f00e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-search-minus:before {
   content: "\f010";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-power-off:before {
   content: "\f011";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-signal:before {
   content: "\f012";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gear:before, .fa-cog:before {
   content: "\f013";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-trash-o:before {
   content: "\f014";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-home:before {
   content: "\f015";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-o:before {
   content: "\f016";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-clock-o:before {
   content: "\f017";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-road:before {
   content: "\f018";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-download:before {
   content: "\f019";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-circle-o-down:before {
   content: "\f01a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-circle-o-up:before {
   content: "\f01b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-inbox:before {
   content: "\f01c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-play-circle-o:before {
   content: "\f01d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-rotate-right:before, .fa-repeat:before {
   content: "\f01e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-refresh:before {
   content: "\f021";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-list-alt:before {
   content: "\f022";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-lock:before {
   content: "\f023";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-flag:before {
   content: "\f024";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-headphones:before {
   content: "\f025";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-volume-off:before {
   content: "\f026";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-volume-down:before {
   content: "\f027";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-volume-up:before {
   content: "\f028";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-qrcode:before {
   content: "\f029";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-barcode:before {
   content: "\f02a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tag:before {
   content: "\f02b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tags:before {
   content: "\f02c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-book:before {
   content: "\f02d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bookmark:before {
   content: "\f02e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-print:before {
   content: "\f02f";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-camera:before {
   content: "\f030";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-font:before {
   content: "\f031";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bold:before {
   content: "\f032";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-italic:before {
   content: "\f033";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-text-height:before {
   content: "\f034";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-text-width:before {
   content: "\f035";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-align-left:before {
   content: "\f036";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-align-center:before {
   content: "\f037";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-align-right:before {
   content: "\f038";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-align-justify:before {
   content: "\f039";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-list:before {
   content: "\f03a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-dedent:before, .fa-outdent:before {
   content: "\f03b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-indent:before {
   content: "\f03c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-video-camera:before {
   content: "\f03d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-photo:before, .fa-image:before, .fa-picture-o:before {
   content: "\f03e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pencil:before {
   content: "\f040";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-map-marker:before {
   content: "\f041";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-adjust:before {
   content: "\f042";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tint:before {
   content: "\f043";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-edit:before, .fa-pencil-square-o:before {
   content: "\f044";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-share-square-o:before {
   content: "\f045";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-check-square-o:before {
   content: "\f046";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrows:before {
   content: "\f047";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-step-backward:before {
   content: "\f048";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fast-backward:before {
   content: "\f049";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-backward:before {
   content: "\f04a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-play:before {
   content: "\f04b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pause:before {
   content: "\f04c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stop:before {
   content: "\f04d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-forward:before {
   content: "\f04e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fast-forward:before {
   content: "\f050";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-step-forward:before {
   content: "\f051";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-eject:before {
   content: "\f052";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chevron-left:before {
   content: "\f053";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chevron-right:before {
   content: "\f054";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-plus-circle:before {
   content: "\f055";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-minus-circle:before {
   content: "\f056";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-times-circle:before {
   content: "\f057";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-check-circle:before {
   content: "\f058";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-question-circle:before {
   content: "\f059";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-info-circle:before {
   content: "\f05a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-crosshairs:before {
   content: "\f05b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-times-circle-o:before {
   content: "\f05c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-check-circle-o:before {
   content: "\f05d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ban:before {
   content: "\f05e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-left:before {
   content: "\f060";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-right:before {
   content: "\f061";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-up:before {
   content: "\f062";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-down:before {
   content: "\f063";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mail-forward:before, .fa-share:before {
   content: "\f064";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-expand:before {
   content: "\f065";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-compress:before {
   content: "\f066";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-plus:before {
   content: "\f067";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-minus:before {
   content: "\f068";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-asterisk:before {
   content: "\f069";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-exclamation-circle:before {
   content: "\f06a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gift:before {
   content: "\f06b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-leaf:before {
   content: "\f06c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fire:before {
   content: "\f06d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-eye:before {
   content: "\f06e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-eye-slash:before {
   content: "\f070";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-warning:before, .fa-exclamation-triangle:before {
   content: "\f071";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-plane:before {
   content: "\f072";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-calendar:before {
   content: "\f073";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-random:before {
   content: "\f074";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-comment:before {
   content: "\f075";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-magnet:before {
   content: "\f076";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chevron-up:before {
   content: "\f077";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chevron-down:before {
   content: "\f078";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-retweet:before {
   content: "\f079";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-shopping-cart:before {
   content: "\f07a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-folder:before {
   content: "\f07b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-folder-open:before {
   content: "\f07c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrows-v:before {
   content: "\f07d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrows-h:before {
   content: "\f07e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bar-chart-o:before, .fa-bar-chart:before {
   content: "\f080";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-twitter-square:before {
   content: "\f081";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-facebook-square:before {
   content: "\f082";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-camera-retro:before {
   content: "\f083";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-key:before {
   content: "\f084";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gears:before, .fa-cogs:before {
   content: "\f085";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-comments:before {
   content: "\f086";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thumbs-o-up:before {
   content: "\f087";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thumbs-o-down:before {
   content: "\f088";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-star-half:before {
   content: "\f089";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-heart-o:before {
   content: "\f08a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sign-out:before {
   content: "\f08b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-linkedin-square:before {
   content: "\f08c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thumb-tack:before {
   content: "\f08d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-external-link:before {
   content: "\f08e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sign-in:before {
   content: "\f090";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-trophy:before {
   content: "\f091";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-github-square:before {
   content: "\f092";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-upload:before {
   content: "\f093";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-lemon-o:before {
   content: "\f094";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-phone:before {
   content: "\f095";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-square-o:before {
   content: "\f096";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bookmark-o:before {
   content: "\f097";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-phone-square:before {
   content: "\f098";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-twitter:before {
   content: "\f099";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-facebook-f:before, .fa-facebook:before {
   content: "\f09a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-github:before {
   content: "\f09b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-unlock:before {
   content: "\f09c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-credit-card:before {
   content: "\f09d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-feed:before, .fa-rss:before {
   content: "\f09e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hdd-o:before {
   content: "\f0a0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bullhorn:before {
   content: "\f0a1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bell:before {
   content: "\f0f3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-certificate:before {
   content: "\f0a3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-o-right:before {
   content: "\f0a4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-o-left:before {
   content: "\f0a5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-o-up:before {
   content: "\f0a6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-o-down:before {
   content: "\f0a7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-circle-left:before {
   content: "\f0a8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-circle-right:before {
   content: "\f0a9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-circle-up:before {
   content: "\f0aa";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-circle-down:before {
   content: "\f0ab";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-globe:before {
   content: "\f0ac";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wrench:before {
   content: "\f0ad";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tasks:before {
   content: "\f0ae";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-filter:before {
   content: "\f0b0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-briefcase:before {
   content: "\f0b1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrows-alt:before {
   content: "\f0b2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-group:before, .fa-users:before {
   content: "\f0c0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chain:before, .fa-link:before {
   content: "\f0c1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cloud:before {
   content: "\f0c2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-flask:before {
   content: "\f0c3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cut:before, .fa-scissors:before {
   content: "\f0c4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-copy:before, .fa-files-o:before {
   content: "\f0c5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-paperclip:before {
   content: "\f0c6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-save:before, .fa-floppy-o:before {
   content: "\f0c7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-square:before {
   content: "\f0c8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-navicon:before, .fa-reorder:before, .fa-bars:before {
   content: "\f0c9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-list-ul:before {
   content: "\f0ca";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-list-ol:before {
   content: "\f0cb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-strikethrough:before {
   content: "\f0cc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-underline:before {
   content: "\f0cd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-table:before {
   content: "\f0ce";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-magic:before {
   content: "\f0d0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-truck:before {
   content: "\f0d1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pinterest:before {
   content: "\f0d2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pinterest-square:before {
   content: "\f0d3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-google-plus-square:before {
   content: "\f0d4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-google-plus:before {
   content: "\f0d5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-money:before {
   content: "\f0d6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-caret-down:before {
   content: "\f0d7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-caret-up:before {
   content: "\f0d8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-caret-left:before {
   content: "\f0d9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-caret-right:before {
   content: "\f0da";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-columns:before {
   content: "\f0db";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-unsorted:before, .fa-sort:before {
   content: "\f0dc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sort-down:before, .fa-sort-desc:before {
   content: "\f0dd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sort-up:before, .fa-sort-asc:before {
   content: "\f0de";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-envelope:before {
   content: "\f0e0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-linkedin:before {
   content: "\f0e1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-rotate-left:before, .fa-undo:before {
   content: "\f0e2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-legal:before, .fa-gavel:before {
   content: "\f0e3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-dashboard:before, .fa-tachometer:before {
   content: "\f0e4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-comment-o:before {
   content: "\f0e5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-comments-o:before {
   content: "\f0e6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-flash:before, .fa-bolt:before {
   content: "\f0e7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sitemap:before {
   content: "\f0e8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-umbrella:before {
   content: "\f0e9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-paste:before, .fa-clipboard:before {
   content: "\f0ea";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-lightbulb-o:before {
   content: "\f0eb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-exchange:before {
   content: "\f0ec";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cloud-download:before {
   content: "\f0ed";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cloud-upload:before {
   content: "\f0ee";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-user-md:before {
   content: "\f0f0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stethoscope:before {
   content: "\f0f1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-suitcase:before {
   content: "\f0f2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bell-o:before {
   content: "\f0a2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-coffee:before {
   content: "\f0f4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cutlery:before {
   content: "\f0f5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-text-o:before {
   content: "\f0f6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-building-o:before {
   content: "\f0f7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hospital-o:before {
   content: "\f0f8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ambulance:before {
   content: "\f0f9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-medkit:before {
   content: "\f0fa";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fighter-jet:before {
   content: "\f0fb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-beer:before {
   content: "\f0fc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-h-square:before {
   content: "\f0fd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-plus-square:before {
   content: "\f0fe";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angle-double-left:before {
   content: "\f100";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angle-double-right:before {
   content: "\f101";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angle-double-up:before {
   content: "\f102";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angle-double-down:before {
   content: "\f103";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angle-left:before {
   content: "\f104";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angle-right:before {
   content: "\f105";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angle-up:before {
   content: "\f106";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angle-down:before {
   content: "\f107";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-desktop:before {
   content: "\f108";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-laptop:before {
   content: "\f109";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tablet:before {
   content: "\f10a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mobile-phone:before, .fa-mobile:before {
   content: "\f10b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-circle-o:before {
   content: "\f10c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-quote-left:before {
   content: "\f10d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-quote-right:before {
   content: "\f10e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-spinner:before {
   content: "\f110";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-circle:before {
   content: "\f111";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mail-reply:before, .fa-reply:before {
   content: "\f112";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-github-alt:before {
   content: "\f113";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-folder-o:before {
   content: "\f114";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-folder-open-o:before {
   content: "\f115";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-smile-o:before {
   content: "\f118";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-frown-o:before {
   content: "\f119";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-meh-o:before {
   content: "\f11a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gamepad:before {
   content: "\f11b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-keyboard-o:before {
   content: "\f11c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-flag-o:before {
   content: "\f11d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-flag-checkered:before {
   content: "\f11e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-terminal:before {
   content: "\f120";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-code:before {
   content: "\f121";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mail-reply-all:before, .fa-reply-all:before {
   content: "\f122";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-star-half-empty:before, .fa-star-half-full:before, .fa-star-half-o:before {
   content: "\f123";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-location-arrow:before {
   content: "\f124";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-crop:before {
   content: "\f125";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-code-fork:before {
   content: "\f126";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-unlink:before, .fa-chain-broken:before {
   content: "\f127";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-question:before {
   content: "\f128";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-info:before {
   content: "\f129";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-exclamation:before {
   content: "\f12a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-superscript:before {
   content: "\f12b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-subscript:before {
   content: "\f12c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-eraser:before {
   content: "\f12d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-puzzle-piece:before {
   content: "\f12e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-microphone:before {
   content: "\f130";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-microphone-slash:before {
   content: "\f131";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-shield:before {
   content: "\f132";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-calendar-o:before {
   content: "\f133";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fire-extinguisher:before {
   content: "\f134";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-rocket:before {
   content: "\f135";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-maxcdn:before {
   content: "\f136";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chevron-circle-left:before {
   content: "\f137";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chevron-circle-right:before {
   content: "\f138";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chevron-circle-up:before {
   content: "\f139";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chevron-circle-down:before {
   content: "\f13a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-html5:before {
   content: "\f13b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-css3:before {
   content: "\f13c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-anchor:before {
   content: "\f13d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-unlock-alt:before {
   content: "\f13e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bullseye:before {
   content: "\f140";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ellipsis-h:before {
   content: "\f141";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ellipsis-v:before {
   content: "\f142";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-rss-square:before {
   content: "\f143";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-play-circle:before {
   content: "\f144";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ticket:before {
   content: "\f145";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-minus-square:before {
   content: "\f146";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-minus-square-o:before {
   content: "\f147";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-level-up:before {
   content: "\f148";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-level-down:before {
   content: "\f149";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-check-square:before {
   content: "\f14a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pencil-square:before {
   content: "\f14b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-external-link-square:before {
   content: "\f14c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-share-square:before {
   content: "\f14d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-compass:before {
   content: "\f14e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-toggle-down:before, .fa-caret-square-o-down:before {
   content: "\f150";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-toggle-up:before, .fa-caret-square-o-up:before {
   content: "\f151";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-toggle-right:before, .fa-caret-square-o-right:before {
   content: "\f152";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-euro:before, .fa-eur:before {
   content: "\f153";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gbp:before {
   content: "\f154";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-dollar:before, .fa-usd:before {
   content: "\f155";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-rupee:before, .fa-inr:before {
   content: "\f156";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cny:before, .fa-rmb:before, .fa-yen:before, .fa-jpy:before {
   content: "\f157";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ruble:before, .fa-rouble:before, .fa-rub:before {
   content: "\f158";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-won:before, .fa-krw:before {
   content: "\f159";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bitcoin:before, .fa-btc:before {
   content: "\f15a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file:before {
   content: "\f15b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-text:before {
   content: "\f15c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sort-alpha-asc:before {
   content: "\f15d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sort-alpha-desc:before {
   content: "\f15e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sort-amount-asc:before {
   content: "\f160";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sort-amount-desc:before {
   content: "\f161";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sort-numeric-asc:before {
   content: "\f162";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sort-numeric-desc:before {
   content: "\f163";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thumbs-up:before {
   content: "\f164";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thumbs-down:before {
   content: "\f165";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-youtube-square:before {
   content: "\f166";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-youtube:before {
   content: "\f167";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-xing:before {
   content: "\f168";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-xing-square:before {
   content: "\f169";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-youtube-play:before {
   content: "\f16a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-dropbox:before {
   content: "\f16b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stack-overflow:before {
   content: "\f16c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-instagram:before {
   content: "\f16d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-flickr:before {
   content: "\f16e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-adn:before {
   content: "\f170";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bitbucket:before {
   content: "\f171";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bitbucket-square:before {
   content: "\f172";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tumblr:before {
   content: "\f173";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tumblr-square:before {
   content: "\f174";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-long-arrow-down:before {
   content: "\f175";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-long-arrow-up:before {
   content: "\f176";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-long-arrow-left:before {
   content: "\f177";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-long-arrow-right:before {
   content: "\f178";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-apple:before {
   content: "\f179";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-windows:before {
   content: "\f17a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-android:before {
   content: "\f17b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-linux:before {
   content: "\f17c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-dribbble:before {
   content: "\f17d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-skype:before {
   content: "\f17e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-foursquare:before {
   content: "\f180";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-trello:before {
   content: "\f181";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-female:before {
   content: "\f182";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-male:before {
   content: "\f183";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gittip:before, .fa-gratipay:before {
   content: "\f184";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sun-o:before {
   content: "\f185";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-moon-o:before {
   content: "\f186";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-archive:before {
   content: "\f187";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bug:before {
   content: "\f188";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-vk:before {
   content: "\f189";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-weibo:before {
   content: "\f18a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-renren:before {
   content: "\f18b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pagelines:before {
   content: "\f18c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stack-exchange:before {
   content: "\f18d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-circle-o-right:before {
   content: "\f18e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-arrow-circle-o-left:before {
   content: "\f190";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-toggle-left:before, .fa-caret-square-o-left:before {
   content: "\f191";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-dot-circle-o:before {
   content: "\f192";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wheelchair:before {
   content: "\f193";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-vimeo-square:before {
   content: "\f194";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-turkish-lira:before, .fa-try:before {
   content: "\f195";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-plus-square-o:before {
   content: "\f196";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-space-shuttle:before {
   content: "\f197";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-slack:before {
   content: "\f198";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-envelope-square:before {
   content: "\f199";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wordpress:before {
   content: "\f19a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-openid:before {
   content: "\f19b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-institution:before, .fa-bank:before, .fa-university:before {
   content: "\f19c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mortar-board:before, .fa-graduation-cap:before {
   content: "\f19d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-yahoo:before {
   content: "\f19e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-google:before {
   content: "\f1a0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-reddit:before {
   content: "\f1a1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-reddit-square:before {
   content: "\f1a2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stumbleupon-circle:before {
   content: "\f1a3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stumbleupon:before {
   content: "\f1a4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-delicious:before {
   content: "\f1a5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-digg:before {
   content: "\f1a6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pied-piper-pp:before {
   content: "\f1a7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pied-piper-alt:before {
   content: "\f1a8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-drupal:before {
   content: "\f1a9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-joomla:before {
   content: "\f1aa";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-language:before {
   content: "\f1ab";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fax:before {
   content: "\f1ac";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-building:before {
   content: "\f1ad";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-child:before {
   content: "\f1ae";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-paw:before {
   content: "\f1b0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-spoon:before {
   content: "\f1b1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cube:before {
   content: "\f1b2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cubes:before {
   content: "\f1b3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-behance:before {
   content: "\f1b4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-behance-square:before {
   content: "\f1b5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-steam:before {
   content: "\f1b6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-steam-square:before {
   content: "\f1b7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-recycle:before {
   content: "\f1b8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-automobile:before, .fa-car:before {
   content: "\f1b9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cab:before, .fa-taxi:before {
   content: "\f1ba";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tree:before {
   content: "\f1bb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-spotify:before {
   content: "\f1bc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-deviantart:before {
   content: "\f1bd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-soundcloud:before {
   content: "\f1be";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-database:before {
   content: "\f1c0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-pdf-o:before {
   content: "\f1c1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-word-o:before {
   content: "\f1c2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-excel-o:before {
   content: "\f1c3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-powerpoint-o:before {
   content: "\f1c4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-photo-o:before, .fa-file-picture-o:before, .fa-file-image-o:before {
   content: "\f1c5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-zip-o:before, .fa-file-archive-o:before {
   content: "\f1c6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-sound-o:before, .fa-file-audio-o:before {
   content: "\f1c7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-movie-o:before, .fa-file-video-o:before {
   content: "\f1c8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-file-code-o:before {
   content: "\f1c9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-vine:before {
   content: "\f1ca";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-codepen:before {
   content: "\f1cb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-jsfiddle:before {
   content: "\f1cc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-life-bouy:before, .fa-life-buoy:before, .fa-life-saver:before, .fa-support:before, .fa-life-ring:before {
   content: "\f1cd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-circle-o-notch:before {
   content: "\f1ce";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ra:before, .fa-resistance:before, .fa-rebel:before {
   content: "\f1d0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ge:before, .fa-empire:before {
   content: "\f1d1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-git-square:before {
   content: "\f1d2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-git:before {
   content: "\f1d3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-y-combinator-square:before, .fa-yc-square:before, .fa-hacker-news:before {
   content: "\f1d4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tencent-weibo:before {
   content: "\f1d5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-qq:before {
   content: "\f1d6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wechat:before, .fa-weixin:before {
   content: "\f1d7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-send:before, .fa-paper-plane:before {
   content: "\f1d8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-send-o:before, .fa-paper-plane-o:before {
   content: "\f1d9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-history:before {
   content: "\f1da";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-circle-thin:before {
   content: "\f1db";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-header:before {
   content: "\f1dc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-paragraph:before {
   content: "\f1dd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sliders:before {
   content: "\f1de";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-share-alt:before {
   content: "\f1e0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-share-alt-square:before {
   content: "\f1e1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bomb:before {
   content: "\f1e2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-soccer-ball-o:before, .fa-futbol-o:before {
   content: "\f1e3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tty:before {
   content: "\f1e4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-binoculars:before {
   content: "\f1e5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-plug:before {
   content: "\f1e6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-slideshare:before {
   content: "\f1e7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-twitch:before {
   content: "\f1e8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-yelp:before {
   content: "\f1e9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-newspaper-o:before {
   content: "\f1ea";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wifi:before {
   content: "\f1eb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-calculator:before {
   content: "\f1ec";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-paypal:before {
   content: "\f1ed";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-google-wallet:before {
   content: "\f1ee";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc-visa:before {
   content: "\f1f0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc-mastercard:before {
   content: "\f1f1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc-discover:before {
   content: "\f1f2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc-amex:before {
   content: "\f1f3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc-paypal:before {
   content: "\f1f4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc-stripe:before {
   content: "\f1f5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bell-slash:before {
   content: "\f1f6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bell-slash-o:before {
   content: "\f1f7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-trash:before {
   content: "\f1f8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-copyright:before {
   content: "\f1f9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-at:before {
   content: "\f1fa";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-eyedropper:before {
   content: "\f1fb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-paint-brush:before {
   content: "\f1fc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-birthday-cake:before {
   content: "\f1fd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-area-chart:before {
   content: "\f1fe";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pie-chart:before {
   content: "\f200";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-line-chart:before {
   content: "\f201";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-lastfm:before {
   content: "\f202";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-lastfm-square:before {
   content: "\f203";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-toggle-off:before {
   content: "\f204";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-toggle-on:before {
   content: "\f205";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bicycle:before {
   content: "\f206";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bus:before {
   content: "\f207";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ioxhost:before {
   content: "\f208";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-angellist:before {
   content: "\f209";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc:before {
   content: "\f20a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-shekel:before, .fa-sheqel:before, .fa-ils:before {
   content: "\f20b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-meanpath:before {
   content: "\f20c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-buysellads:before {
   content: "\f20d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-connectdevelop:before {
   content: "\f20e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-dashcube:before {
   content: "\f210";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-forumbee:before {
   content: "\f211";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-leanpub:before {
   content: "\f212";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sellsy:before {
   content: "\f213";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-shirtsinbulk:before {
   content: "\f214";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-simplybuilt:before {
   content: "\f215";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-skyatlas:before {
   content: "\f216";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cart-plus:before {
   content: "\f217";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cart-arrow-down:before {
   content: "\f218";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-diamond:before {
   content: "\f219";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ship:before {
   content: "\f21a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-user-secret:before {
   content: "\f21b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-motorcycle:before {
   content: "\f21c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-street-view:before {
   content: "\f21d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-heartbeat:before {
   content: "\f21e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-venus:before {
   content: "\f221";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mars:before {
   content: "\f222";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mercury:before {
   content: "\f223";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-intersex:before, .fa-transgender:before {
   content: "\f224";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-transgender-alt:before {
   content: "\f225";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-venus-double:before {
   content: "\f226";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mars-double:before {
   content: "\f227";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-venus-mars:before {
   content: "\f228";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mars-stroke:before {
   content: "\f229";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mars-stroke-v:before {
   content: "\f22a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mars-stroke-h:before {
   content: "\f22b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-neuter:before {
   content: "\f22c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-genderless:before {
   content: "\f22d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-facebook-official:before {
   content: "\f230";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pinterest-p:before {
   content: "\f231";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-whatsapp:before {
   content: "\f232";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-server:before {
   content: "\f233";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-user-plus:before {
   content: "\f234";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-user-times:before {
   content: "\f235";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hotel:before, .fa-bed:before {
   content: "\f236";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-viacoin:before {
   content: "\f237";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-train:before {
   content: "\f238";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-subway:before {
   content: "\f239";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-medium:before {
   content: "\f23a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-yc:before, .fa-y-combinator:before {
   content: "\f23b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-optin-monster:before {
   content: "\f23c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-opencart:before {
   content: "\f23d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-expeditedssl:before {
   content: "\f23e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-battery-4:before, .fa-battery:before, .fa-battery-full:before {
   content: "\f240";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-battery-3:before, .fa-battery-three-quarters:before {
   content: "\f241";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-battery-2:before, .fa-battery-half:before {
   content: "\f242";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-battery-1:before, .fa-battery-quarter:before {
   content: "\f243";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-battery-0:before, .fa-battery-empty:before {
   content: "\f244";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mouse-pointer:before {
   content: "\f245";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-i-cursor:before {
   content: "\f246";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-object-group:before {
   content: "\f247";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-object-ungroup:before {
   content: "\f248";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sticky-note:before {
   content: "\f249";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-sticky-note-o:before {
   content: "\f24a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc-jcb:before {
   content: "\f24b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-cc-diners-club:before {
   content: "\f24c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-clone:before {
   content: "\f24d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-balance-scale:before {
   content: "\f24e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hourglass-o:before {
   content: "\f250";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hourglass-1:before, .fa-hourglass-start:before {
   content: "\f251";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hourglass-2:before, .fa-hourglass-half:before {
   content: "\f252";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hourglass-3:before, .fa-hourglass-end:before {
   content: "\f253";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hourglass:before {
   content: "\f254";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-grab-o:before, .fa-hand-rock-o:before {
   content: "\f255";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-stop-o:before, .fa-hand-paper-o:before {
   content: "\f256";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-scissors-o:before {
   content: "\f257";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-lizard-o:before {
   content: "\f258";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-spock-o:before {
   content: "\f259";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-pointer-o:before {
   content: "\f25a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hand-peace-o:before {
   content: "\f25b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-trademark:before {
   content: "\f25c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-registered:before {
   content: "\f25d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-creative-commons:before {
   content: "\f25e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gg:before {
   content: "\f260";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gg-circle:before {
   content: "\f261";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tripadvisor:before {
   content: "\f262";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-odnoklassniki:before {
   content: "\f263";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-odnoklassniki-square:before {
   content: "\f264";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-get-pocket:before {
   content: "\f265";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wikipedia-w:before {
   content: "\f266";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-safari:before {
   content: "\f267";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-chrome:before {
   content: "\f268";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-firefox:before {
   content: "\f269";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-opera:before {
   content: "\f26a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-internet-explorer:before {
   content: "\f26b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-tv:before, .fa-television:before {
   content: "\f26c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-contao:before {
   content: "\f26d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-500px:before {
   content: "\f26e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-amazon:before {
   content: "\f270";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-calendar-plus-o:before {
   content: "\f271";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-calendar-minus-o:before {
   content: "\f272";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-calendar-times-o:before {
   content: "\f273";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-calendar-check-o:before {
   content: "\f274";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-industry:before {
   content: "\f275";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-map-pin:before {
   content: "\f276";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-map-signs:before {
   content: "\f277";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-map-o:before {
   content: "\f278";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-map:before {
   content: "\f279";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-commenting:before {
   content: "\f27a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-commenting-o:before {
   content: "\f27b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-houzz:before {
   content: "\f27c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-vimeo:before {
   content: "\f27d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-black-tie:before {
   content: "\f27e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fonticons:before {
   content: "\f280";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-reddit-alien:before {
   content: "\f281";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-edge:before {
   content: "\f282";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-credit-card-alt:before {
   content: "\f283";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-codiepie:before {
   content: "\f284";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-modx:before {
   content: "\f285";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fort-awesome:before {
   content: "\f286";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-usb:before {
   content: "\f287";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-product-hunt:before {
   content: "\f288";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-mixcloud:before {
   content: "\f289";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-scribd:before {
   content: "\f28a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pause-circle:before {
   content: "\f28b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pause-circle-o:before {
   content: "\f28c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stop-circle:before {
   content: "\f28d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-stop-circle-o:before {
   content: "\f28e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-shopping-bag:before {
   content: "\f290";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-shopping-basket:before {
   content: "\f291";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-hashtag:before {
   content: "\f292";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bluetooth:before {
   content: "\f293";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bluetooth-b:before {
   content: "\f294";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-percent:before {
   content: "\f295";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-gitlab:before {
   content: "\f296";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wpbeginner:before {
   content: "\f297";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wpforms:before {
   content: "\f298";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-envira:before {
   content: "\f299";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-universal-access:before {
   content: "\f29a";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wheelchair-alt:before {
   content: "\f29b";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-question-circle-o:before {
   content: "\f29c";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-blind:before {
   content: "\f29d";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-audio-description:before {
   content: "\f29e";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-volume-control-phone:before {
   content: "\f2a0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-braille:before {
   content: "\f2a1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-assistive-listening-systems:before {
   content: "\f2a2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-asl-interpreting:before, .fa-american-sign-language-interpreting:before {
   content: "\f2a3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-deafness:before, .fa-hard-of-hearing:before, .fa-deaf:before {
   content: "\f2a4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-glide:before {
   content: "\f2a5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-glide-g:before {
   content: "\f2a6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-signing:before, .fa-sign-language:before {
   content: "\f2a7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-low-vision:before {
   content: "\f2a8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-viadeo:before {
   content: "\f2a9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-viadeo-square:before {
   content: "\f2aa";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-snapchat:before {
   content: "\f2ab";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-snapchat-ghost:before {
   content: "\f2ac";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-snapchat-square:before {
   content: "\f2ad";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-pied-piper:before {
   content: "\f2ae";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-first-order:before {
   content: "\f2b0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-yoast:before {
   content: "\f2b1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-themeisle:before {
   content: "\f2b2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-google-plus-circle:before, .fa-google-plus-official:before {
   content: "\f2b3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-fa:before, .fa-font-awesome:before {
   content: "\f2b4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-handshake-o:before {
   content: "\f2b5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-envelope-open:before {
   content: "\f2b6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-envelope-open-o:before {
   content: "\f2b7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-linode:before {
   content: "\f2b8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-address-book:before {
   content: "\f2b9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-address-book-o:before {
   content: "\f2ba";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-vcard:before, .fa-address-card:before {
   content: "\f2bb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-vcard-o:before, .fa-address-card-o:before {
   content: "\f2bc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-user-circle:before {
   content: "\f2bd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-user-circle-o:before {
   content: "\f2be";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-user-o:before {
   content: "\f2c0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-id-badge:before {
   content: "\f2c1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-drivers-license:before, .fa-id-card:before {
   content: "\f2c2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-drivers-license-o:before, .fa-id-card-o:before {
   content: "\f2c3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-quora:before {
   content: "\f2c4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-free-code-camp:before {
   content: "\f2c5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-telegram:before {
   content: "\f2c6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thermometer-4:before, .fa-thermometer:before, .fa-thermometer-full:before {
   content: "\f2c7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thermometer-3:before, .fa-thermometer-three-quarters:before {
   content: "\f2c8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thermometer-2:before, .fa-thermometer-half:before {
   content: "\f2c9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thermometer-1:before, .fa-thermometer-quarter:before {
   content: "\f2ca";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-thermometer-0:before, .fa-thermometer-empty:before {
   content: "\f2cb";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-shower:before {
   content: "\f2cc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bathtub:before, .fa-s15:before, .fa-bath:before {
   content: "\f2cd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-podcast:before {
   content: "\f2ce";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-window-maximize:before {
   content: "\f2d0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-window-minimize:before {
   content: "\f2d1";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-window-restore:before {
   content: "\f2d2";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-times-rectangle:before, .fa-window-close:before {
   content: "\f2d3";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-times-rectangle-o:before, .fa-window-close-o:before {
   content: "\f2d4";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-bandcamp:before {
   content: "\f2d5";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-grav:before {
   content: "\f2d6";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-etsy:before {
   content: "\f2d7";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-imdb:before {
   content: "\f2d8";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-ravelry:before {
   content: "\f2d9";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-eercast:before {
   content: "\f2da";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-microchip:before {
   content: "\f2db";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-snowflake-o:before {
   content: "\f2dc";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-superpowers:before {
   content: "\f2dd";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-wpexplorer:before {
   content: "\f2de";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .fa-meetup:before {
   content: "\f2e0";
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -3631,7 +3631,7 @@
   border: 0;
 }
 
-/* line 4, C:/GitHub/Personal/firebot/gui/scss/_font-awesome.scss */
+/* line 4, ../scss/_font-awesome.scss */
 .sr-only-focusable:active, .sr-only-focusable:focus {
   position: static;
   width: auto;
@@ -3641,47 +3641,47 @@
   clip: auto;
 }
 
-/* line 2, C:/GitHub/Personal/firebot/gui/scss/_login.scss */
+/* line 2, ../scss/_login.scss */
 .login-page .page-content {
   text-align: center;
 }
-/* line 5, C:/GitHub/Personal/firebot/gui/scss/_login.scss */
+/* line 5, ../scss/_login.scss */
 .login-page .page-content .login-pic {
   border-radius: .25rem;
   border: 2px solid #292b2c;
   width: 220px;
 }
-/* line 11, C:/GitHub/Personal/firebot/gui/scss/_login.scss */
+/* line 11, ../scss/_login.scss */
 .login-page .getting-started {
   margin-top: 1em;
 }
 
-/* line 3, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 3, ../scss/_interactive.scss */
 .interactive-header .board-title a {
   font-size: 2em;
 }
 
-/* line 9, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 9, ../scss/_interactive.scss */
 .general-button-settings .input-group {
   padding-bottom: 1em;
 }
 
-/* line 15, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 15, ../scss/_interactive.scss */
 .functionality-settings .panel-title button {
   margin: -10px -15px;
   line-height: 1.75;
 }
-/* line 20, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 20, ../scss/_interactive.scss */
 .functionality-settings .effect-settings-panel {
   border-top: 1px solid #adadad;
   margin-top: 1em;
 }
-/* line 24, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 24, ../scss/_interactive.scss */
 .functionality-settings .effect-info {
   padding: .5em 0em;
 }
 
-/* line 32, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 32, ../scss/_interactive.scss */
 #board-settings .board-group-defaults-settings .board-group .board-group-scene {
   background-color: #007eff;
   padding: .5em;
@@ -3690,7 +3690,7 @@
   font-weight: bold;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 40, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 40, ../scss/_interactive.scss */
 #board-settings .board-group-defaults-settings .board-group .board-group-scene-dropdown {
   background-color: #0e162a;
   padding: .5em;
@@ -3698,59 +3698,18 @@
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 51, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
-.interactive-group-container .interactive-group-wrap {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 1.5em;
-  color: white;
-  border: 1px solid white;
-  text-align: center;
-  font-size: 1.2em;
-}
-/* line 59, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
-.interactive-group-container .interactive-group-wrap .interactive-groupheader {
-  background-color: #007eff;
-  font-weight: bold;
-  height: 2.5em;
-  padding: .5em 0em;
-  border-radius: .5em .5em 0em 0em;
-}
-/* line 65, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
-.interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-name {
-  text-align: left;
-  width: 75%;
-  display: inline;
-  padding: .2em 0em 0em .5em;
-}
-/* line 71, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
-.interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-controls {
-  display: inline;
-  width: 25%;
-}
-/* line 74, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
-.interactive-group-container .interactive-group-wrap .interactive-groupheader .interactive-group-controls .btn {
-  padding: 3px 10px;
-}
-/* line 79, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
-.interactive-group-container .interactive-group-wrap .interactive-group-main {
-  background-color: #0e162a;
-  padding: .5em 0em;
-  border-radius: 0em 0em .5em .5em;
-}
-
-/* line 87, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 50, ../scss/_interactive.scss */
 .playbutton {
   background: none;
   border: none;
   font-size: 2em;
 }
-/* line 91, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 54, ../scss/_interactive.scss */
 .playbutton:hover {
   color: #adadad;
 }
 
-/* line 96, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 59, ../scss/_interactive.scss */
 .ui-autocomplete {
   border-radius: 10px;
   padding: 5px;
@@ -3765,65 +3724,77 @@
   height: 150px;
   overflow-y: scroll;
 }
-/* line 109, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 72, ../scss/_interactive.scss */
 .ui-autocomplete li {
   cursor: pointer;
 }
-/* line 111, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 74, ../scss/_interactive.scss */
 .ui-autocomplete li div {
   padding: 5px;
   margin: 2px;
 }
-/* line 116, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 79, ../scss/_interactive.scss */
 .ui-autocomplete li:hover {
   color: white;
   background-color: #007eff;
 }
 
-/* line 122, C:/GitHub/Personal/firebot/gui/scss/_interactive.scss */
+/* line 85, ../scss/_interactive.scss */
 .ui-helper-hidden-accessible {
   display: none;
 }
 
-/* line 3, C:/GitHub/Personal/firebot/gui/scss/_groups.scss */
+/* line 89, ../scss/_interactive.scss */
+.board-group-defaults-settings, .board-cooldown-groups, .interactive-button-holder.active {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* line 3, ../scss/_groups.scss */
 .group-user-list-container .user-list-header {
   margin-bottom: 1em;
 }
-/* line 7, C:/GitHub/Personal/firebot/gui/scss/_groups.scss */
+/* line 7, ../scss/_groups.scss */
 .group-user-list-container #group-user-list .list {
   list-style: none;
   margin: 0px;
   padding: 0px;
 }
 
-/* line 2, C:/GitHub/Personal/firebot/gui/scss/_moderation.scss */
+/* line 15, ../scss/_groups.scss */
+.interactive-group-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* line 2, ../scss/_moderation.scss */
 #event-log .event-sort {
   margin: .5em;
 }
-/* line 5, C:/GitHub/Personal/firebot/gui/scss/_moderation.scss */
+/* line 5, ../scss/_moderation.scss */
 #event-log .list {
   list-style: none;
   margin: 0px;
   padding: 0px;
 }
-/* line 11, C:/GitHub/Personal/firebot/gui/scss/_moderation.scss */
+/* line 11, ../scss/_moderation.scss */
 #event-log .list .event-item span {
   display: inline-block;
   padding: .5em;
 }
-/* line 15, C:/GitHub/Personal/firebot/gui/scss/_moderation.scss */
+/* line 15, ../scss/_moderation.scss */
 #event-log .list .event-item .milliseconds {
   display: none;
 }
 
-/* line 23, C:/GitHub/Personal/firebot/gui/scss/_moderation.scss */
+/* line 23, ../scss/_moderation.scss */
 #banned-users .list {
   list-style: none;
   margin: 0px;
   padding: 0px;
 }
 
-/* line 2, C:/GitHub/Personal/firebot/gui/scss/_statusbar.scss */
+/* line 2, ../scss/_statusbar.scss */
 .status-bar {
   position: fixed;
   bottom: 0px;
@@ -3833,7 +3804,7 @@
   line-height: 2.8em;
   color: #9d9d9d;
 }
-/* line 11, C:/GitHub/Personal/firebot/gui/scss/_statusbar.scss */
+/* line 11, ../scss/_statusbar.scss */
 .status-bar .connection-indicator {
   color: white;
   background-color: #d9534f;
@@ -3841,35 +3812,35 @@
   cursor: pointer;
   margin: 2px;
 }
-/* line 17, C:/GitHub/Personal/firebot/gui/scss/_statusbar.scss */
+/* line 17, ../scss/_statusbar.scss */
 .status-bar .connection-indicator.online {
   background-color: #5cb85c;
 }
 
-/* line 1, C:/GitHub/Personal/firebot/gui/scss/_settings.scss */
+/* line 1, ../scss/_settings.scss */
 .setting {
   margin-bottom: 1em;
 }
-/* line 3, C:/GitHub/Personal/firebot/gui/scss/_settings.scss */
+/* line 3, ../scss/_settings.scss */
 .setting .setting-heading {
   font-size: 1.5em;
 }
-/* line 6, C:/GitHub/Personal/firebot/gui/scss/_settings.scss */
+/* line 6, ../scss/_settings.scss */
 .setting .setting-description {
   padding: .5em 0em;
 }
 
-/* line 3, C:/GitHub/Personal/firebot/gui/scss/_info.scss */
+/* line 3, ../scss/_info.scss */
 .info-page .update-wrapper .latest-update {
   font-size: 1.75em;
   margin-top: .3em;
 }
-/* line 7, C:/GitHub/Personal/firebot/gui/scss/_info.scss */
+/* line 7, ../scss/_info.scss */
 .info-page .update-wrapper .release-date {
   margin-bottom: 1em;
 }
 
-/* line 13, C:/GitHub/Personal/firebot/gui/scss/_info.scss */
+/* line 13, ../scss/_info.scss */
 .updates-badge {
   background-color: #007eff;
   margin-left: 5px;
@@ -3901,50 +3872,58 @@ body {
   border: 1px solid white;
   text-align: center;
   font-size: 1.2em;
+  width: 25%;
 }
-/* line 37, ../scss/main.scss */
+@media screen and (max-width: 768px) {
+  /* line 30, ../scss/main.scss */
+  .tile {
+    width: 100%;
+  }
+}
+/* line 42, ../scss/main.scss */
 .tile.no-top {
   margin-top: .5em;
 }
-/* line 41, ../scss/main.scss */
+/* line 46, ../scss/main.scss */
 .tile .tile-header {
   background-color: #007eff;
   font-weight: bold;
-  height: 2.5em;
   padding: .5em 0em;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 47, ../scss/main.scss */
+/* line 51, ../scss/main.scss */
 .tile .tile-header .tileID {
   text-align: left;
   width: 75%;
-  display: inline;
+  display: inline-block;
   padding: .2em 0em 0em .5em;
 }
-/* line 53, ../scss/main.scss */
+/* line 57, ../scss/main.scss */
 .tile .tile-header .tile-edit {
-  display: inline;
-  width: 25%;
+  display: inline-block;
+  width: 20%;
+  vertical-align: top;
+  text-align: right;
 }
-/* line 56, ../scss/main.scss */
+/* line 62, ../scss/main.scss */
 .tile .tile-header .tile-edit .btn {
   padding: 3px 10px;
 }
-/* line 61, ../scss/main.scss */
+/* line 67, ../scss/main.scss */
 .tile .tile-body {
   background-color: #0e162a;
   padding: .5em 0em;
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 69, ../scss/main.scss */
+/* line 75, ../scss/main.scss */
 .pill {
   background-color: #0e162a;
   color: white;
   margin: 1em 0em;
   border-radius: .5em;
 }
-/* line 74, ../scss/main.scss */
+/* line 80, ../scss/main.scss */
 .pill .content {
   display: inline-block;
   padding: .5em;
@@ -3952,7 +3931,7 @@ body {
   margin: 0px;
 }
 
-/* line 85, ../scss/main.scss */
+/* line 91, ../scss/main.scss */
 .top-padding {
   padding-top: 1em;
 }

@@ -33,6 +33,11 @@ body {
     border:1px solid white;
     text-align:center;
     font-size:1.2em;
+    width:25%;
+
+    @media screen and (max-width: 768px) {
+        width:100%;
+    }
 
     &.no-top{
         margin-top:.5em;
@@ -41,18 +46,19 @@ body {
     .tile-header{
         background-color: $mixer-highlight;
         font-weight:bold;
-        height:2.5em;
         padding: .5em 0em;
         border-radius: .5em .5em 0em 0em;
         .tileID{
             text-align:left;
             width: 75%;
-            display:inline;
+            display:inline-block;
             padding:.2em 0em 0em .5em;
         }
         .tile-edit{
-            display:inline;
-            width: 25%;
+            display:inline-block;
+            width: 20%;
+            vertical-align: top;
+            text-align:right;
             .btn{
                 padding:3px 10px;
             }

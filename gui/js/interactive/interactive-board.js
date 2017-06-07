@@ -286,10 +286,10 @@ function boardGroupSettings(scenes){
         var sceneName = scene.sceneID;
 
         var groupSettingTemplate = `
-            <div class="board-group board-group${uniqueid} tile no-top col-sm-6 col-md-3">
+            <div class="board-group board-group${uniqueid} tile no-top">
                 <div class="tile-header">
-                    <div class="board-groupscene tileID pull-left">${sceneName}</div>
-                    <div class="edit-groupscene tile-edit pull-right">
+                    <div class="board-groupscene tileID">${sceneName}</div>
+                    <div class="edit-groupscene tile-edit">
                         <button class="edit-groupscene-btn btn btn-default" sceneunique="${uniqueid}">
                             <i class="fa fa-pencil" aria-hidden="true"></i>
                         </button>
@@ -446,10 +446,10 @@ function buttonBuilder(scenes){
 
                 // The html template for the buttons.
                 var buttonTemplate = `
-                    <div class="interactive-button tile col-sm-6 col-md-3">
+                    <div class="interactive-button tile ">
                         <div class="interactive-button-header tile-header">
-                            <div class="controlID tileID pull-left">${controlID}</div>
-                            <div class="edit-interactive-control tile-edit pull-right">
+                            <div class="controlID tileID">${controlID}</div>
+                            <div class="edit-interactive-control tile-edit">
                                 <button class="edit-control btn btn-default" controlid="${controlID}">
                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                 </button>
@@ -677,10 +677,10 @@ function loadCooldownGroups(){
             var buttons = group.buttons;
             var buttonLength = buttons.length;
             var cooldownGroupTemplate = `
-                <div class="cooldown-group tile no-top col-sm-6 col-md-3">
+                <div class="cooldown-group tile no-top">
                     <div class="cooldown-group-header tile-header">
-                        <div class="groupID tileID pull-left">${groupid}</div>
-                        <div class="edit-cooldown-group-wrap tile-edit pull-right">
+                        <div class="groupID tileID">${groupid}</div>
+                        <div class="edit-cooldown-group-wrap tile-edit">
                             <button class="edit-cooldown-group btn btn-default" groupid="${groupid}">
                                 <i class="fa fa-pencil" aria-hidden="true"></i>
                             </button>
