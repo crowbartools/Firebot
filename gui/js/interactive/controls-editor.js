@@ -718,11 +718,13 @@ function showImageSettings(uniqueid){
 
         <div class="effect-specific-title"><h4>How big should it be?</h4></div>
         <div class="input-group">
-            <span class="input-group-addon" id="image-size-type">Size (in percent)</span>
-            <input type="text" class="form-control" id="image-size-setting" aria-describeby="image-size-setting-type" type="number">
+            <span class="input-group-addon" id="image-size-type">Height (in pixels)</span>
+            <input type="text" class="form-control" id="image-height-setting" aria-describeby="image-height-setting-type" type="number">
+            <span class="input-group-addon" id="image-size-type">Width (in pixels)</span>
+            <input type="text" class="form-control" id="image-width-setting" aria-describeby="image-width-setting-type" type="number">
         </div>
         <div class="effect-info">
-            Just put the number in this field, do not enter the percent sign.
+            Just put the numbers in these fields. If left blank both height and width will be set to 100px as a failsafe.
         </div>
 
         <div class="effect-specific-title"><h4>How long should it show?</h4></div>
@@ -980,9 +982,10 @@ function saveControls(){
         case "Show Image":
             var imageFile = $(this).find('.show-image-effect-input').val();
             var imagePlacement = $(this).find('.image-placement-effect-type').text();
-            var imageSize = $(this).find('#image-size-setting').val();
+            var imageHeight = $(this).find('#image-height-setting').val();
+            var imageWidth = $(this).find('#image-width-setting').val();
             var imageLength = $(this).find('#image-length-setting').val();
-            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "size": imageSize, "length": imageLength});
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "height": imageHeight, "width": imageWidth , "length": imageLength});
             break;
         }
         i++
@@ -1112,7 +1115,8 @@ function loadSettings(controlId, button){
             case "Show Image":
                 $('.panel'+uniqueid+' .show-image-effect-input').val(effect.file);
                 $('.panel'+uniqueid+' .image-placement-effect-type').text(effect.position);
-                $('.panel'+uniqueid+' #image-size-setting').val(effect.size);
+                $('.panel'+uniqueid+' #image-height-setting').val(effect.height);
+                $('.panel'+uniqueid+' #image-width-setting').val(effect.width);
                 $('.panel'+uniqueid+' #image-length-setting').val(effect.length);
                 break;
             }

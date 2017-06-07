@@ -29,7 +29,8 @@ function playSound(data){
 function showImage(data){
     var filepath = data.filepath;
     var imagePosition = data.imagePosition;
-    var imageSize = data.imageSize;
+    var imageHeight = data.imageHeight;
+    var imageWidth = data.imageWidth;
     var imageDuration = parseInt(data.imageDuration);
 
     var dbSettings = new JsonDB("./user-settings/settings", true, false);
@@ -59,6 +60,6 @@ function showImage(data){
     }
 
     // Compile data and send to overlay.
-    var data = {"event":"image","filepath":filepath, "imagePosition":imagePosition, "imageSize":imageSize, "imageDuration":imageDuration};
+    var data = {"event":"image","filepath":filepath, "imagePosition":imagePosition, "imageHeight":imageHeight, "imageWidth": imageWidth, "imageDuration":imageDuration};
     broadcast(data);
 }

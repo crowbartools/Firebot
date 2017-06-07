@@ -74,14 +74,15 @@ function showImage(data){
 	var filepath = data.filepath;
 	var filepathNew = filepath.replace(/\\/g,"/");
 	var imagePosition = data.imagePosition;
-	var imageSize = data.imageSize;
+	var imageHeight = data.imageHeight;
+	var imageWidth = data.imageWidth;
 	var imageDuration = parseInt(data.imageDuration) * 1000;
 
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
 	var divClass = d.getTime();
 
-	var imageFinal = '<div class="'+divClass+'-image imageOverlayContainer" style="display:none;"><img class="imageOverlay" position="'+imagePosition+'" src="'+filepathNew+'?time='+divClass+'" style="width:'+ imageSize +'%;vertical-align: middle;"></div>';
+	var imageFinal = '<div class="'+divClass+'-image imageOverlayContainer" style="display:none;"><img class="imageOverlay" position="'+imagePosition+'" src="'+filepathNew+'?time='+divClass+'" style="height:'+ imageHeight +'px;width:'+ imageWidth +'px;"></div>';
 	
 	$('#wrapper').append(imageFinal);
 	$('.'+divClass+'-image').fadeIn('fast');
