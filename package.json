@@ -1,6 +1,6 @@
 {
   "name": "Firebot",
-  "version": "3.3.0-beta.1",
+  "version": "3.3.0",
   "description": "An application for mixer.com that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
