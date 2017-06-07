@@ -48,6 +48,18 @@ $( ".options-sounds-dropdown ul a" ).click(function() {
     $('.options-sounds-dropdown button .dropdown-text').text(setting);
 });
 
+// Custom Script Button
+$( ".options-customscript-dropdown ul a" ).click(function() {
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    var setting = $(this).text();
+
+    // Push to db.
+    dbSettings.push('./settings/runCustomScripts', (setting == 'On'));
+
+    // Change dropdown text
+    $('.options-customscript-dropdown button .dropdown-text').text(setting);
+});
+
 // Load Settings
 // This loads up all usersettings into the UI on app load.
 function loadUserSettings(){
@@ -77,12 +89,22 @@ function loadUserSettings(){
     }catch(err){
         var controlSounds = "Off"
     }
+    
+    var customScriptsButton = "Off"
+    try{
+      var runCustomScripts = 
+        (dbSettings.getData('./settings/runCustomScripts') === true);
+      if(runCustomScripts) {
+        customScriptsButton = "On" 
+      }
+    }catch(err){}
 
     // Throw into ui
     $('.options-overlay-compat-dropdown button .dropdown-text').text(overlayCompat);
     $('.options-beta-dropdown button .dropdown-text').text(betaTester);
     $('.options-emulation-dropdown button .dropdown-text').text(controlEmulation);
     $('.options-sounds-dropdown button .dropdown-text').text(controlSounds);
+    $('.options-customscript-dropdown button .dropdown-text').text(customScriptsButton);
 }
 
 // On App Load

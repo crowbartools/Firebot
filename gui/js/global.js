@@ -7,6 +7,7 @@ const List = require('list.js');
 const howler = require('howler');
 const compareVersions = require('compare-versions');
 const marked = require('marked');
+const path = require('path');
 
 const WebSocket = require('ws');
 const WebSocketServer = require('ws').Server,
@@ -22,6 +23,11 @@ $(document).on('click', 'a[href^="http"]', function(event) {
     shell.openExternal(this.href);
 });
 
+// Opens the custom scripts folder
+function openScriptsFolder() {
+  ipcRenderer.send('openScriptsFolder');
+}
+
 // Navbar Collapse
 // Collapse the navbar when a menu item is selected.
 $("nav").find("li").on("click", "a", function () {
@@ -33,7 +39,7 @@ $("nav").find("li").on("click", "a", function () {
 
 
 ///////////////
-// Helper 
+// Helper
 //////////////
 
 // Get Current Board
@@ -57,14 +63,16 @@ function getCurrentBoard(){
 function getUniqueId(){
 
     var uniqueid =String.fromCharCode(Math.floor((Math.random()*25)+65));
-    do {                
+    do {
         // between numbers and characters (48 is 0 and 90 is Z (42-48 = 90)
         var ascicode=Math.floor((Math.random()*42)+48);
         if (ascicode<58 || ascicode>64){
             // exclude all chars between : (58) and @ (64)
-           uniqueid+=String.fromCharCode(ascicode);    
-        }                
+           uniqueid+=String.fromCharCode(ascicode);
+        }
     } while (uniqueid.length<32);
 
     return uniqueid;
 }
+
+

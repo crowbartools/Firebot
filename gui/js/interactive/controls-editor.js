@@ -38,7 +38,18 @@ function editButton(controlId){
 // This button adds another pane to the settings menu.
 function addMoreFunctionality(uniqueid){
     // Collapse other panels.
-    $('.collapse').collapse()
+    $('.collapse').collapse();
+    
+    var customScriptOptionHtml = "";
+    var dbSettings = new JsonDB("./user-settings/settings", true, true);
+    try{
+    	var runCustomScripts = 
+        (dbSettings.getData('./settings/runCustomScripts') === true);
+      if(runCustomScripts) {
+        customScriptOptionHtml = 
+          `<li><a href="#" uniqueid="${uniqueid}" effect="Custom Script">Custom Script</a></li>`
+      }
+    } catch(err) {}
 
     // Build our template.
     var panelTemplate = `
@@ -69,6 +80,8 @@ function addMoreFunctionality(uniqueid){
                             <li><a href="#" uniqueid="${uniqueid}" effect="HTML">HTML</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Play Sound">Play Sound</a></li>
                             <li><a href="#" uniqueid="${uniqueid}" effect="Show Image">Show Image</a></li>
+                            ` + customScriptOptionHtml +
+                            `
                         </ul>
                     </div>
                     <div class="effect-settings-panel">
@@ -142,7 +155,76 @@ function functionalitySwitcher(uniqueid, effect){
     case "Show Image":
         var effectTemplate = showImageSettings(uniqueid);
         break;
+    case "Custom Script":
+        customScriptSettings(uniqueid);
+        break;
     }
+}
+
+// Custom Script Button Settings
+// Loads up the settings for custom scripts
+function customScriptSettings(uniqueid) {
+  
+
+  function getHtmlScriptFileList() {
+    var files = fs.readdirSync("./scripts/");
+    var scriptList = '';
+    for(var i in files) {
+      var fileName = files[i].trim();
+      if(fileName.toLowerCase().endsWith(".js")) {
+        scriptList += '<li><a href="#">' + fileName + '</a></li>';
+      }
+    }
+    return scriptList;
+  }
+  var jsFileList = getHtmlScriptFileList();
+  
+  var effectTemplate = `
+      <div class="effect-specific-title"><h4>Which script would you like to use?</h4></div>
+      <div class="effect-info">
+          Place scripts in the <a id="scriptFolderBtn" href="#" onclick="openScriptsFolder()">scripts folder</a> of the root Firebot directory, then refresh the dropdown.
+      </div>
+      <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="script-type">Pick One</span> <span class="caret"></span>
+      </button>
+      <a id="refreshScriptList" href="#" style="padding-left:5px;height:100%;"><i class="fa fa-refresh" id="refreshIcon" style="margin-top:10px;" aria-hidden="true"></i></a>
+      <ul class="dropdown-menu script-dropdown">${jsFileList}</ul>
+      </div>
+      <div class="effect-info" style="color:red">
+          <strong>Warning:</strong> Only use scripts from sources you absolutely trust!
+      </div>
+  `;
+  
+  $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
+  
+  // When an effect is clicked, change the dropdown title.
+  function updateDropdownTitle(element) {
+    var text = element.text();
+    $(".panel"+uniqueid+" .script-type").text(text);
+  }
+  
+  $('#refreshScriptList').click(function() {
+    
+    // Fancy spin animation
+    $("#refreshIcon").addClass("fa-spin");
+    setTimeout(function(){
+      $("#refreshIcon").removeClass("fa-spin");
+    }, 1000);    
+    
+    //Regen the script list dropdwn
+    var newjsFileList = getHtmlScriptFileList();
+    $(".script-dropdown").html(newjsFileList);
+    
+    // Reapply click event since the DOM has changed.
+    $( ".panel"+uniqueid+" .script-dropdown a" ).on('click',function() {
+        updateDropdownTitle($(this));
+    });  
+  });
+
+  $( ".panel"+uniqueid+" .script-dropdown a" ).on('click',function() {
+      updateDropdownTitle($(this));
+  });
 
 }
 
@@ -984,6 +1066,9 @@ function saveControls(){
             var imageLength = $(this).find('#image-length-setting').val();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "size": imageSize, "length": imageLength});
             break;
+        case "Custom Script":
+            var scriptName = $(this).find('.script-type').text();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Custom Script", "scriptName": scriptName});
         }
         i++
     });
@@ -1115,6 +1200,8 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' #image-size-setting').val(effect.size);
                 $('.panel'+uniqueid+' #image-length-setting').val(effect.length);
                 break;
+            case "Custom Script":
+                $('.panel'+uniqueid+' .script-type').text(effect.scriptName);
             }
         }
     }

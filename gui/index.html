@@ -166,7 +166,7 @@
 
           <!-- Settings Board -->
           <section class="item">
-            <div class="page-content">
+            <div class="page-content" style="min-height: 600px;">
               <div class="row page-header">
                 <div class="col-sm-12">
                   <div class="page-title">
@@ -234,7 +234,22 @@
                   </div>
                 </div>
               </div>
-
+              <div class="row">
+                <div class="setting col-sm-6">
+                  <div class="setting-heading">Custom Script Buttons</div>
+                  <div class="setting-description">Firebot supports a button effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a href="https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts">here</a>.</div>
+                  <div class="dropdown options-customscript-dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span class="dropdown-text">Off</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                      <li><a href="#" class="customscript-on">On</a></li>
+                      <li><a href="#" class="customscript-off">Off</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
