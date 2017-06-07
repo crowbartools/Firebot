@@ -67,7 +67,12 @@ function backendBuilder(gameNameId, gameJsonInfo, versionIdInfo){
                     var type = button.kind;
                     if(type == "button"){
                         try{
-                            var controlID = button.controlID;
+                            var emojitest = isEmoji(button.controlID);
+                            if(emojitest === false){
+                                var controlID = button.controlID;
+                            } else {
+                                errorLog("Button: "+button.controlID+" has emoji in the button name. This will cause all buttons to become unresponsive on connecting. Please remove emoji from the button name field in the Mixer studio. Note that button text is what is visible to viewers, and it's fine to have emoji there.")
+                            }
                         }catch(err){}
                         try{
                             var text = button.text;
@@ -828,6 +833,21 @@ function connectSound(type){
     }
     // Play sound
     sound.play();
+}
+
+// Emoji checker!
+// This checks a string for emoji and returns true if there are any...
+function isEmoji(str) {
+    var ranges = [
+        '\ud83c[\udf00-\udfff]', // U+1F300 to U+1F3FF
+        '\ud83d[\udc00-\ude4f]', // U+1F400 to U+1F64F
+        '\ud83d[\ude80-\udeff]' // U+1F680 to U+1F6FF
+    ];
+    if (str.match(ranges.join('|'))) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 //////////////////////
