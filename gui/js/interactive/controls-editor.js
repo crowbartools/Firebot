@@ -806,7 +806,7 @@ function showImageSettings(uniqueid){
             <input type="text" class="form-control" id="image-width-setting" aria-describeby="image-width-setting-type" type="number">
         </div>
         <div class="effect-info">
-            Just put the numbers in these fields. If left blank both height and width will be set to 100px as a failsafe.
+            Just put numbers in the fields (ex: 250). This will set the max width/height of the image and scale it down proportionally.
         </div>
 
         <div class="effect-specific-title"><h4>How long should it show?</h4></div>
