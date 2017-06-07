@@ -162,7 +162,7 @@ function customScriptSettings(uniqueid) {
   for(var i in files) {
     var fileName = files[i].trim();
     if(fileName.toLowerCase().endsWith(".js")) {
-      jsFileList =+ '<li><a href="#">' + fileName + '</a></li>';
+      jsFileList += '<li><a href="#">' + fileName + '</a></li>';
     }
   }
   
@@ -907,6 +907,9 @@ function saveControls(){
             var imageLength = $(this).find('#image-length-setting').val();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Show Image", "file": imageFile, "position": imagePlacement, "length": imageLength});
             break;
+        case "Custom Script":
+            var scriptName = $(this).find('.script-type').text();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Custom Script", "scriptName": scriptName});
         }
         i++
     });
@@ -1022,6 +1025,8 @@ function loadSettings(controlId, button){
                 $('.panel'+uniqueid+' .image-placement-effect-type').text(effect.position);
                 $('.panel'+uniqueid+' #image-length-setting').val(effect.length);
                 break;
+            case "Custom Script":
+                $('.panel'+uniqueid+' .script-type').text(effect.scriptName);
             }
         }
     }
