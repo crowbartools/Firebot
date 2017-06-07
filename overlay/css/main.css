@@ -23,10 +23,6 @@ canvas{
 }
 
 /*** Image Position ***/
-.imageOverlayContainer{
-	width:100vw;
-	height:100vh;
-}
 .imageOverlay[position="Top Left"]{
 	position:absolute;
 	top: 10px;

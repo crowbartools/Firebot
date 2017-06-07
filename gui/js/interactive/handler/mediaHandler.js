@@ -40,10 +40,10 @@ function showImage(data){
         var imageX = "Top Middle";
     }
     if(imageHeight == "" || imageHeight === null){
-        var imageHeight = "100";
+        var imageHeight = false;
     }
     if(imageWidth == "" || imageWidth === null){
-        var imageWidth = "100";
+        var imageWidth = false;
     }
     if(imageDuration == "" || imageDuration === null){
         var imageDuration = 5;
