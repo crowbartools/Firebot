@@ -7,6 +7,7 @@ const List = require('list.js');
 const howler = require('howler');
 const compareVersions = require('compare-versions');
 const marked = require('marked');
+const path = require('path');
 
 const WebSocket = require('ws');
 const WebSocketServer = require('ws').Server,
@@ -21,6 +22,11 @@ $(document).on('click', 'a[href^="http"]', function(event) {
     event.preventDefault();
     shell.openExternal(this.href);
 });
+
+// Opens the custom scripts folder
+function openScriptsFolder() {
+  ipcRenderer.send('openScriptsFolder');
+}
 
 // Navbar Collapse
 // Collapse the navbar when a menu item is selected.

@@ -164,26 +164,32 @@ function functionalitySwitcher(uniqueid, effect){
 // Custom Script Button Settings
 // Loads up the settings for custom scripts
 function customScriptSettings(uniqueid) {
-  var files = fs.readdirSync("./scripts/");
+  
 
-  var jsFileList = '';
-  for(var i in files) {
-    var fileName = files[i].trim();
-    if(fileName.toLowerCase().endsWith(".js")) {
-      jsFileList += '<li><a href="#">' + fileName + '</a></li>';
+  function getHtmlScriptFileList() {
+    var files = fs.readdirSync("./scripts/");
+    var scriptList = '';
+    for(var i in files) {
+      var fileName = files[i].trim();
+      if(fileName.toLowerCase().endsWith(".js")) {
+        scriptList += '<li><a href="#">' + fileName + '</a></li>';
+      }
     }
+    return scriptList;
   }
+  var jsFileList = getHtmlScriptFileList();
   
   var effectTemplate = `
       <div class="effect-specific-title"><h4>Which script would you like to use?</h4></div>
+      <div class="effect-info">
+          Place scripts in the <a id="scriptFolderBtn" href="#" onclick="openScriptsFolder()">scripts folder</a> of the root Firebot directory, then refresh the dropdown.
+      </div>
       <div class="btn-group">
       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="script-type">Pick One</span> <span class="caret"></span>
       </button>
+      <a id="refreshScriptList" href="#" style="padding-left:5px;height:100%;"><i class="fa fa-refresh" id="refreshIcon" style="margin-top:10px;" aria-hidden="true"></i></a>
       <ul class="dropdown-menu script-dropdown">${jsFileList}</ul>
-      </div>
-      <div class="effect-info">
-          Place scripts in the "scripts" folder of the root Firebot directory, then reopen this effect page.
       </div>
       <div class="effect-info" style="color:red">
           <strong>Warning:</strong> Only use scripts from sources you absolutely trust!
@@ -191,11 +197,33 @@ function customScriptSettings(uniqueid) {
   `;
   
   $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate); 
-
+  
   // When an effect is clicked, change the dropdown title.
-  $( ".panel"+uniqueid+" .script-dropdown a" ).click(function() {
-      var text = $(this).text();
-      $(".panel"+uniqueid+" .script-type").text(text);
+  function updateDropdownTitle(element) {
+    var text = element.text();
+    $(".panel"+uniqueid+" .script-type").text(text);
+  }
+  
+  $('#refreshScriptList').click(function() {
+    
+    // Fancy spin animation
+    $("#refreshIcon").addClass("fa-spin");
+    setTimeout(function(){
+      $("#refreshIcon").removeClass("fa-spin");
+    }, 1000);    
+    
+    //Regen the script list dropdwn
+    var newjsFileList = getHtmlScriptFileList();
+    $(".script-dropdown").html(newjsFileList);
+    
+    // Reapply click event since the DOM has changed.
+    $( ".panel"+uniqueid+" .script-dropdown a" ).on('click',function() {
+        updateDropdownTitle($(this));
+    });  
+  });
+
+  $( ".panel"+uniqueid+" .script-dropdown a" ).on('click',function() {
+      updateDropdownTitle($(this));
   });
 
 }
