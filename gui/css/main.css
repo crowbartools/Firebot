@@ -3677,11 +3677,15 @@
   margin-top: 1em;
 }
 /* line 24, ../scss/_interactive.scss */
-.functionality-settings .effect-info {
+.functionality-settings .effect-setting-container {
   padding: .5em 0em;
 }
+/* line 27, ../scss/_interactive.scss */
+.functionality-settings .effect-info {
+  margin: 1em 0em;
+}
 
-/* line 32, ../scss/_interactive.scss */
+/* line 35, ../scss/_interactive.scss */
 #board-settings .board-group-defaults-settings .board-group .board-group-scene {
   background-color: #007eff;
   padding: .5em;
@@ -3690,7 +3694,7 @@
   font-weight: bold;
   border-radius: .5em .5em 0em 0em;
 }
-/* line 40, ../scss/_interactive.scss */
+/* line 43, ../scss/_interactive.scss */
 #board-settings .board-group-defaults-settings .board-group .board-group-scene-dropdown {
   background-color: #0e162a;
   padding: .5em;
@@ -3698,18 +3702,18 @@
   border-radius: 0em 0em .5em .5em;
 }
 
-/* line 50, ../scss/_interactive.scss */
+/* line 53, ../scss/_interactive.scss */
 .playbutton {
   background: none;
   border: none;
   font-size: 2em;
 }
-/* line 54, ../scss/_interactive.scss */
+/* line 57, ../scss/_interactive.scss */
 .playbutton:hover {
   color: #adadad;
 }
 
-/* line 59, ../scss/_interactive.scss */
+/* line 62, ../scss/_interactive.scss */
 .ui-autocomplete {
   border-radius: 10px;
   padding: 5px;
@@ -3724,30 +3728,51 @@
   height: 150px;
   overflow-y: scroll;
 }
-/* line 72, ../scss/_interactive.scss */
+/* line 75, ../scss/_interactive.scss */
 .ui-autocomplete li {
   cursor: pointer;
 }
-/* line 74, ../scss/_interactive.scss */
+/* line 77, ../scss/_interactive.scss */
 .ui-autocomplete li div {
   padding: 5px;
   margin: 2px;
 }
-/* line 79, ../scss/_interactive.scss */
+/* line 82, ../scss/_interactive.scss */
 .ui-autocomplete li:hover {
   color: white;
   background-color: #007eff;
 }
 
-/* line 85, ../scss/_interactive.scss */
+/* line 88, ../scss/_interactive.scss */
 .ui-helper-hidden-accessible {
   display: none;
 }
 
-/* line 89, ../scss/_interactive.scss */
+/* line 92, ../scss/_interactive.scss */
 .board-group-defaults-settings, .board-cooldown-groups, .interactive-button-holder.active {
   display: flex;
   flex-wrap: wrap;
+}
+
+/* line 97, ../scss/_interactive.scss */
+.cooldown-group-buttons {
+  height: 200px;
+  overflow: hidden;
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin: 10px 0px;
+}
+/* line 106, ../scss/_interactive.scss */
+.cooldown-group-buttons .cooldown-group-button-option {
+  border-bottom: 1px solid #cecece;
+  padding: 6px 0px;
+}
+/* line 110, ../scss/_interactive.scss */
+.cooldown-group-buttons .cooldown-group-button-option input {
+  transform: scale(2);
+  margin: 6px;
 }
 
 /* line 3, ../scss/_groups.scss */

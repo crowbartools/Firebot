@@ -21,8 +21,11 @@
         border-top: 1px solid $light-highlight;
         margin-top: 1em;
     }
+    .effect-setting-container{
+        padding:.5em 0em;
+    }
     .effect-info{
-        padding: .5em 0em;
+        margin:1em 0em;
     }
 }
 
@@ -89,4 +92,25 @@
 .board-group-defaults-settings, .board-cooldown-groups, .interactive-button-holder.active{
     display:flex;
     flex-wrap: wrap;
+}
+
+.cooldown-group-buttons{
+    height: 200px;
+    overflow:hidden;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    border-radius:4px;
+    padding:6px 12px;
+    margin: 10px 0px;
+
+    .cooldown-group-button-option{
+        border-bottom:1px solid #cecece;
+        padding: 6px 0px;
+
+        input{
+            transform: scale(2);
+            margin:6px;
+        }
+    }
+
 }
