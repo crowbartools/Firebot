@@ -507,7 +507,7 @@ function addCooldownGroup(){
     // Clear old settings.
     $(".cooldown-groupid").val('');
     $(".cooldown-group-length").val('');
-    $(".selected-cooldown-group-buttons").empty();
+    $('.cooldown-group-button-option').remove();
     $('.cooldown-group-dropdown').empty();
 
     // Pull in all buttons for selected board.
@@ -523,27 +523,20 @@ function addCooldownGroup(){
             var controls = scene.controls;
             for (button of controls){
                 var name = button.controlID;
-                var dropdowntemplate = `<li><a href="#">${name}</a></li>`;
-                $(".cooldown-group-dropdown").append(dropdowntemplate);
+                var template = `
+                    <div class="cooldown-group-button-option">
+                        <input type="checkbox" button="${name}" aria-label="..."> <span>${name}</span>
+                    </div>
+                `;
+
+                $(".cooldown-group-buttons").append(template);
             }
         }
     } catch(err){};
 
-    // Add in a new button when one is selected.
-    $( ".cooldown-group-dropdown a" ).click(function() {
-        var text = $(this).text();
-        var template = `<div class="selected-cooldown-group-button pill">
-                            <p class="content"><span>${text}</span></p>
-                            <div class="remove-cooldown-group-button pull-right">
-                                <button class="btn btn-danger">X</button>
-                            </div>
-                        </div>`;
-        $(".selected-cooldown-group-buttons").append(template);
-
-        // When X is clicked, remove button from list.
-        $(".remove-cooldown-group-button button").click(function(){
-            $(this).closest(".selected-cooldown-group-button").remove();
-        });
+    // Initialize uncheck button.
+    $(".cooldown-group-button-reset button").click(function(){
+        $('.cooldown-group-button-option input').prop('checked', false);
     });
 
     // Hide delete button;
@@ -561,29 +554,13 @@ function editCooldownGroup(sceneid){
     // Clear old settings.
     $(".cooldown-groupid").val('');
     $(".cooldown-group-length").val('');
-    $(".selected-cooldown-group-buttons").empty();
+    $('.cooldown-group-button-option').remove();
     $('.cooldown-group-dropdown').empty();
 
     // Load easy info
     $('#newCooldownGroupLabel').text('Edit Cooldown Group');
     $('.cooldown-groupid').val(sceneid);
     $('.cooldown-group-length').val(length);
-
-    // Loop through buttons and add them in.
-    for (button of buttons){
-        var template = `<div class="selected-cooldown-group-button pill">
-                            <p class="content"><span>${button}</span></p>
-                            <div class="remove-cooldown-group-button pull-right">
-                                <button class="btn btn-danger">X</button>
-                            </div>
-                        </div>`;
-        $(".selected-cooldown-group-buttons").append(template);
-
-        // Intialize delete button.
-        $(".remove-cooldown-group-button button").click(function(){
-            $(this).closest(".selected-cooldown-group-button").remove();
-        });
-    }
 
     // Pull in all buttons for selected board.
     try{
@@ -598,28 +575,21 @@ function editCooldownGroup(sceneid){
             var controls = scene.controls;
             for (button of controls){
                 var name = button.controlID;
-                var dropdowntemplate = `<li><a href="#">${name}</a></li>`;
-                $(".cooldown-group-dropdown").append(dropdowntemplate);
+                var template = `
+                    <div class="cooldown-group-button-option">
+                        <input type="checkbox" button="${name}" aria-label="..."> <span>${name}</span>
+                    </div>
+                `;
+
+                $(".cooldown-group-buttons").append(template);
             }
         }
     } catch(err){};
 
-    // Add in a new button when one is selected.
-    $( ".cooldown-group-dropdown a" ).click(function() {
-        var text = $(this).text();
-        var template = `<div class="selected-cooldown-group-button pill">
-                            <p class="content"><span>${text}</span></p>
-                            <div class="remove-cooldown-group-button pull-right">
-                                <button class="btn btn-danger">X</button>
-                            </div>
-                        </div>`;
-        $(".selected-cooldown-group-buttons").append(template);
-
-        // When X is clicked, remove button from list.
-        $(".remove-cooldown-group-button button").click(function(){
-            $(this).closest(".selected-cooldown-group-button").remove();
-        });
-    });
+    // Loop through our saved buttons and check any that are saved.
+    for (button of buttons){
+        $('.cooldown-group-button-option input[button='+button+']').prop('checked', true);
+    }
 
     // We're editing, so show the delete button.
     $('.remove-cooldown-group').show();
@@ -632,6 +602,11 @@ function editCooldownGroup(sceneid){
         }catch(err){
             errorLog("Error deleting this cooldown group.")
         }
+    });
+
+    // Initialize uncheck button.
+    $(".cooldown-group-button-reset button").click(function(){
+        $('.cooldown-group-button-option input').prop('checked', false);
     });
 
     // Show Modal
@@ -649,12 +624,12 @@ function saveCooldownGroup(){
     var cooldownLength = $('.cooldown-group-length').val();
 
     // Loop through selected buttons and get control id.
-    $( ".selected-cooldown-group-buttons" ).find('.selected-cooldown-group-button').each(function( index ) {
-        var text = $(this).find('span').text();
-        cooldownButtons.push(text);
+    $( ".cooldown-group-button-option input:checked" ).each(function( index ) {
+        var button = $(this).attr('button');
+        cooldownButtons.push(button);
 
         // Push group info to db for each control.
-        dbControls.push('./firebot/controls/'+text+'/cooldownGroup', groupID);
+        dbControls.push('./firebot/controls/'+button+'/cooldownGroup', groupID);
     });
 
     // Push cooldown group info to db.
