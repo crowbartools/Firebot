@@ -1132,6 +1132,7 @@ function saveControls(){
         case "Custom Script":
             var scriptName = $(this).find('.script-type').text();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Custom Script", "scriptName": scriptName});
+            break;
         case "Delay":
             var delay = $(this).find('#delay-length-setting').val();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Delay", "delay": delay});
