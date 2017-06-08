@@ -1218,7 +1218,7 @@ function loadSettings(controlId, button){
                 // Cycle through selected buttons and push to array.
                 var cooldownButtons = effect.buttons;
                 for (button of cooldownButtons){
-                    $('.panel'+uniqueid+' .cooldown-group-button-option input[button='+button+']').prop('checked', true);
+                    $('.panel'+uniqueid+' .cooldown-group-button-option input[button="'+button+'"]').prop('checked', true);
                 }
                 $('.panel'+uniqueid+' #cooldown-amount-setting').val(effect.length);
                 break;

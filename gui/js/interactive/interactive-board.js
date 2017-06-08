@@ -588,7 +588,7 @@ function editCooldownGroup(sceneid){
 
     // Loop through our saved buttons and check any that are saved.
     for (button of buttons){
-        $('.cooldown-group-button-option input[button='+button+']').prop('checked', true);
+        $('.cooldown-group-button-option input[button="'+button+'"]').prop('checked', true);
     }
 
     // We're editing, so show the delete button.
