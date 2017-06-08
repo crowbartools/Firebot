@@ -82,6 +82,7 @@ function addMoreFunctionality(uniqueid){
                             <li><a href="#" uniqueid="${uniqueid}" effect="Show Image">Show Image</a></li>
                             ` + customScriptOptionHtml +
                             `
+                            <li><a href="#" uniqueid="${uniqueid}" effect="Delay">Delay</a></li>
                         </ul>
                     </div>
                     <div class="effect-settings-panel">
@@ -158,13 +159,32 @@ function functionalitySwitcher(uniqueid, effect){
     case "Custom Script":
         customScriptSettings(uniqueid);
         break;
+    case "Delay":
+        delaySettings(uniqueid);
+        break;
     }
+}
+
+function delaySettings(uniqueid) {
+  var effectTemplate = `
+      <div class="effect-specific-title"><h4>How long should the delay be?</h4></div>
+      <div class="input-group">
+          <span class="input-group-addon" id="delay-length-effect-type">Seconds</span>
+          <input type="text" class="form-control" id="delay-length-setting" aria-describedby="delay-length-effect-type" type="number">
+      </div>
+
+      <div class="effect-info">
+          Note: Delays dont wait for the previous effect to finish so take that into account, if required. For example, if your first effect plays a sound thats 10 seconds long and you want a 10 second delay after that sound, make the delay last 20 seconds.
+      </div>
+  `;
+
+  // Put onto the page.
+  $('.panel'+uniqueid+' .effect-settings-panel').append(effectTemplate);
 }
 
 // Custom Script Button Settings
 // Loads up the settings for custom scripts
 function customScriptSettings(uniqueid) {
-  
 
   function getHtmlScriptFileList() {
     var files = fs.readdirSync("./scripts/");
@@ -1072,6 +1092,10 @@ function saveControls(){
         case "Custom Script":
             var scriptName = $(this).find('.script-type').text();
             dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Custom Script", "scriptName": scriptName});
+        case "Delay":
+            var delay = $(this).find('#delay-length-setting').val();
+            dbControls.push('./firebot/controls/'+controlID+'/effects/'+i, {"type": "Delay", "delay": delay});
+            break;
         }
         i++
     });
@@ -1206,6 +1230,9 @@ function loadSettings(controlId, button){
                 break;
             case "Custom Script":
                 $('.panel'+uniqueid+' .script-type').text(effect.scriptName);
+            case "Delay":
+                $('.panel'+uniqueid+' #delay-length-setting').val(effect.delay);
+                break;
             }
         }
     }
