@@ -17,8 +17,8 @@ let mainWindow
 function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-      width: 1100,
-      height: 600,
+      width: 1200,
+      height: 650,
       minWidth: 600,
       icon: path.join(__dirname, './gui/images/logo.ico'),
       show: false
@@ -26,7 +26,7 @@ function createWindow () {
 
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, './gui/index.html'),
+      pathname: path.join(__dirname, './gui/app/index.html'),
       protocol: 'file:',
       slashes: true
     }))

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Firebot Interactive</title>
+    <link rel="icon" href="../../favicon.ico">
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <script src="https://use.fontawesome.com/b4d71b289b.js"></script>
+    <script defer src="../fonts/fontawesome5/light.js"></script>
+    <script defer src="../fonts/fontawesome5/loader.js"></script>
+
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700" rel="stylesheet">
+    
+    <script src="../js/plugins/jquery-3.1.1.slim.min.js"></script>
+    <script src="../js/plugins/jquery.min.js"></script>
+    <script src="../js/plugins/tether.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/plugins/jquery-ui.min.js"></script>
+    
+    
+    <script src="../js/global.js"></script>
+    <script type="text/javascript" src="./index.js"></script>
+	  <script type="text/javascript" src="./controllers/mainController.js"></script>
+    <script type="text/javascript" src="./controllers/loginsController.js"></script>
+    <script type="text/javascript" src="./controllers/interactiveController.js"></script>
+    <script type="text/javascript" src="./factories/boardFactory.js"></script>
+    <script type="text/javascript" src="./factories/settingsService.js"></script>
+    
+    
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../css/main.css" rel="stylesheet">
+  </head>
+  <body ng-controller="MainController">
+    <div class="fb-nav" ng-class="{'contracted': !navExpanded}">
+      <div class="nav-header" >
+        <img class="nav-header-icon" ng-class="{'contracted': !navExpanded}" src="../images/logo_transparent.png">      
+        <span class="nav-header-title" ng-class="{'contracted': !navExpanded}">Firebot</span>
+        <span ng-hide="navExpanded" class="nav-expand-button" ng-class="{'contracted': !navExpanded}" ng-click="toggleNav()">
+          <i class="fal-angle-right"></i>
+        </span>
+        <span ng-show="navExpanded" class="nav-expand-button" ng-class="{'contracted': !navExpanded}" ng-click="toggleNav()">
+          <i class="fal-angle-left"></i>
+        </span>
+      </div>
+      <div class="nav-links-wrapper">
+        <a class="fb-nav-link" href="#" ng-class="{'selected': tabIsSelected('Logins')}" ng-click="setTab('Logins')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon" stlye="padding-bottom: 3px;"><i class="fal-sign-in"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Logins</div>
+        </a>
+        <a class="fb-nav-link" href="#!interactive" ng-class="{'selected': tabIsSelected('Interactive')}" ng-click="setTab('Interactive')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal-gamepad"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Interactive</div>
+        </a>
+        <a class="fb-nav-link" href="#!contact" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal-user"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
+        </a>
+        <a class="fb-nav-link" href="#!contact" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal-bullhorn"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Moderation</div>
+        </a>
+        <a class="fb-nav-link" href="#!contact" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal-cog"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Settings</div>
+        </a>
+        <a class="fb-nav-link" href="#!contact" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal-download"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Updates</div>
+        </a>
+      </div>
+    </div>  
+    <div class="tab-content">
+      <div class="tab-header">{{currentTab}}</div>
+      <div class="tab-body-wrapper"> 
+        <div class="tab-body">
+          <!-- angular templating -->
+          <!-- this is where content will be injected -->
+          <div ng-view></div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <style>
+     html {
+       height: 100%;     
+     }    
+    body {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      margin: 0px;
+      padding-top: 0;
+      padding-bottom: 0;
+      font-family: 'Open Sans', sans-serif !important;
+    }
+    .tab-content {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #F3F5F5;
+    }
+    .tab-header {
+      width: 100%;
+      height: 65px;
+      background: white;
+      border-bottom: 0.01em solid #EAECEC;
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      justify-content: flex-start;
+      padding-left: 30px;
+      font-size: 28px;
+      text-transform: capitalize;
+      font-weight: 400;
+      color: gray;
+      flex-shrink: 0;
+    }
+    .tab-body-wrapper {
+      height: 100%;
+      width: 100%;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    .tab-body {
+      margin: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 3px;
+      border: 0.01em solid #EAECEC;
+    }
+    .fb-nav {
+      height: 100%;
+      width: 275px;
+      display: flex;
+      flex-direction: column;
+      transition: 0.5s;
+      white-space: nowrap;
+      background: #282c2c; /* Old browsers */
+      background: -moz-linear-gradient(-45deg, #282c2c 0%, #2f3436 98%); /* FF3.6-15 */
+      background: -webkit-linear-gradient(-45deg, #282c2c 0%,#2f3436 98%); /* Chrome10-25,Safari5.1-6 */
+      background: linear-gradient(135deg, #282c2c 0%,#2f3436 98%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    }
+    .fb-nav.contracted {
+      width: 62px;
+    }
+    .nav-header {
+      width: 100%;
+      height: 65px;
+      background: #25292A;
+      border-bottom: 0.01em solid #383D3F;
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .nav-links-wrapper {
+      margin-top: 30px;
+    }
+    .fb-nav-link {
+      color:white;
+      display: block;
+      height: 48px;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .fb-nav-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      text-decoration: none;
+    }
+      
+    .fb-nav-link.selected, .fb-nav-link.selected:hover {
+      color: #4d5454;
+      background: #F3F5F5;
+    }
+    .nav-link-bar {
+      height: 100%;
+      width: 6px;
+      display: inline-block;
+    }
+    
+    .selected .nav-link-bar {
+      background: #EBB11F;
+    }
+    
+    .selected .nav-link-icon {
+      color: #EBB11F;
+    }
+    
+    .nav-link-icon {
+      font-size: 20px;
+      width: 50px;
+      height: 100%;
+      display: inline-block;
+      overflow: hidden;
+      padding-top: 9px;
+      padding-left: 10px;
+    }
+    .nav-link-title {
+      font-weight: 500;
+      font-size: 14px;
+      height: 100%;
+      display: inline-block;
+      overflow: hidden;
+      transition: 0.3s;
+      padding-top: 14px;
+      opacity: 1;
+    }
+    .nav-link-title.contracted {
+      opacity: 0;
+    }
+    
+    
+    .selected .nav-link-title {
+      font-weight: 600;
+    }
+    
+    .nav-header-title {
+      color: #EBB11F;
+      font-size: 22px;
+      opacity: 1;
+      transition: 0.3s
+    }
+    
+    .nav-header-title.contracted {
+      opacity: 0;
+    }
+    
+    .nav-expand-button {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-size: 36px;
+      color: #EBB11F;
+      cursor: pointer;
+    }
+    
+    .nav-expand-button.contracted {
+      right: 7px;
+    }
+    
+    .nav-expand-button:hover {
+      opacity: 0.5;
+    }
+    
+    
+    .nav-header-icon {
+      height: 40px;
+      width: 40px;
+      align-self: flex-start;
+      margin-top: 10px;
+      margin-left: 40px;
+      margin-right: 0px;
+      transition: 0.5s;
+    }
+    
+    .nav-header-icon.contracted {
+      margin-left: 5px;
+      margin-right: 35px;
+    }
+  
+    .login-pic{
+        border-radius:.25rem;
+        border: 2px solid $main-color;
+        width: 220px;
+    }
+  </style>
+</html>

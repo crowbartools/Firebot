@@ -1,6 +1,5 @@
 const shell = require('electron').shell;
 const fs = require('fs');
-const {ipcRenderer} = require('electron');
 const JsonDB = require('node-json-db');
 const request = require('request');
 const List = require('list.js');

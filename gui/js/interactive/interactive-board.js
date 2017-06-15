@@ -693,9 +693,12 @@ function menuManager(){
     // Look into the controls directory. Make an array of filenames.
     try{
         var games = fs.readdirSync('./user-settings/controls');
+        
     }catch(err){
+      console.log(err);
         var games = [];
     }
+    console.log(games);
 
     // Clean up dropdown
     $('.dropdownGame').remove();
