@@ -40,6 +40,11 @@
       return buttons;
     }
     
+    $scope.fireControlManually = function(controlId) {
+      console.log("here");
+      ipcRenderer.send('manualButton', controlId);
+    }
+    
     /**
     * Private helpers
     */
@@ -51,7 +56,6 @@
     * Initial tab load
     */
  		if(!boardFactory.hasBoardsLoaded() === true) {
-      console.log("loading boards, interactive controller")
       boardFactory.loadAllBoards().then(function () {
        
         var lastBoard = getLastUsedBoard();

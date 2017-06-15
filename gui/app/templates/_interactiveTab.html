@@ -47,11 +47,11 @@
         </uib-tab>
         <!--Create a tab for each scene -->
         <uib-tab index="$index + 1" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
-          <div class="tab-pane interactive-button-holder">
+          <div class="tab-pane interactive-button-holder active">
             <!--Create buttons in each scene -->
-            <div class="interactive-button tile" ng-repeat="button in getControlsForScene(scene)">
+            <div class="interactive-button tile" ng-repeat="control in getControlsForScene(scene)">
                 <div class="interactive-button-header tile-header">
-                    <div class="controlID tileID">controlID</div>
+                    <div class="controlID tileID">{{control.controlId}}</div>
                     <div class="edit-interactive-control tile-edit">
                         <button class="edit-control btn btn-default" controlid="${controlID}">
                             <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -59,9 +59,11 @@
                     </div>
                 </div>
                 <div class="interactive-button-body tile-body">
-                    <div class="buttontext">buttontext</div>
-                    <div class="playbuttonwrap"><button class="playbutton" control="${controlID}"><i class="fa fa-play-circle" aria-hidden="true"></i></button></div>
-                    <div class="sparkcost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> sparkcost</div>
+                    <div class="buttontext">{{control.text ? control.text : "Unnamed"}}</div>
+                    <div class="playbuttonwrap">
+                      <button class="playbutton" ng-click="fireControlManually(control.controlId)"><i class="fa fa-play-circle" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="sparkcost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
                 </div>
             </div>
           </div>
