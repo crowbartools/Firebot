@@ -1,5 +1,4 @@
 function errorLog(error){
-    console.log(error);
 
     // Kill all connections
     ipcRenderer.send('mixerInteractive', 'disconnect');
@@ -17,11 +16,17 @@ function errorLog(error){
         }
     } catch(err){}
 
-    // Place text into modal
-    $('#error-modal .modal-body p').text(error);
+    // If error modal already visible, just keep that one up.
+    if($('#error-modal').is(':visible') === false){
 
-    // Show Modal
-    $('#error-modal').modal('toggle')
+        if($('#error-modal .modal-body').text().trim().length === 0){
+            // Place text into modal
+            $('#error-modal .modal-body p').text(error);
+        }
+
+        // Show Modal
+        $('#error-modal').modal('show')
+    } 
 }
 
 // Watches for an error event from main process
