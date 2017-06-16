@@ -623,6 +623,18 @@ function saveCooldownGroup(){
     var groupID = $('.cooldown-groupid').val();
     var cooldownLength = $('.cooldown-group-length').val();
 
+    // Loop through all buttons and remove this cooldown group.
+    var buttons = dbControls.getData('/firebot/controls');
+    for(button in buttons){
+        try{
+            var currentGroup = dbControls.getData('./firebot/controls/'+button+'/cooldownGroup');
+            if(currentGroup == groupID){
+                console.log('Removing cooldown group '+groupID+' from '+button+'.');
+                dbControls.delete('./firebot/controls/'+button+'/cooldownGroup');
+            }
+        }catch(err){}
+    }
+
     // Loop through selected buttons and get control id.
     $( ".cooldown-group-button-option input:checked" ).each(function( index ) {
         var button = $(this).attr('button');
