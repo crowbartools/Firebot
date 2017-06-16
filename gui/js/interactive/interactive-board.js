@@ -594,10 +594,26 @@ function editCooldownGroup(sceneid){
     // We're editing, so show the delete button.
     $('.remove-cooldown-group').show();
     $(".remove-cooldown-group").click(function(){
-        var sceneid = $('.cooldown-groupid').val();
+        var groupID = $('.cooldown-groupid').val();
+        
         try{
+            var dbControls = getCurrentBoard();
+
             // Delete and reload groups.
-            dbControls.delete('./firebot/cooldownGroups/'+sceneid);
+            dbControls.delete('./firebot/cooldownGroups/'+groupID);
+
+            // Loop through all buttons and remove this cooldown group.
+            var buttons = dbControls.getData('/firebot/controls');
+            for(button in buttons){
+                try{
+                    var currentGroup = dbControls.getData('./firebot/controls/'+button+'/cooldownGroup');
+                    if(currentGroup == groupID){
+                        console.log('Removing cooldown group '+groupID+' from button '+button+'.');
+                        dbControls.delete('./firebot/controls/'+button+'/cooldownGroup');
+                    }
+                }catch(err){}
+            }
+
             loadCooldownGroups();
         }catch(err){
             errorLog("Error deleting this cooldown group.")
