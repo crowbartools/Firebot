@@ -200,7 +200,7 @@ ipcRenderer.on('getRefreshToken', function (event, data) {
     var status = $('.connection-text').text();
 
     // Send event to render process.
-    if (status === "Connected.") {
+    if (status.substring(0,9) === "Connected") {
         // Disconnect!
         ipcRenderer.send('mixerInteractive', 'disconnect');
     } else {
