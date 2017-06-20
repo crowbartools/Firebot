@@ -67,7 +67,9 @@
           boardJsonFiles = fs.readdirSync('./user-settings/controls');          
       }catch(err){
         console.log(err);
-        return;
+        return new Promise(function(resolve, reject) {
+          reject('No boards saved.')
+        });;
       }
       
       /* Step 1 */  
