@@ -7,14 +7,14 @@
           type="button"
           ng-click="openFileExporer()">Choose</button>
         </span>
-        <input type="text" class="form-control show-image-effect-input">
+        <input type="text" class="form-control show-image-effect-input" ng-model="effect.file">
     </div>
 </div>
 <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>What location should it show in?</h4></div>
     <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="image-placement-effect-type">{{effect.location ? effect.location : 'Pick one'}}</span> <span class="caret"></span>
+            <span class="image-placement-effect-type">{{effect.position ? effect.position : 'Pick one'}}</span> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu image-placement-effect-dropdown">
             <li ng-repeat="location in imageLocations"
