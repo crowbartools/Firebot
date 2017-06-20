@@ -17,4 +17,4 @@
 - Have you gone to /firebot/user-settings/controls and attached the problem controls file to this issue?
 
 
-
+- Go to Interactive Studio, edit the board in question, click on the share icon beside the board name up top in the right part of the view. Choose only allow specific .... then type in our names and click add and you should be ok. (Firebottle, ebiggz, kateract and ThePerry)
