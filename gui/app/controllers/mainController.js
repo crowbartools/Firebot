@@ -84,6 +84,12 @@ const shell = electron.shell;
       .when('/updates', {
         templateUrl: './templates/_updates.html',
         controller: 'updatesController'
+      })
+
+      // route for the credits page
+      .when('/credits', {
+        templateUrl: './templates/_credits.html',
+        controller: 'creditsController'
       });
   }]);
   

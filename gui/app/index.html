@@ -31,6 +31,7 @@
     <script type="text/javascript" src="./controllers/moderationController.js"></script>
     <script type="text/javascript" src="./controllers/settingsController.js"></script>
     <script type="text/javascript" src="./controllers/updatesController.js"></script>
+    <script type="text/javascript" src="./controllers/creditsController.js"></script>
     <script type="text/javascript" src="./services/boardService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/groupsService.js"></script>
@@ -93,6 +94,11 @@
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal-download"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Updates</div>
+        </a>
+        <a class="fb-nav-link" href="#!credits" ng-class="{'selected': tabIsSelected('Credits')}" ng-click="setTab('Credits')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fa fa-github-alt"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Credits</div>
         </a>
       </div>
       <div class='interactive-status-wrapper'>
