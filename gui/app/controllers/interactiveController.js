@@ -21,10 +21,12 @@
 
       $scope.switchToBoard = function(boardName) {
         var board = boardService.getBoardByName(boardName);
-        if (board != null && ($scope.selectedBoard == null || board.name != $scope.selectedBoard.name)) {
-          $scope.selectedBoard = board;
-          settingsService.setLastBoardName(boardName);
-        }
+        setLastBoard(board);
+      }
+      
+      $scope.switchToBoardById = function(id) {
+        var board = boardService.getBoardById(id);
+        setLastBoard(board);
       }
 
       $scope.getScenesForSelectedBoard = function() {
@@ -65,6 +67,13 @@
       $scope.fireControlManually = function(controlId) {
         ipcRenderer.send('manualButton', controlId);
       }
+      
+      function setLastBoard(board) {
+        if (board != null && ($scope.selectedBoard == null || board.name != $scope.selectedBoard.name)) {
+          $scope.selectedBoard = board;
+          settingsService.setLastBoardName(board.name);
+        }
+      }
 
       /**
        * MODAL CONTROL
@@ -93,7 +102,9 @@
           },
           // The callback to run after the modal closed via "Add board"
           closeCallback: (id) => {
-              boardService.addNewBoardWithId(id);
+              boardService.addNewBoardWithId(id).then(() => {
+                $scope.switchToBoardById(id);
+              });
           }
         }      
         utilityService.showModal(addBoardModalContext);
