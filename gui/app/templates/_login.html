@@ -1,18 +1,22 @@
 <!-- Login Page -->
-<section class="login-page item active">
-  <div class="page-content row">
-    <div class="col-sm-6 streamer-login top-padding">
-      <img class="login-pic" ng-src="{{accounts.streamer.photoUrl}}">
-      <h2>{{accounts.streamer.username}}</h2>
-      <button type="button" class="btn" ng-class="accounts.streamer.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{accounts.streamer.isLoggedIn ? "Logout" : "Login"}}</button>
-    </div>
-    <div class="col-sm-6 bot-login top-padding">
-      <img class="login-pic" ng-src="{{accounts.bot.photoUrl}}">
-      <h2>{{accounts.bot.username}}</h2>
-      <button type="button" class="btn" ng-class="accounts.bot.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('bot')">{{accounts.bot.isLoggedIn ? "Logout" : "Login"}}</button>
-    </div>
-    <div class="col-sm-12 top-padding getting-started">
-      <p>First time here? Check out the <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Getting-Started')">getting started guide</a>!
-    </div>
+<div class="content-block">
+  <div class="content-block-body">
+    <section class="login-page item active">
+      <div class="page-content row">
+        <div class="col-sm-6 streamer-login top-padding">
+          <img class="login-pic" ng-src="{{accounts.streamer.photoUrl}}">
+          <h2>{{accounts.streamer.username}}</h2>
+          <button type="button" class="btn" ng-class="accounts.streamer.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{accounts.streamer.isLoggedIn ? "Logout" : "Login"}}</button>
+        </div>
+        <div class="col-sm-6 bot-login top-padding">
+          <img class="login-pic" ng-src="{{accounts.bot.photoUrl}}">
+          <h2>{{accounts.bot.username}}</h2>
+          <button type="button" class="btn" ng-class="accounts.bot.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('bot')">{{accounts.bot.isLoggedIn ? "Logout" : "Login"}}</button>
+        </div>
+        <div class="col-sm-12 top-padding getting-started">
+          <p>First time here? Check out the <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Getting-Started')">getting started guide</a>!
+        </div>
+      </div>
+    </section>
   </div>
-</section>
+</div>

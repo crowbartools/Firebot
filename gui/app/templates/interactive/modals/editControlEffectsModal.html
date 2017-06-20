@@ -1,0 +1,106 @@
+<!-- Modal for editting button effects-->
+ <div class="modal-header">
+   <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+   <h4 class="modal-title" id="editControlsLabel">Edit Button - {{control.controlId}}<span class="edit-title-controlid"></span></h4>
+ </div>
+ <div class="modal-body">
+   
+   <div class="general-button-settings">
+     <div class="settings-title">
+       <h3>General Settings</h3>
+     </div>
+
+     <div class="input-group settings-controlid">
+       <span class="input-group-addon" id="basic-addon3">Control Id</span>
+       <input type="text" class="form-control" disabled aria-describedby="basic-addon3" ng-model="control.controlId">
+     </div>
+
+     <div class="input-group settings-buttontext">
+       <span class="input-group-addon" id="basic-addon3">Button Text</span>
+       <input type="text" class="form-control" disabled aria-describedby="basic-addon3" ng-model="control.text">
+     </div>
+
+     <div class="input-group settings-sparkcost">
+       <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
+       <input type="text" class="form-control" disabled aria-describedby="basic-addon3" type="number" ng-model="control.cost">
+     </div>
+
+     <div class="input-group settings-cooldown">
+       <span class="input-group-addon" id="basic-addon3">Cooldown(sec)</span>
+       <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="control.cooldown">
+     </div>
+   </div>
+   <div class="function-button-settings">
+     <div class="settings-title">
+       <h3>What should this button do?</h3>
+     </div>
+
+     <div class="functionality-settings">
+       
+       <!--new accordian-->
+       <uib-accordion close-others="true">
+        <div ng-repeat="effect in control.effects track by $index" uib-accordion-group class="panel-default" heading="{{effect.type}}" is-open="openEffectPanel[$index]">
+          <div class="btn-group">
+              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="effect-dropdown">{{effect.type != 'Nothing' ? effect.type : 'Pick an effect'}}</span> <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu effects-menu">
+                  <li ng-repeat="effectType in getApprovedEffectTypes()">
+                    <a href="" effect="{{effectType}}" ng-click="changeEffectTypeForEffect(effectType, effect)">{{effectType}}</a>
+                  </li>
+              </ul>
+          </div>
+          <div class="effect-settings-panel">
+              <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
+              <effect-options effect="effect" type="effect.type" ng-show="effect.type != null"><effect-options>
+          </div>
+        </div>
+      </uib-accordion>
+       
+       
+       
+       <!--old accordian-->
+       <!--<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+         
+         <div ng-repeat="effect in control.effects" class="panel panel-default panel${uniqueid}" effect="">
+             <div class="panel-heading" role="tab">
+                 <h4 class="panel-title">
+                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse${uniqueid}" aria-expanded="true" aria-controls="collapse${uniqueid}">
+                         {{effect.type}}
+                     </a>
+                     <button class="btn btn-danger pull-right deleteFunctionality" delete="${uniqueid}">X</button>
+                 </h4>
+             </div>
+             <div id="collapse${uniqueid}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading${uniqueid}">
+                 <div class="panel-body">
+                     <div class="btn-group">
+                         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             <span class="effect-dropdown">{{effect.type}}</span> <span class="caret"></span>
+                         </button>
+                         <ul class="dropdown-menu effects-menu">
+                             <li ng-repeat="effectType in getApprovedEffectTypes()">
+                               <a href="" effect="{{effectType}}" ng-click="changeEffectTypeForEffect(effectType, effect)">{{effectType}}</a>
+                             </li>
+                         </ul>
+                     </div>
+                     <div class="effect-settings-panel">
+                         <div ng-show="effect.type == null" class="effect-specific-title"><h4>Please select an effect.</h4></div>
+                         <effect-options effect="effect" type="effect.type" ng-show="effect.type != null"><effect-options>
+                     </div>
+                 </div>
+             </div>
+         </div>          
+       </div>-->
+       <div class="add-more-functionality">
+         <button type="button" class="btn btn-primary" ng-click="addEffect()">
+           Add Effect
+         </button>
+       </div>
+     </div>
+
+   </div>
+ </div>
+ <div class="modal-footer">
+   <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+   <button type="button" class="btn btn-primary add-new-board-save" ng-click="saveChanges()">Save Changes</button>
+ </div> 

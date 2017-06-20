@@ -8,59 +8,58 @@
  
  angular
   .module('firebotApp')
-  .factory('boardFactory', function ($http) {
+  .factory('boardService', function ($http, settingsService) {
     
     // in memory board storage
     var _boards = {};
     
     // factory/service object
-    var factory = {}
+    var service = {}
     
     /**
     * Public methods
     */
     
-    factory.hasBoardsLoaded = function() {
+    service.hasBoardsLoaded = function() {
       return _.keys(_boards).length > 0; 
     }
     // Returns an array of the in-memory boards
-    factory.getAllBoards = function() {
+    service.getAllBoards = function() {
       return _.values(_boards);
     };
     
     // Returns an array of names for the loaded boards
-    factory.getBoardNames = function() {
+    service.getBoardNames = function() {
       return _.pluck(_boards, 'name');
     };
     
-    factory.getBoardById = function(id) {
+    service.getBoardById = function(id) {
       return _boards[id];
     };
     
-    factory.getBoardByName = function(name) {
+    service.getBoardByName = function(name) {
       return _.findWhere(_boards, {name: name});
     }
     
-    factory.addNewBoardWithId = function(id) {
+    service.addNewBoardWithId = function(id) {
       return loadBoardsById([id], false);
     };
     
-    factory.deleteCurrentBoard = function() {
+    service.deleteCurrentBoard = function() {
       var dbSettings = new JsonDB("./user-settings/settings", true, true);
       var lastBoardName = dbSettings.getData('/interactive/lastBoard');
-      
-      
+          
       return deleteBoard(lastBoardName).then(() => {
         // Remove last board setting entry
         dbSettings.delete('/interactive/lastBoard');
         
-        var key = factory.getBoardByName(lastBoardName).versionId;
+        var key = service.getBoardByName(lastBoardName).versionId;
         delete _boards[key];
       });
     };
     
     // reload boards into memory
-    factory.loadAllBoards = function() {
+    service.loadAllBoards = function() {
       
       // Attempt to access board flatfile storage
       var boardJsonFiles = [];
@@ -75,8 +74,8 @@
       // Get a list or board ids so we can resync them all with Mixer
       
       // Note(ebiggz): Unfortunately this currently means we have to iterate through the files
-      // to get the ids and iterate through the files again after we have synced
-      // There's surely a better way to do this. Maybe maintain a list of known board id's in settings file?
+      // to get the ids and iterate through the files a second time after we have synced with mixer.
+      // There's surely a better way to do this. Maybe maintain a list of known board id's in the settings file?
       var boardVersionIds = [];
       _.each(boardJsonFiles, function (fileName) {
         var boardDb = new JsonDB("./user-settings/controls/"+fileName, true, true);
@@ -88,6 +87,22 @@
       /* Step 2 */
       // Load each board.
       return loadBoardsById(boardVersionIds, true);
+    }
+    
+    service.getLastUsedBoard = function () {
+      return service.getBoardByName(settingsService.getLastBoardName());
+    }
+    
+    service.saveControlForCurrentBoard = function(control) {
+      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      
+      // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
+      // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
+      // while removing internal angular properties. We then convert this string back to an object with 
+      // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
+      var cleanedControl = JSON.parse(angular.toJson(control));
+      
+      boardDb.push("./firebot/controls/" + control.controlId, cleanedControl);
     }
     
     /**
@@ -209,17 +224,16 @@
                     }catch(err){
                         console.log('Problem getting button info to save to json.')
                     };
-    
-                    // Setup scenes in Firebot json if they haven't been made yet.
-                    try{
-                        dbControls.getData('./firebot/scenes/'+scenename);
-                    }catch(err){
-                        dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
-                        if(scenename !== "default"){
-                            dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
-                        } else {
-                            dbControls.push('./firebot/scenes/'+scenename+'/default', []);
-                        }
+                }
+                // Setup scenes in Firebot json if they haven't been made yet.
+                try{
+                    dbControls.getData('./firebot/scenes/'+scenename);
+                }catch(err){
+                    dbControls.push('./firebot/scenes/'+scenename+'/sceneName', scenename);
+                    if(scenename !== "default"){
+                        dbControls.push('./firebot/scenes/'+scenename+'/default', ["None"]);
+                    } else {
+                        dbControls.push('./firebot/scenes/'+scenename+'/default', []);
                     }
                 }
             }
@@ -345,7 +359,26 @@
         } catch(err){reject()};
       });
     }
+    
+    /**
+    * Helpers
+    */
+    
+    // Emoji checker!
+    // This checks a string for emoji and returns true if there are any...
+    function isEmoji(str) {
+        var ranges = [
+            '\ud83c[\udf00-\udfff]', // U+1F300 to U+1F3FF
+            '\ud83d[\udc00-\ude4f]', // U+1F400 to U+1F64F
+            '\ud83d[\ude80-\udeff]' // U+1F680 to U+1F6FF
+        ];
+        if (str.match(ranges.join('|'))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-    return factory;
+    return service;
     });    
 })();

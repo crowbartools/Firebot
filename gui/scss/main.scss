@@ -8,6 +8,7 @@
 @import 'settings';
 @import 'info';
 
+
 /////////////////
 // GLOBAL STYLES
 ////////////////
@@ -90,4 +91,260 @@ body {
 /////////////////
 .top-padding{
     padding-top:1em;
+}
+
+/////////////////////////////////
+// v4.0 STYLES (Needs organizing)
+////////////////////////////////
+
+html {
+  height: 100%;     
+}    
+body {
+ display: flex;
+ flex-direction: row;
+ height: 100%;
+ margin: 0px;
+ padding-top: 0;
+ padding-bottom: 0;
+ font-family: 'Open Sans', sans-serif !important;
+}
+.fb-tab-content {
+ height: 100%;
+ width: 100%;
+ display: flex;
+ flex-direction: column;
+ background: #F3F5F5;
+}
+.tab-header {
+ width: 100%;
+ height: 65px;
+ background: white;
+ border-bottom: 0.01em solid #EAECEC;
+ display: flex;
+ flex-flow: row;
+ align-items: center;
+ justify-content: flex-start;
+ padding-left: 30px;
+ font-size: 28px;
+ text-transform: capitalize;
+ font-weight: 400;
+ color: gray;
+ flex-shrink: 0;
+}
+.tab-body-wrapper {
+ height: 100%;
+ width: 100%;
+ overflow-y: auto;
+ z-index: 10;
+}
+.tab-body {      
+ padding: 15px;
+ display: flex;
+}
+.content-block {
+ background: white;
+ border-radius: 3px;
+ border: 0.01em solid #EAECEC;
+}
+
+.content-block-header {
+ display: flex;
+ position: relative;
+ align-items: center;
+ height: 50px;
+ width: 100%;
+ border-bottom: 0.01em solid #EAECEC;
+}
+
+.content-block-body {
+ margin: 15px;
+ position: relative;
+}
+
+.fb-nav {
+ height: 100%;
+ width: 275px;
+ display: flex;
+ flex-direction: column;
+ transition: 0.5s;
+ white-space: nowrap;
+ background: #282c2c; /* Old browsers */
+ background: -moz-linear-gradient(-45deg, #282c2c 0%, #2f3436 98%); /* FF3.6-15 */
+ background: -webkit-linear-gradient(-45deg, #282c2c 0%,#2f3436 98%); /* Chrome10-25,Safari5.1-6 */
+ background: linear-gradient(135deg, #282c2c 0%,#2f3436 98%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+}
+.fb-nav.contracted {
+ width: 62px;
+}
+.nav-header {
+ width: 100%;
+ height: 65px;
+ background: #25292A;
+ border-bottom: 0.01em solid #383D3F;
+ display: flex;
+ flex-flow: row;
+ align-items: center;
+ justify-content: flex-start;
+ position: relative;
+ overflow: hidden;
+ flex-shrink: 0;
+}
+.nav-links-wrapper {
+ margin-top: 30px;
+}
+.fb-nav-link {
+ color:white;
+ display: block;
+ height: 48px;
+ text-transform: uppercase;
+ text-decoration: none;
+}
+.fb-nav-link:hover {
+ background: rgba(255, 255, 255, 0.08);
+ text-decoration: none;
+}
+ 
+.fb-nav-link.selected, .fb-nav-link.selected:hover {
+ color: #4d5454;
+ background: #F3F5F5;
+}
+.nav-link-bar {
+ height: 100%;
+ width: 6px;
+ display: inline-block;
+}
+
+.selected .nav-link-bar {
+ background: #EBB11F;
+}
+
+.selected .nav-link-icon {
+ color: #EBB11F;
+}
+
+.nav-link-icon {
+ font-size: 20px;
+ width: 50px;
+ height: 100%;
+ display: inline-block;
+ overflow: hidden;
+ padding-top: 9px;
+ padding-left: 10px;
+}
+.nav-link-title {
+ font-weight: 500;
+ font-size: 14px;
+ height: 100%;
+ display: inline-block;
+ overflow: hidden;
+ transition: 0.3s;
+ padding-top: 14px;
+ opacity: 1;
+}
+.nav-link-title.contracted {
+ opacity: 0;
+}
+
+
+.selected .nav-link-title {
+ font-weight: 600;
+}
+
+.nav-header-title {
+ color: #EBB11F;
+ font-size: 22px;
+ opacity: 1;
+ transition: 0.3s
+}
+
+.nav-header-title.contracted {
+ opacity: 0;
+}
+
+.nav-expand-button {
+ position: absolute;
+ top: 6px;
+ right: 10px;
+ font-size: 36px;
+ color: #EBB11F;
+ cursor: pointer;
+}
+
+.nav-expand-button.contracted {
+ right: 7px;
+}
+
+.nav-expand-button:hover {
+ opacity: 0.5;
+}    
+
+.nav-header-icon {
+ height: 40px;
+ width: 40px;
+ align-self: flex-start;
+ margin-top: 10px;
+ margin-left: 40px;
+ margin-right: 0px;
+ transition: 0.5s;
+}
+
+.nav-header-icon.contracted {
+ margin-left: 5px;
+ margin-right: 35px;
+}
+
+.login-pic{
+   border-radius:.25rem;
+   border: 2px solid $main-color;
+   width: 220px;
+}
+
+.delete-button {
+ color: red;
+ cursor: pointer;
+ transition: 0.2s;
+}
+.delete-button:hover {
+ opacity: 0.5;
+}
+
+.interactive-status-wrapper {
+  align-self: center;
+  margin-top: auto;
+  margin-bottom: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.interative-status-icon {
+  cursor: pointer;
+  color: red;
+  font-size: 45px;
+  transition: 0.4s;
+}
+.interative-status-icon.connected {
+  color: green;
+}
+.interative-status-icon:hover {
+  opacity: 0.5;
+}
+.interative-status-icon.contracted {
+  font-size: 30px;
+}
+.interative-status-title {
+  color:white;
+  opacity: 0.5;
+  transition: 0.3s;
+}
+.interative-status-title.contracted {
+  opacity: 0;
+}
+.interative-status-subtitle {
+  color:white;
+  opacity: 1;
+  transition: 0.4s;
+}
+.interative-status-subtitle.contracted {
+  opacity: 0;
 }

@@ -1,0 +1,33 @@
+<div class="modal-header">
+  <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title">Edit Viewer Group Defaults</h4>
+</div>
+<div class="modal-body">
+  <div class="settings-title">
+    <h3>Which groups should use this scene as their default scene?</h3>
+  </div>
+  <div class="edit-scenegroup-defaults">
+    <div ng-if="scene !== 'default'" class="scenegroup-option">
+      <input type="checkbox" group="None" aria-label="..."> <span>None</span>
+    </div>
+    <div class="scenegroup-option">
+      <input type="checkbox" group="Pro" aria-label="..."> <span>Pro</span>
+    </div>
+    <div class="scenegroup-option">
+      <input type="checkbox" group="Subscribers" aria-label="..."> <span>Subscribers</span>
+    </div>
+    <div class="scenegroup-option">
+      <input type="checkbox" group="Moderators" aria-label="..."> <span>Moderators</span>
+    </div>
+    <div class="scenegroup-option">
+      <input type="checkbox" group="Staff" aria-label="..."> <span>Staff</span>
+    </div>
+    <div ng-repeat="group in groups.getViewerGroups(true)" class="scenegroup-option">
+      <input type="checkbox" aria-label="..."> <span>{{group.groupName}}</span>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+  <button type="button" class="btn btn-primary edit-scenegroup-save" data-dismiss="modal">Save Changes</button>
+</div>

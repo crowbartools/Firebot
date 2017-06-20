@@ -1,0 +1,106 @@
+<!--Interactive Tab View-->
+<div class="content-block">
+  <div class="content-block-body">
+    <div class="page-content">
+      <div class="row interactive-header page-header">
+        <div class="col-sm-6">
+          <div class="board-title">
+            <a href ng-click="openLinkExternally('https://mixer.com/i/studio')">{{selectedBoard.name}}</a>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="dropdown pull-right">
+            <button class="btn btn-default dropdown-toggle" type="button" id="interactiveMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              Select a board
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu interactive-menu" aria-labelledby="interactiveMenu">
+              <li><a href ng-click="showAddBoardModal()">Add New Board</a></li>
+              <li><a href ng-click="showDeleteBoardModal()">Delete Board</a></li>
+              <li role="separator" class="divider"></li>
+              <li ng-repeat="boardName in getBoardNames()" >
+                <a href ng-click="switchToBoard(boardName)">{{boardName}}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row interactive-board-container">
+        <uib-tabset>
+          <uib-tab index="0" heading="Settings">
+            <!--put settings stuff here-->
+            <div class="general-board-settings">
+                <h3>Viewer Group Settings</h3>
+                <div class="board-group-defaults">
+                    <p>All of your scenes are listed below. Here you can select which groups you want to use and which scenes they will use as their starting point. Groups are only "active" if selected here, otherwise they will not be used.</p>
+                    <div class="board-group-defaults-settings clearfix">
+                      <!-- Create scene settings -->
+                      <div ng-repeat="scene in getScenesForSelectedBoard()" class="board-group tile no-top">
+                          <div class="tile-header">
+                              <div class="board-groupscene tileID">{{scene}}</div>
+                              <div class="edit-groupscene tile-edit">
+                                  <button class="edit-groupscene-btn btn btn-default">
+                                      <i class="fa fa-pencil" aria-hidden="true"></i>
+                                  </button>
+                              </div>
+                          </div>
+                          <div class="board-group-scene-body tile-body">
+                            <div ng-if="scene == 'default'" class="board-groupscene-group">Default</div>
+                            <div ng-repeat="group in getViewerGroupSettingsForScene(scene)" class="board-groupscene-group">{{group}}</div>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="board-cooldown-group-settings">
+                <h3>Cooldown Groups <button class="btn btn-default add-new-cooldown-group" data-toggle="modal" data-target="#new-cooldown-group-modal">Add New</button></h3>
+                <div class="board-cooldown-content">
+                    <p>Cooldown groups make it easy to group multiple buttons together so that they all cooldown anytime one is clicked.</p>
+                    <div class="board-cooldown-groups">
+                      <!-- Create cooldown groups -->
+                      <div ng-repeat="cooldownGroup in getCooldownGroupSettings()" class="cooldown-group tile no-top">
+                          <div class="cooldown-group-header tile-header">
+                              <div class="groupID tileID">{{cooldownGroup.groupName}}</div>
+                              <div class="edit-cooldown-group-wrap tile-edit">
+                                  <button class="edit-cooldown-group btn btn-default">
+                                      <i class="fa fa-pencil" aria-hidden="true"></i>
+                                  </button>
+                              </div>
+                          </div>
+                          <div class="cooldown-group-body tile-body">
+                              <p>Buttons: {{cooldownGroup.buttons ? cooldownGroup.buttons.length : 0}}</p>
+                              <p>Seconds: {{cooldownGroup.length}}</p>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+          </uib-tab>
+          <!--Create a tab for each scene -->
+          <uib-tab index="$index + 1" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
+            <div class="tab-pane interactive-button-holder active">
+              <!--Create buttons in each scene -->
+              <div class="interactive-button tile" ng-repeat="control in getControlsForScene(scene)">
+                  <div class="interactive-button-header tile-header">
+                      <div class="controlID tileID">{{control.controlId}}</div>
+                      <div class="edit-interactive-control tile-edit">
+                          <button class="edit-control btn btn-default" ng-click="showEditControlEffectsModal(control)">
+                              <i class="fa fa-pencil" aria-hidden="true"></i>
+                          </button>
+                      </div>
+                  </div>
+                  <div class="interactive-button-body tile-body">
+                      <div class="buttontext">{{control.text ? control.text : "Unnamed"}}</div>
+                      <div class="playbuttonwrap">
+                        <button class="playbutton" ng-click="fireControlManually(control.controlId)"><i class="fa fa-play-circle" aria-hidden="true"></i></button>
+                      </div>
+                      <div class="sparkcost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
+                  </div>
+              </div>
+            </div>
+          </uib-tab>
+        </uib-tabset>
+      </div>
+    </div>
+  </div>
+</div>
