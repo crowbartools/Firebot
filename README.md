@@ -47,9 +47,9 @@ Below will be brief descriptions of each, but here are quick and dirty definitio
 Angular works by extending HTML elements with **Directives**. In javascript, an angular "app" is created and given a name. In html, we use the `ng-app` directive on an element to tell Angular what that app controls. Anything inside the element that has the `ng-app` directive is controlled by the app. There are many directives built into Angular. A few of the common ones are: *ng-controller* (Defines the controller to be used for the html element and its children elements), *ng-model* (Defines a javascript varible to be the model for this element. IE, if you put a model for an text input, whatever is typed in that input will be put into the model.), and ng-repeat (Allows you to repeat an html element for a list of items in object/array). Custom Directives can be created as well. We just use one for effect options right now.
 
 #### Controllers
-
+Need to write about this
 #### Services
-
+Need to write about this
 #### How Firebot Is Setup In AngularJS?
 * We have a main *index.html* file that: loads all the js files, has the html for the left sidebar and upper header bar, and has the placeholder div for tab content.
   * We dynamically change the tab content using angular's *route* service, which basically intercepts changes in the url and updates an html element with a template file accordingly.
