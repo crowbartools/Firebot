@@ -6,12 +6,12 @@
 
  angular
   .module('firebotApp')
-  .factory('listenerService', function ($uibModal) {
+  .factory('listenerService', function () {
     var service = {};
     
     var registeredListeners = {
-      soundFiles = {},
-      imageFiles = {}
+      soundFiles: {},
+      imageFiles: {}
     }
     
     service.registerSoundFileListener = function(uuid, callback) {

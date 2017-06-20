@@ -225,16 +225,18 @@
             $scope.addEffect = function() {
               
               var newEffectIndex = 1;
-              
-              var effects = $scope.control.effects;
 
-              if(effects != null) {
-                newEffectIndex = _.keys(effects).length + 1;
+              if($scope.control.effects != null) {
+                newEffectIndex = _.keys($scope.control.effects).length + 1;
+              } else {
+                // Make sure effects object is initialized              
+                $scope.control.effects = {};
               }
              
-              effects[newEffectIndex.toString()] = {
+              $scope.control.effects[newEffectIndex.toString()] = {
                 type: "Nothing"
               };
+              
               updateOpenPanel();     
             }
             
