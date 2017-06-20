@@ -17,9 +17,9 @@
             <span class="image-placement-effect-type">{{effect.position ? effect.position : 'Pick one'}}</span> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu image-placement-effect-dropdown">
-            <li ng-repeat="location in imageLocations"
-                ng-click="effect.location = location">
-                  <a href>{{location}}</a>
+            <li ng-repeat="position in imagePositions"
+                ng-click="effect.position = position">
+                  <a href>{{position}}</a>
             </li>
         </ul>
     </div>
