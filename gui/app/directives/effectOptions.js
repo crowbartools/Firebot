@@ -25,6 +25,7 @@
          
          // We want to locate the controller of the given effect type (if there is one)
          // and run it.
+         // Note(ebiggz): I need to figure out a better way to handle dependancy injection
          function findController() {
            var effectController = effects.getTemplateControllerForEffectType($scope.type);
            effectController($scope, listenerService);

@@ -227,7 +227,7 @@
               var newEffectIndex = 1;
               
               var effects = $scope.control.effects;
-              console.log(effects);
+
               if(effects != null) {
                 newEffectIndex = _.keys(effects).length + 1;
               }
@@ -235,7 +235,6 @@
               effects[newEffectIndex.toString()] = {
                 type: "Nothing"
               };
-              console.log(effects); 
               updateOpenPanel();     
             }
             
