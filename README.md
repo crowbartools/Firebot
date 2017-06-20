@@ -33,8 +33,11 @@ This is going to give a very brief overview of the main concepts of AngularJS. I
 
 #### Overview
 There are three main concepts to know for AngularJS: Directives, Controllers, & Services.
+
 If you already know these, skip to the *How Firebot Is Setup In AngularJS?* section below.
+
 If you prefer to just look at some code, take a look at the html temlate and controller js file for the Viewer Groups tab as a starting point.
+
 Below will be brief descriptions of each, but here are quick and dirty definitions:
 * **Directives** - Extend HTML elements with functionality and data binding. Directives define the application.
 * **Controllers** - Controllers control the application. Controllers are used by directives and other things to control and manage data that is displayed.
