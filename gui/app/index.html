@@ -39,6 +39,8 @@
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/utilityService.js"></script>
     <script type="text/javascript" src="./services/listenerService.js"></script>
+    <script type="text/javascript" src="./services/connectionService.js"></script>
+    <script type="text/javascript" src="./services/soundService.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
     
     
@@ -102,14 +104,22 @@
         </a>
       </div>
       <div class='interactive-status-wrapper'>
-       <div class="interative-status-icon" ng-class="{'contracted': !navExpanded}" uib-tooltip="Click to toggle board. Or press Ctrl + Alt + F12 at any time." tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
+       <div class="interative-status-icon" 
+            ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}" 
+            uib-tooltip="Click to toggle board. Or press Ctrl + Alt + F12 at any time." 
+            tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
+            ng-click="connService.toggleConnectionToInteractive()"
+            ng-hide="connService.waitingForStatusChange">
          <i class="fal-power-off"></i>
+       </div>
+       <div class="interative-status-icon" style="color:white;" ng-show="connService.waitingForStatusChange">
+         <i class="fa fa-refresh fa-spin"></i>
        </div>
        <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
          <span>Interactive Status:</span>
        </div>
        <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
-         <span>Disconnected</span>
+         <span>{{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}</span>
        </div>
       </div>
     </div>  
@@ -123,5 +133,19 @@
         </div>
       </div>
     </div>
+    
+    <!-- Error Modal -->
+    <script type="text/ng-template" id="errorModal.html">
+      <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="errorLabel">Error</h4>
+      </div>
+      <div class="modal-body">
+        <p>{{message}}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+      </div>
+    </script>
   </body>
 </html>
