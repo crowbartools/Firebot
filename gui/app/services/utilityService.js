@@ -46,6 +46,36 @@
       modalInstance.result.then(closeCallback, dismissCallback);
     }
     
+    function showErrorModal(errorMessage) {
+        var errorModalContext = {
+          templateUrl: "errorModal.html",
+          // This is the controller to be used for the modal. 
+          controllerFunc: ($scope, $uibModalInstance, message) => {
+            
+            $scope.message = message;
+            
+            $scope.close = function() {
+              $uibModalInstance.close();
+            };
+            
+            $scope.dismiss = function() {
+              $uibModalInstance.dismiss('cancel');
+            };
+          },
+          resolveObj: {
+            message: () => {
+              return errorMessage;
+            }
+          }
+        }      
+        service.showModal(errorModalContext);
+    }
+    
+    // Watches for an error event from main process
+    ipcRenderer.on('error', function (event, errorMessage){
+        showErrorModal(errorMessage);
+    })
+    
     return service;
   });
 })();
