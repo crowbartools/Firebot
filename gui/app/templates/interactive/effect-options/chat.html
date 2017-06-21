@@ -6,21 +6,21 @@
  the effect, makes sure it's lowercase, and replaces spaces with dashes. IE, the effect type "Play Sound" maps to "play-sound.html".
  
  The effect object in question for this template will be passed over and available in the scope under the variable name "effect", so you can use 
- Angular's data binding to tie html elements to different properties.
+ Angular's data binding to tie html elements to different properties of the effect object.
  
- The effect object is the same object that is saved in the board.json file.
+ The effect object is the same object that is saved in the board.json file. So you can always refer to a board.json to see what properties an effect has.
  
  You can use the attribute 'ng-model' on an input element to bind that element with one of the effect properties.
  IE
    <input type="text" class="form-control" ng-model="effect.message">
- That would bind the "message" property of the effect to this input so everytime something is typed into the input, the message property
+ That would bind the "message" property of the effect to this input so everytime something is typed into the input, the 'message' property (a string in this case)
  is automatically updated.
  
- If you need additional functionality available to you in your effect option template (for dropdowns, button actions, etc), 
- you can define a controller function  for this effect type in the effectHelperService and pass anything you need to the $scope object. 
- That will make it availble to the html template file.
+ If you need additional functionality available to you in your effect option template (ie for dropdowns, button click actions, etc), 
+ you can define a controller function for this effect type in the effectHelperService and pass anything you need to the $scope object. 
+ That will make it availble to the html template file. Take a look at effectHelperService.getControllerForEffectTypeTemplate for examples.
  
- Saving of effect options is also handled automatically, so you don't need to worry about that.
+ The saving of effect options to the json file is also handled automatically, so you don't need to worry about that.
  
  Dont forget you can use double braces {{}} in elements to run expressions. 
  
