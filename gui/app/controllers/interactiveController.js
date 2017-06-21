@@ -3,7 +3,7 @@
   //This handles the Interactive tab
 
   const _ = require('underscore')._;
-  const effects = require('../../lib/interactive/effect-manager.js');
+  const EffectType = require('../../lib/interactive/EffectType.js').EffectType;
 
   angular
     .module('firebotApp')
@@ -182,7 +182,7 @@
             
             
             // Grab the EffectType 'enum' from effect.js        
-            $scope.effectTypes = effects.EffectType; 
+            $scope.effectTypes = EffectType; 
                         
           
             // This makes sure the last effect is open upon modal load.
@@ -198,14 +198,14 @@
             updateOpenPanel();
         
             $scope.getApprovedEffectTypes = function() {
-              var approvedEffects = effects.EffectType
+              var approvedEffects = EffectType
               if(!settingsService.getCustomScriptsEnabled()) {
                 // If there are certain effect types that are available contionally,
                 // we can filter them out here. Currently we only need this for the
                 // Custom Script effect type.
                 approvedEffects = _.filter(approvedEffects, (type) => {
                   var includeType = true;
-                  if(type == effects.EffectType.CUSTOM_SCRIPT) {
+                  if(type == EffectType.CUSTOM_SCRIPT) {
                     includeType = false;
                   }
                   return includeType;

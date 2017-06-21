@@ -2,11 +2,9 @@
   
  //This adds the <effect-options> element
  
- const effects = require('../../lib/interactive/effect-manager.js');
- 
  angular
    .module('firebotApp')
-   .directive('effectOptions', function() {
+   .directive('effectOptions', function(effectHelperService) {
      return {
        restrict: 'E',
        scope: {
@@ -17,7 +15,7 @@
        template: '<div ng-include="templateUrl"></div>',
        link: function($scope, element, attrs) {
            $scope.$watch('type', function() {
-             var templateUrlPath = effects.getTemplateFilePathForEffectType($scope.type);
+             var templateUrlPath = effectHelperService.getTemplateFilePathForEffectType($scope.type);
              $scope.templateUrl = templateUrlPath;
            });
        },
@@ -26,7 +24,7 @@
          // We want to locate the controller of the given effect type (if there is one)
          // and run it.
          function findController() {
-           var effectController = effects.getTemplateControllerForEffectType($scope.type);
+           var effectController = effectHelperService.getControllerForEffectTypeTemplate($scope.type);
            
            // Invoke the controller and inject any dependancies
            $injector.invoke(effectController, {}, { $scope: $scope });
