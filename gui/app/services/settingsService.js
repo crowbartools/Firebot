@@ -8,7 +8,7 @@
  angular
   .module('firebotApp')
   .factory('settingsService', function () {
-    var factory = {};
+    var service = {};
     
     function getSettingsFile() {
       return new JsonDB("./user-settings/settings", true, true);
@@ -28,59 +28,59 @@
       return data
     }
     
-    factory.getLastBoardName = function() {
+    service.getLastBoardName = function() {
       var boardName = getDataFromFile('/interactive/lastBoard');    
       return boardName != null ? boardName : "";
     }
     
-    factory.setLastBoardName = function(name) {
+    service.setLastBoardName = function(name) {
       pushDataToFile('/interactive/lastBoard', name);
     }
     
-    factory.getCustomScriptsEnabled = function() {
+    service.getCustomScriptsEnabled = function() {
       return getDataFromFile('/settings/runCustomScripts') == true;
     }
     
-    factory.setCustomScriptsEnabled = function(enabled) {
+    service.setCustomScriptsEnabled = function(enabled) {
       pushDataToFile('/settings/runCustomScripts', enabled == true);
     }
     
-    factory.isBetaTester = function() {
+    service.isBetaTester = function() {
       var betaTester =  getDataFromFile('/settings/beta');
       return betaTester != null ? betaTester : "No";
     }
     
-    factory.setBetaTester = function(isTester) {
+    service.setBetaTester = function(isTester) {
       pushDataToFile('/settings/beta', isTester);
     }
     
-    factory.getEmulator = function() {
+    service.getEmulator = function() {
       var emulator = getDataFromFile('/settings/emulation');
       return emulator != null ? emulator : "KBMRobot";
     }
     
-    factory.setEmulator = function(emulator) {
+    service.setEmulator = function(emulator) {
       pushDataToFile('/settings/emulation', emulator);
     }
     
-    factory.getOverlayCompatibility = function() {
+    service.getOverlayCompatibility = function() {
       var overlay = getDataFromFile('/settings/overlayImages');
       return overlay != null ? overlay : "Other";
     }
     
-    factory.setOverlayCompatibility = function(overlay) {
+    service.setOverlayCompatibility = function(overlay) {
       pushDataToFile('/settings/overlayImages', overlay);
     }
     
-    factory.soundsEnabled = function() {
+    service.soundsEnabled = function() {
       var sounds = getDataFromFile('/settings/sounds');
       return sounds != null ? sounds : "On";
     }
     
-    factory.setSoundsEnabled = function(enabled) {
+    service.setSoundsEnabled = function(enabled) {
       pushDataToFile('/settings/sounds', enabled);
     }    
     
-    return factory;
+    return service;
   });
 })();
