@@ -17,10 +17,6 @@
       var controller = ($scope) => {};
       
       switch(effectType) {
-        case EffectType.CHAT: 
-          controller = ($scope) => {
-            $scope.chatters = ['Streamer', 'Bot'];          
-          }
         
         case EffectType.PLAY_SOUND:
           controller = ($scope, listenerService) => {
@@ -76,6 +72,12 @@
       }
       
       return controller;
+    }
+
+    // This is an object that will get passed into the scope of every effect type template
+    // containing common options that appear in more than one effect
+    service.commonOptionsForEffectTypes = {
+      chatters: ['Streamer', 'Bot'];
     }
     
     // Generate the template file path based off of the effect type

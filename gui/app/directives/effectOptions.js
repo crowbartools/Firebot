@@ -21,6 +21,9 @@
        },
        controller: ($scope, $injector) => {
          
+         // Add common options to the scope so we can access them in any effect option template
+         $scope.commonOptions = effectHelperService.commonOptionsForEffectTypes;
+         
          // We want to locate the controller of the given effect type (if there is one)
          // and run it.
          function findController() {
