@@ -1603,9 +1603,9 @@ body { display: flex; flex-direction: row; height: 100%; margin: 0px; padding-to
 
 .delete-button:hover { opacity: 0.5; }
 
-.interactive-status-wrapper { align-self: center; margin-top: auto; margin-bottom: 35px; display: flex; flex-direction: column; align-items: center; }
+.interactive-status-wrapper { align-self: center; margin-top: auto; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; }
 
-.interative-status-icon { cursor: pointer; color: red; font-size: 45px; transition: 0.4s; }
+.interative-status-icon { cursor: pointer; color: red; font-size: 35px; /*transition-property: font-size; transition-duration: 0.3s;*/ }
 
 .interative-status-icon.connected { color: green; }
 
