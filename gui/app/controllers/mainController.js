@@ -6,9 +6,9 @@ const shell = electron.shell;
   var app = angular
     .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap']);
 
-  app.controller('MainController', ['$scope', 'boardService', MainController]);
+  app.controller('MainController', ['$scope', 'boardService', 'connectionService', 'utilityService', MainController]);
 
-  function MainController($scope, boardService) {
+  function MainController($scope, boardService, connectionService, utilityService) {
 
     // List of bindable properties and methods
 
@@ -31,6 +31,8 @@ const shell = electron.shell;
     $scope.openLinkExternally = function(url) {
       shell.openExternal(url);
     }
+    
+    $scope.connService = connectionService;
 
     /**
     * Initial App Load
