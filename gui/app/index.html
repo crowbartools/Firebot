@@ -107,7 +107,7 @@
       <div class='interactive-status-wrapper'>
        <div class="interative-status-icon" 
             ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}" 
-            uib-tooltip="Click to toggle board. Or press Ctrl + Alt + F12 at any time." 
+            uib-tooltip-template="'connectTooltipTemplate.html'" 
             tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
             ng-click="connService.toggleConnectionToInteractive()"
             ng-hide="connService.waitingForStatusChange">
@@ -151,6 +151,21 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>
       </div>
+    </script>
+    
+    <!-- Tooltip template -->
+    <script type="text/ng-template" id="connectTooltipTemplate.html">
+      <span ng-if="!navExpanded">
+          <b>Status:</b> {{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}
+          </br></br>
+      </span>
+      <span ng-if="connService.connectedToInteractive">
+        <span><b>Connected Board:</b></span>
+        </br> 
+        <span>{{connService.connectedBoard}}</span>
+        </br></br>
+      </span>
+      <span>Click or press Ctrl + Alt + F12 to toggle.</span>
     </script>
   </body>
 </html>
