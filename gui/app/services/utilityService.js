@@ -7,7 +7,7 @@
 
  angular
   .module('firebotApp')
-  .factory('utilityService', function ($uibModal) {
+  .factory('utilityService', function ($uibModal, listenerService) {
     var service = {};
       
     service.showModal = function(showModalContext) {
@@ -46,7 +46,7 @@
       modalInstance.result.then(closeCallback, dismissCallback);
     }
     
-    function showErrorModal(errorMessage) {
+    service.showErrorModal = function (errorMessage) {
         var errorModalContext = {
           templateUrl: "errorModal.html",
           // This is the controller to be used for the modal. 
@@ -71,10 +71,14 @@
         service.showModal(errorModalContext);
     }
     
-    // Watches for an error event from main process
-    ipcRenderer.on('error', function (event, errorMessage){
-        showErrorModal(errorMessage);
-    })
+    
+    // Watches for an event from main process    
+    listenerService.registerListener(
+      { type: listenerService.ListenerType.ERROR }, 
+      (errorMessage) => {
+        service.showErrorModal(errorMessage);
+      });
+    
     
     return service;
   });
