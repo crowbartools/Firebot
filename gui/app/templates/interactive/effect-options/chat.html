@@ -1,0 +1,63 @@
+<!--
+ This is the template for the Chat effect type. 
+ 
+ You dont need to update any other place in the app when you add an effect template. The app automatically looks for effect option template 
+ files in ./templates/interactive/effect-options/. To find the file, it takes the type of 
+ the effect, makes sure it's lowercase, and replaces spaces with dashes. IE, the effect type "Play Sound" maps to "play-sound.html".
+ 
+ The effect object in question for this template will be passed over and available in the scope under the variable name "effect", so you can use 
+ Angular's data binding to tie html elements to different properties of the effect object.
+ 
+ The effect object is the same object that is saved in the board.json file. So you can always refer to a board.json to see what properties an effect has.
+ 
+ You can use the attribute 'ng-model' on an input element to bind that element with one of the effect properties.
+ IE
+   <input type="text" class="form-control" ng-model="effect.message">
+ That would bind the "message" property of the effect to this input so everytime something is typed into the input, the 'message' property (a string in this case)
+ is automatically updated.
+ 
+ If you need additional functionality available to you in your effect option template (ie for dropdowns, button click actions, etc), 
+ you can define a controller function for this effect type in the effectHelperService and pass anything you need to the $scope object. 
+ That will make it availble to the html template file. Take a look at effectHelperService.getControllerForEffectTypeTemplate for examples.
+ 
+ The saving of effect options to the json file is also handled automatically, so you don't need to worry about that.
+ 
+ Dont forget you can use double braces {{}} in elements to run expressions. 
+ 
+ Refer to the 'chat' effect options template below for a complete example.
+ 
+-->
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Who should I chat as?</h4></div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <!-- We need to display the selected Chatter. We run an expression to see if the chatter property exists, and if so display it. Otherwise, display 'Pick one'.
+                 This will autmatically update if the user selects a new one thanks to angular's magical data binding -->
+            <span class="chat-effect-type">{{effect.chatter ? effect.chatter : 'Pick one'}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu chat-effect-dropdown">
+            <!-- Here we define the options in the chatter dropdown and add click functions to each one that will actually update the chatter property -->
+            <li ng-click="effect.chatter = 'Streamer'"><a href>Streamer</a></li>
+            <li ng-click="effect.chatter = 'Bot'"><a href>Bot</a></li>
+        </ul>
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>What should I say?</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon" id="chat-text-effect-type">Message</span>
+        <!-- All we have to do here is define the model of the input as effect.message and now that property will get updated with this input is typed in -->
+        <input ng-model="effect.message" type="text" class="form-control" id="chat-text-setting" aria-describedby="chat-text-effect-type" maxlength="360">
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Who should I whisper this to? Leave blank to broadcast to everyone.</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon" id="chat-whisper-effect-type">Whisper</span>
+        <!-- Exact same deal as the input before, define the model -->
+        <input ng-model="effect.whisper" type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type">
+    </div>
+</div>
+<div class="effect-info alert alert-info">
+    The variable $(user) will be replaced by the username of the person who pressed the button. EX: If Firebottle hits a button you can whisper him.
+</div>
