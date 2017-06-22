@@ -112,14 +112,18 @@
             ng-hide="connService.waitingForStatusChange">
          <i class="fal-power-off"></i>
        </div>
-       <div class="interative-status-icon" style="color:white;" ng-show="connService.waitingForStatusChange">
-         <i class="fa fa-refresh fa-spin"></i>
+       <div class="interative-status-icon" 
+            style="color:white;" 
+            ng-show="connService.waitingForStatusChange"
+            uib-tooltip="{{getConnectionMessage()}}" 
+            tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
+         <i class="fa fa-spin"><i class="fal-sync"></i></i>
        </div>
        <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
          <span>Interactive Status:</span>
        </div>
        <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
-         <span>{{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}</span>
+         <span>{{getConnectionMessage()}}</span>
        </div>
       </div>
     </div>  

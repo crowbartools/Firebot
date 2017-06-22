@@ -6,7 +6,7 @@
 
  angular
   .module('firebotApp')
-  .factory('listenerService', function () {
+  .factory('listenerService', function ($q) {
     var service = {};
     
     var registeredListeners = {
@@ -106,8 +106,7 @@
     // Connection Monitor
     // Recieves event from main process that connection has been established or disconnected.
     ipcRenderer.on('connection', function (event, data) {
-      var isConnected = data ? (data.toLowerCase() == "Online") : false;
-      
+      var isConnected = data ? (data.toLowerCase() == "online") : false;
       _.forEach(registeredListeners.connectionStatus, (listener, key, list) => {
         runListener(listener, isConnected);
       });
@@ -129,7 +128,11 @@
       if(listener != null) {
         var callback = listener.callback;
         if(typeof callback === 'function') {
-          callback(returnPayload);
+          $q(function(resolve, reject) {
+              resolve();
+            }).then(() => {
+              callback(returnPayload);
+            });
         }
         if(listener.runOnce == true) {
           service.unregisterListener(listener.type, listener.uuid);

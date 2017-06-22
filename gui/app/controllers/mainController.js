@@ -33,6 +33,26 @@ const shell = electron.shell;
     }
     
     $scope.connService = connectionService;
+    
+    $scope.getConnectionMessage = function() {
+      var message = ""
+      if(connectionService.waitingForStatusChange) {
+        connectionService.connectedToInteractive ? message = 'Disconnecting...' : message = 'Connecting...';
+      } else {
+        connectionService.connectedToInteractive ? message = 'Connected' : message = 'Disconnected';
+      }
+      return message;
+    }
+    
+    $scope.connectTooltip = function() {
+      var message = ""
+      if(connectionService.waitingForStatusChange) {
+        connectionService.connectedToInteractive ? message = 'Disconnecting...' : message = 'Connecting...';
+      } else {
+        message = "Click to toggle board. Or press Ctrl + Alt + F12 at any time."
+      }
+      return message;
+    }
 
     /**
     * Initial App Load

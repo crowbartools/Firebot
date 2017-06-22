@@ -12,15 +12,14 @@
     // Connection Sounds
     service.connectSound = function(type){
       if(type == "Online"){
-        service.playSound("./sounds/online.mp3", 0.4);
-
+        service.playSound("../sounds/online.mp3", 0.4);
       } else {
-        service.playSound("./sounds/offline.mp3", 0.4);
+        service.playSound("../sounds/offline.mp3", 0.4);
       }
     }
     
     service.playSound = function(path, volume) {
-      if(settingsService.soundsEnabled) {
+      if(settingsService.soundsEnabled() == "On") {
         var sound = new Howl({
              src: [path],
              volume: volume
