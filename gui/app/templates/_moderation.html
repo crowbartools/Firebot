@@ -16,13 +16,13 @@
          </tr>
        </thead>
        <tbody>
-         <tr ng-repeat="event in filteredEvents = (events | filter:eventLogSearch) | startFrom:(pagination.eventLog.currentPage-1)*pagination.eventLog.pageSize | limitTo:pagination.eventLog.pageSize track by $index">
+         <tr ng-repeat="event in filteredEvents = (eventLogService.events | filter:eventLogSearch) | startFrom:(pagination.eventLog.currentPage-1)*pagination.eventLog.pageSize | limitTo:pagination.eventLog.pageSize | orderBy:'-milliseconds' track by $index">
            <td>{{event.timestamp}}</td>
            <td>{{event.username}} {{event.text}}</td>
          </tr>       
        </tbody>
      </table>
-     <span ng-show="events.length == 0" style="opacity: 0.5">There are no recent events.</span>
+     <span ng-show="eventLogService.events.length == 0" style="opacity: 0.5">There are no recent events.</span>
      <div ng-show="filteredEvents.length > pagination.eventLog.pageSize" style="text-align: center;">
         <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.eventLog.currentPage" items-per-page="pagination.eventLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
      </div>
