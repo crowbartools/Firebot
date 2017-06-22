@@ -8,7 +8,9 @@
      
      groupsService.loadViewerGroups();
      
-     $scope.events = eventLogService.events;
+     $scope.eventLogService = eventLogService;
+     
+     //$scope.events = eventLogService.events;
      
      $scope.pagination = {
        bannedList: {
