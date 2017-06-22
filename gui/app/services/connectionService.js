@@ -8,7 +8,7 @@
 
  angular
   .module('firebotApp')
-  .factory('connectionService', function (listenerService, settingsService, soundService, $q) {
+  .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q) {
     var service = {};
     
     var ListenerType = listenerService.ListenerType;
@@ -89,7 +89,7 @@
     
     function login(type) { 
       var scopes = type == "streamer" ? streamerScopes : botScopes;
-      
+
       authWindowParams.webPreferences.partition = type;
       const oauthProvider = electronOauth2(authInfo, authWindowParams);
       oauthProvider.getAccessToken({ scope: scopes })
@@ -123,11 +123,7 @@
             dbAuth.push('./' + type + '/refreshToken', refreshToken);
     
             // Style up the login page.
-            $q(function(resolve, reject) {
-                resolve();
-              }).then(() => {
-                service.loadLogin();
-              });              
+            $q.resolve(true, () => service.loadLogin());              
         });
     }
     
@@ -183,6 +179,7 @@
     */
     service.connectedToInteractive = false;
     service.waitingForStatusChange = false;
+    service.connectedBoard = "";
     
     service.toggleConnectionToInteractive = function() {
       if(service.connectedToInteractive == true) {
@@ -194,14 +191,15 @@
     
     service.connectToInteractive = function() {
       // Let's connect! Get new tokens and connect.
-      refreshToken();
       service.waitingForStatusChange = true;
+      service.connectedBoard = settingsService.getLastBoardName();
+      refreshToken();
     }
     
     service.disconnectFromInteractive = function() {
       // Disconnect!
-      ipcRenderer.send('mixerInteractive', 'disconnect');
       service.waitingForStatusChange = true;
+      ipcRenderer.send('mixerInteractive', 'disconnect');
     }
     
     // Connection Monitor
@@ -214,9 +212,7 @@
         var soundType = isConnected ? "Online" : "Offline";
         soundService.connectSound(soundType);
         
-        if(service.waitingForStatusChange == true) {
-          service.waitingForStatusChange = false;
-        }
+        service.waitingForStatusChange = false;
       });
       
     // Connect Request
@@ -254,9 +250,7 @@
                     } else {
                         console.log('something went wrong with streamer refresh token.')
                         console.log(token);
-                        if(service.waitingForStatusChange == true) {
-                          service.waitingForStatusChange = false;
-                        }
+                        service.waitingForStatusChange = false;
                     }
     
                     // Refresh bot token if the bot is logged in.
@@ -296,19 +290,15 @@
     
                 },
                 (err) => {
-                  if(service.waitingForStatusChange == true) {
-                    service.waitingForStatusChange = false;
-                  }
                     //error getting streamer refresh token
+                    service.waitingForStatusChange = false;
                     console.log(err);
                 })
         } catch (err) {
             // The streamer isn't logged in... stop everything.
+            service.waitingForStatusChange = false;
             console.log('No streamer logged in. Skipping refresh token.', err);
-            
-            if(service.waitingForStatusChange == true) {
-              service.waitingForStatusChange = false;
-            }
+            utilityService.showErrorModal("You need to log into your streamer account before you can connect to Interactive.");              
             return;
         }
     }
