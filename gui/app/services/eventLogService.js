@@ -6,15 +6,17 @@
 
  angular
   .module('firebotApp')
-  .factory('eventLogService', function ($interval) {
+  .factory('eventLogService', function ($interval, listenerService) {
     var service = {};
     
     service.events = [];
         
-    // Watches for an event from main process
-    ipcRenderer.on('eventlog', function (event, data){
+    // Watches for an event from main process    
+    listenerService.registerListener(
+      { type: listenerService.ListenerType.EVENT_LOG }, 
+      (data) => {
         addEvent(data);
-    });
+      });
     
     function addEvent(data) {
       var username = data.username;
@@ -61,7 +63,7 @@
       var now = new Date();
       var nowMilliseconds = now.getTime();
       var maxAge = 120000;
-      
+            
       service.events = _.reject(service.events,(event) => {
         var age = event.milliseconds + maxAge;
         return age < nowMilliseconds;
