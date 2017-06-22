@@ -12,14 +12,18 @@
     var registeredListeners = {
       filePath: {},
       connectionStatus: {},
-      connectionChangeRequest: {}
+      connectionChangeRequest: {},
+      eventLog: {},
+      error: {}
     }
     
     var ListenerType = {
       IMAGE_FILE: "imageFile",
       SOUND_FILE: "soundFile",
       CONNECTION_STATUS: "connectionStatus",
-      CONNECTION_CHANGE_REQUEST: "connectionChangeRequest"
+      CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
+      EVENT_LOG: "eventLog",
+      ERROR: "error"
     }
     
     service.ListenerType = ListenerType;
@@ -59,6 +63,11 @@
         case ListenerType.CONNECTION_CHANGE_REQUEST:
           registeredListeners.connectionChangeRequest[uuid] = listener;
           break;
+        case ListenerType.EVENT_LOG:
+          registeredListeners.eventLog[uuid] = listener;
+          break;
+        case ListenerType.ERROR:
+          registeredListeners.error[uuid] = listener;
       }
     }
     
@@ -73,6 +82,12 @@
           break;
         case ListenerType.CONNECTION_CHANGE_REQUEST:
           delete registeredListeners.connectionChangeRequest[uuid];
+          break;
+        case ListenerType.EVENT_LOG:
+          delete registeredListeners.eventLog[uuid];
+          break;
+        case ListenerType.ERROR:
+          delete registeredListeners.error[uuid];
           break;
       }
     }
@@ -91,7 +106,7 @@
     function parseFilePathEvent(data) {
       var uuid = data.id;
       var filepath = "";
-      if(data.path != null) {
+      if(data.path != null) { 
         filepath = data.path[0];
       }
       
@@ -121,6 +136,24 @@
     });
     
     /**
+    * Event log event listener
+    */
+    ipcRenderer.on('eventlog', function (event, data){
+      _.forEach(registeredListeners.eventLog, (listener, key, list) => {
+        runListener(listener, data);
+      });
+    });
+    
+    /**
+    * Error event listener
+    */
+    ipcRenderer.on('error', function (event, errorMessage){
+      _.forEach(registeredListeners.error, (listener, key, list) => {
+        runListener(listener, errorMessage);
+      });
+    });
+    
+    /**
     *  Helpers
     */
         
@@ -128,11 +161,9 @@
       if(listener != null) {
         var callback = listener.callback;
         if(typeof callback === 'function') {
-          $q(function(resolve, reject) {
-              resolve();
-            }).then(() => {
-              callback(returnPayload);
-            });
+          // $q is angulars implementation of the promise protocol. We are creating and instantly resolving a promise, then we run the callback.
+          // This simply ensures any scope varibles are updated if needed.
+          $q.resolve(true, () => callback(returnPayload))
         }
         if(listener.runOnce == true) {
           service.unregisterListener(listener.type, listener.uuid);
