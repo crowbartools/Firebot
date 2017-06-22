@@ -135,7 +135,8 @@
               boardService.deleteCurrentBoard();
               $scope.selectedBoard = null;
             }          
-          }
+          },
+          size: "sm"
         }      
         utilityService.showModal(deleteBoardModalContext);
       };

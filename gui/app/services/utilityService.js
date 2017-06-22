@@ -31,7 +31,8 @@
         ariaDescribedBy: 'modal-body',
         templateUrl: templateUrl,
         controller: controllerFunc,
-        resolve: resolveObj
+        resolve: resolveObj,
+        size: showModalContext.size
       });
 
       // If no callbacks were defined, create blank ones. This avoids a console error 
