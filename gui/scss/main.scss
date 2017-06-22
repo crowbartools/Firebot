@@ -312,21 +312,20 @@ body {
 .interactive-status-wrapper {
   align-self: center;
   margin-top: auto;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .interative-status-icon {
   cursor: pointer;
   color: red;
   font-size: 35px;
-  /*transition-property: font-size;
-  transition-duration: 0.3s;*/
+  //transition: font-size 0.4s linear;
 }
-
 .interative-status-icon.connected {
-  color: green;
+  color: lightgreen;
 }
 .interative-status-icon:hover {
   opacity: 0.5;
@@ -349,4 +348,46 @@ body {
 }
 .interative-status-subtitle.contracted {
   opacity: 0;
+}
+.about-link {
+  text-align: center;
+  color: orange;
+  font-size: 10px;
+  text-decoration: underline;
+  margin-bottom: 3px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+.about-link.contracted {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/**
+* Bootstrap Overrides
+*/
+.modal-header {
+  border-bottom: none;
+}
+.modal-footer {
+  border-top: none;
+}
+.modal-content {
+  border-radius: 3px;
+}
+.modal-title {
+  font-weight: 100;
+  font-size: 30px;
+}
+.btn {
+  border-radius: 2px;
+}
+.modal-sm {
+  width: 400px;
+}
+.modal-body {
+    padding-top: 0;
+}
+.general-button-settings .input-group-addon:first-child {
+    min-width: 150px;
 }

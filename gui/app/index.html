@@ -31,7 +31,6 @@
     <script type="text/javascript" src="./controllers/moderationController.js"></script>
     <script type="text/javascript" src="./controllers/settingsController.js"></script>
     <script type="text/javascript" src="./controllers/updatesController.js"></script>
-    <script type="text/javascript" src="./controllers/creditsController.js"></script>
     <script type="text/javascript" src="./services/boardService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/groupsService.js"></script>
@@ -98,11 +97,6 @@
           <div class="nav-link-icon"><i class="fal-download"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Updates</div>
         </a>
-        <a class="fb-nav-link" href="#!credits" ng-class="{'selected': tabIsSelected('Credits')}" ng-click="setTab('Credits')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fa fa-github-alt"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Credits</div>
-        </a>
       </div>
       <div class='interactive-status-wrapper'>
        <div class="interative-status-icon" 
@@ -126,6 +120,11 @@
        <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
          <span>{{getConnectionMessage()}}</span>
        </div>
+      </div>
+      <div class="about-link" 
+           ng-class="{'contracted': !navExpanded}"
+           ng-click="showAboutFirebotModal()">
+        About
       </div>
     </div>  
     <div class="fb-tab-content">
@@ -153,11 +152,39 @@
       </div>
     </script>
     
+    <!-- About Firebot Modal -->
+    <script type="text/ng-template" id="aboutFirebotModal.html">
+      <div class="modal-header" style="text-align: center;">
+        <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="errorLabel">About Firebot</h3>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <h5><b>Version</b></h5>
+        <p>{{version}}</p>
+        <h5><b>Source</b></h5>
+        <p><a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot')">GitHub</a></p>
+        <h5><b>Support</b></h5> 
+        <span>Experiencing a problem?</span></br>
+        <p> Visit our <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/issues')">Issues page</a> or come chat with us in the <i>#firebot</i> channel of our <a href ng-click="openLinkExternally('https://discord.gg/fmz2KWu')">Discord server</a>.</p>
+        <h5><b>Contributors</b></h5> 
+        <div>
+          <div>Firebottle</div>
+          <div>ebiggz</div>
+          <div>ebrayton</div>
+          <div>Kateract</div>
+          <div>ThePerry</div>
+          <div>DeekyJay <span style="color:gray; font-size: 12px;">(Interactive v1)</span></div>
+        </div>
+      </div>
+    </script>
+    
     <!-- Tooltip template -->
     <script type="text/ng-template" id="connectTooltipTemplate.html">
       <span ng-if="!navExpanded">
-          <b>Status:</b> {{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}
-          </br></br>
+        <span><b>Interactive Status:</b></span>
+        </br> 
+        <span>{{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}</span>     
+        </br></br>
       </span>
       <span ng-if="connService.connectedToInteractive">
         <span><b>Connected Board:</b></span>

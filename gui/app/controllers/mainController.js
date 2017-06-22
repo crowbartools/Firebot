@@ -6,9 +6,9 @@ const shell = electron.shell;
   var app = angular
     .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap']);
 
-  app.controller('MainController', ['$scope', 'boardService', 'connectionService', 'utilityService', MainController]);
+  app.controller('MainController', ['$scope', '$rootScope', 'boardService', 'connectionService', 'utilityService', MainController]);
 
-  function MainController($scope, boardService, connectionService, utilityService) {
+  function MainController($scope, $rootScope, boardService, connectionService, utilityService) {
 
     // List of bindable properties and methods
 
@@ -28,7 +28,7 @@ const shell = electron.shell;
       return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
     }
 
-    $scope.openLinkExternally = function(url) {
+    $rootScope.openLinkExternally = function(url) {
       shell.openExternal(url);
     }
     
@@ -43,6 +43,32 @@ const shell = electron.shell;
       }
       return message;
     }
+    
+    /*
+    * ABOUT FIREBOT MODAL
+    */
+    $scope.showAboutFirebotModal = function() {
+      var addBoardModalContext = {
+        templateUrl: "aboutFirebotModal.html",
+        // This is the controller to be used for the modal. 
+        controllerFunc: ($scope, $uibModalInstance) => {
+          // The model for the board id text field
+          $scope.version = electron.remote.app.getVersion();
+          
+          // When the user clicks "Save", we want to pass the id back to interactiveController
+          $scope.close = function() {
+            $uibModalInstance.close();
+          };
+          
+          // When they hit cancel or click outside the modal, we dont want to do anything
+          $scope.dismiss = function() {
+            $uibModalInstance.dismiss('cancel');
+          };
+        },
+        size: 'sm'
+      }      
+      utilityService.showModal(addBoardModalContext);
+    };
   
 
     /**
@@ -98,12 +124,6 @@ const shell = electron.shell;
         templateUrl: './templates/_updates.html',
         controller: 'updatesController'
       })
-
-      // route for the credits page
-      .when('/credits', {
-        templateUrl: './templates/_credits.html',
-        controller: 'creditsController'
-      });
   }]);
   
   // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
