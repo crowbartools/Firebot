@@ -32,7 +32,6 @@
               }
               listenerService.registerListener(registerRequest, (filepath) => {
                 $scope.effect.file = filepath;
-                $scope.$applyAsync();
               });
             };    
           };
@@ -64,7 +63,6 @@
               }
               listenerService.registerListener(registerRequest, (filepath) => {
                 $scope.effect.file = filepath;
-                $scope.$applyAsync();
               });
             };         
           };
@@ -77,7 +75,7 @@
     // This is an object that will get passed into the scope of every effect type template
     // containing common options that appear in more than one effect
     service.commonOptionsForEffectTypes = {
-      chatters: ['Streamer', 'Bot'];
+      chatters: ['Streamer', 'Bot']
     }
     
     // Generate the template file path based off of the effect type
@@ -86,7 +84,7 @@
       if(effectType != null) {
         normalizedEffectType = effectType.toLowerCase().replace(' ', '-');
       } else {
-        normalizedEffectType = "no-effect-type-provided"
+        normalizedEffectType = "no-effect-type-provided";
       }
       return './templates/interactive/effect-options/' + normalizedEffectType + '.html';
     }
