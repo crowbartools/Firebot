@@ -41,6 +41,7 @@
     "beam-client-node": "^0.13.0",
     "beam-interactive-node2": "^2.0.0",
     "compare-versions": "^3.0.1",
+    "dotenv": "^4.0.0",
     "electron-oauth2": "^2.4.1",
     "howler": "^2.0.3",
     "kbm-robot": "0.0.4",

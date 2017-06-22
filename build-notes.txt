@@ -1,3 +1,8 @@
+Adding An Auth Client Id -
+1. Create a file named ".env"
+2. Open file and insert "CLIENT_ID:your_key" where your_key is your client id. Don't include quotations.
+Note: the .env file is git ignored so it will not be tracked or included in any commits.
+ 
 During Compile -
 1. Go to KBM-Robot module and open up the main js file.
 2. Edit the java path under startJar to point to root java folder."var jarPath = path.join("./kbm-java", "robot" + JRE_ver + ".jar");"
