@@ -9,8 +9,8 @@
       $scope.accounts = connectionService.accounts;
       
       // Login Kickoff
-      $scope.loginOrLogout = function() {
-        connectionService.loginOrLogout();
+      $scope.loginOrLogout = function(type) {
+        connectionService.loginOrLogout(type);
       }
       
       // Run loadLogin to update the UI on page load.
