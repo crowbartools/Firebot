@@ -154,7 +154,6 @@
 
               // Set new scope var.
               $scope.effect.groups = groupArray;
-              console.log(groupArray)
             }
 
             // This uses the board service to get a list of scenes for the current board.
@@ -165,7 +164,11 @@
             // This checks if an item is in the effect.group array and returns true.
             // This allows us to check boxes when loading up this button effect.
             $scope.groupCheckboxer = function (group){
-              return $scope.effect.groups.indexOf(group) != -1;
+              if($scope.effect.groups != null) {
+                return $scope.effect.groups.indexOf(group) != -1;
+              } else {
+                return false;
+              }              
             }
 
           };
