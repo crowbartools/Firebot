@@ -12,7 +12,7 @@ const shell = electron.shell;
 
     // List of bindable properties and methods
 
-    $scope.currentTab = "Logins";
+    $scope.currentTab = "Interactive";
 
     $scope.navExpanded = true;
 
@@ -32,6 +32,18 @@ const shell = electron.shell;
       shell.openExternal(url);
     }
     
+    /**
+    * Login preview stuff
+    */
+    $scope.accounts = connectionService.accounts;
+    
+    // Run loadLogin to update the UI on page load.
+    connectionService.loadLogin(); 
+    
+    
+    /**
+    * Connection stuff
+    */
     $scope.connService = connectionService;
     
     $scope.getConnectionMessage = function() {
@@ -43,6 +55,36 @@ const shell = electron.shell;
       }
       return message;
     }
+    
+    
+    /*
+    * MANAGE LOGINS MODAL
+    */
+    $scope.showManageLoginsModal = function() {
+      var showManageLoginsModal = {
+        templateUrl: "manageLoginsModal.html",
+        // This is the controller to be used for the modal. 
+        controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+          $scope.accounts = connectionService.accounts;
+          
+          // Login Kickoff
+          $scope.loginOrLogout = function(type) {
+            connectionService.loginOrLogout(type);
+          }    
+          
+          // When the user clicks "Save", we want to pass the id back to interactiveController
+          $scope.close = function() {
+            $uibModalInstance.close();
+          };
+          
+          // When they hit cancel or click outside the modal, we dont want to do anything
+          $scope.dismiss = function() {
+            $uibModalInstance.dismiss('cancel');
+          };
+        }
+      }      
+      utilityService.showModal(showManageLoginsModal);
+    };
     
     /*
     * ABOUT FIREBOT MODAL
@@ -89,14 +131,9 @@ const shell = electron.shell;
 
   app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
-      // route for the logins tab
-      .when('/', {
-        templateUrl: './templates/_login.html',
-        controller: 'loginsController'
-      })
 
       // route for the interactive tab
-      .when('/interactive', {
+      .when('/', {
         templateUrl: './templates/interactive/_interactive.html',
         controller: 'interactiveController'
       })

@@ -114,7 +114,7 @@ body {
  width: 100%;
  display: flex;
  flex-direction: column;
- background: #F3F5F5;
+ background: #f3f5f5;
 }
 .tab-header {
  width: 100%;
@@ -124,13 +124,15 @@ body {
  display: flex;
  flex-flow: row;
  align-items: center;
- justify-content: flex-start;
+ justify-content: space-between;
  padding-left: 30px;
  font-size: 28px;
  text-transform: capitalize;
  font-weight: 400;
- color: gray;
+ color: #4c4b4b;
  flex-shrink: 0;
+ box-shadow: 2px 2px 7px #dcdcdc;
+ z-index: 100;
 }
 .tab-body-wrapper {
  height: 100%;
@@ -146,6 +148,7 @@ body {
  background: white;
  border-radius: 3px;
  border: 0.01em solid #EAECEC;
+box-shadow: 2px 2px 7px #dcdcdc;
 }
 
 .content-block-header {
@@ -207,7 +210,7 @@ body {
  
 .fb-nav-link.selected, .fb-nav-link.selected:hover {
  color: #4d5454;
- background: #F3F5F5;
+ background: #f3f5f5;
 }
 .nav-link-bar {
  height: 100%;
@@ -300,6 +303,63 @@ body {
    width: 220px;
 }
 
+.logins-wrapper {
+    width: 160px;
+    height: 64px;
+    background: white;
+    border-left: 2px solid #EAECEC;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 11px;
+    margin-right: 3px;
+    cursor: pointer;
+}
+.logins-wrapper:hover {
+    background: #f3f3f3;
+}
+
+
+.login-thumbnail {
+    background: gray;
+    height: 42px;
+    width: 42px;
+    margin-right: 10px;
+}
+
+.login-arrow {
+  margin-left: 3px;
+  width: 10px;
+  height: 10px;
+}
+
+.arrow {
+  border: solid gray;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.arrow.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.arrow.left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}
+
+.arrow.up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+.arrow.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
 .delete-button {
  color: red;
  cursor: pointer;
@@ -312,7 +372,7 @@ body {
 .interactive-status-wrapper {
   align-self: center;
   margin-top: auto;
-  margin-bottom: 25px;
+  margin-bottom: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -352,7 +412,7 @@ body {
 .about-link {
   text-align: center;
   color: orange;
-  font-size: 10px;
+  font-size: 12.5px;
   text-decoration: underline;
   margin-bottom: 3px;
   cursor: pointer;

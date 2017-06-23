@@ -25,7 +25,6 @@
     <script src="../js/global.js"></script>
     <script type="text/javascript" src="./index.js"></script>
 	  <script type="text/javascript" src="./controllers/mainController.js"></script>
-    <script type="text/javascript" src="./controllers/loginsController.js"></script>
     <script type="text/javascript" src="./controllers/interactiveController.js"></script>
     <script type="text/javascript" src="./controllers/groupsController.js"></script>
     <script type="text/javascript" src="./controllers/moderationController.js"></script>
@@ -67,12 +66,7 @@
         </span>
       </div>
       <div class="nav-links-wrapper">
-        <a class="fb-nav-link" href="#" ng-class="{'selected': tabIsSelected('Logins')}" ng-click="setTab('Logins')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon" stlye="padding-bottom: 3px;"><i class="fal-sign-in"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Logins</div>
-        </a>
-        <a class="fb-nav-link" href="#!interactive" ng-class="{'selected': tabIsSelected('Interactive')}" ng-click="setTab('Interactive')">
+        <a class="fb-nav-link" href="#" ng-class="{'selected': tabIsSelected('Interactive')}" ng-click="setTab('Interactive')">
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal-gamepad"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Interactive</div>
@@ -128,7 +122,20 @@
       </div>
     </div>  
     <div class="fb-tab-content">
-      <div class="tab-header">{{currentTab}}</div>
+      <div class="tab-header">
+        <span>{{currentTab}}</span>
+        <div class="logins-wrapper" uib-dropdown uib-dropdown-toggle>
+          <img class="login-thumbnail" ng-src="{{accounts.streamer.photoUrl}}">
+          <img class="login-thumbnail" ng-src="{{accounts.bot.photoUrl}}">          
+          <div class="arrow down login-arrow"></div>
+          <ul class="dropdown-menu" uib-dropdown-menu>
+            <li>
+              <a href ng-click="showManageLoginsModal()"><span style="vertical-align:-11.5%;"><i class="fal-sign-in"></i></span> Manage logins</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
       <div class="tab-body-wrapper"> 
         <div class="tab-body">
           <!-- angular templating -->
@@ -137,6 +144,34 @@
         </div>
       </div>
     </div>
+    
+    <!-- Manage Logins Modal -->
+    <script type="text/ng-template" id="manageLoginsModal.html">
+      <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="errorLabel">Manage Logins</h4>
+      </div>
+      <div class="modal-body">
+            <div class="row" style="text-align: center;">
+              <div class="col-sm-6 streamer-login top-padding">
+                <img class="login-pic" ng-src="{{accounts.streamer.photoUrl}}">
+                <h2>{{accounts.streamer.username}}</h2>
+                <button type="button" class="btn" ng-class="accounts.streamer.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{accounts.streamer.isLoggedIn ? "Logout" : "Login"}}</button>
+              </div>
+              <div class="col-sm-6 bot-login top-padding">
+                <img class="login-pic" ng-src="{{accounts.bot.photoUrl}}">
+                <h2>{{accounts.bot.username}}</h2>
+                <button type="button" class="btn" ng-class="accounts.bot.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('bot')">{{accounts.bot.isLoggedIn ? "Logout" : "Login"}}</button>
+              </div>
+              <div class="col-sm-12 top-padding getting-started">
+                <p>First time here? Check out the <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Getting-Started')">getting started guide</a>!
+              </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+      </div>
+    </script>
     
     <!-- Error Modal -->
     <script type="text/ng-template" id="errorModal.html">
