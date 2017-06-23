@@ -199,17 +199,16 @@
             updateOpenPanel();
         
             $scope.getApprovedEffectTypes = function() {
-              var approvedEffects = EffectType
+              // Convert effecttypes to an array
+              var approvedEffects =  Object.keys(EffectType).map(function(key) {
+                    return EffectType[key];
+                  });
               if(!settingsService.getCustomScriptsEnabled()) {
                 // If there are certain effect types that are available contionally,
                 // we can filter them out here. Currently we only need this for the
                 // Custom Script effect type.
-                approvedEffects = _.filter(approvedEffects, (type) => {
-                  var includeType = true;
-                  if(type == EffectType.CUSTOM_SCRIPT) {
-                    includeType = false;
-                  }
-                  return includeType;
+                approvedEffects = approvedEffects.filter(type => {
+                  return type !== EffectType.CUSTOM_SCRIPT;
                 });
               }
               return approvedEffects;
