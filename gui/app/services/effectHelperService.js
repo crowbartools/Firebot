@@ -132,7 +132,7 @@
             // This is run each time a group checkbox is clicked or unclicked.
             // This will build an array of currently selected groups to be saved to JSON.
             $scope.groupArray = function(group){
-              if($scope.effect.groups !== undefined){
+              if($scope.effect.groups != null){
                 var groupArray = $scope.effect.groups;
               } else {
                 var groupArray = [];
@@ -158,19 +158,14 @@
             }
 
             // This uses the board service to get a list of scenes for the current board.
-            $scope.getScenesForSelectedBoard = function (){
-              var scenes = boardService.getScenesForSelectedBoard();
-              return scenes;
+            $scope.getScenesForSelectedBoard = function(){
+              return boardService.getScenesForSelectedBoard();
             }
 
             // This checks if an item is in the effect.group array and returns true.
             // This allows us to check boxes when loading up this button effect.
             $scope.groupCheckboxer = function (group){
-              if($scope.effect.groups.indexOf(group) != -1){
-                return true;
-              } else {
-                return false;
-              }
+              return $scope.effect.groups.indexOf(group) != -1;
             }
 
           };
