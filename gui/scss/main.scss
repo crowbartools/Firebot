@@ -368,6 +368,11 @@ box-shadow: 2px 2px 7px #dcdcdc;
 .delete-button:hover {
  opacity: 0.5;
 }
+.mixer-studio-link {
+  margin-left: auto;
+  font-size: 11px;
+  margin-right: 15px;
+}
 
 .interactive-status-wrapper {
   align-self: center;
@@ -377,6 +382,8 @@ box-shadow: 2px 2px 7px #dcdcdc;
   flex-direction: column;
   align-items: center;
 }
+
+
 
 .interative-status-icon {
   cursor: pointer;
@@ -417,6 +424,28 @@ box-shadow: 2px 2px 7px #dcdcdc;
   margin-bottom: 3px;
   cursor: pointer;
   transition: 0.4s;
+}
+
+.text-dropdown {
+  margin-left: 15px;
+  padding-right: 7px;
+  padding-left: 5px;
+  font-weight: 500;
+  font-size: 11px;
+  color: gray;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.text-dropdown:hover,.text-dropdown.open {
+  background: #f3f3f3;
+}
+.text-dropdown .arrow {
+  width: 5px;
+  height: 5px;
+  margin-bottom: 3px;
+  margin-left: 6px
 }
 
 .about-link.contracted {

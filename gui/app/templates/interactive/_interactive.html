@@ -1,30 +1,23 @@
 <!--Interactive Tab View-->
 <div class="content-block">
+  <div class="content-block-header">
+    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">{{selectedBoard.name}}</span>
+    <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
+      <span>CHANGE BOARD</span>
+      <div class="arrow down"></div>
+      <ul class="dropdown-menu" uib-dropdown-menu>
+        <li ng-repeat="boardName in getBoardNames()">
+          <a href ng-click="switchToBoard(boardName)">{{boardName}}</a>
+        </li>
+        <li role="separator" class="divider"></li>
+        <li><a href ng-click="showAddBoardModal()">Add New Board</a></li>
+        <li><a href ng-click="showDeleteBoardModal()">Delete Board</a></li>
+      </ul>
+    </div>
+    <span class="mixer-studio-link"><a href ng-click="openLinkExternally('https://mixer.com/i/studio')">Mixer Studio <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
+  </div>
   <div class="content-block-body">
     <div class="page-content">
-      <div class="row interactive-header page-header">
-        <div class="col-sm-6">
-          <div class="board-title">
-            <a href ng-click="openLinkExternally('https://mixer.com/i/studio')">{{selectedBoard.name}}</a>
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="dropdown pull-right">
-            <button class="btn btn-default dropdown-toggle" type="button" id="interactiveMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              Select a board
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu interactive-menu" aria-labelledby="interactiveMenu">
-              <li><a href ng-click="showAddBoardModal()">Add New Board</a></li>
-              <li><a href ng-click="showDeleteBoardModal()">Delete Board</a></li>
-              <li role="separator" class="divider"></li>
-              <li ng-repeat="boardName in getBoardNames()" >
-                <a href ng-click="switchToBoard(boardName)">{{boardName}}</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
       <div class="row interactive-board-container" ng-hide="selectedBoard == null || selectedBoard == ''">
         <uib-tabset>
           <uib-tab index="0" heading="Settings">
