@@ -1,0 +1,29 @@
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Which API should I use?</h4></div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="api-effect-type">{{effect.api ? effect.api : 'Pick one'}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu api-effect-dropdown">
+            <li ng-repeat="api in apiTypes"
+                ng-click="effect.api = api">
+                <a href>{{api}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Who should I send this as?</h4></div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="api-chat-effect-type">{{effect.chatter ? effect.chatter : 'Pick one'}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu api-chat-effect-dropdown">
+            <li ng-click="effect.chatter = 'Streamer'"><a href >Streamer</a></li>
+            <li ng-click="effect.chatter = 'Bot'"><a href>Bot</a></li>
+        </ul>
+    </div>
+</div>
+<div class="effect-info alert alert-danger">
+    Warning: These API's pull from a third party and we have no control over the quality or content.
+</div>

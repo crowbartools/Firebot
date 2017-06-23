@@ -67,6 +67,23 @@
             };         
           };
           break;
+
+        case EffectType.API_BUTTON:
+          controller = ($scope) => {
+
+            $scope.apiTypes = [
+              "Advice",
+              "Cat Picture",
+              "Cat Fact",
+              "Dog Picture",
+              "Dog Fact",
+              "Aww",
+              "Pokemon",
+              "Number Trivia"
+            ]
+
+          };
+          break;
       }
       
       return controller;
