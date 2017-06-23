@@ -16,7 +16,7 @@
          </tr>
        </thead>
        <tbody>
-         <tr ng-repeat="event in filteredEvents = (eventLogService.events | filter:eventLogSearch) | startFrom:(pagination.eventLog.currentPage-1)*pagination.eventLog.pageSize | limitTo:pagination.eventLog.pageSize | orderBy:'-milliseconds' track by $index">
+         <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.events | filter:eventLogSearch) | startFrom:(pagination.eventLog.currentPage-1)*pagination.eventLog.pageSize | limitTo:pagination.eventLog.pageSize | orderBy:'-milliseconds' track by $index">
            <td>{{event.timestamp}}</td>
            <td>{{event.username}} {{event.text}}</td>
          </tr>       
@@ -45,7 +45,7 @@
          </tr>
        </thead>
        <tbody>
-         <tr ng-repeat="user in userList = (bannedGroup.users | filter:bannedSearch) | startFrom:(pagination.bannedList.currentPage-1)*pagination.bannedList.pageSize | limitTo:pagination.bannedList.pageSize track by $index">
+         <tr class="repeatList" ng-repeat="user in userList = (bannedGroup.users | filter:bannedSearch) | startFrom:(pagination.bannedList.currentPage-1)*pagination.bannedList.pageSize | limitTo:pagination.bannedList.pageSize track by $index">
            <td>{{user}}</td>
            <td>
              <span class="delete-button pull-right" ng-click="removeUserFromBannedGroupAtIndex($index)">

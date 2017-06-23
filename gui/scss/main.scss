@@ -358,9 +358,22 @@ body {
   cursor: pointer;
   transition: 0.4s;
 }
+
 .about-link.contracted {
   opacity: 0;
   visibility: hidden;
+}
+
+.repeatList.ng-enter {
+    transition: 300ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+} 
+
+.repeatList.ng-enter.ng-enter-active {
+    opacity: 1;
+}
+
+.repeatList.ng-enter {
+    opacity: 0;
 }
 
 /**
