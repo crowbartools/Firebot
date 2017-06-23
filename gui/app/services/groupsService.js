@@ -10,7 +10,7 @@
   .factory('groupsService', function () {
     var service = {};
     
-    var _groups = [];
+    var groups = [];
         
     service.loadViewerGroups = function() {
       // Load up all custom made groups in each dropdown.
@@ -18,7 +18,7 @@
       try{
           var rawGroups = dbGroup.getData('/');
           if(rawGroups != null) {
-            _groups = _.values(rawGroups);
+            groups = _.values(rawGroups);
           }
           ensureBannedGroupExists();          
       }catch(err){console.log(err)};
@@ -26,13 +26,13 @@
     
     service.getViewerGroups = function(filterOutBannedGroup) {
       var groupList = [];
-      if(_groups != null) {
+      if(groups != null) {
         // Filter out the banned group. This will happen by default, even if the 
         // argument isn't passed.
         if(filterOutBannedGroup != false) {
-          groupList = _.reject(_groups, (group) => { return group.groupName == "banned"});
+          groupList = _.reject(groups, (group) => { return group.groupName == "banned"});
         } else {
-          groupList = _groups;
+          groupList = groups;
         }
       }
       return groupList;
@@ -69,7 +69,7 @@
     
     service.getBannedGroup = function() {
       ensureBannedGroupExists();
-      var group = _.findWhere(_groups, {groupName: "banned"});
+      var group = _.findWhere(groups, {groupName: "banned"});
       return group;
     }
     
@@ -80,7 +80,7 @@
     }
     
     function ensureBannedGroupExists() {
-      var bannedGroupExists = _.any(_groups, (group) => {
+      var bannedGroupExists = _.any(groups, (group) => {
         return group.groupName == 'banned';
       });
       
@@ -91,7 +91,7 @@
         }
         var dbGroup = new JsonDB("./user-settings/groups", true, true);
         dbGroup.push("/" + bannedGroup.groupName, bannedGroup);  
-        _groups.push(bannedGroup);
+        groups.push(bannedGroup);
       }
     }
   
