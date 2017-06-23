@@ -84,6 +84,24 @@
 
           };
           break;
+
+        case EffectType.CHANGE_GROUP:
+          controller = ($scope, groupsService) => {
+
+            // Load up viewer groups if they haven't been already.
+            // Leaving this out causes no groups to load unless you first visit the groups panel.
+            groupsService.loadViewerGroups();
+
+            // Get viewer groups and push group name to scope.
+            $scope.viewerGroups = [];
+            var groups = groupsService.getViewerGroups();
+            for (group of groups){
+              $scope.viewerGroups.push(group.groupName);
+            }
+
+          };
+          break;
+
       }
       
       return controller;
