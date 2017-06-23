@@ -15,9 +15,9 @@
     </div>
 </div>
 
-<div class="change-scene-wrap" ng-if="effect.reset === false">
+<div class="change-scene-wrap" ng-if="effect.reset != null">
     <div class="effect-setting-container">
-        <div class="effect-specific-title"><h4>Which group(s) should change scenes?</h4></div>
+        <div class="effect-specific-title"><h4>{{effect.reset ? 'Which group(s) should we reset?' : 'Which group(s) should change scenes?'}}</h4></div>
         <div class="change-scene-effect-group-select">
             <ul class="change-scene-effect-group-option custom-change-scene-group">
                 <li>
@@ -31,7 +31,7 @@
             </ul>
         </div>
     </div>
-    <div class="effect-setting-container">
+    <div class="effect-setting-container" ng-if="effect.reset === false">
         <div class="effect-specific-title"><h4>Which scene should we change to?</h4></div>
         <div class="btn-group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -44,28 +44,10 @@
             </ul>
         </div>
     </div>
-    <div class="effect-info alert alert-info">
+    <div class="effect-info alert alert-info" ng-hide="effect.reset">
         This button will change the default scene for a group. This means that everyone in that group will get the buttons from whatever scene you select. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
     </div>
-</div>
-
-<div class="reset-scene-wrap" ng-if="effect.reset">
-    <div class="effect-setting-container">
-        <div class="effect-specific-title"><h4>Which group(s) should we reset?</h4></div>
-        <div class="reset-scene-effect-group-select">
-            <ul class="change-scene-effect-group-option custom-change-scene-group">
-                <li>
-                    <input type="checkbox" ng-click="groupArray('Default')" ng-checked="groupCheckboxer('Default')" aria-label="..." >
-                    <span>Default</span>
-                </li>
-                <li ng-repeat="group in viewerGroups">
-                    <input type="checkbox" ng-click="groupArray(group)" ng-checked="groupCheckboxer(group)" aria-label="..." >
-                    <span>{{group}}</span>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="effect-info alert alert-info">
+    <div class="effect-info alert alert-info" ng-show="effect.reset">
         This button will reset any groups you choose back to their default scene. This applies to everyone in the group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
     </div>
 </div>
