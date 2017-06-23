@@ -1,0 +1,18 @@
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Which group should I switch the person to?</h4></div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="change-group-effect-type">{{effect.group ? effect.group : 'Pick one'}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu change-group-effect-dropdown">
+            <li><a href="#" group="default">Default</a></li>
+            <li ng-repeat="group in viewerGroups"
+                ng-click="effect.group = group">
+                  <a href>{{group}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="effect-info alert alert-info">
+    This button will move whomever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group. If no groups are listed, that means you need to create a new custom group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
+</div>

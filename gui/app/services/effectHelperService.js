@@ -84,6 +84,92 @@
 
           };
           break;
+
+        case EffectType.CHANGE_GROUP:
+          controller = ($scope, groupsService) => {
+
+            // Load up viewer groups if they haven't been already.
+            // Leaving this out causes no groups to load unless you first visit the groups panel.
+            groupsService.loadViewerGroups();
+
+            // Get viewer groups and push group name to scope.
+            $scope.viewerGroups = [];
+            var groups = groupsService.getViewerGroups();
+            for (group of groups){
+              $scope.viewerGroups.push(group.groupName);
+            }
+
+          };
+          break;
+
+        case EffectType.CHANGE_SCENE:
+          controller = ($scope, groupsService, boardService) => {
+
+            // Make the Change Scene option user friendly text.
+            // EX: effect.reset = false should show as "Reset Scenes" in the ui.
+            $scope.ufChangeSceneOption = function(){
+              if($scope.effect.reset){
+                return "Reset Scenes"
+              } else if($scope.effect.reset === false){
+                return "Change Scenes"
+              } else {
+                return "Pick One"
+              }
+            }
+
+            // Load up viewer groups if they haven't been already.
+            // Leaving this out causes no groups to load unless you first visit the groups panel.
+            groupsService.loadViewerGroups();
+
+            // Get viewer groups and push group name to scope.
+            // This is for loading up all user group checkboxes.
+            $scope.viewerGroups = [];
+            var groups = groupsService.getViewerGroups();
+            for (group of groups){
+              $scope.viewerGroups.push(group.groupName);
+            }
+
+            // This is run each time a group checkbox is clicked or unclicked.
+            // This will build an array of currently selected groups to be saved to JSON.
+            $scope.groupArray = function(group){
+              if($scope.effect.groups != null){
+                var groupArray = $scope.effect.groups;
+              } else {
+                var groupArray = [];
+              }              
+              
+              try{
+                var itemIndex = groupArray.indexOf(group);
+              } catch(err){
+                var itemIndex = -1;
+              }
+
+              if(itemIndex != -1){
+                // Item exists, so we're unchecking it.
+                groupArray.splice(itemIndex, 1);
+              } else {
+                // Item doesn't exist! Add it in.
+                groupArray.push(group);
+              }
+
+              // Set new scope var.
+              $scope.effect.groups = groupArray;
+              console.log(groupArray)
+            }
+
+            // This uses the board service to get a list of scenes for the current board.
+            $scope.getScenesForSelectedBoard = function(){
+              return boardService.getScenesForSelectedBoard();
+            }
+
+            // This checks if an item is in the effect.group array and returns true.
+            // This allows us to check boxes when loading up this button effect.
+            $scope.groupCheckboxer = function (group){
+              return $scope.effect.groups.indexOf(group) != -1;
+            }
+
+          };
+          break;
       }
       
       return controller;

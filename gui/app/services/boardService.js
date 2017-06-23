@@ -106,6 +106,15 @@
       
       boardDb.push("./firebot/controls/" + control.controlId, cleanedControl);
     }
+
+    service.getScenesForSelectedBoard = function (){
+        var board = service.getLastUsedBoard();
+        var scenes = [];
+        if (board != null) {
+          scenes = _.keys(board.scenes);
+        }
+        return scenes;
+    }
     
     /**
     *  Private helper methods
