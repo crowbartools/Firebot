@@ -123,11 +123,10 @@ const shell = electron.shell;
     $scope.appTitle = 'Firebot Interactive || v'+version+' || @firebottletv';
     
     //Attempt to load interactive boards into memory
-    if (!(boardService.hasBoardsLoaded() == true)) {
+    if (!boardService.hasBoardsLoaded()) {
       boardService.loadAllBoards();
     }
   }
-
 
   app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
