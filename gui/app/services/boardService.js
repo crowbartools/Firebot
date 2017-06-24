@@ -116,6 +116,15 @@
         return scenes;
     }
     
+    service.getControlIdsForSelectedBoard = function (){
+        var board = service.getLastUsedBoard();
+        var controls = [];
+        if (board != null) {
+          controls = _.keys(board.controls);
+        }
+        return controls;
+    }
+
     /**
     *  Private helper methods
     */

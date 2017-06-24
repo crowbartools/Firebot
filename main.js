@@ -57,12 +57,12 @@ function createWindow () {
   app.on('ready', function(){
     
     // Create the scripts folder if it doesn't exist
-    fs.access("./scripts/", (err) => {
+    fs.access("./user-settings/scripts/", (err) => {
       if(err) {
         //ENOENT means Error NO ENTity found, aka the folder doesn't exist.
         if(err.code === 'ENOENT') {
           console.log("Can't find the scripts folder, creating one now...");
-          fs.mkdir("./scripts");
+          fs.mkdir("./user-settings/scripts");
         }
       }
     });

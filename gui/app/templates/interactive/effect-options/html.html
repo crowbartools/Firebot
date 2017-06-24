@@ -1,0 +1,23 @@
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>What HTML should we output?</h4></div>
+    <div class="input-group">
+        <textarea ng-model="effect.html" class="form-control" id="html-effect-html-field" name="text" placeholder="Input your HTML" rows="5" cols="40" width="100%"></textarea>
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>How long should it show?</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon" id="html-length-effect-type">Seconds</span>
+        <input ng-model="effect.length" type="text" class="form-control" id="html-length-setting" aria-describedby="html-length-effect-type" type="number">
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>What item should I remove after the show timer expires?</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon" id="html-selector-effect-type">CSS Class</span>
+        <input ng-model="effect.removal" type="text" class="form-control" id="html-selector-setting" aria-describedby="html-selector-effect-type">
+    </div>
+</div>
+<div class="effect-info alert alert-info">
+    This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html". Also, please be aware that this button is EXTREMELY prone to error due to open ended nature.
+</div>
