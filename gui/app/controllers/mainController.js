@@ -111,6 +111,25 @@ const shell = electron.shell;
       }      
       utilityService.showModal(addBoardModalContext);
     };
+    
+    /*
+    * FIRST TIME USE MODAL
+    */
+    $scope.showFirstTimeUseModal = function() {
+      var firstTimeUseModalContext = {
+        templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
+        // This is the controller to be used for the modal. 
+        controllerFunc: "firstTimeUseModalController",
+        // The callback to run after the modal closed via "Add board"
+        keyboard: false,
+        backdrop: 'static',
+        closeCallback: (data) => {
+            console.log(data);
+        }
+      }      
+      utilityService.showModal(firstTimeUseModalContext);
+    };
+    
   
 
     /**

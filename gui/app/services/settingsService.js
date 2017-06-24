@@ -79,7 +79,16 @@
     
     service.setSoundsEnabled = function(enabled) {
       pushDataToFile('/settings/sounds', enabled);
-    }    
+    }
+    
+    service.isFirstTimeUse = function() {
+      var ftu = getDataFromFile('/settings/firstTimeUse');
+      return ftu != null ? ftu : true;
+    }
+    
+    service.setFirstTimeUse = function(ftu) {
+      pushDataToFile('/settings/firstTimeUse', ftu === true)
+    }   
     
     return service;
   });

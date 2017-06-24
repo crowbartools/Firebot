@@ -493,3 +493,109 @@ box-shadow: 2px 2px 7px #dcdcdc;
 .general-button-settings .input-group-addon:first-child {
     min-width: 150px;
 }
+
+/**
+* Multi step wizard animation
+*/
+/* modal and step animations */
+
+.welcome-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: welcomeFade 5s ease-in-out;
+}
+.welcome-wrapper h3 {
+  width: 100%;
+}
+.welcome-wrapper img {
+  width: 100px;
+  height: 100px;
+}
+.welcome-wrapper span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #EBB11F;
+    font-size: 75px;
+    font-weight: 100;    
+}
+
+@keyframes welcomeFade {
+  0%, 10% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+}
+
+.get-started-btn {
+  animation: welcomeBtnFade 5s ease-in-out;
+}
+@keyframes welcomeBtnFade {
+  0%, 30% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+.wave.ng-enter, .wave.ng-leave, .slide-fade.ng-enter, .slide-fade.ng-leave {
+  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s;
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s;
+}
+
+.wave.ng-enter {
+  position: absolute;
+  right:-100%;
+}
+
+.wave.ng-enter-active {
+  right:0;
+}
+
+.wave.ng-leave {
+  position: absolute;
+  right:0;
+}
+
+.wave.ng-leave-active {
+  right:100%;
+}
+
+.slide-fade {
+  opacity: 1;
+}
+
+.slide-fade.ng-enter {
+  position: absolute;
+  opacity: 0;
+}
+
+.slide-fade.ng-enter-active {
+  opacity: 1;
+}
+
+.slide-fade.ng-leave {
+  position: absolute;
+  opacity: 1;
+}
+
+.slide-fade.ng-leave-active {
+  opacity: 0;
+}
+
+.slide-frame {
+  position:relative;
+  height:200px;
+  overflow:hidden;
+}
+
+.slide-frame > div {
+  width:100%;
+}
+
+
+

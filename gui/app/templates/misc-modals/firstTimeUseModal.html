@@ -1,0 +1,32 @@
+<div class="modal-header" style="text-align:center">
+	<h3>{{getStepTitle()}}</h3>
+</div>
+<div class="modal-body" style="text-align:center">
+	<div> 
+		<div ng-switch="getCurrentStep()" class="slide-frame">
+			
+			<div ng-switch-when="one" class="wave">
+				<div class="welcome-wrapper">
+					<h3>Welcome to</h3>
+					<img src="../images/logo_transparent.png">      
+				  <span>Firebot</span>
+				</div>
+				<div>
+					<a class="btn btn-link get-started-btn" ng-click="handleNext()">Lets get started ></a>
+				</div>
+			</div>
+			
+			<div ng-switch-when="two" class="wave">
+				
+			</div>
+			
+			<div ng-switch-when="three" class="wave">
+
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<a class="btn btn-default" ng-click="handlePrevious()" ng-show="!isFirstStep()">Back</a>
+	<a class="btn btn-primary" ng-click="handleNext()" ng-show="!isFirstStep()">{{getNextLabel()}}</a>
+</div>

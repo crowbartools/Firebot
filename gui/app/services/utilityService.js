@@ -32,7 +32,9 @@
         templateUrl: templateUrl,
         controller: controllerFunc,
         resolve: resolveObj,
-        size: showModalContext.size
+        size: showModalContext.size,
+        keyboard: showModalContext.keyboard,
+        backdrop: showModalContext.backdrop? showModalContext.backdrop : true
       });
 
       // If no callbacks were defined, create blank ones. This avoids a console error 
