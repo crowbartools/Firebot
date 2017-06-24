@@ -1,6 +1,6 @@
 Adding An Auth Client Id -
-1. Create a file named ".env"
-2. Open file and insert "CLIENT_ID:your_key" where your_key is your client id. Don't include quotations.
+1. Edit ".env" file in root folder
+2. Insert "CLIENT_ID:your_key" where your_key is your client id. Don't include quotations.
 Note: the .env file is git ignored so it will not be tracked or included in any commits.
  
 During Compile -
