@@ -21,11 +21,11 @@
         <div class="change-scene-effect-group-select">
             <ul class="change-scene-effect-group-option custom-change-scene-group">
                 <li>
-                    <input type="checkbox" ng-click="groupArray('Default')" ng-checked="groupCheckboxer('Default')" aria-label="..." >
+                    <input type="checkbox" ng-click="groupArray(effect.groups, 'Default')" ng-checked="groupCheckboxer(effect.groups,'Default')" aria-label="..." >
                     <span>Default</span>
                 </li>
                 <li ng-repeat="group in viewerGroups">
-                    <input type="checkbox" ng-click="groupArray(group)" ng-checked="groupCheckboxer(group)"  aria-label="..." >
+                    <input type="checkbox" ng-click="groupArray(effect.groups, group)" ng-checked="groupCheckboxer(effect.groups, group)"  aria-label="..." >
                     <span>{{group}}</span>
                 </li>
             </ul>

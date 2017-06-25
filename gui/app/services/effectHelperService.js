@@ -131,29 +131,9 @@
 
             // This is run each time a group checkbox is clicked or unclicked.
             // This will build an array of currently selected groups to be saved to JSON.
-            $scope.groupArray = function(group){
-              if($scope.effect.groups != null){
-                var groupArray = $scope.effect.groups;
-              } else {
-                var groupArray = [];
-              }              
-              
-              try{
-                var itemIndex = groupArray.indexOf(group);
-              } catch(err){
-                var itemIndex = -1;
-              }
-
-              if(itemIndex != -1){
-                // Item exists, so we're unchecking it.
-                groupArray.splice(itemIndex, 1);
-              } else {
-                // Item doesn't exist! Add it in.
-                groupArray.push(group);
-              }
-
-              // Set new scope var.
-              $scope.effect.groups = groupArray;
+            $scope.groupArray = function(list, item){
+              $scope.effect.groups = service.getCheckedBoxes(list, item);
+              console.log($scope.effect.groups)
             }
 
             // This uses the board service to get a list of scenes for the current board.
@@ -163,16 +143,173 @@
 
             // This checks if an item is in the effect.group array and returns true.
             // This allows us to check boxes when loading up this button effect.
-            $scope.groupCheckboxer = function (group){
-              if($scope.effect.groups != null) {
-                return $scope.effect.groups.indexOf(group) != -1;
-              } else {
-                return false;
-              }              
+            $scope.groupCheckboxer = function (list, item){
+              return service.checkSavedArray(list, item);         
             }
 
           };
           break;
+
+        case EffectType.COOLDOWN:
+          controller = ($scope, boardService) => {
+          
+            // Get all control id's in an array so we can add checkboxes.
+            $scope.boardButtons = boardService.getControlIdsForSelectedBoard();
+
+            // This sets the effect.buttons to an array of checked items.
+            $scope.buttonArray = function(list, item){
+              $scope.effect.buttons = service.getCheckedBoxes(list, item);
+            }
+
+            // This checks if an item is in the effect.buttons array and returns true.
+            // This allows us to check boxes when loading up this button effect.
+            $scope.buttonCheckboxer = function (list, item){
+              return service.checkSavedArray(list, item);         
+            }
+
+            // Uncheck all checkboxes.
+            $scope.uncheckAll = function() {
+                $scope.effect.buttons = [];
+            }
+            
+          };
+          break;
+
+        case EffectType.CELEBRATION:
+          controller = ($scope) => {
+
+            $scope.celebrationTypes = [
+              "Fireworks"
+            ]
+
+          };
+          break;
+
+        case EffectType.CUSTOM_SCRIPT:
+          controller = ($scope) => {
+
+            // Grab files in folder when button effect shown.
+            $scope.scriptArray = fs.readdirSync('./user-settings/scripts');
+
+            // Grab files in folder on refresh click.
+            $scope.getNewScripts = function (){
+              $scope.scriptArray = fs.readdirSync('./user-settings/scripts');
+            }
+
+            // Open script folder on click.
+            $scope.openScriptsFolder = function(){
+              ipcRenderer.send('openScriptsFolder');
+            }
+
+          };
+          break;
+        
+        case EffectType.GAME_CONTROL:
+          controller = ($scope) => {
+
+            $scope.validControls = [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g",
+              "h",
+              "i",
+              "j",
+              "k",
+              "l",
+              "m",
+              "n",
+              "o",
+              "p",
+              "q",
+              "r",
+              "s",
+              "t",
+              "u",
+              "v",
+              "w",
+              "x",
+              "y",
+              "z",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "0",
+              "backspace",
+              "delete",
+              "enter",
+              "space",
+              "tab",
+              "escape",
+              "up",
+              "down",
+              "left",
+              "right",
+              "home",
+              "end",
+              "pageup",
+              "pagedown",
+              "f1",
+              "f2",
+              "f3",
+              "f4",
+              "f5",
+              "f6",
+              "f7",
+              "f8",
+              "f9",
+              "f10",
+              "f11",
+              "f12",
+              "alt",
+              "control",
+              "shift",
+              "numpad_0",
+              "numpad_1",
+              "numpad_2",
+              "numpad_3",
+              "numpad_4",
+              "numpad_5",
+              "numpad_6",
+              "numpad_7",
+              "numpad_8",
+              "numpad_9",
+              "leftmouse",
+              "middlemouse",
+              "rightmouse"
+            ]
+          
+            $scope.validModifiers = [
+              "Control",
+              "Alt",
+              "Shift"
+            ]
+
+            // This sets the effect.modifier to an array of checked items.
+            $scope.modifierArray = function(list, item){
+              $scope.effect.modifiers = service.getCheckedBoxes(list, item);
+            }
+
+            // This checks if an item is in the effect.modifier array and returns true.
+            // This allows us to check boxes when loading up this button effect.
+            $scope.modifierCheckboxer = function (list, item){
+              return service.checkSavedArray(list, item);         
+            }
+
+
+
+          };
+          break;
+
       }
       
       return controller;
@@ -194,6 +331,42 @@
       }
       return './templates/interactive/effect-options/' + normalizedEffectType + '.html';
     }
+
+    // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
+    service.getCheckedBoxes = function (list, item){
+        if(list != null){
+          var itemArray = list;
+        } else {
+          var itemArray = [];
+        }              
+        
+        try{
+          var itemIndex = itemArray.indexOf(item);
+        } catch(err){
+          var itemIndex = -1;
+        }
+
+        if(itemIndex != -1){
+          // Item exists, so we're unchecking it.
+          itemArray.splice(itemIndex, 1);
+        } else {
+          // Item doesn't exist! Add it in.
+          itemArray.push(item);
+        }
+
+        // Set new scope var.
+        return itemArray;
+    }
+
+    // This is used to check for an item in a saved array and returns true if it exists.
+    service.checkSavedArray = function(list, item){
+      if(list != null) {
+        return list.indexOf(item) != -1;
+      } else {
+        return false;
+      }              
+    }
+
     
     return service;
   });

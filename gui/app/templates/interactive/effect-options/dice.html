@@ -1,0 +1,29 @@
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Who should I announce the roll as?</h4></div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="dice-effect-type">{{effect.chatter ? effect.chatter : 'Pick one'}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dice-effect-dropdown">
+            <li ng-click="effect.chatter = 'Streamer'"><a href>Streamer</a></li>
+            <li ng-click="effect.chatter = 'Bot'"><a href>Bot</a></li>
+        </ul>
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Who should I whisper this to? Leave blank to broadcast to everyone.</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon" id="dice-whisper-effect-type">Whisper</span>
+        <input type="text" ng-model="effect.whisper" class="form-control" id="dice-whisper-setting" aria-describedby="dice-text-effect-type">
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>What should I roll?</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon" id="dice-text-effect-type">Dice</span>
+        <input type="text" ng-model="effect.dice" class="form-control" id="dice-text-setting" aria-describedby="dice-text-effect-type" placeholder="2d20 or 2d10+1d12 or 1d10+3">
+    </div>
+</div>
+<div class="effect-info alert alert-info">
+    The variable $(user) will be replaced by the username of the person who pressed the button. EX: If Firebottle hits a button you can whisper him.
+</div>

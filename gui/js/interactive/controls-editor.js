@@ -189,7 +189,7 @@ function delaySettings(uniqueid) {
 function customScriptSettings(uniqueid) {
 
   function getHtmlScriptFileList() {
-    var files = fs.readdirSync("./scripts/");
+    var files = fs.readdirSync("./user-settings/scripts/");
     var scriptList = '';
     for(var i in files) {
       var fileName = files[i].trim();
