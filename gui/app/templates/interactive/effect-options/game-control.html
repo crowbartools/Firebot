@@ -1,0 +1,40 @@
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Which button should I press?</h4></div>
+    <div class="input-group game-press">
+        <span class="input-group-addon" id="button-press-effect-type">Press</span>
+        <input type="text" ng-model="effect.press" uib-typeahead="control for control in validControls | filter:$viewValue | limitTo:8" class="form-control" id="game-control-press-setting" aria-describedby="button-press-effect-type">
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Should we press any modifiers also?</h4></div>
+    <div class="button-press-modifier-effect-type">
+        <ul class="button-press-modifier-effect-inputs">
+            <li ng-repeat="modifier in validModifiers">
+                <input ng-click="modifierArray(effect.modifiers,modifier)" ng-checked="modifierCheckboxer(effect.modifiers,modifier)" type="checkbox" aria-label="..." >
+                <span>{{modifier}}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Does this button have an opposite button? (EX: Game Movement)</h4></div>
+    <div class="input-group game-opposite">
+        <span class="input-group-addon" id="opposite-button-effect-type">Opposite</span>
+        <input type="text" ng-model="effect.opposite" uib-typeahead="control for control in validControls | filter:$viewValue | limitTo:8" class="form-control" id="game-control-opposite-setting" aria-describedby="opposite-button-effect-type">
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Is this a button that should be held down?</h4></div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="holding-button-effect-type">{{effect.holding ? effect.holding : 'No'}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu holding-button-effect-dropdown">
+            <li ng-click="effect.holding = 'No'"><a href>No</a></li>
+            <li ng-click="effect.holding = 'Yes'"><a href>Yes</a></li>
+        </ul>
+    </div>
+</div>
+<div class="effect-info alert alert-info">
+    Game controls do not work in every game or with every program. These are emulated controls. If the controls aren't working on your game or app try changing the emulator in the app settings.
+</div>

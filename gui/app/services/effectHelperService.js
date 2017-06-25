@@ -198,6 +198,112 @@
 
           };
           break;
+        
+        case EffectType.GAME_CONTROL:
+          controller = ($scope) => {
+
+            $scope.validControls = [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g",
+              "h",
+              "i",
+              "j",
+              "k",
+              "l",
+              "m",
+              "n",
+              "o",
+              "p",
+              "q",
+              "r",
+              "s",
+              "t",
+              "u",
+              "v",
+              "w",
+              "x",
+              "y",
+              "z",
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "0",
+              "backspace",
+              "delete",
+              "enter",
+              "space",
+              "tab",
+              "escape",
+              "up",
+              "down",
+              "left",
+              "right",
+              "home",
+              "end",
+              "pageup",
+              "pagedown",
+              "f1",
+              "f2",
+              "f3",
+              "f4",
+              "f5",
+              "f6",
+              "f7",
+              "f8",
+              "f9",
+              "f10",
+              "f11",
+              "f12",
+              "alt",
+              "control",
+              "shift",
+              "numpad_0",
+              "numpad_1",
+              "numpad_2",
+              "numpad_3",
+              "numpad_4",
+              "numpad_5",
+              "numpad_6",
+              "numpad_7",
+              "numpad_8",
+              "numpad_9",
+              "leftmouse",
+              "middlemouse",
+              "rightmouse"
+            ]
+          
+            $scope.validModifiers = [
+              "Control",
+              "Alt",
+              "Shift"
+            ]
+
+            // This sets the effect.modifier to an array of checked items.
+            $scope.modifierArray = function(list, item){
+              $scope.effect.modifiers = service.getCheckedBoxes(list, item);
+            }
+
+            // This checks if an item is in the effect.modifier array and returns true.
+            // This allows us to check boxes when loading up this button effect.
+            $scope.modifierCheckboxer = function (list, item){
+              return service.checkSavedArray(list, item);         
+            }
+
+
+
+          };
+          break;
 
       }
       
