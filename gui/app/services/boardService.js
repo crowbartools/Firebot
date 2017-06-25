@@ -111,11 +111,20 @@
         var board = service.getLastUsedBoard();
         var scenes = [];
         if (board != null) {
-          scenes = _.keys(board.scenes);
+          scenes = Object.keys(board.scenes);
         }
         return scenes;
     }
     
+    service.getControlIdsForSelectedBoard = function (){
+        var board = service.getLastUsedBoard();
+        var controls = [];
+        if (board != null) {
+          controls = Object.keys(board.controls);
+        }
+        return controls;
+    }
+
     /**
     *  Private helper methods
     */

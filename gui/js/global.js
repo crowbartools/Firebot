@@ -22,11 +22,6 @@ $(document).on('click', 'a[href^="http"]', function(event) {
     shell.openExternal(this.href);
 });
 
-// Opens the custom scripts folder
-function openScriptsFolder() {
-  ipcRenderer.send('openScriptsFolder');
-}
-
 // Navbar Collapse
 // Collapse the navbar when a menu item is selected.
 $("nav").find("li").on("click", "a", function () {

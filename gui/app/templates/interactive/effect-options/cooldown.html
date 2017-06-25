@@ -1,0 +1,24 @@
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Which buttons should I put on cooldown?</h4></div>
+    <div class="cooldown-group-buttons">
+        <ul class="cooldown-group-buttons-list">
+            <li ng-repeat="button in boardButtons">
+                <input ng-click="buttonArray(effect.buttons,button)" ng-checked="buttonCheckboxer(effect.buttons,button)" type="checkbox" aria-label="..." >
+                <span>{{button}}</span>
+            </li>
+        </ul>
+    </div>
+    <div class="cooldown-group-button-reset">
+        <button ng-click="uncheckAll()" class="btn btn-warning">Uncheck all</button>
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>How long should these cooldown for?</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon" id="cooldown-amount-effect-type">Seconds</span>
+        <input ng-model="effect.length" type="text" class="form-control" id="cooldown-amount-setting" aria-describedby="cooldown-amount-effect-type" type="number">
+    </div>
+</div>
+<div class="effect-info alert alert-info">
+    If you want to cool down a lot of buttons at the same time, give the cooldown groups a try in the board main settings!
+</div>

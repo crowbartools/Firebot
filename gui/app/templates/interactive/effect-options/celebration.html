@@ -1,0 +1,24 @@
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>How should we celebrate?</h4></div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="celebrate-effect-type">{{effect.celebration ? effect.celebration : 'Pick one'}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu celebrate-effect-dropdown">
+            <li ng-repeat="celebration in celebrationTypes"
+                ng-click="effect.celebration = celebration">
+                <a href>{{celebration}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>How many seconds should the party last?</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon" id="celebration-length-effect-type">Seconds</span>
+        <input type="text" ng-model="effect.length" class="form-control" id="celebration-amount-setting" aria-describedby="celebration-length-effect-type" type="number">
+    </div>
+</div>
+<div class="effect-info alert alert-info">
+    This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html".
+</div>
