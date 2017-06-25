@@ -39,16 +39,24 @@
        
        <!--new accordian-->
        <uib-accordion close-others="true">
-        <div ng-repeat="effect in control.effects track by $index" uib-accordion-group class="panel-default" heading="{{effect.type}}" is-open="openEffectPanel[$index]">
-          <div class="btn-group">
-              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="effect-dropdown">{{effect.type != 'Nothing' ? effect.type : 'Pick an effect'}}</span> <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu effects-menu">
-                  <li ng-repeat="effectType in getApprovedEffectTypes() | orderBy:'toString()'">
-                    <a href="" effect="{{effectType}}" ng-click="changeEffectTypeForEffect(effectType, effect)">{{effectType}}</a>
-                  </li>
-              </ul>
+        <div uib-accordion-group 
+             ng-repeat="effect in control.effects track by $index"  
+             class="panel-default effect-panel"
+             is-open="openEffectPanel[$index]"
+             template-url="effect-panel-template.html"
+             heading="{{effect.type}}">
+          <div class="effect-select-wrapper">
+            <div class="btn-group">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="effect-dropdown">{{effect.type != 'Nothing' ? effect.type : 'Pick an effect'}}</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu effects-menu">
+                    <li ng-repeat="effectType in getApprovedEffectTypes() | orderBy:'toString()'">
+                      <a href="" effect="{{effectType}}" ng-click="changeEffectTypeForEffect(effectType, effect)">{{effectType}}</a>
+                    </li>
+                </ul>
+            </div>
+            <span class="effect-delete-btn clickable" ng-click="removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
           </div>
           <div class="effect-settings-panel">
               <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
@@ -56,41 +64,7 @@
           </div>
         </div>
       </uib-accordion>
-       
-       
-       
-       <!--old accordian-->
-       <!--<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-         
-         <div ng-repeat="effect in control.effects" class="panel panel-default panel${uniqueid}" effect="">
-             <div class="panel-heading" role="tab">
-                 <h4 class="panel-title">
-                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse${uniqueid}" aria-expanded="true" aria-controls="collapse${uniqueid}">
-                         {{effect.type}}
-                     </a>
-                     <button class="btn btn-danger pull-right deleteFunctionality" delete="${uniqueid}">X</button>
-                 </h4>
-             </div>
-             <div id="collapse${uniqueid}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading${uniqueid}">
-                 <div class="panel-body">
-                     <div class="btn-group">
-                         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                             <span class="effect-dropdown">{{effect.type}}</span> <span class="caret"></span>
-                         </button>
-                         <ul class="dropdown-menu effects-menu">
-                             <li ng-repeat="effectType in getApprovedEffectTypes()">
-                               <a href="" effect="{{effectType}}" ng-click="changeEffectTypeForEffect(effectType, effect)">{{effectType}}</a>
-                             </li>
-                         </ul>
-                     </div>
-                     <div class="effect-settings-panel">
-                         <div ng-show="effect.type == null" class="effect-specific-title"><h4>Please select an effect.</h4></div>
-                         <effect-options effect="effect" type="effect.type" ng-show="effect.type != null"><effect-options>
-                     </div>
-                 </div>
-             </div>
-         </div>          
-       </div>-->
+      
        <div class="add-more-functionality">
          <button type="button" class="btn btn-primary" ng-click="addEffect()">
            Add Effect
@@ -103,4 +77,15 @@
  <div class="modal-footer">
    <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
    <button type="button" class="btn btn-primary add-new-board-save" ng-click="saveChanges()">Save Changes</button>
- </div> 
+ </div>
+ 
+ <script type="text/ng-template" id="effect-panel-template.html">
+    <div class="panel-heading" ng-click="toggleOpen()">
+      <h4 class="panel-title" uib-accordion-transclude="heading">
+        {{heading}}<i class="pull-right fal" ng-class="{'fa-angle-right': !isOpen, 'fa-angle-down': isOpen}"></i>
+      </h4>
+    </div>
+    <div class="panel-collapse collapse" uib-collapse="!isOpen">
+      <div class="panel-body" ng-transclude></div>
+    </div>
+  </script> 

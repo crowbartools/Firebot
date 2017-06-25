@@ -196,7 +196,6 @@
               var lastEffectIndex = _.keys($scope.control.effects).length - 1;
               $scope.openEffectPanel[lastEffectIndex] = true;
             }                  
-            updateOpenPanel();
         
             $scope.getApprovedEffectTypes = function() {
               // Convert effecttypes to an array
@@ -252,7 +251,23 @@
             }
             
             $scope.removeEffectAtIndex = function(index) {
-              updateOpenPanel();
+              //set the previous open panel to false so whatever gets moved to the previous
+              //slot doesnt auto-open
+              $scope.openEffectPanel[index] = false;
+                          
+              // remove effect
+              delete $scope.control.effects[(index+1).toString()];                    
+              
+              //recalculate index numbers
+              var newEffects = {};
+              var count = 1;
+              Object.keys($scope.control.effects).forEach(key => {
+                var effect = $scope.control.effects[key];
+                newEffects[count.toString()] = effect;
+                count++;
+              });
+              
+              $scope.control.effects = newEffects;;
             }
           },
           resolveObj: {

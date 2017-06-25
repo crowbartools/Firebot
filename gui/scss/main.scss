@@ -27,6 +27,14 @@ body {
     min-height:450px;
 }
 
+.fas, .far, .fal, .fab {
+    vertical-align: -17%;
+}
+
+.fa {
+    vertical-align: 0;
+}
+
 // Standard styling for tiles such as interactive board buttons.
 .tile{
     margin-top:1.5em;
@@ -597,5 +605,25 @@ box-shadow: 2px 2px 7px #dcdcdc;
   width:100%;
 }
 
+.effect-panel .panel-heading:hover {
+    background: #eaeaea;
+    cursor: pointer;
+}
+
+.effect-select-wrapper {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.effect-delete-btn {
+  color:red;
+  cursor:pointer;
+  font-size: 18px;
+}
+
+.clickable:hover {
+  opacity: 0.4;
+}
 
 
