@@ -3235,6 +3235,10 @@ body {
   padding-top: 1em;
 }
 
+.muted {
+  opacity: 0.5;
+}
+
 html {
   height: 100%;
 }
