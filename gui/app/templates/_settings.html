@@ -2,87 +2,104 @@
 <div class="content-block">
   <div class="content-block-body">
     <div class="page-content" style="min-height: 600px;">
-      <div class="row">
-        <div class="setting col-sm-6">
-          <div class="setting-heading">Overlay Compatibility</div>
-          <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>
-          <div class="dropdown options-overlay-compat-dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="options-overlay-compat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span class="dropdown-text">{{settings.getOverlayCompatibility()}}</span>
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="options-overlay-compat">
-              <li><a href ng-click="settings.setOverlayCompatibility('OBS')">OBS</a></li>
-              <li><a href ng-click="settings.setOverlayCompatibility('Other')">Other</a></li>
-            </ul>
+      <uib-tabset>
+
+        <!-- General Settings -->
+        <uib-tab index="0" heading="General">
+          <div class="row">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Setup Wizard</div>
+              <div class="setting-description">Want to run the setup wizard again? Click the button below.</div>
+              <button class="btn btn-default" ng-click="showSetupWizard()">Open Setup Wizard</button>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Beta Tester</div>
+              <div class="setting-description">Would you like to help test the newest features? Opt in to get notifications for beta releases.</div>
+              <div class="dropdown options-beta-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-beta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.isBetaTester()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-beta">
+                  <li><a href ng-click="settings.setBetaTester('No')">No</a></li>
+                  <li><a href ng-click="settings.setBetaTester('Yes')">Yes</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="setting col-sm-6">
-          <div class="setting-heading">Beta Tester</div>
-          <div class="setting-description">Would you like to help test the newest features? Opt in to get notifications for beta releases.</div>
-          <div class="dropdown options-beta-dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="options-beta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span class="dropdown-text">{{settings.isBetaTester()}}</span>
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="options-beta">
-              <li><a href ng-click="settings.setBetaTester('No')">No</a></li>
-              <li><a href ng-click="settings.setBetaTester('Yes')">Yes</a></li>
-            </ul>
+          <div class="row">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Sounds</div>
+              <div class="setting-description">Let Firebot play sounds! For example, you can get a warning when Firebot connects or disconnects.</div>
+              <div class="dropdown options-sounds-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-sounds">
+                  <li><a href ng-click="settings.setSoundsEnabled('On')">On</a></li>
+                  <li><a href ng-click="settings.setSoundsEnabled('Off')">Off</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="setting col-sm-6">
-          <div class="setting-heading">Control Emulation</div>
-          <div class="setting-description">Firebot has two different control emulators built in. If one doesn't work for you, try the other one!</div>
-          <div class="dropdown options-emulation-dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span class="dropdown-text">{{settings.getEmulator()}}</span>
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="options-emulation">
-              <li><a href ng-click="settings.setEmulator('Robotjs')">Robotjs</a></li>
-              <li><a href ng-click="settings.setEmulator('KBMRobot')">KBMRobot</a></li>
-            </ul>
+        </uib-tab>
+
+        <!-- Interactive Settings -->
+        <uib-tab index="1" heading="Interactive">
+          <div class="row">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Control Emulation</div>
+              <div class="setting-description">Firebot has two different control emulators built in. If one doesn't work for you, try the other one!</div>
+              <div class="dropdown options-emulation-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getEmulator()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-emulation">
+                  <li><a href ng-click="settings.setEmulator('Robotjs')">Robotjs</a></li>
+                  <li><a href ng-click="settings.setEmulator('KBMRobot')">KBMRobot</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Custom Script Buttons</div>
+              <div class="setting-description">Firebot supports a button effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a href="https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts">here</a>.</div>
+              <div class="dropdown options-customscript-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                  <li><a href ng-click="settings.setCustomScriptsEnabled(true)">On</a></li>
+                  <li><a href ng-click="settings.setCustomScriptsEnabled(false)">Off</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="setting col-sm-6">
-          <div class="setting-heading">Sounds</div>
-          <div class="setting-description">Let Firebot play sounds! For example, you can get a warning when Firebot connects or disconnects.</div>
-          <div class="dropdown options-sounds-dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="options-sounds">
-              <li><a href ng-click="settings.setSoundsEnabled('On')">On</a></li>
-              <li><a href ng-click="settings.setSoundsEnabled('Off')">Off</a></li>
-            </ul>
+        </uib-tab>
+
+        <!-- Overlay Settings -->
+        <uib-tab index="2" heading="Overlay">
+          <div class="row">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Overlay Compatibility</div>
+              <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>
+              <div class="dropdown options-overlay-compat-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-overlay-compat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getOverlayCompatibility()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-overlay-compat">
+                  <li><a href ng-click="settings.setOverlayCompatibility('OBS')">OBS</a></li>
+                  <li><a href ng-click="settings.setOverlayCompatibility('Other')">Other</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="setting col-sm-6">
-          <div class="setting-heading">Custom Script Buttons</div>
-          <div class="setting-description">Firebot supports a button effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a href="https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts">here</a>.</div>
-          <div class="dropdown options-customscript-dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="options-customscript">
-              <li><a href ng-click="settings.setCustomScriptsEnabled(true)">On</a></li>
-              <li><a href ng-click="settings.setCustomScriptsEnabled(false)">Off</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="setting col-sm-6">
-          <div class="setting-heading">Setup Wizard</div>
-          <div class="setting-description">Want to run the setup wizard again? Click the button below.</div>
-          <button class="btn btn-default" ng-click="showSetupWizard()">Open Setup Wizard</button>
-        </div>
-      </div>
+        </uib-tab>
+
+      </uib-tabset>
     </div>
   </div>
 </div>
