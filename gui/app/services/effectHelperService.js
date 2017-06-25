@@ -166,6 +166,11 @@
             $scope.buttonCheckboxer = function (list, item){
               return service.checkSavedArray(list, item);         
             }
+
+            // Uncheck all checkboxes.
+            $scope.uncheckAll = function() {
+                $scope.effect.buttons = [];
+            }
             
           };
           break;
