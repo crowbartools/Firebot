@@ -49,6 +49,24 @@
       modalInstance.result.then(closeCallback, dismissCallback);
     }
     
+    /*
+    * FIRST TIME USE MODAL
+    */
+    service.showSetupWizard = function() {
+      var firstTimeUseModalContext = {
+        templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
+        // This is the controller to be used for the modal. 
+        controllerFunc: "firstTimeUseModalController",
+        // The callback to run after the modal closed via "Add board"
+        keyboard: false,
+        backdrop: 'static',
+        closeCallback: (data) => {
+            console.log(data);
+        }
+      }      
+      service.showModal(firstTimeUseModalContext);
+    };
+    
     service.showErrorModal = function (errorMessage) {
         var errorModalContext = {
           templateUrl: "errorModal.html",

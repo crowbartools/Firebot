@@ -7,26 +7,91 @@
 			
 			<div ng-switch-when="one" class="wave">
 				<div class="welcome-wrapper">
-					<h3>Welcome to</h3>
-					<img src="../images/logo_transparent.png">      
-				  <span>Firebot</span>
+					<h3 class="animated fadeIn">Welcome to</h3>
+					<img style="animation-delay: 0.5s" class="animated bounceInDown" src="../images/logo_transparent.png">      
+				  <span style="animation-delay: 1.3s" class="animated bounceIn">Firebot</span>
 				</div>
-				<div>
-					<a class="btn btn-link get-started-btn" ng-click="handleNext()">Lets get started ></a>
+				<div style="animation-delay: 2.3s" class="animated fadeInUp">
+					<a class="btn btn-link" ng-click="handleNext()">Lets get started <i class="fal fa-angle-right"></i></a>
 				</div>
 			</div>
 			
 			<div ng-switch-when="two" class="wave">
-				
+				<p>
+					Firebot supports two different types of accounts:</br> A <b>Streamer</b> (the one you stream with)</br> and a <b>Bot</b> (a second account that can chat to your viewers).
+				</p>
+				<p>
+					You will need to sign into at least your <b>Streamer</b> account to use Firebot's features.
+				</p>
+				<div class="wizard-accounts-wrapper">
+					<div class="wizard-accounts-title">
+						Accounts
+					</div>
+					<table class="table">
+				    <tbody>
+				      <tr style="border-top: 2px solid #ddd;">
+				        <td class="wizard-accounts-td text-left"><b>Streamer</b></td>
+				        <td class="wizard-accounts-td">
+									<div class="wizard-accounts-login-display">
+										<img ng-show="streamerAccount.isLoggedIn" class="login-thumbnail" style="margin-right:0" ng-src="{{streamerAccount.photoUrl}}">
+										<div ng-class="streamerAccount.isLoggedIn ? '' : 'muted'">
+											{{streamerAccount.isLoggedIn ? streamerAccount.username : 'Not signed in'}}
+										</div>
+									</div>
+								</td>
+				        <td class="wizard-accounts-td text-right">
+									<button type="button" class="btn btn-link" ng-click="loginOrLogout('streamer')">{{streamerAccount.isLoggedIn ? "Logout" : "Login"}}</button>
+								</td>
+				      </tr>
+							<tr>
+								<td class="wizard-accounts-td text-left"><b>Bot</b> <span class="muted" style="font-size:12px;">Optional</span></td>
+								<td class="wizard-accounts-td">
+									<div class="wizard-accounts-login-display">
+										<img ng-show="botAccount.isLoggedIn" class="login-thumbnail" style="margin-right:0" ng-src="{{botAccount.photoUrl}}">
+										<div ng-class="botAccount.isLoggedIn ? '' : 'muted'">
+											{{botAccount.isLoggedIn ? botAccount.username : 'Not signed in'}}
+										</div>
+									</div>
+								</td>
+								<td class="wizard-accounts-td text-right">
+									<button type="button" class="btn btn-link" ng-click="loginOrLogout('bot')">{{botAccount.isLoggedIn ? "Logout" : "Login"}}</button>
+								</td>
+							</tr>
+				    </tbody>
+				  </table>
+					<span style="font-size: 12px; opacity: 0.8; margin-top: 3px;">Note: You can always manage your logins in the upper-right corner of the app.</span>
+				</div>	
 			</div>
 			
 			<div ng-switch-when="three" class="wave">
 
 			</div>
+			
+			<div ng-switch-when="four" class="wave">
+				<div style="margin-top: 20px">
+					<img style="width: 80px; height: 80px" class="jump-infinite" src="../images/logo_transparent.png">
+				</div>
+				<h1 style="margin-top: 0px;">You're all set!</h1>
+				<p>
+					If you need help or have a suggestion, we'd love to hear from you. Click the About link in the sidebar to see where you can find us.
+				</p>
+				<p>
+					Feel free to check out the <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Getting-Started')">getting started guide</a> as well.
+				</p>
+				<p style="animation-delay: 7s" class="animated tada">
+					<b>Thank you for using Firebot!</b>
+				</p>
+				<a style="margin-top: 5px;" class="btn btn-primary" ng-click="handleNext()">I'm ready!</a>  
+			</div>
 		</div>
 	</div>
 </div>
-<div class="modal-footer">
-	<a class="btn btn-default" ng-click="handlePrevious()" ng-show="!isFirstStep()">Back</a>
-	<a class="btn btn-primary" ng-click="handleNext()" ng-show="!isFirstStep()">{{getNextLabel()}}</a>
+<div class="modal-footer" style="min-height: 64px; text-align: center;">
+	<div>
+		<a class="btn btn-default" ng-click="handlePrevious()" ng-show="!(isFirstStep() || isLastStep())">Back</a>
+		<a class="btn btn-primary" ng-click="handleNext()" ng-show="!(isFirstStep() || isLastStep())" ng-disabled="!canGoToNext()">{{getNextLabel()}}</a>
+	</div>
+	<div>
+		<a class="btn btn-link" style="font-size: 10px;" ng-click="handleNext()" ng-show="!(isFirstStep() || isLastStep() || canGoToNext())">Skip for now</a>
+	</div>
 </div>

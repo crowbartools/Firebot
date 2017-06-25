@@ -4,7 +4,8 @@
  
  angular
    .module('firebotApp')
-   .controller('settingsController', function($scope, settingsService) {
+   .controller('settingsController', function($scope, settingsService, utilityService) {
         $scope.settings = settingsService;
+        $scope.showSetupWizard = utilityService.showSetupWizard;
    });
  })();

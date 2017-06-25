@@ -6,9 +6,9 @@ const shell = electron.shell;
   var app = angular
     .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap']);
 
-  app.controller('MainController', ['$scope', '$rootScope', 'boardService', 'connectionService', 'utilityService', MainController]);
+  app.controller('MainController', ['$scope', '$rootScope', 'boardService', 'connectionService', 'utilityService', 'settingsService', MainController]);
 
-  function MainController($scope, $rootScope, boardService, connectionService, utilityService) {
+  function MainController($scope, $rootScope, boardService, connectionService, utilityService, settingsService) {
 
     // List of bindable properties and methods
 
@@ -38,7 +38,12 @@ const shell = electron.shell;
     $scope.accounts = connectionService.accounts;
     
     // Run loadLogin to update the UI on page load.
-    connectionService.loadLogin(); 
+    connectionService.loadLogin();
+    
+    if(settingsService.isFirstTimeUse()) {
+      utilityService.showSetupWizard();
+      settingsService.setFirstTimeUse(false);
+    }
     
     
     /**
@@ -111,26 +116,6 @@ const shell = electron.shell;
       }      
       utilityService.showModal(addBoardModalContext);
     };
-    
-    /*
-    * FIRST TIME USE MODAL
-    */
-    $scope.showFirstTimeUseModal = function() {
-      var firstTimeUseModalContext = {
-        templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
-        // This is the controller to be used for the modal. 
-        controllerFunc: "firstTimeUseModalController",
-        // The callback to run after the modal closed via "Add board"
-        keyboard: false,
-        backdrop: 'static',
-        closeCallback: (data) => {
-            console.log(data);
-        }
-      }      
-      utilityService.showModal(firstTimeUseModalContext);
-    };
-    
-  
 
     /**
     * Initial App Load

@@ -309,6 +309,10 @@ box-shadow: 2px 2px 7px #dcdcdc;
  margin-right: 35px;
 }
 
+.nav-header-icon:hover {
+  animation: 0.8s jump infinite;
+}
+
 .login-pic{
    border-radius:.25rem;
    border: 2px solid $main-color;
@@ -515,7 +519,7 @@ box-shadow: 2px 2px 7px #dcdcdc;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  animation: welcomeFade 5s ease-in-out;
+  margin-top: 65px;
 }
 .welcome-wrapper h3 {
   width: 100%;
@@ -533,30 +537,9 @@ box-shadow: 2px 2px 7px #dcdcdc;
     font-weight: 100;    
 }
 
-@keyframes welcomeFade {
-  0%, 10% {
-    opacity: 0;
-  }
-  30% {
-    opacity: 1;
-  }
-}
-
-.get-started-btn {
-  animation: welcomeBtnFade 5s ease-in-out;
-}
-@keyframes welcomeBtnFade {
-  0%, 30% {
-    opacity: 0;
-  }
-  40% {
-    opacity: 1;
-  }
-}
-
 .wave.ng-enter, .wave.ng-leave, .slide-fade.ng-enter, .slide-fade.ng-leave {
-  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s;
-  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 1s;
+  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
 
 .wave.ng-enter {
@@ -601,8 +584,8 @@ box-shadow: 2px 2px 7px #dcdcdc;
 
 .slide-frame {
   position:relative;
-  height:200px;
-  overflow:hidden;
+  height:315px;
+  overflow: hidden;
 }
 
 .slide-frame > div {
@@ -628,6 +611,80 @@ box-shadow: 2px 2px 7px #dcdcdc;
 
 .clickable:hover {
   opacity: 0.4;
+}
+
+//////
+// animations
+//////
+
+@keyframes jump {
+  from, to {
+    transform: scale3d(1, 1, 1) translate3d(0,0,0);
+  }
+  
+  10% {
+    transform: scale3d(1.25, 0.65, 1) translate3d(0,19px,0);
+  }
+
+  58%, 61% {
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    transform: translate3d(0, -20px, 0) scale3d(1, 1, 1);
+  }
+}
+
+.jump {
+  animation-name: jump;
+  transform-origin: center bottom;
+}
+
+.jump-infinite {
+  animation: 0.8s jump infinite;
+}
+
+///////
+// wizard styles
+//////
+
+.wizard-accounts-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top:20px;
+}
+
+.wizard-accounts-title   {
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #777171;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.wizard-accounts-login-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wizard-accounts-wrapper table {
+  width: 70%;
+  margin-bottom: 0;
+}
+
+.wizard-accounts-wrapper td {
+  vertical-align: middle;
+}
+
+.wizard-accounts-td {
+  vertical-align: middle !important;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
 }
 
 
