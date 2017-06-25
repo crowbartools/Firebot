@@ -111,7 +111,7 @@
         var board = service.getLastUsedBoard();
         var scenes = [];
         if (board != null) {
-          scenes = _.keys(board.scenes);
+          scenes = Object.keys(board.scenes);
         }
         return scenes;
     }
@@ -120,7 +120,7 @@
         var board = service.getLastUsedBoard();
         var controls = [];
         if (board != null) {
-          controls = _.keys(board.controls);
+          controls = Object.keys(board.controls);
         }
         return controls;
     }
