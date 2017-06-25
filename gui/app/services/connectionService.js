@@ -42,7 +42,7 @@
     
     service.accounts = {
       streamer: {
-        username: "Broadcaster",
+        username: "Streamer",
         photoUrl: "../images/placeholders/default.jpg",
         isLoggedIn: false
       },

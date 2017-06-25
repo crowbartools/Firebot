@@ -6,9 +6,8 @@
     .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, connectionService, boardService) {
 
         $scope.steps = ['one', 'two', 'three', 'four'];
-        $scope.stepTitles = ['', 'Get Signed In', 'Your First Board'];
+        $scope.stepTitles = ['', 'Get Signed In', 'Your First Board', ''];
         $scope.step = 0;
-        $scope.wizard = {};
 
         $scope.isFirstStep = function () {
             return $scope.step === 0;
@@ -59,19 +58,32 @@
           return true;   
         }
 
-        $scope.handleNext = function () {
+        $scope.handleNext = function (forceNext) {
             if ($scope.isLastStep()) {
-                $uibModalInstance.close($scope.wizard);
+                $uibModalInstance.close();
             } else {
               switch($scope.step){
                 case 0:
                   break;
                 case 1:
+                case 2:
+                  if(!$scope.canGoToNext() && !forceNext) return;
                   break;
               }                
               $scope.step += 1;
             }
         };
+        
+        $scope.getTooltipText = function() {
+          switch($scope.step){
+            case 1:
+              return "Please sign into your Streamer account.";
+            case 2:
+              return "First board needs to be added.";
+              break;
+          }
+          return "";   
+        }
 
         $scope.dismiss = function(reason) {
             $uibModalInstance.dismiss(reason);

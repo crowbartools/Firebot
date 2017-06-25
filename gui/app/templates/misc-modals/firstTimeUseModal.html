@@ -11,7 +11,10 @@
 					<img style="animation-delay: 0.5s" class="animated bounceInDown" src="../images/logo_transparent.png">      
 				  <span style="animation-delay: 1.3s" class="animated bounceIn">Firebot</span>
 				</div>
-				<div style="animation-delay: 2.3s" class="animated fadeInUp">
+				<div style="animation-delay: 2.0s" class="animated fadeIn welcome-subtitle">
+					<span>A Tool For Mixer Interactive</span>
+				</div>
+				<div style="animation-delay: 3.2s" class="animated fadeInUp">
 					<a class="btn btn-link" ng-click="handleNext()">Lets get started <i class="fal fa-angle-right"></i></a>
 				</div>
 			</div>
@@ -89,9 +92,17 @@
 <div class="modal-footer" style="min-height: 64px; text-align: center;">
 	<div>
 		<a class="btn btn-default" ng-click="handlePrevious()" ng-show="!(isFirstStep() || isLastStep())">Back</a>
-		<a class="btn btn-primary" ng-click="handleNext()" ng-show="!(isFirstStep() || isLastStep())" ng-disabled="!canGoToNext()">{{getNextLabel()}}</a>
+		<a 
+			class="btn btn-primary"
+			uib-tooltip="{{getTooltipText()}}"
+			tooltip-enable="!canGoToNext()" 
+			ng-click="handleNext()" 
+			ng-show="!(isFirstStep() || isLastStep())" 
+			ng-disabled="!canGoToNext()">
+				{{getNextLabel()}}
+		</a>
 	</div>
 	<div>
-		<a class="btn btn-link" style="font-size: 10px;" ng-click="handleNext()" ng-show="!(isFirstStep() || isLastStep() || canGoToNext())">Skip for now</a>
+		<a class="btn btn-link" style="font-size: 10px;" ng-click="handleNext(true)" ng-show="!(isFirstStep() || isLastStep() || canGoToNext())">Skip for now</a>
 	</div>
 </div>
