@@ -8,7 +8,7 @@
 
  angular
   .module('firebotApp')
-  .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q) {
+  .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q, $rootScope) {
     var service = {};
     
     var ListenerType = listenerService.ListenerType;
@@ -87,7 +87,9 @@
       }
     }
     
-    function login(type) { 
+    function login(type) {
+      $rootScope.showSpinner = true;
+       
       var scopes = type == "streamer" ? streamerScopes : botScopes;
 
       authWindowParams.webPreferences.partition = type;
@@ -123,7 +125,10 @@
             dbAuth.push('./' + type + '/refreshToken', refreshToken);
     
             // Style up the login page.
-            $q.resolve(true, () => service.loadLogin());              
+            $q.resolve(true, () => {              
+              service.loadLogin();
+              $rootScope.showSpinner = false;
+            });              
         });
     }
     

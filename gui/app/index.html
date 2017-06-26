@@ -64,6 +64,9 @@
     <link href="../css/animate.css" rel="stylesheet">
   </head>
   <body>
+    <div class='loader-wrapper' ng-if="showSpinner">
+      <div class="loader">Loading...</div>
+    </div>
     <div class="fb-nav" ng-class="{'contracted': !navExpanded}">
       <div class="nav-header" >
         <img class="nav-header-icon" ng-class="{'contracted': !navExpanded}" src="../images/logo_transparent.png">      

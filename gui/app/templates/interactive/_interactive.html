@@ -1,7 +1,7 @@
 <!--Interactive Tab View-->
 <div class="content-block">
   <div class="content-block-header">
-    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">{{selectedBoard.name}}</span>
+    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">{{selectedBoard().name}}</span>
     <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
       <span>CHANGE BOARD</span>
       <div class="arrow down"></div>
@@ -18,7 +18,7 @@
   </div>
   <div class="content-block-body">
     <div class="page-content">
-      <div class="row interactive-board-container" ng-hide="selectedBoard == null || selectedBoard == ''">
+      <div class="row interactive-board-container" ng-hide="selectedBoard() == null || selectedBoard() == ''">
         <uib-tabset>
           <uib-tab index="0" heading="Settings">
             <!--put settings stuff here-->

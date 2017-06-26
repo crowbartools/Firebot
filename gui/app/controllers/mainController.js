@@ -12,6 +12,8 @@ const shell = electron.shell;
 
     // List of bindable properties and methods
 
+    $rootScope.showSpinner = true;
+
     $scope.currentTab = "Interactive";
 
     $scope.navExpanded = true;
@@ -27,6 +29,8 @@ const shell = electron.shell;
     $scope.tabIsSelected = function(tabId) {
       return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
     }
+    
+    
 
     $rootScope.openLinkExternally = function(url) {
       shell.openExternal(url);
@@ -129,6 +133,7 @@ const shell = electron.shell;
     //Attempt to load interactive boards into memory
     if (!boardService.hasBoardsLoaded()) {
       boardService.loadAllBoards();
+      $rootScope.showSpinner = false;
     }
   }
 

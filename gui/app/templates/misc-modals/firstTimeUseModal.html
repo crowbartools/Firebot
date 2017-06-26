@@ -33,10 +33,15 @@
 					<table class="table">
 				    <tbody>
 				      <tr style="border-top: 2px solid #ddd;">
-				        <td class="wizard-accounts-td text-left"><b>Streamer</b></td>
+				        <td class="wizard-accounts-td text-left">
+									<b style="position: relative;">
+										<span ng-if="streamerAccount.isLoggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn" style=""></i></span>
+										Streamer
+									</b>
+								</td>
 				        <td class="wizard-accounts-td">
 									<div class="wizard-accounts-login-display">
-										<img ng-show="streamerAccount.isLoggedIn" class="login-thumbnail" style="margin-right:0" ng-src="{{streamerAccount.photoUrl}}">
+										<img class="login-thumbnail" ng-show="streamerAccount.isLoggedIn" ng-class="streamerAccount.isLoggedIn ? 'animated flipInX' : ''" style="height: 34px; width: 34px;" ng-src="{{streamerAccount.photoUrl}}">
 										<div ng-class="streamerAccount.isLoggedIn ? '' : 'muted'">
 											{{streamerAccount.isLoggedIn ? streamerAccount.username : 'Not signed in'}}
 										</div>
@@ -47,10 +52,15 @@
 								</td>
 				      </tr>
 							<tr>
-								<td class="wizard-accounts-td text-left"><b>Bot</b> <span class="muted" style="font-size:12px;">Optional</span></td>
+								<td class="wizard-accounts-td text-left">
+									<b style="position: relative;">
+										<span ng-if="botAccount.isLoggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn" style=""></i></span>
+										Bot <span class="muted" style="font-size:11px;">Optional</span>
+									</b>
+								</td>
 								<td class="wizard-accounts-td">
 									<div class="wizard-accounts-login-display">
-										<img ng-show="botAccount.isLoggedIn" class="login-thumbnail" style="margin-right:0" ng-src="{{botAccount.photoUrl}}">
+										<img class="login-thumbnail" ng-show="botAccount.isLoggedIn" ng-class="botAccount.isLoggedIn ? 'animated flipInX' : ''" style="height: 34px; width: 34px;" ng-src="{{botAccount.photoUrl}}">
 										<div ng-class="botAccount.isLoggedIn ? '' : 'muted'">
 											{{botAccount.isLoggedIn ? botAccount.username : 'Not signed in'}}
 										</div>
@@ -67,14 +77,74 @@
 			</div>
 			
 			<div ng-switch-when="three" class="wave">
-				<p>To add a board to Firebot go to the <a href="https://mixer.com/i/studio">mixer interactive studio</a> and create a project. Organize and create buttons however you want. Once done, you'll be given a five digit number in the "code" tab. Copy and paste that below.</p>
-				<input type="text" class="form-control" style="width: 40%; display:inline-block;" placeholder="Enter code" ng-model="firstBoard.id">
-				<div>
-					<button class="btn btn-default" ng-click="addBoard()" ng-disabled="firstBoard.id.toString().trim().length === 0">Add Board</button>
+				<p>
+					Next, we need to sync controls from Mixer.
+				</p>
+				<p>
+					Read below to learn how interactive controls work <br />and then continue on to add your first board!
+				</p>
+				<div style="display:flex; justify-content: center;">
+					<div class="panel panel-info" style="margin-top: 5px;font-size: 14px;width: 80%;">
+						<div class="panel-heading">How Interactive Controls Work</div>
+					  <div class="panel-body">
+							<p>
+							 Interactive controls on Mixer work by creating 'boards' on Mixer's website. 
+							</p>
+							<p>
+								There you can create scenes, add buttons, and organize the layout of those buttons. 
+							</p>
+							<p>
+								Each board will have it's own ID code that you will give to Firebot, which will allow it to sync the buttons you created.
+							</p>
+					  </div>
+					</div>
 				</div>
 			</div>
 			
 			<div ng-switch-when="four" class="wave">
+				<div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;" ng-hide="hasBoardsLoaded">
+					<p>
+						<b style="font-size: 16px;">How to create and add a board to Firebot:</b>
+					</p>
+					<ol class="wizard-board-add-instructions">
+						<li>
+							Go to Mixer's <a href="https://mixer.com/i/studio">Interactive Studio</a>.
+						</li>
+						<li>
+							Create a new Project and give it a name.
+						</li>
+						<li>
+							Optionally: Go to the project's <b>Build</b> tab and create scenes/add buttons now. <br><span class="muted">(You can always do this later. Any changes will be synced to Firebot)</span>
+						</li>
+						<li>
+							Go to the <b>Code</b> tab and copy the 5-digit ID code.
+						</li>
+						<li>
+							Paste the ID code below and click <b>Add Board</b>.
+						</li>
+					</ol>
+					<div class="input-group" style="width: 55%;">
+						<input type="text" class="form-control" placeholder="Enter code" ng-model="firstBoard.id">
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="button" ng-click="addBoard()" ng-disabled="firstBoard.id.toString().trim().length === 0">Add Board</button>
+						</span>
+					</div>
+					<p style="color: red;" ng-show="boardAddErrorOccured">
+						Whoops, there was an error loading that board. Was the code copied properly?
+					</p>
+				</div>
+				<div ng-if="hasBoardsLoaded">
+				  <span><i class="fal fa-check-circle animated bounceIn" style="font-size: 193px;color: green;animation-delay: 0.3s;"></i></span>
+					<div style="margin-top: 22px;text-transform: uppercase;font-size: 18px;opacity: 0.5;margin-top: 10px;">
+						<span style="animation-delay: 1s;" class="animated flipInX"><b>Loaded Board:</b></span>
+					</div>
+					<div style="font-size: 50px;animation-delay: 1s;" class="animated flipInX">
+						<span>{{selectedBoardName()}}</span>
+					</div>
+				</div>
+			</div>
+			
+			<div ng-switch-when="five" class="wave">
 				<div style="margin-top: 20px">
 					<img style="width: 80px; height: 80px" class="jump-infinite" src="../images/logo_transparent.png">
 				</div>
@@ -95,18 +165,18 @@
 </div>
 <div class="modal-footer" style="min-height: 64px; text-align: center;">
 	<div>
-		<a class="btn btn-default" ng-click="handlePrevious()" ng-show="!(isFirstStep() || isLastStep())">Back</a>
+		<a class="btn btn-default" ng-click="handlePrevious()" ng-show="showBackButton()">Back</a>
 		<a 
 			class="btn btn-primary"
 			uib-tooltip="{{getTooltipText()}}"
 			tooltip-enable="!canGoToNext()" 
 			ng-click="handleNext()" 
-			ng-show="!(isFirstStep() || isLastStep())" 
+			ng-show="showNextButton()" 
 			ng-disabled="!canGoToNext()">
 				{{getNextLabel()}}
 		</a>
 	</div>
 	<div>
-		<a class="btn btn-link" style="font-size: 10px;" ng-click="handleNext(true)" ng-show="!(isFirstStep() || isLastStep() || canGoToNext())">Skip for now</a>
+		<a class="btn btn-link" style="font-size: 10px;" ng-click="handleNext(true)" ng-show="showNextButton() && !canGoToNext()">Skip for now</a>
 	</div>
 </div>

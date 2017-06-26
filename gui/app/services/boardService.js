@@ -8,7 +8,7 @@
  
  angular
   .module('firebotApp')
-  .factory('boardService', function ($http, $q, settingsService) {
+  .factory('boardService', function ($http, $q, settingsService, $rootScope) {
     
     // in memory board storage
     var _boards = {};
@@ -41,20 +41,40 @@
       return _.findWhere(_boards, {name: name});
     }
     
+    service.getLastUsedBoard = function () {
+      return service.getBoardByName(settingsService.getLastBoardName());
+    }
+    
+    var selectedBoard = service.getLastUsedBoard();
+
+    service.getSelectedBoard = function() {
+      return selectedBoard;
+    }
+    
+    service.setSelectedBoard = function(board) {
+      if(board != null && board.name != null) {
+        settingsService.setLastBoardName(board.name); 
+      }
+      selectedBoard = board;
+    }
+    
     service.addNewBoardWithId = function(id) {
+      $rootScope.showSpinner = true;
       return loadBoardsById([id], false);
     };
     
     service.deleteCurrentBoard = function() {
-      var dbSettings = new JsonDB("./user-settings/settings", true, true);
-      var lastBoardName = dbSettings.getData('/interactive/lastBoard');
+      var currentBoardName = service.getSelectedBoard().name;
           
-      return deleteBoard(lastBoardName).then(() => {
+      return deleteBoard(currentBoardName).then(() => {
         // Remove last board setting entry
-        dbSettings.delete('/interactive/lastBoard');
+        settingsService.deleteLastBoardName();
         
-        var key = service.getBoardByName(lastBoardName).versionId;
+        var key = service.getBoardByName(currentBoardName).versionId;
+        
         delete _boards[key];
+        
+        service.setSelectedBoard(null);
       });
     };
     
@@ -88,11 +108,7 @@
       
       /* Step 2 */
       // Load each board.
-      return loadBoardsById(boardVersionIds, true);
-    }
-    
-    service.getLastUsedBoard = function () {
-      return service.getBoardByName(settingsService.getLastBoardName());
+      return loadBoardsById(boardVersionIds, true).then(() => { selectedBoard = service.getLastUsedBoard() });
     }
     
     service.saveControlForCurrentBoard = function(control) {
@@ -188,7 +204,13 @@
             addedBoards.push(board);
           });
           
-          return $q.resolve(true, () => {return addedBoards});
+          return $q.resolve(true, () => {
+            $rootScope.showSpinner = false;
+            return addedBoards
+          });
+       }, (error) => {
+         $rootScope.showSpinner = false;
+         return $q.reject(error);
        });
     }
     
@@ -362,7 +384,7 @@
     // Delete Board
     // This deletes the currently selected board on confirmation.
     function deleteBoard(boardName){
-      return new Promise((resolve, reject) => {
+      return $q.when( new Promise((resolve, reject) => {
               
         // Check for last board and load ui if one exists.
         try{
@@ -381,7 +403,7 @@
                 }
             });
         } catch(err){reject()};
-      });
+      }));
     }
     
     /**

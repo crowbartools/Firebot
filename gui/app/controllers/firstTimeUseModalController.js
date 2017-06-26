@@ -1,12 +1,12 @@
 (function() {
 
-
+  //TODO: Rename this to setupWizardModalController
   angular
     .module('firebotApp')
     .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, $q, connectionService, boardService) {
 
-        $scope.steps = ['one', 'two', 'three', 'four'];
-        $scope.stepTitles = ['', 'Get Signed In', 'Your First Board', ''];
+        $scope.steps = ['one', 'two', 'three', 'four', 'five'];
+        $scope.stepTitles = ['', 'First, Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', ''];
         $scope.step = 0;
 
         $scope.isFirstStep = function () {
@@ -34,21 +34,30 @@
         }
 
         $scope.getNextLabel = function () {
-            return ($scope.isLastStep()) ? 'Okay' : 'Next';
+          switch($scope.step){
+            default:
+              return "Next"
+          }
         };
 
         $scope.handlePrevious = function () {
             $scope.step -= ($scope.isFirstStep()) ? 0 : 1;
         };
         
-        var hasBoardsLoaded = boardService.hasBoardsLoaded();
+        $scope.showNextButton = function() {
+          return !($scope.isFirstStep() || $scope.isLastStep())
+        }
+        
+        $scope.showBackButton = function() {
+          return !($scope.isFirstStep() || $scope.isLastStep())
+        }
         
         $scope.canGoToNext = function() {
           switch($scope.step){
             case 1:
               return connectionService.accounts.streamer.isLoggedIn;
-            case 2:
-              return hasBoardsLoaded;
+            case 3:
+              return $scope.hasBoardsLoaded;
               break;
           }
           return true;   
@@ -62,7 +71,7 @@
                 case 0:
                   break;
                 case 1:
-                case 2:
+                case 3:
                   if(!$scope.canGoToNext() && !forceNext) return;
                   break;
               }                
@@ -74,8 +83,8 @@
           switch($scope.step){
             case 1:
               return "Please sign into your Streamer account.";
-            case 2:
-              return "First board needs to be added.";
+            case 3:
+              return "A board needs to be added.";
               break;
           }
           return "";   
@@ -87,25 +96,38 @@
         
         $scope.loginOrLogout = connectionService.loginOrLogout;
         
+        $scope.hasBoardsLoaded = boardService.hasBoardsLoaded();
+                
         $scope.firstBoard = {
-          id: "",
-          board: {}
+          id: ""
+        }
+        
+        $scope.boardAddErrorOccured = false;
+        
+        $scope.selectedBoardName = function() {
+          var board = boardService.getSelectedBoard();        
+          if(board != null) {
+            return board.name;
+          }
+          return "";
         }
         
         $scope.addBoard = function() {
           var boardId = $scope.firstBoard.id;
-          console.log(boardId);
           if(boardId == null || boardId.length == 0) {
-            console.log("Board id empty!")
             return;
           }
           boardService.addNewBoardWithId(boardId).then((boards) => {
-            settingsService.setLastBoardName(board.name);           
+            var board = boards[0];
+            boardService.setSelectedBoard(board);        
             /**
             * Note(ebiggz): This is a workaround to ensure boards load and update scope. 
-            * I need to update boardService to use the $q service for Promises instead of regular Promises;
+            * I need to update boardService to use the $q service for Promises instead of regular Promises.
             */
-            $q.resolve(true, () => { hasBoardsLoaded = true });
+            $q.resolve(true, () => { $scope.hasBoardsLoaded = true });
+          },(error) => {
+            $q.resolve(true, () => { $scope.boardAddErrorOccured = true; });
+            
           });
         }
 

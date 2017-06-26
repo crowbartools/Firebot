@@ -28,6 +28,10 @@
       return data
     }
     
+    function deleteDataAtPath(path) {
+      getSettingsFile().delete(path);
+    }
+    
     service.getLastBoardName = function() {
       var boardName = getDataFromFile('/interactive/lastBoard');    
       return boardName != null ? boardName : "";
@@ -35,6 +39,10 @@
     
     service.setLastBoardName = function(name) {
       pushDataToFile('/interactive/lastBoard', name);
+    }
+    
+    service.deleteLastBoardName = function() {
+      deleteDataAtPath('/interactive/lastBoard');
     }
     
     service.getCustomScriptsEnabled = function() {

@@ -13,24 +13,26 @@
       
       $scope.groups = groupsService;
 
-      $scope.selectedBoard = boardService.getLastUsedBoard();
-
+      $scope.selectedBoard = function() {
+        return boardService.getSelectedBoard();
+      }
+      
       $scope.getBoardNames = function() {      
         return boardService.getBoardNames();
       }
 
       $scope.switchToBoard = function(boardName) {
         var board = boardService.getBoardByName(boardName);
-        setLastBoard(board);
+        boardService.setSelectedBoard(board);
       }
       
       $scope.switchToBoardById = function(id) {
         var board = boardService.getBoardById(id);
-        setLastBoard(board);
+        boardService.setSelectedBoard(board);
       }
 
       $scope.getScenesForSelectedBoard = function() {
-        var board = $scope.selectedBoard;
+        var board = $scope.selectedBoard();
         var scenes = [];
         if (board != null) {
           scenes = _.keys(board.scenes);
@@ -40,14 +42,14 @@
 
       $scope.getControlsForScene = function(scene) {
         var buttons = [];
-        if ($scope.selectedBoard != null) {
-          buttons = $scope.selectedBoard.getControlsForScene(scene);
+        if ($scope.selectedBoard() != null) {
+          buttons = $scope.selectedBoard().getControlsForScene(scene);
         }
         return buttons;
       }
 
       $scope.getViewerGroupSettingsForScene = function(scene) {
-        var board = $scope.selectedBoard;
+        var board = $scope.selectedBoard();
         var settings = [];
         if (board != null) {
           settings = board.scenes[scene].default;
@@ -56,7 +58,7 @@
       }
 
       $scope.getCooldownGroupSettings = function() {
-        var board = $scope.selectedBoard;
+        var board = $scope.selectedBoard();
         var settings = [];
         if (board != null) {
           settings = _.values(board.cooldownGroups);
@@ -66,13 +68,6 @@
 
       $scope.fireControlManually = function(controlId) {
         ipcRenderer.send('manualButton', controlId);
-      }
-      
-      function setLastBoard(board) {
-        if (board != null && ($scope.selectedBoard == null || board.name != $scope.selectedBoard.name)) {
-          $scope.selectedBoard = board;
-          settingsService.setLastBoardName(board.name);
-        }
       }
 
       /**
@@ -133,7 +128,7 @@
           closeCallback: (shouldDelete) => {
             if(shouldDelete === true) {
               boardService.deleteCurrentBoard();
-              $scope.selectedBoard = null;
+              $scope.selectedBoard() = null;
             }          
           },
           size: "sm"
@@ -299,8 +294,9 @@
         boardService.loadAllBoards().then(function() {
 
           var lastBoard = boardService.getLastUsedBoard();
+          
+          boardService.setSelectedBoard(lastBoard);
 
-          $scope.selectedBoard = lastBoard;
           $scope.$applyAsync();
 
         });
