@@ -3,7 +3,7 @@
 
   angular
     .module('firebotApp')
-    .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, connectionService, boardService) {
+    .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, $q, connectionService, boardService) {
 
         $scope.steps = ['one', 'two', 'three', 'four'];
         $scope.stepTitles = ['', 'Get Signed In', 'Your First Board', ''];
@@ -41,18 +41,14 @@
             $scope.step -= ($scope.isFirstStep()) ? 0 : 1;
         };
         
-        $scope.streamerAccount = connectionService.accounts.streamer;
-        
-        $scope.botAccount = connectionService.accounts.bot;
-        
-        $scope.loginOrLogout = connectionService.loginOrLogout;
+        var hasBoardsLoaded = boardService.hasBoardsLoaded();
         
         $scope.canGoToNext = function() {
           switch($scope.step){
             case 1:
               return connectionService.accounts.streamer.isLoggedIn;
             case 2:
-              return boardService.hasBoardsLoaded();
+              return hasBoardsLoaded;
               break;
           }
           return true;   
@@ -83,6 +79,34 @@
               break;
           }
           return "";   
+        }
+        
+        $scope.streamerAccount = connectionService.accounts.streamer;
+        
+        $scope.botAccount = connectionService.accounts.bot;
+        
+        $scope.loginOrLogout = connectionService.loginOrLogout;
+        
+        $scope.firstBoard = {
+          id: "",
+          board: {}
+        }
+        
+        $scope.addBoard = function() {
+          var boardId = $scope.firstBoard.id;
+          console.log(boardId);
+          if(boardId == null || boardId.length == 0) {
+            console.log("Board id empty!")
+            return;
+          }
+          boardService.addNewBoardWithId(boardId).then((boards) => {
+            settingsService.setLastBoardName(board.name);           
+            /**
+            * Note(ebiggz): This is a workaround to ensure boards load and update scope. 
+            * I need to update boardService to use the $q service for Promises instead of regular Promises;
+            */
+            $q.resolve(true, () => { hasBoardsLoaded = true });
+          });
         }
 
         $scope.dismiss = function(reason) {

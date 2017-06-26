@@ -67,7 +67,11 @@
 			</div>
 			
 			<div ng-switch-when="three" class="wave">
-
+				<p>To add a board to Firebot go to the <a href="https://mixer.com/i/studio">mixer interactive studio</a> and create a project. Organize and create buttons however you want. Once done, you'll be given a five digit number in the "code" tab. Copy and paste that below.</p>
+				<input type="text" class="form-control" style="width: 40%; display:inline-block;" placeholder="Enter code" ng-model="firstBoard.id">
+				<div>
+					<button class="btn btn-default" ng-click="addBoard()" ng-disabled="firstBoard.id.toString().trim().length === 0">Add Board</button>
+				</div>
 			</div>
 			
 			<div ng-switch-when="four" class="wave">

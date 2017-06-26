@@ -8,7 +8,7 @@
  
  angular
   .module('firebotApp')
-  .factory('boardService', function ($http, settingsService) {
+  .factory('boardService', function ($http, $q, settingsService) {
     
     // in memory board storage
     var _boards = {};
@@ -166,6 +166,7 @@
             return;
           }
           
+          var addedBoards = []
           // load each board
           _.each(boardJsonFiles, function (fileName) {
             // Get settings.
@@ -184,7 +185,10 @@
             }
             
             _boards[versionId] = board;
+            addedBoards.push(board);
           });
+          
+          return $q.resolve(true, () => {return addedBoards});
        });
     }
     
