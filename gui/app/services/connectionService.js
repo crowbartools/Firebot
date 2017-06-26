@@ -94,11 +94,12 @@
 
       authWindowParams.webPreferences.partition = type;
       const oauthProvider = electronOauth2(authInfo, authWindowParams);
-      oauthProvider.getAccessToken({ scope: scopes })
+      $q.when(oauthProvider.getAccessToken({ scope: scopes }))
           .then(token => {
               userInfo(type, token.access_token, token.refresh_token);
           }, err => {
               //error requesting access 
+              $rootScope.showSpinner = false;
               console.log(err);
           });
     }  
