@@ -12,6 +12,8 @@
       var settings = settingsService;
       
       $scope.groups = groupsService;
+      
+      $scope.buttonViewMode = 'grid';
 
       $scope.selectedBoard = function() {
         return boardService.getSelectedBoard();
@@ -30,15 +32,15 @@
         var board = boardService.getBoardById(id);
         boardService.setSelectedBoard(board);
       }
-
+      
       $scope.getScenesForSelectedBoard = function() {
         var board = $scope.selectedBoard();
         var scenes = [];
         if (board != null) {
-          scenes = _.keys(board.scenes);
+          scenes = Object.keys(board.scenes);
         }
         return scenes;
-      };
+      };      
 
       $scope.getControlsForScene = function(scene) {
         var buttons = [];
@@ -48,24 +50,6 @@
         return buttons;
       }
 
-      $scope.getViewerGroupSettingsForScene = function(scene) {
-        var board = $scope.selectedBoard();
-        var settings = [];
-        if (board != null) {
-          settings = board.scenes[scene].default;
-        }
-        return settings;
-      }
-
-      $scope.getCooldownGroupSettings = function() {
-        var board = $scope.selectedBoard();
-        var settings = [];
-        if (board != null) {
-          settings = _.values(board.cooldownGroups);
-        }
-        return settings;
-      }
-
       $scope.fireControlManually = function(controlId) {
         ipcRenderer.send('manualButton', controlId);
       }
@@ -73,6 +57,52 @@
       /**
        * MODAL CONTROL
        */
+       
+       $scope.showBoardSettingsModal = function() {
+         var showBoardSetingsModalContext = {
+           templateUrl: "./templates/interactive/modals/boardSettingsModal.html",
+           size: "lg",
+           // This is the controller to be used for the modal.
+           resolveObj: {
+             board: () => {
+               return $scope.selectedBoard();
+             }
+           },  
+           controllerFunc: ($scope, $uibModalInstance, board) => {
+             
+             $scope.board = board;
+             
+             $scope.getScenesForBoard = function() {
+               var scenes = [];
+               if (board != null) {
+                 scenes = Object.keys(board.scenes);
+               }
+               return scenes;
+             };
+             
+             $scope.getViewerGroupSettingsForScene = function(scene) {
+               var settings = [];
+               if (board != null) {
+                 settings = board.scenes[scene].default;
+               }
+               return settings;
+             }
+             
+             $scope.getCooldownGroupSettings = function() {
+               var settings = [];
+               if (board != null) {
+                 settings = _.values(board.cooldownGroups);
+               }
+               return settings;
+             }
+             
+             $scope.close = function() {
+               $uibModalInstance.close();
+             };     
+           }
+         }    
+         utilityService.showModal(showBoardSetingsModalContext);
+       }
       
        /*
        * ADD BOARD MODAL

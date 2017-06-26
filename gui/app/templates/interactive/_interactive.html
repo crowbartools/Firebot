@@ -2,6 +2,9 @@
 <div class="content-block">
   <div class="content-block-header">
     <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">{{selectedBoard().name}}</span>
+    <span class="clickable board-settings-icon" ng-hide="selectedBoard() == null || selectedBoard() == ''" ng-click="showBoardSettingsModal()">
+      <i class="fas fa-cog"></i>
+    </span>
     <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
       <span>CHANGE BOARD</span>
       <div class="arrow down"></div>
@@ -18,62 +21,26 @@
   </div>
   <div class="content-block-body">
     <div class="page-content">
-      <div class="row interactive-board-container" ng-hide="selectedBoard() == null || selectedBoard() == ''">
+      <div class="row interactive-board-container" ng-hide="selectedBoard() == null">
+        <div class="scene-tools-wrapper">
+          <span class="scenes-title">SCENES</span>
+          <div class="scene-tools">
+            <div class="btn-group" style="margin-right: 15px">
+              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
+              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'list'" uib-tooltip="Button View: List" tooltip-append-to-body="true" disabled><i class="fas fa-list"></i></label>
+            </div>
+            <div class="searchbar-wrapper">
+              <input type="text" class="form-control" placeholder="Search controls" ng-model="buttonSearch" style="padding-left: 27px;">
+              <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+            </div>
+          </div>
+        </div>
         <uib-tabset>
-          <uib-tab index="0" heading="Settings">
-            <!--put settings stuff here-->
-            <div class="general-board-settings">
-                <h3>Viewer Group Settings</h3>
-                <div class="board-group-defaults">
-                    <p>All of your scenes are listed below. Here you can select which groups you want to use and which scenes they will use as their starting point. Groups are only "active" if selected here, otherwise they will not be used.</p>
-                    <div class="board-group-defaults-settings clearfix">
-                      <!-- Create scene settings -->
-                      <div ng-repeat="scene in getScenesForSelectedBoard()" class="board-group tile no-top">
-                          <div class="tile-header">
-                              <div class="board-groupscene tileID">{{scene}}</div>
-                              <div class="edit-groupscene tile-edit">
-                                  <button class="edit-groupscene-btn btn btn-default">
-                                      <i class="fa fa-pencil" aria-hidden="true"></i>
-                                  </button>
-                              </div>
-                          </div>
-                          <div class="board-group-scene-body tile-body">
-                            <div ng-if="scene == 'default'" class="board-groupscene-group">Default</div>
-                            <div ng-repeat="group in getViewerGroupSettingsForScene(scene)" class="board-groupscene-group">{{group}}</div>
-                          </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
-            <div class="board-cooldown-group-settings">
-                <h3>Cooldown Groups <button class="btn btn-default add-new-cooldown-group" data-toggle="modal" data-target="#new-cooldown-group-modal">Add New</button></h3>
-                <div class="board-cooldown-content">
-                    <p>Cooldown groups make it easy to group multiple buttons together so that they all cooldown anytime one is clicked.</p>
-                    <div class="board-cooldown-groups">
-                      <!-- Create cooldown groups -->
-                      <div ng-repeat="cooldownGroup in getCooldownGroupSettings()" class="cooldown-group tile no-top">
-                          <div class="cooldown-group-header tile-header">
-                              <div class="groupID tileID">{{cooldownGroup.groupName}}</div>
-                              <div class="edit-cooldown-group-wrap tile-edit">
-                                  <button class="edit-cooldown-group btn btn-default">
-                                      <i class="fa fa-pencil" aria-hidden="true"></i>
-                                  </button>
-                              </div>
-                          </div>
-                          <div class="cooldown-group-body tile-body">
-                              <p>Buttons: {{cooldownGroup.buttons ? cooldownGroup.buttons.length : 0}}</p>
-                              <p>Seconds: {{cooldownGroup.length}}</p>
-                          </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
-          </uib-tab>
           <!--Create a tab for each scene -->
-          <uib-tab index="$index + 1" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
+          <uib-tab index="$index" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
             <div class="tab-pane interactive-button-holder active">
               <!--Create buttons in each scene -->
-              <div class="interactive-button tile" ng-repeat="control in getControlsForScene(scene)">
+              <div class="interactive-button tile" ng-repeat="control in getControlsForScene(scene) | filter:buttonSearch">
                   <div class="interactive-button-header tile-header">
                       <div class="controlID tileID">{{control.controlId}}</div>
                       <div class="edit-interactive-control tile-edit">

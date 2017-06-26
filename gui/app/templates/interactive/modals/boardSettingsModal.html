@@ -1,0 +1,56 @@
+<div class="modal-header">
+  <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title">Board Settings - {{board.name}}</h4>
+</div>
+<div class="modal-body">
+  <!--put settings stuff here-->
+  <div class="general-board-settings">
+      <h3>Viewer Group Settings</h3>
+      <div class="board-group-defaults">
+          <p>All of your scenes are listed below. Here you can select which groups you want to use and which scenes they will use as their starting point. Groups are only "active" if selected here, otherwise they will not be used.</p>
+          <div class="board-group-defaults-settings clearfix">
+            <!-- Create scene settings -->
+            <div ng-repeat="scene in getScenesForBoard()" class="board-group tile no-top">
+                <div class="tile-header">
+                    <div class="board-groupscene tileID">{{scene}}</div>
+                    <div class="edit-groupscene tile-edit">
+                        <button class="edit-groupscene-btn btn btn-default">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="board-group-scene-body tile-body">
+                  <div ng-if="scene == 'default'" class="board-groupscene-group">Default</div>
+                  <div ng-repeat="group in getViewerGroupSettingsForScene(scene)" class="board-groupscene-group">{{group}}</div>
+                </div>
+            </div>
+          </div>
+      </div>
+  </div>
+  <div class="board-cooldown-group-settings">
+      <h3>Cooldown Groups <button class="btn btn-default add-new-cooldown-group">Add New</button></h3>
+      <div class="board-cooldown-content">
+          <p>Cooldown groups make it easy to group multiple buttons together so that they all cooldown anytime one is clicked.</p>
+          <div class="board-cooldown-groups">
+            <!-- Create cooldown groups -->
+            <div ng-repeat="cooldownGroup in getCooldownGroupSettings()" class="cooldown-group tile no-top">
+                <div class="cooldown-group-header tile-header">
+                    <div class="groupID tileID">{{cooldownGroup.groupName}}</div>
+                    <div class="edit-cooldown-group-wrap tile-edit">
+                        <button class="edit-cooldown-group btn btn-default">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="cooldown-group-body tile-body">
+                    <p>Buttons: {{cooldownGroup.buttons ? cooldownGroup.buttons.length : 0}}</p>
+                    <p>Seconds: {{cooldownGroup.length}}</p>
+                </div>
+            </div>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary add-new-board-save" ng-click="close()">Close</button>
+</div>

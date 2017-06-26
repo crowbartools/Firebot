@@ -3,10 +3,35 @@
   <h4 class="modal-title" id="addInteractiveBoardLabel">Add New Board</h4>
 </div>
 <div class="modal-body">
-  <p>To add a board to Firebot go to the <a href="https://mixer.com/i/studio">mixer interactive studio</a> and create a project. Organize and create buttons however you want. Once done, you'll be given a five digit number in the "code" tab. Copy and paste that below.</p>
-  <div class="input-group">
-    <input type="text" class="form-control add-new-board-code" placeholder="Enter code" ng-model="newBoardId">
-  </div><!-- /input-group -->
+  <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;" ng-hide="hasBoardsLoaded">
+    <p>
+      <b style="font-size: 16px;">How to create and add a board to Firebot:</b>
+    </p>
+    <ol class="wizard-board-add-instructions">
+      <li>
+        Go to Mixer's <a href="https://mixer.com/i/studio">Interactive Studio</a>.
+      </li>
+      <li>
+        Create a new Project and give it a name.
+      </li>
+      <li>
+        Optionally: Go to the project's <b>Build</b> tab and create scenes/add buttons now. <br><span class="muted">(You can always do this later. Any changes will be synced to Firebot)</span>
+      </li>
+      <li>
+        Go to the <b>Code</b> tab and copy the 5-digit ID code.
+      </li>
+      <li>
+        Paste the ID code below and click <b>Add Board</b>.
+      </li>
+    </ol>
+    <div style="width: 55%; position: relative;">
+      <input id="newBoardIdField" type="text" class="form-control" placeholder="Enter code" ng-model="newBoardId">
+      <span class="wizard-paste-btn clickable" uib-tooltip="Paste clipboard contents" ng-click="pasteClipboard('newBoardIdField')"><i class="fas fa-paste"></i></span>
+    </div>
+    <p style="color: red;" ng-show="boardAddErrorOccured">
+      Whoops, there was an error loading that board. Was the code copied properly?
+    </p>
+  </div>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>

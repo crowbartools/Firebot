@@ -30,7 +30,11 @@ const shell = electron.shell;
       return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
     }
     
-    
+    $rootScope.pasteClipboard = function(elementId) {
+      angular.element(`#${elementId}`).focus();
+      document.execCommand('paste');
+      angular.element(`#${elementId}`).blur();
+    }
 
     $rootScope.openLinkExternally = function(url) {
       shell.openExternal(url);
