@@ -10,6 +10,32 @@
         padding-bottom:1em;
     }
 }
+
+.scenes-title {
+  font-weight: 600;
+  color: darkgray;
+  font-size: 14px;
+}
+
+.scene-tools-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.scene-tools {
+  display: flex;
+ align-items: center;
+}
+
+.searchbar-wrapper {
+  display: inline-block;
+  position: relative;
+  width: 250px;
+}
+
 .functionality-settings{
     .panel-title{
         button{
