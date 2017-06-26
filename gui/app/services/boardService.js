@@ -264,7 +264,7 @@
                         }
                         // Prepare to push to db
                         var control = {
-                            controlID: controlID,
+                            controlId: controlID,
                             scene: scenename,
                             text: text,
                             cost: cost
