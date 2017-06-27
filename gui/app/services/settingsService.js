@@ -96,7 +96,16 @@
     
     service.setFirstTimeUse = function(ftu) {
       pushDataToFile('/settings/firstTimeUse', ftu === true)
-    }   
+    }
+    
+    service.getButtonViewMode = function() {
+      var buttonViewMode = getDataFromFile('/settings/buttonViewMode');
+      return buttonViewMode != null ? buttonViewMode : 'grid';
+    }
+    
+    service.setButtonViewMode = function(buttonViewMode) {
+      pushDataToFile('/settings/buttonViewMode', buttonViewMode)
+    }    
     
     return service;
   });

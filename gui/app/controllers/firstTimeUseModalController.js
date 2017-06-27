@@ -117,7 +117,7 @@
           if(boardId == null || boardId.length == 0) {
             return;
           }
-          boardService.addNewBoardWithId(boardId).then((boards) => {
+          boardService.loadBoardWithId(boardId).then((boards) => {
             var board = boards[0];
             boardService.setSelectedBoard(board);        
             /**

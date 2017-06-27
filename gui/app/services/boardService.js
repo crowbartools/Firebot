@@ -58,9 +58,15 @@
       selectedBoard = board;
     }
     
-    service.addNewBoardWithId = function(id) {
+    service.loadBoardWithId = function(id) {
       $rootScope.showSpinner = true;
-      return loadBoardsById([id], false);
+      return loadBoardsById([id], false).then((boards) => {
+        var board = boards[0];
+        if(board != null) {
+          service.setSelectedBoard(board);
+        }
+        return $q.resolve(true, () => {return boards;})
+      });
     };
     
     service.deleteCurrentBoard = function() {
@@ -121,6 +127,51 @@
       var cleanedControl = JSON.parse(angular.toJson(control));
       
       boardDb.push("./firebot/controls/" + control.controlId, cleanedControl);
+    }
+    
+    service.saveSceneForCurrentBoard = function(scene) {
+      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      
+      // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
+      // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
+      // while removing internal angular properties. We then convert this string back to an object with 
+      // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
+      var cleanedScene = JSON.parse(angular.toJson(scene));
+      
+      boardDb.push("./firebot/scenes/" + scene.sceneName, cleanedScene);
+      
+      service.getSelectedBoard().scenes[scene.sceneName] = scene;
+    }
+    
+    service.saveCooldownGroupForCurrentBoard = function(previousName, cooldownGroup) {
+      
+      if(previousName != null && previousName != '') {
+        service.deleteCooldownGroupForCurrentBoard(previousName);
+      } 
+      
+      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      
+      // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
+      // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
+      // while removing internal angular properties. We then convert this string back to an object with 
+      // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
+      var cleanedCooldownGroup = JSON.parse(angular.toJson(cooldownGroup));
+      
+      boardDb.push("./firebot/cooldownGroups/" + cooldownGroup.groupName, cleanedCooldownGroup);
+      
+      if(service.getSelectedBoard().cooldownGroups == null) {
+        service.getSelectedBoard().cooldownGroups = {}
+      }
+       
+      service.getSelectedBoard().cooldownGroups[cooldownGroup.groupName] = cleanedCooldownGroup;   
+    }
+    
+    service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName) {
+      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      
+      boardDb.delete("./firebot/cooldownGroups/" + cooldownGroupName);
+      
+      delete service.getSelectedBoard().cooldownGroups[cooldownGroupName];
     }
 
     service.getScenesForSelectedBoard = function (){

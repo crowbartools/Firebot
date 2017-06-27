@@ -13,7 +13,7 @@
       
       $scope.groups = groupsService;
       
-      $scope.buttonViewMode = 'grid';
+      $scope.buttonViewMode = settingsService.getButtonViewMode();
 
       $scope.selectedBoard = function() {
         return boardService.getSelectedBoard();
@@ -49,9 +49,20 @@
         }
         return buttons;
       }
+      
+      $scope.resyncCurrentBoard = function() {
+        var board = boardService.getSelectedBoard();
+        if(board != null) {
+         boardService.loadBoardWithId(board.versionId);
+       }
+      }
 
       $scope.fireControlManually = function(controlId) {
         ipcRenderer.send('manualButton', controlId);
+      }
+      
+      $scope.saveCurrentButtomViewMode = function() {
+        settingsService.setButtonViewMode($scope.buttonViewMode);
       }
 
       /**
@@ -68,38 +79,7 @@
                return $scope.selectedBoard();
              }
            },  
-           controllerFunc: ($scope, $uibModalInstance, board) => {
-             
-             $scope.board = board;
-             
-             $scope.getScenesForBoard = function() {
-               var scenes = [];
-               if (board != null) {
-                 scenes = Object.keys(board.scenes);
-               }
-               return scenes;
-             };
-             
-             $scope.getViewerGroupSettingsForScene = function(scene) {
-               var settings = [];
-               if (board != null) {
-                 settings = board.scenes[scene].default;
-               }
-               return settings;
-             }
-             
-             $scope.getCooldownGroupSettings = function() {
-               var settings = [];
-               if (board != null) {
-                 settings = _.values(board.cooldownGroups);
-               }
-               return settings;
-             }
-             
-             $scope.close = function() {
-               $uibModalInstance.close();
-             };     
-           }
+           controllerFunc: 'editBoardSettingsModalController' 
          }    
          utilityService.showModal(showBoardSetingsModalContext);
        }
@@ -127,7 +107,7 @@
           },
           // The callback to run after the modal closed via "Add board"
           closeCallback: (id) => {
-              boardService.addNewBoardWithId(id).then(() => {
+              boardService.loadBoardWithId(id).then(() => {
                 $scope.switchToBoardById(id);
               });
           }
@@ -164,35 +144,6 @@
           size: "sm"
         }      
         utilityService.showModal(deleteBoardModalContext);
-      };
-      
-      /*
-      * EDIT VIEWER GROUP MODAL
-      */
-      $scope.showEditViewerGroupDefaultsModal = function(sceneName) {
-        var addBoardModalContext = {
-          templateUrl: "./templates/interactive/modals/editViewerGroupModal.html",
-          // This is the controller to be used for the modal. 
-          controllerFunc: ($scope, $uibModalInstance, groupsService) => {
-            // The model for the board id text field
-            $scope.groups = groupsService;
-            
-            // When the user clicks "Save", we want to pass the id back to interactiveController
-            $scope.saveChanges = function() {
-              $uibModalInstance.close($scope.newBoardId);
-            };
-            
-            // When they hit cancel or click outside the modal, we dont want to do anything
-            $scope.dismiss = function() {
-              $uibModalInstance.dismiss('cancel');
-            };
-          },
-          // The callback to run after the modal closed via "Add board"
-          closeCallback: (id) => {
-              boardService.addNewBoardWithId(id);
-          }
-        }      
-        utilityService.showModal(addBoardModalContext);
       };
       
       /*

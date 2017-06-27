@@ -2973,6 +2973,61 @@
   width: 250px;
 }
 
+.interactive-control-tile {
+  margin-top: 20px;
+  color: white;
+  border: 3px solid white;
+  text-align: center;
+  font-size: 1.2em;
+  width: 25%;
+  height: 155px;
+  border-radius: 7px;
+  background: linear-gradient(16deg, #022442, #124b7d);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.interactive-control-tile .play-button {
+  font-size: 45px;
+  transition: 0.1s;
+  cursor: pointer;
+}
+
+.interactive-control-tile .button-name {
+  font-weight: 100;
+  font-size: 20px;
+  margin-top: 13px;
+}
+
+.interactive-control-tile .spark-cost {
+  margin-bottom: 11px;
+}
+
+.interactive-control-tile .control-edit-btn {
+  visibility: hidden;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  transition: 0.2s;
+  opacity: 0;
+  color: #d4cece;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 100;
+}
+
+.interactive-control-tile .control-edit-btn:hover {
+  opacity: 0.4 !important;
+}
+
+.interactive-control-tile:hover .control-edit-btn {
+  visibility: visible;
+  opacity: 1;
+}
+
 .functionality-settings .panel-title button {
   margin: -10px -15px;
   line-height: 1.75;
@@ -3185,7 +3240,7 @@ body {
 }
 
 .fas, .far, .fal, .fab {
-  vertical-align: -17%;
+  vertical-align: -12%;
 }
 
 .fa {
@@ -3308,7 +3363,7 @@ body {
 .tab-body-wrapper {
   height: 100%;
   width: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
   z-index: 10;
 }
 
@@ -3415,7 +3470,7 @@ body {
   height: 100%;
   display: inline-block;
   overflow: hidden;
-  padding-top: 9px;
+  padding-top: 10px;
   padding-left: 10px;
 }
 

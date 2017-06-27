@@ -39,6 +39,7 @@
     <script type="text/javascript" src="./controllers/settingsController.js"></script>
     <script type="text/javascript" src="./controllers/updatesController.js"></script>
     <script type="text/javascript" src="./controllers/firstTimeUseModalController.js"></script>
+    <script type="text/javascript" src="./controllers/editBoardSettingsModalController.js"></script>
     <script type="text/javascript" src="./services/boardService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/groupsService.js"></script>
@@ -175,9 +176,6 @@
                 <img class="login-pic" ng-src="{{accounts.bot.photoUrl}}">
                 <h2>{{accounts.bot.username}}</h2>
                 <button type="button" class="btn" ng-class="accounts.bot.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('bot')">{{accounts.bot.isLoggedIn ? "Logout" : "Login"}}</button>
-              </div>
-              <div class="col-sm-12 top-padding getting-started">
-                <p>First time here? Check out the <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Getting-Started')">getting started guide</a>!
               </div>
             </div>
       </div>

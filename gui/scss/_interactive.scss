@@ -36,6 +36,56 @@
   width: 250px;
 }
 
+.interactive-control-tile {
+  margin-top: 20px;
+  color: white;
+  border: 3px solid white;
+  text-align: center;
+  font-size: 1.2em;
+  width: 25%;
+  height: 155px;
+  border-radius: 7px;
+  background: linear-gradient(16deg, #022442, #124b7d);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  .play-button {
+    font-size: 45px;
+    transition: 0.1s;
+    cursor: pointer;
+  }
+  .button-name {
+    font-weight: 100;
+    font-size: 20px;
+    margin-top: 13px;
+  }
+  .spark-cost {
+    margin-bottom: 11px;
+  }
+  .control-edit-btn {
+    visibility: hidden;
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    transition: 0.2s;
+    opacity: 0;
+    color: #d4cece;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 100;
+    &:hover {
+      opacity: 0.4 !important;
+    }
+  }
+  &:hover .control-edit-btn {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+
 .functionality-settings{
     .panel-title{
         button{

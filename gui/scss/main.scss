@@ -28,7 +28,7 @@ body {
 }
 
 .fas, .far, .fal, .fab {
-    vertical-align: -17%;
+    vertical-align: -12%;
 }
 
 .fa {
@@ -149,7 +149,7 @@ body {
 .tab-body-wrapper {
  height: 100%;
  width: 100%;
- overflow-y: auto;
+ overflow-y: scroll;
  z-index: 10;
 }
 .tab-body {      
@@ -244,7 +244,7 @@ box-shadow: 2px 2px 7px #dcdcdc;
  height: 100%;
  display: inline-block;
  overflow: hidden;
- padding-top: 9px;
+ padding-top: 10px;
  padding-left: 10px;
 }
 .nav-link-title {

@@ -15,6 +15,7 @@
         <li role="separator" class="divider"></li>
         <li><a href ng-click="showAddBoardModal()">Add New Board</a></li>
         <li><a href ng-click="showDeleteBoardModal()">Delete Board</a></li>
+        <li><a href ng-click="resyncCurrentBoard()">Resync Board</a></li>
       </ul>
     </div>
     <span class="mixer-studio-link"><a href ng-click="openLinkExternally('https://mixer.com/i/studio')">Mixer Studio <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
@@ -26,8 +27,8 @@
           <span class="scenes-title">SCENES</span>
           <div class="scene-tools">
             <div class="btn-group" style="margin-right: 15px">
-              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
-              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'list'" uib-tooltip="Button View: List" tooltip-append-to-body="true" disabled><i class="fas fa-list"></i></label>
+              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" ng-click="saveCurrentButtomViewMode()" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
+              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'list'" ng-click="saveCurrentButtomViewMode()" uib-tooltip="Button View: List" tooltip-append-to-body="true"><i class="fas fa-list"></i></label>
             </div>
             <div class="searchbar-wrapper">
               <input type="text" class="form-control" placeholder="Search controls" ng-model="buttonSearch" style="padding-left: 27px;">
@@ -40,23 +41,38 @@
           <uib-tab index="$index" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
             <div class="tab-pane interactive-button-holder active">
               <!--Create buttons in each scene -->
-              <div class="interactive-button tile" ng-repeat="control in getControlsForScene(scene) | filter:buttonSearch">
-                  <div class="interactive-button-header tile-header">
-                      <div class="controlID tileID">{{control.controlId}}</div>
-                      <div class="edit-interactive-control tile-edit">
-                          <button class="edit-control btn btn-default" ng-click="showEditControlEffectsModal(control)">
-                              <i class="fa fa-pencil" aria-hidden="true"></i>
-                          </button>
-                      </div>
-                  </div>
-                  <div class="interactive-button-body tile-body">
-                      <div class="buttontext">{{control.text ? control.text : "Unnamed"}}</div>
-                      <div class="playbuttonwrap">
-                        <button class="playbutton" ng-click="fireControlManually(control.controlId)"><i class="fa fa-play-circle" aria-hidden="true"></i></button>
-                      </div>
-                      <div class="sparkcost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
-                  </div>
+              <!--Grid View-->
+              <div ng-show="buttonViewMode == 'grid'" class="interactive-control-tile" ng-repeat="control in getControlsForScene(scene) | filter:buttonSearch">
+                <a class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">
+                    <i class="fal fa-pencil" style="font-size: 10px" aria-hidden="true"></i> Edit
+                </a>
+                <div class="button-name" ng-class="{ 'muted' : !control.text }">{{control.text ? control.text : 'ID: ' + control.controlId}}</div>
+                <span class="play-button clickable" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle"></i></span>
+                <div class="spark-cost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
               </div>
+              <!--List View-->
+              <table ng-show="buttonViewMode == 'list'" class="table table-hover">
+                <thead style="text-transform: uppercase;color: #4a4a4a;">
+                  <tr>
+                    <th style="width:5%;"></th>
+                    <th style="width:25%;">ID</th>
+                    <th style="width:25%;">Name</th>
+                    <th style="width:25%;">Cost</th>
+                    <th style="width:20%;"></th>
+                  </tr>
+                </thead>
+                <tbody style="font-size: 16px;">
+                  <tr ng-repeat="control in getControlsForScene(scene) | filter:buttonSearch">
+                    <td><a ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle clickable"></i></a></td>
+                    <td>{{control.controlId}}</td>
+                    <td ng-class="{'muted': !control.text}">{{control.text ? control.text : "Unnamed"}}</td>
+                    <td><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</td>
+                    <td>
+                      <a class="clickable" ng-click="showEditControlEffectsModal(control)""><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </uib-tab>
         </uib-tabset>

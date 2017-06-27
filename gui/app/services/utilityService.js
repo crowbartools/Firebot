@@ -92,6 +92,41 @@
         service.showModal(errorModalContext);
     }
     
+    // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
+    service.getNewArrayWithToggledElement = function (array, element){
+        var itemArray = [];
+        if(array != null){
+          itemArray = array;
+        }             
+        
+        var itemIndex = -1;
+        try{
+          var itemIndex = itemArray.indexOf(element);
+        } catch(err){
+          
+        }
+
+        if(itemIndex != -1){
+          // Item exists, so we're unchecking it.
+          itemArray.splice(itemIndex, 1);
+        } else {
+          // Item doesn't exist! Add it in.
+          itemArray.push(element);
+        }
+
+        // Set new scope var.
+        return itemArray;
+    }
+
+    // This is used to check for an item in a saved array and returns true if it exists.
+    service.arrayContainsElement = function(array, element){
+      if(array != null) {
+        return array.indexOf(element) != -1;
+      } else {
+        return false;
+      }              
+    }
+    
     
     // Watches for an event from main process    
     listenerService.registerListener(
