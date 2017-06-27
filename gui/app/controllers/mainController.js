@@ -6,9 +6,9 @@ const shell = electron.shell;
   var app = angular
     .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap']);
 
-  app.controller('MainController', ['$scope', '$rootScope', 'boardService', 'connectionService', 'utilityService', 'settingsService', MainController]);
+  app.controller('MainController', ['$scope', '$rootScope', 'boardService', 'connectionService', 'groupsService', 'utilityService', 'settingsService', MainController]);
 
-  function MainController($scope, $rootScope, boardService, connectionService, utilityService, settingsService) {
+  function MainController($scope, $rootScope, boardService, connectionService, groupsService, utilityService, settingsService) {
 
     // List of bindable properties and methods
 
@@ -30,39 +30,14 @@ const shell = electron.shell;
       return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
     }
     
-    
+    $rootScope.pasteClipboard = function(elementId) {
+      angular.element(`#${elementId}`).focus();
+      document.execCommand('paste');
+      angular.element(`#${elementId}`).blur();
+    }
 
     $rootScope.openLinkExternally = function(url) {
       shell.openExternal(url);
-    }
-    
-    /**
-    * Login preview stuff
-    */
-    $scope.accounts = connectionService.accounts;
-    
-    // Run loadLogin to update the UI on page load.
-    connectionService.loadLogin();
-    
-    if(settingsService.isFirstTimeUse()) {
-      utilityService.showSetupWizard();
-      settingsService.setFirstTimeUse(false);
-    }
-    
-    
-    /**
-    * Connection stuff
-    */
-    $scope.connService = connectionService;
-    
-    $scope.getConnectionMessage = function() {
-      var message = ""
-      if(connectionService.waitingForStatusChange) {
-        connectionService.connectedToInteractive ? message = 'Disconnecting...' : message = 'Connecting...';
-      } else {
-        connectionService.connectedToInteractive ? message = 'Connected' : message = 'Disconnected';
-      }
-      return message;
     }
     
     
@@ -124,6 +99,34 @@ const shell = electron.shell;
     /**
     * Initial App Load
     */
+    /**
+    * Login preview stuff
+    */
+    $scope.accounts = connectionService.accounts;
+    
+    // Run loadLogin to update the UI on page load.
+    connectionService.loadLogin();
+    
+    if(settingsService.isFirstTimeUse()) {
+      utilityService.showSetupWizard();
+      settingsService.setFirstTimeUse(false);
+    }
+    
+    
+    /**
+    * Connection stuff
+    */
+    $scope.connService = connectionService;
+    
+    $scope.getConnectionMessage = function() {
+      var message = ""
+      if(connectionService.waitingForStatusChange) {
+        connectionService.connectedToInteractive ? message = 'Disconnecting...' : message = 'Connecting...';
+      } else {
+        connectionService.connectedToInteractive ? message = 'Connected' : message = 'Disconnected';
+      }
+      return message;
+    }
     
     // Get app version and change titlebar.
     var appVersion = electron.remote.app.getVersion();
@@ -135,6 +138,9 @@ const shell = electron.shell;
       boardService.loadAllBoards();
       $rootScope.showSpinner = false;
     }
+    
+    //Attempt to load viewer groups into memory
+    groupsService.loadViewerGroups(); 
   }
 
   app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {

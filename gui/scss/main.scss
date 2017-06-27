@@ -28,7 +28,7 @@ body {
 }
 
 .fas, .far, .fal, .fab {
-    vertical-align: -17%;
+    vertical-align: -12%;
 }
 
 .fa {
@@ -149,7 +149,7 @@ body {
 .tab-body-wrapper {
  height: 100%;
  width: 100%;
- overflow-y: auto;
+ overflow-y: scroll;
  z-index: 10;
 }
 .tab-body {      
@@ -244,7 +244,7 @@ box-shadow: 2px 2px 7px #dcdcdc;
  height: 100%;
  display: inline-block;
  overflow: hidden;
- padding-top: 9px;
+ padding-top: 10px;
  padding-left: 10px;
 }
 .nav-link-title {
@@ -619,7 +619,28 @@ box-shadow: 2px 2px 7px #dcdcdc;
 
 .clickable:hover {
   opacity: 0.4;
+  cursor: pointer;
 }
+
+.board-settings-icon {
+  margin-left: 15px;
+  font-size: 15px;
+  color: #929292;
+}
+
+.board-settings-icon:hover {
+  animation:fa-spin-half 0.7s 1 linear;
+}
+
+@keyframes 
+  fa-spin-half {
+    0% {
+      transform:rotate(0deg)
+    }
+    100%{
+      transform:rotate(60deg)
+    }
+  }
 
 //////
 // animations
@@ -671,6 +692,7 @@ box-shadow: 2px 2px 7px #dcdcdc;
 .wizard-accounts-login-display {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .wizard-accounts-wrapper table {
@@ -684,6 +706,8 @@ box-shadow: 2px 2px 7px #dcdcdc;
 
 .wizard-accounts-td {
   vertical-align: middle !important;
+  border-top: none !important;
+  width: 25%
 }
 
 .wizard-account-checkmark {
@@ -701,6 +725,13 @@ box-shadow: 2px 2px 7px #dcdcdc;
   margin-top: 20px;
 }
 
+.wizard-paste-btn {
+  position: absolute;
+  left: -21px;
+  top: 7px;
+  z-index: 100;
+  color: #30a6ce;
+}
 .text-right {
   text-align: right;
 }

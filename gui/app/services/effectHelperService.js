@@ -133,7 +133,6 @@
             // This will build an array of currently selected groups to be saved to JSON.
             $scope.groupArray = function(list, item){
               $scope.effect.groups = service.getCheckedBoxes(list, item);
-              console.log($scope.effect.groups)
             }
 
             // This uses the board service to get a list of scenes for the current board.

@@ -58,19 +58,25 @@
       selectedBoard = board;
     }
     
-    service.addNewBoardWithId = function(id) {
+    service.loadBoardWithId = function(id) {
       $rootScope.showSpinner = true;
-      return loadBoardsById([id], false);
+      return loadBoardsById([id], false).then((boards) => {
+        var board = boards[0];
+        if(board != null) {
+          service.setSelectedBoard(board);
+        }
+        return $q.resolve(true, () => {return boards;})
+      });
     };
     
     service.deleteCurrentBoard = function() {
       var currentBoardName = service.getSelectedBoard().name;
           
       return deleteBoard(currentBoardName).then(() => {
-        // Remove last board setting entry
-        settingsService.deleteLastBoardName();
         
         var key = service.getBoardByName(currentBoardName).versionId;
+        // Remove last board setting entry
+        settingsService.deleteLastBoardName(key);
         
         delete _boards[key];
         
@@ -122,6 +128,51 @@
       
       boardDb.push("./firebot/controls/" + control.controlId, cleanedControl);
     }
+    
+    service.saveSceneForCurrentBoard = function(scene) {
+      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      
+      // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
+      // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
+      // while removing internal angular properties. We then convert this string back to an object with 
+      // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
+      var cleanedScene = JSON.parse(angular.toJson(scene));
+      
+      boardDb.push("./firebot/scenes/" + scene.sceneName, cleanedScene);
+      
+      service.getSelectedBoard().scenes[scene.sceneName] = scene;
+    }
+    
+    service.saveCooldownGroupForCurrentBoard = function(previousName, cooldownGroup) {
+      
+      if(previousName != null && previousName != '') {
+        service.deleteCooldownGroupForCurrentBoard(previousName);
+      } 
+      
+      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      
+      // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
+      // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
+      // while removing internal angular properties. We then convert this string back to an object with 
+      // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
+      var cleanedCooldownGroup = JSON.parse(angular.toJson(cooldownGroup));
+      
+      boardDb.push("./firebot/cooldownGroups/" + cooldownGroup.groupName, cleanedCooldownGroup);
+      
+      if(service.getSelectedBoard().cooldownGroups == null) {
+        service.getSelectedBoard().cooldownGroups = {}
+      }
+       
+      service.getSelectedBoard().cooldownGroups[cooldownGroup.groupName] = cleanedCooldownGroup;   
+    }
+    
+    service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName) {
+      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      
+      boardDb.delete("./firebot/cooldownGroups/" + cooldownGroupName);
+      
+      delete service.getSelectedBoard().cooldownGroups[cooldownGroupName];
+    }
 
     service.getScenesForSelectedBoard = function (){
         var board = service.getLastUsedBoard();
@@ -150,10 +201,24 @@
       return $http.get("https://mixer.com/api/v1/interactive/versions/"+id)
         .then(function(response) {
             var data = response.data;
+            var gameUpdated = data.updatedAt;
             var gameName = data.game.name;
             var gameJson = data.controls.scenes;
+            var boardUpdated = null; // Prepare for data from settings/boards/boardId
+            try{ // Checking if the data for this board is present in settings.json
+                boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
+                if(boardUpdated != gameUpdated){ // Call backendbuilder if the dates don't match
+                    return backendBuilder(gameName, gameJson, gameUpdated, id);
+                }else{ // Date matches, no need to rebuild.
+                    console.log("This board is already inplace, no need to rebuild");
+                }
+            }catch(err){
+                // This board doesn't exist, recreate the board to get it into knownBoards
+                console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
+                return backendBuilder(gameName, gameJson, gameUpdated, id);
+            }
             
-            return backendBuilder(gameName, gameJson, id);
+            // return backendBuilder(gameName, gameJson, gameUpdated, id);
         });
     }  
     
@@ -216,10 +281,19 @@
     
     // Backend Controls Builder
     // This takes the mixer json and builds out the structure for the controls file.
-    function backendBuilder(gameNameId, gameJsonInfo, versionIdInfo){
+    function backendBuilder(gameNameId, gameJsonInfo, gameUpdatedInfo, versionIdInfo){
         const gameName = gameNameId;
         const gameJson = gameJsonInfo;
+        const gameUpdated = gameUpdatedInfo;
         const versionid = versionIdInfo
+
+        // Preparing data for push to settings.js/boards/boardId
+        var settingsBoard = {
+            boardId: versionIdInfo,
+            lastUpdated: gameUpdatedInfo
+        }
+        // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
+        settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameUpdated);
     
         var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
     
@@ -262,11 +336,16 @@
                                 var cost = 0;
                             }
                         }
-                        // Push to db
-                        dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
-                        dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
-                        dbControls.push('./firebot/controls/'+controlID+'/text', text);
-                        dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
+                        // Prepare to push to db
+                        var control = {
+                            controlId: controlID,
+                            scene: scenename,
+                            text: text,
+                            cost: cost
+                        }
+                        // Push to database
+                        dbControls.push(`./firebot/controls/${controlID}`, control);
+                        // console.log("Board rebuilt"); // Perry board rebuilding feedback
                     }catch(err){
                         console.log('Problem getting button info to save to json.')
                     };

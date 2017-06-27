@@ -7,27 +7,21 @@
     <h3>Which groups should use this scene as their default scene?</h3>
   </div>
   <div class="edit-scenegroup-defaults">
-    <div ng-if="scene !== 'default'" class="scenegroup-option">
-      <input type="checkbox" group="None" aria-label="..."> <span>None</span>
+    <div ng-if="scene.sceneName !== 'default'" class="scenegroup-option">
+      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, 'None')" ng-checked="arrayContainsElement(scene.default, 'None')"> <span>None</span>
     </div>
-    <div class="scenegroup-option">
-      <input type="checkbox" group="Pro" aria-label="..."> <span>Pro</span>
+    <div ng-if="scene.sceneName === 'default'" class="scenegroup-option">
+      <input type="checkbox" checked disabled> <span>Default</span>
     </div>
-    <div class="scenegroup-option">
-      <input type="checkbox" group="Subscribers" aria-label="..."> <span>Subscribers</span>
-    </div>
-    <div class="scenegroup-option">
-      <input type="checkbox" group="Moderators" aria-label="..."> <span>Moderators</span>
-    </div>
-    <div class="scenegroup-option">
-      <input type="checkbox" group="Staff" aria-label="..."> <span>Staff</span>
+    <div ng-repeat="groupName in defaultGroups" class="scenegroup-option">
+      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, groupName)" ng-checked="arrayContainsElement(scene.default, groupName)"> <span>{{groupName}}</span>
     </div>
     <div ng-repeat="group in groups.getViewerGroups(true)" class="scenegroup-option">
-      <input type="checkbox" aria-label="..."> <span>{{group.groupName}}</span>
+      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, group.groupName)" ng-checked="arrayContainsElement(scene.default, group.groupName)"> <span>{{group.groupName}}</span>
     </div>
   </div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
-  <button type="button" class="btn btn-primary edit-scenegroup-save" data-dismiss="modal">Save Changes</button>
+  <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+  <button type="button" class="btn btn-primary edit-scenegroup-save" ng-click="save()">Save Changes</button>
 </div>

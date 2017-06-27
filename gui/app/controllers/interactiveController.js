@@ -12,6 +12,8 @@
       var settings = settingsService;
       
       $scope.groups = groupsService;
+      
+      $scope.buttonViewMode = settingsService.getButtonViewMode();
 
       $scope.selectedBoard = function() {
         return boardService.getSelectedBoard();
@@ -30,15 +32,15 @@
         var board = boardService.getBoardById(id);
         boardService.setSelectedBoard(board);
       }
-
+      
       $scope.getScenesForSelectedBoard = function() {
         var board = $scope.selectedBoard();
         var scenes = [];
         if (board != null) {
-          scenes = _.keys(board.scenes);
+          scenes = Object.keys(board.scenes);
         }
         return scenes;
-      };
+      };      
 
       $scope.getControlsForScene = function(scene) {
         var buttons = [];
@@ -47,32 +49,40 @@
         }
         return buttons;
       }
-
-      $scope.getViewerGroupSettingsForScene = function(scene) {
-        var board = $scope.selectedBoard();
-        var settings = [];
-        if (board != null) {
-          settings = board.scenes[scene].default;
-        }
-        return settings;
-      }
-
-      $scope.getCooldownGroupSettings = function() {
-        var board = $scope.selectedBoard();
-        var settings = [];
-        if (board != null) {
-          settings = _.values(board.cooldownGroups);
-        }
-        return settings;
+      
+      $scope.resyncCurrentBoard = function() {
+        var board = boardService.getSelectedBoard();
+        if(board != null) {
+         boardService.loadBoardWithId(board.versionId);
+       }
       }
 
       $scope.fireControlManually = function(controlId) {
         ipcRenderer.send('manualButton', controlId);
       }
+      
+      $scope.saveCurrentButtomViewMode = function() {
+        settingsService.setButtonViewMode($scope.buttonViewMode);
+      }
 
       /**
        * MODAL CONTROL
        */
+       
+       $scope.showBoardSettingsModal = function() {
+         var showBoardSetingsModalContext = {
+           templateUrl: "./templates/interactive/modals/boardSettingsModal.html",
+           size: "lg",
+           // This is the controller to be used for the modal.
+           resolveObj: {
+             board: () => {
+               return $scope.selectedBoard();
+             }
+           },  
+           controllerFunc: 'editBoardSettingsModalController' 
+         }    
+         utilityService.showModal(showBoardSetingsModalContext);
+       }
       
        /*
        * ADD BOARD MODAL
@@ -97,7 +107,7 @@
           },
           // The callback to run after the modal closed via "Add board"
           closeCallback: (id) => {
-              boardService.addNewBoardWithId(id).then(() => {
+              boardService.loadBoardWithId(id).then(() => {
                 $scope.switchToBoardById(id);
               });
           }
@@ -134,35 +144,6 @@
           size: "sm"
         }      
         utilityService.showModal(deleteBoardModalContext);
-      };
-      
-      /*
-      * EDIT VIEWER GROUP MODAL
-      */
-      $scope.showEditViewerGroupDefaultsModal = function(sceneName) {
-        var addBoardModalContext = {
-          templateUrl: "./templates/interactive/modals/editViewerGroupModal.html",
-          // This is the controller to be used for the modal. 
-          controllerFunc: ($scope, $uibModalInstance, groupsService) => {
-            // The model for the board id text field
-            $scope.groups = groupsService;
-            
-            // When the user clicks "Save", we want to pass the id back to interactiveController
-            $scope.saveChanges = function() {
-              $uibModalInstance.close($scope.newBoardId);
-            };
-            
-            // When they hit cancel or click outside the modal, we dont want to do anything
-            $scope.dismiss = function() {
-              $uibModalInstance.dismiss('cancel');
-            };
-          },
-          // The callback to run after the modal closed via "Add board"
-          closeCallback: (id) => {
-              boardService.addNewBoardWithId(id);
-          }
-        }      
-        utilityService.showModal(addBoardModalContext);
       };
       
       /*

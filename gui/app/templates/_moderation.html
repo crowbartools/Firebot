@@ -61,9 +61,9 @@
      </div>
      <div style="display: flex;justify-content: center;">
        <div class="input-group" style="width: 50%;">
-         <input type="text" class="form-control" placeholder="New user" ng-model="newUser" ng-keyup="$event.keyCode == 13 ? addUserToBannedGroup() : null">
+         <input type="text" class="form-control" placeholder="Ban new user" ng-model="newUser" ng-keyup="$event.keyCode == 13 ? addUserToBannedGroup() : null">
          <span class="input-group-btn">
-           <button class="btn btn-default" type="button" ng-click="addUserToBannedGroup()">Add</button>
+           <button class="btn btn-danger" type="button" ng-click="addUserToBannedGroup()">Ban</button>
          </span>
       </div>
      </div>

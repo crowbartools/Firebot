@@ -6,7 +6,7 @@
     .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, $q, connectionService, boardService) {
 
         $scope.steps = ['one', 'two', 'three', 'four', 'five'];
-        $scope.stepTitles = ['', 'First, Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', ''];
+        $scope.stepTitles = ['', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', ''];
         $scope.step = 0;
 
         $scope.isFirstStep = function () {
@@ -117,7 +117,7 @@
           if(boardId == null || boardId.length == 0) {
             return;
           }
-          boardService.addNewBoardWithId(boardId).then((boards) => {
+          boardService.loadBoardWithId(boardId).then((boards) => {
             var board = boards[0];
             boardService.setSelectedBoard(board);        
             /**

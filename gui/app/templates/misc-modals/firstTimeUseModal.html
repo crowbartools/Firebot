@@ -34,45 +34,51 @@
 				    <tbody>
 				      <tr style="border-top: 2px solid #ddd;">
 				        <td class="wizard-accounts-td text-left">
-									<b style="position: relative;">
-										<span ng-if="streamerAccount.isLoggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn" style=""></i></span>
+									<b ng-show="streamerAccount.isLoggedIn" style="position: relative;">
+										<span ng-if="streamerAccount.isLoggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn"></i></span>
 										Streamer
 									</b>
 								</td>
-				        <td class="wizard-accounts-td">
-									<div class="wizard-accounts-login-display">
+				        <td class="wizard-accounts-td" style="width: 50%; height: 50px;text-align: center;">
+									<div ng-show="streamerAccount.isLoggedIn" class="wizard-accounts-login-display">
 										<img class="login-thumbnail" ng-show="streamerAccount.isLoggedIn" ng-class="streamerAccount.isLoggedIn ? 'animated flipInX' : ''" style="height: 34px; width: 34px;" ng-src="{{streamerAccount.photoUrl}}">
-										<div ng-class="streamerAccount.isLoggedIn ? '' : 'muted'">
-											{{streamerAccount.isLoggedIn ? streamerAccount.username : 'Not signed in'}}
+										<div class="animated fadeIn">
+											{{streamerAccount.username}}
 										</div>
 									</div>
+									<div ng-hide="streamerAccount.isLoggedIn">
+											<a class="clickable" ng-click="loginOrLogout('streamer')">+ Add <b>Streamer</b> Account</a><span style="color:red;">*</span>
+									</div>
 								</td>
-				        <td class="wizard-accounts-td text-right">
-									<button type="button" class="btn btn-link" ng-click="loginOrLogout('streamer')">{{streamerAccount.isLoggedIn ? "Logout" : "Login"}}</button>
+				        <td class="wizard-accounts-td text-right" class="animated fadeIn">
+									<a ng-show="streamerAccount.isLoggedIn" class="clickable" ng-click="loginOrLogout('streamer')">Logout</a>
 								</td>
 				      </tr>
 							<tr>
 								<td class="wizard-accounts-td text-left">
-									<b style="position: relative;">
+									<b ng-show="botAccount.isLoggedIn" style="position: relative;">
 										<span ng-if="botAccount.isLoggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn" style=""></i></span>
-										Bot <span class="muted" style="font-size:11px;">Optional</span>
+										Bot
 									</b>
 								</td>
-								<td class="wizard-accounts-td">
-									<div class="wizard-accounts-login-display">
+				        <td class="wizard-accounts-td" style="width: 50%; height: 50px;text-align: center;">
+									<div ng-show="botAccount.isLoggedIn" class="wizard-accounts-login-display">
 										<img class="login-thumbnail" ng-show="botAccount.isLoggedIn" ng-class="botAccount.isLoggedIn ? 'animated flipInX' : ''" style="height: 34px; width: 34px;" ng-src="{{botAccount.photoUrl}}">
-										<div ng-class="botAccount.isLoggedIn ? '' : 'muted'">
-											{{botAccount.isLoggedIn ? botAccount.username : 'Not signed in'}}
+										<div>
+											{{botAccount.username}}
 										</div>
 									</div>
+									<div ng-hide="botAccount.isLoggedIn">
+											<a class="clickable" ng-click="loginOrLogout('bot')">+ Add <b>Bot</b> Account</a> <span class="muted" style="font-size:11px">Optional</span>
+									</div>
 								</td>
-								<td class="wizard-accounts-td text-right">
-									<button type="button" class="btn btn-link" ng-click="loginOrLogout('bot')">{{botAccount.isLoggedIn ? "Logout" : "Login"}}</button>
+				        <td class="wizard-accounts-td text-right">
+									<a ng-show="botAccount.isLoggedIn" class="clickable" ng-click="loginOrLogout('bot')">Logout</a>
 								</td>
 							</tr>
 				    </tbody>
 				  </table>
-					<span style="font-size: 12px; opacity: 0.8; margin-top: 3px;">Note: You can always manage your logins in the upper-right corner of the app.</span>
+					<span style="font-size: 12px; opacity: 0.8; margin-top: 3px;">Note: You can manage your logins in the upper-right corner of the app at any time.</span>
 				</div>	
 			</div>
 			
@@ -124,7 +130,8 @@
 						</li>
 					</ol>
 					<div class="input-group" style="width: 55%;">
-						<input type="text" class="form-control" placeholder="Enter code" ng-model="firstBoard.id">
+						<input id="wizardIdField" type="text" class="form-control" placeholder="Enter code" ng-model="firstBoard.id">
+						<span class="wizard-paste-btn clickable" uib-tooltip="Paste clipboard contents" ng-click="pasteClipboard('wizardIdField')"><i class="fas fa-paste"></i></span>
 						<span class="input-group-btn">
 							<button class="btn btn-default" type="button" ng-click="addBoard()" ng-disabled="firstBoard.id.toString().trim().length === 0">Add Board</button>
 						</span>
