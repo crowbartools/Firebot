@@ -4,84 +4,89 @@
  
  const _ = require('underscore')._;
  const JsonDb = require('node-json-db');
- const request = require('request');
  const compareVersions = require('compare-versions');
 
  angular
   .module('firebotApp')
-  .factory('updatesService', function (settingsService) {
+  .factory('updatesService', function ($q, $http, $sce, settingsService) {
     // factory/service object
     var service = {}
+    
+    service.updateData = {};
+    
+    service.hasCheckedForUpdates = false;  
+    
+    service.updateIsAvailable = function() {
+      if(service.hasCheckedForUpdates) {
+        return service.updateData.updateIsAvailable;
+      } else {
+        return false;
+      }
+    }
 
     // Update Checker
     // This checks for updates.
-    service.updateCheck = function(){
-        return new Promise((resolve, reject) => {
+    service.checkForUpdate = function(){
+        return $q((resolve, reject) => {
             // If user opts into betas we want to check different git api links.
             // If they are, we check releases as beta releases will be listed.
             // Else we check /latest which will only list the latest full release.
-            var betaOptIn = settingsService.isBetaTester();
-            if(betaOptIn === "Yes"){
-                var gitApi = "https://api.github.com/repos/Firebottle/Firebot/releases";
-            } else {
-                var gitApi = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
+
+            var firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
+            
+            if(settingsService.isBetaTester() === "Yes"){
+                firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases";
             }
             
-            try{
-                var options = {
-                    url: gitApi,
-                    headers: {
-                        'User-Agent': 'request'
-                    }
-                };
-                request(options, function (error, response, body) {
-                    if (!error && response.statusCode == 200) {
+            var options = {
+                headers: {
+                    'User-Agent': 'request'
+                }
+            };
+            
+            $http.get(firebotReleasesUrl).then((response) => {
+              // Get app version
+              var currentVersion = require('electron').remote.app.getVersion();
+              
+              // Parse github api to get tag name.
+              var gitNewest = {}
+              if(response.data.length > 0){
+                  gitNewest = response.data[0];
+              } else {
+                  gitNewest = response.data;
+              }            
 
-                        // Get app version
-                        var version = require('electron').remote.app.getVersion();
+              var gitName = gitNewest.name;
+              var gitDate = gitNewest.created_at;
+              var gitLink = gitNewest.html_url;
+              var gitNotes = marked(gitNewest.body);
 
-                        // Parse github api to get tag name.
-                        var git = JSON.parse(body);
-                        if(git.length > 0){
-                            var gitNewest = git[0];
-                        } else {
-                            var gitNewest = git;
-                        }
+              // Now lets look to see if there is a newer version.
+              var versionCompare = compareVersions(gitNewest.tag_name, currentVersion);
 
-                        var gitName = gitNewest.name;
-                        var gitDate = gitNewest.created_at;
-                        var gitLink = gitNewest.html_url;
-                        var gitNotes = marked(gitNewest.body);
+              var updateIsAvailable = false;
+              if(versionCompare > 0){
+                  updateIsAvailable = true;
+              }
 
-                        // Now lets look to see if there is a newer version.
-                        var versionCompare = compareVersions(gitNewest.tag_name, version);
-
-                        if(versionCompare > 0){
-                            versionCompare = true;
-                        } else {
-                            versionCompare = false;
-                        }
-
-                        // Build update object.
-                        var updateObject = {
-                            gitName: gitName,
-                            gitDate: gitDate,
-                            gitLink: gitLink,
-                            gitNotes: gitNotes,
-                            gitVersionCompare: versionCompare
-                        }
-                        
-                        resolve(updateObject)
-
-                    } else {
-                        console.log(error, response, body);
-                        reject(false);
-                    }
-                })
-            } catch (err){
-                console.log(err);
-                reject(false);
-            }
+              // Build update object.
+              var updateObject = {
+                  gitName: gitName,
+                  gitDate: gitDate,
+                  gitLink: gitLink,
+                  gitNotes: $sce.trustAsHtml(gitNotes),
+                  updateIsAvailable: updateIsAvailable
+              }
+              
+              service.updateData = updateObject;
+              
+              service.hasCheckedForUpdates = true;
+              
+              resolve(updateObject)
+            }, (error) => {
+              console.log(error);
+              reject(false);
+            });
         });
     }
     return service;

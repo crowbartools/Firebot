@@ -4,17 +4,15 @@
  
  angular
    .module('firebotApp')
-   .controller('updatesController', function($sce, $scope, $q, updatesService) {
-      $scope.updates = {};
+   .controller('updatesController', function($scope, updatesService) {
+     
+      $scope.getUpdateData = function() {
+        return updatesService.updateData;
+      }
 
-      // Get update information
-      $q.when( updatesService.updateCheck() )
-        .then(update => {
-          $scope.updates = update;
-
-          // This is required by angular to strip out bad HTML that could cause issues.
-          $scope.updates.gitNotes = $sce.trustAsHtml($scope.updates.gitNotes)
-
-        });
+      // Get update information if we havent alreday
+      if(!updatesService.hasCheckedForUpdates) {
+        updatesService.checkForUpdate();
+      }
    });
  })();

@@ -105,6 +105,9 @@
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-download"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Updates</div>
+          <div ng-show="updateIsAvailable" class="nav-update-badge" ng-class="{'contracted': !navExpanded}">
+            <span class="label label-danger">NEW</span>
+          </div>
         </a>
       </div>
       <div class='interactive-status-wrapper'>

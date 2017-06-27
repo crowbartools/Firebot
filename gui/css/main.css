@@ -3209,18 +3209,13 @@
   padding: .5em 0em;
 }
 
-.info-page .update-wrapper .latest-update {
+.info-page .latest-update {
   font-size: 1.75em;
   margin-top: .3em;
 }
 
-.info-page .update-wrapper .release-date {
+.info-page .release-date {
   margin-bottom: 1em;
-}
-
-.updates-badge {
-  background-color: #007eff;
-  margin-left: 5px;
 }
 
 body {
@@ -3438,6 +3433,7 @@ body {
   height: 48px;
   text-transform: uppercase;
   text-decoration: none;
+  position: relative;
 }
 
 .fb-nav-link:hover {
@@ -3538,6 +3534,22 @@ body {
 
 .nav-header-icon:hover {
   animation: 0.8s jump infinite;
+}
+
+.nav-update-badge {
+  position: absolute;
+  opacity: 1;
+  visibility: visible;
+  top: 12px;
+  right: 15px;
+  display: inline-block;
+  transition: 0.4s;
+}
+
+.nav-update-badge.contracted {
+  transition: 0.1s;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .login-pic {
