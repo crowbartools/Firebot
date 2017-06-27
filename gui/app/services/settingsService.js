@@ -37,12 +37,44 @@
       return boardName != null ? boardName : "";
     }
     
+    service.getKnownBoards = function() {
+      // This should feed the boardService with known boards and their lastUpdated values. Not implemented yet.
+      var boards = getDataFromFile('/boards');
+      return boards;
+    }
+
+    service.getBoardLastUpdatedDatetimeById = function(id) {
+      // Preparing for data from settings.json/boards/$boardId/lastUpdated
+      var lastUpdatedDatetime = null;
+      // Check if data is present for given board
+      try{
+        lastUpdatedDatetime = getDataFromFile(`/boards/${id}/lastUpdated`);
+        // return lastUpdatedDatetime;
+      }catch(err){
+        // TODO: We neet some handling of this error here, not quite sure what... 2am, might be better at 9am.. xD
+        console.log("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first");
+      }
+      return lastUpdatedDatetime;
+    }
+
+    service.setBoardLastUpdatedDatetimeById = function(boardId,boardDate) {
+      // console.log(`Saving board ID: ${boardId} and lastUpdated: ${boardDate} from Mixer Studio`)
+      // Building the board with ID and lastUpdated before pushing to settings
+      var settingsBoard = {
+        boardId: boardId,
+        lastUpdated: boardDate
+      }
+      pushDataToFile(`/boards/${boardId}`, settingsBoard);
+    }
+
     service.setLastBoardName = function(name) {
       pushDataToFile('/interactive/lastBoard', name);
     }
     
-    service.deleteLastBoardName = function() {
+    service.deleteLastBoardName = function(boardId) {
       deleteDataAtPath('/interactive/lastBoard');
+      // Removing the board from settings
+      deleteDataAtPath('/boards/'+boardId);
     }
     
     service.getCustomScriptsEnabled = function() {
