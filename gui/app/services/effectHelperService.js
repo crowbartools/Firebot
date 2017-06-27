@@ -183,6 +183,15 @@
 
           };
           break;
+          
+        case EffectType.DICE:
+          controller = ($scope) => {
+
+            // Default result type to 'sum'
+            $scope.effect.resultType = $scope.effect.resultType ? $scope.effect.resultType : 'sum';            
+
+          };
+          break;
 
         case EffectType.CUSTOM_SCRIPT:
           controller = ($scope) => {

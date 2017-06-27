@@ -24,6 +24,19 @@
         <input type="text" ng-model="effect.dice" class="form-control" id="dice-text-setting" aria-describedby="dice-text-effect-type" placeholder="2d20 or 2d10+1d12 or 1d10+3">
     </div>
 </div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Should the result be the sum of all rolls or individual rolls?</h4></div>
+    <div style="padding-left: 10px;">
+      <label class="control control--radio">Sum
+        <input type="radio" ng-model="effect.resultType" value="sum"/>
+        <div class="control__indicator"></div>
+      </label>
+      <label class="control control--radio" >Individual
+        <input type="radio" ng-model="effect.resultType" value="individual"/>
+        <div class="control__indicator"></div>
+      </label>
+    </div>
+</div>
 <div class="effect-info alert alert-info">
     The variable $(user) will be replaced by the username of the person who pressed the button. EX: If Firebottle hits a button you can whisper him.
 </div>
