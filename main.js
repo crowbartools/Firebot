@@ -98,7 +98,7 @@ function createWindow () {
   // When Quittin.
   app.on('will-quit', () => {
     // Unregister all shortcuts.
-    globalShortcut.unregisterAll()
+    mixerConnect.shortcutUnregister();
   });
 
 // In this file you can include the rest of your app's specific main process
