@@ -5,3 +5,4 @@ user-settings
 app-settings
 scripts
 .env
+*.css
