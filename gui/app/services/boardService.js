@@ -73,10 +73,10 @@
       var currentBoardName = service.getSelectedBoard().name;
           
       return deleteBoard(currentBoardName).then(() => {
-        // Remove last board setting entry
-        settingsService.deleteLastBoardName();
         
         var key = service.getBoardByName(currentBoardName).versionId;
+        // Remove last board setting entry
+        settingsService.deleteLastBoardName(key);
         
         delete _boards[key];
         
@@ -201,10 +201,24 @@
       return $http.get("https://mixer.com/api/v1/interactive/versions/"+id)
         .then(function(response) {
             var data = response.data;
+            var gameUpdated = data.updatedAt;
             var gameName = data.game.name;
             var gameJson = data.controls.scenes;
+            var boardUpdated = null; // Prepare for data from settings/boards/boardId
+            try{ // Checking if the data for this board is present in settings.json
+                boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
+                if(boardUpdated != gameUpdated){ // Call backendbuilder if the dates don't match
+                    return backendBuilder(gameName, gameJson, gameUpdated, id);
+                }else{ // Date matches, no need to rebuild.
+                    console.log("This board is already inplace, no need to rebuild");
+                }
+            }catch(err){
+                // This board doesn't exist, recreate the board to get it into knownBoards
+                console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
+                return backendBuilder(gameName, gameJson, gameUpdated, id);
+            }
             
-            return backendBuilder(gameName, gameJson, id);
+            // return backendBuilder(gameName, gameJson, gameUpdated, id);
         });
     }  
     
@@ -267,10 +281,19 @@
     
     // Backend Controls Builder
     // This takes the mixer json and builds out the structure for the controls file.
-    function backendBuilder(gameNameId, gameJsonInfo, versionIdInfo){
+    function backendBuilder(gameNameId, gameJsonInfo, gameUpdatedInfo, versionIdInfo){
         const gameName = gameNameId;
         const gameJson = gameJsonInfo;
+        const gameUpdated = gameUpdatedInfo;
         const versionid = versionIdInfo
+
+        // Preparing data for push to settings.js/boards/boardId
+        var settingsBoard = {
+            boardId: versionIdInfo,
+            lastUpdated: gameUpdatedInfo
+        }
+        // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
+        settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameUpdated);
     
         var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
     
@@ -322,6 +345,7 @@
                         }
                         // Push to database
                         dbControls.push(`./firebot/controls/${controlID}`, control);
+                        // console.log("Board rebuilt"); // Perry board rebuilding feedback
                     }catch(err){
                         console.log('Problem getting button info to save to json.')
                     };
