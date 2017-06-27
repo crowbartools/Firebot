@@ -55,7 +55,7 @@
 
                         // Now lets look to see if there is a newer version.
                         var versionCompare = compareVersions(gitNewest.tag_name, version);
-                        console.log(versionCompare)
+
                         if(versionCompare > 0){
                             versionCompare = true;
                         } else {
