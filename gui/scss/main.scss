@@ -527,6 +527,14 @@ box-shadow: 2px 2px 7px #dcdcdc;
     min-width: 150px;
 }
 
+.panel-group {
+    margin-bottom: 0px;
+}
+
+.well {
+    margin-bottom: 0px;
+}
+
 /**
 * Multi step wizard animation
 */
@@ -617,11 +625,6 @@ box-shadow: 2px 2px 7px #dcdcdc;
   width:100%;
 }
 
-.effect-panel .panel-heading:hover {
-    background: #eaeaea;
-    cursor: pointer;
-}
-
 .effect-select-wrapper {
   display:flex;
   justify-content: space-between;
@@ -636,6 +639,11 @@ box-shadow: 2px 2px 7px #dcdcdc;
 
 .clickable:hover {
   opacity: 0.4;
+  cursor: pointer;
+}
+
+.clickable-dark:hover {
+  opacity: 0.8;
   cursor: pointer;
 }
 

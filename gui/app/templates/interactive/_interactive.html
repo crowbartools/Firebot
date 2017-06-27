@@ -43,9 +43,7 @@
               <!--Create buttons in each scene -->
               <!--Grid View-->
               <div ng-show="buttonViewMode == 'grid'" class="interactive-control-tile" ng-repeat="control in getControlsForScene(scene) | filter:buttonSearch">
-                <a class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">
-                    <i class="fal fa-pencil" style="font-size: 10px" aria-hidden="true"></i> Edit
-                </a>
+                <a class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">EDIT</a>
                 <div class="button-name" ng-class="{ 'muted' : !control.text }">{{control.text ? control.text : 'ID: ' + control.controlId}}</div>
                 <span class="play-button clickable" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle"></i></span>
                 <div class="spark-cost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>

@@ -68,15 +68,20 @@
     visibility: hidden;
     position: absolute;
     right: 5px;
-    bottom: 5px;
+    top: 5px;
     transition: 0.2s;
     opacity: 0;
     color: #d4cece;
-    font-size: 13px;
+    font-size: 10px;
     text-transform: uppercase;
     font-weight: 100;
+    border: 1px darkgrey solid;
+    border-radius: 2px;
+    padding: 0px 2px 0px 2px;
     &:hover {
-      opacity: 0.4 !important;
+      color: white;
+      border-color: white;
+      //opacity: 0.4 !important;
     }
   }
   &:hover .control-edit-btn {

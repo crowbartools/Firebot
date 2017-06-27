@@ -3010,17 +3010,21 @@
   visibility: hidden;
   position: absolute;
   right: 5px;
-  bottom: 5px;
+  top: 5px;
   transition: 0.2s;
   opacity: 0;
   color: #d4cece;
-  font-size: 13px;
+  font-size: 10px;
   text-transform: uppercase;
   font-weight: 100;
+  border: 1px darkgrey solid;
+  border-radius: 2px;
+  padding: 0px 2px 0px 2px;
 }
 
 .interactive-control-tile .control-edit-btn:hover {
-  opacity: 0.4 !important;
+  color: white;
+  border-color: white;
 }
 
 .interactive-control-tile:hover .control-edit-btn {
@@ -3921,6 +3925,14 @@ body {
   min-width: 150px;
 }
 
+.panel-group {
+  margin-bottom: 0px;
+}
+
+.well {
+  margin-bottom: 0px;
+}
+
 /**
 * Multi step wizard animation
 */
@@ -4013,11 +4025,6 @@ body {
   width: 100%;
 }
 
-.effect-panel .panel-heading:hover {
-  background: #eaeaea;
-  cursor: pointer;
-}
-
 .effect-select-wrapper {
   display: flex;
   justify-content: space-between;
@@ -4032,6 +4039,11 @@ body {
 
 .clickable:hover {
   opacity: 0.4;
+  cursor: pointer;
+}
+
+.clickable-dark:hover {
+  opacity: 0.8;
   cursor: pointer;
 }
 
