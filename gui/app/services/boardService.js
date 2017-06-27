@@ -313,11 +313,15 @@
                                 var cost = 0;
                             }
                         }
-                        // Push to db
-                        dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
-                        dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
-                        dbControls.push('./firebot/controls/'+controlID+'/text', text);
-                        dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
+                        // Prepare to push to db
+                        var control = {
+                            controlId: controlID,
+                            scene: scenename,
+                            text: text,
+                            cost: cost
+                        }
+                        // Push to database
+                        dbControls.push(`./firebot/controls/${controlID}`, control);
                     }catch(err){
                         console.log('Problem getting button info to save to json.')
                     };
