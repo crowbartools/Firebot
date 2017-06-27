@@ -1,0 +1,23 @@
+<div class="content-block info-page">
+  <div class="content-block-body">
+    <div class="page-content" style="min-height: 600px;">
+        
+        <div class="update-alert alert alert-warning" ng-if="updates.gitVersionCompare">
+            <p>Hey! It looks like there was an update released!</p> <p>You can update by following these steps. Backup your user-settings folder then hit the download button. Download the newest zip file for the release. Then extract into your current Firebot folder, overwrite all files, then reload the app.</p>
+        </div>
+        <div class="latest-update">
+            {{updates.gitName}}
+        </div>
+        <div class="release-date">
+            {{updates.gitDate | date: 'medium'}}
+        </div>
+        <div class="update-notes" ng-bind-html="updates.gitNotes"></div>
+        <div class="update-buttons">
+            <a class="github-link" href="{{updates.gitLink}}"><button class="btn btn-primary">Download</button></a>
+            <a href="https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3Abug"><button class="btn btn-danger">Report Bugs</button></a>
+            <a href="https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3A%22Feature+Request%22"><button class="btn btn-info">Suggest Features</button></a>  
+        </div>
+
+    </div>
+  </div>
+</div>
