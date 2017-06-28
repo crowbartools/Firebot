@@ -88,6 +88,27 @@
       function resetSceneTab() {
         $scope.activeSceneTab = 0;
       }
+      
+      // Tracks what button name the user is hovering over so we can show the ID instead of name
+      var hoveringOverControlId = "";
+      
+      $scope.isHoverOverControlName = function(controlID) {
+        return hoveringOverControlId === controlID;
+      }
+      
+      $scope.setHoverOverControlId = function(controlID) {
+        hoveringOverControlId = controlID;
+      }
+      
+      $scope.getControlIdOrName = function(control) {
+        if(control.text == null || control.text === "") {
+          return `ID: ${control.controlId}`;
+        } 
+        if($scope.isHoverOverControlName(control.controlId)) {
+          return `ID: ${control.controlId}`;
+        }
+        return control.text;
+      }
 
       /**
        * MODAL CONTROL
