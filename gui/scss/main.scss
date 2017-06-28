@@ -106,6 +106,16 @@ body {
   opacity: 0.5;
 }
 
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
 /////////////////////////////////
 // v4.0 STYLES (Needs organizing!!)
 ////////////////////////////////
@@ -752,7 +762,7 @@ box-shadow: 2px 2px 7px #dcdcdc;
 
 .wizard-paste-btn {
   position: absolute;
-  left: -21px;
+  right: 10px;
   top: 7px;
   z-index: 100;
   color: #30a6ce;

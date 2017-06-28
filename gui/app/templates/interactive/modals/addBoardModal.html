@@ -25,8 +25,8 @@
       </li>
     </ol>
     <div style="width: 55%; position: relative;">
-      <input id="newBoardIdField" type="text" class="form-control" placeholder="Enter code" ng-model="newBoardId">
-      <span class="wizard-paste-btn clickable" uib-tooltip="Paste clipboard contents" ng-click="pasteClipboard('newBoardIdField')"><i class="fas fa-paste"></i></span>
+      <input id="newBoardIdField" type="text" class="form-control" placeholder="Enter code" ng-model="newBoardId" ng-keyup="$event.keyCode == 13 ? addBoard() : null">
+      <span class="wizard-paste-btn clickable" tooltip-append-to-body="true" uib-tooltip="Paste clipboard contents" ng-click="pasteClipboard('newBoardIdField', false)"><i class="fas fa-paste"></i></span>
     </div>
     <p style="color: red;" ng-show="boardAddErrorOccured">
       Whoops, there was an error loading that board. Was the code copied properly?
