@@ -1,6 +1,6 @@
 <!--Interactive Tab View-->
 <div class="content-block">
-  <div class="content-block-header">
+  <div ng-hide="getBoardNames().length == 0" class="content-block-header">
     <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">{{selectedBoard().name}}</span>
     <span class="clickable board-settings-icon" ng-hide="selectedBoard() == null || selectedBoard() == ''" ng-click="showBoardSettingsModal()">
       <i class="fas fa-cog"></i>
@@ -21,6 +21,7 @@
     <span class="mixer-studio-link"><a href ng-click="openLinkExternally('https://mixer.com/i/studio')">Mixer Studio <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
   </div>
   <div class="content-block-body">
+    <button ng-show="getBoardNames().length == 0" ng-click="showAddBoardModal()" class="btn btn-default">+ Add First Board</button>
     <div class="page-content">
       <div class="row interactive-board-container" ng-hide="selectedBoard() == null">
         <div class="scene-tools-wrapper">
