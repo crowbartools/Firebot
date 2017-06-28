@@ -1,0 +1,63 @@
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Which video should I show?</h4></div>
+    <div class="input-group">
+        <span class="input-group-btn">
+        <button 
+          class="btn btn-default show-video-effect-chooser" 
+          type="button"
+          ng-click="openFileExporer()">Choose</button>
+        </span>
+        <input type="text" class="form-control show-video-effect-input" ng-model="effect.file">
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>What location should it show in?</h4></div>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="video-placement-effect-type">{{effect.position ? effect.position : 'Pick one'}}</span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu video-placement-effect-dropdown">
+            <li ng-repeat="position in videoPositions"
+                ng-click="effect.position = position">
+                  <a href>{{position}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>How big should it be?</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon">Height (in pixels)</span>
+        <input 
+          type="text" 
+          class="form-control" 
+          aria-describeby="video-height-setting-type" 
+          type="number"
+          ng-model="effect.height">
+        <span class="input-group-addon">Width (in pixels)</span>
+        <input 
+          type="text" 
+          class="form-control" 
+          aria-describeby="video-width-setting-type" 
+          type="number"
+          ng-model="effect.width">
+    </div>
+    <div class="effect-info alert alert-info">
+        Just put numbers in the fields (ex: 250). This will set the max width/height of the video and scale it down proportionally.
+    </div>
+</div>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>How long should it show?</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon">Seconds</span>
+        <input 
+          type="text" 
+          class="form-control" 
+          aria-describedby="video-length-effect-type" 
+          type="number"
+          ng-model="effect.length">
+    </div>
+</div>
+<div class="effect-info alert alert-info">
+    This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html".
+</div>
