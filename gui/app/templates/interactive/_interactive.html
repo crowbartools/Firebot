@@ -37,7 +37,7 @@
             </div>
           </div>
         </div>
-        <uib-tabset>
+        <uib-tabset active="activeSceneTab">
           <!--Create a tab for each scene -->
           <uib-tab index="$index" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
             <div class="tab-pane interactive-button-holder active">

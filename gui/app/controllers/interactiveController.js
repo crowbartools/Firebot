@@ -7,13 +7,16 @@
 
   angular
     .module('firebotApp')
-    .controller('interactiveController', function($scope, $interval, boardService, groupsService, settingsService, utilityService) {
+    .controller('interactiveController', function($scope, $interval, $timeout, boardService, 
+      groupsService, settingsService, utilityService) {
 
       var settings = settingsService;
       
       $scope.groups = groupsService;
       
       $scope.buttonViewMode = settingsService.getButtonViewMode();
+      
+      $scope.activeSceneTab = 0;
 
       $scope.selectedBoard = function() {
         return boardService.getSelectedBoard();
@@ -26,11 +29,13 @@
       $scope.switchToBoard = function(boardName) {
         var board = boardService.getBoardByName(boardName);
         boardService.setSelectedBoard(board);
+        resetSceneTab();
       }
       
       $scope.switchToBoardById = function(id) {
         var board = boardService.getBoardById(id);
         boardService.setSelectedBoard(board);
+        resetSceneTab();
       }
       
       $scope.getScenesForSelectedBoard = function() {
@@ -78,6 +83,10 @@
       
       $scope.saveCurrentButtomViewMode = function() {
         settingsService.setButtonViewMode($scope.buttonViewMode);
+      }
+      
+      function resetSceneTab() {
+        $scope.activeSceneTab = 0;
       }
 
       /**
