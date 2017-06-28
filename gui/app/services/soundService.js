@@ -6,27 +6,37 @@
 
  angular
   .module('firebotApp')
-  .factory('soundService', function (settingsService) {
+  .factory('soundService', function (settingsService, listenerService) {
     var service = {};
       
     // Connection Sounds
     service.connectSound = function(type){
-      if(type == "Online"){
-        service.playSound("../sounds/online.mp3", 0.4);
-      } else {
-        service.playSound("../sounds/offline.mp3", 0.4);
+      if(settingsService.soundsEnabled() == "On") {
+        if(type == "Online"){
+          service.playSound("../sounds/online.mp3", 0.4);
+        } else {
+          service.playSound("../sounds/offline.mp3", 0.4);
+        }
       }
     }
     
     service.playSound = function(path, volume) {
-      if(settingsService.soundsEnabled() == "On") {
-        var sound = new Howl({
-             src: [path],
-             volume: volume
-         });
-        sound.play();
-      }
+      var sound = new Howl({
+           src: [path],
+           volume: volume
+       });
+      sound.play();
     }; 
+    
+    // Watches for an event from main process    
+    listenerService.registerListener(
+      { type: listenerService.ListenerType.PLAY_SOUND }, 
+      (data) => {
+        var filepath = data.filepath;
+        var volume = (data.volume / 100) * 10;
+        
+        service.playSound(filepath, volume);
+      });
     
     return service;
   });
