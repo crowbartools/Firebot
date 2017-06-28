@@ -17,6 +17,7 @@ require('angular');
 require('angular-animate');
 require('angular-route');
 require('angular-ui-bootstrap');
+require('angularjs-slider');
 
 function boot() {
 

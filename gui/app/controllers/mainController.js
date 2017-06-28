@@ -4,7 +4,7 @@ const electron = require('electron');
 const shell = electron.shell;
 
   var app = angular
-    .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap']);
+    .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule']);
 
   app.controller('MainController', function($scope, $rootScope, boardService, connectionService, groupsService, 
     utilityService, settingsService, updatesService, eventLogService, websocketService) {

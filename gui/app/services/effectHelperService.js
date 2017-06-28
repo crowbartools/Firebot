@@ -23,6 +23,10 @@
             
             var uuid = _.uniqueId();
             
+            if($scope.effect.volume == null) {
+              $scope.effect.volume = 5;
+            }
+            
             $scope.openFileExporer = function() {
               var registerRequest = {
                 type: listenerService.ListenerType.SOUND_FILE,

@@ -7,9 +7,8 @@
 </div>
 
 <div class="effect-specific-title"><h4>How loud should it be?</h4></div>
-<div class="input-group">
-    <span class="input-group-addon" id="volume-effect-type">1-10</span>
-    <input type="text" class="form-control" ng-model="effect.volume" aria-describedby="volume-effect-type" type="number" min="1" max="10">
+<div>
+    <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10}"></rzslider>
 </div>
 <div class="effect-info">
     FYI, sounds are played through the Firebot app itself and not the overlay file.
