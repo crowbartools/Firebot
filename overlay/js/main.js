@@ -17,6 +17,10 @@ function mixerSocketConnect(){
 				showImage(data);
 			}
 			
+			if (event == "video"){
+				showVideo(data);
+			}
+
 			if (event == "celebration"){
 				celebrate(data);
 			}
@@ -104,6 +108,49 @@ function showImage(data){
 			$('.'+divClass+'-image').remove();
 		});
 	}, imageDuration);
+}
+
+// Video Handling
+// This will take the data that is sent to it from the GUI and render a video on the overlay.
+function showVideo(data){
+	// Video Packet...
+	// {"event":"video","filepath":filepath, "videoX":videoX, "videoY":videoY, "videoDuration":videoDuration};
+	var filepath = data.filepath;
+	var filepathNew = filepath.replace(/\\/g,"/");
+	var videoPosition = data.videoPosition;
+	var videoHeight = data.videoHeight;
+	var videoWidth = data.videoWidth;
+	var videoDuration = parseInt(data.videoDuration) * 1000;
+
+	// Get time in milliseconds to use as class name.
+	var d = new Date();
+	var divClass = d.getTime();
+
+	if (videoHeight === false && videoWidth === false){
+		// Both height and width fields left blank.
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+	} else if (videoWidth === false){
+		// Width field left blank, but height provided.
+		// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+	} else if (videoHeight === false) {
+		// Height field left blank, but width provided.
+		// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; width:'+ videoWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video width="'+ videoWidth +'" class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+	} else {
+		// Both height and width provided.
+		// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+	}
+	
+	$('#wrapper').append(videoFinal);
+	$('.'+divClass+'-video').fadeIn('fast');
+
+	setTimeout(function(){ 
+		$('.'+divClass+'-video').fadeOut('fast', function(){
+			$('.'+divClass+'-video').remove();
+		});
+	}, videoDuration);
 }
 
 // Show HTML

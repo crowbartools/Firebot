@@ -67,6 +67,37 @@
             };         
           };
           break;
+        
+        case EffectType.SHOW_VIDEO:
+          controller = ($scope, listenerService) => {
+            
+            $scope.videoPositions = [
+              "Top Left",
+              "Top Middle",
+              "Top Right",
+              "Middle Left",
+              "Middle",
+              "Middle Right",
+              "Bottom Left",
+              "Bottom Middle",
+              "Bottom Right"
+            ];
+            
+            var uuid = _.uniqueId(); 
+            
+            $scope.openFileExporer = function() {
+              var registerRequest = {
+                type: listenerService.ListenerType.VIDEO_FILE,
+                uuid: uuid,
+                runOnce: true,
+                publishEvent: true
+              }
+              listenerService.registerListener(registerRequest, (filepath) => {
+                $scope.effect.file = filepath;
+              });
+            };         
+          };
+          break;
 
         case EffectType.API_BUTTON:
           controller = ($scope) => {

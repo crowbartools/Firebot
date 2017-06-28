@@ -34,6 +34,13 @@
     
     // Watches for an event from main process    
     listenerService.registerListener(
+      { type: listenerService.ListenerType.SHOW_VIDEO }, 
+      (data) => {
+        showVideo(data);
+      });
+
+    // Watches for an event from main process    
+    listenerService.registerListener(
       { type: listenerService.ListenerType.SHOW_IMAGE }, 
       (data) => {
         showImage(data);
@@ -85,6 +92,41 @@
       
           // Compile data and send to overlay.
           var data = {"event":"image","filepath":filepath, "imagePosition":imagePosition, "imageHeight":imageHeight, "imageWidth": imageWidth, "imageDuration":imageDuration};
+          service.broadcast(data);
+      }
+      
+      function showVideo(data){
+          var filepath = data.filepath;
+          var videoPosition = data.videoPosition;
+          var videoHeight = data.videoHeight;
+          var videoWidth = data.videoWidth;
+          var videoDuration = parseInt(data.videoDuration);
+      
+          // Set defaults if they werent filled out.
+          if(videoPosition == "" || videoPosition === null){
+              var videoX = "Top Middle";
+          }
+          if(videoHeight == "" || videoHeight === null){
+              var videoHeight = false;
+          }
+          if(videoWidth == "" || videoWidth === null){
+              var videoWidth = false;
+          }
+          if(videoDuration == "" || videoDuration === null){
+              var videoDuration = 5;
+          }        
+      
+          // Setup filepath based on compatibility settings.
+          var compatibility = settingsService.getOverlayCompatibility();
+
+          if(compatibility == "Other"){
+              var filepath = "file:///"+filepath;
+          }else{
+              var filepath = "http://absolute/"+filepath;
+          }
+      
+          // Compile data and send to overlay.
+          var data = {"event":"video","filepath":filepath, "videoPosition":videoPosition, "videoHeight":videoHeight, "videoWidth": videoWidth, "videoDuration":videoDuration};
           service.broadcast(data);
       }
       
