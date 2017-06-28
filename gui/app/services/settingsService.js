@@ -38,7 +38,7 @@
     }
     
     service.getKnownBoards = function() {
-      // This should feed the boardService with known boards and their lastUpdated values. Not implemented yet.
+      // This feeds the boardService with known boards and their lastUpdated values.
       var boards = getDataFromFile('/boards');
       return boards;
     }
