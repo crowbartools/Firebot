@@ -336,16 +336,19 @@
                                 var cost = 0;
                             }
                         }
-                        // Prepare to push to db
-                        var control = {
-                            controlId: controlID,
-                            scene: scenename,
-                            text: text,
-                            cost: cost
-                        }
-                        // Push to database
-                        dbControls.push(`./firebot/controls/${controlID}`, control);
-                        // console.log("Board rebuilt"); // Perry board rebuilding feedback
+                        // Push to db
+                        /*
+                        // There is a reason for this one; Don't do it in a whole block
+                        // it will rewrite all custom actions even if you just change the spark cost on Mixer Studio
+                        // If we figure out a way to load the whole block, swap the new changes from mixer and save
+                        // it back in without altering custom actions then we can swap this for a whole push instead
+                        // of a singular one (Perry - 2017-06-28)
+                        */
+                        
+                        dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
+                        dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
+                        dbControls.push('./firebot/controls/'+controlID+'/text', text);
+                        dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
                     }catch(err){
                         console.log('Problem getting button info to save to json.')
                     };
