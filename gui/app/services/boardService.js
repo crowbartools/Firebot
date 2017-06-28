@@ -84,7 +84,7 @@
       });
     };
     
-        // reload boards into memory
+    // reload boards into memory
     service.loadAllBoards = function() {
       
       /* Step 1 */  
@@ -375,7 +375,7 @@
                         // it back in without altering custom actions then we can swap this for a whole push instead
                         // of a singular one (Perry - 2017-06-28)
                         */
-
+                        
                         dbControls.push('./firebot/controls/'+controlID+'/controlId', controlID);
                         dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
                         dbControls.push('./firebot/controls/'+controlID+'/text', text);
