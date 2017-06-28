@@ -2985,7 +2985,7 @@
   background: linear-gradient(16deg, #022442, #124b7d);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   position: relative;
 }
@@ -2996,10 +2996,14 @@
   cursor: pointer;
 }
 
+.interactive-control-tile .joystick-wrapper {
+  padding-bottom: 23px;
+}
+
 .interactive-control-tile .button-name {
   font-weight: 100;
   font-size: 20px;
-  margin-top: 13px;
+  margin-top: 15px;
 }
 
 .interactive-control-tile .spark-cost {
@@ -3027,9 +3031,30 @@
   border-color: white;
 }
 
-.interactive-control-tile:hover .control-edit-btn {
+.interactive-control-tile .info-btn {
+  visibility: hidden;
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  transition: 0.2s;
+  opacity: 0;
+  color: #d4cece;
+  font-size: 17px;
+  font-weight: 100;
+}
+
+.interactive-control-tile .info-btn:hover {
+  color: white;
+}
+
+.interactive-control-tile:hover .control-edit-btn, .interactive-control-tile:hover .info-btn {
   visibility: visible;
   opacity: 1;
+}
+
+.interactive-control-tile .joystick-grid {
+  width: 40px;
+  vertical-align: text-top;
 }
 
 .functionality-settings .panel-title button {

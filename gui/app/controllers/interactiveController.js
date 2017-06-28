@@ -50,6 +50,21 @@
         return buttons;
       }
       
+      $scope.getJoysticksForScene = function(scene) {
+        var joysticks = [];
+        if ($scope.selectedBoard() != null) {
+          joysticks = $scope.selectedBoard().getJoysticksForScene(scene);
+        }
+        return joysticks;
+      }
+      
+      $scope.getAllControlsForScene = function(scene) {
+        var buttons = $scope.getControlsForScene(scene);
+        var joysticks = $scope.getJoysticksForScene(scene);
+        var combined = buttons.concat(joysticks);
+        return combined;
+      }
+      
       $scope.resyncCurrentBoard = function() {
         var board = boardService.getSelectedBoard();
         if(board != null) {

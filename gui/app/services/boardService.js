@@ -261,8 +261,18 @@
             board["name"] = boardName;
             board["versionId"] = versionId;
             
+            if(this.controls == null) {
+              this.controls = {};
+            }
             board.getControlsForScene = function(sceneId) {
               return _.where(this.controls, {scene: sceneId});
+            }
+            
+            if(this.joysticks == null) {
+              this.joysticks = {};
+            }
+            board.getJoysticksForScene = function(sceneId) {
+              return _.where(this.joysticks, {scene: sceneId});
             }
             
             _boards[versionId] = board;
@@ -335,16 +345,30 @@
                             }catch(err){
                                 var cost = 0;
                             }
+                            
+                            // Prepare to push to db
+                            var control = {
+                                controlId: controlID,
+                                scene: scenename,
+                                text: text,
+                                cost: cost,
+                                kind: button.kind
+                            }
+                            // Push to database
+                            dbControls.push(`./firebot/controls/${controlID}`, control);                          
                         }
-                        // Prepare to push to db
-                        var control = {
-                            controlId: controlID,
+                        
+                        if(type === "joystick") {
+                          var joystick = {
+                            controlID: button.controlID,
+                            sampleRate: button.sampleRate,
                             scene: scenename,
-                            text: text,
-                            cost: cost
+                            kind: button.kind
+                          }
+                          dbControls.push(`./firebot/joysticks/${joystick.controlID}`, joystick);
                         }
-                        // Push to database
-                        dbControls.push(`./firebot/controls/${controlID}`, control);
+                        
+
                         // console.log("Board rebuilt"); // Perry board rebuilding feedback
                     }catch(err){
                         console.log('Problem getting button info to save to json.')

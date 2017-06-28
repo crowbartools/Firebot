@@ -10,8 +10,6 @@
      
      $scope.eventLogService = eventLogService;
      
-     //$scope.events = eventLogService.events;
-     
      $scope.pagination = {
        bannedList: {
          currentPage: 1,

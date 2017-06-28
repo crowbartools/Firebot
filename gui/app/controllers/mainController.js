@@ -6,9 +6,9 @@ const shell = electron.shell;
   var app = angular
     .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap']);
 
-  app.controller('MainController', ['$scope', '$rootScope', 'boardService', 'connectionService', 'groupsService', 'utilityService', 'settingsService', 'updatesService', MainController]);
+  app.controller('MainController', ['$scope', '$rootScope', 'boardService', 'connectionService', 'groupsService', 'utilityService', 'settingsService', 'updatesService', 'eventLogService', MainController]);
 
-  function MainController($scope, $rootScope, boardService, connectionService, groupsService, utilityService, settingsService, updatesService) {
+  function MainController($scope, $rootScope, boardService, connectionService, groupsService, utilityService, settingsService, updatesService, eventLogService) {
 
     // List of bindable properties and methods
 

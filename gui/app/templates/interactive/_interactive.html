@@ -42,11 +42,15 @@
             <div class="tab-pane interactive-button-holder active">
               <!--Create buttons in each scene -->
               <!--Grid View-->
-              <div ng-show="buttonViewMode == 'grid'" class="interactive-control-tile" ng-repeat="control in getControlsForScene(scene) | filter:buttonSearch">
-                <a class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">EDIT</a>
-                <div class="button-name" ng-class="{ 'muted' : !control.text }">{{control.text ? control.text : 'ID: ' + control.controlId}}</div>
-                <span class="play-button clickable" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle"></i></span>
-                <div class="spark-cost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
+              <div ng-show="buttonViewMode == 'grid'" class="interactive-control-tile" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
+                <a ng-hide="control.kind ==='joystick'" class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">EDIT</a>
+                <a ng-show="control.kind ==='joystick'" class="info-btn" tooltip-append-to-body="true" uib-tooltip="Joysticks will automatically control your mouse when the board is connected."><i class="fal fa-info-circle"></i></a>                
+                <div ng-hide="control.kind ==='joystick'" class="button-name" ng-class="{ 'muted' : !control.text }">{{control.text ? control.text : 'ID: ' + control.controlId}}</div>
+                <div ng-show="control.kind ==='joystick'" class="button-name">{{control.controlID}}</div>
+                <span ng-hide="control.kind ==='joystick'" class="play-button clickable" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle"></i></span>
+                <span ng-show="control.kind ==='joystick'" class="joystick-wrapper" ng-click=""><img class="joystick-grid" src="../images/joystick.svg"></img></span>
+                <div ng-hide="control.kind ==='joystick'" class="spark-cost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
+                <div ng-show="control.kind ==='joystick'" class="spark-cost"></div>
               </div>
               <!--List View-->
               <table ng-show="buttonViewMode == 'list'" class="table table-hover">
@@ -60,13 +64,22 @@
                   </tr>
                 </thead>
                 <tbody style="font-size: 16px;">
-                  <tr ng-repeat="control in getControlsForScene(scene) | filter:buttonSearch">
-                    <td><a ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle clickable"></i></a></td>
-                    <td>{{control.controlId}}</td>
-                    <td ng-class="{'muted': !control.text}">{{control.text ? control.text : "Unnamed"}}</td>
-                    <td><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</td>
+                  <tr ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
                     <td>
-                      <a class="clickable" ng-click="showEditControlEffectsModal(control)""><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a>
+                      <a ng-hide="control.kind ==='joystick'" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle clickable"></i></a>
+                      <a ng-show="control.kind ==='joystick'"><img height="18" src="../images/joystick-black.svg"></img></a>
+                    </td>
+                    <td>{{control.kind ==='joystick' ? control.controlID : control.controlId}}</td>
+                    <td ng-class="{'muted': !control.text}">
+                      <span ng-hide="control.kind ==='joystick'">{{control.text ? control.text : "Unnamed"}}</span>
+                      <span ng-show="control.kind ==='joystick'">n/a</span>
+                    </td>
+                    <td>
+                      <span ng-hide="control.kind ==='joystick'"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</span>
+                      <span ng-show="control.kind ==='joystick'"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> n/a </span>
+                    </td>
+                    <td>
+                      <a ng-hide="control.kind ==='joystick'" class="clickable" ng-click="showEditControlEffectsModal(control)"><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a>
                     </td>
                   </tr>
                 </tbody>
