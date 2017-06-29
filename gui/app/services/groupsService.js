@@ -37,6 +37,28 @@
       }
       return groupList;
     }
+
+    service.getActiveGroups = function(){
+      // Get the selected board and set default groupList var.
+      var dbGroup = boardService.getSelectedBoard();
+      var groupList = [];
+
+      // Go through each scene on the current board and push default groups to groupList.
+      for (scene in dbGroup.scenes){
+        var scene = dbGroup.scenes[scene];
+        var sceneGroups = scene.default;
+        for(item of sceneGroups){
+          groupList.push(item);
+        }
+      }
+
+      // Filter out duplicates
+      groupList = groupList.filter(function(elem, pos) {
+          return groupList.indexOf(elem) == pos;
+      })
+
+      return groupList;
+    }
     
     service.addOrUpdateViewerGroup = function(group) {
       if(group.groupName == "banned") return;
