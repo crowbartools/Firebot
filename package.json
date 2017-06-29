@@ -1,6 +1,6 @@
 {
   "name": "Firebot",
-  "version": "4.0.0-alpha",
+  "version": "4.0.0",
   "auto-updater":{
 	"repo": "Firebottle/Firebot",
 	"branch": "4.0-w/Angular"
