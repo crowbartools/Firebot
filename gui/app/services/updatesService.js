@@ -57,7 +57,9 @@
                   gitNewest = response.data[0];
               } else {
                   gitNewest = response.data;
-              }          
+              }
+              
+              console.log(gitNewest);          
 
               var gitName = gitNewest.name;
               var gitDate = gitNewest.created_at;
@@ -79,7 +81,7 @@
                   gitDate: gitDate,
                   gitLink: gitLink,
                   gitNotes: $sce.trustAsHtml(gitNotes),
-                  gitZipDownloadUrl: gitZipDownloadUrl
+                  gitZipDownloadUrl: gitZipDownloadUrl,
                   updateIsAvailable: updateIsAvailable
               }
               
@@ -98,6 +100,14 @@
     
     service.downloadUpdate = function () {
       downloadFile(updateData.gitZipDownloadUrl);  
+    }
+    
+    service.udateIsDownloaded = function () {
+      
+    }
+    
+    service.extractUpdate = function () {
+      
     }
     
     function downloadFile(zipUrl) {
