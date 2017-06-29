@@ -1,6 +1,10 @@
 {
   "name": "Firebot",
   "version": "4.0.0-alpha",
+  "auto-updater":{
+	"repo": "Firebottle/Firebot",
+	"branch": "4.0-w/Angular"
+  },
   "description": "An application for mixer.com that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
@@ -55,6 +59,7 @@
     "underscore": "^1.8.3",
     "validator": "^7.0.0",
     "ws": "^2.3.1",
-    "angularjs-slider": "^6.2.2"
+    "angularjs-slider": "^6.2.2",
+    "auto-updater": "^1.0.2"
   }
 }
