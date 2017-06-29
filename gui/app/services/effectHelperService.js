@@ -123,16 +123,8 @@
         case EffectType.CHANGE_GROUP:
           controller = ($scope, groupsService) => {
 
-            // Load up viewer groups if they haven't been already.
-            // Leaving this out causes no groups to load unless you first visit the groups panel.
-            groupsService.loadViewerGroups();
-
             // Get viewer groups and push group name to scope.
-            $scope.viewerGroups = [];
-            var groups = groupsService.getViewerGroups();
-            for (group of groups){
-              $scope.viewerGroups.push(group.groupName);
-            }
+            $scope.viewerGroups = groupsService.getActiveGroups();
 
           };
           break;
@@ -152,17 +144,9 @@
               }
             }
 
-            // Load up viewer groups if they haven't been already.
-            // Leaving this out causes no groups to load unless you first visit the groups panel.
-            groupsService.loadViewerGroups();
-
             // Get viewer groups and push group name to scope.
             // This is for loading up all user group checkboxes.
-            $scope.viewerGroups = [];
-            var groups = groupsService.getViewerGroups();
-            for (group of groups){
-              $scope.viewerGroups.push(group.groupName);
-            }
+            $scope.viewerGroups = groupsService.getActiveGroups();
 
             // This is run each time a group checkbox is clicked or unclicked.
             // This will build an array of currently selected groups to be saved to JSON.
