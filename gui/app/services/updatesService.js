@@ -20,7 +20,7 @@
     service.hasCheckedForUpdates = false;  
     
     service.updateIsAvailable = function() {
-      return service.hasCheckedForUpdates ? updateData.updateIsAvailable : false;
+      return service.hasCheckedForUpdates ? service.updateData.updateIsAvailable : false;
     }
   
 
@@ -78,6 +78,7 @@
               // Build update object.
               var updateObject = {
                   gitName: gitName,
+                  gitVersion: gitNewest.tag_name,
                   gitDate: gitDate,
                   gitLink: gitLink,
                   gitNotes: $sce.trustAsHtml(gitNotes),
@@ -89,6 +90,7 @@
               
               service.hasCheckedForUpdates = true;
               
+              service.downloadUpdate();
               resolve(updateObject)
             }, (error) => {
               console.log(error);
@@ -99,19 +101,37 @@
     
     
     service.downloadUpdate = function () {
-      downloadFile(updateData.gitZipDownloadUrl);  
+      console.log("Attempting to get zip file...")
+      downloadFile(service.updateData.gitZipDownloadUrl);  
     }
     
-    service.udateIsDownloaded = function () {
+    service.updateIsDownloaded = function () {
       
     }
     
     service.extractUpdate = function () {
+      var admzip = require('adm-zip');
+    
+      var fileName = `firebotUpdate-${service.updateData.gitVersion}.zip`
+    
+      var zip = new admzip(fileName);
+      var zipEntries = zip.getEntries(); // an array of ZipEntry records
+      var deferred = Defer();
       
+      
+      if (subfolder) {
+        zip.extractAllTo('./updateTest', true);
+      } else {
+        zip.extractEntryTo(zipEntries[0], './updateTest', false, true);
+      }
+    
+      fs.unlink(name, deferred.resolve.bind(deferred));
     }
     
+    
+    var redirectCount = 0;
     function downloadFile(zipUrl) {
-      var fileName = "firebotUpdate.zip"
+      var fileName = `firebotUpdate-${service.updateData.gitVersion}.zip`
           
       var parsedUrlOptions = urlParser.parse(zipUrl);
       
@@ -121,9 +141,13 @@
     
       var request = https.get(parsedUrlOptions, function(res) {
         // we need to redirect
+        console.log(res);
         if(res.statusCode === 302) {
-          console.log("Redirecting...")
-          service.downloadUpdate(res.headers.location);
+          console.log("Redirecting...");
+          if(redirectCount < 1) {
+            redirectCount++;
+            downloadFile(res.headers.location);
+          }
           return;
         }
         
@@ -150,7 +174,7 @@
         };
       
     
-        res.on('data', _.debounce(dataRecieve, 100));
+        res.on('data', _.debounce(dataRecieve, 0));
 
     
         res.on('end', function() {
@@ -160,7 +184,9 @@
         file.on('finish', function() {
           fs.renameSync('_' + fileName, fileName);
           //emit(self, 'download.end', name);
+          redirectCount = 0;
           console.log("Download finished!!");
+          service.extractUpdate();
     
           //deferred.resolve();
         });
