@@ -210,13 +210,18 @@
     
     service.deleteViewerGroupFromAllBoards = function(viewerGroup) {
       var boards = service.getAllBoards();
+      // interate through each saved board
       boards.forEach((board) => {
         var scenes = Object.keys(board.scenes).map(k => board.scenes[k]);
+        // interate through each scene in a board
         scenes.forEach((scene) => {
           var groups = scene.default;
           var index = groups.indexOf(viewerGroup);
+          // check if this group is saved as a scene default
           if(index != -1) {
+            // remove from array
             groups.splice(index, 1);
+            //save to file
             var boardDb = new JsonDB(`./user-settings/controls/${board.name}`, true, true);
             boardDb.push(`./firebot/scenes/${scene.sceneName}/default`, groups);
           }
