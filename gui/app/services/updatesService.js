@@ -33,7 +33,7 @@
             // Else we check /latest which will only list the latest full release.
             
             // Start checking
-            autoUpdate.fire('check');
+            //autoUpdate.fire('check');
 
             var firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
             
