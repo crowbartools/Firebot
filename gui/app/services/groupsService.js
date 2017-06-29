@@ -7,7 +7,7 @@
 
  angular
   .module('firebotApp')
-  .factory('groupsService', function () {
+  .factory('groupsService', function (boardService) {
     var service = {};
     
     var groups = [];
@@ -48,6 +48,9 @@
     service.removeViewerGroup = function(groupName) {
       var dbGroup = new JsonDB("./user-settings/groups", true, true);
       dbGroup.delete("/" + groupName);
+      
+      boardService.deleteViewerGroupFromAllBoards(groupName);
+      
       service.loadViewerGroups();
     }
     

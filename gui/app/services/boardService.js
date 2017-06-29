@@ -172,6 +172,7 @@
       boardDb.push("./firebot/scenes/" + scene.sceneName, cleanedScene);
       
       service.getSelectedBoard().scenes[scene.sceneName] = scene;
+      
     }
     
     service.saveCooldownGroupForCurrentBoard = function(previousName, cooldownGroup) {
@@ -195,6 +196,8 @@
       }
        
       service.getSelectedBoard().cooldownGroups[cooldownGroup.groupName] = cleanedCooldownGroup;   
+      
+      //TODO: propigate cooldown group to related buttons
     }
     
     service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName) {
@@ -204,6 +207,22 @@
       
       delete service.getSelectedBoard().cooldownGroups[cooldownGroupName];
     }
+    
+    service.deleteViewerGroupFromAllBoards = function(viewerGroup) {
+      var boards = service.getAllBoards();
+      boards.forEach((board) => {
+        var scenes = Object.keys(board.scenes).map(k => board.scenes[k]);
+        scenes.forEach((scene) => {
+          var groups = scene.default;
+          var index = groups.indexOf(viewerGroup);
+          if(index != -1) {
+            groups.splice(index, 1);
+            var boardDb = new JsonDB(`./user-settings/controls/${board.name}`, true, true);
+            boardDb.push(`./firebot/scenes/${scene.sceneName}/default`, groups);
+          }
+        });
+      });
+    };
 
     service.getScenesForSelectedBoard = function (){
         var board = service.getLastUsedBoard();
