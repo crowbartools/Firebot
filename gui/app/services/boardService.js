@@ -358,7 +358,7 @@
                             dbControls.push('./firebot/controls/'+controlID+'/scene', scenename);
                             dbControls.push('./firebot/controls/'+controlID+'/text', text);
                             dbControls.push('./firebot/controls/'+controlID+'/cost', cost);
-                            dbControls.push('./firebot/controls/'+controlID+'/kind', button.kind);                        
+                            dbControls.push('./firebot/controls/'+controlID+'/kind', type);                        
                         }
 
                         
@@ -367,7 +367,7 @@
                             controlID: button.controlID,
                             sampleRate: button.sampleRate,
                             scene: scenename,
-                            kind: button.kind
+                            kind: type
                           }
                           dbControls.push(`./firebot/joysticks/${joystick.controlID}`, joystick);
                         }
