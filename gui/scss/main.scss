@@ -496,19 +496,6 @@ box-shadow: 2px 2px 7px #dcdcdc;
   opacity: 0;
   visibility: hidden;
 }
-
-.repeatList.ng-enter {
-    transition: 300ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
-} 
-
-.repeatList.ng-enter.ng-enter-active {
-    opacity: 1;
-}
-
-.repeatList.ng-enter {
-    opacity: 0;
-}
-
 /**
 * Bootstrap Overrides
 */

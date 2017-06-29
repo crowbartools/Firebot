@@ -3941,18 +3941,6 @@ body {
   visibility: hidden;
 }
 
-.repeatList.ng-enter {
-  transition: 300ms cubic-bezier(0.25, 0.25, 0.75, 0.75) all;
-}
-
-.repeatList.ng-enter.ng-enter-active {
-  opacity: 1;
-}
-
-.repeatList.ng-enter {
-  opacity: 0;
-}
-
 /**
 * Bootstrap Overrides
 */
