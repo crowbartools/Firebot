@@ -1,10 +1,6 @@
 {
   "name": "Firebot",
   "version": "4.0.0",
-  "auto-updater":{
-	"repo": "Firebottle/Firebot",
-	"branch": "4.0-w/Angular"
-  },
   "description": "An application for mixer.com that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
@@ -42,6 +38,7 @@
     "angular-animate": "^1.5.5",
     "angular-route": "^1.6.4",
     "angular-ui-bootstrap": "^2.5.0",
+    "angularjs-slider": "^6.2.2",
     "beam-client-node": "^0.13.0",
     "beam-interactive-node2": "^2.0.0",
     "compare-versions": "^3.0.1",
@@ -58,8 +55,6 @@
     "roll": "^1.2.0",
     "underscore": "^1.8.3",
     "validator": "^7.0.0",
-    "ws": "^2.3.1",
-    "angularjs-slider": "^6.2.2",
-    "auto-updater": "^1.0.2"
+    "ws": "^2.3.1"
   }
 }
