@@ -111,6 +111,26 @@
   }
 }
 
+.volume-slider-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .volume-low {
+    font-size: 30px;
+    margin-right: 10px;
+    color: #337ab7;
+    align-self: flex-end;
+    padding-bottom: 3px;
+  }
+  .volume-high {
+    font-size: 30px;
+    margin-left: 10px;
+    color: #337ab7;
+    align-self: flex-end;
+    padding-bottom: 3px;
+  }
+}
+
 
 .functionality-settings{
     .panel-title{

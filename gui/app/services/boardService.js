@@ -87,30 +87,61 @@
     // reload boards into memory
     service.loadAllBoards = function() {
       
-      // Attempt to access board flatfile storage
-      var boardJsonFiles = [];
-      try{
-          boardJsonFiles = fs.readdirSync('./user-settings/controls');          
-      }catch(err){
-        console.log(err);
-        return new Promise(function(resolve, reject) {
-          reject('No boards saved.')
-        });;
-      }
-      
       /* Step 1 */  
       // Get a list or board ids so we can resync them all with Mixer
       
       // Note(ebiggz): Unfortunately this currently means we have to iterate through the files
       // to get the ids and iterate through the files a second time after we have synced with mixer.
       // There's surely a better way to do this. Maybe maintain a list of known board id's in the settings file?
-      var boardVersionIds = [];
-      _.each(boardJsonFiles, function (fileName) {
-        var boardDb = new JsonDB("./user-settings/controls/"+fileName, true, true);
-        var boardData = boardDb.getData('/');
-        
-        boardVersionIds.push(boardData.versionid);
-      });
+      try{
+        knownBoards = settingsService.getKnownBoards();
+        var boardVersionIds = [];
+        _.each(knownBoards, function(board){
+            boardVersionIds.push(board.boardId);
+        });
+        try{
+            if(typeof boardVersionIds != "undefined" && boardVersionIds != null && boardVersionIds.length > 0){
+                // console.log("We have data, no need to rebuild, proceed");
+            }else{
+                // console.log("This happened, we need to check for board files to see if we can rebuild them to get data in knownboards");
+                throw new Error('boardlist is empty, might be first run of new 4.0 version? Trying to salvage data from board jsons instead...');
+            }
+        }catch(err){
+            console.log("boardId is not present... We might have to reinitialize the board list...");
+            // Attempt to access board flatfile storage
+            var boardJsonFiles = [];
+            try{
+                boardJsonFiles = fs.readdirSync('./user-settings/controls');          
+            }catch(err){
+                console.log(err);
+                return new Promise(function(resolve, reject) {
+                reject('No boards saved.')
+                });;
+            }
+            
+            /* Step 1 */  
+            // Get a list or board ids so we can resync them all with Mixer
+            
+            // Note(ebiggz): Unfortunately this currently means we have to iterate through the files
+            // to get the ids and iterate through the files a second time after we have synced with mixer.
+            // There's surely a better way to do this. Maybe maintain a list of known board id's in the settings file?
+            var boardVersionIds = [];
+            _.each(boardJsonFiles, function (fileName) {
+                var boardDb = new JsonDB("./user-settings/controls/"+fileName, true, true);
+                var boardData = boardDb.getData('/');
+                
+                boardVersionIds.push(boardData.versionid);
+            });
+            
+            /* Step 2 */
+            // Load each board.
+            return loadBoardsById(boardVersionIds, true).then(() => { selectedBoard = service.getLastUsedBoard() });
+        }
+      }catch(err){
+          // We don't have any board data... Do something about it?
+          console.log("We don't have any board data... Panic? Riot? Riot?? Ok, blame Firebottle, it will be all good according to Waterbottle");
+          knownBoards = [];
+      }
       
       /* Step 2 */
       // Load each board.

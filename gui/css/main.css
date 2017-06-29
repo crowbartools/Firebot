@@ -3057,6 +3057,28 @@
   vertical-align: text-top;
 }
 
+.volume-slider-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.volume-slider-wrapper .volume-low {
+  font-size: 30px;
+  margin-right: 10px;
+  color: #337ab7;
+  align-self: flex-end;
+  padding-bottom: 3px;
+}
+
+.volume-slider-wrapper .volume-high {
+  font-size: 30px;
+  margin-left: 10px;
+  color: #337ab7;
+  align-self: flex-end;
+  padding-bottom: 3px;
+}
+
 .functionality-settings .panel-title button {
   margin: -10px -15px;
   line-height: 1.75;
@@ -3500,6 +3522,7 @@ body {
 }
 
 .noselect {
+  cursor: default;
   -webkit-touch-callout: none;
   /* iOS Safari */
   -webkit-user-select: none;

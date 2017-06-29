@@ -14,16 +14,27 @@
       connectionStatus: {},
       connectionChangeRequest: {},
       eventLog: {},
-      error: {}
+      error: {},
+      playSound: {},
+      showImage: {},
+      showVideo: {},
+      showHtml: {},
+      celebrate: {}
     }
     
     var ListenerType = {
       IMAGE_FILE: "imageFile",
       SOUND_FILE: "soundFile",
+      VIDEO_FILE: "videoFile",
       CONNECTION_STATUS: "connectionStatus",
       CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
       EVENT_LOG: "eventLog",
-      ERROR: "error"
+      ERROR: "error",
+      PLAY_SOUND: "playSound",
+      SHOW_IMAGE: "showImage",
+      SHOW_VIDEO: "showVideo",
+      SHOW_HTML: "showHtml",
+      CELEBREATE: "celebrate"
     }
     
     service.ListenerType = ListenerType;
@@ -44,6 +55,7 @@
       var publishEvent = request.publishEvent == true;
       
       switch(listener.type) {
+        case ListenerType.VIDEO_FILE:
         case ListenerType.IMAGE_FILE:
         case ListenerType.SOUND_FILE:
           registeredListeners.filePath[uuid] = listener;
@@ -54,41 +66,25 @@
             else if(listener.type == ListenerType.SOUND_FILE) {
               ipcRenderer.send('getSoundPath', uuid);
             }
+            else if(listener.type == ListenerType.VIDEO_FILE) {
+              ipcRenderer.send('getVideoPath', uuid);
+            }
           }
           break;
-        case ListenerType.CONNECTION_STATUS:
-          registeredListeners.connectionStatus[uuid] = listener;
-          // There isn't really a corresponding event to publish for this
-          break;
-        case ListenerType.CONNECTION_CHANGE_REQUEST:
-          registeredListeners.connectionChangeRequest[uuid] = listener;
-          break;
-        case ListenerType.EVENT_LOG:
-          registeredListeners.eventLog[uuid] = listener;
-          break;
-        case ListenerType.ERROR:
-          registeredListeners.error[uuid] = listener;
+        default:
+          registeredListeners[listener.type][uuid] = listener;
       }
     }
     
     service.unregisterListener = function(type, uuid) {
       switch(type) {
+        case ListenerType.VIDEO_FILE:
         case ListenerType.IMAGE_FILE:
         case ListenerType.SOUND_FILE:
           delete registeredListeners.filePath[uuid];
           break;
-        case ListenerType.CONNECTION_STATUS:
-          delete registeredListeners.connectionStatus[uuid];
-          break;
-        case ListenerType.CONNECTION_CHANGE_REQUEST:
-          delete registeredListeners.connectionChangeRequest[uuid];
-          break;
-        case ListenerType.EVENT_LOG:
-          delete registeredListeners.eventLog[uuid];
-          break;
-        case ListenerType.ERROR:
-          delete registeredListeners.error[uuid];
-          break;
+        default:
+          delete registeredListeners[type][uuid];
       }
     }
     
@@ -100,6 +96,10 @@
     });
     
     ipcRenderer.on('gotImageFilePath', function (event, data){
+        parseFilePathEvent(data);
+    });
+
+    ipcRenderer.on('gotVideoFilePath', function (event, data){
         parseFilePathEvent(data);
     });
       
@@ -150,6 +150,51 @@
     ipcRenderer.on('error', function (event, errorMessage){
       _.forEach(registeredListeners.error, (listener, key, list) => {
         runListener(listener, errorMessage);
+      });
+    });
+    
+    /**
+    * Show img event listener
+    */
+    ipcRenderer.on('showimage', function (event, data){
+      _.forEach(registeredListeners.showImage, (listener, key, list) => {
+        runListener(listener, data);
+      });
+    });
+    
+    /**
+    * Show video event listener
+    */
+    ipcRenderer.on('showvideo', function (event, data){
+      _.forEach(registeredListeners.showVideo, (listener, key, list) => {
+        runListener(listener, data);
+      });
+    });
+    
+    /**
+    * Show html event listener
+    */
+    ipcRenderer.on('showhtml', function (event, data){
+      _.forEach(registeredListeners.showHtml, (listener, key, list) => {
+        runListener(listener, data);
+      });
+    });
+    
+    /**
+    * Play sound event listener
+    */
+    ipcRenderer.on('playsound', function (event, data){
+      _.forEach(registeredListeners.playSound, (listener, key, list) => {
+        runListener(listener, data);
+      });
+    });
+    
+    /**
+     *  Show Celebration animation
+     */
+    ipcRenderer.on('celebrate', function (event, data){
+      _.forEach(registeredListeners.celebrate, (listener, key, list) => {
+        runListener(listener, data);
       });
     });
     

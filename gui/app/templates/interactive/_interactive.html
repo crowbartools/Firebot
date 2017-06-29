@@ -37,7 +37,7 @@
             </div>
           </div>
         </div>
-        <uib-tabset>
+        <uib-tabset active="activeSceneTab">
           <!--Create a tab for each scene -->
           <uib-tab index="$index" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
             <div class="tab-pane interactive-button-holder active">
@@ -46,8 +46,8 @@
               <div ng-show="buttonViewMode == 'grid'" class="interactive-control-tile" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
                 <a ng-hide="control.kind ==='joystick'" class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">EDIT</a>
                 <a ng-show="control.kind ==='joystick'" class="info-btn" tooltip-append-to-body="true" uib-tooltip="Joysticks will automatically control your mouse when the board is connected."><i class="fal fa-info-circle"></i></a>                
-                <div ng-hide="control.kind ==='joystick'" class="button-name" ng-class="{ 'muted' : !control.text }">{{control.text ? control.text : 'ID: ' + control.controlId}}</div>
-                <div ng-show="control.kind ==='joystick'" class="button-name">{{control.controlID}}</div>
+                <div ng-hide="control.kind ==='joystick'" ng-mouseenter="setHoverOverControlId(control.controlId)" ng-mouseleave="setHoverOverControlId('')" class="button-name noselect" ng-class="{ 'muted' : !control.text || isHoverOverControlName(control.controlId) }">{{getControlIdOrName(control)}}</div>
+                <div ng-show="control.kind ==='joystick'" class="button-name noselect">{{control.controlID}}</div>
                 <span ng-hide="control.kind ==='joystick'" class="play-button clickable" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle"></i></span>
                 <span ng-show="control.kind ==='joystick'" class="joystick-wrapper" ng-click=""><img class="joystick-grid" src="../images/joystick.svg"></img></span>
                 <div ng-hide="control.kind ==='joystick'" class="spark-cost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
