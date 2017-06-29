@@ -39,9 +39,6 @@
     }
 
     service.getActiveGroups = function(){
-      // Load custom groups up incase they havent been already.
-      service.loadViewerGroups();
-
       // Get the selected board and set default groupList var.
       var dbGroup = boardService.getSelectedBoard();
       var groupList = [];
