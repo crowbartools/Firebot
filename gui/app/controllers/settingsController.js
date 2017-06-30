@@ -28,8 +28,8 @@
                 var newPort = $scope.newPort;
                 if(newPort == null 
                   || newPort === '' 
-                  || newPort <= 0 
-                  || newPort >= 65535) {
+                  || newPort <= 1024 
+                  || newPort >= 49151) {
                     
                   $scope.newPortError = true;
                   return;
