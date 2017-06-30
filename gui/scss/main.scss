@@ -756,6 +756,14 @@ box-shadow: 2px 2px 7px #dcdcdc;
   z-index: 100;
   color: #30a6ce;
 }
+
+.cooldown-list-btn-wrapper {
+  height: 40px;
+  border-bottom: 1px darkgray solid;
+  display: flex;
+  align-items: center;
+}
+
 .text-right {
   text-align: right;
 }

@@ -7,18 +7,22 @@
     <h3>Which groups should use this scene as their default scene?</h3>
   </div>
   <div class="edit-scenegroup-defaults">
-    <div ng-if="scene.sceneName !== 'default'" class="scenegroup-option">
-      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, 'None')" ng-checked="arrayContainsElement(scene.default, 'None')"> <span>None</span>
-    </div>
-    <div ng-if="scene.sceneName === 'default'" class="scenegroup-option">
+    <label ng-if="scene.sceneName !== 'default'" class="control-fb control--checkbox">None
+      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, 'None')" ng-checked="arrayContainsElement(scene.default, 'None')">
+      <div class="control__indicator"></div>
+    </label>
+    <label ng-if="scene.sceneName === 'default'" class="control-fb control--checkbox">Default
       <input type="checkbox" checked disabled> <span>Default</span>
-    </div>
-    <div ng-repeat="groupName in defaultGroups" class="scenegroup-option">
-      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, groupName)" ng-checked="arrayContainsElement(scene.default, groupName)"> <span>{{groupName}}</span>
-    </div>
-    <div ng-repeat="group in groups.getViewerGroups(true)" class="scenegroup-option">
-      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, group.groupName)" ng-checked="arrayContainsElement(scene.default, group.groupName)"> <span>{{group.groupName}}</span>
-    </div>
+      <div class="control__indicator"></div>
+    </label>
+    <label ng-repeat="groupName in defaultGroups" class="control-fb control--checkbox">{{groupName}}
+      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, groupName)" ng-checked="arrayContainsElement(scene.default, groupName)">
+      <div class="control__indicator"></div>
+    </label>
+    <label ng-repeat="group in groups.getViewerGroups(true)" class="control-fb control--checkbox">{{group.groupName}}
+      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, group.groupName)" ng-checked="arrayContainsElement(scene.default, group.groupName)">
+      <div class="control__indicator"></div>
+    </label>
   </div>
 </div>
 <div class="modal-footer">

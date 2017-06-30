@@ -19,16 +19,14 @@
     <div class="effect-setting-container">
         <div class="effect-specific-title"><h4>{{effect.reset ? 'Which group(s) should we reset?' : 'Which group(s) should change scenes?'}}</h4></div>
         <div class="change-scene-effect-group-select">
-            <ul class="change-scene-effect-group-option custom-change-scene-group">
-                <li>
-                    <input type="checkbox" ng-click="groupArray(effect.groups, 'default')" ng-checked="groupCheckboxer(effect.groups,'default')" aria-label="..." >
-                    <span>Default</span>
-                </li>
-                <li ng-repeat="group in viewerGroups">
-                    <input type="checkbox" ng-click="groupArray(effect.groups, group)" ng-checked="groupCheckboxer(effect.groups, group)"  aria-label="..." >
-                    <span>{{group}}</span>
-                </li>
-            </ul>
+          <label class="control-fb control--checkbox">Default
+            <input type="checkbox" ng-click="groupArray(effect.groups, 'default')" ng-checked="groupCheckboxer(effect.groups,'default')" aria-label="..." >
+            <div class="control__indicator"></div>
+          </label>
+          <label ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
+            <input type="checkbox" ng-click="groupArray(effect.groups, group)" ng-checked="groupCheckboxer(effect.groups, group)"  aria-label="..." >
+            <div class="control__indicator"></div>
+          </label>
         </div>
     </div>
     <div class="effect-setting-container" ng-if="effect.reset === false">

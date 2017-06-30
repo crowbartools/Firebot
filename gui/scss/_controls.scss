@@ -9,7 +9,7 @@
   height: 210px;
   margin: 10px;
 }
-.control {
+.control-fb {
   display: block;
   position: relative;
   padding-left: 30px;
@@ -18,7 +18,7 @@
   font-size: 15px;
   font-weight: 400;
 }
-.control input {
+.control-fb input {
   position: absolute;
   z-index: -1;
   opacity: 0;
@@ -34,18 +34,18 @@
 .control--radio .control__indicator {
   border-radius: 50%;
 }
-.control:hover input ~ .control__indicator,
-.control input:focus ~ .control__indicator {
+.control-fb:hover input ~ .control__indicator,
+.control-fb input:focus ~ .control__indicator {
   background: #ccc;
 }
-.control input:checked ~ .control__indicator {
+.control-fb input:checked ~ .control__indicator {
   background: #2aa1c0;
 }
-.control:hover input:not([disabled]):checked ~ .control__indicator,
-.control input:checked:focus ~ .control__indicator {
+.control-fb:hover input:not([disabled]):checked ~ .control__indicator,
+.control-fb input:checked:focus ~ .control__indicator {
   background: #0e647d;
 }
-.control input:disabled ~ .control__indicator {
+.control-fb input:disabled ~ .control__indicator {
   background: #e6e6e6;
   opacity: 0.6;
   pointer-events: none;
@@ -55,14 +55,14 @@
   position: absolute;
   display: none;
 }
-.control input:checked ~ .control__indicator:after {
+.control-fb input:checked ~ .control__indicator:after {
   display: block;
 }
 .control--checkbox .control__indicator:after {
-  left: 8px;
-  top: 4px;
-  width: 3px;
-  height: 8px;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 10px;
   border: solid #fff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
