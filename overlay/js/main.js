@@ -1,9 +1,13 @@
 function mixerSocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
-		ws = new ReconnectingWebSocket("ws://localhost:8080");
+		var port = WEBSOCKET_PORT;
+		if(port == null || !Number.isInteger(port) || port <= 1024 || port >= 49151) {
+			port = 8080;
+		}
+		ws = new ReconnectingWebSocket(`ws://localhost:${port}`);
 		ws.onopen = function(){
-			console.log("Connection is opened...");
+			console.log(`Connection is opened on port ${port}...`);
 		};
 
 		// When we get a message from the Firebot GUI...
@@ -32,7 +36,7 @@ function mixerSocketConnect(){
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.
 		ws.onclose = function(){
-		  console.log("Connection is closed...");
+		  console.log(`Connection is closed on port ${port}...`);
 		};
 
 	} else {

@@ -1,17 +1,20 @@
 (function(){
   
   const WebSocket = require('ws');
-  const WebSocketServer = require('ws').Server,
-      wss = new WebSocketServer({
-          port: 8080
-      });
+  const WebSocketServer = WebSocket.Server;
 
  // This provides methods for sending stuff to the websocket
 
  angular
   .module('firebotApp')
   .factory('websocketService', function (listenerService, settingsService) {
-    var service = {};
+    var service = {};      
+      
+    // Setup the WebSocketServer with the saved port.  
+    var port = settingsService.getWebSocketPort();      
+    const wss = new WebSocketServer({
+        port: port
+    });
       
     // Websocket Server
     // This allows for the guiBroadcast call to send out data via websocket.

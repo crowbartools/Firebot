@@ -4,6 +4,7 @@
  
  const _ = require('underscore')._;
  const JsonDB = require('node-json-db');
+ const fs = require('fs');
 
  angular
   .module('firebotApp')
@@ -135,7 +136,24 @@
     
     service.setButtonViewMode = function(buttonViewMode) {
       pushDataToFile('/settings/buttonViewMode', buttonViewMode)
-    }    
+    }
+    
+    service.getWebSocketPort = function() {
+      var websocketPort = getDataFromFile('/settings/websocketPort');
+      return websocketPort != null ? websocketPort : 8080;
+    }
+    
+    service.setWebSocketPort = function(port) {
+      // Verify port is a number. This might be overly safe.
+      if(!Number.isInteger(port)) { return; }
+      
+      // Save to settings file for app front end
+      pushDataToFile('/settings/websocketPort', port);
+
+      // Overwrite the 'port.js' file in the overlay settings folder with the new port
+      fs.writeFile('./user-settings/overlay-settings/port.js', `WEBSOCKET_PORT = ${port}`, 
+        'utf8', () => { console.log(`Set overlay port to: ${port}`)});
+    }      
     
     return service;
   });
