@@ -36,7 +36,7 @@ function mixerSocketConnect(){
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.
 		ws.onclose = function(){
-		  console.log(`Connection is closed on port ${WEBSOCKET_PORT}...`);
+		  console.log(`Connection is closed on port ${port}...`);
 		};
 
 	} else {
