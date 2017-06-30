@@ -2,7 +2,7 @@ function mixerSocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
 		var port = WEBSOCKET_PORT;
-		if(port == null || !Number.isInteger(port) || port <= 0 || port >= 65355) {
+		if(port == null || !Number.isInteger(port) || port <= 0 || port >= 65535) {
 			port = 8080;
 		}
 		ws = new ReconnectingWebSocket(`ws://localhost:${port}`);
