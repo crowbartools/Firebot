@@ -56,6 +56,19 @@ function createWindow () {
   // Some APIs can only be used after this event occurs.
   app.on('ready', function(){
     
+    // Create the user settings folder if it doesn't exist. It's required 
+    // for the folders below that are within it
+    fs.access("./user-settings/", (err) => {
+      if(err) {
+        //ENOENT means Error NO ENTity found, aka the folder doesn't exist.
+        if(err.code === 'ENOENT') {
+          console.log("Can't find the user-settings folder, creating one now...");
+          fs.mkdir("./user-settings");
+        }
+      }
+    });
+    
+    
     // Create the scripts folder if it doesn't exist
     fs.access("./user-settings/scripts/", (err) => {
       if(err) {
@@ -66,6 +79,22 @@ function createWindow () {
         }
       }
     });
+    
+    // Create the overlay settings folder if it doesn't exist.
+    fs.access("./user-settings/overlay-settings/", (err) => {
+      if(err) {
+        //ENOENT means Error NO ENTity found, aka the folder doesn't exist.
+        if(err.code === 'ENOENT') {
+          console.log("Can't find the overlay-settings folder, creating one now...");
+          fs.mkdir("./user-settings/overlay-settings");
+          
+          // Save the default port file
+          fs.writeFile('./user-settings/overlay-settings/port.js', `WEBSOCKET_PORT = 8080`, 
+            'utf8', () => { console.log(`Set overlay port to: 8080`)});
+        }
+      }
+    });
+    
     
     createWindow()
     renderWindow.webContents.on('did-finish-load', function() {

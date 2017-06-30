@@ -147,12 +147,11 @@
       // Verify port is a number. This might be overly safe.
       if(!Number.isInteger(port)) { return; }
       
-      
-      //Save to settings file for app front end
+      // Save to settings file for app front end
       pushDataToFile('/settings/websocketPort', port);
 
-      //Overwrite the 'port.js' file in the overlay folder with the new port
-      fs.writeFile('./overlay/js/port.js', `WEBSOCKET_PORT = ${port}`, 
+      // Overwrite the 'port.js' file in the overlay settings folder with the new port
+      fs.writeFile('./user-settings/overlay-settings/port.js', `WEBSOCKET_PORT = ${port}`, 
         'utf8', () => { console.log(`Set overlay port to: ${port}`)});
     }      
     
