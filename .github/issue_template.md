@@ -13,8 +13,8 @@
 
 - Are you able to reproduce the issue? If so, what steps did you follow?
 
+-----------------------------------------------------------------------
+#### If you are having problems related to your interactive board, there are two ways that you can help us help you
+**1)** Please navigate to **/firebot/user-settings/controls** and attach the .json file of the board you are having issues with.
 
-- Have you gone to /firebot/user-settings/controls and attached the problem controls file to this issue?
-
-
-- Go to Interactive Studio, edit the board in question, click on the share icon beside the board name up top in the right part of the view. Choose only allow specific .... then type in our names and click add and you should be ok. (Firebottle, ebiggz, kateract and ThePerry)
+**2)** Go to Mixer's Interactive Studio, click "Edit" on the board you are having issues with, click on the share icon beside the board name up top in the right corner of the page, choose "Only allow specific", and then add in our names (Firebottle, ebiggz, kateract, and ThePerry). This allows us to more easily test your board. Thanks!
