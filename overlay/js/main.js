@@ -1,9 +1,13 @@
 function mixerSocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
-		ws = new ReconnectingWebSocket(`ws://localhost:${WEBSOCKET_PORT}`);
+		var port = WEBSOCKET_PORT;
+		if(port == null || !Number.isInteger(port) || port <= 0 || port >= 65355) {
+			port = 8080;
+		}
+		ws = new ReconnectingWebSocket(`ws://localhost:${port}`);
 		ws.onopen = function(){
-			console.log(`Connection is opened on port ${WEBSOCKET_PORT}...`);
+			console.log(`Connection is opened on port ${port}...`);
 		};
 
 		// When we get a message from the Firebot GUI...
