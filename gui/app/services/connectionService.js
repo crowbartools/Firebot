@@ -95,7 +95,6 @@
       const oauthProvider = electronOauth2(authInfo, authWindowParams);
       $q.when(oauthProvider.getAccessToken({ scope: scopes }))
           .then(token => {
-            console.log(token);
               userInfo(type, token.access_token, token.refresh_token);
           }, err => {
               //error requesting access 
@@ -242,7 +241,6 @@
             var oauthProvider = electronOauth2(authInfo, authWindowParams);
             oauthProvider.refreshToken(refresh)
                 .then(token => {
-                  console.log(token);
     
                     // Success!
                     var accessToken = token.access_token;
@@ -263,7 +261,6 @@
                     try {
                         var refresh = dbAuth.getData('./bot/refreshToken');
                         oauthProvider.refreshToken(refresh).then(token => {
-                          console.log(token);
     
                             // Success!
                             var accessToken = token.access_token;
