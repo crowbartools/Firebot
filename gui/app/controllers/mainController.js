@@ -25,8 +25,12 @@ const shell = electron.shell;
 
       $scope.tabIsSelected = function(tabId) {
         return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
-      }
+      }    
       
+      /**
+      * rootScope functions. This means they are accessable in all scopes in the front end
+      * This is probably bad form, so putting functions in rootScope shouldnt be abused too much
+      */
       $rootScope.pasteClipboard = function(elementId, shouldUnfocus) {
         angular.element(`#${elementId}`).focus();
         document.execCommand('paste');
