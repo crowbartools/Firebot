@@ -25,13 +25,13 @@
     </div>
 </div>
 <div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Should the result be the sum of all rolls or individual rolls?</h4></div>
+    <div class="effect-specific-title"><h4>Should the message display just the sum or include each roll?</h4></div>
     <div style="padding-left: 10px;">
-      <label class="control-fb control--radio">Sum <span class="muted">Ex: 2d6 = 7</span>
+      <label class="control-fb control--radio">Just the sum <span class="muted"><br />Ex: 'ebiggz rolled a 7 on 2d6.'</span>
         <input type="radio" ng-model="effect.resultType" value="sum"/> 
         <div class="control__indicator"></div>
       </label>
-      <label class="control-fb control--radio" >Individual <span class="muted">Ex: 2d6 = 4,3</span>
+      <label class="control-fb control--radio" >Include each roll <span class="muted"><br />Ex: 'ebiggz rolled a 7 (4, 3) on 2d6.'</span>
         <input type="radio" ng-model="effect.resultType" value="individual"/>
         <div class="control__indicator"></div>
       </label>
