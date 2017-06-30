@@ -22,15 +22,14 @@
         authorizationUrl: "https://mixer.com/oauth/authorize",
         tokenUrl: "https://mixer.com/api/v1/oauth/token",
         useBasicAuthorizationHeader: false,
-        redirectUri: "http://localhost"
+        redirectUri: "https://firebottle.tv/Firebot/oauth/redirect.php"
     };
     
     var authWindowParams = {
         alwaysOnTop: true,
         autoHideMenuBar: true,
         webPreferences: {
-            nodeIntegration: false,
-            partition: 'default'
+            sandbox: true
         }
     };
     
@@ -243,7 +242,6 @@
             oauthProvider.refreshToken(refresh)
                 .then(token => {
     
-    
                     // Success!
                     var accessToken = token.access_token;
                     var refreshToken = token.refresh_token;
@@ -263,7 +261,6 @@
                     try {
                         var refresh = dbAuth.getData('./bot/refreshToken');
                         oauthProvider.refreshToken(refresh).then(token => {
-    
     
                             // Success!
                             var accessToken = token.access_token;
