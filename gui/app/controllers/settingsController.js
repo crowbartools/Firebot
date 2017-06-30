@@ -5,12 +5,16 @@
  angular
    .module('firebotApp')
    .controller('settingsController', function($scope, settingsService, utilityService) {
+     
         $scope.settings = settingsService;
+        
         $scope.showSetupWizard = utilityService.showSetupWizard;
         
         $scope.currentPort = settingsService.getWebSocketPort();
         
-        
+        /**
+        * Modals
+        */          
         $scope.showChangePortModal = function() {
           var showChangePortModalContext = {
             templateUrl: "changePortModal.html",
@@ -47,6 +51,7 @@
               };                      
             },
             closeCallback: (port) => {
+                // Update the local port scope var so setting input updates
                 $scope.currentPort = port;         
             }
           }    
