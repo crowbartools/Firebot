@@ -178,8 +178,9 @@
     service.saveCooldownGroupForCurrentBoard = function(previousName, cooldownGroup) {
       
       if(previousName != null && previousName != '') {
-        service.deleteCooldownGroupForCurrentBoard(previousName);
-      } 
+        service.deleteCooldownGroupForCurrentBoard(previousName, cooldownGroup);
+      }
+      
       
       var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
       
@@ -188,6 +189,10 @@
       // while removing internal angular properties. We then convert this string back to an object with 
       // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
       var cleanedCooldownGroup = JSON.parse(angular.toJson(cooldownGroup));
+      
+      cleanedCooldownGroup.buttons.forEach((buttonName) => {
+        boardDb.push(`./firebot/controls/${buttonName}/cooldownGroup`, cooldownGroup.groupName);
+      });
       
       boardDb.push("./firebot/cooldownGroups/" + cooldownGroup.groupName, cleanedCooldownGroup);
       
@@ -200,8 +205,12 @@
       //TODO: propigate cooldown group to related buttons
     }
     
-    service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName) {
+    service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName, cooldownGroup) {
       var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      
+      cooldownGroup.buttons.forEach((buttonName) => {
+        boardDb.delete(`./firebot/controls/${buttonName}/cooldownGroup`);
+      });
       
       boardDb.delete("./firebot/cooldownGroups/" + cooldownGroupName);
       

@@ -140,7 +140,7 @@
            }
            console.log(response.newCooldownGroup);
            if(response.shouldDelete) {
-             boardService.deleteCooldownGroupForCurrentBoard(previousName);
+             boardService.deleteCooldownGroupForCurrentBoard(previousName, cooldownGroup);
            } else {
              boardService.saveCooldownGroupForCurrentBoard(previousName, response.newCooldownGroup);
            }           
