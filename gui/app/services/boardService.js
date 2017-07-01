@@ -190,9 +190,11 @@
       // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
       var cleanedCooldownGroup = JSON.parse(angular.toJson(cooldownGroup));
       
-      cleanedCooldownGroup.buttons.forEach((buttonName) => {
-        boardDb.push(`./firebot/controls/${buttonName}/cooldownGroup`, cooldownGroup.groupName);
-      });
+      if(cleanedCooldownGroup.buttons != null) {
+        cleanedCooldownGroup.buttons.forEach((buttonName) => {
+          boardDb.push(`./firebot/controls/${buttonName}/cooldownGroup`, cooldownGroup.groupName);
+        });
+      }
       
       boardDb.push("./firebot/cooldownGroups/" + cooldownGroup.groupName, cleanedCooldownGroup);
       
@@ -208,9 +210,11 @@
     service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName, cooldownGroup) {
       var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
       
-      cooldownGroup.buttons.forEach((buttonName) => {
-        boardDb.delete(`./firebot/controls/${buttonName}/cooldownGroup`);
-      });
+      if(cooldownGroup.buttons != null) {
+        cooldownGroup.buttons.forEach((buttonName) => {
+          boardDb.delete(`./firebot/controls/${buttonName}/cooldownGroup`);
+        });
+      }
       
       boardDb.delete("./firebot/cooldownGroups/" + cooldownGroupName);
       
