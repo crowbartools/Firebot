@@ -4207,7 +4207,7 @@ body {
 /**
 * tile cards
 */
-.tile {
+.fb-tile {
   padding: 5px;
   margin-top: 20px;
   color: white;
@@ -4224,56 +4224,56 @@ body {
   position: relative;
 }
 
-.tile.dark-blue {
+.fb-tile.dark-blue {
   background: linear-gradient(16deg, #022442, #124b7d);
 }
 
-.tile.light-blue {
+.fb-tile.light-blue {
   background: linear-gradient(16deg, #339FC0, #46AFC6);
 }
 
-.tile.orange {
+.fb-tile.orange {
   background: linear-gradient(16deg, #EC7F2E, #FDA23C);
 }
 
-.tile.gray {
+.fb-tile.gray {
   background: linear-gradient(16deg, #525657, #5A5B5C);
 }
 
-.tile.green {
+.fb-tile.green {
   background: linear-gradient(16deg, #76BA60, #8CC673);
 }
 
-.tile.centered {
+.fb-tile.centered {
   justify-content: center;
 }
 
-.tile.space-around {
+.fb-tile.space-around {
   justify-content: space-around;
 }
 
-.tile.flex-start {
+.fb-tile.flex-start {
   justify-content: flex-start;
 }
 
-.tile .title {
+.fb-tile .title {
   font-weight: 300;
   font-size: 20px;
   color: white;
 }
 
-.tile .detail-wrapper {
+.fb-tile .detail-wrapper {
   margin-top: 11px;
 }
 
-.tile .detail {
+.fb-tile .detail {
   font-weight: 100;
   font-size: 55px;
   color: white;
   line-height: 1;
 }
 
-.tile .detail-description {
+.fb-tile .detail-description {
   font-weight: 300;
   font-size: 14px;
   color: whitesmoke;
@@ -4281,7 +4281,7 @@ body {
   text-transform: uppercase;
 }
 
-.tile .edit-btn {
+.fb-tile .edit-btn {
   visibility: hidden;
   position: absolute;
   right: 5px;
@@ -4298,17 +4298,17 @@ body {
   cursor: pointer;
 }
 
-.tile .edit-btn:hover {
+.fb-tile .edit-btn:hover {
   color: white;
   border-color: white;
   opacity: 1 !important;
 }
 
-.tile .edit-btn:before {
+.fb-tile .edit-btn:before {
   content: 'edit';
 }
 
-.tile:hover .edit-btn {
+.fb-tile:hover .edit-btn {
   visibility: visible;
   opacity: 0.5;
 }
