@@ -51,50 +51,49 @@ function createWindow () {
     mixerConnect.shortcut();
 }
 
+function pathExists(path) {
+  fs.access(path, (err) => {
+    if(err) {
+      //ENOENT means Error NO ENTity found, aka the file/folder doesn't exist.
+      if(err.code === 'ENOENT') {        
+        return false;
+      }
+    }
+  });
+  return true;
+}
+
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', function(){
     
-    // Create the user settings folder if it doesn't exist. It's required 
+    // Create the user-settings folder if it doesn't exist. It's required 
     // for the folders below that are within it
-    fs.access("./user-settings/", (err) => {
-      if(err) {
-        //ENOENT means Error NO ENTity found, aka the folder doesn't exist.
-        if(err.code === 'ENOENT') {
-          console.log("Can't find the user-settings folder, creating one now...");
-          fs.mkdir("./user-settings");
-        }
-      }
-    });
-    
-    
+    if(!pathExists("./user-settings/")) {
+      console.log("Can't find the user-settings folder, creating one now...");
+      fs.mkdir("./user-settings");
+    }
+      
     // Create the scripts folder if it doesn't exist
-    fs.access("./user-settings/scripts/", (err) => {
-      if(err) {
-        //ENOENT means Error NO ENTity found, aka the folder doesn't exist.
-        if(err.code === 'ENOENT') {
-          console.log("Can't find the scripts folder, creating one now...");
-          fs.mkdir("./user-settings/scripts");
-        }
-      }
-    });
+    if(!pathExists("./user-settings/scripts/")) {
+      console.log("Can't find the scripts folder, creating one now...");
+      fs.mkdir("./user-settings/scripts");
+    }
     
     // Create the overlay settings folder if it doesn't exist.
-    fs.access("./user-settings/overlay-settings/", (err) => {
-      if(err) {
-        //ENOENT means Error NO ENTity found, aka the folder doesn't exist.
-        if(err.code === 'ENOENT') {
-          console.log("Can't find the overlay-settings folder, creating one now...");
-          fs.mkdir("./user-settings/overlay-settings");
-          
-          // Save the default port file
-          fs.writeFile('./user-settings/overlay-settings/port.js', `WEBSOCKET_PORT = 8080`, 
-            'utf8', () => { console.log(`Set overlay port to: 8080`)});
-        }
-      }
-    });
+    if(!pathExists("./user-settings/overlay-settings/")) {
+      console.log("Can't find the overlay-settings folder, creating one now...");
+      fs.mkdir("./user-settings/overlay-settings");
+    }  
     
+    // Create the port.js file if it doesn't exist.
+    if(!pathExists("./user-settings/overlay-settings/port.js")) {
+      // Save the default port file
+      fs.writeFile('./user-settings/overlay-settings/port.js', `window.WEBSOCKET_PORT = 8080`, 
+        'utf8', () => { console.log(`Set overlay port to: 8080`)});
+    }
+  
     
     createWindow()
     renderWindow.webContents.on('did-finish-load', function() {

@@ -1,10 +1,17 @@
 function mixerSocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
-		var port = WEBSOCKET_PORT;
-		if(port == null || !Number.isInteger(port) || port <= 1024 || port >= 49151) {
-			port = 8080;
+		var port = 8080;
+		if("WEBSOCKET_PORT" in window) {
+			if(window.WEBSOCKET_PORT != null && Number.isInteger(window.WEBSOCKET_PORT) && window.WEBSOCKET_PORT > 1024 && window.WEBSOCKET_PORT < 49151) {
+				port = window.WEBSOCKET_PORT;
+			} else {
+				console.warn("Saved websocket port is not valid. Using 8080 instead...")
+			}
+		} else {
+			console.warn("/user-settings/overlay-settings/port.js could not be found. Assuming port is 8080. Resave the port setting in Firebot to generate a new port.js file.")
 		}
+		
 		ws = new ReconnectingWebSocket(`ws://localhost:${port}`);
 		ws.onopen = function(){
 			console.log(`Connection is opened on port ${port}...`);
