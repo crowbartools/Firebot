@@ -4,8 +4,20 @@
     <div class="row interactive-group-container">
       
       <!-- Show each group -->
-      <div ng-repeat="group in groupsService.getViewerGroups(true) track by $index" class="interactive-group-wrap tile">
-          <div class="interactive-groupheader tile-header">
+      <div ng-repeat="group in groupsService.getViewerGroups(true) track by $index" class="tile orange flex-start">
+        <div class="edit-btn" ng-click="showAddEditGroupModal(group)"></div>
+        <div class="title">
+          {{group.groupName}}
+        </div>
+        <div class="detail-wrapper">
+          <div class="detail">
+            {{group.users ? group.users.length : 0}}
+          </div>
+          <div class="detail-description">
+            Users
+          </div>
+        </div>
+          <!--<div class="interactive-groupheader tile-header">
               <div class="interactive-group-name tileID">{{group.groupName}}</div>
               <div class="edit-interactive-control tile-edit">
                   <button class="edit-group btn btn-default" ng-click="showAddEditGroupModal(group)">
@@ -15,7 +27,7 @@
           </div>
           <div class="interactive-group-main tile-body">
               Users: {{group.users ? group.users.length : 0}}
-          </div>
+          </div>-->
       </div>  
     </div>
     <div style="padding-top: 15px">
