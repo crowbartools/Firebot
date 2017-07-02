@@ -80,7 +80,7 @@
           if(context.shouldDelete == true) {
             groupsService.removeViewerGroup(group.groupName);
           } else {
-            groupsService.addOrUpdateViewerGroup(group);
+            groupsService.addOrUpdateViewerGroup(group, groupToEdit.groupName);
           }                      
         }
       }      

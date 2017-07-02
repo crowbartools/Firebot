@@ -60,20 +60,31 @@
       return groupList;
     }
     
-    service.addOrUpdateViewerGroup = function(group) {
+    service.addOrUpdateViewerGroup = function(group, previousName) {
       if(group.groupName == "banned") return;
       var dbGroup = new JsonDB("./user-settings/groups", true, true);
-      dbGroup.push("/" + group.groupName, group);  
+      
+      if(previousName != null && previousName !== "" && previousName !== group.groupName) {
+        deleteViewerGroup(previousName);
+      }
+        
+      dbGroup.push("/" + group.groupName, group);
+        
       service.loadViewerGroups();
     }
     
     service.removeViewerGroup = function(groupName) {
+      
+      deleteViewerGroup(groupName);
+      
+      service.loadViewerGroups();
+    }
+    
+    function deleteViewerGroup(groupName) {
       var dbGroup = new JsonDB("./user-settings/groups", true, true);
       dbGroup.delete("/" + groupName);
       
       boardService.deleteViewerGroupFromAllBoards(groupName);
-      
-      service.loadViewerGroups();
     }
     
     /**
