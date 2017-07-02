@@ -61,7 +61,7 @@
     service.loadBoardWithId = function(id) {
       $rootScope.showSpinner = true;
       return loadBoardsById([id], false).then((boards) => {
-        var board = boards[0];
+        var board = service.getBoardById(id);
         if(board != null) {
           service.setSelectedBoard(board);
         }
