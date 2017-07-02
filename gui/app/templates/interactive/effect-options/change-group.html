@@ -5,7 +5,7 @@
             <span class="change-group-effect-type">{{effect.group ? effect.group : 'Pick one'}}</span> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu change-group-effect-dropdown">
-            <li><a href ng-click="effect.group = 'default'">Default</a></li>
+            <li><a href ng-click="effect.group = 'default'">default</a></li>
             <li ng-repeat="group in viewerGroups"
                 ng-click="effect.group = group">
                   <a href>{{group}}</a>
