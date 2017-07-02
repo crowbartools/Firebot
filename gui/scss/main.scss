@@ -192,8 +192,10 @@ box-shadow: 2px 2px 7px #dcdcdc;
 
 .fb-nav {
  height: 100%;
- width: 275px;
+ width: 223px;
  display: flex;
+ flex-shrink: 0;
+ flex-grow: 0;
  flex-direction: column;
  transition: 0.5s;
  white-space: nowrap;
@@ -496,6 +498,101 @@ box-shadow: 2px 2px 7px #dcdcdc;
 .about-link.contracted {
   opacity: 0;
   visibility: hidden;
+}
+
+/**
+* tile cards
+*/
+
+.tile {
+  padding: 5px;
+  margin-top: 20px;
+  color: white;
+  border: 3px solid white;
+  text-align: center;
+  font-size: 1.2em;
+  width: 25%;
+  height: 155px;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  &.dark-blue {
+    background: linear-gradient(16deg, #022442, #124b7d);
+   }
+  &.light-blue {
+   background: linear-gradient(16deg, #339FC0, #46AFC6);
+  }
+  &.orange {
+    background: linear-gradient(16deg, #EC7F2E, #FDA23C);
+  }
+  &.gray {
+    background: linear-gradient(16deg, #525657, #5A5B5C);
+  }
+  &.green {
+    background: linear-gradient(16deg, #76BA60, #8CC673);
+  }
+  &.centered {
+      justify-content: center;
+  }
+  &.space-around {
+      justify-content: space-around;
+  }
+  &.flex-start {
+      justify-content: flex-start;
+  }
+  .title {
+    font-weight: 300;
+    font-size: 20px;
+    color: white;
+  }
+  .detail-wrapper {
+    margin-top: 11px;
+  }
+  .detail {
+    font-weight: 100;
+    font-size: 55px;
+    color: white;
+    line-height: 1;
+  }
+  .detail-description {
+    font-weight: 300;
+    font-size: 14px;
+    color: whitesmoke;
+    opacity: 0.6;
+    text-transform: uppercase;
+    
+  }
+  .edit-btn {
+    visibility: hidden;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    transition: 0.2s;
+    opacity: 0;
+    color: white;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 100;
+    border: 1px white solid;
+    border-radius: 2px;
+    padding: 0px 2px 0px 2px;
+    cursor: pointer;
+    &:hover {
+      color: white;
+      border-color: white;
+      opacity: 1 !important;
+    }
+    &:before {
+      content: 'edit';
+    }
+  }
+  &:hover .edit-btn {
+    visibility: visible;
+    opacity: 0.5;
+  }
 }
 /**
 * Bootstrap Overrides
