@@ -138,7 +138,7 @@
            if(cooldownGroup != null) {
              previousName = cooldownGroup.groupName;
            }
-           console.log(response.newCooldownGroup);
+           
            if(response.shouldDelete) {
              boardService.deleteCooldownGroupForCurrentBoard(previousName, cooldownGroup);
            } else {
