@@ -1,0 +1,41 @@
+html, body{
+	background-color:transparent;
+	margin:0px;
+	padding:0px;
+	height:100vh;
+	width:100vw;
+	overflow-x:hidden;
+	overflow-y:hidden;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.wrapper{
+	position:relative;
+	overflow:hidden;
+	color:white;
+	height:100vh;
+	width:100vw;
+}
+canvas{
+	position:absolute;
+	top:0px;
+	left:0px;
+	height:100vh;
+	width:100vw;
+}
+.notification{
+	position:absolute;
+	margin-left: auto;
+	margin-right: auto;
+	top:0px;
+	left:0px;
+	padding:5px;
+	background: linear-gradient(16deg, #022442, #124b7d);
+	color: white;
+	text-align:center;
+	font-size:12pt;
+	border-radius: 0px 0px 7px 0px;
+	p{
+		margin:0px;
+		padding:0px;
+	}
+}
