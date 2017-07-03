@@ -99,6 +99,7 @@
       }
       
       function showVideo(data){
+          var videoType = data.videoType;
           var filepath = data.filepath;
           var youtubeId = data.youtubeId;
           var videoPosition = data.videoPosition;
@@ -130,7 +131,17 @@
           }
       
           // Compile data and send to overlay.
-          var data = {"event":"video","filepath":filepath, "youtubeId": youtubeId, "videoPosition":videoPosition, "videoHeight":videoHeight, "videoWidth": videoWidth, "videoDuration":videoDuration};
+          var data = {
+            "event":"video",
+            "videoType": videoType,
+            "filepath":filepath, 
+            "youtubeId": youtubeId, 
+            "videoPosition":videoPosition, 
+            "videoHeight":videoHeight, 
+            "videoWidth": videoWidth, 
+            "videoDuration":videoDuration
+          };
+          
           service.broadcast(data);
       }
       

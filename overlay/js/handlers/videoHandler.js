@@ -3,6 +3,7 @@
 function showVideo(data){
 	// Video Packet...
 	// {"event":"video","filepath":filepath, "videoX":videoX, "videoY":videoY, "videoDuration":videoDuration};
+	var videoType = data.videoType;
 	var filepath = data.filepath;
 	var youtubeId = data.youtubeId;
 	var filepathNew = filepath.replace(/\\/g,"/");
@@ -15,7 +16,7 @@ function showVideo(data){
 	var d = new Date();
 	var divClass = d.getTime();
 
-	if(!youtubeId){
+	if(videoType === "Local Video"){
 		if (videoHeight === false && videoWidth === false){
 			// Both height and width fields left blank.
 			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
