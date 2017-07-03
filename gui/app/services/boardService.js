@@ -8,7 +8,7 @@
  
  angular
   .module('firebotApp')
-  .factory('boardService', function ($http, $q, settingsService, $rootScope) {
+  .factory('boardService', function ($http, $q, settingsService, $rootScope, utilityService) {
     
     // in memory board storage
     var _boards = {};
@@ -276,14 +276,14 @@
             try{ // Checking if the data for this board is present in settings.json
                 boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
                 if(boardUpdated != gameUpdated){ // Call backendbuilder if the dates don't match
-                    return backendBuilder(gameName, gameJson, gameUpdated, id);
+                    return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                 }else{ // Date matches, no need to rebuild.
                     console.log("This board is already inplace, no need to rebuild");
                 }
             }catch(err){
                 // This board doesn't exist, recreate the board to get it into knownBoards
                 console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
-                return backendBuilder(gameName, gameJson, gameUpdated, id);
+                return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
             }
             
             // return backendBuilder(gameName, gameJson, gameUpdated, id);
@@ -359,11 +359,24 @@
     
     // Backend Controls Builder
     // This takes the mixer json and builds out the structure for the controls file.
-    function backendBuilder(gameNameId, gameJsonInfo, gameUpdatedInfo, versionIdInfo){
+    function backendBuilder(gameNameId, gameJsonInfo, gameUpdatedInfo, versionIdInfo, utilityService){
         const gameName = gameNameId;
         const gameJson = gameJsonInfo;
         const gameUpdated = gameUpdatedInfo;
-        const versionid = versionIdInfo
+        const versionid = versionIdInfo;
+
+        // Check if game name contains a period.
+        if(gameName.indexOf('.') !== -1){
+            utilityService.showErrorModal("The board ("+gameName+") has a period in it's name. This could cause issues with Firebot. Please rename it in Mixer and try again.") 
+            return;
+        }
+
+        // Check if board name contains emoji.
+        var emojitest = isEmoji(gameName);
+        if(emojitest === true){
+            utilityService.showErrorModal("The board ("+gameName+") has emoji in it's name. Please rename the board and try again.")
+            return;
+        }
 
         // Preparing data for push to settings.js/boards/boardId
         var settingsBoard = {
@@ -400,8 +413,10 @@
                                 if(emojitest === false){
                                     var controlID = button.controlID;
                                 } else {
-                                    errorLog("Button: "+button.controlID+" has emoji in the button name. This will cause all buttons to become unresponsive on connecting. Please remove emoji from the button name field in the Mixer studio. Note that button text is what is visible to viewers, and it's fine to have emoji there.")
+                                    utilityService.showErrorModal("Button: "+button.controlID+" has emoji in the button name. This will cause all buttons to become unresponsive on connecting. Please remove emoji from the button name field in the Mixer studio. Note that button text is what is visible to viewers, and it's fine to have emoji there.")
                                 }
+
+                                
                             }catch(err){}
                             try{
                                 var text = button.text;
