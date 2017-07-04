@@ -39,13 +39,13 @@
 .interactive-control-tile {
   margin-top: 20px;
   color: white;
-  border: 3px solid white;
+  border: $tile-border;
   text-align: center;
   font-size: 1.2em;
   width: 25%;
   height: 155px;
   border-radius: 7px;
-  background: linear-gradient(16deg, #022442, #124b7d);
+  background: $dark-tile-background-color;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -131,89 +131,11 @@
   }
 }
 
-
+// Button Effects
 .functionality-settings{
-    .panel-title{
-        button{
-            margin: -10px -15px;
-            line-height:1.75;
-        }
-    }
-    .effect-settings-panel{
-        border-top: 1px solid $light-highlight;
-        margin-top: 1em;
-    }
-    .effect-setting-container{
-        padding:.5em 0em;
-        
-        ul{
-            list-style: none;
-            padding:0px;
-        }
-    }
-    .effect-info{
-        margin:1em 0em;
-    }
-}
-
-#board-settings{
-    .board-group-defaults-settings{
-        .board-group{
-            .board-group-scene{
-                background-color: $mixer-highlight;
-                padding: .5em;
-                text-align:center;
-                color:white;
-                font-weight:bold;
-                border-radius: .5em .5em 0em 0em;
-            }
-            .board-group-scene-dropdown{
-                background-color:$mixer-main;
-                padding:.5em;
-                text-align:center;
-                border-radius: 0em 0em .5em .5em;
-            }
-        }
-    }
-}
-
-.playbutton{
-    background:none;
-    border:none;
-    font-size:2em;
-    &:hover{
-        color:$light-highlight;
-    }
-}
-
-.ui-autocomplete{
-    border-radius:10px;
-    padding:5px;
-    border:none;
-    background-color: #ddd;
-    list-style:none;
-    color:$mixer-main;
-    font-weight:bold;
-    position:absolute;
-    z-index:5;
-    box-shadow: 2px 2px 5px #000;
-    height:150px;
-    overflow-y: scroll;
-    li{
-        cursor:pointer;
-        div{
-            padding:5px;
-            margin:2px;
-        }
-    }
-    li:hover{
-        color:white;
-        background-color: $mixer-highlight;
-    }
-}
-
-.ui-helper-hidden-accessible{
-    display:none;
+  .panel-body{
+    background-color: $effect-background-color;
+  }
 }
 
 .board-group-defaults-settings, .board-cooldown-groups, .interactive-button-holder.active{
@@ -239,5 +161,5 @@
             margin:6px;
         }
     }
-
 }
+
