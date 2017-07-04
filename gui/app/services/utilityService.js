@@ -7,7 +7,7 @@
 
  angular
   .module('firebotApp')
-  .factory('utilityService', function ($uibModal, listenerService) {
+  .factory('utilityService', function ($rootScope, $uibModal, listenerService) {
     var service = {};
       
     service.showModal = function(showModalContext) {
@@ -68,28 +68,29 @@
     };
     
     service.showErrorModal = function (errorMessage) {
-        var errorModalContext = {
-          templateUrl: "errorModal.html",
-          // This is the controller to be used for the modal. 
-          controllerFunc: ($scope, $uibModalInstance, message) => {
-            
-            $scope.message = message;
-            
-            $scope.close = function() {
-              $uibModalInstance.close();
-            };
-            
-            $scope.dismiss = function() {
-              $uibModalInstance.dismiss('cancel');
-            };
-          },
-          resolveObj: {
-            message: () => {
-              return errorMessage;
-            }
+      $rootScope.showSpinner = false;
+      var errorModalContext = {
+        templateUrl: "errorModal.html",
+        // This is the controller to be used for the modal. 
+        controllerFunc: ($scope, $uibModalInstance, message) => {
+          
+          $scope.message = message;
+          
+          $scope.close = function() {
+            $uibModalInstance.close();
+          };
+          
+          $scope.dismiss = function() {
+            $uibModalInstance.dismiss('cancel');
+          };
+        },
+        resolveObj: {
+          message: () => {
+            return errorMessage;
           }
-        }      
-        service.showModal(errorModalContext);
+        }
+      }      
+      service.showModal(errorModalContext);
     }
     
     // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
