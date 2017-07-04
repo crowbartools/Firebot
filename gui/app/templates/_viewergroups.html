@@ -4,20 +4,25 @@
     <div class="row interactive-group-container">
       
       <!-- Show each group -->
-      <div ng-repeat="group in groupsService.getViewerGroups(true) track by $index" class="fb-tile orange flex-start">
+      
+      <div ng-repeat="group in groupsService.getViewerGroups(true) track by $index" class="fb-tile orange centered">
         <div class="edit-btn" ng-click="showAddEditGroupModal(group)"></div>
-        <div class="title">
-          {{group.groupName}}
-        </div>
-        <div class="detail-wrapper">
-          <div class="detail">
-            {{group.users ? group.users.length : 0}}
-          </div>
-          <div class="detail-description">
-            Users
+        <div class="header">
+          <div class="title edit-btn-spacer">
+            {{group.groupName}}
           </div>
         </div>
-      </div>  
+        <div class="content row">
+          <div class="detail-wrapper nomargin">
+            <div class="detail">
+              {{group.users ? group.users.length : 0}}
+            </div>
+            <div class="detail-description">
+              Users
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div style="padding-top: 15px">
       <button class="btn btn-default" ng-click="showAddEditGroupModal()"><i class="far fa-plus"></i> New Group</button>
