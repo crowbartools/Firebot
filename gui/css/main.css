@@ -4208,14 +4208,14 @@ body {
 * tile cards
 */
 .fb-tile {
-  padding: 5px;
-  margin-top: 20px;
+  margin-bottom: 10px;
   color: white;
   border: 3px solid white;
   text-align: center;
   font-size: 1.2em;
   width: 25%;
-  height: 155px;
+  height: 100%;
+  min-height: 155px;
   border-radius: 7px;
   display: flex;
   flex-direction: column;
@@ -4224,16 +4224,34 @@ body {
   position: relative;
 }
 
+.fb-tile .header {
+  min-height: 40px;
+  width: 100%;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
 .fb-tile.dark-blue {
-  background: linear-gradient(16deg, #022442, #124b7d);
+  background: linear-gradient(16deg, #124b7d, #022442);
 }
 
 .fb-tile.light-blue {
   background: linear-gradient(16deg, #339FC0, #46AFC6);
 }
 
+.fb-tile.light-blue .header {
+  background: linear-gradient(16deg, #2A8FAE, #45A8BF);
+}
+
 .fb-tile.orange {
   background: linear-gradient(16deg, #EC7F2E, #FDA23C);
+}
+
+.fb-tile.orange .header {
+  background: linear-gradient(16deg, #F17F1E, #F6953A);
 }
 
 .fb-tile.gray {
@@ -4242,6 +4260,10 @@ body {
 
 .fb-tile.green {
   background: linear-gradient(16deg, #76BA60, #8CC673);
+}
+
+.fb-tile.green .header {
+  background: linear-gradient(16deg, #6BA65D, #81BD68);
 }
 
 .fb-tile.centered {
@@ -4257,13 +4279,49 @@ body {
 }
 
 .fb-tile .title {
-  font-weight: 300;
+  font-weight: 100;
   font-size: 20px;
+  color: white;
+  margin-bottom: 5px;
+}
+
+.fb-tile .title.edit-btn-spacer {
+  margin-top: 14px;
+}
+
+.fb-tile .title.bold {
+  font-weight: 600;
+}
+
+.fb-tile .content {
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  flex-grow: 1;
+  flex-direction: column;
+  margin: 5px 0 5px 0;
+}
+
+.fb-tile .content.row {
+  flex-direction: row;
+}
+
+.fb-tile .subtitle {
+  font-weight: 400;
+  font-size: 15px;
   color: white;
 }
 
 .fb-tile .detail-wrapper {
-  margin-top: 11px;
+  margin-top: 5px;
+  min-width: 95px;
+}
+
+.fb-tile .detail-wrapper.nomargin {
+  margin: 0;
 }
 
 .fb-tile .detail {
@@ -4277,7 +4335,7 @@ body {
   font-weight: 300;
   font-size: 14px;
   color: whitesmoke;
-  opacity: 0.6;
+  opacity: 0.7;
   text-transform: uppercase;
 }
 

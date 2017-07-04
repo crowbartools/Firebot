@@ -89,6 +89,12 @@
             
             var uuid = _.uniqueId(); 
             
+            $scope.setVideoType = function(type) {
+              $scope.effect.videoType = type;
+              $scope.effect.youtube = "";
+              $scope.effect.file = "";
+            };
+            
             $scope.openFileExporer = function() {
               var registerRequest = {
                 type: listenerService.ListenerType.VIDEO_FILE,
