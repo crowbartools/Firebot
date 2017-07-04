@@ -49,16 +49,14 @@
       </div>
   </div>
   <div class="effect-setting-container">
-      <div class="effect-specific-title"><h4>How big should it be?</h4></div>
+      <div class="effect-specific-title">
+        <h4 style="display:inline-block;margin-right:20px;">How big should it be?</h4>
+        <label class="control-fb control--checkbox" style="display:inline;"> Force 16:9 Ratio
+          <input type="checkbox" ng-click="forceRatioToggle();" ng-checked="forceRatio">
+          <div class="control__indicator"></div>
+        </label>
+      </div>
       <div class="input-group">
-          <span class="input-group-addon">Height (in pixels)</span>
-          <input 
-            type="text" 
-            class="form-control" 
-            aria-describeby="video-height-setting-type" 
-            type="number"
-            ng-change="calculateSize('Height', effect.height)"
-            ng-model="effect.height">
           <span class="input-group-addon">Width (in pixels)</span>
           <input 
             type="text" 
@@ -67,6 +65,14 @@
             type="number"
             ng-change="calculateSize('Width', effect.width)"
             ng-model="effect.width">
+          <span class="input-group-addon">Height (in pixels)</span>
+          <input 
+            type="text" 
+            class="form-control" 
+            aria-describeby="video-height-setting-type" 
+            type="number"
+            ng-change="calculateSize('Height', effect.height)"
+            ng-model="effect.height">
       </div>
       <div class="effect-info alert alert-info">
           Just put numbers in the fields (ex: 250). This will set the max width/height of the video and scale it down proportionally.

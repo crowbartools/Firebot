@@ -92,16 +92,27 @@
               $scope.effect.videoType = type;
             }
 
+            // Force ratio toggle
+            $scope.forceRatio = true;
+            $scope.forceRatioToggle = function(){
+              if($scope.forceRatio === true){
+                $scope.forceRatio = false;
+              } else {
+                $scope.forceRatio = true;
+              }
+            }
+
             // Calculate 16:9
             // This checks to see which field the user is filling out, and then adjust the other field so it's always 16:9.
             $scope.calculateSize = function(widthOrHeight, size) {
-              if(size !== ""){
-                if(widthOrHeight == "Width"){
-                  $scope.effect.height = Math.round((size/9)*16);
-                } else {
-                  $scope.effect.width = Math.round((size/16)*9);
+              console.log($scope.forceRatio);
+              if(size !== "" ){
+                if(widthOrHeight == "Width" && $scope.forceRatio === true){
+                    $scope.effect.height = String( Math.round((size/16)*9) );
+                } else if (widthOrHeight == "Height" && $scope.forceRatio === true){
+                    $scope.effect.width = String( Math.round((size*16)/9) );
                 }
-              } else {
+              } else{
                 $scope.effect.height = ""
                 $scope.effect.width = ""
               }
