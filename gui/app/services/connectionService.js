@@ -19,6 +19,7 @@
     
     var authInfo = {
         clientId: process.env.CLIENT_ID,
+        clientSecret: "firebot",
         authorizationUrl: "https://mixer.com/oauth/authorize",
         tokenUrl: "https://mixer.com/api/v1/oauth/token",
         useBasicAuthorizationHeader: false,
@@ -95,7 +96,12 @@
       const oauthProvider = electronOauth2(authInfo, authWindowParams);
       $q.when(oauthProvider.getAccessToken({ scope: scopes }))
           .then(token => {
+            if(token.name != null && token.name === "ValidationError") {               
+              utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
+              console.log(token);
+            } else {
               userInfo(type, token.access_token, token.refresh_token);
+            }   
           }, err => {
               //error requesting access 
               $rootScope.showSpinner = false;
