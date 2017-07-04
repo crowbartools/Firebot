@@ -57,6 +57,7 @@
             class="form-control" 
             aria-describeby="video-height-setting-type" 
             type="number"
+            ng-change="calculateSize('Height', effect.height)"
             ng-model="effect.height">
           <span class="input-group-addon">Width (in pixels)</span>
           <input 
@@ -64,6 +65,7 @@
             class="form-control" 
             aria-describeby="video-width-setting-type" 
             type="number"
+            ng-change="calculateSize('Width', effect.width)"
             ng-model="effect.width">
       </div>
       <div class="effect-info alert alert-info">
