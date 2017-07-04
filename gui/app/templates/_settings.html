@@ -29,6 +29,20 @@
           </div>
           <div class="row">
             <div class="setting col-sm-6">
+              <div class="setting-heading">Theme</div>
+              <div class="setting-description">Choose your color theme for Firebot!</div>
+              <div class="dropdown options-themes-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-themes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getTheme()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-sounds">
+                  <li><a href ng-click="settings.setTheme('Light')">Light</a></li>
+                  <li><a href ng-click="settings.setTheme('Dark')">Dark</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="setting col-sm-6">
               <div class="setting-heading">Sounds</div>
               <div class="setting-description">Let Firebot play sounds! For example, you can get a warning when Firebot connects or disconnects.</div>
               <div class="dropdown options-sounds-dropdown">
