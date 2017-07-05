@@ -19,7 +19,6 @@
     
     var authInfo = {
         clientId: process.env.CLIENT_ID,
-        clientSecret: "firebot",
         authorizationUrl: "https://mixer.com/oauth/authorize",
         tokenUrl: "https://mixer.com/api/v1/oauth/token",
         useBasicAuthorizationHeader: false,
