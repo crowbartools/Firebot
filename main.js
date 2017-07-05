@@ -105,6 +105,13 @@ function pathExists(path) {
       fs.writeFile('./user-settings/overlay-settings/port.js', `window.WEBSOCKET_PORT = 8080`, 
         'utf8', () => { console.log(`Set overlay port to: 8080`)});
     })  
+
+    // Create the controls folder if it doesn't exist.
+    pathExists("./user-settings/controls")
+    .then((resolve) => {
+      console.log("Can't find the controls folder, creating one now...");
+      fs.mkdir("./user-settings/controls");
+    })  
     
     createWindow()
     renderWindow.webContents.on('did-finish-load', function() {
