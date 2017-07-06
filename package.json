@@ -31,7 +31,9 @@
   "devDependencies": {
     "electron": "1.4.15",
     "electron-packager": "^8.5.1",
-    "electron-rebuild": "^1.5.6"
+    "electron-rebuild": "^1.5.6",
+    "grunt-electron-installer": "^2.1.0",
+    "grunt": "^1.0.1"
   },
   "dependencies": {
     "angular": "^1.5.5",
@@ -43,6 +45,7 @@
     "beam-interactive-node2": "^2.0.0",
     "compare-versions": "^3.0.1",
     "dotenv": "^4.0.0",
+    "electron-gh-releases": "^2.0.4",
     "electron-oauth2": "^2.4.1",
     "howler": "^2.0.3",
     "kbm-robot": "0.0.4",
