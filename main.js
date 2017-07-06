@@ -210,18 +210,21 @@ function autoUpdate(){
   // Check for updates
   // `status` returns true if there is a new update available
   updater.check((err, status) => {
-    console.log(status);
     if (!err && status) {
+      console.log('Should we download an update? '+status);
+
       // Download the update
       updater.download()
+    } else {
+      console.log('Error: Could not start the auto updater.');
     }
   })
 
   // When an update has been downloaded
   updater.on('update-downloaded', (info) => {
-    console.log(info);
+    console.log('Updated downloaded. Installing...');
     // Restart the app and install the update
-    //updater.install()
+    updater.install()
   })
 
   // Access electrons autoUpdater
