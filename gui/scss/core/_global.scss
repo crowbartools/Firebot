@@ -17,6 +17,18 @@
                                   supported by Chrome and Opera */
 }
 
+// Fix icon alignment
+.fa, .fas, .far, .fal, .fab {
+  vertical-align: -15%;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+
+///
+
 /////////////////////////////////
 // v4.0 STYLES (Needs organizing!!)
 ////////////////////////////////
@@ -44,8 +56,8 @@ body {
 .tab-header {
  width: 100%;
  height: 65px;
- background: $light-background-color;
- border-bottom: 0.01em solid $light-background-border;
+ background: $light-background-color + 20%;
+ border-bottom: 2px solid $light-background-border;
  display: flex;
  flex-flow: row;
  align-items: center;
@@ -56,7 +68,6 @@ body {
  font-weight: 400;
  color: $content-text-color;
  flex-shrink: 0;
- box-shadow: 2px 2px 7px $light-background-box-shadow;
  z-index: 100;
 }
 .tab-body-wrapper {
@@ -116,7 +127,7 @@ body {
  width: 100%;
  height: 65px;
  background: $dark-background-color;
- border-bottom: 0.01em solid $dark-background-border;
+ border-bottom: 2px solid $dark-background-border;
  display: flex;
  flex-flow: row;
  align-items: center;
@@ -200,10 +211,10 @@ body {
 
 .nav-expand-button {
  position: absolute;
- top: 14px;
  right: 10px;
  font-size: 36px;
  color: white;
+ color: $navbar-collapse-btn;
  cursor: pointer;
 }
 
@@ -270,8 +281,8 @@ body {
 
 .logins-wrapper {
     width: 160px;
-    height: 64px;
-    background: $light-background-color;
+    height: 63px;
+    background: $light-background-color + 20%;
     border-left: 2px solid $light-background-border;
     display: flex;
     align-items: center;
@@ -281,7 +292,7 @@ body {
     cursor: pointer;
 }
 .logins-wrapper:hover {
-    background: $light-background-color;
+    background: $text-dropdown-hover-color;
 }
 
 
@@ -299,7 +310,7 @@ body {
 }
 
 .arrow {
-  border: solid $content-text-color;
+  border: solid $downarrow-color;
   border-width: 0 2px 2px 0;
   display: inline-block;
   padding: 3px;
@@ -397,14 +408,14 @@ body {
   padding-left: 5px;
   font-weight: 500;
   font-size: 11px;
-  color: $content-text-color;
+  color: $change-board-dropdown-color;
   height: 100%;
   display: flex;
   align-items: center;
-  cursor: pointer;
+  cursor: pointer !important;
 }
 .text-dropdown:hover,.text-dropdown.open {
-  background: $medium-background-color;
+  background: $text-dropdown-hover-color;
 }
 .text-dropdown .arrow {
   width: 5px;
@@ -599,13 +610,17 @@ body {
     margin-bottom: 0px;
 }
 
+.effect-info {
+  margin-top: 20px;
+}
+
 // Scrollbar adjustments
 ::-webkit-scrollbar {
   width: 10px;
 }
  
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 4px $scrollbar-background-color; 
+  background-color: $scrollbar-background-color
 }
  
 ::-webkit-scrollbar-thumb {
@@ -727,7 +742,7 @@ body {
 .board-settings-icon {
   margin-left: 15px;
   font-size: 15px;
-  color: $content-text-color;
+  color: $board-settings-btn-color;
 }
 
 .board-settings-icon:hover {
@@ -833,6 +848,9 @@ body {
   top: 7px;
   z-index: 100;
   color: $info-color;
+  &.btn-group-adjust {
+    right: 104px;
+  }
 }
 
 .cooldown-list-btn-wrapper {

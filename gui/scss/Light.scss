@@ -1,12 +1,14 @@
-$light-background-color: white;
+$light-background-color: #F3F5F5;
 $light-background-border: #EAECEC;
 $light-background-box-shadow: #dcdcdc;
-$medium-background-color: #dcdcdc;
+$medium-background-color: #dcdcdc; 
 $dark-background-color: #25292a;
 $dark-background-border: #383d3f;
 $dark-background-box-shadow: #383d3f;
 
 $content-text-color: #25292a;
+
+$light-text-color: #808080;
 
 $bad-color:red;
 $good-color:lightgreen;
@@ -14,7 +16,7 @@ $info-color:#30a6ce;
 $highlight-color: #EBB11F;
 
 // Scrollbar
-$scrollbar-background-color: $dark-background-color + 30%;
+$scrollbar-background-color: $medium-background-color;
 $scrollbar-bar-color: $dark-background-border + 50%;
 
 // Navigation
@@ -41,6 +43,16 @@ $quaternary-tile-header-background-color: linear-gradient(16deg, #6BA65D, #81BD6
 
 // Button Effects
 $effect-background-color: $light-background-color;
+
+// misc
+$text-dropdown-hover-color: #F3F3F3;
+$board-settings-btn-color: $light-text-color;
+$change-board-dropdown-color: $light-text-color;
+$downarrow-color: $light-text-color;
+$navbar-collapse-btn: orange;
+
+
+
 
 // Import Core Styles
 @import './core/$importer';

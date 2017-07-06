@@ -131,7 +131,7 @@
 					</ol>
 					<div class="input-group" style="width: 55%;">
 						<input id="wizardIdField" type="text" class="form-control" placeholder="Enter code" ng-model="firstBoard.id">
-						<span class="wizard-paste-btn clickable" uib-tooltip="Paste clipboard contents" ng-click="pasteClipboard('wizardIdField')"><i class="fas fa-paste"></i></span>
+						<span class="wizard-paste-btn btn-group-adjust clickable" uib-tooltip="Paste clipboard contents" ng-click="pasteClipboard('wizardIdField')"><i class="fas fa-paste"></i></span>
 						<span class="input-group-btn">
 							<button class="btn btn-default" type="button" ng-click="addBoard()" ng-disabled="firstBoard.id.toString().trim().length === 0">Add Board</button>
 						</span>
