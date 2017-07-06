@@ -116,6 +116,15 @@
     service.setOverlayCompatibility = function(overlay) {
       pushDataToFile('/settings/overlayImages', overlay);
     }
+
+    service.getTheme = function() {
+      var theme = getDataFromFile('/settings/theme');
+      return theme != null ? theme : "Light";
+    }
+    
+    service.setTheme = function(theme) {
+      pushDataToFile('/settings/theme', theme);
+    }
     
     service.soundsEnabled = function() {
       var sounds = getDataFromFile('/settings/sounds');

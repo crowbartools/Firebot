@@ -151,6 +151,11 @@ const shell = electron.shell;
           $scope.updateIsAvailable = updateData.updateIsAvailable;
         });
       }
+
+      // Apply Theme
+      $scope.appTheme = function() {
+        return settingsService.getTheme();
+      }
   });
 
   app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {

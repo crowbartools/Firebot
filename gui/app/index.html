@@ -49,13 +49,9 @@
     <script type="text/javascript" src="./services/updatesService.js"></script>
     <script type="text/javascript" src="./services/websocketService.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
-      
-    <!-- Bootstrap core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="../css/main.css" rel="stylesheet">
-    <link href="../css/animate.css" rel="stylesheet">
+    <link ng-href="../css/{{appTheme()}}.css" rel="stylesheet">
   </head>
   <body>
     <div class='loader-wrapper' ng-if="showSpinner">
