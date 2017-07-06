@@ -11,6 +11,8 @@
   .factory('settingsService', function () {
     var service = {};
     
+    var settingsCache = {}
+    
     function getSettingsFile() {
       return new JsonDB("./user-settings/settings", true, true);
     }
@@ -18,19 +20,23 @@
     function pushDataToFile(path, data) {
       try {
           getSettingsFile().push(path, data);
+          settingsCache[path] = data;
       } catch(err){};
     }
     
-    function getDataFromFile(path) {
-      var data = null;
+    function getDataFromFile(path, forceCacheUpdate) {
       try{
-          data = getSettingsFile().getData(path);
+        if(settingsCache[path] == null || forceCacheUpdate) {
+          var data = getSettingsFile().getData(path);
+          settingsCache[path] = data;
+        }          
       } catch(err){};
-      return data
+      return settingsCache[path];
     }
     
     function deleteDataAtPath(path) {
       getSettingsFile().delete(path);
+      delete settingsCache[path];
     }
     
     service.getLastBoardName = function() {
@@ -109,6 +115,15 @@
     
     service.setOverlayCompatibility = function(overlay) {
       pushDataToFile('/settings/overlayImages', overlay);
+    }
+
+    service.getTheme = function() {
+      var theme = getDataFromFile('/settings/theme');
+      return theme != null ? theme : "Light";
+    }
+    
+    service.setTheme = function(theme) {
+      pushDataToFile('/settings/theme', theme);
     }
     
     service.soundsEnabled = function() {
