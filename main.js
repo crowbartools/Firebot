@@ -9,8 +9,55 @@ const {ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
+const GhReleases = require('electron-gh-releases')
 
 require('dotenv').config()
+
+
+// Handle Squirrel events
+var handleStartupEvent = function() {
+  if (process.platform !== 'win32') {
+    return false;
+  }
+
+  var squirrelCommand = process.argv[1];
+  switch (squirrelCommand) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+
+      // Optionally do things such as:
+      //
+      // - Install desktop and start menu shortcuts
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //   explorer context menus
+
+      // Always quit when done
+      app.quit();
+
+      return true;
+    case '--squirrel-uninstall':
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+
+      // Always quit when done
+      app.quit();
+
+      return true;
+    case '--squirrel-obsolete':
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+      app.quit();
+      return true;
+  }
+};
+
+if (handleStartupEvent()) {
+  return;
+}
+
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -116,6 +163,7 @@ function pathExists(path) {
     createWindow()
     renderWindow.webContents.on('did-finish-load', function() {
         renderWindow.show();
+        autoUpdate();
     });
   })
 
@@ -149,6 +197,36 @@ function pathExists(path) {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+// Updater
+function autoUpdate(){
+  let options = {
+    repo: 'firebottle/firebot',
+    currentVersion: app.getVersion()
+  }
+
+  const updater = new GhReleases(options)
+
+  // Check for updates
+  // `status` returns true if there is a new update available
+  updater.check((err, status) => {
+    console.log(status);
+    if (!err && status) {
+      // Download the update
+      updater.download()
+    }
+  })
+
+  // When an update has been downloaded
+  updater.on('update-downloaded', (info) => {
+    console.log(info);
+    // Restart the app and install the update
+    //updater.install()
+  })
+
+  // Access electrons autoUpdater
+  updater.autoUpdater
+}
 
 // Interactive handler
 const mixerConnect = require('./lib/interactive/mixer-interactive.js');
