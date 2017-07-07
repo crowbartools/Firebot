@@ -14,8 +14,14 @@
     var service = {}
     
     service.updateData = {};
+    service.hasCheckedForUpdates = false;
     
-    service.hasCheckedForUpdates = false;  
+    // Updater
+    let options = {
+        repo: 'firebottle/firebot',
+        currentVersion: app.getVersion()
+    }
+    const updater = new GhReleases(options)  
     
     service.updateIsAvailable = function() {
       return service.hasCheckedForUpdates ? service.updateData.updateIsAvailable : false;
@@ -85,28 +91,24 @@
     }
 
     service.downloadAndInstallUpdate = function(){
-        // Updater
-        let options = {
-            repo: 'firebottle/test',
-            currentVersion: app.getVersion()
-        }
-
-        const updater = new GhReleases(options)
 
         // Download Update
         console.log('Downloading update...');
-        updater.download()
-
-        // When an update has been downloaded
-        updater.on('update-downloaded', (info) => {
-            console.log('Updated downloaded. Installing...');
-            // Restart the app and install the update
-            updater.install()
-        })
+        updater.download();
 
         // Access electrons autoUpdater
         updater.autoUpdater
     }
+    
+    // When an update has been downloaded
+    updater.on('update-downloaded', (info) => {
+        console.log('Updated downloaded. Installing...');
+        // Restart the app and install the update
+        updater.install();
+    });
+  
+    
+    
 
     return service;
   });
