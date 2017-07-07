@@ -88,7 +88,7 @@
         // Updater
         let options = {
             repo: 'firebottle/test',
-            currentVersion: app.getVersion()
+            currentVersion: require('electron').remote.app.getVersion()
         }
 
         const updater = new GhReleases(options)
