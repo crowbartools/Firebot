@@ -5,7 +5,7 @@
  const _ = require('underscore')._;
  const JsonDb = require('node-json-db');
  const compareVersions = require('compare-versions');
-
+ const GhReleases = require('electron-gh-releases');
 
  angular
   .module('firebotApp')
@@ -82,6 +82,30 @@
               reject(false);
             });
         });
+    }
+
+    service.downloadAndInstallUpdate = function(){
+        // Updater
+        let options = {
+            repo: 'firebottle/firebot',
+            currentVersion: app.getVersion()
+        }
+
+        const updater = new GhReleases(options)
+
+        // Download Update
+        console.log('Downloading update...');
+        updater.download()
+
+        // When an update has been downloaded
+        updater.on('update-downloaded', (info) => {
+            console.log('Updated downloaded. Installing...');
+            // Restart the app and install the update
+            updater.install()
+        })
+
+        // Access electrons autoUpdater
+        updater.autoUpdater
     }
 
     return service;

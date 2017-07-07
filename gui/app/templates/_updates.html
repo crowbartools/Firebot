@@ -17,7 +17,7 @@
         </div>
         <div class="update-notes" ng-bind-html="getUpdateData().gitNotes"></div>
         <div class="update-buttons">
-            <a class="github-link" href="{{getUpdateData().gitLink}}"><button class="btn btn-primary" ng-if="getUpdateData().updateIsAvailable">Download</button></a>
+            <a class="github-link" href ng-click="downloadAndInstallUpdate()"><button class="btn btn-primary" ng-if="getUpdateData().updateIsAvailable">Download</button></a>
             <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3Abug')"><button class="btn btn-danger">Report Bugs</button></a>
             <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3A%22Feature+Request%22')"><button class="btn btn-info">Suggest Features</button></a>  
         </div>

@@ -9,7 +9,6 @@ const {ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
-const GhReleases = require('electron-gh-releases')
 
 require('dotenv').config()
 
@@ -163,7 +162,6 @@ function pathExists(path) {
     createWindow()
     renderWindow.webContents.on('did-finish-load', function() {
         renderWindow.show();
-        autoUpdate();
     });
   })
 
@@ -198,38 +196,6 @@ function pathExists(path) {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-// Updater
-function autoUpdate(){
-  let options = {
-    repo: 'firebottle/firebot',
-    currentVersion: app.getVersion()
-  }
-
-  const updater = new GhReleases(options)
-
-  // Check for updates
-  // `status` returns true if there is a new update available
-  updater.check((err, status) => {
-    if (!err && status) {
-      console.log('Should we download an update? '+status);
-
-      // Download the update
-      updater.download()
-    } else {
-      console.log('Error: Could not start the auto updater.');
-    }
-  })
-
-  // When an update has been downloaded
-  updater.on('update-downloaded', (info) => {
-    console.log('Updated downloaded. Installing...');
-    // Restart the app and install the update
-    updater.install()
-  })
-
-  // Access electrons autoUpdater
-  updater.autoUpdater
-}
-
 // Interactive handler
 const mixerConnect = require('./lib/interactive/mixer-interactive.js');
+
