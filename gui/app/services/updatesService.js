@@ -107,9 +107,6 @@
         updater.install();
     });
   
-    
-    
-
     return service;
   });
 })();
