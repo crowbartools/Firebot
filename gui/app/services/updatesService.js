@@ -94,7 +94,7 @@
       console.log("sending download request");
       listenerService.registerListener(registerRequest, () => {
         console.log("downloaded...installing");
-        ipcRenderer.send('installUpdate');
+        //ipcRenderer.send('installUpdate');
       });      
     }
 

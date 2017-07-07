@@ -12,18 +12,7 @@ const fs = require('fs')
 
 require('dotenv').config()
 
-
 const GhReleases = require('electron-gh-releases')
-
-// Updater
-let options = {
-    repo: 'firebottle/firebot',
-    currentVersion: app.getVersion()
-}
-const updater = new GhReleases(options);
-// Access electrons autoUpdater
-updater.autoUpdater
-
 
 // Handle Squirrel events
 var handleStartupEvent = function() {
@@ -205,26 +194,39 @@ function pathExists(path) {
     mixerConnect.shortcutUnregister();
   });
   
-  
+  // Run Updater
   ipcMain.on('downloadUpdate', function(event, uniqueid) {
     // Download Update
-    console.log('Downloading update...');
-    updater.download();
+    let options = {
+      repo: 'firebottle/test',
+      currentVersion: app.getVersion()
+    }
+
+    var updater = new GhReleases(options)
+
+    updater.check((err, status) => {
+      if (!err && status) {
+        console.log('Should we download an update? '+status);
+
+        // Download the update
+        updater.download()
+      } else {
+        console.log('Error: Could not start the auto updater.');
+        console.log(err);
+      }
+    })
+
+    // When an update has been downloaded
+    updater.on('update-downloaded', (info) => {
+      console.log('Updated downloaded. Installing...');
+      // Restart the app and install the update
+      updater.install()
+    })
+
+    // Access electrons autoUpdater
+    updater.autoUpdater
   });
-  
-  // When an update has been downloaded
-  updater.on('update-downloaded', (info) => {
-      console.log('Updated downloaded.');
-      // Tell the front end we downloaded an update
-      renderWindow.webContents.send('updateDownloaded', "");
-  });
-  
-  ipcMain.on('installUpdate', function(event, uniqueid) {
-    // Install Update
-    console.log('Install update...');
-    updater.install();  
-  });
-  
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
