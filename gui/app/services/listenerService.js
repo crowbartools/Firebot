@@ -15,6 +15,7 @@
       connectionChangeRequest: {},
       eventLog: {},
       error: {},
+      update: {},
       playSound: {},
       showImage: {},
       showVideo: {},
@@ -30,6 +31,7 @@
       CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
       EVENT_LOG: "eventLog",
       ERROR: "error",
+      UPDATE: "update",
       PLAY_SOUND: "playSound",
       SHOW_IMAGE: "showImage",
       SHOW_VIDEO: "showVideo",
@@ -149,6 +151,15 @@
     */
     ipcRenderer.on('error', function (event, errorMessage){
       _.forEach(registeredListeners.error, (listener, key, list) => {
+        runListener(listener, errorMessage);
+      });
+    });
+
+    /**
+    * Update event listener
+    */
+    ipcRenderer.on('update', function (){
+      _.forEach(registeredListeners.update, (listener, key, list) => {
         runListener(listener, errorMessage);
       });
     });
