@@ -15,7 +15,7 @@
       connectionChangeRequest: {},
       eventLog: {},
       error: {},
-      update: {},
+      installUpdate: {},
       playSound: {},
       showImage: {},
       showVideo: {},
@@ -31,7 +31,7 @@
       CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
       EVENT_LOG: "eventLog",
       ERROR: "error",
-      UPDATE: "update",
+      INSTALL_UPDATE: "installUpdate",
       PLAY_SOUND: "playSound",
       SHOW_IMAGE: "showImage",
       SHOW_VIDEO: "showVideo",
@@ -73,6 +73,13 @@
             }
           }
           break;
+        case ListenerType.INSTALL_UPDATE:
+            registeredListeners.update[uuid] = listener;
+            if(publishEvent) {
+              // call the event to download first
+              ipcRenderer.send('downloadUpdate');
+            }
+          break;
         default:
           registeredListeners[listener.type][uuid] = listener;
       }
@@ -88,7 +95,7 @@
         default:
           delete registeredListeners[type][uuid];
       }
-    }
+    }    
     
     /**
     * File path event listeners 
@@ -158,8 +165,8 @@
     /**
     * Update event listener
     */
-    ipcRenderer.on('update', function (){
-      _.forEach(registeredListeners.update, (listener, key, list) => {
+    ipcRenderer.on('updateDownloaded', function (){
+      _.forEach(registeredListeners.INSTALL_UPDATE, (listener, key, list) => {
         runListener(listener, errorMessage);
       });
     });

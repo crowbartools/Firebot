@@ -8,7 +8,7 @@
 
  angular
   .module('firebotApp')
-  .factory('updatesService', function ($q, $http, $sce, settingsService, utilityService) {
+  .factory('updatesService', function ($q, $http, $sce, settingsService, utilityService, listenerService) {
     // factory/service object
     var service = {}
     
@@ -83,8 +83,18 @@
         });
     }
 
-    service.downloadAndInstallUpdate = function(){
+    service.downloadAndInstallUpdate = function() {
+    
         
+      var registerRequest = {
+        type: listenerService.ListenerType.INSTALL_UPDATE,
+        runOnce: true,
+        publishEvent: true
+      }
+      
+      listenerService.registerListener(registerRequest, () => {
+        ipcRenderer.send('installUpdate');
+      });      
     }
 
     return service;
