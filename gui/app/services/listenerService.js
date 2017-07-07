@@ -74,7 +74,7 @@
           }
           break;
         case ListenerType.INSTALL_UPDATE:
-            registeredListeners.update[uuid] = listener;
+            registeredListeners.installUpdate[uuid] = listener;
             if(publishEvent) {
               // call the event to download first
               ipcRenderer.send('downloadUpdate');

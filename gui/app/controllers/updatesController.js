@@ -14,5 +14,9 @@
       if(!updatesService.hasCheckedForUpdates) {
         updatesService.checkForUpdate();
       }
+      
+      $scope.downloadAndInstallUpdate = function() {
+        updatesService.downloadAndInstallUpdate();
+      }
    });
  })();

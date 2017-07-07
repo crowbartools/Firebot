@@ -84,7 +84,6 @@
     }
 
     service.downloadAndInstallUpdate = function() {
-    
         
       var registerRequest = {
         type: listenerService.ListenerType.INSTALL_UPDATE,
@@ -92,7 +91,9 @@
         publishEvent: true
       }
       
+      console.log("sending download request");
       listenerService.registerListener(registerRequest, () => {
+        console.log("downloaded...installing");
         ipcRenderer.send('installUpdate');
       });      
     }
