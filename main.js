@@ -4,15 +4,19 @@ const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 // IPC for conveying events between main process and render processes.
-const {ipcMain} = require('electron')
+const {ipcMain, shell} = require('electron')
 
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
 
+const JsonDb = require('node-json-db');
+
 require('dotenv').config()
 
-const GhReleases = require('electron-gh-releases')
+const GhReleases = require('electron-gh-releases');
+
+const settings = require('./lib/interactive/settings-access').settings;
 
 // Handle Squirrel events
 var handleStartupEvent = function() {
@@ -205,13 +209,13 @@ function pathExists(path) {
     var updater = new GhReleases(options)
 
     updater.check((err, status) => {
-      if (!err && status) {
+      if (!err) {
         console.log('Should we download an update? '+status);
 
         // Download the update
-        updater.download()
+        updater.download();
       } else {
-        console.log('Error: Could not start the auto updater.');
+        renderWindow.webContents.send('updateError', "Could not start the updater.");
         console.log(err);
       }
     })
@@ -219,12 +223,28 @@ function pathExists(path) {
     // When an update has been downloaded
     updater.on('update-downloaded', (info) => {
       console.log('Updated downloaded. Installing...');
-      // Restart the app and install the update
-      updater.install()
+      //let the front end know and wait a few secs.
+      renderWindow.webContents.send('updateDownloaded');
+      
+      setTimeout(function () {
+        // Restart the app and install the update
+        settings.setJustUpdated(true);
+        
+        updater.install();
+      }, 3*1000);
     })
 
     // Access electrons autoUpdater
     updater.autoUpdater
+  });
+  
+  // Opens the firebot root folder
+  ipcMain.on('openRootFolder', function(event) {
+    // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead 
+    // of opening to the poarent folder with 'Firebot'folder selected. 
+    var rootFolder = path.resolve(process.cwd() + path.sep + "fakefile.txt");
+    console.log(rootFolder);
+    shell.showItemInFolder(rootFolder);
   });
 
 

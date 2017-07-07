@@ -891,10 +891,10 @@ body {
   font-size: 10px;
   position: relative;
   text-indent: -9999em;
-  border-top: 1.1em solid $dark-background-border;
-  border-right: 1.1em solid $dark-background-border;
-  border-bottom: 1.1em solid $dark-background-border;
-  border-left: 1.1em solid $light-background-color;
+  border-top: 1.1em solid orange;
+  border-right: 1.1em solid orange;
+  border-bottom: 1.1em solid orange;
+  border-left: 1.1em solid rgba(255, 165, 0, 0.18);
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   transform: translateZ(0);

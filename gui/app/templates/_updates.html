@@ -6,9 +6,10 @@
             <p><i class="fas fa-check-circle"></i> Firebot is up-to-date.</p>
         </div>
       
-        <div class="update-alert alert alert-warning" ng-if="getUpdateData().updateIsAvailable">
-            <p>Hey! It looks like there was an update released!</p> <p>You can update by following these steps. Backup your user-settings folder then hit the download button. Download the newest zip file for the release. Then extract into your current Firebot folder, overwrite all files, then reload the app.</p>
+        <div class="update-alert alert alert-warning" style="display: inline-block;" ng-if="getUpdateData().updateIsAvailable">
+            <p>Hey! It looks like there was an update released!</p> <p>You can update by clicking the button below.</p>
         </div>
+        
         <div class="latest-update">
             {{getUpdateData().gitName}}
         </div>
@@ -17,10 +18,30 @@
         </div>
         <div class="update-notes" ng-bind-html="getUpdateData().gitNotes"></div>
         <div class="update-buttons">
-            <a class="github-link" href ng-click="downloadAndInstallUpdate()"><button class="btn btn-primary" ng-if="getUpdateData().updateIsAvailable">Download</button></a>
+            <a class="github-link" href><button class="btn btn-primary" ng-if="getUpdateData().updateIsAvailable" ng-click="downloadAndInstallUpdate()">Update</button></a>
             <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3Abug')"><button class="btn btn-danger">Report Bugs</button></a>
-            <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3A%22Feature+Request%22')"><button class="btn btn-info">Suggest Features</button></a>  
+            <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3A%22Feature+Request%22')"><button class="btn btn-info">Suggest Features</button></a>
         </div>
     </div>
   </div>
 </div>
+
+<!-- Download Modal -->
+<script type="text/ng-template" id="downloadModal.html">
+  <div class="modal-header">
+    <h4 class="modal-title"></h4>
+  </div>
+  <div class="modal-body" style="text-align:center;">
+    <h1>{{downloadComplete ? 'Download complete!' : 'Downloading update...'}}</h1>
+    <h3 ng-if="downloadComplete" style="color:darkgray;">Firebot will restart shortly and install the update...</h3>
+    <div style="overflow: hidden;">
+      <div class="loader">Loading...</div>
+    </div>
+    <p ng-if="downloadHasError" style="color:red;">
+      {{errorMessage}}
+    </p>
+    <button ng-if="downloadHasError" class="btn btn-primary" ng-click="dismiss()">Close</button>
+  </div>
+  <div class="modal-footer">
+  </div>
+</script>

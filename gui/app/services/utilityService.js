@@ -3,7 +3,9 @@
  // This contains utility functions
  // Just inject "utilityService" into any controller that you want access to these
  
+ const electron = require('electron');
  const _ = require('underscore')._;
+ const path = require('path');
 
  angular
   .module('firebotApp')
@@ -57,7 +59,6 @@
         templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
         // This is the controller to be used for the modal. 
         controllerFunc: "firstTimeUseModalController",
-        // The callback to run after the modal closed via "Add board"
         keyboard: false,
         backdrop: 'static',
         closeCallback: (data) => {
@@ -65,6 +66,54 @@
         }
       }      
       service.showModal(firstTimeUseModalContext);
+    };
+    
+    /*
+    * OVERLAY INFO MODAL
+    */
+    service.showOverlayInfoModal = function() {
+      var overlayInfoModalContext = {
+        templateUrl: "overlayInfoModal.html",
+        // This is the controller to be used for the modal. 
+        controllerFunc: ($scope, $rootScope, $uibModalInstance) => {        
+          
+          $scope.overlayPath = 
+            path.resolve(process.cwd() + path.sep + "overlay" + path.sep + "firebot.html");
+            
+          $scope.pathCopied = false;
+            
+          $scope.copy = function() {
+            $rootScope.copyTextToClipboard($scope.overlayPath);
+            $scope.pathCopied = true;
+          }
+          
+          $scope.dismiss = function() {
+            $uibModalInstance.dismiss('cancel');
+          };
+        }
+      }      
+      service.showModal(overlayInfoModalContext);
+    };
+    /*
+    * JUST UPDATED MODAL
+    */
+    service.showUpdatedModal = function() {
+      var justUpdatedModalContext = {
+        templateUrl: "updatedModal.html",
+        // This is the controller to be used for the modal. 
+        controllerFunc: ($scope, $uibModalInstance) => {
+          
+          var appVersion = electron.remote.app.getVersion();
+          
+          $scope.appVersion = `v${appVersion}`;
+          
+          $scope.dismiss = function() {
+            $uibModalInstance.dismiss('cancel');
+          };
+        },
+        size: "sm"
+      }      
+      service.showModal(justUpdatedModalContext);
     };
     
     service.showErrorModal = function (errorMessage) {

@@ -14,7 +14,9 @@
     
     service.updateData = {};
     
-    service.hasCheckedForUpdates = false;  
+    service.isCheckingForUpdates = false;
+    
+    service.hasCheckedForUpdates = false;
     
     service.updateIsAvailable = function() {
       return service.hasCheckedForUpdates ? service.updateData.updateIsAvailable : false;
@@ -23,6 +25,7 @@
     // Update Checker
     // This checks for updates.
     service.checkForUpdate = function(){
+      service.isCheckingForUpdates = true;
         return $q((resolve, reject) => {
             // If user opts into betas we want to check different git api links.
             // If they are, we check releases as beta releases will be listed.
@@ -74,9 +77,11 @@
               service.updateData = updateObject;
               
               service.hasCheckedForUpdates = true;
+              service.isCheckingForUpdates = false;
               
               resolve(updateObject)
             }, (error) => {
+              service.isCheckingForUpdates = false;
               console.log(error);
               reject(false);
             });
@@ -84,20 +89,11 @@
     }
 
     service.downloadAndInstallUpdate = function() {
-        
-      var registerRequest = {
-        type: listenerService.ListenerType.INSTALL_UPDATE,
-        runOnce: true,
-        publishEvent: true
-      }
-      
-      console.log("sending download request");
-      listenerService.registerListener(registerRequest, () => {
-        console.log("downloaded...installing");
-        //ipcRenderer.send('installUpdate');
-      });      
+      if(service.updateIsAvailable()) {
+        listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+      }         
     }
-
+    
     return service;
   });
 })();

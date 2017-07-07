@@ -18,6 +18,15 @@
       
       switch(effectType) {
         
+        case EffectType.HTML: 
+          controller = ($scope, utilityService) => {
+            
+            $scope.showOverlayInfoModal = function() {
+              utilityService.showOverlayInfoModal();
+            }
+          }
+          break;    
+        
         case EffectType.PLAY_SOUND:
           controller = ($scope, listenerService) => {
             
@@ -42,7 +51,7 @@
           break;
           
         case EffectType.SHOW_IMAGE:
-          controller = ($scope, listenerService) => {
+          controller = ($scope, listenerService, utilityService) => {
             
             $scope.imagePositions = [
               "Top Left",
@@ -68,12 +77,20 @@
               listenerService.registerListener(registerRequest, (filepath) => {
                 $scope.effect.file = filepath;
               });
-            };         
+            };
+            
+            $scope.showOverlayInfoModal = function() {
+              utilityService.showOverlayInfoModal();
+            }          
           };
           break;
         
         case EffectType.SHOW_VIDEO:
-          controller = ($scope, listenerService) => {
+          controller = ($scope, listenerService, utilityService) => {
+            
+            $scope.showOverlayInfoModal = function() {
+              utilityService.showOverlayInfoModal();
+            }    
             
             $scope.videoPositions = [
               "Top Left",

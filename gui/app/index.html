@@ -216,6 +216,60 @@
       </div>
     </script>
     
+    <!-- overlay info modal -->
+    <script type="text/ng-template" id="overlayInfoModal.html">
+      <div class="modal-header" style="text-align:center;">
+        <h2 class="modal-title">Firebot Overlay Info</h2>
+      </div>
+      <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;">
+        <p>Button effects that show things on stream (ie images, videos, etc) need Firebot's overlay file to be added to your broadcasting software.</p>
+        <h3>How To Add The Overlay</h3>
+        <p>In your broadcasting software add a <b>BrowserSource</b> (or something named similiar, it varies between each software) to the scenes you desire the overlay to be present.</p>
+        
+        <p>Then in the settings for this <b>BrowserSource</b>, there should be field for a URL. Copy and paste the file path below into that URL field:</p>
+        
+        <div style="width:75%; margin-bottom:25px;">
+          <div class="input-group">
+            <input type="text" class="form-control" style="cursor:text;"ng-model="overlayPath" disabled>
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="copy()">Copy</button>
+            </span>
+          </div>
+          <p ng-if="pathCopied" style="color: green;">
+            Overlay path copied!
+          </p>
+        </div>
+        
+       <div class="alert alert-info">
+         Make sure the checkbox designating the URL as a <b>"Local file"</b> is checked, if there is one.
+       </div>
+      </div>
+      <div class="modal-footer" style="text-align:center;">
+        <button class="btn btn-primary" ng-click="dismiss()">Okay</button>
+      </div>
+    </script>
+    
+    <!-- Just updated modal -->
+    <script type="text/ng-template" id="updatedModal.html">
+      <div class="modal-header">
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body" style="text-align:center;">
+        <div>
+          <span><i class="fal fa-check-circle animated bounceIn" style="font-size: 193px;color: green;"></i></span>
+        </div>
+        <h1 style="animation-delay: 0.3s;" class="animated fadeIn">Update Successful!</h1>
+        <h3 style="color:darkgray; animation-delay: 0.3s;" class="animated fadeIn">Installed {{appVersion}}</h3>
+        <br />
+        <p style="animation-delay: 0.3s;" class="animated fadeIn">
+            You can see what's new in the <b>Updates</b> tab.
+        </p>              
+      </div>
+      <div class="modal-footer" style="text-align:center;">
+        <button style="animation-delay: 0.3s;" class="btn btn-primary animated fadeIn" ng-click="dismiss()">Okay</button>
+      </div>
+    </script>
+    
     <!-- Tooltip template -->
     <script type="text/ng-template" id="connectTooltipTemplate.html">
       <span ng-if="!navExpanded">

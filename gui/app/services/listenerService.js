@@ -15,7 +15,8 @@
       connectionChangeRequest: {},
       eventLog: {},
       error: {},
-      installUpdate: {},
+      updateError: {},
+      updateDownloaded: {},
       playSound: {},
       showImage: {},
       showVideo: {},
@@ -31,7 +32,8 @@
       CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
       EVENT_LOG: "eventLog",
       ERROR: "error",
-      INSTALL_UPDATE: "installUpdate",
+      UPDATE_ERROR: "updateError",
+      UPDATE_DOWNLOADED: "updateDownloaded",
       PLAY_SOUND: "playSound",
       SHOW_IMAGE: "showImage",
       SHOW_VIDEO: "showVideo",
@@ -73,13 +75,6 @@
             }
           }
           break;
-        case ListenerType.INSTALL_UPDATE:
-            registeredListeners.installUpdate[uuid] = listener;
-            if(publishEvent) {
-              // call the event to download first
-              ipcRenderer.send('downloadUpdate');
-            }
-          break;
         default:
           registeredListeners[listener.type][uuid] = listener;
       }
@@ -95,7 +90,25 @@
         default:
           delete registeredListeners[type][uuid];
       }
-    }    
+    }
+    
+    /*
+    * Events
+    */
+    var EventType = {
+      DOWNLOAD_UPDATE: "downloadUpdate",
+      OPEN_ROOT: "openRootFolder",
+      GET_IMAGE: "getImagePath",
+      GET_SOUND: "getSoundPath",
+      GET_VIDEO: "getVideoPath"
+    }  
+    service.EventType = EventType;
+    
+    service.fireEvent = function(type, data) {
+      ipcRenderer.send(type, data);
+    } 
+    
+       
     
     /**
     * File path event listeners 
@@ -163,11 +176,20 @@
     });
 
     /**
-    * Update event listener
+    * Update error listener
+    */
+    ipcRenderer.on('updateError', function (){
+      _.forEach(registeredListeners.updateError, (listener, key, list) => {
+        runListener(listener, errorMessage);
+      });
+    });
+    
+    /**
+    * Update download listener
     */
     ipcRenderer.on('updateDownloaded', function (){
-      _.forEach(registeredListeners.INSTALL_UPDATE, (listener, key, list) => {
-        runListener(listener, errorMessage);
+      _.forEach(registeredListeners.updateDownloaded, (listener, key, list) => {
+        runListener(listener);
       });
     });
     

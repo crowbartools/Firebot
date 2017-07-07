@@ -3,10 +3,10 @@
   //TODO: Rename this to setupWizardModalController
   angular
     .module('firebotApp')
-    .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, $q, connectionService, boardService) {
+    .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, $q, connectionService, boardService, settingsService) {
 
-        $scope.steps = ['one', 'two', 'three', 'four', 'five'];
-        $scope.stepTitles = ['', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', ''];
+        $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six'];
+        $scope.stepTitles = ['', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', '', ''];
         $scope.step = 0;
 
         $scope.isFirstStep = function () {
@@ -58,14 +58,17 @@
               return connectionService.accounts.streamer.isLoggedIn;
             case 3:
               return $scope.hasBoardsLoaded;
-              break;
+            case 4:
+              return $scope.settingOptions.overlayCompatibility !== "";
           }
           return true;   
         }
 
         $scope.handleNext = function (forceNext) {
             if ($scope.isLastStep()) {
-                $uibModalInstance.close();
+              console.log(`overlay compat: ${$scope.settingOptions.overlayCompatibility}`);
+              settingsService.setOverlayCompatibility($scope.settingOptions.overlayCompatibility);
+              $uibModalInstance.close();
             } else {
               switch($scope.step){
                 case 0:
@@ -88,6 +91,10 @@
               break;
           }
           return "";   
+        }
+        
+        $scope.settingOptions = {
+          overlayCompatibility: ""
         }
         
         $scope.streamerAccount = connectionService.accounts.streamer;

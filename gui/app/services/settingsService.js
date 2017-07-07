@@ -114,7 +114,8 @@
     }
     
     service.setOverlayCompatibility = function(overlay) {
-      pushDataToFile('/settings/overlayImages', overlay);
+      var overlaySetting = overlay === 'OBS' ? overlay : 'Other'
+      pushDataToFile('/settings/overlayImages', overlaySetting);
     }
 
     service.getTheme = function() {
@@ -142,6 +143,15 @@
     
     service.setFirstTimeUse = function(ftu) {
       pushDataToFile('/settings/firstTimeUse', ftu === true)
+    }
+    
+    service.hasJustUpdated = function() {
+      var updated = getDataFromFile('/settings/justUpdated');
+      return updated != null ? updated : false;
+    }
+    
+    service.setJustUpdated = function(justUpdated) {
+      pushDataToFile('/settings/justUpdated', justUpdated === true)
     }
     
     service.getButtonViewMode = function() {
