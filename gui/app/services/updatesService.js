@@ -87,7 +87,7 @@
     service.downloadAndInstallUpdate = function(){
         // Updater
         let options = {
-            repo: 'firebottle/firebot',
+            repo: 'firebottle/test',
             currentVersion: app.getVersion()
         }
 
