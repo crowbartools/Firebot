@@ -112,6 +112,13 @@ function pathExists(path) {
       console.log("Can't find the controls folder, creating one now...");
       fs.mkdir("./user-settings/controls");
     })  
+
+    // Create the log folder if it doesn't exist.
+    pathExists("./user-settings/logs")
+    .then((resolve) => {
+      console.log("Can't find the log folder, creating one now...");
+      fs.mkdir("./user-settings/logs");
+    })  
     
     createWindow()
     renderWindow.webContents.on('did-finish-load', function() {
