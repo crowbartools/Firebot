@@ -105,6 +105,7 @@
               //error requesting access 
               $rootScope.showSpinner = false;
               console.log(err);
+              utilityService.showErrorModal('Error requesting access for oauth token.')
           });
     }  
     
@@ -260,6 +261,7 @@
                         console.log('something went wrong with streamer refresh token.')
                         console.log(token);
                         service.waitingForStatusChange = false;
+                        utilityService.showErrorModal('Error updating refresh token for streamer account. Try re-logging.')
                     }
     
                     // Refresh bot token if the bot is logged in.
@@ -279,6 +281,7 @@
                             } else {
                                 console.log('something went wrong with bot refresh token.')
                                 console.log(token);
+                                utilityService.showErrorModal('Error updating refresh token for bot account. Try re-logging.')
                             }
     
                             // Okay, we have both streamer and bot tokens now. Start up the login process.
@@ -288,6 +291,7 @@
     
                             // There was an error getting the bot token.
                             console.log(err);
+                            utilityService.showErrorModal('Error updating refresh token for bot account. Try re-logging.')
                         });
                     } catch (err) {
                         console.log('No bot logged in. Skipping refresh token.', err)
@@ -301,6 +305,7 @@
                     //error getting streamer refresh token
                     service.waitingForStatusChange = false;
                     console.log(err);
+                    utilityService.showErrorModal('Error updating refresh token for streamer account. Try re-logging.')
                 })
         } catch (err) {
             // The streamer isn't logged in... stop everything.
