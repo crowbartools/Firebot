@@ -145,7 +145,7 @@ function pathExists(path) {
 
   process.on('uncaughtException', function(error) {
       // Handle the error
-      console.error(error);
+      // console.error(error);
   });
 
   // When Quittin.
