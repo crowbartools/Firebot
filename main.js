@@ -112,6 +112,13 @@ function pathExists(path) {
       console.log("Can't find the controls folder, creating one now...");
       fs.mkdir("./user-settings/controls");
     })  
+
+    // Create the log folder if it doesn't exist.
+    pathExists("./user-settings/logs")
+    .then((resolve) => {
+      console.log("Can't find the log folder, creating one now...");
+      fs.mkdir("./user-settings/logs");
+    })  
     
     createWindow()
     renderWindow.webContents.on('did-finish-load', function() {
@@ -138,7 +145,8 @@ function pathExists(path) {
 
   process.on('uncaughtException', function(error) {
       // Handle the error
-      console.error(error);
+      renderWindow.webContents.send('error', "There was an unhandled error. Please see /user-settings/logs for more details.");
+      errorLog(error);
   });
 
   // When Quittin.
@@ -152,3 +160,23 @@ function pathExists(path) {
 
 // Interactive handler
 const mixerConnect = require('./lib/interactive/mixer-interactive.js');
+
+// Errors
+function errorLog(error){
+  var date = new Date();
+  var fileName = (date.getMonth()+1)+'-'+date.getDate()+'-'+date.getFullYear()+'-'+date.getHours()+'-'+date.getMinutes()+'-'+date.getSeconds()
+  fs.readFile('./user-settings/controls/'+lastBoard+'.json', (err, data) => {
+    if(!err){
+      var lastBoard = data;
+    } else {
+      var lastBoard = "Error getting last board json.";
+    }
+    var stream = fs.createWriteStream("./user-settings/logs/"+fileName+".log");
+      stream.once('open', function(fd) {
+      stream.write(error+'\r\n');
+      stream.end();
+    });
+
+    console.log('Wrote error to file.')
+  });
+}
