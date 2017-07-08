@@ -269,24 +269,30 @@
       return $http.get("https://mixer.com/api/v1/interactive/versions/"+id)
         .then(function(response) {
             var data = response.data;
-            var gameUpdated = data.updatedAt;
-            var gameName = data.game.name;
-            var gameJson = data.controls.scenes;
-            var boardUpdated = null; // Prepare for data from settings/boards/boardId
-            try{ // Checking if the data for this board is present in settings.json
-                boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
-                if(boardUpdated != gameUpdated){ // Call backendbuilder if the dates don't match
+
+            if( data.controlVersion == "1.0"){
+                utilityService.showErrorModal("The board you're trying to load was created using Mixer Interactive v1. Please create a new board using Mixer Interactive v2.");
+                return;
+            } else {
+                var gameUpdated = data.updatedAt;
+                var gameName = data.game.name;
+                var gameJson = data.controls.scenes;
+                var boardUpdated = null; // Prepare for data from settings/boards/boardId
+                try{ // Checking if the data for this board is present in settings.json
+                    boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
+                    if(boardUpdated != gameUpdated){ // Call backendbuilder if the dates don't match
+                        return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
+                    }else{ // Date matches, no need to rebuild.
+                        console.log("This board is already inplace, no need to rebuild");
+                    }
+                }catch(err){
+                    // This board doesn't exist, recreate the board to get it into knownBoards
+                    console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
-                }else{ // Date matches, no need to rebuild.
-                    console.log("This board is already inplace, no need to rebuild");
                 }
-            }catch(err){
-                // This board doesn't exist, recreate the board to get it into knownBoards
-                console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
-                return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
+                
+                // return backendBuilder(gameName, gameJson, gameUpdated, id);
             }
-            
-            // return backendBuilder(gameName, gameJson, gameUpdated, id);
         });
     }  
     
