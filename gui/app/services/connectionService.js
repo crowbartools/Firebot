@@ -3,7 +3,10 @@
  // This handles logins and connections to mixer interactive
  
  const electronOauth2 = require('electron-oauth2');
- const dbAuth = new JsonDB("./user-settings/auth", true, false); 
+ 
+ const dataAccess = require('../../lib/data-access.js');
+ const dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"); 
+ 
  const _ = require('underscore')._;
 
  angular

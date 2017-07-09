@@ -3,7 +3,7 @@
  //This handles groups
  
  const _ = require('underscore')._;
- const JsonDb = require('node-json-db');
+ const dataAccess = require('../../lib/data-access.js');
 
  angular
   .module('firebotApp')
@@ -14,7 +14,7 @@
         
     service.loadViewerGroups = function() {
       // Load up all custom made groups in each dropdown.
-      var dbGroup = new JsonDB("./user-settings/groups", true, true);      
+      var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");      
       try{
           var rawGroups = dbGroup.getData('/');
           if(rawGroups != null) {
@@ -62,7 +62,7 @@
     
     service.addOrUpdateViewerGroup = function(group, previousName) {
       if(group.groupName == "banned") return;
-      var dbGroup = new JsonDB("./user-settings/groups", true, true);
+      var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
       
       if(previousName != null && previousName !== "" && previousName !== group.groupName) {
         deleteViewerGroup(previousName);
@@ -81,7 +81,7 @@
     }
     
     function deleteViewerGroup(groupName) {
-      var dbGroup = new JsonDB("./user-settings/groups", true, true);
+      var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
       dbGroup.delete("/" + groupName);
       
       boardService.deleteViewerGroupFromAllBoards(groupName);
@@ -110,7 +110,7 @@
     }
     
     function saveBannedGroup() {
-      var dbGroup = new JsonDB("./user-settings/groups", true, true);
+      var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
       var bannedGroup = service.getBannedGroup();
       dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
     }
@@ -125,7 +125,7 @@
           groupName: 'banned',
           users: []
         }
-        var dbGroup = new JsonDB("./user-settings/groups", true, true);
+        var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
         dbGroup.push("/" + bannedGroup.groupName, bannedGroup);  
         groups.push(bannedGroup);
       }

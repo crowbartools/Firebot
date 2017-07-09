@@ -2,8 +2,9 @@
   
  //This handles settings access for frontend
  
+ const dataAccess = require('../../lib/data-access.js');
+ 
  const _ = require('underscore')._;
- const JsonDB = require('node-json-db');
  const fs = require('fs');
 
  angular
@@ -14,7 +15,7 @@
     var settingsCache = {}
     
     function getSettingsFile() {
-      return new JsonDB("./user-settings/settings", true, true);
+      return dataAccess.getJsonDbInUserData("/user-settings/settings");
     }
     
     function pushDataToFile(path, data) {

@@ -3,8 +3,8 @@
  //This manages board data
  
  const fs = require('fs');
- const _ = require('underscore')._;
- const JsonDb = require('node-json-db');
+ const _ = require('underscore')._; 
+ const dataAccess = require('../../lib/data-access.js');
  
  angular
   .module('firebotApp')
@@ -127,7 +127,7 @@
             // There's surely a better way to do this. Maybe maintain a list of known board id's in the settings file?
             var boardVersionIds = [];
             _.each(boardJsonFiles, function (fileName) {
-                var boardDb = new JsonDB("./user-settings/controls/"+fileName, true, true);
+                var boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/"+fileName);
                 var boardData = boardDb.getData('/');
                 
                 boardVersionIds.push(boardData.versionid);
@@ -149,7 +149,7 @@
     }
     
     service.saveControlForCurrentBoard = function(control) {
-      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      var boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/"+settingsService.getLastBoardName());
       
       // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
       // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -161,7 +161,7 @@
     }
     
     service.saveSceneForCurrentBoard = function(scene) {
-      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      var boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/"+settingsService.getLastBoardName());
       
       // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
       // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -182,7 +182,7 @@
       }
       
       
-      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      var boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/"+settingsService.getLastBoardName());
       
       // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
       // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -208,7 +208,7 @@
     }
     
     service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName, cooldownGroup) {
-      var boardDb = new JsonDB("./user-settings/controls/"+settingsService.getLastBoardName(), true, true);
+      var boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/"+settingsService.getLastBoardName());
       
       if(cooldownGroup.buttons != null) {
         cooldownGroup.buttons.forEach((buttonName) => {
@@ -235,7 +235,7 @@
             // remove from array
             groups.splice(index, 1);
             //save to file
-            var boardDb = new JsonDB(`./user-settings/controls/${board.name}`, true, true);
+            var boardDb = dataAccess.getJsonDbInUserData(`/user-settings/controls/${board.name}`);
             boardDb.push(`./firebot/scenes/${scene.sceneName}/default`, groups);
           }
         });
@@ -319,7 +319,7 @@
           // load each board
           _.each(boardJsonFiles, function (fileName) {
             // Get settings.
-            var boardDb = new JsonDB("./user-settings/controls/"+fileName, true, true);
+            var boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/"+fileName);
             var boardData = boardDb.getData('/');
             
             var board = boardData.firebot; 
@@ -386,7 +386,7 @@
         // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
         settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameUpdated);
     
-        var dbControls = new JsonDB("./user-settings/controls/"+gameName, true, true);
+        var dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/"+gameName);
     
         // Push mixer Json to controls file.
         dbControls.push('/versionid', parseInt(versionid) );

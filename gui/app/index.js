@@ -5,7 +5,6 @@ const {remote} = electron;
 //from old Gobal.js
 const shell = require('electron').shell;
 const fs = require('fs');
-const JsonDB = require('node-json-db');
 const request = require('request');
 const List = require('list.js');
 const howler = require('howler');
