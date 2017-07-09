@@ -132,11 +132,9 @@
 }
 
 // Button Effects
-.functionality-settings{
   .panel-body{
     background-color: $effect-background-color;
   }
-}
 
 .board-group-defaults-settings, .board-cooldown-groups, .interactive-button-holder.active{
     display:flex;
