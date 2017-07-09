@@ -1,3 +1,6 @@
+// Global
+notificationShown = false;
+
 // Kickstarter
 // This function kickstarts the connection process.
 function mixerSocketConnect(){
@@ -78,12 +81,20 @@ function notification(status, text){
 	var divStatus = $('.notification').is(':visible');
 
 	// Check if we need to show notification or not.
-	if(divStatus === false && status === "open"){
+	if(divStatus === false && status === "open" && notificationShown === false){
 		// Show the notification
+		notificationShown = true;
 		$('body').prepend('<div class="notification" style="display:none"><p>'+text+'</p></div>');
 		$('.notification').fadeIn('fast');
+		setTimeout(function(){ 
+			$(".notification p").text("I'll keep trying in the background...");
+			setTimeout(function(){ 
+				$(".notification").fadeOut(300, function() { $(this).remove(); });
+			}, 5000);
+		}, 30000);
 	} else if (status === "close"){
-		// Fadeo ut and remove notification
+		// Fade out and remove notification
+		notificationShown = false;
 		$(".notification").fadeOut(300, function() { $(this).remove(); });
 	}
 }
