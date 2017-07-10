@@ -90,6 +90,12 @@
             ng-model="effect.length">
       </div>
   </div>
+  <div class="effect-specific-title"><h4>How loud should it be?</h4></div>
+  <div class="volume-slider-wrapper">
+      <i class="fal fa-volume-down volume-low"></i>
+      <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10, hideLimitLabels: true}"></rzslider>
+      <i class="fal fa-volume-up volume-high"></i>
+  </div>
   <div class="effect-info alert alert-info">
       This effect requires the overlay file to be loaded into your streaming software. Look in the Firebot folder for "/overlay/firebot.html".
   </div>
