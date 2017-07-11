@@ -104,27 +104,6 @@ function createWindow () {
     mixerConnect.shortcut();
 }
 
-function pathExists(path) {
-  return new Promise((resolve, reject) => {
-    fs.access(path, (err) => {
-      if(err) {
-        //ENOENT means Error NO ENTity found, aka the file/folder doesn't exist.
-        if(err.code === 'ENOENT') {
-          // This folder doesn't exist. Resolve and create it.
-          resolve();
-        } else {
-          // Some weird error happened other than the path missing.
-          console.log(err)
-        };
-      } else {
-        // This folder exists. Reject and don't touch it.
-        console.log('Path Found: '+path)
-        reject();
-      }
-    });
-  });
-};
-
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
