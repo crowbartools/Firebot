@@ -18,6 +18,8 @@ const GhReleases = require('electron-gh-releases');
 
 const settings = require('./lib/interactive/settings-access').settings;
 
+const dataAccess = require('./lib/data-access.js');
+
 // Handle Squirrel events
 var handleStartupEvent = function() {
   if (process.platform !== 'win32') {
@@ -128,43 +130,47 @@ function pathExists(path) {
   // Some APIs can only be used after this event occurs.
   app.on('ready', function(){
     
+    //create the root "firebot-data" folder in user-settings
+    dataAccess.createFirebotDataDir();
+    
     // Create the user-settings folder if it doesn't exist. It's required 
     // for the folders below that are within it
-    pathExists("./user-settings/")
-    .then((resolve) => {
+    dataAccess.userDataPathExists("/user-settings/").then((resolve) => {
       console.log("Can't find the user-settings folder, creating one now...");
-      fs.mkdir("./user-settings");
+      dataAccess.makeDirInUserData("/user-settings");
     });
 
     // Create the scripts folder if it doesn't exist
-    pathExists("./user-settings/scripts/")
-    .then((resolve) => {
+    dataAccess.userDataPathExists("/user-settings/scripts/").then((resolve) => {
       console.log("Can't find the scripts folder, creating one now...");
-      fs.mkdir("./user-settings/scripts");
-    })
+      dataAccess.makeDirInUserData("/user-settings/scripts");
+    });
     
     // Create the overlay settings folder if it doesn't exist.
-    pathExists("./user-settings/overlay-settings/")
+    dataAccess.userDataPathExists("/user-settings/overlay-settings/")
     .then((resolve) => {
       console.log("Can't find the overlay-settings folder, creating one now...");
-      fs.mkdir("./user-settings/overlay-settings");
-    })
+      dataAccess.makeDirInUserData("/user-settings/overlay-settings");
+    });
     
     // Create the port.js file if it doesn't exist.
-    pathExists("./user-settings/overlay-settings/port.js")
+    dataAccess.userDataPathExists("/user-settings/overlay-settings/port.js")
     .then((resolve) => {
-      fs.writeFile('./user-settings/overlay-settings/port.js', `window.WEBSOCKET_PORT = 8080`, 
-        'utf8', () => { console.log(`Set overlay port to: 8080`)});
-    })  
+      dataAccess.writeFileInUserData(
+        '/user-settings/overlay-settings/port.js', 
+        `window.WEBSOCKET_PORT = 8080`,
+        () => { console.log(`Set overlay port to: 8080`)});
+    });  
 
     // Create the controls folder if it doesn't exist.
-    pathExists("./user-settings/controls")
+    dataAccess.userDataPathExists("/user-settings/controls")
     .then((resolve) => {
       console.log("Can't find the controls folder, creating one now...");
-      fs.mkdir("./user-settings/controls");
-    })  
+      dataAccess.makeDirInUserData("/user-settings/controls");
+    });  
     
-    createWindow()
+    createWindow();
+    
     renderWindow.webContents.on('did-finish-load', function() {
         renderWindow.show();
     });
@@ -242,8 +248,7 @@ function pathExists(path) {
   ipcMain.on('openRootFolder', function(event) {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead 
     // of opening to the poarent folder with 'Firebot'folder selected. 
-    var rootFolder = path.resolve(process.cwd() + path.sep + "fakefile.txt");
-    console.log(rootFolder);
+    var rootFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "user-settings");
     shell.showItemInFolder(rootFolder);
   });
 
