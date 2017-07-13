@@ -32,6 +32,17 @@ var handleStartupEvent = function() {
   var squirrelCommand = process.argv[1];
   switch (squirrelCommand) {
     case '--squirrel-install':
+
+      // Install shortcuts
+      target = path.basename(process.execPath);
+      updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+      var createShortcut = updateDotExe + ' --createShortcut=' + target + ' --shortcut-locations=Desktop,StartMenu' ;
+      console.log (createShortcut);
+      exec(createShortcut);
+
+      // Always quit when done
+      app.quit();
+      return true;
     case '--squirrel-updated':
 
       // Optionally do things such as:
@@ -49,9 +60,15 @@ var handleStartupEvent = function() {
       // Undo anything you did in the --squirrel-install and
       // --squirrel-updated handlers
 
+      // Remove shortcuts
+      target = path.basename(process.execPath);
+      updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+      var createShortcut = updateDotExe + ' --removeShortcut=' + target ;
+      console.log (createShortcut);
+      exec(createShortcut);
+      
       // Always quit when done
       app.quit();
-
       return true;
     case '--squirrel-obsolete':
       // This is called on the outgoing version of your app before
