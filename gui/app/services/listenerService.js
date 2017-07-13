@@ -178,7 +178,7 @@
     /**
     * Update error listener
     */
-    ipcRenderer.on('updateError', function (){
+    ipcRenderer.on('updateError', function (event, errorMessage){
       _.forEach(registeredListeners.updateError, (listener, key, list) => {
         runListener(listener, errorMessage);
       });

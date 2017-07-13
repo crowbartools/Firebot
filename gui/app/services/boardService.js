@@ -111,7 +111,8 @@
             // Attempt to access board flatfile storage
             var boardJsonFiles = [];
             try{
-                boardJsonFiles = fs.readdirSync('./user-settings/controls');          
+                var controlsPath = dataAccess.getPathInUserData('/user-settings/controls');
+                boardJsonFiles = fs.readdirSync(controlsPath);          
             }catch(err){
                 console.log(err);
                 return new Promise(function(resolve, reject) {
@@ -309,7 +310,8 @@
           // get file names for all the boards
           var boardJsonFiles = [];
           try{
-              boardJsonFiles = fs.readdirSync('./user-settings/controls');          
+              var controlsPath = dataAccess.getPathInUserData('/user-settings/controls');
+              boardJsonFiles = fs.readdirSync(controlsPath);          
           }catch(err){
             console.log(err);
             return;
@@ -576,7 +578,7 @@
               
         // Check for last board and load ui if one exists.
         try{
-            var filepath = './user-settings/controls/'+boardName+'.json';
+            var filepath = dataAccess.getPathInUserData('/user-settings/controls/'+boardName+'.json');
     
             fs.exists(filepath, function(exists) {
                 if(exists) {

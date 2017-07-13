@@ -3,7 +3,7 @@
  // This provides helper methods for control effects
  
  const _ = require('underscore')._;
- 
+ const dataAccess = require('../../lib/data-access.js');
  const EffectType = require('../../lib/interactive/EffectType.js').EffectType;
 
  angular
@@ -268,13 +268,13 @@
 
         case EffectType.CUSTOM_SCRIPT:
           controller = ($scope) => {
-
+            var scriptFolderPath = dataAccess.getPathInUserData("/user-settings/scripts")
             // Grab files in folder when button effect shown.
-            $scope.scriptArray = fs.readdirSync('./user-settings/scripts');
+            $scope.scriptArray = fs.readdirSync(scriptFolderPath);
 
             // Grab files in folder on refresh click.
             $scope.getNewScripts = function (){
-              $scope.scriptArray = fs.readdirSync('./user-settings/scripts');
+              $scope.scriptArray = fs.readdirSync(scriptFolderPath);
             }
 
             // Open script folder on click.
