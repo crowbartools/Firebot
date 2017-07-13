@@ -3,8 +3,9 @@
  // This contains utility functions
  // Just inject "utilityService" into any controller that you want access to these
  
- const _ = require('underscore')._;
- const fs = require('fs')
+  const _ = require('underscore')._;
+  const fs = require('fs')
+  const logger = require('../../lib/errorLogging.js');
 
  angular
   .module('firebotApp')
@@ -94,32 +95,7 @@
       service.showModal(errorModalContext);
       
       // Log error to file.
-      service.errorLogger(errorMessage);
-    }
-
-    // Error Logger
-    service.errorLogger = function (errorMessage){
-      var date = new Date();
-      var fileName = (date.getMonth()+1)+'-'+date.getDate()+'-'+date.getFullYear()+'-'+date.getHours()+'-'+date.getMinutes()+'-'+date.getSeconds()
-      var lastBoard = settingsService.getLastBoardName();
-      fs.readFile('./user-settings/controls/'+lastBoard+'.json', (err, data) => {
-        if(!err){
-          var lastBoard = data;
-        } else {
-          var lastBoard = "Error getting last board json.";
-        }
-        var stream = fs.createWriteStream("./user-settings/logs/"+fileName+".log");
-          stream.once('open', function(fd) {
-          stream.write(errorMessage+'\r\n');
-          stream.write('\r\n');
-          stream.write('------------------------------\r\n')
-          stream.write('\r\n');
-          stream.write(lastBoard);
-          stream.end();
-        });
-
-        console.log('Wrote error to file.')
-      });
+      logger.info(errorMessage)
     }
     
     // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.

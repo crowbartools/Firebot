@@ -9,6 +9,7 @@ const {ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
+const logger = require('./lib/errorLogging.js');
 
 require('dotenv').config()
 
@@ -146,6 +147,7 @@ function pathExists(path) {
   process.on('uncaughtException', function(error) {
       // Handle the error
       // console.error(error);
+      logger.info(error)
   });
 
   // When Quittin.
@@ -159,3 +161,4 @@ function pathExists(path) {
 
 // Interactive handler
 const mixerConnect = require('./lib/interactive/mixer-interactive.js');
+
