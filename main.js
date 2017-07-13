@@ -20,6 +20,9 @@ const settings = require('./lib/interactive/settings-access').settings;
 
 const dataAccess = require('./lib/data-access.js');
 
+var ncp = require('ncp').ncp;
+ncp.limit = 16;
+
 // Handle Squirrel events
 var handleStartupEvent = function() {
   if (process.platform !== 'win32') {
@@ -62,8 +65,6 @@ var handleStartupEvent = function() {
 if (handleStartupEvent()) {
   return;
 }
-
-
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -146,7 +147,24 @@ function createWindow () {
     .then((resolve) => {
       console.log("Can't find the controls folder, creating one now...");
       dataAccess.makeDirInUserData("/user-settings/controls");
-    });  
+    });
+    
+    
+    var overlayFolderExists = dataAccess.userDataPathExistsSync("/overlay/");
+    var appVersion = electron.app.getVersion();
+    if(!overlayFolderExists || settings.getOverlayVersion() !== appVersion) {
+      
+      var source = dataAccess.getPathInWorkingDir("/overlay");
+      var destination = dataAccess.getPathInUserData("/overlay");    
+      ncp(source, destination, function (err) {
+       if (err) {
+         console.log("Error copying Overlay folder to user data!");
+         return console.error(err);
+       }
+       settings.setOverlayVersion(appVersion);
+       console.log('Copied overlay folder to user data.');
+      });
+    }  
     
     createWindow();
     

@@ -164,6 +164,15 @@
       pushDataToFile('/settings/buttonViewMode', buttonViewMode)
     }
     
+    service.getOverlayVersion = function() {
+      var version = getDataFromFile('/settings/copiedOverlayVersion');
+      return version != null ? version : "";
+    }
+    
+    service.setOverlayVersion = function(newVersion) {
+      pushDataToFile('/settings/copiedOverlayVersion', newVersion.toString());
+    }
+    
     service.getWebSocketPort = function() {
       var websocketPort = getDataFromFile('/settings/websocketPort');
       return websocketPort != null ? websocketPort : 8080;
