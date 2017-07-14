@@ -5,8 +5,8 @@
     .module('firebotApp')
     .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, $q, connectionService, boardService, settingsService) {
 
-        $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six'];
-        $scope.stepTitles = ['', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', '', ''];
+        $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six', 'seven'];
+        $scope.stepTitles = ['', 'Import Data', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', '', ''];
         $scope.step = 0;
 
         $scope.isFirstStep = function () {
@@ -41,24 +41,37 @@
         };
 
         $scope.handlePrevious = function () {
-            $scope.step -= ($scope.isFirstStep()) ? 0 : 1;
+          switch($scope.step){
+            case 2:
+             $scope.step = 0;
+             break;
+            default:
+              $scope.step -= ($scope.isFirstStep()) ? 0 : 1;
+          }
         };
         
         $scope.showNextButton = function() {
-          return !($scope.isFirstStep() || $scope.isLastStep())
+          if($scope.isFirstStep() || $scope.isLastStep()) {
+            return false;
+          }
+          
+          if($scope.step === 1) {
+            return false;
+          }
+          return true;
         }
         
         $scope.showBackButton = function() {
           return !($scope.isFirstStep() || $scope.isLastStep())
         }
-        
+      
         $scope.canGoToNext = function() {
-          switch($scope.step){
-            case 1:
+          switch($scope.step){ 
+            case 2:
               return connectionService.accounts.streamer.isLoggedIn;
-            case 3:
-              return $scope.hasBoardsLoaded;
             case 4:
+              return $scope.hasBoardsLoaded;
+            case 5:
               return $scope.settingOptions.overlayCompatibility !== "";
           }
           return true;   
@@ -66,15 +79,14 @@
 
         $scope.handleNext = function (forceNext) {
             if ($scope.isLastStep()) {
-              console.log(`overlay compat: ${$scope.settingOptions.overlayCompatibility}`);
               settingsService.setOverlayCompatibility($scope.settingOptions.overlayCompatibility);
               $uibModalInstance.close();
             } else {
               switch($scope.step){
                 case 0:
                   break;
-                case 1:
-                case 3:
+                case 2:
+                case 4:
                   if(!$scope.canGoToNext() && !forceNext) return;
                   break;
               }                
@@ -84,10 +96,13 @@
         
         $scope.getTooltipText = function() {
           switch($scope.step){
-            case 1:
+            case 2:
               return "Please sign into your Streamer account.";
-            case 3:
+            case 4:
               return "A board needs to be added.";
+              break;
+            case 5:
+              return "Please select your Broadcasting software.";
               break;
           }
           return "";   

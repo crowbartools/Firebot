@@ -584,6 +584,7 @@ body {
 .modal-content {
   border-radius: 3px;
   background-color: $light-background-color;
+  position: relative;
 }
 .modal-title {
   font-weight: 100;
@@ -660,6 +661,10 @@ body {
   letter-spacing: 2px;
   margin-bottom: 20px;
   margin-top: 3px;
+}
+
+.import-settings-btn {
+  font-size: 12px;
 }
 
 .wave.ng-enter, .wave.ng-leave, .slide-fade.ng-enter, .slide-fade.ng-leave {
