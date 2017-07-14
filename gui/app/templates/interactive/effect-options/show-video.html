@@ -79,6 +79,19 @@
       </div>
   </div>
   <div class="effect-setting-container">
+        <div ng-show="effect.videoType == 'YouTube Video'">
+            <div class="effect-specific-title"><h4>Start position in video?</h4></div>
+            <div class="input-group">
+                <span class="input-group-addon">Start time location</span>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  aria-describeby="video-youtube-time-setting" 
+                  type="text"
+                  ng-model="effect.starttime"
+                  placeholder="Ex: 12">
+            </div>
+        </div>
       <div class="effect-specific-title"><h4>How long should it show?</h4></div>
       <div class="input-group">
           <span class="input-group-addon">Seconds</span>

@@ -12,8 +12,8 @@ function showVideo(data){
 	var videoWidth = data.videoWidth;
 	var videoDuration = parseInt(data.videoDuration) * 1000;
 	var videoVolume = data.videoVolume;
-	console.log(videoVolume);
-
+	var videoStarttime = data.videoStarttime || 0;
+	
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
 	var divClass = d.getTime();
@@ -38,7 +38,7 @@ function showVideo(data){
 		
 	}else{
 		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;">';
-		var videoFinal = videoFinal + '<iframe id="youtubeApi" width="'+ videoWidth +'" height="'+ videoHeight +'" src="https://www.youtube.com/embed/'+ youtubeId +'?enablejsapi=1&amp;rel=0&amp;autoplay=1&amp;showinfo=0&amp;controls=0&amp;autohide=1" frameborder="0" allowfullscreen></iframe>';
+		var videoFinal = videoFinal + '<iframe id="youtubeApi" width="'+ videoWidth +'" height="'+ videoHeight +'" src="https://www.youtube.com/embed/'+ youtubeId +'?enablejsapi=1&amp;rel=0&amp;autoplay=1&amp;showinfo=0&amp;controls=0&amp;autohide=1&amp;start='+ videoStarttime +'" frameborder="0" allowfullscreen></iframe>';
 		var videoFinal = videoFinal + '</div>';
 	}
 	
