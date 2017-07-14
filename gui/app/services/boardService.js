@@ -116,7 +116,7 @@
             }catch(err){
                 console.log(err);
                 return new Promise(function(resolve, reject) {
-                reject('No boards saved.')
+                  resolve('No boards saved.');
                 });;
             }
             

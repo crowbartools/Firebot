@@ -5,7 +5,6 @@
  const electronOauth2 = require('electron-oauth2');
  
  const dataAccess = require('../../lib/data-access.js');
- const dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"); 
  
  const _ = require('underscore')._;
 
@@ -68,6 +67,8 @@
     }
     
     function logout(type) {
+      var dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
+       
       if(type === "streamer") {
         // Delete Info
         dbAuth.delete('/streamer');
@@ -114,6 +115,7 @@
     // User Info
     // This function grabs info from the currently logged in user.
     function userInfo(type, accessToken, refreshToken) {
+       var dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"); 
     
         // Request user info and save out everything to auth file.
         request({
@@ -143,6 +145,7 @@
     // Load Login
     // This function populates the accounnt fields which will in turn update the ui
      service.loadLogin = function() {
+        var dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"); 
         // Get streamer info.
         try {
             var streamer = dbAuth.getData('/streamer');
@@ -239,6 +242,7 @@
     // Refresh Token
     // This will get a new access token when connecting to interactive.
     function refreshToken() {
+       var dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"); 
     
         console.log('Trying to get refresh tokens...')
     

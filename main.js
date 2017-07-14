@@ -4,7 +4,7 @@ const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 // IPC for conveying events between main process and render processes.
-const {ipcMain, shell} = require('electron')
+const {ipcMain, shell, dialog} = require('electron')
 
 const path = require('path')
 const url = require('url')
@@ -264,6 +264,17 @@ function createWindow () {
     // of opening to the poarent folder with 'Firebot'folder selected. 
     var rootFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "user-settings");
     shell.showItemInFolder(rootFolder);
+  });
+  
+  // Get Image File Path
+  // This listens for an event from the render media.js file to open a dialog to get a filepath.
+  ipcMain.on('getImportFolderPath', function(event, uniqueid) {
+      var path = dialog.showOpenDialog({
+          title: "Select 'user-settings' folder",
+          buttonLabel: "Import 'user-settings'",
+          properties: ['openDirectory']
+      });
+      event.sender.send('gotImportFolderPath', {path: path, id: uniqueid});
   });
 
 

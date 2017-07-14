@@ -28,8 +28,11 @@
 						Click the button below and select the <b>user-settings</b> folder located where you previously had Firebot saved.
 					</p>
 					<div>
-						<button class="btn btn-primary"><i class="fal fa-inbox-in"></i> Import Boards & Settings</button>
+						<button class="btn btn-primary" ng-click="openImportBrowser()"><i class="fal fa-inbox-in"></i> Import Boards & Settings</button>
 					</div>
+					<p ng-if="importErrorOccured" class="animated fadeInUp" style="color:red; margin-top: 10px;">
+						{{importErrorMessage}}
+					</p>
 				</div>
 			</div>
 			

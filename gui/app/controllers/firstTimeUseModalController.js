@@ -1,12 +1,20 @@
 (function() {
 
   //TODO: Rename this to setupWizardModalController
+  
+  const dataAccess = require('../../lib/data-access.js');
+  const fs = require('fs');
+  const path = require('path');
+  const ncp = require('ncp');
+  
   angular
     .module('firebotApp')
-    .controller('firstTimeUseModalController', function ($scope, $uibModalInstance, $q, connectionService, boardService, settingsService) {
+    .controller('firstTimeUseModalController', function ($rootScope, $scope, $uibModalInstance, 
+      $q, connectionService, boardService, settingsService, listenerService, groupsService) {
 
         $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six', 'seven'];
-        $scope.stepTitles = ['', 'Import Data', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', '', ''];
+        $scope.stepTitles = 
+          ['', 'Import Data', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', '', ''];
         $scope.step = 0;
 
         $scope.isFirstStep = function () {
@@ -108,6 +116,64 @@
           return "";   
         }
         
+        /*
+        * Data import
+        */
+        $scope.openImportBrowser = function() {
+          var registerRequest = {
+            type: listenerService.ListenerType.IMPORT_FOLDER,
+            runOnce: true,
+            publishEvent: true
+          }
+          listenerService.registerListener(registerRequest, (filepath) => {
+            validateUserSettingsFolder(filepath);
+          });
+        }
+        
+        $scope.importErrorOccured = false;
+        $scope.importErrorMessage = "";
+        
+        function validateUserSettingsFolder(filePath) {
+          // Not the best validation, but it should prevent most mistakes.
+          if(!fs.existsSync(filePath) || !filePath.endsWith("user-settings")) {
+            $scope.importErrorOccured = true;
+            $scope.importErrorMessage = "This is not a valid 'user-settings' folder.";
+          }          
+          else {
+            $rootScope.showSpinner = true;
+            copyUserSettingsToUserDataFolder(filePath, () => {
+              loadBoardsAndLogins();             
+            });
+          }
+        }
+        
+        function copyUserSettingsToUserDataFolder(filePath, callback) {
+          var source = filePath;
+          var destination = dataAccess.getPathInUserData("/user-settings");    
+          ncp(source, destination, function (err) {
+           if (err) {
+             console.log("Failed to copy 'user-settings'!");
+             callback();
+             return console.error(err);
+           }
+           console.log('Copied "user-settings" to user data.');
+           callback();
+          });
+        }
+        
+        function loadBoardsAndLogins() {
+          boardService.loadAllBoards().then(() => {  
+                    
+            connectionService.loadLogin();
+            groupsService.loadViewerGroups();
+            
+            $scope.$applyAsync();
+            
+            $rootScope.showSpinner = false;
+            $scope.setCurrentStep(6);
+          });         
+        }
+         
         $scope.settingOptions = {
           overlayCompatibility: ""
         }
