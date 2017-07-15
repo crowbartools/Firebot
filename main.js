@@ -4,14 +4,84 @@ const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 // IPC for conveying events between main process and render processes.
-const {ipcMain} = require('electron')
+const {ipcMain, shell, dialog} = require('electron')
 
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
-const logger = require('./lib/errorLogging.js');
+
+const JsonDb = require('node-json-db');
 
 require('dotenv').config()
+
+const GhReleases = require('electron-gh-releases');
+
+const settings = require('./lib/interactive/settings-access').settings;
+
+const dataAccess = require('./lib/data-access.js');
+
+var ncp = require('ncp').ncp;
+ncp.limit = 16;
+
+// Handle Squirrel events
+var handleStartupEvent = function() {
+  if (process.platform !== 'win32') {
+    return false;
+  }
+
+  var squirrelCommand = process.argv[1];
+  switch (squirrelCommand) {
+    case '--squirrel-install':
+
+      // Install shortcuts
+      target = path.basename(process.execPath);
+      updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+      var createShortcut = updateDotExe + ' --createShortcut=' + target + ' --shortcut-locations=Desktop,StartMenu' ;
+      console.log (createShortcut);
+      exec(createShortcut);
+
+      // Always quit when done
+      app.quit();
+      return true;
+    case '--squirrel-updated':
+
+      // Optionally do things such as:
+      //
+      // - Install desktop and start menu shortcuts
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //   explorer context menus
+
+      // Always quit when done
+      app.quit();
+
+      return true;
+    case '--squirrel-uninstall':
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+
+      // Remove shortcuts
+      target = path.basename(process.execPath);
+      updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+      var createShortcut = updateDotExe + ' --removeShortcut=' + target ;
+      console.log (createShortcut);
+      exec(createShortcut);
+      
+      // Always quit when done
+      app.quit();
+      return true;
+    case '--squirrel-obsolete':
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+      app.quit();
+      return true;
+  }
+};
+
+if (handleStartupEvent()) {
+  return;
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -52,76 +122,69 @@ function createWindow () {
     mixerConnect.shortcut();
 }
 
-function pathExists(path) {
-  return new Promise((resolve, reject) => {
-    fs.access(path, (err) => {
-      if(err) {
-        //ENOENT means Error NO ENTity found, aka the file/folder doesn't exist.
-        if(err.code === 'ENOENT') {
-          // This folder doesn't exist. Resolve and create it.
-          resolve();
-        } else {
-          // Some weird error happened other than the path missing.
-          console.log(err)
-        };
-      } else {
-        // This folder exists. Reject and don't touch it.
-        console.log('Path Found: '+path)
-        reject();
-      }
-    });
-  });
-};
-
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   app.on('ready', function(){
     
+    //create the root "firebot-data" folder in user-settings
+    dataAccess.createFirebotDataDir();
+    
     // Create the user-settings folder if it doesn't exist. It's required 
     // for the folders below that are within it
-    pathExists("./user-settings/")
-    .then((resolve) => {
+    dataAccess.userDataPathExists("/user-settings/").then((resolve) => {
       console.log("Can't find the user-settings folder, creating one now...");
-      fs.mkdir("./user-settings");
+      dataAccess.makeDirInUserData("/user-settings");
     });
 
     // Create the scripts folder if it doesn't exist
-    pathExists("./user-settings/scripts/")
-    .then((resolve) => {
+    dataAccess.userDataPathExists("/user-settings/scripts/").then((resolve) => {
       console.log("Can't find the scripts folder, creating one now...");
-      fs.mkdir("./user-settings/scripts");
-    })
+      dataAccess.makeDirInUserData("/user-settings/scripts");
+    });
     
     // Create the overlay settings folder if it doesn't exist.
-    pathExists("./user-settings/overlay-settings/")
+    dataAccess.userDataPathExists("/user-settings/overlay-settings/")
     .then((resolve) => {
       console.log("Can't find the overlay-settings folder, creating one now...");
-      fs.mkdir("./user-settings/overlay-settings");
-    })
+      dataAccess.makeDirInUserData("/user-settings/overlay-settings");
+    });
     
     // Create the port.js file if it doesn't exist.
-    pathExists("./user-settings/overlay-settings/port.js")
+    dataAccess.userDataPathExists("/user-settings/overlay-settings/port.js")
     .then((resolve) => {
-      fs.writeFile('./user-settings/overlay-settings/port.js', `window.WEBSOCKET_PORT = 8080`, 
-        'utf8', () => { console.log(`Set overlay port to: 8080`)});
-    })  
+      dataAccess.writeFileInUserData(
+        '/user-settings/overlay-settings/port.js', 
+        `window.WEBSOCKET_PORT = 8080`,
+        () => { console.log(`Set overlay port to: 8080`)});
+    });  
 
     // Create the controls folder if it doesn't exist.
-    pathExists("./user-settings/controls")
+    dataAccess.userDataPathExists("/user-settings/controls")
     .then((resolve) => {
       console.log("Can't find the controls folder, creating one now...");
-      fs.mkdir("./user-settings/controls");
-    })  
-
-    // Create the log folder if it doesn't exist.
-    pathExists("./user-settings/logs")
-    .then((resolve) => {
-      console.log("Can't find the log folder, creating one now...");
-      fs.mkdir("./user-settings/logs");
-    })  
+      dataAccess.makeDirInUserData("/user-settings/controls");
+    });
     
-    createWindow()
+    
+    var overlayFolderExists = dataAccess.userDataPathExistsSync("/overlay/");
+    var appVersion = electron.app.getVersion();
+    if(!overlayFolderExists || settings.getOverlayVersion() !== appVersion) {
+      
+      var source = dataAccess.getPathInWorkingDir("/overlay");
+      var destination = dataAccess.getPathInUserData("/overlay");    
+      ncp(source, destination, function (err) {
+       if (err) {
+         console.log("Error copying Overlay folder to user data!");
+         return console.error(err);
+       }
+       settings.setOverlayVersion(appVersion);
+       console.log('Copied overlay folder to user data.');
+      });
+    }  
+    
+    createWindow();
+    
     renderWindow.webContents.on('did-finish-load', function() {
         renderWindow.show();
     });
@@ -146,8 +209,7 @@ function pathExists(path) {
 
   process.on('uncaughtException', function(error) {
       // Handle the error
-      // console.error(error);
-      logger.info(error)
+      console.error(error);
   });
 
   // When Quittin.
@@ -155,6 +217,66 @@ function pathExists(path) {
     // Unregister all shortcuts.
     mixerConnect.shortcutUnregister();
   });
+  
+  // Run Updater
+  ipcMain.on('downloadUpdate', function(event, uniqueid) {
+    // Download Update
+    let options = {
+      repo: 'firebottle/test',
+      currentVersion: app.getVersion()
+    }
+
+    var updater = new GhReleases(options)
+
+    updater.check((err, status) => {
+      if (!err) {
+        console.log('Should we download an update? '+status);
+
+        // Download the update
+        updater.download();
+      } else {
+        renderWindow.webContents.send('updateError', "Could not start the updater.");
+        console.log(err);
+      }
+    })
+
+    // When an update has been downloaded
+    updater.on('update-downloaded', (info) => {
+      console.log('Updated downloaded. Installing...');
+      //let the front end know and wait a few secs.
+      renderWindow.webContents.send('updateDownloaded');
+      
+      setTimeout(function () {
+        // Restart the app and install the update
+        settings.setJustUpdated(true);
+        
+        updater.install();
+      }, 3*1000);
+    })
+
+    // Access electrons autoUpdater
+    updater.autoUpdater
+  });
+  
+  // Opens the firebot root folder
+  ipcMain.on('openRootFolder', function(event) {
+    // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead 
+    // of opening to the poarent folder with 'Firebot'folder selected. 
+    var rootFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "user-settings");
+    shell.showItemInFolder(rootFolder);
+  });
+  
+  // Get Image File Path
+  // This listens for an event from the render media.js file to open a dialog to get a filepath.
+  ipcMain.on('getImportFolderPath', function(event, uniqueid) {
+      var path = dialog.showOpenDialog({
+          title: "Select 'user-settings' folder",
+          buttonLabel: "Import 'user-settings'",
+          properties: ['openDirectory']
+      });
+      event.sender.send('gotImportFolderPath', {path: path, id: uniqueid});
+  });
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
