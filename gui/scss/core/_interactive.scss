@@ -161,3 +161,7 @@
     }
 }
 
+// Hover color for text when switch interactive board to list.
+.table-hover > tbody > tr:hover > td{ 
+  color: $dark-background-color;
+}

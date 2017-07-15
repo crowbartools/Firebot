@@ -290,9 +290,10 @@ body {
     padding: 11px;
     margin-right: 3px;
     cursor: pointer;
-}
-.logins-wrapper:hover {
-    background: $text-dropdown-hover-color;
+
+    &:hover{
+      background: $text-dropdown-hover-color;
+    }
 }
 
 
@@ -806,7 +807,7 @@ body {
 .wizard-accounts-title   {
   text-transform: uppercase;
   font-weight: 600;
-  color: $dark-background-border;
+  color: $content-text-color;
   font-size: 16px;
   margin-bottom: 5px;
 }
