@@ -26,7 +26,7 @@
     "interactive",
     "streaming"
   ],
-  "author": "@Firebottletv",
+  "author": "A Mixer Community Project",
   "license": "GPL-3.0",
   "devDependencies": {
     "electron": "1.4.15",

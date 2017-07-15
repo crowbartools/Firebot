@@ -52,8 +52,14 @@ var handleStartupEvent = function() {
       // - Write to the registry for things like file associations and
       //   explorer context menus
 
-      // Always quit when done
-      app.quit();
+      // Install shortcuts
+      var cp = require('child_process');    
+      var updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+      var target = path.basename(process.execPath);
+      var child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
+      child.on('close', function(code) {
+          app.quit();
+      });
 
       return true;
     case '--squirrel-uninstall':
