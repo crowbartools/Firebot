@@ -15,11 +15,28 @@
 					<span>A Tool For Mixer Interactive</span>
 				</div>
 				<div style="animation-delay: 3.2s" class="animated fadeInUp">
-					<a class="btn btn-link" ng-click="handleNext()">Lets get started <i class="fal fa-angle-right"></i></a>
+					<a class="btn btn-link" ng-click="setCurrentStep(2)">Lets get started <i class="fal fa-angle-right"></i></a>
 				</div>
 			</div>
 			
 			<div ng-switch-when="two" class="wave">
+				<div>
+					<p>
+						If you're upgrading from 3.0 or prior (or the 4.0 betas), you will have to import your boards and settings because Firebot now saves in a new location.
+					</p>
+					<p>
+						Click the button below and select the <b>user-settings</b> folder located where you previously had Firebot saved.
+					</p>
+					<div>
+						<button class="btn btn-primary" ng-click="openImportBrowser()"><i class="fal fa-inbox-in"></i> Import Boards & Settings</button>
+					</div>
+					<p ng-if="importErrorOccured" class="animated fadeInUp" style="color:red; margin-top: 10px;">
+						{{importErrorMessage}}
+					</p>
+				</div>
+			</div>
+			
+			<div ng-switch-when="three" class="wave">
 				<p>
 					Firebot supports two different Mixer accounts:</br> A <b>Streamer</b> (the one you stream with)</br> and a <b>Bot</b> (a second account that can chat to your viewers).
 				</p>
@@ -82,7 +99,7 @@
 				</div>	
 			</div>
 			
-			<div ng-switch-when="three" class="wave">
+			<div ng-switch-when="four" class="wave">
 				<p>
 					Next, we need to sync controls from Mixer.
 				</p>
@@ -107,7 +124,7 @@
 				</div>
 			</div>
 			
-			<div ng-switch-when="four" class="wave">
+			<div ng-switch-when="five" class="wave">
 				<div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;" ng-hide="hasBoardsLoaded">
 					<p>
 						<b style="font-size: 16px;">How to create and add a board to Firebot:</b>
@@ -151,7 +168,28 @@
 				</div>
 			</div>
 			
-			<div ng-switch-when="five" class="wave">
+			<div ng-switch-when="six" class="wave">
+				<h2>
+					What broadcasting software do you currently stream with?
+				</h2>
+				<div style="text-align: left; display:flex; justify-content:center;">
+					<div style="margin: 20px 0 30px 0;width:50%;">
+						<label class="control-fb control--radio">OBS
+							<input type="radio" ng-model="settingOptions.overlayCompatibility" value="OBS"/> 
+							<div class="control__indicator"></div>
+						</label>
+						<label class="control-fb control--radio">Other <span class="muted">(XSplit, Wirecast, etc)</span>
+							<input type="radio" ng-model="settingOptions.overlayCompatibility" value="Other"/>
+							<div class="control__indicator"></div>
+						</label>
+					</div>
+				</div>
+				<div class="alert alert-info">
+					We need to ask this because <b>OBS</b> handles local files (for things like pictures, videos, etc) differently than all the other broadcasting sofware.
+				</div>
+			</div>
+			
+			<div ng-switch-when="seven" class="wave">
 				<div style="margin-top: 20px">
 					<img style="width: 80px; height: 80px" class="jump-infinite" src="../images/logo_transparent.png">
 				</div>
@@ -171,6 +209,9 @@
 	</div>
 </div>
 <div class="modal-footer" style="min-height: 64px; text-align: center;">
+	<div ng-if="isFirstStep()">
+		<a style="animation-delay: 3.3s" class="btn btn-link import-settings-btn animated fadeIn" ng-click="setCurrentStep(1)">Upgrading from 3.0 or 4.0-beta?</a>
+	</div>
 	<div>
 		<a class="btn btn-default" ng-click="handlePrevious()" ng-show="showBackButton()">Back</a>
 		<a 

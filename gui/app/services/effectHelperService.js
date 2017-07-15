@@ -3,7 +3,7 @@
  // This provides helper methods for control effects
  
  const _ = require('underscore')._;
- 
+ const dataAccess = require('../../lib/data-access.js');
  const EffectType = require('../../lib/interactive/EffectType.js').EffectType;
 
  angular
@@ -17,6 +17,15 @@
       var controller = ($scope) => {};
       
       switch(effectType) {
+        
+        case EffectType.HTML: 
+          controller = ($scope, utilityService) => {
+            
+            $scope.showOverlayInfoModal = function() {
+              utilityService.showOverlayInfoModal();
+            }
+          }
+          break;    
         
         case EffectType.PLAY_SOUND:
           controller = ($scope, listenerService) => {
@@ -42,7 +51,7 @@
           break;
           
         case EffectType.SHOW_IMAGE:
-          controller = ($scope, listenerService) => {
+          controller = ($scope, listenerService, utilityService) => {
             
             $scope.imagePositions = [
               "Top Left",
@@ -68,12 +77,20 @@
               listenerService.registerListener(registerRequest, (filepath) => {
                 $scope.effect.file = filepath;
               });
-            };         
+            };
+            
+            $scope.showOverlayInfoModal = function() {
+              utilityService.showOverlayInfoModal();
+            }          
           };
           break;
         
         case EffectType.SHOW_VIDEO:
-          controller = ($scope, listenerService) => {
+          controller = ($scope, listenerService, utilityService) => {
+            
+            $scope.showOverlayInfoModal = function() {
+              utilityService.showOverlayInfoModal();
+            }    
             
             $scope.videoPositions = [
               "Top Left",
@@ -251,13 +268,13 @@
 
         case EffectType.CUSTOM_SCRIPT:
           controller = ($scope) => {
-
+            var scriptFolderPath = dataAccess.getPathInUserData("/user-settings/scripts")
             // Grab files in folder when button effect shown.
-            $scope.scriptArray = fs.readdirSync('./user-settings/scripts');
+            $scope.scriptArray = fs.readdirSync(scriptFolderPath);
 
             // Grab files in folder on refresh click.
             $scope.getNewScripts = function (){
-              $scope.scriptArray = fs.readdirSync('./user-settings/scripts');
+              $scope.scriptArray = fs.readdirSync(scriptFolderPath);
             }
 
             // Open script folder on click.

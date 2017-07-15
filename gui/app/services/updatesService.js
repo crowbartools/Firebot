@@ -6,16 +6,17 @@
  const JsonDb = require('node-json-db');
  const compareVersions = require('compare-versions');
 
-
  angular
   .module('firebotApp')
-  .factory('updatesService', function ($q, $http, $sce, settingsService, utilityService) {
+  .factory('updatesService', function ($q, $http, $sce, settingsService, utilityService, listenerService) {
     // factory/service object
     var service = {}
     
     service.updateData = {};
     
-    service.hasCheckedForUpdates = false;  
+    service.isCheckingForUpdates = false;
+    
+    service.hasCheckedForUpdates = false;
     
     service.updateIsAvailable = function() {
       return service.hasCheckedForUpdates ? service.updateData.updateIsAvailable : false;
@@ -24,6 +25,7 @@
     // Update Checker
     // This checks for updates.
     service.checkForUpdate = function(){
+      service.isCheckingForUpdates = true;
         return $q((resolve, reject) => {
             // If user opts into betas we want to check different git api links.
             // If they are, we check releases as beta releases will be listed.
@@ -75,15 +77,23 @@
               service.updateData = updateObject;
               
               service.hasCheckedForUpdates = true;
+              service.isCheckingForUpdates = false;
               
               resolve(updateObject)
             }, (error) => {
+              service.isCheckingForUpdates = false;
               console.log(error);
               reject(false);
             });
         });
     }
 
+    service.downloadAndInstallUpdate = function() {
+      if(service.updateIsAvailable()) {
+        listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+      }         
+    }
+    
     return service;
   });
 })();

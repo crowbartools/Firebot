@@ -15,6 +15,8 @@
       connectionChangeRequest: {},
       eventLog: {},
       error: {},
+      updateError: {},
+      updateDownloaded: {},
       playSound: {},
       showImage: {},
       showVideo: {},
@@ -26,10 +28,13 @@
       IMAGE_FILE: "imageFile",
       SOUND_FILE: "soundFile",
       VIDEO_FILE: "videoFile",
+      IMPORT_FOLDER: "importFolder",
       CONNECTION_STATUS: "connectionStatus",
       CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
       EVENT_LOG: "eventLog",
       ERROR: "error",
+      UPDATE_ERROR: "updateError",
+      UPDATE_DOWNLOADED: "updateDownloaded",
       PLAY_SOUND: "playSound",
       SHOW_IMAGE: "showImage",
       SHOW_VIDEO: "showVideo",
@@ -58,6 +63,7 @@
         case ListenerType.VIDEO_FILE:
         case ListenerType.IMAGE_FILE:
         case ListenerType.SOUND_FILE:
+        case ListenerType.IMPORT_FOLDER:
           registeredListeners.filePath[uuid] = listener;
           if(publishEvent) {
             if(listener.type == ListenerType.IMAGE_FILE) {
@@ -68,6 +74,9 @@
             }
             else if(listener.type == ListenerType.VIDEO_FILE) {
               ipcRenderer.send('getVideoPath', uuid);
+            }
+            else if(listener.type == ListenerType.IMPORT_FOLDER) {
+              ipcRenderer.send('getImportFolderPath', uuid);
             }
           }
           break;
@@ -81,12 +90,29 @@
         case ListenerType.VIDEO_FILE:
         case ListenerType.IMAGE_FILE:
         case ListenerType.SOUND_FILE:
+        case ListenerType.IMPORT_FOLDER:
           delete registeredListeners.filePath[uuid];
           break;
         default:
           delete registeredListeners[type][uuid];
       }
     }
+    
+    /*
+    * Events
+    */
+    var EventType = {
+      DOWNLOAD_UPDATE: "downloadUpdate",
+      OPEN_ROOT: "openRootFolder",
+      GET_IMAGE: "getImagePath",
+      GET_SOUND: "getSoundPath",
+      GET_VIDEO: "getVideoPath"
+    }  
+    service.EventType = EventType;
+    
+    service.fireEvent = function(type, data) {
+      ipcRenderer.send(type, data);
+    } 
     
     /**
     * File path event listeners 
@@ -100,6 +126,10 @@
     });
 
     ipcRenderer.on('gotVideoFilePath', function (event, data){
+        parseFilePathEvent(data);
+    });
+    
+    ipcRenderer.on('gotImportFolderPath', function (event, data){
         parseFilePathEvent(data);
     });
       
@@ -152,6 +182,24 @@
         runListener(listener, errorMessage);
       });
     });
+
+    /**
+    * Update error listener
+    */
+    ipcRenderer.on('updateError', function (event, errorMessage){
+      _.forEach(registeredListeners.updateError, (listener, key, list) => {
+        runListener(listener, errorMessage);
+      });
+    });
+    
+    /**
+    * Update download listener
+    */
+    ipcRenderer.on('updateDownloaded', function (){
+      _.forEach(registeredListeners.updateDownloaded, (listener, key, list) => {
+        runListener(listener);
+      });
+    });
     
     /**
     * Show img event listener
@@ -197,6 +245,7 @@
         runListener(listener, data);
       });
     });
+    
     
     /**
     *  Helpers

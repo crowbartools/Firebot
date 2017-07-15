@@ -4,11 +4,15 @@
  
  angular
    .module('firebotApp')
-   .controller('settingsController', function($scope, settingsService, utilityService) {
+   .controller('settingsController', function($scope, settingsService, utilityService, listenerService) {
      
         $scope.settings = settingsService;
         
         $scope.showSetupWizard = utilityService.showSetupWizard;
+        
+        $scope.openRootFolder = function() {
+          listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
+        }
         
         $scope.currentPort = settingsService.getWebSocketPort();
         

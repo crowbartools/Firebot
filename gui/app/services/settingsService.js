@@ -2,8 +2,9 @@
   
  //This handles settings access for frontend
  
+ const dataAccess = require('../../lib/data-access.js');
+ 
  const _ = require('underscore')._;
- const JsonDB = require('node-json-db');
  const fs = require('fs');
 
  angular
@@ -14,7 +15,7 @@
     var settingsCache = {}
     
     function getSettingsFile() {
-      return new JsonDB("./user-settings/settings", true, true);
+      return dataAccess.getJsonDbInUserData("/user-settings/settings");
     }
     
     function pushDataToFile(path, data) {
@@ -114,7 +115,8 @@
     }
     
     service.setOverlayCompatibility = function(overlay) {
-      pushDataToFile('/settings/overlayImages', overlay);
+      var overlaySetting = overlay === 'OBS' ? overlay : 'Other'
+      pushDataToFile('/settings/overlayImages', overlaySetting);
     }
 
     service.getTheme = function() {
@@ -144,6 +146,15 @@
       pushDataToFile('/settings/firstTimeUse', ftu === true)
     }
     
+    service.hasJustUpdated = function() {
+      var updated = getDataFromFile('/settings/justUpdated');
+      return updated != null ? updated : false;
+    }
+    
+    service.setJustUpdated = function(justUpdated) {
+      pushDataToFile('/settings/justUpdated', justUpdated === true)
+    }
+    
     service.getButtonViewMode = function() {
       var buttonViewMode = getDataFromFile('/settings/buttonViewMode');
       return buttonViewMode != null ? buttonViewMode : 'grid';
@@ -151,6 +162,15 @@
     
     service.setButtonViewMode = function(buttonViewMode) {
       pushDataToFile('/settings/buttonViewMode', buttonViewMode)
+    }
+    
+    service.getOverlayVersion = function() {
+      var version = getDataFromFile('/settings/copiedOverlayVersion');
+      return version != null ? version : "";
+    }
+    
+    service.setOverlayVersion = function(newVersion) {
+      pushDataToFile('/settings/copiedOverlayVersion', newVersion.toString());
     }
     
     service.getWebSocketPort = function() {
