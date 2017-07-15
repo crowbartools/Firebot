@@ -34,14 +34,14 @@ var handleStartupEvent = function() {
     case '--squirrel-install':
 
       // Install shortcuts
-      target = path.basename(process.execPath);
-      updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-      var createShortcut = updateDotExe + ' --createShortcut=' + target + ' --shortcut-locations=Desktop,StartMenu' ;
-      console.log (createShortcut);
-      exec(createShortcut);
+      var cp = require('child_process');    
+      var updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+      var target = path.basename(process.execPath);
+      var child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
+      child.on('close', function(code) {
+          app.quit();
+      });
 
-      // Always quit when done
-      app.quit();
       return true;
     case '--squirrel-updated':
 
@@ -61,14 +61,14 @@ var handleStartupEvent = function() {
       // --squirrel-updated handlers
 
       // Remove shortcuts
-      target = path.basename(process.execPath);
-      updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-      var createShortcut = updateDotExe + ' --removeShortcut=' + target ;
-      console.log (createShortcut);
-      exec(createShortcut);
+      var cp = require('child_process');    
+      var updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+      var target = path.basename(process.execPath);
+      var child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
+      child.on('close', function(code) {
+          app.quit();
+      });
       
-      // Always quit when done
-      app.quit();
       return true;
     case '--squirrel-obsolete':
       // This is called on the outgoing version of your app before
