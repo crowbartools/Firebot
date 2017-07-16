@@ -27,13 +27,6 @@
 <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>How big should it be?</h4></div>
     <div class="input-group">
-        <span class="input-group-addon">Height (in pixels)</span>
-        <input 
-          type="text" 
-          class="form-control" 
-          aria-describeby="image-height-setting-type" 
-          type="number"
-          ng-model="effect.height">
         <span class="input-group-addon">Width (in pixels)</span>
         <input 
           type="text" 
@@ -41,6 +34,13 @@
           aria-describeby="image-width-setting-type" 
           type="number"
           ng-model="effect.width">
+        <span class="input-group-addon">Height (in pixels)</span>
+        <input 
+          type="text" 
+          class="form-control" 
+          aria-describeby="image-height-setting-type" 
+          type="number"
+          ng-model="effect.height">
     </div>
     <div class="effect-info alert alert-info">
         Just put numbers in the fields (ex: 250). This will set the max width/height of the image and scale it down proportionally.
