@@ -106,6 +106,8 @@
           var videoHeight = data.videoHeight;
           var videoWidth = data.videoWidth;
           var videoDuration = parseInt(data.videoDuration);
+          var videoVolume = data.videoVolume;
+          var videoStarttime = data.videoStarttime;
       
           // Set defaults if they werent filled out.
           if(videoPosition == "" || videoPosition === null){
@@ -139,7 +141,9 @@
             "videoPosition":videoPosition, 
             "videoHeight":videoHeight, 
             "videoWidth": videoWidth, 
-            "videoDuration":videoDuration
+            "videoDuration":videoDuration,
+            "videoVolume": videoVolume,
+            "videoStarttime": videoStarttime
           };
           
           service.broadcast(data);

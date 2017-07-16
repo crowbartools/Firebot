@@ -1,3 +1,9 @@
+// Load youtube iframe api onto page.
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
 // Video Handling
 // This will take the data that is sent to it from the GUI and render a video on the overlay.
 function showVideo(data){
@@ -11,12 +17,15 @@ function showVideo(data){
 	var videoHeight = data.videoHeight;
 	var videoWidth = data.videoWidth;
 	var videoDuration = parseInt(data.videoDuration) * 1000;
-
+	var videoVolume = data.videoVolume;
+	var videoStarttime = data.videoStarttime || 0;
+	
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
 	var divClass = d.getTime();
 
 	if(videoType === "Local Video"){
+
 		if (videoHeight === false && videoWidth === false){
 			// Both height and width fields left blank.
 			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
@@ -33,18 +42,65 @@ function showVideo(data){
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
 			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		}
-	}else{
-		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;">';
-		var videoFinal = videoFinal + '<iframe width="'+ videoWidth +'" height="'+ videoHeight +'" src="https://www.youtube.com/embed/'+ youtubeId +'?rel=0&amp;autoplay=1&amp;showinfo=0&amp;controls=0&amp;autohide=1" frameborder="0" allowfullscreen></iframe>';
-		var videoFinal = videoFinal + '</div>';
-	}
-	
-	$('#wrapper').append(videoFinal);
-	$('.'+divClass+'-video').fadeIn('fast');
 
-	setTimeout(function(){ 
-		$('.'+divClass+'-video').fadeOut('fast', function(){
-			$('.'+divClass+'-video').remove();
+		// Put the div on the page.
+		$('#wrapper').append(videoFinal);
+		$('.'+divClass+'-video').fadeIn('fast');
+
+		// Adjust volume
+		videoVolume = parseInt(videoVolume) / 10;
+		console.log(videoVolume);
+		$('.player').prop("volume", videoVolume);
+
+		// Remove div after X time.
+		setTimeout(function(){ 
+			$('.'+divClass+'-video').fadeOut('fast', function(){
+				$('.'+divClass+'-video').remove();
+			});
+		}, videoDuration);
+		
+	}else{
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><div id="player"></div></div>';
+		
+		// Throw div on page.
+		$('#wrapper').append(videoFinal);
+		
+		// Add iframe.
+		var player = new YT.Player('player', {
+			videoId: youtubeId,
+			playerVars: { 
+				'autoplay': 1, 
+				'controls': 0,
+				'start': videoStarttime,
+				'showinfo': 0,
+				'rel': 0,
+				'modestbranding': 1
+			},
+			events: {
+				'onReady': onPlayerReady,
+				'onError': onPlayerError
+			}
 		});
-	}, videoDuration);
-}
+
+		// Fade in video.
+		$('.'+divClass+'-video').fadeIn('fast');
+
+		// Play video when the player is ready.
+		function onPlayerReady(event) {
+			event.target.setVolume(parseInt(videoVolume) * 10);
+			event.target.playVideo();
+		}
+
+		// Remove div after X time.
+		setTimeout(function(){ 
+			$('.'+divClass+'-video').fadeOut('fast', function(){
+				$('.'+divClass+'-video').remove();
+			});
+		}, videoDuration);
+
+		// Log Errors
+		function onPlayerError(event){
+			console.log(event)
+		}
+	}
+};
