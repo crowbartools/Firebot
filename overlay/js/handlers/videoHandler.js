@@ -1,3 +1,9 @@
+// Load youtube iframe api onto page.
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
 // Video Handling
 // This will take the data that is sent to it from the GUI and render a video on the overlay.
 function showVideo(data){
@@ -19,6 +25,7 @@ function showVideo(data){
 	var divClass = d.getTime();
 
 	if(videoType === "Local Video"){
+
 		if (videoHeight === false && videoWidth === false){
 			// Both height and width fields left blank.
 			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
@@ -35,72 +42,65 @@ function showVideo(data){
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
 			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		}
-		
-	}else{
-		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;">';
-		var videoFinal = videoFinal + '<iframe id="youtubeApi" width="'+ videoWidth +'" height="'+ videoHeight +'" src="https://www.youtube.com/embed/'+ youtubeId +'?enablejsapi=1&amp;rel=0&amp;autoplay=1&amp;showinfo=0&amp;controls=0&amp;autohide=1&amp;start='+ videoStarttime +'" frameborder="0" allowfullscreen></iframe>';
-		var videoFinal = videoFinal + '</div>';
-	}
-	
-	$('#wrapper').append(videoFinal);
-	$('.'+divClass+'-video').fadeIn('fast');
-	if(videoType === "Local Video"){
+
+		// Put the div on the page.
+		$('#wrapper').append(videoFinal);
+		$('.'+divClass+'-video').fadeIn('fast');
+
+		// Adjust volume
 		videoVolume = parseInt(videoVolume) / 10;
 		console.log(videoVolume);
 		$('.player').prop("volume", videoVolume);
-	}else{
-		var tag = document.createElement('script');
-		tag.id = 'iframe-demo';
-		tag.src = 'https://www.youtube.com/iframe_api';
-		var firstScriptTag = document.getElementsByTagName('script')[0];
-		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-	  
-		var player;
 
-		function onYouTubeIframeAPIReady() {
-		  player = new YT.Player('youtubeApi', {
-			  events: {
-				'onReady': onPlayerReady,
-				'onStateChange': onPlayerStateChange
-			  }
-		  });
-		}
-
-		function onPlayerReady(event) {
-		  document.getElementById('youtubeApi').style.borderColor = '#FF6D00';
-		  videoVolume = parseInt(videoVolume) * 10;
-		  console.log(videoVolume);
-		  event.target.setVolume(videoVolume);
-		}
-		// Just to have an form of visual feedback that the scrpt works while testing and stuff
-		function changeBorderColor(playerStatus) {
-		  var color;
-		  if (playerStatus == -1) {
-			color = "#37474F"; // unstarted = gray
-		  } else if (playerStatus == 0) {
-			color = "#FFFF00"; // ended = yellow
-		  } else if (playerStatus == 1) {
-			color = "#33691E"; // playing = green
-		  } else if (playerStatus == 2) {
-			color = "#DD2C00"; // paused = red
-		  } else if (playerStatus == 3) {
-			color = "#AA00FF"; // buffering = purple
-		  } else if (playerStatus == 5) {
-			color = "#FF6DOO"; // video cued = orange
-		  }
-		  if (color) {
-			document.getElementById('youtubeApi').style.borderColor = color;
-		  }
-		}
+		// Remove div after X time.
+		setTimeout(function(){ 
+			$('.'+divClass+'-video').fadeOut('fast', function(){
+				$('.'+divClass+'-video').remove();
+			});
+		}, videoDuration);
 		
-		function onPlayerStateChange(event) {
-		  changeBorderColor(event.data);
+	}else{
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><div id="player"></div></div>';
+		
+		// Throw div on page.
+		$('#wrapper').append(videoFinal);
+		
+		// Add iframe.
+		var player = new YT.Player('player', {
+			videoId: youtubeId,
+			playerVars: { 
+				'autoplay': 1, 
+				'controls': 0,
+				'start': videoStarttime,
+				'showinfo': 0,
+				'rel': 0,
+				'modestbranding': 1
+			},
+			events: {
+				'onReady': onPlayerReady,
+				'onError': onPlayerError
+			}
+		});
+
+		// Fade in video.
+		$('.'+divClass+'-video').fadeIn('fast');
+
+		// Play video when the player is ready.
+		function onPlayerReady(event) {
+			event.target.setVolume(parseInt(videoVolume) * 10);
+			event.target.playVideo();
+		}
+
+		// Remove div after X time.
+		setTimeout(function(){ 
+			$('.'+divClass+'-video').fadeOut('fast', function(){
+				$('.'+divClass+'-video').remove();
+			});
+		}, videoDuration);
+
+		// Log Errors
+		function onPlayerError(event){
+			console.log(event)
 		}
 	}
-
-	setTimeout(function(){ 
-		$('.'+divClass+'-video').fadeOut('fast', function(){
-			$('.'+divClass+'-video').remove();
-		});
-	}, videoDuration);
-}
+};
