@@ -65,8 +65,23 @@
            };
            
            $scope.updateCheckedArrayWithElement = function(array, element) {
+             // Remove "None"
+             // Later on this can be removed and replaced with a "uncheck all" button in the UI.
+             // But for now this will help convert files over to not use "None" anymore.
+             var index = array.indexOf("None");
+             if (index !== -1) {
+                array.splice(index, 1);
+             }
+
+             // Update array
              $scope.scene.default = utilityService.getNewArrayWithToggledElement(array, element);
-           }  
+           }
+
+           // This wipes out all checked items. This is a lame "uncheck all button".
+           // We can remove this later and replace with an actual uncheck all button after a few versions.
+           $scope.clearSavedArray = function(){
+             $scope.scene.default = ["None"];
+           }
                 
            $scope.arrayContainsElement = utilityService.arrayContainsElement;
            
