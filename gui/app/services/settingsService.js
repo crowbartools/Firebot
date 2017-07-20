@@ -137,6 +137,24 @@
       pushDataToFile('/settings/sounds', enabled);
     }
     
+    service.notifyOnPrerelease = function() {
+      var prerelease = getDataFromFile('/settings/notifyOnPrerelease');
+      return prerelease != null ? prerelease === true : false;
+    }
+    
+    service.setNotifyOnPrerelease = function(prerelease) {
+      pushDataToFile('/settings/notifyOnPrerelease', prerelease === true)
+    }
+    
+    service.getAutoUpdateLevel = function() {
+      var updateLevel = getDataFromFile('/settings/autoUpdateLevel');
+      return updateLevel != null ? updateLevel : 'minor';
+    }
+    
+    service.setAutoUpdateLevel = function(updateLevel) {
+      pushDataToFile('/settings/autoUpdateLevel', updateLevel)
+    }
+    
     service.isFirstTimeUse = function() {
       var ftu = getDataFromFile('/settings/firstTimeUse');
       return ftu != null ? ftu : true;
