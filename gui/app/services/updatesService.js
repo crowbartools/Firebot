@@ -3,8 +3,8 @@
  //This handles updates
  
  const _ = require('underscore')._;
- const JsonDb = require('node-json-db');
- const compareVersions = require('compare-versions');
+ const VersionCompare = require('../../lib/compare-versions.js');
+ const UpdateType = VersionCompare.UpdateType;
 
  angular
   .module('firebotApp')
@@ -26,16 +26,9 @@
     // This checks for updates.
     service.checkForUpdate = function(){
       service.isCheckingForUpdates = true;
-        return $q((resolve, reject) => {
-            // If user opts into betas we want to check different git api links.
-            // If they are, we check releases as beta releases will be listed.
-            // Else we check /latest which will only list the latest full release.      
+        return $q((resolve, reject) => {     
 
-            var firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
-            
-            if(settingsService.isBetaTester() === "Yes"){
-                firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases";
-            }          
+            var firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases";                  
             
             $http.get(firebotReleasesUrl).then((response) => {
               // Get app version
@@ -56,11 +49,16 @@
               var gitZipDownloadUrl = gitNewest.assets[0].browser_download_url;
 
               // Now lets look to see if there is a newer version.
-              var versionCompare = compareVersions(gitNewest.tag_name, currentVersion);
+              var updateType = VersionCompare.compareVersions(gitNewest.tag_name, currentVersion);
 
               var updateIsAvailable = false;
-              if(versionCompare > 0){
-                  updateIsAvailable = true;
+              if(updateType != UpdateType.NONE) {
+                  var autoUpdateLevel = settingsService.getAutoUpdateLevel();
+                  if(shouldAutoUpdate(autoUpdateLevel, updateType)) {
+                     listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+                  } else {
+                     updateIsAvailable = true;
+                  }
               }
 
               // Build update object.
@@ -94,6 +92,28 @@
       }         
     }
     
+    function shouldAutoUpdate(autoUpdateLevel, updateType) {
+      // if auto updating is completely disabled
+      if(autoUpdateLevel == 0) { return false; }
+      
+      // check each update type
+      switch(updateType) {
+        case UpdateType.NONE:
+          return false;
+        case UpdateType.PRELEASE:
+          return autoUpdateLevel >= 4;
+        case UpdateType.OFFICAL:
+        case UpdateType.PATCH:
+          return autoUpdateLevel >= 1;
+        case UpdateType.MINOR:
+          return autoUpdateLevel >= 2;
+        case UpdateType.MAJOR:
+          return autoUpdateLevel >= 3;
+        default:
+          return false;
+      }
+    }
+
     return service;
   });
 })();

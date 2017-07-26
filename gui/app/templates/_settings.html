@@ -13,27 +13,17 @@
               <button class="btn btn-default" ng-click="showSetupWizard()">Open Setup Wizard</button>
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">Update Options</div>
-              <div class="setting-description">You will be notified when a new stable update is available, however you can choose to be notified of beta releases too. You can also choose what kind of updates you want automatically installed.</div>
-              <div style="margin-left: 10px;">
-                <label class="control-fb control--checkbox" style="margin-bottom: 0">Notifiy me of beta releases
-                  <input type="checkbox" ng-click="settings.setNotifyOnPrerelease(!settings.notifyOnPrerelease())" ng-checked="settings.notifyOnPrerelease()"/>
-                  <div class="control__indicator"></div>
-                </label>
-              </div>
-              <div>
-                <h5>Automatically update to:</h5>
-              </div>
+              <div class="setting-heading">Auto Update</div>
+              <div class="setting-description">Firebot can automatically update when a new version is available. Below you can choose what kinds of updates you want to be automatically downloaded. For any updates that aren't automatically downloaded, you will recieve a notification so you can update at your convenience.</div>
               <div class="dropdown options-beta-dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="options-beta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">Feature updates</span></span>
+                  <span class="dropdown-text">{{getAutoUpdateLevelString()}}</span></span>
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="options-beta">
-                  <li><a href ng-click="">Bugfix updates <i class="pull-right fal fa-question-circle" uib-tooltip="Updates that contain bugfixes for your current version. (Ex: v1.0.0 to v1.0.1)" tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>
-                  <li><a href ng-click="">Feature updates <i class="pull-right fal fa-question-circle" uib-tooltip="Updates that add or improve features. (Ex: v1.0 to v1.1). Includes everything above this (Bugfix updates)." tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>      
-                  <li><a href ng-click="">Major new versions <i class="pull-right fal fa-question-circle" uib-tooltip="Updates that are major new versions. (Ex: v1.0 to v2.0). Includes everything above this (Feature & Bugfix updates)." tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>
-                  <li ng-if="settings.notifyOnPrerelease()"><a href ng-click="">Betas <i class="pull-right fal fa-question-circle" uib-tooltip="Any beta update. (Ex: v1.0 to v1.1-beta). Includes everything above this (Major new versions + Feature & Bugfix updates)." tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>                  
+                  <li><a href ng-click="settings.setAutoUpdateLevel(2)">Bugfix & Feature updates <i class="pull-right fal fa-question-circle" uib-tooltip="Updates that fix bugs or add features. (Ex: v1.0 to v1.1.1). Recommended!" tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>      
+                  <li><a href ng-click="settings.setAutoUpdateLevel(3)">Major new versions <i class="pull-right fal fa-question-circle" uib-tooltip="Updates that are major new versions. (Ex: v1.0 to v2.0). Includes everything above this (Bugfix & Feature updates)." tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>
+                  <li><a href ng-click="settings.setAutoUpdateLevel(4)">Betas <i class="pull-right fal fa-question-circle" uib-tooltip="Any beta update. (Ex: v1.0 to v1.1-beta). Includes everything above this (Major new versions + Bugfix & Feature updates)." tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>                  
                 </ul>
               </div>
             </div>

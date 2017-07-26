@@ -137,18 +137,16 @@
       pushDataToFile('/settings/sounds', enabled);
     }
     
-    service.notifyOnPrerelease = function() {
-      var prerelease = getDataFromFile('/settings/notifyOnPrerelease');
-      return prerelease != null ? prerelease === true : false;
-    }
-    
-    service.setNotifyOnPrerelease = function(prerelease) {
-      pushDataToFile('/settings/notifyOnPrerelease', prerelease === true)
-    }
-    
+    /*
+    * 0 = off,
+    * 1 = bugfix,
+    * 2 = feature,
+    * 3 = major release,
+    * 4 = betas
+    */
     service.getAutoUpdateLevel = function() {
       var updateLevel = getDataFromFile('/settings/autoUpdateLevel');
-      return updateLevel != null ? updateLevel : 'minor';
+      return updateLevel != null ? updateLevel : 2;
     }
     
     service.setAutoUpdateLevel = function(updateLevel) {

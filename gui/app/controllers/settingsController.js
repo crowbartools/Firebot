@@ -14,6 +14,24 @@
           listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
         }
         
+        $scope.getAutoUpdateLevelString = function() {
+          var level = settingsService.getAutoUpdateLevel();
+          switch(level) {
+            case 0:
+              return "Off";
+            case 1: 
+              return "Bugfix updates";
+            case 2:
+              return "Bugfix & Feature updates";
+            case 3:
+              return "Major new versions"
+            case 4:
+              return "Betas";
+            default:
+              return "";
+          }
+        }
+        
         $scope.currentPort = settingsService.getWebSocketPort();
         
         /**
