@@ -177,7 +177,7 @@ function createWindow () {
     var appVersion = electron.app.getVersion();
     if(!overlayFolderExists || settings.getOverlayVersion() !== appVersion) {
       
-      var source = dataAccess.getPathInWorkingDir("/overlay");
+      var source = dataAccess.getPathInWorkingDir("/resources/overlay");
       var destination = dataAccess.getPathInUserData("/overlay");    
       ncp(source, destination, function (err) {
        if (err) {
