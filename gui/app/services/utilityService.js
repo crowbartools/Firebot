@@ -6,6 +6,7 @@
  const _ = require('underscore')._;
  const path = require('path');
  const logger = require('../../lib/errorLogging.js');
+ const dataAccess = require('../../lib/data-access.js');
 
  angular
   .module('firebotApp')
@@ -78,7 +79,7 @@
         controllerFunc: ($scope, $rootScope, $uibModalInstance) => {        
           
           $scope.overlayPath = 
-            path.resolve(process.cwd() + path.sep + "overlay" + path.sep + "firebot.html");
+            dataAccess.getPathInUserData("/overlay");
             
           $scope.pathCopied = false;
             
