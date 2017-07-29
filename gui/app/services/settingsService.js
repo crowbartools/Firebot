@@ -102,7 +102,7 @@
     
     service.getEmulator = function() {
       var emulator = getDataFromFile('/settings/emulation');
-      return emulator != null ? emulator : "KBMRobot";
+      return emulator != null ? emulator : "Robotjs";
     }
     
     service.setEmulator = function(emulator) {
