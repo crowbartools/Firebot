@@ -6,7 +6,7 @@ const shell = electron.shell;
   var app = angular
     .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule']);
 
-  app.controller('MainController', function($scope, $rootScope, boardService, connectionService, groupsService, 
+  app.controller('MainController', function($scope, $rootScope, $timeout, boardService, connectionService, groupsService, 
     utilityService, settingsService, updatesService, eventLogService, websocketService) {
 
       $rootScope.showSpinner = true;
@@ -21,6 +21,9 @@ const shell = electron.shell;
 
       $scope.setTab = function(tabId) {
         $scope.currentTab = tabId.toLowerCase();
+        $timeout(function () {
+            $scope.$broadcast('rzSliderForceRender');
+        });
       }
 
       $scope.tabIsSelected = function(tabId) {

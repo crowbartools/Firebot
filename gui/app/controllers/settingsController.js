@@ -14,15 +14,50 @@
           listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
         }
         
-        $scope.getAutoUpdateLevelString = function() {
-          var level = settingsService.getAutoUpdateLevel();
+        $scope.autoUpdateSlider = {
+          value: settingsService.getAutoUpdateLevel(),
+          options: {
+            showSelectionBar: true,
+            showTicks: true,
+            showTicksValues: true,
+            stepsArray: [
+              {value: 2},
+              {value: 3},
+              {value: 4}
+            ],
+            translate: function (value, sliderId, label) {
+              return $scope.getAutoUpdateLevelString(value);
+            },
+            ticksTooltip: function (index) {
+              switch(index) {
+                case 0:
+                  return "Updates that fix bugs or add features (Example: v1.0 to v1.1.1)";
+                case 1:
+                  return "Updates that are major new versions (Example: v1.0 to v2.0)"
+                case 2:
+                  return "Any beta update (Example: v1.0 to v1.1-beta)";
+                default:
+                  return "";
+              }
+            },
+            getSelectionBarColor: function(value) {
+                return "orange";
+            },
+            getPointerColor: function(value) {
+                return "orange";
+            },
+            onChange: function(id) {
+              settingsService.setAutoUpdateLevel($scope.autoUpdateSlider.value);
+            }
+          }        
+        };
+            
+        $scope.getAutoUpdateLevelString = function(level) {
           switch(level) {
             case 0:
               return "Off";
-            case 1: 
-              return "Bugfix updates";
             case 2:
-              return "Bugfix & Feature updates";
+              return "Bugfix & feature updates";
             case 3:
               return "Major new versions"
             case 4:

@@ -15,17 +15,22 @@
             <div class="setting col-sm-6">
               <div class="setting-heading">Auto Update</div>
               <div class="setting-description">Firebot can automatically update when a new version is available. Below you can choose what kinds of updates you want to be automatically downloaded. For any updates that aren't automatically downloaded, you will recieve a notification so you can update at your convenience.</div>
-              <div class="dropdown options-beta-dropdown">
+              <div style="display: flex; flex-direction: row; justify-content: center;">
+                <div style="display:inline-block; width: 80%; font-weight: 600;">    
+                  <rzslider rz-slider-model="autoUpdateSlider.value" rz-slider-options="autoUpdateSlider.options"></rzslider>
+                </div>            
+              </div>          
+              <!--<div class="dropdown options-beta-dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="options-beta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   <span class="dropdown-text">{{getAutoUpdateLevelString()}}</span></span>
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="options-beta">
-                  <li><a href ng-click="settings.setAutoUpdateLevel(2)">Bugfix & Feature updates <i class="pull-right fal fa-question-circle" uib-tooltip="Updates that fix bugs or add features. (Ex: v1.0 to v1.1.1). Recommended!" tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>      
+                  <li><a href ng-click="settings.setAutoUpdateLevel(2)">Bugfix & Feature updates <i class="pull-right fal fa-question-circle" uib-tooltip="Updates that fix bugs or add features. (Example: v1.0 to v1.1.1). Recommended!" tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>      
                   <li><a href ng-click="settings.setAutoUpdateLevel(3)">Major new versions <i class="pull-right fal fa-question-circle" uib-tooltip="Updates that are major new versions. (Ex: v1.0 to v2.0). Includes everything above this (Bugfix & Feature updates)." tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>
                   <li><a href ng-click="settings.setAutoUpdateLevel(4)">Betas <i class="pull-right fal fa-question-circle" uib-tooltip="Any beta update. (Ex: v1.0 to v1.1-beta). Includes everything above this (Major new versions + Bugfix & Feature updates)." tooltip-append-to-body="true" style="padding: 3px 0 0 15px;"></i></a></li>                  
                 </ul>
-              </div>
+              </div>-->
             </div>
           </div>
           <div class="row">
