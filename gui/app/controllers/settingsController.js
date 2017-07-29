@@ -31,11 +31,11 @@
             ticksTooltip: function (index) {
               switch(index) {
                 case 0:
-                  return "Updates that fix bugs or add features (Example: v1.0 to v1.1.1)";
+                  return "Updates that fix bugs or add features. (Example: v1.0 to v1.1.1)";
                 case 1:
-                  return "Updates that are major new versions (Example: v1.0 to v2.0)"
+                  return "Updates that are major new versions. Could contain breaking changes. (Example: v1.0 to v2.0)"
                 case 2:
-                  return "Any beta update (Example: v1.0 to v1.1-beta)";
+                  return "Any beta updates. Might have bugs! (Example: v1.0 to v2.0-beta)";
                 default:
                   return "";
               }
@@ -57,9 +57,9 @@
             case 0:
               return "Off";
             case 2:
-              return "Bugfix & feature updates";
+              return "Default";
             case 3:
-              return "Major new versions"
+              return "Major Versions"
             case 4:
               return "Betas";
             default:
