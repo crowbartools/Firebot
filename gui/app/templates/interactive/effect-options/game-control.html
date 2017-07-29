@@ -6,14 +6,12 @@
     </div>
 </div>
 <div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Should we press any modifiers also?</h4></div>
-    <div class="button-press-modifier-effect-type">
-        <ul class="button-press-modifier-effect-inputs">
-            <li ng-repeat="modifier in validModifiers">
-                <input ng-click="modifierArray(effect.modifiers,modifier)" ng-checked="modifierCheckboxer(effect.modifiers,modifier)" type="checkbox" aria-label="..." >
-                <span>{{modifier}}</span>
-            </li>
-        </ul>
+    <div class="effect-specific-title"><h4>Should we also press any modifiers?</h4></div>
+    <div class="button-press-modifier-effect-type" style="padding-left: 15px;">
+      <label ng-repeat="modifier in validModifiers" class="control-fb control--checkbox">{{modifier}}
+        <input type="checkbox" ng-click="modifierArray(effect.modifiers,modifier)" ng-checked="modifierCheckboxer(effect.modifiers,modifier)"  aria-label="..." >
+        <div class="control__indicator"></div>
+      </label>
     </div>
 </div>
 <div class="effect-setting-container">
