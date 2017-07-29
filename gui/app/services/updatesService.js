@@ -56,6 +56,7 @@
                   var autoUpdateLevel = settingsService.getAutoUpdateLevel();
                   // Check if we should auto update based on the users setting
                   if(shouldAutoUpdate(autoUpdateLevel, updateType)) {
+                     utilityService.showDownloadModal();
                      listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
                   } else {
                      // Dont autoupdate, just notify the user
