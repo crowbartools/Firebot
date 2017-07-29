@@ -13,19 +13,18 @@
               <button class="btn btn-default" ng-click="showSetupWizard()">Open Setup Wizard</button>
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">Auto Update</div>
-              <div class="setting-description">Firebot can automatically update when a new version is available. Below you can choose what kinds of updates you want to be automatically downloaded. For any updates that aren't automatically downloaded, you will recieve a notification so you can update at your convenience.</div>
-              <div style="display: flex; flex-direction: row; justify-content: center;">
-                <div style="display:inline-block; width: 90%; font-weight: 600;">    
-                  <rzslider rz-slider-model="autoUpdateSlider.value" rz-slider-options="autoUpdateSlider.options"></rzslider>
-                </div>            
-              </div>
-              <div style="padding-top: 10px; padding-left: 10px;">
-                <label class="control-fb control--checkbox"> Subscribe to beta notifications <i class="fal fa-question-circle" uib-tooltip="If you are not autoupdating to betas, but you want to be notified when a new beta is available, check this box." tooltip-append-to-body="true" ></i
-                  <input type="checkbox" ng-click="settings.setNotifyOnBeta(!settings.notifyOnBeta())" ng-checked="settings.notifyOnBeta()"  aria-label="..." >
-                  <div class="control__indicator"></div>
-                </label>
-              </div>          
+              <div class="setting-heading">App Sounds</div>
+              <div class="setting-description">Let Firebot play sounds for various app functions. For example, you will get a warning when Firebot connects or disconnects.</div>
+              <div class="dropdown options-sounds-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-sounds">
+                  <li><a href ng-click="settings.setSoundsEnabled('On')">On</a></li>
+                  <li><a href ng-click="settings.setSoundsEnabled('Off')">Off</a></li>
+                </ul>
+              </div>         
             </div>
           </div>
           <div class="row">
@@ -43,26 +42,27 @@
                 </ul>
               </div>
             </div>
-            <div class="setting col-sm-6">
-              <div class="setting-heading">App Sounds</div>
-              <div class="setting-description">Let Firebot play sounds for various app functions. For example, you will get a warning when Firebot connects or disconnects.</div>
-              <div class="dropdown options-sounds-dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-sounds">
-                  <li><a href ng-click="settings.setSoundsEnabled('On')">On</a></li>
-                  <li><a href ng-click="settings.setSoundsEnabled('Off')">Off</a></li>
-                </ul>
-              </div>
+            <div class="setting col-sm-6">              
+              <div class="setting-heading">Root Folder Access</div>
+              <div class="setting-description">Need easy access to Firebot's main folder where all settings and data are saved?</div>
+              <button class="btn btn-default" ng-click="openRootFolder()">Open Root Folder</button>
             </div>
           </div>
           <div class="row">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Root Folder Access</div>
-              <div class="setting-description">Need easy access to Firebot's main folder where all settings and data are saved?</div>
-              <button class="btn btn-default" ng-click="openRootFolder()">Open Root Folder</button>
+              <div class="setting-heading">Auto Update</div>
+              <div class="setting-description">Firebot can automatically update when a new version is available. Below you can choose what kinds of updates you want to be automatically downloaded. For any updates that aren't automatically downloaded, you will recieve a notification so you can update at your convenience.</div>
+              <div style="display: flex; flex-direction: row; justify-content: center;">
+                <div style="display:inline-block; width: 90%; font-weight: 600;">    
+                  <rzslider rz-slider-model="autoUpdateSlider.value" rz-slider-options="autoUpdateSlider.options"></rzslider>
+                </div>            
+              </div>
+              <div style="padding-top: 10px; padding-left: 10px;">
+                <label class="control-fb control--checkbox"> Subscribe to beta notifications <i class="fal fa-question-circle" uib-tooltip="If you are not autoupdating to betas, but you want to be notified when a new beta is available, check this box." tooltip-append-to-body="true" ></i
+                  <input type="checkbox" ng-click="settings.setNotifyOnBeta(!settings.notifyOnBeta())" ng-checked="settings.notifyOnBeta()"  aria-label="..." >
+                  <div class="control__indicator"></div>
+                </label>
+              </div> 
             </div>
           </div>
         </uib-tab>
