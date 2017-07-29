@@ -54,9 +54,11 @@
               var updateIsAvailable = false;
               if(updateType != UpdateType.NONE) {
                   var autoUpdateLevel = settingsService.getAutoUpdateLevel();
+                  // Check if we should auto update based on the users setting
                   if(shouldAutoUpdate(autoUpdateLevel, updateType)) {
                      listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
                   } else {
+                     // Dont autoupdate, just notify the user
                      updateIsAvailable = true;
                   }
               }
@@ -88,6 +90,7 @@
 
     service.downloadAndInstallUpdate = function() {
       if(service.updateIsAvailable()) {
+        utilityService.showDownloadModal();
         listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
       }         
     }
