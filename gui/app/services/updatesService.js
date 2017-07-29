@@ -27,8 +27,12 @@
     service.checkForUpdate = function(){
       service.isCheckingForUpdates = true;
         return $q((resolve, reject) => {     
-
-            var firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases";                  
+            
+            var firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
+            
+            if(settingsService.notifyOnBeta() || settingsService.getAutoUpdateLevel() >= 4){
+                firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases";
+            }                    
             
             $http.get(firebotReleasesUrl).then((response) => {
               // Get app version

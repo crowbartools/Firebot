@@ -153,6 +153,15 @@
       pushDataToFile('/settings/autoUpdateLevel', updateLevel)
     }
     
+    service.notifyOnBeta = function() {
+      var beta = getDataFromFile('/settings/notifyOnBeta');
+      return beta != null ? beta : false;
+    }
+    
+    service.setNotifyOnBeta = function(beta) {
+      pushDataToFile('/settings/notifyOnBeta', beta === true)
+    }
+    
     service.isFirstTimeUse = function() {
       var ftu = getDataFromFile('/settings/firstTimeUse');
       return ftu != null ? ftu : true;

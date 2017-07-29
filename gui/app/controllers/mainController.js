@@ -199,6 +199,11 @@ const shell = electron.shell;
           $scope.updateIsAvailable = updateData.updateIsAvailable;
         });
       }
+      
+      //make sure sliders render properly
+      $timeout(function () {
+          $scope.$broadcast('rzSliderForceRender');
+      });
 
       // Apply Theme
       $scope.appTheme = function() {
