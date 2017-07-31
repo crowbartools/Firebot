@@ -1,4 +1,4 @@
-#### Describe your issue or feature request:
+#### Describe your issue or feature request (details are helpful!):
 
 
 
