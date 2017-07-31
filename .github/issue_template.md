@@ -3,19 +3,23 @@
 
 
 -----------------------------------------------------------------------
-#### If you're reporting an issue please fill out the steps below:
+#### If you're reporting an issue, please fill out the following:
 
-- What version of Firebot are you running? Might be an idea to update to the latest version to see if the issues has been resolved there before posting an issue if you are on an old version(4.0.0 is the latest).
-
-
-- Have you tried the troubleshooting steps located on the wiki?
+- What version of Firebot are you running?
 
 
-- Are you able to reproduce the issue? If so, what steps did you follow?
+- What are the steps to reproduce the issue?
+1)
+2)
+3)
 
+*NOTE: A lot of issues can be solved by:
+- Updating to the latest version
+- Trying the troubleshooting steps on the wiki*
 -----------------------------------------------------------------------
-#### If you are having problems related to your interactive board, there are two ways that you can help us help you, please do BOTH of these steps as it makes it a LOT easier to help you to investigate the issue.
-**1)** Please navigate to **Settings -> Open Root Folder** Then open user-settings -> controls and attach the .json file of the board you are having issues with, as well as the **latest log file in the user-settings -> logs folder** put these files in a ZIP-file before attaching them.
+#### IMPORTANT!
+## If you are having problems related to your interactive board, we can help you much faster if you do the following:
 
-**2)** Go to Mixer's Interactive Studio, click "Edit" on the board you are having issues with, click on the share icon beside the board name up top in the right corner of the page, choose "Only allow specific", and then add in our names (Firebottle, ebiggz, kateract, and ThePerry).
-This allows us to easily test your board. Thanks!
+**1)** Go to Firebot's root folder (**Settings tab -> Open Root Folder**), zip the following two files, then attach the zip to this issue:
+- **user-settings > controls** and find the .json file with the name of the board you are having issues with.
+- **user-settings > logs ** and find the latest log file.
