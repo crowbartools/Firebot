@@ -25,4 +25,4 @@ NOTE: A lot of issues can be solved by,
 
 Go to Firebot's root folder (**Settings tab -> Open Root Folder**), zip the following two files, then attach that zip to this issue:
 1) **user-settings > controls** and find the .json file with the name of the board you are having issues with.
-2) **user-settings > logs ** and find the latest log file.
+2) **user-settings > logs** and find the latest log file.
