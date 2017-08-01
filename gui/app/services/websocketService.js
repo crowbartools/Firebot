@@ -94,7 +94,17 @@
           }
       
           // Compile data and send to overlay.
-          var data = {"event":"image","filepath":filepath, "imagePosition":imagePosition, "imageHeight":imageHeight, "imageWidth": imageWidth, "imageDuration":imageDuration};
+          var data = {
+            "event":"image",
+            "filepath":filepath, 
+            "imagePosition":imagePosition, 
+            "imageHeight":imageHeight, 
+            "imageWidth": imageWidth, 
+            "imageDuration":imageDuration,
+            "enterAnimation": data.enterAnimation,
+            "exitAnimation": data.exitAnimation
+          };
+          
           service.broadcast(data);
       }
       

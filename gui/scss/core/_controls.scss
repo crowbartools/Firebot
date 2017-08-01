@@ -131,3 +131,23 @@
 .select select:disabled ~ .select__arrow {
   border-top-color: #ccc;
 }
+
+
+
+.fb-select {
+  height: 37px;
+  border-radius: 3px;
+  border: 1px solid #cccccc;
+  width: 100%;
+  margin-bottom: 5px;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.fb-control-detail {
+  font-size: 13px;
+  color: gray;
+  font-weight: 600;
+  margin-left: 8px;
+}
