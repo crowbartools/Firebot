@@ -171,6 +171,13 @@ function createWindow () {
       console.log("Can't find the controls folder, creating one now...");
       dataAccess.makeDirInUserData("/user-settings/controls");
     });
+
+    // Create the logs folder if it doesn't exist.
+    dataAccess.userDataPathExists("/user-settings/logs")
+    .then((resolve) => {
+      console.log("Can't find the logs folder, creating one now...");
+      dataAccess.makeDirInUserData("/user-settings/logs");
+    });
     
     
     var overlayFolderExists = dataAccess.userDataPathExistsSync("/overlay/");
