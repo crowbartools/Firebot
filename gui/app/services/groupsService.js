@@ -48,7 +48,9 @@
         var scene = dbGroup.scenes[scene];
         var sceneGroups = scene.default;
         for(item of sceneGroups){
-          groupList.push(item);
+          if(item !== "None"){
+            groupList.push(item);
+          }
         }
       }
 

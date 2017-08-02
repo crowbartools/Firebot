@@ -1,5 +1,5 @@
 <div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Which group should I switch the person to?</h4></div>
+    <div class="effect-specific-title"><h4>Which viewer group should I switch the person to?</h4></div>
     <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="change-group-effect-type">{{effect.group ? effect.group : 'Pick one'}}</span> <span class="caret"></span>
@@ -12,7 +12,10 @@
             </li>
         </ul>
     </div>
+    <div class="effect-info alert alert-warning">
+        Don't see the group you want? This is because you haven't made it active yet! Go back to your board and click the cog wheel at the top. Then add your viewer group to one of your scenes.
+    </div>
 </div>
 <div class="effect-info alert alert-info">
-    This button will move whomever clicks it to a new group (ex: From Default to "AwesomeGroup"). So, make sure you assign a scene to that group. If no groups are listed, that means you need to create a new custom group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
+    This button will move a viewer to a new user group. In doing so they'll see the buttons associated to that group. They'll stay in this group until something forces them back.
 </div>

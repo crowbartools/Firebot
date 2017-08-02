@@ -17,7 +17,7 @@
 
 <div class="change-scene-wrap" ng-if="effect.reset != null">
     <div class="effect-setting-container">
-        <div class="effect-specific-title"><h4>{{effect.reset ? 'Which group(s) should we reset?' : 'Which group(s) should change scenes?'}}</h4></div>
+        <div class="effect-specific-title"><h4>{{effect.reset ? 'Which viewer group(s) should we reset?' : 'Which viewer group(s) should change scenes?'}}</h4></div>
         <div class="change-scene-effect-group-select">
           <label class="control-fb control--checkbox">Default
             <input type="checkbox" ng-click="groupArray(effect.groups, 'default')" ng-checked="groupCheckboxer(effect.groups,'default')" aria-label="..." >
@@ -28,6 +28,9 @@
             <div class="control__indicator"></div>
           </label>
         </div>
+    </div>
+    <div class="effect-info alert alert-warning">
+        Don't see the group you want? This is because you haven't made it active yet! Go back to your board and click the cog wheel at the top. Then add your viewer group to one of your scenes.
     </div>
     <div class="effect-setting-container" ng-if="effect.reset === false">
         <div class="effect-specific-title"><h4>Which scene should we change to?</h4></div>
