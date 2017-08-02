@@ -28,19 +28,19 @@ function showVideo(data){
 
 		if (videoHeight === false && videoWidth === false){
 			// Both height and width fields left blank.
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		} else if (videoWidth === false){
 			// Width field left blank, but height provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		} else if (videoHeight === false) {
 			// Height field left blank, but width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; width:'+ videoWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video width="'+ videoWidth +'" class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		} else {
 			// Both height and width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		}
 
 		// Put the div on the page.
@@ -49,15 +49,24 @@ function showVideo(data){
 
 		// Adjust volume
 		videoVolume = parseInt(videoVolume) / 10;
-		console.log(videoVolume);
 		$('.player').prop("volume", videoVolume);
 
 		// Remove div after X time.
-		setTimeout(function(){ 
-			$('.'+divClass+'-video').fadeOut('fast', function(){
-				$('.'+divClass+'-video').remove();
-			});
-		}, videoDuration);
+		if(videoDuration){
+			setTimeout(function(){ 
+				$('.'+divClass+'-video').fadeOut('fast', function(){
+					$('.'+divClass+'-video').remove();
+				});
+			}, videoDuration);
+		}else{
+			var video = document.getElementById('video-'+divClass);
+			video.onended = function(e){
+				$('.'+divClass+'-video').fadeOut('fast', function(){
+					$('.'+divClass+'-video').remove();
+				});
+			}
+		}
+		
 		
 	}else{
 		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><div id="player"></div></div>';
@@ -78,7 +87,8 @@ function showVideo(data){
 			},
 			events: {
 				'onReady': onPlayerReady,
-				'onError': onPlayerError
+				'onError': onPlayerError,
+				'onStateChange': onPlayerStateChange
 			}
 		});
 
@@ -91,12 +101,26 @@ function showVideo(data){
 			event.target.playVideo();
 		}
 
+		// Remove div when YouTube video has stopped.
+		function onPlayerStateChange(event){
+			if(event.data === 0 && !videoDuration){
+				$('.'+divClass+'-video').fadeOut('fast', function(){
+					$('.'+divClass+'-video').remove();
+				});
+			}
+		}
+
 		// Remove div after X time.
-		setTimeout(function(){ 
-			$('.'+divClass+'-video').fadeOut('fast', function(){
-				$('.'+divClass+'-video').remove();
-			});
-		}, videoDuration);
+		if(videoDuration){
+			// console.log("Waiting for timer to remove div");
+			setTimeout(function(){ 
+				$('.'+divClass+'-video').fadeOut('fast', function(){
+					$('.'+divClass+'-video').remove();
+				});
+			}, videoDuration);	
+		}else{
+			// console.log("Waiting for video event to clear div");
+		}
 
 		// Log Errors
 		function onPlayerError(event){
