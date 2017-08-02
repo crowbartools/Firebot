@@ -11,6 +11,7 @@
     var service = {};
     
     var groups = [];
+    var sparkExemptGroup = [];
         
     service.loadViewerGroups = function() {
       // Load up all custom made groups in each dropdown.
@@ -22,6 +23,12 @@
           }
           ensureBannedGroupExists();          
       }catch(err){console.log(err)};
+
+      // Load up exempt group
+      var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");      
+      try{
+          sparkExemptGroup.push( dbGroup.getData('/sparkExempt') );         
+      }catch(err){};
     }
     
     service.getViewerGroups = function(filterOutBannedGroup) {
@@ -130,6 +137,50 @@
         var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
         dbGroup.push("/" + bannedGroup.groupName, bannedGroup);  
         groups.push(bannedGroup);
+      }
+    }
+
+    /**
+    * Exempt Usergroup Methods 
+    */
+    
+    service.addUserToExemptGroup = function(username) {
+      if(username != null && username != "") {
+        service.getExemptGroup().users.push(username);
+      }            
+      saveExemptGroup();
+    }
+    
+    service.removeUserFromExemptGroupAtIndex = function(index) {
+      service.getExemptGroup().users.splice(index,1);
+      saveExemptGroup();
+    }
+    
+    service.getExemptGroup = function() {
+      ensureExemptGroupExists();
+      var group = _.findWhere(sparkExemptGroup, {groupName: "sparkExempt"});
+      return group;
+    }
+    
+    function saveExemptGroup() {
+      var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
+      var exemptGroup = service.getExemptGroup();
+      dbGroup.push("/sparkExempt", exemptGroup);
+    }
+    
+    function ensureExemptGroupExists() {
+      var exemptGroupExists = _.any(sparkExemptGroup, (group) => {
+        return group.groupName == 'sparkExempt';
+      });
+      
+      if(!exemptGroupExists) {
+        var exemptGroup = {
+          groupName: 'sparkExempt',
+          users: []
+        }
+        var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
+        dbGroup.push("/sparkExempt", exemptGroup);  
+        sparkExemptGroup.push(exemptGroup);
       }
     }
   
