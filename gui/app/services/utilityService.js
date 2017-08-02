@@ -146,7 +146,7 @@
       service.showModal(errorModalContext);
       
       // Log error to file.
-      logger.info(errorMessage)
+      logger.log(errorMessage)
     }
     
     /*
