@@ -20,7 +20,7 @@
     var botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat"    
     
     var authInfo = {
-        clientId: process.env.CLIENT_ID,
+        clientId: 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9',
         authorizationUrl: "https://mixer.com/oauth/authorize",
         tokenUrl: "https://mixer.com/api/v1/oauth/token",
         useBasicAuthorizationHeader: false,
