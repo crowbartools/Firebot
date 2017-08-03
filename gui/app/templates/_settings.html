@@ -105,6 +105,11 @@
         <uib-tab index="2" heading="Overlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
+              <div class="setting-heading">Overlay Filepath</div>
+              <div class="setting-description">Click the button below to get quick access to the Firebot overlay path.</div>
+              <button class="btn btn-default" ng-click="settings.showOverlayInfoModal()">Get Overlay Path</button>
+            </div>
+            <div class="setting col-sm-6">
               <div class="setting-heading">Overlay Compatibility</div>
               <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>
               <div class="dropdown options-overlay-compat-dropdown">
