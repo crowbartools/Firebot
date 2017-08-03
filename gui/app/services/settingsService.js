@@ -9,7 +9,7 @@
 
  angular
   .module('firebotApp')
-  .factory('settingsService', function () {
+  .factory('settingsService', function (utilityService) {
     var service = {};
     
     var settingsCache = {}
@@ -213,7 +213,11 @@
       // Overwrite the 'port.js' file in the overlay settings folder with the new port
       fs.writeFile('./user-settings/overlay-settings/port.js', `window.WEBSOCKET_PORT = ${port}`, 
         'utf8', () => { console.log(`Set overlay port to: ${port}`)});
-    }      
+    }
+      
+    service.showOverlayInfoModal = function() {
+      utilityService.showOverlayInfoModal();
+    }
     
     return service;
   });
