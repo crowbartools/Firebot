@@ -321,7 +321,7 @@
               	category: "Misc"
               },
               {
-              	name: "Hinge",;
+              	name: "Hinge",
               	class: "hinge",
               	category: "Misc"
               },
