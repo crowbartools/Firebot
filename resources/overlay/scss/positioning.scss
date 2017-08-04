@@ -5,9 +5,10 @@ div[position="Top Left"]{
 }
 div[position="Top Middle"]{
 	position:absolute;
+	margin: auto;
 	top: 10px;
-	left:50%;
-	transform: translate(-50%, 0%);
+	left: 0;
+	right: 0;
 }
 div[position="Top Right"]{
 	position:absolute;
@@ -16,21 +17,25 @@ div[position="Top Right"]{
 }
 div[position="Middle Left"]{
 	position:absolute;
-	left:10px;
-	top: 50%;
-	transform: translate(0%, -50%);
+	margin: auto;
+	top: 0;
+	left: 10px;
+	bottom: 0;
 }
 div[position="Middle"]{
 	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	margin: auto;
+	top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 div[position="Middle Right"]{
 	position:absolute;
-	right:10px;
-	top: 50%;
-	transform: translate(0%, -50%);
+	margin: auto;
+	top: 0;
+	right: 10px;
+	bottom: 0;
 }
 div[position="Bottom Left"]{
 	position:absolute;
@@ -39,9 +44,10 @@ div[position="Bottom Left"]{
 }
 div[position="Bottom Middle"]{
 	position:absolute;
+	margin: auto;
+	left: 0;
 	bottom: 10px;
-	left:50%;
-	transform: translate(-50%, 0%);
+	right: 0;
 }
 div[position="Bottom Right"]{
 	position:absolute;
