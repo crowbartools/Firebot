@@ -78,8 +78,7 @@
         // This is the controller to be used for the modal. 
         controllerFunc: ($scope, $rootScope, $uibModalInstance) => {        
           
-          $scope.overlayPath = 
-            dataAccess.getPathInUserData("/overlay");
+          $scope.overlayPath = dataAccess.getPathInUserData("/overlay/firebot.html");
             
           $scope.pathCopied = false;
             

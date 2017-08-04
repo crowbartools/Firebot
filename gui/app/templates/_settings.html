@@ -86,7 +86,7 @@
             </div>
             <div class="setting col-sm-6">
               <div class="setting-heading">Custom Script Buttons</div>
-              <div class="setting-description">Firebot supports a button effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a href="https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts">here</a>.</div>
+              <div class="setting-description">Firebot supports a button effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
               <div class="dropdown options-customscript-dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
@@ -104,6 +104,11 @@
         <!-- Overlay Settings -->
         <uib-tab index="2" heading="Overlay">
           <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Overlay Filepath</div>
+              <div class="setting-description">Click the button below to get quick access to the Firebot overlay path.</div>
+              <button class="btn btn-default" ng-click="settings.showOverlayInfoModal()">Get Overlay Path</button>
+            </div>
             <div class="setting col-sm-6">
               <div class="setting-heading">Overlay Compatibility</div>
               <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>

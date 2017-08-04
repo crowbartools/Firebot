@@ -129,9 +129,9 @@
           if(videoWidth == "" || videoWidth === null){
               var videoWidth = false;
           }
-          if(videoDuration == "" || videoDuration === null){
+          if(videoDuration === null || videoDuration === undefined || isNaN(videoDuration)){
               var videoDuration = 5;
-          }        
+          }
       
           // Setup filepath based on compatibility settings.
           var compatibility = settingsService.getOverlayCompatibility();

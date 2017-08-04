@@ -1,0 +1,50 @@
+div[position="Top Left"]{
+	position:absolute;
+	top: 10px;
+	left: 10px;
+}
+div[position="Top Middle"]{
+	position:absolute;
+	top: 10px;
+	left:50%;
+	transform: translate(-50%, 0%);
+}
+div[position="Top Right"]{
+	position:absolute;
+	top: 10px;
+	right: 10px;
+}
+div[position="Middle Left"]{
+	position:absolute;
+	left:10px;
+	top: 50%;
+	transform: translate(0%, -50%);
+}
+div[position="Middle"]{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+div[position="Middle Right"]{
+	position:absolute;
+	right:10px;
+	top: 50%;
+	transform: translate(0%, -50%);
+}
+div[position="Bottom Left"]{
+	position:absolute;
+	bottom: 10px;
+	left: 10px;
+}
+div[position="Bottom Middle"]{
+	position:absolute;
+	bottom: 10px;
+	left:50%;
+	transform: translate(-50%, 0%);
+}
+div[position="Bottom Right"]{
+	position:absolute;
+	bottom: 10px;
+	right: 10px;
+}

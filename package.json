@@ -1,24 +1,25 @@
 {
   "name": "Firebot",
-  "version": "4.0.0",
+  "version": "4.0.2",
   "description": "An application for mixer.com that celebrates and promotes interactive controls.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "rebuild32": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=1.4.15 --arch=ia32 --dist-url=https://atom.io/download/atom-shell",
     "rebuild64": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=1.4.15 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
+    "kbmCopy": "xcopy resources\\modules\\kbm-robot.js node_modules\\kbm-robot\\kbm-robot.js /y",
     "pack:win32": "electron-packager . Firebot --out=./dist --platform=win32 --arch=ia32 --electronVersion=1.4.15 --asar --prune --overwrite --icon=./gui/images/logo.ico --ignore=/user-settings --ignore=/kbm-java --ignore=/.vscode",
-    "pack:win64": "electron-packager . Firebot --out=./dist --platform=win32 --arch=x64 --electronVersion=1.4.15 --asar --prune --overwrite --version-string.ProductName=\"Firebot\" --icon=./gui/images/logo.ico --ignore=/user-settings --ignore=/kbm-java --ignore=/overlay --ignore=/.vscode  && xcopy /s \"overlay\" \"./dist/Firebot-win32-x64/resources/overlay\" && xcopy /s \"kbm-java\" \"./dist/Firebot-win32-x64/resources/kbm-java\"",
+    "pack:win64": "electron-packager . Firebot --out=./dist --platform=win32 --arch=x64 --electronVersion=1.4.15 --asar --prune --overwrite --version-string.ProductName=\"Firebot\" --icon=./gui/images/logo.ico --ignore=/user-settings --ignore=/resources --ignore=/.vscode  && xcopy /s resources\\overlay .\\dist\\Firebot-win32-x64\\resources\\overlay && xcopy /s resources\\kbm-java .\\dist\\Firebot-win32-x64\\resources\\kbm-java",
     "pack:lin32": "electron-packager . Firebot --out=./dist --platform=linux --arch=ia32 --electronVersion=1.4.15 --asar --prune --overwrite --icon=./gui/images/logo.ico --ignore=/user-settings --ignore=/kbm-java --ignore=/.vscode",
     "pack:lin64": "electron-packager . Firebot --out=./dist --platform=linux --arch=x64 --electronVersion=1.4.15 --asar --prune --overwrite --icon=./gui/images/logo.ico --ignore=/user-settings --ignore=/kbm-java --ignore=/.vscode",
     "pack:all32": "electron-packager . Firebot --out=./dist --platform=all --arch=ia32 --electronVersion=1.4.15 --asar --prune --overwrite --icon=./gui/images/logo.ico --ignore=/user-settings --ignore=/kbm-java --ignore=/.vscode",
     "pack:all64": "electron-packager . Firebot --out=./dist --platform=all --arch=x64 --electronVersion=1.4.15 --asar --prune --overwrite --icon=./gui/images/logo.ico --ignore=/user-settings --ignore=/kbm-java --ignore=/.vscode",
-    "build32": "npm run pack:win32 && npm run pack:lin32",
-    "build64": "npm run pack:win64 && npm run pack:lin64",
+    "build32": "npm run kbmCopy && npm run pack:win32",
+    "build64": "npm run kbmCopy && npm run pack:win64",
     "build-all": "echo Packaging 32bit versions && npm run rebuild32 && npm run pack:all32 && echo 32bit Packaging done.... && echo Packaging 64bit versions && npm run rebuild64 && npm run pack:all64",
     "rebuild": "npm run rebuild64",
-    "build": "npm run pack:win64",
-    "package": "echo Building Electron package && npm run pack:win64 && echo Packing the installer && grunt create-windows-installer && echo Installer package ready!"
+    "build": "npm run build64",
+    "package": "echo Replacing KBM-Robot && npm run kbmCopy && echo Building Electron package && npm run pack:win64 && echo Packing the installer && grunt create-windows-installer && echo Installer package ready!"
   },
   "repository": "https://github.com/Firebottle/Firebot",
   "keywords": [

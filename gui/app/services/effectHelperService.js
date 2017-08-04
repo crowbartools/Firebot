@@ -109,6 +109,10 @@
               $scope.effect.videoType = type;
             }
 
+            if($scope.effect.volume == null) {
+              $scope.effect.volume = 5;
+            }
+
             // Force ratio toggle
             $scope.forceRatio = true;
             $scope.forceRatioToggle = function(){

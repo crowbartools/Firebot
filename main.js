@@ -235,7 +235,7 @@ function createWindow () {
   ipcMain.on('downloadUpdate', function(event, uniqueid) {
     // Download Update
     let options = {
-      repo: 'firebottle/test',
+      repo: 'firebottle/firebot',
       currentVersion: app.getVersion()
     }
 
