@@ -34,7 +34,7 @@ function showImage(data){
 
 	setTimeout(function(){ 
 		$('.'+divClass+'-image').animateCss(data.exitAnimation ? data.exitAnimation : "fadeOut", function(){
-			//$('.'+divClass+'-image').remove();
+			$('.'+divClass+'-image').remove();
 		});
 	}, imageDuration);
 }
