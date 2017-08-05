@@ -5,8 +5,6 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 // IPC for conveying events between main process and render processes.
 const {ipcMain, shell, dialog} = require('electron')
-// Error Logger
-const logger = require('../../lib/errorLogging.js');
 
 const path = require('path')
 const url = require('url')
@@ -224,7 +222,6 @@ function createWindow () {
 
   process.on('uncaughtException', function(error) {
       // Handle the error
-      logger.log(error);
       console.error(error);
   });
 
