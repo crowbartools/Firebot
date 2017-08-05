@@ -6,13 +6,15 @@ function showHtml(data){
     var HTML = data.html;
     var length = parseInt(data.length) * 1000;
     var mainClass = data.removal;
+    
+    var exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeOut";
 
 	// Throw HTML on page.
 	$('#wrapper').append(HTML);
 
 	// In X time remove it.
 	setTimeout(function(){ 
-		$('.'+mainClass).fadeOut('fast', function(){
+		$('.'+mainClass).animateCss(exitAnimation, function(){
 			$('.'+mainClass).remove();
 		});
 	}, length);

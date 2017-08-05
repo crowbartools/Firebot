@@ -23,6 +23,10 @@ function showVideo(data){
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
 	var divClass = d.getTime();
+	var videoId = `.${divClass}-video`;
+	
+	var enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
+	var exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
 
 	if(videoType === "Local Video"){
 
@@ -42,10 +46,10 @@ function showVideo(data){
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
 			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		}
-
 		// Put the div on the page.
 		$('#wrapper').append(videoFinal);
-		$('.'+divClass+'-video').fadeIn('fast');
+		
+		$(videoId).animateCss(enterAnimation);
 
 		// Adjust volume
 		videoVolume = parseInt(videoVolume) / 10;
@@ -54,16 +58,12 @@ function showVideo(data){
 		// Remove div after X time.
 		if(videoDuration){
 			setTimeout(function(){ 
-				$('.'+divClass+'-video').fadeOut('fast', function(){
-					$('.'+divClass+'-video').remove();
-				});
+				animateVideoExit(videoId, exitAnimation);
 			}, videoDuration);
 		}else{
 			var video = document.getElementById('video-'+divClass);
 			video.onended = function(e){
-				$('.'+divClass+'-video').fadeOut('fast', function(){
-					$('.'+divClass+'-video').remove();
-				});
+				animateVideoExit(videoId, exitAnimation);
 			}
 		}
 		
@@ -93,7 +93,7 @@ function showVideo(data){
 		});
 
 		// Fade in video.
-		$('.'+divClass+'-video').fadeIn('fast');
+		$(videoId).animateCss(enterAnimation);
 
 		// Play video when the player is ready.
 		function onPlayerReady(event) {
@@ -104,9 +104,7 @@ function showVideo(data){
 		// Remove div when YouTube video has stopped.
 		function onPlayerStateChange(event){
 			if(event.data === 0 && !videoDuration){
-				$('.'+divClass+'-video').fadeOut('fast', function(){
-					$('.'+divClass+'-video').remove();
-				});
+				animateVideoExit(videoId, exitAnimation);
 			}
 		}
 
@@ -114,9 +112,7 @@ function showVideo(data){
 		if(videoDuration){
 			// console.log("Waiting for timer to remove div");
 			setTimeout(function(){ 
-				$('.'+divClass+'-video').fadeOut('fast', function(){
-					$('.'+divClass+'-video').remove();
-				});
+				animateVideoExit(videoId, exitAnimation);
 			}, videoDuration);	
 		}else{
 			// console.log("Waiting for video event to clear div");
@@ -128,3 +124,9 @@ function showVideo(data){
 		}
 	}
 };
+
+function animateVideoExit(idString, animation) {
+	$(id).fadeOut(animation, () => {
+		$(id).remove();
+	});
+}

@@ -29,12 +29,5 @@ function showImage(data){
 	}
 	
 	$('#wrapper').append(imageFinal);
-	$('.'+divClass+'-image').animateCss(data.enterAnimation ? data.enterAnimation : "fadeIn");
-
-
-	setTimeout(function(){ 
-		$('.'+divClass+'-image').animateCss(data.exitAnimation ? data.exitAnimation : "fadeOut", function(){
-			$('.'+divClass+'-image').remove();
-		});
-	}, imageDuration);
+	showTimedAnimatedElement(divClass+'-image', data.enterAnimation, data.exitAnimation, imageDuration);
 }
