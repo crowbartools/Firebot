@@ -153,7 +153,9 @@
             "videoWidth": videoWidth, 
             "videoDuration":videoDuration,
             "videoVolume": videoVolume,
-            "videoStarttime": videoStarttime
+            "videoStarttime": videoStarttime,            
+            "enterAnimation": data.enterAnimation,
+            "exitAnimation": data.exitAnimation
           };
           
           service.broadcast(data);
@@ -161,13 +163,9 @@
       
       // Shows HTML
       // This function takes info given from the main process and then sends a request to the overlay to render it.
-      function showHtml(data){
-          var HTML = data.html;
-          var length = data.length;
-          var removal = data.removal;
+      function showHtml(data){      
+          data.event = "html";
       
-          // Compile data and send to overlay.
-          var data = {"event":"html","html": HTML, "length": length, "removal": removal};
           service.broadcast(data);
       }
     
