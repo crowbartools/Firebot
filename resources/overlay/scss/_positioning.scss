@@ -1,28 +1,28 @@
-div[position="Top Left"]{
+div[position="Top Left"], video[position="Top Left"]{
 	position:absolute;
 	top: 10px;
 	left: 10px;
 }
-div[position="Top Middle"]{
+div[position="Top Middle"], video[position="Top Middle"]{
 	position:absolute;
 	margin: auto;
 	top: 10px;
 	left: 0;
 	right: 0;
 }
-div[position="Top Right"]{
+div[position="Top Right"],video[position="Top Right"]{
 	position:absolute;
 	top: 10px;
 	right: 10px;
 }
-div[position="Middle Left"]{
+div[position="Middle Left"],video[position="Middle Left"]{
 	position:absolute;
 	margin: auto;
 	top: 0;
 	left: 10px;
 	bottom: 0;
 }
-div[position="Middle"]{
+div[position="Middle"],video[position="Middle"]{
 	position: absolute;
 	margin: auto;
 	top: 0;
@@ -30,26 +30,26 @@ div[position="Middle"]{
   bottom: 0;
   right: 0;
 }
-div[position="Middle Right"]{
+div[position="Middle Right"],video[position="Middle Right"]{
 	position:absolute;
 	margin: auto;
 	top: 0;
 	right: 10px;
 	bottom: 0;
 }
-div[position="Bottom Left"]{
+div[position="Bottom Left"],video[position="Bottom Left"]{
 	position:absolute;
 	bottom: 10px;
 	left: 10px;
 }
-div[position="Bottom Middle"]{
+div[position="Bottom Middle"],video[position="Bottom Middle"]{
 	position:absolute;
 	margin: auto;
 	left: 0;
 	bottom: 10px;
 	right: 0;
 }
-div[position="Bottom Right"]{
+div[position="Bottom Right"],video[position="Bottom Right"]{
 	position:absolute;
 	bottom: 10px;
 	right: 10px;
