@@ -115,11 +115,11 @@ $.fn.extend({
 function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration) {
 	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
-	console.log(duration);
-	$(`.${elementClass}`).animateCss(enterAnimation, () => {
+	var id = `.${elementClass}`;
+	$(id).animateCss(enterAnimation, () => {
 		setTimeout(function(){ 
-			$(`.${elementClass}`).animateCss(exitAnimation, () => {
-				$(`.${elementClass}`).remove();
+			$(id).animateCss(exitAnimation, () => {
+				$(id).remove();
 			});
 		}, (duration === 0 || duration != null) ? duration : 5000);
 	});

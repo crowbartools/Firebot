@@ -32,19 +32,19 @@ function showVideo(data){
 
 		if (videoHeight === false && videoWidth === false){
 			// Both height and width fields left blank.
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'"><video class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		} else if (videoWidth === false){
 			// Width field left blank, but height provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'"><video height="'+ videoHeight +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		} else if (videoHeight === false) {
 			// Height field left blank, but width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; width:'+ videoWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'"><video width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		} else {
 			// Both height and width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;"><video height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;"><video  height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/mp4" ></video></div>';
 		}
 		// Put the div on the page.
 		$('#wrapper').append(videoFinal);
@@ -126,7 +126,7 @@ function showVideo(data){
 };
 
 function animateVideoExit(idString, animation) {
-	$(id).fadeOut(animation, () => {
-		$(id).remove();
+	$(idString).animateCss(animation, () => {
+		$(idString).remove();
 	});
 }
