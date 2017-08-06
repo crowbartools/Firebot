@@ -126,7 +126,6 @@
             // Calculate 16:9
             // This checks to see which field the user is filling out, and then adjust the other field so it's always 16:9.
             $scope.calculateSize = function(widthOrHeight, size) {
-              console.log($scope.forceRatio);
               if(size !== "" ){
                 if(widthOrHeight == "Width" && $scope.forceRatio === true){
                     $scope.effect.height = String( Math.round((size/16)*9) );
