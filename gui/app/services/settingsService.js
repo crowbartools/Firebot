@@ -209,9 +209,11 @@
       
       // Save to settings file for app front end
       pushDataToFile('/settings/websocketPort', port);
+      
+      var path = dataAccess.getPathInUserData("/user-settings/overlay-settings/port.js");
 
       // Overwrite the 'port.js' file in the overlay settings folder with the new port
-      fs.writeFile('./user-settings/overlay-settings/port.js', `window.WEBSOCKET_PORT = ${port}`, 
+      fs.writeFile(path, `window.WEBSOCKET_PORT = ${port}`, 
         'utf8', () => { console.log(`Set overlay port to: ${port}`)});
     }
       
