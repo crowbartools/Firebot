@@ -7,7 +7,7 @@
 
  angular
   .module('firebotApp')
-  .factory('groupsService', function (boardService) {
+  .factory('groupsService', function (boardService, listenerService) {
     var service = {};
     
     var groups = [];
@@ -149,11 +149,13 @@
         service.getExemptGroup().users.push(username);
       }            
       saveExemptGroup();
+      listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
     }
     
     service.removeUserFromExemptGroupAtIndex = function(index) {
       service.getExemptGroup().users.splice(index,1);
       saveExemptGroup();
+      listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
     }
     
     service.getExemptGroup = function() {

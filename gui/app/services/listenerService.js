@@ -106,7 +106,8 @@
       OPEN_ROOT: "openRootFolder",
       GET_IMAGE: "getImagePath",
       GET_SOUND: "getSoundPath",
-      GET_VIDEO: "getVideoPath"
+      GET_VIDEO: "getVideoPath",
+      SPARK_EXEMPT_UPDATED: "sparkExemptUpdated"
     }  
     service.EventType = EventType;
     
