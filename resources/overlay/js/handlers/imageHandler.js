@@ -16,16 +16,16 @@ function showImage(data){
 
 	if (imageHeight === false && imageWidth === false){
 		// Both height and width fields left blank.
-		var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:block;"><img src="'+filepathNew+'?time='+divClass+'"></div>';
+		var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:block;"><img src="'+filepathNew+'?time='+divClass+'" position="'+imagePosition+'"></div>';
 	} else if (imageWidth === false){
 		// Width field left blank, but height provided.
-		var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:block;height:'+ imageHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
+		var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:block;height:'+ imageHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" position="'+imagePosition+'" style="max-width:100%; max-height:100%;"></div>';
 	} else if (imageHeight === false) {
 		// Height field left blank, but width provided.
-		var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:block;width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
+		var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:block;width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" position="'+imagePosition+'" style="max-width:100%; max-height:100%;"></div>';
 	} else {
 		// Both height and width provided.
-		var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:block;height:'+ imageHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
+		var imageFinal = '<div class="'+divClass+'-image imageOverlay" position="'+imagePosition+'" style="display:block;height:'+ imageHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" position="'+imagePosition+'" style="max-width:100%; max-height:100%;"></div>';
 	}
 	
 	$('#wrapper').append(imageFinal);
