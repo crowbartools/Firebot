@@ -57,7 +57,7 @@
              var groups = [];
              
              var inactiveGroups = groupsService.getInactiveGroups();  
-             var combinedGroups = inactiveGroups.concat(scene.default);           
+             var combinedGroups = inactiveGroups.concat(scene.default.filter((e) => { return e !== 'None' } ));           
              
              // Filter out duplicates
              combinedGroups = combinedGroups.filter(function(elem, pos) {
