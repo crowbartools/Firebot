@@ -51,14 +51,23 @@
 
            $scope.scene = scene;
            
-           $scope.groups = groupsService;
+           $scope.groups = groupsService;          
            
-           $scope.defaultGroups = [
-             "Pro",
-             "Subscribers",
-             "Moderators",
-             "Staff"
-           ];            
+           function getGroupList() {
+             var groups = [];
+             
+             var inactiveGroups = groupsService.getInactiveGroups();  
+             var combinedGroups = inactiveGroups.concat(scene.default);           
+             
+             // Filter out duplicates
+             combinedGroups = combinedGroups.filter(function(elem, pos) {
+                 return combinedGroups.indexOf(elem) == pos;
+             });
+             
+             return combinedGroups;
+           }    
+           
+           $scope.groupList = getGroupList();        
            
            $scope.saveChanges = function() {
              $uibModalInstance.close();

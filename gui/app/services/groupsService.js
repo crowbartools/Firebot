@@ -44,6 +44,15 @@
       }
       return groupList;
     }
+    
+    service.getDefaultGroups = function() {
+      return [
+        "Pro",
+        "Subscribers",
+        "Moderators",
+        "Staff"
+      ];
+    }
 
     service.getActiveGroups = function(){
       // Get the selected board and set default groupList var.
@@ -67,6 +76,25 @@
       })
 
       return groupList;
+    }
+    
+    // Get groups that dont have scenes assigned as a default
+    service.getInactiveGroups = function() {
+      var inactiveGroups = [];
+      
+      var customGroups = service.getViewerGroups()
+        .map((group) => {return group.groupName})
+        
+      var allGroups = service.getDefaultGroups().concat(customGroups);
+      
+      var activeGroups = service.getActiveGroups();      
+      
+      // filter out active groups
+      inactiveGroups = allGroups.filter((groupName) => {
+        return !activeGroups.includes(groupName);
+      });
+       
+      return inactiveGroups;
     }
     
     service.addOrUpdateViewerGroup = function(group, previousName) {

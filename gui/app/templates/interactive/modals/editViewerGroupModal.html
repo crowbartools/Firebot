@@ -15,12 +15,8 @@
       <input type="checkbox" checked disabled>
       <div class="control__indicator"></div>
     </label>
-    <label ng-repeat="groupName in defaultGroups" class="control-fb control--checkbox">{{groupName}}
+    <label ng-repeat="groupName in groupList | orderBy:'toString()'" class="control-fb control--checkbox">{{groupName}}
       <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, groupName)" ng-checked="arrayContainsElement(scene.default, groupName)">
-      <div class="control__indicator"></div>
-    </label>
-    <label ng-repeat="group in groups.getViewerGroups(true)" class="control-fb control--checkbox">{{group.groupName}}
-      <input type="checkbox" ng-click="updateCheckedArrayWithElement(scene.default, group.groupName)" ng-checked="arrayContainsElement(scene.default, group.groupName)">
       <div class="control__indicator"></div>
     </label>
   </div>
