@@ -583,22 +583,21 @@
       return $q.when( new Promise((resolve, reject) => {
               
         // Check for last board and load ui if one exists.
-        try{
+        try {
             var filepath = dataAccess.getPathInUserData('/user-settings/controls/'+boardName+'.json');
     
-            fs.exists(filepath, function(exists) {
-                if(exists) {
-                        // File exists deleting
-                        fs.unlink(filepath,function(err){
-                            resolve();
-                        });
-                } else {
-                    renderWindow.webContents.send('error', "Well this is weird. The board you tried to delete is already gone. Try restarting the app.");
-                    console.log("This file doesn't exist, cannot delete");
+            var exists = fs.existsSync(filepath);            
+            if(exists) {
+                // File exists deleting
+                fs.unlink(filepath,function(err){
                     resolve();
-                }
-            });
-        } catch(err){reject()};
+                });
+            } else {
+                renderWindow.webContents.send('error', "Well this is weird. The board you tried to delete is already gone. Try restarting the app.");
+                console.log("This file doesn't exist, cannot delete");
+                resolve();
+            }
+        } catch(err) { reject(); }
       }));
     }
     

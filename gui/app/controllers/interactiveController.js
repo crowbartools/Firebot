@@ -183,7 +183,6 @@
           closeCallback: (shouldDelete) => {
             if(shouldDelete === true) {
               boardService.deleteCurrentBoard();
-              $scope.selectedBoard() = null;
             }          
           },
           size: "sm"
