@@ -21,7 +21,7 @@
       var addEditGroupModalContext = {
         templateUrl: "addEditViewerGroupModal.html",
         // This is the controller to be used for the modal. 
-        controllerFunc: ($scope, $uibModalInstance, groupToEdit) => {
+        controllerFunc: ($scope, $uibModalInstance, utilityService, groupToEdit) => {
           // The model for the board id text field
           $scope.group = {
             groupName: "",
@@ -53,7 +53,22 @@
           // When the user clicks "Save/Add", we want to pass the group back
           $scope.saveChanges = function(shouldDelete) {
             shouldDelete = (shouldDelete == true);
-            if(!shouldDelete && $scope.group.groupName == "") return;
+            
+            var defaultGroups = [
+              "Pro",
+              "Subscribers",
+              "Moderators",
+              "Staff"
+            ];  
+            
+            var groupName = $scope.group.groupName;
+            
+            if(defaultGroups.includes(groupName)) {
+              utilityService.showErrorModal("You cannot create a custom group with the same name as a default Mixer group (Pro, Subscribers, Moderators, Staff).");
+              return;
+            }
+            
+            if(!shouldDelete && groupName == "") return;
             $uibModalInstance.close({
               shouldDelete: shouldDelete,
               group: shouldDelete ? groupToEdit : $scope.group
