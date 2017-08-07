@@ -186,7 +186,7 @@ function createWindow () {
       
       var source = dataAccess.getPathInWorkingDir("/resources/overlay");
       var destination = dataAccess.getPathInUserData("/overlay");    
-      ncp(source, destination, function (err) {
+      ncp(source, destination, { clobber: true }, function (err) {
        if (err) {
          console.log("Error copying Overlay folder to user data!");
          return console.error(err);
