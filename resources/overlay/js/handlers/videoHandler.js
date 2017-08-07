@@ -69,7 +69,7 @@ function showVideo(data){
 		
 		
 	}else{
-		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'"><div id="player"></div></div>';
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;"><div id="player"></div></div>';
 		
 		// Throw div on page.
 		$('#wrapper').append(videoFinal);
@@ -77,6 +77,8 @@ function showVideo(data){
 		// Add iframe.
 		var player = new YT.Player('player', {
 			videoId: youtubeId,
+			height: videoHeight,
+      width: videoWidth,
 			playerVars: { 
 				'autoplay': 1, 
 				'controls': 0,
