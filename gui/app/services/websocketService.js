@@ -71,16 +71,16 @@
           var imageDuration = parseInt(data.imageDuration);
       
           // Set defaults if they werent filled out.
-          if(imagePosition == "" || imagePosition === null){
+          if(imagePosition == "" || imagePosition == null){
               var imageX = "Top Middle";
           }
-          if(imageHeight == "" || imageHeight === null){
+          if(imageHeight == "" || imageHeight == null){
               var imageHeight = false;
           }
-          if(imageWidth == "" || imageWidth === null){
+          if(imageWidth == "" || imageWidth == null){
               var imageWidth = false;
           }
-          if(imageDuration == "" || imageDuration === null){
+          if(imageDuration == "" || imageDuration == null){
               var imageDuration = 5;
           }        
       
@@ -120,13 +120,13 @@
           var videoStarttime = data.videoStarttime;
       
           // Set defaults if they werent filled out.
-          if(videoPosition == "" || videoPosition === null){
+          if(videoPosition == "" || videoPosition == null){
               var videoX = "Top Middle";
           }
-          if(videoHeight == "" || videoHeight === null){
+          if(videoHeight == "" || videoHeight == null){
               var videoHeight = false;
           }
-          if(videoWidth == "" || videoWidth === null){
+          if(videoWidth == "" || videoWidth == null){
               var videoWidth = false;
           }
           if(videoDuration === null || videoDuration === undefined || isNaN(videoDuration)){

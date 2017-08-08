@@ -69,16 +69,15 @@ function showVideo(data){
 		
 		
 	}else{
-		var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;"><div id="player"></div></div>';
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay"><div id="player" position="'+videoPosition+'"></div></div>';
 		
 		// Throw div on page.
 		$('#wrapper').append(videoFinal);
 		
 		// Add iframe.
-		var player = new YT.Player('player', {
+		
+		var ytOptions = {
 			videoId: youtubeId,
-			height: videoHeight,
-      width: videoWidth,
 			playerVars: { 
 				'autoplay': 1, 
 				'controls': 0,
@@ -92,7 +91,14 @@ function showVideo(data){
 				'onError': onPlayerError,
 				'onStateChange': onPlayerStateChange
 			}
-		});
+		}
+		if(videoHeight) {
+			ytOptions.height = videoHeight;
+		}
+		if(videoWidth) {
+			ytOptions.width = videoWidth;
+		}
+		var player = new YT.Player('player', ytOptions);
 
 		// Fade in video.
 		$(videoId).animateCss(enterAnimation);
