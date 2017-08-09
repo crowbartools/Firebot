@@ -179,13 +179,32 @@ function createWindow () {
       dataAccess.makeDirInUserData("/user-settings/logs");
     });
     
+    var deleteFolderRecursive = function(path) {
+      if(path == null || path.toString().trim() == "/" || path.toString().trim() == "") { return; }
+      if( fs.existsSync(path) ) {
+        fs.readdirSync(path).forEach(function(file,index){
+          var curPath = path + "/" + file;
+          if(fs.lstatSync(curPath).isDirectory()) { // recurse
+            deleteFolderRecursive(curPath);
+          } else { // delete file
+            fs.unlinkSync(curPath);
+          }
+        });
+        fs.rmdirSync(path);
+      }
+    };
+    
     
     var overlayFolderExists = dataAccess.userDataPathExistsSync("/overlay/");
     var appVersion = electron.app.getVersion();
     if(!overlayFolderExists || settings.getOverlayVersion() !== appVersion) {
       
+    
       var source = dataAccess.getPathInWorkingDir("/resources/overlay");
-      var destination = dataAccess.getPathInUserData("/overlay");    
+      var destination = dataAccess.getPathInUserData("/overlay");  
+        
+      deleteFolderRecursive(destination);
+      console.log("Deleting old overlay folder");  
       ncp(source, destination, { clobber: true }, function (err) {
        if (err) {
          console.log("Error copying Overlay folder to user data!");
