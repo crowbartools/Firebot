@@ -52,6 +52,9 @@ function showVideo(data){
 		$(videoId).animateCss(enterAnimation);
 
 		// Adjust volume
+		if(isNaN(videoVolume)) {
+			videoVolume = 5;
+		}
 		videoVolume = parseInt(videoVolume) / 10;
 		$('.player').prop("volume", videoVolume);
 
