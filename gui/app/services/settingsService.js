@@ -221,6 +221,15 @@
       utilityService.showOverlayInfoModal();
     }
     
+    service.getClearCustomScriptCache = function() {
+      var clear = getDataFromFile('/settings/clearCustomScriptCache');
+      return clear != null ? clear : false;
+    }
+    
+    service.setClearCustomScriptCache = function(clear) {
+      pushDataToFile('/settings/clearCustomScriptCache', clear === true)
+    }
+    
     return service;
   });
 })();

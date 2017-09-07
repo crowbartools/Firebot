@@ -148,9 +148,25 @@
                   <b>Note</b>: If a new port is set, both Firebot and anything previewing the overlay (ie broadcasting software) will need to be restarted for the new port to take effect.
               </div>
             </div>
+            <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
+              <div class="setting-heading">Clear Custom Script Cache</div>
+              <div class="setting-description">
+                Whether or not you want the cached version of a custom script to be cleared on every button press. 
+                You usually only need to change this if you are actively developing a custom script, otherwise you wont see changes to your script until you restart Firebot. 
+              </div>
+              <div class="dropdown options-customscript-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getClearCustomScriptCache() ? 'On' : 'Off'}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                  <li><a href ng-click="settings.setClearCustomScriptCache(true)">On</a></li>
+                  <li><a href ng-click="settings.setClearCustomScriptCache(false)">Off</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
         </uib-tab>
-
       </uib-tabset>
     </div>
   </div>
