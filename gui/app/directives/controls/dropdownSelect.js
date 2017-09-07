@@ -1,6 +1,6 @@
 (function(){
   
- //This adds the <eos-enter-exit-animations> element
+ //This a wrapped dropdown element that automatically handles the particulars
  
  angular
    .module('firebotApp')
