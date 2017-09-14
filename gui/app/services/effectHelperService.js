@@ -432,7 +432,15 @@
               "numpad_9",
               "leftmouse",
               "middlemouse",
-              "rightmouse"
+              "rightmouse",
+              "audio_mute",
+              "audio_vol_down",
+              "audio_vol_up",
+              "audio_play",
+              "audio_stop",
+              "audio_pause",
+              "audio_prev",
+              "audio_next"
             ]
           
             $scope.validModifiers = [
