@@ -12,6 +12,9 @@ function showVideo(data){
 	var videoType = data.videoType;
 	var filepath = data.filepath;
 	var fileExt = filepath.split('.').pop();
+	if(fileExt == "ogv"){
+		var fileExt = "ogg";
+	}
 	var youtubeId = data.youtubeId;
 	var filepathNew = filepath.replace(/\\/g,"/");
 	var videoPosition = data.videoPosition;
