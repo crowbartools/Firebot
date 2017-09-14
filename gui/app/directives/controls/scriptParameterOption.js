@@ -11,8 +11,8 @@
         onUpdate: '&'
       },
        template: `
-       <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 10px;">
-          <div style="font-size: 15px;font-weight: 400;">{{$ctrl.metadata.type != 'boolean' ? $ctrl.metadata.description ? $ctrl.metadata.description : $ctrl.name : ""}}</div>
+       <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 10px;font-size: 15px;font-weight: 600;">
+          <div>{{$ctrl.metadata.type != 'boolean' ? $ctrl.metadata.description ? $ctrl.metadata.description : $ctrl.name : ""}}</div>
           <div ng-switch-when="string">
             <input class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.metadata.value">
           </div>
@@ -20,7 +20,7 @@
             <input class="form-control" type="number" placeholder="Enter a number" ng-model="$ctrl.metadata.value">
           </div>
           <div ng-switch-when="boolean" style="padding-top:10px;">
-            <label class="control-fb control--checkbox"> {{$ctrl.metadata.description ? $ctrl.metadata.description : $ctrl.name}}
+            <label class="control-fb control--checkbox" style="font-weight: 600;"> {{$ctrl.metadata.description ? $ctrl.metadata.description : $ctrl.name}}
               <input type="checkbox" ng-click="$ctrl.metadata.value = !$ctrl.metadata.value" ng-checked="$ctrl.metadata.value" aria-label="...">
               <div class="control__indicator"></div>
             </label>

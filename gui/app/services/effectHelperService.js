@@ -8,7 +8,7 @@
 
  angular
   .module('firebotApp')
-  .factory('effectHelperService', function ($q) {
+  .factory('effectHelperService', function ($q, utilityService) {
     var service = {};
       
     // Returns a controller to be used for the template of a given effectype
@@ -315,6 +315,8 @@
                       
                 var customScript = require(scriptFilePath);
                 
+                console.log("loaded");
+                
                 var currentParameters = $scope.effect.parameters;                            
                 if(typeof customScript.getDefaultParameters === 'function') {
                   var parametersPromise = customScript.getDefaultParameters();
@@ -323,6 +325,15 @@
                     var defaultParameters = parameters;                  
                     
                     if(currentParameters != null) {
+                      //get rid of old params hat no longer exist
+                      Object.keys(currentParameters).forEach((currentParameterName) => {
+                        var currentParamInDefaults = defaultParameters[currentParameterName];
+                        if(currentParamInDefaults == null) {
+                          delete currentParameters[currentParameterName];
+                        }
+                      });
+                      
+                      //handle any new params
                       Object.keys(defaultParameters).forEach((defaultParameterName) => {
                         var currentParam = currentParameters[defaultParameterName];
                         var defaultParam = defaultParameters[defaultParameterName];
@@ -333,17 +344,15 @@
                         }
                       });
                     } else {
-                      console.log("no current parameters");
                       $scope.effect.parameters = defaultParameters;
-                    }
-                    console.log($scope.effect.parameters);                   
+                    }                 
                     $scope.isLoadingParameters = false; 
                   });                                                  
                 } else {
                   $scope.isLoadingParameters = false; 
                 }               
               } catch (err) {
-                renderWindow.webContents.send('error', "Error loading the script '" + scriptName + "'\n\n" + err);
+                utilityService.showErrorModal("Error loading the script '" + scriptName + "'\n\n" + err);
                 console.log(err);
               }
             };        
