@@ -1,5 +1,5 @@
 (function(){
-
+  
  // This contains utility functions
  // Just inject "utilityService" into any controller that you want access to these
  const electron = require('electron');
@@ -12,20 +12,7 @@
   .module('firebotApp')
   .factory('utilityService', function ($rootScope, $uibModal, listenerService) {
     var service = {};
-
-    var copiedEffects = null;
-    service.copyButtonEffects = function(effects) {
-      copiedEffects = $.extend(true, {}, effects);
-    }
-
-    service.getCopiedButtonEffects = function() {
-      return $.extend(true, {}, copiedEffects);
-    }
-
-    service.hasCopiedEffects = function() {
-      return copiedEffects != null;
-    }
-
+      
     service.showModal = function(showModalContext) {
 
       // We dont want to do anything if there's no context
@@ -53,58 +40,58 @@
         backdrop: showModalContext.backdrop? showModalContext.backdrop : true
       });
 
-      // If no callbacks were defined, create blank ones. This avoids a console error
+      // If no callbacks were defined, create blank ones. This avoids a console error 
       if (typeof closeCallback !== "function") {
         closeCallback = () => {};
       }
       if (typeof dismissCallback !== "function") {
         dismissCallback = () => {};
       }
-
+      
       // Handle when the modal is exited
       modalInstance.result.then(closeCallback, dismissCallback);
     }
-
+    
     /*
     * FIRST TIME USE MODAL
     */
     service.showSetupWizard = function() {
       var firstTimeUseModalContext = {
         templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
-        // This is the controller to be used for the modal.
+        // This is the controller to be used for the modal. 
         controllerFunc: "firstTimeUseModalController",
         keyboard: false,
         backdrop: 'static',
         closeCallback: (data) => {
             console.log(data);
         }
-      }
+      }      
       service.showModal(firstTimeUseModalContext);
     };
-
+    
     /*
     * OVERLAY INFO MODAL
     */
     service.showOverlayInfoModal = function() {
       var overlayInfoModalContext = {
         templateUrl: "overlayInfoModal.html",
-        // This is the controller to be used for the modal.
-        controllerFunc: ($scope, $rootScope, $uibModalInstance) => {
-
+        // This is the controller to be used for the modal. 
+        controllerFunc: ($scope, $rootScope, $uibModalInstance) => {        
+          
           $scope.overlayPath = dataAccess.getPathInUserData("/overlay/firebot.html");
-
+            
           $scope.pathCopied = false;
-
+            
           $scope.copy = function() {
             $rootScope.copyTextToClipboard($scope.overlayPath);
             $scope.pathCopied = true;
           }
-
+          
           $scope.dismiss = function() {
             $uibModalInstance.dismiss('cancel');
           };
         }
-      }
+      }      
       service.showModal(overlayInfoModalContext);
     };
     /*
@@ -113,22 +100,22 @@
     service.showUpdatedModal = function() {
       var justUpdatedModalContext = {
         templateUrl: "updatedModal.html",
-        // This is the controller to be used for the modal.
+        // This is the controller to be used for the modal. 
         controllerFunc: ($scope, $uibModalInstance) => {
-
+          
           var appVersion = electron.remote.app.getVersion();
-
+          
           $scope.appVersion = `v${appVersion}`;
-
+          
           $scope.dismiss = function() {
             $uibModalInstance.dismiss('cancel');
           };
         },
         size: "sm"
-      }
+      }      
       service.showModal(justUpdatedModalContext);
     };
-
+    
     /*
     * ERROR MODAL
     */
@@ -136,15 +123,15 @@
       $rootScope.showSpinner = false;
       var errorModalContext = {
         templateUrl: "errorModal.html",
-        // This is the controller to be used for the modal.
+        // This is the controller to be used for the modal. 
         controllerFunc: ($scope, $uibModalInstance, message) => {
-
+          
           $scope.message = message;
-
+          
           $scope.close = function() {
             $uibModalInstance.close();
           };
-
+          
           $scope.dismiss = function() {
             $uibModalInstance.dismiss('cancel');
           };
@@ -154,13 +141,13 @@
             return errorMessage;
           }
         }
-      }
+      }      
       service.showModal(errorModalContext);
-
+      
       // Log error to file.
       logger.log(errorMessage)
     }
-
+    
     /*
     * DOWNLOAD MODAL
     */
@@ -170,19 +157,19 @@
         keyboard: false,
         backdrop: 'static',
         size: 'sm',
-        // This is the controller to be used for the modal.
+        // This is the controller to be used for the modal. 
         controllerFunc: ($scope, $uibModalInstance, $timeout, listenerService) => {
-
+          
           $scope.downloadHasError = false;
           $scope.errorMessage = "";
-
+          
           $scope.downloadComplete = false;
-
+          
           // Update error listener
           var registerRequest = {
             type: listenerService.ListenerType.UPDATE_ERROR,
             runOnce: true
-          }
+          }        
           listenerService.registerListener(registerRequest, (errorMessage) => {
             // the autoupdater had an error
             $scope.downloadHasError = true;
@@ -193,13 +180,13 @@
           var updateDownloadedListenerRequest = {
             type: listenerService.ListenerType.UPDATE_DOWNLOADED,
             runOnce: true
-          }
+          }        
           listenerService.registerListener(updateDownloadedListenerRequest, () => {
             // the autoupdater has downloaded the update and restart shortly
             $scope.downloadComplete = true;
           });
-
-          // Start timer for if the download seems to take longer than normal,
+          
+          // Start timer for if the download seems to take longer than normal, 
           // we want to allow user to close modal.
           // Currently set to a minute and a half
           $timeout(() => {
@@ -207,28 +194,28 @@
               $scope.downloadHasError = true;
               $scope.errorMessage = "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
             }
-          }, 90*1000);
-
+          }, 90*1000);           
+          
           $scope.dismiss = function() {
             $uibModalInstance.dismiss('cancel');
           };
         }
-      }
+      }      
       service.showModal(downloadModalContext);
     }
-
+    
     // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
     service.getNewArrayWithToggledElement = function (array, element){
         var itemArray = [];
         if(array != null){
           itemArray = array;
-        }
-
+        }             
+        
         var itemIndex = -1;
         try{
           var itemIndex = itemArray.indexOf(element);
         } catch(err){
-
+          
         }
 
         if(itemIndex != -1){
@@ -249,18 +236,18 @@
         return array.indexOf(element) != -1;
       } else {
         return false;
-      }
+      }              
     }
-
-
-    // Watches for an event from main process
+    
+    
+    // Watches for an event from main process    
     listenerService.registerListener(
-      { type: listenerService.ListenerType.ERROR },
+      { type: listenerService.ListenerType.ERROR }, 
       (errorMessage) => {
         service.showErrorModal(errorMessage);
       });
-
-
+    
+    
     return service;
   });
 })();

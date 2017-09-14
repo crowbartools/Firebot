@@ -4,7 +4,7 @@
    <h4 class="modal-title" id="editControlsLabel">Edit Button - {{control.controlId}}<span class="edit-title-controlid"></span></h4>
  </div>
  <div class="modal-body">
-
+   
    <div class="general-button-settings">
      <div class="settings-title">
        <h3>General Settings</h3>
@@ -32,24 +32,15 @@
    </div>
    <div class="function-button-settings">
      <div class="settings-title">
-       <h3>
-         What should this button do? <div class="effect-actions-btn" uib-dropdown uib-dropdown-toggle>
-         <span class="noselect pointer"><i class="fal fa-ellipsis-h"></i></span>
-         <ul class="dropdown-menu" uib-dropdown-menu>
-           <li><a href ng-click="copyEffects()">Copy effects</a></li>
-           <li><a href ng-click="pasteEffects()">Paste effects</a></li>
-           <li><a href ng-click="removeAllEffects()">Delete all effects</a></li>
-         </ul>
-       </div>
-     </h3>
+       <h3>What should this button do?</h3>
      </div>
 
      <div class="functionality-settings">
-
+       
        <!--new accordian-->
        <uib-accordion close-others="true">
-        <div uib-accordion-group
-             ng-repeat="effect in control.effects track by $index"
+        <div uib-accordion-group 
+             ng-repeat="effect in control.effects track by $index"  
              class="panel-primary effect-panel"
              is-open="openEffectPanel[$index]"
              template-url="effect-panel-template.html"
@@ -73,7 +64,7 @@
           </div>
         </div>
       </uib-accordion>
-
+           
        <div class="add-more-functionality">
          <button type="button" class="btn btn-link" ng-click="addEffect()">
            + Add Effect
@@ -87,7 +78,7 @@
    <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
    <button type="button" class="btn btn-primary add-new-board-save" ng-click="saveChanges()">Save Changes</button>
  </div>
-
+ 
  <script type="text/ng-template" id="effect-panel-template.html">
     <div class="panel-heading clickable-dark" ng-click="toggleOpen()">
       <h4 class="panel-title" uib-accordion-transclude="heading">
@@ -97,4 +88,4 @@
     <div class="panel-collapse collapse" uib-collapse="!isOpen">
       <div class="panel-body" ng-transclude></div>
     </div>
-  </script>
+  </script> 
