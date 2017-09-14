@@ -8,7 +8,7 @@
 
  angular
   .module('firebotApp')
-  .factory('effectHelperService', function () {
+  .factory('effectHelperService', function ($q) {
     var service = {};
       
     // Returns a controller to be used for the template of a given effectype
@@ -271,6 +271,9 @@
 
         case EffectType.CUSTOM_SCRIPT:
           controller = ($scope) => {
+            
+            $scope.isLoadingParameters = true;
+            
             var scriptFolderPath = dataAccess.getPathInUserData("/user-settings/scripts")
             // Grab files in folder when button effect shown.
             $scope.scriptArray = fs.readdirSync(scriptFolderPath);
@@ -278,14 +281,74 @@
             // Grab files in folder on refresh click.
             $scope.getNewScripts = function (){
               $scope.scriptArray = fs.readdirSync(scriptFolderPath);
-            }
+            }        
 
             // Open script folder on click.
             $scope.openScriptsFolder = function(){
               ipcRenderer.send('openScriptsFolder');
             }
-
-          };
+            
+            $scope.selectScript = function(scriptName) {
+              $scope.effect.scriptName = scriptName;
+              $scope.effect.parameters = null;
+              loadParameters(scriptName);
+            };
+            
+            $scope.scriptHasParameters = function() {
+              return $scope.effect.parameters != null && Object.keys($scope.effect.parameters).length > 0;
+            }
+            
+            if($scope.effect.scriptName != null) {
+              loadParameters($scope.effect.scriptName);
+            }
+            
+            function loadParameters(scriptName) {
+              console.log("Attempting to load custom script parameters...");
+              $scope.isLoadingParameters = true;
+                          
+              var scriptsFolder = dataAccess.getPathInUserData('/user-settings/scripts'); 
+              var scriptFilePath = path.resolve(scriptsFolder, scriptName);
+              // Attempt to load the script
+              try {
+                // Make sure we first remove the cached version, incase there was any changes
+                delete require.cache[require.resolve(scriptFilePath)];
+                      
+                var customScript = require(scriptFilePath);
+                
+                var currentParameters = $scope.effect.parameters;                            
+                if(typeof customScript.getDefaultParameters === 'function') {
+                  var parametersPromise = customScript.getDefaultParameters();
+                  
+                  $q.when(parametersPromise).then((parameters) => {
+                    var defaultParameters = parameters;                  
+                    
+                    if(currentParameters != null) {
+                      Object.keys(defaultParameters).forEach((defaultParameterName) => {
+                        var currentParam = currentParameters[defaultParameterName];
+                        var defaultParam = defaultParameters[defaultParameterName];
+                        if(currentParam != null) {
+                          currentParam.default = defaultParameters[defaultParameterName].default;
+                        } else {
+                          currentParameters[defaultParameterName] = defaultParam;
+                        }
+                      });
+                    } else {
+                      console.log("no current parameters");
+                      $scope.effect.parameters = defaultParameters;
+                    }
+                    console.log($scope.effect.parameters);                   
+                    $scope.isLoadingParameters = false; 
+                  });                                                  
+                } else {
+                  $scope.isLoadingParameters = false; 
+                }               
+              } catch (err) {
+                renderWindow.webContents.send('error', "Error loading the script '" + scriptName + "'\n\n" + err);
+                console.log(err);
+              }
+            };        
+          }
+            
           break;
         
         case EffectType.GAME_CONTROL:

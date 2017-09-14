@@ -28,6 +28,7 @@
       IMAGE_FILE: "imageFile",
       SOUND_FILE: "soundFile",
       VIDEO_FILE: "videoFile",
+      ANY_FILE: "anyFile",
       IMPORT_FOLDER: "importFolder",
       CONNECTION_STATUS: "connectionStatus",
       CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
@@ -78,6 +79,9 @@
             else if(listener.type == ListenerType.IMPORT_FOLDER) {
               ipcRenderer.send('getImportFolderPath', uuid);
             }
+            else if(listener.type == ListenerType.ANY_FILE) {
+              ipcRenderer.send('getAnyFilePath', uuid);
+            }
           }
           break;
         default:
@@ -91,6 +95,7 @@
         case ListenerType.IMAGE_FILE:
         case ListenerType.SOUND_FILE:
         case ListenerType.IMPORT_FOLDER:
+        case ListenerType.ANY_FILE:
           delete registeredListeners.filePath[uuid];
           break;
         default:
@@ -107,6 +112,7 @@
       GET_IMAGE: "getImagePath",
       GET_SOUND: "getSoundPath",
       GET_VIDEO: "getVideoPath",
+      GET_ANYFILE: "getAnyFilePath",
       SPARK_EXEMPT_UPDATED: "sparkExemptUpdated"
     }  
     service.EventType = EventType;
@@ -131,6 +137,10 @@
     });
     
     ipcRenderer.on('gotImportFolderPath', function (event, data){
+        parseFilePathEvent(data);
+    });
+    
+    ipcRenderer.on('gotAnyFilePath', function (event, data){
         parseFilePathEvent(data);
     });
       

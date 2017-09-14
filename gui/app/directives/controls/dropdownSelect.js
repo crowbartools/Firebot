@@ -7,7 +7,7 @@
    .component("dropdownSelect", {
        bindings: {
         options: "=",
-        selected: "<", 
+        selected: "=", 
         onUpdate: '&'
       },
        template: `

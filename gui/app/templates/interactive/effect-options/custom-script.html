@@ -12,12 +12,25 @@
             <li ng-show="scriptArray.length == 0" class="muted">
                 <a href>No scripts found.</a>
             </li>
-            <li ng-repeat="script in scriptArray" ng-click="effect.scriptName = script">
+            <li ng-repeat="script in scriptArray" ng-click="selectScript(script)">
                 <a href>{{script}}</a>
             </li>
         </ul>
     </div>
 </div>
-<div class="effect-info" alert alert-danger>
-    <strong>Warning:</strong> Only use scripts from sources you absolutely trust!
+<div class="effect-setting-container">
+  <div class="effect-specific-title"><h4>Script Parameters</h4></div>
+  <div ng-show="isLoadingParameters">
+    Loading parameters...
+  </div>
+  <div ng-hide="isLoadingParameters">
+    <span ng-hide="scriptHasParameters()" class="muted">Script has no parameters.</span>
+    <div ng-show="scriptHasParameters()">
+      <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters" name="parameterName" metadata="parameterMetadata"></script-parameter-option>
+    </div>
+  </div>
+</div>
+
+<div class="effect-info alert alert-danger">
+  <strong>Warning:</strong> Only use scripts from sources you absolutely trust!
 </div>

@@ -298,7 +298,7 @@ function createWindow () {
     shell.showItemInFolder(rootFolder);
   });
   
-  // Get Image File Path
+  // Get Import Folder Path
   // This listens for an event from the render media.js file to open a dialog to get a filepath.
   ipcMain.on('getImportFolderPath', function(event, uniqueid) {
       var path = dialog.showOpenDialog({
@@ -307,6 +307,17 @@ function createWindow () {
           properties: ['openDirectory']
       });
       event.sender.send('gotImportFolderPath', {path: path, id: uniqueid});
+  });
+  
+  // Get Any kind of file Path
+  // This listens for an event from the front end.
+  ipcMain.on('getAnyFilePath', function(event, uniqueid) {
+      var path = dialog.showOpenDialog({
+          title: "Please choose a file",
+          buttonLabel: "Choose a file",
+          properties: ['openDirectory']
+      });
+      event.sender.send('gotAnyFilePath', {path: path, id: uniqueid});
   });
 
 
