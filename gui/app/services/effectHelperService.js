@@ -167,6 +167,7 @@
               "Advice",
               "Cat Picture",
               "Cat Fact",
+              "Dad Joke",
               "Dog Picture",
               "Dog Fact",
               "Aww",
