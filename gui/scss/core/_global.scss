@@ -19,7 +19,7 @@
 
 // Fix icon alignment
 .fa, .fas, .far, .fal, .fab {
-  vertical-align: -15%;
+  vertical-align: -0%;
 }
 
 .pointer {
@@ -34,8 +34,8 @@
 ////////////////////////////////
 
 html {
-  height: 100%;     
-}    
+  height: 100%;
+}
 body {
  display: flex;
  flex-direction: row;
@@ -76,7 +76,7 @@ body {
  overflow-y: scroll;
  z-index: 10;
 }
-.tab-body {      
+.tab-body {
  padding: 15px;
  display: flex;
 }
@@ -151,7 +151,7 @@ body {
  background: $left-nav-link-text-hover-color;
  text-decoration: none;
 }
- 
+
 .fb-nav-link.selected, .fb-nav-link.selected:hover {
  color: $left-nav-link-text-selected-color;
  background: $light-background-color;
@@ -224,7 +224,7 @@ body {
 
 .nav-expand-button:hover {
  opacity: 0.5;
-}    
+}
 
 .nav-header-icon {
  height: 40px;
@@ -251,7 +251,7 @@ body {
   visibility: visible;
   top: 12px;
   right: 15px;
-  display: inline-block; 
+  display: inline-block;
   transition: 0.4s;
 }
 .nav-update-badge.contracted {
@@ -541,7 +541,7 @@ body {
     color: $tile-text-faded-color;
     opacity: 0.7;
     text-transform: uppercase;
-    
+
   }
   .edit-btn {
     visibility: hidden;
@@ -620,11 +620,11 @@ body {
 ::-webkit-scrollbar {
   width: 10px;
 }
- 
+
 ::-webkit-scrollbar-track {
   background-color: $scrollbar-background-color
 }
- 
+
 ::-webkit-scrollbar-thumb {
   background-color: $scrollbar-bar-color;
 }
@@ -653,7 +653,7 @@ body {
     align-items: center;
     color: $highlight-color;
     font-size: 75px;
-    font-weight: 100;    
+    font-weight: 100;
 }
 
 .welcome-subtitle {
@@ -755,7 +755,7 @@ body {
   animation:fa-spin-half 0.7s 1 linear;
 }
 
-@keyframes 
+@keyframes
   fa-spin-half {
     0% {
       transform:rotate(0deg)
@@ -773,7 +773,7 @@ body {
   from, to {
     transform: scale3d(1, 1, 1) translate3d(0,0,0);
   }
-  
+
   10% {
     transform: scale3d(1.25, 0.65, 1) translate3d(0,19px,0);
   }
