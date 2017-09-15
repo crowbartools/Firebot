@@ -132,7 +132,14 @@
     /*
     * ERROR MODAL
     */
+    var previousErrorMessage = "";
+    var errorModalOpen = false;
     service.showErrorModal = function (errorMessage) {
+      if(errorModalOpen && previousErrorMessage == errorMessage) {
+        return;
+      }
+      previousErrorMessage = errorMessage;
+      
       $rootScope.showSpinner = false;
       var errorModalContext = {
         templateUrl: "errorModal.html",
@@ -153,8 +160,13 @@
           message: () => {
             return errorMessage;
           }
+        },
+        closeCallback: () => {
+            errorModalOpen = false;
         }
       }
+      
+      errorModalOpen = true;
       service.showModal(errorModalContext);
 
       // Log error to file.
