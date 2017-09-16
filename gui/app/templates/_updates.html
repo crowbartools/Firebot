@@ -10,10 +10,10 @@
             <p>Hey! It looks like there was an update released!</p> <p>You can update by clicking the button below.</p>
         </div>
         
-        <div class="latest-update">
+        <div class="latest-update" style="font-size:30px;font-weight:200;">
             {{getUpdateData().gitName}}
         </div>
-        <div class="release-date">
+        <div class="release-date" style="font-weight:600;">
             {{getUpdateData().gitDate | date: 'medium'}}
         </div>
         <div class="update-notes" ng-bind-html="getUpdateData().gitNotes"></div>
