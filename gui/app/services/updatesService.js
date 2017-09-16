@@ -47,7 +47,7 @@
               }                   
 
               var gitName = gitNewest.name;
-              var gitDate = gitNewest.created_at;
+              var gitDate = gitNewest.published_at;
               var gitLink = gitNewest.html_url;
               var gitNotes = marked(gitNewest.body);
               var gitZipDownloadUrl = gitNewest.assets[0].browser_download_url;
