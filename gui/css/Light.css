@@ -11582,7 +11582,7 @@ button.close {
 }
 
 .fa, .fas, .far, .fal, .fab {
-  vertical-align: -15%;
+  vertical-align: -0%;
 }
 
 .pointer {
@@ -12932,7 +12932,13 @@ thead th {
 
 .fb-control-detail {
   font-size: 13px;
-  color: gray;
+  color: #25292a;
   font-weight: 600;
   margin-left: 8px;
+}
+
+.effect-actions-btn {
+  float: right;
+  padding-right: 15px;
+  cursor: pointer;
 }

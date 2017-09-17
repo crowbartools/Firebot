@@ -26,7 +26,16 @@
          var ctrl = this;
          
          ctrl.settings = settingsService;
-
+         
+         ctrl.$onInit = function() {
+           
+           // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore
+           if(ctrl.effect.overlayInstance != null) {
+              if(!settingsService.getOverlayInstances().includes(ctrl.effect.overlayInstance)) {
+                ctrl.effect.overlayInstance = null;
+              }
+           }
+        };
        }   
      });   
  })();
