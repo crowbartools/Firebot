@@ -217,8 +217,8 @@
         'utf8', () => { console.log(`Set overlay port to: ${port}`)});
     }
       
-    service.showOverlayInfoModal = function() {
-      utilityService.showOverlayInfoModal();
+    service.showOverlayInfoModal = function(instanceName) {
+      utilityService.showOverlayInfoModal(instanceName);
     }
     
     service.getClearCustomScriptCache = function() {
@@ -230,6 +230,24 @@
       pushDataToFile('/settings/clearCustomScriptCache', clear === true)
     }
     
+    service.useOverlayInstances = function() {
+      var oi = getDataFromFile('/settings/useOverlayInstances');
+      return oi != null ? oi : false;
+    }
+    
+    service.setUseOverlayInstances = function(oi) {
+      pushDataToFile('/settings/useOverlayInstances', oi === true)
+    }
+    
+    service.getOverlayInstances = function() {
+      var ois = getDataFromFile('/settings/overlayInstances');
+      return ois != null ? ois : [];
+    }
+    
+    service.setOverlayInstances = function(ois) {
+      pushDataToFile('/settings/overlayInstances', ois)
+    }
+      
     return service;
   });
 })();

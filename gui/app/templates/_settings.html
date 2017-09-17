@@ -166,6 +166,25 @@
               </div>
             </div>
           </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Overlay Instances</div>
+              <div class="setting-description">
+                Enable or disable the ability to use multiple overlay instances in your broadcasting software. When on, you will be able to pick which instance you want a video or image effect to show in. This is useful if you use greenscreen footage that you need to chroma key but don't want to affect your other videos and images. 
+              </div>
+              <div class="dropdown options-customscript-dropdown"style="display: inline-block">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.useOverlayInstances() ? 'On' : 'Off'}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                  <li><a href ng-click="settings.setUseOverlayInstances(true)">On</a></li>
+                  <li><a href ng-click="settings.setUseOverlayInstances(false)">Off</a></li>
+                </ul>
+              </div>
+              <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
+            </div>
+          </div>
         </uib-tab>
       </uib-tabset>
     </div>
@@ -173,7 +192,7 @@
 </div>
 
 
-<!-- Modal For Adding/Editting Viewer Group -->
+<!-- Modal For Editting Overlay Port -->
 <script type="text/ng-template" id="changePortModal.html">
   <div class="modal-header">
     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -193,5 +212,64 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary" ng-click="changePort()">Change Port</button>
+  </div>
+</script>
+
+<!-- Modal For Editting Overlay Instaces -->
+<script type="text/ng-template" id="editOverlayInstances.html">
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Edit Overlay Instances</h4>
+  </div>
+  <div class="modal-body">
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>URL</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Default</td>
+            <td><a href ng-click="showViewUrlModal()">View URL</a></td>
+            <td></td>
+          </tr>
+          <tr ng-repeat="instanceName in getOverlayInstances()">
+            <td>{{instanceName}}</td>
+            <td><a href ng-click="showViewUrlModal(instanceName)">View URL</a></td>
+            <td><span class="effect-delete-btn clickable pull-right" ng-click="deleteOverlayInstanceAtIndex($index)"><i class="far fa-trash-alt"></i></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-default btn-sm" ng-click="showCreateInstanceModal()">+ Create Instance</button>
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" ng-click="dismiss()">Done</button>
+  </div>
+</script>
+
+<!-- Modal For Adding Overlay Instances -->
+<script type="text/ng-template" id="createOverlayInstance.html">
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Create Overlay Instance</h4>
+  </div>
+  <div class="modal-body">
+    <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
+      <div style="width: 75%; position: relative;">
+        <div class="form-group" ng-class="{'has-error': createError}">
+          <label class="control-label" for="name">Name</label>
+          <input type="text" class="form-control" id="name" ng-model="name" aria-describedby="helpBlock">
+          <span id="helpBlock" class="help-block" ng-show="createError">This name is invalid or already exists.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="create()">Create</button>
   </div>
 </script>

@@ -85,14 +85,19 @@
     /*
     * OVERLAY INFO MODAL
     */
-    service.showOverlayInfoModal = function() {
+    service.showOverlayInfoModal = function(instanceName) {
       var overlayInfoModalContext = {
         templateUrl: "overlayInfoModal.html",
         // This is the controller to be used for the modal.
-        controllerFunc: ($scope, $rootScope, $uibModalInstance) => {
+        controllerFunc: ($scope, $rootScope, $uibModalInstance, instanceName) => {
 
           $scope.overlayPath = dataAccess.getPathInUserData("/overlay/firebot.html");
 
+          if(instanceName != null && instanceName != "") {
+            $scope.showingInstance = true;
+            $scope.overlayPath = $scope.overlayPath + "?instance=" + encodeURIComponent(instanceName);
+          };
+          
           $scope.pathCopied = false;
 
           $scope.copy = function() {
@@ -103,6 +108,11 @@
           $scope.dismiss = function() {
             $uibModalInstance.dismiss('cancel');
           };
+        },
+        resolveObj: {
+          instanceName: () => {
+            return instanceName;
+          }
         }
       }
       service.showModal(overlayInfoModalContext);

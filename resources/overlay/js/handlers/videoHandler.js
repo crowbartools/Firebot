@@ -13,7 +13,7 @@ function showVideo(data){
 	var filepath = data.filepath;
 	var fileExt = filepath.split('.').pop();
 	if(fileExt == "ogv"){
-		var fileExt = "ogg";
+		fileExt = "ogg";
 	}
 	var youtubeId = data.youtubeId;
 	var filepathNew = filepath.replace(/\\/g,"/");
@@ -59,6 +59,7 @@ function showVideo(data){
 		if(isNaN(videoVolume)) {
 			videoVolume = 5;
 		}
+		
 		videoVolume = parseInt(videoVolume) / 10;
 		$('.player').prop("volume", videoVolume);
 

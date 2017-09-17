@@ -21,8 +21,8 @@
         case EffectType.HTML: 
           controller = ($scope, utilityService) => {
             
-            $scope.showOverlayInfoModal = function() {
-              utilityService.showOverlayInfoModal();
+            $scope.showOverlayInfoModal = function(overlayInstance) {
+              utilityService.showOverlayInfoModal(overlayInstance);
             }
           }
           break;    
@@ -79,8 +79,8 @@
               });
             };
             
-            $scope.showOverlayInfoModal = function() {
-              utilityService.showOverlayInfoModal();
+            $scope.showOverlayInfoModal = function(overlayInstance) {
+              utilityService.showOverlayInfoModal(overlayInstance);
             }          
           };
           break;
@@ -88,8 +88,8 @@
         case EffectType.SHOW_VIDEO:
           controller = ($scope, listenerService, utilityService) => {
             
-            $scope.showOverlayInfoModal = function() {
-              utilityService.showOverlayInfoModal();
+            $scope.showOverlayInfoModal = function(overlayInstance) {
+              utilityService.showOverlayInfoModal(overlayInstance);
             }    
             
             $scope.videoPositions = [

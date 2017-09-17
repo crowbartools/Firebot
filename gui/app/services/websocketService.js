@@ -102,7 +102,8 @@
             "imageWidth": imageWidth, 
             "imageDuration":imageDuration,
             "enterAnimation": data.enterAnimation,
-            "exitAnimation": data.exitAnimation
+            "exitAnimation": data.exitAnimation,
+            "overlayInstance": data.overlayInstance
           };
           
           service.broadcast(data);
@@ -155,7 +156,8 @@
             "videoVolume": videoVolume,
             "videoStarttime": videoStarttime,            
             "enterAnimation": data.enterAnimation,
-            "exitAnimation": data.exitAnimation
+            "exitAnimation": data.exitAnimation,
+            "overlayInstance": data.overlayInstance
           };
           
           service.broadcast(data);

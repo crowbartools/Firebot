@@ -1,6 +1,8 @@
 // Global
 notificationShown = false;
 
+let params = new URL(location).searchParams;
+
 // Kickstarter
 // This function kickstarts the connection process.
 function mixerSocketConnect(){
@@ -27,6 +29,20 @@ function mixerSocketConnect(){
 		ws.onmessage = function (evt){
 			var data = JSON.parse(evt.data);
 			var event = data.event;
+			
+			var olInstance = params.get("instance");
+			console.log(`Instance: ${olInstance}, Event Instance: ${data.overlayInstance}`)
+			if(olInstance != null && olInstance != "") {
+				if(data.overlayInstance != olInstance) {
+					console.log("Event detected but it's for a different instance. Ignoring.")
+					return;
+				}
+			} else {
+				if(data.overlayInstance != null && data.overlayInstance != "") {
+					console.log("Event detected but it's for a specific instance. Ignoring.")
+					return;
+				}
+			}
 
 			// Pass data on to the correct function.
 			switch(event){

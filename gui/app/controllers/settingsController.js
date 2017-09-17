@@ -115,5 +115,73 @@
           utilityService.showModal(showChangePortModalContext);
         }
         
+        $scope.showEditOverlayInstancesModal = function() {
+          var showEditOverlayInstancesModalContext = {
+            templateUrl: "editOverlayInstances.html",  
+            controllerFunc: ($scope, settingsService, utilityService, $uibModalInstance) => {
+              
+              $scope.getOverlayInstances = function() {
+                return settingsService.getOverlayInstances();
+              };
+              
+              $scope.deleteOverlayInstanceAtIndex = function(index) {
+                var instances = settingsService.getOverlayInstances();
+                
+                instances.splice(index, 1);
+                
+                settingsService.setOverlayInstances(instances);
+              };
+              
+              var addOverlayInstance = function(overlayInstance) {
+                var instances = settingsService.getOverlayInstances();
+                
+                instances.push(overlayInstance);
+                
+                settingsService.setOverlayInstances(instances);
+              };
+              
+              $scope.showViewUrlModal = function(instanceName) {
+                utilityService.showOverlayInfoModal(instanceName);
+              }            
+              
+              $scope.showCreateInstanceModal = function() {
+                var showCreateInstanceModalContext = {
+                  templateUrl: "createOverlayInstance.html",
+                  size: "sm",   
+                  controllerFunc: ($scope, settingsService, $uibModalInstance) => {
+                    
+                    $scope.name = "";
+                    
+                    $scope.create = function() {
+                      
+                      if(settingsService.getOverlayInstances().includes($scope.name) ||
+                          $scope.name == "") {
+                        $scope.createError = true;
+                        return;
+                      }
+                      
+                      $uibModalInstance.close($scope.name);
+                    }
+                                  
+                    $scope.dismiss = function() {
+                      $uibModalInstance.dismiss('cancel');
+                    };                      
+                  },
+                  closeCallback: (instanceName) => {
+                      addOverlayInstance(instanceName);         
+                  }                  
+                }    
+                utilityService.showModal(showCreateInstanceModalContext);
+              }
+              
+                            
+              $scope.dismiss = function() {
+                $uibModalInstance.dismiss('cancel');
+              };                      
+            }
+          }    
+          utilityService.showModal(showEditOverlayInstancesModalContext);
+        }
+        
    });
  })();

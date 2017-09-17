@@ -51,6 +51,7 @@
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
     <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosEnterExitAnimations.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayInstance.js"></script>
     <script type="text/javascript" src="./directives/controls/scriptParameterOption.js"></script>
     <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
 
@@ -227,12 +228,13 @@
         <h2 class="modal-title">Firebot Overlay Info</h2>
       </div>
       <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;">
-        <p>Button effects that show things on stream (ie images, videos, etc) need Firebot's overlay file to be added to your broadcasting software.</p>
-        <h3>How To Add The Overlay</h3>
-        <p>In your broadcasting software add a <b>BrowserSource</b> (or something named similiar, it varies between each software) to the scenes you desire the overlay to be present.</p>
-        
-        <p>Then in the settings for this <b>BrowserSource</b>, there should be field for a URL. Copy and paste the file path below into that URL field:</p>
-        
+        <div ng-hide="showingInstance">      
+          <p>Button effects that show things on stream (ie images, videos, etc) need Firebot's overlay file to be added to your broadcasting software.</p>
+          <h3>How To Add The Overlay</h3>
+          <p>In your broadcasting software add a <b>BrowserSource</b> (or something named similiar, it varies between each software) to the scenes you desire the overlay to be present.</p>
+          
+          <p>Then in the settings for this <b>BrowserSource</b>, there should be field for a URL. Copy and paste the file path below into that URL field:</p>
+        </div>
         <div style="width:75%; margin-bottom:25px;">
           <div class="input-group">
             <input type="text" class="form-control" style="cursor:text;" ng-model="overlayPath" disabled>
