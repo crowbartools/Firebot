@@ -89,7 +89,7 @@
       var overlayInfoModalContext = {
         templateUrl: "overlayInfoModal.html",
         // This is the controller to be used for the modal.
-        controllerFunc: ($scope, $rootScope, $uibModalInstance, instanceName) => {
+        controllerFunc: ($scope, $rootScope, $uibModalInstance, settingsService, instanceName) => {
 
           $scope.overlayPath = dataAccess.getPathInUserData("/overlay/firebot.html");
 
@@ -97,6 +97,8 @@
             $scope.showingInstance = true;
             $scope.overlayPath = $scope.overlayPath + "?instance=" + encodeURIComponent(instanceName);
           };
+          
+          $scope.usingOverlayInstances = settingsService.useOverlayInstances();
           
           $scope.pathCopied = false;
 

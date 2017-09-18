@@ -124,6 +124,8 @@
                 return settingsService.getOverlayInstances();
               };
               
+              $scope.usingObs = settingsService.getOverlayCompatibility() == 'OBS';
+              
               $scope.deleteOverlayInstanceAtIndex = function(index) {
                 var instances = settingsService.getOverlayInstances();
                 

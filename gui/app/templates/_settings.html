@@ -183,6 +183,9 @@
                 </ul>
               </div>
               <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
+              <div class="effect-info alert alert-warning" ng-show="settings.getOverlayCompatibility() == 'OBS' && settings.useOverlayInstances()">
+                  You have 'Overlay Compatibility' set to 'OBS' but it's recommended that you set that to 'Other' and don't mark your BrowerSources as 'Local Files' in OBS.
+              </div>
             </div>
           </div>
         </uib-tab>
@@ -244,7 +247,10 @@
         </tbody>
       </table>
       <button class="btn btn-default btn-sm" ng-click="showCreateInstanceModal()">+ Create Instance</button>
-    
+      
+      <div class="effect-info alert alert-warning" ng-show="usingObs">
+        It's recommended that you do NOT mark the overlay BrowserSources as "Local Files" and that you DO set your Firebot Overlay Compatibility setting to "Other".
+      </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-primary" ng-click="dismiss()">Done</button>
