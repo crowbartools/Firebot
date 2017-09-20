@@ -247,7 +247,25 @@
     service.setOverlayInstances = function(ois) {
       pushDataToFile('/settings/overlayInstances', ois)
     }
-      
+
+    service.saveOnExitEnabled = function() {
+      var saveOnExit = getDataFromFile('/settings/backup/saveOnExit');
+      return saveOnExit != null ? saveOnExit : "Off";
+    }
+    
+    service.setSaveOnExitEnabled = function(enabled) {
+      pushDataToFile('/settings/backup/saveOnExit', enabled);
+    }
+
+    service.keepAllBackupsEnabled = function() {
+      var keepAllBackups = getDataFromFile('/settings/backup/keepAllBackups');
+      return keepAllBackups != null ? keepAllBackups : "Off";
+    }
+    
+    service.setKeepAllBackupsEnabled = function(enabled) {
+      pushDataToFile('/settings/backup/keepAllBackups', enabled);
+    }
+
     return service;
   });
 })();

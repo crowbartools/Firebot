@@ -338,11 +338,12 @@ function createWindow () {
   // Backup Routine
   // 
   ipcMain.on('startBackup', function(event){
-    console.log("Initiate Backup here....");
     var archiver = require('archiver');
+    var timestamp = Date.now();
+    var filename = 'backup-' + timestamp;
     var backupPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups");
     var folderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "user-settings");
-    var output = fs.createWriteStream(backupPath + '/backup.zip');
+    var output = fs.createWriteStream(backupPath + path.sep + filename + '.zip');
     var archive = archiver('zip', {
       zlib: { level: 9 } // Sets the compression level.
     });
