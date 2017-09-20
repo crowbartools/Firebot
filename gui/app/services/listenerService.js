@@ -199,6 +199,16 @@
     });
 
     /**
+    * Info event listener
+    */
+    ipcRenderer.on('info', function (event, infoMessage){
+      _.forEach(registeredListeners.info, (listener, key, list) => {
+        runListener(listener, infoMessage);
+      });
+    });
+    
+
+    /**
     * Update error listener
     */
     ipcRenderer.on('updateError', function (event, errorMessage){

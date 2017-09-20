@@ -282,7 +282,6 @@
     var previousInfoMessage = "";
     var infoModalOpen = false;
     service.showInfoModal = function (infoMessage) {
-      console.log("Trigger infoModal");
       if(infoModalOpen && previousInfoMessage == infoMessage) {
         return;
       }

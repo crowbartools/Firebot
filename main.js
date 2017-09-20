@@ -149,6 +149,12 @@ function createWindow () {
       dataAccess.makeDirInUserData("/user-settings/scripts");
     });
     
+    // Create the scripts folder if it doesn't exist
+    dataAccess.userDataPathExists("/backups/").then((resolve) => {
+      console.log("Can't find the backup folder, creating one now...");
+      dataAccess.makeDirInUserData("/backups");
+    });
+
     // Create the overlay settings folder if it doesn't exist.
     dataAccess.userDataPathExists("/user-settings/overlay-settings/")
     .then((resolve) => {
@@ -343,21 +349,19 @@ function createWindow () {
     
     // listen for all archive data to be written
     output.on('close', function() {
-      console.log(archive.pointer() + ' total bytes');
-      console.log('archiver has been finalized and the output file descriptor has closed.');
-      renderWindow.webContents.send('info', "info - Backup has been finished, you can close this message safely.");
-      renderWindow.webContents.send('error', "error - Backup has been finished, you can close this message safely.");
+      filesize = archive.pointer() / 1000;
+      renderWindow.webContents.send('info', "The backup has been finished, you can close this message safely. (Backup size: "+ filesize +" bytes)");
     });
 
     archive.on('warning', function(err) {
       if (err.code === 'ENOENT') {
           // log warning
           renderWindow.webContents.send('error', "There was an error initiating the backup function.");
-          console.log("Log warnings here...");
-          console.log(err);
+          renderWindow.webContents.send('error', err);
       } else {
           // throw error
-          console.log("An error occured...");
+          renderWindow.webContents.send('error', "Something bad happened, please check your logs.");
+          renderWindow.webContents.send('error', err);
           throw err;
       }
     });
