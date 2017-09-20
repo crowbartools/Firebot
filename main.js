@@ -111,7 +111,7 @@ function createWindow () {
     }))
 
     // Open dev tools
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -345,7 +345,8 @@ function createWindow () {
     output.on('close', function() {
       console.log(archive.pointer() + ' total bytes');
       console.log('archiver has been finalized and the output file descriptor has closed.');
-      renderWindow.webContents.send('info', "Backup has been finished, you can close this message safely. -- Not an error --");
+      renderWindow.webContents.send('info', "info - Backup has been finished, you can close this message safely.");
+      renderWindow.webContents.send('error', "error - Backup has been finished, you can close this message safely.");
     });
 
     archive.on('warning', function(err) {

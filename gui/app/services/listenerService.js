@@ -21,7 +21,8 @@
       showImage: {},
       showVideo: {},
       showHtml: {},
-      celebrate: {}
+      celebrate: {},
+      info: {}
     }
     
     var ListenerType = {

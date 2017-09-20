@@ -282,6 +282,7 @@
     var previousInfoMessage = "";
     var infoModalOpen = false;
     service.showInfoModal = function (infoMessage) {
+      console.log("Trigger infoModal");
       if(infoModalOpen && previousInfoMessage == infoMessage) {
         return;
       }
@@ -289,7 +290,7 @@
       
       $rootScope.showSpinner = false;
       var infoModalContext = {
-        templateUrl: "errorModal.html",
+        templateUrl: "infoModal.html",
         // This is the controller to be used for the modal.
         controllerFunc: ($scope, $uibModalInstance, message) => {
 
@@ -297,10 +298,6 @@
 
           $scope.close = function() {
             $uibModalInstance.close();
-          };
-
-          $scope.dismiss = function() {
-            $uibModalInstance.dismiss('cancel');
           };
         },
         resolveObj: {
