@@ -189,6 +189,22 @@
             </div>
           </div>
         </uib-tab>
+
+        <!-- Backup Settings -->
+        <uib-tab index="4" heading="Backup">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Backups folder:</div>
+              <div class="setting-description">Click the button below to get quick access to the Firebot Backups.</div>
+              <button class="btn btn-default" ng-click="openBackupFolder()">Open Backup Folder</button>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Initiate Backup</div>
+              <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>
+              <button class="btn btn-default" ng-click="startBackup()">Initiate Backup</button>
+            </div>
+          </div>
+        </uib-tab>
       </uib-tabset>
     </div>
   </div>

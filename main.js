@@ -320,6 +320,61 @@ function createWindow () {
       event.sender.send('gotAnyFilePath', {path: path, id: uniqueid});
   });
 
+  // Opens the firebot backup folder
+  ipcMain.on('openBackupFolder', function(event) {
+    // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead 
+    // of opening to the poarent folder with 'Firebot'folder selected. 
+    var backupFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep + "fakescript.js");
+    shell.showItemInFolder(backupFolder);
+  });
+
+
+  // Backup Routine
+  // 
+  ipcMain.on('startBackup', function(event){
+    console.log("Initiate Backup here....");
+    var archiver = require('archiver');
+    var backupPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups");
+    var folderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "user-settings");
+    var output = fs.createWriteStream(backupPath + '/backup.zip');
+    var archive = archiver('zip', {
+      zlib: { level: 9 } // Sets the compression level.
+    });
+    
+    // listen for all archive data to be written
+    output.on('close', function() {
+      console.log(archive.pointer() + ' total bytes');
+      console.log('archiver has been finalized and the output file descriptor has closed.');
+      renderWindow.webContents.send('info', "Backup has been finished, you can close this message safely. -- Not an error --");
+    });
+
+    archive.on('warning', function(err) {
+      if (err.code === 'ENOENT') {
+          // log warning
+          renderWindow.webContents.send('error', "There was an error initiating the backup function.");
+          console.log("Log warnings here...");
+          console.log(err);
+      } else {
+          // throw error
+          console.log("An error occured...");
+          throw err;
+      }
+    });
+
+    // good practice to catch this error explicitly
+    archive.on('error', function(err) {
+      throw err;
+    });
+
+    // pipe archive data to the file
+    archive.pipe(output);
+    
+    // Add directory to package
+    archive.directory(folderPath,'user-settings');
+    
+    // finalize the archive (ie we are done appending files but streams have to finish yet)
+    archive.finalize();
+  });
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

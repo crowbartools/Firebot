@@ -40,7 +40,8 @@
       SHOW_IMAGE: "showImage",
       SHOW_VIDEO: "showVideo",
       SHOW_HTML: "showHtml",
-      CELEBREATE: "celebrate"
+      CELEBREATE: "celebrate",
+      INFO: "info"
     }
     
     service.ListenerType = ListenerType;
@@ -113,7 +114,9 @@
       GET_SOUND: "getSoundPath",
       GET_VIDEO: "getVideoPath",
       GET_ANYFILE: "getAnyFilePath",
-      SPARK_EXEMPT_UPDATED: "sparkExemptUpdated"
+      SPARK_EXEMPT_UPDATED: "sparkExemptUpdated",
+      OPEN_BACKUP: "openBackupFolder",
+      INITIATE_BACKUP: "startBackup"
     }  
     service.EventType = EventType;
     

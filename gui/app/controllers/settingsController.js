@@ -13,7 +13,15 @@
         $scope.openRootFolder = function() {
           listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
         }
-        
+
+        $scope.openBackupFolder = function() {
+          listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
+        }        
+
+        $scope.startBackup = function() {
+          listenerService.fireEvent(listenerService.EventType.INITIATE_BACKUP);
+        }        
+
         $scope.autoUpdateSlider = {
           value: settingsService.getAutoUpdateLevel(),
           options: {
