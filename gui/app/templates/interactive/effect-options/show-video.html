@@ -34,20 +34,7 @@
     </div>
 </div>
 <div ng-show="effect.videoType">
-  <div class="effect-setting-container">
-      <div class="effect-specific-title"><h4>What location should it show in?</h4></div>
-      <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="video-placement-effect-type">{{effect.position ? effect.position : 'Pick one'}}</span> <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu video-placement-effect-dropdown">
-              <li ng-repeat="position in videoPositions"
-                  ng-click="effect.position = position">
-                    <a href>{{position}}</a>
-              </li>
-          </ul>
-      </div>
-  </div>
+  <eos-overlay-position effect="effect"></eos-overlay-position>
   <div class="effect-setting-container">
       <div class="effect-specific-title">
         <h4 style="display:inline-block;margin-right:20px;">How big should it be?</h4>
