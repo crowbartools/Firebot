@@ -186,6 +186,20 @@
       listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
     }
     
+    service.addViewerGroupToExemptGroup = function(group) {
+      if(group != null && !service.getExemptGroup().includes[group]) {
+        service.getExemptGroup().groups.push(group);
+      }            
+      saveExemptGroup();
+      listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
+    }
+    
+    service.removeViewerGroupFromExemptGroupAtIndex = function(index) {
+      service.getExemptGroup().groups.splice(index,1);
+      saveExemptGroup();
+      listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
+    }
+    
     service.getExemptGroup = function() {
       ensureExemptGroupExists();
       var group = _.findWhere(sparkExemptGroup, {groupName: "sparkExempt"});
@@ -206,7 +220,8 @@
       if(!exemptGroupExists) {
         var exemptGroup = {
           groupName: 'sparkExempt',
-          users: []
+          users: [],
+          groups: []
         }
         var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
         dbGroup.push("/sparkExempt", exemptGroup);  
