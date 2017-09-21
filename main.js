@@ -339,6 +339,10 @@ function createWindow () {
   // 
   ipcMain.on('startBackup', function(event){
     var archiver = require('archiver');
+    var keepAllBackups = settings.keepAllBackups;
+    var saveOnExit = settings.backupOnExit;
+    console.log("keep: " + settings.keepAllBackups);
+    console.log("save: " + settings.backupOnExit);
     var timestamp = Date.now();
     var filename = 'backup-' + timestamp;
     var backupPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups");

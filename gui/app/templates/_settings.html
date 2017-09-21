@@ -195,44 +195,35 @@
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Backups folder:</div>
-              <div class="setting-description">Click the button below to get quick access to the Firebot Backups.</div>
+              <div class="setting-description">Click the button below to get access to the Firebot Backups.</div>
               <button class="btn btn-default" ng-click="openBackupFolder()">Open Backup Folder</button>
             </div>
             <div class="setting col-sm-6">
               <div class="setting-heading">Initiate Backup</div>
-              <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>
+              <div class="setting-description">Click the button below to start the backup and wait for Firebot to tell you when the backup is done.</div>
               <button class="btn btn-default" ng-click="startBackup()">Initiate Backup</button>
             </div>
             <div class="row" style="margin-top: 15px">
               <div class="setting col-sm-6">
-                <div class="setting-heading">Take backup each time you close Firebot?</div>
-                <div class="setting-description">Do you want Firebot to initiate a backup each time you exit the application?</div>
-                <div class="dropdown options-saveonexit-dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="options-backup-saveonexit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span class="dropdown-text">{{settings.saveOnExitEnabled()}}</span>
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="options-backup-saveonexit">
-                    <li><a href ng-click="settings.setSaveOnExitEnabled('On')">On</a></li>
-                    <li><a href ng-click="settings.setSaveOnExitEnabled('Off')">Off</a></li>
-                  </ul>
-                </div> 
-              </div>
-            </div>
-            <div class="row" style="margin-top: 15px">
-              <div class="setting col-sm-6">
-                <div class="setting-heading">Do you want to keep all backup files?</div>
-                <div class="setting-description">Do you want Firebot to store all the backups?</div>
-                  <div class="dropdown options-keepallbackups-dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="options-backup-keepallbackups" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      <span class="dropdown-text">{{settings.keepAllBackupsEnabled()}}</span>
-                      <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="options-backup-keepallbackups">
-                      <li><a href ng-click="settings.setKeepAllBackupsEnabled('On')">On</a></li>
-                      <li><a href ng-click="settings.setKeepAllBackupsEnabled('Off')">Off</a></li>
-                    </ul>
-                  </div>
+                <div class="setting-heading">Backup Settings</div>
+                <div class="setting-description">You can tweeak how you want the backup system to work:</div>
+                <div class="effect-setting-container">
+                  <div class="change-scene-effect-group-select">
+                    <label class="control-fb control--checkbox">Keep all old backups
+                        <input type="checkbox" ng-click="settings.setKeepAllBackups(!settings.keepAllBackups())" ng-checked="settings.keepAllBackups()" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    <div class="setting-description">Backup when:</div>
+                    <label class="control-fb control--checkbox">Firebot closes
+                      <input type="checkbox" ng-click="settings.setBackupOnExit(!settings.backupOnExit())" ng-checked="settings.backupOnExit()" aria-label="..." >
+                      <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox">Before updates
+                        <input type="checkbox" ng-click="settings.setBackupBeforeUpdates(!settings.backupBeforeUpdates())" ng-checked="settings.backupBeforeUpdates()" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    </div>
+                </div>
               </div>
             </div>
           </div>

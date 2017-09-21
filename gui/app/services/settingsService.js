@@ -248,22 +248,31 @@
       pushDataToFile('/settings/overlayInstances', ois)
     }
 
-    service.saveOnExitEnabled = function() {
-      var saveOnExit = getDataFromFile('/settings/backup/saveOnExit');
-      return saveOnExit != null ? saveOnExit : "Off";
+    service.keepAllBackups = function() {
+      var keepAllBackups = getDataFromFile('/settings/backupKeepAllBackups');
+      return keepAllBackups != null ? keepAllBackups : false;
     }
     
-    service.setSaveOnExitEnabled = function(enabled) {
-      pushDataToFile('/settings/backup/saveOnExit', enabled);
+    service.setKeepAllBackups = function(keepAllBackups) {
+      pushDataToFile('/settings/backupKeepAllBackups', keepAllBackups === true)
     }
 
-    service.keepAllBackupsEnabled = function() {
-      var keepAllBackups = getDataFromFile('/settings/backup/keepAllBackups');
-      return keepAllBackups != null ? keepAllBackups : "Off";
+    service.backupOnExit = function() {
+      var save = getDataFromFile('/settings/backupOnExit');
+      return save != null ? save : false;
     }
     
-    service.setKeepAllBackupsEnabled = function(enabled) {
-      pushDataToFile('/settings/backup/keepAllBackups', enabled);
+    service.setBackupOnExit = function(backupOnExit) {
+      pushDataToFile('/settings/backupOnExit', backupOnExit === true)
+    }
+    
+    service.backupBeforeUpdates = function() {
+      var backupBeforeUpdates = getDataFromFile('/settings/backupBeforeUpdates');
+      return backupBeforeUpdates != null ? backupBeforeUpdates : false;
+    }
+    
+    service.setBackupBeforeUpdates = function(backupBeforeUpdates) {
+      pushDataToFile('/settings/backupBeforeUpdates', backupBeforeUpdates === true)
     }
 
     return service;
