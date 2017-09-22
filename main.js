@@ -111,7 +111,7 @@ function createWindow () {
     }))
 
     // Open dev tools
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -337,35 +337,42 @@ function createWindow () {
 
   // Backup Routine
   // 
-  ipcMain.on('startBackup', function(event){
+  ipcMain.on('startBackup', function(event, onUser = 1){
     var archiver = require('archiver');
-    var keepAllBackups = settings.keepAllBackups;
-    var saveOnExit = settings.backupOnExit;
-    console.log("keep: " + settings.keepAllBackups);
-    console.log("save: " + settings.backupOnExit);
+    var backupKeepAll = settings.backupKeepAll();
+    var backupOnExit = settings.backupOnExit();
+    var backupBeforeUpdates = settings.backupBeforeUpdates();
     var timestamp = Date.now();
-    var filename = 'backup-' + timestamp;
+    var fileExtension = 'zip';
+    console.log(event);
+    console.log(onUser);
+    if(backupKeepAll){
+      var filename = 'backup-' + timestamp +'.' + fileExtension;
+    }else{
+      console.log("Overwriting the same file each time...");
+      var filename = 'backup.'+ fileExtension;
+    }
     var backupPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups");
     var folderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "user-settings");
-    var output = fs.createWriteStream(backupPath + path.sep + filename + '.zip');
-    var archive = archiver('zip', {
+    var output = fs.createWriteStream(backupPath + path.sep + filename);
+    var archive = archiver(fileExtension, {
       zlib: { level: 9 } // Sets the compression level.
     });
     
     // listen for all archive data to be written
     output.on('close', function() {
       filesize = archive.pointer() / 1000;
-      renderWindow.webContents.send('info', "The backup has been finished, you can close this message safely. (Backup size: "+ filesize +" bytes)");
+      if(onUser) renderWindow.webContents.send('info', "The backup has been finished, you can close this message safely. (Backup size: "+ filesize +" bytes)");
     });
 
     archive.on('warning', function(err) {
       if (err.code === 'ENOENT') {
           // log warning
-          renderWindow.webContents.send('error', "There was an error initiating the backup function.");
+          if(onUser) renderWindow.webContents.send('error', "There was an error initiating the backup function.");
           renderWindow.webContents.send('error', err);
       } else {
           // throw error
-          renderWindow.webContents.send('error', "Something bad happened, please check your logs.");
+          if(onUser) renderWindow.webContents.send('error', "Something bad happened, please check your logs.");
           renderWindow.webContents.send('error', err);
           throw err;
       }

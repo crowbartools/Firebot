@@ -201,7 +201,7 @@
             <div class="setting col-sm-6">
               <div class="setting-heading">Initiate Backup</div>
               <div class="setting-description">Click the button below to start the backup and wait for Firebot to tell you when the backup is done.</div>
-              <button class="btn btn-default" ng-click="startBackup()">Initiate Backup</button>
+              <button class="btn btn-default" ng-click="startBackup('onUser')">Initiate Backup</button>
             </div>
             <div class="row" style="margin-top: 15px">
               <div class="setting col-sm-6">
@@ -210,7 +210,7 @@
                 <div class="effect-setting-container">
                   <div class="change-scene-effect-group-select">
                     <label class="control-fb control--checkbox">Keep all old backups
-                        <input type="checkbox" ng-click="settings.setKeepAllBackups(!settings.keepAllBackups())" ng-checked="settings.keepAllBackups()" aria-label="..." >
+                        <input type="checkbox" ng-click="settings.setBackupKeepAll(!settings.backupKeepAll())" ng-checked="settings.backupKeepAll()" aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
                     <div class="setting-description">Backup when:</div>

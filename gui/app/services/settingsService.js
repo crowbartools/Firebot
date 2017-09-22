@@ -248,13 +248,13 @@
       pushDataToFile('/settings/overlayInstances', ois)
     }
 
-    service.keepAllBackups = function() {
-      var keepAllBackups = getDataFromFile('/settings/backupKeepAllBackups');
-      return keepAllBackups != null ? keepAllBackups : false;
+    service.backupKeepAll = function() {
+      var backupKeepAll = getDataFromFile('/settings/backupKeepAll');
+      return backupKeepAll != null ? backupKeepAll : false;
     }
     
-    service.setKeepAllBackups = function(keepAllBackups) {
-      pushDataToFile('/settings/backupKeepAllBackups', keepAllBackups === true)
+    service.setBackupKeepAll = function(backupKeepAll) {
+      pushDataToFile('/settings/backupKeepAll', backupKeepAll === true)
     }
 
     service.backupOnExit = function() {
