@@ -103,7 +103,8 @@
             "imageDuration":imageDuration,
             "enterAnimation": data.enterAnimation,
             "exitAnimation": data.exitAnimation,
-            "overlayInstance": data.overlayInstance
+            "overlayInstance": data.overlayInstance,
+            "customCoords": data.customCoords
           };
           
           service.broadcast(data);
@@ -157,7 +158,8 @@
             "videoStarttime": videoStarttime,            
             "enterAnimation": data.enterAnimation,
             "exitAnimation": data.exitAnimation,
-            "overlayInstance": data.overlayInstance
+            "overlayInstance": data.overlayInstance,
+            "customCoords": data.customCoords
           };
           
           service.broadcast(data);
