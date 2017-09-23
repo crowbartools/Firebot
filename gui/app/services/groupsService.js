@@ -45,6 +45,14 @@
       return groupList;
     }
     
+    service.getViewerGroupNames = function() {
+      return service.getViewerGroups().map((g) => { return g.groupName; } );
+    }
+    
+    service.getDefaultAndCustomViewerGroupNames = function() {
+      return service.getDefaultGroups().concat(service.getViewerGroupNames());
+    }
+    
     service.getDefaultGroups = function() {
       return [
         "Pro",
@@ -186,9 +194,18 @@
       listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
     }
     
+    service.updateExemptViewerGroups = function(groups) {
+      service.getExemptGroup().groups = groups;
+      saveExemptGroup();
+      listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
+    }
+    
     service.getExemptGroup = function() {
       ensureExemptGroupExists();
       var group = _.findWhere(sparkExemptGroup, {groupName: "sparkExempt"});
+      if(group.groups == null) {
+        group.groups = [];
+      }
       return group;
     }
     
@@ -206,7 +223,8 @@
       if(!exemptGroupExists) {
         var exemptGroup = {
           groupName: 'sparkExempt',
-          users: []
+          users: [],
+          groups: []
         }
         var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
         dbGroup.push("/sparkExempt", exemptGroup);  
