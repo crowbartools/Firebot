@@ -46,7 +46,11 @@
     }
     
     service.getViewerGroupNames = function() {
-      return service.getViewerGroups(true).map((g) => { return g.groupName; } );
+      return service.getViewerGroups().map((g) => { return g.groupName; } );
+    }
+    
+    service.getDefaultAndCustomViewerGroupNames = function() {
+      return service.getDefaultGroups().concat(service.getViewerGroupNames());
     }
     
     service.getDefaultGroups = function() {
@@ -190,16 +194,8 @@
       listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
     }
     
-    service.addViewerGroupToExemptGroup = function(group) {
-      if(group != null && !service.getExemptGroup().includes[group]) {
-        service.getExemptGroup().groups.push(group);
-      }            
-      saveExemptGroup();
-      listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
-    }
-    
-    service.removeViewerGroupFromExemptGroupAtIndex = function(index) {
-      service.getExemptGroup().groups.splice(index,1);
+    service.updateExemptViewerGroups = function(groups) {
+      service.getExemptGroup().groups = groups;
       saveExemptGroup();
       listenerService.fireEvent(listenerService.EventType.SPARK_EXEMPT_UPDATED);
     }
