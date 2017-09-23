@@ -20,6 +20,8 @@ const settings = require('./lib/interactive/settings-access').settings;
 
 const dataAccess = require('./lib/data-access.js');
 
+require('./api/apiServer.js');
+
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
 

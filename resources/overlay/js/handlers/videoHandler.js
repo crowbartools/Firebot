@@ -24,6 +24,11 @@ function showVideo(data){
 	var videoVolume = data.videoVolume;
 	var videoStarttime = data.videoStarttime || 0;
 	
+	var customPosStyles = "";
+	if(videoPosition == 'Custom') {
+		customPosStyles = getStylesForCustomCoords(data.customCoords)
+	}
+	
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
 	var divClass = d.getTime();
@@ -36,19 +41,19 @@ function showVideo(data){
 
 		if (videoHeight === false && videoWidth === false){
 			// Both height and width fields left blank.
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'"><video position="'+videoPosition+'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else if (videoWidth === false){
 			// Width field left blank, but height provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else if (videoHeight === false) {
 			// Height field left blank, but width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; width:'+ videoWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'"><video position="'+videoPosition+'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else {
 			// Both height and width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;"><video position="'+videoPosition+'" height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" autoplay ><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		}
 		// Put the div on the page.
 		$('#wrapper').append(videoFinal);

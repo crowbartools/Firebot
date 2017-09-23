@@ -2,6 +2,7 @@ div[position="Top Left"],video[position="Top Left"],img[position="Top Left"],ifr
 	position:absolute;
 	top: 10px;
 	left: 10px;
+	margin: auto;
 }
 div[position="Top Middle"],video[position="Top Middle"],img[position="Top Middle"],iframe[position="Top Middle"]{
 	position:absolute;
@@ -14,6 +15,7 @@ div[position="Top Right"],video[position="Top Right"],img[position="Top Right"],
 	position:absolute;
 	top: 10px;
 	right: 10px;
+	margin: auto;
 }
 div[position="Middle Left"],video[position="Middle Left"],img[position="Middle Left"],iframe[position="Middle Left"]{
 	position:absolute;
@@ -41,6 +43,7 @@ div[position="Bottom Left"],video[position="Bottom Left"],img[position="Bottom L
 	position:absolute;
 	bottom: 10px;
 	left: 10px;
+	margin: auto;
 }
 div[position="Bottom Middle"],video[position="Bottom Middle"],img[position="Bottom Middle"],iframe[position="Bottom Middle"]{
 	position:absolute;
@@ -53,4 +56,5 @@ div[position="Bottom Right"],video[position="Bottom Right"],img[position="Bottom
 	position:absolute;
 	bottom: 10px;
 	right: 10px;
+	margin: auto;
 }
