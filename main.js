@@ -337,15 +337,14 @@ function createWindow () {
 
   // Backup Routine
   // 
-  ipcMain.on('startBackup', function(event, onUser = 1){
+  ipcMain.on('startBackup', function(event, onUser = false){
     var archiver = require('archiver');
     var backupKeepAll = settings.backupKeepAll();
     var backupOnExit = settings.backupOnExit();
     var backupBeforeUpdates = settings.backupBeforeUpdates();
     var timestamp = Date.now();
     var fileExtension = 'zip';
-    console.log(event);
-    console.log(onUser);
+
     if(backupKeepAll){
       var filename = 'backup-' + timestamp +'.' + fileExtension;
     }else{

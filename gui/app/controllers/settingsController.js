@@ -19,7 +19,7 @@
         }        
 
         $scope.startBackup = function() {
-          listenerService.fireEvent(listenerService.EventType.INITIATE_BACKUP);
+          listenerService.fireEvent(listenerService.EventType.INITIATE_BACKUP, true);
         }        
 
         $scope.autoUpdateSlider = {
