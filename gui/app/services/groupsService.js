@@ -45,6 +45,10 @@
       return groupList;
     }
     
+    service.getViewerGroupNames = function() {
+      return service.getViewerGroups(true).map((g) => { return g.groupName; } );
+    }
+    
     service.getDefaultGroups = function() {
       return [
         "Pro",
@@ -203,6 +207,9 @@
     service.getExemptGroup = function() {
       ensureExemptGroupExists();
       var group = _.findWhere(sparkExemptGroup, {groupName: "sparkExempt"});
+      if(group.groups == null) {
+        group.groups = [];
+      }
       return group;
     }
     

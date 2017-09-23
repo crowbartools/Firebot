@@ -48,5 +48,6 @@
      $scope.removeUserFromExemptGroupAtIndex = function(index) {
        groupsService.removeUserFromExemptGroupAtIndex(index);
      };
+    
    });
  })();

@@ -77,37 +77,48 @@
         <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
       </div>
     </div>
-    <div class="content-block-body">      
-      <table class="table">
-       <thead>
-         <tr>
-           <th>USERNAME</th>
-           <th></th>
-         </tr>
-       </thead>
-       <tbody>
-         <tr class="repeatList" ng-repeat="user in userList = (exemptGroup.users | filter:exemptSearch) | startFrom:(pagination.exemptList.currentPage-1)*pagination.exemptList.pageSize | limitTo:pagination.exemptList.pageSize track by $index">
-           <td>{{user}}</td>
-           <td>
-             <span class="delete-button pull-right" ng-click="removeUserFromExemptGroupAtIndex($index)">
-               <i class="far fa-trash-alt"></i>
+    <div class="content-block-body">
+      
+      <uib-tabset active="activeExemptTab">
+        <uib-tab index="0" heading="Users">
+          <table class="table">
+           <thead>
+             <tr>
+               <th>USERNAME</th>
+               <th></th>
+             </tr>
+           </thead>
+           <tbody>
+             <tr class="repeatList" ng-repeat="user in userList = (exemptGroup.users | filter:exemptSearch) | startFrom:(pagination.exemptList.currentPage-1)*pagination.exemptList.pageSize | limitTo:pagination.exemptList.pageSize track by $index">
+               <td>{{user}}</td>
+               <td>
+                 <span class="delete-button pull-right" ng-click="removeUserFromExemptGroupAtIndex($index)">
+                   <i class="far fa-trash-alt"></i>
+                 </span>
+               </td>
+             </tr>
+           </tbody>
+         </table>
+         <div ng-show="exemptGroup.users.length == 0" style="opacity: 0.5;padding-bottom:20px;">There are no exempt users.</div>
+         <div ng-show="exemptGroup.users.length > pagination.exemptList.pageSize" style="text-align: center;">
+            <ul uib-pagination total-items="userList.length" ng-model="pagination.exemptList.currentPage" items-per-page="pagination.exemptList.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
+         </div>
+         <div style="display: flex;justify-content: center;">
+           <div class="input-group" style="width: 50%;">
+             <input type="text" class="form-control" placeholder="Exempt new user" ng-model="newExemptUser" ng-keyup="$event.keyCode == 13 ? addUserToExemptGroup() : null">
+             <span class="input-group-btn">
+               <button class="btn btn-danger" type="button" ng-click="addUserToExemptGroup()">Exempt</button>
              </span>
-           </td>
-         </tr>
-       </tbody>
-     </table>
-     <div ng-show="exemptGroup.users.length == 0" style="opacity: 0.5;padding-bottom:20px;">There are no exempt users.</div>
-     <div ng-show="exemptGroup.users.length > pagination.exemptList.pageSize" style="text-align: center;">
-        <ul uib-pagination total-items="userList.length" ng-model="pagination.exemptList.currentPage" items-per-page="pagination.exemptList.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
-     </div>
-     <div style="display: flex;justify-content: center;">
-       <div class="input-group" style="width: 50%;">
-         <input type="text" class="form-control" placeholder="Exempt new user" ng-model="newExemptUser" ng-keyup="$event.keyCode == 13 ? addUserToExemptGroup() : null">
-         <span class="input-group-btn">
-           <button class="btn btn-danger" type="button" ng-click="addUserToExemptGroup()">Exempt</button>
-         </span>
-      </div>
-     </div>
+          </div>
+         </div>
+        </uib-tab>
+        
+        <uib-tab index="1" heading="Groups">
+          
+        </uib-tab>
+      </uib-tabset>
+        
+      
     </div>
   </div>
 </div>
