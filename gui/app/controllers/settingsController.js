@@ -4,7 +4,8 @@
  
  angular
    .module('firebotApp')
-   .controller('settingsController', function($scope, settingsService, utilityService, listenerService) {
+   .controller('settingsController', function($scope, $timeout, settingsService, 
+     utilityService, listenerService) {
      
         $scope.settings = settingsService;
         
@@ -13,7 +14,37 @@
         $scope.openRootFolder = function() {
           listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
         }
+
+        /* back ups */
+        $scope.openBackupFolder = function() {
+          listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
+        }        
+
+        $scope.isBackingUp = false;
+        $scope.backupCompleted = false;
+        $scope.startBackup = function() {
+          $scope.isBackingUp = true;
+          $scope.backupCompleted = false;
+          listenerService.fireEvent(listenerService.EventType.INITIATE_BACKUP, true);
+        }
         
+        listenerService.registerListener(
+          { type: listenerService.ListenerType.BACKUP_COMPLETE }, 
+          function(manualActivation) {
+            $scope.isBackingUp = false;
+            
+            if(manualActivation) {
+              // we only want to act if the backup was manually triggered
+              $scope.backupCompleted = true;
+              // after 5 seconds, hide the completed message
+              $timeout(() => { 
+                if($scope.backupCompleted) {
+                  $scope.backupCompleted = false 
+                }
+              }, 5000);
+            }      
+          });              
+
         $scope.autoUpdateSlider = {
           value: settingsService.getAutoUpdateLevel(),
           options: {

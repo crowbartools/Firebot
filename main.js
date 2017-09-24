@@ -20,6 +20,8 @@ const settings = require('./lib/interactive/settings-access').settings;
 
 const dataAccess = require('./lib/data-access.js');
 
+const backupManager = require("./lib/backupManager");
+
 require('./api/apiServer.js');
 
 var ncp = require('ncp').ncp;
@@ -153,6 +155,12 @@ function createWindow () {
       dataAccess.makeDirInUserData("/user-settings/scripts");
     });
     
+    // Create the scripts folder if it doesn't exist
+    dataAccess.userDataPathExists("/backups/").then((resolve) => {
+      console.log("Can't find the backup folder, creating one now...");
+      dataAccess.makeDirInUserData("/backups");
+    });
+
     // Create the overlay settings folder if it doesn't exist.
     dataAccess.userDataPathExists("/user-settings/overlay-settings/")
     .then((resolve) => {
@@ -252,10 +260,15 @@ function createWindow () {
   app.on('will-quit', () => {
     // Unregister all shortcuts.
     mixerConnect.shortcutUnregister();
+    if(settings.backupOnExit()) backupManager.startBackup();
   });
   
   // Run Updater
   ipcMain.on('downloadUpdate', function(event, uniqueid) {
+    
+    //back up first
+    if(settings.backupBeforeUpdates()) backupManager.startBackup();
+    
     // Download Update
     let options = {
       repo: 'firebottle/firebot',
@@ -324,6 +337,20 @@ function createWindow () {
       event.sender.send('gotAnyFilePath', {path: path, id: uniqueid});
   });
 
+  // Opens the firebot backup folder
+  ipcMain.on('openBackupFolder', function(event) {
+    // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead 
+    // of opening to the poarent folder with 'Firebot'folder selected. 
+    var backupFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep + "fakescript.js");
+    shell.showItemInFolder(backupFolder);
+  });
+
+  ipcMain.on('startBackup', function(event, manualActivation = false){
+    backupManager.startBackup(manualActivation)
+      .then(() => {
+        renderWindow.webContents.send('backupComplete', manualActivation);
+      });
+  });
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

@@ -16,12 +16,14 @@
       eventLog: {},
       error: {},
       updateError: {},
-      updateDownloaded: {},
+      updateDownloaded: {},  
       playSound: {},
       showImage: {},
       showVideo: {},
       showHtml: {},
-      celebrate: {}
+      celebrate: {},
+      info: {},
+      backupComplete: {}
     }
     
     var ListenerType = {
@@ -40,7 +42,9 @@
       SHOW_IMAGE: "showImage",
       SHOW_VIDEO: "showVideo",
       SHOW_HTML: "showHtml",
-      CELEBREATE: "celebrate"
+      CELEBREATE: "celebrate",
+      INFO: "info",
+      BACKUP_COMPLETE: "backupComplete"
     }
     
     service.ListenerType = ListenerType;
@@ -113,7 +117,9 @@
       GET_SOUND: "getSoundPath",
       GET_VIDEO: "getVideoPath",
       GET_ANYFILE: "getAnyFilePath",
-      SPARK_EXEMPT_UPDATED: "sparkExemptUpdated"
+      SPARK_EXEMPT_UPDATED: "sparkExemptUpdated",
+      OPEN_BACKUP: "openBackupFolder",
+      INITIATE_BACKUP: "startBackup"
     }  
     service.EventType = EventType;
     
@@ -195,6 +201,16 @@
     });
 
     /**
+    * Info event listener
+    */
+    ipcRenderer.on('info', function (event, infoMessage){
+      _.forEach(registeredListeners.info, (listener, key, list) => {
+        runListener(listener, infoMessage);
+      });
+    });
+    
+
+    /**
     * Update error listener
     */
     ipcRenderer.on('updateError', function (event, errorMessage){
@@ -257,6 +273,15 @@
       });
     });
     
+    /**
+    * Update download listener
+    */
+    ipcRenderer.on('backupComplete', function (event, data){
+      _.forEach(registeredListeners.backupComplete, (listener, key, list) => {
+        runListener(listener, data);
+      });
+    });
+    
     
     /**
     *  Helpers
@@ -268,7 +293,7 @@
         if(typeof callback === 'function') {
           // $q is angulars implementation of the promise protocol. We are creating and instantly resolving a promise, then we run the callback.
           // This simply ensures any scope varibles are updated if needed.
-          $q.resolve(true, () => callback(returnPayload))
+          $q.resolve(true, () => callback(returnPayload));
         }
         if(listener.runOnce == true) {
           service.unregisterListener(listener.type, listener.uuid);
