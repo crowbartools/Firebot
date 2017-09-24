@@ -276,9 +276,9 @@
     /**
     * Update download listener
     */
-    ipcRenderer.on('backupComplete', function (){
+    ipcRenderer.on('backupComplete', function (event, data){
       _.forEach(registeredListeners.backupComplete, (listener, key, list) => {
-        runListener(listener);
+        runListener(listener, data);
       });
     });
     

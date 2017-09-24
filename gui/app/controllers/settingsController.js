@@ -30,10 +30,19 @@
         
         listenerService.registerListener(
           { type: listenerService.ListenerType.BACKUP_COMPLETE }, 
-          function() {
+          function(manualActivation) {
             $scope.isBackingUp = false;
-            $scope.backupCompleted = true;
-            $timeout(() => { if($scope.backupCompleted) {$scope.backupCompleted = false }}, 5000);
+            
+            if(manualActivation) {
+              // we only want to act if the backup was manually triggered
+              $scope.backupCompleted = true;
+              // after 5 seconds, hide the completed message
+              $timeout(() => { 
+                if($scope.backupCompleted) {
+                  $scope.backupCompleted = false 
+                }
+              }, 5000);
+            }      
           });              
 
         $scope.autoUpdateSlider = {

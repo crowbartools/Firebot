@@ -348,7 +348,7 @@ function createWindow () {
   ipcMain.on('startBackup', function(event, manualActivation = false){
     backupManager.startBackup(manualActivation)
       .then(() => {
-        renderWindow.webContents.send('backupComplete');
+        renderWindow.webContents.send('backupComplete', manualActivation);
       });
   });
 
