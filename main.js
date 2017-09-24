@@ -345,9 +345,11 @@ function createWindow () {
     shell.showItemInFolder(backupFolder);
   });
 
-  //ipcMain.on('startBackup');
   ipcMain.on('startBackup', function(event, manualActivation = false){
-    backupManager.startBackup(manualActivation);
+    backupManager.startBackup(manualActivation)
+      .then(() => {
+        renderWindow.webContents.send('backupComplete');
+      });
   });
 
 // In this file you can include the rest of your app's specific main process

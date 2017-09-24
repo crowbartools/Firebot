@@ -16,13 +16,14 @@
       eventLog: {},
       error: {},
       updateError: {},
-      updateDownloaded: {},
+      updateDownloaded: {},  
       playSound: {},
       showImage: {},
       showVideo: {},
       showHtml: {},
       celebrate: {},
-      info: {}
+      info: {},
+      backupComplete: {}
     }
     
     var ListenerType = {
@@ -42,7 +43,8 @@
       SHOW_VIDEO: "showVideo",
       SHOW_HTML: "showHtml",
       CELEBREATE: "celebrate",
-      INFO: "info"
+      INFO: "info",
+      BACKUP_COMPLETE: "backupComplete"
     }
     
     service.ListenerType = ListenerType;
@@ -271,6 +273,15 @@
       });
     });
     
+    /**
+    * Update download listener
+    */
+    ipcRenderer.on('backupComplete', function (){
+      _.forEach(registeredListeners.backupComplete, (listener, key, list) => {
+        runListener(listener);
+      });
+    });
+    
     
     /**
     *  Helpers
@@ -282,7 +293,7 @@
         if(typeof callback === 'function') {
           // $q is angulars implementation of the promise protocol. We are creating and instantly resolving a promise, then we run the callback.
           // This simply ensures any scope varibles are updated if needed.
-          $q.resolve(true, () => callback(returnPayload))
+          $q.resolve(true, () => callback(returnPayload));
         }
         if(listener.runOnce == true) {
           service.unregisterListener(listener.type, listener.uuid);

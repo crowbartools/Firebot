@@ -4,7 +4,8 @@
  
  angular
    .module('firebotApp')
-   .controller('settingsController', function($scope, settingsService, utilityService, listenerService) {
+   .controller('settingsController', function($scope, $timeout, settingsService, 
+     utilityService, listenerService) {
      
         $scope.settings = settingsService;
         
@@ -14,13 +15,26 @@
           listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
         }
 
+        /* back ups */
         $scope.openBackupFolder = function() {
           listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
         }        
 
+        $scope.isBackingUp = false;
+        $scope.backupCompleted = false;
         $scope.startBackup = function() {
+          $scope.isBackingUp = true;
+          $scope.backupCompleted = false;
           listenerService.fireEvent(listenerService.EventType.INITIATE_BACKUP, true);
-        }        
+        }
+        
+        listenerService.registerListener(
+          { type: listenerService.ListenerType.BACKUP_COMPLETE }, 
+          function() {
+            $scope.isBackingUp = false;
+            $scope.backupCompleted = true;
+            $timeout(() => { if($scope.backupCompleted) {$scope.backupCompleted = false }}, 5000);
+          });              
 
         $scope.autoUpdateSlider = {
           value: settingsService.getAutoUpdateLevel(),
