@@ -282,6 +282,9 @@
             // Grab files in folder on refresh click.
             $scope.getNewScripts = function (){
               $scope.scriptArray = fs.readdirSync(scriptFolderPath);
+              if($scope.effect.scriptName != null) {
+                loadParameters($scope.effect.scriptName);
+              }
             }        
 
             // Open script folder on click.
@@ -315,18 +318,22 @@
                 delete require.cache[require.resolve(scriptFilePath)];
                       
                 var customScript = require(scriptFilePath);
-                
-                console.log("loaded");
-                
+                                
                 var currentParameters = $scope.effect.parameters;                            
                 if(typeof customScript.getDefaultParameters === 'function') {
-                  var parametersPromise = customScript.getDefaultParameters();
+                  
+                  var parameterRequest = {
+                    modules: {
+                      request: require("request")
+                    }
+                  }
+                  var parametersPromise = customScript.getDefaultParameters(parameterRequest);
                   
                   $q.when(parametersPromise).then((parameters) => {
                     var defaultParameters = parameters;                  
                     
                     if(currentParameters != null) {
-                      //get rid of old params hat no longer exist
+                      //get rid of old params that no longer exist
                       Object.keys(currentParameters).forEach((currentParameterName) => {
                         var currentParamInDefaults = defaultParameters[currentParameterName];
                         if(currentParamInDefaults == null) {
@@ -339,10 +346,10 @@
                         var currentParam = currentParameters[defaultParameterName];
                         var defaultParam = defaultParameters[defaultParameterName];
                         if(currentParam != null) {
-                          currentParam.default = defaultParameters[defaultParameterName].default;
-                        } else {
-                          currentParameters[defaultParameterName] = defaultParam;
+                          //Current param exsits lets update the value.
+                          defaultParam.value = currentParam.value;
                         }
+                        currentParameters[defaultParameterName] = defaultParam;
                       });
                     } else {
                       $scope.effect.parameters = defaultParameters;
