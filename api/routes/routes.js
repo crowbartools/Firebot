@@ -1,5 +1,5 @@
 var appRouter = function(api) {
-
+  
   var effects = require('../controllers/effectsApiController');
   
   api.route('/effects')

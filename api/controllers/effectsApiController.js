@@ -1,4 +1,4 @@
-const settingsAccess = require('../../lib/interactive/settings-access');
+const settingsAccess = require('../../lib/interactive/settings-access.js').settings;
 const dataAccess = require('../../lib/data-access');
 
 const EffectType = require("../../lib/interactive/EffectType");
@@ -11,7 +11,7 @@ exports.getAllEffects = function(req, res) {
 }
 
 exports.runEffects = function(req, res) {
-  if(!interactiveConnected) {
+  if(interactiveConnected == false) {
     res.status(500).send({status: 'error', message: "Interactive is not connected."});
     return;
   }

@@ -125,6 +125,8 @@ function createWindow () {
 
     // Global var for main window.
     global.renderWindow = mainWindow;
+    
+    interactiveConnected = false;
 
     // Register the Kill Switch
     mixerConnect.shortcut();
