@@ -256,11 +256,15 @@ function createWindow () {
   app.on('will-quit', () => {
     // Unregister all shortcuts.
     mixerConnect.shortcutUnregister();
-    if(settings.backupOnExit()) backupManager.startBackupManager();
+    if(settings.backupOnExit()) backupManager.startBackup();
   });
   
   // Run Updater
   ipcMain.on('downloadUpdate', function(event, uniqueid) {
+    
+    //back up first
+    if(settings.backupBeforeUpdates()) backupManager.startBackup();
+    
     // Download Update
     let options = {
       repo: 'firebottle/firebot',
@@ -339,7 +343,7 @@ function createWindow () {
 
   //ipcMain.on('startBackup');
   ipcMain.on('startBackup', function(event, manualActivation = false){
-    backupManager.startBackupManager(manualActivation);
+    backupManager.startBackup(manualActivation);
   });
 
 // In this file you can include the rest of your app's specific main process

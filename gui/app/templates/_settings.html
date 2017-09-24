@@ -126,6 +126,45 @@
           </div>
         </uib-tab>
         
+        <!-- Backup Settings -->
+        <uib-tab index="4" heading="Backup">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Access Backups Folder</div>
+              <div class="setting-description">Click the button below to access where Firebot saves backups.</div>
+              <button class="btn btn-default" ng-click="openBackupFolder()">Open Backup Folder</button>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Manual Backup</div>
+              <div class="setting-description">Click the button below to start a backup manually. Firebot will notify you when complete.</div>
+              <button class="btn btn-default" ng-click="startBackup()">Start Backup </button>
+            </div>
+            <div class="row" style="margin-top: 15px">
+              <div class="setting col-sm-6">
+                <div class="setting-heading">Backup Options</div>
+                <div class="setting-description">You can tweak how you want the backup system to work:</div>
+                <div class="effect-setting-container">
+                  <div class="change-scene-effect-group-select">
+                    <label class="control-fb control--checkbox">Keep all old backups <i class="fal fa-question-circle" uib-tooltip="Check this if you don't want the previous backup to be overwritten everytime." tooltip-append-to-body="true" ></i>
+                        <input type="checkbox" ng-click="settings.setBackupKeepAll(!settings.backupKeepAll())" ng-checked="settings.backupKeepAll()" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    <div class="setting-description">When to backup automatically:</div>
+                    <label class="control-fb control--checkbox">When Firebot closes
+                      <input type="checkbox" ng-click="settings.setBackupOnExit(!settings.backupOnExit())" ng-checked="settings.backupOnExit()" aria-label="..." >
+                      <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox">Before updates
+                        <input type="checkbox" ng-click="settings.setBackupBeforeUpdates(!settings.backupBeforeUpdates())" ng-checked="settings.backupBeforeUpdates()" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </uib-tab>
+        
         <!-- Advanced Settings -->
         <uib-tab index="3" heading="Advanced">
           <div class="row" style="margin-top: 15px">
@@ -185,45 +224,6 @@
               <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
               <div class="effect-info alert alert-warning" ng-show="settings.getOverlayCompatibility() == 'OBS' && settings.useOverlayInstances()">
                   You have 'Overlay Compatibility' set to 'OBS' but it's recommended that you set that to 'Other' and don't mark your BrowerSources as 'Local Files' in OBS.
-              </div>
-            </div>
-          </div>
-        </uib-tab>
-
-        <!-- Backup Settings -->
-        <uib-tab index="4" heading="Backup">
-          <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Backups folder:</div>
-              <div class="setting-description">Click the button below to get access to the Firebot Backups.</div>
-              <button class="btn btn-default" ng-click="openBackupFolder()">Open Backup Folder</button>
-            </div>
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Initiate Backup</div>
-              <div class="setting-description">Click the button below to start the backup and wait for Firebot to tell you when the backup is done.</div>
-              <button class="btn btn-default" ng-click="startBackup()">Initiate Backup</button>
-            </div>
-            <div class="row" style="margin-top: 15px">
-              <div class="setting col-sm-6">
-                <div class="setting-heading">Backup Settings</div>
-                <div class="setting-description">You can tweeak how you want the backup system to work:</div>
-                <div class="effect-setting-container">
-                  <div class="change-scene-effect-group-select">
-                    <label class="control-fb control--checkbox">Keep all old backups
-                        <input type="checkbox" ng-click="settings.setBackupKeepAll(!settings.backupKeepAll())" ng-checked="settings.backupKeepAll()" aria-label="..." >
-                        <div class="control__indicator"></div>
-                    </label>
-                    <div class="setting-description">Backup when:</div>
-                    <label class="control-fb control--checkbox">Firebot closes
-                      <input type="checkbox" ng-click="settings.setBackupOnExit(!settings.backupOnExit())" ng-checked="settings.backupOnExit()" aria-label="..." >
-                      <div class="control__indicator"></div>
-                    </label>
-                    <label class="control-fb control--checkbox">Before updates
-                        <input type="checkbox" ng-click="settings.setBackupBeforeUpdates(!settings.backupBeforeUpdates())" ng-checked="settings.backupBeforeUpdates()" aria-label="..." >
-                        <div class="control__indicator"></div>
-                    </label>
-                    </div>
-                </div>
               </div>
             </div>
           </div>
