@@ -30,6 +30,7 @@
     <script type="text/javascript" src="./index.js"></script>
 	  <script type="text/javascript" src="./controllers/mainController.js"></script>
     <script type="text/javascript" src="./controllers/interactiveController.js"></script>
+    <script type="text/javascript" src="./controllers/commandsController.js"></script>
     <script type="text/javascript" src="./controllers/groupsController.js"></script>
     <script type="text/javascript" src="./controllers/moderationController.js"></script>
     <script type="text/javascript" src="./controllers/settingsController.js"></script>
@@ -37,6 +38,7 @@
     <script type="text/javascript" src="./controllers/firstTimeUseModalController.js"></script>
     <script type="text/javascript" src="./controllers/editBoardSettingsModalController.js"></script>
     <script type="text/javascript" src="./services/boardService.js"></script>
+    <script type="text/javascript" src="./services/commandsService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/groupsService.js"></script>
     <script type="text/javascript" src="./services/eventLogService.js"></script>
@@ -84,6 +86,11 @@
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-user"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
+        </a>
+        <a class="fb-nav-link" href="#!commands" ng-class="{'selected': tabIsSelected('Commands')}" ng-click="setTab('Commands')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Commands</div>
         </a>
         <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
           <div class="nav-link-bar"></div>

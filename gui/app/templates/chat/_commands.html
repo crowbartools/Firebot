@@ -1,0 +1,54 @@
+<!-- Commands Board -->
+<div class="content-block">
+  <div class="content-block-header">
+    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Commands</span>
+  </div>
+  <div class="content-block-body">
+    <div class="page-content" style="min-height: 600px;">
+        <div class="chat-commands-wrapper">
+            <div class="scene-tools-wrapper">
+                <span class="scenes-title">Commands</span>
+                <div class="scene-tools">
+                    <div class="btn-group" style="margin-right: 15px">
+                    <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" ng-click="saveCurrentButtomViewMode()" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
+                    <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'list'" ng-click="saveCurrentButtomViewMode()" uib-tooltip="Button View: List" tooltip-append-to-body="true"><i class="fas fa-list"></i></label>
+                    </div>
+                    <div class="searchbar-wrapper">
+                    <input type="text" class="form-control" placeholder="Search controls" ng-model="buttonSearch" style="padding-left: 27px;">
+                    <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+            <uib-tabset active="activeSceneTab">
+                <!--Create a tab for each control type -->
+                <uib-tab index="$index" ng-repeat="commandType in getCommandTypes()" heading="{{commandType}}">
+                    <div class="tab-pane interactive-button-holder active">
+                    <!--Create buttons in each scene -->
+                    <!--Grid View-->
+                    <div ng-show="buttonViewMode == 'grid'" class="interactive-control-tile" ng-repeat="command in getAllCommandsForType(commandType) | filter:buttonSearch">
+                        <div class="button-name noselect">{{command.commandID}}</div>
+                    </div>
+                    <!--List View-->
+                    <table ng-show="buttonViewMode == 'list'" class="table table-hover">
+                        <thead style="text-transform: uppercase;color: #4a4a4a;">
+                            <tr>
+                                <th style="width:5%;"></th>
+                                <th style="width:25%;">ID</th>
+                                <th style="width:25%;">Name</th>
+                                <th style="width:25%;">Cost</th>
+                                <th style="width:20%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: 16px;">
+                            <tr ng-repeat="command in getAllCommandsForType(commandType) | filter:buttonSearch">
+                                <td>{{command.commandID}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </uib-tab>
+            </uib-tabset>
+        </div><!-- End Chat Command Wrapper-->
+    </div><!-- End Page Content-->
+  </div><!-- End content body block-->
+</div><!-- End content block-->

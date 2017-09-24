@@ -225,6 +225,12 @@ const shell = electron.shell;
         templateUrl: './templates/_viewergroups.html',
         controller: 'groupsController'
       })
+
+      // route for the moderation page
+      .when('/commands', {
+        templateUrl: './templates/chat/_commands.html',
+        controller: 'commandsController'
+      })
       
       // route for the moderation page
       .when('/moderation', {
