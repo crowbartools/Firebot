@@ -6,12 +6,15 @@
  
  angular
    .module('firebotApp')
-   .controller('commandsController', function($scope, commandsService, updatesService, utilityService, settingsService) {
+   .controller('commandsController', function($scope, commandsService, updatesService, utilityService, settingsService, groupsService, effectHelperService) {
      // Cache commands on app load.
      commandsService.refreshCommands();
 
      // Set button view to user setting value.
      $scope.buttonViewModeCommands = settingsService.getButtonViewMode('commands');
+
+    // Set active viewer groups for command permissions.
+    $scope.viewerGroups = groupsService.getAllGroups();
 
     //Save button view.
     $scope.saveCurrentButtonViewMode = function(type) {
@@ -35,11 +38,14 @@
         // This is the controller to be used for the modal.
         controllerFunc: ($scope, $uibModalInstance) => {
 
+          // Set active viewer groups for command permissions.
+          $scope.viewerGroups = groupsService.getAllGroups();
+
           // If we pass in a command, then we're editing. Otherwise this is a new command and we default to it being active.
           if(command != null){
             $scope.command = command;
           } else {
-            $scope.command = {active: true};
+            $scope.command = {active: true, permissions: []};
           }
 
           // Grab the EffectType 'enum' from effect.js
@@ -146,6 +152,18 @@
             return utilityService.hasCopiedEffects();
           };
 
+          // This is run each time a group checkbox is clicked or unclicked.
+          // This will build an array of currently selected groups to be saved to JSON.
+          $scope.groupArray = function(list, item){
+            $scope.command.permissions = effectHelperService.getCheckedBoxes(list, item);
+          }
+
+          // This checks if an item is in the command.permission array and returns true.
+          // This allows us to check boxes when loading up this button effect.
+          $scope.groupCheckboxer = function (list, item){
+              return effectHelperService.checkSavedArray(list, item);         
+          }
+
         },
         // The callback to run after the modal closed via "Save changes"
         closeCallback: (command) => {
@@ -161,16 +179,5 @@
       utilityService.showModal(addCommandModalContext);
     }
 
-    // This opens a modal when editing a command.
-    $scope.showEditCommandEffectsModal = function(){
-      console.log('Success!');
-    }
-
-    ///////////
-    // Effects (Can we put these somewhere they can be shared between interactive and commands?)
-    ///////////
-
-
-    
    });
  })();

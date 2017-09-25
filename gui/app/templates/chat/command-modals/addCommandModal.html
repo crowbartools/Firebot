@@ -39,14 +39,19 @@
             <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="command.cooldown">
         </div>
 
-        <div class="input-group settings-permission">
-            <span class="input-group-addon" id="basic-addon3">Permission</span>
-            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="command.permission">
-        </div>
-
         <div class="input-group settings-timer">
             <span class="input-group-addon" id="basic-addon3">Timer</span>
             <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="command.timer">
+        </div>
+
+        <div class="input-group settings-permission">
+            <div class="input-group-addon command-permission-label" id="basic-addon3">Permission</div>
+            <div class="command-permissions">
+                <label ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
+                    <input type="checkbox" ng-click="groupArray(command.permissions, group)" ng-checked="groupCheckboxer(command.permissions, group)"  aria-label="..." >
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
         </div>
 
         <div class="input-group settings-logging">

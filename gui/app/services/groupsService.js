@@ -62,6 +62,30 @@
       ];
     }
 
+    service.getAllGroups = function(){
+      var groupList = service.getDefaultGroups();
+      var activeGroups = service.getActiveGroups();
+      var inactiveGroups = service.getInactiveGroups();
+
+      // Push groups to array.
+      for(group in activeGroups){
+        var group = activeGroups[group];
+        groupList.push(group);
+      }
+
+      for(group in inactiveGroups){
+        var group = inactiveGroups[group];
+        groupList.push(group);
+      }
+
+      // Filter out duplicates
+      groupList = groupList.filter(function(elem, pos) {
+        return groupList.indexOf(elem) == pos;
+      })
+
+      return groupList;
+    }
+
     service.getActiveGroups = function(){
       // Get the selected board and set default groupList var.
       var dbGroup = boardService.getSelectedBoard();
