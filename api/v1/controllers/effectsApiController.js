@@ -1,9 +1,9 @@
-const settingsAccess = require('../../lib/interactive/settings-access.js').settings;
-const dataAccess = require('../../lib/data-access');
+const settingsAccess = require('../../../lib/interactive/settings-access.js').settings;
+const dataAccess = require('../../../lib/data-access');
 
-const EffectType = require("../../lib/interactive/EffectType");
-const effectsBuilder = require("../../lib/interactive/helpers/effectsObjectBuilder");
-const effectRunner = require('../../lib/interactive/effect-runner');
+const EffectType = require("../../../lib/interactive/EffectType");
+const effectsBuilder = require("../../../lib/interactive/helpers/effectsObjectBuilder");
+const effectRunner = require('../../../lib/interactive/effect-runner');
 
 
 exports.getAllEffects = function(req, res) {
