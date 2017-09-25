@@ -75,6 +75,10 @@
         </span>
       </div>
       <div class="nav-links-wrapper">
+        <div class="fb-nav-link-category">
+          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>          
+          <span ng-class="{'contracted': !navExpanded}">Interactive</span>
+        </div>
         <a class="fb-nav-link" href="#" ng-class="{'selected': tabIsSelected('Interactive')}" ng-click="setTab('Interactive')">
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-gamepad"></i></div>
@@ -85,6 +89,10 @@
           <div class="nav-link-icon"><i class="fal fa-user"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
         </a>
+        <div class="fb-nav-link-category pad-top">  
+          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>        
+          <span ng-class="{'contracted': !navExpanded}">General</span>
+        </div>
         <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>

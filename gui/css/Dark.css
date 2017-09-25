@@ -11582,7 +11582,7 @@ button.close {
 }
 
 .fa, .fas, .far, .fal, .fab {
-  vertical-align: -15%;
+  vertical-align: -0%;
 }
 
 .pointer {
@@ -11706,13 +11706,45 @@ body {
 }
 
 .nav-links-wrapper {
-  margin-top: 30px;
+  margin-top: 15px;
+}
+
+.fb-nav-link-category {
+  padding-bottom: 5px;
+}
+
+.fb-nav-link-category.pad-top {
+  padding-top: 7px;
+  padding-bottom: 0px;
+}
+
+.fb-nav-link-category.pad-top .spacing {
+  padding-top: 7px;
+  border-bottom: 1px solid #383d3f;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+.fb-nav-link-category.pad-top .spacing.contracted {
+  opacity: 1;
+}
+
+.fb-nav-link-category span {
+  opacity: 1;
+  color: #6F7074;
+  font-weight: 700;
+  transition: 0.3s;
+  padding-left: 21px;
+}
+
+.fb-nav-link-category span.contracted {
+  opacity: 0;
 }
 
 .fb-nav-link {
   color: white;
   display: block;
-  height: 48px;
+  height: 42px;
   text-transform: uppercase;
   text-decoration: none;
   position: relative;
@@ -11743,23 +11775,23 @@ body {
 }
 
 .nav-link-icon {
-  font-size: 20px;
+  font-size: 18px;
   width: 50px;
   height: 100%;
   display: inline-block;
   overflow: hidden;
-  padding-top: 10px;
+  padding-top: 8px;
   padding-left: 10px;
 }
 
 .nav-link-title {
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
   height: 100%;
   display: inline-block;
   overflow: hidden;
   transition: 0.3s;
-  padding-top: 14px;
+  padding-top: 12px;
   opacity: 1;
 }
 
@@ -11928,7 +11960,7 @@ body {
 .interactive-status-wrapper {
   align-self: center;
   margin-top: auto;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12932,7 +12964,13 @@ thead th {
 
 .fb-control-detail {
   font-size: 13px;
-  color: gray;
+  color: white;
   font-weight: 600;
   margin-left: 8px;
+}
+
+.effect-actions-btn {
+  float: right;
+  padding-right: 15px;
+  cursor: pointer;
 }
