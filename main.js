@@ -22,8 +22,6 @@ const dataAccess = require('./lib/data-access.js');
 
 const backupManager = require("./lib/backupManager");
 
-require('./api/apiServer.js');
-
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
 
@@ -226,6 +224,9 @@ function createWindow () {
        console.log('Copied overlay folder to user data.');
       });
     }  
+    
+    //start the REST api server
+    require('./api/apiServer.js');
     
     createWindow();
     
