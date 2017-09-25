@@ -81,8 +81,8 @@
         ipcRenderer.send('manualButton', controlId);
       }
 
-      $scope.saveCurrentButtomViewMode = function() {
-        settingsService.setButtonViewMode($scope.buttonViewMode);
+      $scope.saveCurrentButtomViewMode = function(type) {
+        settingsService.setButtonViewMode($scope.buttonViewMode, type);
       }
 
       function resetSceneTab() {

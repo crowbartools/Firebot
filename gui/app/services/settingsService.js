@@ -180,13 +180,21 @@
       pushDataToFile('/settings/justUpdated', justUpdated === true)
     }
     
-    service.getButtonViewMode = function() {
-      var buttonViewMode = getDataFromFile('/settings/buttonViewMode');
+    service.getButtonViewMode = function(type) {
+      if(type == "commands"){
+        var buttonViewMode = getDataFromFile('/settings/buttonViewModeCommands');
+      } else {
+        var buttonViewMode = getDataFromFile('/settings/buttonViewMode');
+      }
       return buttonViewMode != null ? buttonViewMode : 'grid';
     }
     
-    service.setButtonViewMode = function(buttonViewMode) {
-      pushDataToFile('/settings/buttonViewMode', buttonViewMode)
+    service.setButtonViewMode = function(buttonViewMode, type) {
+      if(type == "commands"){
+        pushDataToFile('/settings/buttonViewModeCommands', buttonViewMode)
+      } else {
+        pushDataToFile('/settings/buttonViewMode', buttonViewMode)
+      }
     }
     
     service.getOverlayVersion = function() {

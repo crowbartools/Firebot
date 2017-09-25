@@ -8,18 +8,33 @@
      // Cache commands on app load.
      commandsService.refreshCommands();
 
-     // TO DO: Commands needs it's own button view.
-     $scope.buttonViewMode = settingsService.getButtonViewMode();
+     // Set button view to user setting value.
+     $scope.buttonViewModeCommands = settingsService.getButtonViewMode('commands');
 
-     // Gets an array of command types.
-     $scope.getCommandTypes = function(){
-         return commandsService.getCommandTypes();
-     }
+    //Save button view.
+    $scope.saveCurrentButtonViewMode = function(type) {
+      settingsService.setButtonViewMode($scope.buttonViewModeCommands, type);
+    }
 
-     // Gets all commands within a certain command type.
-     $scope.getAllCommandsForType = function(commandType){
-         return commandsService.getAllCommandsForType(commandType);
-     }
+    // Gets an array of command types.
+    $scope.getCommandTypes = function(){
+        return commandsService.getCommandTypes();
+    }
+
+    // Gets all commands within a certain command type.
+    $scope.getAllCommandsForType = function(commandType){
+        return commandsService.getAllCommandsForType(commandType);
+    }
+
+    // This opens up a modal when adding a new command.
+    $scope.showAddCommandModal = function(){
+      console.log('Success!');
+    }
+
+    // This opens a modal when editing a command.
+    $scope.showEditCommandEffectsModal = function(){
+      console.log('Success!');
+    }
     
    });
  })();
