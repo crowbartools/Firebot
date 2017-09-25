@@ -2,7 +2,7 @@
 <div class="modal-header">
     <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" id="editControlsLabel">
-        New Command
+           <span ng-if="command.commandID">Edit Command - </span> {{command.commandID ? command.commandID : 'Add New Command'}}
         <span class="edit-title-controlid"></span>
     </h4>
 </div>
