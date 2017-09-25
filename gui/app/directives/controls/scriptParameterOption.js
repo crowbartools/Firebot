@@ -25,7 +25,7 @@
               <div class="control__indicator"></div>
             </label>
           </div>
-          <div ng-switch-when="enum">
+          <div ng-switch-when="enum"  style="padding-top:5px;">
             <dropdown-select options="$ctrl.metadata.options" selected="$ctrl.metadata.value"></dropdown-select>
           </div>
           <div ng-switch-when="filepath">
@@ -40,6 +40,13 @@
          ctrl.$onInit = function() {
            if(ctrl.metadata.value == null) {
              ctrl.metadata.value = ctrl.metadata.default;
+             
+             // If its an enum and no default is supplied, select the first one
+             if(ctrl.metadata.type == 'enum') {
+               if(ctrl.metadata.default == null) {
+                 ctrl.metadata.value = ctrl.metadata.options[0];
+               }
+             }
            }
          }
        }   

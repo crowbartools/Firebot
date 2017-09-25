@@ -43,6 +43,7 @@
     "angular-route": "^1.6.4",
     "angular-ui-bootstrap": "^2.5.0",
     "angularjs-slider": "^6.2.2",
+    "archiver": "^2.0.3",
     "beam-client-node": "^0.13.0",
     "beam-interactive-node2": "^2.0.0",
     "body-parser": "^1.18.1",

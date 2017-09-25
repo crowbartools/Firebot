@@ -126,8 +126,55 @@
           </div>
         </uib-tab>
         
+        <!-- Backup Settings -->
+        <uib-tab index="3" heading="Backup">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Access Backups Folder</div>
+              <div class="setting-description">Click the button below to access where Firebot saves backups.</div>
+              <button class="btn btn-default" ng-click="openBackupFolder()">Open Backup Folder</button>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Manual Backup</div>
+              <div class="setting-description">Click the button below to start a backup manually. Firebot will notify you when complete.</div>
+              <button class="btn btn-default" ng-click="startBackup()" ng-disabled="isBackingUp">Start Backup</button>
+              <span ng-if="isBackingUp || backupCompleted" style="padding-left:10px">
+                <span ng-if="isBackingUp" >
+                  Backing up... 
+                </span>
+                <span ng-if="backupCompleted" style="color: green;">
+                  <i class="fal fa-check-circle"></i> Backup successful! 
+                </span>
+              </span>            
+            </div>
+            <div class="row" style="margin-top: 15px">
+              <div class="setting col-sm-6">
+                <div class="setting-heading">Backup Options</div>
+                <div class="setting-description">Choose how you want the backup system to work:</div>
+                <div class="effect-setting-container">
+                  <div class="change-scene-effect-group-select">
+                    <label class="control-fb control--checkbox">Keep all old backups <i class="fal fa-question-circle" uib-tooltip="Check this if you don't want the previous backup to be overwritten everytime." tooltip-append-to-body="true" ></i>
+                        <input type="checkbox" ng-click="settings.setBackupKeepAll(!settings.backupKeepAll())" ng-checked="settings.backupKeepAll()" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    <div class="setting-description">When to backup automatically:</div>
+                    <label class="control-fb control--checkbox">When Firebot closes
+                      <input type="checkbox" ng-click="settings.setBackupOnExit(!settings.backupOnExit())" ng-checked="settings.backupOnExit()" aria-label="..." >
+                      <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox">Before updates
+                        <input type="checkbox" ng-click="settings.setBackupBeforeUpdates(!settings.backupBeforeUpdates())" ng-checked="settings.backupBeforeUpdates()" aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </uib-tab>
+        
         <!-- Advanced Settings -->
-        <uib-tab index="3" heading="Advanced">
+        <uib-tab index="4" heading="Advanced">
           <div class="row" style="margin-top: 15px">
             <div class="alert alert-warning">
                 Most users won't need to change settings in this tab. Only change them if you understand what you are doing.

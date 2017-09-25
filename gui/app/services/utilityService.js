@@ -276,6 +276,52 @@
       }
     }
 
+    /*
+    * INFO MODAL
+    */
+    var previousInfoMessage = "";
+    var infoModalOpen = false;
+    service.showInfoModal = function (infoMessage) {
+      if(infoModalOpen && previousInfoMessage == infoMessage) {
+        return;
+      }
+      previousInfoMessage = infoMessage;
+      
+      $rootScope.showSpinner = false;
+      var infoModalContext = {
+        templateUrl: "infoModal.html",
+        // This is the controller to be used for the modal.
+        controllerFunc: ($scope, $uibModalInstance, message) => {
+
+          $scope.message = message;
+
+          $scope.close = function() {
+            $uibModalInstance.close();
+          };
+        },
+        resolveObj: {
+          message: () => {
+            return infoMessage;
+          }
+        },
+        closeCallback: () => {
+            infoModalOpen = false;
+        }
+      }
+      
+      infoModalOpen = true;
+      service.showModal(infoModalContext);
+
+      // Log info to file.
+      logger.log(infoMessage)
+    }
+
+    // Watches for an event from main process
+    listenerService.registerListener(
+      { type: listenerService.ListenerType.INFO },
+      (infoMessage) => {
+        service.showInfoModal(infoMessage);
+      });
 
     // Watches for an event from main process
     listenerService.registerListener(
