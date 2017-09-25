@@ -1,0 +1,127 @@
+<!-- Modal for editting button effects-->
+<div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="editControlsLabel">
+        New Command
+        <span class="edit-title-controlid"></span>
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="general-button-settings">
+        <div class="settings-title">
+            <h3>General Settings</h3>
+        </div>
+
+        <div class="input-group settings-active">
+            <label class="control-fb control--checkbox">Active Command
+                <input type="checkbox" ng-model="command.active" aria-label="..." checked>
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+
+        <div class="input-group settings-commandid">
+            <span class="input-group-addon" id="basic-addon3">Command Id</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="command.commandID">
+        </div>
+
+        <div class="input-group settings-trigger">
+            <span class="input-group-addon" id="basic-addon3">Trigger</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="command.trigger">
+        </div>
+
+        <div class="input-group settings-sparkcost">
+            <span class="input-group-addon" id="basic-addon3">Cost</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="command.cost">
+        </div>
+
+        <div class="input-group settings-cooldown">
+            <span class="input-group-addon" id="basic-addon3">Cooldown(sec)</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="command.cooldown">
+        </div>
+
+        <div class="input-group settings-permission">
+            <span class="input-group-addon" id="basic-addon3">Permission</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="command.permission">
+        </div>
+
+        <div class="input-group settings-timer">
+            <span class="input-group-addon" id="basic-addon3">Timer</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="command.timer">
+        </div>
+
+        <div class="input-group settings-logging">
+            <label class="control-fb control--checkbox">Skip Logging
+                <input type="checkbox" ng-model="control.skipLog" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+    </div>
+    <div class="function-button-settings">
+        <div class="settings-title">
+            <h3>
+                What should this button do? 
+                <div class="effect-actions-btn" uib-dropdown uib-dropdown-toggle>
+                    <span class="noselect pointer"><i class="fal fa-ellipsis-h"></i></span>
+                    <ul class="dropdown-menu" uib-dropdown-menu>
+                    <li><a href ng-click="copyEffects()">Copy effects</a></li>
+                    <li><a href ng-click="pasteEffects()">Paste effects</a></li>
+                    <li><a href ng-click="removeAllEffects()">Delete all effects</a></li>
+                    </ul>
+                </div>
+            </h3>
+        </div>
+
+        <div class="functionality-settings">
+            <!--new accordian-->
+            <uib-accordion close-others="true">
+                <div uib-accordion-group
+                    ng-repeat="effect in command.effects track by $index"
+                    class="panel-primary effect-panel"
+                    is-open="openEffectPanel[$index]"
+                    template-url="effect-panel-template.html"
+                    heading="{{effect.type}}">
+                <div class="effect-select-wrapper">
+                    <div class="btn-group">
+                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="effect-dropdown">{{effect.type != 'Nothing' ? effect.type : 'Pick an effect'}}</span> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu effects-menu">
+                            <li ng-repeat="effectType in getApprovedEffectTypes() | orderBy:'toString()'">
+                            <a href="" effect="{{effectType}}" ng-click="changeEffectTypeForEffect(effectType, effect)">{{effectType}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <span class="effect-delete-btn clickable" ng-click="removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
+                </div>
+                <div class="effect-settings-panel">
+                    <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
+                    <effect-options effect="effect" type="effect.type" ng-show="effect.type != null"><effect-options>
+                </div>
+                </div>
+            </uib-accordion>
+
+            <div class="add-more-functionality">
+                <button type="button" class="btn btn-link" ng-click="addEffect()">
+                + Add Effect
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary add-new-board-save" ng-click="saveChanges()">Save Changes</button>
+</div>
+
+<script type="text/ng-template" id="effect-panel-template.html">
+    <div class="panel-heading clickable-dark" ng-click="toggleOpen()">
+    <h4 class="panel-title" uib-accordion-transclude="heading">
+        {{heading}}<i class="pull-right fal" ng-class="{'fa-angle-right': !isOpen, 'fa-angle-down': isOpen}"></i>
+    </h4>
+    </div>
+    <div class="panel-collapse collapse" uib-collapse="!isOpen">
+    <div class="panel-body" ng-transclude></div>
+    </div>
+</script>
+     
