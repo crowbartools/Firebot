@@ -29,13 +29,18 @@
     }
 
     // This opens up a modal when adding a new command.
-    $scope.showAddCommandModal = function(){
+    $scope.showAddCommandModal = function(command){
       var addCommandModalContext = {
         templateUrl: "./templates/chat/command-modals/addCommandModal.html",
         // This is the controller to be used for the modal.
         controllerFunc: ($scope, $uibModalInstance) => {
-          // This sets the command to active. We're assuming all new commands will be active right away.
-          $scope.command = {active: true};
+
+          // If we pass in a command, then we're editing. Otherwise this is a new command and we default to it being active.
+          if(command != null){
+            $scope.command = command;
+          } else {
+            $scope.command = {active: true};
+          }
 
           // Grab the EffectType 'enum' from effect.js
           $scope.effectTypes = EffectType;
