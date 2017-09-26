@@ -136,8 +136,8 @@
             </div>
             <div class="setting col-sm-6">
               <div class="setting-heading">Manual Backup</div>
-              <div class="setting-description">Click the button below to start a backup manually. Firebot will notify you when complete.</div>
-              <button class="btn btn-default" ng-click="startBackup()" ng-disabled="isBackingUp">Start Backup</button>
+              <div class="setting-description">Click the button below to start a backup manually.</div>
+              <button class="btn btn-default" ng-click="startBackup()" ng-disabled="isBackingUp">Backup Now</button>
               <span ng-if="isBackingUp || backupCompleted" style="padding-left:10px">
                 <span ng-if="isBackingUp" >
                   Backing up... 
