@@ -7,6 +7,12 @@ router.use(function log(req, res, next) {
   next()
 });
 
+// Status 
+const status = require('./controllers/statusApiController');
+
+router.route('/status')
+  .get(status.getStatus);
+  
 
 // Effects 
 const effects = require('./controllers/effectsApiController');
