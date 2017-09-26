@@ -190,6 +190,13 @@ function createWindow () {
       console.log("Can't find the logs folder, creating one now...");
       dataAccess.makeDirInUserData("/user-settings/logs");
     });
+
+    // Create the chat folder if it doesn't exist.
+    dataAccess.userDataPathExists("/user-settings/chat")
+    .then((resolve) => {
+      console.log("Can't find the chat folder, creating one now...");
+      dataAccess.makeDirInUserData("/user-settings/chat");
+    });
     
     var deleteFolderRecursive = function(path) {
       if(path == null || path.toString().trim() == "/" || path.toString().trim() == "") { return; }
