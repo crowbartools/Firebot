@@ -4,7 +4,7 @@
  
  const _ = require('underscore')._;
  const dataAccess = require('../../lib/common/data-access.js');
- const EffectType = require('../../lib/common/EffectType.js').EffectType;
+ const EffectType = require('../../lib/common/EffectType.js');
 
  angular
   .module('firebotApp')
@@ -15,6 +15,13 @@
     service.getControllerForEffectTypeTemplate = function(effectType) {
       // Default empty controller. We can override it in the switch statement below.
       var controller = ($scope) => {};
+
+      // Swap list to look through based on given type.
+      if(type == "interactive"){
+        var EffectList = EffectType.InteractiveEffectType;
+      } else if (type == "command"){
+        var EffectList = EffectType.CommandEffectType;
+      }
       
       switch(effectType) {
         
