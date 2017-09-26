@@ -3,8 +3,8 @@
  // This provides helper methods for control effects
  
  const _ = require('underscore')._;
- const dataAccess = require('../../lib/data-access.js');
- const EffectType = require('../../lib/interactive/EffectType.js').EffectType;
+ const dataAccess = require('../../lib/common/data-access.js');
+ const EffectType = require('../../lib/common/EffectType.js').EffectType;
 
  angular
   .module('firebotApp')

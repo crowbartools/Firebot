@@ -2,7 +2,7 @@
 
   //TODO: Rename this to setupWizardModalController
   
-  const dataAccess = require('../../lib/data-access.js');
+  const dataAccess = require('../../lib/common/data-access.js');
   const fs = require('fs');
   const path = require('path');
   const ncp = require('ncp');

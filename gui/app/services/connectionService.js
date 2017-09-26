@@ -4,7 +4,7 @@
  
  const electronOauth2 = require('electron-oauth2');
  
- const dataAccess = require('../../lib/data-access.js');
+ const dataAccess = require('../../lib/common/data-access.js');
  
  const _ = require('underscore')._;
 

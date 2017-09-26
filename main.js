@@ -16,9 +16,9 @@ require('dotenv').config()
 
 const GhReleases = require('electron-gh-releases');
 
-const settings = require('./lib/interactive/settings-access').settings;
+const settings = require('./lib/common/settings-access').settings;
 
-const dataAccess = require('./lib/data-access.js');
+const dataAccess = require('./lib/common/data-access.js');
 
 const backupManager = require("./lib/backupManager");
 
@@ -356,5 +356,5 @@ function createWindow () {
 // code. You can also put them in separate files and require them here.
 
 // Interactive handler
-const mixerConnect = require('./lib/interactive/mixer-interactive.js');
+const mixerConnect = require('./lib/common/mixer-interactive.js');
 

@@ -1,4 +1,4 @@
-const groupsAccess = require('../../lib/groups-access');
+const groupsAccess = require('../../lib/common/groups-access');
 
 exports.getAllGroups = function(req, res) {
   var response;

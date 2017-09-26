@@ -2,7 +2,7 @@
   
  //This handles the commands tab
  const _ = require('underscore')._;
- const EffectType = require('../../lib/interactive/EffectType.js').CommandEffectType;
+ const EffectType = require('../../lib/common/EffectType.js').CommandEffectType;
  
  angular
    .module('firebotApp')

@@ -3,7 +3,7 @@
  //This handles groups
  
  const _ = require('underscore')._;
- const dataAccess = require('../../lib/data-access.js');
+ const dataAccess = require('../../lib/common/data-access.js');
 
  angular
   .module('firebotApp')

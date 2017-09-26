@@ -2,7 +2,7 @@
   
  //This handles settings access for frontend
  
- const dataAccess = require('../../lib/data-access.js');
+ const dataAccess = require('../../lib/common/data-access.js');
  
  const _ = require('underscore')._;
  const fs = require('fs');

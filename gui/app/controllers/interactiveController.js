@@ -3,7 +3,7 @@
   //This handles the Interactive tab
 
   const _ = require('underscore')._;
-  const EffectType = require('../../lib/interactive/EffectType.js').EffectType;
+  const EffectType = require('../../lib/common/EffectType.js').EffectType;
 
   angular
     .module('firebotApp')
