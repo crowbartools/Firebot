@@ -100,7 +100,7 @@
                 </div>
                 <div class="effect-settings-panel">
                     <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
-                    <effect-options effect="effect" type="effect.type" triggerType="command" ng-show="effect.type != null"><effect-options>
+                    <effect-options effect="effect" type="effect.type" trigger="command" ng-show="effect.type != null"><effect-options>
                 </div>
                 </div>
             </uib-accordion>
@@ -115,6 +115,7 @@
 </div>
 
 <div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-show="command.commandID != null" ng-click="deleteCommand(command)">Delete Command</button>
     <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary add-new-board-save" ng-click="saveChanges()">Save Changes</button>
 </div>

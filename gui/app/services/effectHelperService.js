@@ -12,19 +12,19 @@
     var service = {};
       
     // Returns a controller to be used for the template of a given effectype
-    service.getControllerForEffectTypeTemplate = function(triggerType, effectType) {
+    service.getControllerForEffectTypeTemplate = function(trigger, effectType) {
       // Default empty controller. We can override it in the switch statement below.
       var controller = ($scope) => {};
 
       // Swap list to look through based on given type.
-      if(triggerType == "interactive"){
+      if(trigger == "interactive"){
         var EffectList = EffectType.InteractiveEffectType;
-      } else if (triggerType == "command"){
+      } else if (trigger == "command"){
         var EffectList = EffectType.CommandEffectType;
       }
       
-      // If triggerType is still null, that means we dont know it yet. Just pass back the empty controller
-      if(triggerType == null) {
+      // If trigger is still null, that means we dont know it yet. Just pass back the empty controller
+      if(trigger == null) {
         return controller;
       }
       
@@ -509,7 +509,7 @@
     service.getTemplateFilePathForEffectType = function(effectType) {
       var normalizedEffectType = ""
       if(effectType != null) {
-        normalizedEffectType = effectType.toLowerCase().replace(' ', '-');
+        normalizedEffectType = effectType.toLowerCase().replace(/ /g, '-');
       } else {
         normalizedEffectType = "no-effect-type-provided";
       }

@@ -164,6 +164,18 @@
               return effectHelperService.checkSavedArray(list, item);         
           }
 
+          // This deletes the current command.
+          $scope.deleteCommand = function (command){
+            // Delete the command
+            commandsService.deleteCommand(command);
+
+            // Close the modal
+            $uibModalInstance.close();
+
+            // Refresh Commands
+            commandsService.refreshCommands();
+          }
+
         },
         // The callback to run after the modal closed via "Save changes"
         closeCallback: (command) => {

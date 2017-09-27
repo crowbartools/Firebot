@@ -3,7 +3,7 @@
   //This handles the Interactive tab
 
   const _ = require('underscore')._;
-  const EffectType = require('../../lib/common/EffectType.js').EffectType;
+  const EffectType = require('../../lib/common/EffectType.js').InteractiveEffectType;
 
   angular
     .module('firebotApp')
@@ -222,6 +222,7 @@
               var approvedEffects =  Object.keys(EffectType).map(function(key) {
                     return EffectType[key];
                   });
+
               if(!settingsService.getCustomScriptsEnabled()) {
                 // If there are certain effect types that are available contionally,
                 // we can filter them out here. Currently we only need this for the

@@ -10,7 +10,7 @@
        scope: {
          effect: '=',
          type: '=',
-         triggerType: "@"
+         trigger: "@"
        },
        replace: true,
        template: '<div ng-include="templateUrl"></div>',
@@ -28,8 +28,7 @@
          // We want to locate the controller of the given effect type (if there is one)
          // and run it.
          function findController() {
-           console.log($scope.type, $scope.triggerType)
-           var effectController = effectHelperService.getControllerForEffectTypeTemplate($scope.triggerType, $scope.type);
+           var effectController = effectHelperService.getControllerForEffectTypeTemplate($scope.trigger, $scope.type);
            
            // Invoke the controller and inject any dependancies
            $injector.invoke(effectController, {}, { $scope: $scope });

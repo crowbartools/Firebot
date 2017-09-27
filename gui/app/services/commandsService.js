@@ -68,6 +68,18 @@
             }
         }
 
+        // Deletes a command.
+        service.deleteCommand = function(command){
+            var commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+            var cleanedCommands = JSON.parse(angular.toJson(command));
+
+            if(cleanedCommands.active === true){
+                commandDb.delete('./Active/'+cleanedCommands.commandID);
+            } else {
+                commandDb.delete('./Inactive/'+cleanedCommands.commandID);
+            }
+        }
+
         return service;
     });    
 })();
