@@ -18,8 +18,17 @@ router.route('/status')
 const effects = require('./controllers/effectsApiController');
 
 router.route('/effects')
-  .get(effects.getAllEffects)
+  .get(effects.getEffects)
   .post(effects.runEffects);
+  
+  router.route('/effects/:effect')
+    .get(effects.getEffect)
+    
+  router.route('/effects/:effect/triggers')
+    .get(effects.getEffectTriggers)
+    
+  router.route('/effects/:effect/dependancies')
+    .get(effects.getEffectDependancies)
  
  
  // Groups
