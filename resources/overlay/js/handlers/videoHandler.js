@@ -82,7 +82,7 @@ function showVideo(data){
 		
 		
 	}else{
-		var videoFinal = '<div class="'+divClass+'-video videoOverlay"><div id="player" position="'+videoPosition+'"></div></div>';
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay"><div id="player" position="'+videoPosition+'" style="'+customPosStyles+'"></div></div>';
 		
 		// Throw div on page.
 		$('#wrapper').append(videoFinal);
