@@ -23,6 +23,7 @@
         var EffectList = EffectType.CommandEffectType;
       }
       
+      // If triggerType is still null, that means we dont know it yet. Just pass back the empty controller
       if(triggerType == null) {
         return controller;
       }
