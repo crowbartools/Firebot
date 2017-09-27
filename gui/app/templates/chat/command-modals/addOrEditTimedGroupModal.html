@@ -20,11 +20,11 @@
     <div class="cooldown-group-button-container">
         <h3>Which commands will we loop through?</h3>
         <div class="searchbar-wrapper">
-        <input type="text" class="form-control" placeholder="Search buttons" ng-model="controlSearch" style="padding-left: 27px;">
+        <input type="text" class="form-control" placeholder="Search commands" ng-model="commandSearch" style="padding-left: 27px;">
         <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
         </div>
         <div class="cooldown-group-buttons">
-        <div ng-repeat="commandID in allCommandIds | filter:controlSearch" class="cooldown-list-btn-wrapper">
+        <div ng-repeat="commandID in allCommandIds | filter:commandSearch" class="cooldown-list-btn-wrapper">
             <label class="control-fb control--checkbox" style="margin-bottom: 0">{{commandID}}
             <input type="checkbox" ng-click="updateCheckedArrayWithElement(timedGroup.commands, commandID)" ng-checked="arrayContainsElement(timedGroup.commands, commandID)"/>
             <div class="control__indicator"></div>
