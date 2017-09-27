@@ -259,9 +259,10 @@ function createWindow () {
 
   // When Quittin.
   app.on('will-quit', () => {
+    if(settings.backupOnExit()) backupManager.startBackup();
+        
     // Unregister all shortcuts.
     mixerConnect.shortcutUnregister();
-    if(settings.backupOnExit()) backupManager.startBackup();
   });
   
   // Run Updater
@@ -347,10 +348,9 @@ function createWindow () {
   });
 
   ipcMain.on('startBackup', function(event, manualActivation = false){
-    backupManager.startBackup(manualActivation)
-      .then(() => {
-        renderWindow.webContents.send('backupComplete', manualActivation);
-      });
+    backupManager.startBackup(manualActivation, () => {
+      renderWindow.webContents.send('backupComplete', manualActivation);
+    });
   });
 
 // In this file you can include the rest of your app's specific main process
