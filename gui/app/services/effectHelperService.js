@@ -12,20 +12,20 @@
     var service = {};
       
     // Returns a controller to be used for the template of a given effectype
-    service.getControllerForEffectTypeTemplate = function(effectType) {
+    service.getControllerForEffectTypeTemplate = function(triggerType, effectType) {
       // Default empty controller. We can override it in the switch statement below.
       var controller = ($scope) => {};
 
       // Swap list to look through based on given type.
-      if(type == "interactive"){
+      if(triggerType == "interactive"){
         var EffectList = EffectType.InteractiveEffectType;
-      } else if (type == "command"){
+      } else if (triggerType == "command"){
         var EffectList = EffectType.CommandEffectType;
       }
       
       switch(effectType) {
         
-        case EffectType.HTML: 
+        case EffectList.HTML:
           controller = ($scope, utilityService) => {
             
             $scope.showOverlayInfoModal = function(overlayInstance) {
@@ -34,7 +34,7 @@
           }
           break;    
         
-        case EffectType.PLAY_SOUND:
+        case EffectList.PLAY_SOUND:
           controller = ($scope, listenerService) => {
             
             var uuid = _.uniqueId();
@@ -57,7 +57,7 @@
           };
           break;
           
-        case EffectType.SHOW_IMAGE:
+        case EffectList.SHOW_IMAGE:
           controller = ($scope, listenerService, utilityService) => {
             
             $scope.imagePositions = [
@@ -92,7 +92,7 @@
           };
           break;
         
-        case EffectType.SHOW_VIDEO:
+        case EffectList.SHOW_VIDEO:
           controller = ($scope, listenerService, utilityService) => {
             
             $scope.showOverlayInfoModal = function(overlayInstance) {
@@ -167,7 +167,7 @@
           };
           break;
 
-        case EffectType.API_BUTTON:
+        case EffectList.API_BUTTON:
           controller = ($scope) => {
 
             $scope.apiTypes = [
@@ -185,7 +185,7 @@
           };
           break;
 
-        case EffectType.CHANGE_GROUP:
+        case EffectList.CHANGE_GROUP:
           controller = ($scope, groupsService) => {
 
             // Get viewer groups and push group name to scope.
@@ -194,7 +194,7 @@
           };
           break;
 
-        case EffectType.CHANGE_SCENE:
+        case EffectList.CHANGE_SCENE:
           controller = ($scope, groupsService, boardService) => {
 
             // Make the Change Scene option user friendly text.
@@ -233,7 +233,7 @@
           };
           break;
 
-        case EffectType.COOLDOWN:
+        case EffectList.COOLDOWN:
           controller = ($scope, boardService) => {
           
             // Get all control id's in an array so we can add checkboxes.
@@ -258,7 +258,7 @@
           };
           break;
 
-        case EffectType.CELEBRATION:
+        case EffectList.CELEBRATION:
           controller = ($scope) => {
 
             $scope.celebrationTypes = [
@@ -268,7 +268,7 @@
           };
           break;
           
-        case EffectType.DICE:
+        case EffectList.DICE:
           controller = ($scope) => {
 
             // Default result type to 'sum'
@@ -277,7 +277,7 @@
           };
           break;
 
-        case EffectType.CUSTOM_SCRIPT:
+        case EffectList.CUSTOM_SCRIPT:
           controller = ($scope) => {
             
             $scope.isLoadingParameters = true;
@@ -375,7 +375,7 @@
             
           break;
         
-        case EffectType.GAME_CONTROL:
+        case EffectList.GAME_CONTROL:
           controller = ($scope) => {
 
             $scope.validControls = [
