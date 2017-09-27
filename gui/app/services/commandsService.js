@@ -13,11 +13,15 @@
 
         // in memory commands storage
         var commandsCache = {};
+        var timedGroupsCache = {};
 
         // Refresh commands cache
         service.refreshCommands = function() {
             var commandsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
             commandsCache = commandsDb.getData('/');
+
+            var timedGroupsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+            timedGroupsCache = timedGroupsDb.getData('/timedGroups');
         }
 
         // Get an array of command types.
@@ -78,6 +82,11 @@
             } else {
                 commandDb.delete('./Inactive/'+cleanedCommands.commandID);
             }
+        }
+
+        // Gets the cached timed groups
+        service.getTimedGroupSettings = function(){
+            return timedGroupsCache;
         }
 
         return service;

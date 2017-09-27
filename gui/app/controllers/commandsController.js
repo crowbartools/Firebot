@@ -31,6 +31,12 @@
         return commandsService.getAllCommandsForType(commandType);
     }
 
+
+    /**
+      * MODAL CONTROL
+    */
+
+
     // This opens up a modal when adding a new command.
     $scope.showAddCommandModal = function(command){
       var addCommandModalContext = {
@@ -189,6 +195,17 @@
         }
       }
       utilityService.showModal(addCommandModalContext);
+    } // End add command modal
+
+
+    // This opens up the command settings modal.
+    $scope.showCommandSettingsModal = function() {
+      var showCommandSetingsModalContext = {
+        templateUrl: "./templates/chat/command-modals/commandSettingsModal.html",
+        size: "lg",
+        controllerFunc: 'editCommandSettingsModalController'
+      }
+      utilityService.showModal(showCommandSetingsModalContext);
     }
 
    });
