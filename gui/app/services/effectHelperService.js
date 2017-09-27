@@ -23,6 +23,10 @@
         var EffectList = EffectType.CommandEffectType;
       }
       
+      if(triggerType == null) {
+        return controller;
+      }
+      
       switch(effectType) {
         
         case EffectList.HTML:
