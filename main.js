@@ -22,6 +22,8 @@ const dataAccess = require('./lib/common/data-access.js');
 
 const backupManager = require("./lib/backupManager");
 
+const apiServer = require('./api/apiServer.js');
+
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
 
@@ -232,14 +234,15 @@ function createWindow () {
       });
     }  
     
-    //start the REST api server
-    require('./api/apiServer.js');
-    
     createWindow();
     
     renderWindow.webContents.on('did-finish-load', function() {
         renderWindow.show();
     });
+    
+    //start the REST api server 
+    apiServer.start();
+    
   })
 
   // Quit when all windows are closed.
@@ -363,6 +366,7 @@ function createWindow () {
 
   ipcMain.on('startBackup', function(event, manualActivation = false){
     backupManager.startBackup(manualActivation, () => {
+      console.log("backup complete");
       renderWindow.webContents.send('backupComplete', manualActivation);
     });
   });

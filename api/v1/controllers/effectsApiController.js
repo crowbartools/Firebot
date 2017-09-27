@@ -1,14 +1,59 @@
-const settingsAccess = require('../../../lib/common/settings-access.js').settings;
-const dataAccess = require('../../../lib/common/data-access');
+const settingsAccess = require('../../../lib/interactive/settings-access.js').settings;
+const dataAccess = require('../../../lib/data-access');
 
-const EffectType = require("../../../lib/common/EffectType");
-const effectsBuilder = require("../../../lib/common/handlers/custom-scripts/effectsObjectBuilder");
-const effectRunner = require('../../../lib/common/effect-runner');
+const Effects = require("../../../lib/interactive/EffectType");
+const effectsBuilder = require("../../../lib/interactive/helpers/effectsObjectBuilder");
+const effectRunner = require('../../../lib/interactive/effect-runner');
 
 
-exports.getAllEffects = function(req, res) {
-  res.json(EffectType.getAllEffectTypes());
+exports.getEffects = function(req, res) {
+  
+  var response = Effects.getEffectDefinitions(req.query.trigger);
+  
+  if(req.query.dependancy) {
+    response = response.filter((e) => e.dependancies.includes(req.query.dependancy));
+  }
+  
+  if(req.query.onlynames == "true") {
+    response = response.map((e) => { return e.name; });
+  }
+  
+  res.json(response);
 }
+
+exports.getEffect = function(req, res) {
+  var effectIdOrName = req.params.effect;
+  var effect = Effects.getEffect(effectIdOrName);
+  if(effect == null) {
+    res.status(404).send({status: 'error', message: `Cannot find effect '${effectIdOrName}'`});
+    return;
+  }
+  
+  res.json(effect);
+}
+
+exports.getEffectTriggers = function(req, res) {
+  var effectIdOrName = req.params.effect;
+  var effect = Effects.getEffect(effectIdOrName);
+  if(effect == null) {
+    res.status(404).send({status: 'error', message: `Cannot find effect '${effectIdOrName}'`});
+    return;
+  }
+  
+  res.json(effect.triggers);
+}
+
+exports.getEffectDependancies = function(req, res) {
+  var effectIdOrName = req.params.effect;
+  var effect = Effects.getEffect(effectIdOrName);
+  if(effect == null) {
+    res.status(404).send({status: 'error', message: `Cannot find effect '${effectIdOrName}'`});
+    return;
+  }
+  
+  res.json(effect.dependancies);
+}
+
 
 exports.runEffects = function(req, res) {
   if(interactiveConnected == false) {
