@@ -5,13 +5,13 @@
   <div class="modal-body">
     <!--put settings stuff here-->
     <div class="board-cooldown-group-settings">
-        <h3>Timed Command Groups <button class="btn btn-default add-new-cooldown-group" ng-click="showAddOrEditCooldownGroupModal()">Add New</button></h3>
+        <h3>Timed Command Groups <button class="btn btn-default add-new-cooldown-group" ng-click="showAddOrEditTimedGroupModal()">Add New</button></h3>
         <div class="board-cooldown-content">
             <p>Timed groups let you group together commands that will automatically trigger at a set interval.</p>
             <div class="board-cooldown-groups">
               <!-- Create timed groups -->
               <div ng-repeat="timedGroup in getTimedGroupSettings() track by $index" class="fb-tile flex-start light-blue">
-                <div class="edit-btn" ng-click="showAddOrEditCooldownGroupModal(cooldownGroup)"></div>
+                <div class="edit-btn" ng-click="showAddOrEditTimedGroupModal(timedGroup)"></div>
                 <div class="header">
                   <div class="title edit-btn-spacer">
                     {{timedGroup.groupName}}

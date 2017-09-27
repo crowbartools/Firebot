@@ -19,16 +19,16 @@
         service.refreshCommands = function() {
             var commandsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
             commandsCache = commandsDb.getData('/');
-
-            var timedGroupsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
-            timedGroupsCache = timedGroupsDb.getData('/timedGroups');
+            timedGroupsCache = commandsDb.getData('/timedGroups');
         }
 
-        // Get an array of command types.
+        // Get an array of command types. Filters out timed groups list.
         service.getCommandTypes = function(){
             var commandTypes = [];
             if (commandsCache != null) {
-                commandTypes = Object.keys(commandsCache);
+                commandTypes = Object.keys(commandsCache).filter(key => {
+                    return key !== 'timedGroups';
+                });
             }
             return commandTypes;
         }
@@ -84,9 +84,42 @@
             }
         }
 
+        ///////////////
+        // Timed Groups
+        ///////////////
+
         // Gets the cached timed groups
         service.getTimedGroupSettings = function(){
             return timedGroupsCache;
+        }
+
+        // Save Timed Group
+        service.saveTimedGroup = function(previousGroupName, timedGroup){
+            var commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+            var cleanedCommands = JSON.parse(angular.toJson(timedGroup));
+
+            try{
+                commandDb.push('./timedGroups/'+timedGroup.groupName, timedGroup);
+            }catch(err){console.log(err)}
+
+            // Check to see if we are renaming a group and need to remove the old one.
+            if(previousGroupName !== timedGroup.groupName && previousGroupName != null && previousGroupName !== ""){
+                try{
+                    commandDb.delete('./timedGroups/'+previousGroupName);
+                }catch(err){console.log(err)}
+            }
+        }
+
+        // Delete timed Group
+        service.deleteTimedGroup = function(previousGroupName, timedGroup){
+            var commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+            try{
+                commandDb.delete('./timedGroups/'+previousGroupName);
+            }catch(err){console.log(err)}
+
+            try{
+                commandDb.delete('./timedGroups/'+timedGroup.groupName);
+            }catch(err){console.log(err)}
         }
 
         return service;
