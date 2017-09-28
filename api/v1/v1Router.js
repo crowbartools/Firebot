@@ -27,8 +27,8 @@ router.route('/effects')
   router.route('/effects/:effect/triggers')
     .get(effects.getEffectTriggers)
     
-  router.route('/effects/:effect/dependancies')
-    .get(effects.getEffectDependancies)
+  router.route('/effects/:effect/dependencies')
+    .get(effects.getEffectDependencies)
  
  
  // Groups

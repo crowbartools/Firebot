@@ -20,8 +20,6 @@
           listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
         }        
 
-        $scope.isBackingUp = false;
-        $scope.backupCompleted = false;
         $scope.startBackup = function() {
           $scope.isBackingUp = true;
           $scope.backupCompleted = false;

@@ -10,8 +10,8 @@ exports.getEffects = function(req, res) {
   
   var response = Effects.getEffectDefinitions(req.query.trigger);
   
-  if(req.query.dependancy) {
-    response = response.filter((e) => e.dependancies.includes(req.query.dependancy));
+  if(req.query.dependency) {
+    response = response.filter((e) => e.dependencies.includes(req.query.dependency));
   }
   
   if(req.query.onlynames == "true") {
@@ -43,7 +43,7 @@ exports.getEffectTriggers = function(req, res) {
   res.json(effect.triggers);
 }
 
-exports.getEffectDependancies = function(req, res) {
+exports.getEffectDependencies = function(req, res) {
   var effectIdOrName = req.params.effect;
   var effect = Effects.getEffect(effectIdOrName);
   if(effect == null) {
@@ -51,7 +51,7 @@ exports.getEffectDependancies = function(req, res) {
     return;
   }
   
-  res.json(effect.dependancies);
+  res.json(effect.dependencies);
 }
 
 
