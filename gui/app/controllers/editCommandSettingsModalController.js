@@ -39,6 +39,9 @@
                 if(timedGroup != null) {
                     $scope.timedGroup = timedGroup;
                     $scope.isNewGroup = false;
+                } else {
+                    // This is a new group, so default active to true.
+                    $scope.timedGroup = {active: true};
                 }
                 
                 // Get all of the commands to list out in the modal.

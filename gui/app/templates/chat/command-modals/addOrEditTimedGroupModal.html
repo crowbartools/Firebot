@@ -3,25 +3,25 @@
     <h4 class="modal-title" id="newCooldownGroupLabel">{{isNewGroup ? 'Add New Timed Group' : 'Edit Timed Group - ' + timedGroup.groupName}}</h4>
 </div>
 <div class="modal-body">
-    <div class="general-group-settings">
+    <div class="general-button-settings">
         <div class="settings-title">
             <h3>General Settings</h3>
         </div>
-        <div class="input-group settings-logging">
+        <div class="input-group settings-commandGroup-active">
             <label class="control-fb control--checkbox">Active Group
                 <input type="checkbox" ng-model="timedGroup.active" aria-label="...">
                 <div class="control__indicator"></div>
             </label>
         </div>
-        <div class="input-group settings-cooldown-groupid">
+        <div class="input-group settings-commandGroup-groupName">
             <span class="input-group-addon">Group Name</span>
             <input type="text" class="form-control" ng-model="timedGroup.groupName">
         </div>
-        <div class="input-group settings-cooldown-length">
+        <div class="input-group settings-commandGroup-timer">
             <span class="input-group-addon">Timer(min)</span>
             <input type="number" class="form-control" ng-model="timedGroup.timer">
         </div>
-        <div class="input-group settings-logging">
+        <div class="input-group settings-commandGroup-random">
             <label class="control-fb control--checkbox">Randomize
                 <input type="checkbox" ng-model="timedGroup.randomize" aria-label="...">
                 <div class="control__indicator"></div>
