@@ -100,8 +100,8 @@ let mainWindow
 function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-      width: 1200,
-      height: 650,
+      width: 1280,
+      height: 720,
       minWidth: 600,
       icon: path.join(__dirname, './gui/images/logo.ico'),
       show: false
