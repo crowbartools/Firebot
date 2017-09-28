@@ -5,16 +5,29 @@
 <div class="modal-body">
     <div class="general-group-settings">
         <div class="settings-title">
-        <h3>General Settings</h3>
+            <h3>General Settings</h3>
+        </div>
+        <div class="input-group settings-logging">
+            <label class="control-fb control--checkbox">Active Group
+                <input type="checkbox" ng-model="timedGroup.active" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>
         </div>
         <div class="input-group settings-cooldown-groupid">
-        <span class="input-group-addon">Group Name</span>
-        <input type="text" class="form-control" ng-model="timedGroup.groupName">
+            <span class="input-group-addon">Group Name</span>
+            <input type="text" class="form-control" ng-model="timedGroup.groupName">
         </div>
         <div class="input-group settings-cooldown-length">
-        <span class="input-group-addon">Timer(sec)</span>
-        <input type="number" class="form-control" ng-model="timedGroup.timer">
+            <span class="input-group-addon">Timer(min)</span>
+            <input type="number" class="form-control" ng-model="timedGroup.timer">
         </div>
+        <div class="input-group settings-logging">
+            <label class="control-fb control--checkbox">Randomize
+                <input type="checkbox" ng-model="timedGroup.randomize" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+
     </div>
 
     <div class="cooldown-group-button-container">
