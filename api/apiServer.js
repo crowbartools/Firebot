@@ -5,7 +5,8 @@ var server = null;
 
 exports.start = function() {
   if(server != null) {
-    server.close();
+    //server is already running.
+    return;
   }
   var api = express();
   api.use(bodyParser.json());
