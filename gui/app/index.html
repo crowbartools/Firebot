@@ -85,13 +85,12 @@
         <a class="fb-nav-link" href="#" ng-class="{'selected': tabIsSelected('Interactive')}" ng-click="setTab('Interactive')">
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-gamepad"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Interactive</div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Buttons</div>
         </a>
-        <a class="fb-nav-link" href="#!groups" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-user"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
-        </a>
+        <div class="fb-nav-link-category pad-top">
+          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>          
+          <span ng-class="{'contracted': !navExpanded}">Chat</span>
+        </div>
         <a class="fb-nav-link" href="#!commands" ng-class="{'selected': tabIsSelected('Commands')}" ng-click="setTab('Commands')">
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
@@ -101,9 +100,14 @@
           <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>        
           <span ng-class="{'contracted': !navExpanded}">General</span>
         </div>
+        <a class="fb-nav-link" href="#!groups" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal fa-user"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
+        </a>
         <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
           <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
+          <div class="nav-link-icon"><i class="fal fa-gavel"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Moderation</div>
         </a>
         <a class="fb-nav-link" href="#!settings" ng-class="{'selected': tabIsSelected('Settings')}" ng-click="setTab('Settings')">
