@@ -6,3 +6,4 @@ app-settings
 scripts
 .env
 *.css
+resources/overlay/js/port.js
