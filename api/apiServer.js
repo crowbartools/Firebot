@@ -19,6 +19,19 @@ exports.start = function() {
   // set up route to serve overlay
   api.use('/overlay', express.static('resources/overlay'))
   
+  // set up resource endpoint
+  api.get('/resource/:path', function (req, res) {
+      
+      var resourcePath = req.params.path;  
+      if(resourcePath != null) {
+        resourcePath = resourcePath.replace(/\\/g, "/");
+        res.sendFile(resourcePath);
+        return;
+      }
+      
+      res.status(404).send({status: "error", message: req.originalUrl + ' not found'})
+  });
+  
   // Catch all remaining paths and send the caller a 404
   api.use(function(req, res) {
     res.status(404).send({status: "error", message: req.originalUrl + ' not found'})
