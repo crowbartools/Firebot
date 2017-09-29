@@ -4,7 +4,6 @@ function showImage(data){
 	// Image Packet...
 	// {"event":"image","filepath":filepath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration};
 	var filepath = data.filepath;
-	var filepathNew = filepath.replace(/\\/g,"/");
 	var imagePosition = data.imagePosition;
 	var imageHeight = data.imageHeight;
 	var imageWidth = data.imageWidth;
@@ -16,6 +15,9 @@ function showImage(data){
 	if(imagePosition == 'Custom') {
 		customPosStyles = getStylesForCustomCoords(data.customCoords)
 	}
+	
+	filepath = encodeURIComponent(filepath);
+	var filepathNew = `http://localhost:7473/resource/${filepath}`;
 
 	// Get time in milliseconds to use as class name.
 	var d = new Date();

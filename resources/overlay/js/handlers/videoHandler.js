@@ -16,13 +16,15 @@ function showVideo(data){
 		fileExt = "ogg";
 	}
 	var youtubeId = data.youtubeId;
-	var filepathNew = filepath.replace(/\\/g,"/");
 	var videoPosition = data.videoPosition;
 	var videoHeight = data.videoHeight;
 	var videoWidth = data.videoWidth;
 	var videoDuration = parseInt(data.videoDuration) * 1000;
 	var videoVolume = data.videoVolume;
 	var videoStarttime = data.videoStarttime || 0;
+	
+	filepath = encodeURIComponent(filepath);
+	var filepathNew = `http://localhost:7473/resource/${filepath}`;
 	
 	var customPosStyles = "";
 	if(videoPosition == 'Custom') {
