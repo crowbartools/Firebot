@@ -82,7 +82,11 @@ function showVideo(data){
 		
 		
 	}else{
-		var videoFinal = '<div class="'+divClass+'-video videoOverlay"><div id="player" position="'+videoPosition+'" style="'+customPosStyles+'"></div></div>';
+		
+		var time = d.getTime();
+		var ytPlayerId = `yt-${time}`;
+		
+		var videoFinal = '<div class="'+divClass+'-video videoOverlay"><div id="' + ytPlayerId +'" position="'+videoPosition+'" style="'+customPosStyles+'"></div></div>';
 		
 		// Throw div on page.
 		$('#wrapper').append(videoFinal);
@@ -111,7 +115,7 @@ function showVideo(data){
 		if(videoWidth) {
 			ytOptions.width = videoWidth;
 		}
-		var player = new YT.Player('player', ytOptions);
+		var player = new YT.Player(ytPlayerId, ytOptions);
 
 		// Fade in video.
 		$(videoId).animateCss(enterAnimation);
