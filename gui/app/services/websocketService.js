@@ -84,15 +84,6 @@
               var imageDuration = 5;
           }        
       
-          // Setup filepath based on compatibility settings.
-          var compatibility = settingsService.getOverlayCompatibility();
-
-          if(compatibility == "Other"){
-              var filepath = "file:///"+filepath;
-          }else{
-              var filepath = "http://absolute/"+filepath;
-          }
-      
           // Compile data and send to overlay.
           var data = {
             "event":"image",
@@ -133,15 +124,6 @@
           }
           if(videoDuration === null || videoDuration === undefined || isNaN(videoDuration)){
               var videoDuration = 5;
-          }
-      
-          // Setup filepath based on compatibility settings.
-          var compatibility = settingsService.getOverlayCompatibility();
-
-          if(compatibility == "Other"){
-              var filepath = "file:///"+filepath;
-          }else{
-              var filepath = "http://absolute/"+filepath;
           }
       
           // Compile data and send to overlay.
