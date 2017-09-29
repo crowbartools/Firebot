@@ -23,8 +23,8 @@ function showVideo(data){
 	var videoVolume = data.videoVolume;
 	var videoStarttime = data.videoStarttime || 0;
 	
-	filepath = encodeURIComponent(filepath);
-	var filepathNew = `http://localhost:7473/resource/${filepath}`;
+	var token = encodeURIComponent(data.resourceToken);
+	var filepathNew = `http://localhost:7473/resource/${token}`;
 	
 	var customPosStyles = "";
 	if(videoPosition == 'Custom') {

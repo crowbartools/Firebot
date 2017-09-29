@@ -82,12 +82,14 @@
           }
           if(imageDuration == "" || imageDuration == null){
               var imageDuration = 5;
-          }        
+          }
+                  
       
           // Compile data and send to overlay.
           var data = {
             "event":"image",
-            "filepath":filepath, 
+            "filepath":filepath,
+            "resourceToken": data.resourceToken, 
             "imagePosition":imagePosition, 
             "imageHeight":imageHeight, 
             "imageWidth": imageWidth, 
@@ -130,7 +132,8 @@
           var data = {
             "event":"video",
             "videoType": videoType,
-            "filepath":filepath, 
+            "filepath":filepath,
+            "resourceToken": data.resourceToken, 
             "youtubeId": youtubeId, 
             "videoPosition":videoPosition, 
             "videoHeight":videoHeight, 

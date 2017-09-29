@@ -16,8 +16,8 @@ function showImage(data){
 		customPosStyles = getStylesForCustomCoords(data.customCoords)
 	}
 	
-	filepath = encodeURIComponent(filepath);
-	var filepathNew = `http://localhost:7473/resource/${filepath}`;
+	var token = encodeURIComponent(data.resourceToken);
+	var filepathNew = `http://localhost:7473/resource/${token}`;
 
 	// Get time in milliseconds to use as class name.
 	var d = new Date();

@@ -1,5 +1,6 @@
 var express = require("express");
 var bodyParser = require("body-parser");
+const resourceTokenManager = require('../lib/resourceTokenManager');
 
 var server = null;
 
@@ -20,13 +21,16 @@ exports.start = function() {
   api.use('/overlay', express.static('resources/overlay'))
   
   // set up resource endpoint
-  api.get('/resource/:path', function (req, res) {
+  api.get('/resource/:token', function (req, res) {
       
-      var resourcePath = req.params.path;  
-      if(resourcePath != null) {
-        resourcePath = resourcePath.replace(/\\/g, "/");
-        res.sendFile(resourcePath);
-        return;
+      var token = req.params.token;  
+      if(token != null) {
+        var resourcePath = resourceTokenManager.getResourcePath(token);
+        if(resourcePath != null) {
+          resourcePath = resourcePath.replace(/\\/g, "/");
+          res.sendFile(resourcePath);
+          return;
+        }
       }
       
       res.status(404).send({status: "error", message: req.originalUrl + ' not found'})
