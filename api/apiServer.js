@@ -15,6 +15,9 @@ exports.start = function() {
   // get our router for the current v1 api methods
   var v1Router = require("./v1/v1Router.js");
   api.use("/api/v1", v1Router);
+    
+  // set up route to serve overlay
+  api.use('/overlay', express.static('resources/overlay'))
   
   // Catch all remaining paths and send the caller a 404
   api.use(function(req, res) {
