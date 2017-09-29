@@ -107,6 +107,7 @@ body {
 }
 
 .fb-nav {
+  position:relative;
  height: 100%;
  width: 223px;
  display: flex;
@@ -380,48 +381,60 @@ body {
   margin-right: 15px;
 }
 
+.connection-status-wrapper{
+  position:absolute;
+  bottom:0px;
+  width:100%;
+}
+
 .interactive-status-wrapper {
-  align-self: center;
+  align-self: left;
   margin-top: auto;
-  margin-bottom: 25px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding:0em 0em 0em 1em;
+  text-align:left;
+  margin-bottom: .25em;
+  .interative-status-icon {
+    cursor: pointer;
+    color: $bad-color;
+    font-size: 35px;
+    display:inline-block;
+    padding: 0px .25em 0em 0em;
+    //transition: font-size 0.4s linear;
+  }
+  .interactive-status-text{
+    display:inline-block;
+  }
+  .interative-status-icon.connected {
+    color: $good-color;
+  }
+  .interative-status-icon:hover {
+    opacity: 0.5;
+  }
+  .interative-status-icon.contracted {
+    font-size: 30px;
+  }
+  .interative-status-title {
+    color:white;
+    opacity: 0.5;
+    transition: 0.3s;
+  }
+  .interative-status-title.contracted {
+    opacity: 0;
+  }
+  .interative-status-subtitle {
+    color:white;
+    opacity: 1;
+    transition: 0.4s;
+  }
+  .interative-status-subtitle.contracted {
+    opacity: 0;
+  }
+
 }
 
 
 
-.interative-status-icon {
-  cursor: pointer;
-  color: $bad-color;
-  font-size: 35px;
-  //transition: font-size 0.4s linear;
-}
-.interative-status-icon.connected {
-  color: $good-color;
-}
-.interative-status-icon:hover {
-  opacity: 0.5;
-}
-.interative-status-icon.contracted {
-  font-size: 30px;
-}
-.interative-status-title {
-  color:white;
-  opacity: 0.5;
-  transition: 0.3s;
-}
-.interative-status-title.contracted {
-  opacity: 0;
-}
-.interative-status-subtitle {
-  color:white;
-  opacity: 1;
-  transition: 0.4s;
-}
-.interative-status-subtitle.contracted {
-  opacity: 0;
-}
+
 .about-link {
   text-align: center;
   color: $highlight-color;

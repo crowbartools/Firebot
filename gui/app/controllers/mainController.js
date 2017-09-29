@@ -168,12 +168,23 @@ const shell = electron.shell;
       */
       $scope.connService = connectionService;
       
+      // Interactive
       $scope.getConnectionMessage = function() {
         var message = ""
         if(connectionService.waitingForStatusChange) {
           connectionService.connectedToInteractive ? message = 'Disconnecting...' : message = 'Connecting...';
         } else {
           connectionService.connectedToInteractive ? message = 'Connected' : message = 'Disconnected';
+        }
+        return message;
+      }
+      // Chat
+      $scope.getChatConnectionMessage = function() {
+        var message = ""
+        if(connectionService.waitingForChatStatusChange) {
+          connectionService.connectedToChat ? message = 'Disconnecting...' : message = 'Connecting...';
+        } else {
+          connectionService.connectedToChat ? message = 'Connected' : message = 'Disconnected';
         }
         return message;
       }

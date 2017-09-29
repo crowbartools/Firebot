@@ -124,36 +124,70 @@
           </div>
         </a>
       </div>
-      <div class='interactive-status-wrapper'>
-       <div class="interative-status-icon" 
-            ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}" 
-            uib-tooltip-template="'connectTooltipTemplate.html'" 
-            tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
-            ng-click="connService.toggleConnectionToInteractive()"
-            ng-hide="connService.waitingForStatusChange">
-         <i class="fal fa-power-off"></i>
-       </div>
-       <div class="interative-status-icon" 
-            style="color:white;" 
-            ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}"
-            ng-show="connService.waitingForStatusChange"
-            uib-tooltip="{{getConnectionMessage()}}" 
-            tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
-            <i class="fal fa-sync fa-spin"></i>
-       </div>
-       <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
-         <span>Interactive Status:</span>
-       </div>
-       <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
-         <span>{{getConnectionMessage()}}</span>
-       </div>
+
+      <div class="connection-status-wrapper">
+          <div class='interactive-status-wrapper'>
+            <div class="interative-status-icon" 
+                  ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}" 
+                  uib-tooltip-template="'connectTooltipTemplate.html'" 
+                  tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
+                  ng-click="connService.toggleConnectionToChat()"
+                  ng-hide="connService.waitingForChatStatusChange">
+              <i class="fal fa-power-off"></i>
+            </div>
+            <div class="interative-status-icon" 
+                  style="color:white;" 
+                  ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}"
+                  ng-show="connService.waitingForChatStatusChange"
+                  uib-tooltip="{{getChatConnectionMessage()}}" 
+                  tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
+                  <i class="fal fa-sync fa-spin"></i>
+            </div>
+            <div class="interactive-status-text">
+              <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
+                <span>Chat:</span>
+              </div>
+              <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
+                <span>{{getChatConnectionMessage()}}</span>
+              </div>
+            </div>
+        </div>
+  
+        <div class='interactive-status-wrapper'>
+          <div class="interative-status-icon" 
+                ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}" 
+                uib-tooltip-template="'connectTooltipTemplate.html'" 
+                tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
+                ng-click="connService.toggleConnectionToInteractive()"
+                ng-hide="connService.waitingForStatusChange">
+            <i class="fal fa-power-off"></i>
+          </div>
+          <div class="interative-status-icon" 
+                style="color:white;" 
+                ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}"
+                ng-show="connService.waitingForStatusChange"
+                uib-tooltip="{{getConnectionMessage()}}" 
+                tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
+                <i class="fal fa-sync fa-spin"></i>
+          </div>
+          <div class="interactive-status-text">
+            <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
+              <span>Interactive:</span>
+            </div>
+            <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
+              <span>{{getConnectionMessage()}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-link" 
+              ng-class="{'contracted': !navExpanded}"
+              ng-click="showAboutFirebotModal()">
+          About
+        </div>
       </div>
-      <div class="about-link" 
-           ng-class="{'contracted': !navExpanded}"
-           ng-click="showAboutFirebotModal()">
-        About
-      </div>
+
     </div>  
+
     <div class="fb-tab-content">
       <div class="tab-header">
         <span>{{currentTab}}</span>

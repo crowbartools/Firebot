@@ -210,7 +210,7 @@
       // Let's connect! Get new tokens and connect.
       service.waitingForStatusChange = true;
       service.connectedBoard = settingsService.getLastBoardName();
-      refreshToken();
+      refreshToken('interactive');
     }
     
     service.disconnectFromInteractive = function() {
@@ -239,10 +239,59 @@
       () => {
         service.toggleConnectionToInteractive();
       });
+
+
+    /**
+    * Chat Connection Stuff
+    */
+    service.connectedToChat = false;
+    service.waitingForChatStatusChange = false;
+    
+    service.toggleConnectionToChat = function() {
+      if(service.connectedToChat == true) {
+        service.disconnectFromChat();
+      } else {
+        service.connectToChat();
+      }    
+    }
+    
+    service.connectToChat = function() {
+      // Let's connect! Get new tokens and connect.
+      service.waitingForChatStatusChange = true;
+      refreshToken('chat');
+    }
+    
+    service.disconnectFromChat = function() {
+      // Disconnect!
+      service.waitingForChatStatusChange = true;
+      ipcRenderer.send('mixerChat', 'disconnect');
+    }
+    
+    // Connection Monitor
+    // Recieves event from main process that connection has been established or disconnected.
+    listenerService.registerListener(
+      { type: ListenerType.CHAT_CONNECTION_STATUS }, 
+      (isChatConnected) => {
+        service.connectedToChat = isChatConnected;
+        
+        var soundType = isChatConnected ? "Online" : "Offline";
+        soundService.connectSound(soundType);
+        
+        service.waitingForChatStatusChange = false;
+      });
+      
+    // Connect Request
+    // Recieves an event from the main process when the global hotkey is hit for connecting.  
+    listenerService.registerListener(
+      { type: ListenerType.CHAT_CONNECTION_CHANGE_REQUEST }, 
+      () => {
+        service.toggleConnectionToChat();
+      });
+
     
     // Refresh Token
-    // This will get a new access token when connecting to interactive.
-    function refreshToken() {
+    // This will get a new access token for the streamer and bot account.
+    function refreshToken(connectionType) {
        var dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"); 
     
         console.log('Trying to get refresh tokens...')
@@ -292,7 +341,11 @@
                             }
     
                             // Okay, we have both streamer and bot tokens now. Start up the login process.
-                            ipcRenderer.send('gotRefreshToken');
+                            if(connectionType == "interactive"){
+                              ipcRenderer.send('gotRefreshToken');
+                            } else if (connectionType == "chat"){
+                              ipcRenderer.send('gotChatRefreshToken');
+                            }
     
                         }, err => {
     
@@ -304,7 +357,11 @@
                         console.log('No bot logged in. Skipping refresh token.', err)
     
                         // We have the streamer token, but there is no bot logged in. So... start up the login process.
-                        ipcRenderer.send('gotRefreshToken');
+                        if(connectionType == "interactive"){
+                          ipcRenderer.send('gotRefreshToken');
+                        } else if (connectionType == "chat"){
+                          ipcRenderer.send('gotChatRefreshToken');
+                        }
                     }
     
                 },

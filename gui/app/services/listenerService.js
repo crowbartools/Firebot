@@ -13,6 +13,8 @@
       filePath: {},
       connectionStatus: {},
       connectionChangeRequest: {},
+      chatConnectionStatus: {},
+      chatConnectionChangeRequest: {},
       eventLog: {},
       error: {},
       updateError: {},
@@ -34,6 +36,8 @@
       IMPORT_FOLDER: "importFolder",
       CONNECTION_STATUS: "connectionStatus",
       CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
+      CHAT_CONNECTION_STATUS: "chatConnectionStatus",
+      CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
       EVENT_LOG: "eventLog",
       ERROR: "error",
       UPDATE_ERROR: "updateError",
@@ -165,7 +169,7 @@
     * Connection event listeners 
     */
     
-    // Connection Monitor
+    // Interactive Connection Monitor
     // Recieves event from main process that connection has been established or disconnected.
     ipcRenderer.on('connection', function (event, data) {
       var isConnected = data ? (data.toLowerCase() == "online") : false;
@@ -173,11 +177,28 @@
         runListener(listener, isConnected);
       });
     });
+
+    // Chat Connection Monitor
+    // Recieves event from main process that connection has been established or disconnected.
+    ipcRenderer.on('chatConnection', function (event, data) {
+      var isChatConnected = data ? (data.toLowerCase() == "online") : false;
+      _.forEach(registeredListeners.chatConnectionStatus, (listener, key, list) => {
+        runListener(listener, isChatConnected);
+      });
+    });
     
-    // Connect Request
+    // Interactive Connect Request
     // Recieves an event from the main process when the global hotkey is hit for connecting.
     ipcRenderer.on('getRefreshToken', function (event, data) {  
       _.forEach(registeredListeners.connectionChangeRequest, (listener, key, list) => {
+        runListener(listener, null);
+      });
+    });
+
+    // Chat Connect Request
+    // Recieves an event from the main process when the global hotkey is hit for connecting.
+    ipcRenderer.on('getChatRefreshToken', function (event, data) {  
+      _.forEach(registeredListeners.chatConnectionChangeRequest, (listener, key, list) => {
         runListener(listener, null);
       });
     });
