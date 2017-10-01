@@ -19,7 +19,7 @@
           <small class="muted">{{option.description}}</small>
           
           <!--still working on this-->
-          <!--<span class="muted" style="position: absolute;top: 6px;right: 6px;font-size: 12px;" uib-tooltip-html="'<b>Dependencies:</b><br /> ' + option.dependencies.join()" tooltip-append-to-body="true"><i class="fal fa-link"></i></span>-->
+          <span class="muted" style="" uib-tooltip-html="'<b>Dependencies:</b><br /> ' + option.dependencies.join()" tooltip-append-to-body="true"><i class="fal fa-link"></i></span>
           
         </ui-select-choices>
       </ui-select>
