@@ -81,16 +81,8 @@
                     template-url="effect-panel-template.html"
                     heading="{{effect.type}}">
                 <div class="effect-select-wrapper">
-                    <div class="btn-group">
-                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="effect-dropdown">{{effect.type != 'Nothing' ? effect.type : 'Pick an effect'}}</span> <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu effects-menu">
-                            <li ng-repeat="effectType in getApprovedEffectTypes() | orderBy:'toString()'">
-                            <a href="" effect="{{effectType}}" ng-click="changeEffectTypeForEffect(effectType, effect)">{{effectType}}</a>
-                            </li>
-                        </ul>
-                    </div>
+                    <searchable-effect-dropdown trigger="command" selected="effect.type" style="width:50%"></searchable-effect-dropdown>
+
                     <span class="effect-delete-btn clickable" ng-click="removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
                 </div>
                 <div class="effect-settings-panel">

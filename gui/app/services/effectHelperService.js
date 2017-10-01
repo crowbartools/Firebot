@@ -17,7 +17,7 @@
       var controller = ($scope) => {};
 
       // Swap list to look through based on given type.
-      var EffectList = EffectType.getAllEffectTypes(trigger);
+      var EffectList = EffectType.getEffectDictionary(trigger);
       
       // If trigger is still null, that means we dont know it yet. Just pass back the empty controller
       if(trigger == null) {
