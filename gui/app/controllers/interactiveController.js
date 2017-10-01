@@ -237,6 +237,9 @@
             // When the user clicks "Save", we want to pass the control back to interactiveController
             $scope.saveChanges = function() {
               $uibModalInstance.close($scope.control);
+
+              // Refresh the interactive control cache.
+              ipcRenderer.send('refreshInteractiveCache');
             };
 
             $scope.changeEffectTypeForEffect = function(effectType, effect) {

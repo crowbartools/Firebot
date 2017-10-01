@@ -73,6 +73,9 @@
               shouldDelete: shouldDelete,
               group: shouldDelete ? groupToEdit : $scope.group
             });
+
+              // Refresh the interactive control cache.
+              ipcRenderer.send('refreshInteractiveCache');
           };
           
           // When they hit cancel or click outside the modal, we dont want to do anything
