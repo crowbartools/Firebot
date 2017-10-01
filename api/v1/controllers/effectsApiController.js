@@ -65,7 +65,7 @@ exports.runEffects = function(req, res) {
     
     var control = { 
       text: "API",
-      sparks: 0,
+      cost: 0,
       cooldown: 0
     }
     
