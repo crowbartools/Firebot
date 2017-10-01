@@ -20,6 +20,9 @@
             var commandsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
             commandsCache = commandsDb.getData('/');
             timedGroupsCache = commandsDb.getData('/timedGroups');
+
+            // Refresh the backend command cache.
+            ipcRenderer.send('refreshCommandCache');
         }
 
         // Get an array of command types. Filters out timed groups list.

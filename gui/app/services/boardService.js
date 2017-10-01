@@ -159,6 +159,9 @@
       var cleanedControl = JSON.parse(angular.toJson(control));
       
       boardDb.push("./firebot/controls/" + control.controlId, cleanedControl);
+
+      // Refresh the interactive control cache.
+      ipcRenderer.send('refreshInteractiveCache');
     }
     
     service.saveSceneForCurrentBoard = function(scene) {
@@ -173,6 +176,9 @@
       boardDb.push("./firebot/scenes/" + scene.sceneName, cleanedScene);
       
       service.getSelectedBoard().scenes[scene.sceneName] = scene;
+
+      // Refresh the interactive control cache.
+      ipcRenderer.send('refreshInteractiveCache');
       
     }
     
@@ -203,7 +209,10 @@
         service.getSelectedBoard().cooldownGroups = {}
       }
        
-      service.getSelectedBoard().cooldownGroups[cooldownGroup.groupName] = cleanedCooldownGroup;   
+      service.getSelectedBoard().cooldownGroups[cooldownGroup.groupName] = cleanedCooldownGroup; 
+
+      // Refresh the interactive control cache.
+      ipcRenderer.send('refreshInteractiveCache');
       
       //TODO: propigate cooldown group to related buttons
     }
@@ -220,6 +229,9 @@
       boardDb.delete("./firebot/cooldownGroups/" + cooldownGroupName);
       
       delete service.getSelectedBoard().cooldownGroups[cooldownGroupName];
+
+      // Refresh the interactive control cache.
+      ipcRenderer.send('refreshInteractiveCache');
     }
     
     service.deleteViewerGroupFromAllBoards = function(viewerGroup) {
@@ -241,6 +253,10 @@
           }
         });
       });
+
+      // Refresh the backend cache
+      ipcRenderer.send('refreshInteractiveCache');
+      ipcRenderer.send('refreshCommandCache');
     };
 
     service.getScenesForSelectedBoard = function (){

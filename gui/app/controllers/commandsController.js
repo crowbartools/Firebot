@@ -88,9 +88,6 @@
           // When the user clicks "Save"
           $scope.saveChanges = function() {
             $uibModalInstance.close($scope.command);
-
-            // Refresh the interactive control cache.
-            ipcRenderer.send('refreshInteractiveCache');
           };
 
           $scope.changeEffectTypeForEffect = function(effectType, effect) {
@@ -195,10 +192,6 @@
 
           // Refresh cache
           commandsService.refreshCommands();
-
-          // Refresh the interactive control cache.
-          ipcRenderer.send('refreshInteractiveCache');
-
         }
       }
       utilityService.showModal(addCommandModalContext);
