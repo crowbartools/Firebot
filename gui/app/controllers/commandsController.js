@@ -2,12 +2,13 @@
   
  //This handles the commands tab
  const _ = require('underscore')._;
- const EffectType = require('../../lib/common/EffectType.js').CommandEffectType;
  
  angular
    .module('firebotApp')
    .controller('commandsController', function($scope, commandsService, updatesService, utilityService, settingsService, groupsService, effectHelperService) {
-     // Cache commands on app load.
+    var EffectType = require('../../lib/common/EffectType.js').getAllEffectTypes('command');
+    
+    // Cache commands on app load.
      commandsService.refreshCommands();
 
      // Set button view to user setting value.

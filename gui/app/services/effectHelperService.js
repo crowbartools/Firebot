@@ -17,11 +17,7 @@
       var controller = ($scope) => {};
 
       // Swap list to look through based on given type.
-      if(trigger == "interactive"){
-        var EffectList = EffectType.InteractiveEffectType;
-      } else if (trigger == "command"){
-        var EffectList = EffectType.CommandEffectType;
-      }
+      var EffectList = EffectType.getAllEffectTypes(trigger);
       
       // If trigger is still null, that means we dont know it yet. Just pass back the empty controller
       if(trigger == null) {

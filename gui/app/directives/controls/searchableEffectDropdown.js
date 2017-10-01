@@ -1,7 +1,7 @@
 (function(){
   
  //This a wrapped dropdown element that automatically handles the particulars
- const Effect = require('../../lib/interactive/EffectType.js');
+ const Effect = require('../../lib/common/EffectType.js');
  
  angular
    .module('firebotApp')
