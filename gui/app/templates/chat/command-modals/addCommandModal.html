@@ -81,7 +81,8 @@
                     template-url="effect-panel-template.html"
                     heading="{{effect.type}}">
                 <div class="effect-select-wrapper">
-                    <searchable-effect-dropdown trigger="command" selected="effect.type" style="width:50%"></searchable-effect-dropdown>
+                    
+                    <searchable-effect-dropdown trigger="command" selected="effect.type" style="width:100%"></searchable-effect-dropdown>
 
                     <span class="effect-delete-btn clickable" ng-click="removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
                 </div>

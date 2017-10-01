@@ -18,8 +18,7 @@
           <div ng-bind-html="option.name | highlight: $select.search"></div>
           <small class="muted">{{option.description}}</small>
           
-          <!--still working on this-->
-          <span class="muted" style="" uib-tooltip-html="'<b>Dependencies:</b><br /> ' + option.dependencies.join()" tooltip-append-to-body="true"><i class="fal fa-link"></i></span>
+          <span ng-show="option.dependencies.length > 0" class="muted" style="font-size: 12px; position: absolute; top: 4px; right: 4px;" uib-tooltip-html="'<b>Dependencies:</b><br /> ' + $ctrl.getDependencyString(option.dependencies)" tooltip-append-to-body="true"><i class="fal fa-link"></i></span>
           
         </ui-select-choices>
       </ui-select>
@@ -47,6 +46,21 @@
           ctrl.selected = option.name;
           ctrl.onUpdate({option: option});
         }
+
+        ctrl.getDependencyString = function(dependencies) {
+
+          if(dependencies.length < 1) {
+            return "None";
+          }
+
+          const capitalize = ([first,...rest]) => first.toUpperCase() + rest.join('').toLowerCase();
+
+          return dependencies.map((d) => capitalize(d.replace("_", " "))).join();
+        }
+
+        $scope.$watch('selected', function() {
+          console.log("changed!");
+        });
       }   
     });     
  })();
