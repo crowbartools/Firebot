@@ -82,21 +82,14 @@
           }
           if(imageDuration == "" || imageDuration == null){
               var imageDuration = 5;
-          }        
-      
-          // Setup filepath based on compatibility settings.
-          var compatibility = settingsService.getOverlayCompatibility();
-
-          if(compatibility == "Other"){
-              var filepath = "file:///"+filepath;
-          }else{
-              var filepath = "http://absolute/"+filepath;
           }
+                  
       
           // Compile data and send to overlay.
           var data = {
             "event":"image",
-            "filepath":filepath, 
+            "filepath":filepath,
+            "resourceToken": data.resourceToken, 
             "imagePosition":imagePosition, 
             "imageHeight":imageHeight, 
             "imageWidth": imageWidth, 
@@ -135,20 +128,12 @@
               var videoDuration = 5;
           }
       
-          // Setup filepath based on compatibility settings.
-          var compatibility = settingsService.getOverlayCompatibility();
-
-          if(compatibility == "Other"){
-              var filepath = "file:///"+filepath;
-          }else{
-              var filepath = "http://absolute/"+filepath;
-          }
-      
           // Compile data and send to overlay.
           var data = {
             "event":"video",
             "videoType": videoType,
-            "filepath":filepath, 
+            "filepath":filepath,
+            "resourceToken": data.resourceToken, 
             "youtubeId": youtubeId, 
             "videoPosition":videoPosition, 
             "videoHeight":videoHeight, 

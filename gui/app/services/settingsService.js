@@ -212,13 +212,13 @@
     }
     
     service.setWebSocketPort = function(port) {
-      // Verify port is a number. This might be overly safe.
+      // Ensure port is a number.
       if(!Number.isInteger(port)) { return; }
       
       // Save to settings file for app front end
       pushDataToFile('/settings/websocketPort', port);
       
-      var path = dataAccess.getPathInUserData("/user-settings/overlay-settings/port.js");
+      var path = dataAccess.getPathInWorkingDir("/resources/overlay/js/port.js");
 
       // Overwrite the 'port.js' file in the overlay settings folder with the new port
       fs.writeFile(path, `window.WEBSOCKET_PORT = ${port}`, 
