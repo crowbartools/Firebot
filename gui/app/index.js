@@ -15,8 +15,10 @@ const path = require('path');
 require('angular');
 require('angular-animate');
 require('angular-route');
+require('angular-sanitize');
 require('angular-ui-bootstrap');
 require('angularjs-slider');
+require('ui-select');
 
 function boot() {
 

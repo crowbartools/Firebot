@@ -17,9 +17,11 @@
     <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-regular.css">
     <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-light.css">
     <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-brands.css">
-
-
+  
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700" rel="stylesheet">
+    
+    <!-- Custom styles for this template -->
+    <link ng-href="../css/{{appTheme()}}.css" rel="stylesheet">
     
     <script src="../js/plugins/jquery-3.1.1.slim.min.js"></script>
     <script src="../js/plugins/jquery.min.js"></script>
@@ -27,7 +29,7 @@
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/plugins/jquery-ui.min.js"></script>  
     
-    <script type="text/javascript" src="./index.js"></script>
+    <script type="text/javascript" src="./index.js"></script>      
 	  <script type="text/javascript" src="./controllers/mainController.js"></script>
     <script type="text/javascript" src="./controllers/interactiveController.js"></script>
     <script type="text/javascript" src="./controllers/groupsController.js"></script>
@@ -55,9 +57,8 @@
     <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayPosition.js"></script>
     <script type="text/javascript" src="./directives/controls/scriptParameterOption.js"></script>
     <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
-
-    <!-- Custom styles for this template -->
-    <link ng-href="../css/{{appTheme()}}.css" rel="stylesheet">
+    <script type="text/javascript" src="./directives/controls/searchableEffectDropdown.js"></script>
+  
   </head>
   <body>
     <div class='loader-wrapper' ng-if="showSpinner">
