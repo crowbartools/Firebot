@@ -27,17 +27,22 @@
       controller: function($scope, $element, $attrs) {
         var ctrl = this;
         
-        // If there is no value, supply the default.
+        // when the element is initialized
         ctrl.$onInit = function() {
+          
+          // grab the effect definitions for the given trigger
           ctrl.options = Effect.getEffectDefinitions(ctrl.trigger);
-               
+          
+          //find the selected effect in the list     
           var selected = ctrl.options.filter((e) => e.name == ctrl.selected);  
-  
+          
+          //if we have a match, set it as selected  
           if(selected.length > 0) {
             ctrl.selectedEffect = selected[0];
           }
         }
         
+        //when a new effect is selected, set the selected type
         ctrl.selectOption = function(option) {
           ctrl.selected = option.name;
           ctrl.onUpdate({option: option});
