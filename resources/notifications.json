@@ -1,0 +1,8 @@
+[
+    {
+        "id": 0,
+        "title": "Test Notification",
+        "message": "Message test test",
+        "version": "*"
+    }
+]
