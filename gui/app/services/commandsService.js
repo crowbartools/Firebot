@@ -19,10 +19,13 @@
         service.refreshCommands = function() {
             var commandsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
             commandsCache = commandsDb.getData('/');
-            timedGroupsCache = commandsDb.getData('/timedGroups');
 
-            // Refresh the backend command cache.
-            ipcRenderer.send('refreshCommandCache');
+            try{
+                timedGroupsCache = commandsDb.getData('/timedGroups');
+            }catch(err){
+                timedGroupsCache = {};
+            }
+            
         }
 
         // Get an array of command types. Filters out timed groups list.
@@ -72,13 +75,7 @@
                     commandDb.delete("/Active/" + command.commandID);
                 }catch(err){}
                 commandDb.push("/Inactive/" + command.commandID, cleanedCommands);
-
-                // If command was in timed command group, remove it.
-                service.cleanTimedCommand(command.commandID);
             }
-
-            // Refresh commands cache.
-            service.refreshCommands();
         }
 
         // Deletes a command.
@@ -91,9 +88,6 @@
             } else {
                 commandDb.delete('./Inactive/'+cleanedCommands.commandID);
             }
-
-            // Refresh commands cache.
-            service.refreshCommands();
         }
 
         ///////////////
@@ -120,9 +114,6 @@
                     commandDb.delete('./timedGroups/'+previousGroupName);
                 }catch(err){console.log(err)}
             }
-
-            // Refresh our command cache.
-            service.refreshCommands();
         }
 
         // Delete timed Group
@@ -135,29 +126,6 @@
             try{
                 commandDb.delete('./timedGroups/'+timedGroup.groupName);
             }catch(err){console.log(err)}
-
-            // Refresh our command cache.
-            service.refreshCommands();
-        }
-
-        // Remove command from timed groups
-        service.cleanTimedCommand = function(commandID){
-            var commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
-            var timedGroups = commandDb.getData('/timedGroups');
-            for(timedGroup in timedGroups){
-                var timedGroup = timedGroups[timedGroup];
-                var commands = timedGroup.commands;
-
-                console.log(timedGroup);
-
-                // Filter out the command we're removing.
-                cleanedList = commands.filter(function(item) {
-                    return item !== commandID;
-                });
-                
-                //Push cleaned list to db.
-                commandDb.push('/timedGroups/'+timedGroup.groupName+'/commands', cleanedList);
-            }
         }
 
         return service;
