@@ -1,6 +1,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 const resourceTokenManager = require('../lib/resourceTokenManager');
+const {settings} = require('../lib/common/settings-access');
 
 var server = null;
 
@@ -42,7 +43,7 @@ exports.start = function() {
   });
   
   
-  server = api.listen(7473, function () {
+  server = api.listen(settings.getWebServerPort(), function () {
       console.log("REST API listening on port %s.", server.address().port);
   });
 }

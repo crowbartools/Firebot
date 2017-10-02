@@ -75,9 +75,7 @@
         controllerFunc: "firstTimeUseModalController",
         keyboard: false,
         backdrop: 'static',
-        closeCallback: (data) => {
-            console.log(data);
-        }
+        closeCallback: (data) => {}
       }
       service.showModal(firstTimeUseModalContext);
     };
@@ -91,7 +89,7 @@
         // This is the controller to be used for the modal.
         controllerFunc: ($scope, $rootScope, $uibModalInstance, settingsService, instanceName) => {
 
-          $scope.overlayPath = dataAccess.getPathInUserData("/overlay/firebot.html");
+          $scope.overlayPath = `http://localhost:${settingsService.getWebServerPort()}/overlay`
 
           if(instanceName != null && instanceName != "") {
             $scope.showingInstance = true;

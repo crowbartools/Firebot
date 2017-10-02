@@ -205,6 +205,11 @@
     service.setOverlayVersion = function(newVersion) {
       pushDataToFile('/settings/copiedOverlayVersion', newVersion.toString());
     }
+
+    service.getWebServerPort = function() {
+      var serverPort = getDataFromFile('/settings/webServerPort');
+      return serverPort != null ? serverPort : 7473;
+    }
     
     service.getWebSocketPort = function() {
       var websocketPort = getDataFromFile('/settings/websocketPort');

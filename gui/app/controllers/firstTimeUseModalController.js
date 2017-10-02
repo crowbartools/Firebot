@@ -12,9 +12,9 @@
     .controller('firstTimeUseModalController', function ($rootScope, $scope, $uibModalInstance, 
       $q, connectionService, boardService, settingsService, listenerService, groupsService) {
 
-        $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six', 'seven'];
+        $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six'];
         $scope.stepTitles = 
-          ['', 'Import Data', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', '', ''];
+          ['', 'Import Data', 'Get Signed In', 'Sync Controls From Mixer' , 'Your First Board', ''];
         $scope.step = 0;
 
         $scope.isFirstStep = function () {
@@ -79,15 +79,12 @@
               return connectionService.accounts.streamer.isLoggedIn;
             case 4:
               return $scope.hasBoardsLoaded;
-            case 5:
-              return $scope.settingOptions.overlayCompatibility !== "";
           }
           return true;   
         }
 
         $scope.handleNext = function (forceNext) {
             if ($scope.isLastStep()) {
-              settingsService.setOverlayCompatibility($scope.settingOptions.overlayCompatibility);
               $uibModalInstance.close();
             } else {
               switch($scope.step){
@@ -108,9 +105,6 @@
               return "Please sign into your Streamer account.";
             case 4:
               return "A board needs to be added.";
-              break;
-            case 5:
-              return "Please select your Broadcasting software.";
               break;
           }
           return "";   
@@ -172,10 +166,6 @@
             $rootScope.showSpinner = false;
             $scope.setCurrentStep(6);
           });         
-        }
-         
-        $scope.settingOptions = {
-          overlayCompatibility: ""
         }
         
         $scope.streamerAccount = connectionService.accounts.streamer;

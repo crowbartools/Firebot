@@ -301,9 +301,9 @@
         <div ng-hide="showingInstance">      
           <p>Button effects that show things on stream (ie images, videos, etc) need Firebot's overlay file to be added to your broadcasting software.</p>
           <h3>How To Add The Overlay</h3>
-          <p>In your broadcasting software add a <b>BrowserSource</b> (or something named similiar, it varies between each software) to the scenes you desire the overlay to be present.</p>
+          <p>In your broadcasting software, add a <b>Browser/Webpage Source</b></p>
           
-          <p>Then in the settings for this <b>BrowserSource</b>, there should be field for a URL. Copy and paste the file path below into that URL field:</p>
+          <p>Then in the settings for this <b>Browser/Webpage Source</b>, there should be a URL field. Copy and paste the following URL into that field:</p>
         </div>
         <div style="width:75%; margin-bottom:25px;">
           <div class="input-group">
@@ -316,10 +316,6 @@
             Overlay path copied!
           </p>
         </div>
-        
-       <div class="alert alert-info" ng-hide="showingInstance || usingOverlayInstances">
-         Make sure the checkbox designating the URL as a <b>"Local file"</b> is checked, if there is one.
-       </div>
       </div>
       <div class="modal-footer" style="text-align:center;">
         <button class="btn btn-primary" ng-click="dismiss()">Okay</button>
