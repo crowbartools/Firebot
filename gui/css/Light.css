@@ -12257,6 +12257,7 @@ body {
 
 .logins-wrapper {
   width: 160px;
+  min-width: 160px;
   height: 63px;
   background: white;
   border-left: 2px solid #EAECEC;
@@ -12277,6 +12278,29 @@ body {
   height: 42px;
   width: 42px;
   margin-right: 10px;
+}
+
+.notifications-wrapper {
+  margin: 0 40px 0 0px;
+  font-size: 24px;
+  position: relative;
+}
+
+.notification-badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: red;
+  position: absolute;
+  top: 2px;
+  right: -2px;
+  font-size: 11px;
+  color: white;
+  font-weight: 900;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-arrow {

@@ -53,6 +53,7 @@
     <script type="text/javascript" src="./services/effectHelperService.js"></script>
     <script type="text/javascript" src="./services/updatesService.js"></script>
     <script type="text/javascript" src="./services/websocketService.js"></script>
+    <script type="text/javascript" src="./services/notificationService.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
     <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosEnterExitAnimations.js"></script>
@@ -61,6 +62,7 @@
     <script type="text/javascript" src="./directives/controls/scriptParameterOption.js"></script>
     <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
     <script type="text/javascript" src="./directives/controls/searchableEffectDropdown.js"></script>
+    <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
   
   </head>
   <body>
@@ -103,7 +105,7 @@
         </div>
         <a class="fb-nav-link" href="#!groups" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
           <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-user"></i></div>
+          <div class="nav-link-icon"><i class="fal fa-users"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
         </a>
         <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
@@ -191,7 +193,8 @@
 
     <div class="fb-tab-content">
       <div class="tab-header">
-        <span>{{currentTab}}</span>
+        <span style="width:100%">{{currentTab}}</span>
+        <notification-center></notification-center>
         <div class="logins-wrapper" uib-dropdown uib-dropdown-toggle>
           <img class="login-thumbnail" ng-src="{{accounts.streamer.photoUrl}}">
           <img class="login-thumbnail" ng-src="{{accounts.bot.photoUrl}}">          
