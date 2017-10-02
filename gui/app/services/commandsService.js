@@ -19,7 +19,13 @@
         service.refreshCommands = function() {
             var commandsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
             commandsCache = commandsDb.getData('/');
-            timedGroupsCache = commandsDb.getData('/timedGroups');
+
+            try{
+                timedGroupsCache = commandsDb.getData('/timedGroups');
+            }catch(err){
+                timedGroupsCache = {};
+            }
+            
         }
 
         // Get an array of command types. Filters out timed groups list.
