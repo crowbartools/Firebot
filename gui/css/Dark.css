@@ -12956,6 +12956,10 @@ thead th {
   color: white;
 }
 
+.progress {
+  background-color: #c7c7c7;
+}
+
 .select2 > .select2-choice.ui-select-match {
   /* Because of the inclusion of Bootstrap */
   height: 29px;

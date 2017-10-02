@@ -18,7 +18,8 @@
       eventLog: {},
       error: {},
       updateError: {},
-      updateDownloaded: {},  
+      updateDownloaded: {},
+      updateProgress: {},  
       playSound: {},
       showImage: {},
       showVideo: {},
@@ -42,6 +43,7 @@
       ERROR: "error",
       UPDATE_ERROR: "updateError",
       UPDATE_DOWNLOADED: "updateDownloaded",
+      UPDATE_PROGRESS: "updateProgress",
       PLAY_SOUND: "playSound",
       SHOW_IMAGE: "showImage",
       SHOW_VIDEO: "showVideo",
@@ -246,6 +248,15 @@
     ipcRenderer.on('updateDownloaded', function (){
       _.forEach(registeredListeners.updateDownloaded, (listener, key, list) => {
         runListener(listener);
+      });
+    });
+
+     /**
+    * Update progress listener
+    */
+    ipcRenderer.on('updateProgress', function (event, data){
+      _.forEach(registeredListeners.updateProgress, (listener, key, list) => {
+        runListener(listener, data);
       });
     });
     
