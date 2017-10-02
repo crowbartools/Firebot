@@ -2,17 +2,23 @@
   
  // This provides methods for notifications
  
+ const dataAccess = require('../../lib/common/data-access.js');
 
  angular
   .module('firebotApp')
   .factory('notificationService', function ($http) {
+
+    function getNotificationsFile() {
+      return dataAccess.getJsonDbInUserData("/user-settings/notifications");
+    }
+
     var service = {};
 
     /*
     example notification:
     {
       type: "external",
-      id: "",
+      uuid: "",
       title: "Some Title",
       message: "some text",
       read: false,
@@ -23,9 +29,14 @@
     
     var notifications = [];
 
-    service.loadExternalNotifications = function() {
-      $http.get("github.com").then((response) => {
 
+
+
+    service.loadExternalNotifications = function() {
+      $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/dev/resources/notifications.json").then((response) => {
+
+
+        console.log(response.data);
       });
     }
 

@@ -9,7 +9,7 @@ const shell = electron.shell;
 
   app.controller('MainController', function($scope, $rootScope, $timeout, boardService, 
     connectionService, groupsService, utilityService, settingsService, updatesService, 
-    eventLogService, websocketService) {
+    eventLogService, websocketService, notificationService) {
 
       $rootScope.showSpinner = true;
 
@@ -30,7 +30,9 @@ const shell = electron.shell;
 
       $scope.tabIsSelected = function(tabId) {
         return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
-      }    
+      }
+      
+      notificationService.loadExternalNotifications();
       
       /**
       * rootScope functions. This means they are accessable in all scopes in the front end
