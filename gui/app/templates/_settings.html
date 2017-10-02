@@ -110,18 +110,6 @@
               <button class="btn btn-default" ng-click="settings.showOverlayInfoModal()">Get Overlay Path</button>
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Compatibility</div>
-              <div class="setting-description">OBS has a unique way of handling local files in overlays. So, pick which streaming software you're using.</div>
-              <div class="dropdown options-overlay-compat-dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="options-overlay-compat" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.getOverlayCompatibility()}}</span>
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-overlay-compat">
-                  <li><a href ng-click="settings.setOverlayCompatibility('OBS')">OBS</a></li>
-                  <li><a href ng-click="settings.setOverlayCompatibility('Other')">Other</a></li>
-                </ul>
-              </div>
             </div>
           </div>
         </uib-tab>
