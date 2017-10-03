@@ -63,7 +63,6 @@
 
     service.loadAllNotifications = function() {
       loadSavedNotifications();
-      console.log(notifications);
       loadExternalNotifications();
     }
 
@@ -101,25 +100,6 @@
       });
     }
 
-<<<<<<< HEAD
-    service.loadSavedNotifications = function() {
-      notifications = getSavedNotifications();
-    }
-
-    service.addNotification = function(notification, permenantlySave = false) {
-      notification.uuid = uuid();
-      notification.timestamp = new Date();
-      notification.read = false;
-      notifications.push(notification);
-    }
-
-    service.markNotificationAsRead = function(notification) {
-
-
-    }
-
-    /* Helpers */
-=======
     /* Helpers */
 
     function getSavedNotifications() {
@@ -134,24 +114,13 @@
     function pushSavedNotification(notification) {
       pushDataToFile("/savedNotifications[]", notification, true);
     }
->>>>>>> a6dd9b15e5d5394632bf93e95897ea59eac663e9
 
     function updateSavedNotificationAtIndex(notification, index) {
       pushDataToFile(`/savedNotifications[${index}]`, notification, true);
     }
 
-<<<<<<< HEAD
-    function getSavedNotifications() {
-      var savedNotis = getNotificationsFile().getData("/savedNotifications")
-      return savedNotis ? savedNotis : [];
-    }
-
-    function setSavedNotifications(notis) {
-      getNotificationsFile().push("/savedNotifications", notis);
-=======
     function deleteSavedNotificationAtIndex(index) {
       deleteDataFromFile(`/savedNotifications[${index}]`);
->>>>>>> a6dd9b15e5d5394632bf93e95897ea59eac663e9
     }
 
     function getKnownExternalNotifications() {

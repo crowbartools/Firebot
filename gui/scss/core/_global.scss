@@ -354,6 +354,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
 .login-arrow {
@@ -362,29 +363,29 @@ body {
   height: 10px;
 }
 
-.arrow {
+.fb-arrow {
   border: solid $downarrow-color;
   border-width: 0 2px 2px 0;
   display: inline-block;
   padding: 3px;
 }
 
-.arrow.right {
+.fb-arrow.right {
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
 }
 
-.arrow.left {
+.fb-arrow.left {
     transform: rotate(135deg);
     -webkit-transform: rotate(135deg);
 }
 
-.arrow.up {
+.fb-arrow.up {
     transform: rotate(-135deg);
     -webkit-transform: rotate(-135deg);
 }
 
-.arrow.down {
+.fb-arrow.down {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
 }
@@ -482,7 +483,7 @@ body {
 .text-dropdown:hover,.text-dropdown.open {
   background: $text-dropdown-hover-color;
 }
-.text-dropdown .arrow {
+.text-dropdown .fb-arrow {
   width: 5px;
   height: 5px;
   margin-bottom: 3px;
