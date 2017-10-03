@@ -32,7 +32,11 @@ const shell = electron.shell;
         return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
       }
       
-      notificationService.loadExternalNotifications();
+      notificationService.loadAllNotifications();
+
+      $timeout(() => {
+        notificationService.addNotification({ title: 'test', message: 'test'});
+      }, 3000)
       
       /**
       * rootScope functions. This means they are accessable in all scopes in the front end

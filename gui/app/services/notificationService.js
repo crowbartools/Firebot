@@ -39,7 +39,39 @@
     
     var notifications = [];
 
-    service.loadExternalNotifications = function() {
+    service.getNotifications = function() {
+      return notifications;
+    }
+
+    service.getUnreadCount = function() {
+      return notifications.filter((n) => !n.read).length;
+    }
+
+    service.addNotification = function(notification, permenantlySave = false) {
+      notification.uuid = uuid();
+      notification.timestamp = new Date();
+      notification.read = false;
+
+      notification.type = notification.type ? notification.type : NotificationType.MISC;
+      notification.icon = notification.icon ? notification.icon : NotificationIconType.INFO,
+
+      notifications.push(notification);
+      if(permenantlySave) {
+        pushSavedNotification(notification);
+      }
+    }
+
+    service.loadAllNotifications = function() {
+      loadSavedNotifications();
+      console.log(notifications);
+      loadExternalNotifications();
+    }
+
+    function loadSavedNotifications() {
+      notifications = getSavedNotifications();
+    }
+
+    function loadExternalNotifications() {
       $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/dev/resources/notifications.json").then((response) => {
         var externalNotifications = response.data;
 
@@ -49,16 +81,16 @@
 
         externalNotifications.forEach((n) => {
 
-          var previouslyKnownNoti = findKnownExternalNoti(n.id, knownExtNotis);
-          newKnownExtNotis.push({id: n.id, deleted: previouslyKnownNoti.deleted == true});
+          newKnownExtNotis.push(n.id);
 
-          if(previouslyKnownNoti == null) {
+          if(!knownExtNotis.includes(n.id)) {
                        
             service.addNotification({
                 type: NotificationType.EXTERNAL,
                 icon: n.icon ? n.icon : NotificationIconType.INFO,
                 title: n.title,
-                message: n.message
+                message: n.message,
+                externalId: n.id
               }, 
               true);
 
@@ -69,41 +101,60 @@
       });
     }
 
-    service.loadSavedNotifications = function() {
-      
-    }
-
-    service.addNotification = function(notification, permenantlySave = false) {
-      notification.uuid = uuid();
-      notification.timestamp = new Date();
-      notification.read = false;
-      notification.deleted = false;
-      notifications.push(notification);
-    }
-
     /* Helpers */
+
+    function getSavedNotifications() {
+      var saveNotis = getDataFromFile("/savedNotifications")
+      return saveNotis ? saveNotis : [];
+    }
+
+    function setSavedNotifications(notis) {
+      pushDataToFile("/savedNotifications", notis);
+    }
+
+    function pushSavedNotification(notification) {
+      pushDataToFile("/savedNotifications[]", notification, true);
+    }
+
+    function updateSavedNotificationAtIndex(notification, index) {
+      pushDataToFile(`/savedNotifications[${index}]`, notification, true);
+    }
+
+    function deleteSavedNotificationAtIndex(index) {
+      deleteDataFromFile(`/savedNotifications[${index}]`);
+    }
+
+    function getKnownExternalNotifications() {
+      var externalNotiIds = getDataFromFile("/knownExternalNotifications")
+      return externalNotiIds ? externalNotiIds : [];
+    }
+
+    function setKnownExternalNotifications(notis) {
+      pushDataToFile("/knownExternalNotifications", notis);
+    }
 
     function getNotificationsFile() {
       return dataAccess.getJsonDbInUserData("/user-settings/notifications");
     }
 
-    function getKnownExternalNotifications() {
-      var externalNotiIds = getNotificationsFile().getData("/knownExternalNotifications")
-      return externalNotiIds ? externalNotiIds : [];
+    function pushDataToFile(path, data) {
+      try {
+        getNotificationsFile().push(path, data);
+      } catch(err){};
+    }
+    
+    function getDataFromFile(path) {
+      var data = null;
+      try{
+        data = getNotificationsFile().getData(path);      
+      } catch(err){};
+      return data;
     }
 
-    function getKnownExternalNotifications() {
-      var externalNotiIds = getNotificationsFile().getData("/knownExternalNotifications")
-      return externalNotiIds ? externalNotiIds : [];
-    }
-
-    function setKnownExternalNotifications(notis) {
-      getNotificationsFile().push("/knownExternalNotifications", notis);
-    }
-
-    function findKnownExternalNoti(id, knownExternalNotis) {
-      var known = knownExternalNotis.filter((n) => n.id == id);
-      return known;
+    function deleteDataFromFile(path) {
+      try{
+        getNotificationsFile().delete(path);      
+      } catch(err){};
     }
 
     function uuid() {
