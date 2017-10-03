@@ -70,15 +70,19 @@
     }
 
     service.loadSavedNotifications = function() {
-      
+      notifications = getSavedNotifications();
     }
 
     service.addNotification = function(notification, permenantlySave = false) {
       notification.uuid = uuid();
       notification.timestamp = new Date();
       notification.read = false;
-      notification.deleted = false;
       notifications.push(notification);
+    }
+
+    service.markNotificationAsRead = function(notification) {
+
+
     }
 
     /* Helpers */
@@ -87,9 +91,13 @@
       return dataAccess.getJsonDbInUserData("/user-settings/notifications");
     }
 
-    function getKnownExternalNotifications() {
-      var externalNotiIds = getNotificationsFile().getData("/knownExternalNotifications")
-      return externalNotiIds ? externalNotiIds : [];
+    function getSavedNotifications() {
+      var savedNotis = getNotificationsFile().getData("/savedNotifications")
+      return savedNotis ? savedNotis : [];
+    }
+
+    function setSavedNotifications(notis) {
+      getNotificationsFile().push("/savedNotifications", notis);
     }
 
     function getKnownExternalNotifications() {
