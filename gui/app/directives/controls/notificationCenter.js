@@ -9,13 +9,13 @@
        template: `
        <div class="notifications-wrapper">
           <i class="far fa-bell"></i>
-          <div class="notification-badge">1</div>
+          <div ng-if="$ctrl.unreadCount() > 0" class="notification-badge">{{$ctrl.unreadCount()}}</div>
        </div>
        `,
-       controller: function($scope, $element, $attrs) {
+       controller: function($scope, $element, $attrs, notificationService) {
          var ctrl = this;
          
-         
+         ctrl.unreadCount = notificationService.getUnreadCount;
        }   
      });     
  })();
