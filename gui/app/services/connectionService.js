@@ -201,7 +201,7 @@
     service.toggleConnectionToInteractive = function() {
       if(service.connectedToInteractive == true) {
         service.disconnectFromInteractive();
-      } else {
+      } else if (!service.waitingForChatStatusChange) {
         service.connectToInteractive();
       }    
     }
@@ -250,7 +250,7 @@
     service.toggleConnectionToChat = function() {
       if(service.connectedToChat == true) {
         service.disconnectFromChat();
-      } else {
+      } else if (!service.waitingForStatusChange) {
         service.connectToChat();
       }    
     }
