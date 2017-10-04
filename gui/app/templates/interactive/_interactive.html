@@ -1,7 +1,7 @@
 <!--Interactive Tab View-->
 <div class="content-block">
   <div ng-hide="getBoardNames().length == 0" class="content-block-header">
-    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">{{selectedBoard().name}}</span>
+    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;" class="noselect">{{selectedBoard().name}}</span>
     <span class="clickable board-settings-icon" ng-hide="selectedBoard() == null || selectedBoard() == ''" ng-click="showBoardSettingsModal()">
       <i class="fas fa-cog"></i>
     </span>

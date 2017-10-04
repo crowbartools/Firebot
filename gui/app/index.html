@@ -193,11 +193,11 @@
 
     <div class="fb-tab-content">
       <div class="tab-header">
-        <span style="width:100%">{{currentTab}}</span>
+        <span style="width:100%" class="noselect">{{currentTab}}</span>
         <notification-center></notification-center>
-        <div class="logins-wrapper" uib-dropdown uib-dropdown-toggle>
-          <img class="login-thumbnail" ng-src="{{accounts.streamer.photoUrl}}">
-          <img class="login-thumbnail" ng-src="{{accounts.bot.photoUrl}}">          
+        <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
+          <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
+          <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
           <div class="fb-arrow down login-arrow"></div>
           <ul class="dropdown-menu" uib-dropdown-menu>
             <li>

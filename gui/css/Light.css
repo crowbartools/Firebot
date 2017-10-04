@@ -12280,30 +12280,6 @@ body {
   margin-right: 10px;
 }
 
-.notifications-wrapper {
-  margin: 0 40px 0 0px;
-  font-size: 24px;
-  position: relative;
-}
-
-.notification-badge {
-  width: 16px;
-  height: 16px;
-  border-radius: 8px;
-  background: red;
-  position: absolute;
-  top: 2px;
-  right: -2px;
-  font-size: 11px;
-  color: white;
-  font-weight: 900;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
 .login-arrow {
   margin-left: 3px;
   width: 10px;
@@ -13006,6 +12982,83 @@ thead th {
   position: relative;
   z-index: 10000;
   /* The select2 dropdown has a z-index of 9999 */
+}
+
+/* notification center */
+.notifications-wrapper {
+  margin: 0 40px 0 0px;
+  font-size: 24px;
+  position: relative;
+}
+
+.notification-badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: red;
+  position: absolute;
+  top: 2px;
+  right: -2px;
+  font-size: 11px;
+  color: white;
+  font-weight: 900;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.notification-popover {
+  max-width: none;
+  width: 350px;
+  z-index: 1030;
+  border-radius: 2px;
+}
+
+.notification-popover .popover-content {
+  padding-top: 10px;
+}
+
+.noti-preview-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-preview {
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid #BBC1C4;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+}
+
+.notification-preview:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.notification-preview .noti-icon {
+  font-size: 20px;
+}
+
+.notification-preview .noti-text {
+  padding: 0px 20px 0 20px;
+  font-size: 15px;
+}
+
+.notification-preview .noti-open {
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.notification-preview .noti-open:hover {
+  opacity: 0.7;
 }
 
 .interactive-header .board-title a {

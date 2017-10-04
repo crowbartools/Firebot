@@ -59,7 +59,7 @@
         }
 
         $scope.$watch('selected', function() {
-          console.log("changed!");
+          //console.log("changed!");
         });
       }   
     });     

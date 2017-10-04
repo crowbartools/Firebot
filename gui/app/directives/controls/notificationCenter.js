@@ -10,25 +10,70 @@
        bindings: {},
        template: `
        <div class="notifications-wrapper">
-          <div uib-popover-template="$ctrl.templateUrl" popover-placement="bottom" popover-trigger="'outsideClick'" popover-append-to-body="true">
+          <div uib-popover-template="$ctrl.templateUrl" popover-placement="bottom" popover-trigger="'outsideClick'" popover-append-to-body="true" popover-class="notification-popover">
             <i class="far fa-bell" style="cursor:pointer;"></i>
           </div>
-          <div ng-if="$ctrl.unreadCount() > 0" class="notification-badge noselect animated bounceIn">{{$ctrl.unreadCount()}}</div>
+          <div ng-if="$ctrl.unreadCount() > 0" class="notification-badge noselect animated bounceIn">{{$ctrl.unreadCount() > 9 ? '+' : $ctrl.unreadCount()}}</div>
        </div>
        <script type="text/ng-template" id="notificationCenterPopupTemplate.html">
-          <div>Notifications</div>
-          <div ng-repeat="notification in $ctrl.getNotifications() track by notification.uuid">
-            {{notification.title}}
+          <div class="noti-preview-wrapper">
+            <div ng-repeat="notification in $ctrl.getNotifications() track by notification.uuid" class="notification-preview">
+              <span class="noti-icon">
+                <i class="fal fa-info-circle"></i>
+              </span>
+              <span class="noti-text">{{notification.title}}</span>
+              <a class="noti-open" ng-click="$ctrl.openNotification(notification, $index)">
+                <i class="fal fa-external-link"></i>
+              </a>
+            </div>
+          </div>        
+        </script>
+        <script type="text/ng-template" id="notificationModal.html">
+          <div class="modal-header">
+            <h4 class="modal-title">{{notification.title}}</h4>
+          </div>
+          <div class="modal-body" style="text-align:center;" ng-bind-html="htmlNotificationMessage">
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-danger pull-left"  type="button" ng-click="delete()">Delete</button>
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
           </div>
         </script>
        `,
-       controller: function($scope, $element, $attrs, notificationService) {
-         var ctrl = this;
-         
-         ctrl.unreadCount = notificationService.getUnreadCount;
-         ctrl.getNotifications = notificationService.getNotifications;
+      controller: function($scope, $element, $attrs, notificationService, utilityService) {
+        var ctrl = this;
+        
+        ctrl.unreadCount = notificationService.getUnreadCount;
+        ctrl.getNotifications = notificationService.getNotifications;
 
-         ctrl.templateUrl = "notificationCenterPopupTemplate.html"
+        ctrl.templateUrl = "notificationCenterPopupTemplate.html";
+        
+        ctrl.openNotification = function(notification, index) {
+          notificationService.markNotificationAsRead(notification, index);
+          var justUpdatedModalContext = {
+            templateUrl: "notificationModal.html",
+            size: 'sm',
+            resolveObj: {
+              notification: () => notification,
+              index: () => index
+            },
+            controllerFunc: ($scope, $uibModalInstance, $sce, notificationService, notification, index) => {
+              
+              $scope.notification = notification;
+              $scope.htmlNotificationMessage = $sce.trustAsHtml(notification.message);
+
+              $scope.delete = function() {
+                notificationService.deleteNotification(notification, index);
+                $scope.ok();
+              }
+    
+              $scope.ok = function() {
+                $uibModalInstance.dismiss('cancel');
+              };
+            }
+          }
+          utilityService.showModal(justUpdatedModalContext);
+        }
        }   
      });     
  })();

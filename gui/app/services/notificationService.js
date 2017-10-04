@@ -47,18 +47,35 @@
       return notifications.filter((n) => !n.read).length;
     }
 
+    service.markNotificationAsRead = function(notification, index) {
+      notification.read = true;
+      if(notification.saved) {
+        updateSavedNotificationAtIndex(notification, index);
+      }  
+    }
+
+    service.deleteNotification = function(notification, index) {
+      notifications = notifications.filter(n => n.uuid !== notification.uuid);
+      if(notification.saved) {
+        deleteSavedNotificationAtIndex(index);
+      }
+    }
+
     service.addNotification = function(notification, permenantlySave = false) {
       notification.uuid = uuid();
       notification.timestamp = new Date();
       notification.read = false;
 
       notification.type = notification.type ? notification.type : NotificationType.MISC;
-      notification.icon = notification.icon ? notification.icon : NotificationIconType.INFO,
+      notification.icon = notification.icon ? notification.icon : NotificationIconType.INFO;
 
-      notifications.push(notification);
+      
       if(permenantlySave) {
+        notification.saved = true;
         pushSavedNotification(notification);
       }
+
+      notifications.push(notification);
     }
 
     service.loadAllNotifications = function() {
@@ -103,33 +120,33 @@
     /* Helpers */
 
     function getSavedNotifications() {
-      var saveNotis = getDataFromFile("/savedNotifications")
+      var saveNotis = getDataFromFile("/notifications")
       return saveNotis ? saveNotis : [];
     }
 
     function setSavedNotifications(notis) {
-      pushDataToFile("/savedNotifications", notis);
+      pushDataToFile("/notifications", notis);
     }
 
     function pushSavedNotification(notification) {
-      pushDataToFile("/savedNotifications[]", notification, true);
+      pushDataToFile("/notifications[]", notification, true);
     }
 
     function updateSavedNotificationAtIndex(notification, index) {
-      pushDataToFile(`/savedNotifications[${index}]`, notification, true);
+      pushDataToFile(`/notifications[${index}]`, notification, true);
     }
 
     function deleteSavedNotificationAtIndex(index) {
-      deleteDataFromFile(`/savedNotifications[${index}]`);
+      deleteDataFromFile(`/notifications[${index}]`);
     }
 
     function getKnownExternalNotifications() {
-      var externalNotiIds = getDataFromFile("/knownExternalNotifications")
+      var externalNotiIds = getDataFromFile("/knownExternalIds")
       return externalNotiIds ? externalNotiIds : [];
     }
 
     function setKnownExternalNotifications(notis) {
-      pushDataToFile("/knownExternalNotifications", notis);
+      pushDataToFile("/knownExternalIds", notis);
     }
 
     function getNotificationsFile() {
