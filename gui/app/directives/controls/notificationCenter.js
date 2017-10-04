@@ -16,6 +16,9 @@
           <div ng-if="$ctrl.unreadCount() > 0" class="notification-badge noselect animated bounceIn">{{$ctrl.unreadCount() > 9 ? '+' : $ctrl.unreadCount()}}</div>
        </div>
        <script type="text/ng-template" id="notificationCenterPopupTemplate.html">
+          <div class="notification-popover-header">
+            <span>Notifications</span>
+          </div>
           <div class="noti-preview-wrapper">
             <div ng-repeat="notification in $ctrl.getNotifications() track by notification.uuid" class="notification-preview">
               <span class="noti-icon">
@@ -39,7 +42,8 @@
 
             <h4 class="modal-title" style="text-align: center">{{notification.title}}</h4>
           </div>
-          <div class="modal-body" style="text-align:center; padding-top:15px" ng-bind-html="htmlNotificationMessage">
+          <div class="modal-body" style="text-align:center; padding-top:15px">
+            <dynamic-element message='notification.message'></dynamic-element>
           </div>
           <div class="modal-footer" style="text-align:center;position: relative;">
             
@@ -65,10 +69,15 @@
               notification: () => notification,
               index: () => index
             },
-            controllerFunc: ($scope, $uibModalInstance, $sce, notificationService, notification, index) => {
+            controllerFunc: ($scope, $uibModalInstance, $compile, $sce, notificationService, notification, index) => {
               
               $scope.notification = notification;
-              $scope.htmlNotificationMessage = $sce.trustAsHtml(notification.message);
+              
+              var compiledHtml = $compile(notification.message)($scope);
+
+              console.log(compiledHtml);
+              console.log(compiledHtml.html());
+              $scope.htmlNotificationMessage = $sce.trustAsHtml(compiledHtml.html());
 
               $scope.delete = function() {
                 notificationService.deleteNotification(notification, index);
@@ -83,5 +92,21 @@
           utilityService.showModal(justUpdatedModalContext);
         }
        }   
-     });     
+     })
+     .directive('dynamicElement', ['$compile', function ($compile) {
+          return { 
+            restrict: 'E', 
+            scope: {
+                message: "="
+            },
+            replace: true,
+            link: function(scope, element, attrs) {
+                var template = $compile(scope.message)(scope);
+                element.replaceWith(template);               
+            },
+            controller: ['$scope', '$rootScope', function($scope, $rootScope) {
+              $scope.rootScope = $rootScope;
+            }]
+          }
+      }]);     
  })();

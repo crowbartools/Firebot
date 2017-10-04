@@ -1035,8 +1035,18 @@ thead th{
   z-index: 1030;
   border-radius: 2px;
   .popover-content {
-    padding-top: 10px;
+    padding: 0;
   }
+}
+
+.notification-popover-header {
+  height: 48px;
+  background: #f3f5f5;
+  display: flex;
+  align-items: center;
+  font-size: 23px;
+  font-weight: 100;
+  padding-left: 15px;
 }
 
 .noti-preview-wrapper {
