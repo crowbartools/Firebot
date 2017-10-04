@@ -30,12 +30,20 @@
         </script>
         <script type="text/ng-template" id="notificationModal.html">
           <div class="modal-header">
-            <h4 class="modal-title">{{notification.title}}</h4>
+            <div class="noti-more-btn" uib-dropdown uib-dropdown-toggle>
+              <span class="noselect pointer"><i class="far fa-ellipsis-h"></i></span>
+              <ul class="dropdown-menu" uib-dropdown-menu>
+                <li><a href ng-click="delete()" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
+              </ul>
+            </div>
+
+            <h4 class="modal-title" style="text-align: center">{{notification.title}}</h4>
           </div>
-          <div class="modal-body" style="text-align:center;" ng-bind-html="htmlNotificationMessage">
+          <div class="modal-body" style="text-align:center; padding-top:15px" ng-bind-html="htmlNotificationMessage">
           </div>
-          <div class="modal-footer">
-            <button class="btn btn-danger pull-left"  type="button" ng-click="delete()">Delete</button>
+          <div class="modal-footer" style="text-align:center;position: relative;">
+            
+             
             <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
           </div>
         </script>
