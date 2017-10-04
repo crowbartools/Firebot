@@ -1,8 +1,8 @@
 [
     {
         "id": 0,
-        "title": "Test Notification",
-        "message": "Message test test",
+        "title": "The overlay URL has changed!",
+        "message": "As of <b>v4.4.0</b>, the overlay is now hosted on a local web server! <br/> Instead of selecting the path to the local file, you just need to put the following URL for your Browser/Webpage Sources: http://localhost.7473/overlay",
         "version": "*"
     }
 ]
