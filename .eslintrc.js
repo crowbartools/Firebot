@@ -1,4 +1,4 @@
-{
+module.exports = {
     // Extend from recommened eslint rules
     // Indicated by a wrench @ https://eslint.org/docs/rules/
     "extends": "eslint:recommended",
@@ -49,13 +49,13 @@
         "new-cap": 2,                                     // Constructors must start with capital letter
         "no-trailing-spaces": 2,                          // no trailing spaces
         "semi": 2,                                        // semi-colons required
-        "semi-spacing": [2, {before: false, after: true}] // space after semi-colon, no space before
+        "semi-spacing": [2, {before: false, after: true}],// space after semi-colon, no space before
         "semi-style": 2,                                  // See: https://eslint.org/docs/rules/semi-style
         "space-before-blocks": 2,                         // whitespace required before and after {}
         "space-in-parens": [2, "never"],                  // See: https://eslint.org/docs/rules/space-in-parens
         "space-infix-ops": 2,                             // Spaces required areound operators
         "space-unary-ops": 2,                             // See: https://eslint.org/docs/rules/space-unary-ops
-        "switch-colon-spacing": 2                         // Spaces after case colon
+        "switch-colon-spacing": 2,                        // Spaces after case colon
 
         // Deviation from < https://eslint.org/docs/rules/#ecmascript-6 >
         "arrow-spacing": 2,                               // Spaces required around fat-arrow function's "=>"
