@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/SReject/Firebot.svg?branch=travis-ci)](https://travis-ci.org/SReject/Firebot)
+
 # Firebot
 An app that allows streamers on Mixer.com to quickly and easily setup versitile interactive boards.
 
