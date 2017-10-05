@@ -21,7 +21,7 @@
             <span>Notifications</span>
           </div>
           <div class="noti-preview-wrapper">
-            <div ng-repeat="notification in $ctrl.getNotifications() track by notification.uuid" class="notification-card" ng-click="$ctrl.openNotification(notification, $index)">
+            <div ng-repeat="notification in $ctrl.getNotifications() | orderBy: 'created_at':true track by notification.uuid" class="notification-card" ng-click="$ctrl.openNotification(notification, $index)">
               <span class="noti-unread-indicator" ng-class="{'read': notification.read}"></span>
               <span class="noti-icon">
                 <i class="fal fa-info-circle"></i>
