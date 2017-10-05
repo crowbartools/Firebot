@@ -46,7 +46,7 @@
     "angularjs-slider": "^6.2.2",
     "archiver": "^2.0.3",
     "beam-client-node": "^0.13.0",
-    "beam-interactive-node2": "^2.0.0",
+    "beam-interactive-node2": "^2.4.0",
     "body-parser": "^1.18.1",
     "compare-versions": "^3.0.1",
     "dotenv": "^4.0.0",
