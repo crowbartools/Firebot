@@ -10,6 +10,13 @@
        <h3>General Settings</h3>
      </div>
 
+     <div class="input-group settings-active">
+      <label class="control-fb control--checkbox">Active Button
+          <input type="checkbox" ng-model="control.active" aria-label="..." checked>
+          <div class="control__indicator"></div>
+      </label>
+     </div>
+
      <div class="input-group settings-controlid">
        <span class="input-group-addon" id="basic-addon3">Control Id</span>
        <input type="text" class="form-control" disabled aria-describedby="basic-addon3" ng-model="control.controlId">
@@ -17,12 +24,12 @@
 
      <div class="input-group settings-buttontext">
        <span class="input-group-addon" id="basic-addon3">Button Text</span>
-       <input type="text" class="form-control" disabled aria-describedby="basic-addon3" ng-model="control.text">
+       <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="control.text">
      </div>
 
      <div class="input-group settings-sparkcost">
        <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
-       <input type="text" class="form-control" disabled aria-describedby="basic-addon3" type="number" ng-model="control.cost">
+       <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="control.cost">
      </div>
 
      <div class="input-group settings-cooldown">

@@ -201,6 +201,13 @@
             // The model for the button we are editting
             $scope.control = control;
 
+            // Default to active for controls unless told otherwise.
+            console.log($scope.control.active);
+            if($scope.control.active != null){
+              // Don't do anything because active has already been set to something.
+            } else {
+              $scope.control.active = true;
+            }
 
             // Grab the EffectType 'enum' from effect.js
             $scope.effectTypes = EffectType;
