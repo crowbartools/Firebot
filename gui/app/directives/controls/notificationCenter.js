@@ -30,7 +30,7 @@
               <div class="noti-action" uib-dropdown uib-dropdown-toggle ng-click="$event.stopPropagation();" dropdown-append-to-body="true">
                 <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
                 <ul class="dropdown-menu" uib-dropdown-menu>
-                  <li><a href ng-click="delete()" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
+                  <li><a href ng-click="deleteNotification(notification, $index)" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
                 </ul>
               </div>             
             </div>
@@ -39,13 +39,6 @@
 
         <script type="text/ng-template" id="notificationModal.html">
           <div class="modal-header">
-            <div class="noti-more-btn" uib-dropdown uib-dropdown-toggle>
-              <span class="noselect pointer"><i class="far fa-ellipsis-h"></i></span>
-              <ul class="dropdown-menu" uib-dropdown-menu>
-                <li><a href ng-click="delete()" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
-              </ul>
-            </div>
-
             <h4 class="modal-title" style="text-align: center">{{notification.title}}</h4>
           </div>
           <div class="modal-body" style="text-align:center; padding-top:15px">
@@ -65,6 +58,8 @@
         ctrl.getNotifications = notificationService.getNotifications;
 
         ctrl.templateUrl = "notificationCenterPopupTemplate.html";
+
+        $scope.deleteNotification = notificationService.deleteNotification;
         
         ctrl.openNotification = function(notification, index) {
           notificationService.markNotificationAsRead(notification, index);
@@ -81,14 +76,7 @@
               
               var compiledHtml = $compile(notification.message)($scope);
 
-              console.log(compiledHtml);
-              console.log(compiledHtml.html());
               $scope.htmlNotificationMessage = $sce.trustAsHtml(compiledHtml.html());
-
-              $scope.delete = function() {
-                notificationService.deleteNotification(notification, index);
-                $scope.ok();
-              }
     
               $scope.ok = function() {
                 $uibModalInstance.dismiss('cancel');
