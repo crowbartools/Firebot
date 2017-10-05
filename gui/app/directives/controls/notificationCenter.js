@@ -10,27 +10,33 @@
        bindings: {},
        template: `
        <div class="notifications-wrapper">
-          <div uib-popover-template="$ctrl.templateUrl" popover-placement="bottom" popover-trigger="'outsideClick'" popover-append-to-body="true" popover-class="notification-popover">
+          <div uib-popover-template="$ctrl.templateUrl" popover-placement="bottom-right" popover-trigger="'outsideClick'" popover-append-to-body="true" popover-class="notification-popover">
             <i class="far fa-bell" style="cursor:pointer;"></i>
           </div>
           <div ng-if="$ctrl.unreadCount() > 0" class="notification-badge noselect animated bounceIn">{{$ctrl.unreadCount() > 9 ? '+' : $ctrl.unreadCount()}}</div>
        </div>
+
        <script type="text/ng-template" id="notificationCenterPopupTemplate.html">
           <div class="notification-popover-header">
             <span>Notifications</span>
           </div>
           <div class="noti-preview-wrapper">
-            <div ng-repeat="notification in $ctrl.getNotifications() track by notification.uuid" class="notification-preview">
+            <div ng-repeat="notification in $ctrl.getNotifications() track by notification.uuid" class="notification-card" ng-click="$ctrl.openNotification(notification, $index)">
+              <span class="noti-unread-indicator" ng-class="{'read': notification.read}"></span>
               <span class="noti-icon">
                 <i class="fal fa-info-circle"></i>
               </span>
               <span class="noti-text">{{notification.title}}</span>
-              <a class="noti-open" ng-click="$ctrl.openNotification(notification, $index)">
-                <i class="fal fa-external-link"></i>
-              </a>
+              <div class="noti-action" uib-dropdown uib-dropdown-toggle ng-click="$event.stopPropagation();" dropdown-append-to-body="true">
+                <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
+                <ul class="dropdown-menu" uib-dropdown-menu>
+                  <li><a href ng-click="delete()" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
+                </ul>
+              </div>             
             </div>
           </div>        
         </script>
+
         <script type="text/ng-template" id="notificationModal.html">
           <div class="modal-header">
             <div class="noti-more-btn" uib-dropdown uib-dropdown-toggle>

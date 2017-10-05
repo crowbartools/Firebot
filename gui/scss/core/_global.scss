@@ -1029,24 +1029,32 @@ thead th{
   pointer-events: none;
 }
 
+.dropdown-menu {
+  z-index: 2080;
+}
+
 .notification-popover {
   max-width: none;
   width: 350px;
   z-index: 1030;
-  border-radius: 2px;
+  border-radius: 1px;
   .popover-content {
     padding: 0;
+  }
+  .arrow:after {
+    border-bottom-color: #f3f5f5 !important;
   }
 }
 
 .notification-popover-header {
-  height: 48px;
+  height: 40px;
   background: #f3f5f5;
   display: flex;
   align-items: center;
-  font-size: 23px;
+  font-size: 18px;
   font-weight: 100;
   padding-left: 15px;
+  font-family: 'Open Sans', sans-serif !important;
 }
 
 .noti-preview-wrapper {
@@ -1054,17 +1062,16 @@ thead th{
   overflow-y: auto;
 }
 
-.notification-preview {
+.notification-card {
   height: 50px;
   display: flex;
   flex-direction: row;
   border-top: 1px solid #eaedee;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 10px;
-  margin-bottom: 10px;
+  &:hover {
+    cursor: pointer;
+    background-color: #f3f5f5;
+  }
   &:first-child {
     border-top: none;
     padding-top: 0;
@@ -1074,16 +1081,41 @@ thead th{
   }  
   .noti-icon {
     font-size: 20px;
+    padding-left: 10px;
+    i {
+      vertical-align: -3%;
+    }
   }
   .noti-text {
-    padding: 0px 20px 0 20px;
+    padding: 0px 10px 0 10px;
     font-size: 15px;
+    width: 100%;
   }
   .noti-open {
     font-size: 13px;
     cursor: pointer;
     &:hover {
       opacity: 0.7;
+    }
+  }
+  .noti-action {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    font-size: 24px;
+    align-self: flex-start;
+    color: darkgrey;
+    z-index: 1050;
+    &:hover {
+      color: black;
+    }
+  }
+  .noti-unread-indicator {
+    height: 100%;
+    width: 5px;
+    background-color: #4098E0;
+    &.read {
+      background-color:transparent;
     }
   }
 }
