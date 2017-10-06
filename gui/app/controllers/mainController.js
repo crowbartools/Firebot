@@ -34,7 +34,7 @@ const shell = electron.shell;
       
       $timeout(() => {
         notificationService.loadAllNotifications();
-      }, 1000)
+      }, 1000);   
       
       /**
       * rootScope functions. This means they are accessable in all scopes in the front end

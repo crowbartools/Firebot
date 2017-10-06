@@ -19,7 +19,7 @@
       UPDATE: "update",
       INFO: "info",
       TIP: "tip",
-      WARNING: "warning"
+      ALERT: "alert"
     }
 
     service.NotificationIconType = NotificationIconType;
@@ -37,18 +37,25 @@
 
     service.markNotificationAsRead = function(notification) {
       notification.read = true;
-      var index = notifications.indexOf(notification);
+  
       if(notification.saved) {
-        updateSavedNotificationAtIndex(notification, index);
+        var index = getIndexOfUuid(notification.uuid);
+        if(index != null) {
+          updateSavedNotificationAtIndex(notification, index);
+        }       
       }  
     }
 
     service.deleteNotification = function(notification) {
-      var index = notifications.indexOf(notification);
-      notifications = notifications.filter(n => n.uuid !== notification.uuid);
+
       if(notification.saved) {
-        deleteSavedNotificationAtIndex(index);
-      }
+        var index = getIndexOfUuid(notification.uuid);
+        if(index != null) {
+          deleteSavedNotificationAtIndex(index);
+        }       
+      } 
+      
+      notifications = notifications.filter(n => n.uuid !== notification.uuid);
     }
 
     service.addNotification = function(notification, permenantlySave = false) {
@@ -90,14 +97,12 @@
           newKnownExtNotis.push(n.id);
 
           if(!knownExtNotis.includes(n.id)) {
+
+            n.type = NotificationType.EXTERNAL;
+            n.externalId = n.id;
+            n.id = undefined;
                        
-            service.addNotification({
-                type: NotificationType.EXTERNAL,
-                title: n.title,
-                message: n.message,
-                externalId: n.id
-              }, 
-              true);
+            service.addNotification(n, true);
 
           }
         });
@@ -118,11 +123,11 @@
     }
 
     function pushSavedNotification(notification) {
-      pushDataToFile("/notifications[]", notification, true);
+      pushDataToFile("/notifications[]", notification);
     }
 
     function updateSavedNotificationAtIndex(notification, index) {
-      pushDataToFile(`/notifications[${index}]`, notification, true);
+      pushDataToFile(`/notifications[${index}]`, notification);
     }
 
     function deleteSavedNotificationAtIndex(index) {
@@ -144,14 +149,14 @@
 
     function pushDataToFile(path, data) {
       try {
-        getNotificationsFile().push(path, data);
+        getNotificationsFile().push(path, data, true);
       } catch(err){};
     }
     
     function getDataFromFile(path) {
       var data = null;
       try{
-        data = getNotificationsFile().getData(path);      
+        data = getNotificationsFile().getData(path, true);      
       } catch(err){};
       return data;
     }
@@ -160,6 +165,20 @@
       try{
         getNotificationsFile().delete(path);      
       } catch(err){};
+    }
+
+    function getIndexOfUuid(uuid) {
+      var foundIndex = null;
+
+      for(var i = 0; i < notifications.length; i++) {
+        var n = notifications[i];
+        if(n.uuid == uuid) {
+          foundIndex = i;
+          break;
+        }
+      }
+
+      return foundIndex;
     }
 
     function uuid() {

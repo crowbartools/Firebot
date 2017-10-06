@@ -1015,7 +1015,7 @@ thead th{
   width: 16px;
   height: 16px;
   border-radius: 8px;
-  background: red;
+  background: #4098E0;
   position: absolute;
   top: 2px;
   right: -2px;
@@ -1061,7 +1061,13 @@ thead th{
   max-height: 400px;
   overflow-y: auto;
 }
-
+.no-notifications-card {
+  width: 100%;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .notification-card {
   height: 70px;
   display: flex;
