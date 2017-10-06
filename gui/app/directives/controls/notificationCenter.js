@@ -21,16 +21,19 @@
             <span>Notifications</span>
           </div>
           <div class="noti-preview-wrapper">
-            <div ng-repeat="notification in $ctrl.getNotifications() | orderBy: 'created_at':true track by notification.uuid" class="notification-card" ng-click="$ctrl.openNotification(notification, $index)">
+            <div ng-repeat="notification in $ctrl.getNotifications() | orderBy: 'created_at':true track by $index" class="notification-card" ng-click="$ctrl.openNotification(notification)">
               <span class="noti-unread-indicator" ng-class="{'read': notification.read}"></span>
               <span class="noti-icon">
                 <i class="fal fa-info-circle"></i>
               </span>
-              <span class="noti-text">{{notification.title}}</span>
+              <div class="noti-title-wrapper">
+                <span class="noti-icon-text">{{getIconTypeText(notification.icon)}}</span>
+                <span class="noti-text">{{notification.title}}</span>
+              </div>
               <div class="noti-action" uib-dropdown uib-dropdown-toggle ng-click="$event.stopPropagation();" dropdown-append-to-body="true">
                 <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
                 <ul class="dropdown-menu" uib-dropdown-menu>
-                  <li><a href ng-click="deleteNotification(notification, $index)" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
+                  <li><a href ng-click="deleteNotification(notification)" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
                 </ul>
               </div>             
             </div>
@@ -42,11 +45,9 @@
             <h4 class="modal-title" style="text-align: center">{{notification.title}}</h4>
           </div>
           <div class="modal-body" style="text-align:center; padding-top:15px">
-            <dynamic-element message='notification.message'></dynamic-element>
+            <dynamic-element message="notification.message"></dynamic-element>
           </div>
-          <div class="modal-footer" style="text-align:center;position: relative;">
-            
-             
+          <div class="modal-footer" style="text-align:center;position: relative;">   
             <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
           </div>
         </script>
@@ -60,6 +61,21 @@
         ctrl.templateUrl = "notificationCenterPopupTemplate.html";
 
         $scope.deleteNotification = notificationService.deleteNotification;
+
+        $scope.getIconTypeText = function(iconType) {
+          var NotificationIconType = notificationService.NotificationIconType;
+          switch(iconType) {
+            case NotificationIconType.UPDATE:
+              return "UPDATE";
+            case NotificationIconType.WARNING:
+              return "ALERT";
+            case NotificationIconType.TIP:
+              return "TIP";
+            case NotificationIconType.INFO:
+            default:
+              return "INFO"
+          }
+        }
         
         ctrl.openNotification = function(notification, index) {
           notificationService.markNotificationAsRead(notification, index);
@@ -73,10 +89,6 @@
             controllerFunc: ($scope, $uibModalInstance, $compile, $sce, notificationService, notification, index) => {
               
               $scope.notification = notification;
-              
-              var compiledHtml = $compile(notification.message)($scope);
-
-              $scope.htmlNotificationMessage = $sce.trustAsHtml(compiledHtml.html());
     
               $scope.ok = function() {
                 $uibModalInstance.dismiss('cancel');
@@ -95,7 +107,10 @@
             },
             replace: true,
             link: function(scope, element, attrs) {
-                var template = $compile(scope.message)(scope);
+                var htmlWrap = `<div style="width:100%; height: 100%; position: relative;">${scope.message}</div>`.trim();
+                
+                var el = angular.element(htmlWrap);
+                var template = $compile(el)(scope);
                 element.replaceWith(template);               
             },
             controller: ['$scope', '$rootScope', function($scope, $rootScope) {

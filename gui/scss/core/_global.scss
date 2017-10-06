@@ -1063,7 +1063,7 @@ thead th{
 }
 
 .notification-card {
-  height: 50px;
+  height: 70px;
   display: flex;
   flex-direction: row;
   border-top: 1px solid #eaedee;
@@ -1080,14 +1080,14 @@ thead th{
     //margin-bottom: 0;
   }  
   .noti-icon {
-    font-size: 20px;
+    font-size: 27px;
     padding-left: 10px;
+    color: gray;
     i {
       vertical-align: -3%;
     }
   }
-  .noti-text {
-    padding: 0px 10px 0 10px;
+  .noti-text {  
     font-size: 15px;
     width: 100%;
   }
@@ -1097,6 +1097,18 @@ thead th{
     &:hover {
       opacity: 0.7;
     }
+  }
+  .noti-title-wrapper {
+    padding: 0px 10px 0 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .noti-icon-text {
+    text-transform: uppercase;
+    font-size: 9px;
+    font-weight: 600;
+    color: gray;   
   }
   .noti-action {
     padding-left: 10px;

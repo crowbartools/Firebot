@@ -12,8 +12,7 @@
 
     const NotificationType = {
       EXTERNAL: "external",
-      UPDATE: "update",
-      MISC: "misc"
+      INTERNAL: "internal"
     }
 
     const NotificationIconType = {
@@ -23,19 +22,8 @@
       WARNING: "warning"
     }
 
-
-    /*
-    example notification:
-    {
-      type: "external",
-      uuid: "",
-      title: "Some Title",
-      message: "some text",
-      read: false,
-      timestamp: DateTime
-    }
-
-    */
+    service.NotificationIconType = NotificationIconType;
+    service.NotificationType = NotificationType;
     
     var notifications = [];
 
@@ -47,14 +35,16 @@
       return notifications.filter((n) => !n.read).length;
     }
 
-    service.markNotificationAsRead = function(notification, index) {
+    service.markNotificationAsRead = function(notification) {
       notification.read = true;
+      var index = notifications.indexOf(notification);
       if(notification.saved) {
         updateSavedNotificationAtIndex(notification, index);
       }  
     }
 
-    service.deleteNotification = function(notification, index) {
+    service.deleteNotification = function(notification) {
+      var index = notifications.indexOf(notification);
       notifications = notifications.filter(n => n.uuid !== notification.uuid);
       if(notification.saved) {
         deleteSavedNotificationAtIndex(index);
@@ -66,9 +56,8 @@
       notification.timestamp = new Date();
       notification.read = false;
 
-      notification.type = notification.type ? notification.type : NotificationType.MISC;
+      notification.type = notification.type ? notification.type : NotificationType.INTERNAL;
       notification.icon = notification.icon ? notification.icon : NotificationIconType.INFO;
-
       
       if(permenantlySave) {
         notification.saved = true;
@@ -79,6 +68,7 @@
     }
 
     service.loadAllNotifications = function() {
+      notifications = [];
       loadSavedNotifications();
       loadExternalNotifications();
     }
@@ -103,7 +93,6 @@
                        
             service.addNotification({
                 type: NotificationType.EXTERNAL,
-                icon: n.icon ? n.icon : NotificationIconType.INFO,
                 title: n.title,
                 message: n.message,
                 externalId: n.id
