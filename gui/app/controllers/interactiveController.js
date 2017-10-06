@@ -202,7 +202,6 @@
             $scope.control = control;
 
             // Default to active for controls unless told otherwise.
-            console.log($scope.control.active);
             if($scope.control.active != null){
               // Don't do anything because active has already been set to something.
             } else {
@@ -244,6 +243,9 @@
             // When the user clicks "Save", we want to pass the control back to interactiveController
             $scope.saveChanges = function() {
               $uibModalInstance.close($scope.control);
+
+              // Send over control obj to backend to push to mixer if we're live.
+              ipcRenderer.send('mixerButtonUpdate', $scope.control);
 
               // Refresh the interactive control cache.
               ipcRenderer.send('refreshInteractiveCache');
