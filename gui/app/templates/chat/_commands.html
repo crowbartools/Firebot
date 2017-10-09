@@ -33,29 +33,26 @@
                     <div class="tab-pane interactive-button-holder active">
                     <!--Create buttons in each scene -->
                     <!--Grid View-->
-                    <div ng-show="buttonViewModeCommands == 'grid'" class="interactive-control-tile" ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch">
+                    <div ng-show="buttonViewModeCommands == 'grid'" ng-class="{'interactive-control-tile': command}" ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch">
                         <a class="control-edit-btn clickable" ng-click="showAddCommandModal(command)">EDIT</a>
                         <div class="button-name noselect">{{command.commandID}}</div>
                         <div class="button-trigger noselect">{{command.trigger}}</div>
-                        <div class="spark-cost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{command.cost ? command.cost : 0}}</div>
                     </div>
                     <!--List View-->
                     <table ng-show="buttonViewModeCommands == 'list'" class="table table-hover">
                         <thead style="text-transform: uppercase;color: #4a4a4a;">
                             <tr>
-                                <th style="width:18%;">ID</th>
-                                <th style="width:18%;">Trigger</th>
-                                <th style="width:18%;">Cost</th>
-                                <th style="width:18%;">Cooldown</th>
-                                <th style="width:18%;">Permissions</th>
-                                <th style="width:10%;"></th>
+                                <th style="width:23%;">ID</th>
+                                <th style="width:23%;">Trigger</th>
+                                <th style="width:23%;">Cooldown</th>
+                                <th style="width:23%;">Permissions</th>
+                                <th style="width:8%;"></th>
                             </tr>
                         </thead>
                         <tbody style="font-size: 16px;">
-                            <tr ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch">
+                            <tr ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch" ng-class="{'command-list': command}">
                                 <td>{{command.commandID}}</td>
                                 <td>{{command.trigger}}</td>
-                                <td><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{command.cost}}</td>
                                 <td><i class="fa fa-clock-o button-title-spark" aria-hidden="true"></i> {{command.cooldown}}</td>
                                 <td><span ng-repeat="role in command.permissions">{{role}}{{$last ? '' : ', '}}</span></td>
                                 <td><a class="clickable" ng-click="showAddCommandModal(command)"><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a></td>
