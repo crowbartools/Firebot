@@ -6,26 +6,23 @@ const BrowserWindow = electron.BrowserWindow
 // IPC for conveying events between main process and render processes.
 const {ipcMain, shell, dialog} = require('electron')
 
-const {autoUpdater} = require("electron-updater");
-
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
 
 const JsonDb = require('node-json-db');
 
-require('dotenv').config();
+require('dotenv').config()
 
-const {settings} = require('./lib/common/settings-access');
+const GhReleases = require('electron-gh-releases');
+
+const settings = require('./lib/common/settings-access').settings;
 
 const dataAccess = require('./lib/common/data-access.js');
 
 const backupManager = require("./lib/backupManager");
 
 const apiServer = require('./api/apiServer.js');
-
-const autoUpdateManager = require('./lib/autoUpdateManager');
-autoUpdateManager.init();
 
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
@@ -239,7 +236,50 @@ function createWindow () {
     // Unregister all shortcuts.
     mixerConnect.shortcutUnregister();
   });
+  
+  // Run Updater
+  ipcMain.on('downloadUpdate', function(event, uniqueid) {
+    
+    //back up first
+    if(settings.backupBeforeUpdates()) backupManager.startBackup();
+    
+    // Download Update
+    let options = {
+      repo: 'firebottle/firebot',
+      currentVersion: app.getVersion()
+    }
 
+    var updater = new GhReleases(options)
+
+    updater.check((err, status) => {
+      if (!err) {
+        console.log('Should we download an update? '+status);
+
+        // Download the update
+        updater.download();
+      } else {
+        renderWindow.webContents.send('updateError', "Could not start the updater.");
+        console.log(err);
+      }
+    })
+
+    // When an update has been downloaded
+    updater.on('update-downloaded', (info) => {
+      console.log('Updated downloaded. Installing...');
+      //let the front end know and wait a few secs.
+      renderWindow.webContents.send('updateDownloaded');
+      
+      setTimeout(function () {
+        // Restart the app and install the update
+        settings.setJustUpdated(true);
+        
+        updater.install();
+      }, 3*1000);
+    })
+
+    // Access electrons autoUpdater
+    updater.autoUpdater
+  });
   
   // Opens the firebot root folder
   ipcMain.on('openRootFolder', function(event) {

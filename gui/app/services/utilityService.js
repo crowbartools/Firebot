@@ -197,7 +197,6 @@
 
           $scope.downloadHasError = false;
           $scope.errorMessage = "";
-          $scope.downloadPercent = 0;
 
           $scope.downloadComplete = false;
 
@@ -212,12 +211,6 @@
             $scope.errorMessage = errorMessage;
           });
 
-          listenerService.registerListener({type: listenerService.ListenerType.UPDATE_PROGRESS}, (progressObj) => {
-            // the autoupdater had an error
-            $scope.downloadPercent = Math.floor(progressObj.percent);
-          });
-
-
           // Update downloaded listener
           var updateDownloadedListenerRequest = {
             type: listenerService.ListenerType.UPDATE_DOWNLOADED,
@@ -230,13 +223,13 @@
 
           // Start timer for if the download seems to take longer than normal,
           // we want to allow user to close modal.
-          // Currently set to 5 minutes
+          // Currently set to a minute and a half
           $timeout(() => {
             if(!$scope.downloadComplete) {
               $scope.downloadHasError = true;
               $scope.errorMessage = "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
             }
-          }, 300*1000);
+          }, 90*1000);
 
           $scope.dismiss = function() {
             $uibModalInstance.dismiss('cancel');

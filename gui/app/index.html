@@ -371,9 +371,9 @@
       <div class="modal-body" style="text-align:center;">
         <h1>{{downloadComplete ? 'Download complete!' : 'Downloading update...'}}</h1>
         <h3 ng-if="downloadComplete" style="color:darkgray;">Firebot will restart shortly and install the update...</h3>
-        <div style="padding: 35px 0 10px 0;">
-            <uib-progressbar value="downloadPercent" class="progress-striped active" type="info"><b>{{downloadPercent}}%</b></uib-progressbar>
-        </div>  
+        <div style="overflow: hidden;">
+          <div class="loader">Loading...</div>
+        </div>
         <p ng-if="downloadHasError" style="color:red;">
           {{errorMessage}}
         </p>
