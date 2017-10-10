@@ -1,0 +1,45 @@
+<div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Command Settings</h4>
+  </div>
+  <div class="modal-body">
+    <!--put settings stuff here-->
+    <div class="board-cooldown-group-settings">
+        <h3>Timed Command Groups <button class="btn btn-default add-new-cooldown-group" ng-click="showAddOrEditTimedGroupModal()">Add New</button></h3>
+        <div class="board-cooldown-content">
+            <p>Timed groups let you group together commands that will automatically trigger at a set interval.</p>
+            <div class="board-cooldown-groups">
+              <!-- Create timed groups -->
+              <div ng-repeat="timedGroup in getTimedGroupSettings() track by $index" class="fb-tile flex-start light-blue">
+                <div class="edit-btn" ng-click="showAddOrEditTimedGroupModal(timedGroup)"></div>
+                <div class="header">
+                  <div class="title edit-btn-spacer">
+                    {{timedGroup.groupName}}
+                  </div>
+                </div>
+                <div class="content row">
+                  <div class="detail-wrapper">
+                    <div class="detail">
+                      {{timedGroup.commands ? timedGroup.commands.length : 0}}
+                    </div>
+                    <div class="detail-description">
+                      Commands
+                    </div>
+                  </div>
+                  <div class="detail-wrapper">
+                    <div class="detail">
+                      {{timedGroup.timer ? timedGroup.timer : 0}}
+                    </div>
+                    <div class="detail-description">
+                      Mins
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary add-new-board-save" ng-click="close()">Close</button>
+  </div>

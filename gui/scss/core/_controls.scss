@@ -136,6 +136,7 @@
 
 .fb-select {
   height: 37px;
+  color:black;
   border-radius: 3px;
   border: 1px solid #cccccc;
   width: 100%;
@@ -156,4 +157,8 @@
   float:right;
   padding-right:15px;
   cursor: pointer;
+}
+
+.modal-header {
+  position: relative;
 }

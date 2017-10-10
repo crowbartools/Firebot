@@ -6,7 +6,7 @@
  const _ = require('underscore')._;
  const path = require('path');
  const logger = require('../../lib/errorLogging.js');
- const dataAccess = require('../../lib/data-access.js');
+ const dataAccess = require('../../lib/common/data-access.js');
 
  angular
   .module('firebotApp')
@@ -75,9 +75,7 @@
         controllerFunc: "firstTimeUseModalController",
         keyboard: false,
         backdrop: 'static',
-        closeCallback: (data) => {
-            console.log(data);
-        }
+        closeCallback: (data) => {}
       }
       service.showModal(firstTimeUseModalContext);
     };
@@ -91,7 +89,7 @@
         // This is the controller to be used for the modal.
         controllerFunc: ($scope, $rootScope, $uibModalInstance, settingsService, instanceName) => {
 
-          $scope.overlayPath = dataAccess.getPathInUserData("/overlay/firebot.html");
+          $scope.overlayPath = `http://localhost:${settingsService.getWebServerPort()}/overlay`
 
           if(instanceName != null && instanceName != "") {
             $scope.showingInstance = true;
@@ -199,6 +197,7 @@
 
           $scope.downloadHasError = false;
           $scope.errorMessage = "";
+          $scope.downloadPercent = 0;
 
           $scope.downloadComplete = false;
 
@@ -213,6 +212,12 @@
             $scope.errorMessage = errorMessage;
           });
 
+          listenerService.registerListener({type: listenerService.ListenerType.UPDATE_PROGRESS}, (progressObj) => {
+            // the autoupdater had an error
+            $scope.downloadPercent = Math.floor(progressObj.percent);
+          });
+
+
           // Update downloaded listener
           var updateDownloadedListenerRequest = {
             type: listenerService.ListenerType.UPDATE_DOWNLOADED,
@@ -225,13 +230,13 @@
 
           // Start timer for if the download seems to take longer than normal,
           // we want to allow user to close modal.
-          // Currently set to a minute and a half
+          // Currently set to 5 minutes
           $timeout(() => {
             if(!$scope.downloadComplete) {
               $scope.downloadHasError = true;
               $scope.errorMessage = "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
             }
-          }, 90*1000);
+          }, 300*1000);
 
           $scope.dismiss = function() {
             $uibModalInstance.dismiss('cancel');

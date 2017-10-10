@@ -3,7 +3,7 @@
  //This handles groups
  
  const _ = require('underscore')._;
- const dataAccess = require('../../lib/data-access.js');
+ const dataAccess = require('../../lib/common/data-access.js');
 
  angular
   .module('firebotApp')
@@ -60,6 +60,30 @@
         "Moderators",
         "Staff"
       ];
+    }
+
+    service.getAllGroups = function(){
+      var groupList = service.getDefaultGroups();
+      var activeGroups = service.getActiveGroups();
+      var inactiveGroups = service.getInactiveGroups();
+
+      // Push groups to array.
+      for(group in activeGroups){
+        var group = activeGroups[group];
+        groupList.push(group);
+      }
+
+      for(group in inactiveGroups){
+        var group = inactiveGroups[group];
+        groupList.push(group);
+      }
+
+      // Filter out duplicates
+      groupList = groupList.filter(function(elem, pos) {
+        return groupList.indexOf(elem) == pos;
+      })
+
+      return groupList;
     }
 
     service.getActiveGroups = function(){

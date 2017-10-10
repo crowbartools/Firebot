@@ -3,7 +3,7 @@
   //This handles the Interactive tab
 
   const _ = require('underscore')._;
-  const EffectType = require('../../lib/interactive/EffectType.js').EffectType;
+  const EffectType = require('../../lib/common/EffectType.js').InteractiveEffectType;
 
   angular
     .module('firebotApp')
@@ -81,8 +81,8 @@
         ipcRenderer.send('manualButton', controlId);
       }
 
-      $scope.saveCurrentButtomViewMode = function() {
-        settingsService.setButtonViewMode($scope.buttonViewMode);
+      $scope.saveCurrentButtomViewMode = function(type) {
+        settingsService.setButtonViewMode($scope.buttonViewMode, type);
       }
 
       function resetSceneTab() {
@@ -201,6 +201,12 @@
             // The model for the button we are editting
             $scope.control = control;
 
+            // Default to active for controls unless told otherwise.
+            if($scope.control.active != null){
+              // Don't do anything because active has already been set to something.
+            } else {
+              $scope.control.active = true;
+            }
 
             // Grab the EffectType 'enum' from effect.js
             $scope.effectTypes = EffectType;
@@ -222,6 +228,7 @@
               var approvedEffects =  Object.keys(EffectType).map(function(key) {
                     return EffectType[key];
                   });
+
               if(!settingsService.getCustomScriptsEnabled()) {
                 // If there are certain effect types that are available contionally,
                 // we can filter them out here. Currently we only need this for the
@@ -236,6 +243,12 @@
             // When the user clicks "Save", we want to pass the control back to interactiveController
             $scope.saveChanges = function() {
               $uibModalInstance.close($scope.control);
+
+              // Send over control obj to backend to push to mixer if we're live.
+              ipcRenderer.send('mixerButtonUpdate', $scope.control);
+
+              // Refresh the interactive control cache.
+              ipcRenderer.send('refreshInteractiveCache');
             };
 
             $scope.changeEffectTypeForEffect = function(effectType, effect) {

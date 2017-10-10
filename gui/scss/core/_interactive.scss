@@ -35,7 +35,6 @@
   position: relative;
   width: 250px;
 }
-
 .interactive-control-tile {
   margin-top: 20px;
   color: white;
@@ -51,6 +50,9 @@
   justify-content: space-between;
   align-items: center;
   position: relative;
+  &.inactive-command, &.inactive-control{
+    background: $dark-tile-background-color-inactive;
+  }
   .play-button {
     font-size: 45px;
     transition: 0.1s;
@@ -162,6 +164,12 @@
 }
 
 // Hover color for text when switch interactive board to list.
-.table-hover > tbody > tr:hover > td{ 
+.control-list, .command-list{
   color: $dark-background-color;
+  &.inactive-control, &.inactive-command{
+    background: $dark-tile-background-color-inactive;
+    &:hover{
+      background: $dark-tile-background-color-inactive-light;
+    }
+  }
 }

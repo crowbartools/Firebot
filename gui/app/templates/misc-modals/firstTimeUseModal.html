@@ -166,30 +166,9 @@
 						<span>{{selectedBoardName()}}</span>
 					</div>
 				</div>
-			</div>
+			</div>			
 			
 			<div ng-switch-when="six" class="wave">
-				<h2>
-					What broadcasting software do you currently stream with?
-				</h2>
-				<div style="text-align: left; display:flex; justify-content:center;">
-					<div style="margin: 20px 0 30px 0;width:50%;">
-						<label class="control-fb control--radio">OBS
-							<input type="radio" ng-model="settingOptions.overlayCompatibility" value="OBS"/> 
-							<div class="control__indicator"></div>
-						</label>
-						<label class="control-fb control--radio">Other <span class="muted">(XSplit, Wirecast, etc)</span>
-							<input type="radio" ng-model="settingOptions.overlayCompatibility" value="Other"/>
-							<div class="control__indicator"></div>
-						</label>
-					</div>
-				</div>
-				<div class="alert alert-info">
-					We need to ask this because <b>OBS</b> handles local files (for things like pictures, videos, etc) differently than all the other broadcasting sofware.
-				</div>
-			</div>
-			
-			<div ng-switch-when="seven" class="wave">
 				<div style="margin-top: 20px">
 					<img style="width: 80px; height: 80px" class="jump-infinite" src="../images/logo_transparent.png">
 				</div>

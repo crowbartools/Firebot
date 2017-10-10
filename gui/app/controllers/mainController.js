@@ -4,10 +4,12 @@ const electron = require('electron');
 const shell = electron.shell;
 
   var app = angular
-    .module('firebotApp', ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule']);
+    .module('firebotApp', 
+      ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize','ui.select']);
 
-  app.controller('MainController', function($scope, $rootScope, $timeout, boardService, connectionService, groupsService, 
-    utilityService, settingsService, updatesService, eventLogService, websocketService) {
+  app.controller('MainController', function($scope, $rootScope, $timeout, boardService, 
+    connectionService, groupsService, utilityService, settingsService, updatesService, 
+    eventLogService, websocketService, notificationService) {
 
       $rootScope.showSpinner = true;
 
@@ -28,7 +30,11 @@ const shell = electron.shell;
 
       $scope.tabIsSelected = function(tabId) {
         return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
-      }    
+      }
+      
+      $timeout(() => {
+        notificationService.loadAllNotifications();
+      }, 1000);   
       
       /**
       * rootScope functions. This means they are accessable in all scopes in the front end
@@ -168,12 +174,23 @@ const shell = electron.shell;
       */
       $scope.connService = connectionService;
       
+      // Interactive
       $scope.getConnectionMessage = function() {
         var message = ""
         if(connectionService.waitingForStatusChange) {
           connectionService.connectedToInteractive ? message = 'Disconnecting...' : message = 'Connecting...';
         } else {
           connectionService.connectedToInteractive ? message = 'Connected' : message = 'Disconnected';
+        }
+        return message;
+      }
+      // Chat
+      $scope.getChatConnectionMessage = function() {
+        var message = ""
+        if(connectionService.waitingForChatStatusChange) {
+          connectionService.connectedToChat ? message = 'Disconnecting...' : message = 'Connecting...';
+        } else {
+          connectionService.connectedToChat ? message = 'Connected' : message = 'Disconnected';
         }
         return message;
       }
@@ -224,6 +241,12 @@ const shell = electron.shell;
       .when('/groups', {
         templateUrl: './templates/_viewergroups.html',
         controller: 'groupsController'
+      })
+
+      // route for the moderation page
+      .when('/commands', {
+        templateUrl: './templates/chat/_commands.html',
+        controller: 'commandsController'
       })
       
       // route for the moderation page

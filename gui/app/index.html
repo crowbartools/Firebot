@@ -17,9 +17,11 @@
     <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-regular.css">
     <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-light.css">
     <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-brands.css">
-
-
+  
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700" rel="stylesheet">
+    
+    <!-- Custom styles for this template -->
+    <link ng-href="../css/{{appTheme()}}.css" rel="stylesheet">
     
     <script src="../js/plugins/jquery-3.1.1.slim.min.js"></script>
     <script src="../js/plugins/jquery.min.js"></script>
@@ -27,16 +29,19 @@
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/plugins/jquery-ui.min.js"></script>  
     
-    <script type="text/javascript" src="./index.js"></script>
+    <script type="text/javascript" src="./index.js"></script>      
 	  <script type="text/javascript" src="./controllers/mainController.js"></script>
     <script type="text/javascript" src="./controllers/interactiveController.js"></script>
+    <script type="text/javascript" src="./controllers/commandsController.js"></script>
     <script type="text/javascript" src="./controllers/groupsController.js"></script>
     <script type="text/javascript" src="./controllers/moderationController.js"></script>
     <script type="text/javascript" src="./controllers/settingsController.js"></script>
     <script type="text/javascript" src="./controllers/updatesController.js"></script>
     <script type="text/javascript" src="./controllers/firstTimeUseModalController.js"></script>
     <script type="text/javascript" src="./controllers/editBoardSettingsModalController.js"></script>
+    <script type="text/javascript" src="./controllers/editCommandSettingsModalController.js"></script>
     <script type="text/javascript" src="./services/boardService.js"></script>
+    <script type="text/javascript" src="./services/commandsService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/groupsService.js"></script>
     <script type="text/javascript" src="./services/eventLogService.js"></script>
@@ -48,6 +53,7 @@
     <script type="text/javascript" src="./services/effectHelperService.js"></script>
     <script type="text/javascript" src="./services/updatesService.js"></script>
     <script type="text/javascript" src="./services/websocketService.js"></script>
+    <script type="text/javascript" src="./services/notificationService.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
     <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosEnterExitAnimations.js"></script>
@@ -55,9 +61,9 @@
     <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayPosition.js"></script>
     <script type="text/javascript" src="./directives/controls/scriptParameterOption.js"></script>
     <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
-
-    <!-- Custom styles for this template -->
-    <link ng-href="../css/{{appTheme()}}.css" rel="stylesheet">
+    <script type="text/javascript" src="./directives/controls/searchableEffectDropdown.js"></script>
+    <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
+  
   </head>
   <body>
     <div class='loader-wrapper' ng-if="showSpinner">
@@ -75,19 +81,36 @@
         </span>
       </div>
       <div class="nav-links-wrapper">
+        <div class="fb-nav-link-category">
+          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>          
+          <span ng-class="{'contracted': !navExpanded}">Interactive</span>
+        </div>
         <a class="fb-nav-link" href="#" ng-class="{'selected': tabIsSelected('Interactive')}" ng-click="setTab('Interactive')">
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-gamepad"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Interactive</div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Buttons</div>
         </a>
+        <div class="fb-nav-link-category pad-top">
+          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>          
+          <span ng-class="{'contracted': !navExpanded}">Chat</span>
+        </div>
+        <a class="fb-nav-link" href="#!commands" ng-class="{'selected': tabIsSelected('Commands')}" ng-click="setTab('Commands')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Commands</div>
+        </a>
+        <div class="fb-nav-link-category pad-top">  
+          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>        
+          <span ng-class="{'contracted': !navExpanded}">General</span>
+        </div>
         <a class="fb-nav-link" href="#!groups" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
           <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-user"></i></div>
+          <div class="nav-link-icon"><i class="fal fa-users"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
         </a>
         <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
           <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
+          <div class="nav-link-icon"><i class="fal fa-gavel"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Moderation</div>
         </a>
         <a class="fb-nav-link" href="#!settings" ng-class="{'selected': tabIsSelected('Settings')}" ng-click="setTab('Settings')">
@@ -104,43 +127,78 @@
           </div>
         </a>
       </div>
-      <div class='interactive-status-wrapper'>
-       <div class="interative-status-icon" 
-            ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}" 
-            uib-tooltip-template="'connectTooltipTemplate.html'" 
-            tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
-            ng-click="connService.toggleConnectionToInteractive()"
-            ng-hide="connService.waitingForStatusChange">
-         <i class="fal fa-power-off"></i>
-       </div>
-       <div class="interative-status-icon" 
-            style="color:white;" 
-            ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}"
-            ng-show="connService.waitingForStatusChange"
-            uib-tooltip="{{getConnectionMessage()}}" 
-            tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
-            <i class="fal fa-sync fa-spin"></i>
-       </div>
-       <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
-         <span>Interactive Status:</span>
-       </div>
-       <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
-         <span>{{getConnectionMessage()}}</span>
-       </div>
+
+      <div class="connection-status-wrapper">
+          <div class='interactive-status-wrapper'>
+            <div class="interative-status-icon" 
+                  ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}" 
+                  uib-tooltip-template="'connectTooltipTemplate.html'" 
+                  tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
+                  ng-click="connService.toggleConnectionToChat()"
+                  ng-hide="connService.waitingForChatStatusChange">
+              <i class="fal fa-power-off"></i>
+            </div>
+            <div class="interative-status-icon" 
+                  style="color:white;" 
+                  ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}"
+                  ng-show="connService.waitingForChatStatusChange"
+                  uib-tooltip="{{getChatConnectionMessage()}}" 
+                  tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
+                  <i class="fal fa-sync fa-spin"></i>
+            </div>
+            <div class="interactive-status-text">
+              <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
+                <span>Chat:</span>
+              </div>
+              <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
+                <span>{{getChatConnectionMessage()}}</span>
+              </div>
+            </div>
+        </div>
+  
+        <div class='interactive-status-wrapper'>
+          <div class="interative-status-icon" 
+                ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}" 
+                uib-tooltip-template="'connectTooltipTemplate.html'" 
+                tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
+                ng-click="connService.toggleConnectionToInteractive()"
+                ng-hide="connService.waitingForStatusChange">
+            <i class="fal fa-power-off"></i>
+          </div>
+          <div class="interative-status-icon" 
+                style="color:white;" 
+                ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}"
+                ng-show="connService.waitingForStatusChange"
+                uib-tooltip="{{getConnectionMessage()}}" 
+                tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
+                <i class="fal fa-sync fa-spin"></i>
+          </div>
+          <div class="interactive-status-text">
+            <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
+              <span>Interactive:</span>
+            </div>
+            <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
+              <span>{{getConnectionMessage()}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-link" 
+              ng-class="{'contracted': !navExpanded}"
+              ng-click="showAboutFirebotModal()">
+          About
+        </div>
       </div>
-      <div class="about-link" 
-           ng-class="{'contracted': !navExpanded}"
-           ng-click="showAboutFirebotModal()">
-        About
-      </div>
+
     </div>  
+
     <div class="fb-tab-content">
       <div class="tab-header">
-        <span>{{currentTab}}</span>
-        <div class="logins-wrapper" uib-dropdown uib-dropdown-toggle>
-          <img class="login-thumbnail" ng-src="{{accounts.streamer.photoUrl}}">
-          <img class="login-thumbnail" ng-src="{{accounts.bot.photoUrl}}">          
-          <div class="arrow down login-arrow"></div>
+        <span style="width:100%" class="noselect">{{currentTab}}</span>
+        <notification-center></notification-center>
+        <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
+          <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
+          <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
+          <div class="fb-arrow down login-arrow"></div>
           <ul class="dropdown-menu" uib-dropdown-menu>
             <li>
               <a href ng-click="showManageLoginsModal()"><span style="vertical-align:-11.5%;"><i class="fal fa-sign-in"></i></span> Manage logins</a>
@@ -227,13 +285,12 @@
         <h5><b>Contributors</b></h5> 
         <div>
           <div>Firebottle</div>
-          <div>ebiggz</div>
+          <div>ebiggz (The Optimizer)</div>
           <div>ebrayton</div>
           <div>Kateract</div>
           <div>ThePerry</div>
+          <div>Skriglitz</div>
           <div>Nitrocell</div>
-	        <div>Skriglitz</div>
-          <div>DeekyJay <span style="color:gray; font-size: 12px;">(Interactive v1)</span></div>
         </div>
       </div>
     </script>
@@ -247,9 +304,9 @@
         <div ng-hide="showingInstance">      
           <p>Button effects that show things on stream (ie images, videos, etc) need Firebot's overlay file to be added to your broadcasting software.</p>
           <h3>How To Add The Overlay</h3>
-          <p>In your broadcasting software add a <b>BrowserSource</b> (or something named similiar, it varies between each software) to the scenes you desire the overlay to be present.</p>
+          <p>In your broadcasting software, add a <b>Browser/Webpage Source</b></p>
           
-          <p>Then in the settings for this <b>BrowserSource</b>, there should be field for a URL. Copy and paste the file path below into that URL field:</p>
+          <p>Then in the settings for this <b>Browser/Webpage Source</b>, there should be a URL field. Copy and paste the following URL into that field:</p>
         </div>
         <div style="width:75%; margin-bottom:25px;">
           <div class="input-group">
@@ -262,10 +319,6 @@
             Overlay path copied!
           </p>
         </div>
-        
-       <div class="alert alert-info" ng-hide="showingInstance || usingOverlayInstances">
-         Make sure the checkbox designating the URL as a <b>"Local file"</b> is checked, if there is one.
-       </div>
       </div>
       <div class="modal-footer" style="text-align:center;">
         <button class="btn btn-primary" ng-click="dismiss()">Okay</button>
@@ -318,9 +371,9 @@
       <div class="modal-body" style="text-align:center;">
         <h1>{{downloadComplete ? 'Download complete!' : 'Downloading update...'}}</h1>
         <h3 ng-if="downloadComplete" style="color:darkgray;">Firebot will restart shortly and install the update...</h3>
-        <div style="overflow: hidden;">
-          <div class="loader">Loading...</div>
-        </div>
+        <div style="padding: 35px 0 10px 0;">
+            <uib-progressbar value="downloadPercent" class="progress-striped active" type="info"><b>{{downloadPercent}}%</b></uib-progressbar>
+        </div>  
         <p ng-if="downloadHasError" style="color:red;">
           {{errorMessage}}
         </p>
@@ -329,5 +382,6 @@
       <div class="modal-footer">
       </div>
     </script>
+  
   </body>
 </html>

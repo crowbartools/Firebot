@@ -1,13 +1,13 @@
 <!--Interactive Tab View-->
 <div class="content-block">
   <div ng-hide="getBoardNames().length == 0" class="content-block-header">
-    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">{{selectedBoard().name}}</span>
+    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;" class="noselect">{{selectedBoard().name}}</span>
     <span class="clickable board-settings-icon" ng-hide="selectedBoard() == null || selectedBoard() == ''" ng-click="showBoardSettingsModal()">
       <i class="fas fa-cog"></i>
     </span>
     <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
       <span class="noselect pointer">CHANGE BOARD</span>
-      <div class="arrow down"></div>
+      <div class="fb-arrow down"></div>
       <ul class="dropdown-menu" uib-dropdown-menu>
         <li ng-repeat="boardName in getBoardNames()">
           <a href ng-click="switchToBoard(boardName)">{{boardName}}</a>
@@ -28,8 +28,8 @@
           <span class="scenes-title">SCENES</span>
           <div class="scene-tools">
             <div class="btn-group" style="margin-right: 15px">
-              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" ng-click="saveCurrentButtomViewMode()" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
-              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'list'" ng-click="saveCurrentButtomViewMode()" uib-tooltip="Button View: List" tooltip-append-to-body="true"><i class="fas fa-list"></i></label>
+              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" ng-click="saveCurrentButtomViewMode('interactive')" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
+              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'list'" ng-click="saveCurrentButtomViewMode('interactive')" uib-tooltip="Button View: List" tooltip-append-to-body="true"><i class="fas fa-list"></i></label>
             </div>
             <div class="searchbar-wrapper">
               <input type="text" class="form-control" placeholder="Search controls" ng-model="buttonSearch" style="padding-left: 27px;">
@@ -43,7 +43,7 @@
             <div class="tab-pane interactive-button-holder active">
               <!--Create buttons in each scene -->
               <!--Grid View-->
-              <div ng-show="buttonViewMode == 'grid'" class="interactive-control-tile" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
+              <div ng-show="buttonViewMode == 'grid'" ng-class="{'interactive-control-tile': control, 'inactive-control' : !control.active && control.active != null}" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
                 <a ng-hide="control.kind ==='joystick'" class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">EDIT</a>
                 <a ng-show="control.kind ==='joystick'" class="info-btn" tooltip-append-to-body="true" uib-tooltip="Joysticks will automatically control your mouse when the board is connected."><i class="fal fa-info-circle"></i></a>                
                 <div ng-hide="control.kind ==='joystick'" ng-mouseenter="setHoverOverControlId(control.controlId)" ng-mouseleave="setHoverOverControlId('')" class="button-name noselect" ng-class="{ 'muted' : !control.text || isHoverOverControlName(control.controlId) }">{{getControlIdOrName(control)}}</div>
@@ -65,7 +65,7 @@
                   </tr>
                 </thead>
                 <tbody style="font-size: 16px;">
-                  <tr ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
+                  <tr ng-class="{'control-list': control, 'inactive-control' : !control.active && control.active != null}" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
                     <td>
                       <a ng-hide="control.kind ==='joystick'" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle clickable"></i></a>
                       <a ng-show="control.kind ==='joystick'"><img height="18" src="../images/joystick-black.svg"></img></a>

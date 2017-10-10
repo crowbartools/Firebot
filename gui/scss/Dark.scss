@@ -28,6 +28,8 @@ $tile-text-faded-color: whitesmoke;
 $tile-border: 3px solid $light-background-color + 20%;
 
 $dark-tile-background-color:linear-gradient(16deg, #022442, #124b7d);
+$dark-tile-background-color-inactive: #A9A9A9;
+$dark-tile-background-color-inactive-light: #cecece;
 $light-tile-background-color:linear-gradient(16deg, #339FC0, #46AFC6);
 $light-tile-header-background-color:linear-gradient(16deg, #2A8FAE, #45A8BF);
 

@@ -3,8 +3,8 @@
  // This provides helper methods for control effects
  
  const _ = require('underscore')._;
- const dataAccess = require('../../lib/data-access.js');
- const EffectType = require('../../lib/interactive/EffectType.js').EffectType;
+ const dataAccess = require('../../lib/common/data-access.js');
+ const EffectType = require('../../lib/common/EffectType.js');
 
  angular
   .module('firebotApp')
@@ -12,13 +12,21 @@
     var service = {};
       
     // Returns a controller to be used for the template of a given effectype
-    service.getControllerForEffectTypeTemplate = function(effectType) {
+    service.getControllerForEffectTypeTemplate = function(trigger, effectType) {
       // Default empty controller. We can override it in the switch statement below.
       var controller = ($scope) => {};
+
+      // Swap list to look through based on given type.
+      var EffectList = EffectType.getEffectDictionary(trigger);
+      
+      // If trigger is still null, that means we dont know it yet. Just pass back the empty controller
+      if(trigger == null) {
+        return controller;
+      }
       
       switch(effectType) {
         
-        case EffectType.HTML: 
+        case EffectList.HTML:
           controller = ($scope, utilityService) => {
             
             $scope.showOverlayInfoModal = function(overlayInstance) {
@@ -27,7 +35,7 @@
           }
           break;    
         
-        case EffectType.PLAY_SOUND:
+        case EffectList.PLAY_SOUND:
           controller = ($scope, listenerService) => {
             
             var uuid = _.uniqueId();
@@ -50,7 +58,7 @@
           };
           break;
           
-        case EffectType.SHOW_IMAGE:
+        case EffectList.SHOW_IMAGE:
           controller = ($scope, listenerService, utilityService) => {
             
             $scope.imagePositions = [
@@ -85,7 +93,7 @@
           };
           break;
         
-        case EffectType.SHOW_VIDEO:
+        case EffectList.SHOW_VIDEO:
           controller = ($scope, listenerService, utilityService) => {
             
             $scope.showOverlayInfoModal = function(overlayInstance) {
@@ -160,7 +168,7 @@
           };
           break;
 
-        case EffectType.API_BUTTON:
+        case EffectList.API_BUTTON:
           controller = ($scope) => {
 
             $scope.apiTypes = [
@@ -178,7 +186,7 @@
           };
           break;
 
-        case EffectType.CHANGE_GROUP:
+        case EffectList.CHANGE_GROUP:
           controller = ($scope, groupsService) => {
 
             // Get viewer groups and push group name to scope.
@@ -187,7 +195,7 @@
           };
           break;
 
-        case EffectType.CHANGE_SCENE:
+        case EffectList.CHANGE_SCENE:
           controller = ($scope, groupsService, boardService) => {
 
             // Make the Change Scene option user friendly text.
@@ -226,7 +234,7 @@
           };
           break;
 
-        case EffectType.COOLDOWN:
+        case EffectList.COOLDOWN:
           controller = ($scope, boardService) => {
           
             // Get all control id's in an array so we can add checkboxes.
@@ -251,7 +259,7 @@
           };
           break;
 
-        case EffectType.CELEBRATION:
+        case EffectList.CELEBRATION:
           controller = ($scope) => {
 
             $scope.celebrationTypes = [
@@ -261,7 +269,7 @@
           };
           break;
           
-        case EffectType.DICE:
+        case EffectList.DICE:
           controller = ($scope) => {
 
             // Default result type to 'sum'
@@ -270,7 +278,7 @@
           };
           break;
 
-        case EffectType.CUSTOM_SCRIPT:
+        case EffectList.CUSTOM_SCRIPT:
           controller = ($scope) => {
             
             $scope.isLoadingParameters = true;
@@ -368,7 +376,7 @@
             
           break;
         
-        case EffectType.GAME_CONTROL:
+        case EffectList.GAME_CONTROL:
           controller = ($scope) => {
 
             $scope.validControls = [
@@ -497,7 +505,7 @@
     service.getTemplateFilePathForEffectType = function(effectType) {
       var normalizedEffectType = ""
       if(effectType != null) {
-        normalizedEffectType = effectType.toLowerCase().replace(' ', '-');
+        normalizedEffectType = effectType.toLowerCase().replace(/ /g, '-');
       } else {
         normalizedEffectType = "no-effect-type-provided";
       }

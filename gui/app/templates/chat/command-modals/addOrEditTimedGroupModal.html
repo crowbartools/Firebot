@@ -1,0 +1,57 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" ng-click="dismiss()">&times;</span></button>
+    <h4 class="modal-title" id="newCooldownGroupLabel">{{isNewGroup ? 'Add New Timed Group' : 'Edit Timed Group - ' + timedGroup.groupName}}</h4>
+</div>
+<div class="modal-body">
+    <div class="general-button-settings">
+        <div class="settings-title">
+            <h3>General Settings</h3>
+        </div>
+        <div class="input-group settings-commandGroup-active">
+            <label class="control-fb control--checkbox">Active Group
+                <input type="checkbox" ng-model="timedGroup.active" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+        <div class="input-group settings-commandGroup-groupName">
+            <span class="input-group-addon">Group Name</span>
+            <input type="text" class="form-control" ng-model="timedGroup.groupName">
+        </div>
+        <div class="input-group settings-commandGroup-timer">
+            <span class="input-group-addon">Timer(min)</span>
+            <input type="number" class="form-control" ng-model="timedGroup.timer">
+        </div>
+        <div class="input-group settings-commandGroup-random">
+            <label class="control-fb control--checkbox">Randomize
+                <input type="checkbox" ng-model="timedGroup.randomize" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+
+    </div>
+
+    <div class="cooldown-group-button-container">
+        <h3>Which commands will we loop through?</h3>
+        <div class="searchbar-wrapper">
+        <input type="text" class="form-control" placeholder="Search commands" ng-model="commandSearch" style="padding-left: 27px;">
+        <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+        </div>
+        <div class="cooldown-group-buttons">
+        <div ng-repeat="commandID in allCommandIds | filter:commandSearch" class="cooldown-list-btn-wrapper">
+            <label class="control-fb control--checkbox" style="margin-bottom: 0">{{commandID}}
+            <input type="checkbox" ng-click="updateCheckedArrayWithElement(timedGroup.commands, commandID)" ng-checked="arrayContainsElement(timedGroup.commands, commandID)"/>
+            <div class="control__indicator"></div>
+            </label>
+        </div>
+        </div>
+        <div class="cooldown-group-button-reset">
+        <button class="btn btn-warning" ng-click="timedGroup.commands = []">Uncheck all</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger remove-cooldown-group pull-left" ng-click="delete()">Delete</button>
+    <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary save-cooldown-group" ng-click="save()">Save Changes</button>
+</div>

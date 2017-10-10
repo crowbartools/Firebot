@@ -6,23 +6,26 @@ const BrowserWindow = electron.BrowserWindow
 // IPC for conveying events between main process and render processes.
 const {ipcMain, shell, dialog} = require('electron')
 
+const {autoUpdater} = require("electron-updater");
+
 const path = require('path')
 const url = require('url')
 const fs = require('fs')
 
 const JsonDb = require('node-json-db');
 
-require('dotenv').config()
+require('dotenv').config();
 
-const GhReleases = require('electron-gh-releases');
+const {settings} = require('./lib/common/settings-access');
 
-const settings = require('./lib/interactive/settings-access').settings;
-
-const dataAccess = require('./lib/data-access.js');
+const dataAccess = require('./lib/common/data-access.js');
 
 const backupManager = require("./lib/backupManager");
 
 const apiServer = require('./api/apiServer.js');
+
+const autoUpdateManager = require('./lib/autoUpdateManager');
+autoUpdateManager.init();
 
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
@@ -100,8 +103,8 @@ let mainWindow
 function createWindow () {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-      width: 1200,
-      height: 650,
+      width: 1280,
+      height: 720,
       minWidth: 600,
       icon: path.join(__dirname, './gui/images/logo.ico'),
       show: false
@@ -161,21 +164,12 @@ function createWindow () {
       dataAccess.makeDirInUserData("/backups");
     });
 
-    // Create the overlay settings folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/overlay-settings/")
-    .then((resolve) => {
-      console.log("Can't find the overlay-settings folder, creating one now...");
-      dataAccess.makeDirInUserData("/user-settings/overlay-settings");
-    });
-    
-    // Create the port.js file if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/overlay-settings/port.js")
-    .then((resolve) => {
-      dataAccess.writeFileInUserData(
-        '/user-settings/overlay-settings/port.js', 
-        `window.WEBSOCKET_PORT = 8080`,
-        () => { console.log(`Set overlay port to: 8080`)});
-    });  
+    // Update the port.js file
+    var port = settings.getWebSocketPort();
+    dataAccess.writeFileInWorkingDir(
+      '/resources/overlay/js/port.js', 
+      `window.WEBSOCKET_PORT = ${port}`,
+      () => { console.log(`Set overlay port to: ${port}`)});  
 
     // Create the controls folder if it doesn't exist.
     dataAccess.userDataPathExists("/user-settings/controls")
@@ -190,42 +184,13 @@ function createWindow () {
       console.log("Can't find the logs folder, creating one now...");
       dataAccess.makeDirInUserData("/user-settings/logs");
     });
-    
-    var deleteFolderRecursive = function(path) {
-      if(path == null || path.toString().trim() == "/" || path.toString().trim() == "") { return; }
-      if( fs.existsSync(path) ) {
-        fs.readdirSync(path).forEach(function(file,index){
-          var curPath = path + "/" + file;
-          if(fs.lstatSync(curPath).isDirectory()) { // recurse
-            deleteFolderRecursive(curPath);
-          } else { // delete file
-            fs.unlinkSync(curPath);
-          }
-        });
-        fs.rmdirSync(path);
-      }
-    };
-    
-    
-    var overlayFolderExists = dataAccess.userDataPathExistsSync("/overlay/");
-    var appVersion = electron.app.getVersion();
-    if(!overlayFolderExists || settings.getOverlayVersion() !== appVersion) {
-      
-    
-      var source = dataAccess.getPathInWorkingDir("/resources/overlay");
-      var destination = dataAccess.getPathInUserData("/overlay");  
-        
-      deleteFolderRecursive(destination);
-      console.log("Deleting old overlay folder");  
-      ncp(source, destination, { clobber: true }, function (err) {
-       if (err) {
-         console.log("Error copying Overlay folder to user data!");
-         return console.error(err);
-       }
-       settings.setOverlayVersion(appVersion);
-       console.log('Copied overlay folder to user data.');
-      });
-    }  
+
+    // Create the chat folder if it doesn't exist.
+    dataAccess.userDataPathExists("/user-settings/chat")
+    .then((resolve) => {
+      console.log("Can't find the chat folder, creating one now...");
+      dataAccess.makeDirInUserData("/user-settings/chat");
+    });
     
     createWindow();
     
@@ -274,50 +239,7 @@ function createWindow () {
     // Unregister all shortcuts.
     mixerConnect.shortcutUnregister();
   });
-  
-  // Run Updater
-  ipcMain.on('downloadUpdate', function(event, uniqueid) {
-    
-    //back up first
-    if(settings.backupBeforeUpdates()) backupManager.startBackup();
-    
-    // Download Update
-    let options = {
-      repo: 'firebottle/firebot',
-      currentVersion: app.getVersion()
-    }
 
-    var updater = new GhReleases(options)
-
-    updater.check((err, status) => {
-      if (!err) {
-        console.log('Should we download an update? '+status);
-
-        // Download the update
-        updater.download();
-      } else {
-        renderWindow.webContents.send('updateError', "Could not start the updater.");
-        console.log(err);
-      }
-    })
-
-    // When an update has been downloaded
-    updater.on('update-downloaded', (info) => {
-      console.log('Updated downloaded. Installing...');
-      //let the front end know and wait a few secs.
-      renderWindow.webContents.send('updateDownloaded');
-      
-      setTimeout(function () {
-        // Restart the app and install the update
-        settings.setJustUpdated(true);
-        
-        updater.install();
-      }, 3*1000);
-    })
-
-    // Access electrons autoUpdater
-    updater.autoUpdater
-  });
   
   // Opens the firebot root folder
   ipcMain.on('openRootFolder', function(event) {
@@ -368,5 +290,5 @@ function createWindow () {
 // code. You can also put them in separate files and require them here.
 
 // Interactive handler
-const mixerConnect = require('./lib/interactive/mixer-interactive.js');
+const mixerConnect = require('./lib/common/mixer-interactive.js');
 

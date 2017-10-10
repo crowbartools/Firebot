@@ -71,6 +71,9 @@
            
            $scope.saveChanges = function() {
              $uibModalInstance.close();
+
+              // Refresh the interactive control cache.
+              ipcRenderer.send('refreshInteractiveCache');
            };
            
            $scope.updateCheckedArrayWithElement = function(array, element) {
@@ -96,6 +99,9 @@
            
            $scope.save = function() {
              $uibModalInstance.close($scope.scene);
+
+             // Refresh the interactive control cache.
+             ipcRenderer.send('refreshInteractiveCache');
            };   
            
            // When they hit cancel or click outside the modal, we dont want to do anything
@@ -145,6 +151,9 @@
            $scope.save = function() {
              if($scope.cooldownGroup.groupName != null && $scope.cooldownGroup.groupName != "") {
                 $uibModalInstance.close({ shouldDelete: false, newCooldownGroup: $scope.cooldownGroup });
+
+                // Refresh the interactive control cache.
+                ipcRenderer.send('refreshInteractiveCache');
              }
            };
            
@@ -167,7 +176,10 @@
              boardService.deleteCooldownGroupForCurrentBoard(previousName, cooldownGroup);
            } else {
              boardService.saveCooldownGroupForCurrentBoard(previousName, response.newCooldownGroup);
-           }           
+           }     
+
+            // Refresh the interactive control cache.
+            ipcRenderer.send('refreshInteractiveCache'); 
          },
          resolveObj: {
            cooldownGroup: () => {

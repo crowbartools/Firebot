@@ -2,7 +2,7 @@
   
  //This handles settings access for frontend
  
- const dataAccess = require('../../lib/data-access.js');
+ const dataAccess = require('../../lib/common/data-access.js');
  
  const _ = require('underscore')._;
  const fs = require('fs');
@@ -180,13 +180,21 @@
       pushDataToFile('/settings/justUpdated', justUpdated === true)
     }
     
-    service.getButtonViewMode = function() {
-      var buttonViewMode = getDataFromFile('/settings/buttonViewMode');
+    service.getButtonViewMode = function(type) {
+      if(type == "commands"){
+        var buttonViewMode = getDataFromFile('/settings/buttonViewModeCommands');
+      } else {
+        var buttonViewMode = getDataFromFile('/settings/buttonViewMode');
+      }
       return buttonViewMode != null ? buttonViewMode : 'grid';
     }
     
-    service.setButtonViewMode = function(buttonViewMode) {
-      pushDataToFile('/settings/buttonViewMode', buttonViewMode)
+    service.setButtonViewMode = function(buttonViewMode, type) {
+      if(type == "commands"){
+        pushDataToFile('/settings/buttonViewModeCommands', buttonViewMode)
+      } else {
+        pushDataToFile('/settings/buttonViewMode', buttonViewMode)
+      }
     }
     
     service.getOverlayVersion = function() {
@@ -197,6 +205,11 @@
     service.setOverlayVersion = function(newVersion) {
       pushDataToFile('/settings/copiedOverlayVersion', newVersion.toString());
     }
+
+    service.getWebServerPort = function() {
+      var serverPort = getDataFromFile('/settings/webServerPort');
+      return serverPort != null ? serverPort : 7473;
+    }
     
     service.getWebSocketPort = function() {
       var websocketPort = getDataFromFile('/settings/websocketPort');
@@ -204,13 +217,13 @@
     }
     
     service.setWebSocketPort = function(port) {
-      // Verify port is a number. This might be overly safe.
+      // Ensure port is a number.
       if(!Number.isInteger(port)) { return; }
       
       // Save to settings file for app front end
       pushDataToFile('/settings/websocketPort', port);
       
-      var path = dataAccess.getPathInUserData("/user-settings/overlay-settings/port.js");
+      var path = dataAccess.getPathInWorkingDir("/resources/overlay/js/port.js");
 
       // Overwrite the 'port.js' file in the overlay settings folder with the new port
       fs.writeFile(path, `window.WEBSOCKET_PORT = ${port}`, 

@@ -10,6 +10,13 @@
        <h3>General Settings</h3>
      </div>
 
+     <div class="input-group settings-active">
+      <label class="control-fb control--checkbox">Active Button
+          <input type="checkbox" ng-model="control.active" aria-label="..." checked>
+          <div class="control__indicator"></div>
+      </label>
+     </div>
+
      <div class="input-group settings-controlid">
        <span class="input-group-addon" id="basic-addon3">Control Id</span>
        <input type="text" class="form-control" disabled aria-describedby="basic-addon3" ng-model="control.controlId">
@@ -17,12 +24,12 @@
 
      <div class="input-group settings-buttontext">
        <span class="input-group-addon" id="basic-addon3">Button Text</span>
-       <input type="text" class="form-control" disabled aria-describedby="basic-addon3" ng-model="control.text">
+       <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="control.text">
      </div>
 
      <div class="input-group settings-sparkcost">
        <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
-       <input type="text" class="form-control" disabled aria-describedby="basic-addon3" type="number" ng-model="control.cost">
+       <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="control.cost">
      </div>
 
      <div class="input-group settings-cooldown">
@@ -62,21 +69,14 @@
              template-url="effect-panel-template.html"
              heading="{{effect.type}}">
           <div class="effect-select-wrapper">
-            <div class="btn-group">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="effect-dropdown">{{effect.type != 'Nothing' ? effect.type : 'Pick an effect'}}</span> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu effects-menu">
-                    <li ng-repeat="effectType in getApprovedEffectTypes() | orderBy:'toString()'">
-                      <a href="" effect="{{effectType}}" ng-click="changeEffectTypeForEffect(effectType, effect)">{{effectType}}</a>
-                    </li>
-                </ul>
-            </div>
+
+            <searchable-effect-dropdown trigger="interactive" selected="effect.type" style="width:100%"></searchable-effect-dropdown>
+            
             <span class="effect-delete-btn clickable" ng-click="removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
           </div>
           <div class="effect-settings-panel">
               <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
-              <effect-options effect="effect" type="effect.type" ng-show="effect.type != null"><effect-options>
+              <effect-options effect="effect" type="effect.type" trigger="interactive" ng-show="effect.type != null"><effect-options>
           </div>
         </div>
       </uib-accordion>

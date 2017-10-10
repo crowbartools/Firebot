@@ -1,0 +1,68 @@
+<!-- Commands Board -->
+<div class="content-block">
+  <div class="content-block-header">
+    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Chat Commands</span>
+    <span class="clickable board-settings-icon" ng-click="showCommandSettingsModal()">
+        <i class="fas fa-cog"></i>
+    </span>
+  </div>
+  <div class="content-block-body">
+    <div class="page-content" style="min-height: 600px;">
+        <div class="chat-commands-wrapper">
+            <div class="scene-tools-wrapper">
+                <span class="scenes-title">
+
+                </span>
+                <div class="scene-tools">
+                    <div class="commandTools" style="margin-right: 15px">
+                        <button ng-click="showAddCommandModal()" class="btn btn-default">+ Add Command</button>
+                    </div>
+                    <div class="btn-group" style="margin-right: 15px">
+                    <label class="btn btn-default" ng-model="buttonViewModeCommands" uib-btn-radio="'grid'" ng-click="saveCurrentButtonViewMode('commands')" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
+                    <label class="btn btn-default" ng-model="buttonViewModeCommands" uib-btn-radio="'list'" ng-click="saveCurrentButtonViewMode('commands')" uib-tooltip="Button View: List" tooltip-append-to-body="true"><i class="fas fa-list"></i></label>
+                    </div>
+                    <div class="searchbar-wrapper">
+                        <input type="text" class="form-control" placeholder="Search commands" ng-model="commandSearch" style="padding-left: 27px;">
+                        <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+            <uib-tabset active="activeSceneTab">
+                <!--Create a tab for each control type -->
+                <uib-tab index="$index" ng-repeat="commandType in getCommandTypes()" heading="{{commandType}}">
+                    <div class="tab-pane interactive-button-holder active">
+                    <!--Create buttons in each scene -->
+                    <!--Grid View-->
+                    <div ng-show="buttonViewModeCommands == 'grid'" ng-class="{'interactive-control-tile': command}" ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch">
+                        <a class="control-edit-btn clickable" ng-click="showAddCommandModal(command)">EDIT</a>
+                        <div class="button-name noselect">{{command.commandID}}</div>
+                        <div class="button-trigger noselect">{{command.trigger}}</div>
+                    </div>
+                    <!--List View-->
+                    <table ng-show="buttonViewModeCommands == 'list'" class="table table-hover">
+                        <thead style="text-transform: uppercase;color: #4a4a4a;">
+                            <tr>
+                                <th style="width:23%;">ID</th>
+                                <th style="width:23%;">Trigger</th>
+                                <th style="width:23%;">Cooldown</th>
+                                <th style="width:23%;">Permissions</th>
+                                <th style="width:8%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: 16px;">
+                            <tr ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch" ng-class="{'command-list': command}">
+                                <td>{{command.commandID}}</td>
+                                <td>{{command.trigger}}</td>
+                                <td><i class="fa fa-clock-o button-title-spark" aria-hidden="true"></i> {{command.cooldown}}</td>
+                                <td><span ng-repeat="role in command.permissions">{{role}}{{$last ? '' : ', '}}</span></td>
+                                <td><a class="clickable" ng-click="showAddCommandModal(command)"><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </uib-tab>
+            </uib-tabset>
+        </div><!-- End Chat Command Wrapper-->
+    </div><!-- End Page Content-->
+  </div><!-- End content body block-->
+</div><!-- End content block-->

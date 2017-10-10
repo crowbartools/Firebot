@@ -59,5 +59,20 @@
     </div>
 </div>
 <div class="effect-info alert alert-info">
-    There are several variables you can use in your chat message. $(user), $(text), $(cost), $(cooldown). User will display the name of the person using the button. Text will be replaced with the button text. Cost will display the spark cost. Cooldown will display the cooldown amount.
+    <div style="padding-bottom: 1em">
+        There are several variables you can use in your chat message. Please note that some can only be used in chat commands and others only in interactive buttons.
+    </div>
+    <div>
+        <h4>Interactive & Chat</h4>
+        <ul>
+            <li><b>$(user)</b> - Replaced by the name of the person running the button or using the command.</li>
+            <li><b>$(text)</b> - Replaced by the interactive button text or the chat command ID.</li>
+            <li><b>$(cost)</b> - Replaced by the cost of the command or button.</li>
+            <li><b>$(cooldown)</b> - Replaced by the cooldown of the command or button.</li>
+        </ul>
+        <h4>Chat Commands Only</h4>
+        <ul>
+            <li><b>$(arg1)</b> - Replaced by the argument provided after a chat command. For example $(arg1) pulls the first word after the command, but $(arg5) would pull the fifth word.</li>
+        </ul>
+    </div>
 </div>
