@@ -88,6 +88,9 @@
           // When the user clicks "Save"
           $scope.saveChanges = function() {
             $uibModalInstance.close($scope.command);
+            
+            // Refresh Commands
+            commandsService.refreshCommands();
           };
 
           $scope.changeEffectTypeForEffect = function(effectType, effect) {

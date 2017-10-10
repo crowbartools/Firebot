@@ -25,6 +25,9 @@
             }catch(err){
                 timedGroupsCache = {};
             }
+
+            // Refresh the interactive control cache.
+            ipcRenderer.send('refreshCommandCache');
             
         }
 
