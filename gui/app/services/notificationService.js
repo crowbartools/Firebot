@@ -6,7 +6,7 @@
 
  angular
   .module('firebotApp')
-  .factory('notificationService', function ($http) {
+  .factory('notificationService', function ($http, $interval) {
 
     var service = {};
 
@@ -109,6 +109,18 @@
 
         setKnownExternalNotifications(newKnownExtNotis);
       });
+    }
+
+    var externalIntervalCheck = null;
+    service.startExternalIntervalCheck = function() {
+      //check for new external notifications every 5 minutes
+      if(externalIntervalCheck != null) {
+        $interval.cancel(externalIntervalCheck);
+      }
+
+      externalIntervalCheck = $interval(()=> {
+        service.loadExternalNotifications();
+      }, 5*60000)
     }
 
     /* Helpers */

@@ -34,6 +34,7 @@ const shell = electron.shell;
       
       $timeout(() => {
         notificationService.loadAllNotifications();
+        notificationService.startExternalIntervalCheck();
       }, 1000);   
       
       /**
