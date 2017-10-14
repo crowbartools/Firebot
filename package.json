@@ -63,6 +63,7 @@
     "request": "^2.81.0",
     "robotjs": "^0.4.7",
     "roll": "^1.2.0",
+    "sanitize-filename": "^1.6.1",
     "ui-select": "^0.19.8",
     "underscore": "^1.8.3",
     "validator": "^7.0.0",

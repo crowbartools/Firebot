@@ -4,6 +4,7 @@
  
  const fs = require('fs');
  const _ = require('underscore')._; 
+ const sanitize = require("sanitize-filename");
  const dataAccess = require('../../lib/common/data-access.js');
  
  angular
@@ -291,23 +292,29 @@
                 utilityService.showErrorModal("The board you're trying to load was created using Mixer Interactive v1. Please create a new board using Mixer Interactive v2.");
                 return;
             } else {
-                var gameUpdated = data.updatedAt;
-                var gameName = data.game.name;
-                var gameJson = data.controls.scenes;
-                var boardUpdated = null; // Prepare for data from settings/boards/boardId
-                try{ // Checking if the data for this board is present in settings.json
-                    boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
-                    if(boardUpdated != gameUpdated){ // Call backendbuilder if the dates don't match
+                try{
+                    var gameUpdated = data.updatedAt;
+                    var gameName = sanitize(data.game.name);
+                    console.log(sanitize(data.game.name));
+                    var gameJson = data.controls.scenes;
+                    var boardUpdated = null; // Prepare for data from settings/boards/boardId
+
+                    try{ // Checking if the data for this board is present in settings.json
+                        boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
+                        if(boardUpdated != gameUpdated){ // Call backendbuilder if the dates don't match
+                            return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
+                        }else{ // Date matches, no need to rebuild.
+                            console.log("This board is already inplace, no need to rebuild");
+                        }
+                    }catch(err){
+                        // This board doesn't exist, recreate the board to get it into knownBoards
+                        console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
                         return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
-                    }else{ // Date matches, no need to rebuild.
-                        console.log("This board is already inplace, no need to rebuild");
                     }
                 }catch(err){
-                    // This board doesn't exist, recreate the board to get it into knownBoards
-                    console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
-                    return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
-                }
-                
+                    console.log('There was a problem loading this board!');
+                    console.log(err);
+                }               
                 // return backendBuilder(gameName, gameJson, gameUpdated, id);
             }
         });
