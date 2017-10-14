@@ -4,5 +4,11 @@
         "title": "The overlay URL has changed!",
         "message": "<div>As of <b>v4.4.0</b>, the overlay is now hosted on a local web server! <br/><br/> Instead of selecting the path to the local file, you just need to put the following URL for your Browser/Webpage Sources:</div> <br/> <div class=\"well\" style=\"background:white;\"><a href ng-click=\"rootScope.openLinkExternally('http://localhost:7473/overlay')\">http://localhost:7473/overlay</a></div>",
         "icon": "alert"
+    },
+    {
+        "id": 1,
+        "title": "Subs not seeing their board?",
+        "message": "<div>Firebot's auto grouping functionality requires a chat connection to see viewer roles. Make sure to connect to both. The event log will let you know when the auto grouper starts up.</div>",
+        "icon": "tip"
     }
 ]
