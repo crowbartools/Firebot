@@ -133,7 +133,7 @@
             <div class="interative-status-icon" 
                   ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}" 
                   uib-tooltip-template="'connectTooltipTemplate.html'" 
-                  tooltip-placement="{{navExpanded ? 'top' : 'right'}}"
+                  tooltip-placement="right"
                   ng-click="connService.toggleConnectionToChat()"
                   ng-hide="connService.waitingForChatStatusChange">
               <i class="fal fa-power-off"></i>
@@ -143,7 +143,7 @@
                   ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}"
                   ng-show="connService.waitingForChatStatusChange"
                   uib-tooltip="{{getChatConnectionMessage()}}" 
-                  tooltip-placement="{{navExpanded ? 'top' : 'right'}}">
+                  tooltip-placement="right">
                   <i class="fal fa-sync fa-spin"></i>
             </div>
             <div class="interactive-status-text">
@@ -318,6 +318,10 @@
           <p ng-if="pathCopied" style="color: green;">
             Overlay path copied!
           </p>
+        </div>
+
+        <div class="effect-info alert alert-warning">
+          Now that the overlay is hosted when Firebot is running, you may notice images and videos not showing up if you start your broadcasting software before you start Firebot. To prevent this, make sure to select "Refresh browser when scene becomes active" for the overlay Browser/Webpage source or just make sure Firebot is started first.
         </div>
       </div>
       <div class="modal-footer" style="text-align:center;">
