@@ -1,5 +1,5 @@
 # Firebot
-An app that allows streamers on Mixer.com to quickly and easily setup versitile interactive boards.
+An app that allows streamers on Mixer.com to quickly and easily setup versatile interactive boards.
 
 ## What is this?
 Firebot is an app for use by streamers on Mixer.com. It allows any streamer to quickly and easily setup interactive controls for their channel. It supports sound board buttons, api buttons, game controls, scene changes, group changes, and more all on the same interactive board at the same time. This allows any user to have a variety of fun buttons for their audience to interact with at any time.
