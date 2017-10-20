@@ -120,7 +120,7 @@
       }
 
       externalIntervalCheck = $interval(()=> {
-        service.loadExternalNotifications();
+        loadExternalNotifications();
       }, 5*60000)
     }
 
