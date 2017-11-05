@@ -85,7 +85,8 @@
     }
 
     function loadExternalNotifications() {
-      $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json").then((response) => {
+      $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json")
+      .then((response) => {
         var externalNotifications = response.data;
 
         var knownExtNotis = getKnownExternalNotifications();
@@ -119,7 +120,7 @@
       }
 
       externalIntervalCheck = $interval(()=> {
-        service.loadExternalNotifications();
+        loadExternalNotifications();
       }, 5*60000)
     }
 

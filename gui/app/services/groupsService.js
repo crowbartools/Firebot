@@ -92,20 +92,22 @@
       var groupList = [];
 
       // Go through each scene on the current board and push default groups to groupList.
-      for (scene in dbGroup.scenes){
-        var scene = dbGroup.scenes[scene];
-        var sceneGroups = scene.default;
-        for(item of sceneGroups){
-          if(item !== "None"){
-            groupList.push(item);
+      if(dbGroup != null){
+        for (scene in dbGroup.scenes){
+          var scene = dbGroup.scenes[scene];
+          var sceneGroups = scene.default;
+          for(item of sceneGroups){
+            if(item !== "None"){
+              groupList.push(item);
+            }
           }
         }
-      }
 
-      // Filter out duplicates
-      groupList = groupList.filter(function(elem, pos) {
-          return groupList.indexOf(elem) == pos;
-      })
+        // Filter out duplicates
+        groupList = groupList.filter(function(elem, pos) {
+            return groupList.indexOf(elem) == pos;
+        })
+      }
 
       return groupList;
     }

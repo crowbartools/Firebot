@@ -18,5 +18,7 @@ exports.getGroup = function(req, res) {
 }
 
 exports.getGroupUsers = function(req, res) {
-  res.json(groupsAccess.getGroup(req.params.groupName).users);
+  var group = groupsAccess.getGroup(req.params.groupName);
+  res.json(group ? group.users : []);
 }
+

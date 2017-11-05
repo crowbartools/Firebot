@@ -81,13 +81,13 @@ exports.runEffects = function(req, res) {
     var boardJson = dbControls.getData('/');  
     
     var processEffectsRequest = {
+      type: Effects.TriggerType.API,
       effects: builtEffects,
       firebot: boardJson,
       participant: participant,
       username: username,
       control: control,
-      isManual: participant == null,
-      isApi: true
+      isManual: participant == null
     }
     
     effectRunner.processEffects(processEffectsRequest);  
