@@ -13,9 +13,9 @@
     service.connectSound = function(type){
       if(settingsService.soundsEnabled() == "On") {
         if(type == "Online"){
-          service.playSound("../sounds/online.mp3", 0.4);
+          service.playSound("../sounds/online.mp3", 0.2);
         } else {
-          service.playSound("../sounds/offline.mp3", 0.4);
+          service.playSound("../sounds/offline.mp3", 0.2);
         }
       }
     }
