@@ -14,7 +14,10 @@
        <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 10px;font-size: 15px;font-weight: 600;">
           <div>{{$ctrl.metadata.type != 'boolean' ? $ctrl.metadata.description ? $ctrl.metadata.description : $ctrl.name : ""}}</div>
           <div ng-switch-when="string">
-            <input class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.metadata.value">
+            <textarea ng-if="$ctrl.metadata.useTextArea" ng-model="$ctrl.metadata.value" class="form-control" placeholder="Enter text" rows="5" style="width:100%"></textarea>
+            <input ng-if="!$ctrl.metadata.useTextArea" class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.metadata.value">
+          </div>
+          <div>
           </div>
           <div ng-switch-when="number">
             <input class="form-control" type="number" placeholder="Enter a number" ng-model="$ctrl.metadata.value">
@@ -32,6 +35,7 @@
             <file-chooser model="$ctrl.metadata.value"></file-chooser>
           </div>
        </div>
+       <hr ng-if="$ctrl.metadata.showBottomHr" />
        `,
        controller: function($scope, $element, $attrs) {
          var ctrl = this;
