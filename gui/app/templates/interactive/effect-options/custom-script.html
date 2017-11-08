@@ -2,7 +2,7 @@
     <div class="effect-info alert alert-info">
         Place scripts in the <a id="scriptFolderBtn" href="#" ng-click="openScriptsFolder()" style="text-decoration:underline">scripts folder</a> of the Firebot user-settings directory, then refresh the dropdown.
     </div>
-    <div class="effect-specific-title" style="margin-bottom: 20px"><h4>Which script would you like to use?</h4></div>
+    <div class="effect-specific-title" style="margin-bottom: 10px"><h4>Which script would you like to use?</h4></div>
     <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="script-type">{{effect.scriptName ? effect.scriptName : 'Pick one'}}</span> <span class="caret"></span>
@@ -19,7 +19,7 @@
     </div>
 </div>
 <div class="effect-setting-container" ng-show="effect.scriptName != null">
-  <div class="effect-specific-title" style="padding-top:10px;margin-bottom: 20px"><h4>Script Parameters</h4></div>
+  <div class="effect-specific-title" style="padding-top:10px;margin-bottom: 10px"><h4>Script Parameters</h4></div>
   <div ng-show="isLoadingParameters">
     Loading parameters...
   </div>

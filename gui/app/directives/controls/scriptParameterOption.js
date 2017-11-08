@@ -35,7 +35,7 @@
             <file-chooser model="$ctrl.metadata.value"></file-chooser>
           </div>
        </div>
-       <hr ng-if="$ctrl.metadata.showBottomHr" />
+       <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
        `,
        controller: function($scope, $element, $attrs) {
          var ctrl = this;
