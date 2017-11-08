@@ -17,6 +17,8 @@
     // Set active viewer groups for command permissions.
     $scope.viewerGroups = groupsService.getAllGroups();
 
+    $scope.activeSceneTab = 0;
+
     //Save button view.
     $scope.saveCurrentButtonViewMode = function(type) {
       settingsService.setButtonViewMode($scope.buttonViewModeCommands, type);
