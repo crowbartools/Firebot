@@ -133,7 +133,7 @@
             <div class="interative-status-icon" 
                   ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}" 
                   uib-tooltip-template="'connectTooltipTemplate.html'" 
-                  tooltip-placement="right-top"
+                  tooltip-placement="{{!navExpanded ? 'right-bottom' : 'right'}}"
                   tooltip-append-to-body="true"
                   ng-click="connService.toggleConnectionToChat()"
                   ng-hide="connService.waitingForChatStatusChange">
@@ -144,7 +144,7 @@
                   ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}"
                   ng-show="connService.waitingForChatStatusChange"
                   uib-tooltip="{{getChatConnectionMessage()}}" 
-                  tooltip-placement="right-top"
+                  tooltip-placement="right"
                   tooltip-append-to-body="true">
                   <i class="fal fa-sync fa-spin"></i>
             </div>
@@ -162,7 +162,7 @@
           <div class="interative-status-icon" 
                 ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}" 
                 uib-tooltip-template="'connectTooltipTemplate.html'" 
-                tooltip-placement="right-top"
+                tooltip-placement="{{!navExpanded || connService.connectedToInteractive ? 'right-bottom' : 'right'}}"
                 tooltip-append-to-body="true"
                 ng-click="connService.toggleConnectionToInteractive()"
                 ng-hide="connService.waitingForStatusChange">
@@ -173,7 +173,7 @@
                 ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}"
                 ng-show="connService.waitingForStatusChange"
                 uib-tooltip="{{getConnectionMessage()}}" 
-                tooltip-placement="right-top"
+                tooltip-placement="right"
                 tooltip-append-to-body="true">
                 <i class="fal fa-sync fa-spin"></i>
           </div>
