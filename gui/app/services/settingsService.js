@@ -183,10 +183,11 @@
     service.getButtonViewMode = function(type) {
       if(type == "commands"){
         var buttonViewMode = getDataFromFile('/settings/buttonViewModeCommands');
+        return buttonViewMode != null ? buttonViewMode : 'list';
       } else {
         var buttonViewMode = getDataFromFile('/settings/buttonViewMode');
-      }
-      return buttonViewMode != null ? buttonViewMode : 'grid';
+        return buttonViewMode != null ? buttonViewMode : 'grid';
+      }   
     }
     
     service.setButtonViewMode = function(buttonViewMode, type) {
