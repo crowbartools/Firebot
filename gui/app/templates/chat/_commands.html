@@ -29,7 +29,7 @@
             </div>
             <uib-tabset active="activeSceneTab">
                 <!--Create a tab for each control type -->
-                <uib-tab index="$index" ng-repeat="commandType in getCommandTypes()" heading="{{commandType}}">
+                <uib-tab index="$index" ng-repeat="commandType in getCommandTypes() | orderBy:'toString()'" heading="{{commandType}}">
                     <div class="tab-pane interactive-button-holder active">
                     <!--Create buttons in each scene -->
                     <!--Grid View-->
