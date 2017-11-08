@@ -23,7 +23,7 @@
         </ui-select-choices>
       </ui-select>
       `,
-      controller: function($scope, $element, $attrs) {
+      controller: function($scope, $element, $attrs, settingsService) {
         var ctrl = this;
         
         // when the element is initialized
@@ -31,6 +31,10 @@
           
           // grab the effect definitions for the given trigger
           ctrl.options = Effect.getEffectDefinitions(ctrl.trigger);
+
+          if(!settingsService.getCustomScriptsEnabled()) {
+            ctrl.options = ctrl.options.filter(e => e.name !== Effect.EffectType.CUSTOM_SCRIPT);
+          }
           
           //find the selected effect in the list     
           var selected = ctrl.options.filter((e) => e.name == ctrl.selected);  
