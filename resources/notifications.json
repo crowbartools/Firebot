@@ -8,7 +8,7 @@
     {
         "id": 2,
         "title": "Command Trigger Behavior Change",
-        "message": "<div>As of v4.4.5, chat command trigger behavior has been changed. It is no longer assumed that a command starts with "!", instead triggers are considered exactly how they are saved. Please update your current commands to include a "!" (or whatever you want) in their triggers.</div>",
+        "message": "<div>As of v4.4.5, chat command trigger behavior has been changed. It is no longer assumed that a command starts with \"!\", instead triggers are considered exactly how they are saved. Please update your current commands to include a \"!\" (or whatever you want) in their triggers.</div>",
         "icon": "alert"
     }
 ]
