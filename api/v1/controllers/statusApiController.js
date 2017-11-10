@@ -1,3 +1,5 @@
+'use strict';
+
 exports.getStatus = function(req, res) {
     let status = {
         connections: {

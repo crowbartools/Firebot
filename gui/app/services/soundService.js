@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     // This provides methods for playing sounds
 
@@ -40,4 +42,4 @@
 
             return service;
         });
-}());
+}(window.angular));

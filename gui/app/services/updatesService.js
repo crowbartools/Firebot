@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     //This handles updates
 
@@ -126,4 +128,4 @@
 
             return service;
         });
-}());
+}(window.angular));

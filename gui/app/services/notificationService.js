@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     // This provides methods for notifications
 
@@ -202,4 +204,4 @@
 
             return service;
         });
-}());
+}(window.angular));

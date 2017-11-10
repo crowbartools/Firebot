@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     //This a wrapped dropdown element that automatically handles the particulars
     const Effect = require('../../lib/common/EffectType.js');
@@ -17,9 +18,9 @@
         <ui-select-choices repeat="option in $ctrl.options | filter: { name: $select.search }" style="position:relative;">
           <div ng-bind-html="option.name | highlight: $select.search"></div>
           <small class="muted">{{option.description}}</small>
-          
+
           <span ng-show="option.dependencies.length > 0" class="muted" style="font-size: 12px; position: absolute; top: 4px; right: 4px;" uib-tooltip-html="'<b>Dependencies:</b><br /> ' + $ctrl.getDependencyString(option.dependencies)" tooltip-append-to-body="true"><i class="fal fa-link"></i></span>
-          
+
         </ui-select-choices>
       </ui-select>
       `,
@@ -67,4 +68,4 @@
                 });
             }
         });
-}());
+}(window.angular));

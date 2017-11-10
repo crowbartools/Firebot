@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     // This provides helper methods for control effects
 
@@ -550,4 +551,4 @@
 
             return service;
         });
-}());
+}(window.angular));

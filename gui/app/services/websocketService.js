@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     const WebSocket = require('ws');
     const WebSocketServer = WebSocket.Server;
@@ -108,28 +110,28 @@
                 let filepath = data.filepath;
                 let youtubeId = data.youtubeId;
                 let videoPosition = data.videoPosition;
-                var videoHeight = data.videoHeight;
-                var videoWidth = data.videoWidth;
-                var videoDuration = parseInt(data.videoDuration);
+                let videoHeight = data.videoHeight;
+                let videoWidth = data.videoWidth;
+                let videoDuration = parseInt(data.videoDuration);
                 let videoVolume = data.videoVolume;
                 let videoStarttime = data.videoStarttime;
 
                 // Set defaults if they werent filled out.
-                if (videoPosition == "" || videoPosition == null) {
+                if (videoPosition === "" || videoPosition == null) {
                     let videoX = "Top Middle";
                 }
-                if (videoHeight == "" || videoHeight == null) {
-                    var videoHeight = false;
+                if (videoHeight === "" || videoHeight == null) {
+                    videoHeight = false;
                 }
-                if (videoWidth == "" || videoWidth == null) {
-                    var videoWidth = false;
+                if (videoWidth === "" || videoWidth == null) {
+                    videoWidth = false;
                 }
                 if (videoDuration === null || videoDuration === undefined || isNaN(videoDuration)) {
-                    var videoDuration = 5;
+                    videoDuration = 5;
                 }
 
                 // Compile data and send to overlay.
-                var data = {
+                let broadcastdata = {
                     "event": "video",
                     "videoType": videoType,
                     "filepath": filepath,
@@ -147,7 +149,7 @@
                     "customCoords": data.customCoords
                 };
 
-                service.broadcast(data);
+                service.broadcast(broadcastdata);
             }
 
             // Shows HTML
@@ -160,4 +162,4 @@
 
             return service;
         });
-}());
+}(window.angular));

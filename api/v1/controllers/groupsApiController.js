@@ -1,3 +1,5 @@
+'use strict';
+
 const groupsAccess = require('../../../lib/common/groups-access');
 
 exports.getAllGroups = function(req, res) {
@@ -23,4 +25,3 @@ exports.getGroupUsers = function(req, res) {
     let group = groupsAccess.getGroup(req.params.groupName);
     res.json(group ? group.users : []);
 };
-

@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     //This manages board data
 
@@ -653,4 +654,4 @@
 
             return service;
         });
-}());
+}(window.angular));

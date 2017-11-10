@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     //This handles the commands tab
     const _ = require('underscore')._;
@@ -214,4 +215,4 @@
             };
 
         });
-}());
+}(window.angular));

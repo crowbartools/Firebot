@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     // This handles logins and connections to mixer interactive
 
@@ -382,4 +383,4 @@
 
             return service;
         });
-}());
+}(window.angular));

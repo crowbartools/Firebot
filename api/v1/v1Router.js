@@ -1,5 +1,7 @@
+'use strict';
+
 const express = require('express');
-const router = express.Router();
+const router = express.Router(); //eslint-disable-line new-cap
 
 router.use(function log(req, res, next) {
     // here we could do stuff for every request if we wanted

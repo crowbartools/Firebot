@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     // This helps listening to events coming from the backend
 
@@ -320,4 +322,4 @@
 
             return service;
         });
-}());
+}(window.angular));

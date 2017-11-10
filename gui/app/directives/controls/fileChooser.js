@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     //This a wrapped dropdown element that automatically handles the particulars
 
@@ -12,8 +14,8 @@
             template: `
        <div class="input-group">
          <span class="input-group-btn">
-         <button 
-           class="btn btn-default show-image-effect-chooser" 
+         <button
+           class="btn btn-default show-image-effect-chooser"
            type="button"
            ng-click="$ctrl.openFileExporer()">Choose</button>
          </span>
@@ -35,4 +37,4 @@
                 };
             }
         });
-}());
+}(window.angular));

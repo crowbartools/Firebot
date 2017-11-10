@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     //This handles groups
 
@@ -77,4 +79,4 @@
 
             return service;
         });
-}());
+}(window.angular));

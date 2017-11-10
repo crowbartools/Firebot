@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     // This contains utility functions
     // Just inject "utilityService" into any controller that you want access to these
@@ -331,4 +333,4 @@
 
             return service;
         });
-}());
+}(window.angular));

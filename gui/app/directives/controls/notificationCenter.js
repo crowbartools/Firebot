@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     //This a wrapped dropdown element that automatically handles the particulars
 
@@ -35,12 +36,12 @@
                 <ul class="dropdown-menu" uib-dropdown-menu>
                   <li><a href ng-click="deleteNotification(notification)" style="color:red;"><i class="far fa-trash-alt"></i> Delete notification</a></li>
                 </ul>
-              </div>             
+              </div>
             </div>
             <div ng-if="$ctrl.getNotifications().length < 1" class="no-notifications-card">
               <span class="muted">No notifications.</span>
             </div>
-          </div>        
+          </div>
         </script>
 
         <script type="text/ng-template" id="notificationModal.html">
@@ -50,7 +51,7 @@
           <div class="modal-body" style="text-align:center; padding-top:15px">
             <dynamic-element message="notification.message"></dynamic-element>
           </div>
-          <div class="modal-footer" style="text-align:center;position: relative;">   
+          <div class="modal-footer" style="text-align:center;position: relative;">
             <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
           </div>
         </script>
@@ -141,4 +142,4 @@
                 }]
             };
         }]);
-}());
+}(window.angular));

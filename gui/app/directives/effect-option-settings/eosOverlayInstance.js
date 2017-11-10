@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     //This adds the <eos-overlay-instance> element
 
@@ -38,4 +39,4 @@
                 };
             }
         });
-}());
+}(window.angular));

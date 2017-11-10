@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     //This manages command data
 
@@ -141,4 +142,4 @@
 
             return service;
         });
-}());
+}(window.angular));

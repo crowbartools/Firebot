@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     //This handles the Moderation tab
 
@@ -61,4 +62,4 @@
             $scope.arrayContainsElement = utilityService.arrayContainsElement;
 
         });
-}());
+}(window.angular));

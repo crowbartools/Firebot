@@ -1,4 +1,6 @@
-(function() {
+'use strict';
+
+(function(angular) {
 
     //This handles settings access for frontend
 
@@ -295,4 +297,4 @@
 
             return service;
         });
-}());
+}(window.angular));

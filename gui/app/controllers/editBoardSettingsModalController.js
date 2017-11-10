@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     const _ = require('underscore')._;
 
@@ -196,4 +197,4 @@
                 utilityService.showModal(editViewerGroupDefaultsModalContext);
             };
         });
-}());
+}(window.angular));

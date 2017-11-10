@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     //This adds the <effect-options> element
 
@@ -44,4 +45,4 @@
                 }
             };
         });
-}());
+}(window.angular));

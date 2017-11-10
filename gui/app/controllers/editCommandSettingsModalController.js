@@ -1,4 +1,5 @@
-(function() {
+'use strict';
+(function(angular) {
 
     // This handles the Groups tab
 
@@ -108,4 +109,4 @@
             };
 
         });
-}());
+}(window.angular));
