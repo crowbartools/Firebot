@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron .",
     "lint": "./node_modules/.bin/eslint .",
+    "locallint": "./node_modules/.bin/eslint . --output-file=eslint.log.htm --format=html --fix",
     "rebuild32": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=1.4.15 --arch=ia32 --dist-url=https://atom.io/download/atom-shell",
     "rebuild64": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=1.4.15 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "kbmCopy": "xcopy resources\\modules\\kbm-robot.js node_modules\\kbm-robot\\kbm-robot.js /y",

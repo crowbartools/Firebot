@@ -79,3 +79,4 @@ scripts
 *.scssc
 .env
 resources/overlay/js/port.js
+eslint.log.htm
