@@ -20,7 +20,7 @@ module.exports = {
         "no-console": 0, // Enable the use of console
 
         // Deviations from < https://eslint.org/docs/rules/#best-practices >
-        "eqeqeq": 2,                // No coersion
+        "eqeqeq": [2, "smart"],     // No coersion unless comparing against null
         "guard-for-in": 2,          // require an if statement with for-in loops
         "no-else-return": 2,        // no 'if () { return } else { ... }
         "no-eval": 2,               // no eval()
