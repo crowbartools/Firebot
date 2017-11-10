@@ -22,9 +22,9 @@ require('ui-select');
 
 function boot() {
 
-	angular.bootstrap(document, ['firebotApp'], {
-		strictDi: false
-	});
+    angular.bootstrap(document, ['firebotApp'], {
+        strictDi: false
+    });
 }
 
 document.addEventListener('DOMContentLoaded', boot);

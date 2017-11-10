@@ -15,6 +15,6 @@ module.exports = function(grunt) {
     });
 
     // Load installer builder.
-    grunt.loadNpmTasks('grunt-electron-installer')
+    grunt.loadNpmTasks('grunt-electron-installer');
 
-}
+};

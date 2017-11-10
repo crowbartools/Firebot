@@ -1,16 +1,16 @@
-(function(){
-  
- //This a wrapped dropdown element that automatically handles the particulars
- 
- angular
-   .module('firebotApp')
-   .component("scriptParameterOption", {
-       bindings: {
-        metadata: "=",
-        name: "<", 
-        onUpdate: '&'
-      },
-       template: `
+(function() {
+
+    //This a wrapped dropdown element that automatically handles the particulars
+
+    angular
+        .module('firebotApp')
+        .component("scriptParameterOption", {
+            bindings: {
+                metadata: "=",
+                name: "<",
+                onUpdate: '&'
+            },
+            template: `
        <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 10px;font-size: 15px;font-weight: 600;">
           <div>{{$ctrl.metadata.type != 'boolean' ? $ctrl.metadata.description ? $ctrl.metadata.description : $ctrl.name : ""}}</div>
           <div ng-switch-when="string">
@@ -37,22 +37,22 @@
        </div>
        <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
        `,
-       controller: function($scope, $element, $attrs) {
-         var ctrl = this;
-         
-         //If there is no value, supply the default.
-         ctrl.$onInit = function() {
-           if(ctrl.metadata.value == null) {
-             ctrl.metadata.value = ctrl.metadata.default;
-             
-             // If its an enum and no default is supplied, select the first one
-             if(ctrl.metadata.type == 'enum') {
-               if(ctrl.metadata.default == null) {
-                 ctrl.metadata.value = ctrl.metadata.options[0];
-               }
-             }
-           }
-         }
-       }   
-     });     
- })();
+            controller: function($scope, $element, $attrs) {
+                let ctrl = this;
+
+                //If there is no value, supply the default.
+                ctrl.$onInit = function() {
+                    if (ctrl.metadata.value == null) {
+                        ctrl.metadata.value = ctrl.metadata.default;
+
+                        // If its an enum and no default is supplied, select the first one
+                        if (ctrl.metadata.type == 'enum') {
+                            if (ctrl.metadata.default == null) {
+                                ctrl.metadata.value = ctrl.metadata.options[0];
+                            }
+                        }
+                    }
+                };
+            }
+        });
+}());
