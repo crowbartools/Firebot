@@ -1,9 +1,81 @@
-*.scssc
-node_modules
+# General ignores
+build/Release
+pids
+*.pid
+*.seed
+*.pid.lock
+*.tgz
+logs
+*.log
+
+
+# OS Ignores: Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+
+# OS Ignores: iOS/Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+
+# OS Ignores: Linux
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+
+# Node-specific ignores
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lib-cov
+coverage
+.nyc_output
+.grunt
+bower_components
+.lock-wscript
+node_modules/
+jspm_packages/
+typings/
+.npm
+.eslintcache
+.node_repl_history
+.yarn-integrity
+.env
+
+
+# Repo Specific
 dist
 user-settings
 app-settings
 scripts
-.env
 *.css
+*.scssc
+.env
 resources/overlay/js/port.js
