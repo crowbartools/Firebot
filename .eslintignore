@@ -2,3 +2,7 @@
 node_modules/
 gui/js/*
 resources/*
+Gruntfile.js
+eslintrc.js
+package.json
+package-lock.json
