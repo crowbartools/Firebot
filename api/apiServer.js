@@ -1,3 +1,5 @@
+'use strict';
+
 let express = require("express");
 let bodyParser = require("body-parser");
 const resourceTokenManager = require('../lib/resourceTokenManager');
@@ -6,8 +8,9 @@ const {settings} = require('../lib/common/settings-access');
 let server = null;
 
 exports.start = function() {
-    if (server != null) {
+
     //server is already running.
+    if (server !== null) {
         return;
     }
     let api = express();
@@ -24,10 +27,10 @@ exports.start = function() {
     // set up resource endpoint
     api.get('/resource/:token', function (req, res) {
 
-        let token = req.params.token;
-        if (token != null) {
-            let resourcePath = resourceTokenManager.getResourcePath(token);
-            if (resourcePath != null) {
+        let token = req.params.token || null;
+        if (token !== null) {
+            let resourcePath = resourceTokenManager.getResourcePath(token) || null;
+            if (resourcePath !== null) {
                 resourcePath = resourcePath.replace(/\\/g, "/");
                 res.sendFile(resourcePath);
                 return;

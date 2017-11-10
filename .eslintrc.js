@@ -9,6 +9,11 @@ module.exports = {
         "es6": true
     },
 
+    // Project specific globals
+    "globals": {
+        "renderWindow": true
+    },
+
     "rules":{
 
         // Deviations from https://eslint.org/docs/rules/#possible-errors
