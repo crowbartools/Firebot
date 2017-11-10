@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "lint": "./node_modules/.bin/eslint **/*.js",
     "rebuild32": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=1.4.15 --arch=ia32 --dist-url=https://atom.io/download/atom-shell",
     "rebuild64": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=1.4.15 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "kbmCopy": "xcopy resources\\modules\\kbm-robot.js node_modules\\kbm-robot\\kbm-robot.js /y",
@@ -52,6 +53,7 @@
     "dotenv": "^4.0.0",
     "electron-gh-releases": "^2.0.4",
     "electron-oauth2": "^2.4.1",
+    "eslint": "^4.8.0",
     "express": "^4.15.4",
     "howler": "^2.0.3",
     "kbm-robot": "0.0.4",
