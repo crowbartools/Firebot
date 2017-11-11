@@ -1,3 +1,5 @@
+/* eslint no-unused-vars: 0*/
+'use strict';
 const electron = require('electron');
 const {ipcRenderer} = electron;
 const {remote} = electron;
@@ -21,7 +23,6 @@ require('angularjs-slider');
 require('ui-select');
 
 function boot() {
-
     angular.bootstrap(document, ['firebotApp'], {
         strictDi: false
     });
