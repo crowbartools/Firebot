@@ -1,3 +1,5 @@
+'use strict';
+
 const electron = require('electron');
 // Module to control application life.
 const app = electron.app;
@@ -8,9 +10,9 @@ const {ipcMain, shell, dialog} = require('electron');
 
 const path = require('path');
 const url = require('url');
-const fs = require('fs');
 
-const JsonDb = require('node-json-db');
+// const fs = require('fs');
+// const JsonDb = require('node-json-db');
 
 require('dotenv').config();
 
@@ -27,26 +29,29 @@ const apiServer = require('./api/apiServer.js');
 let ncp = require('ncp').ncp;
 ncp.limit = 16;
 
+let mixerConnect;
+
 // Handle Squirrel events
 let handleStartupEvent = function() {
     if (process.platform !== 'win32') {
         return false;
     }
+    let cp, updateDotExe, target, child;
 
     let squirrelCommand = process.argv[1];
     switch (squirrelCommand) {
     case '--squirrel-install':
 
         // Install shortcuts
-        var cp = require('child_process');
-        var updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-        var target = path.basename(process.execPath);
-        var child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
-        child.on('close', function(code) {
+        cp = require('child_process');
+        updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+        target = path.basename(process.execPath);
+        child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
+        child.on('close', () => {
             app.quit();
         });
-
         return true;
+
     case '--squirrel-updated':
 
         // Optionally do things such as:
@@ -57,29 +62,29 @@ let handleStartupEvent = function() {
         //   explorer context menus
 
         // Install shortcuts
-        var cp = require('child_process');
-        var updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-        var target = path.basename(process.execPath);
-        var child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
-        child.on('close', function(code) {
+        cp = require('child_process');
+        updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+        target = path.basename(process.execPath);
+        child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
+        child.on('close', () => {
             app.quit();
         });
-
         return true;
+
     case '--squirrel-uninstall':
         // Undo anything you did in the --squirrel-install and
         // --squirrel-updated handlers
 
         // Remove shortcuts
-        var cp = require('child_process');
-        var updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-        var target = path.basename(process.execPath);
-        var child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
-        child.on('close', function(code) {
+        cp = require('child_process');
+        updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+        target = path.basename(process.execPath);
+        child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
+        child.on('close', () => {
             app.quit();
         });
-
         return true;
+
     case '--squirrel-obsolete':
         // This is called on the outgoing version of your app before
         // we update to the new version - it's the opposite of
@@ -118,7 +123,7 @@ function createWindow () {
     // mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
-    mainWindow.on('closed', function () {
+    mainWindow.on('closed', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
@@ -144,19 +149,19 @@ app.on('ready', function() {
 
     // Create the user-settings folder if it doesn't exist. It's required
     // for the folders below that are within it
-    dataAccess.userDataPathExists("/user-settings/").then((resolve) => {
+    dataAccess.userDataPathExists("/user-settings/").then(() => {
         console.log("Can't find the user-settings folder, creating one now...");
         dataAccess.makeDirInUserData("/user-settings");
     });
 
     // Create the scripts folder if it doesn't exist
-    dataAccess.userDataPathExists("/user-settings/scripts/").then((resolve) => {
+    dataAccess.userDataPathExists("/user-settings/scripts/").then(() => {
         console.log("Can't find the scripts folder, creating one now...");
         dataAccess.makeDirInUserData("/user-settings/scripts");
     });
 
     // Create the scripts folder if it doesn't exist
-    dataAccess.userDataPathExists("/backups/").then((resolve) => {
+    dataAccess.userDataPathExists("/backups/").then(() => {
         console.log("Can't find the backup folder, creating one now...");
         dataAccess.makeDirInUserData("/backups");
     });
@@ -172,28 +177,28 @@ app.on('ready', function() {
 
     // Create the controls folder if it doesn't exist.
     dataAccess.userDataPathExists("/user-settings/controls")
-        .then((resolve) => {
+        .then(() => {
             console.log("Can't find the controls folder, creating one now...");
             dataAccess.makeDirInUserData("/user-settings/controls");
         });
 
     // Create the logs folder if it doesn't exist.
     dataAccess.userDataPathExists("/user-settings/logs")
-        .then((resolve) => {
+        .then(() => {
             console.log("Can't find the logs folder, creating one now...");
             dataAccess.makeDirInUserData("/user-settings/logs");
         });
 
     // Create the chat folder if it doesn't exist.
     dataAccess.userDataPathExists("/user-settings/chat")
-        .then((resolve) => {
+        .then(() => {
             console.log("Can't find the chat folder, creating one now...");
             dataAccess.makeDirInUserData("/user-settings/chat");
         });
 
     createWindow();
 
-    renderWindow.webContents.on('did-finish-load', function() {
+    renderWindow.webContents.on('did-finish-load', () => {
         renderWindow.show();
     });
 
@@ -203,7 +208,7 @@ app.on('ready', function() {
 });
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
 
     if (settings.backupOnExit()) {
         backupManager.startBackup(false, () => {
@@ -226,7 +231,7 @@ app.on('activate', function () {
     }
 });
 
-process.on('uncaughtException', function(error) {
+process.on('uncaughtException', (error) => {
     // Handle the error
     console.error(error);
 });
@@ -234,13 +239,12 @@ process.on('uncaughtException', function(error) {
 // When Quittin.
 app.on('will-quit', () => {
 
-
     // Unregister all shortcuts.
     mixerConnect.shortcutUnregister();
 });
 
 // Run Updater
-ipcMain.on('downloadUpdate', function(event, uniqueid) {
+ipcMain.on('downloadUpdate', () => {
 
     //back up first
     if (settings.backupBeforeUpdates()) backupManager.startBackup();
@@ -266,7 +270,7 @@ ipcMain.on('downloadUpdate', function(event, uniqueid) {
     });
 
     // When an update has been downloaded
-    updater.on('update-downloaded', (info) => {
+    updater.on('update-downloaded', () => {
         console.log('Updated downloaded. Installing...');
         //let the front end know and wait a few secs.
         renderWindow.webContents.send('updateDownloaded');
@@ -284,7 +288,7 @@ ipcMain.on('downloadUpdate', function(event, uniqueid) {
 });
 
 // Opens the firebot root folder
-ipcMain.on('openRootFolder', function(event) {
+ipcMain.on('openRootFolder', () => {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
     // of opening to the poarent folder with 'Firebot'folder selected.
     let rootFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "user-settings");
@@ -293,7 +297,7 @@ ipcMain.on('openRootFolder', function(event) {
 
 // Get Import Folder Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.
-ipcMain.on('getImportFolderPath', function(event, uniqueid) {
+ipcMain.on('getImportFolderPath', (event, uniqueid) => {
     let path = dialog.showOpenDialog({
         title: "Select 'user-settings' folder",
         buttonLabel: "Import 'user-settings'",
@@ -304,7 +308,7 @@ ipcMain.on('getImportFolderPath', function(event, uniqueid) {
 
 // Get Any kind of file Path
 // This listens for an event from the front end.
-ipcMain.on('getAnyFilePath', function(event, uniqueid) {
+ipcMain.on('getAnyFilePath', (event, uniqueid) => {
     let path = dialog.showOpenDialog({
         title: "Please choose a file",
         buttonLabel: "Choose a file",
@@ -314,14 +318,14 @@ ipcMain.on('getAnyFilePath', function(event, uniqueid) {
 });
 
 // Opens the firebot backup folder
-ipcMain.on('openBackupFolder', function(event) {
+ipcMain.on('openBackupFolder', () => {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
     // of opening to the poarent folder with 'Firebot'folder selected.
     let backupFolder = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep + "fakescript.js");
     shell.showItemInFolder(backupFolder);
 });
 
-ipcMain.on('startBackup', function(event, manualActivation = false) {
+ipcMain.on('startBackup', (event, manualActivation = false) => {
     backupManager.startBackup(manualActivation, () => {
         console.log("backup complete");
         renderWindow.webContents.send('backupComplete', manualActivation);
@@ -332,5 +336,4 @@ ipcMain.on('startBackup', function(event, manualActivation = false) {
 // code. You can also put them in separate files and require them here.
 
 // Interactive handler
-const mixerConnect = require('./lib/common/mixer-interactive.js');
-
+mixerConnect = require('./lib/common/mixer-interactive.js');

@@ -113,78 +113,78 @@
                             category: "Flip"
                         },
                         {
-              	name: "Rotate In",
-              	class: "rotateIn",
-              	category: "Rotate"
+                            name: "Rotate In",
+                            class: "rotateIn",
+                            category: "Rotate"
                         }, {
-              	name: "Rotate In Down Left",
-              	class: "rotateInDownLeft",
-              	category: "Rotate"
+                            name: "Rotate In Down Left",
+                            class: "rotateInDownLeft",
+                            category: "Rotate"
                         }, {
-              	name: "Rotate In Down Right",
-              	class: "rotateInDownRight",
-              	category: "Rotate"
+                            name: "Rotate In Down Right",
+                            class: "rotateInDownRight",
+                            category: "Rotate"
                         }, {
-              	name: "Rotate In Up Left",
-              	class: "rotateInUpLeft",
-              	category: "Rotate"
+                            name: "Rotate In Up Left",
+                            class: "rotateInUpLeft",
+                            category: "Rotate"
                         }, {
-              	name: "Rotate In Up Right",
-              	class: "rotateInUpRight",
-              	category: "Rotate"
+                            name: "Rotate In Up Right",
+                            class: "rotateInUpRight",
+                            category: "Rotate"
                         },
                         {
-              	name: "Zoom In",
-              	class: "zoomIn",
-              	category: "Zoom"
+                            name: "Zoom In",
+                            class: "zoomIn",
+                            category: "Zoom"
                         }, {
-              	name: "Zoom In Down",
-              	class: "zoomInDown",
-              	category: "Zoom"
+                            name: "Zoom In Down",
+                            class: "zoomInDown",
+                            category: "Zoom"
                         }, {
-              	name: "Zoom In Left",
-              	class: "zoomInLeft",
-              	category: "Zoom"
+                            name: "Zoom In Left",
+                            class: "zoomInLeft",
+                            category: "Zoom"
                         }, {
-              	name: "Zoom In Right",
-              	class: "zoomInRight",
-              	category: "Zoom"
+                            name: "Zoom In Right",
+                            class: "zoomInRight",
+                            category: "Zoom"
                         }, {
-              	name: "Zoom In Up",
-              	class: "zoomInUp",
-              	category: "Zoom"
+                            name: "Zoom In Up",
+                            class: "zoomInUp",
+                            category: "Zoom"
                         },
                         {
-              	name: "Slide In Down",
-              	class: "slideInDown",
-              	category: "Slide"
+                            name: "Slide In Down",
+                            class: "slideInDown",
+                            category: "Slide"
                         }, {
-              	name: "Slide In Left",
-              	class: "slideInLeft",
-              	category: "Slide"
+                            name: "Slide In Left",
+                            class: "slideInLeft",
+                            category: "Slide"
                         }, {
-              	name: "Slide In Right",
-              	class: "slideInRight",
-              	category: "Slide"
+                            name: "Slide In Right",
+                            class: "slideInRight",
+                            category: "Slide"
                         }, {
-              	name: "Slide In Up",
-              	class: "slideInUp",
-              	category: "Slide"
+                            name: "Slide In Up",
+                            class: "slideInUp",
+                            category: "Slide"
                         },
                         {
-              	name: "Light Speed In",
-              	class: "lightSpeedIn",
-              	category: "Misc"
+                            name: "Light Speed In",
+                            class: "lightSpeedIn",
+                            category: "Misc"
                         },
                         {
-              	name: "Jack In The Box",
-              	class: "jackInTheBox",
-              	category: "Misc"
+                            name: "Jack In The Box",
+                            class: "jackInTheBox",
+                            category: "Misc"
                         },
                         {
-              	name: "Roll In",
-              	class: "rollIn",
-              	category: "Misc"
+                            name: "Roll In",
+                            class: "rollIn",
+                            category: "Misc"
                         }
                     ],
                     exit: [
@@ -259,78 +259,78 @@
                             category: "Fade"
                         },
                         {
-              	name: "Rotate Out",
-              	class: "rotateOut",
-              	category: "Rotate"
+                            name: "Rotate Out",
+                            class: "rotateOut",
+                            category: "Rotate"
                         }, {
-              	name: "Rotate Out Down Left",
-              	class: "rotateOutDownLeft",
-              	category: "Rotate"
+                            name: "Rotate Out Down Left",
+                            class: "rotateOutDownLeft",
+                            category: "Rotate"
                         }, {
-              	name: "Rotate Out Down Right",
-              	class: "rotateOutDownRight",
-              	category: "Rotate"
+                            name: "Rotate Out Down Right",
+                            class: "rotateOutDownRight",
+                            category: "Rotate"
                         }, {
-              	name: "Rotate Out Up Left",
-              	class: "rotateOutUpLeft",
-              	category: "Rotate"
+                            name: "Rotate Out Up Left",
+                            class: "rotateOutUpLeft",
+                            category: "Rotate"
                         }, {
-              	name: "Rotate Out Up Right",
-              	class: "rotateOutUpRight",
-              	category: "Rotate"
+                            name: "Rotate Out Up Right",
+                            class: "rotateOutUpRight",
+                            category: "Rotate"
                         },
                         {
-              	name: "Zoom Out",
-              	class: "zoomOut",
-              	category: "Zoom"
+                            name: "Zoom Out",
+                            class: "zoomOut",
+                            category: "Zoom"
                         }, {
-              	name: "Zoom Out Down",
-              	class: "zoomOutDown",
-              	category: "Zoom"
+                            name: "Zoom Out Down",
+                            class: "zoomOutDown",
+                            category: "Zoom"
                         }, {
-              	name: "Zoom Out Left",
-              	class: "zoomOutLeft",
-              	category: "Zoom"
+                            name: "Zoom Out Left",
+                            class: "zoomOutLeft",
+                            category: "Zoom"
                         }, {
-              	name: "Zoom Out Right",
-              	class: "zoomOutRight",
-              	category: "Zoom"
+                            name: "Zoom Out Right",
+                            class: "zoomOutRight",
+                            category: "Zoom"
                         }, {
-              	name: "Zoom Out Up",
-              	class: "zoomOutUp",
-              	category: "Zoom"
+                            name: "Zoom Out Up",
+                            class: "zoomOutUp",
+                            category: "Zoom"
                         },
                         {
-              	name: "Slide Out Down",
-              	class: "slideOutDown",
-              	category: "Slide"
+                            name: "Slide Out Down",
+                            class: "slideOutDown",
+                            category: "Slide"
                         }, {
-              	name: "Slide Out Left",
-              	class: "slideOutLeft",
-              	category: "Slide"
+                            name: "Slide Out Left",
+                            class: "slideOutLeft",
+                            category: "Slide"
                         }, {
-              	name: "Slide Out Right",
-              	class: "slideOutRight",
-              	category: "Slide"
+                            name: "Slide Out Right",
+                            class: "slideOutRight",
+                            category: "Slide"
                         }, {
-              	name: "Slide Out Up",
-              	class: "slideOutUp",
-              	category: "Slide"
+                            name: "Slide Out Up",
+                            class: "slideOutUp",
+                            category: "Slide"
                         },
                         {
-              	name: "Light Speed Out",
-              	class: "lightSpeedOut",
-              	category: "Misc"
+                            name: "Light Speed Out",
+                            class: "lightSpeedOut",
+                            category: "Misc"
                         },
                         {
-              	name: "Hinge",
-              	class: "hinge",
-              	category: "Misc"
+                            name: "Hinge",
+                            class: "hinge",
+                            category: "Misc"
                         },
                         {
-              	name: "Roll Out",
-              	class: "rollOut",
-              	category: "Misc"
+                            name: "Roll Out",
+                            class: "rollOut",
+                            category: "Misc"
                         }
                     ]
                 };
