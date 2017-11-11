@@ -1,6 +1,6 @@
 'use strict';
 
-(function(angular) {
+(function() {
 
     const WebSocket = require('ws');
     const WebSocketServer = WebSocket.Server;
@@ -18,77 +18,30 @@
                 port: port
             });
 
-            // Websocket Server
-            // This allows for the guiBroadcast call to send out data via websocket.
-            service.broadcast = function(data) {
-                var data = JSON.stringify(data);
-                console.log(data);
-                wss.clients.forEach(function each(client) {
-                    client.send(data);
-                });
-            };
-
-            // This allows the websocket server to accept incoming packets from overlay.
-            wss.on('connection', function connection(ws) {
-                ws.on('message', function incoming(message) {
-                    var message = JSON.parse(message);
-                    let eventType = message.event;
-                    // TO DO: This would be where you'd watch for events shown in the GUI to end.
-                });
-            });
-
-            // Watches for an event from main process
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.SHOW_VIDEO },
-                (data) => {
-                    showVideo(data);
-                });
-
-            // Watches for an event from main process
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.SHOW_IMAGE },
-                (data) => {
-                    showImage(data);
-                });
-
-            // Watches for an event from main process
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.SHOW_HTML },
-                (data) => {
-                    showHtml(data);
-                });
-
-            // Watches for an event from main process
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CELEBREATE },
-                (data) => {
-                    service.broadcast(data);
-                });
-
             function showImage(data) {
                 let filepath = data.filepath;
                 let imagePosition = data.imagePosition;
-                var imageHeight = data.imageHeight;
-                var imageWidth = data.imageWidth;
-                var imageDuration = parseInt(data.imageDuration);
+                let imageHeight = data.imageHeight;
+                let imageWidth = data.imageWidth;
+                let imageDuration = parseInt(data.imageDuration);
 
                 // Set defaults if they werent filled out.
-                if (imagePosition == "" || imagePosition == null) {
+                if (imagePosition === "" || imagePosition == null) {
                     let imageX = "Top Middle";
                 }
-                if (imageHeight == "" || imageHeight == null) {
-                    var imageHeight = false;
+                if (imageHeight === "" || imageHeight == null) {
+                    imageHeight = false;
                 }
-                if (imageWidth == "" || imageWidth == null) {
-                    var imageWidth = false;
+                if (imageWidth === "" || imageWidth == null) {
+                    imageWidth = false;
                 }
-                if (imageDuration == "" || imageDuration == null) {
-                    var imageDuration = 5;
+                if (imageDuration === "" || imageDuration == null) {
+                    imageDuration = 5;
                 }
 
 
                 // Compile data and send to overlay.
-                var data = {
+                let broadCastData = {
                     "event": "image",
                     "filepath": filepath,
                     "resourceToken": data.resourceToken,
@@ -102,7 +55,7 @@
                     "customCoords": data.customCoords
                 };
 
-                service.broadcast(data);
+                service.broadcast(broadCastData);
             }
 
             function showVideo(data) {
@@ -160,6 +113,53 @@
                 service.broadcast(data);
             }
 
+            // Websocket Server
+            // This allows for the guiBroadcast call to send out data via websocket.
+            service.broadcast = function(data) {
+                data = JSON.stringify(data);
+                console.log(data);
+                wss.clients.forEach(function each(client) {
+                    client.send(data);
+                });
+            };
+
+            // This allows the websocket server to accept incoming packets from overlay.
+            wss.on('connection', function connection(ws) {
+                ws.on('message', function incoming(message) {
+                    message = JSON.parse(message);
+                    let eventType = message.event;
+                    // TO DO: This would be where you'd watch for events shown in the GUI to end.
+                });
+            });
+
+            // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.SHOW_VIDEO },
+                (data) => {
+                    showVideo(data);
+                });
+
+            // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.SHOW_IMAGE },
+                (data) => {
+                    showImage(data);
+                });
+
+            // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.SHOW_HTML },
+                (data) => {
+                    showHtml(data);
+                });
+
+            // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.CELEBREATE },
+                (data) => {
+                    service.broadcast(data);
+                });
+
             return service;
         });
-}(window.angular));
+}());

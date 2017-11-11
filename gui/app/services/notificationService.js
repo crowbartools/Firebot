@@ -1,6 +1,6 @@
 'use strict';
 
-(function(angular) {
+(function() {
 
     // This provides methods for notifications
 
@@ -11,6 +11,7 @@
         .factory('notificationService', function ($http, $interval) {
 
             let service = {};
+            let notifications = [];
 
             const NotificationType = {
                 EXTERNAL: "external",
@@ -23,11 +24,114 @@
                 TIP: "tip",
                 ALERT: "alert"
             };
+            /* Helpers */
+            function getNotificationsFile() {
+                return dataAccess.getJsonDbInUserData("/user-settings/notifications");
+            }
+
+            function deleteDataFromFile(path) {
+                try {
+                    getNotificationsFile().delete(path);
+                } catch (err) {} //eslint-disable-line no-empty
+            }
+            function getDataFromFile(path) {
+                let data = null;
+                try {
+                    data = getNotificationsFile().getData(path, true);
+                } catch (err) {} //eslint-disable-line no-empty
+                return data;
+            }
+            function getSavedNotifications() {
+                let saveNotis = getDataFromFile("/notifications");
+                return saveNotis ? saveNotis : [];
+            }
+            function pushDataToFile(path, data) {
+                try {
+                    getNotificationsFile().push(path, data, true);
+                } catch (err) {} //eslint-disable-line no-empty
+            }
+
+            function setSavedNotifications(notis) {
+                pushDataToFile("/notifications", notis);
+            }
+
+            function pushSavedNotification(notification) {
+                pushDataToFile("/notifications[]", notification);
+            }
+
+            function updateSavedNotificationAtIndex(notification, index) {
+                pushDataToFile(`/notifications[${index}]`, notification);
+            }
+
+            function deleteSavedNotificationAtIndex(index) {
+                deleteDataFromFile(`/notifications[${index}]`);
+            }
+
+            function getKnownExternalNotifications() {
+                let externalNotiIds = getDataFromFile("/knownExternalIds");
+                return externalNotiIds ? externalNotiIds : [];
+            }
+
+            function setKnownExternalNotifications(notis) {
+                pushDataToFile("/knownExternalIds", notis);
+            }
+
+            function getIndexOfUuid(uuid) {
+                let foundIndex = null;
+
+                for (let i = 0; i < notifications.length; i++) {
+                    let n = notifications[i];
+                    if (n.uuid === uuid) {
+                        foundIndex = i;
+                        break;
+                    }
+                }
+
+                return foundIndex;
+            }
+
+            function uuid() {
+                return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                );
+            }
+
+            function loadSavedNotifications() {
+                notifications = getSavedNotifications();
+            }
+
+            function loadExternalNotifications() {
+                $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json")
+                    .then((response) => {
+                        let externalNotifications = response.data;
+
+                        let knownExtNotis = getKnownExternalNotifications();
+
+                        let newKnownExtNotis = [];
+
+                        externalNotifications.forEach((n) => {
+
+                            newKnownExtNotis.push(n.id);
+
+                            if (!knownExtNotis.includes(n.id)) {
+
+                                n.type = NotificationType.EXTERNAL;
+                                n.externalId = n.id;
+                                n.id = undefined;
+
+                                service.addNotification(n, true);
+
+                            }
+                        });
+
+                        setKnownExternalNotifications(newKnownExtNotis);
+                    });
+            }
 
             service.NotificationIconType = NotificationIconType;
             service.NotificationType = NotificationType;
 
-            let notifications = [];
+
 
             service.getNotifications = function() {
                 return notifications;
@@ -82,37 +186,7 @@
                 loadExternalNotifications();
             };
 
-            function loadSavedNotifications() {
-                notifications = getSavedNotifications();
-            }
 
-            function loadExternalNotifications() {
-                $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json")
-                    .then((response) => {
-                        let externalNotifications = response.data;
-
-                        let knownExtNotis = getKnownExternalNotifications();
-
-                        let newKnownExtNotis = [];
-
-                        externalNotifications.forEach((n) => {
-
-                            newKnownExtNotis.push(n.id);
-
-                            if (!knownExtNotis.includes(n.id)) {
-
-                                n.type = NotificationType.EXTERNAL;
-                                n.externalId = n.id;
-                                n.id = undefined;
-
-                                service.addNotification(n, true);
-
-                            }
-                        });
-
-                        setKnownExternalNotifications(newKnownExtNotis);
-                    });
-            }
 
             let externalIntervalCheck = null;
             service.startExternalIntervalCheck = function() {
@@ -126,82 +200,6 @@
                 }, 5 * 60000);
             };
 
-            /* Helpers */
-
-            function getSavedNotifications() {
-                let saveNotis = getDataFromFile("/notifications");
-                return saveNotis ? saveNotis : [];
-            }
-
-            function setSavedNotifications(notis) {
-                pushDataToFile("/notifications", notis);
-            }
-
-            function pushSavedNotification(notification) {
-                pushDataToFile("/notifications[]", notification);
-            }
-
-            function updateSavedNotificationAtIndex(notification, index) {
-                pushDataToFile(`/notifications[${index}]`, notification);
-            }
-
-            function deleteSavedNotificationAtIndex(index) {
-                deleteDataFromFile(`/notifications[${index}]`);
-            }
-
-            function getKnownExternalNotifications() {
-                let externalNotiIds = getDataFromFile("/knownExternalIds");
-                return externalNotiIds ? externalNotiIds : [];
-            }
-
-            function setKnownExternalNotifications(notis) {
-                pushDataToFile("/knownExternalIds", notis);
-            }
-
-            function getNotificationsFile() {
-                return dataAccess.getJsonDbInUserData("/user-settings/notifications");
-            }
-
-            function pushDataToFile(path, data) {
-                try {
-                    getNotificationsFile().push(path, data, true);
-                } catch (err) {}
-            }
-
-            function getDataFromFile(path) {
-                let data = null;
-                try {
-                    data = getNotificationsFile().getData(path, true);
-                } catch (err) {}
-                return data;
-            }
-
-            function deleteDataFromFile(path) {
-                try {
-                    getNotificationsFile().delete(path);
-                } catch (err) {}
-            }
-
-            function getIndexOfUuid(uuid) {
-                let foundIndex = null;
-
-                for (let i = 0; i < notifications.length; i++) {
-                    let n = notifications[i];
-                    if (n.uuid == uuid) {
-                        foundIndex = i;
-                        break;
-                    }
-                }
-
-                return foundIndex;
-            }
-
-            function uuid() {
-                return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-                );
-            }
-
             return service;
         });
-}(window.angular));
+}());

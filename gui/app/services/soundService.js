@@ -1,10 +1,8 @@
 'use strict';
 
-(function(angular) {
+(function() {
 
     // This provides methods for playing sounds
-
-    const _ = require('underscore')._;
 
     angular
         .module('firebotApp')
@@ -13,8 +11,8 @@
 
             // Connection Sounds
             service.connectSound = function(type) {
-                if (settingsService.soundsEnabled() == "On") {
-                    if (type == "Online") {
+                if (settingsService.soundsEnabled() === "On") {
+                    if (type === "Online") {
                         service.playSound("../sounds/online.mp3", 0.2);
                     } else {
                         service.playSound("../sounds/offline.mp3", 0.2);

@@ -1,14 +1,10 @@
 'use strict';
-
-(function(angular) {
+(function() {
 
     // This contains utility functions
     // Just inject "utilityService" into any controller that you want access to these
     const electron = require('electron');
-    const _ = require('underscore')._;
-    const path = require('path');
     const logger = require('../../lib/errorLogging.js');
-    const dataAccess = require('../../lib/common/data-access.js');
 
     angular
         .module('firebotApp')
@@ -77,7 +73,7 @@
                     controllerFunc: "firstTimeUseModalController",
                     keyboard: false,
                     backdrop: 'static',
-                    closeCallback: (data) => {}
+                    closeCallback: () => {}
                 };
                 service.showModal(firstTimeUseModalContext);
             };
@@ -93,7 +89,7 @@
 
                         $scope.overlayPath = `http://localhost:${settingsService.getWebServerPort()}/overlay`;
 
-                        if (instanceName != null && instanceName != "") {
+                        if (instanceName != null && instanceName !== "") {
                             $scope.showingInstance = true;
                             $scope.overlayPath = $scope.overlayPath + "?instance=" + encodeURIComponent(instanceName);
                         }
@@ -147,7 +143,7 @@
             let previousErrorMessage = "";
             let errorModalOpen = false;
             service.showErrorModal = function (errorMessage) {
-                if (errorModalOpen && previousErrorMessage == errorMessage) {
+                if (errorModalOpen && previousErrorMessage === errorMessage) {
                     return;
                 }
                 previousErrorMessage = errorMessage;
@@ -243,19 +239,15 @@
 
             // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
             service.getNewArrayWithToggledElement = function (array, element) {
-                let itemArray = [];
+                let itemArray = [], itemIndex = -1;
                 if (array != null) {
                     itemArray = array;
                 }
-
-                var itemIndex = -1;
                 try {
-                    var itemIndex = itemArray.indexOf(element);
-                } catch (err) {
+                    itemIndex = itemArray.indexOf(element);
+                } catch (err) {} //eslint-disable-line no-empty
 
-                }
-
-                if (itemIndex != -1) {
+                if (itemIndex !== -1) {
                     // Item exists, so we're unchecking it.
                     itemArray.splice(itemIndex, 1);
                 } else {
@@ -270,19 +262,19 @@
             // This is used to check for an item in a saved array and returns true if it exists.
             service.arrayContainsElement = function(array, element) {
                 if (array != null) {
-                    return array.indexOf(element) != -1;
+                    return array.indexOf(element) !== -1;
                 }
                 return false;
 
             };
 
             /*
-    * INFO MODAL
-    */
+            * INFO MODAL
+            */
             let previousInfoMessage = "";
             let infoModalOpen = false;
             service.showInfoModal = function (infoMessage) {
-                if (infoModalOpen && previousInfoMessage == infoMessage) {
+                if (infoModalOpen && previousInfoMessage === infoMessage) {
                     return;
                 }
                 previousInfoMessage = infoMessage;
@@ -333,4 +325,4 @@
 
             return service;
         });
-}(window.angular));
+}());

@@ -1,12 +1,9 @@
 'use strict';
-
-(function(angular) {
+(function() {
 
     //This handles settings access for frontend
 
     const dataAccess = require('../../lib/common/data-access.js');
-
-    const _ = require('underscore')._;
     const fs = require('fs');
 
     angular
@@ -24,7 +21,7 @@
                 try {
                     getSettingsFile().push(path, data);
                     settingsCache[path] = data;
-                } catch (err) {}
+                } catch (err) {} //eslint-disable-line no-empty
             }
 
             function getDataFromFile(path, forceCacheUpdate) {
@@ -33,7 +30,7 @@
                         let data = getSettingsFile().getData(path);
                         settingsCache[path] = data;
                     }
-                } catch (err) {}
+                } catch (err) {} //eslint-disable-line no-empty
                 return settingsCache[path];
             }
 
@@ -86,11 +83,11 @@
             };
 
             service.getCustomScriptsEnabled = function() {
-                return getDataFromFile('/settings/runCustomScripts') == true;
+                return getDataFromFile('/settings/runCustomScripts') === true;
             };
 
             service.setCustomScriptsEnabled = function(enabled) {
-                pushDataToFile('/settings/runCustomScripts', enabled == true);
+                pushDataToFile('/settings/runCustomScripts', enabled === true);
             };
 
             service.isBetaTester = function() {
@@ -183,17 +180,17 @@
             };
 
             service.getButtonViewMode = function(type) {
-                if (type == "commands") {
-                    var buttonViewMode = getDataFromFile('/settings/buttonViewModeCommands');
+                if (type === "commands") {
+                    let buttonViewMode = getDataFromFile('/settings/buttonViewModeCommands');
                     return buttonViewMode != null ? buttonViewMode : 'list';
                 }
-                var buttonViewMode = getDataFromFile('/settings/buttonViewMode');
+                let buttonViewMode = getDataFromFile('/settings/buttonViewMode');
                 return buttonViewMode != null ? buttonViewMode : 'grid';
 
             };
 
             service.setButtonViewMode = function(buttonViewMode, type) {
-                if (type == "commands") {
+                if (type === "commands") {
                     pushDataToFile('/settings/buttonViewModeCommands', buttonViewMode);
                 } else {
                     pushDataToFile('/settings/buttonViewMode', buttonViewMode);
@@ -297,4 +294,4 @@
 
             return service;
         });
-}(window.angular));
+}());

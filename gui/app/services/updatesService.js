@@ -3,8 +3,6 @@
 (function(angular) {
 
     //This handles updates
-
-    const _ = require('underscore')._;
     const VersionCompare = require('../../lib/compare-versions.js');
     const UpdateType = VersionCompare.UpdateType;
 
@@ -28,6 +26,31 @@
             // This checks for updates.
             service.checkForUpdate = function() {
                 service.isCheckingForUpdates = true;
+
+                function shouldAutoUpdate(autoUpdateLevel, updateType) {
+                    // if auto updating is completely disabled
+                    if (autoUpdateLevel === 0) {
+                        return false;
+                    }
+
+                    // check each update type
+                    switch (updateType) {
+                    case UpdateType.NONE:
+                        return false;
+                    case UpdateType.PRELEASE:
+                        return autoUpdateLevel >= 4;
+                    case UpdateType.OFFICAL:
+                    case UpdateType.PATCH:
+                        return autoUpdateLevel >= 1;
+                    case UpdateType.MINOR:
+                        return autoUpdateLevel >= 2;
+                    case UpdateType.MAJOR:
+                        return autoUpdateLevel >= 3;
+                    default:
+                        return false;
+                    }
+                }
+
                 return $q((resolve, reject) => {
 
                     let firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
@@ -58,7 +81,7 @@
                         let updateType = VersionCompare.compareVersions(gitNewest.tag_name, currentVersion);
 
                         let updateIsAvailable = false;
-                        if (updateType != UpdateType.NONE) {
+                        if (updateType !== UpdateType.NONE) {
                             let autoUpdateLevel = settingsService.getAutoUpdateLevel();
                             // Check if we should auto update based on the users setting
                             if (shouldAutoUpdate(autoUpdateLevel, updateType)) {
@@ -101,30 +124,6 @@
                     listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
                 }
             };
-
-            function shouldAutoUpdate(autoUpdateLevel, updateType) {
-                // if auto updating is completely disabled
-                if (autoUpdateLevel == 0) {
-                    return false;
-                }
-
-                // check each update type
-                switch (updateType) {
-                case UpdateType.NONE:
-                    return false;
-                case UpdateType.PRELEASE:
-                    return autoUpdateLevel >= 4;
-                case UpdateType.OFFICAL:
-                case UpdateType.PATCH:
-                    return autoUpdateLevel >= 1;
-                case UpdateType.MINOR:
-                    return autoUpdateLevel >= 2;
-                case UpdateType.MAJOR:
-                    return autoUpdateLevel >= 3;
-                default:
-                    return false;
-                }
-            }
 
             return service;
         });
