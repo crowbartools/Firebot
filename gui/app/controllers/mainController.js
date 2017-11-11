@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function() {
 
     const electron = require('electron');
     const shell = electron.shell;
@@ -276,4 +276,4 @@
             return input.slice(startFrom);
         };
     });
-}(window.angular));
+}(angular));

@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function() {
 
     // This provides helper methods for control effects
 
@@ -15,7 +15,7 @@
             // Returns a controller to be used for the template of a given effectype
             service.getControllerForEffectTypeTemplate = function(trigger, effectType) {
                 // Default empty controller. We can override it in the switch statement below.
-                let controller = ($scope) => {};
+                let controller = () => {};
 
                 // Swap list to look through based on given type.
                 let EffectList = EffectType.getEffectDictionary(trigger);
@@ -136,9 +136,9 @@
                         // This checks to see which field the user is filling out, and then adjust the other field so it's always 16:9.
                         $scope.calculateSize = function(widthOrHeight, size) {
                             if (size !== "") {
-                                if (widthOrHeight == "Width" && $scope.forceRatio === true) {
+                                if (widthOrHeight === "Width" && $scope.forceRatio === true) {
                                     $scope.effect.height = String(Math.round((size / 16) * 9));
-                                } else if (widthOrHeight == "Height" && $scope.forceRatio === true) {
+                                } else if (widthOrHeight === "Height" && $scope.forceRatio === true) {
                                     $scope.effect.width = String(Math.round((size * 16) / 9));
                                 }
                             } else {
@@ -282,39 +282,6 @@
                 case EffectList.CUSTOM_SCRIPT:
                     controller = ($scope) => {
 
-                        $scope.isLoadingParameters = true;
-
-                        let scriptFolderPath = dataAccess.getPathInUserData("/user-settings/scripts");
-                        // Grab files in folder when button effect shown.
-                        $scope.scriptArray = fs.readdirSync(scriptFolderPath);
-
-                        // Grab files in folder on refresh click.
-                        $scope.getNewScripts = function () {
-                            $scope.scriptArray = fs.readdirSync(scriptFolderPath);
-                            if ($scope.effect.scriptName != null) {
-                                loadParameters($scope.effect.scriptName);
-                            }
-                        };
-
-                        // Open script folder on click.
-                        $scope.openScriptsFolder = function() {
-                            ipcRenderer.send('openScriptsFolder');
-                        };
-
-                        $scope.selectScript = function(scriptName) {
-                            $scope.effect.scriptName = scriptName;
-                            $scope.effect.parameters = null;
-                            loadParameters(scriptName);
-                        };
-
-                        $scope.scriptHasParameters = function() {
-                            return $scope.effect.parameters != null && Object.keys($scope.effect.parameters).length > 0;
-                        };
-
-                        if ($scope.effect.scriptName != null) {
-                            loadParameters($scope.effect.scriptName);
-                        }
-
                         function loadParameters(scriptName) {
                             console.log("Attempting to load custom script parameters...");
                             $scope.isLoadingParameters = true;
@@ -372,6 +339,39 @@
                                 utilityService.showErrorModal("Error loading the script '" + scriptName + "'\n\n" + err);
                                 console.log(err);
                             }
+                        }
+
+                        $scope.isLoadingParameters = true;
+
+                        let scriptFolderPath = dataAccess.getPathInUserData("/user-settings/scripts");
+                        // Grab files in folder when button effect shown.
+                        $scope.scriptArray = fs.readdirSync(scriptFolderPath);
+
+                        // Grab files in folder on refresh click.
+                        $scope.getNewScripts = function () {
+                            $scope.scriptArray = fs.readdirSync(scriptFolderPath);
+                            if ($scope.effect.scriptName != null) {
+                                loadParameters($scope.effect.scriptName);
+                            }
+                        };
+
+                        // Open script folder on click.
+                        $scope.openScriptsFolder = function() {
+                            ipcRenderer.send('openScriptsFolder');
+                        };
+
+                        $scope.selectScript = function(scriptName) {
+                            $scope.effect.scriptName = scriptName;
+                            $scope.effect.parameters = null;
+                            loadParameters(scriptName);
+                        };
+
+                        $scope.scriptHasParameters = function() {
+                            return $scope.effect.parameters != null && Object.keys($scope.effect.parameters).length > 0;
+                        };
+
+                        if ($scope.effect.scriptName != null) {
+                            loadParameters($scope.effect.scriptName);
                         }
                     };
 
@@ -515,19 +515,18 @@
 
             // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
             service.getCheckedBoxes = function (list, item) {
-                if (list != null) {
-                    var itemArray = list;
-                } else {
-                    var itemArray = [];
+                let itemArray = list, itemIndex;
+                if (list == null) {
+                    itemArray = [];
                 }
 
                 try {
-                    var itemIndex = itemArray.indexOf(item);
+                    itemIndex = itemArray.indexOf(item);
                 } catch (err) {
-                    var itemIndex = -1;
+                    itemIndex = -1;
                 }
 
-                if (itemIndex != -1) {
+                if (itemIndex !== -1) {
                     // Item exists, so we're unchecking it.
                     itemArray.splice(itemIndex, 1);
                 } else {
@@ -542,7 +541,7 @@
             // This is used to check for an item in a saved array and returns true if it exists.
             service.checkSavedArray = function(list, item) {
                 if (list != null) {
-                    return list.indexOf(item) != -1;
+                    return list.indexOf(item) !== -1;
                 }
                 return false;
 
@@ -551,4 +550,4 @@
 
             return service;
         });
-}(window.angular));
+}());

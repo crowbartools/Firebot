@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function() {
 
     //This manages board data
 
@@ -651,21 +651,6 @@
                 return controls;
             };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             return service;
         });
-}(window.angular));
+}());

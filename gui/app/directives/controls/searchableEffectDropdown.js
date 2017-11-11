@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function() {
 
     //This a wrapped dropdown element that automatically handles the particulars
     const Effect = require('../../lib/common/EffectType.js');
@@ -68,4 +68,4 @@
                 });
             }
         });
-}(window.angular));
+}());

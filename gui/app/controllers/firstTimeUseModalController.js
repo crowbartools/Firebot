@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function() {
 
     //TODO: Rename this to setupWizardModalController
 
@@ -216,4 +216,4 @@
                 $uibModalInstance.dismiss(reason);
             };
         });
-}(window.angular));
+}());

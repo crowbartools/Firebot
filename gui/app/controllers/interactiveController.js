@@ -1,5 +1,5 @@
 'use strict';
-(function(angular, $) {
+(function($) {
 
     //This handles the Interactive tab
 
@@ -359,4 +359,4 @@
                 });
             }
         });
-}(window.angular, window.jQuery));
+}(window.jQuery));

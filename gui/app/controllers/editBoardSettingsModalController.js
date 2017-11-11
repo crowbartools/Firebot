@@ -1,5 +1,5 @@
 'use strict';
-(function(angular, $) {
+(function($) {
 
     const _ = require('underscore')._;
 
@@ -195,4 +195,4 @@
                 utilityService.showModal(editViewerGroupDefaultsModalContext);
             };
         });
-}(window.angular, window.jQuery));
+}(window.jQuery));

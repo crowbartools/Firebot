@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function() {
 
     //This adds the <eos-enter-exit-animations> element
 
@@ -357,4 +357,4 @@
                 };
             }
         });
-}(window.angular));
+}());

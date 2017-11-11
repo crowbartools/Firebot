@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function() {
 
     //This handles the Updates tab
 
@@ -21,4 +21,4 @@
             };
 
         });
-}(window.angular));
+}());

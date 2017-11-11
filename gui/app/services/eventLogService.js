@@ -1,6 +1,6 @@
 'use strict';
 
-(function(angular) {
+(function() {
 
     //This handles groups
 
@@ -12,31 +12,6 @@
             let service = {};
 
             service.events = [];
-
-            // Watches for an event from main process
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.EVENT_LOG },
-                (data) => {
-                    addEvent(data);
-                });
-
-            function addEvent(data) {
-                let username = data.username;
-                let text = data.event;
-
-                let now = new Date();
-                let timeStamp = getTimeStamp(now);
-
-                // Tag this item with milliseconds so we can easily purge them later.
-                let milliseconds = now.getTime();
-
-                service.events.push({
-                    milliseconds: milliseconds,
-                    timestamp: timeStamp,
-                    username: username,
-                    text: text
-                });
-            }
 
             // Pretty timestamp
             function getTimeStamp(date) {
@@ -61,6 +36,31 @@
                 return time.join(":") + " " + suffix;
             }
 
+            function addEvent(data) {
+                let username = data.username;
+                let text = data.event;
+
+                let now = new Date();
+                let timeStamp = getTimeStamp(now);
+
+                // Tag this item with milliseconds so we can easily purge them later.
+                let milliseconds = now.getTime();
+
+                service.events.push({
+                    milliseconds: milliseconds,
+                    timestamp: timeStamp,
+                    username: username,
+                    text: text
+                });
+            }
+
+            // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.EVENT_LOG },
+                (data) => {
+                    addEvent(data);
+                });
+
             function logCleaner() {
                 let now = new Date();
                 let nowMilliseconds = now.getTime();
@@ -79,4 +79,4 @@
 
             return service;
         });
-}(window.angular));
+}());

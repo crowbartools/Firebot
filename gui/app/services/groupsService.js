@@ -1,6 +1,6 @@
 'use strict';
 
-(function(angular) {
+(function() {
 
     //This handles groups
 
@@ -15,9 +15,66 @@
             let groups = [];
             let sparkExemptGroup = [];
 
+
+            function saveBannedGroup() {
+                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                let bannedGroup = service.getBannedGroup();
+                dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
+            }
+
+            function saveExemptGroup() {
+                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
+                let exemptGroup = service.getExemptGroup();
+                dbGroup.push("/sparkExempt", exemptGroup);
+            }
+
+            function ensureExemptGroupExists() {
+                let exemptGroupExists = _.any(sparkExemptGroup, (group) => {
+                    return group.groupName === 'sparkExempt';
+                });
+
+                if (!exemptGroupExists) {
+                    let exemptGroup = {
+                        groupName: 'sparkExempt',
+                        users: [],
+                        groups: []
+                    };
+                    let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
+                    dbGroup.push("/sparkExempt", exemptGroup);
+                    sparkExemptGroup.push(exemptGroup);
+                }
+            }
+
+            function deleteViewerGroup(groupName) {
+                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                dbGroup.delete("/" + groupName);
+
+                boardService.deleteViewerGroupFromAllBoards(groupName);
+            }
+
+            /**
+            * Banned Usergroup Methods
+            */
+
+            function ensureBannedGroupExists() {
+                let bannedGroupExists = _.any(groups, (group) => {
+                    return group.groupName === 'banned';
+                });
+
+                if (!bannedGroupExists) {
+                    let bannedGroup = {
+                        groupName: 'banned',
+                        users: []
+                    };
+                    let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                    dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
+                    groups.push(bannedGroup);
+                }
+            }
+
             service.loadViewerGroups = function() {
                 // Load up all custom made groups in each dropdown.
-                var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
                 try {
                     let rawGroups = dbGroup.getData('/');
                     if (rawGroups != null) {
@@ -29,10 +86,10 @@
                 }
 
                 // Load up exempt group
-                var dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
+                dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
                 try {
                     sparkExemptGroup.push(dbGroup.getData('/sparkExempt'));
-                } catch (err) {}
+                } catch (err) {} //eslint-disable-line no-empty
             };
 
             service.getViewerGroups = function(filterOutBannedGroup) {
@@ -40,9 +97,9 @@
                 if (groups != null) {
                     // Filter out the banned group. This will happen by default, even if the
                     // argument isn't passed.
-                    if (filterOutBannedGroup != false) {
+                    if (filterOutBannedGroup !== false) {
                         groupList = _.reject(groups, (group) => {
-                            return group.groupName == "banned";
+                            return group.groupName === "banned";
                         });
                     } else {
                         groupList = groups;
@@ -76,19 +133,23 @@
                 let inactiveGroups = service.getInactiveGroups();
 
                 // Push groups to array.
-                for (group in activeGroups) {
-                    var group = activeGroups[group];
-                    groupList.push(group);
+                for (let group in activeGroups) {
+                    if (activeGroups.hasOwnProperty(group)) {
+                        group = activeGroups[group];
+                        groupList.push(group);
+                    }
                 }
 
-                for (group in inactiveGroups) {
-                    var group = inactiveGroups[group];
-                    groupList.push(group);
+                for (let group in inactiveGroups) {
+                    if (inactiveGroups.hasOwnProperty(group)) {
+                        group = inactiveGroups[group];
+                        groupList.push(group);
+                    }
                 }
 
                 // Filter out duplicates
                 groupList = groupList.filter(function(elem, pos) {
-                    return groupList.indexOf(elem) == pos;
+                    return groupList.indexOf(elem) === pos;
                 });
 
                 return groupList;
@@ -101,19 +162,21 @@
 
                 // Go through each scene on the current board and push default groups to groupList.
                 if (dbGroup != null) {
-                    for (scene in dbGroup.scenes) {
-                        var scene = dbGroup.scenes[scene];
-                        let sceneGroups = scene.default;
-                        for (item of sceneGroups) {
-                            if (item !== "None") {
-                                groupList.push(item);
+                    for (let scene in dbGroup.scenes) {
+                        if (dbGroup.scenes.hasOwnProperty(scene)) {
+                            scene = dbGroup.scenes[scene];
+                            let sceneGroups = scene.default;
+                            for (let item of sceneGroups) {
+                                if (item !== "None") {
+                                    groupList.push(item);
+                                }
                             }
                         }
                     }
 
                     // Filter out duplicates
                     groupList = groupList.filter(function(elem, pos) {
-                        return groupList.indexOf(elem) == pos;
+                        return groupList.indexOf(elem) === pos;
                     });
                 }
 
@@ -142,7 +205,7 @@
             };
 
             service.addOrUpdateViewerGroup = function(group, previousName) {
-                if (group.groupName == "banned") return;
+                if (group.groupName === "banned") return;
                 let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
 
                 if (previousName != null && previousName !== "" && previousName !== group.groupName) {
@@ -161,19 +224,8 @@
                 service.loadViewerGroups();
             };
 
-            function deleteViewerGroup(groupName) {
-                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
-                dbGroup.delete("/" + groupName);
-
-                boardService.deleteViewerGroupFromAllBoards(groupName);
-            }
-
-            /**
-    * Banned Usergroup Methods
-    */
-
             service.addUserToBannedGroup = function(username) {
-                if (username != null && username != "") {
+                if (username != null && username !== "") {
                     service.getBannedGroup().users.push(username);
                 }
                 saveBannedGroup();
@@ -190,34 +242,12 @@
                 return group;
             };
 
-            function saveBannedGroup() {
-                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
-                let bannedGroup = service.getBannedGroup();
-                dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
-            }
-
-            function ensureBannedGroupExists() {
-                let bannedGroupExists = _.any(groups, (group) => {
-                    return group.groupName == 'banned';
-                });
-
-                if (!bannedGroupExists) {
-                    let bannedGroup = {
-                        groupName: 'banned',
-                        users: []
-                    };
-                    let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
-                    dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
-                    groups.push(bannedGroup);
-                }
-            }
-
             /**
-    * Exempt Usergroup Methods
-    */
+            * Exempt Usergroup Methods
+            */
 
             service.addUserToExemptGroup = function(username) {
-                if (username != null && username != "") {
+                if (username != null && username !== "") {
                     service.getExemptGroup().users.push(username);
                 }
                 saveExemptGroup();
@@ -245,29 +275,6 @@
                 return group;
             };
 
-            function saveExemptGroup() {
-                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
-                let exemptGroup = service.getExemptGroup();
-                dbGroup.push("/sparkExempt", exemptGroup);
-            }
-
-            function ensureExemptGroupExists() {
-                let exemptGroupExists = _.any(sparkExemptGroup, (group) => {
-                    return group.groupName == 'sparkExempt';
-                });
-
-                if (!exemptGroupExists) {
-                    let exemptGroup = {
-                        groupName: 'sparkExempt',
-                        users: [],
-                        groups: []
-                    };
-                    let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
-                    dbGroup.push("/sparkExempt", exemptGroup);
-                    sparkExemptGroup.push(exemptGroup);
-                }
-            }
-
             return service;
         });
-}(window.angular));
+}());

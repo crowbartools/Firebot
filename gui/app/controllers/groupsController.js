@@ -1,5 +1,5 @@
 'use strict';
-(function(angular, $) {
+(function($) {
 
     // This handles the Groups tab
 
@@ -110,4 +110,4 @@
             };
 
         });
-}(window.angular, window.jQuery));
+}(window.jQuery));

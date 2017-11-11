@@ -1,6 +1,5 @@
 'use strict';
-
-(function(angular) {
+(function() {
 
     // This helps listening to events coming from the backend
 
@@ -53,6 +52,31 @@
                 BACKUP_COMPLETE: "backupComplete"
             };
 
+            function runListener(listener, returnPayload) {
+                if (listener != null) {
+                    let callback = listener.callback;
+                    if (typeof callback === 'function') {
+                        // $q is angulars implementation of the promise protocol. We are creating and instantly resolving a promise, then we run the callback.
+                        // This simply ensures any scope varibles are updated if needed.
+                        $q.resolve(true, () => callback(returnPayload));
+                    }
+                    if (listener.runOnce === true) {
+                        service.unregisterListener(listener.type, listener.uuid);
+                    }
+                }
+            }
+
+            function parseFilePathEvent(data) {
+                let uuid = data.id;
+                let filepath = "";
+                if (data.path != null) {
+                    filepath = data.path[0];
+                }
+
+                let listener = registeredListeners.filePath[uuid];
+                runListener(listener, filepath);
+            }
+
             service.ListenerType = ListenerType;
 
             service.registerListener = function(request, callback) {
@@ -65,10 +89,10 @@
                     uuid: uuid,
                     type: request.type,
                     callback: callback, // the callback when this listener is triggered
-                    runOnce: request.runOnce == true // Means the listener will remove itself after the first time its called
+                    runOnce: request.runOnce === true // Means the listener will remove itself after the first time its called
                 };
 
-                let publishEvent = request.publishEvent == true;
+                let publishEvent = request.publishEvent === true;
 
                 switch (listener.type) {
                 case ListenerType.VIDEO_FILE:
@@ -77,15 +101,15 @@
                 case ListenerType.IMPORT_FOLDER:
                     registeredListeners.filePath[uuid] = listener;
                     if (publishEvent) {
-                        if (listener.type == ListenerType.IMAGE_FILE) {
+                        if (listener.type === ListenerType.IMAGE_FILE) {
                             ipcRenderer.send('getImagePath', uuid);
-                        } else if (listener.type == ListenerType.SOUND_FILE) {
+                        } else if (listener.type === ListenerType.SOUND_FILE) {
                             ipcRenderer.send('getSoundPath', uuid);
-                        } else if (listener.type == ListenerType.VIDEO_FILE) {
+                        } else if (listener.type === ListenerType.VIDEO_FILE) {
                             ipcRenderer.send('getVideoPath', uuid);
-                        } else if (listener.type == ListenerType.IMPORT_FOLDER) {
+                        } else if (listener.type === ListenerType.IMPORT_FOLDER) {
                             ipcRenderer.send('getImportFolderPath', uuid);
-                        } else if (listener.type == ListenerType.ANY_FILE) {
+                        } else if (listener.type === ListenerType.ANY_FILE) {
                             ipcRenderer.send('getAnyFilePath', uuid);
                         }
                     }
@@ -152,16 +176,7 @@
                 parseFilePathEvent(data);
             });
 
-            function parseFilePathEvent(data) {
-                let uuid = data.id;
-                let filepath = "";
-                if (data.path != null) {
-                    filepath = data.path[0];
-                }
 
-                let listener = registeredListeners.filePath[uuid];
-                runListener(listener, filepath);
-            }
 
             /**
     * Connection event listeners
@@ -170,8 +185,8 @@
             // Interactive Connection Monitor
             // Recieves event from main process that connection has been established or disconnected.
             ipcRenderer.on('connection', function (event, data) {
-                let isConnected = data ? (data.toLowerCase() == "online") : false;
-                _.forEach(registeredListeners.connectionStatus, (listener, key, list) => {
+                let isConnected = data ? (data.toLowerCase() === "online") : false;
+                _.forEach(registeredListeners.connectionStatus, (listener) => {
                     runListener(listener, isConnected);
                 });
             });
@@ -179,147 +194,133 @@
             // Chat Connection Monitor
             // Recieves event from main process that connection has been established or disconnected.
             ipcRenderer.on('chatConnection', function (event, data) {
-                let isChatConnected = data ? (data.toLowerCase() == "online") : false;
-                _.forEach(registeredListeners.chatConnectionStatus, (listener, key, list) => {
+                let isChatConnected = data ? (data.toLowerCase() === "online") : false;
+                _.forEach(registeredListeners.chatConnectionStatus, (listener) => {
                     runListener(listener, isChatConnected);
                 });
             });
 
             // Interactive Connect Request
             // Recieves an event from the main process when the global hotkey is hit for connecting.
-            ipcRenderer.on('getRefreshToken', function (event, data) {
-                _.forEach(registeredListeners.connectionChangeRequest, (listener, key, list) => {
+            ipcRenderer.on('getRefreshToken', function () {
+                _.forEach(registeredListeners.connectionChangeRequest, (listener) => {
                     runListener(listener, null);
                 });
             });
 
             // Chat Connect Request
             // Recieves an event from the main process when the global hotkey is hit for connecting.
-            ipcRenderer.on('getChatRefreshToken', function (event, data) {
-                _.forEach(registeredListeners.chatConnectionChangeRequest, (listener, key, list) => {
+            ipcRenderer.on('getChatRefreshToken', function () {
+                _.forEach(registeredListeners.chatConnectionChangeRequest, (listener) => {
                     runListener(listener, null);
                 });
             });
 
             /**
-    * Event log event listener
-    */
+            * Event log event listener
+            */
             ipcRenderer.on('eventlog', function (event, data) {
-                _.forEach(registeredListeners.eventLog, (listener, key, list) => {
+                _.forEach(registeredListeners.eventLog, (listener) => {
                     runListener(listener, data);
                 });
             });
 
             /**
-    * Error event listener
-    */
+            * Error event listener
+            */
             ipcRenderer.on('error', function (event, errorMessage) {
-                _.forEach(registeredListeners.error, (listener, key, list) => {
+                _.forEach(registeredListeners.error, (listener) => {
                     runListener(listener, errorMessage);
                 });
             });
 
             /**
-    * Info event listener
-    */
+            * Info event listener
+            */
             ipcRenderer.on('info', function (event, infoMessage) {
-                _.forEach(registeredListeners.info, (listener, key, list) => {
+                _.forEach(registeredListeners.info, (listener) => {
                     runListener(listener, infoMessage);
                 });
             });
 
 
             /**
-    * Update error listener
-    */
+            * Update error listener
+            */
             ipcRenderer.on('updateError', function (event, errorMessage) {
-                _.forEach(registeredListeners.updateError, (listener, key, list) => {
+                _.forEach(registeredListeners.updateError, (listener) => {
                     runListener(listener, errorMessage);
                 });
             });
 
             /**
-    * Update download listener
-    */
+            * Update download listener
+            */
             ipcRenderer.on('updateDownloaded', function () {
-                _.forEach(registeredListeners.updateDownloaded, (listener, key, list) => {
+                _.forEach(registeredListeners.updateDownloaded, (listener) => {
                     runListener(listener);
                 });
             });
 
             /**
-    * Show img event listener
-    */
+            * Show img event listener
+            */
             ipcRenderer.on('showimage', function (event, data) {
-                _.forEach(registeredListeners.showImage, (listener, key, list) => {
+                _.forEach(registeredListeners.showImage, (listener) => {
                     runListener(listener, data);
                 });
             });
 
             /**
-    * Show video event listener
-    */
+            * Show video event listener
+            */
             ipcRenderer.on('showvideo', function (event, data) {
-                _.forEach(registeredListeners.showVideo, (listener, key, list) => {
+                _.forEach(registeredListeners.showVideo, (listener) => {
                     runListener(listener, data);
                 });
             });
 
             /**
-    * Show html event listener
-    */
+            * Show html event listener
+            */
             ipcRenderer.on('showhtml', function (event, data) {
-                _.forEach(registeredListeners.showHtml, (listener, key, list) => {
+                _.forEach(registeredListeners.showHtml, (listener) => {
                     runListener(listener, data);
                 });
             });
 
             /**
-    * Play sound event listener
-    */
+            * Play sound event listener
+            */
             ipcRenderer.on('playsound', function (event, data) {
-                _.forEach(registeredListeners.playSound, (listener, key, list) => {
+                _.forEach(registeredListeners.playSound, (listener) => {
                     runListener(listener, data);
                 });
             });
 
             /**
-     *  Show Celebration animation
-     */
+             *  Show Celebration animation
+             */
             ipcRenderer.on('celebrate', function (event, data) {
-                _.forEach(registeredListeners.celebrate, (listener, key, list) => {
+                _.forEach(registeredListeners.celebrate, (listener) => {
                     runListener(listener, data);
                 });
             });
 
             /**
-    * Update download listener
-    */
+            * Update download listener
+            */
             ipcRenderer.on('backupComplete', function (event, data) {
-                _.forEach(registeredListeners.backupComplete, (listener, key, list) => {
+                _.forEach(registeredListeners.backupComplete, (listener) => {
                     runListener(listener, data);
                 });
             });
 
 
             /**
-    *  Helpers
-    */
-
-            function runListener(listener, returnPayload) {
-                if (listener != null) {
-                    let callback = listener.callback;
-                    if (typeof callback === 'function') {
-                        // $q is angulars implementation of the promise protocol. We are creating and instantly resolving a promise, then we run the callback.
-                        // This simply ensures any scope varibles are updated if needed.
-                        $q.resolve(true, () => callback(returnPayload));
-                    }
-                    if (listener.runOnce == true) {
-                        service.unregisterListener(listener.type, listener.uuid);
-                    }
-                }
-            }
+            *  Helpers
+            */
 
             return service;
         });
-}(window.angular));
+}());

@@ -1,13 +1,10 @@
 'use strict';
-(function(angular) {
+(function() {
 
     // This handles logins and connections to mixer interactive
 
     const electronOauth2 = require('electron-oauth2');
-
     const dataAccess = require('../../lib/common/data-access.js');
-
-    const _ = require('underscore')._;
 
     angular
         .module('firebotApp')
@@ -37,35 +34,10 @@
             };
 
             /**
-    * Login Stuff
-    */
+            * Login Stuff
+            */
 
             let defaultPhotoUrl = "../images/placeholders/default.jpg";
-
-            service.accounts = {
-                streamer: {
-                    username: "Streamer",
-                    photoUrl: "../images/placeholders/default.jpg",
-                    isLoggedIn: false
-                },
-                bot: {
-                    username: "Bot",
-                    photoUrl: "../images/placeholders/default.jpg",
-                    isLoggedIn: false
-                }
-            };
-
-            // Login Kickoff
-            service.loginOrLogout = function(type) {
-                if ((type === 'streamer' && !service.accounts.streamer.isLoggedIn) ||
-            (type === 'bot' && !service.accounts.bot.isLoggedIn)) {
-                    // We need to login
-                    login(type);
-                } else {
-                    // We need to logout
-                    logout(type);
-                }
-            };
 
             function logout(type) {
                 let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
@@ -89,29 +61,6 @@
                     botAccount.isLoggedIn = false;
 
                 }
-            }
-
-            function login(type) {
-                $rootScope.showSpinner = true;
-
-                let scopes = type == "streamer" ? streamerScopes : botScopes;
-
-                authWindowParams.webPreferences.partition = type;
-                const oauthProvider = electronOauth2(authInfo, authWindowParams);
-                $q.when(oauthProvider.getAccessToken({ scope: scopes }))
-                    .then(token => {
-                        if (token.name != null && token.name === "ValidationError") {
-                            utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
-                            console.log(token);
-                        } else {
-                            userInfo(type, token.access_token, token.refresh_token);
-                        }
-                    }, err => {
-                        //error requesting access
-                        $rootScope.showSpinner = false;
-                        console.log(err);
-                        utilityService.showErrorModal('Error requesting access for oauth token.');
-                    });
             }
 
             // User Info
@@ -144,151 +93,28 @@
                 });
             }
 
-            // Load Login
-            // This function populates the accounnt fields which will in turn update the ui
-            service.loadLogin = function() {
-                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
-                // Get streamer info.
-                try {
-                    let streamer = dbAuth.getData('/streamer');
+            function login(type) {
+                $rootScope.showSpinner = true;
 
-                    if (streamer != null) {
-                        service.accounts.streamer.isLoggedIn = true;
+                let scopes = type === "streamer" ? streamerScopes : botScopes;
 
-                        var username = streamer.username;
-                        var avatar = streamer.avatar;
-
-                        if (avatar != null) {
-                            service.accounts.streamer.photoUrl = avatar;
+                authWindowParams.webPreferences.partition = type;
+                const oauthProvider = electronOauth2(authInfo, authWindowParams);
+                $q.when(oauthProvider.getAccessToken({ scope: scopes }))
+                    .then(token => {
+                        if (token.name != null && token.name === "ValidationError") {
+                            utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
+                            console.log(token);
+                        } else {
+                            userInfo(type, token.access_token, token.refresh_token);
                         }
-
-                        if (username != null) {
-                            service.accounts.streamer.username = username;
-                        }
-                    }
-                } catch (error) {
-                    console.log('No streamer logged into the app.');
-                }
-                // Get bot info
-                try {
-                    let bot = dbAuth.getData('/bot');
-
-                    if (bot != null) {
-                        service.accounts.bot.isLoggedIn = true;
-
-                        var username = bot.username;
-                        var avatar = bot.avatar;
-
-                        if (avatar != null) {
-                            service.accounts.bot.photoUrl = avatar;
-                        }
-
-                        if (username != null) {
-                            service.accounts.bot.username = username;
-                        }
-                    }
-                } catch (error) {
-                    console.log('No bot logged into the app.');
-                }
-            };
-
-            /**
-    * Interactive Connection Stuff
-    */
-            service.connectedToInteractive = false;
-            service.waitingForStatusChange = false;
-            service.connectedBoard = "";
-
-            service.toggleConnectionToInteractive = function() {
-                if (service.connectedToInteractive == true) {
-                    service.disconnectFromInteractive();
-                } else if (!service.waitingForChatStatusChange) {
-                    service.connectToInteractive();
-                }
-            };
-
-            service.connectToInteractive = function() {
-                // Let's connect! Get new tokens and connect.
-                service.waitingForStatusChange = true;
-                service.connectedBoard = settingsService.getLastBoardName();
-                refreshToken('interactive');
-            };
-
-            service.disconnectFromInteractive = function() {
-                // Disconnect!
-                service.waitingForStatusChange = true;
-                ipcRenderer.send('mixerInteractive', 'disconnect');
-            };
-
-            // Connection Monitor
-            // Recieves event from main process that connection has been established or disconnected.
-            listenerService.registerListener(
-                { type: ListenerType.CONNECTION_STATUS },
-                (isConnected) => {
-                    service.connectedToInteractive = isConnected;
-
-                    let soundType = isConnected ? "Online" : "Offline";
-                    soundService.connectSound(soundType);
-
-                    service.waitingForStatusChange = false;
-                });
-
-            // Connect Request
-            // Recieves an event from the main process when the global hotkey is hit for connecting.
-            listenerService.registerListener(
-                { type: ListenerType.CONNECTION_CHANGE_REQUEST },
-                () => {
-                    service.toggleConnectionToInteractive();
-                });
-
-
-            /**
-    * Chat Connection Stuff
-    */
-            service.connectedToChat = false;
-            service.waitingForChatStatusChange = false;
-
-            service.toggleConnectionToChat = function() {
-                if (service.connectedToChat == true) {
-                    service.disconnectFromChat();
-                } else if (!service.waitingForStatusChange) {
-                    service.connectToChat();
-                }
-            };
-
-            service.connectToChat = function() {
-                // Let's connect! Get new tokens and connect.
-                service.waitingForChatStatusChange = true;
-                refreshToken('chat');
-            };
-
-            service.disconnectFromChat = function() {
-                // Disconnect!
-                service.waitingForChatStatusChange = true;
-                ipcRenderer.send('mixerChat', 'disconnect');
-            };
-
-            // Connection Monitor
-            // Recieves event from main process that connection has been established or disconnected.
-            listenerService.registerListener(
-                { type: ListenerType.CHAT_CONNECTION_STATUS },
-                (isChatConnected) => {
-                    service.connectedToChat = isChatConnected;
-
-                    let soundType = isChatConnected ? "Online" : "Offline";
-                    soundService.connectSound(soundType);
-
-                    service.waitingForChatStatusChange = false;
-                });
-
-            // Connect Request
-            // Recieves an event from the main process when the global hotkey is hit for connecting.
-            listenerService.registerListener(
-                { type: ListenerType.CHAT_CONNECTION_CHANGE_REQUEST },
-                () => {
-                    service.toggleConnectionToChat();
-                });
-
+                    }, err => {
+                        //error requesting access
+                        $rootScope.showSpinner = false;
+                        console.log(err);
+                        utilityService.showErrorModal('Error requesting access for oauth token.');
+                    });
+            }
 
             // Refresh Token
             // This will get a new access token for the streamer and bot account.
@@ -342,9 +168,9 @@
                                     }
 
                                     // Okay, we have both streamer and bot tokens now. Start up the login process.
-                                    if (connectionType == "interactive") {
+                                    if (connectionType === "interactive") {
                                         ipcRenderer.send('gotRefreshToken');
-                                    } else if (connectionType == "chat") {
+                                    } else if (connectionType === "chat") {
                                         ipcRenderer.send('gotChatRefreshToken');
                                     }
 
@@ -358,9 +184,9 @@
                                 console.log('No bot logged in. Skipping refresh token.', err);
 
                                 // We have the streamer token, but there is no bot logged in. So... start up the login process.
-                                if (connectionType == "interactive") {
+                                if (connectionType === "interactive") {
                                     ipcRenderer.send('gotRefreshToken');
-                                } else if (connectionType == "chat") {
+                                } else if (connectionType === "chat") {
                                     ipcRenderer.send('gotChatRefreshToken');
                                 }
                             }
@@ -381,6 +207,178 @@
                 }
             }
 
+            service.accounts = {
+                streamer: {
+                    username: "Streamer",
+                    photoUrl: "../images/placeholders/default.jpg",
+                    isLoggedIn: false
+                },
+                bot: {
+                    username: "Bot",
+                    photoUrl: "../images/placeholders/default.jpg",
+                    isLoggedIn: false
+                }
+            };
+
+            // Login Kickoff
+            service.loginOrLogout = function(type) {
+                if ((type === 'streamer' && !service.accounts.streamer.isLoggedIn) ||
+            (type === 'bot' && !service.accounts.bot.isLoggedIn)) {
+                    // We need to login
+                    login(type);
+                } else {
+                    // We need to logout
+                    logout(type);
+                }
+            };
+
+            // Load Login
+            // This function populates the accounnt fields which will in turn update the ui
+            service.loadLogin = function() {
+                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
+
+                let username, avatar;
+                // Get streamer info.
+                try {
+                    let streamer = dbAuth.getData('/streamer');
+
+                    if (streamer != null) {
+                        service.accounts.streamer.isLoggedIn = true;
+
+                        username = streamer.username;
+                        avatar = streamer.avatar;
+
+                        if (avatar != null) {
+                            service.accounts.streamer.photoUrl = avatar;
+                        }
+
+                        if (username != null) {
+                            service.accounts.streamer.username = username;
+                        }
+                    }
+                } catch (error) {
+                    console.log('No streamer logged into the app.');
+                }
+                // Get bot info
+                try {
+                    let bot = dbAuth.getData('/bot');
+
+                    if (bot != null) {
+                        service.accounts.bot.isLoggedIn = true;
+
+                        username = bot.username;
+                        avatar = bot.avatar;
+
+                        if (avatar != null) {
+                            service.accounts.bot.photoUrl = avatar;
+                        }
+
+                        if (username != null) {
+                            service.accounts.bot.username = username;
+                        }
+                    }
+                } catch (error) {
+                    console.log('No bot logged into the app.');
+                }
+            };
+
+            /**
+            * Interactive Connection Stuff
+            */
+            service.connectedToInteractive = false;
+            service.waitingForStatusChange = false;
+            service.connectedBoard = "";
+
+            service.toggleConnectionToInteractive = function() {
+                if (service.connectedToInteractive === true) {
+                    service.disconnectFromInteractive();
+                } else if (!service.waitingForChatStatusChange) {
+                    service.connectToInteractive();
+                }
+            };
+
+            service.connectToInteractive = function() {
+                // Let's connect! Get new tokens and connect.
+                service.waitingForStatusChange = true;
+                service.connectedBoard = settingsService.getLastBoardName();
+                refreshToken('interactive');
+            };
+
+            service.disconnectFromInteractive = function() {
+                // Disconnect!
+                service.waitingForStatusChange = true;
+                ipcRenderer.send('mixerInteractive', 'disconnect');
+            };
+
+            // Connection Monitor
+            // Recieves event from main process that connection has been established or disconnected.
+            listenerService.registerListener(
+                { type: ListenerType.CONNECTION_STATUS },
+                (isConnected) => {
+                    service.connectedToInteractive = isConnected;
+
+                    let soundType = isConnected ? "Online" : "Offline";
+                    soundService.connectSound(soundType);
+
+                    service.waitingForStatusChange = false;
+                });
+
+            // Connect Request
+            // Recieves an event from the main process when the global hotkey is hit for connecting.
+            listenerService.registerListener(
+                { type: ListenerType.CONNECTION_CHANGE_REQUEST },
+                () => {
+                    service.toggleConnectionToInteractive();
+                });
+
+
+            /**
+            * Chat Connection Stuff
+            */
+            service.connectedToChat = false;
+            service.waitingForChatStatusChange = false;
+
+            service.toggleConnectionToChat = function() {
+                if (service.connectedToChat === true) {
+                    service.disconnectFromChat();
+                } else if (!service.waitingForStatusChange) {
+                    service.connectToChat();
+                }
+            };
+
+            service.connectToChat = function() {
+                // Let's connect! Get new tokens and connect.
+                service.waitingForChatStatusChange = true;
+                refreshToken('chat');
+            };
+
+            service.disconnectFromChat = function() {
+                // Disconnect!
+                service.waitingForChatStatusChange = true;
+                ipcRenderer.send('mixerChat', 'disconnect');
+            };
+
+            // Connection Monitor
+            // Recieves event from main process that connection has been established or disconnected.
+            listenerService.registerListener(
+                { type: ListenerType.CHAT_CONNECTION_STATUS },
+                (isChatConnected) => {
+                    service.connectedToChat = isChatConnected;
+
+                    let soundType = isChatConnected ? "Online" : "Offline";
+                    soundService.connectSound(soundType);
+
+                    service.waitingForChatStatusChange = false;
+                });
+
+            // Connect Request
+            // Recieves an event from the main process when the global hotkey is hit for connecting.
+            listenerService.registerListener(
+                { type: ListenerType.CHAT_CONNECTION_CHANGE_REQUEST },
+                () => {
+                    service.toggleConnectionToChat();
+                });
+
             return service;
         });
-}(window.angular));
+}());

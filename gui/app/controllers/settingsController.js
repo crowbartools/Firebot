@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function() {
 
     //This handles the Settings tab
 
@@ -215,4 +215,4 @@
             };
 
         });
-}(window.angular));
+}());

@@ -1,6 +1,6 @@
 'use strict';
 
-(function(angular) {
+(function() {
 
     //This a wrapped dropdown element that automatically handles the particulars
 
@@ -30,4 +30,4 @@
                 };
             }
         });
-}(window.angular));
+}());
