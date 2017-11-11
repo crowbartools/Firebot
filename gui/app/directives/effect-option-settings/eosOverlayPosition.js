@@ -38,7 +38,7 @@
          </div>
       </div>
        `,
-            controller: function($scope, $element, $attrs) {
+            controller: function() {
                 let ctrl = this;
 
                 ctrl.topOrBottom = "top";
@@ -57,7 +57,7 @@
                 };
 
                 ctrl.updateAllValues = function() {
-                    if (ctrl.topOrBottom == 'top') {
+                    if (ctrl.topOrBottom === 'top') {
                         ctrl.effect.customCoords.top = ctrl.topOrBottomValue;
                         ctrl.effect.customCoords.bottom = null;
                     } else {
@@ -65,7 +65,7 @@
                         ctrl.effect.customCoords.bottom = ctrl.topOrBottomValue;
                     }
 
-                    if (ctrl.leftOrRight == 'left') {
+                    if (ctrl.leftOrRight === 'left') {
                         ctrl.effect.customCoords.left = ctrl.leftOrRightValue;
                         ctrl.effect.customCoords.right = null;
                     } else {

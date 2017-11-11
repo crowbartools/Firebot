@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function(angular, $) {
 
     //This handles the Interactive tab
 
@@ -11,7 +11,12 @@
         .controller('interactiveController', function($scope, $interval, $timeout, boardService,
             groupsService, settingsService, utilityService) {
 
-            let settings = settingsService;
+            function resetSceneTab() {
+                $scope.activeSceneTab = 0;
+            }
+
+            // Tracks what button name the user is hovering over so we can show the ID instead of name
+            let hoveringOverControlId = "";
 
             $scope.groups = groupsService;
 
@@ -86,12 +91,7 @@
                 settingsService.setButtonViewMode($scope.buttonViewMode, type);
             };
 
-            function resetSceneTab() {
-                $scope.activeSceneTab = 0;
-            }
 
-            // Tracks what button name the user is hovering over so we can show the ID instead of name
-            let hoveringOverControlId = "";
 
             $scope.isHoverOverControlName = function(controlID) {
                 return hoveringOverControlId === controlID;
@@ -112,8 +112,8 @@
             };
 
             /**
-       * MODAL CONTROL
-       */
+           * MODAL CONTROL
+           */
 
             $scope.showBoardSettingsModal = function() {
                 let showBoardSetingsModalContext = {
@@ -131,8 +131,8 @@
             };
 
             /*
-       * ADD BOARD MODAL
-       */
+           * ADD BOARD MODAL
+           */
             $scope.showAddBoardModal = function() {
                 let addBoardModalContext = {
                     templateUrl: "./templates/interactive/modals/addBoardModal.html",
@@ -162,8 +162,8 @@
             };
 
             /*
-      * DELETE BOARD MODAL
-      */
+          * DELETE BOARD MODAL
+          */
             $scope.showDeleteBoardModal = function() {
                 let deleteBoardModalContext = {
                     templateUrl: "./templates/interactive/modals/deleteBoardModal.html",
@@ -192,8 +192,8 @@
             };
 
             /*
-      * EDIT CONTROLL EFFECTS MODAL
-      */
+          * EDIT CONTROLL EFFECTS MODAL
+          */
             $scope.showEditControlEffectsModal = function(controlButton) {
                 let editControlEffectsModalContext = {
                     templateUrl: "./templates/interactive/modals/editControlEffectsModal.html",
@@ -359,4 +359,4 @@
                 });
             }
         });
-}(window.angular));
+}(window.angular, window.jQuery));

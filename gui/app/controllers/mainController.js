@@ -30,7 +30,7 @@
         };
 
         $scope.tabIsSelected = function(tabId) {
-            return $scope.currentTab.toLowerCase() == tabId.toLowerCase();
+            return $scope.currentTab.toLowerCase() === tabId.toLowerCase();
         };
 
         $timeout(() => {
@@ -179,9 +179,9 @@
         $scope.getConnectionMessage = function() {
             let message = "";
             if (connectionService.waitingForStatusChange) {
-                connectionService.connectedToInteractive ? message = 'Disconnecting...' : message = 'Connecting...';
+                message = connectionService.connectedToInteractive ? 'Disconnecting...' : 'Connecting...';
             } else {
-                connectionService.connectedToInteractive ? message = 'Connected' : message = 'Disconnected';
+                message = connectionService.connectedToInteractive ? 'Connected' : 'Disconnected';
             }
             return message;
         };
@@ -189,9 +189,9 @@
         $scope.getChatConnectionMessage = function() {
             let message = "";
             if (connectionService.waitingForChatStatusChange) {
-                connectionService.connectedToChat ? message = 'Disconnecting...' : message = 'Connecting...';
+                message = connectionService.connectedToChat ? 'Disconnecting...' : 'Connecting...';
             } else {
-                connectionService.connectedToChat ? message = 'Connected' : message = 'Disconnected';
+                message = connectionService.connectedToChat ? 'Connected' : 'Disconnected';
             }
             return message;
         };
@@ -229,7 +229,7 @@
         };
     });
 
-    app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+    app.config(['$routeProvider', '$locationProvider', function($routeProvider) {
         $routeProvider
 
         // route for the interactive tab

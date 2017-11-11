@@ -1,5 +1,5 @@
 'use strict';
-(function(angular) {
+(function(angular, $) {
 
     const _ = require('underscore')._;
 
@@ -42,8 +42,8 @@
             };
 
             /*
-     * EDIT VIEWER GROUP MODAL
-     */
+             * EDIT VIEWER GROUP MODAL
+             */
             $scope.showEditViewerGroupDefaultsModal = function(sceneName) {
                 let editViewerGroupDefaultsModalContext = {
                     templateUrl: "./templates/interactive/modals/editViewerGroupModal.html",
@@ -55,7 +55,6 @@
                         $scope.groups = groupsService;
 
                         function getGroupList() {
-                            let groups = [];
 
                             let inactiveGroups = groupsService.getInactiveGroups();
                             let combinedGroups = inactiveGroups.concat(scene.default.filter((e) => {
@@ -64,7 +63,7 @@
 
                             // Filter out duplicates
                             combinedGroups = combinedGroups.filter(function(elem, pos) {
-                                return combinedGroups.indexOf(elem) == pos;
+                                return combinedGroups.indexOf(elem) === pos;
                             });
 
                             return combinedGroups;
@@ -125,8 +124,8 @@
             };
 
             /*
-     * ADD OR EDIT COOLDOWN GROUP MODAL
-     */
+             * ADD OR EDIT COOLDOWN GROUP MODAL
+             */
             $scope.showAddOrEditCooldownGroupModal = function(cooldownGroup) {
                 let editViewerGroupDefaultsModalContext = {
                     templateUrl: "./templates/interactive/modals/addOrEditCooldownGroupModal.html",
@@ -152,7 +151,7 @@
                         $scope.arrayContainsElement = utilityService.arrayContainsElement;
 
                         $scope.save = function() {
-                            if ($scope.cooldownGroup.groupName != null && $scope.cooldownGroup.groupName != "") {
+                            if ($scope.cooldownGroup.groupName != null && $scope.cooldownGroup.groupName !== "") {
                                 $uibModalInstance.close({ shouldDelete: false, newCooldownGroup: $scope.cooldownGroup });
 
                                 // Refresh the interactive control cache.
@@ -190,11 +189,10 @@
                                 return null;
                             }
                             return $.extend(true, {}, cooldownGroup);
-
                         }
                     }
                 };
                 utilityService.showModal(editViewerGroupDefaultsModalContext);
             };
         });
-}(window.angular));
+}(window.angular, window.jQuery));

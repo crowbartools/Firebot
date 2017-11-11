@@ -38,7 +38,7 @@
                     }
 
                     //find the selected effect in the list
-                    let selected = ctrl.options.filter((e) => e.name == ctrl.selected);
+                    let selected = ctrl.options.filter((e) => e.name === ctrl.selected);
 
                     //if we have a match, set it as selected
                     if (selected.length > 0) {

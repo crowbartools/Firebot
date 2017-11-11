@@ -5,7 +5,7 @@
 
     angular
         .module('firebotApp')
-        .controller('updatesController', function($scope, updatesService, utilityService) {
+        .controller('updatesController', function($scope, updatesService) {
 
             $scope.getUpdateData = function() {
                 return updatesService.updateData;

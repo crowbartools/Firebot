@@ -22,7 +22,7 @@
          </ul>
        </div>
        `,
-            controller: function($scope, $element, $attrs) {
+            controller: function() {
                 let ctrl = this;
                 ctrl.selectOption = function(option) {
                     ctrl.selected = option;

@@ -1,9 +1,7 @@
 'use strict';
-(function(angular) {
+(function(angular, $) {
 
     // This handles the Groups tab
-
-    const _ = require('underscore')._;
 
     angular
         .module('firebotApp')
@@ -25,8 +23,8 @@
             };
 
             /*
-        * ADD OR EDIT TIMED GROUP MODAL
-        */
+            * ADD OR EDIT TIMED GROUP MODAL
+            */
             $scope.showAddOrEditTimedGroupModal = function(timedGroup) {
                 let editTimedGroupDefaultsModalContext = {
                     templateUrl: "./templates/chat/command-modals/addOrEditTimedGroupModal.html",
@@ -48,8 +46,10 @@
                         // Get all of the commands to list out in the modal.
                         $scope.allCommandIds = [];
                         let allCommands = commandsService.getAllCommandsForType('Active');
-                        for (commandItem in allCommands) {
-                            $scope.allCommandIds.push(allCommands[commandItem].commandID);
+                        for (let commandItem in allCommands) {
+                            if (allCommands.hasOwnProperty(commandItem)) {
+                                $scope.allCommandIds.push(allCommands[commandItem].commandID);
+                            }
                         }
 
 
@@ -64,7 +64,7 @@
 
                         // This saves the content in the modal.
                         $scope.save = function() {
-                            if ($scope.timedGroup.groupName != null && $scope.timedGroup.groupName != "") {
+                            if ($scope.timedGroup.groupName != null && $scope.timedGroup.groupName !== "") {
                                 $uibModalInstance.close({ shouldDelete: false, newTimedGroup: $scope.timedGroup });
                             }
                         };
@@ -109,4 +109,4 @@
             };
 
         });
-}(window.angular));
+}(window.angular, window.jQuery));

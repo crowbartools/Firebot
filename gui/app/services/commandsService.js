@@ -3,13 +3,11 @@
 
     //This manages command data
 
-    const fs = require('fs');
-    const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
 
     angular
         .module('firebotApp')
-        .factory('commandsService', function ($http, $q, settingsService, $rootScope, utilityService) {
+        .factory('commandsService', function () {
             let service = {};
 
             // in memory commands storage
@@ -48,9 +46,10 @@
                 let commandArray = [];
                 if (commandsCache != null) {
                     let commands = commandsCache[commandType];
-                    for (command in commands) {
-                        var command = commands[command];
-                        commandArray.push(command);
+                    for (let command in commands) {
+                        if (commands.hasOwnProperty(command)) {
+                            commandArray.push(commands[command]);
+                        }
                     }
                 }
                 return commandArray;
@@ -71,13 +70,13 @@
                     console.log('Saving ' + command.commandID + ' to active');
                     try {
                         commandDb.delete("/Inactive/" + command.commandID);
-                    } catch (err) {}
+                    } catch (err) {} //eslint-disable-line no-empty
                     commandDb.push("/Active/" + command.commandID, cleanedCommands);
                 } else {
                     console.log('Saving ' + command.commandID + ' to inactive');
                     try {
                         commandDb.delete("/Active/" + command.commandID);
-                    } catch (err) {}
+                    } catch (err) {} //eslint-disable-line no-empty
                     commandDb.push("/Inactive/" + command.commandID, cleanedCommands);
                 }
             };
@@ -106,8 +105,6 @@
             // Save Timed Group
             service.saveTimedGroup = function(previousGroupName, timedGroup) {
                 let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
-                let cleanedCommands = JSON.parse(angular.toJson(timedGroup));
-
                 try {
                     commandDb.push('./timedGroups/' + timedGroup.groupName, timedGroup);
                 } catch (err) {

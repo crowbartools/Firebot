@@ -15,7 +15,7 @@
                 },
                 replace: true,
                 template: '<div ng-include="templateUrl"></div>',
-                link: function($scope, element, attrs) {
+                link: function($scope) {
                     $scope.$watch('type', function() {
                         let templateUrlPath = effectHelperService.getTemplateFilePathForEffectType($scope.type);
                         $scope.templateUrl = templateUrlPath;

@@ -23,7 +23,7 @@
          </div>
        </div>
        `,
-            controller: function($scope, $element, $attrs) {
+            controller: function() {
                 let ctrl = this;
                 ctrl.selected = {
                     enter: null,
@@ -352,7 +352,7 @@
                 ctrl.enterUpdate = function() {
                     ctrl.effect.enterAnimation = ctrl.selected.enter.class;
                 };
-                ctrl.exitUpdate = function(option) {
+                ctrl.exitUpdate = function() {
                     ctrl.effect.exitAnimation = ctrl.selected.exit.class;
                 };
             }

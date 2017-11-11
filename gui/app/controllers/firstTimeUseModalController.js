@@ -5,7 +5,6 @@
 
     const dataAccess = require('../../lib/common/data-access.js');
     const fs = require('fs');
-    const path = require('path');
     const ncp = require('ncp');
 
     angular
@@ -13,9 +12,48 @@
         .controller('firstTimeUseModalController', function ($rootScope, $scope, $uibModalInstance,
             $q, connectionService, boardService, settingsService, listenerService, groupsService) {
 
+            function copyUserSettingsToUserDataFolder(filePath, callback) {
+                let source = filePath;
+                let destination = dataAccess.getPathInUserData("/user-settings");
+                ncp(source, destination, function (err) {
+                    if (err) {
+                        console.log("Failed to copy 'user-settings'!");
+                        callback();
+                        return console.error(err);
+                    }
+                    console.log('Copied "user-settings" to user data.');
+                    callback();
+                });
+            }
+
+            function loadBoardsAndLogins() {
+                boardService.loadAllBoards().then(() => {
+
+                    connectionService.loadLogin();
+                    groupsService.loadViewerGroups();
+
+                    $scope.$applyAsync();
+
+                    $rootScope.showSpinner = false;
+                    $scope.setCurrentStep(6);
+                });
+            }
+
+            function validateUserSettingsFolder(filePath) {
+                // Not the best validation, but it should prevent most mistakes.
+                if (!fs.existsSync(filePath) || !filePath.endsWith("user-settings")) {
+                    $scope.importErrorOccured = true;
+                    $scope.importErrorMessage = "This is not a valid 'user-settings' folder.";
+                } else {
+                    $rootScope.showSpinner = true;
+                    copyUserSettingsToUserDataFolder(filePath, () => {
+                        loadBoardsAndLogins();
+                    });
+                }
+            }
+
             $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six'];
-            $scope.stepTitles =
-          ['', 'Import Data', 'Get Signed In', 'Sync Controls From Mixer', 'Your First Board', ''];
+            $scope.stepTitles = ['', 'Import Data', 'Get Signed In', 'Sync Controls From Mixer', 'Your First Board', ''];
             $scope.step = 0;
 
             $scope.isFirstStep = function () {
@@ -106,14 +144,16 @@
                     return "Please sign into your Streamer account.";
                 case 4:
                     return "A board needs to be added.";
-                    break;
                 }
                 return "";
             };
 
+
+
+
             /*
-        * Data import
-        */
+            * Data import
+            */
             $scope.openImportBrowser = function() {
                 let registerRequest = {
                     type: listenerService.ListenerType.IMPORT_FOLDER,
@@ -124,49 +164,8 @@
                     validateUserSettingsFolder(filepath);
                 });
             };
-
             $scope.importErrorOccured = false;
             $scope.importErrorMessage = "";
-
-            function validateUserSettingsFolder(filePath) {
-                // Not the best validation, but it should prevent most mistakes.
-                if (!fs.existsSync(filePath) || !filePath.endsWith("user-settings")) {
-                    $scope.importErrorOccured = true;
-                    $scope.importErrorMessage = "This is not a valid 'user-settings' folder.";
-                } else {
-                    $rootScope.showSpinner = true;
-                    copyUserSettingsToUserDataFolder(filePath, () => {
-                        loadBoardsAndLogins();
-                    });
-                }
-            }
-
-            function copyUserSettingsToUserDataFolder(filePath, callback) {
-                let source = filePath;
-                let destination = dataAccess.getPathInUserData("/user-settings");
-                ncp(source, destination, function (err) {
-                    if (err) {
-                        console.log("Failed to copy 'user-settings'!");
-                        callback();
-                        return console.error(err);
-                    }
-                    console.log('Copied "user-settings" to user data.');
-                    callback();
-                });
-            }
-
-            function loadBoardsAndLogins() {
-                boardService.loadAllBoards().then(() => {
-
-                    connectionService.loadLogin();
-                    groupsService.loadViewerGroups();
-
-                    $scope.$applyAsync();
-
-                    $rootScope.showSpinner = false;
-                    $scope.setCurrentStep(6);
-                });
-            }
 
             $scope.streamerAccount = connectionService.accounts.streamer;
 
@@ -192,20 +191,20 @@
 
             $scope.addBoard = function() {
                 let boardId = $scope.firstBoard.id;
-                if (boardId == null || boardId.length == 0) {
+                if (boardId == null || boardId.length === 0) {
                     return;
                 }
                 boardService.loadBoardWithId(boardId).then((boards) => {
                     let board = boards[0];
                     boardService.setSelectedBoard(board);
                     /**
-            * Note(ebiggz): This is a workaround to ensure boards load and update scope.
-            * I need to update boardService to use the $q service for Promises instead of regular Promises.
-            */
+                    * Note(ebiggz): This is a workaround to ensure boards load and update scope.
+                    * I need to update boardService to use the $q service for Promises instead of regular Promises.
+                    */
                     $q.resolve(true, () => {
                         $scope.hasBoardsLoaded = true;
                     });
-                }, (error) => {
+                }, () => {
                     $q.resolve(true, () => {
                         $scope.boardAddErrorOccured = true;
                     });

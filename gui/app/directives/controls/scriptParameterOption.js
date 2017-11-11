@@ -38,7 +38,7 @@
        </div>
        <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
        `,
-            controller: function($scope, $element, $attrs) {
+            controller: function() {
                 let ctrl = this;
 
                 //If there is no value, supply the default.
@@ -47,7 +47,7 @@
                         ctrl.metadata.value = ctrl.metadata.default;
 
                         // If its an enum and no default is supplied, select the first one
-                        if (ctrl.metadata.type == 'enum') {
+                        if (ctrl.metadata.type === 'enum') {
                             if (ctrl.metadata.default == null) {
                                 ctrl.metadata.value = ctrl.metadata.options[0];
                             }

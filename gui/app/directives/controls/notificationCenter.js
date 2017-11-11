@@ -110,7 +110,7 @@
                             notification: () => notification,
                             index: () => index
                         },
-                        controllerFunc: ($scope, $uibModalInstance, $compile, $sce, notificationService, notification, index) => {
+                        controllerFunc: ($scope, $uibModalInstance, $compile, $sce, notificationService, notification) => {
 
                             $scope.notification = notification;
 
@@ -130,7 +130,7 @@
                     message: "="
                 },
                 replace: true,
-                link: function(scope, element, attrs) {
+                link: function(scope, element) {
                     let htmlWrap = `<div style="width:100%; height: 100%; position: relative;">${scope.message}</div>`.trim();
 
                     let el = angular.element(htmlWrap);

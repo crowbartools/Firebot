@@ -55,7 +55,7 @@
                         {value: 3},
                         {value: 4}
                     ],
-                    translate: function (value, sliderId, label) {
+                    translate: function (value) {
                         return $scope.getAutoUpdateLevelString(value);
                     },
                     ticksTooltip: function (index) {
@@ -70,13 +70,13 @@
                             return "";
                         }
                     },
-                    getSelectionBarColor: function(value) {
+                    getSelectionBarColor: function() {
                         return "orange";
                     },
-                    getPointerColor: function(value) {
+                    getPointerColor: function() {
                         return "orange";
                     },
-                    onChange: function(id) {
+                    onChange: function() {
                         settingsService.setAutoUpdateLevel($scope.autoUpdateSlider.value);
                     }
                 }
@@ -100,8 +100,8 @@
             $scope.currentPort = settingsService.getWebSocketPort();
 
             /**
-        * Modals
-        */
+            * Modals
+            */
             $scope.showChangePortModal = function() {
                 let showChangePortModalContext = {
                     templateUrl: "changePortModal.html",
@@ -154,7 +154,7 @@
                             return settingsService.getOverlayInstances();
                         };
 
-                        $scope.usingObs = settingsService.getOverlayCompatibility() == 'OBS';
+                        $scope.usingObs = settingsService.getOverlayCompatibility() === 'OBS';
 
                         $scope.deleteOverlayInstanceAtIndex = function(index) {
                             let instances = settingsService.getOverlayInstances();
@@ -186,8 +186,7 @@
 
                                     $scope.create = function() {
 
-                                        if (settingsService.getOverlayInstances().includes($scope.name) ||
-                          $scope.name == "") {
+                                        if (settingsService.getOverlayInstances().includes($scope.name) || $scope.name === "") {
                                             $scope.createError = true;
                                             return;
                                         }

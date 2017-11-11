@@ -1,23 +1,22 @@
 'use strict';
-(function(angular) {
+(function(angular, $) {
 
     // This handles the Groups tab
 
-    const _ = require('underscore')._;
 
     angular
         .module('firebotApp')
         .controller('groupsController', function($scope, groupsService, utilityService) {
             $scope.groupsService = groupsService;
-            /**
-     * On tab load
-     */
+            /*
+             * On tab load
+             */
             // Make sure groups are loaded into memory
             groupsService.loadViewerGroups();
 
             /*
-     * ADD/EDIT BOARD MODAL
-     */
+             * ADD/EDIT BOARD MODAL
+             */
             $scope.showAddEditGroupModal = function(groupToEdit) {
                 let addEditGroupModalContext = {
                     templateUrl: "addEditViewerGroupModal.html",
@@ -41,7 +40,7 @@
                         };
 
                         $scope.addNewUser = function() {
-                            if ($scope.newUser != null && $scope.newUser != "") {
+                            if ($scope.newUser != null && $scope.newUser !== "") {
                                 $scope.group.users.push($scope.newUser);
                             }
                             $scope.newUser = "";
@@ -53,7 +52,7 @@
 
                         // When the user clicks "Save/Add", we want to pass the group back
                         $scope.saveChanges = function(shouldDelete) {
-                            shouldDelete = (shouldDelete == true);
+                            shouldDelete = shouldDelete === true;
 
                             let defaultGroups = [
                                 "Pro",
@@ -69,7 +68,7 @@
                                 return;
                             }
 
-                            if (!shouldDelete && groupName == "") return;
+                            if (!shouldDelete && groupName === "") return;
                             $uibModalInstance.close({
                                 shouldDelete: shouldDelete,
                                 group: shouldDelete ? groupToEdit : $scope.group
@@ -96,7 +95,7 @@
                     // The callback to run after the modal closed via "Save changes" or "Delete"
                     closeCallback: (context) => {
                         let group = context.group;
-                        if (context.shouldDelete == true) {
+                        if (context.shouldDelete === true) {
                             groupsService.removeViewerGroup(group.groupName);
                         } else {
                             let previousGroupName = null;
@@ -111,4 +110,4 @@
             };
 
         });
-}(window.angular));
+}(window.angular, window.jQuery));
