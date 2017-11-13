@@ -2,7 +2,7 @@
 
 const settingsAccess = require('../../../lib/common/settings-access.js').settings;
 const dataAccess = require('../../../lib/common/data-access');
-
+const mixerInteractive = require('../../../lib/common/mixer-interactive.js');
 const Effects = require("../../../lib/common/EffectType");
 const effectsBuilder = require("../../../lib/common/handlers/custom-scripts/effectsObjectBuilder");
 const effectRunner = require('../../../lib/common/effect-runner');
@@ -60,7 +60,7 @@ exports.getEffectDependencies = function(req, res) {
 
 
 exports.runEffects = function(req, res) {
-    if (interactiveConnected == false) {
+    if (mixerInteractive.getInteractiveStatus() === false) {
         res.status(500).send({status: 'error', message: "Interactive is not connected."});
         return;
 
