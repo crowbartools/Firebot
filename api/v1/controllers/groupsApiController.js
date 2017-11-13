@@ -9,7 +9,7 @@ exports.getAllGroups = function(req, res) {
     } else {
         response = groupsAccess.getAllGroups();
     }
-    if (req.query.onlynames == "true") {
+    if (req.query.onlynames === "true") {
         response = response.map((g) => {
             return g.groupName;
         });

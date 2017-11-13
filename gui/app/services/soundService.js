@@ -1,5 +1,7 @@
 'use strict';
 
+const Howl = require('howler');
+
 (function() {
 
     // This provides methods for playing sounds

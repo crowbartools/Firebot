@@ -51,10 +51,6 @@
                 } catch (err) {} //eslint-disable-line no-empty
             }
 
-            function setSavedNotifications(notis) {
-                pushDataToFile("/notifications", notis);
-            }
-
             function pushSavedNotification(notification) {
                 pushDataToFile("/notifications[]", notification);
             }

@@ -16,7 +16,7 @@ exports.getEffects = function(req, res) {
         response = response.filter((e) => e.dependencies.includes(req.query.dependency));
     }
 
-    if (req.query.onlynames == "true") {
+    if (req.query.onlynames === "true") {
         response = response.map((e) => {
             return e.name;
         });
