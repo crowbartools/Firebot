@@ -27,7 +27,7 @@
 
                 // Set defaults if they werent filled out.
                 if (imagePosition === "" || imagePosition == null) {
-                    let imageX = "Top Middle";
+                    imagePosition = "Top Middle";
                 }
                 if (imageHeight === "" || imageHeight == null) {
                     imageHeight = false;
@@ -71,7 +71,7 @@
 
                 // Set defaults if they werent filled out.
                 if (videoPosition === "" || videoPosition == null) {
-                    let videoX = "Top Middle";
+                    videoPosition = "Top Middle";
                 }
                 if (videoHeight === "" || videoHeight == null) {
                     videoHeight = false;
@@ -127,7 +127,6 @@
             wss.on('connection', function connection(ws) {
                 ws.on('message', function incoming(message) {
                     message = JSON.parse(message);
-                    let eventType = message.event;
                     // TO DO: This would be where you'd watch for events shown in the GUI to end.
                 });
             });
