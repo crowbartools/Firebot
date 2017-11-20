@@ -123,14 +123,6 @@
                 });
             };
 
-            // This allows the websocket server to accept incoming packets from overlay.
-            wss.on('connection', function connection(ws) {
-                ws.on('message', function incoming(message) {
-                    message = JSON.parse(message);
-                    // TO DO: This would be where you'd watch for events shown in the GUI to end.
-                });
-            });
-
             // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_VIDEO },
