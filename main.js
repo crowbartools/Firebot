@@ -282,6 +282,7 @@ ipcMain.on('downloadUpdate', () => {
     });
 
     // Access electrons autoUpdater
+    // eslint-disable-next-line no-unused-expressions
     updater.autoUpdater;
 });
 
