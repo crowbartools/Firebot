@@ -69,6 +69,8 @@ if (process.platform === 'win32') {
 
 
 function createWindow () {
+    console.log('createWindow called');
+
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1280,
@@ -85,8 +87,11 @@ function createWindow () {
         slashes: true
     }));
 
-    // Open dev tools
-    mainWindow.webContents.openDevTools();
+    // wait for the main window's content to load, then show it
+    mainWindow.webContents.on('did-finish-load', () => {
+        // mainWindow.webContents.openDevTools();
+        mainWindow.show();
+    });
 
     // Emitted when the window is closed.
     mainWindow.on('closed', () => {
@@ -163,10 +168,6 @@ app.on('ready', function() {
 
     createWindow();
 
-    renderWindow.webContents.on('did-finish-load', () => {
-        renderWindow.show();
-    });
-
     //start the REST api server
     apiServer.start();
 });
@@ -202,7 +203,9 @@ app.on('will-quit', () => {
 ipcMain.on('downloadUpdate', () => {
 
     //back up first
-    if (settings.backupBeforeUpdates()) backupManager.startBackup();
+    if (settings.backupBeforeUpdates()) {
+        backupManager.startBackup();
+    }
 
     // Download Update
     let options = {
