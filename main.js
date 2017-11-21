@@ -1,88 +1,62 @@
 'use strict';
 
-const electron = require('electron');
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
-// IPC for conveying events between main process and render processes.
-const {ipcMain, shell, dialog} = require('electron');
+// uncaught exception
+process.on('uncaughtException', (error) => {
+    // Handle the error
+    console.error(error);
+});
 
 const path = require('path');
 const url = require('url');
 
-// const fs = require('fs');
-// const JsonDb = require('node-json-db');
-
-require('dotenv').config();
-
+const electron = require('electron');
+const {app, BrowserWindow, ipcMain, shell, dialog} = electron;
 const GhReleases = require('electron-gh-releases');
-
 const settings = require('./lib/common/settings-access').settings;
-
 const dataAccess = require('./lib/common/data-access.js');
-
 const backupManager = require("./lib/backupManager");
-
 const apiServer = require('./api/apiServer.js');
 
-let ncp = require('ncp').ncp;
-ncp.limit = 16;
-
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let mainWindow;
 let mixerConnect;
 
-// Handle Squirrel events
-let handleStartupEvent = function() {
-    if (process.platform !== 'win32') {
-        return false;
-    }
-    let cp, updateDotExe, target, child;
-
-    let squirrelCommand = process.argv[1];
-    switch (squirrelCommand) {
-    case '--squirrel-install':
-
-        // Install shortcuts
-        cp = require('child_process');
-        updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-        target = path.basename(process.execPath);
-        child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
-        child.on('close', () => {
-            app.quit();
-        });
-        return true;
-
+// Handle Squirrel events for windows machines
+if (process.platform === 'win32') {
+    let cp;
+    let updateDotExe;
+    let target;
+    let child;
+    switch (process.argv[1]) {
     case '--squirrel-updated':
+        // cleanup from last instance
 
-        // Optionally do things such as:
-        //
+        // use case-fallthrough to do normal installation
+
+    case '--squirrel-install': //eslint-disable-line no-fallthrough
+        // Optional - do things such as:
         // - Install desktop and start menu shortcuts
         // - Add your .exe to the PATH
-        // - Write to the registry for things like file associations and
-        //   explorer context menus
+        // - Write to the registry for things like file associations and explorer context menus
 
         // Install shortcuts
         cp = require('child_process');
         updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
         target = path.basename(process.execPath);
         child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
-        child.on('close', () => {
-            app.quit();
-        });
-        return true;
+        child.on('close', app.quit);
+        return;
 
     case '--squirrel-uninstall':
-        // Undo anything you did in the --squirrel-install and
-        // --squirrel-updated handlers
+        // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
 
         // Remove shortcuts
         cp = require('child_process');
         updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
         target = path.basename(process.execPath);
         child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
-        child.on('close', () => {
-            app.quit();
-        });
+        child.on('close', app.quit);
         return true;
 
     case '--squirrel-obsolete':
@@ -90,17 +64,10 @@ let handleStartupEvent = function() {
         // we update to the new version - it's the opposite of
         // --squirrel-updated
         app.quit();
-        return true;
+        return;
     }
-};
-
-if (handleStartupEvent()) {
-    return;
 }
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
 
 function createWindow () {
     // Create the browser window.
@@ -120,7 +87,7 @@ function createWindow () {
     }));
 
     // Open dev tools
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', () => {
@@ -141,6 +108,7 @@ function createWindow () {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
+    let port;
 
     //create the root "firebot-data" folder in user-settings
     dataAccess.createFirebotDataDir();
@@ -165,7 +133,7 @@ app.on('ready', function() {
     });
 
     // Update the port.js file
-    let port = settings.getWebSocketPort();
+    port = settings.getWebSocketPort();
     dataAccess.writeFileInWorkingDir(
         '/resources/overlay/js/port.js',
         `window.WEBSOCKET_PORT = ${port}`,
@@ -202,26 +170,21 @@ app.on('ready', function() {
 
     //start the REST api server
     apiServer.start();
-
 });
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-
     if (settings.backupOnExit()) {
-        backupManager.startBackup(false, () => {
-            app.quit();
-        });
-    } else {
-        // On OS X it is common for applications and their menu bar
-        // to stay active until the user quits explicitly with Cmd + Q
-        if (process.platform !== 'darwin') {
-            app.quit();
-        }
+        backupManager.startBackup(false, app.quit);
+
+    // On OS X it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    } else if (process.platform !== 'darwin') {
+        app.quit();
     }
 });
 
-app.on('activate', function () {
+app.on('activate', () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
@@ -229,12 +192,7 @@ app.on('activate', function () {
     }
 });
 
-process.on('uncaughtException', (error) => {
-    // Handle the error
-    console.error(error);
-});
-
-// When Quittin.
+// When Quitting.
 app.on('will-quit', () => {
 
     // Unregister all shortcuts.
@@ -330,9 +288,6 @@ ipcMain.on('startBackup', (event, manualActivation = false) => {
         renderWindow.webContents.send('backupComplete', manualActivation);
     });
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
 
 // Interactive handler
 mixerConnect = require('./lib/common/mixer-interactive.js');
