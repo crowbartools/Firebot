@@ -1,11 +1,5 @@
 'use strict';
 
-// uncaught exception
-process.on('uncaughtException', (error) => {
-    // Handle the error
-    console.error(error);
-});
-
 const path = require('path');
 const url = require('url');
 
@@ -17,9 +11,14 @@ const dataAccess = require('./lib/common/data-access.js');
 const backupManager = require("./lib/backupManager");
 const apiServer = require('./api/apiServer.js');
 
+// uncaught exception - log the error
+process.on('uncaughtException', console.error);
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+// Interactive handler
 let mixerConnect;
 
 // Handle Squirrel events for windows machines
@@ -289,5 +288,5 @@ ipcMain.on('startBackup', (event, manualActivation = false) => {
     });
 });
 
-// Interactive handler
+
 mixerConnect = require('./lib/common/mixer-interactive.js');
