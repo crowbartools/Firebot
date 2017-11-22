@@ -291,6 +291,7 @@
                             let gameUpdated = data.updatedAt;
                             let gameName = sanitize(data.game.name);
                             console.log(sanitize(data.game.name));
+
                             let gameJson = data.controls.scenes;
                             let boardUpdated = null; // Prepare for data from settings/boards/boardId
 
@@ -344,31 +345,22 @@
                     let addedBoards = [];
                     // load each board
                     _.each(boardJsonFiles, function (fileName) {
+
                         // Get settings.
                         let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + fileName);
                         let boardData = boardDb.getData('/');
 
                         let board = boardData.firebot;
-                        let versionId = boardData.versionid;
-                        let boardName = fileName.split(".")[0];
-
-                        board["name"] = boardName;
-                        board["versionId"] = versionId;
-
-                        if (this.controls == null) {
-                            this.controls = {};
-                        }
+                        let versionId = board["versionId"] = boardData.versionid;
+                        board["name"] = fileName.split(".")[0];
+                        board['controls'] = boardData.mixer.controls || {};
                         board.getControlsForScene = function(sceneId) {
                             return _.where(this.controls, {scene: sceneId});
                         };
-
-                        if (this.joysticks == null) {
-                            this.joysticks = {};
-                        }
+                        board['joysticks'] = boardData.mixer.joysticks || {};
                         board.getJoysticksForScene = function(sceneId) {
                             return _.where(this.joysticks, {scene: sceneId});
                         };
-
                         _boards[versionId] = board;
                         addedBoards.push(board);
                     });
