@@ -47,7 +47,7 @@
             $scope.getScenesForSelectedBoard = function() {
                 let board = $scope.selectedBoard();
                 let scenes = [];
-                if (board != null) {
+                if (board != null && board.scenes != null) {
                     scenes = Object.keys(board.scenes);
                 }
                 return scenes;

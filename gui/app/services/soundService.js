@@ -23,7 +23,7 @@ const Howl = require('howler');
             };
 
             service.playSound = function(path, volume) {
-                let sound = new Howl({
+                let sound = new howler.Howl({
                     src: [path],
                     volume: volume
                 });
