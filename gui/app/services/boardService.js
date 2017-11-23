@@ -18,6 +18,8 @@
             // factory/service object
             let service = {};
 
+            let selectedBoard = {};
+
             /**
             *  Private helper methods
             */
@@ -405,7 +407,7 @@
             };
 
             service.getSelectedBoard = function() {
-                return service.getLastUsedBoard();
+                return selectedBoard;
             };
 
             service.setSelectedBoard = function(board) {
