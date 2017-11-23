@@ -18,8 +18,6 @@
             // factory/service object
             let service = {};
 
-            let selectedBoard = {};
-
             /**
             *  Private helper methods
             */

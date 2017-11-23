@@ -54,11 +54,11 @@
             };
 
             $scope.getControlsForScene = function(scene) {
+                let buttons = [];
                 if ($scope.selectedBoard() != null) {
-                    return $scope.selectedBoard().getControlsForScene(scene);   
-                } else {
-                    return [];
+                    buttons = $scope.selectedBoard().getControlsForScene(scene);
                 }
+                return buttons;
             };
 
             $scope.getJoysticksForScene = function(scene) {
