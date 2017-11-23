@@ -18,6 +18,8 @@
             // factory/service object
             let service = {};
 
+            let selectedBoard = {};
+
             /**
             *  Private helper methods
             */
@@ -353,11 +355,11 @@
                         let board = boardData.firebot;
                         let versionId = board["versionId"] = boardData.versionid;
                         board["name"] = fileName.split(".")[0];
-                        board['controls'] = boardData.mixer.controls || {};
+                        board['controls'] = boardData.firebot.controls || {};
                         board.getControlsForScene = function(sceneId) {
                             return _.where(this.controls, {scene: sceneId});
                         };
-                        board['joysticks'] = boardData.mixer.joysticks || {};
+                        board['joysticks'] = boardData.firebot.joysticks || {};
                         board.getJoysticksForScene = function(sceneId) {
                             return _.where(this.joysticks, {scene: sceneId});
                         };
@@ -404,10 +406,8 @@
                 return service.getBoardByName(settingsService.getLastBoardName());
             };
 
-            let selectedBoard = service.getLastUsedBoard();
-
             service.getSelectedBoard = function() {
-                return selectedBoard;
+                return service.getLastUsedBoard();
             };
 
             service.setSelectedBoard = function(board) {
