@@ -1,6 +1,5 @@
 'use strict';
 
-const Howl = require('howler');
 
 (function() {
 
