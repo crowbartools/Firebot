@@ -214,7 +214,7 @@
                                     if (type === "button") {
                                         try {
                                             let emojitest = isEmoji(button.controlID);
-                                            if (emojitest !== false) {
+                                            if (emojitest === false) {
                                                 controlID = button.controlID;
                                             } else {
                                                 utilityService.showErrorModal("Button: " + button.controlID + " has emoji in the button name. This will cause all buttons to become unresponsive on connecting. Please remove emoji from the button name field in the Mixer studio. Note that button text is what is visible to viewers, and it's fine to have emoji there.");
