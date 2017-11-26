@@ -6,6 +6,7 @@
 
     const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
+    var {ipcRenderer} = require('electron');  
 
     angular
         .module('firebotApp')
@@ -229,6 +230,9 @@
                     service.getBannedGroup().users.push(username);
                 }
                 saveBannedGroup();
+
+                // Send to backend to be banned.
+                ipcRenderer.send('bannedUser', username);
             };
 
             service.removeUserFromBannedGroupAtIndex = function(index) {
