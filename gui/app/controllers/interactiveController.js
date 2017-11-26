@@ -252,6 +252,13 @@
                             ipcRenderer.send('refreshInteractiveCache');
                         };
 
+                        $scope.effectTypeChanged = function(option, index) {
+
+                            $scope.control.effects[(index + 1).toString()] = {
+                                type: option.name
+                            };
+                        };
+
                         $scope.changeEffectTypeForEffect = function(effectType, effect) {
                             for (let property in effect) {
                                 if (effect.hasOwnProperty(property)) {

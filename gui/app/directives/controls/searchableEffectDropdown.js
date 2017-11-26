@@ -10,7 +10,7 @@
             bindings: {
                 trigger: "@",
                 selected: "=",
-                onUpdate: '&'
+                update: '&'
             },
             template: `
       <ui-select ng-model="$ctrl.selectedEffect" on-select="$ctrl.selectOption($item, $model)" theme="bootstrap">
@@ -49,7 +49,7 @@
                 //when a new effect is selected, set the selected type
                 ctrl.selectOption = function(option) {
                     ctrl.selected = option.name;
-                    ctrl.onUpdate({option: option});
+                    ctrl.update({option: option});
                 };
 
                 ctrl.getDependencyString = function(dependencies) {
