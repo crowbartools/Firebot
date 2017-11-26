@@ -6,7 +6,7 @@
 
     const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
-    var {ipcRenderer} = require('electron');  
+    const {ipcRenderer} = require('electron');
 
     angular
         .module('firebotApp')
