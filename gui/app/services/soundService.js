@@ -21,12 +21,24 @@
                 }
             };
 
+
             service.playSound = function(path, volume) {
-                let sound = new howler.Howl({
-                    src: [path],
-                    volume: volume
+
+                navigator.mediaDevices.enumerateDevices().then(deviceList => {
+                    let filteredDevices = deviceList.filter(d => d.kind === 'audiooutput' && d.deviceId !== "communications");
+
+
+                    console.log(filteredDevices[1]);
+
+                    let sound = new howler.Howl({
+                        src: [path],
+                        volume: volume,
+                        html5: true,
+                        sinkId: filteredDevices[1].deviceId
+                    });
+                    sound.play();
+
                 });
-                sound.play();
             };
 
             // Watches for an event from main process
