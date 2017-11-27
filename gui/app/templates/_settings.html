@@ -42,10 +42,20 @@
                 </ul>
               </div>
             </div>
-            <div class="setting col-sm-6">              
-              <div class="setting-heading">Root Folder Access</div>
-              <div class="setting-description">Need easy access to Firebot's main folder where all settings and data are saved?</div>
-              <button class="btn btn-default" ng-click="openRootFolder()">Open Root Folder</button>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Sound Output Device</div>
+              <div class="setting-description">Change what output device App Sounds (connect/disconnect sounds) and Play Sound Effects are sent to.</div>
+              <div class="dropdown options-emulation-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getAudioOutputDevice().label}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-emulation">
+                  <li ng-repeat="device in audioOutputDevices">
+                      <a href ng-click="settings.setAudioOutputDevice(device)">{{device.label}}</a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <div class="row">
@@ -63,6 +73,11 @@
                   <div class="control__indicator"></div>
                 </label>
               </div> 
+            </div>
+            <div class="setting col-sm-6">              
+              <div class="setting-heading">Root Folder Access</div>
+              <div class="setting-description">Need easy access to Firebot's main folder where all settings and data are saved?</div>
+              <button class="btn btn-default" ng-click="openRootFolder()">Open Root Folder</button>
             </div>
           </div>
         </uib-tab>

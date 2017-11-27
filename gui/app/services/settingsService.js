@@ -292,6 +292,15 @@
                 pushDataToFile('/settings/backupBeforeUpdates', backupBeforeUpdates === true);
             };
 
+            service.getAudioOutputDevice = function() {
+                let device = getDataFromFile('/settings/audioOutputDevice');
+                return device != null ? device : { label: "Default", deviceId: "default"};
+            };
+
+            service.setAudioOutputDevice = function(device) {
+                pushDataToFile('/settings/audioOutputDevice', device);
+            };
+
             return service;
         });
 }());

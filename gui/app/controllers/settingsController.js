@@ -5,7 +5,7 @@
 
     angular
         .module('firebotApp')
-        .controller('settingsController', function($scope, $timeout, settingsService,
+        .controller('settingsController', function($scope, $timeout, $q, settingsService,
             utilityService, listenerService) {
 
             $scope.settings = settingsService;
@@ -26,6 +26,14 @@
                 $scope.backupCompleted = false;
                 listenerService.fireEvent(listenerService.EventType.INITIATE_BACKUP, true);
             };
+
+            $scope.audioOutputDevices = [];
+            $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
+                $scope.audioOutputDevices = deviceList.filter(d => d.kind === 'audiooutput' && d.deviceId !== "communications")
+                    .map(d => {
+                        return { label: d.label, deviceId: d.deviceId };
+                    });
+            });
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.BACKUP_COMPLETE },

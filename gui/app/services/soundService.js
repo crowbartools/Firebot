@@ -7,7 +7,7 @@
 
     angular
         .module('firebotApp')
-        .factory('soundService', function (settingsService, listenerService) {
+        .factory('soundService', function (settingsService, listenerService, $q) {
             let service = {};
 
             // Connection Sounds
@@ -24,20 +24,21 @@
 
             service.playSound = function(path, volume) {
 
-                navigator.mediaDevices.enumerateDevices().then(deviceList => {
-                    let filteredDevices = deviceList.filter(d => d.kind === 'audiooutput' && d.deviceId !== "communications");
+                let selectedOutputDevice = settingsService.getAudioOutputDevice();
 
+                $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
+                    let filteredDevice = deviceList.filter(d => d.label === selectedOutputDevice.label || d.deviceId === selectedOutputDevice.deviceId);
 
-                    console.log(filteredDevices[1]);
+                    let sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
 
                     let sound = new howler.Howl({
                         src: [path],
                         volume: volume,
                         html5: true,
-                        sinkId: filteredDevices[1].deviceId
+                        sinkId: sinkId
                     });
-                    sound.play();
 
+                    sound.play();
                 });
             };
 
