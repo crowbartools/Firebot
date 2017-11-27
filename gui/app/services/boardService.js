@@ -174,12 +174,6 @@
                 const gameUpdated = gameUpdatedInfo;
                 const versionid = versionIdInfo;
 
-                // Check if game name contains a period.
-                if (gameName.indexOf('.') !== -1) {
-                    utilityService.showErrorModal("The board (" + gameName + ") has a period in it's name. This could cause issues with Firebot. Please rename it in Mixer and try again.");
-                    return;
-                }
-
                 // Check if board name contains emoji.
                 let emojitest = isEmoji(gameName);
                 if (emojitest === true) {
@@ -190,9 +184,18 @@
                 // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
                 settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameUpdated);
 
-                let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + gameName);
+                // If file is still based on game name ( < v4.4.6 ), convert the filename to versionid format.
+                if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
+                    let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
+                    let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
+                    console.log('Converting control files to new versionid format.');
+                    fs.renameSync(oldPath, newPath);
+                }
+
+                let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
 
                 // Push mixer Json to controls file.
+                dbControls.push('/gameName', gameName);
                 dbControls.push('/versionid', parseInt(versionid));
                 dbControls.push('/mixer', gameJson);
 
@@ -299,7 +302,10 @@
 
                             try { // Checking if the data for this board is present in settings.json
                                 boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
-                                if (boardUpdated !== gameUpdated) { // Call backendbuilder if the dates don't match
+
+                                // If the board is up to date, OR if the file exists under the game name then run the backend builder.
+                                // FB: Note the game name check is temp until we convert everyone over to versionid for filenames.
+                                if (boardUpdated !== gameUpdated || dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) { // Call backendbuilder if the dates don't match
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                 } // Date matches, no need to rebuild.
                                 console.log("This board is already inplace, no need to rebuild");
@@ -360,7 +366,8 @@
 
                         let board = boardData.firebot;
                         let versionId = board["versionId"] = boardData.versionid;
-                        board["name"] = fileName.split(".")[0];
+                        board["name"] = boardData.gameName;
+                        board["versionid"] = boardData.versionid;
                         board['controls'] = boardData.firebot.controls || {};
                         board.getControlsForScene = function(sceneId) {
                             return _.where(this.controls, {scene: sceneId});
