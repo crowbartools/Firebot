@@ -337,8 +337,14 @@
                     // get file names for all the boards
                     let boardJsonFiles = [];
                     try {
+                        // Pull array of all files in controls folder.
                         let controlsPath = dataAccess.getPathInUserData('/user-settings/controls');
                         boardJsonFiles = fs.readdirSync(controlsPath);
+
+                        // Filter out non JSON files just in case they're in there.
+                        boardJsonFiles = boardJsonFiles.filter(function(board) {
+                            return board.indexOf('.json') !== -1;
+                        });
                     } catch (err) {
                         console.log(err);
                         return;
