@@ -27,9 +27,15 @@
                 </label>
             </div>
          </div>
-         <div ng-if="$ctrl.effect.position !== 'Custom'" class="btn-group btn-matrix" style="margin: 5px 0 5px 10px;">
-            <label ng-repeat="position in $ctrl.presetPositions" class="btn btn-primary" ng-model="$ctrl.effect.position" uib-btn-radio="position" uib-tooltip="{{position}}" tooltip-append-to-body="true" tooltip-animation="false"></label>
-        </div>
+         <div ng-if="$ctrl.effect.position !== 'Custom'">
+            <div class="btn-group btn-matrix" style="margin: 5px 0 5px 10px;">
+                <label ng-repeat="position in $ctrl.presetPositions" class="btn btn-primary" ng-model="$ctrl.effect.position" ng-disabled="$ctrl.isRandom()" uib-btn-radio="position" uib-tooltip="{{position}}" tooltip-append-to-body="true" tooltip-animation="false"></label>
+            </div>
+            <label class="control-fb control--checkbox" style="margin: 5px 0 0 20px;"> Random preset location
+                <input type="checkbox" ng-click="$ctrl.toggleRandomPreset()" ng-checked="$ctrl.isRandom()">
+                <div class="control__indicator"></div>
+            </label>
+         </div>
          <div ng-if="$ctrl.effect.position === 'Custom'" style="margin: 5px 0 5px 10px;">
            <form class="form-inline">
                <div class="form-group">
@@ -68,6 +74,18 @@
                 ctrl.updateLeftOrRight = function(option) {
                     ctrl.leftOrRight = option;
                     ctrl.updateAllValues();
+                };
+
+                ctrl.isRandom = function() {
+                    return ctrl.effect.position === 'Random';
+                };
+
+                ctrl.toggleRandomPreset = function() {
+                    if (ctrl.isRandom()) {
+                        ctrl.effect.position = 'Middle';
+                    } else {
+                        ctrl.effect.position = 'Random';
+                    }
                 };
 
                 ctrl.updateAllValues = function() {
