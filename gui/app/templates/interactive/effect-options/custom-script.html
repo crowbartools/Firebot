@@ -18,13 +18,19 @@
         </ul>
     </div>
 </div>
+<hr>
 <div class="effect-setting-container" ng-show="effect.scriptName != null">
-  <div class="effect-specific-title" style="padding-top:10px;margin-bottom: 10px"><h4>Script Parameters</h4></div>
+    <div ng-if="scriptManifest != null" style="padding-bottom:10px;"> 
+        <div class="script-name">{{scriptManifest.name ? scriptManifest.name : "Unnamed Script"}} <span class="script-version muted">{{scriptManifest.version ? scriptManifest.version : "Unknown"}}</span></div>
+        <div style="font-size: 13px;">by <span class="script-author">{{scriptManifest.author ? scriptManifest.author : "Unknown"}}</span><span ng-if="scriptManifest.website" class="script-website"> (<a ng-click="openScriptsWebsite()" class="clickable">{{scriptManifest.website}}</a>)</span><span></span></div>     
+        <div class="script-description">{{scriptManifest.description}}</div>
+    </div>
+  <div class="effect-specific-title" style="margin-bottom: 15px"><h4>{{ scriptManifest == null ? "Options" : ""}}</h4></div>
   <div ng-show="isLoadingParameters">
-    Loading parameters...
+    Loading options...
   </div>
   <div ng-hide="isLoadingParameters">
-    <span ng-hide="scriptHasParameters()" class="muted">Script has no parameters.</span>
+    <span ng-hide="scriptHasParameters()" class="muted">Script has no options.</span>
     <div ng-show="scriptHasParameters()">
       <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters" name="parameterName" metadata="parameterMetadata"></script-parameter-option>
     </div>

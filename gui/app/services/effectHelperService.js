@@ -280,7 +280,7 @@
                     break;
 
                 case EffectList.CUSTOM_SCRIPT:
-                    controller = ($scope) => {
+                    controller = ($scope, $rootScope) => {
 
                         function loadParameters(scriptName) {
                             console.log("Attempting to load custom script parameters...");
@@ -294,6 +294,13 @@
                                 delete require.cache[require.resolve(scriptFilePath)];
 
                                 let customScript = require(scriptFilePath);
+
+                                //grab the manifest
+                                if (typeof customScript.getScriptManifest === 'function') {
+                                    $scope.scriptManifest = customScript.getScriptManifest();
+                                } else {
+                                    $scope.scriptManifest = null;
+                                }
 
                                 let currentParameters = $scope.effect.parameters;
                                 if (typeof customScript.getDefaultParameters === 'function') {
@@ -360,9 +367,15 @@
                             ipcRenderer.send('openScriptsFolder');
                         };
 
+                        $scope.openScriptsWebsite = function() {
+                            if (!$scope.scriptManifest || !$scope.scriptManifest.website) return;
+                            $rootScope.openLinkExternally($scope.scriptManifest.website);
+                        };
+
                         $scope.selectScript = function(scriptName) {
                             $scope.effect.scriptName = scriptName;
                             $scope.effect.parameters = null;
+                            $scope.scriptManifest = null;
                             loadParameters(scriptName);
                         };
 

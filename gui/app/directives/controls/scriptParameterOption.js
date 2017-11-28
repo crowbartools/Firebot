@@ -14,6 +14,7 @@
             template: `
        <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 10px;font-size: 15px;font-weight: 600;">
           <div>{{$ctrl.metadata.type != 'boolean' ? $ctrl.metadata.description ? $ctrl.metadata.description : $ctrl.name : ""}}</div>
+          <div ng-if="$ctrl.metadata.type != 'boolean' && $ctrl.metadata.secondaryDescription" style="padding-bottom: 5px;font-size: 14px;font-weight: 300;">{{$ctrl.metadata.secondaryDescription}}</div>
           <div ng-switch-when="string">
             <textarea ng-if="$ctrl.metadata.useTextArea" ng-model="$ctrl.metadata.value" class="form-control" placeholder="Enter text" rows="5" style="width:100%"></textarea>
             <input ng-if="!$ctrl.metadata.useTextArea" class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.metadata.value">
