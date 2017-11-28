@@ -12,21 +12,21 @@
                 onUpdate: '&'
             },
             template: `
-       <div class="input-group">
-         <span class="input-group-btn">
-         <button
-           class="btn btn-default show-image-effect-chooser"
-           type="button"
-           ng-click="$ctrl.openFileExporer()">Choose</button>
-         </span>
-         <input type="text" class="form-control show-image-effect-input" ng-model="$ctrl.model">
-       </div>
-       `,
+            <div class="input-group">
+                <span class="input-group-btn">
+                <button
+                class="btn btn-default show-image-effect-chooser"
+                type="button"
+                ng-click="$ctrl.openFileExporer()">Choose</button>
+                </span>
+                <input type="text" class="form-control show-image-effect-input" ng-model="$ctrl.model">
+            </div>
+            `,
             controller: function($scope, $element, $attrs, listenerService) {
                 let ctrl = this;
                 ctrl.openFileExporer = function() {
                     let registerRequest = {
-                        type: listenerService.ListenerType.IMAGE_FILE,
+                        type: listenerService.ListenerType.ANY_FILE,
                         runOnce: true,
                         publishEvent: true
                     };
