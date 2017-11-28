@@ -13,10 +13,24 @@
             template: `
       <div class="effect-setting-container">
          <div class="effect-specific-title">
-             <h4>What location should it show in?</h4>
+             <h4>What location should it show in the overlay?</h4>
          </div>
-         <dropdown-select options="$ctrl.positions" selected="$ctrl.effect.position"></dropdown-select>
-         <div ng-if="$ctrl.effect.position == 'Custom'" style="margin: 15px 0 15px 15px;">
+         <div>
+            <div class="controls-fb-inline" style="padding-left: 10px;">
+                <label class="control-fb control--radio">Preset
+                    <input type="radio" ng-model="$ctrl.presetOrCustom" ng-change="$ctrl.togglePresetCustom()" value="preset"/> 
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--radio">Custom
+                    <input type="radio" ng-model="$ctrl.presetOrCustom" ng-change="$ctrl.togglePresetCustom()" value="custom"/>
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
+         </div>
+         <div ng-if="$ctrl.effect.position !== 'Custom'" class="btn-group btn-matrix" style="margin: 5px 0 5px 10px;">
+            <label ng-repeat="position in $ctrl.presetPositions" class="btn btn-primary" ng-model="$ctrl.effect.position" uib-btn-radio="position" uib-tooltip="{{position}}" tooltip-append-to-body="true" tooltip-animation="false"></label>
+        </div>
+         <div ng-if="$ctrl.effect.position === 'Custom'" style="margin: 5px 0 5px 10px;">
            <form class="form-inline">
                <div class="form-group">
                    <input type="number" class="form-control" ng-model="$ctrl.topOrBottomValue" ng-change="$ctrl.updateAllValues()" style="width: 85px;">
@@ -74,8 +88,15 @@
                     }
                 };
 
-                ctrl.positions = [
-                    "Custom",
+                ctrl.togglePresetCustom = function() {
+                    if (ctrl.presetOrCustom === "custom") {
+                        ctrl.effect.position = "Custom";
+                    } else {
+                        ctrl.effect.position = "Middle";
+                    }
+                };
+
+                ctrl.presetPositions = [
                     "Top Left",
                     "Top Middle",
                     "Top Right",
@@ -114,6 +135,7 @@
                             ctrl.leftOrRightValue = ctrl.effect.customCoords.right;
                         }
                     }
+                    ctrl.presetOrCustom = ctrl.effect.position === "Custom" ? "custom" : "preset";
                 };
             }
         });

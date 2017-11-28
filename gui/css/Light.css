@@ -13141,6 +13141,46 @@ thead th {
   position: relative;
 }
 
+.btn-matrix > .btn:nth-child(3n+4) {
+  clear: left;
+  margin-left: 0;
+}
+
+.btn-matrix > .btn:nth-child(n+4) {
+  margin-top: -1px;
+}
+
+.btn-matrix > .btn:first-child {
+  border-bottom-left-radius: 0;
+}
+
+.btn-matrix > .btn:nth-child(3) {
+  border-top-right-radius: 4px !important;
+}
+
+.btn-matrix > .btn:nth-last-child(3) {
+  border-bottom-left-radius: 4px !important;
+}
+
+.btn-matrix > .btn:last-child {
+  border-top-right-radius: 0;
+}
+
+.btn-matrix .btn {
+  height: 40px;
+  width: 80px;
+}
+
+.btn-matrix {
+  margin: 5px;
+}
+
+.controls-fb-inline .control-fb {
+  display: inline-block;
+  padding-right: 25px;
+  margin-bottom: 5px;
+}
+
 .interactive-header .board-title a {
   font-size: 2em;
 }
