@@ -27,21 +27,8 @@
  Refer to the 'chat' effect options template below for a complete example.
  
 -->
-<div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Who should I chat as?</h4></div>
-    <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <!-- We need to display the selected Chatter. We run an expression to see if the chatter property exists, and if so display it. Otherwise, display 'Pick one'.
-                 This will autmatically update if the user selects a new one thanks to angular's magical data binding -->
-            <span class="chat-effect-type">{{effect.chatter ? effect.chatter : 'Pick one'}}</span> <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu chat-effect-dropdown">
-            <!-- Here we define the options in the chatter dropdown and add click functions to each one that will actually update the chatter property -->
-            <li ng-click="effect.chatter = 'Streamer'"><a href>Streamer</a></li>
-            <li ng-click="effect.chatter = 'Bot'"><a href>Bot</a></li>
-        </ul>
-    </div>
-</div>
+<eos-chatter-select effect="effect" title="Who should I chat as?"></eos-chatter-select>
+
 <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>What should I say?</h4></div>
     <div class="input-group">

@@ -1,15 +1,4 @@
-<div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Who should I announce the roll as?</h4></div>
-    <div class="btn-group">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="dice-effect-type">{{effect.chatter ? effect.chatter : 'Pick one'}}</span> <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu dice-effect-dropdown">
-            <li ng-click="effect.chatter = 'Streamer'"><a href>Streamer</a></li>
-            <li ng-click="effect.chatter = 'Bot'"><a href>Bot</a></li>
-        </ul>
-    </div>
-</div>
+<eos-chatter-select effect="effect" title="Who should I announce the roll as?"></eos-chatter-select>
 <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>Who should I whisper this to? Leave blank to broadcast to everyone.</h4></div>
     <div class="input-group">
