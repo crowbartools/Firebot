@@ -11,6 +11,14 @@ const dataAccess = require('./lib/common/data-access.js');
 const backupManager = require("./lib/backupManager");
 const apiServer = require('./api/apiServer.js');
 
+const Effect = require('./lib/common/EffectType');
+
+// These are defined globally for Custom Scripts.
+// We will probably wnat to handle these differently but we shouldn't
+// change anything until we are ready as changing this will break most scripts
+global.EffectType = Effect.EffectType;
+global.SCRIPTS_DIR = dataAccess.getPathInUserData('/user-settings/scripts/');
+
 // uncaught exception - log the error
 process.on('uncaughtException', console.error);
 
