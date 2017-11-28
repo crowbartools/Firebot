@@ -259,15 +259,6 @@
                             };
                         };
 
-                        $scope.changeEffectTypeForEffect = function(effectType, effect) {
-                            for (let property in effect) {
-                                if (effect.hasOwnProperty(property)) {
-                                    delete effect[property];
-                                }
-                            }
-                            effect.type = effectType;
-                        };
-
                         // When they hit cancel or click outside the modal, we dont want to do anything
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss('cancel');
