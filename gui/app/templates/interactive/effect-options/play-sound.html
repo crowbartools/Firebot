@@ -12,6 +12,9 @@
     <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10, hideLimitLabels: true}"></rzslider>
     <i class="fal fa-volume-up volume-high"></i>
 </div>
-<div class="effect-info">
-    Note: sounds are played through the Firebot app itself and not the overlay file.
+
+<eos-audio-output-device effect="effect"></eos-audio-output-device>
+
+<div class="effect-info alert alert-warning">
+    Note: Sounds are played through the above output device, not the overlay.
 </div>

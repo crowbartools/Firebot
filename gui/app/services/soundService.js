@@ -22,14 +22,19 @@
             };
 
 
-            service.playSound = function(path, volume) {
+            service.playSound = function(path, volume, outputDevice = null) {
 
-                let selectedOutputDevice = settingsService.getAudioOutputDevice();
+                let selectedOutputDevice = outputDevice;
+                if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
+                    selectedOutputDevice = settingsService.getAudioOutputDevice();
+                }
 
                 $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
                     let filteredDevice = deviceList.filter(d => d.label === selectedOutputDevice.label || d.deviceId === selectedOutputDevice.deviceId);
 
                     let sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
+
+                    console.log(filteredDevice);
 
                     let sound = new howler.Howl({
                         src: [path],
@@ -49,7 +54,7 @@
                     let filepath = data.filepath;
                     let volume = (data.volume / 100) * 10;
 
-                    service.playSound(filepath, volume);
+                    service.playSound(filepath, volume, data.audioOutputDevice);
                 });
 
             return service;

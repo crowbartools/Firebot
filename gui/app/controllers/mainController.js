@@ -227,12 +227,6 @@
         $scope.appTheme = function() {
             return settingsService.getTheme();
         };
-
-        navigator.mediaDevices.enumerateDevices().then(deviceList => {
-            let filteredDevices = deviceList.filter(d => d.kind === 'audiooutput' && d.deviceId !== "communications");
-
-            console.log(filteredDevices);
-        });
     });
 
     app.config(['$routeProvider', '$locationProvider', function($routeProvider) {

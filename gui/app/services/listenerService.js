@@ -179,8 +179,8 @@
 
 
             /**
-    * Connection event listeners
-    */
+            * Connection event listeners
+            */
 
             // Interactive Connection Monitor
             // Recieves event from main process that connection has been established or disconnected.
