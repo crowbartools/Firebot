@@ -31,9 +31,9 @@
                 label: "System Default",
                 deviceId: "default"
             }];
-            
+
             $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
-                deviceList = deviceList.filter(d => d.kind === 'audiooutput' && 
+                deviceList = deviceList.filter(d => d.kind === 'audiooutput' &&
                     d.deviceId !== "communications" &&
                     d.deviceId !== "default")
                     .map(d => {
