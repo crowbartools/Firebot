@@ -425,7 +425,7 @@
 
             service.setSelectedBoard = function(board) {
                 if (board != null && board.name != null) {
-                    settingsService.setLastBoardName(board.name);
+                    settingsService.setLastBoardName(board.versionid);
                 }
                 selectedBoard = board;
             };

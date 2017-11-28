@@ -59,6 +59,7 @@
         "node-json-db": "^0.7.3",
         "random-puppy": "^1.1.0",
         "request": "^2.81.0",
+        "request-image-size": "^2.1.0",
         "robotjs": "^0.4.7",
         "roll": "^1.2.0",
         "sanitize-filename": "^1.6.1",
