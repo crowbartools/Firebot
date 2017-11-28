@@ -7,7 +7,7 @@
 
     angular
         .module('firebotApp')
-        .factory('soundService', function (settingsService, listenerService) {
+        .factory('soundService', function (settingsService, listenerService, $q) {
             let service = {};
 
             // Connection Sounds
@@ -21,12 +21,30 @@
                 }
             };
 
-            service.playSound = function(path, volume) {
-                let sound = new howler.Howl({
-                    src: [path],
-                    volume: volume
+
+            service.playSound = function(path, volume, outputDevice = null) {
+
+                let selectedOutputDevice = outputDevice;
+                if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
+                    selectedOutputDevice = settingsService.getAudioOutputDevice();
+                }
+
+                $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
+                    let filteredDevice = deviceList.filter(d => d.label === selectedOutputDevice.label || d.deviceId === selectedOutputDevice.deviceId);
+
+                    let sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
+
+                    console.log(filteredDevice);
+
+                    let sound = new howler.Howl({
+                        src: [path],
+                        volume: volume,
+                        html5: true,
+                        sinkId: sinkId
+                    });
+
+                    sound.play();
                 });
-                sound.play();
             };
 
             // Watches for an event from main process
@@ -36,7 +54,7 @@
                     let filepath = data.filepath;
                     let volume = (data.volume / 100) * 10;
 
-                    service.playSound(filepath, volume);
+                    service.playSound(filepath, volume, data.audioOutputDevice);
                 });
 
             return service;

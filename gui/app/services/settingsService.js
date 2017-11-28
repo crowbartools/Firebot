@@ -137,12 +137,12 @@
             };
 
             /*
-    * 0 = off,
-    * 1 = bugfix,
-    * 2 = feature,
-    * 3 = major release,
-    * 4 = betas
-    */
+            * 0 = off,
+            * 1 = bugfix,
+            * 2 = feature,
+            * 3 = major release,
+            * 4 = betas
+            */
             service.getAutoUpdateLevel = function() {
                 let updateLevel = getDataFromFile('/settings/autoUpdateLevel');
                 return updateLevel != null ? updateLevel : 2;
@@ -290,6 +290,15 @@
 
             service.setBackupBeforeUpdates = function(backupBeforeUpdates) {
                 pushDataToFile('/settings/backupBeforeUpdates', backupBeforeUpdates === true);
+            };
+
+            service.getAudioOutputDevice = function() {
+                let device = getDataFromFile('/settings/audioOutputDevice');
+                return device != null ? device : { label: "System Default", deviceId: "default"};
+            };
+
+            service.setAudioOutputDevice = function(device) {
+                pushDataToFile('/settings/audioOutputDevice', device);
             };
 
             return service;
