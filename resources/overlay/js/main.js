@@ -117,13 +117,17 @@ function notification(status, text){
 
 $.fn.extend({
     animateCss: function (animationName, callback) {
-        var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-        this.addClass('animated ' + animationName).one(animationEnd, function() {
-            $(this).removeClass('animated ' + animationName);
-						if(callback != null && callback instanceof Function) {
-							callback();
-						}
-        });
+		if(callback == null || !(callback instanceof Function)) {
+			callback = () => {};
+		}
+		var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+		if(animationName !== "none") {
+			this.addClass('animated ' + animationName).one(animationEnd, function() {
+				$(this).removeClass('animated ' + animationName);
+				
+			});
+		}
+		callback();
         return this;
     }
 });

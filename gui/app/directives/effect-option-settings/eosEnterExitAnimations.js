@@ -185,6 +185,11 @@
                             name: "Roll In",
                             class: "rollIn",
                             category: "Misc"
+                        },
+                        {
+                            name: "None",
+                            class: "none",
+                            category: "Misc"
                         }
                     ],
                     exit: [
@@ -330,6 +335,11 @@
                         {
                             name: "Roll Out",
                             class: "rollOut",
+                            category: "Misc"
+                        },
+                        {
+                            name: "None",
+                            class: "none",
                             category: "Misc"
                         }
                     ]
