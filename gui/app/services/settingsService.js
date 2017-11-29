@@ -39,11 +39,6 @@
                 delete settingsCache[path];
             }
 
-            service.getLastBoardName = function() {
-                let boardName = getDataFromFile('/interactive/lastBoard');
-                return boardName != null ? boardName : "";
-            };
-
             service.getKnownBoards = function() {
                 // This feeds the boardService with known boards and their lastUpdated values.
                 let boards = getDataFromFile('/boards');
@@ -72,12 +67,27 @@
                 pushDataToFile(`/boards/${boardId}`, settingsBoard);
             };
 
+            service.getLastBoardName = function() {
+                let boardName = getDataFromFile('/interactive/lastBoard');
+                return boardName != null ? boardName : "";
+            };
+
             service.setLastBoardName = function(name) {
                 pushDataToFile('/interactive/lastBoard', name);
             };
 
-            service.deleteLastBoardName = function(boardId) {
+            service.getLastBoardId = function() {
+                let boardId = getDataFromFile('/interactive/lastBoardId');
+                return boardId != null ? boardId : "";
+            };
+
+            service.setLastBoardId = function(id) {
+                pushDataToFile('/interactive/lastBoardId', id);
+            };
+
+            service.deleteLastBoardId = function(boardId) {
                 deleteDataAtPath('/interactive/lastBoard');
+                deleteDataAtPath('/interactive/lastBoardId');
                 // Removing the board from settings
                 deleteDataAtPath('/boards/' + boardId);
             };

@@ -41,12 +41,12 @@
 
             // Delete Board
             // This deletes the currently selected board on confirmation.
-            function deleteBoard(boardName) {
-                return $q.when(new Promise((resolve, reject) => {
+            function deleteBoard(boardId) {
+                return $q.when(new Promise((resolve) => {
 
                     // Check for last board and load ui if one exists.
                     try {
-                        let filepath = dataAccess.getPathInUserData('/user-settings/controls/' + boardName + '.json');
+                        let filepath = dataAccess.getPathInUserData('/user-settings/controls/' + boardId + '.json');
 
                         let exists = fs.existsSync(filepath);
                         if (exists) {
@@ -60,7 +60,7 @@
                             resolve();
                         }
                     } catch (err) {
-                        reject();
+                        resolve();
                     }
                 }));
             }
@@ -346,12 +346,8 @@
                     try {
                         // Pull array of all files in controls folder.
                         let controlsPath = dataAccess.getPathInUserData('/user-settings/controls');
-                        boardJsonFiles = fs.readdirSync(controlsPath);
+                        boardJsonFiles = fs.readdirSync(controlsPath).filter(f => f.endsWith(".json"));
 
-                        // Filter out non JSON files just in case they're in there.
-                        boardJsonFiles = boardJsonFiles.filter(function(board) {
-                            return board.indexOf('.json') !== -1;
-                        });
                     } catch (err) {
                         console.log(err);
                         return;
@@ -417,7 +413,7 @@
             };
 
             service.getLastUsedBoard = function () {
-                return service.getBoardByName(settingsService.getLastBoardName());
+                return service.getBoardById(settingsService.getLastBoardId());
             };
 
             service.getSelectedBoard = function() {
@@ -425,8 +421,8 @@
             };
 
             service.setSelectedBoard = function(board) {
-                if (board != null && board.name != null) {
-                    settingsService.setLastBoardName(board.versionid);
+                if (board != null && board.versionid != null) {
+                    settingsService.setLastBoardId(board.versionid);
                 }
                 selectedBoard = board;
             };
@@ -445,17 +441,24 @@
             };
 
             service.deleteCurrentBoard = function() {
-                let currentBoardName = service.getSelectedBoard().name;
+                let currentBoardId = service.getSelectedBoard().versionid;
 
-                return deleteBoard(currentBoardName).then(() => {
+                return deleteBoard(currentBoardId).then(() => {
 
-                    let key = service.getBoardByName(currentBoardName).versionId;
                     // Remove last board setting entry
-                    settingsService.deleteLastBoardName(key);
+                    settingsService.deleteLastBoardId(currentBoardId);
 
-                    delete _boards[key];
+                    delete _boards[currentBoardId];
 
-                    service.setSelectedBoard(null);
+                    let remainingBoards = Object.keys(_boards);
+
+                    if (remainingBoards.length < 1) {
+                        service.setSelectedBoard(null);
+                    } else {
+                        let key = remainingBoards[0];
+                        service.setSelectedBoard(_boards[key]);
+                    }
+
                 });
             };
 
@@ -488,13 +491,14 @@
                         let boardJsonFiles = [];
                         try {
                             let controlsPath = dataAccess.getPathInUserData('/user-settings/controls');
-                            boardJsonFiles = fs.readdirSync(controlsPath);
+                            boardJsonFiles = fs.readdirSync(controlsPath).filter(f => f.endsWith(".json"));
                         } catch (err) {
                             console.log(err);
                             return new Promise(function(resolve) {
                                 resolve('No boards saved.');
                             });
                         }
+
 
                         /* Step 1 */
                         // Get a list or board ids so we can resync them all with Mixer
@@ -530,7 +534,7 @@
             };
 
             service.saveControlForCurrentBoard = function(control) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardName());
+                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -545,7 +549,7 @@
             };
 
             service.saveSceneForCurrentBoard = function(scene) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardName());
+                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -569,7 +573,7 @@
                 }
 
 
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardName());
+                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -598,7 +602,7 @@
             };
 
             service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName, cooldownGroup) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardName());
+                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
 
                 if (cooldownGroup.buttons != null) {
                     cooldownGroup.buttons.forEach((buttonName) => {
