@@ -67,15 +67,6 @@
                 pushDataToFile(`/boards/${boardId}`, settingsBoard);
             };
 
-            service.getLastBoardName = function() {
-                let boardName = getDataFromFile('/interactive/lastBoard');
-                return boardName != null ? boardName : "";
-            };
-
-            service.setLastBoardName = function(name) {
-                pushDataToFile('/interactive/lastBoard', name);
-            };
-
             service.getLastBoardId = function() {
                 let boardId = getDataFromFile('/interactive/lastBoardId');
                 return boardId != null ? boardId : "";

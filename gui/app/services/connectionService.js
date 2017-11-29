@@ -300,7 +300,7 @@
             service.connectToInteractive = function() {
                 // Let's connect! Get new tokens and connect.
                 service.waitingForStatusChange = true;
-                service.connectedBoard = settingsService.getLastBoardName();
+                service.connectedBoard = settingsService.getLastBoardId();
                 refreshToken('interactive');
             };
 
