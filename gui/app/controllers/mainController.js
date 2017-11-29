@@ -27,6 +27,9 @@
             $timeout(function () {
                 $scope.$broadcast('rzSliderForceRender');
             });
+            $timeout(function () {
+                $scope.$broadcast('rzSliderForceRender');
+            }, 50);
         };
 
         $scope.tabIsSelected = function(tabId) {
@@ -221,7 +224,7 @@
         //make sure sliders render properly
         $timeout(function () {
             $scope.$broadcast('rzSliderForceRender');
-        });
+        }, 250);
 
         // Apply Theme
         $scope.appTheme = function() {
