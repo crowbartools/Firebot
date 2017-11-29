@@ -224,13 +224,12 @@ ipcMain.on('downloadUpdate', () => {
     let updater = new GhReleases(options);
 
     updater.check((err, status) => {
-        if (!err) {
-            console.log('Should we download an update? ' + status);
+        console.log('Should we download an update? ' + status);
 
-            // Download the update
-            updater.download();
-        } else {
-            renderWindow.webContents.send('updateError', "Could not start the updater.");
+        // Download the update
+        updater.download();
+
+        if (err) {
             console.log(err);
         }
     });
