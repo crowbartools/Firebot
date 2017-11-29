@@ -1,5 +1,8 @@
 <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>Image</h4></div>
+    <div style="padding-bottom: 10px;padding-left: 10px; width: 100%;">
+        <img ng-src="{{getImagePreviewSrc()}}" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
+    </div>
     <div>
         <div class="controls-fb-inline" style="padding-left: 10px; padding-bottom: 5px;">
             <label class="control-fb control--radio">Local file
@@ -18,9 +21,6 @@
     </div>
     <div ng-if="effect.imageType === 'url'" style="padding-left: 10px;">
         <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url">
-    </div>
-    <div style="padding-top: 10px;padding-left: 10px;">
-        <img ng-src="{{getImagePreviewSrc()}}" style="height: 150px;object-fit: contain;">
     </div>
 </div>
 <eos-overlay-position effect="effect"></eos-overlay-position>

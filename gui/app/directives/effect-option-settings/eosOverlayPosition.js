@@ -13,7 +13,7 @@
             template: `
       <div class="effect-setting-container">
          <div class="effect-specific-title">
-             <h4>What location should it show in the overlay?</h4>
+             <h4>Overlay Display Location</h4>
          </div>
          <div>
             <div class="controls-fb-inline" style="padding-left: 10px;">
