@@ -44,6 +44,8 @@
                 let broadCastData = {
                     "event": "image",
                     "filepath": filepath,
+                    "url": data.url,
+                    "imageType": data.imageType,
                     "resourceToken": data.resourceToken,
                     "imagePosition": imagePosition,
                     "imageHeight": imageHeight,

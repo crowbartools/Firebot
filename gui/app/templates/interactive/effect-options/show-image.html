@@ -1,13 +1,26 @@
 <div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Which image should I show?</h4></div>
-    <div class="input-group">
-        <span class="input-group-btn">
-        <button 
-          class="btn btn-default show-image-effect-chooser" 
-          type="button"
-          ng-click="openFileExporer()">Choose</button>
-        </span>
-        <input type="text" class="form-control show-image-effect-input" ng-model="effect.file">
+    <div class="effect-specific-title"><h4>Image</h4></div>
+    <div>
+        <div class="controls-fb-inline" style="padding-left: 10px; padding-bottom: 5px;">
+            <label class="control-fb control--radio">Local file
+                <input type="radio" ng-model="effect.imageType" value="local"/> 
+                <div class="control__indicator"></div>
+            </label>
+            <label class="control-fb control--radio">URL
+                <input type="radio" ng-model="effect.imageType" value="url"/>
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+    </div>
+    <div ng-if="effect.imageType === 'local'" style="display: flex;flex-direction: row;align-items: center;padding-left: 10px;">
+        <button class="btn btn-default" ng-click="openFileExporer()">Choose File</button>
+        <span style="padding-left: 10px; font-size: 12px; width: 400px; text-overflow:ellipsis;overflow: hidden;display:inline-block;">{{effect.file ? effect.file : "No file selected."}}</span>
+    </div>
+    <div ng-if="effect.imageType === 'url'" style="padding-left: 10px;">
+        <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url">
+    </div>
+    <div style="padding-top: 10px;padding-left: 10px;">
+        <img ng-src="{{getImagePreviewSrc()}}" style="height: 150px;object-fit: contain;">
     </div>
 </div>
 <eos-overlay-position effect="effect"></eos-overlay-position>
