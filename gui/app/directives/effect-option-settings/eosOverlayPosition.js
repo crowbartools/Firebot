@@ -15,7 +15,7 @@
          <div class="effect-specific-title">
              <h4>Overlay Display Location</h4>
          </div>
-         <div>
+         <div class="effect-setting-content">
             <div class="controls-fb-inline" style="padding-left: 10px;">
                 <label class="control-fb control--radio">Preset
                     <input type="radio" ng-model="$ctrl.presetOrCustom" ng-change="$ctrl.togglePresetCustom()" value="preset"/> 
@@ -26,35 +26,35 @@
                     <div class="control__indicator"></div>
                 </label>
             </div>
-         </div>
-         <div ng-if="$ctrl.effect.position !== 'Custom'">
-            <div class="btn-group btn-matrix" style="margin: 5px 0 5px 10px;">
-                <label ng-repeat="position in $ctrl.presetPositions" class="btn btn-primary" ng-model="$ctrl.effect.position" ng-disabled="$ctrl.isRandom()" uib-btn-radio="position" uib-tooltip="{{position}}" tooltip-append-to-body="true" tooltip-animation="false"></label>
+            <div ng-if="$ctrl.effect.position !== 'Custom'">
+                <div class="btn-group btn-matrix" style="margin: 5px 0 5px 10px;">
+                    <label ng-repeat="position in $ctrl.presetPositions" class="btn btn-primary" ng-model="$ctrl.effect.position" ng-disabled="$ctrl.isRandom()" uib-btn-radio="position" uib-tooltip="{{position}}" tooltip-append-to-body="true" tooltip-animation="false"></label>
+                </div>
+                <label class="control-fb control--checkbox" style="margin: 5px 0 0 10px;"> Random preset location
+                    <input type="checkbox" ng-click="$ctrl.toggleRandomPreset()" ng-checked="$ctrl.isRandom()">
+                    <div class="control__indicator"></div>
+                </label>
             </div>
-            <label class="control-fb control--checkbox" style="margin: 5px 0 0 10px;"> Random preset location
-                <input type="checkbox" ng-click="$ctrl.toggleRandomPreset()" ng-checked="$ctrl.isRandom()">
-                <div class="control__indicator"></div>
-            </label>
-         </div>
-         <div ng-if="$ctrl.effect.position === 'Custom'" style="margin: 5px 0 5px 10px;">
-           <form class="form-inline">
-               <div class="form-group">
-                   <input type="number" class="form-control" ng-model="$ctrl.topOrBottomValue" ng-change="$ctrl.updateAllValues()" style="width: 85px;">
-               </div>
-               <div class="form-group">
-                   <span> pixels from the </span>
-                   <dropdown-select options="['top','bottom']" selected="$ctrl.topOrBottom" on-update="$ctrl.updateTopOrBottom(option)"></dropdown-select>
-               </div>
-               <div style="margin-top: 15px;">
-                   <div class="form-group">
-                       <input type="number" class="form-control" ng-model="$ctrl.leftOrRightValue" ng-change="$ctrl.updateAllValues()" style="width: 85px;">
-                   </div>
-                   <div class="form-group">
-                       <span> pixels from the </span>
-                       <dropdown-select options="['left','right']" selected="$ctrl.leftOrRight" on-update="$ctrl.updateLeftOrRight(option)"></dropdown-select>
-                   </div>
-               </div>
-           </form>
+            <div ng-if="$ctrl.effect.position === 'Custom'" style="margin: 5px 0 5px 10px;">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <input type="number" class="form-control" ng-model="$ctrl.topOrBottomValue" ng-change="$ctrl.updateAllValues()" style="width: 85px;">
+                    </div>
+                    <div class="form-group">
+                        <span> pixels from the </span>
+                        <dropdown-select options="['top','bottom']" selected="$ctrl.topOrBottom" on-update="$ctrl.updateTopOrBottom(option)"></dropdown-select>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div class="form-group">
+                            <input type="number" class="form-control" ng-model="$ctrl.leftOrRightValue" ng-change="$ctrl.updateAllValues()" style="width: 85px;">
+                        </div>
+                        <div class="form-group">
+                            <span> pixels from the </span>
+                            <dropdown-select options="['left','right']" selected="$ctrl.leftOrRight" on-update="$ctrl.updateLeftOrRight(option)"></dropdown-select>
+                        </div>
+                    </div>
+                </form>
+            </div>
          </div>
       </div>
        `,

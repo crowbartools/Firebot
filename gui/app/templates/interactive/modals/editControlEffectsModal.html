@@ -4,24 +4,10 @@
    <h4 class="modal-title" id="editControlsLabel">Edit Button - {{control.controlId}}<span class="edit-title-controlid"></span></h4>
  </div>
  <div class="modal-body">
-
    <div class="general-button-settings">
-     <div class="settings-title">
-       <h3>General Settings</h3>
-     </div>
-
-     <div class="input-group settings-active">
-      <label class="control-fb control--checkbox">Active Button
-          <input type="checkbox" ng-model="control.active" aria-label="..." checked>
-          <div class="control__indicator"></div>
-      </label>
-     </div>
-
-     <div class="input-group settings-controlid">
-       <span class="input-group-addon" id="basic-addon3">Control Id</span>
-       <input type="text" class="form-control" disabled aria-describedby="basic-addon3" ng-model="control.controlId">
-     </div>
-
+      <div class="settings-title">
+          <h3>Settings</h3>
+      </div>
      <div class="input-group settings-buttontext">
        <span class="input-group-addon" id="basic-addon3">Button Text</span>
        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="control.text">
@@ -37,7 +23,11 @@
        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="control.cooldown">
      </div>
 
-     <div class="input-group settings-cooldown">
+     <div class="controls-fb-inline">
+        <label class="control-fb control--checkbox">Active Button
+            <input type="checkbox" ng-model="control.active" aria-label="..." checked>
+            <div class="control__indicator"></div>
+        </label>
         <label class="control-fb control--checkbox">Skip Logging
           <input type="checkbox" ng-model="control.skipLog" aria-label="...">
           <div class="control__indicator"></div>

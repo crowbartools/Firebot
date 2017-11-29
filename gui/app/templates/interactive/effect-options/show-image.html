@@ -1,10 +1,10 @@
 <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>Image</h4></div>
-    <div style="padding-bottom: 10px;padding-left: 10px; width: 100%;">
-        <img ng-src="{{getImagePreviewSrc()}}" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
-    </div>
-    <div>
-        <div class="controls-fb-inline" style="padding-left: 10px; padding-bottom: 5px;">
+    <div class="effect-setting-content">
+        <div style="padding-bottom: 10px;width: 100%;">
+            <img ng-src="{{getImagePreviewSrc()}}" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
+        </div>
+        <div class="controls-fb-inline" style="padding-bottom: 5px;">
             <label class="control-fb control--radio">Local file
                 <input type="radio" ng-model="effect.imageType" value="local"/> 
                 <div class="control__indicator"></div>
@@ -14,52 +14,55 @@
                 <div class="control__indicator"></div>
             </label>
         </div>
-    </div>
-    <div ng-if="effect.imageType === 'local'" style="display: flex;flex-direction: row;align-items: center;padding-left: 10px;">
-        <button class="btn btn-default" ng-click="openFileExporer()">Choose File</button>
-        <span style="padding-left: 10px; font-size: 12px; width: 400px; text-overflow:ellipsis;overflow: hidden;display:inline-block;">{{effect.file ? effect.file : "No file selected."}}</span>
-    </div>
-    <div ng-if="effect.imageType === 'url'" style="padding-left: 10px;">
-        <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url">
-    </div>
-</div>
-<eos-overlay-position effect="effect"></eos-overlay-position>
-<eos-enter-exit-animations effect="effect"></eos-enter-exit-animations>
-<div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>How big should it be?</h4></div>
-    <div class="input-group">
-        <span class="input-group-addon">Width (in pixels)</span>
-        <input 
-          type="text" 
-          class="form-control" 
-          aria-describeby="image-width-setting-type" 
-          type="number"
-          ng-model="effect.width">
-        <span class="input-group-addon">Height (in pixels)</span>
-        <input 
-          type="text" 
-          class="form-control" 
-          aria-describeby="image-height-setting-type" 
-          type="number"
-          ng-model="effect.height">
-    </div>
-    <div class="effect-info alert alert-info">
-        Just put numbers in the fields (ex: 250). This will set the max width/height of the image and scale it down proportionally.
+        <div ng-if="effect.imageType === 'local'" style="display: flex;flex-direction: row;align-items: center;">
+            <button class="btn btn-default" ng-click="openFileExporer()">Choose File</button>
+            <span style="padding-left: 10px; font-size: 12px; width: 400px; text-overflow:ellipsis;overflow: hidden;display:inline-block;">{{effect.file ? effect.file : "No file selected."}}</span>
+        </div>
+        <div ng-if="effect.imageType === 'url'">
+            <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url">
+        </div>
     </div>
 </div>
-<div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>How long should it show?</h4></div>
-    <div class="input-group">
-        <span class="input-group-addon">Seconds</span>
-        <input 
-          type="text" 
-          class="form-control" 
-          aria-describedby="image-length-effect-type" 
-          type="number"
-          ng-model="effect.length">
+<eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
+<eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
+<div class="effect-setting-container setting-padtop">
+    <div class="effect-specific-title"><h4>Dimensions</h4></div>
+    <div class="effect-setting-content">
+        <div class="input-group">
+            <span class="input-group-addon">Width</span>
+            <input 
+              type="number" 
+              class="form-control" 
+              aria-describeby="image-width-setting-type" 
+              type="number"
+              ng-model="effect.width"
+              placeholder="px">
+            <span class="input-group-addon">Height</span>
+            <input 
+              type="number" 
+              class="form-control" 
+              aria-describeby="image-height-setting-type" 
+              type="number"
+              ng-model="effect.height"
+              placeholder="px">
+        </div>
     </div>
 </div>
-<eos-overlay-instance effect="effect"></eos-overlay-instance>
+<div class="effect-setting-container setting-padtop">
+    <div class="effect-specific-title"><h4>Duration</h4></div>
+    <div class="effect-setting-content">
+        <div class="input-group">
+            <span class="input-group-addon">Seconds</span>
+            <input 
+              type="text" 
+              class="form-control" 
+              aria-describedby="image-length-effect-type" 
+              type="number"
+              ng-model="effect.length">
+        </div>
+    </div>
+</div>
+<eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
 <div class="effect-info alert alert-warning">
     This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal()" style="text-decoration:underline">Learn more</a>
 </div>
