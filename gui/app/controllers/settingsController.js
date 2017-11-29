@@ -60,6 +60,10 @@
                     }
                 });
 
+            if (settingsService.getAutoUpdateLevel() > 3) {
+                settingsService.setAutoUpdateLevel(3);
+            }
+
             $scope.autoUpdateSlider = {
                 value: settingsService.getAutoUpdateLevel(),
                 options: {
@@ -68,8 +72,7 @@
                     showTicksValues: true,
                     stepsArray: [
                         {value: 2},
-                        {value: 3},
-                        {value: 4}
+                        {value: 3}
                     ],
                     translate: function (value) {
                         return $scope.getAutoUpdateLevelString(value);
@@ -80,8 +83,6 @@
                             return "Updates that fix bugs or add features. (Example: v1.0 to v1.1.1)";
                         case 1:
                             return "Updates that are major new versions. Could contain breaking changes. (Example: v1.0 to v2.0)";
-                        case 2:
-                            return "Any beta updates. Might have bugs! (Example: v1.0 to v2.0-beta)";
                         default:
                             return "";
                         }
