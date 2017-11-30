@@ -43,7 +43,7 @@
                 let broadCastData = {
                     "event": "shoutout",
                     "resourceToken": data.resourceToken,
-                    "shoutoutText": data.text,
+                    "shoutoutText": data.shoutoutText,
                     "shoutoutPosition": shoutoutPosition,
                     "shoutoutHeight": shoutoutHeight,
                     "shoutoutWidth": shoutoutWidth,
