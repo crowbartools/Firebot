@@ -1,7 +1,45 @@
+// Shoutout Animation
+function showShoutoutElement(enterAnimation, exitAnimation, duration, textFinal) {
+	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
+	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
+    
+    // Animate old shoutout message off of the page.
+    if ( $('.shoutoutMessage').length > 0 ){
+        $('.shoutoutMessage').animateCss(exitAnimation, () => {
+            // Remove old message.
+            $('.shoutoutMessage').remove();
+            $('.shoutoutOverlay').append(textFinal);
+    
+            // Add in new message and remove it after max duration
+            $('.shoutoutMessage').animateCss(enterAnimation, () => {
+                setTimeout(function(){ 
+                    $('.shoutoutMessage').animateCss(exitAnimation, () => {
+                        $('.shoutoutMessage').remove();
+                    });
+                }, (duration === 0 || duration != null) ? duration : 5000);
+            });
+        });
+    } else {
+        $('.shoutoutOverlay').append(textFinal);
+        
+        // Add in new message and remove it after max duration
+        $('.shoutoutMessage').animateCss(enterAnimation, () => {
+            setTimeout(function(){ 
+                $('.shoutoutMessage').animateCss(exitAnimation, () => {
+                    $('.shoutoutMessage').remove();
+                });
+            }, (duration === 0 || duration != null) ? duration : 5000);
+        });
+    }
+}
+
+
 // Shoutout Handling
 // This will take the data that is sent to it from the GUI and push some text to the overlay.
 function shoutout(data){
     var shoutoutText = data.shoutoutText;
+    var shoutoutColor = data.shoutoutColor;
+    var shoutoutFontSize = data.shoutoutFontSize;
 	var shoutoutPosition = data.shoutoutPosition;
 	var shoutoutHeight = data.shoutoutHeight;
 	var shoutoutWidth = data.shoutoutWidth;
@@ -37,9 +75,8 @@ function shoutout(data){
     }
 
     // Put the shoutout text into the shoutout container.
-    var textFinal = '<div class="'+divClass+'-shoutout shoutoutMessage">'+shoutoutText+'</div>';
-    $('.shoutoutOverlay').append(textFinal);
+    var textFinal = '<div class="'+divClass+'-shoutout shoutoutMessage" style="color: '+shoutoutColor+'; font-size: '+shoutoutFontSize+'">'+shoutoutText+'</div>';
 
     // Animate it!
-	showTimedAnimatedElement(divClass+'-shoutout', data.enterAnimation, data.exitAnimation, shoutoutDuration);
+	showShoutoutElement(data.enterAnimation, data.exitAnimation, shoutoutDuration, textFinal);
 }

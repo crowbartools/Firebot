@@ -23,6 +23,8 @@
                 let shoutoutHeight = data.shoutoutHeight;
                 let shoutoutWidth = data.shoutoutWidth;
                 let shoutoutDuration = parseInt(data.shoutoutDuration);
+                let shoutoutColor = data.shoutoutColor;
+                let shoutoutFontSize = data.shoutoutFontSize;
 
                 // Set defaults if they werent filled out.
                 if (shoutoutPosition === "" || shoutoutPosition == null) {
@@ -38,12 +40,23 @@
                     shoutoutDuration = 5;
                 }
 
+                // Shoutout color
+                if (shoutoutColor === "" || shoutoutColor == null) {
+                    shoutoutColor = "#ffffff";
+                }
+
+                // Shoutout font size
+                if (shoutoutFontSize === "" || shoutoutFontSize == null) {
+                    shoutoutFontSize = "1em";
+                }
 
                 // Compile data and send to overlay.
                 let broadCastData = {
                     "event": "shoutout",
                     "resourceToken": data.resourceToken,
                     "shoutoutText": data.shoutoutText,
+                    "shoutoutColor": shoutoutColor,
+                    "shoutoutFontSize": shoutoutFontSize,
                     "shoutoutPosition": shoutoutPosition,
                     "shoutoutHeight": shoutoutHeight,
                     "shoutoutWidth": shoutoutWidth,
