@@ -6,7 +6,7 @@
 
     let app = angular
         .module('firebotApp',
-            ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select']);
+            ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable']);
 
     app.controller('MainController', function($scope, $rootScope, $timeout, boardService,
         connectionService, groupsService, utilityService, settingsService, updatesService,

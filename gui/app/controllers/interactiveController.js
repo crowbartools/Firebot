@@ -209,6 +209,9 @@
                             $scope.control.active = true;
                         }
 
+
+                        $scope.effectsArray = Object.keys(control.effects).map(k => control.effects[k]);
+
                         // Grab the EffectType 'enum' from effect.js
                         $scope.effectTypes = EffectType;
 
@@ -243,6 +246,16 @@
 
                         // When the user clicks "Save", we want to pass the control back to interactiveController
                         $scope.saveChanges = function() {
+
+                            let newEffects = {};
+                            let count = 1;
+                            $scope.effectsArray.forEach(effect => {
+                                newEffects[count.toString()] = effect;
+                                count++;
+                            });
+
+                            $scope.control.effects = newEffects;
+
                             $uibModalInstance.close($scope.control);
 
                             // Send over control obj to backend to push to mixer if we're live.
@@ -254,9 +267,9 @@
 
                         $scope.effectTypeChanged = function(option, index) {
 
-                            $scope.control.effects[(index + 1).toString()] = {
+                            /*$scope.control.effects[(index + 1).toString()] = {
                                 type: option.name
-                            };
+                            };*/
                         };
 
                         // When they hit cancel or click outside the modal, we dont want to do anything
@@ -266,7 +279,7 @@
 
                         $scope.addEffect = function() {
 
-                            let newEffectIndex = 1;
+                            /*let newEffectIndex = 1;
 
                             if ($scope.control.effects != null) {
                                 newEffectIndex = _.keys($scope.control.effects).length + 1;
@@ -277,13 +290,17 @@
 
                             $scope.control.effects[newEffectIndex.toString()] = {
                                 type: "Nothing"
-                            };
+                            };*/
+
+                            $scope.effectsArray.push({
+                                type: "Nothing"
+                            });
 
                             updateOpenPanel();
                         };
 
                         $scope.removeEffectAtIndex = function(index) {
-                            //set the previous open panel to false so whatever gets moved to the previous
+                            /* //set the previous open panel to false so whatever gets moved to the previous
                             //slot doesnt auto-open
                             $scope.openEffectPanel[index] = false;
 
@@ -299,11 +316,14 @@
                                 count++;
                             });
 
-                            $scope.control.effects = newEffects;
+                            $scope.control.effects = newEffects;*/
+
+                            $scope.effectsArray.splice(index, 1);
+
                         };
 
                         $scope.removeAllEffects = function() {
-                            $scope.control.effects = {};
+                            $scope.effectsArray = [];
                         };
 
                         $scope.copyEffects = function() {
@@ -318,6 +338,46 @@
 
                         $scope.hasCopiedEffects = function() {
                             return utilityService.hasCopiedEffects();
+                        };
+
+                        $scope.showReorderEffectsModal = function() {
+                            let showReorderEffectsModalContext = {
+                                templateUrl: "showReorderEffectsModal.html",
+                                resolveObj: {
+                                    effects: () => {
+                                        if ($scope.control.effects == null) return [];
+
+                                        let effects = Object.keys($scope.control.effects).map(k => $scope.control.effects[k]);
+
+                                        return effects;
+                                    }
+                                },
+                                controllerFunc: ($scope, $uibModalInstance, effects) => {
+
+                                    $scope.effects = effects;
+
+                                    console.log(effects);
+
+                                    $scope.save = function() {
+                                        $uibModalInstance.close($scope.effects);
+                                    };
+
+                                    $scope.dismiss = function() {
+                                        $uibModalInstance.dismiss('cancel');
+                                    };
+                                },
+                                closeCallback: (effects) => {
+                                    let builtEffects = {};
+                                    let effectCount = 1;
+                                    effects.forEach(e => {
+                                        builtEffects[effectCount.toString()] = e;
+                                        effectCount++;
+                                    });
+
+                                    $scope.control.effects = builtEffects;
+                                }
+                            };
+                            utilityService.showModal(showReorderEffectsModalContext);
                         };
                     },
                     resolveObj: {

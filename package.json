@@ -42,6 +42,7 @@
         "angular-route": "^1.6.4",
         "angular-sanitize": "^1.6.6",
         "angular-ui-bootstrap": "^2.5.0",
+        "angular-ui-sortable": "^0.18.0",
         "angularjs-slider": "^6.2.2",
         "archiver": "^2.0.3",
         "beam-client-node": "^0.13.0",

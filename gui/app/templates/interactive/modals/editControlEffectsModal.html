@@ -40,6 +40,7 @@
          What should this button do? <div class="effect-actions-btn" uib-dropdown uib-dropdown-toggle>
          <span class="noselect pointer"><i class="fal fa-ellipsis-h"></i></span>
          <ul class="dropdown-menu" uib-dropdown-menu>
+            <li><a href ng-click="showReorderEffectsModal()">Reorder effects</a></li>
            <li><a href ng-click="copyEffects()">Copy effects</a></li>
            <li><a href ng-click="pasteEffects()">Paste effects</a></li>
            <li><a href ng-click="removeAllEffects()">Delete all effects</a></li>
@@ -51,9 +52,9 @@
      <div class="functionality-settings">
 
        <!--new accordian-->
-       <uib-accordion close-others="true">
+       <uib-accordion close-others="true" template-url="effect-accordian.html">
         <div uib-accordion-group
-             ng-repeat="effect in control.effects track by $index"
+             ng-repeat="effect in effectsArray track by $index"
              class="panel-primary effect-panel"
              is-open="openEffectPanel[$index]"
              template-url="effect-panel-template.html"
@@ -94,4 +95,8 @@
     <div class="panel-collapse collapse" uib-collapse="!isOpen">
       <div class="panel-body" ng-transclude></div>
     </div>
+  </script>
+
+  <script type="text/ng-template" id="effect-accordian.html">
+    <div role="tablist" class="panel-group" ng-transclude ui-sortable ng-model="effectsArray"></div>
   </script>
