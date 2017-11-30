@@ -9,26 +9,6 @@
               aria-describedby="shoutout-text-effect-type" 
               ng-model="effect.text">
         </div>
-        <div class="input-group">
-            <span class="input-group-addon">Color</span>
-            <input 
-              type="text" 
-              class="form-control" 
-              aria-describedby="shoutout-text-effect-type" 
-              ng-model="effect.color"
-              placeholder="#CCCCCC"
-              >
-        </div>
-        <div class="input-group">
-            <span class="input-group-addon">Font Size</span>
-            <input 
-              type="text" 
-              class="form-control" 
-              aria-describedby="shoutout-text-effect-type" 
-              ng-model="effect.size"
-              placeholder="20px"
-              >
-        </div>
     </div>
 </div>
 <div class="effect-info alert alert-info">
@@ -40,6 +20,28 @@
             <li><b>$(cost)</b> - Replaced by the cost of the command or button.</li>
             <li><b>$(cooldown)</b> - Replaced by the cooldown of the command or button.</li>
         </ul>
+    </div>
+</div>
+<div class="effect-setting-container setting-padtop">
+    <div class="input-group">
+        <span class="input-group-addon">Color</span>
+        <input 
+          type="text" 
+          class="form-control" 
+          aria-describedby="shoutout-text-effect-type" 
+          ng-model="effect.color"
+          placeholder="#CCCCCC"
+          >
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon">Font Size</span>
+        <input 
+          type="text" 
+          class="form-control" 
+          aria-describedby="shoutout-text-effect-type" 
+          ng-model="effect.size"
+          placeholder="20px"
+          >
     </div>
 </div>
 <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
