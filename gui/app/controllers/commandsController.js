@@ -1,13 +1,9 @@
 'use strict';
 (function() {
 
-    //This handles the commands tab
-    const _ = require('underscore')._;
-
     angular
         .module('firebotApp')
         .controller('commandsController', function($scope, commandsService, updatesService, utilityService, settingsService, groupsService, effectHelperService) {
-            let EffectType = require('../../lib/common/EffectType.js').getAllEffectTypes('command');
 
             // Cache commands on app load.
             commandsService.refreshCommands();

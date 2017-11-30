@@ -2,8 +2,6 @@
 (function($) {
 
     //This handles the Interactive tab
-
-    const _ = require('underscore')._;
     const EffectType = require('../../lib/common/EffectType.js').InteractiveEffectType;
 
     angular
