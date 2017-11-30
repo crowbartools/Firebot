@@ -59,6 +59,48 @@
                     };
                     break;
 
+                case EffectList.SHOUTOUT:
+                    controller = ($scope, listenerService, utilityService) => {
+
+                        let uuid = _.uniqueId();
+
+                        if ($scope.effect.imageType == null) {
+                            $scope.effect.imageType = "local";
+                        }
+
+                        $scope.openFileExporer = function() {
+                            let registerRequest = {
+                                type: listenerService.ListenerType.IMAGE_FILE,
+                                uuid: uuid,
+                                runOnce: true,
+                                publishEvent: true
+                            };
+                            listenerService.registerListener(registerRequest, (filepath) => {
+                                $scope.effect.file = filepath;
+                            });
+                        };
+
+                        $scope.showOverlayInfoModal = function(overlayInstance) {
+                            utilityService.showOverlayInfoModal(overlayInstance);
+                        };
+
+                        $scope.getImagePreviewSrc = function() {
+                            let path;
+                            if ($scope.effect.imageType === 'local') {
+                                path = $scope.effect.file;
+                            } else {
+                                path = $scope.effect.url;
+                            }
+
+                            if (path == null || path === "") {
+                                path = "../images/placeholders/image.png";
+                            }
+
+                            return path;
+                        };
+                    };
+                    break;
+
                 case EffectList.SHOW_IMAGE:
                     controller = ($scope, listenerService, utilityService) => {
 
