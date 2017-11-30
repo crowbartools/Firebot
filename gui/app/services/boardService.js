@@ -199,26 +199,26 @@
                             "with the new format. Please Close Firebot and open your boards folder and choose whether to delete \"" + gameName +
                             ".json\" (Old Format, will be converted on next launch), or to keep \"" + versionid + ".json\" (New Format). If you are restoring " +
                             "from an update you may wish to delete \"" + versionid + ".json\" so your board will be reverted to your backup instead");
-                    
+
                         } else {
                             console.log('Detected existing board file with destination filename. Prompting with info');
                             utilityService.showErrorModal("While trying to convert board " + gameName + " we found a board with the same destination filename. " +
                                 "Please Close Firebot and open your boards folder and choose whether to delete \"" + gameName +
                                 ".json\" (Old Format, will be converted on next launch), or to keep \"" + versionid + ".json\" (New Format)");
-                        
+
                         }
                         // Possibly Open Folder Here?
                         return;
-        
-                    } else {
-                        console.log('Converting control files to new versionid format.');
-                        try {
-                            fs.renameSync(oldPath, newPath);
-                        } catch (err) {
-                            console.log(err);
-                            utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere?");
-                            return;
-                        }
+
+                    }
+
+                    console.log('Converting control files to new versionid format.');
+                    try {
+                        fs.renameSync(oldPath, newPath);
+                    } catch (err) {
+                        console.log(err);
+                        utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere?");
+                        return;
                     }
                 }
 
