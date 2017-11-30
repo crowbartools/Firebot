@@ -308,6 +308,43 @@
                 logger.log(infoMessage);
             };
 
+            /*
+            * EDIT EFFECT LIST MODAL
+            */
+            service.showEditEffectListModal = function (effects, triggerType, closeCallback) {
+                let showEditEffectListContext = {
+                    templateUrl: "editEffectListModal.html",
+                    controllerFunc: ($scope, $uibModalInstance, effects, triggerType) => {
+
+                        $scope.effects = effects;
+                        $scope.triggerType = triggerType;
+
+                        $scope.effectListUpdated = function(effects) {
+                            $scope.effects = effects;
+                        };
+
+                        $scope.save = function() {
+                            $uibModalInstance.close($scope.effects);
+                        };
+
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss();
+                        };
+                    },
+                    resolveObj: {
+                        effects: () => {
+                            return effects;
+                        },
+                        triggerType: () => {
+                            return triggerType;
+                        }
+                    },
+                    closeCallback: closeCallback
+                };
+
+                service.showModal(showEditEffectListContext);
+            };
+
             // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.INFO },

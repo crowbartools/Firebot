@@ -277,6 +277,19 @@
                     };
                     break;
 
+                case EffectList.RANDOM_EFFECT:
+                    controller = ($scope, utilityService) => {
+                        if ($scope.effect.effectList == null) {
+                            $scope.effect.effectList = [];
+                        }
+                        $scope.showEditEffectListModal = function() {
+                            utilityService.showEditEffectListModal($scope.effect.effectList, $scope.trigger, (effects) => {
+                                $scope.effect.effectList = effects;
+                            });
+                        };
+                    };
+                    break;
+
                 case EffectList.DICE:
                     controller = ($scope) => {
 
