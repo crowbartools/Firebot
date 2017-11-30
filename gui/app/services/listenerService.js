@@ -292,6 +292,15 @@
             });
 
             /**
+            * Shoutout listener
+            */
+            ipcRenderer.on('shoutout', function (event, data) {
+                _.forEach(registeredListeners.shoutout, (listener) => {
+                    runListener(listener, data);
+                });
+            });
+
+            /**
             * Play sound event listener
             */
             ipcRenderer.on('playsound', function (event, data) {

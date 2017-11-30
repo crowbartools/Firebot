@@ -18,6 +18,44 @@
                 port: port
             });
 
+            function shoutout(data) {
+                let shoutoutPosition = data.shoutoutPosition;
+                let shoutoutHeight = data.shoutoutHeight;
+                let shoutoutWidth = data.shoutoutWidth;
+                let shoutoutDuration = parseInt(data.shoutoutDuration);
+
+                // Set defaults if they werent filled out.
+                if (shoutoutPosition === "" || shoutoutPosition == null) {
+                    shoutoutPosition = "Top Middle";
+                }
+                if (shoutoutHeight === "" || shoutoutHeight == null) {
+                    shoutoutHeight = false;
+                }
+                if (shoutoutWidth === "" || shoutoutWidth == null) {
+                    shoutoutWidth = false;
+                }
+                if (shoutoutDuration === "" || shoutoutDuration == null) {
+                    shoutoutDuration = 5;
+                }
+
+
+                // Compile data and send to overlay.
+                let broadCastData = {
+                    "event": "shoutout",
+                    "resourceToken": data.resourceToken,
+                    "shoutoutText": data.text,
+                    "shoutoutPosition": shoutoutPosition,
+                    "shoutoutHeight": shoutoutHeight,
+                    "shoutoutWidth": shoutoutWidth,
+                    "shoutoutDuration": shoutoutDuration,
+                    "enterAnimation": data.enterAnimation,
+                    "exitAnimation": data.exitAnimation,
+                    "customCoords": data.customCoords
+                };
+
+                service.broadcast(broadCastData);
+            }
+
             function showImage(data) {
                 let filepath = data.filepath;
                 let imagePosition = data.imagePosition;
@@ -126,6 +164,12 @@
             };
 
             // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.SHOUTOUT },
+                (data) => {
+                    shoutout(data);
+                });
+
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_VIDEO },
                 (data) => {
