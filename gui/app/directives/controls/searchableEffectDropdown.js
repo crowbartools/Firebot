@@ -9,7 +9,7 @@
         .component("searchableEffectDropdown", {
             bindings: {
                 trigger: "@",
-                selected: "=",
+                selected: "<",
                 update: '&'
             },
             template: `
@@ -27,9 +27,7 @@
             controller: function($scope, $element, $attrs, settingsService) {
                 let ctrl = this;
 
-                // when the element is initialized
-                ctrl.$onInit = function() {
-
+                function getSelected() {
                     // grab the effect definitions for the given trigger
                     ctrl.options = Effect.getEffectDefinitions(ctrl.trigger);
 
@@ -44,12 +42,20 @@
                     if (selected.length > 0) {
                         ctrl.selectedEffect = selected[0];
                     }
+                }
+
+                // when the element is initialized
+                ctrl.$onInit = function() {
+                    getSelected();
+                };
+
+                ctrl.$onChanges = function () {
+                    getSelected();
                 };
 
                 //when a new effect is selected, set the selected type
                 ctrl.selectOption = function(option) {
-                    ctrl.selected = option.name;
-                    ctrl.update({option: option});
+                    ctrl.update({effectType: option});
                 };
 
                 ctrl.getDependencyString = function(dependencies) {
@@ -62,10 +68,6 @@
 
                     return dependencies.map((d) => capitalize(d.replace("_", " "))).join();
                 };
-
-                $scope.$watch('selected', function() {
-                    //console.log("changed!");
-                });
             }
         });
 }());

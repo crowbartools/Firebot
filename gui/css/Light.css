@@ -12773,7 +12773,7 @@ body {
 }
 
 .clickable-dark:hover {
-  opacity: 0.8;
+  opacity: 0.96;
   cursor: pointer;
 }
 
@@ -13205,6 +13205,38 @@ thead th {
   padding-top: 5px;
 }
 
+.effect-setting-content {
+  padding-left: 10px;
+}
+
+.setting-padtop {
+  padding-top: 20px;
+  display: block;
+}
+
+.settings-title h3 {
+  margin-top: 0px;
+}
+
+.general-button-settings {
+  margin: 10px 0 25px 0;
+}
+
+.reorderable-effect {
+  background: #337ab7;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: white;
+  height: 38px;
+  font-size: 16px;
+  padding-left: 15px;
+  border-radius: 3px;
+  cursor: move;
+  margin-bottom: 5px;
+}
+
 .interactive-header .board-title a {
   font-size: 2em;
 }
@@ -13409,6 +13441,28 @@ thead th {
 .interactive-group-container {
   display: flex;
   flex-wrap: wrap;
+}
+
+.effect-panel {
+  line-height: 1.1;
+  justify-content: space-between;
+}
+
+.dragHandle {
+  cursor: move;
+  opacity: 0.7;
+  transition: 0.2s;
+  visibility: visible;
+}
+
+.dragHandle:hover {
+  opacity: 1;
+}
+
+.dragHandle.hiddenHandle {
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.2s;
 }
 
 #event-log .event-sort {
