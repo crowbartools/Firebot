@@ -8,7 +8,7 @@
 
     angular
         .module('firebotApp')
-        .factory('utilityService', function ($rootScope, $uibModal, listenerService) {
+        .factory('utilityService', function($rootScope, $uibModal, listenerService) {
             let service = {};
 
             let copiedEffectsCache = {};
@@ -64,8 +64,8 @@
             };
 
             /*
-    * FIRST TIME USE MODAL
-    */
+             * FIRST TIME USE MODAL
+             */
             service.showSetupWizard = function() {
                 let firstTimeUseModalContext = {
                     templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
@@ -79,8 +79,8 @@
             };
 
             /*
-    * OVERLAY INFO MODAL
-    */
+             * OVERLAY INFO MODAL
+             */
             service.showOverlayInfoModal = function(instanceName) {
                 let overlayInfoModalContext = {
                     templateUrl: "overlayInfoModal.html",
@@ -115,9 +115,32 @@
                 };
                 service.showModal(overlayInfoModalContext);
             };
+
             /*
-    * JUST UPDATED MODAL
-    */
+             * OVERLAY INFO MODAL
+             */
+            service.showOverlayShoutoutModal = function(instanceName) {
+                let overlayShoutoutModalContext = {
+                    templateUrl: "overlayShoutoutModal.html",
+                    // This is the controller to be used for the modal.
+                    controllerFunc: ($scope, $rootScope, $uibModalInstance) => {
+
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss('cancel');
+                        };
+                    },
+                    resolveObj: {
+                        instanceName: () => {
+                            return instanceName;
+                        }
+                    }
+                };
+                service.showModal(overlayShoutoutModalContext);
+            };
+
+            /*
+             * JUST UPDATED MODAL
+             */
             service.showUpdatedModal = function() {
                 let justUpdatedModalContext = {
                     templateUrl: "updatedModal.html",
@@ -138,11 +161,11 @@
             };
 
             /*
-    * ERROR MODAL
-    */
+             * ERROR MODAL
+             */
             let previousErrorMessage = "";
             let errorModalOpen = false;
-            service.showErrorModal = function (errorMessage) {
+            service.showErrorModal = function(errorMessage) {
                 if (errorModalOpen && previousErrorMessage === errorMessage) {
                     return;
                 }
@@ -182,9 +205,9 @@
             };
 
             /*
-    * DOWNLOAD MODAL
-    */
-            service.showDownloadModal = function () {
+             * DOWNLOAD MODAL
+             */
+            service.showDownloadModal = function() {
                 let downloadModalContext = {
                     templateUrl: "downloadModal.html",
                     keyboard: false,
@@ -238,8 +261,9 @@
             };
 
             // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
-            service.getNewArrayWithToggledElement = function (array, element) {
-                let itemArray = [], itemIndex = -1;
+            service.getNewArrayWithToggledElement = function(array, element) {
+                let itemArray = [],
+                    itemIndex = -1;
                 if (array != null) {
                     itemArray = array;
                 }
@@ -269,11 +293,11 @@
             };
 
             /*
-            * INFO MODAL
-            */
+             * INFO MODAL
+             */
             let previousInfoMessage = "";
             let infoModalOpen = false;
-            service.showInfoModal = function (infoMessage) {
+            service.showInfoModal = function(infoMessage) {
                 if (infoModalOpen && previousInfoMessage === infoMessage) {
                     return;
                 }
@@ -309,18 +333,20 @@
             };
 
             // Watches for an event from main process
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.INFO },
-                (infoMessage) => {
-                    service.showInfoModal(infoMessage);
-                });
+            listenerService.registerListener({
+                type: listenerService.ListenerType.INFO
+            },
+            (infoMessage) => {
+                service.showInfoModal(infoMessage);
+            });
 
             // Watches for an event from main process
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.ERROR },
-                (errorMessage) => {
-                    service.showErrorModal(errorMessage);
-                });
+            listenerService.registerListener({
+                type: listenerService.ListenerType.ERROR
+            },
+            (errorMessage) => {
+                service.showErrorModal(errorMessage);
+            });
 
 
             return service;

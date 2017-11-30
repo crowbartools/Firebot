@@ -239,6 +239,10 @@
                 utilityService.showOverlayInfoModal(instanceName);
             };
 
+            service.showOverlayShoutoutModal = function() {
+                utilityService.showOverlayShoutoutModal();
+            }
+
             service.getClearCustomScriptCache = function() {
                 let clear = getDataFromFile('/settings/clearCustomScriptCache');
                 return clear != null ? clear : false;
