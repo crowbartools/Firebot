@@ -67,6 +67,9 @@
                 let ctrl = this;
 
                 function createEffectsArray() {
+                    if (ctrl.effects == null) {
+                        ctrl.effects = {};
+                    }
                     ctrl.effectsArray = Object.keys(ctrl.effects).map(k => ctrl.effects[k]);
                 }
 
