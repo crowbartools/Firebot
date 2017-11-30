@@ -12,13 +12,6 @@
             <h3>General Settings</h3>
         </div>
 
-        <div class="input-group settings-active">
-            <label class="control-fb control--checkbox">Active Command
-                <input type="checkbox" ng-model="command.active" aria-label="..." checked>
-                <div class="control__indicator"></div>
-            </label>
-        </div>
-
         <div class="input-group settings-commandid">
             <span class="input-group-addon" id="basic-addon3">Command Id</span>
             <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="command.commandID">
@@ -44,7 +37,11 @@
             </div>
         </div>
 
-        <div class="input-group settings-logging">
+        <div class="controls-fb-inline">
+            <label class="control-fb control--checkbox">Active Command
+                <input type="checkbox" ng-model="command.active" aria-label="..." checked>
+                <div class="control__indicator"></div>
+            </label>
             <label class="control-fb control--checkbox">Skip Logging
                 <input type="checkbox" ng-model="control.skipLog" aria-label="...">
                 <div class="control__indicator"></div>
