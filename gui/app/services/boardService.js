@@ -5,7 +5,6 @@
 
     const fs = require('fs');
     const _ = require('underscore')._;
-    const sanitize = require("sanitize-filename");
     const dataAccess = require('../../lib/common/data-access.js');
     const logger = require('../../lib/errorLogging.js');
 
@@ -177,13 +176,6 @@
 
                 console.log('Backend builder is pushing settings to ' + gameName + ' (' + versionid + ').');
 
-                // Check if board name contains emoji.
-                let emojitest = isEmoji(gameName);
-                if (emojitest === true) {
-                    utilityService.showErrorModal("The board (" + gameName + ") has emoji in it's name. Please rename the board and try again.");
-                    return;
-                }
-
                 // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
                 settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameUpdated);
 
@@ -296,9 +288,10 @@
                             utilityService.showErrorModal("The board you're trying to load was created using Mixer Interactive v1. Please create a new board using Mixer Interactive v2.");
                             return;
                         }
+
                         try {
                             let gameUpdated = data.updatedAt;
-                            let gameName = sanitize(data.game.name);
+                            let gameName = data.game.name;
                             let gameJson = data.controls.scenes;
                             let boardUpdated = null; // Prepare for data from settings/boards/boardId
 
