@@ -216,8 +216,7 @@
                         logger.log('Error converting control file ' + gameName + '.json to version id format.');
                         utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere?");
                         return;
-                    }      
-                    
+                    }
                 }
 
                 let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
