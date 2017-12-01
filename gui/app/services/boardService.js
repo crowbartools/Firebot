@@ -175,6 +175,8 @@
                 const gameUpdated = gameUpdatedInfo;
                 const versionid = versionIdInfo;
 
+                console.log('Backend builder is pushing settings to '+gameName+' ('+versionid+').');
+
                 // Check if board name contains emoji.
                 let emojitest = isEmoji(gameName);
                 if (emojitest === true) {
@@ -185,7 +187,7 @@
                 // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
                 settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameUpdated);
 
-                // If file is still based on game name ( < v4.4.6 ), convert the filename to versionid format.
+                // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
                     let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
                     let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
@@ -297,22 +299,16 @@
                         try {
                             let gameUpdated = data.updatedAt;
                             let gameName = sanitize(data.game.name);
-                            console.log(sanitize(data.game.name));
-
                             let gameJson = data.controls.scenes;
                             let boardUpdated = null; // Prepare for data from settings/boards/boardId
 
                             try { // Checking if the data for this board is present in settings.json
                                 boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
-                                let boardIdFile = dataAccess.userDataPathExistsSync('/user-settings/controls/' + id + '.json');
-                                let boardNameFile = dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json');
 
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
-                                // FB: Note the game name check is temp until we convert everyone over to versionid for filenames.
-                                if (boardUpdated !== gameUpdated || boardNameFile === true || boardIdFile === false) {
+                                if (boardUpdated !== gameUpdated) {
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                 } // Date matches, no need to rebuild.
-                                console.log("This board is already inplace, no need to rebuild");
 
                             } catch (err) {
                                 // This board doesn't exist, recreate the board to get it into knownBoards
@@ -347,39 +343,34 @@
                     let addedBoards = [];
                     // load each board
                     _.each(boardVersionIds, function (id) {
-
-                        // Check if file exists either by id or gameName
-                        let boardIdFile = dataAccess.userDataPathExistsSync('/user-settings/controls/' + id + '.json');
-
-                        if(boardIdFile === true){
-                            // This controls file exists, so we can load it up.
-                            let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + id);
-                            let boardData = boardDb.getData('/');
-                            try{
-                                let board = boardData.firebot;
-                                let versionId = board["versionId"] = boardData.versionid;
-                                board["name"] = boardData.gameName;
-                                board["versionid"] = boardData.versionid;
-                                board['controls'] = boardData.firebot.controls || {};
-                                board.getControlsForScene = function(sceneId) {
-                                    return _.where(this.controls, {scene: sceneId});
-                                };
-                                board['joysticks'] = boardData.firebot.joysticks || {};
-                                board.getJoysticksForScene = function(sceneId) {
-                                    return _.where(this.joysticks, {scene: sceneId});
-                                };
-                                _boards[versionId] = board;
-                                addedBoards.push(board);
-                            } catch(err){
-                                console.log('Board '+id+' errored out while trying to load.');
-                                console.log(err);
-                                logger.log('Board '+id+' errored out while trying to load.')
-                            }
-                        } else {
-                            // This controls file doesnt exist. Delete it from the known boards list.
-                            console.log('Board '+id+' control file missing. Removing from known board list.');
-                            logger.log('Board '+id+' control file missing. Removing from known board list.')
+                        let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + id);
+                        let boardData = boardDb.getData('/');
+                        try{
+                            let board = boardData.firebot;
+                            let versionId = board["versionId"] = boardData.versionid;
+                            board["name"] = boardData.gameName;
+                            board["versionid"] = boardData.versionid;
+                            board['controls'] = boardData.firebot.controls || {};
+                            board.getControlsForScene = function(sceneId) {
+                                return _.where(this.controls, {scene: sceneId});
+                            };
+                            board['joysticks'] = boardData.firebot.joysticks || {};
+                            board.getJoysticksForScene = function(sceneId) {
+                                return _.where(this.joysticks, {scene: sceneId});
+                            };
+                            _boards[versionId] = board;
+                            addedBoards.push(board);
+                        } catch(err){
+                            console.log('Board '+id+' errored out while trying to load.');
+                            console.log(err);
+                            logger.log('Board '+id+' errored out while trying to load.')
+                            logger.log(err);
+                            
+                            // Remove the corrupted board from settings so we don't get stuck on next restart.
                             settingsService.deleteKnownBoard(id);
+                            if(settingsService.getLastBoardId() === id){
+                                settingsService.deleteLastBoardId(id);
+                            }
                         }
                     });
 
