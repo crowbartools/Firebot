@@ -183,8 +183,41 @@
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
                     let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
                     let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
-                    logger.log('Trying to convert control file ' + gameName + '.json to version id format.');
-                    fs.renameSync(oldPath, newPath);
+
+                    if (dataAccess.userDataPathExistsSync(newPath)) {
+                        let dbOld = dataAccess.getJsonDbInUserData("/user-settings/controls/" + gameName);
+                        let dbNew = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
+
+                        if (dbOld.versionid === dbNew.versionid) {
+                            console.log('Detected duplicate copies of board with different formats. Prompting');
+                            utilityService.showErrorModal("While trying to convert board " + gameName + " to the new format we found there was already a copy " +
+                            "with the new format. Please Close Firebot and open your boards folder and choose whether to delete \"" + gameName +
+                            ".json\" (Old Format, will be converted on next launch), or to keep \"" + versionid + ".json\" (New Format). If you are restoring " +
+                            "from an update you may wish to delete \"" + versionid + ".json\" so your board will be reverted to your backup instead");
+
+                        } else {
+                            console.log('Detected existing board file with destination filename. Prompting with info');
+                            utilityService.showErrorModal("While trying to convert board " + gameName + " we found a board with the same destination filename. " +
+                                "Please Close Firebot and open your boards folder and choose whether to delete \"" + gameName +
+                                ".json\" (Old Format, will be converted on next launch), or to keep \"" + versionid + ".json\" (New Format)");
+
+                        }
+                        // Possibly Open Folder Here?
+                        return;
+
+                    }
+
+                    console.log('Converting control files to new versionid format.');
+                    try {
+                        fs.renameSync(oldPath, newPath);
+                        logger.log('Converted control file ' + gameName + '.json to version id format.');
+                    } catch (err) {
+                        console.log(err);
+                        logger.log('Error converting control file ' + gameName + '.json to version id format.');
+                        utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere?");
+                        return;
+                    }      
+                    
                 }
 
                 let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
