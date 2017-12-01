@@ -17,11 +17,11 @@ function showImage(data){
 	}
 	
 	let filepathNew;
-	if(data.imageType === 'local') {
+	if(data.imageType === 'url') {
+		filepathNew = data.url;
+	} else {
 		var token = encodeURIComponent(data.resourceToken);
 		filepathNew = `http://localhost:7473/resource/${token}`;
-	} else {
-		filepathNew = data.url;
 	}
 
 	// Get time in milliseconds to use as class name.

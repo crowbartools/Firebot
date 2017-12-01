@@ -1,13 +1,9 @@
 'use strict';
 (function() {
 
-    //This handles the commands tab
-    const _ = require('underscore')._;
-
     angular
         .module('firebotApp')
         .controller('commandsController', function($scope, commandsService, updatesService, utilityService, settingsService, groupsService, effectHelperService) {
-            let EffectType = require('../../lib/common/EffectType.js').getAllEffectTypes('command');
 
             // Cache commands on app load.
             commandsService.refreshCommands();
@@ -55,114 +51,47 @@
                         if (command != null) {
                             $scope.command = command;
                         } else {
-                            $scope.command = {active: true, permissions: []};
+                            $scope.command = {active: true, permissions: [], effects: {}};
                         }
 
-                        // Grab the EffectType 'enum' from effect.js
-                        $scope.effectTypes = EffectType;
+                        $scope.effects = $scope.command.effects;
 
-                        // This makes sure the last effect is open upon modal load.
-                        // We also call this when a new effect is added or an old effect is deleted
-                        // to open the last effect again.
-                        $scope.openEffectPanel = {};
-                        function updateOpenPanel() {
-                            // We get the index of the last effect and add true to a scope varible
-                            // that the accordian directive is looking at
-                            let lastEffectIndex = _.keys($scope.command.effects).length - 1;
-                            $scope.openEffectPanel[lastEffectIndex] = true;
-                        }
+                        $scope.effectListUpdated = function(effects) {
+                            $scope.effects = effects;
+                        };
 
-                        $scope.getApprovedEffectTypes = function() {
-                            // Convert effecttypes to an array
-                            let approvedEffects = Object.keys(EffectType).map(function(key) {
-                                return EffectType[key];
-                            });
-                            if (!settingsService.getCustomScriptsEnabled()) {
-                                // If there are certain effect types that are available contionally,
-                                // we can filter them out here. Currently we only need this for the
-                                // Custom Script effect type.
-                                approvedEffects = approvedEffects.filter(type => {
-                                    return type !== EffectType.CUSTOM_SCRIPT;
-                                });
+                        $scope.copyEffects = function() {
+                            utilityService.copyEffects("command", $scope.effects);
+                        };
+
+                        $scope.pasteEffects = function() {
+                            if (utilityService.hasCopiedEffects("command")) {
+                                $scope.effects = utilityService.getCopiedEffects("command");
                             }
-                            return approvedEffects;
+                        };
+
+                        $scope.removeAllEffects = function() {
+                            $scope.effects = {};
+                        };
+
+                        $scope.hasCopiedEffects = function() {
+                            return utilityService.hasCopiedEffects("command");
                         };
 
                         // When the user clicks "Save"
                         $scope.saveChanges = function() {
+
+                            $scope.command.effects = $scope.effects;
+
                             $uibModalInstance.close($scope.command);
 
                             // Refresh Commands
                             commandsService.refreshCommands();
                         };
 
-                        $scope.changeEffectTypeForEffect = function(effectType, effect) {
-                            for (let property in effect) {
-                                if (effect.hasOwnProperty(property)) {
-                                    delete effect[property];
-                                }
-                            }
-                            effect.type = effectType;
-                        };
-
                         // When they hit cancel or click outside the modal, we dont want to do anything
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss('cancel');
-                        };
-
-                        $scope.addEffect = function() {
-                            let newEffectIndex = 1;
-
-                            if ($scope.command.effects != null) {
-                                newEffectIndex = _.keys($scope.command.effects).length + 1;
-                            } else {
-                                // Make sure effects object is initialized
-                                $scope.command.effects = {};
-                            }
-
-                            $scope.command.effects[newEffectIndex.toString()] = {
-                                type: "Nothing"
-                            };
-
-                            updateOpenPanel();
-                        };
-
-                        $scope.removeEffectAtIndex = function(index) {
-                            //set the previous open panel to false so whatever gets moved to the previous
-                            //slot doesnt auto-open
-                            $scope.openEffectPanel[index] = false;
-
-                            // remove effect
-                            delete $scope.command.effects[(index + 1).toString()];
-
-                            //recalculate index numbers
-                            let newEffects = {};
-                            let count = 1;
-                            Object.keys($scope.command.effects).forEach(key => {
-                                let effect = $scope.command.effects[key];
-                                newEffects[count.toString()] = effect;
-                                count++;
-                            });
-
-                            $scope.command.effects = newEffects;
-                        };
-
-                        $scope.removeAllEffects = function() {
-                            $scope.command.effects = {};
-                        };
-
-                        $scope.copyEffects = function() {
-                            utilityService.copyButtonEffects($scope.command.effects);
-                        };
-
-                        $scope.pasteEffects = function() {
-                            if (utilityService.hasCopiedEffects()) {
-                                $scope.command.effects = utilityService.getCopiedButtonEffects();
-                            }
-                        };
-
-                        $scope.hasCopiedEffects = function() {
-                            return utilityService.hasCopiedEffects();
                         };
 
                         // This is run each time a group checkbox is clicked or unclicked.

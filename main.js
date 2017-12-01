@@ -277,8 +277,7 @@ ipcMain.on('getImportFolderPath', (event, uniqueid) => {
 ipcMain.on('getAnyFilePath', (event, uniqueid) => {
     let path = dialog.showOpenDialog({
         title: "Please choose a file",
-        buttonLabel: "Choose a file",
-        properties: ['openDirectory']
+        buttonLabel: "Choose a file"
     });
     event.sender.send('gotAnyFilePath', {path: path, id: uniqueid});
 });

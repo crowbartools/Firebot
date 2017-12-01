@@ -99,6 +99,7 @@
                 case ListenerType.IMAGE_FILE:
                 case ListenerType.SOUND_FILE:
                 case ListenerType.IMPORT_FOLDER:
+                case ListenerType.ANY_FILE:
                     registeredListeners.filePath[uuid] = listener;
                     if (publishEvent) {
                         if (listener.type === ListenerType.IMAGE_FILE) {

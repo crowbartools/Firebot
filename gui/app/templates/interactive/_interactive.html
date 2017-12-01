@@ -23,6 +23,9 @@
   <div class="content-block-body">
     <button ng-show="getBoardNames().length == 0" ng-click="showAddBoardModal()" class="btn btn-default">+ Add First Board</button>
     <div class="page-content">
+      <div class="row interactive-board-container" ng-show="selectedBoard() == null">
+        <p>No board selected. Import or select a board to get started!</p>
+      </div>
       <div class="row interactive-board-container" ng-hide="selectedBoard() == null">
         <div class="scene-tools-wrapper">
           <span class="scenes-title">SCENES</span>
@@ -91,4 +94,24 @@
       </div>
     </div>
   </div>
+
+  <!-- Reorder Modal -->
+  <script type="text/ng-template" id="showReorderEffectsModal.html">
+    <div class="modal-header">
+      <h4 class="modal-title">Reorder Effects</h4>
+    </div>
+    <div class="modal-body">
+      <p>Click and drag to reorder effects.</p>
+      <div ui-sortable ng-model="effects">
+        <span class="reorderable-effect" ng-repeat="effect in effects">{{ effect.type }}</span>
+      </div>   
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
+        <button class="btn btn-primary" ng-click="save()">Save</button>
+    </div>
+  </script>
+
+
 </div>
+

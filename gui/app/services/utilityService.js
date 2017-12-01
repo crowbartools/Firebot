@@ -11,17 +11,17 @@
         .factory('utilityService', function ($rootScope, $uibModal, listenerService) {
             let service = {};
 
-            let copiedEffects = null;
-            service.copyButtonEffects = function(effects) {
-                copiedEffects = $.extend(true, {}, effects);
+            let copiedEffectsCache = {};
+            service.copyEffects = function(type, effects) {
+                copiedEffectsCache[type] = JSON.parse(angular.toJson(effects));
             };
 
-            service.getCopiedButtonEffects = function() {
-                return $.extend(true, {}, copiedEffects);
+            service.getCopiedEffects = function(type) {
+                return JSON.parse(JSON.stringify(copiedEffectsCache[type]));
             };
 
-            service.hasCopiedEffects = function() {
-                return copiedEffects != null;
+            service.hasCopiedEffects = function(type) {
+                return copiedEffectsCache[type] != null;
             };
 
             service.showModal = function(showModalContext) {

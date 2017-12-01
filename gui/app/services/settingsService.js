@@ -45,6 +45,15 @@
                 return boards;
             };
 
+            service.deleteKnownBoard = function(boardId) {
+                // This will delete a known board if provided a board id.
+                try {
+                    deleteDataAtPath('/boards/' + boardId);
+                } catch (err) {
+                    console.log(err);
+                }
+            };
+
             service.getBoardLastUpdatedDatetimeById = function(id) {
                 // Preparing for data from settings.json/boards/$boardId/lastUpdated
                 let lastUpdatedDatetime = null;
@@ -69,6 +78,23 @@
 
             service.getLastBoardId = function() {
                 let boardId = getDataFromFile('/interactive/lastBoardId');
+                let boardKnown = service.getKnownBoards().boardId;
+                if(boardKnown === undefined || boardKnown === null){
+                    // Clear board from settings.
+                    service.deleteLastBoardId();
+
+                    // Get fresh list of known boards.
+                    let knownBoards = service.getKnownBoards();
+                    
+                    // See if we have any other known boards.
+                    if(knownBoards !== null && knownBoards !== undefined && knownBoards !== {}){
+                        let newBoard = Object.keys(knownBoards)[0];
+                        service.setLastBoardId(newBoard);
+                        boardId = newBoard;
+                    } else {
+                        boardId = "";
+                    }
+                }
                 return boardId != null ? boardId : "";
             };
 

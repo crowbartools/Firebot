@@ -2,8 +2,6 @@
 (function($) {
 
     //This handles the Interactive tab
-
-    const _ = require('underscore')._;
     const EffectType = require('../../lib/common/EffectType.js').InteractiveEffectType;
 
     angular
@@ -212,37 +210,17 @@
                         // Grab the EffectType 'enum' from effect.js
                         $scope.effectTypes = EffectType;
 
+                        $scope.effects = control.effects;
 
-                        // This makes sure the last effect is open upon modal load.
-                        // We also call this when a new effect is added or an old effect is deleted
-                        // to open the last effect again.
-                        $scope.openEffectPanel = {};
-                        function updateOpenPanel() {
-                            // We get the index of the last effect and add true to a scope varible
-                            // that the accordian directive is looking at
-                            let lastEffectIndex = _.keys($scope.control.effects).length - 1;
-                            $scope.openEffectPanel[lastEffectIndex] = true;
-                        }
-
-                        $scope.getApprovedEffectTypes = function() {
-                            // Convert effecttypes to an array
-                            let approvedEffects = Object.keys(EffectType).map(function(key) {
-                                return EffectType[key];
-                            });
-
-                            if (!settingsService.getCustomScriptsEnabled()) {
-                                // If there are certain effect types that are available contionally,
-                                // we can filter them out here. Currently we only need this for the
-                                // Custom Script effect type.
-                                approvedEffects = approvedEffects.filter(type => {
-                                    return type !== EffectType.CUSTOM_SCRIPT;
-                                });
-                            }
-                            return approvedEffects;
+                        $scope.effectListUpdated = function(effects) {
+                            $scope.effects = effects;
                         };
 
                         // When the user clicks "Save", we want to pass the control back to interactiveController
                         $scope.saveChanges = function() {
+
+                            $scope.control.effects = $scope.effects;
+
                             $uibModalInstance.close($scope.control);
 
                             // Send over control obj to backend to push to mixer if we're live.
@@ -252,72 +230,27 @@
                             ipcRenderer.send('refreshInteractiveCache');
                         };
 
-                        $scope.effectTypeChanged = function(option, index) {
-
-                            $scope.control.effects[(index + 1).toString()] = {
-                                type: option.name
-                            };
-                        };
-
                         // When they hit cancel or click outside the modal, we dont want to do anything
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
 
-                        $scope.addEffect = function() {
-
-                            let newEffectIndex = 1;
-
-                            if ($scope.control.effects != null) {
-                                newEffectIndex = _.keys($scope.control.effects).length + 1;
-                            } else {
-                                // Make sure effects object is initialized
-                                $scope.control.effects = {};
-                            }
-
-                            $scope.control.effects[newEffectIndex.toString()] = {
-                                type: "Nothing"
-                            };
-
-                            updateOpenPanel();
-                        };
-
-                        $scope.removeEffectAtIndex = function(index) {
-                            //set the previous open panel to false so whatever gets moved to the previous
-                            //slot doesnt auto-open
-                            $scope.openEffectPanel[index] = false;
-
-                            // remove effect
-                            delete $scope.control.effects[(index + 1).toString()];
-
-                            //recalculate index numbers
-                            let newEffects = {};
-                            let count = 1;
-                            Object.keys($scope.control.effects).forEach(key => {
-                                let effect = $scope.control.effects[key];
-                                newEffects[count.toString()] = effect;
-                                count++;
-                            });
-
-                            $scope.control.effects = newEffects;
-                        };
-
-                        $scope.removeAllEffects = function() {
-                            $scope.control.effects = {};
-                        };
-
                         $scope.copyEffects = function() {
-                            utilityService.copyButtonEffects($scope.control.effects);
+                            utilityService.copyEffects("interactive", $scope.effects);
                         };
 
                         $scope.pasteEffects = function() {
-                            if (utilityService.hasCopiedEffects()) {
-                                $scope.control.effects = utilityService.getCopiedButtonEffects();
+                            if (utilityService.hasCopiedEffects("interactive")) {
+                                $scope.effects = utilityService.getCopiedEffects("interactive");
                             }
                         };
 
+                        $scope.removeAllEffects = function() {
+                            $scope.effects = {};
+                        };
+
                         $scope.hasCopiedEffects = function() {
-                            return utilityService.hasCopiedEffects();
+                            return utilityService.hasCopiedEffects("interactive");
                         };
                     },
                     resolveObj: {

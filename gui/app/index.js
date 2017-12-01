@@ -21,6 +21,7 @@ require('angular-sanitize');
 require('angular-ui-bootstrap');
 require('angularjs-slider');
 require('ui-select');
+require('angular-ui-sortable');
 
 function boot() {
     angular.bootstrap(document, ['firebotApp'], {
