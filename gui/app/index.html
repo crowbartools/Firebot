@@ -57,6 +57,7 @@
     <script type="text/javascript" src="./services/notificationService.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
     <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosContainer.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosEnterExitAnimations.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayInstance.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayPosition.js"></script>
@@ -411,6 +412,19 @@
       <div class="modal-footer">
       </div>
     </script>
-  
+
+    <!-- Edit Effects List Modal -->
+    <script type="text/ng-template" id="editEffectListModal.html">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Effect List</h4>
+      </div>
+      <div class="modal-body">
+          <effect-list effects="effects" trigger="{{triggerType}}" update="effectListUpdated(effects)" is-array="true"></effect-list>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
+          <button class="btn btn-primary" ng-click="save()">Save</button>
+      </div>
+    </script>
   </body>
 </html>

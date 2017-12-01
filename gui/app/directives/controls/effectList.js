@@ -8,6 +8,7 @@
             bindings: {
                 trigger: "@",
                 effects: "<",
+                isArray: "<",
                 update: '&'
             },
             template: `
@@ -66,21 +67,37 @@
             controller: function() {
                 let ctrl = this;
 
+                ctrl.effectsArray = [];
                 function createEffectsArray() {
                     if (ctrl.effects == null) {
-                        ctrl.effects = {};
+                        if (ctrl.isArray) {
+                            ctrl.effects = [];
+                        } else {
+                            ctrl.effects = {};
+                        }
                     }
-                    ctrl.effectsArray = Object.keys(ctrl.effects).map(k => ctrl.effects[k]);
+
+                    if (ctrl.isArray) {
+                        ctrl.effectsArray = ctrl.effects;
+                    } else {
+                        ctrl.effectsArray = Object.keys(ctrl.effects).map(k => ctrl.effects[k]);
+                    }
                 }
 
                 function getEffectsObject() {
-                    let effects = {};
-                    let count = 1;
-                    ctrl.effectsArray.forEach(e => {
-                        effects[count.toString()] = e;
-                        count++;
-                    });
-                    return effects;
+                    let obj;
+                    if (ctrl.isArray) {
+                        obj = ctrl.effectsArray;
+                    } else {
+                        let effects = {};
+                        let count = 1;
+                        ctrl.effectsArray.forEach(e => {
+                            effects[count.toString()] = e;
+                            count++;
+                        });
+                        obj = effects;
+                    }
+                    return obj;
                 }
 
                 // when the element is initialized
