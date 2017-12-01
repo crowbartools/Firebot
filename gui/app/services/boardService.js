@@ -175,7 +175,7 @@
                 const gameUpdated = gameUpdatedInfo;
                 const versionid = versionIdInfo;
 
-                console.log('Backend builder is pushing settings to ' +gameName+ ' (' +versionid+ ').');
+                console.log('Backend builder is pushing settings to ' + gameName + ' (' +versionid+ ').');
 
                 // Check if board name contains emoji.
                 let emojitest = isEmoji(gameName);
@@ -191,7 +191,7 @@
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
                     let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
                     let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
-                    logger.log('Trying to convert control file ' +gameName+ '.json to version id format.');
+                    logger.log('Trying to convert control file ' + gameName + '.json to version id format.');
                     fs.renameSync(oldPath, newPath);
                 }
 
@@ -360,10 +360,10 @@
                             };
                             _boards[versionId] = board;
                             addedBoards.push(board);
-                        } catch(err) {
-                            console.log('Board ' +id+ ' errored out while trying to load.');
+                        } catch (err) {
+                            console.log('Board ' + id + ' errored out while trying to load.');
                             console.log(err);
-                            logger.log('Board ' +id+ ' errored out while trying to load.');
+                            logger.log('Board ' + id + ' errored out while trying to load.');
                             logger.log(err);
                             // Remove the corrupted board from settings so we don't get stuck on next restart.
                             settingsService.deleteKnownBoard(id);
@@ -471,7 +471,6 @@
                     _.each(knownBoards, function(board) {
                         boardVersionIds.push(board.boardId);
                     });
-    
                     /* Step 2 */
                     // Load each board.
                     return loadBoardsById(boardVersionIds, true).then(() => {

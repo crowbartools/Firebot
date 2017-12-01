@@ -49,7 +49,7 @@
                 // This will delete a known board if provided a board id.
                 try {
                     deleteDataAtPath('/boards/' + boardId);
-                } catch(err) {
+                } catch (err) {
                     console.log(err);
                 }
             };
