@@ -175,7 +175,7 @@
                 const gameUpdated = gameUpdatedInfo;
                 const versionid = versionIdInfo;
 
-                console.log('Backend builder is pushing settings to '+gameName+' ('+versionid+').');
+                console.log('Backend builder is pushing settings to ' +gameName+ ' (' +versionid+ ').');
 
                 // Check if board name contains emoji.
                 let emojitest = isEmoji(gameName);
@@ -191,7 +191,7 @@
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
                     let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
                     let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
-                    logger.log('Trying to convert control file '+gameName+'.json to version id format.');
+                    logger.log('Trying to convert control file ' +gameName+ '.json to version id format.');
                     fs.renameSync(oldPath, newPath);
                 }
 
@@ -345,7 +345,7 @@
                     _.each(boardVersionIds, function (id) {
                         let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + id);
                         let boardData = boardDb.getData('/');
-                        try{
+                        try {
                             let board = boardData.firebot;
                             let versionId = board["versionId"] = boardData.versionid;
                             board["name"] = boardData.gameName;
@@ -360,15 +360,14 @@
                             };
                             _boards[versionId] = board;
                             addedBoards.push(board);
-                        } catch(err){
-                            console.log('Board '+id+' errored out while trying to load.');
+                        } catch(err) {
+                            console.log('Board ' +id+ ' errored out while trying to load.');
                             console.log(err);
-                            logger.log('Board '+id+' errored out while trying to load.')
+                            logger.log('Board ' +id+ ' errored out while trying to load.');
                             logger.log(err);
-                            
                             // Remove the corrupted board from settings so we don't get stuck on next restart.
                             settingsService.deleteKnownBoard(id);
-                            if(settingsService.getLastBoardId() === id){
+                            if (settingsService.getLastBoardId() === id) {
                                 settingsService.deleteLastBoardId(id);
                             }
                         }
@@ -467,7 +466,7 @@
                 // Get a list or board ids so we can resync them all with Mixer
                 knownBoards = settingsService.getKnownBoards();
 
-                if(knownBoards !== null && knownBoards !== undefined){
+                if (knownBoards !== null && knownBoards !== undefined) {
                     boardVersionIds = [];
                     _.each(knownBoards, function(board) {
                         boardVersionIds.push(board.boardId);
@@ -478,9 +477,6 @@
                     return loadBoardsById(boardVersionIds, true).then(() => {
                         selectedBoard = service.getLastUsedBoard();
                     });
-                } else {
-                    // We don't have any known boards.
-                    console.log('No known boards. Skipping loading.')
                 }
             };
 
