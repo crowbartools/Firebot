@@ -412,8 +412,8 @@
             service.setSelectedBoard = function(board) {
                 if (board != null && board.versionid != null) {
                     settingsService.setLastBoardId(board.versionid);
+                    selectedBoard = board;
                 }
-                selectedBoard = board;
             };
 
             service.loadBoardWithId = function(id) {

@@ -78,6 +78,23 @@
 
             service.getLastBoardId = function() {
                 let boardId = getDataFromFile('/interactive/lastBoardId');
+                let boardKnown = service.getKnownBoards().boardId;
+                if(boardKnown === undefined || boardKnown === null){
+                    // Clear board from settings.
+                    service.deleteLastBoardId();
+
+                    // Get fresh list of known boards.
+                    let knownBoards = service.getKnownBoards();
+                    
+                    // See if we have any other known boards.
+                    if(knownBoards !== null && knownBoards !== undefined && knownBoards !== {}){
+                        let newBoard = Object.keys(knownBoards)[0];
+                        service.setLastBoardId(newBoard);
+                        boardId = newBoard;
+                    } else {
+                        boardId = "";
+                    }
+                }
                 return boardId != null ? boardId : "";
             };
 
