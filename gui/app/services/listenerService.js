@@ -85,6 +85,12 @@
                     uuid = _.uniqueId();
                 }
 
+                if (request.data == null) {
+                    request.data = {};
+                }
+
+                request.data['uuid'] = uuid;
+
                 let listener = {
                     uuid: uuid,
                     type: request.type,
@@ -111,7 +117,7 @@
                         } else if (listener.type === ListenerType.IMPORT_FOLDER) {
                             ipcRenderer.send('getImportFolderPath', uuid);
                         } else if (listener.type === ListenerType.ANY_FILE) {
-                            ipcRenderer.send('getAnyFilePath', uuid);
+                            ipcRenderer.send('getAnyFilePath', request.data);
                         }
                     }
                     break;
