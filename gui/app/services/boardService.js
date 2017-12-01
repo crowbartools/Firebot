@@ -7,6 +7,7 @@
     const _ = require('underscore')._;
     const sanitize = require("sanitize-filename");
     const dataAccess = require('../../lib/common/data-access.js');
+    const logger = require('../../lib/errorLogging.js');
 
     angular
         .module('firebotApp')
@@ -188,7 +189,7 @@
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
                     let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
                     let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
-                    console.log('Converting control files to new versionid format.');
+                    logger.log('Trying to convert control file '+gameName+'.json to version id format.');
                     fs.renameSync(oldPath, newPath);
                 }
 
@@ -303,10 +304,12 @@
 
                             try { // Checking if the data for this board is present in settings.json
                                 boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
+                                let boardIdFile = dataAccess.userDataPathExistsSync('/user-settings/controls/' + id + '.json');
+                                let boardNameFile = dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json');
 
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
                                 // FB: Note the game name check is temp until we convert everyone over to versionid for filenames.
-                                if (boardUpdated !== gameUpdated || dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) { // Call backendbuilder if the dates don't match
+                                if (boardUpdated !== gameUpdated || boardNameFile === true || boardIdFile === false) {
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                 } // Date matches, no need to rebuild.
                                 console.log("This board is already inplace, no need to rebuild");
@@ -341,40 +344,43 @@
                         _boards = {};
                     }
 
-                    // get file names for all the boards
-                    let boardJsonFiles = [];
-                    try {
-                        // Pull array of all files in controls folder.
-                        let controlsPath = dataAccess.getPathInUserData('/user-settings/controls');
-                        boardJsonFiles = fs.readdirSync(controlsPath).filter(f => f.endsWith(".json"));
-
-                    } catch (err) {
-                        console.log(err);
-                        return;
-                    }
-
                     let addedBoards = [];
                     // load each board
-                    _.each(boardJsonFiles, function (fileName) {
+                    _.each(boardVersionIds, function (id) {
 
-                        // Get settings.
-                        let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + fileName);
-                        let boardData = boardDb.getData('/');
+                        // Check if file exists either by id or gameName
+                        let boardIdFile = dataAccess.userDataPathExistsSync('/user-settings/controls/' + id + '.json');
 
-                        let board = boardData.firebot;
-                        let versionId = board["versionId"] = boardData.versionid;
-                        board["name"] = boardData.gameName;
-                        board["versionid"] = boardData.versionid;
-                        board['controls'] = boardData.firebot.controls || {};
-                        board.getControlsForScene = function(sceneId) {
-                            return _.where(this.controls, {scene: sceneId});
-                        };
-                        board['joysticks'] = boardData.firebot.joysticks || {};
-                        board.getJoysticksForScene = function(sceneId) {
-                            return _.where(this.joysticks, {scene: sceneId});
-                        };
-                        _boards[versionId] = board;
-                        addedBoards.push(board);
+                        if(boardIdFile === true){
+                            // This controls file exists, so we can load it up.
+                            let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + id);
+                            let boardData = boardDb.getData('/');
+                            try{
+                                let board = boardData.firebot;
+                                let versionId = board["versionId"] = boardData.versionid;
+                                board["name"] = boardData.gameName;
+                                board["versionid"] = boardData.versionid;
+                                board['controls'] = boardData.firebot.controls || {};
+                                board.getControlsForScene = function(sceneId) {
+                                    return _.where(this.controls, {scene: sceneId});
+                                };
+                                board['joysticks'] = boardData.firebot.joysticks || {};
+                                board.getJoysticksForScene = function(sceneId) {
+                                    return _.where(this.joysticks, {scene: sceneId});
+                                };
+                                _boards[versionId] = board;
+                                addedBoards.push(board);
+                            } catch(err){
+                                console.log('Board '+id+' errored out while trying to load.');
+                                console.log(err);
+                                logger.log('Board '+id+' errored out while trying to load.')
+                            }
+                        } else {
+                            // This controls file doesnt exist. Delete it from the known boards list.
+                            console.log('Board '+id+' control file missing. Removing from known board list.');
+                            logger.log('Board '+id+' control file missing. Removing from known board list.')
+                            settingsService.deleteKnownBoard(id);
+                        }
                     });
 
                     return $q.resolve(true, () => {
@@ -468,69 +474,23 @@
 
                 /* Step 1 */
                 // Get a list or board ids so we can resync them all with Mixer
+                knownBoards = settingsService.getKnownBoards();
 
-                // Note(ebiggz): Unfortunately this currently means we have to iterate through the files
-                // to get the ids and iterate through the files a second time after we have synced with mixer.
-                // There's surely a better way to do this. Maybe maintain a list of known board id's in the settings file?
-                try {
-                    knownBoards = settingsService.getKnownBoards();
+                if(knownBoards !== null && knownBoards !== undefined){
                     boardVersionIds = [];
                     _.each(knownBoards, function(board) {
                         boardVersionIds.push(board.boardId);
                     });
-                    try {
-                        if (typeof boardVersionIds !== "undefined" && boardVersionIds != null && boardVersionIds.length > 0) {
-                            // console.log("We have data, no need to rebuild, proceed");
-                        } else {
-                            // console.log("This happened, we need to check for board files to see if we can rebuild them to get data in knownboards");
-                            throw new Error('boardlist is empty, might be first run of new 4.0 version? Trying to salvage data from board jsons instead...');
-                        }
-                    } catch (err) {
-                        console.log("boardId is not present... We might have to reinitialize the board list...");
-                        // Attempt to access board flatfile storage
-                        let boardJsonFiles = [];
-                        try {
-                            let controlsPath = dataAccess.getPathInUserData('/user-settings/controls');
-                            boardJsonFiles = fs.readdirSync(controlsPath).filter(f => f.endsWith(".json"));
-                        } catch (err) {
-                            console.log(err);
-                            return new Promise(function(resolve) {
-                                resolve('No boards saved.');
-                            });
-                        }
-
-
-                        /* Step 1 */
-                        // Get a list or board ids so we can resync them all with Mixer
-
-                        // Note(ebiggz): Unfortunately this currently means we have to iterate through the files
-                        // to get the ids and iterate through the files a second time after we have synced with mixer.
-                        // There's surely a better way to do this. Maybe maintain a list of known board id's in the settings file?
-                        boardVersionIds = [];
-                        _.each(boardJsonFiles, function (fileName) {
-                            let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + fileName);
-                            let boardData = boardDb.getData('/');
-
-                            boardVersionIds.push(boardData.versionid);
-                        });
-
-                        /* Step 2 */
-                        // Load each board.
-                        return loadBoardsById(boardVersionIds, true).then(() => {
-                            selectedBoard = service.getLastUsedBoard();
-                        });
-                    }
-                } catch (err) {
-                    // We don't have any board data... Do something about it?
-                    console.log("We don't have any board data... Panic? Riot? Riot?? Ok, blame Firebottle, it will be all good according to Waterbottle");
-                    knownBoards = [];
+    
+                    /* Step 2 */
+                    // Load each board.
+                    return loadBoardsById(boardVersionIds, true).then(() => {
+                        selectedBoard = service.getLastUsedBoard();
+                    });
+                } else {
+                    // We don't have any known boards.
+                    console.log('No known boards. Skipping loading.')
                 }
-
-                /* Step 2 */
-                // Load each board.
-                return loadBoardsById(boardVersionIds, true).then(() => {
-                    selectedBoard = service.getLastUsedBoard();
-                });
             };
 
             service.saveControlForCurrentBoard = function(control) {

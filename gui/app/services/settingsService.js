@@ -45,6 +45,15 @@
                 return boards;
             };
 
+            service.deleteKnownBoard = function(boardId) {
+                // This will delete a known board if provided a board id.
+                try{
+                    deleteDataAtPath('/boards/' + boardId);
+                } catch(err) {
+                    console.log(err);
+                }
+            }
+
             service.getBoardLastUpdatedDatetimeById = function(id) {
                 // Preparing for data from settings.json/boards/$boardId/lastUpdated
                 let lastUpdatedDatetime = null;
