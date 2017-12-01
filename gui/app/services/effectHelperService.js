@@ -277,6 +277,7 @@
                     };
                     break;
 
+                case EffectList.EFFECT_GROUP:
                 case EffectList.RANDOM_EFFECT:
                     controller = ($scope, utilityService) => {
                         if ($scope.effect.effectList == null) {
