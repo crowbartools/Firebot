@@ -175,7 +175,7 @@
                 const gameUpdated = gameUpdatedInfo;
                 const versionid = versionIdInfo;
 
-                console.log('Backend builder is pushing settings to ' + gameName + ' (' +versionid+ ').');
+                console.log('Backend builder is pushing settings to ' + gameName + ' (' + versionid + ').');
 
                 // Check if board name contains emoji.
                 let emojitest = isEmoji(gameName);
