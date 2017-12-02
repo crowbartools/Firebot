@@ -6,6 +6,8 @@
     const electron = require('electron');
     const logger = require('../../lib/errorLogging.js');
 
+    const _ = require('underscore')._;
+
     angular
         .module('firebotApp')
         .factory('utilityService', function ($rootScope, $uibModal, listenerService) {
@@ -24,6 +26,43 @@
                 return copiedEffectsCache[type] != null;
             };
 
+
+            let slidingModals = [];
+            service.addSlidingModal = function(promise) {
+                // update previous values
+                const shiftAmount = 50;
+
+                slidingModals.forEach(em => {
+                    let newAmount = em.transform + shiftAmount;
+                    em.transform = newAmount;
+                    em.element.css("transform", `translate(-${newAmount}px, 0)`);
+                });
+
+                console.log(promise);
+                promise.then((data) => {
+
+                    let model = { transform: 0, element: data.element, id: data.id };
+                    slidingModals.push(model);
+
+                });
+            };
+
+            service.removeSlidingModal = function() {
+
+                slidingModals.pop();
+
+                // update previous values
+                const shiftAmount = 50;
+
+                slidingModals.forEach(em => {
+                    let newAmount = em.transform - shiftAmount;
+                    em.transform = newAmount;
+                    em.element.css("transform", `translate(-${newAmount}px, 0)`);
+                });
+            };
+
+
+
             service.showModal = function(showModalContext) {
 
                 // We dont want to do anything if there's no context
@@ -35,9 +74,14 @@
                 // Pull values out of the context
                 let templateUrl = showModalContext.templateUrl;
                 let controllerFunc = showModalContext.controllerFunc;
-                let resolveObj = showModalContext.resolveObj;
+                let resolveObj = showModalContext.resolveObj || {};
                 let closeCallback = showModalContext.closeCallback;
                 let dismissCallback = showModalContext.dismissCallback;
+
+                let modalId = "modal" + _.uniqueId().toString();
+                resolveObj.modalId = () => {
+                    return modalId;
+                };
 
                 // Show the modal
                 let modalInstance = $uibModal.open({
@@ -48,7 +92,8 @@
                     resolve: resolveObj,
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard,
-                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true
+                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
+                    windowClass: modalId
                 });
 
                 // If no callbacks were defined, create blank ones. This avoids a console error
@@ -311,17 +356,30 @@
             /*
             * EDIT EFFECT LIST MODAL
             */
-            service.showEditEffectListModal = function (effects, triggerType, closeCallback) {
+            service.showEditEffectListModal = function (effects, triggerType, headerPrefix, closeCallback) {
                 let showEditEffectListContext = {
                     templateUrl: "editEffectListModal.html",
-                    controllerFunc: ($scope, $uibModalInstance, effects, triggerType) => {
+                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effects, headerPrefix, triggerType) => {
 
                         $scope.effects = effects;
                         $scope.triggerType = triggerType;
+                        $scope.headerPrefix = headerPrefix;
 
                         $scope.effectListUpdated = function(effects) {
                             $scope.effects = effects;
                         };
+
+                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                id: modalId
+                            };
+                        }));
+
+                        $scope.$on('modal.closing', function() {
+                            utilityService.removeSlidingModal();
+                        });
 
                         $scope.save = function() {
                             $uibModalInstance.close($scope.effects);
@@ -337,6 +395,9 @@
                         },
                         triggerType: () => {
                             return triggerType;
+                        },
+                        headerPrefix: () => {
+                            return headerPrefix;
                         }
                     },
                     closeCallback: closeCallback

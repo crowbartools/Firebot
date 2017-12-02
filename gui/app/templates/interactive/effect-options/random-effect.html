@@ -1,10 +1,8 @@
 <p>This effect will run a random effect from the list below.</p>
 
-<div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Effect List</h4></div>
-    <div class="effect-setting-content">
-        <div ng-if="effect.effectList == null || effect.effectList.length < 1" class="muted">No effects added.</div>
-        <div ng-repeat="randEffect in effect.effectList">{{randEffect.type}}</div>
-        <button class="btn-sm btn-primary" style="margin-top: 10px;" ng-click="showEditEffectListModal()">Edit Effect List</button>
-    </div>
-</div>
+<eos-container header="Effects">
+    <div ng-if="effect.effectList == null || effect.effectList.length < 1" class="muted">No effects added.</div>
+    <div>{{effectsString}}</div>
+    <button class="btn-sm btn-primary" style="margin-top: 10px;" ng-click="showEditEffectListModal()">Edit Effects List</button>
+    <!--<effect-list effects="effect.effectList" trigger="{{trigger}}" is-array="true"></effect-list>-->
+</eos-container>

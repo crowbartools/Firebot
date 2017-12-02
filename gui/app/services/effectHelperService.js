@@ -283,8 +283,11 @@
                         if ($scope.effect.effectList == null) {
                             $scope.effect.effectList = [];
                         }
+
+                        $scope.effectsString = $scope.effect.effectList.map(e => e.type).join(", ");
+
                         $scope.showEditEffectListModal = function() {
-                            utilityService.showEditEffectListModal($scope.effect.effectList, $scope.trigger, (effects) => {
+                            utilityService.showEditEffectListModal($scope.effect.effectList, $scope.trigger, effectType, (effects) => {
                                 $scope.effect.effectList = effects;
                             });
                         };
