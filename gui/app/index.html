@@ -413,5 +413,27 @@
           <button class="btn btn-primary" ng-click="save()">Save</button>
       </div>
     </script>
+
+    <!-- Edit Effect Modal -->
+    <script type="text/ng-template" id="editEffectModal.html">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Effect - {{effect.type}}</h4>
+      </div>
+      <div class="modal-body">
+          <div class="effect-select-wrapper">
+              <searchable-effect-dropdown trigger="{{triggerType}}" selected="effect.type" style="width:100%" update="$ctrl.effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
+              
+              <span class="effect-delete-btn clickable" ng-click="$ctrl.removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
+          </div>
+          <div class="effect-settings-panel">
+              <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
+              <effect-options effect="effect" type="effect.type" trigger="{{triggerType}}" ng-show="effect.type != null"><effect-options>
+          </div>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
+          <button class="btn btn-primary" ng-click="save()">Save</button>
+      </div>
+    </script>
   </body>
 </html>

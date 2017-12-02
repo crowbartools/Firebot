@@ -406,6 +406,55 @@
                 service.showModal(showEditEffectListContext);
             };
 
+            /*
+            * EDIT EFFECT MODAL
+            */
+            service.showEditEffectModal = function (effect, triggerType, closeCallback) {
+                let showEditEffectContext = {
+                    templateUrl: "editEffectModal.html",
+                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, triggerType) => {
+
+                        $scope.effect = JSON.parse(JSON.stringify(effect));
+                        $scope.triggerType = triggerType;
+
+                        $scope.effectListUpdated = function(effects) {
+                            $scope.effects = effects;
+                        };
+
+                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                id: modalId
+                            };
+                        }));
+
+                        $scope.$on('modal.closing', function() {
+                            utilityService.removeSlidingModal();
+                        });
+
+                        $scope.save = function() {
+                            $uibModalInstance.close($scope.effects);
+                        };
+
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss();
+                        };
+                    },
+                    resolveObj: {
+                        effect: () => {
+                            return effect;
+                        },
+                        triggerType: () => {
+                            return triggerType;
+                        }
+                    },
+                    closeCallback: closeCallback
+                };
+
+                service.showModal(showEditEffectContext);
+            };
+
             // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.INFO },

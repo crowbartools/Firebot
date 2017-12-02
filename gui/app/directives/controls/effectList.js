@@ -22,7 +22,7 @@
                         ng-click="$ctrl.checkForOpenEffects()"
                         ng-mouseenter="hovering = true"
                         ng-mouseleave="hovering = false">
-                    <div class="effect-select-wrapper">
+
                         <uib-accordion-heading>
                             <div class="effect-panel" style="display:flex;">
                                 <span>{{effect.type}}</span>
@@ -32,15 +32,16 @@
                                 </span> 
                             </div>
                         </uib-accordion-heading>
-            
-                        <searchable-effect-dropdown trigger="{{$ctrl.trigger}}" selected="effect.type" style="width:100%" update="$ctrl.effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
-                        
-                        <span class="effect-delete-btn clickable" ng-click="$ctrl.removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
-                    </div>
-                    <div class="effect-settings-panel">
-                        <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
-                        <effect-options effect="effect" type="effect.type" trigger="{{$ctrl.trigger}}" ng-show="effect.type != null"><effect-options>
-                    </div>
+
+                        <div class="effect-select-wrapper">
+                            <searchable-effect-dropdown trigger="{{$ctrl.trigger}}" selected="effect.type" style="width:100%" update="$ctrl.effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
+                            
+                            <span class="effect-delete-btn clickable" ng-click="$ctrl.removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
+                        </div>
+                        <div class="effect-settings-panel">
+                            <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
+                            <effect-options effect="effect" type="effect.type" trigger="{{$ctrl.trigger}}" ng-show="effect.type != null"><effect-options>
+                        </div>
                     </div>
                 </uib-accordion>
         
