@@ -58,8 +58,8 @@ function mixerSocketConnect(){
 				case "html":
 					showHtml(data);
 					break;
-				case "shoutout":
-					shoutout(data);
+				case "showText":
+					showText(data);
 					break;
 				default:
 					console.log('Unrecognized event type.', data);

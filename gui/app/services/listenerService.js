@@ -20,7 +20,7 @@
                 error: {},
                 updateError: {},
                 updateDownloaded: {},
-                shoutout: {},
+                showText: {},
                 playSound: {},
                 showImage: {},
                 showVideo: {},
@@ -44,7 +44,7 @@
                 ERROR: "error",
                 UPDATE_ERROR: "updateError",
                 UPDATE_DOWNLOADED: "updateDownloaded",
-                SHOUTOUT: "shoutout",
+                SHOW_TEXT: "showText",
                 PLAY_SOUND: "playSound",
                 SHOW_IMAGE: "showImage",
                 SHOW_VIDEO: "showVideo",
@@ -299,10 +299,10 @@
             });
 
             /**
-            * Shoutout listener
+            * Show Text listener
             */
-            ipcRenderer.on('shoutout', function (event, data) {
-                _.forEach(registeredListeners.shoutout, (listener) => {
+            ipcRenderer.on('showText', function (event, data) {
+                _.forEach(registeredListeners.showText, (listener) => {
                     runListener(listener, data);
                 });
             });

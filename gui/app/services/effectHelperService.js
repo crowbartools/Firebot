@@ -59,7 +59,7 @@
                     };
                     break;
 
-                case EffectList.SHOUTOUT:
+                case EffectList.SHOW_TEXT:
                     controller = ($scope, listenerService, utilityService) => {
 
                         let uuid = _.uniqueId();

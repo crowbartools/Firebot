@@ -18,49 +18,54 @@
                 port: port
             });
 
-            function shoutout(data) {
-                let shoutoutPosition = data.shoutoutPosition;
-                let shoutoutHeight = data.shoutoutHeight;
-                let shoutoutWidth = data.shoutoutWidth;
-                let shoutoutDuration = parseInt(data.shoutoutDuration);
-                let shoutoutColor = data.shoutoutColor;
-                let shoutoutFontSize = data.shoutoutFontSize;
+            function showText(data) {
+                let showTextPosition = data.showTextPosition;
+                let showTextHeight = data.showTextHeight;
+                let showTextWidth = data.showTextWidth;
+                let showTextDuration = parseInt(data.showTextDuration);
+                let showTextColor = data.showTextColor;
+                let showTextBackgroundColor = data.showTextBackgroundColor;
+                let showTextFontSize = data.showTextFontSize;
+                let showTextType = data.showTextType;
+                let showTextAlignment = data.showTextAlignment;
 
                 // Set defaults if they werent filled out.
-                if (shoutoutPosition === "" || shoutoutPosition == null) {
-                    shoutoutPosition = "Top Middle";
+                if (showTextPosition === "" || showTextPosition == null) {
+                    showTextPosition = "Top Middle";
                 }
-                if (shoutoutHeight === "" || shoutoutHeight == null) {
-                    shoutoutHeight = false;
+                if (showTextHeight === "" || showTextHeight == null) {
+                    showTextHeight = false;
                 }
-                if (shoutoutWidth === "" || shoutoutWidth == null) {
-                    shoutoutWidth = false;
+                if (showTextWidth === "" || showTextWidth == null) {
+                    showTextWidth = false;
                 }
-                if (shoutoutDuration === "" || shoutoutDuration == null) {
-                    shoutoutDuration = 5;
+                if (showTextDuration === "" || showTextDuration == null) {
+                    showTextDuration = 5;
                 }
-
-                // Shoutout color
-                if (shoutoutColor === "" || shoutoutColor == null) {
-                    shoutoutColor = "#ffffff";
+                if (showTextColor === "" || showTextColor == null) {
+                    showTextColor = "#ffffff";
                 }
-
-                // Shoutout font size
-                if (shoutoutFontSize === "" || shoutoutFontSize == null) {
-                    shoutoutFontSize = "1em";
+                if (showTextBackgroundColor === "" || showTextBackgroundColor == null) {
+                    showTextBackgroundColor = "transparent";
+                }
+                if (showTextFontSize === "" || showTextFontSize == null) {
+                    showTextFontSize = "1em";
                 }
 
                 // Compile data and send to overlay.
                 let broadCastData = {
-                    "event": "shoutout",
+                    "event": "showText",
+                    "showTextType": data.showTextType,
                     "resourceToken": data.resourceToken,
-                    "shoutoutText": data.shoutoutText,
-                    "shoutoutColor": shoutoutColor,
-                    "shoutoutFontSize": shoutoutFontSize,
-                    "shoutoutPosition": shoutoutPosition,
-                    "shoutoutHeight": shoutoutHeight,
-                    "shoutoutWidth": shoutoutWidth,
-                    "shoutoutDuration": shoutoutDuration,
+                    "showTextText": data.showTextText,
+                    "showTextAlignment": data.showTextAlignment,
+                    "showTextColor": showTextColor,
+                    "showTextBackgroundColor": showTextBackgroundColor,
+                    "showTextFontSize": showTextFontSize,
+                    "showTextPosition": showTextPosition,
+                    "showTextHeight": showTextHeight,
+                    "showTextWidth": showTextWidth,
+                    "showTextDuration": showTextDuration,
                     "enterAnimation": data.enterAnimation,
                     "exitAnimation": data.exitAnimation,
                     "customCoords": data.customCoords
@@ -178,9 +183,9 @@
 
             // Watches for an event from main process
             listenerService.registerListener(
-                { type: listenerService.ListenerType.SHOUTOUT },
+                { type: listenerService.ListenerType.SHOW_TEXT },
                 (data) => {
-                    shoutout(data);
+                    showText(data);
                 });
 
             listenerService.registerListener(

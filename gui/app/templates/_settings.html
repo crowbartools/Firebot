@@ -125,9 +125,9 @@
               <button class="btn btn-default" ng-click="settings.showOverlayInfoModal()">Get Overlay Path</button>
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Shoutout</div>
-              <div class="setting-description">If a button or command has "shoutout" on, it will use the settings here to display user info on the overlay. This can be overridden at a per button or command level using the "Shoutout Override" effect.</div>
-              <button class="btn btn-default" ng-click="settings.showOverlayShoutoutModal()">Edit Shoutout Settings</button>
+              <div class="setting-heading">Overlay Show Text</div>
+              <div class="setting-description">Here you can set global "show text" effect settings. This can be overriden at the button or command level.</div>
+              <button class="btn btn-default" ng-click="settings.showOverlayShowTextModal()">Edit Text Settings</button>
             </div>
           </div>
         </uib-tab>
@@ -329,9 +329,9 @@
 </script>
 
 <!-- show text modal -->
-<script type="text/ng-template" id="overlayShoutoutModal.html">
+<script type="text/ng-template" id="overlayShowTextModal.html">
   <div class="modal-header" style="text-align:center;">
-    <h2 class="modal-title">Global Overlay Shoutout Settings</h2>
+    <h2 class="modal-title">Global Show Text Settings</h2>
   </div>
   <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;">
     <show-text-settings model="textSettings"></show-text-settings>

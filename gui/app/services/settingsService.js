@@ -264,8 +264,8 @@
                 utilityService.showOverlayInfoModal(instanceName);
             };
 
-            service.showOverlayShoutoutModal = function() {
-                utilityService.showOverlayShoutoutModal();
+            service.showOverlayShowTextModal = function() {
+                utilityService.showOverlayShowTextModal();
             }
 
             service.getClearCustomScriptCache = function() {

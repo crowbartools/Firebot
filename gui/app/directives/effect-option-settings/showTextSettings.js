@@ -9,13 +9,25 @@
             },
             template: `
                 <div>
-                    <eos-container header="Shoutout">
+                    <eos-container header="Display Style">
+                    <div class="controls-fb-inline" style="padding-bottom: 5px;">
+                        <label class="control-fb control--radio">List
+                            <input type="radio" ng-model="$ctrl.model.textType" value="list"/> 
+                            <div class="control__indicator"></div>
+                        </label>
+                        <label class="control-fb control--radio">Replace
+                            <input type="radio" ng-model="$ctrl.model.textType" value="replace"/>
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
+                    </eos-container>
+                    <eos-container header="Text">
                         <div class="input-group">
-                            <span class="input-group-addon">Shoutout Text</span>
+                            <span class="input-group-addon">Text</span>
                             <input 
                             type="text" 
                             class="form-control" 
-                            aria-describedby="shoutout-text-effect-type" 
+                            aria-describedby="showText-text-effect-type" 
                             ng-model="$ctrl.model.text">
                         </div>
                         <eos-collapsable-panel show-label="Show Variables" hide-label="Hide Variables">
@@ -26,26 +38,53 @@
                                 <li><b>$(cooldown)</b> - Replaced by the cooldown of the command or button.</li>
                             </ul>
                         </eos-collapsable-panel>
-                    
-                        <div class="input-group">
-                            <span class="input-group-addon">Color</span>
-                            <input 
-                            type="text" 
-                            class="form-control" 
-                            aria-describedby="shoutout-text-effect-type" 
-                            ng-model="$ctrl.model.color"
-                            placeholder="#CCCCCC"
-                            >
+                    </eos-container>
+                    <eos-container header="Text Details">
+                        <div class="effect-setting-container">
+                            <div class="input-group">
+                                <span class="input-group-addon">Color</span>
+                                <input 
+                                type="text" 
+                                class="form-control" 
+                                aria-describedby="showText-text-effect-type" 
+                                ng-model="$ctrl.model.color"
+                                placeholder="#CCCCCC"
+                                >
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">Font Size</span>
-                            <input 
-                            type="text" 
-                            class="form-control" 
-                            aria-describedby="shoutout-text-effect-type" 
-                            ng-model="$ctrl.model.size"
-                            placeholder="20px"
-                            >
+                        <div class="effect-setting-container">
+                            <div class="input-group">
+                                <span class="input-group-addon">Background Color</span>
+                                <input 
+                                type="text" 
+                                class="form-control" 
+                                aria-describedby="showText-text-effect-type" 
+                                ng-model="$ctrl.model.backgroundColor"
+                                placeholder="#000000 or transparent"
+                                >
+                            </div>
+                        </div>
+                        <div class="effect-setting-container">
+                            <div class="input-group">
+                                <span class="input-group-addon">Font Size</span>
+                                <input 
+                                type="text" 
+                                class="form-control" 
+                                aria-describedby="showText-text-effect-type" 
+                                ng-model="$ctrl.model.size"
+                                placeholder="20px"
+                                >
+                            </div>
+                        </div>
+                        <div class="effect-setting-container">
+                            <div class="input-group" style="width: 100%">
+                                <span class="input-group-addon">Text Alignment</span>
+                                <select class="fb-select form-control" ng-model="$ctrl.model.textAlignment">
+                                    <option label="Left" value="left" selected="selected">Left</option>
+                                    <option label="Center" value="center">Center</option>
+                                    <option label="Right" value="right">Right</option>
+                                </select>
+                            </div>
                         </div>
                     </eos-container>
                     
@@ -59,14 +98,14 @@
                             <input 
                             type="number"
                             class="form-control" 
-                            aria-describeby="shoutout-width-setting-type"
+                            aria-describeby="showText-width-setting-type"
                             ng-model="$ctrl.model.width"
                             placeholder="px">
                             <span class="input-group-addon">Height</span>
                             <input 
                             type="number"
                             class="form-control" 
-                            aria-describeby="shoutout-height-setting-type"
+                            aria-describeby="showText-height-setting-type"
                             ng-model="$ctrl.model.height"
                             placeholder="px">
                         </div>
@@ -78,7 +117,7 @@
                             <input 
                             type="number"
                             class="form-control" 
-                            aria-describedby="shoutout-length-effect-type" 
+                            aria-describedby="showText-length-effect-type" 
                             ng-model="$ctrl.model.length">
                         </div>
                     </eos-container>
@@ -90,6 +129,7 @@
                 let ctrl = this;
 
                 ctrl.$onInit = function() {
+                    ctrl.model.textAlignment = ctrl.model.textAlignment ? ctrl.model.textAlignment : 'left';
                 };
             }
         });

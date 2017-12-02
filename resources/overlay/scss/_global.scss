@@ -39,3 +39,25 @@ canvas{
 		padding:0px;
 	}
 }
+
+
+/** Show text overlay **/
+.showTextOverlay{
+	display:inline-block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	
+	.showTextHolder{
+		position:absolute;
+		bottom:0px;
+		width:100%;
+
+		.showTextMessage{
+			opacity: .8;
+			border-radius: 5px;
+			margin:5px 0px 5px 0px;
+			padding:7px;
+			width:95%;
+		}
+	}
+}

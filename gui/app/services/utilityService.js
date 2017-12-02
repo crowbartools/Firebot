@@ -119,9 +119,9 @@
             /*
              * OVERLAY INFO MODAL
              */
-            service.showOverlayShoutoutModal = function() {
-                let overlayShoutoutModalContext = {
-                    templateUrl: "overlayShoutoutModal.html",
+            service.showOverlayShowTextModal = function() {
+                let overlayShowTextModalContext = {
+                    templateUrl: "overlayShowTextModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $rootScope, $uibModalInstance, settingsService) => {
 
@@ -137,7 +137,7 @@
                         };
                     }
                 };
-                service.showModal(overlayShoutoutModalContext);
+                service.showModal(overlayShowTextModalContext);
             };
 
             /*
