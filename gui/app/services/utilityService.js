@@ -119,20 +119,22 @@
             /*
              * OVERLAY INFO MODAL
              */
-            service.showOverlayShoutoutModal = function(instanceName) {
+            service.showOverlayShoutoutModal = function() {
                 let overlayShoutoutModalContext = {
                     templateUrl: "overlayShoutoutModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $rootScope, $uibModalInstance) => {
+                    controllerFunc: ($scope, $rootScope, $uibModalInstance, settingsService) => {
+
+                        // TODO: Load $scope.textSettings via settingsService
+                        $scope.textSettings = {};
+
+                        $scope.save = function() {
+                            // TODO: $scope.textSettings to file via settingsService
+                        };
 
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
-                    },
-                    resolveObj: {
-                        instanceName: () => {
-                            return instanceName;
-                        }
                     }
                 };
                 service.showModal(overlayShoutoutModalContext);

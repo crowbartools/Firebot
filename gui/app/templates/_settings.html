@@ -327,3 +327,17 @@
     <button type="button" class="btn btn-primary" ng-click="create()">Create</button>
   </div>
 </script>
+
+<!-- show text modal -->
+<script type="text/ng-template" id="overlayShoutoutModal.html">
+  <div class="modal-header" style="text-align:center;">
+    <h2 class="modal-title">Global Overlay Shoutout Settings</h2>
+  </div>
+  <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;">
+    <show-text-settings model="textSettings"></show-text-settings>
+  </div>
+  <div class="modal-footer" style="text-align:center;">
+    <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
+    <button class="btn btn-primary" ng-click="save()">Save</button>
+  </div>
+</script>
