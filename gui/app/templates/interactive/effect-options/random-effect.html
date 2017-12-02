@@ -2,7 +2,8 @@
 
 <eos-container header="Effects">
     <div ng-if="effect.effectList == null || effect.effectList.length < 1" class="muted">No effects added.</div>
-    <div>{{effectsString}}</div>
-    <button class="btn-sm btn-primary" style="margin-top: 10px;" ng-click="showEditEffectListModal()">Edit Effects List</button>
-    <!--<effect-list effects="effect.effectList" trigger="{{trigger}}" is-array="true"></effect-list>-->
+    <ul>
+        <li ng-repeat="randEffect in effect.effectList"><b>{{randEffect.type}}</b></li>
+    </ul>
+    <button class="btn-sm btn-primary" style="margin-top: 10px;" ng-click="showEditEffectListModal()">Edit Effects</button>
 </eos-container>

@@ -361,7 +361,7 @@
                     templateUrl: "editEffectListModal.html",
                     controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effects, headerPrefix, triggerType) => {
 
-                        $scope.effects = effects;
+                        $scope.effects = JSON.parse(JSON.stringify(effects));
                         $scope.triggerType = triggerType;
                         $scope.headerPrefix = headerPrefix;
 

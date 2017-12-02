@@ -284,8 +284,6 @@
                             $scope.effect.effectList = [];
                         }
 
-                        $scope.effectsString = $scope.effect.effectList.map(e => e.type).join(", ");
-
                         $scope.showEditEffectListModal = function() {
                             utilityService.showEditEffectListModal($scope.effect.effectList, $scope.trigger, effectType, (effects) => {
                                 $scope.effect.effectList = effects;
