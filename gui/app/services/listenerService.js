@@ -20,7 +20,7 @@
                 error: {},
                 updateError: {},
                 updateDownloaded: {},
-                showText: {},
+                showEvents: {},
                 playSound: {},
                 showImage: {},
                 showVideo: {},
@@ -44,7 +44,7 @@
                 ERROR: "error",
                 UPDATE_ERROR: "updateError",
                 UPDATE_DOWNLOADED: "updateDownloaded",
-                SHOW_TEXT: "showText",
+                SHOW_EVENTS: "showEvents",
                 PLAY_SOUND: "playSound",
                 SHOW_IMAGE: "showImage",
                 SHOW_VIDEO: "showVideo",
@@ -301,8 +301,8 @@
             /**
             * Show Text listener
             */
-            ipcRenderer.on('showText', function (event, data) {
-                _.forEach(registeredListeners.showText, (listener) => {
+            ipcRenderer.on('showEvents', function (event, data) {
+                _.forEach(registeredListeners.showEvents, (listener) => {
                     runListener(listener, data);
                 });
             });

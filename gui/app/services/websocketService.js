@@ -18,54 +18,54 @@
                 port: port
             });
 
-            function showText(data) {
-                let showTextPosition = data.showTextPosition;
-                let showTextHeight = data.showTextHeight;
-                let showTextWidth = data.showTextWidth;
-                let showTextDuration = parseInt(data.showTextDuration);
-                let showTextColor = data.showTextColor;
-                let showTextBackgroundColor = data.showTextBackgroundColor;
-                let showTextFontSize = data.showTextFontSize;
-                let showTextType = data.showTextType;
-                let showTextAlignment = data.showTextAlignment;
+            function showEvents(data) {
+                let showEventsPosition = data.showEventsPosition;
+                let showEventsHeight = data.showEventsHeight;
+                let showEventsWidth = data.showEventsWidth;
+                let showEventsDuration = parseInt(data.showEventsDuration);
+                let showEventsColor = data.showEventsColor;
+                let showEventsBackgroundColor = data.showEventsBackgroundColor;
+                let showEventsFontSize = data.showEventsFontSize;
+                let showEventsType = data.showEventsType;
+                let showEventsAlignment = data.showEventsAlignment;
 
                 // Set defaults if they werent filled out.
-                if (showTextPosition === "" || showTextPosition == null) {
-                    showTextPosition = "Top Middle";
+                if (showEventsPosition === "" || showEventsPosition == null) {
+                    showEventsPosition = "Top Middle";
                 }
-                if (showTextHeight === "" || showTextHeight == null) {
-                    showTextHeight = false;
+                if (showEventsHeight === "" || showEventsHeight == null) {
+                    showEventsHeight = false;
                 }
-                if (showTextWidth === "" || showTextWidth == null) {
-                    showTextWidth = false;
+                if (showEventsWidth === "" || showEventsWidth == null) {
+                    showEventsWidth = false;
                 }
-                if (showTextDuration === "" || showTextDuration == null) {
-                    showTextDuration = 5;
+                if (showEventsDuration === "" || showEventsDuration == null) {
+                    showEventsDuration = 5;
                 }
-                if (showTextColor === "" || showTextColor == null) {
-                    showTextColor = "#ffffff";
+                if (showEventsColor === "" || showEventsColor == null) {
+                    showEventsColor = "#ffffff";
                 }
-                if (showTextBackgroundColor === "" || showTextBackgroundColor == null) {
-                    showTextBackgroundColor = "transparent";
+                if (showEventsBackgroundColor === "" || showEventsBackgroundColor == null) {
+                    showEventsBackgroundColor = "transparent";
                 }
-                if (showTextFontSize === "" || showTextFontSize == null) {
-                    showTextFontSize = "1em";
+                if (showEventsFontSize === "" || showEventsFontSize == null) {
+                    showEventsFontSize = "1em";
                 }
 
                 // Compile data and send to overlay.
                 let broadCastData = {
-                    "event": "showText",
-                    "showTextType": data.showTextType,
+                    "event": "showEvents",
+                    "showEventsType": data.showEventsType,
                     "resourceToken": data.resourceToken,
-                    "showTextText": data.showTextText,
-                    "showTextAlignment": data.showTextAlignment,
-                    "showTextColor": showTextColor,
-                    "showTextBackgroundColor": showTextBackgroundColor,
-                    "showTextFontSize": showTextFontSize,
-                    "showTextPosition": showTextPosition,
-                    "showTextHeight": showTextHeight,
-                    "showTextWidth": showTextWidth,
-                    "showTextDuration": showTextDuration,
+                    "showEventsText": data.showEventsText,
+                    "showEventsAlignment": data.showEventsAlignment,
+                    "showEventsColor": showEventsColor,
+                    "showEventsBackgroundColor": showEventsBackgroundColor,
+                    "showEventsFontSize": showEventsFontSize,
+                    "showEventsPosition": showEventsPosition,
+                    "showEventsHeight": showEventsHeight,
+                    "showEventsWidth": showEventsWidth,
+                    "showEventsDuration": showEventsDuration,
                     "enterAnimation": data.enterAnimation,
                     "exitAnimation": data.exitAnimation,
                     "customCoords": data.customCoords
@@ -183,9 +183,9 @@
 
             // Watches for an event from main process
             listenerService.registerListener(
-                { type: listenerService.ListenerType.SHOW_TEXT },
+                { type: listenerService.ListenerType.SHOW_EVENTS },
                 (data) => {
-                    showText(data);
+                    showEvents(data);
                 });
 
             listenerService.registerListener(

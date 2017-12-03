@@ -42,17 +42,17 @@ canvas{
 
 
 /** Show text overlay **/
-.showTextOverlay{
+.showEventsOverlay{
 	display:inline-block;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	
-	.showTextHolder{
+	.showEventsHolder{
 		position:absolute;
 		bottom:0px;
 		width:100%;
 
-		.showTextMessage{
+		.showEventsMessage{
 			opacity: .8;
 			border-radius: 5px;
 			margin:5px 0px 5px 0px;

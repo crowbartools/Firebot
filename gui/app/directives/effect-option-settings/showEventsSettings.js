@@ -3,7 +3,7 @@
 
     angular
         .module('firebotApp')
-        .component("showTextSettings", {
+        .component("showEventsSettings", {
             bindings: {
                 model: '='
             },
@@ -27,7 +27,7 @@
                             <input 
                             type="text" 
                             class="form-control" 
-                            aria-describedby="showText-text-effect-type" 
+                            aria-describedby="showEvents-text-effect-type" 
                             ng-model="$ctrl.model.text">
                         </div>
                         <eos-collapsable-panel show-label="Show Variables" hide-label="Hide Variables">
@@ -46,7 +46,7 @@
                                 <input 
                                 type="text" 
                                 class="form-control" 
-                                aria-describedby="showText-text-effect-type" 
+                                aria-describedby="showEvents-text-effect-type" 
                                 ng-model="$ctrl.model.color"
                                 placeholder="#CCCCCC"
                                 >
@@ -58,7 +58,7 @@
                                 <input 
                                 type="text" 
                                 class="form-control" 
-                                aria-describedby="showText-text-effect-type" 
+                                aria-describedby="showEvents-text-effect-type" 
                                 ng-model="$ctrl.model.backgroundColor"
                                 placeholder="#000000 or transparent"
                                 >
@@ -70,7 +70,7 @@
                                 <input 
                                 type="text" 
                                 class="form-control" 
-                                aria-describedby="showText-text-effect-type" 
+                                aria-describedby="showEvents-text-effect-type" 
                                 ng-model="$ctrl.model.size"
                                 placeholder="20px"
                                 >
@@ -98,14 +98,14 @@
                             <input 
                             type="number"
                             class="form-control" 
-                            aria-describeby="showText-width-setting-type"
+                            aria-describeby="showEvents-width-setting-type"
                             ng-model="$ctrl.model.width"
                             placeholder="px">
                             <span class="input-group-addon">Height</span>
                             <input 
                             type="number"
                             class="form-control" 
-                            aria-describeby="showText-height-setting-type"
+                            aria-describeby="showEvents-height-setting-type"
                             ng-model="$ctrl.model.height"
                             placeholder="px">
                         </div>
@@ -117,7 +117,7 @@
                             <input 
                             type="number"
                             class="form-control" 
-                            aria-describedby="showText-length-effect-type" 
+                            aria-describedby="showEvents-length-effect-type" 
                             ng-model="$ctrl.model.length">
                         </div>
                     </eos-container>
