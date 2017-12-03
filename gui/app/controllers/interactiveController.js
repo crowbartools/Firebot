@@ -211,6 +211,7 @@
                             let modalElement = $("." + modalId).children();
                             return {
                                 element: modalElement,
+                                name: "Edit Button",
                                 id: modalId
                             };
                         }));

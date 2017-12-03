@@ -39,11 +39,10 @@
                     em.element.css("transform", `translate(-${newAmount}px, 0)`);
                 });
 
-                console.log(promise);
                 promise.then((data) => {
 
-                    let model = { transform: 0, element: data.element, id: data.id };
-                    slidingModals.push(model);
+                    data.transform = 0;
+                    slidingModals.push(data);
 
                 });
             };
@@ -60,7 +59,9 @@
                 });
             };
 
-
+            service.getSlidingModalNames = function() {
+                return slidingModals.map(sm => sm.name);
+            };
 
             service.showModal = function(showModalContext) {
 
@@ -420,14 +421,16 @@
                             $scope.effect.type = effectType.name;
                         };
 
-
                         utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
                             let modalElement = $("." + modalId).children();
                             return {
                                 element: modalElement,
+                                name: effect.type,
                                 id: modalId
                             };
                         }));
+
+                        console.log(utilityService.getSlidingModalNames());
 
                         $scope.$on('modal.closing', function() {
                             utilityService.removeSlidingModal();
