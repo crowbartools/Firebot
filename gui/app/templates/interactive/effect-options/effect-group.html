@@ -1,10 +1,5 @@
 <p>All effects in the below list will be treated as one effect. This is useful when used in a Random Effect effect.</p>
 
 <eos-container header="Effects">
-        <div ng-if="effect.effectList == null || effect.effectList.length < 1" class="muted">No effects added.</div>
-        <ul>
-            <li ng-repeat="randEffect in effect.effectList"><b>{{randEffect.type}}</b></li>
-        </ul>
-    <button class="btn-sm btn-primary" style="margin-top: 10px;" ng-click="showEditEffectListModal()">Edit Effects</button>
+        <effect-list effects="effect.effectList" trigger="{{trigger}}" update="effectListUpdated(effects)"></effect-list>
 </eos-container>
-    

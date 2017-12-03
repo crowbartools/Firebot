@@ -44,14 +44,21 @@
                     </div>
                 </uib-accordion>-->
                 <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsArray">
-                    <div ng-repeat="effect in $ctrl.effectsArray">
+                    <div ng-repeat="effect in $ctrl.effectsArray track by $index">
                         <div class="effect-bar clickable-dark"
                             ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
                             ng-mouseenter="hovering = true"
                             ng-mouseleave="hovering = false">
                             <span>{{effect.type}}</span>
-                            <span>
+                            <span class="flex-row-center ">
                                 <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" style="margin-right:15px"></i>
+                                <div class="clickable" style="margin-right:15px; font-size: 20px; width: 15px; text-align: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
+                                    <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
+                                    <ul class="dropdown-menu" uib-dropdown-menu>
+                                        <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
+                                        <li><a href ng-click="$ctrl.removeEffectAtIndex($index)" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
+                                    </ul>
+                                </div>
                             </span> 
                         </div>
                     </div>
@@ -172,6 +179,11 @@
 
                     updateOpenPanel();
                     ctrl.effectsUpdate();
+                };
+
+                ctrl.duplicateEffectAtIndex = function(index) {
+                    let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
+                    ctrl.effectsArray.splice(index + 1, 0, effect);
                 };
 
                 ctrl.removeEffectAtIndex = function(index) {

@@ -279,15 +279,13 @@
 
                 case EffectList.EFFECT_GROUP:
                 case EffectList.RANDOM_EFFECT:
-                    controller = ($scope, utilityService) => {
+                    controller = ($scope) => {
                         if ($scope.effect.effectList == null) {
                             $scope.effect.effectList = [];
                         }
 
-                        $scope.showEditEffectListModal = function() {
-                            utilityService.showEditEffectListModal($scope.effect.effectList, $scope.trigger, effectType, (effects) => {
-                                $scope.effect.effectList = effects;
-                            });
+                        $scope.effectListUpdated = function(effects) {
+                            $scope.effect.effectList = effects;
                         };
                     };
                     break;
