@@ -28,9 +28,10 @@
 
 
             let slidingModals = [];
+            const shiftAmount = 75;
             service.addSlidingModal = function(promise) {
                 // update previous values
-                const shiftAmount = 50;
+
 
                 slidingModals.forEach(em => {
                     let newAmount = em.transform + shiftAmount;
@@ -52,8 +53,6 @@
                 slidingModals.pop();
 
                 // update previous values
-                const shiftAmount = 50;
-
                 slidingModals.forEach(em => {
                     let newAmount = em.transform - shiftAmount;
                     em.transform = newAmount;
@@ -409,17 +408,18 @@
             /*
             * EDIT EFFECT MODAL
             */
-            service.showEditEffectModal = function (effect, triggerType, closeCallback) {
+            service.showEditEffectModal = function (effect, index, triggerType, closeCallback) {
                 let showEditEffectContext = {
                     templateUrl: "editEffectModal.html",
-                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, triggerType) => {
+                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, index, triggerType) => {
 
-                        $scope.effect = JSON.parse(JSON.stringify(effect));
+                        $scope.effect = effect;
                         $scope.triggerType = triggerType;
 
-                        $scope.effectListUpdated = function(effects) {
-                            $scope.effects = effects;
+                        $scope.effectTypeChanged = function(effectType) {
+                            $scope.effect.type = effectType.name;
                         };
+
 
                         utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
                             let modalElement = $("." + modalId).children();
@@ -434,7 +434,19 @@
                         });
 
                         $scope.save = function() {
-                            $uibModalInstance.close($scope.effects);
+                            $uibModalInstance.close({
+                                action: "update",
+                                effect: $scope.effect,
+                                index: index
+                            });
+                        };
+
+                        $scope.delete = function() {
+                            $uibModalInstance.close({
+                                action: "delete",
+                                effect: $scope.effect,
+                                index: index
+                            });
                         };
 
                         $scope.dismiss = function() {
@@ -447,6 +459,9 @@
                         },
                         triggerType: () => {
                             return triggerType;
+                        },
+                        index: () => {
+                            return index;
                         }
                     },
                     closeCallback: closeCallback

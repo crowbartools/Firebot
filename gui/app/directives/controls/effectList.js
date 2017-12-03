@@ -13,13 +13,12 @@
             },
             template: `
             <div>
-                <uib-accordion close-others="true" template-url="effect-accordian.html">
+                <!--<uib-accordion close-others="true" template-url="effect-accordian.html">
                     <div uib-accordion-group
                         ng-repeat="effect in $ctrl.effectsArray"
                         class="panel-primary effect-panel"
-                        is-open="$ctrl.openEffectPanel[$index]"
                         template-url="effect-header-template.html"
-                        ng-click="$ctrl.checkForOpenEffects()"
+                        ng-click="$ctrl.openEditEffectModal(effect, $ctrl.trigger)"
                         ng-mouseenter="hovering = true"
                         ng-mouseleave="hovering = false">
 
@@ -43,7 +42,20 @@
                             <effect-options effect="effect" type="effect.type" trigger="{{$ctrl.trigger}}" ng-show="effect.type != null"><effect-options>
                         </div>
                     </div>
-                </uib-accordion>
+                </uib-accordion>-->
+                <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsArray">
+                    <div ng-repeat="effect in $ctrl.effectsArray">
+                        <div class="effect-bar clickable-dark"
+                            ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
+                            ng-mouseenter="hovering = true"
+                            ng-mouseleave="hovering = false">
+                            <span>{{effect.type}}</span>
+                            <span>
+                                <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" style="margin-right:15px"></i>
+                            </span> 
+                        </div>
+                    </div>
+                </div>
         
                 <div class="add-more-functionality">
                     <button type="button" class="btn btn-link" ng-click="$ctrl.addEffect()">
@@ -65,7 +77,7 @@
                 </script>
             </div>
             `,
-            controller: function() {
+            controller: function(utilityService) {
                 let ctrl = this;
 
                 ctrl.effectsArray = [];
@@ -166,6 +178,16 @@
                     ctrl.effectsArray.splice(index, 1);
                     clearOutOpenPanelCache();
                     ctrl.effectsUpdate();
+                };
+
+                ctrl.openEditEffectModal = function(effect, index, trigger) {
+                    utilityService.showEditEffectModal(effect, index, trigger, (response) => {
+                        if (response.action === 'update') {
+                            ctrl.effectsArray[response.index] = response.effect;
+                        } else if (response.action === 'delete') {
+                            ctrl.removeEffectAtIndex(response.index);
+                        }
+                    });
                 };
             }
         });
