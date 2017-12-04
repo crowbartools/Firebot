@@ -1,7 +1,7 @@
 [![Build Status](https://api.travis-ci.org/Firebottle/Firebot.svg)](https://travis-ci.org/Firebottle/Firebot)
 [![dependencies Status](https://david-dm.org/Firebottle/Firebot/status.png)](https://david-dm.org/Firebottle/Firebot)
-[![Version](https://img.shields.io/github/release/firebottle/firebot.svg)
-[![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)
+![Version](https://img.shields.io/github/release/firebottle/firebot.svg)
+![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)
 
 
 
