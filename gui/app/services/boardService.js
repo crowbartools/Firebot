@@ -184,11 +184,9 @@
                     let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
                     let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
 
-                    if (dataAccess.userDataPathExistsSync(newPath)) {
-                        let dbOld = dataAccess.getJsonDbInUserData("/user-settings/controls/" + gameName);
-                        let dbNew = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
+                    if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + versionid + '.json')) {
 
-                        if (dbOld.versionid === dbNew.versionid) {
+                        if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json') && dataAccess.userDataPathExistsSync('/user-settings/controls/' + versionid + '.json')) {
                             console.log('Detected duplicate copies of board with different formats. Prompting');
                             utilityService.showErrorModal("While trying to convert board " + gameName + " to the new format we found there was already a copy " +
                             "with the new format. Please Close Firebot and open your boards folder and choose whether to delete \"" + gameName +
@@ -209,6 +207,8 @@
 
                     console.log('Converting control files to new versionid format.');
                     try {
+                        let dbOld = dataAccess.getJsonDbInUserData("/user-settings/controls/" + gameName);
+                        let dbNew = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
                         fs.renameSync(oldPath, newPath);
                         logger.log('Converted control file ' + gameName + '.json to version id format.');
                     } catch (err) {
@@ -330,8 +330,18 @@
                             try { // Checking if the data for this board is present in settings.json
                                 boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
 
+                                // If id is in settings, check to see if the actual file exists.
+                                if (boardUpdated !== null && boardUpdated !== undefined) {
+                                    let boardExists = settingsService.userDataPathExistsSync("/user-settings/controls/" + id);
+                                    if (!boardExists) {
+                                        console.log('Board was in settings, but the controls file is missing. Rebuilding.');
+                                        return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
+                                    }
+                                }
+
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
                                 if (boardUpdated !== gameUpdated) {
+                                    console.log('Board updated. Rebuilding.');
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                 } // Date matches, no need to rebuild.
 
@@ -390,11 +400,9 @@
                             console.log(err);
                             logger.log('Board ' + id + ' errored out while trying to load.');
                             logger.log(err);
+
                             // Remove the corrupted board from settings so we don't get stuck on next restart.
-                            settingsService.deleteKnownBoard(id);
-                            if (settingsService.getLastBoardId() === id) {
-                                settingsService.deleteLastBoardId(id);
-                            }
+                            loadBoardById(id);
                         }
                     });
 
