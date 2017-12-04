@@ -4,8 +4,8 @@ An app that allows streamers on Mixer.com to quickly and easily setup versatile 
 
 [![Build Status](https://api.travis-ci.org/Firebottle/Firebot.svg)](https://travis-ci.org/Firebottle/Firebot)
 [![dependencies Status](https://david-dm.org/Firebottle/Firebot/status.png)](https://david-dm.org/Firebottle/Firebot)
-![Version](https://img.shields.io/github/release/firebottle/firebot.svg)
-![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)
+[![Version](https://img.shields.io/github/release/firebottle/firebot.svg)](https://github.com/Firebottle/Firebot/releases)
+[![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)](https://twitter.com/FirebotApp)
 
 ***
 
