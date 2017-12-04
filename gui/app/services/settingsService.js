@@ -41,7 +41,8 @@
 
             service.getKnownBoards = function() {
                 // This feeds the boardService with known boards and their lastUpdated values.
-                let boards = getDataFromFile('/boards');
+                let settingsDb = getSettingsFile();
+                let boards = settingsDb.getData('/boards');
                 return boards;
             };
 
@@ -77,23 +78,27 @@
             };
 
             service.getLastBoardId = function() {
-                let boardId = getDataFromFile('/interactive/lastBoardId');
-                let boardKnown = service.getKnownBoards().boardId;
-                if (boardKnown === undefined || boardKnown === null) {
+                let boardId = getSettingsFile().getData('/interactive/lastBoardId');
+                let knownBoards = service.getKnownBoards();
+                let knownBoardId = knownBoards[boardId].boardId;
+
+                // Check to see if the last selected board is on our "known boards" list.
+                // If it's not, then pick a different board on our known boards list instead.
+                if (knownBoardId === undefined || knownBoardId === null) {
+
                     // Clear board from settings.
                     service.deleteLastBoardId();
 
-                    // Get fresh list of known boards.
-                    let knownBoards = service.getKnownBoards();
                     // See if we have any other known boards.
                     if (knownBoards !== null && knownBoards !== undefined && knownBoards !== {}) {
                         let newBoard = Object.keys(knownBoards)[0];
                         service.setLastBoardId(newBoard);
                         boardId = newBoard;
                     } else {
-                        boardId = "";
+                        boardId = null;
                     }
                 }
+
                 return boardId != null ? boardId : "";
             };
 

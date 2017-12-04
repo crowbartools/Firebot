@@ -196,7 +196,7 @@
                 let editControlEffectsModalContext = {
                     templateUrl: "./templates/interactive/modals/editControlEffectsModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $uibModalInstance, utilityService, control) => {
+                    controllerFunc: ($scope, $uibModal, $uibModalInstance, utilityService, control, modalId) => {
                         // The model for the button we are editting
                         $scope.control = control;
 
@@ -206,6 +206,20 @@
                         } else {
                             $scope.control.active = true;
                         }
+
+                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                name: "Edit Button",
+                                id: modalId
+                            };
+                        }));
+
+                        $scope.$on('modal.closing', function() {
+                            utilityService.removeSlidingModal();
+                        });
+
 
                         // Grab the EffectType 'enum' from effect.js
                         $scope.effectTypes = EffectType;

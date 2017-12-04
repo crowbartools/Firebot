@@ -6,6 +6,8 @@
     const electron = require('electron');
     const logger = require('../../lib/errorLogging.js');
 
+    const _ = require('underscore')._;
+
     angular
         .module('firebotApp')
         .factory('utilityService', function($rootScope, $uibModal, listenerService) {
@@ -24,6 +26,43 @@
                 return copiedEffectsCache[type] != null;
             };
 
+
+            let slidingModals = [];
+            const shiftAmount = 75;
+            service.addSlidingModal = function(promise) {
+                // update previous values
+
+
+                slidingModals.forEach(em => {
+                    let newAmount = em.transform + shiftAmount;
+                    em.transform = newAmount;
+                    em.element.css("transform", `translate(-${newAmount}px, 0)`);
+                });
+
+                promise.then((data) => {
+
+                    data.transform = 0;
+                    slidingModals.push(data);
+
+                });
+            };
+
+            service.removeSlidingModal = function() {
+
+                slidingModals.pop();
+
+                // update previous values
+                slidingModals.forEach(em => {
+                    let newAmount = em.transform - shiftAmount;
+                    em.transform = newAmount;
+                    em.element.css("transform", `translate(-${newAmount}px, 0)`);
+                });
+            };
+
+            service.getSlidingModalNames = function() {
+                return slidingModals.map(sm => sm.name);
+            };
+
             service.showModal = function(showModalContext) {
 
                 // We dont want to do anything if there's no context
@@ -35,9 +74,14 @@
                 // Pull values out of the context
                 let templateUrl = showModalContext.templateUrl;
                 let controllerFunc = showModalContext.controllerFunc;
-                let resolveObj = showModalContext.resolveObj;
+                let resolveObj = showModalContext.resolveObj || {};
                 let closeCallback = showModalContext.closeCallback;
                 let dismissCallback = showModalContext.dismissCallback;
+
+                let modalId = "modal" + _.uniqueId().toString();
+                resolveObj.modalId = () => {
+                    return modalId;
+                };
 
                 // Show the modal
                 let modalInstance = $uibModal.open({
@@ -48,7 +92,8 @@
                     resolve: resolveObj,
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard,
-                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true
+                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
+                    windowClass: modalId
                 });
 
                 // If no callbacks were defined, create blank ones. This avoids a console error
@@ -337,17 +382,30 @@
             /*
             * EDIT EFFECT LIST MODAL
             */
-            service.showEditEffectListModal = function (effects, triggerType, closeCallback) {
+            service.showEditEffectListModal = function (effects, triggerType, headerPrefix, closeCallback) {
                 let showEditEffectListContext = {
                     templateUrl: "editEffectListModal.html",
-                    controllerFunc: ($scope, $uibModalInstance, effects, triggerType) => {
+                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effects, headerPrefix, triggerType) => {
 
-                        $scope.effects = effects;
+                        $scope.effects = JSON.parse(JSON.stringify(effects));
                         $scope.triggerType = triggerType;
+                        $scope.headerPrefix = headerPrefix;
 
                         $scope.effectListUpdated = function(effects) {
                             $scope.effects = effects;
                         };
+
+                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                id: modalId
+                            };
+                        }));
+
+                        $scope.$on('modal.closing', function() {
+                            utilityService.removeSlidingModal();
+                        });
 
                         $scope.save = function() {
                             $uibModalInstance.close($scope.effects);
@@ -363,12 +421,82 @@
                         },
                         triggerType: () => {
                             return triggerType;
+                        },
+                        headerPrefix: () => {
+                            return headerPrefix;
                         }
                     },
                     closeCallback: closeCallback
                 };
 
                 service.showModal(showEditEffectListContext);
+            };
+
+            /*
+            * EDIT EFFECT MODAL
+            */
+            service.showEditEffectModal = function (effect, index, triggerType, closeCallback) {
+                let showEditEffectContext = {
+                    templateUrl: "editEffectModal.html",
+                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, index, triggerType) => {
+
+                        $scope.effect = JSON.parse(angular.toJson(effect));
+                        $scope.triggerType = triggerType;
+
+                        $scope.effectTypeChanged = function(effectType) {
+                            $scope.effect.type = effectType.name;
+                        };
+
+                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                name: effect.type,
+                                id: modalId
+                            };
+                        }));
+
+                        console.log(utilityService.getSlidingModalNames());
+
+                        $scope.$on('modal.closing', function() {
+                            utilityService.removeSlidingModal();
+                        });
+
+                        $scope.save = function() {
+                            $uibModalInstance.close({
+                                action: "update",
+                                effect: $scope.effect,
+                                index: index
+                            });
+                        };
+
+                        $scope.delete = function() {
+                            $uibModalInstance.close({
+                                action: "delete",
+                                effect: $scope.effect,
+                                index: index
+                            });
+                        };
+
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss();
+                        };
+                    },
+                    resolveObj: {
+                        effect: () => {
+                            return effect;
+                        },
+                        triggerType: () => {
+                            return triggerType;
+                        },
+                        index: () => {
+                            return index;
+                        }
+                    },
+                    closeCallback: closeCallback
+                };
+
+                service.showModal(showEditEffectContext);
             };
 
             // Watches for an event from main process

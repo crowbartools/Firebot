@@ -181,40 +181,17 @@
 
                 // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
-                    let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
-                    let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
-
-                    if (dataAccess.userDataPathExistsSync(newPath)) {
-                        let dbOld = dataAccess.getJsonDbInUserData("/user-settings/controls/" + gameName);
-                        let dbNew = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
-
-                        if (dbOld.versionid === dbNew.versionid) {
-                            console.log('Detected duplicate copies of board with different formats. Prompting');
-                            utilityService.showErrorModal("While trying to convert board " + gameName + " to the new format we found there was already a copy " +
-                            "with the new format. Please Close Firebot and open your boards folder and choose whether to delete \"" + gameName +
-                            ".json\" (Old Format, will be converted on next launch), or to keep \"" + versionid + ".json\" (New Format). If you are restoring " +
-                            "from an update you may wish to delete \"" + versionid + ".json\" so your board will be reverted to your backup instead");
-
-                        } else {
-                            console.log('Detected existing board file with destination filename. Prompting with info');
-                            utilityService.showErrorModal("While trying to convert board " + gameName + " we found a board with the same destination filename. " +
-                                "Please Close Firebot and open your boards folder and choose whether to delete \"" + gameName +
-                                ".json\" (Old Format, will be converted on next launch), or to keep \"" + versionid + ".json\" (New Format)");
-
-                        }
-                        // Possibly Open Folder Here?
-                        return;
-
-                    }
-
                     console.log('Converting control files to new versionid format.');
+                    let oldPath = dataAccess.getPathInUserData("/user-settings/controls/" + gameName + '.json');
+                    let newPath = dataAccess.getPathInUserData("/user-settings/controls/" + versionid + '.json');
+
                     try {
                         fs.renameSync(oldPath, newPath);
                         logger.log('Converted control file ' + gameName + '.json to version id format.');
                     } catch (err) {
                         console.log(err);
                         logger.log('Error converting control file ' + gameName + '.json to version id format.');
-                        utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere?");
+                        utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere? If so, close it down and restart Firebot.");
                         return;
                     }
                 }
@@ -330,8 +307,18 @@
                             try { // Checking if the data for this board is present in settings.json
                                 boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
 
+                                // If id is in settings, check to see if the actual file exists.
+                                if (boardUpdated !== null && boardUpdated !== undefined) {
+                                    let boardExists = settingsService.userDataPathExistsSync("/user-settings/controls/" + id);
+                                    if (!boardExists) {
+                                        console.log('Board was in settings, but the controls file is missing. Rebuilding.');
+                                        return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
+                                    }
+                                }
+
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
                                 if (boardUpdated !== gameUpdated) {
+                                    console.log('Board updated. Rebuilding.');
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                 } // Date matches, no need to rebuild.
 
@@ -390,11 +377,9 @@
                             console.log(err);
                             logger.log('Board ' + id + ' errored out while trying to load.');
                             logger.log(err);
+
                             // Remove the corrupted board from settings so we don't get stuck on next restart.
-                            settingsService.deleteKnownBoard(id);
-                            if (settingsService.getLastBoardId() === id) {
-                                settingsService.deleteLastBoardId(id);
-                            }
+                            loadBoardById(id);
                         }
                     });
 
