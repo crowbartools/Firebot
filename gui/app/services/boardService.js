@@ -181,8 +181,6 @@
 
                 // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
-                    let oldPath = dataAccess.getPathInUserData('/user-settings/controls/' + gameName + '.json');
-                    let newPath = dataAccess.getPathInUserData('/user-settings/controls/' + versionid + '.json');
 
                     if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + versionid + '.json')) {
 
