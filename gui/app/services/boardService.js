@@ -308,8 +308,8 @@
                                 boardUpdated = settingsService.getBoardLastUpdatedDatetimeById(id);
 
                                 // If id is in settings, check to see if the actual file exists.
-                                if (boardUpdated !== null && boardUpdated !== undefined) {
-                                    let boardExists = settingsService.userDataPathExistsSync("/user-settings/controls/" + id);
+                                if (boardUpdated != null) {
+                                    let boardExists = dataAccess.userDataPathExistsSync("/user-settings/controls/" + id + ".json");
                                     if (!boardExists) {
                                         console.log('Board was in settings, but the controls file is missing. Rebuilding.');
                                         return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
@@ -323,6 +323,7 @@
                                 } // Date matches, no need to rebuild.
 
                             } catch (err) {
+                                console.log(err);
                                 // This board doesn't exist, recreate the board to get it into knownBoards
                                 console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
                                 return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
@@ -407,7 +408,8 @@
 
             // Returns an array of names for the loaded boards
             service.getBoardNames = function() {
-                return _.pluck(_boards, 'name');
+                let names = _.pluck(_boards, 'name');
+                return names;
             };
 
             service.getBoardById = function(id) {
@@ -429,8 +431,8 @@
             service.setSelectedBoard = function(board) {
                 if (board != null && board.versionid != null) {
                     settingsService.setLastBoardId(board.versionid);
-                    selectedBoard = board;
                 }
+                selectedBoard = board;
             };
 
             service.loadBoardWithId = function(id) {
@@ -487,6 +489,8 @@
                         selectedBoard = service.getLastUsedBoard();
                     });
                 }
+                return Promise.resolve();
+
             };
 
             service.saveControlForCurrentBoard = function(control) {

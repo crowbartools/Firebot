@@ -35,15 +35,19 @@
             }
 
             function deleteDataAtPath(path) {
-                getSettingsFile().delete(path);
-                delete settingsCache[path];
+                try {
+                    getSettingsFile().delete(path);
+                    delete settingsCache[path];
+                } catch (err) {} //eslint-disable-line no-empty
             }
 
             service.getKnownBoards = function() {
-                // This feeds the boardService with known boards and their lastUpdated values.
-                let settingsDb = getSettingsFile();
-                let boards = settingsDb.getData('/boards');
-                return boards;
+                try {
+                    // This feeds the boardService with known boards and their lastUpdated values.
+                    let settingsDb = getSettingsFile();
+                    let boards = settingsDb.getData('/boards');
+                    return boards;
+                } catch (err) {} //eslint-disable-line no-empty
             };
 
             service.deleteKnownBoard = function(boardId) {
@@ -60,9 +64,8 @@
                 let lastUpdatedDatetime = null;
                 // Check if data is present for given board
                 try {
-                    lastUpdatedDatetime = getDataFromFile(`/boards/${id}/lastUpdated`);
+                    lastUpdatedDatetime = getSettingsFile().getData(`/boards/${id}/lastUpdated`);
                 } catch (err) {
-                    // TODO: We neet some handling of this error here, not quite sure what... 2am, might be better at 9am.. xD
                     console.log("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first");
                 }
                 return lastUpdatedDatetime;
@@ -78,28 +81,30 @@
             };
 
             service.getLastBoardId = function() {
-                let boardId = getSettingsFile().getData('/interactive/lastBoardId');
-                let knownBoards = service.getKnownBoards();
-                let knownBoardId = knownBoards[boardId].boardId;
+                try {
+                    let boardId = getSettingsFile().getData('/interactive/lastBoardId');
+                    let knownBoards = service.getKnownBoards();
+                    let knownBoardId = knownBoards[boardId].boardId;
 
-                // Check to see if the last selected board is on our "known boards" list.
-                // If it's not, then pick a different board on our known boards list instead.
-                if (knownBoardId === undefined || knownBoardId === null) {
+                    // Check to see if the last selected board is on our "known boards" list.
+                    // If it's not, then pick a different board on our known boards list instead.
+                    if (knownBoardId === undefined || knownBoardId === null) {
 
                     // Clear board from settings.
-                    service.deleteLastBoardId();
+                        service.deleteLastBoardId();
 
-                    // See if we have any other known boards.
-                    if (knownBoards !== null && knownBoards !== undefined && knownBoards !== {}) {
-                        let newBoard = Object.keys(knownBoards)[0];
-                        service.setLastBoardId(newBoard);
-                        boardId = newBoard;
-                    } else {
-                        boardId = null;
+                        // See if we have any other known boards.
+                        if (knownBoards !== null && knownBoards !== undefined && knownBoards !== {}) {
+                            let newBoard = Object.keys(knownBoards)[0];
+                            service.setLastBoardId(newBoard);
+                            boardId = newBoard;
+                        } else {
+                            boardId = null;
+                        }
                     }
-                }
 
-                return boardId != null ? boardId : "";
+                    return boardId != null ? boardId : "";
+                } catch (err) {} //eslint-disable-line no-empty
             };
 
             service.setLastBoardId = function(id) {

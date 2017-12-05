@@ -22,11 +22,11 @@
   </div>
   <div class="content-block-body">
     <button ng-show="getBoardNames().length == 0" ng-click="showAddBoardModal()" class="btn btn-default">+ Add First Board</button>
-    <div class="page-content">
-      <div class="row interactive-board-container" ng-show="selectedBoard() == null">
-        <p>No board selected. Import or select a board to get started!</p>
+    <div class="page-content" >
+      <div class="row interactive-board-container" ng-show="selectedBoard() == null && getBoardNames().length > 0">
+        <p class="muted" style="margin-top:15px;">No board selected. Import or select a board to get started!</p>
       </div>
-      <div class="row interactive-board-container" ng-hide="selectedBoard() == null">
+      <div class="row interactive-board-container" ng-if="selectedBoard() != null">
         <div class="scene-tools-wrapper">
           <span class="scenes-title">SCENES</span>
           <div class="scene-tools">
