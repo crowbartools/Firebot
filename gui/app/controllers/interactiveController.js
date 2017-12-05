@@ -6,7 +6,7 @@
 
     angular
         .module('firebotApp')
-        .controller('interactiveController', function($scope, $interval, $timeout, boardService,
+        .controller('interactiveController', function($scope, $rootScope, $interval, $timeout, boardService,
             groupsService, settingsService, utilityService) {
 
             function resetSceneTab() {
@@ -28,6 +28,10 @@
 
             $scope.getBoardNames = function() {
                 return boardService.getBoardNames();
+            };
+
+            $scope.isLoadingBoards = function() {
+                return boardService.isloadingBoards();
             };
 
             $scope.switchToBoard = function(boardName) {
@@ -290,9 +294,10 @@
             };
 
             /**
-       * Initial tab load
-       */
+             * Initial tab load
+             */
             if (!boardService.hasBoardsLoaded() === true) {
+                $rootScope.showSpinner = true;
                 boardService.loadAllBoards().then(function() {
 
                     let lastBoard = boardService.getLastUsedBoard();
@@ -301,6 +306,7 @@
 
                     $scope.$applyAsync();
 
+                    $rootScope.showSpinner = false;
                 });
             }
         });
