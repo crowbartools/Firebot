@@ -1,26 +1,16 @@
-#### Describe your issue or feature request (details are helpful!):
+#### If you're reporting an issue, *please* fill out & do the following questions. If you leave them blank the issue may be closed due to lack of information.
+
+
+## What version of Firebot are you running?
+<!--- Please provide the version number found in the title bar of the app. -->
 
 
 
------------------------------------------------------------------------
-#### If you're reporting an issue, *please* fill out & do the following:
-
-- What version of Firebot are you running?
-
-
-- What are the steps to reproduce the issue?
-1)
-2)
-3)
-
-- (IMPORTANT) Go to Firebot's root folder (**Settings tab -> Open Root Folder**) then zip the following two files and attach that zip to this issue:
-
-1) In **user-settings > controls**, find the .json file with the name of the board you are having issues with.
-2) In **user-settings > logs**, find the latest log file.
+## Please describe the issue or feature requests in as much detail as possible.
+<!-- Bug Report: Please include details such as what you were doing at the time. Board ID numbers used. Effects added. -->
+<!-- Feature Request: Please describe the feature request. How would this help other users? What are you trying to accomplish? -->
 
 
-```
-NOTE: A lot of issues can be solved by,
-- Updating to the latest version
-- Trying the troubleshooting steps on the wiki
-```
+
+## Contact Us!
+Did you know that we have a help channel in discord as well? https://discord.gg/DegW792
