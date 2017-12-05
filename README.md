@@ -1,4 +1,5 @@
 [![Build Status](https://api.travis-ci.org/Firebottle/Firebot.svg)](https://travis-ci.org/Firebottle/Firebot)
+[![dependencies Status](https://david-dm.org/Firebottle/Firebot/status.png)](https://david-dm.org/Firebottle/Firebot)
 
 # Firebot
 An app that allows streamers on Mixer.com to quickly and easily setup versitile interactive boards.

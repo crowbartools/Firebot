@@ -45,18 +45,18 @@
         "angular-ui-sortable": "^0.18.0",
         "angularjs-slider": "^6.2.2",
         "archiver": "^2.0.3",
-        "beam-client-node": "^0.13.0",
+        "beam-client-node": "^1.0.2",
         "beam-interactive-node2": "^2.4.0",
         "body-parser": "^1.18.1",
         "compare-versions": "^3.0.1",
         "electron-gh-releases": "^2.0.4",
-        "electron-oauth2": "^2.4.1",
+        "electron-oauth2": "^3.0.0",
         "eslint": "^4.8.0",
         "express": "^4.15.4",
         "howler": "https://github.com/ebiggz/howler.js/tarball/master",
         "kbm-robot": "0.0.4",
         "list.js": "^1.5.0",
-        "marked": "^0.3.6",
+        "marked": "^0.3.7",
         "ncp": "^2.0.0",
         "node-json-db": "^0.7.3",
         "random-puppy": "^1.1.0",
@@ -66,9 +66,9 @@
         "roll": "^1.2.0",
         "ui-select": "^0.19.8",
         "underscore": "^1.8.3",
-        "validator": "^7.0.0",
+        "validator": "^9.1.2",
         "winston": "^2.3.1",
         "winston-daily-rotate-file": "^1.4.6",
-        "ws": "^2.3.1"
+        "ws": "^3.3.2"
     }
 }

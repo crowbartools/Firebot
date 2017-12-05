@@ -35,15 +35,19 @@
             }
 
             function deleteDataAtPath(path) {
-                getSettingsFile().delete(path);
-                delete settingsCache[path];
+                try {
+                    getSettingsFile().delete(path);
+                    delete settingsCache[path];
+                } catch (err) {} //eslint-disable-line no-empty
             }
 
             service.getKnownBoards = function() {
-                // This feeds the boardService with known boards and their lastUpdated values.
-                let settingsDb = getSettingsFile();
-                let boards = settingsDb.getData('/boards');
-                return boards;
+                try {
+                    // This feeds the boardService with known boards and their lastUpdated values.
+                    let settingsDb = getSettingsFile();
+                    let boards = settingsDb.getData('/boards');
+                    return boards;
+                } catch (err) {} //eslint-disable-line no-empty
             };
 
             service.deleteKnownBoard = function(boardId) {
@@ -60,38 +64,62 @@
                 let lastUpdatedDatetime = null;
                 // Check if data is present for given board
                 try {
-                    lastUpdatedDatetime = getDataFromFile(`/boards/${id}/lastUpdated`);
+                    lastUpdatedDatetime = getSettingsFile().getData(`/boards/${id}/lastUpdated`);
                 } catch (err) {
-                    // TODO: We neet some handling of this error here, not quite sure what... 2am, might be better at 9am.. xD
                     console.log("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first");
                 }
                 return lastUpdatedDatetime;
             };
 
-            service.setBoardLastUpdatedDatetimeById = function(boardId, boardDate) {
+            service.setBoardLastUpdatedDatetimeById = function(boardId, boardName, boardDate) {
                 // Building the board with ID and lastUpdated before pushing to settings
                 let settingsBoard = {
                     boardId: boardId,
+                    boardName: boardName,
                     lastUpdated: boardDate
                 };
                 pushDataToFile(`/boards/${boardId}`, settingsBoard);
             };
 
+            function getLastBoardIdInternal() {
+                let boardId = "";
+                try {
+                    boardId = getSettingsFile().getData('/interactive/lastBoardId');
+                } catch (err) {
+                    console.log(err);
+                }
+                return boardId;
+            }
+
             service.getLastBoardId = function() {
-                let boardId = getSettingsFile().getData('/interactive/lastBoardId');
+                let boardId = getLastBoardIdInternal();
                 let knownBoards = service.getKnownBoards();
-                let knownBoardId = knownBoards[boardId].boardId;
+                let knownBoardId = knownBoards[boardId] ? knownBoards[boardId].boardId : null;
 
                 // Check to see if the last selected board is on our "known boards" list.
                 // If it's not, then pick a different board on our known boards list instead.
-                if (knownBoardId === undefined || knownBoardId === null) {
+                if (knownBoardId == null) {
 
                     // Clear board from settings.
                     service.deleteLastBoardId();
 
                     // See if we have any other known boards.
-                    if (knownBoards !== null && knownBoards !== undefined && knownBoards !== {}) {
-                        let newBoard = Object.keys(knownBoards)[0];
+                    if (knownBoards != null && knownBoards !== {}) {
+                        let oldLastBoardName = service.getOldLastBoardName();
+                        let newBoard = null;
+                        if (oldLastBoardName != null) {
+                            Object.keys(knownBoards).forEach(k => {
+                                let b = knownBoards[k];
+                                if (b != null && b.boardName === oldLastBoardName) {
+                                    newBoard = k;
+                                }
+                            });
+                            // we no longer need this badboy
+                            deleteDataAtPath('/interactive/lastBoard');
+                        }
+                        if (newBoard == null) {
+                            newBoard = Object.keys(knownBoards)[0];
+                        }
                         service.setLastBoardId(newBoard);
                         boardId = newBoard;
                     } else {
@@ -107,10 +135,13 @@
             };
 
             service.deleteLastBoardId = function(boardId) {
-                deleteDataAtPath('/interactive/lastBoard');
                 deleteDataAtPath('/interactive/lastBoardId');
                 // Removing the board from settings
                 deleteDataAtPath('/boards/' + boardId);
+            };
+
+            service.getOldLastBoardName = function() {
+                return getDataFromFile('/interactive/lastBoard');
             };
 
             service.getCustomScriptsEnabled = function() {

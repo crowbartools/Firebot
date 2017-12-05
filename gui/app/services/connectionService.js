@@ -130,6 +130,7 @@
                     let oauthProvider = electronOauth2(authInfo, authWindowParams);
                     oauthProvider.refreshToken(refresh)
                         .then(token => {
+                            console.log('Got refresh token!');
 
                             // Success!
                             let accessToken = token.access_token;
