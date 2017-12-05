@@ -204,12 +204,6 @@
         let version = appVersion;
         $scope.appTitle = 'Firebot Interactive || v' + version + ' || @firebottletv';
 
-        //Attempt to load interactive boards into memory
-        if (!boardService.hasBoardsLoaded()) {
-            boardService.loadAllBoards();
-            $rootScope.showSpinner = false;
-        }
-
         //Attempt to load viewer groups into memory
         groupsService.loadViewerGroups();
 

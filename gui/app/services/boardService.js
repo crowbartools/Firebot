@@ -20,6 +20,8 @@
 
             let selectedBoard = {};
 
+            let isloadingBoards = false;
+
             /**
             *  Private helper methods
             */
@@ -177,7 +179,7 @@
                 console.log('Backend builder is pushing settings to ' + gameName + ' (' + versionid + ').');
 
                 // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
-                settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameUpdated);
+                settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameName, gameUpdated);
 
                 // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
@@ -470,8 +472,14 @@
                 });
             };
 
+            service.isloadingBoards = function() {
+                return isloadingBoards;
+            };
+
             // reload boards into memory
             service.loadAllBoards = function() {
+                isloadingBoards = true;
+
                 let knownBoards, boardVersionIds;
 
                 /* Step 1 */
@@ -486,11 +494,13 @@
                     /* Step 2 */
                     // Load each board.
                     return loadBoardsById(boardVersionIds, true).then(() => {
+                        isloadingBoards = false;
                         selectedBoard = service.getLastUsedBoard();
                     });
                 }
-                return Promise.resolve();
 
+                isloadingBoards = false;
+                return Promise.resolve();
             };
 
             service.saveControlForCurrentBoard = function(control) {

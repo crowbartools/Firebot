@@ -71,40 +71,63 @@
                 return lastUpdatedDatetime;
             };
 
-            service.setBoardLastUpdatedDatetimeById = function(boardId, boardDate) {
+            service.setBoardLastUpdatedDatetimeById = function(boardId, boardName, boardDate) {
                 // Building the board with ID and lastUpdated before pushing to settings
                 let settingsBoard = {
                     boardId: boardId,
+                    boardName: boardName,
                     lastUpdated: boardDate
                 };
                 pushDataToFile(`/boards/${boardId}`, settingsBoard);
             };
 
-            service.getLastBoardId = function() {
+            function getLastBoardIdInternal() {
+                let boardId = "";
                 try {
-                    let boardId = getSettingsFile().getData('/interactive/lastBoardId');
-                    let knownBoards = service.getKnownBoards();
-                    let knownBoardId = knownBoards[boardId].boardId;
+                    boardId = getSettingsFile().getData('/interactive/lastBoardId');
+                } catch (err) {
+                    console.log(err);
+                }
+                return boardId;
+            }
 
-                    // Check to see if the last selected board is on our "known boards" list.
-                    // If it's not, then pick a different board on our known boards list instead.
-                    if (knownBoardId === undefined || knownBoardId === null) {
+            service.getLastBoardId = function() {
+                let boardId = getLastBoardIdInternal();
+                let knownBoards = service.getKnownBoards();
+                let knownBoardId = knownBoards[boardId] ? knownBoards[boardId].boardId : null;
+
+                // Check to see if the last selected board is on our "known boards" list.
+                // If it's not, then pick a different board on our known boards list instead.
+                if (knownBoardId == null) {
 
                     // Clear board from settings.
-                        service.deleteLastBoardId();
+                    service.deleteLastBoardId();
 
-                        // See if we have any other known boards.
-                        if (knownBoards !== null && knownBoards !== undefined && knownBoards !== {}) {
-                            let newBoard = Object.keys(knownBoards)[0];
-                            service.setLastBoardId(newBoard);
-                            boardId = newBoard;
-                        } else {
-                            boardId = null;
+                    // See if we have any other known boards.
+                    if (knownBoards != null && knownBoards !== {}) {
+                        let oldLastBoardName = service.getOldLastBoardName();
+                        let newBoard = null;
+                        if (oldLastBoardName != null) {
+                            Object.keys(knownBoards).forEach(k => {
+                                let b = knownBoards[k];
+                                if (b != null && b.boardName === oldLastBoardName) {
+                                    newBoard = k;
+                                }
+                            });
+                            // we no longer need this badboy
+                            deleteDataAtPath('/interactive/lastBoard');
                         }
+                        if (newBoard == null) {
+                            newBoard = Object.keys(knownBoards)[0];
+                        }
+                        service.setLastBoardId(newBoard);
+                        boardId = newBoard;
+                    } else {
+                        boardId = null;
                     }
+                }
 
-                    return boardId != null ? boardId : "";
-                } catch (err) {} //eslint-disable-line no-empty
+                return boardId != null ? boardId : "";
             };
 
             service.setLastBoardId = function(id) {
@@ -112,10 +135,13 @@
             };
 
             service.deleteLastBoardId = function(boardId) {
-                deleteDataAtPath('/interactive/lastBoard');
                 deleteDataAtPath('/interactive/lastBoardId');
                 // Removing the board from settings
                 deleteDataAtPath('/boards/' + boardId);
+            };
+
+            service.getOldLastBoardName = function() {
+                return getDataFromFile('/interactive/lastBoard');
             };
 
             service.getCustomScriptsEnabled = function() {

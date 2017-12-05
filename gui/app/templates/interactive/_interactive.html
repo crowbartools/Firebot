@@ -1,7 +1,7 @@
 <!--Interactive Tab View-->
 <div class="content-block">
   <div ng-hide="getBoardNames().length == 0" class="content-block-header">
-    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">{{selectedBoard().name}} <span class="muted" style="font-size: 12px;">({{selectedBoard().versionid}})</span></span>
+    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;" ng-hide="selectedBoard() == null || selectedBoard() == ''">{{selectedBoard().name}} <span class="muted" style="font-size: 12px;">({{selectedBoard().versionid}})</span></span>
     <span class="clickable board-settings-icon" ng-hide="selectedBoard() == null || selectedBoard() == ''" ng-click="showBoardSettingsModal()">
       <i class="fas fa-cog"></i>
     </span>
@@ -21,12 +21,13 @@
     <span class="mixer-studio-link"><a href ng-click="openLinkExternally('https://mixer.com/lab/interactive')">Mixer Studio <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
   </div>
   <div class="content-block-body">
-    <button ng-show="getBoardNames().length == 0" ng-click="showAddBoardModal()" class="btn btn-default">+ Add First Board</button>
+
+    <p ng-show="getBoardNames().length == 0 && isLoadingBoards()" class="muted" style="margin-top:15px;">Loading boards...</p>
+    <button ng-show="(!isLoadingBoards() && getBoardNames().length == 0)" ng-click="showAddBoardModal()" class="btn btn-default">+ Add First Board</button>
+    <p ng-show="selectedBoard() == null && getBoardNames().length > 0" class="muted" style="margin-top:15px;">We couldn't auto select a board but don't worry, you have boards saved! Click the dropdown above and select a board.</p>
+    
     <div class="page-content" >
-      <div class="row interactive-board-container" ng-show="selectedBoard() == null && getBoardNames().length > 0">
-        <p class="muted" style="margin-top:15px;">No board selected. Import or select a board to get started!</p>
-      </div>
-      <div class="row interactive-board-container" ng-if="selectedBoard() != null">
+      <div class="row interactive-board-container" ng-if="selectedBoard() != null && getBoardNames().length > 0">
         <div class="scene-tools-wrapper">
           <span class="scenes-title">SCENES</span>
           <div class="scene-tools">
