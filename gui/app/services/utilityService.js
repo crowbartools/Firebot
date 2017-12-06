@@ -71,12 +71,17 @@
             };
 
             service.saveAllSlidingModals = function() {
-                console.log(slidingModals[0]);
                 let lastEditModalId = slidingModals[0].id;
+
+                let saveList = [];
                 slidingModals.forEach(m => {
                     if (m.id !== lastEditModalId) {
-                        m.onSaveAll();
+                        saveList.push(m);
                     }
+                });
+
+                saveList.reverse().forEach(m => {
+                    m.onSaveAll();
                 });
             };
 
@@ -472,6 +477,7 @@
                         });
 
                         $scope.saveAll = function() {
+                            //$scope.save();
                             utilityService.saveAllSlidingModals();
                         };
 
