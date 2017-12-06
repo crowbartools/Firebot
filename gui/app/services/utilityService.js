@@ -31,8 +31,6 @@
             const shiftAmount = 75;
             service.addSlidingModal = function(promise) {
                 // update previous values
-
-
                 slidingModals.forEach(em => {
                     let newAmount = em.transform + shiftAmount;
                     em.transform = newAmount;
@@ -40,15 +38,12 @@
                 });
 
                 promise.then((data) => {
-
                     data.transform = 0;
                     slidingModals.push(data);
-
                 });
             };
 
             service.removeSlidingModal = function() {
-
                 slidingModals.pop();
 
                 // update previous values
@@ -59,8 +54,40 @@
                 });
             };
 
-            service.getSlidingModalNames = function() {
-                return slidingModals.map(sm => sm.name);
+            service.closeToModalId = function(modalId) {
+                let minId = modalId.replace("modal", "");
+
+                let closeList = [];
+                slidingModals.forEach(m => {
+                    let nextId = m.id.replace("modal", "");
+                    if (minId < nextId && minId !== nextId) {
+                        closeList.push(m);
+                    }
+                });
+
+                closeList.forEach(m => {
+                    m.instance.dismiss();
+                });
+            };
+
+            service.saveAllSlidingModals = function() {
+                console.log(slidingModals[0]);
+                let lastEditModalId = slidingModals[0].id;
+                slidingModals.forEach(m => {
+                    if (m.id !== lastEditModalId) {
+                        m.onSaveAll();
+                    }
+                });
+            };
+
+            service.getSlidingModalNamesAndIds = function() {
+                return slidingModals.map(sm => {
+                    return {name: sm.name, id: sm.id};
+                });
+            };
+
+            service.updateNameForSlidingModal = function(newName, modalId) {
+                slidingModals.filter(m => m.id === modalId).forEach(m => m.name = newName);
             };
 
             service.showModal = function(showModalContext) {
@@ -416,27 +443,40 @@
 
                         $scope.effect = JSON.parse(angular.toJson(effect));
                         $scope.triggerType = triggerType;
+                        $scope.modalId = modalId;
 
                         $scope.effectTypeChanged = function(effectType) {
                             $scope.effect.type = effectType.name;
+                            utilityService.updateNameForSlidingModal(effectType.name, modalId);
                         };
+
+
+                        $scope.openModals = utilityService.getSlidingModalNamesAndIds();
+                        $scope.closeToModal = utilityService.closeToModalId;
 
                         utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
                             let modalElement = $("." + modalId).children();
                             return {
                                 element: modalElement,
                                 name: effect.type,
-                                id: modalId
+                                id: modalId,
+                                instance: $uibModalInstance,
+                                onSaveAll: () => {
+                                    $scope.save();
+                                }
                             };
                         }));
-
-                        console.log(utilityService.getSlidingModalNames());
 
                         $scope.$on('modal.closing', function() {
                             utilityService.removeSlidingModal();
                         });
 
+                        $scope.saveAll = function() {
+                            utilityService.saveAllSlidingModals();
+                        };
+
                         $scope.save = function() {
+                            console.log("saving" + $scope.effect.type);
                             $uibModalInstance.close({
                                 action: "update",
                                 effect: $scope.effect,

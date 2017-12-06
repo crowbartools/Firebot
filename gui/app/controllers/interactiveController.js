@@ -204,6 +204,8 @@
                         // The model for the button we are editting
                         $scope.control = control;
 
+                        $scope.modalId = modalId;
+
                         // Default to active for controls unless told otherwise.
                         if ($scope.control.active != null) {
                             // Don't do anything because active has already been set to something.
@@ -216,7 +218,8 @@
                             return {
                                 element: modalElement,
                                 name: "Edit Button",
-                                id: modalId
+                                id: modalId,
+                                instance: $uibModalInstance
                             };
                         }));
 

@@ -9,7 +9,8 @@
                 trigger: "@",
                 effects: "<",
                 isArray: "<",
-                update: '&'
+                update: '&',
+                modalId: "@"
             },
             template: `
             <div>
@@ -143,29 +144,6 @@
                         ctrl.effectsUpdate();
                     }
                 };
-
-                // We also call this when a new effect is added or an old effect is deleted
-                // to open the last effect again.
-                ctrl.openEffectPanel = {};
-                function clearOutOpenPanelCache() {
-                    Object.keys(ctrl.openEffectPanel).forEach(k => {
-                        ctrl.openEffectPanel[k] = false;
-                    });
-                    ctrl.anEffectPanelIsOpen = false;
-                }
-
-                function updateOpenPanel() {
-                    // We get the index of the last effect and add true to a scope varible
-                    // that the accordian directive is looking at
-
-                    clearOutOpenPanelCache();
-
-                    let lastEffectIndex = ctrl.effectsArray.length - 1;
-                    ctrl.openEffectPanel[lastEffectIndex] = true;
-                    ctrl.checkForOpenEffects();
-                }
-
-                ctrl.anEffectPanelIsOpen = false;
                 ctrl.checkForOpenEffects = function() {
                     ctrl.anEffectPanelIsOpen = Object.keys(ctrl.openEffectPanel)
                         .some(i => ctrl.openEffectPanel[i]);
@@ -177,18 +155,17 @@
                         type: "Nothing"
                     });
 
-                    updateOpenPanel();
                     ctrl.effectsUpdate();
                 };
 
                 ctrl.duplicateEffectAtIndex = function(index) {
                     let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
                     ctrl.effectsArray.splice(index + 1, 0, effect);
+                    ctrl.effectsUpdate();
                 };
 
                 ctrl.removeEffectAtIndex = function(index) {
                     ctrl.effectsArray.splice(index, 1);
-                    clearOutOpenPanelCache();
                     ctrl.effectsUpdate();
                 };
 
@@ -196,8 +173,10 @@
                     utilityService.showEditEffectModal(effect, index, trigger, (response) => {
                         if (response.action === 'update') {
                             ctrl.effectsArray[response.index] = response.effect;
+                            ctrl.effectsUpdate();
                         } else if (response.action === 'delete') {
                             ctrl.removeEffectAtIndex(response.index);
+                            ctrl.effectsUpdate();
                         }
                     });
                 };

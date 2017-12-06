@@ -418,6 +418,10 @@
     <script type="text/ng-template" id="editEffectModal.html">
       <div class="modal-header">
         <h4 class="modal-title">Edit Effect - {{effect.type}}</h4>
+        <ol class="breadcrumb" style="padding-bottom: 0px;margin-bottom: 0px;">
+          <li ng-repeat="modal in openModals"><a href ng-click="closeToModal(modal.id)">{{modal.name}}</a></li>
+          <li class="active">{{effect.type}}</li>
+        </ol>
       </div>
       <div class="modal-body">
           <div class="effect-select-wrapper">
@@ -431,8 +435,19 @@
           </div>
       </div>
       <div class="modal-footer">
+        
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
-          <button class="btn btn-primary" ng-click="save()">Save</button>
+
+              <!-- Split button -->
+          <div class="btn-group" uib-dropdown>
+            <button id="split-button" type="button" class="btn btn-primary" ng-click="save()">Save</button>
+            <button type="button" class="btn btn-primary" uib-dropdown-toggle>
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="split-button">
+              <li role="menuitem" ng-click="saveAll()"><a href>Save All</a></li>
+            </ul>
+          </div>
       </div>
     </script>
   </body>
