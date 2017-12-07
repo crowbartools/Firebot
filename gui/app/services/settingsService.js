@@ -300,9 +300,18 @@
                 utilityService.showOverlayInfoModal(instanceName);
             };
 
-            service.showOverlayshowEventsModal = function() {
-                utilityService.showOverlayshowEventsModal();
-            }
+            service.showOverlayEventsModal = function() {
+                utilityService.showOverlayEventsModal();
+            };
+
+            service.getOverlayEventsSettings = function() {
+                let settings = getDataFromFile('/settings/eventSettings');
+                return settings != null ? settings : {};
+            };
+
+            service.saveOverlayEventsSettings = function(eventSettings) {
+                pushDataToFile('/settings/eventSettings', eventSettings);
+            };
 
             service.getClearCustomScriptCache = function() {
                 let clear = getDataFromFile('/settings/clearCustomScriptCache');

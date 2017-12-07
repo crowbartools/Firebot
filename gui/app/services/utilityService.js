@@ -195,17 +195,17 @@
             /*
              * OVERLAY INFO MODAL
              */
-            service.showOverlayshowEventsModal = function() {
-                let overlayshowEventsModalContext = {
-                    templateUrl: "overlayshowEventsModal.html",
+            service.showOverlayEventsModal = function() {
+                let overlayEventsModalContext = {
+                    templateUrl: "overlayEventsModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $rootScope, $uibModalInstance, settingsService) => {
 
-                        // TODO: Load $scope.textSettings via settingsService
-                        $scope.textSettings = {};
+                        $scope.textSettings = settingsService.getOverlayEventsSettings();
 
                         $scope.save = function() {
-                            // TODO: $scope.textSettings to file via settingsService
+                            settingsService.saveOverlayEventsSettings($scope.textSettings);
+                            $uibModalInstance.dismiss();
                         };
 
                         $scope.dismiss = function() {
@@ -213,7 +213,7 @@
                         };
                     }
                 };
-                service.showModal(overlayshowEventsModalContext);
+                service.showModal(overlayEventsModalContext);
             };
 
             /*

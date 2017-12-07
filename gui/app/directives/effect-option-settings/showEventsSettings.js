@@ -6,23 +6,23 @@
         .component("showEventsSettings", {
             bindings: {
                 model: '=',
-                global: '=',
+                global: '='
             },
             template: `
                 <div>
                     <eos-container header="Override Global Settings" ng-if="$ctrl.global === false">
                             <div class="controls-fb-inline" style="padding-bottom: 5px;">
                                 <label class="control-fb control--radio">No
-                                    <input type="radio" ng-model="$ctrl.model.override" value="no"/> 
+                                    <input type="radio" ng-model="$ctrl.model.override" ng-value="false"/> 
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control-fb control--radio">Yes
-                                    <input type="radio" ng-model="$ctrl.model.override" value="yes"/>
+                                    <input type="radio" ng-model="$ctrl.model.override" ng-value="true"/>
                                     <div class="control__indicator"></div>
                                 </label>
                             </div>
                     </eos-container>
-                    <eos-container class="setting-padtop" ng-if="$ctrl.model.override === 'yes' || $ctrl.global">
+                    <eos-container class="setting-padtop" ng-if="$ctrl.model.override === true || $ctrl.global">
                         <eos-container header="Display Style">
                             <div class="controls-fb-inline" style="padding-bottom: 5px;">
                                 <label class="control-fb control--radio">List
@@ -147,12 +147,12 @@
                 ctrl.$onInit = function() {
                     ctrl.model.textAlignment = ctrl.model.textAlignment ? ctrl.model.textAlignment : 'left';
 
-                    if(ctrl.model.override === null || ctrl.model.override === undefined){
-                        ctrl.model.override = 'no';
+                    if (ctrl.model.override === null || ctrl.model.override === undefined) {
+                        ctrl.model.override = false;
                     }
 
                     // If we're looking at the global setting modal, then set override to true so all settings show.
-                    if(ctrl.global === true){
+                    if (ctrl.global === true) {
                         ctrl.model.override = true;
                     }
                 };

@@ -127,7 +127,7 @@
             <div class="setting col-sm-6">
               <div class="setting-heading">Overlay Show Text</div>
               <div class="setting-description">Here you can set global "show text" effect settings. This can be overriden at the button or command level.</div>
-              <button class="btn btn-default" ng-click="settings.showOverlayshowEventsModal()">Edit Text Settings</button>
+              <button class="btn btn-default" ng-click="settings.showOverlayEventsModal()">Edit Text Settings</button>
             </div>
           </div>
         </uib-tab>
@@ -329,11 +329,11 @@
 </script>
 
 <!-- show events modal -->
-<script type="text/ng-template" id="overlayshowEventsModal.html">
+<script type="text/ng-template" id="overlayEventsModal.html">
   <div class="modal-header" style="text-align:center;">
     <h2 class="modal-title">Global Show Events Settings</h2>
   </div>
-  <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;">
+  <div class="modal-body" style="text-align:left;display:flex;flex-direction: column;align-items: center;">
     <show-events-settings model="textSettings" global="true"></show-events-settings>
   </div>
   <div class="modal-footer" style="text-align:center;">

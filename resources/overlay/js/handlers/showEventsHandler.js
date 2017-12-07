@@ -106,7 +106,6 @@ function showEvents(data){
     var textFinal = '<div class="'+divClass+'-showEvents showEventsMessage" style="color: '+showEventsColor+'; background-color: '+showEventsBackgroundColor+'; font-size: '+showEventsFontSize+'; text-align: '+showEventsAlignment+'">'+showEventsText+'</div>';
 
     // Animate it!
-    console.log(showEventsType);
     if(showEventsType === "replace"){
         showEventsElementReplace(data.enterAnimation, data.exitAnimation, showEventsDuration, textFinal);
     } else {
