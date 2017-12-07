@@ -95,24 +95,5 @@
       </div>
     </div>
   </div>
-
-  <!-- Reorder Modal -->
-  <script type="text/ng-template" id="showReorderEffectsModal.html">
-    <div class="modal-header">
-      <h4 class="modal-title">Reorder Effects</h4>
-    </div>
-    <div class="modal-body">
-      <p>Click and drag to reorder effects.</p>
-      <div ui-sortable ng-model="effects">
-        <span class="reorderable-effect" ng-repeat="effect in effects">{{ effect.type }}</span>
-      </div>   
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
-        <button class="btn btn-primary" ng-click="save()">Save</button>
-    </div>
-  </script>
-
-
 </div>
 

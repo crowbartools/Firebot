@@ -9,17 +9,14 @@
         .component("fileChooser", {
             bindings: {
                 model: "=",
+                options: "<",
                 onUpdate: '&'
             },
             template: `
-            <div class="input-group">
-                <span class="input-group-btn">
-                <button
-                class="btn btn-default show-image-effect-chooser"
-                type="button"
-                ng-click="$ctrl.openFileExporer()">Choose</button>
-                </span>
-                <input type="text" class="form-control show-image-effect-input" ng-model="$ctrl.model">
+            <div style="display: flex;flex-direction: row;align-items: center;">
+                <button class="btn btn-default" ng-click="$ctrl.openFileExporer()">Choose File</button>
+                <span style="padding-left: 10px;font-size: 12px;max-width: 400px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{$ctrl.model ? $ctrl.model : "No file selected."}}</span>
+                <span ng-if="$ctrl.model != null && $ctrl.model !== ''" class="clickable" style="margin-left: 10px" ng-click="$ctrl.model = null"><i class="fal fa-times-circle"></i></span>
             </div>
             `,
             controller: function($scope, $element, $attrs, listenerService) {
@@ -28,7 +25,10 @@
                     let registerRequest = {
                         type: listenerService.ListenerType.ANY_FILE,
                         runOnce: true,
-                        publishEvent: true
+                        publishEvent: true,
+                        data: {
+                            options: ctrl.options
+                        }
                     };
                     listenerService.registerListener(registerRequest, (filepath) => {
                         ctrl.model = filepath;

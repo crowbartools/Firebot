@@ -277,6 +277,19 @@
                     };
                     break;
 
+                case EffectList.EFFECT_GROUP:
+                case EffectList.RANDOM_EFFECT:
+                    controller = ($scope) => {
+                        if ($scope.effect.effectList == null) {
+                            $scope.effect.effectList = [];
+                        }
+
+                        $scope.effectListUpdated = function(effects) {
+                            $scope.effect.effectList = effects;
+                        };
+                    };
+                    break;
+
                 case EffectList.DICE:
                     controller = ($scope) => {
 

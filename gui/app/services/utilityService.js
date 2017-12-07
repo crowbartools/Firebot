@@ -6,6 +6,8 @@
     const electron = require('electron');
     const logger = require('../../lib/errorLogging.js');
 
+    const _ = require('underscore')._;
+
     angular
         .module('firebotApp')
         .factory('utilityService', function ($rootScope, $uibModal, listenerService) {
@@ -24,6 +26,74 @@
                 return copiedEffectsCache[type] != null;
             };
 
+            let slidingModals = [];
+            const shiftAmount = 75;
+            service.addSlidingModal = function(promise) {
+                // update previous values
+                slidingModals.forEach(em => {
+                    let newAmount = em.transform + shiftAmount;
+                    em.transform = newAmount;
+                    em.element.css("transform", `translate(-${newAmount}px, 0)`);
+                });
+
+                promise.then((data) => {
+                    data.transform = 0;
+                    slidingModals.push(data);
+                });
+            };
+
+            service.removeSlidingModal = function() {
+                slidingModals.pop();
+
+                // update previous values
+                slidingModals.forEach(em => {
+                    let newAmount = em.transform - shiftAmount;
+                    em.transform = newAmount;
+                    em.element.css("transform", `translate(-${newAmount}px, 0)`);
+                });
+            };
+
+            service.closeToModalId = function(modalId) {
+                let minId = modalId.replace("modal", "");
+
+                let closeList = [];
+                slidingModals.forEach(m => {
+                    let nextId = m.id.replace("modal", "");
+                    if (minId < nextId && minId !== nextId) {
+                        closeList.push(m);
+                    }
+                });
+
+                closeList.forEach(m => {
+                    m.instance.dismiss();
+                });
+            };
+
+            service.saveAllSlidingModals = function() {
+                let lastEditModalId = slidingModals[0].id;
+
+                let saveList = [];
+                slidingModals.forEach(m => {
+                    if (m.id !== lastEditModalId) {
+                        saveList.push(m);
+                    }
+                });
+
+                saveList.reverse().forEach(m => {
+                    m.onSaveAll();
+                });
+            };
+
+            service.getSlidingModalNamesAndIds = function() {
+                return slidingModals.map(sm => {
+                    return {name: sm.name, id: sm.id};
+                });
+            };
+
+            service.updateNameForSlidingModal = function(newName, modalId) {
+                slidingModals.filter(m => m.id === modalId).forEach(m => m.name = newName);
+            };
+
             service.showModal = function(showModalContext) {
 
                 // We dont want to do anything if there's no context
@@ -35,9 +105,14 @@
                 // Pull values out of the context
                 let templateUrl = showModalContext.templateUrl;
                 let controllerFunc = showModalContext.controllerFunc;
-                let resolveObj = showModalContext.resolveObj;
+                let resolveObj = showModalContext.resolveObj || {};
                 let closeCallback = showModalContext.closeCallback;
                 let dismissCallback = showModalContext.dismissCallback;
+
+                let modalId = "modal" + _.uniqueId().toString();
+                resolveObj.modalId = () => {
+                    return modalId;
+                };
 
                 // Show the modal
                 let modalInstance = $uibModal.open({
@@ -48,7 +123,8 @@
                     resolve: resolveObj,
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard,
-                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true
+                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
+                    windowClass: modalId
                 });
 
                 // If no callbacks were defined, create blank ones. This avoids a console error
@@ -306,6 +382,101 @@
 
                 // Log info to file.
                 logger.log(infoMessage);
+            };
+
+            /*
+            * EDIT EFFECT MODAL
+            */
+            service.showEditEffectModal = function (effect, index, triggerType, closeCallback) {
+                let showEditEffectContext = {
+                    templateUrl: "editEffectModal.html",
+                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, index, triggerType) => {
+
+                        $scope.effect = JSON.parse(angular.toJson(effect));
+                        $scope.triggerType = triggerType;
+                        $scope.modalId = modalId;
+
+                        $scope.effectTypeChanged = function(effectType) {
+                            $scope.effect.type = effectType.name;
+                            utilityService.updateNameForSlidingModal(effectType.name, modalId);
+                        };
+
+                        $scope.openModals = utilityService.getSlidingModalNamesAndIds();
+                        $scope.closeToModal = utilityService.closeToModalId;
+
+                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                name: effect.type,
+                                id: modalId,
+                                instance: $uibModalInstance,
+                                onSaveAll: () => {
+                                    $scope.save();
+                                }
+                            };
+                        }));
+
+                        $scope.$on('modal.closing', function() {
+                            utilityService.removeSlidingModal();
+                        });
+
+                        $scope.saveAll = function() {
+                            //$scope.save();
+                            utilityService.saveAllSlidingModals();
+                        };
+
+                        $scope.save = function() {
+                            console.log("saving" + $scope.effect.type);
+                            $uibModalInstance.close({
+                                action: "update",
+                                effect: $scope.effect,
+                                index: index
+                            });
+                        };
+
+                        $scope.copy = function() {
+                            utilityService.copyEffects(triggerType, [$scope.effect]);
+                        };
+
+                        $scope.paste = function() {
+                            if ($scope.hasCopiedEffect()) {
+                                $scope.effect = utilityService.getCopiedEffects(triggerType)[0];
+                            }
+                        };
+
+                        $scope.hasCopiedEffect = function() {
+                            return utilityService.hasCopiedEffects(triggerType) &&
+                            utilityService.getCopiedEffects(triggerType).length < 2;
+                        };
+
+                        $scope.delete = function() {
+                            $uibModalInstance.close({
+                                action: "delete",
+                                effect: $scope.effect,
+                                index: index
+                            });
+                        };
+
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss();
+                        };
+                    },
+                    resolveObj: {
+                        effect: () => {
+                            return effect;
+                        },
+                        triggerType: () => {
+                            return triggerType;
+                        },
+                        index: () => {
+                            return index;
+                        }
+                    },
+                    closeCallback: closeCallback
+                };
+
+                service.showModal(showEditEffectContext);
             };
 
             // Watches for an event from main process

@@ -1,0 +1,34 @@
+
+<eos-container header="File">
+    <file-chooser model="effect.filepath" options="{ filters: [ {name:'Text',extensions:['txt']} ]}"></file-chooser>
+</eos-container>
+
+<eos-container header="Text" pad-top="true">
+    <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text">
+    <eos-collapsable-panel show-label="Show Variables" hide-label="Hide Variables">
+        <h4>Interactive & Chat</h4>
+        <ul>
+            <li><b>$(user)</b> - Replaced by the name of the person running the button or using the command.</li>
+            <li><b>$(text)</b> - Replaced by the interactive button text or the chat command ID.</li>
+            <li><b>$(cost)</b> - Replaced by the cost of the command or button.</li>
+            <li><b>$(cooldown)</b> - Replaced by the cooldown of the command or button.</li>
+        </ul>
+        <h4>Chat Commands Only</h4>
+        <ul>
+            <li><b>$(arg1)</b> - Replaced by the argument provided after a chat command. For example $(arg1) pulls the first word after the command, but $(arg5) would pull the fifth word.</li>
+        </ul>
+    </eos-collapsable-panel>
+</eos-container>
+
+<eos-container header="Write Mode">
+    <div class="controls-fb-inline" style="padding-bottom: 5px;">
+        <label class="control-fb control--radio">Replace
+            <input type="radio" ng-model="effect.writeMode" value="replace"/> 
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control-fb control--radio">Append
+            <input type="radio" ng-model="effect.writeMode" value="append"/>
+            <div class="control__indicator"></div>
+        </label>
+    </div>
+</eos-container>

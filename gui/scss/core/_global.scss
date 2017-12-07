@@ -1224,7 +1224,7 @@ thead th{
   margin: 10px 0 25px 0;
 }
 
-.reorderable-effect {
+.effect-bar {
   background: #337ab7;
   width: 100%;
   display: flex;
@@ -1232,9 +1232,41 @@ thead th{
   align-items: center;
   color: white;
   height: 38px;
-  font-size: 16px;
   padding-left: 15px;
   border-radius: 3px;
-  cursor: move;
   margin-bottom: 5px;
+  line-height: 1.1;
+  justify-content: space-between;
+}
+
+.flex-row-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  &.jcenter {
+    justify-content: center
+  }
+  &.jspacebetween {
+    justify-content: space-between;
+  }
+}
+
+.no-before {
+  &::before {
+    content: none !important;
+  }
+}
+
+.no-after {
+  &::after {
+    content: none !important;
+  }
+}
+
+.dropdown-menu {
+  min-width: 125px;
+}
+
+.tooltip {
+  z-index:999999999999999999;
 }

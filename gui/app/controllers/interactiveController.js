@@ -200,9 +200,11 @@
                 let editControlEffectsModalContext = {
                     templateUrl: "./templates/interactive/modals/editControlEffectsModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $uibModalInstance, utilityService, control) => {
+                    controllerFunc: ($scope, $uibModal, $uibModalInstance, utilityService, control, modalId) => {
                         // The model for the button we are editting
                         $scope.control = control;
+
+                        $scope.modalId = modalId;
 
                         // Default to active for controls unless told otherwise.
                         if ($scope.control.active != null) {
@@ -210,6 +212,21 @@
                         } else {
                             $scope.control.active = true;
                         }
+
+                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                name: "Edit Button",
+                                id: modalId,
+                                instance: $uibModalInstance
+                            };
+                        }));
+
+                        $scope.$on('modal.closing', function() {
+                            utilityService.removeSlidingModal();
+                        });
+
 
                         // Grab the EffectType 'enum' from effect.js
                         $scope.effectTypes = EffectType;
@@ -237,24 +254,6 @@
                         // When they hit cancel or click outside the modal, we dont want to do anything
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss('cancel');
-                        };
-
-                        $scope.copyEffects = function() {
-                            utilityService.copyEffects("interactive", $scope.effects);
-                        };
-
-                        $scope.pasteEffects = function() {
-                            if (utilityService.hasCopiedEffects("interactive")) {
-                                $scope.effects = utilityService.getCopiedEffects("interactive");
-                            }
-                        };
-
-                        $scope.removeAllEffects = function() {
-                            $scope.effects = {};
-                        };
-
-                        $scope.hasCopiedEffects = function() {
-                            return utilityService.hasCopiedEffects("interactive");
                         };
                     },
                     resolveObj: {

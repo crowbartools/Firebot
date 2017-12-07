@@ -272,16 +272,6 @@ ipcMain.on('getImportFolderPath', (event, uniqueid) => {
     event.sender.send('gotImportFolderPath', {path: path, id: uniqueid});
 });
 
-// Get Any kind of file Path
-// This listens for an event from the front end.
-ipcMain.on('getAnyFilePath', (event, uniqueid) => {
-    let path = dialog.showOpenDialog({
-        title: "Please choose a file",
-        buttonLabel: "Choose a file"
-    });
-    event.sender.send('gotAnyFilePath', {path: path, id: uniqueid});
-});
-
 // Opens the firebot backup folder
 ipcMain.on('openBackupFolder', () => {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
