@@ -10,5 +10,11 @@
         "title": "Command Trigger Behavior Change",
         "message": "<div>As of v4.4.5, chat command trigger behavior has been changed. It is no longer assumed that a command starts with \"!\", instead triggers are considered exactly how they are saved. Please update your current commands to include a \"!\" (or whatever you want) in their triggers.</div>",
         "icon": "alert"
+    },
+    {
+        "id": 3,
+        "title": "Update Incoming! Back up recommended.",
+        "message": "<div>We will be releasing v4.5.0 shortly, we recommended heading to the Backup section in the settings tab and clicking Backup Now as this is a rather large update. We hope you enjoy all the new features!</div>",
+        "icon": "alert"
     }
 ]
