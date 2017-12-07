@@ -35,7 +35,8 @@
             };
 
             $scope.removeUserFromBannedGroupAtIndex = function(index) {
-                groupsService.removeUserFromBannedGroupAtIndex(index);
+                let mappedIndex = index + (($scope.pagination.bannedList.currentPage - 1) * $scope.pagination.bannedList.pageSize);
+                groupsService.removeUserFromBannedGroupAtIndex(mappedIndex);
             };
 
             // Exempt Group Functions
@@ -50,7 +51,8 @@
             };
 
             $scope.removeUserFromExemptGroupAtIndex = function(index) {
-                groupsService.removeUserFromExemptGroupAtIndex(index);
+                let mappedIndex = index + (($scope.pagination.exemptList.currentPage - 1) * $scope.pagination.exemptList.pageSize);
+                groupsService.removeUserFromExemptGroupAtIndex(mappedIndex);
             };
 
             $scope.updateCheckedArrayWithElement = function(array, element) {
