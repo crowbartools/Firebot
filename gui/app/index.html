@@ -69,6 +69,7 @@
     <script type="text/javascript" src="./directives/controls/searchableEffectDropdown.js"></script>
     <script type="text/javascript" src="./directives/controls/effectList.js"></script>
     <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
+    <script type="text/javascript" src="./directives/misc/tooltip.js"></script>
   
   </head>
   <body>
@@ -402,8 +403,8 @@
 
     <!-- Edit Effects List Modal -->
     <script type="text/ng-template" id="editEffectListModal.html">
-      <div class="modal-header">
-        <h4 class="modal-title">{{headerPrefix}} - Edit Effect List</h4>
+      <div class="modal-header flex-row-center jspacebetween">
+        <h4 class="modal-title" style="display:inline;">{{headerPrefix}} - Edit Effect List</h4>
       </div>
       <div class="modal-body">
           <effect-list effects="effects" trigger="{{triggerType}}" update="effectListUpdated(effects)" is-array="true"></effect-list>
@@ -416,18 +417,32 @@
 
     <!-- Edit Effect Modal -->
     <script type="text/ng-template" id="editEffectModal.html">
-      <div class="modal-header">
-        <h4 class="modal-title">Edit Effect - {{effect.type}}</h4>
-        <ol class="breadcrumb" style="padding-bottom: 0px;margin-bottom: 0px;">
+      <div class="modal-header flex-row-center jspacebetween no-before no-after" style="padding-bottom: 0">
+        <h4 class="modal-title" style="display:inline;">Edit Effect - {{effect.type}}</h4>
+
+        <div uib-dropdown uib-dropdown-toggle>
+            <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
+            <ul class="dropdown-menu" uib-dropdown-menu>
+                <li>
+                    <a href ng-click="copy()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>
+                </li>
+                <li ng-class="{'disabled': !hasCopiedEffect()}" ng-click="!hasCopiedEffect() ? $event.stopPropagation() : null">
+                    <a href ng-click="paste()"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste</a>
+                </li>
+                <li>
+                    <a href ng-click="delete()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>
+                </li>
+            </ul>
+        </div>
+      </div>
+      <ol class="breadcrumb" style="margin-bottom: 0px;padding-bottom:11px;">
           <li ng-repeat="modal in openModals"><a href ng-click="closeToModal(modal.id)">{{modal.name}}</a></li>
           <li class="active">{{effect.type}}</li>
-        </ol>
-      </div>
+      </ol>
       <div class="modal-body">
           <div class="effect-select-wrapper">
               <searchable-effect-dropdown trigger="{{triggerType}}" selected="effect.type" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
-              
-              <span class="effect-delete-btn clickable" ng-click="delete()"><i class="far fa-trash-alt"></i></span>
+
           </div>
           <div class="effect-settings-panel">
               <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
@@ -435,17 +450,16 @@
           </div>
       </div>
       <div class="modal-footer">
-        
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
 
-              <!-- Split button -->
-          <div class="btn-group" uib-dropdown>
+          <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()">Save</button>
+          <div ng-if="openModals.length >= 2" class="btn-group" uib-dropdown>
             <button id="split-button" type="button" class="btn btn-primary" ng-click="save()">Save</button>
             <button type="button" class="btn btn-primary" uib-dropdown-toggle>
               <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="split-button">
-              <li role="menuitem" ng-click="saveAll()"><a href>Save All</a></li>
+            <ul class="dropdown-menu" style="min-width: 100%" uib-dropdown-menu role="menu" aria-labelledby="split-button">
+              <li role="menuitem" ng-click="saveAll()"><a href>Save All <tooltip text="'This will save all windows up until the last one ('+ openModals[0].name +')'"></tooltip></a></li>
             </ul>
           </div>
       </div>

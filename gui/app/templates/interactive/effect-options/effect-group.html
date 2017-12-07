@@ -1,5 +1,9 @@
-<p>All effects in the below list will be treated as one effect. This is useful when used in a Random Effect effect.</p>
+<p>All effects in the below list will be treated as one effect. This is useful when used in a Random Effect.</p>
 
-<eos-container header="Effects">
-        <effect-list effects="effect.effectList" trigger="{{trigger}}" update="effectListUpdated(effects)" modalId="{{modalId}}"></effect-list>
-</eos-container>
+<effect-list effects="effect.effectList" 
+        trigger="{{trigger}}" 
+        update="effectListUpdated(effects)"
+        header="Effects"
+        header-classes="h4"
+        effect-container-classes="effect-setting-content" 
+        modalId="{{modalId}}"></effect-list>

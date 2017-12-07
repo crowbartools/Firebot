@@ -26,7 +26,6 @@
                 return copiedEffectsCache[type] != null;
             };
 
-
             let slidingModals = [];
             const shiftAmount = 75;
             service.addSlidingModal = function(promise) {
@@ -386,59 +385,6 @@
             };
 
             /*
-            * EDIT EFFECT LIST MODAL
-            */
-            service.showEditEffectListModal = function (effects, triggerType, headerPrefix, closeCallback) {
-                let showEditEffectListContext = {
-                    templateUrl: "editEffectListModal.html",
-                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effects, headerPrefix, triggerType) => {
-
-                        $scope.effects = JSON.parse(JSON.stringify(effects));
-                        $scope.triggerType = triggerType;
-                        $scope.headerPrefix = headerPrefix;
-
-                        $scope.effectListUpdated = function(effects) {
-                            $scope.effects = effects;
-                        };
-
-                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
-                            let modalElement = $("." + modalId).children();
-                            return {
-                                element: modalElement,
-                                id: modalId
-                            };
-                        }));
-
-                        $scope.$on('modal.closing', function() {
-                            utilityService.removeSlidingModal();
-                        });
-
-                        $scope.save = function() {
-                            $uibModalInstance.close($scope.effects);
-                        };
-
-                        $scope.dismiss = function() {
-                            $uibModalInstance.dismiss();
-                        };
-                    },
-                    resolveObj: {
-                        effects: () => {
-                            return effects;
-                        },
-                        triggerType: () => {
-                            return triggerType;
-                        },
-                        headerPrefix: () => {
-                            return headerPrefix;
-                        }
-                    },
-                    closeCallback: closeCallback
-                };
-
-                service.showModal(showEditEffectListContext);
-            };
-
-            /*
             * EDIT EFFECT MODAL
             */
             service.showEditEffectModal = function (effect, index, triggerType, closeCallback) {
@@ -454,7 +400,6 @@
                             $scope.effect.type = effectType.name;
                             utilityService.updateNameForSlidingModal(effectType.name, modalId);
                         };
-
 
                         $scope.openModals = utilityService.getSlidingModalNamesAndIds();
                         $scope.closeToModal = utilityService.closeToModalId;
@@ -488,6 +433,21 @@
                                 effect: $scope.effect,
                                 index: index
                             });
+                        };
+
+                        $scope.copy = function() {
+                            utilityService.copyEffects(triggerType, [$scope.effect]);
+                        };
+
+                        $scope.paste = function() {
+                            if ($scope.hasCopiedEffect()) {
+                                $scope.effect = utilityService.getCopiedEffects(triggerType)[0];
+                            }
+                        };
+
+                        $scope.hasCopiedEffect = function() {
+                            return utilityService.hasCopiedEffects(triggerType) &&
+                            utilityService.getCopiedEffects(triggerType).length < 2;
                         };
 
                         $scope.delete = function() {

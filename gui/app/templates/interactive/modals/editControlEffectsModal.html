@@ -40,22 +40,8 @@
      </div>
    </div>
    <div class="function-button-settings">
-     <div class="settings-title">
-       <h3>
-         What should this button do? <div class="effect-actions-btn" uib-dropdown uib-dropdown-toggle>
-         <span class="noselect pointer"><i class="fal fa-ellipsis-h"></i></span>
-         <ul class="dropdown-menu" uib-dropdown-menu>
-           <li><a href ng-click="copyEffects()">Copy effects</a></li>
-           <li><a href ng-click="pasteEffects()">Paste effects</a></li>
-           <li><a href ng-click="removeAllEffects()">Delete all effects</a></li>
-         </ul>
-       </div>
-     </h3>
-     </div>
 
-     <div class="functionality-settings">
-      <effect-list effects="effects" trigger="interactive" update="effectListUpdated(effects)" modalId="{{modalId}}"></effect-list>
-     </div>
+    <effect-list header="What should this button do?" effects="effects" trigger="interactive" update="effectListUpdated(effects)" modalId="{{modalId}}"></effect-list>
 
    </div>
  </div>

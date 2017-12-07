@@ -255,24 +255,6 @@
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss('cancel');
                         };
-
-                        $scope.copyEffects = function() {
-                            utilityService.copyEffects("interactive", $scope.effects);
-                        };
-
-                        $scope.pasteEffects = function() {
-                            if (utilityService.hasCopiedEffects("interactive")) {
-                                $scope.effects = utilityService.getCopiedEffects("interactive");
-                            }
-                        };
-
-                        $scope.removeAllEffects = function() {
-                            $scope.effects = {};
-                        };
-
-                        $scope.hasCopiedEffects = function() {
-                            return utilityService.hasCopiedEffects("interactive");
-                        };
                     },
                     resolveObj: {
                         control: () => {
