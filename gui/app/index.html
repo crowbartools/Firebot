@@ -419,7 +419,7 @@
     <!-- Edit Effect Modal -->
     <script type="text/ng-template" id="editEffectModal.html">
       <div class="modal-header flex-row-center jspacebetween no-before no-after" style="padding-bottom: 0">
-        <h4 class="modal-title" style="display:inline;">Edit Effect - {{effect.type}}</h4>
+        <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}{{effect.type !== 'Nothing' ? " - " + effect.type : ""}}</h4>
 
         <div uib-dropdown uib-dropdown-toggle>
             <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
@@ -453,9 +453,9 @@
       <div class="modal-footer">
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
 
-          <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()">Save</button>
+          <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()">{{isAddMode ? "Add" : "Save"}}</button>
           <div ng-if="openModals.length >= 2" class="btn-group" uib-dropdown>
-            <button id="split-button" type="button" class="btn btn-primary" ng-click="save()">Save</button>
+            <button id="split-button" type="button" class="btn btn-primary" ng-click="save()">{{isAddMode ? "Add" : "Save"}}</button>
             <button type="button" class="btn btn-primary" uib-dropdown-toggle>
               <span class="caret"></span>
             </button>

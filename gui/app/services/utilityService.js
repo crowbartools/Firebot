@@ -422,6 +422,8 @@
                         $scope.triggerType = triggerType;
                         $scope.modalId = modalId;
 
+                        $scope.isAddMode = index == null;
+
                         $scope.effectTypeChanged = function(effectType) {
                             $scope.effect.type = effectType.name;
                             utilityService.updateNameForSlidingModal(effectType.name, modalId);
@@ -448,14 +450,12 @@
                         });
 
                         $scope.saveAll = function() {
-                            //$scope.save();
                             utilityService.saveAllSlidingModals();
                         };
 
                         $scope.save = function() {
-                            console.log("saving" + $scope.effect.type);
                             $uibModalInstance.close({
-                                action: "update",
+                                action: $scope.isAddMode ? "add" : "update",
                                 effect: $scope.effect,
                                 index: index
                             });

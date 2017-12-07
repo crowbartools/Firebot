@@ -127,19 +127,6 @@
                         ctrl.effectsUpdate();
                     }
                 };
-                ctrl.checkForOpenEffects = function() {
-                    ctrl.anEffectPanelIsOpen = Object.keys(ctrl.openEffectPanel)
-                        .some(i => ctrl.openEffectPanel[i]);
-                };
-
-                ctrl.addEffect = function() {
-
-                    ctrl.effectsArray.push({
-                        type: "Nothing"
-                    });
-
-                    ctrl.effectsUpdate();
-                };
 
                 ctrl.duplicateEffectAtIndex = function(index) {
                     let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
@@ -193,15 +180,23 @@
                     utilityService.copyEffects(ctrl.trigger, ctrl.effectsArray);
                 };
 
+                ctrl.addEffect = function() {
+
+                    let newEffect = { type: "Nothing" };
+
+                    ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
+                };
+
                 ctrl.openEditEffectModal = function(effect, index, trigger) {
                     utilityService.showEditEffectModal(effect, index, trigger, (response) => {
-                        if (response.action === 'update') {
+                        if (response.action === 'add') {
+                            ctrl.effectsArray.push(response.effect);
+                        } else if (response.action === 'update') {
                             ctrl.effectsArray[response.index] = response.effect;
-                            ctrl.effectsUpdate();
                         } else if (response.action === 'delete') {
                             ctrl.removeEffectAtIndex(response.index);
-                            ctrl.effectsUpdate();
                         }
+                        ctrl.effectsUpdate();
                     });
                 };
             }
