@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-    
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -15,6 +15,6 @@ module.exports = function(grunt) {
     });
 
     // Load installer builder.
-    grunt.loadNpmTasks('grunt-electron-installer')
+    grunt.loadNpmTasks('grunt-electron-installer');
 
-}
+};

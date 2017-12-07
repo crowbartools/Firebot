@@ -9,79 +9,63 @@
                 trigger: "@",
                 effects: "<",
                 isArray: "<",
-                update: '&'
+                update: '&',
+                modalId: "@",
+                header: "@",
+                headerClasses: "@",
+                effectContainerClasses: "@"
             },
             template: `
             <div>
-                <!--<uib-accordion close-others="true" template-url="effect-accordian.html">
-                    <div uib-accordion-group
-                        ng-repeat="effect in $ctrl.effectsArray"
-                        class="panel-primary effect-panel"
-                        template-url="effect-header-template.html"
-                        ng-click="$ctrl.openEditEffectModal(effect, $ctrl.trigger)"
-                        ng-mouseenter="hovering = true"
-                        ng-mouseleave="hovering = false">
-
-                        <uib-accordion-heading>
-                            <div class="effect-panel" style="display:flex;">
-                                <span>{{effect.type}}</span>
-                                <span>
-                                    <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering || $ctrl.anEffectPanelIsOpen}" aria-hidden="true" style="margin-right:15px"></i>
-                                    <i class="fal" ng-class="{'fa-angle-right': !$ctrl.openEffectPanel[$index], 'fa-angle-down': $ctrl.openEffectPanel[$index]}" style="width:10px"></i>
-                                </span> 
+                <div class="flex-row-center jspacebetween" style="margin-bottom:10px;">
+                    <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;">{{$ctrl.header}}</h3>
+                    
+                    <div uib-dropdown uib-dropdown-toggle>
+                        <span class="noselect pointer effects-actions-btn"><i class="fal fa-ellipsis-h"></i></span>
+                        <ul class="dropdown-menu" uib-dropdown-menu>
+                            <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
+                                <a href ng-click="$ctrl.copyEffects()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects</a>
+                            </li>
+                            <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
+                                <a href ng-click="$ctrl.pasteEffects(true)"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects</a>
+                            </li>
+                            <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
+                                <a href ng-click="$ctrl.removeAllEffects()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="{{$ctrl.effectContainerClasses}}">
+                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsArray">
+                        <div ng-repeat="effect in $ctrl.effectsArray track by $index">
+                            <div class="effect-bar clickable-dark"
+                                ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
+                                ng-mouseenter="hovering = true"
+                                ng-mouseleave="hovering = false">
+                                    <span>{{effect.type}}</span>
+                                    <span class="flex-row-center ">
+                                        <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" style="margin-right:15px" ng-click="$event.stopPropagation()"></i>
+                                        <div class="clickable" style="margin-right:15px; font-size: 20px; width: 15px; text-align: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
+                                            <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
+                                            <ul class="dropdown-menu" uib-dropdown-menu>
+                                                <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
+                                                <li><a href ng-click="$ctrl.copyEffectAtIndex($index)"><i class="fal fa-copy" style="margin-right: 10px;" aria-hidden="true"></i>  Copy</a></li>
+                                                <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null"><a href ng-click="$ctrl.pasteEffectsAtIndex($index, false)"><i class="fal fa-paste" style="margin-right: 10px;" aria-hidden="true"></i>  Paste After</a></li>
+                                                <li><a href ng-click="$ctrl.removeEffectAtIndex($index)" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </span> 
                             </div>
-                        </uib-accordion-heading>
-
-                        <div class="effect-select-wrapper">
-                            <searchable-effect-dropdown trigger="{{$ctrl.trigger}}" selected="effect.type" style="width:100%" update="$ctrl.effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
-                            
-                            <span class="effect-delete-btn clickable" ng-click="$ctrl.removeEffectAtIndex($index)"><i class="far fa-trash-alt"></i></span>
-                        </div>
-                        <div class="effect-settings-panel">
-                            <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
-                            <effect-options effect="effect" type="effect.type" trigger="{{$ctrl.trigger}}" ng-show="effect.type != null"><effect-options>
                         </div>
                     </div>
-                </uib-accordion>-->
-                <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsArray">
-                    <div ng-repeat="effect in $ctrl.effectsArray track by $index">
-                        <div class="effect-bar clickable-dark"
-                            ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
-                            ng-mouseenter="hovering = true"
-                            ng-mouseleave="hovering = false">
-                            <span>{{effect.type}}</span>
-                            <span class="flex-row-center ">
-                                <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" style="margin-right:15px"></i>
-                                <div class="clickable" style="margin-right:15px; font-size: 20px; width: 15px; text-align: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
-                                    <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
-                                    <ul class="dropdown-menu" uib-dropdown-menu>
-                                        <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
-                                        <li><a href ng-click="$ctrl.removeEffectAtIndex($index)" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
-                                    </ul>
-                                </div>
-                            </span> 
-                        </div>
+            
+                    <div class="add-more-functionality">
+                        <button type="button" class="btn btn-link" ng-click="$ctrl.addEffect()">
+                            + Add Effect
+                        </button>
                     </div>
                 </div>
-        
-                <div class="add-more-functionality">
-                    <button type="button" class="btn btn-link" ng-click="$ctrl.addEffect()">
-                        + Add Effect
-                    </button>
-                </div>
-
-                <script type="text/ng-template" id="effect-accordian.html">
-                    <div role="tablist" class="panel-group" ng-transclude ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsArray"></div>
-                </script>
-
-                <script type="text/ng-template" id="effect-header-template.html">
-                    <div class="panel-heading clickable-dark" ng-click="toggleOpen()" uib-accordion-transclude="heading">
-                        <div uib-accordion-header></div>
-                    </div>
-                    <div class="panel-collapse collapse" uib-collapse="!isOpen">
-                    <div class="panel-body" ng-transclude></div>
-                    </div>
-                </script>
+                
             </div>
             `,
             controller: function(utilityService) {
@@ -143,29 +127,6 @@
                         ctrl.effectsUpdate();
                     }
                 };
-
-                // We also call this when a new effect is added or an old effect is deleted
-                // to open the last effect again.
-                ctrl.openEffectPanel = {};
-                function clearOutOpenPanelCache() {
-                    Object.keys(ctrl.openEffectPanel).forEach(k => {
-                        ctrl.openEffectPanel[k] = false;
-                    });
-                    ctrl.anEffectPanelIsOpen = false;
-                }
-
-                function updateOpenPanel() {
-                    // We get the index of the last effect and add true to a scope varible
-                    // that the accordian directive is looking at
-
-                    clearOutOpenPanelCache();
-
-                    let lastEffectIndex = ctrl.effectsArray.length - 1;
-                    ctrl.openEffectPanel[lastEffectIndex] = true;
-                    ctrl.checkForOpenEffects();
-                }
-
-                ctrl.anEffectPanelIsOpen = false;
                 ctrl.checkForOpenEffects = function() {
                     ctrl.anEffectPanelIsOpen = Object.keys(ctrl.openEffectPanel)
                         .some(i => ctrl.openEffectPanel[i]);
@@ -177,27 +138,69 @@
                         type: "Nothing"
                     });
 
-                    updateOpenPanel();
                     ctrl.effectsUpdate();
                 };
 
                 ctrl.duplicateEffectAtIndex = function(index) {
                     let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
                     ctrl.effectsArray.splice(index + 1, 0, effect);
+                    ctrl.effectsUpdate();
                 };
 
                 ctrl.removeEffectAtIndex = function(index) {
                     ctrl.effectsArray.splice(index, 1);
-                    clearOutOpenPanelCache();
                     ctrl.effectsUpdate();
+                };
+
+                ctrl.removeAllEffects = function() {
+                    ctrl.effectsArray = [];
+                };
+
+                ctrl.hasCopiedEffects = function() {
+                    return utilityService.hasCopiedEffects(ctrl.trigger);
+                };
+
+                ctrl.hasMultipleCopiedEffects = function() {
+                    return utilityService.hasCopiedEffects(ctrl.trigger) &&
+                    utilityService.getCopiedEffects(ctrl.trigger).length > 1;
+                };
+
+                ctrl.pasteEffects = function(append = false) {
+                    if (utilityService.hasCopiedEffects(ctrl.trigger)) {
+                        if (append) {
+                            ctrl.effectsArray = ctrl.effectsArray.concat(utilityService.getCopiedEffects(ctrl.trigger));
+                        } else {
+                            ctrl.effectsArray = utilityService.getCopiedEffects(ctrl.trigger);
+                        }
+                    }
+                };
+
+                ctrl.pasteEffectsAtIndex = function(index, above) {
+                    if (utilityService.hasCopiedEffects(ctrl.trigger)) {
+                        if (!above) {
+                            index++;
+                        }
+                        let copiedEffects = utilityService.getCopiedEffects(ctrl.trigger);
+                        ctrl.effectsArray.splice(index, 0, ...copiedEffects);
+                    }
+                };
+
+                ctrl.copyEffectAtIndex = function(index) {
+                    utilityService.copyEffects(ctrl.trigger, [ctrl.effectsArray[index]]);
+                };
+
+                ctrl.copyEffects = function() {
+                    utilityService.copyEffects(ctrl.trigger, ctrl.effectsArray);
                 };
 
                 ctrl.openEditEffectModal = function(effect, index, trigger) {
                     utilityService.showEditEffectModal(effect, index, trigger, (response) => {
                         if (response.action === 'update') {
                             ctrl.effectsArray[response.index] = response.effect;
+                            ctrl.effectsUpdate();
                         } else if (response.action === 'delete') {
                             ctrl.removeEffectAtIndex(response.index);
+                            ctrl.effectsUpdate();
                         }
                     });
                 };

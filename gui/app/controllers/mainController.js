@@ -224,6 +224,8 @@
         $scope.appTheme = function() {
             return settingsService.getTheme();
         };
+
+        $rootScope.showSpinner = false;
     });
 
     app.config(['$routeProvider', '$locationProvider', function($routeProvider) {

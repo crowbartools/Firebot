@@ -1239,8 +1239,30 @@ thead th{
   display: flex;
   flex-direction: row;
   align-items: center;
+  &.jcenter {
+    justify-content: center
+  }
+  &.jspacebetween {
+    justify-content: space-between;
+  }
+}
+
+.no-before {
+  &::before {
+    content: none !important;
+  }
+}
+
+.no-after {
+  &::after {
+    content: none !important;
+  }
 }
 
 .dropdown-menu {
   min-width: 125px;
+}
+
+.tooltip {
+  z-index:999999999999999999;
 }

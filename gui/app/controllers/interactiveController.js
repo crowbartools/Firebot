@@ -204,6 +204,8 @@
                         // The model for the button we are editting
                         $scope.control = control;
 
+                        $scope.modalId = modalId;
+
                         // Default to active for controls unless told otherwise.
                         if ($scope.control.active != null) {
                             // Don't do anything because active has already been set to something.
@@ -216,7 +218,8 @@
                             return {
                                 element: modalElement,
                                 name: "Edit Button",
-                                id: modalId
+                                id: modalId,
+                                instance: $uibModalInstance
                             };
                         }));
 
@@ -251,24 +254,6 @@
                         // When they hit cancel or click outside the modal, we dont want to do anything
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss('cancel');
-                        };
-
-                        $scope.copyEffects = function() {
-                            utilityService.copyEffects("interactive", $scope.effects);
-                        };
-
-                        $scope.pasteEffects = function() {
-                            if (utilityService.hasCopiedEffects("interactive")) {
-                                $scope.effects = utilityService.getCopiedEffects("interactive");
-                            }
-                        };
-
-                        $scope.removeAllEffects = function() {
-                            $scope.effects = {};
-                        };
-
-                        $scope.hasCopiedEffects = function() {
-                            return utilityService.hasCopiedEffects("interactive");
                         };
                     },
                     resolveObj: {
