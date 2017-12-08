@@ -21,7 +21,7 @@ function showImage(data){
 		filepathNew = data.url;
 	} else {
 		var token = encodeURIComponent(data.resourceToken);
-		filepathNew = `http://localhost:7473/resource/${token}`;
+		filepathNew = `http://${window.location.hostname}:7473/resource/${token}`;
 	}
 
 	// Get time in milliseconds to use as class name.

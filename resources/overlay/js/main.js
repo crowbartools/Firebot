@@ -18,8 +18,8 @@ function mixerSocketConnect(){
 		} else {
 			console.warn("/user-settings/overlay-settings/port.js could not be found. Assuming port is 8080. Resave the port setting in Firebot to generate a new port.js file.")
 		}
-		
-		ws = new ReconnectingWebSocket(`ws://localhost:${port}`);
+
+		ws = new ReconnectingWebSocket(`ws://${window.location.hostname}:${port}`);
 		ws.onopen = function(){
 			notification('close');
 			console.log(`Connection is opened on port ${port}...`);
