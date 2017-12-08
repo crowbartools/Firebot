@@ -24,7 +24,7 @@ function showVideo(data){
 	var videoStarttime = data.videoStarttime || 0;
 	
 	var token = encodeURIComponent(data.resourceToken);
-	var filepathNew = `http://localhost:7473/resource/${token}`;
+	var filepathNew = `http://${window.location.hostname}:7473/resource/${token}`;
 	
 	var customPosStyles = "";
 	if(videoPosition == 'Custom') {
