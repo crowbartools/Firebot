@@ -1,4 +1,89 @@
-<show-events-settings model="effect" global="false"></show-events-settings>
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Button/Command Specific Settings</h4></div>
+    <div class="input-group">
+        <span class="input-group-addon">Text</span>
+        <input 
+        type="text" 
+        class="form-control" 
+        aria-describedby="showEvents-text-effect-type" 
+        ng-model="effect.text">
+    </div>
+    <eos-collapsable-panel show-label="Show Variables" hide-label="Hide Variables">
+        <ul>
+            <li><b>$(user)</b> - Replaced by the name of the person running the button or using the command.</li>
+            <li><b>$(text)</b> - Replaced by the interactive button text or the chat command ID.</li>
+            <li><b>$(cost)</b> - Replaced by the cost of the command or button.</li>
+            <li><b>$(cooldown)</b> - Replaced by the cooldown of the command or button.</li>
+        </ul>
+    </eos-collapsable-panel>
+</div>
+
+<div class="effect-setting-container">
+    <div class="effect-setting-container setting-padtop">
+        <div class="input-group">
+            <span class="input-group-addon">Color</span>
+            <input 
+            type="text" 
+            class="form-control" 
+            aria-describedby="showEvents-text-effect-type" 
+            ng-model="effect.color"
+            placeholder="#CCCCCC"
+            >
+        </div>
+    </div>
+    <div class="effect-setting-container setting-padtop">
+        <div class="input-group">
+            <span class="input-group-addon">Background Color</span>
+            <input 
+            type="text" 
+            class="form-control" 
+            aria-describedby="showEvents-text-effect-type" 
+            ng-model="effect.backgroundColor"
+            placeholder="#000000 or transparent"
+            >
+        </div>
+    </div>
+    <div class="effect-setting-container setting-padtop">
+        <div class="input-group">
+            <span class="input-group-addon">Font Size</span>
+            <input 
+            type="text" 
+            class="form-control" 
+            aria-describedby="showEvents-text-effect-type" 
+            ng-model="effect.size"
+            placeholder="20px"
+            >
+        </div>
+    </div>
+    <div class="effect-setting-container setting-padtop">
+        <div class="input-group" style="width: 100%">
+            <span class="input-group-addon">Text Alignment</span>
+            <select class="fb-select form-control" ng-model="effect.textAlignment">
+                <option label="Left" value="left" selected="selected">Left</option>
+                <option label="Center" value="center">Center</option>
+                <option label="Right" value="right">Right</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<eosEnterExitAnimations model="effect"></eosEnterExitAnimations>
+
+<div class="effect-setting-container setting-padtop">
+    <div class="input-group">
+        <span class="input-group-addon">Duration(sec)</span>
+        <input 
+        type="number"
+        class="form-control" 
+        aria-describedby="showEvents-length-effect-type" 
+        ng-model="effect.length">
+    </div>
+</div>
+
+<div class="effect-setting-container">
+    <div class="effect-specific-title"><h4>Global Settings</h4></div>
+    <button class="btn btn-default" ng-click="showOverlayEventsModal()">Edit Global Settings</button>
+</div>
 
 <div class="effect-info alert alert-info">
     You can set global show events settings by going to Settings -> Overlay -> Global Show Event Settings. Please also note that you can't override the position of this effect per button. It has to be set globally.
