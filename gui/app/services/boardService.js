@@ -208,41 +208,39 @@
                 // Cleanup Firebot Controls
                 return backendCleanup(dbControls)
                     .then(() => {
-                        let controlID;
+                        let controlID,
+                            sceneName,
+                            sceneControls,
+                            emojiTest,
+                            button,
+                            text,
+                            cost,
+                            joystick;
 
                         // Build Firebot controls
                         for (let i = 0; i < gameJson.length; i++) {
-                            let scenename = gameJson[i].sceneID;
-                            let sceneControls = gameJson[i].controls;
+                            sceneName = gameJson[i].sceneID;
+                            sceneControls = gameJson[i].controls;
 
                             // Loop through controls for this scene.
                             for (let a = 0; a < sceneControls.length; a++) {
-                                let button = sceneControls[a];
+                                button = sceneControls[a];
 
                                 // Try to get info for button. If there is nothing it errors out.
                                 try {
                                     let type = button.kind;
                                     if (type === "button") {
                                         try {
-                                            let emojitest = isEmoji(button.controlID);
-                                            if (emojitest === false) {
+                                            emojiTest = isEmoji(button.controlID);
+                                            if (emojiTest === false) {
                                                 controlID = button.controlID;
                                             } else {
                                                 utilityService.showErrorModal("Button: " + button.controlID + " has emoji in the button name. This will cause all buttons to become unresponsive on connecting. Please remove emoji from the button name field in the Mixer studio. Note that button text is what is visible to viewers, and it's fine to have emoji there.");
                                             }
                                         } catch (ignore) {} //eslint-disable-line no-empty
 
-                                        let text, cost;
-                                        try {
-                                            text = button.text;
-                                        } catch (ignore) {
-                                            text = "None";
-                                        }
-                                        try {
-                                            cost = button.cost;
-                                        } catch (err) {
-                                            cost = 0;
-                                        }
+                                        text = button.text || "None";
+                                        cost = button.cost || 0;
 
                                         // Push to database
                                         /*
@@ -253,7 +251,7 @@
                                         // of a singular one (Perry - 2017-06-28)
                                         */
                                         dbControls.push('./firebot/controls/' + controlID + '/controlId', controlID);
-                                        dbControls.push('./firebot/controls/' + controlID + '/scene', scenename);
+                                        dbControls.push('./firebot/controls/' + controlID + '/scene', sceneName);
                                         dbControls.push('./firebot/controls/' + controlID + '/text', text);
                                         dbControls.push('./firebot/controls/' + controlID + '/cost', cost);
                                         dbControls.push('./firebot/controls/' + controlID + '/kind', type);
@@ -262,10 +260,10 @@
 
 
                                     if (type === "joystick") {
-                                        let joystick = {
+                                        joystick = {
                                             controlID: button.controlID,
                                             sampleRate: button.sampleRate,
-                                            scene: scenename,
+                                            scene: sceneName,
                                             kind: type
                                         };
                                         dbControls.push(`./firebot/joysticks/${joystick.controlID}`, joystick);
@@ -277,13 +275,13 @@
                             }
                             // Setup scenes in Firebot json if they haven't been made yet.
                             try {
-                                dbControls.getData('./firebot/scenes/' + scenename);
+                                dbControls.getData('./firebot/scenes/' + sceneName);
                             } catch (err) {
-                                dbControls.push('./firebot/scenes/' + scenename + '/sceneName', scenename);
-                                if (scenename !== "default") {
-                                    dbControls.push('./firebot/scenes/' + scenename + '/default', ["None"]);
+                                dbControls.push('./firebot/scenes/' + sceneName + '/sceneName', sceneName);
+                                if (sceneName !== "default") {
+                                    dbControls.push('./firebot/scenes/' + sceneName + '/default', ["None"]);
                                 } else {
-                                    dbControls.push('./firebot/scenes/' + scenename + '/default', []);
+                                    dbControls.push('./firebot/scenes/' + sceneName + '/default', []);
                                 }
                             }
                         }
