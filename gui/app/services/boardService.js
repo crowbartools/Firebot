@@ -215,7 +215,8 @@
                             button,
                             text,
                             cost,
-                            joystick;
+                            joystick,
+                            type;
 
                         // Build Firebot controls
                         for (let i = 0; i < gameJson.length; i++) {
@@ -228,7 +229,7 @@
 
                                 // Try to get info for button. If there is nothing it errors out.
                                 try {
-                                    let type = button.kind;
+                                    type = button.kind;
                                     if (type === "button") {
                                         try {
                                             emojiTest = isEmoji(button.controlID);
