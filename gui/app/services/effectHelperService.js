@@ -60,7 +60,7 @@
                     break;
 
                 case EffectList.SHOW_EVENTS:
-                    controller = ($scope, listenerService, utilityService) => {    
+                    controller = ($scope, listenerService, utilityService) => {
 
                         $scope.showOverlayEventsModal = function() {
                             utilityService.showOverlayEventsModal();
