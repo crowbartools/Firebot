@@ -200,7 +200,7 @@
                 let editControlEffectsModalContext = {
                     templateUrl: "./templates/interactive/modals/editControlEffectsModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $uibModal, $uibModalInstance, utilityService, control, modalId) => {
+                    controllerFunc: ($scope, $uibModal, $uibModalInstance, groupsService, effectHelperService, utilityService, control, modalId) => {
                         // The model for the button we are editting
                         $scope.control = control;
 
@@ -235,6 +235,21 @@
 
                         $scope.effectListUpdated = function(effects) {
                             $scope.effects = effects;
+                        };
+
+                        // Get all viewer groups for permissions settings.
+                        $scope.viewerGroups = groupsService.getAllGroups();
+
+                        // This is run each time a group checkbox is clicked or unclicked.
+                        // This will build an array of currently selected groups to be saved to JSON.
+                        $scope.groupArray = function(list, item) {
+                            $scope.control.permissions = effectHelperService.getCheckedBoxes(list, item);
+                        };
+
+                        // This checks if an item is in the command.permission array and returns true.
+                        // This allows us to check boxes when loading up this button effect.
+                        $scope.groupCheckboxer = function (list, item) {
+                            return effectHelperService.checkSavedArray(list, item);
                         };
 
                         // When the user clicks "Save", we want to pass the control back to interactiveController
