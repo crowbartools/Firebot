@@ -327,17 +327,3 @@
     <button type="button" class="btn btn-primary" ng-click="create()">Create</button>
   </div>
 </script>
-
-<!-- show events modal -->
-<script type="text/ng-template" id="overlayEventsModal.html">
-  <div class="modal-header" style="text-align:center;">
-    <h2 class="modal-title">Global Show Events Settings</h2>
-  </div>
-  <div class="modal-body" style="text-align:left;display:flex;flex-direction: column;align-items: center;">
-    <show-events-settings model="textSettings" global="true"></show-events-settings>
-  </div>
-  <div class="modal-footer" style="text-align:center;">
-    <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
-    <button class="btn btn-primary" ng-click="save()">Save</button>
-  </div>
-</script>

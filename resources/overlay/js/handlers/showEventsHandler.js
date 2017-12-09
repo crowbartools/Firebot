@@ -83,7 +83,7 @@ function showEvents(data){
 
     // Add in our showEvents wrapper if it's not added already.
     // This container can have a set width and height and holds all of the showEvents messages.
-    if($('.showEventsOverlay').width() !== showEventsWidth || $('.showEventsOverlay').height() !== showEventsHeight){
+    if($('.showEventsOverlay').width() !== showEventsWidth || $('.showEventsOverlay').height() !== showEventsHeight || $('.showEventsOverlay').attr('position') !== showEventsPosition){
         $('.showEventsOverlay').remove();
 
         if (showEventsHeight == false && showEventsWidth == false){
