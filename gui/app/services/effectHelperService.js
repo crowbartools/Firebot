@@ -60,9 +60,7 @@
                     break;
 
                 case EffectList.SHOW_EVENTS:
-                    controller = ($scope, listenerService, utilityService) => {
-
-                        let uuid = _.uniqueId();
+                    controller = ($scope, listenerService, utilityService) => {    
 
                         $scope.showOverlayEventsModal = function() {
                             utilityService.showOverlayEventsModal();

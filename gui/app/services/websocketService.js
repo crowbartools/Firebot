@@ -55,10 +55,10 @@
                 // Compile data and send to overlay.
                 let broadCastData = {
                     "event": "showEvents",
-                    "showEventsType": data.showEventsType,
+                    "showEventsType": showEventsType,
                     "resourceToken": data.resourceToken,
                     "showEventsText": data.showEventsText,
-                    "showEventsAlignment": data.showEventsAlignment,
+                    "showEventsAlignment": showEventsAlignment,
                     "showEventsColor": showEventsColor,
                     "showEventsBackgroundColor": showEventsBackgroundColor,
                     "showEventsFontSize": showEventsFontSize,
