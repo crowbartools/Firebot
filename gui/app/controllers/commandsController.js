@@ -42,17 +42,19 @@
                 let addCommandModalContext = {
                     templateUrl: "./templates/chat/command-modals/addCommandModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $uibModalInstance, modalId) => {
+                    controllerFunc: ($scope, $uibModalInstance, command, modalId) => {
 
                         // Set active viewer groups for command permissions.
                         $scope.viewerGroups = groupsService.getAllGroups();
 
                         $scope.isNewCommand = true;
+                        let previousCmdId = "";
 
                         // If we pass in a command, then we're editing. Otherwise this is a new command and we default to it being active.
                         if (command != null) {
                             $scope.command = command;
                             $scope.isNewCommand = false;
+                            previousCmdId = command.commandID;
                         } else {
                             $scope.command = {active: true, permissions: [], effects: {}};
                         }
@@ -80,7 +82,7 @@
                         // When the user clicks "Save"
                         $scope.saveChanges = function() {
 
-                            if ($scope.commandID == null) {
+                            if ($scope.command.commandID == null) {
                                 return;
                             }
 
@@ -110,9 +112,13 @@
                         };
 
                         // This deletes the current command.
-                        $scope.deleteCommand = function (command) {
+                        $scope.deleteCommand = function () {
+
+                            //reset to original cmdId in case they altered it before clicking delete.
+                            $scope.command.commandID = previousCmdId;
+
                             // Delete the command
-                            commandsService.deleteCommand(command);
+                            commandsService.deleteCommand($scope.command);
 
                             // Close the modal
                             $uibModalInstance.close();
@@ -130,6 +136,12 @@
 
                         // Refresh cache
                         commandsService.refreshCommands();
+                    },
+                    resolveObj: {
+                        command: () => {
+                            if (command == null) return null;
+                            return JSON.parse(angular.toJson(command));
+                        }
                     }
                 };
                 utilityService.showModal(addCommandModalContext);
