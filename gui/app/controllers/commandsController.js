@@ -42,14 +42,17 @@
                 let addCommandModalContext = {
                     templateUrl: "./templates/chat/command-modals/addCommandModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $uibModalInstance) => {
+                    controllerFunc: ($scope, $uibModalInstance, modalId) => {
 
                         // Set active viewer groups for command permissions.
                         $scope.viewerGroups = groupsService.getAllGroups();
 
+                        $scope.isNewCommand = true;
+
                         // If we pass in a command, then we're editing. Otherwise this is a new command and we default to it being active.
                         if (command != null) {
                             $scope.command = command;
+                            $scope.isNewCommand = false;
                         } else {
                             $scope.command = {active: true, permissions: [], effects: {}};
                         }
@@ -60,26 +63,26 @@
                             $scope.effects = effects;
                         };
 
-                        $scope.copyEffects = function() {
-                            utilityService.copyEffects("command", $scope.effects);
-                        };
+                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                name: "Edit Command",
+                                id: modalId,
+                                instance: $uibModalInstance
+                            };
+                        }));
 
-                        $scope.pasteEffects = function() {
-                            if (utilityService.hasCopiedEffects("command")) {
-                                $scope.effects = utilityService.getCopiedEffects("command");
-                            }
-                        };
-
-                        $scope.removeAllEffects = function() {
-                            $scope.effects = {};
-                        };
-
-                        $scope.hasCopiedEffects = function() {
-                            return utilityService.hasCopiedEffects("command");
-                        };
+                        $scope.$on('modal.closing', function() {
+                            utilityService.removeSlidingModal();
+                        });
 
                         // When the user clicks "Save"
                         $scope.saveChanges = function() {
+
+                            if ($scope.commandID == null) {
+                                return;
+                            }
 
                             $scope.command.effects = $scope.effects;
 

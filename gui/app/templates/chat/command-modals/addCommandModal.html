@@ -2,7 +2,7 @@
 <div class="modal-header">
     <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" id="editControlsLabel">
-           <span ng-if="command.commandID">Edit Command - </span> {{command.commandID ? command.commandID : 'Add New Command'}}
+           <span ng-if="!isNewCommand">Edit Command - </span> {{isNewCommand ? 'Add New Command' : command.commandID }}
         <span class="edit-title-controlid"></span>
     </h4>
 </div>
@@ -49,28 +49,12 @@
         </div>
     </div>
     <div class="function-button-settings">
-        <div class="settings-title">
-            <h3>
-                What should this command do? 
-                <div class="effect-actions-btn" uib-dropdown uib-dropdown-toggle>
-                    <span class="noselect pointer"><i class="fal fa-ellipsis-h"></i></span>
-                    <ul class="dropdown-menu" uib-dropdown-menu>
-                    <li><a href ng-click="copyEffects()">Copy effects</a></li>
-                    <li><a href ng-click="pasteEffects()">Paste effects</a></li>
-                    <li><a href ng-click="removeAllEffects()">Delete all effects</a></li>
-                    </ul>
-                </div>
-            </h3>
-        </div>
-
-        <div class="functionality-settings">
-            <effect-list effects="effects" trigger="command" update="effectListUpdated(effects)"></effect-list>
-        </div>
+        <effect-list header="What should this command do?" effects="effects" trigger="command" update="effectListUpdated(effects)"></effect-list>
     </div>
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger pull-left" ng-show="command.commandID != null" ng-click="deleteCommand(command)">Delete Command</button>
+    <button type="button" class="btn btn-danger pull-left" ng-show="!isNewCommand" ng-click="deleteCommand(command)">Delete Command</button>
     <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary add-new-board-save" ng-click="saveChanges()">Save Changes</button>
 </div>
