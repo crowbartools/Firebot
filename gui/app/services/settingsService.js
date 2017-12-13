@@ -94,7 +94,11 @@
             service.getLastBoardId = function() {
                 let boardId = getLastBoardIdInternal();
                 let knownBoards = service.getKnownBoards();
-                let knownBoardId = knownBoards[boardId] ? knownBoards[boardId].boardId : null;
+
+                let knownBoardId;
+                if (knownBoards != null) {
+                    knownBoardId = knownBoards[boardId] ? knownBoards[boardId].boardId : null;
+                }
 
                 // Check to see if the last selected board is on our "known boards" list.
                 // If it's not, then pick a different board on our known boards list instead.
