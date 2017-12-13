@@ -58,6 +58,7 @@
         "list.js": "^1.5.0",
         "marked": "^0.3.7",
         "ncp": "^2.0.0",
+        "node-cache": "^4.1.1",
         "node-json-db": "^0.7.3",
         "random-puppy": "^1.1.0",
         "request": "^2.81.0",
