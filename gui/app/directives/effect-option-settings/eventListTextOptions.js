@@ -11,7 +11,7 @@
             template: `
                 <div>
                     <eos-container header="Text Settings" ng-hide="$ctrl.isGlobal">
-                        <label class="control-fb control--radio">Use Presets <span class="muted"><br />Presets are editable in Settings > Overlay or click <a href ng-click="$event.stopPropagation();$ctrl.openPresetModal();">here</a>. </span>
+                        <label class="control-fb control--radio">Use Presets <span class="muted"><br />Presets are editable in Settings > Overlay or by clicking <a href ng-click="$event.stopPropagation();$ctrl.openPresetModal();">here</a>. </span>
                             <input type="radio" ng-model="$ctrl.model.override" ng-value="false"/> 
                             <div class="control__indicator"></div>
                         </label>
