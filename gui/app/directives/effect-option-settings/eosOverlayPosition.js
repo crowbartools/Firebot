@@ -8,7 +8,8 @@
         .module('firebotApp')
         .component("eosOverlayPosition", {
             bindings: {
-                effect: '='
+                effect: '=',
+                hideRandom: "<"
             },
             template: `
       <div class="effect-setting-container">
@@ -16,7 +17,7 @@
              <h4>Overlay Display Location</h4>
          </div>
          <div class="effect-setting-content">
-            <div class="controls-fb-inline" style="padding-left: 10px;">
+            <div class="controls-fb-inline">
                 <label class="control-fb control--radio">Preset
                     <input type="radio" ng-model="$ctrl.presetOrCustom" ng-change="$ctrl.togglePresetCustom()" value="preset"/> 
                     <div class="control__indicator"></div>
@@ -27,17 +28,17 @@
                 </label>
             </div>
             <div ng-if="$ctrl.effect.position !== 'Custom'">
-                <div class="btn-group btn-matrix" style="margin: 5px 0 5px 10px;">
+                <div class="btn-group btn-matrix" style="margin: 5px 0 5px 0px;">
                     <label ng-repeat="position in $ctrl.presetPositions" class="btn btn-primary" ng-model="$ctrl.effect.position" ng-disabled="$ctrl.isRandom()" uib-btn-radio="position" uib-tooltip="{{position}}" tooltip-append-to-body="true" tooltip-animation="false"></label>
                 </div>
-                <div class="controls-fb-inline">
+                <div class="controls-fb-inline" ng-if="!$ctrl.hideRandom">
                     <label class="control-fb control--checkbox" style="margin: 5px 0 0 10px;"> Random preset location
                         <input type="checkbox" ng-click="$ctrl.toggleRandomPreset()" ng-checked="$ctrl.isRandom()">
                         <div class="control__indicator"></div>
                     </label>
                 </div>
             </div>
-            <div ng-if="$ctrl.effect.position === 'Custom'" style="margin: 5px 0 5px 10px;">
+            <div ng-if="$ctrl.effect.position === 'Custom'" style="margin: 5px 0 5px 0px;">
                 <form class="form-inline">
                     <div class="form-group">
                         <input type="number" class="form-control" ng-model="$ctrl.topOrBottomValue" ng-change="$ctrl.updateAllValues()" style="width: 85px;">
@@ -129,6 +130,7 @@
                 ];
 
                 ctrl.$onInit = function() {
+                    console.log(ctrl.hideRandom);
                     if (ctrl.effect.position == null) {
                         ctrl.effect.position = "Middle";
                     }

@@ -65,13 +65,13 @@
     <script type="text/javascript" src="./directives/effect-option-settings/eosChatterSelect.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosCollapsablePanel.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/showEventsSettings.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eventListTextOptions.js"></script>
     <script type="text/javascript" src="./directives/controls/scriptParameterOption.js"></script>
     <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
     <script type="text/javascript" src="./directives/controls/searchableEffectDropdown.js"></script>
     <script type="text/javascript" src="./directives/controls/effectList.js"></script>
     <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
     <script type="text/javascript" src="./directives/misc/tooltip.js"></script>
-  
   </head>
   <body>
     <div class='loader-wrapper' ng-if="showSpinner">
@@ -347,10 +347,14 @@
     <!-- show events modal -->
     <script type="text/ng-template" id="overlayEventsModal.html">
       <div class="modal-header" style="text-align:center;">
-        <h2 class="modal-title">Global Show Events Settings</h2>
+        <h2 class="modal-title">Event List Settings</h2>
       </div>
-      <div class="modal-body" style="text-align:left;display:flex;flex-direction: column;align-items: center;">
-        <show-events-settings model="textSettings" global="true"></show-events-settings>
+      <div class="modal-body">
+        <h3>Event List</h3>
+        <show-events-settings model="textSettings"></show-events-settings>
+
+        <h3>Text Presets</h3>
+        <event-list-text-options model="textSettings" is-global="true"></event-list-text-options>
       </div>
       <div class="modal-footer" style="text-align:center;">
         <button class="btn btn-link" ng-click="dismiss()">Cancel</button>

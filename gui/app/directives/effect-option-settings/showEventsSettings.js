@@ -5,26 +5,24 @@
         .module('firebotApp')
         .component("showEventsSettings", {
             bindings: {
-                model: '=',
-                global: '='
+                model: '='
             },
             template: `
                 <div>
-                    <eos-container class="setting-padtop" ng-if="$ctrl.model.override === true || $ctrl.global">
-                        <eos-container header="Display Style">
-                            <div class="controls-fb-inline" style="padding-bottom: 5px;">
-                                <label class="control-fb control--radio">List
-                                    <input type="radio" ng-model="$ctrl.model.textType" value="list"/> 
-                                    <div class="control__indicator"></div>
-                                </label>
-                                <label class="control-fb control--radio">Replace
-                                    <input type="radio" ng-model="$ctrl.model.textType" value="replace"/>
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </div>
-                        </eos-container>
+                    <eos-container header="Display Style">
+                        <div class="controls-fb-inline">
+                            <label class="control-fb control--radio">List
+                                <input type="radio" ng-model="$ctrl.model.textType" value="list"/> 
+                                <div class="control__indicator"></div>
+                            </label>
+                            <label class="control-fb control--radio">Replace
+                                <input type="radio" ng-model="$ctrl.model.textType" value="replace"/>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </eos-container>
                         
-                        <eos-overlay-position effect="$ctrl.model" class="setting-padtop" ng-if="$ctrl.global"></eos-overlay-position>
+                    <eos-overlay-position effect="$ctrl.model" class="setting-padtop" hide-random="true"></eos-overlay-position>
                         
                         <eos-container header="Dimensions" class="setting-padtop">
                             <div class="input-group">
@@ -46,14 +44,23 @@
                         </eos-container>
                         
                         <eos-overlay-instance effect="$ctrl.model" class="setting-padtop"></eos-overlay-instance>
-                    </eos-container>
                 </div>
                 `,
             controller: function() {
                 let ctrl = this;
 
                 ctrl.$onInit = function() {
+                    if (ctrl.model.textType == null) {
+                        ctrl.model.textType = "list";
+                    }
 
+                    if (ctrl.model.width == null) {
+                        ctrl.model.width = 150;
+                    }
+
+                    if (ctrl.model.height == null) {
+                        ctrl.model.height = 100;
+                    }
                 };
             }
         });
