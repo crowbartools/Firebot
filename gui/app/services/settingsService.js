@@ -355,7 +355,7 @@
 
             service.backupOnExit = function() {
                 let save = getDataFromFile('/settings/backupOnExit');
-                return save != null ? save : false;
+                return save != null ? save : true;
             };
 
             service.setBackupOnExit = function(backupOnExit) {
@@ -364,11 +364,29 @@
 
             service.backupBeforeUpdates = function() {
                 let backupBeforeUpdates = getDataFromFile('/settings/backupBeforeUpdates');
-                return backupBeforeUpdates != null ? backupBeforeUpdates : false;
+                return backupBeforeUpdates != null ? backupBeforeUpdates : true;
             };
 
             service.setBackupBeforeUpdates = function(backupBeforeUpdates) {
                 pushDataToFile('/settings/backupBeforeUpdates', backupBeforeUpdates === true);
+            };
+
+            service.backupOnceADay = function() {
+                let backupOnceADay = getDataFromFile('/settings/backupOnceADay');
+                return backupOnceADay != null ? backupOnceADay : true;
+            };
+
+            service.setBackupOnceADay = function(backupOnceADay) {
+                pushDataToFile('/settings/backupOnceADay', backupOnceADay === true);
+            };
+
+            service.maxBackupCount = function() {
+                let maxBackupCount = getDataFromFile('/settings/maxBackupCount');
+                return maxBackupCount != null ? maxBackupCount : 25;
+            };
+
+            service.setMaxBackupCount = function(maxBackupCount) {
+                pushDataToFile('/settings/maxBackupCount', maxBackupCount);
             };
 
             service.getAudioOutputDevice = function() {

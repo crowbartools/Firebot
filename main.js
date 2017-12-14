@@ -176,6 +176,7 @@ app.on('ready', function() {
 
     createWindow();
 
+    backupManager.onceADayBackUpCheck();
     //start the REST api server
     apiServer.start();
 });

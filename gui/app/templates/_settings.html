@@ -156,20 +156,17 @@
             <div class="row" style="margin-top: 15px">
               <div class="setting col-sm-6">
                 <div class="setting-heading">Backup Options</div>
-                <div class="setting-description">Choose how you want the backup system to work:</div>
+                <div class="setting-description">Number of Backups To Keep</div>
                 <div class="effect-setting-container">
                   <div class="change-scene-effect-group-select">
-                    <label class="control-fb control--checkbox">Keep all old backups <i class="fal fa-question-circle" uib-tooltip="Check this if you don't want the previous backup to be overwritten everytime." tooltip-append-to-body="true" ></i>
-                        <input type="checkbox" ng-click="settings.setBackupKeepAll(!settings.backupKeepAll())" ng-checked="settings.backupKeepAll()" aria-label="..." >
-                        <div class="control__indicator"></div>
-                    </label>
+                    <dropdown-select options="[3,5,10,25,'All']" selected="currentMaxBackups" on-update="updateMaxBackups(option)"></dropdown-select>
                     <div class="setting-description">When to backup automatically:</div>
                     <label class="control-fb control--checkbox">When Firebot closes
                       <input type="checkbox" ng-click="settings.setBackupOnExit(!settings.backupOnExit())" ng-checked="settings.backupOnExit()" aria-label="..." >
                       <div class="control__indicator"></div>
                     </label>
-                    <label class="control-fb control--checkbox">Before updates
-                        <input type="checkbox" ng-click="settings.setBackupBeforeUpdates(!settings.backupBeforeUpdates())" ng-checked="settings.backupBeforeUpdates()" aria-label="..." >
+                    <label class="control-fb control--checkbox">Once a day
+                        <input type="checkbox" ng-click="settings.setBackupOnceADay(!settings.backupOnceADay())" ng-checked="settings.backupOnceADay()" aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
                     </div>

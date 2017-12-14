@@ -27,6 +27,12 @@
                 listenerService.fireEvent(listenerService.EventType.INITIATE_BACKUP, true);
             };
 
+            $scope.currentMaxBackups = settingsService.maxBackupCount();
+
+            $scope.updateMaxBackups = function(option) {
+                settingsService.setMaxBackupCount(option);
+            };
+
             $scope.audioOutputDevices = [{
                 label: "System Default",
                 deviceId: "default"
