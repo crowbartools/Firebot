@@ -3,7 +3,7 @@
 (function(angular) {
 
     //This handles updates
-    const VersionCompare = require('../../lib/compare-versions.js');
+    const VersionCompare = require('../../../lib/compare-versions');
     const UpdateType = VersionCompare.UpdateType;
 
     angular
@@ -37,9 +37,9 @@
                     switch (updateType) {
                     case UpdateType.NONE:
                         return false;
-                    case UpdateType.PRELEASE:
+                    case UpdateType.PRERELEASE:
                         return autoUpdateLevel >= 4;
-                    case UpdateType.OFFICAL:
+                    case UpdateType.OFFICIAL:
                     case UpdateType.PATCH:
                         return autoUpdateLevel >= 1;
                     case UpdateType.MINOR:
