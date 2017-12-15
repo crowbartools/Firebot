@@ -144,8 +144,13 @@
                             } else {
                                 console.log('something went wrong with streamer refresh token.');
                                 console.log(token);
-                                service.waitingForStatusChange = false;
-                                utilityService.showErrorModal('Error updating refresh token for streamer account. Try re-logging.');
+                                
+                                // Set connecting to false and log the streamer out because we have oauth issues.
+                                service.waitingForChatStatusChange = false;
+                                logout('streamer');
+
+                                utilityService.showErrorModal('There was an error authenticating your streamer account. Please log in again.');
+                                return;
                             }
 
                             // Refresh bot token if the bot is logged in.
@@ -164,8 +169,14 @@
                                         dbAuth.push('./bot/refreshToken', refreshToken);
                                     } else {
                                         console.log('something went wrong with bot refresh token.');
-                                        console.log(token);
-                                        utilityService.showErrorModal('Error updating refresh token for bot account. Try re-logging.');
+                                        utilityService.showErrorModal('There was an error authenticating your bot account. Please log in again.');
+
+                                        // Set connecting to false and log the streamer out because we have oauth issues.
+                                        service.waitingForChatStatusChange = false;
+                                        service.disconnectFromInteractive();
+                                        logout('bot');
+
+                                        return;
                                     }
 
                                     // Okay, we have both streamer and bot tokens now. Start up the login process.
@@ -176,10 +187,16 @@
                                     }
 
                                 }, err => {
-
                                     // There was an error getting the bot token.
                                     console.log(err);
-                                    utilityService.showErrorModal('Error updating refresh token for bot account. Try re-logging.');
+                                    utilityService.showErrorModal('There was an error authenticating your bot account. Please log in again.');
+
+                                    // Set connecting to false and log the streamer out because we have oauth issues.
+                                    service.waitingForChatStatusChange = false;
+                                    service.disconnectFromInteractive();
+                                    logout('bot');
+
+                                    return;
                                 });
                             } catch (err) {
                                 console.log('No bot logged in. Skipping refresh token.', err);
@@ -195,15 +212,20 @@
                         },
                         (err) => {
                             //error getting streamer refresh token
-                            service.waitingForStatusChange = false;
+
+                            // Set connecting to false and log the streamer out because we have oauth issues.
+                            service.waitingForChatStatusChange = false;
+                            logout('streamer');
+
                             console.log(err);
-                            utilityService.showErrorModal('Error updating refresh token for streamer account. Try re-logging.');
+                            utilityService.showErrorModal('There was an error authenticating your streamer account. Please log in again.');
+                            return;
                         });
                 } catch (err) {
                     // The streamer isn't logged in... stop everything.
-                    service.waitingForStatusChange = false;
+                    service.waitingForChatStatusChange = false;
                     console.log('No streamer logged in. Skipping refresh token.', err);
-                    utilityService.showErrorModal("You need to log into your streamer account before you can connect to Interactive.");
+                    utilityService.showErrorModal("You need to log into the app before trying to connect to Mixer.");
                     return;
                 }
             }
