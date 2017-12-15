@@ -521,6 +521,9 @@
                 service.showErrorModal(errorMessage);
             });
 
+            service.capitalize = function([first, ...rest]) {
+                return first.toUpperCase() + rest.join('').toLowerCase();
+            };
 
             return service;
         });

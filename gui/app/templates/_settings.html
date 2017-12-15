@@ -135,26 +135,7 @@
         <!-- Backup Settings -->
         <uib-tab index="3" heading="Backup">
           <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Access Backups Folder</div>
-              <div class="setting-description">Click the button below to access where Firebot saves backups.</div>
-              <button class="btn btn-default" ng-click="openBackupFolder()">Open Backup Folder</button>
-            </div>
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Manual Backup</div>
-              <div class="setting-description">Click the button below to start a backup manually.</div>
-              <button class="btn btn-default" ng-click="startBackup()" ng-disabled="isBackingUp">Backup Now</button>
-              <span ng-if="isBackingUp || backupCompleted" style="padding-left:10px">
-                <span ng-if="isBackingUp" >
-                  Backing up... 
-                </span>
-                <span ng-if="backupCompleted" style="color: green;">
-                  <i class="fal fa-check-circle"></i> Backup successful! 
-                </span>
-              </span>            
-            </div>
-            <div class="row" style="margin-top: 15px">
-              <div class="setting col-sm-6">
+            <div class="setting col-sm-6">              
                 <div class="setting-heading">Backup Options</div>
                 <div class="setting-description">Number of Backups To Keep</div>
                 <div class="effect-setting-container">
@@ -175,6 +156,25 @@
                       </label>
                     </div>
                 </div>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Manual Backup</div>
+              <div class="setting-description">Click the button below to start a backup manually.</div>
+              <button class="btn btn-default" ng-click="startBackup()" ng-disabled="isBackingUp">Backup Now</button>
+              <span ng-if="isBackingUp || backupCompleted" style="padding-left:10px">
+                <span ng-if="isBackingUp" >
+                  Backing up... 
+                </span>
+                <span ng-if="backupCompleted" style="color: green;">
+                  <i class="fal fa-check-circle"></i> Backup successful! 
+                </span>
+              </span>            
+            </div>
+            <div class="row" style="margin-top: 15px">
+              <div class="setting col-sm-6">
+                  <div class="setting-heading">Manage Backups</div>
+                  <div class="setting-description">Click the button below to view your backups or chose to restore or delete a backup.</div>
+                  <button class="btn btn-default" ng-click="showBackupListModal()">Manage Backups</button>
               </div>
               <div class="setting col-sm-6">
               </div>
@@ -326,5 +326,31 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary" ng-click="create()">Create</button>
+  </div>
+</script>
+
+<!-- View Backups Modal -->
+<script type="text/ng-template" id="backupListModal.html">
+  <div class="modal-header flex-row-center jspacebetween">
+    <h4 class="modal-title" style="display:inline;">Manage Backups</h4>
+  </div>
+  <div class="modal-body" style="overflow-y: auto;max-height: 300px;padding-bottom:0;">
+    <div class="list-group" style="margin-bottom: 0;">
+      <div class="list-group-item flex-row-center jspacebetween" ng-repeat="backup in backups track by $index">
+        <div>
+            <h4 class="list-group-item-heading">{{backup.dayDifference < 1 ? backup.fromNowDisplay : backup.backupDateDisplay}}</h4>
+            <p class="list-group-item-text muted">{{backup.size + " KB"}} | {{backup.version}} {{backup.isManual ? "| Manual" : ""}}
+        </div>
+        <div style="font-size:17px">
+          <span style="margin-right:15px; color:#4379f9;" ng-class="{'muted clickable-dark': !backup.neverDelete, 'clickable': backup.neverDelete}" ng-click="togglePreventDeletion(backup)"><i ng-class="{'far fa-unlock': !backup.neverDelete, 'fas fa-lock': backup.neverDelete}"></i></span>
+          <span style="margin-right:15px;" class="clickable"><i class="fal fa-undo-alt"></i></span>
+          <span class="clickable" style="color:red;"><i class="fal fa-trash-alt"></i></span>    
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-default pull-left" ng-click="openBackupFolder()">Open Backups Folder</button>
+      <button class="btn btn-primary" ng-click="dismiss()">Okay</button>
   </div>
 </script>

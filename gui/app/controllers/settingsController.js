@@ -3,6 +3,11 @@
 
     //This handles the Settings tab
 
+    const fs = require("fs");
+    const path = require("path");
+    const dataAccess = require("../../lib/common/data-access");
+    const moment = require("moment");
+
     angular
         .module('firebotApp')
         .controller('settingsController', function($scope, $timeout, $q, settingsService,
@@ -16,10 +21,6 @@
                 listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
             };
 
-            /* back ups */
-            $scope.openBackupFolder = function() {
-                listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
-            };
 
             $scope.startBackup = function() {
                 $scope.isBackingUp = true;
@@ -125,6 +126,76 @@
             /**
             * Modals
             */
+            $scope.showBackupListModal = function() {
+                let showBackupListModalContext = {
+                    templateUrl: "backupListModal.html",
+                    size: 'sm',
+                    controllerFunc: ($scope, settingsService, $uibModalInstance, $q, listenerService) => {
+
+                        $scope.backups = [];
+
+                        let backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
+
+                        $scope.loadingBackups = true;
+                        $q.when(new Promise(resolve => {
+                            fs.readdir(backupFolderPath, (err, files) => {
+                                let backups =
+                                    files
+                                        .filter(f => f.endsWith(".zip"))
+                                        .map(function(v) {
+                                            let fileStats = fs.statSync(backupFolderPath + v);
+                                            let backupDate = moment(fileStats.birthtime);
+
+                                            let version = "Unknown Version";
+                                            let versionRe = /_(v?\d\.\d\.\d(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
+                                            let match = v.match(versionRe);
+                                            if (match != null) {
+                                                version = match[1];
+                                            }
+
+                                            return {
+                                                name: v.replace(".zip", ""),
+                                                backupTime: backupDate.toDate().getTime(),
+                                                backupDateDisplay: backupDate.format("MMM Do, h:mm A"),
+                                                fromNowDisplay: utilityService.capitalize(backupDate.fromNow()),
+                                                dayDifference: moment().diff(backupDate, 'days'),
+                                                version: version,
+                                                size: Math.round(fileStats.size / 1000),
+                                                isManual: v.includes("manual"),
+                                                neverDelete: v.includes("NODELETE")
+                                            };
+                                        }).sort(function(a, b) {
+                                            return b.backupTime - a.backupTime;
+                                        });
+
+                                resolve(backups);
+                            });
+                        })).then(backups => {
+                            $scope.loadingBackups = false;
+                            $scope.backups = backups;
+                        });
+
+                        $scope.togglePreventDeletion = function(backup) {
+                            backup.neverDelete = !backup.neverDelete;
+                            let oldName = backup.name + ".zip";
+                            backup.name = backup.neverDelete ? backup.name += "_NODELETE" : backup.name.replace("_NODELETE", "");
+
+                            fs.renameSync(backupFolderPath + oldName, backupFolderPath + backup.name + ".zip");
+                        };
+
+                        /* back ups */
+                        $scope.openBackupFolder = function() {
+                            listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
+                        };
+
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss('cancel');
+                        };
+                    }
+                };
+                utilityService.showModal(showBackupListModalContext);
+            };
+
             $scope.showChangePortModal = function() {
                 let showChangePortModalContext = {
                     templateUrl: "changePortModal.html",
@@ -141,9 +212,9 @@
                             // validate port number
                             let newPort = $scope.newPort;
                             if (newPort == null
-                  || newPort === ''
-                  || newPort <= 1024
-                  || newPort >= 49151) {
+                                    || newPort === ''
+                                    || newPort <= 1024
+                                    || newPort >= 49151) {
 
                                 $scope.newPortError = true;
                                 return;
