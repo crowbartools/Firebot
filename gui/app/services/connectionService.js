@@ -14,7 +14,7 @@
             let ListenerType = listenerService.ListenerType;
 
             // Auth Options
-            let streamerScopes = "user:details:self interactive:manage:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:change_ban chat:change_role chat:clear_messages chat:giveaway_start chat:poll_start chat:purge chat:remove_message chat:timeout chat:view_deleted channel:details:self";
+            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:change_ban chat:change_role chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted channel:details:self";
             let botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat";
 
             let authInfo = {
