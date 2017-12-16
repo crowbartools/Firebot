@@ -143,8 +143,8 @@
             };
 
             /*
-    * Events
-    */
+            * Events
+            */
             let EventType = {
                 DOWNLOAD_UPDATE: "downloadUpdate",
                 OPEN_ROOT: "openRootFolder",
@@ -154,7 +154,8 @@
                 GET_ANYFILE: "getAnyFilePath",
                 SPARK_EXEMPT_UPDATED: "sparkExemptUpdated",
                 OPEN_BACKUP: "openBackupFolder",
-                INITIATE_BACKUP: "startBackup"
+                INITIATE_BACKUP: "startBackup",
+                RESTART_APP: "restartApp"
             };
             service.EventType = EventType;
 

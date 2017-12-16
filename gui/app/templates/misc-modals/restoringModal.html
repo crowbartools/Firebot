@@ -13,9 +13,9 @@
         {{errorMessage}}
     </p>
     <p ng-if="restoreComplete">
-        The restore has completed successfully! Clicking <b>Okay</b> below will cause the UI to reload which ensures you see the updated data. However an entire app restart is <b>recommended</b>.
+        The restore has completed successfully! Please click <b>Restart</b> below to restart Firebot, this ensures you see the updated data.
     </p>
 </div>
 <div class="modal-footer" style="text-align: center;">
-    <button ng-if="restoreHasError || restoreComplete" class="btn btn-primary" ng-click="dismiss()">Okay</button>
+    <button ng-if="restoreHasError || restoreComplete" class="btn btn-primary" ng-click="dismiss()">{{restoreComplete ? 'Restart Firebot' : 'Okay'}}</button>
 </div>

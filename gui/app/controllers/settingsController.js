@@ -137,7 +137,7 @@
                             return backup;
                         }
                     },
-                    controllerFunc: ($scope, $uibModalInstance, $timeout, backup, connectionService, boardService, settingsService, groupsService, commandsService) => {
+                    controllerFunc: ($scope, $uibModalInstance, $timeout, backup, settingsService, listenerService) => {
 
                         $scope.restoreComplete = false;
                         $scope.errorMessage = "";
@@ -150,26 +150,19 @@
                         }, 30 * 1000);
 
                         $scope.dismiss = function() {
-                            $uibModalInstance.dismiss('cancel');
                             if ($scope.restoreComplete) {
-                                //makes sure the user returns to the default (buttons) tab
-                                window.location.hash = "";
-                                window.location.reload();
+                                listenerService.fireEvent(listenerService.EventType.RESTART_APP);
+                            } else {
+                                $uibModalInstance.dismiss('cancel');
                             }
                         };
 
                         function reloadEverything() {
                             settingsService.purgeSettingsCache();
-                            boardService.loadAllBoards().then(() => {
 
-                                connectionService.loadLogin();
-                                groupsService.loadViewerGroups();
-                                commandsService.refreshCommands();
+                            $scope.$applyAsync();
 
-                                $scope.$applyAsync();
-
-                                $scope.restoreComplete = true;
-                            });
+                            $scope.restoreComplete = true;
                         }
 
                         function copyFilesOver() {

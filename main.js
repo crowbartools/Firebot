@@ -254,6 +254,12 @@ ipcMain.on('downloadUpdate', () => {
     updater.autoUpdater;
 });
 
+// restarts the app
+ipcMain.on('restartApp', () => {
+    app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
+    app.exit(0);
+});
+
 // Opens the firebot root folder
 ipcMain.on('openRootFolder', () => {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
