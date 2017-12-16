@@ -203,6 +203,13 @@
 
             // Watches for an event from main process
             listenerService.registerListener(
+                { type: listenerService.ListenerType.API_BUTTON },
+                (data) => {
+                    showImage(data);
+                });
+
+            // Watches for an event from main process
+            listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_HTML },
                 (data) => {
                     showHtml(data);

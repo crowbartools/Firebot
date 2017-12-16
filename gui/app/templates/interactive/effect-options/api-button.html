@@ -6,13 +6,77 @@
         </button>
         <ul class="dropdown-menu api-effect-dropdown">
             <li ng-repeat="api in apiTypes"
-                ng-click="effect.api = api">
-                <a href>{{api}}</a>
+                ng-click="effectClick(api)">
+                <a href>{{api.name}}</a>
             </li>
         </ul>
     </div>
 </div>
-<eos-chatter-select effect="effect" title="Who should I send this as?"></eos-chatter-select>
+<div class="effect-setting-container" ng-if="effect.api !== null && effect.api !== 'Pick one'">
+    <div class="effect-specific-title"><h4>Where should we send this?</h4></div>
+    <div class="controls-fb-inline" style="padding-bottom: 5px;">
+        <label class="control-fb control--radio">Chat
+            <input type="radio" ng-model="effect.show" value="chat"/> 
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control-fb control--radio" ng-if="effect.imageAvailable">Overlay
+            <input type="radio" ng-model="effect.show" value="overlay"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control-fb control--radio" ng-if="effect.imageAvailable">Both
+            <input type="radio" ng-model="effect.show" value="both"/>
+            <div class="control__indicator"></div>
+        </label>
+    </div>
+</div>
+
+<div class="effect-chat-settings" ng-if="effect.show === 'chat' || effect.show ==='both'">
+    <eos-chatter-select effect="effect" title="Who should I send this to chat as?"></eos-chatter-select>
+</div>
+
+<div class="effect-chat-settings" ng-if="effect.show === 'overlay' && effect.imageAvailable || effect.show ==='both' && effect.imageAvailable">
+    <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
+    <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
+    <div class="effect-setting-container setting-padtop">
+        <div class="effect-specific-title"><h4>Dimensions</h4></div>
+        <div class="effect-setting-content">
+            <div class="input-group">
+                <span class="input-group-addon">Width</span>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  aria-describeby="image-width-setting-type" 
+                  type="number"
+                  ng-model="effect.width"
+                  placeholder="px">
+                <span class="input-group-addon">Height</span>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  aria-describeby="image-height-setting-type" 
+                  type="number"
+                  ng-model="effect.height"
+                  placeholder="px">
+            </div>
+        </div>
+    </div>
+    <div class="effect-setting-container setting-padtop">
+        <div class="effect-specific-title"><h4>Duration</h4></div>
+        <div class="effect-setting-content">
+            <div class="input-group">
+                <span class="input-group-addon">Seconds</span>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  aria-describedby="image-length-effect-type" 
+                  type="number"
+                  ng-model="effect.length">
+            </div>
+        </div>
+    </div>
+    <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>   
+</div>
+
 <div class="effect-info alert alert-danger">
     Warning: These API's pull from a third party and we have no control over the quality or content.
 </div>
