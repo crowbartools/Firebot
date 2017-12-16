@@ -144,7 +144,7 @@
                             } else {
                                 console.log('something went wrong with streamer refresh token.');
                                 console.log(token);
-                                
+
                                 // Set connecting to false and log the streamer out because we have oauth issues.
                                 service.waitingForChatStatusChange = false;
                                 logout('streamer');
