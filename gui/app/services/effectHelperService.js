@@ -195,15 +195,15 @@
 
                         // The name of the api and if it has images available to show or not.
                         $scope.apiTypes = [
-                            {name:"Advice", image: false},
-                            {name:"Cat Picture", image: true},
-                            {name:"Cat Fact", image: false},
-                            {name:"Dad Joke", image: false},
-                            {name:"Dog Picture", image: true},
-                            {name:"Dog Fact", image: false},
-                            {name:"Aww", image: true},
-                            {name:"Pokemon", image: false},
-                            {name:"Number Trivia", image: false}
+                            {name: "Advice", image: false},
+                            {name: "Cat Picture", image: true},
+                            {name: "Cat Fact", image: false},
+                            {name: "Dad Joke", image: false},
+                            {name: "Dog Picture", image: true},
+                            {name: "Dog Fact", image: false},
+                            {name: "Aww", image: true},
+                            {name: "Pokemon", image: false},
+                            {name: "Number Trivia", image: false}
                         ];
 
                         // When an api is clicked in the dropdown save its name and if it has images available.
@@ -211,7 +211,7 @@
                             console.log(api);
                             $scope.effect.api = api.name;
                             $scope.effect.imageAvailable = api.image;
-                        }
+                        };
 
                     };
                     break;
