@@ -1,6 +1,6 @@
 {
     "name": "Firebot",
-    "version": "4.6.0",
+    "version": "4.7.0",
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
     "scripts": {
@@ -68,6 +68,7 @@
         "roll": "^1.2.0",
         "ui-select": "^0.19.8",
         "underscore": "^1.8.3",
+        "unzipper": "^0.8.11",
         "validator": "^9.1.2",
         "winston": "^2.3.1",
         "winston-daily-rotate-file": "^1.4.6",

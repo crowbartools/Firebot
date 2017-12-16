@@ -41,6 +41,10 @@
                 } catch (err) {} //eslint-disable-line no-empty
             }
 
+            service.purgeSettingsCache = function() {
+                settingsCache = {};
+            };
+
             service.getKnownBoards = function() {
                 try {
                     // This feeds the boardService with known boards and their lastUpdated values.

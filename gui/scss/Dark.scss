@@ -57,4 +57,9 @@ $downarrow-color: darkgray;
 // Import Core Styles
 @import './core/$importer';
 
+.list-group-item {
+    background-color: #323851;
+    border: 1px solid #1c2a3b;
+}
+
 

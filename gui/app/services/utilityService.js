@@ -505,6 +505,56 @@
                 service.showModal(showEditEffectContext);
             };
 
+            service.showConfirmationModal = function(confirmModalRequest) {
+                return new Promise(resolve => {
+
+                    let deleteBoardModalContext = {
+                        templateUrl: "./templates/misc-modals/confirmationModal.html",
+                        resolveObj: {
+                            title: () => {
+                                return confirmModalRequest.title;
+                            },
+                            question: () => {
+                                return confirmModalRequest.question;
+                            },
+                            cancelLabel: () => {
+                                return confirmModalRequest.cancelLabel;
+                            },
+                            confirmLabel: () => {
+                                return confirmModalRequest.confirmLabel;
+                            },
+                            confirmBtnType: () => {
+                                return confirmModalRequest.confirmBtnType;
+                            }
+                        },
+                        controllerFunc: ($scope, $uibModalInstance, title, question, cancelLabel, confirmLabel, confirmBtnType) => {
+
+                            $scope.title = title;
+                            $scope.question = question;
+                            $scope.cancelLabel = cancelLabel;
+                            $scope.confirmLabel = confirmLabel;
+                            $scope.confirmBtnType = confirmBtnType;
+
+                            $scope.confirmed = false;
+                            $scope.confirm = function() {
+                                $scope.confirmed = true;
+                                $uibModalInstance.close();
+                            };
+
+                            $scope.dismiss = function() {
+                                $uibModalInstance.close();
+                            };
+
+                            $scope.$on('modal.closing', function() {
+                                resolve($scope.confirmed);
+                            });
+                        },
+                        size: "sm"
+                    };
+                    service.showModal(deleteBoardModalContext);
+                });
+            };
+
             // Watches for an event from main process
             listenerService.registerListener({
                 type: listenerService.ListenerType.INFO

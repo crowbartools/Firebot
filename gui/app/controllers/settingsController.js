@@ -7,6 +7,8 @@
     const path = require("path");
     const dataAccess = require("../../lib/common/data-access");
     const moment = require("moment");
+    const unzipper = require("unzipper");
+    const ncp = require("ncp");
 
     angular
         .module('firebotApp')
@@ -123,6 +125,86 @@
 
             $scope.currentPort = settingsService.getWebSocketPort();
 
+            function startRestoreFromBackup(backup) {
+
+                let downloadModalContext = {
+                    templateUrl: "./templates/misc-modals/restoringModal.html",
+                    keyboard: false,
+                    backdrop: 'static',
+                    size: 'sm',
+                    resolveObj: {
+                        backup: () => {
+                            return backup;
+                        }
+                    },
+                    controllerFunc: ($scope, $uibModalInstance, $timeout, backup, connectionService, boardService, settingsService, groupsService, commandsService) => {
+
+                        $scope.restoreComplete = false;
+                        $scope.errorMessage = "";
+
+                        $timeout(() => {
+                            if (!$scope.restoreComplete && !$scope.restoreHasError) {
+                                $scope.restoreHasError = true;
+                                $scope.errorMessage = "Restore is taking longer than normal. There may have been an error. You can close and try again or check your log files and contact us. We are happy to help!";
+                            }
+                        }, 30 * 1000);
+
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss('cancel');
+                            if ($scope.restoreComplete) {
+                                //makes sure the user returns to the default (buttons) tab
+                                window.location.hash = "";
+                                window.location.reload();
+                            }
+                        };
+
+                        function reloadEverything() {
+                            settingsService.purgeSettingsCache();
+                            boardService.loadAllBoards().then(() => {
+
+                                connectionService.loadLogin();
+                                groupsService.loadViewerGroups();
+                                commandsService.refreshCommands();
+
+                                $scope.$applyAsync();
+
+                                $scope.restoreComplete = true;
+                            });
+                        }
+
+                        function copyFilesOver() {
+                            let source = dataAccess.getPathInTmpDir("/restore/user-settings");
+                            let destination = dataAccess.getPathInUserData("/user-settings");
+                            ncp(source, destination, function (err) {
+                                if (err) {
+                                    console.log("Failed to copy 'user-settings'!");
+                                    $scope.restoreHasError = true;
+                                    $scope.errorMessage = "The restore failed when trying to copy data.";
+                                } else {
+                                    console.log('Copied "user-settings" to user data.');
+                                    reloadEverything();
+                                }
+                            });
+                        }
+
+                        function beginRestore() {
+                            let backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
+                            let backupName = backup.name + ".zip";
+                            fs.createReadStream(backupFolderPath + backupName)
+                                .pipe(
+                                    unzipper.Extract({ path: dataAccess.getPathInTmpDir("/restore") }) //eslint-disable-line new-cap
+                                        .on('close', () => {
+                                            console.log("extracted!");
+                                            copyFilesOver();
+                                        }));
+
+                        }
+
+                        $timeout(beginRestore, 2 * 1000);
+                    }
+                };
+                utilityService.showModal(downloadModalContext);
+            }
             /**
             * Modals
             */
@@ -130,7 +212,7 @@
                 let showBackupListModalContext = {
                     templateUrl: "backupListModal.html",
                     size: 'sm',
-                    controllerFunc: ($scope, settingsService, $uibModalInstance, $q, listenerService) => {
+                    controllerFunc: ($scope, settingsService, $uibModalInstance, $q, listenerService, utilityService) => {
 
                         $scope.backups = [];
 
@@ -157,6 +239,7 @@
                                                 name: v.replace(".zip", ""),
                                                 backupTime: backupDate.toDate().getTime(),
                                                 backupDateDisplay: backupDate.format("MMM Do, h:mm A"),
+                                                backupDateFull: backupDate.format("ddd, MMM Do YYYY, h:mm:ss A"),
                                                 fromNowDisplay: utilityService.capitalize(backupDate.fromNow()),
                                                 dayDifference: moment().diff(backupDate, 'days'),
                                                 version: version,
@@ -183,7 +266,32 @@
                             fs.renameSync(backupFolderPath + oldName, backupFolderPath + backup.name + ".zip");
                         };
 
-                        /* back ups */
+                        $scope.deleteBackup = function(index, backup) {
+                            utilityService.showConfirmationModal({
+                                title: "Delete Backup",
+                                question: "Are you sure you'd like to delete this backup?",
+                                confirmLabel: "Delete"
+                            }).then(confirmed => {
+                                if (confirmed) {
+                                    $scope.backups.splice(index, 1);
+                                    fs.unlink(backupFolderPath + backup.name + ".zip");
+                                }
+                            });
+                        };
+
+                        $scope.restoreBackup = function(backup) {
+                            utilityService.showConfirmationModal({
+                                title: "Restore From Backup",
+                                question: "Are you sure you'd like to restore from this backup?",
+                                confirmLabel: "Restore"
+                            }).then(confirmed => {
+                                if (confirmed) {
+                                    $uibModalInstance.dismiss('cancel');
+                                    startRestoreFromBackup(backup);
+                                }
+                            });
+                        };
+
                         $scope.openBackupFolder = function() {
                             listenerService.fireEvent(listenerService.EventType.OPEN_BACKUP);
                         };

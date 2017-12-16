@@ -93,8 +93,6 @@
                 settingsService.setButtonViewMode($scope.buttonViewMode, type);
             };
 
-
-
             $scope.isHoverOverControlName = function(controlID) {
                 return hoveringOverControlId === controlID;
             };
