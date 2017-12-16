@@ -44,6 +44,7 @@
                 ERROR: "error",
                 UPDATE_ERROR: "updateError",
                 UPDATE_DOWNLOADED: "updateDownloaded",
+                API_BUTTON: "showImage",
                 SHOW_EVENTS: "showEvents",
                 PLAY_SOUND: "playSound",
                 SHOW_IMAGE: "showImage",
