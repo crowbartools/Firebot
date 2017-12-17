@@ -226,13 +226,11 @@ function kbmRobot() {
     var notStartedErr = "ERR: kbm-robot not started. ( Call .startJar() ).";
 
     var pub = {
-        startJar: function(JRE_ver) {
-            JRE_ver = JRE_ver || 6;
-            var jarPath = path.join("./resources/kbm-java", "robot" + JRE_ver + ".jar");
+        startJar: function() {
+            var jarPath = path.join("./resources/kbm-java", "robot.jar");
             if (!keyPresser) {
                 if (!fs.existsSync(jarPath)) {
-                    throw new Error("ERR: Can't find robot" + JRE_ver +
-                        ".jar. Expected Path: " + jarPath);
+                    throw new Error("ERR: Can't find robot.jar. Expected Path: " + jarPath);
                 }
                 keyPresser = spawn("java", ["-jar", jarPath]);
 
