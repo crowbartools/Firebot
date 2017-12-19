@@ -202,7 +202,7 @@
         // Get app version and change titlebar.
         let appVersion = electron.remote.app.getVersion();
         let version = appVersion;
-        $scope.appTitle = 'Firebot Interactive || v' + version + ' || @firebottletv';
+        $scope.appTitle = 'Firebot Interactive || v' + version + ' || @FirebotApp';
 
         //Attempt to load viewer groups into memory
         groupsService.loadViewerGroups();
