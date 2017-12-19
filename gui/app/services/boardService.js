@@ -434,6 +434,9 @@
                     settingsService.setLastBoardId(board.versionid);
                 }
                 selectedBoard = board;
+
+                // Refresh the interactive control cache.
+                ipcRenderer.send('refreshInteractiveCache');
             };
 
             service.loadBoardWithId = function(id) {

@@ -83,6 +83,9 @@
                 if (board != null) {
                     boardService.loadBoardWithId(board.versionId);
                 }
+
+                // Refresh the interactive control cache.
+                ipcRenderer.send('refreshInteractiveCache');
             };
 
             $scope.fireControlManually = function(controlId) {
