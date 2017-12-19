@@ -81,7 +81,7 @@ exports.runEffects = function(req, res) {
         let participant = req.body.participant;
 
         // Get settings for last board.
-        let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsAccess.getLastBoardId());
+        let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsAccess.getLastBoardName());
         let boardJson = dbControls.getData('/');
 
         let processEffectsRequest = {
