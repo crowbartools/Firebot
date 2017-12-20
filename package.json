@@ -52,6 +52,7 @@
         "beam-client-node": "^1.0.2",
         "beam-interactive-node2": "^2.4.0",
         "body-parser": "^1.18.1",
+        "carina": "^0.10.0",
         "compare-versions": "^3.0.1",
         "electron-gh-releases": "^2.0.4",
         "electron-oauth2": "^3.0.0",
