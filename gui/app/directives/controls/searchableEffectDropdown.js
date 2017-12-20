@@ -15,7 +15,7 @@
             template: `
       <ui-select ng-model="$ctrl.selectedEffect" on-select="$ctrl.selectOption($item, $model)" theme="bootstrap">
         <ui-select-match placeholder="Select or search for an effect... ">{{$select.selected.name}}</ui-select-match>
-        <ui-select-choices repeat="option in $ctrl.options | filter: { name: $select.search } | orderBy:'toString()'" style="position:relative;">
+        <ui-select-choices repeat="option in $ctrl.options | filter: { name: $select.search }" style="position:relative;">
           <div ng-bind-html="option.name | highlight: $select.search"></div>
           <small class="muted">{{option.description}}</small>
 
@@ -29,7 +29,11 @@
 
                 function getSelected() {
                     // grab the effect definitions for the given trigger
-                    ctrl.options = Effect.getEffectDefinitions(ctrl.trigger);
+                    ctrl.options = Effect.getEffectDefinitions(ctrl.trigger).sort((a, b) => {
+                        let textA = a.name.toUpperCase();
+                        let textB = b.name.toUpperCase();
+                        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+                    });
 
                     if (!settingsService.getCustomScriptsEnabled()) {
                         ctrl.options = ctrl.options.filter(e => e.name !== Effect.EffectType.CUSTOM_SCRIPT);

@@ -1,0 +1,49 @@
+<eos-container header="Button To Update">
+    <ui-select ng-model="effect.control" theme="bootstrap">
+        <ui-select-match placeholder="Select or search for an button... ">{{$select.selected.text}}</ui-select-match>
+        <ui-select-choices repeat="option in buttons | filter: { text: $select.search }" style="position:relative;">
+            <div ng-bind-html="option.text | highlight: $select.search"></div>
+            <small class="muted">Id: {{option.controlId}}  |  Scene: {{option.scene}}</small>
+        </ui-select-choices>
+    </ui-select>
+</eos-container>
+
+<eos-container header="Properties">
+        <label class="control-fb control--checkbox"> Button Text
+            <input type="checkbox" ng-model="effect.properties.text.shouldUpdate">
+            <div class="control__indicator"></div>
+        </label>
+        <div ng-show="effect.properties.text.shouldUpdate" style="margin: 0 0 15px 15px;">
+            <input type="text" class="form-control" ng-model="effect.properties.text.value" placeholder="Enter text">
+        </div>
+
+        <label class="control-fb control--checkbox"> Spark Cost
+            <input type="checkbox" ng-model="effect.properties.cost.shouldUpdate">
+            <div class="control__indicator"></div>
+        </label>
+        <div ng-show="effect.properties.cost.shouldUpdate" style="margin: 0 0 15px 15px;">
+            <input type="text" class="form-control" ng-model="effect.properties.cost.value" placeholder="Enter value or expression">
+        </div>
+
+        <label class="control-fb control--checkbox"> Progress Bar Precentage
+            <input type="checkbox" ng-model="effect.properties.progress.shouldUpdate">
+            <div class="control__indicator"></div>
+        </label>
+        <div ng-show="effect.properties.progress.shouldUpdate" style="margin: 0 0 15px 15px;">
+            <input type="text" class="form-control" ng-model="effect.properties.progress.value" placeholder="Enter value or expression">
+        </div>
+        <div>
+            <label class="control-fb control--checkbox"> Edit Active State
+                <input type="checkbox" ng-model="effect.properties.disabled.shouldUpdate">
+                <div class="control__indicator"></div>
+            </label>
+            <label style="display:inline-flex; margin-left:15px;" ng-show="effect.properties.disabled.shouldUpdate">
+                <label class="switch">
+                    <input type="checkbox" ng-checked="!effect.properties.disabled.value" ng-click="effect.properties.disabled.value = !effect.propertries.disabled.value"/>
+                    <span class="slider"></span>
+                </label>
+                Active
+            </label>
+        </div>
+        
+</eos-container>

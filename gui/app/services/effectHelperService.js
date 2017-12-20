@@ -311,7 +311,42 @@
                         };
                     };
                     break;
+                case EffectList.UPDATE_BUTTON:
+                    controller = ($scope, boardService) => {
+                        if ($scope.effect.properties == null) {
+                            $scope.effect.properties = {
+                                text: {
+                                    shouldUpdate: false,
+                                    value: ""
+                                },
+                                cost: {
+                                    shouldUpdate: false,
+                                    value: ""
+                                },
+                                progress: {
+                                    shouldUpdate: false,
+                                    value: ""
+                                },
+                                disabled: {
+                                    shouldUpdate: false,
+                                    value: false
+                                }
+                            };
+                        }
 
+                        $scope.buttons = boardService.getControlsForSelectedBoard()
+                            .filter(c => c.kind === "button")
+                            .map(b => {
+                                return {
+                                    controlId: b.controlId,
+                                    text: b.text,
+                                    scene: b.scene
+                                };
+                            });
+
+                        console.log($scope.buttons);
+                    };
+                    break;
                 case EffectList.DICE:
                     controller = ($scope) => {
 

@@ -630,6 +630,16 @@
                 return controls;
             };
 
+            service.getControlsForSelectedBoard = function () {
+                let board = service.getLastUsedBoard();
+                let controls = [];
+                if (board != null) {
+                    controls = board.controls;
+                }
+
+                return Object.keys(controls).map(key => controls[key]);
+            };
+
             return service;
         });
 }());
