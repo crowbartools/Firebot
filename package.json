@@ -61,6 +61,7 @@
         "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",
         "list.js": "^1.5.0",
         "marked": "^0.3.7",
+        "mathjs-expression-parser": "^1.0.0",
         "moment": "^2.19.4",
         "ncp": "^2.0.0",
         "node-cache": "^4.1.1",
