@@ -257,6 +257,7 @@
                                         dbControls.push('./firebot/controls/' + controlID + '/cost', cost);
                                         dbControls.push('./firebot/controls/' + controlID + '/kind', type);
                                         dbControls.push('./firebot/controls/' + controlID + '/meta', button.meta);
+                                        dbControls.push('./firebot/controls/' + controlID + '/tooltip', button.tooltip);
                                     }
 
 

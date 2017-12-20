@@ -319,6 +319,10 @@
                                     shouldUpdate: false,
                                     value: ""
                                 },
+                                tooltip: {
+                                    shouldUpdate: false,
+                                    value: ""
+                                },
                                 cost: {
                                     shouldUpdate: false,
                                     value: ""
