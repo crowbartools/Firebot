@@ -8,7 +8,7 @@ function showImage(data){
 	var imageHeight = data.imageHeight;
 	var imageWidth = data.imageWidth;
 
-	var imageDuration = parseInt(data.imageDuration) * 1000;
+	var imageDuration = parseFloat(data.imageDuration) * 1000;
 	
 	
 	var customPosStyles = "";

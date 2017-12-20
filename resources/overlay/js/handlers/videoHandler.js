@@ -19,7 +19,7 @@ function showVideo(data){
 	var videoPosition = data.videoPosition;
 	var videoHeight = data.videoHeight;
 	var videoWidth = data.videoWidth;
-	var videoDuration = parseInt(data.videoDuration) * 1000;
+	var videoDuration = parseFloat(data.videoDuration) * 1000;
 	var videoVolume = data.videoVolume;
 	var videoStarttime = data.videoStarttime || 0;
 	

@@ -4,7 +4,7 @@ function celebrate(data){
 	// Celebrate Packet
 	//{"event": "celebration", "celebrationType": celebrationType, "celebrationDuration":celebrationDuration};
 	var type = data.celebrationType;
-	var duration = parseInt(data.celebrationDuration) * 1000; //convert to milliseconds.
+	var duration = parseFloat(data.celebrationDuration) * 1000; //convert to milliseconds.
 
 	// Get time in milliseconds to use as class name.
 	var d = new Date();
