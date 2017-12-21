@@ -265,6 +265,12 @@
             .when('/updates', {
                 templateUrl: './templates/_updates.html',
                 controller: 'updatesController'
+            })
+
+        // route for the events page
+            .when('/events', {
+                templateUrl: './templates/live-events/_events.html',
+                controller: 'eventsController'
             });
     }]);
 

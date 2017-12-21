@@ -41,7 +41,9 @@
     <script type="text/javascript" src="./controllers/firstTimeUseModalController.js"></script>
     <script type="text/javascript" src="./controllers/editBoardSettingsModalController.js"></script>
     <script type="text/javascript" src="./controllers/editCommandSettingsModalController.js"></script>
+    <script type="text/javascript" src="./controllers/eventsController.js"></script>
     <script type="text/javascript" src="./services/boardService.js"></script>
+    <script type="text/javascript" src="./services/eventsService.js"></script>
     <script type="text/javascript" src="./services/commandsService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/groupsService.js"></script>
@@ -115,6 +117,11 @@
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-users"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
+        </a>
+        <a class="fb-nav-link" href="#!events" ng-class="{'selected': tabIsSelected('Events')}" ng-click="setTab('Events')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal fa-users"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Events</div>
         </a>
         <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
           <div class="nav-link-bar"></div>

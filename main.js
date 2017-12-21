@@ -174,6 +174,13 @@ app.on('ready', function() {
             dataAccess.makeDirInUserData("/user-settings/chat");
         });
 
+    // Create the chat folder if it doesn't exist.
+    dataAccess.userDataPathExists("/user-settings/live-events")
+        .then(() => {
+            console.log("Can't find the live-events folder, creating one now...");
+            dataAccess.makeDirInUserData("/user-settings/live-events");
+        });
+
     createWindow();
 
     backupManager.onceADayBackUpCheck();

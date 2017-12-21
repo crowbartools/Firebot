@@ -1,0 +1,76 @@
+<div class="content-block">
+  <div class="content-block-body">
+    <!-- Events Tab -->
+    <div class="row events-container">
+      
+      <!-- Show each event -->
+      <div ng-repeat="event in eventsService.getEvents() track by $index" class="fb-tile grapefruit centered">
+        <div class="edit-btn" ng-click="showAddEditEventModal(event)"></div>
+        <div class="header">
+          <div class="title edit-btn-spacer">
+            {{event.eventName}}
+          </div>
+        </div>
+        <div class="content row">
+          <div class="detail-wrapper nomargin">
+            <div class="detail" style="font-size: 2em;">
+              {{event.eventType ? event.eventType : "None"}}
+            </div>
+            <div class="detail-description">
+              Trigger
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding-top: 15px">
+      <button class="btn btn-default" ng-click="showAddEditEventModal()"><i class="far fa-plus"></i> New Event</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal For Adding/Editting Events -->
+<script type="text/ng-template" id="addEditEventModal.html">
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="editEventLabel">{{isNewEvent ? "Add Event" : "Edit Event"}}</h4>
+  </div>
+  <div class="modal-body">
+    <div class="general-event-settings">
+      <div class="settings-title">
+        <h3>General Settings</h3>
+      </div>
+
+      <div class="effect-setting-container setting-padtop">
+        <div class="input-group settings-eventid">
+          <span class="input-group-addon" id="basic-addon3">Event Name</span>
+          <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-not-empty event-id" aria-describedby="basic-addon3" ng-model="event.eventName">
+        </div>
+      </div>
+
+      <div class="effect-setting-container setting-padtop">
+        <div class="effect-specific-title"><h4>Which event will we trigger on?</h4></div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="event-type">{{event.eventType ? event.eventType : 'Pick one'}}</span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu event-dropdown">
+                <li ng-repeat="event in eventTypes"
+                    ng-click="eventClick(event)">
+                    <a href>{{event}}</a>
+                </li>
+            </ul>
+        </div>
+      </div>
+
+    </div>
+    <div ng-if="event.eventType != null" class="effect-setting-container setting-padtop">
+      <effect-list header="What should this event do?" effects="event.effects" trigger="event" update="effectListUpdated(effects)" modalId="{{modalId}}"></effect-list>      
+    </div>
+    <div class="modal-footer">
+      <button ng-if="!isNewEvent" type="button" class="btn btn-danger delete-event-button pull-left" ng-click="saveChanges(true)">Delete Event</button>
+      <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+      <button type="button" class="btn btn-primary event-edit-save" ng-click="saveChanges(false)">{{isNewEvent ? "Add Event" : "Save Changes"}}</button>
+    </div>
+</script>
