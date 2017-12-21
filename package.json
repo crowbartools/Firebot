@@ -58,7 +58,7 @@
         "electron-oauth2": "^3.0.0",
         "eslint": "^4.8.0",
         "express": "^4.15.4",
-        "howler": "github:ebiggz/howler.js",
+        "howler": "https://github.com/ebiggz/howler.js/tarball/master",
         "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",
         "list.js": "^1.5.0",
         "marked": "^0.3.7",

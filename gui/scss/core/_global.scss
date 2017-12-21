@@ -516,7 +516,28 @@ body {
     }
   }
   &.gray {
-    background: $tertiary-tile-background-color;
+    background: #656D78;
+    .header {
+      background: #434A54
+    }
+  }
+  &.lavender {
+    background: #AC92ED;
+    .header {
+      background: #967BDC
+    }
+  }
+  &.grapefruit {
+    background: #ED5564;
+    .header {
+      background: #DB4453;
+    }
+  }
+  &.mint {
+    background: #48CFAE;
+    .header {
+      background: #34BD9B;
+    }
   }
   &.green {
     background: $quaternary-tile-background-color;

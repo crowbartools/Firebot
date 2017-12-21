@@ -66,7 +66,7 @@ function showEvents(data){
 	var showEventsPosition = data.showEventsPosition;
 	var showEventsHeight = data.showEventsHeight;
 	var showEventsWidth = data.showEventsWidth;
-    var showEventsDuration = parseInt(data.showEventsDuration) * 1000;
+    var showEventsDuration = parseFloat(data.showEventsDuration) * 1000;
     var showEventsType = data.showEventsType;
     var showEventsAlignment = data.showEventsAlignment;
 	
