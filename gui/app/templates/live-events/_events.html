@@ -4,7 +4,7 @@
     <div class="row events-container">
       
       <!-- Show each event -->
-      <div ng-repeat="event in eventsService.getEvents() track by $index" class="fb-tile grapefruit centered">
+      <div ng-repeat="event in eventsService.getEvents() track by $index" class="fb-tile grapefruit centered" ng-class="{'inactive' : !event.active && event.active != null}">
         <div class="edit-btn" ng-click="showAddEditEventModal(event)"></div>
         <div class="header">
           <div class="title edit-btn-spacer">
@@ -47,6 +47,17 @@
           <span class="input-group-addon" id="basic-addon3">Event Name</span>
           <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-not-empty event-id" aria-describedby="basic-addon3" ng-model="event.eventName">
         </div>
+      </div>
+
+      <div class="controls-fb-inline effect-setting-container setting-padtop">
+          <label class="control-fb control--checkbox">Active Event
+              <input type="checkbox" ng-model="event.active" aria-label="..." checked>
+              <div class="control__indicator"></div>
+          </label>
+          <label class="control-fb control--checkbox">Skip Logging
+              <input type="checkbox" ng-model="event.skipLog" aria-label="...">
+              <div class="control__indicator"></div>
+          </label>
       </div>
 
       <div class="effect-setting-container setting-padtop">

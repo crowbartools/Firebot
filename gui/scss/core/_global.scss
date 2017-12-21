@@ -545,6 +545,12 @@ body {
       background: $quaternary-tile-header-background-color;
     }
   }
+  &.inactive{
+    background: $dark-tile-background-color-inactive;
+    .header{
+      background: $dark-tile-background-color-inactive + 10%;
+    }
+  }
   &.centered {
       justify-content: center;
   }
