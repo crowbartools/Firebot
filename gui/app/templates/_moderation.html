@@ -8,24 +8,49 @@
       </div>
     </div>
     <div class="content-block-body">
-      <table class="table">
-       <thead>
-         <tr>
-           <th width="100">TIME</th>
-           <th>EVENT</th>
-         </tr>
-       </thead>
-       <tbody>
-         <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.events | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.eventLog.currentPage-1)*pagination.eventLog.pageSize | limitTo:pagination.eventLog.pageSize track by $index">
-           <td>{{event.timestamp}}</td>
-           <td>{{event.username}} {{event.text}}</td>
-         </tr>       
-       </tbody>
-     </table>
-     <span ng-show="eventLogService.events.length == 0" style="opacity: 0.5">There are no recent events.</span>
-     <div ng-show="filteredEvents.length > pagination.eventLog.pageSize" style="text-align: center;">
-        <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.eventLog.currentPage" items-per-page="pagination.eventLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
-     </div>
+
+      <uib-tabset active="activeLogTab">
+        <uib-tab index="0" heading="General">
+          <table class="table">
+            <thead>
+              <tr>
+                <th width="100">TIME</th>
+                <th>EVENT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.generalEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.generalLog.currentPage-1)*pagination.generalLog.pageSize | limitTo:pagination.generalLog.pageSize track by $index">
+                <td>{{event.timestamp}}</td>
+                <td>{{event.username}} {{event.text}}</td>
+              </tr>       
+            </tbody>
+          </table>
+          <span ng-show="eventLogService.generalEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
+          <div ng-show="filteredEvents.length > pagination.generalLog.pageSize" style="text-align: center;">
+              <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.generalLog.currentPage" items-per-page="pagination.generalLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
+          </div>
+        </uib-tab>
+        <uib-tab index="1" heading="Events">
+          <table class="table">
+            <thead>
+              <tr>
+                <th width="100">TIME</th>
+                <th>EVENT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.alertEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.alertLog.currentPage-1)*pagination.alertLog.pageSize | limitTo:pagination.alertLog.pageSize track by $index">
+                <td>{{event.timestamp}}</td>
+                <td>{{event.username}} {{event.text}}</td>
+              </tr>       
+            </tbody>
+          </table>
+          <span ng-show="eventLogService.alertEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
+          <div ng-show="filteredEvents.length > pagination.alertLog.pageSize" style="text-align: center;">
+              <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.alertLog.currentPage" items-per-page="pagination.alertLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
+          </div>
+        </uib-tab>
+      </uib-tabset>
     </div>
   </div>
   <div class="content-block" style="width: 49%">

@@ -20,7 +20,11 @@
                     currentPage: 1,
                     pageSize: 5
                 },
-                eventLog: {
+                generalLog: {
+                    currentPage: 1,
+                    pageSize: 5
+                },
+                alertLog: {
                     currentPage: 1,
                     pageSize: 5
                 }

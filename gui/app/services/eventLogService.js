@@ -11,7 +11,11 @@
         .factory('eventLogService', function ($interval, listenerService) {
             let service = {};
 
-            service.events = [];
+            // General Events - Interactive info, command info, etc...
+            service.generalEvents = [];
+
+            // Alert Events - follows, subs, hosts, etc...
+            service.alertEvents = [];
 
             // Pretty timestamp
             function getTimeStamp(date) {
@@ -39,6 +43,7 @@
             function addEvent(data) {
                 let username = data.username;
                 let text = data.event;
+                let type = data.type;
 
                 let now = new Date();
                 let timeStamp = getTimeStamp(now);
@@ -46,12 +51,22 @@
                 // Tag this item with milliseconds so we can easily purge them later.
                 let milliseconds = now.getTime();
 
-                service.events.push({
-                    milliseconds: milliseconds,
-                    timestamp: timeStamp,
-                    username: username,
-                    text: text
-                });
+                if (type === "alert") {
+                    service.alertEvents.push({
+                        milliseconds: milliseconds,
+                        timestamp: timeStamp,
+                        username: username,
+                        text: text
+                    });
+                } else {
+                    service.generalEvents.push({
+                        milliseconds: milliseconds,
+                        timestamp: timeStamp,
+                        username: username,
+                        text: text
+                    });
+                }
+
             }
 
             // Watches for an event from main process
@@ -66,7 +81,7 @@
                 let nowMilliseconds = now.getTime();
                 let maxAge = 120000;
 
-                service.events = _.reject(service.events, (event) => {
+                service.generalEvents = _.reject(service.generalEvents, (event) => {
                     let age = event.milliseconds + maxAge;
                     return age < nowMilliseconds;
                 });
