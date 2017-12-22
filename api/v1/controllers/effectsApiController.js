@@ -1,9 +1,8 @@
 'use strict';
 
-const settingsAccess = require('../../../lib/common/settings-access.js').settings;
-const dataAccess = require('../../../lib/common/data-access');
 const mixerInteractive = require('../../../lib/common/mixer-interactive.js');
 const Effects = require("../../../lib/common/EffectType");
+const { TriggerType } = Effects;
 const effectsBuilder = require("../../../lib/common/handlers/custom-scripts/effectsObjectBuilder");
 const effectRunner = require('../../../lib/common/effect-runner');
 
@@ -67,12 +66,6 @@ exports.runEffects = function(req, res) {
     } else if (req.body.effects != null) {
         let builtEffects = effectsBuilder.buildEffects(req.body.effects);
 
-        let control = {
-            text: "API",
-            cost: 0,
-            cooldown: 0
-        };
-
         let username = req.body.username;
         if (username == null) {
             username = "API Call";
@@ -80,18 +73,15 @@ exports.runEffects = function(req, res) {
 
         let participant = req.body.participant;
 
-        // Get settings for last board.
-        let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsAccess.getLastBoardName());
-        let boardJson = dbControls.getData('/');
-
         let processEffectsRequest = {
-            type: Effects.TriggerType.API,
-            effects: builtEffects,
-            firebot: boardJson,
-            participant: participant,
-            username: username,
-            control: control,
-            isManual: participant == null
+            trigger: {
+                type: TriggerType.API,
+                metadata: {
+                    username: username,
+                    participant: participant
+                }
+            },
+            effects: builtEffects
         };
 
         effectRunner.processEffects(processEffectsRequest);
