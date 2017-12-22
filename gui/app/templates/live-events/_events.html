@@ -61,15 +61,15 @@
       </div>
 
       <div class="effect-setting-container setting-padtop">
-        <div class="effect-specific-title"><h4>Which event will we trigger on?</h4></div>
+        <div class="effect-specific-title"><h4>Trigger On</h4></div>
         <div class="btn-group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="event-type">{{event.eventType ? event.eventType : 'Pick one'}}</span> <span class="caret"></span>
+                <span class="event-type">{{selectedEventTypeName}}</span> <span class="caret"></span>
             </button>
             <ul class="dropdown-menu event-dropdown">
-                <li ng-repeat="event in eventTypes"
-                    ng-click="eventClick(event)">
-                    <a href>{{event}}</a>
+                <li ng-repeat="eventType in eventDefinitions"
+                    ng-click="eventTypeSelected(eventType)">
+                    <a href>{{eventType.name}}</a>
                 </li>
             </ul>
         </div>

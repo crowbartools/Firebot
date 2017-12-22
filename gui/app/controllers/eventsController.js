@@ -21,12 +21,15 @@
                     templateUrl: "addEditEventModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance, utilityService, eventToEdit) => {
-                        $scope.eventTypes = EventType.getAllEventTypes();
+                        $scope.eventDefinitions = EventType.getEventDefinitions();
 
                         // The model for the board id text field
                         $scope.event = {
                             eventName: ""
                         };
+
+                        $scope.selectedEventTypeName =
+                            $scope.event.eventType ? EventType.getEvent($scope.event.eventType) : "Pick one";
 
                         $scope.isNewEvent = eventToEdit == null;
 
@@ -34,9 +37,10 @@
                             $scope.event = $.extend(true, {}, eventToEdit);
                         }
 
-                        $scope.eventClick = function(event) {
-                            $scope.event['eventType'] = event;
-                        }
+                        $scope.eventTypeSelected = function(event) {
+                            $scope.selectedEventTypeName = event.name;
+                            $scope.event.eventType = event.id;
+                        };
 
                         $scope.effectListUpdated = function(effects) {
                             $scope.event['effects'] = effects;
