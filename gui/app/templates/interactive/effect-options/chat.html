@@ -1,32 +1,3 @@
-<!--
- This is the template for the Chat effect type. 
- 
- You dont need to update any other place in the app when you add an effect template. The app automatically looks for effect option template 
- files in ./templates/interactive/effect-options/. To find the file, it takes the type of 
- the effect, makes sure it's lowercase, and replaces spaces with dashes. IE, the effect type "Play Sound" maps to "play-sound.html".
- 
- The effect object in question for this template will be passed over and available in the scope under the variable name "effect", so you can use 
- Angular's data binding to tie html elements to different properties of the effect object.
- 
- The effect object is the same object that is saved in the board.json file. So you can always refer to a board.json to see what properties an effect has.
- 
- You can use the attribute 'ng-model' on an input element to bind that element with one of the effect properties.
- IE
-   <input type="text" class="form-control" ng-model="effect.message">
- That would bind the "message" property of the effect to this input so everytime something is typed into the input, the 'message' property (a string in this case)
- is automatically updated.
- 
- If you need additional functionality available to you in your effect option template (ie for dropdowns, button click actions, etc), 
- you can define a controller function for this effect type in the effectHelperService and pass anything you need to the $scope object. 
- That will make it availble to the html template file. Take a look at effectHelperService.getControllerForEffectTypeTemplate for examples.
- 
- The saving of effect options to the json file is also handled automatically, so you don't need to worry about that.
- 
- Dont forget you can use double braces {{}} in elements to run expressions. 
- 
- Refer to the 'chat' effect options template below for a complete example.
- 
--->
 <eos-chatter-select effect="effect" title="Who should I chat as?"></eos-chatter-select>
 
 <div class="effect-setting-container">
@@ -60,6 +31,10 @@
         <h4>Chat Commands Only</h4>
         <ul>
             <li><b>$(arg1)</b> - Replaced by the argument provided after a chat command. For example $(arg1) pulls the first word after the command, but $(arg5) would pull the fifth word.</li>
+        </ul>
+        <h4>Events Only</h4>
+        <ul>
+            <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed. Meant to be used on subscriber events.</li>
         </ul>
     </div>
 </div>
