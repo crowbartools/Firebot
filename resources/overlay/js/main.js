@@ -58,6 +58,9 @@ function mixerSocketConnect(){
 				case "html":
 					showHtml(data);
 					break;
+				case "sound":
+					playSound(data);
+					break;
 				case "showEvents":
 					showEvents(data);
 					break;

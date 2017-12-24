@@ -7,34 +7,28 @@
 
     angular
         .module('firebotApp')
-        .factory('soundService', function (settingsService, listenerService, $q) {
+        .factory('soundService', function (settingsService, listenerService, $q, websocketService) {
             let service = {};
 
             // Connection Sounds
             service.connectSound = function(type) {
                 if (settingsService.soundsEnabled() === "On") {
+                    let outputDevice = settingsService.getAudioOutputDevice();
                     if (type === "Online") {
-                        service.playSound("../sounds/online.mp3", 0.2);
+                        service.playSound("../sounds/online.mp3", 0.2, outputDevice);
                     } else {
-                        service.playSound("../sounds/offline.mp3", 0.2);
+                        service.playSound("../sounds/offline.mp3", 0.2, outputDevice);
                     }
                 }
             };
 
 
-            service.playSound = function(path, volume, outputDevice = null) {
-
-                let selectedOutputDevice = outputDevice;
-                if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
-                    selectedOutputDevice = settingsService.getAudioOutputDevice();
-                }
+            service.playSound = function(path, volume, outputDevice) {
 
                 $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
-                    let filteredDevice = deviceList.filter(d => d.label === selectedOutputDevice.label || d.deviceId === selectedOutputDevice.deviceId);
+                    let filteredDevice = deviceList.filter(d => d.label === outputDevice.label || d.deviceId === outputDevice.deviceId);
 
                     let sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
-
-                    console.log(filteredDevice);
 
                     let sound = new howler.Howl({
                         src: [path],
@@ -54,7 +48,23 @@
                     let filepath = data.filepath;
                     let volume = (data.volume / 100) * 10;
 
-                    service.playSound(filepath, volume, data.audioOutputDevice);
+                    let selectedOutputDevice = data.audioOutputDevice;
+                    if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
+                        selectedOutputDevice = settingsService.getAudioOutputDevice();
+                    }
+
+                    if (selectedOutputDevice.deviceId === 'overlay') {
+                        websocketService.broadcast({
+                            event: "sound",
+                            filepath: filepath,
+                            volume: volume,
+                            resourceToken: data.resourceToken
+                        });
+                    } else {
+                        service.playSound(filepath, volume, selectedOutputDevice);
+                    }
+
+
                 });
 
             return service;

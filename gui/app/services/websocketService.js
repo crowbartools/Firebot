@@ -95,7 +95,6 @@
                     imageDuration = 5;
                 }
 
-
                 // Compile data and send to overlay.
                 let broadCastData = {
                     "event": "image",
@@ -175,7 +174,6 @@
             // This allows for the guiBroadcast call to send out data via websocket.
             service.broadcast = function(data) {
                 data = JSON.stringify(data);
-                console.log(data);
                 wss.clients.forEach(function each(client) {
                     client.send(data);
                 });

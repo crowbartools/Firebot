@@ -54,6 +54,10 @@
                   <li ng-repeat="device in audioOutputDevices">
                       <a href ng-click="settings.setAudioOutputDevice(device)">{{device.label}}</a>
                   </li>
+                  <li class="divider"></li>
+                  <li role="menuitem" ng-click="settings.setAudioOutputDevice({label: 'Send To Overlay', deviceId: 'overlay'})">
+                    <a href>Send To Overlay</a>
+                  </li>
                 </ul>
               </div>
             </div>

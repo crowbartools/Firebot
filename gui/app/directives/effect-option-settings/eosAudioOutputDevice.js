@@ -18,6 +18,10 @@
                         </button>
                         <ul class="dropdown-menu chat-effect-dropdown">
                             <li ng-repeat="device in $ctrl.audioOutputDevices" ng-click="$ctrl.effect.audioOutputDevice = device"><a href>{{device.label}}</a></li>
+                            <li class="divider"></li>
+                            <li role="menuitem" ng-click="$ctrl.effect.audioOutputDevice = {label: 'Send To Overlay', deviceId: 'overlay'}">
+                                <a href>Send To Overlay</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
