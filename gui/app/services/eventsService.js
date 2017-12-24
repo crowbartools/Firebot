@@ -3,6 +3,7 @@
 (function() {
 
     //This handles events
+    const EventType = require('../../lib/live-events/EventType.js');
     const dataAccess = require('../../lib/common/data-access.js');
     const {ipcRenderer} = require('electron');
 
@@ -12,8 +13,44 @@
             let service = {};
             let events = [];
 
-            service.getEvents = function() {
-                return events;
+            // Get a list of events json obj based on a given category.
+            service.getEvents = function(eventCategory) {
+                // Convert user friendly name to event id.
+                eventCategory = EventType.getEvent(eventCategory).id;
+
+                // Start building a list and checking in twice.
+                let eventsList = [],
+                    event = [];
+                Object.keys(events).forEach(k => {
+                    event = events[k];
+                    let effectCount = 0;
+
+                    Object.keys(event.effects).forEach(() => {
+                        effectCount++;
+                    });
+                    event.effectCount = effectCount;
+
+                    if (event.eventType === eventCategory) {
+                        eventsList.push(event);
+                    }
+                });
+
+                return eventsList;
+            };
+
+            // This will get all events categories that we have active events for.
+            service.getCategories = function () {
+                let eventCategories = [],
+                    eventName = [];
+                Object.keys(events).forEach(k => {
+                    // Convert from event id to event name for user friendly ui.
+                    eventName = EventType.getEvent(events[k].eventType).name;
+                    eventCategories.push(eventName);
+                });
+
+                // Filter out duplicates
+                eventCategories = [...new Set(eventCategories)];
+                return eventCategories;
             };
 
             // Deletes events.
@@ -45,6 +82,17 @@
                 }
 
                 dbEvents.push("/" + event.eventName, event);
+
+                // We can only have one active set of effects for each type, so lets turn the others off.
+                if (event.active === true) {
+                    let fullList = dbEvents.getData('/');
+                    Object.keys(fullList).forEach(k => {
+                        let newEvent = fullList[k];
+                        if (newEvent.eventName !== event.eventName && newEvent.active === true && newEvent.eventType === event.eventType) {
+                            dbEvents.push("/" + newEvent.eventName + "/active", false);
+                        }
+                    });
+                }
 
                 service.loadEvents();
 

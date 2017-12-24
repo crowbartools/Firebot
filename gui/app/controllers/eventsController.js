@@ -28,14 +28,15 @@
                             eventName: ""
                         };
 
-                        $scope.selectedEventTypeName =
-                            $scope.event.eventType ? EventType.getEvent($scope.event.eventType) : "Pick one";
-
                         $scope.isNewEvent = eventToEdit == null;
 
                         if (!$scope.isNewEvent) {
                             $scope.event = $.extend(true, {}, eventToEdit);
                         }
+
+
+                        $scope.selectedEventTypeName =
+                        $scope.event.eventType ? EventType.getEvent($scope.event.eventType).name : "Pick one";
 
                         $scope.eventTypeSelected = function(event) {
                             $scope.selectedEventTypeName = event.name;
