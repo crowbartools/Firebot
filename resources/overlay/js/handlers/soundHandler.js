@@ -28,11 +28,7 @@ function playSound(data){
 	let audio = document.getElementById(uuid);
 	audio.volume = parseFloat(data.volume);
 
-	audio.oncanplay = function() {
-		audio.play();
-	};
+	audio.oncanplay = () => audio.play();
 
-	audio.onended = function() {
-		$("#" + uuid).remove();
-	};
+	audio.onended = () => $("#" + uuid).remove();
 }
