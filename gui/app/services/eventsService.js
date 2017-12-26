@@ -3,6 +3,7 @@
 (function() {
 
     //This handles events
+    const _ = require('underscore')._;
     const EventType = require('../../lib/live-events/EventType.js');
     const dataAccess = require('../../lib/common/data-access.js');
     const {ipcRenderer} = require('electron');
@@ -35,6 +36,11 @@
                     }
                 });
 
+                // Sort list and reverse it so that active events always come first.
+                eventsList = _.sortBy(eventsList, 'active');
+                eventsList = eventsList.reverse();
+
+                // Return our new list.
                 return eventsList;
             };
 
