@@ -62,8 +62,8 @@ $procolor: #b143d1;
 $modcolor: #36e53a;
 $staffcolor: #dcb235;
 $ownercolor: black;
-$chatTextColor: black;
-$chatBorder: $chatTextColor - 50%;
+$chatTextColor: #000;
+$chatBorder: #cecece;
 
 // Import Core Styles
 @import './core/$importer';

@@ -8,16 +8,23 @@
 // Chat Screen
 .chat-window{
     border: 1px solid $chatBorder;
-    border-radius: 5px 0px 0px 5px;
-    height:500px;
+    border-left:0px;
+    border-radius: 0px 5px 5px 0px;
+    height:375px;
     overflow: hidden;
     overflow-y: scroll;
     overflow-x: hidden;
+    @media only screen and (max-width: 779px) {
+        border-left: 1px solid $chatBorder;
+    }
+    ::-webkit-scrollbar-track {
+        border-radius: 0px 5px 5px 0px;
+    }
 }
 .chat-users{
     border: 1px solid $chatBorder;
-    border-radius: 0px 5px 5px 0px;
-    height:500px; 
+    border-radius: 5px 0px 0px 5px;
+    height:375px; 
 }
 
 .chatMessage{
