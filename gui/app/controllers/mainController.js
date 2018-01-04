@@ -243,10 +243,16 @@
                 controller: 'groupsController'
             })
 
-        // route for the moderation page
+        // route for the commands page
             .when('/commands', {
                 templateUrl: './templates/chat/_commands.html',
                 controller: 'commandsController'
+            })
+
+        // route for the chat messages page
+            .when('/chat-messages', {
+                templateUrl: './templates/chat/_chat-messages.html',
+                controller: 'chatMessagesController'
             })
 
         // route for the moderation page

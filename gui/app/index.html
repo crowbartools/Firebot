@@ -42,12 +42,14 @@
     <script type="text/javascript" src="./controllers/editBoardSettingsModalController.js"></script>
     <script type="text/javascript" src="./controllers/editCommandSettingsModalController.js"></script>
     <script type="text/javascript" src="./controllers/eventsController.js"></script>
+    <script type="text/javascript" src="./controllers/chatMessagesController.js"></script>
     <script type="text/javascript" src="./services/boardService.js"></script>
     <script type="text/javascript" src="./services/eventsService.js"></script>
     <script type="text/javascript" src="./services/commandsService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/groupsService.js"></script>
     <script type="text/javascript" src="./services/eventLogService.js"></script>
+    <script type="text/javascript" src="./services/chatMessagesService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/utilityService.js"></script>
     <script type="text/javascript" src="./services/listenerService.js"></script>
@@ -108,6 +110,11 @@
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Commands</div>
+        </a>
+        <a class="fb-nav-link" href="#!chat-messages" ng-class="{'selected': tabIsSelected('Chat')}" ng-click="setTab('Chat')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal fa-commenting"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Chat Messages</div>
         </a>
         <div class="fb-nav-link-category pad-top">  
           <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>        

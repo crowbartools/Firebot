@@ -56,6 +56,13 @@ $change-board-dropdown-color: $light-text-color;
 $downarrow-color: $light-text-color;
 $navbar-collapse-btn: orange;
 
+// Chat Window
+$usercolor: #37aad5;
+$procolor: #b143d1;
+$modcolor: #36e53a;
+$staffcolor: #dcb235;
+$ownercolor: black;
+$chatTextColor: black;
 
 // Import Core Styles
 @import './core/$importer';

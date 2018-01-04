@@ -1,7 +1,89 @@
-
 .command-permission-label{
     border-right:1px solid #ccc!important;
 }
 .command-permissions{
     padding:1em;
+}
+
+// Chat Screen
+
+.chatMessage{
+    padding-bottom:.1em;
+    margin-bottom:.1em;
+    .chatLeft{
+        display:inline-block;
+        vertical-align: top;
+        width:5%;
+    }
+    .chatRight{
+        display:inline-block;
+        vertical-align: top;
+        padding:.5em;
+        width:90%;
+    }
+    .User{
+        color: $usercolor;
+        .chatUserAvatar img {
+            border: 1px solid $usercolor;
+        }
+        a{
+            color:$usercolor;
+        }
+    }
+    .Pro{
+        color: $procolor;
+        .chatUserAvatar img {
+            border: 1px solid $procolor;
+        }
+        a{
+            color: $procolor;
+        }
+    }
+    .Mod{
+        color: $modcolor;
+        .chatUserAvatar img {
+            border: 1px solid $modcolor;
+        }
+        a{
+            color: $modcolor;
+        }
+    }
+    .Staff{
+        color: $staffcolor;
+        .chatUserAvatar img {
+            border: 1px solid $staffcolor;
+        }
+        a{
+            color: $staffcolor;
+        }
+    }
+    .Owner{
+        color: $ownercolor;
+        .chatUserAvatar img {
+            border: 1px solid $ownercolor;
+        }
+        a{
+            color: $ownercolor;
+        }
+    }
+    .chatUserAvatar{
+        display:inline-block;
+        padding:5px;
+        width:100%;
+        img{
+            border-radius: 50%;
+            width:100%;
+        }
+    }
+    .chatUsername{
+        display:inline-block;
+        font-weight:bold;
+    }
+    .chatContent{
+        color: $chatTextColor;
+        .chatEmoticon{
+            position:relative;
+            top:7px;
+        }
+    }
 }

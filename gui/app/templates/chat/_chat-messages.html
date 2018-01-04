@@ -1,0 +1,21 @@
+<!-- Commands Board -->
+<div class="content-block">
+    <div class="content-block-header">
+      <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Chat</span>
+      <span class="clickable board-settings-icon" ng-click="showChatMessagesSettingsModal()">
+          <i class="fas fa-cog"></i>
+      </span>
+    </div>
+    <div class="content-block-body">
+      <div class="page-content" style="min-height: 600px;">
+          <div class="chat-messages-wrapper">
+              <div class="chat-window">
+                  <div class="chatMessage" ng-bind-html="$sce.trustAsHtml(message.messageHTML)" ng-repeat="message in chatMessagesService.chatQueue"></div>
+              </div>
+              <div class="chat-messages-input">
+                  <!-- There is where the chat input field would go.-->
+              </div>
+          </div><!-- End Chat Command Wrapper-->
+      </div><!-- End Page Content-->
+    </div><!-- End content body block-->
+</div><!-- End content block-->

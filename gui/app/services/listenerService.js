@@ -16,6 +16,7 @@
                 connectionChangeRequest: {},
                 chatConnectionStatus: {},
                 chatConnectionChangeRequest: {},
+                chatMessage: {},
                 eventLog: {},
                 error: {},
                 updateError: {},
@@ -40,6 +41,7 @@
                 CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
                 CHAT_CONNECTION_STATUS: "chatConnectionStatus",
                 CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
+                CHAT_MESSAGE: "chatMessage",
                 EVENT_LOG: "eventLog",
                 ERROR: "error",
                 UPDATE_ERROR: "updateError",
@@ -224,6 +226,14 @@
             ipcRenderer.on('getChatRefreshToken', function () {
                 _.forEach(registeredListeners.chatConnectionChangeRequest, (listener) => {
                     runListener(listener, null);
+                });
+            });
+
+            // Chat Message
+            // Recieves an event from main process when a chat message is processed.
+            ipcRenderer.on('chatMessage', function (event, data) {
+                _.forEach(registeredListeners.chatMessage, (listener) => {
+                    runListener(listener, data);
                 });
             });
 
