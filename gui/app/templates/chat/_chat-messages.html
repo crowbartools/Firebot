@@ -9,11 +9,20 @@
     <div class="content-block-body">
       <div class="page-content" style="min-height: 600px;">
           <div class="chat-messages-wrapper">
-              <div class="chat-window">
-                  <div class="chatMessage" ng-bind-html="$sce.trustAsHtml(message.messageHTML)" ng-repeat="message in chatMessagesService.chatQueue"></div>
+              <div class="row">
+                    <div class="chat-users col-sm-3">
+                        <!-- This is where chat user list will go -->
+                        Chat users go here.
+                    </div>
+                    <div class="chat-window col-sm-9">
+                        <div class="chatMessage" ng-bind-html="$sce.trustAsHtml(message.messageHTML)" ng-repeat="message in chatMessagesService.chatQueue"></div>
+                    </div>
               </div>
-              <div class="chat-messages-input">
-                  <!-- There is where the chat input field would go.-->
+              <div class="row">
+                    <div class="chat-messages-input col-sm-12">
+                        <!-- There is where the chat input field would go.-->
+                        <textarea class="form-control send-message" rows="3" placeholder="Write a message..."></textarea>
+                    </div>
               </div>
           </div><!-- End Chat Command Wrapper-->
       </div><!-- End Page Content-->
