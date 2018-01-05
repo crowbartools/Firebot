@@ -19,16 +19,19 @@
                 // Convert user friendly name to event id.
                 eventCategory = EventType.getEvent(eventCategory).id;
 
-                // Start building a list and checking in twice.
+                // Start building a list and checking it twice.
                 let eventsList = [],
                     event = [];
                 Object.keys(events).forEach(k => {
                     event = events[k];
                     let effectCount = 0;
 
-                    Object.keys(event.effects).forEach(() => {
-                        effectCount++;
-                    });
+                    if (event.effects != null) {
+                        Object.keys(event.effects).forEach(() => {
+                            effectCount++;
+                        });
+                    }
+
                     event.effectCount = effectCount;
 
                     if (event.eventType === eventCategory) {
