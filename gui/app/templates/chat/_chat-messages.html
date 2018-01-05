@@ -17,7 +17,7 @@
                         </div>
                     </div>
                     <div class="chat-window col-sm-9">
-                        <div class="chatMessage" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
+                        <div class="chatMessage" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
                             <div class="chatLeft">
                                 <div class="chatUserAvatar">
                                     <img ng-src="{{message.user_avatar}}">
@@ -28,6 +28,9 @@
                                     <a ng-click="openLinkExternally('https://mixer.com/{{message.user_name}}')" href>{{message.user_name}}</a>
                                 </div>
                                 <div class="chatContent" ng-bind-html="getMessageContent(message)"></div>
+                                <div class="chatEventInfo">
+                                    {{message.eventInfo}}
+                                </div>
                             </div>
                         </div>
                     </div>

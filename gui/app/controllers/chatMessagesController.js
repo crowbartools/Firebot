@@ -28,6 +28,14 @@
                 return false;
             };
 
+            // Takes a compelete message packet and checks to see if it's deleted.
+            $scope.isDeleted = function(data) {
+                if (data.deleted != null) {
+                    return true;
+                }
+                return false;
+            };
+
             // Returns first role in set of roles which should be their primary.
             $scope.getRole = function(data) {
                 return data.user_roles[0];

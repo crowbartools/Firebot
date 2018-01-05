@@ -114,6 +114,13 @@
             top:7px;
         }
     }
+    .chatEventInfo{
+        font-size: .85em;
+    }
+    &.isDeleted .chatContent{
+        text-decoration: line-through;
+        color: $chatDeletedColor;
+    }
     &.isAction{
         .chatContent{
             font-style: italic;

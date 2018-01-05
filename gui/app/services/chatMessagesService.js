@@ -21,6 +21,16 @@
                 service.chatQueue = [];
             };
 
+            // Delete Chat Message
+            service.deleteChatMessage = function(data) {
+                let arr = service.chatQueue,
+                    message = arr.find(message => message.id === data.id);
+                console.log(message);
+                message.deleted = true;
+                message.eventInfo = "Deleted by " + data.moderator.user_name + '.';
+                console.log(arr);
+            };
+
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
                 let data = {
@@ -48,6 +58,7 @@
                 case "DeleteMessage":
                     console.log('Chat message deleted');
                     console.log(data);
+                    service.deleteChatMessage(data);
                     break;
                 case "PurgeMessage":
                     console.log('Chat message purged');
