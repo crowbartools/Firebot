@@ -14,7 +14,7 @@
 
             // Takes a complete message packet and checks to see if it's a whisper.
             $scope.isWhisper = function(data) {
-                if (data.message.message.meta.whisper === true) {
+                if (data.message.meta.whisper === true) {
                     return true;
                 }
                 return false;
@@ -22,7 +22,7 @@
 
             // Takes a complete message packet and checks to see if it's a /me.
             $scope.isAction = function(data) {
-                if (data.message.message.meta.me === true) {
+                if (data.message.meta.me === true) {
                     return true;
                 }
                 return false;
