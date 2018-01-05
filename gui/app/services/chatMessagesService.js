@@ -11,6 +11,11 @@
             // Chat Message Queue
             service.chatQueue = [];
 
+            // Return the chat queue.
+            service.getChatQueue = function() {
+                return service.chatQueue;
+            }
+
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.
             listenerService.registerListener(
