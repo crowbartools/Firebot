@@ -12,7 +12,9 @@
               <div class="row">
                     <div class="chat-users col-sm-3">
                         <!-- This is where chat user list will go -->
-                        Chat users go here.
+                        <div class="chatUser" role="">
+                            Chat User Here
+                        </div>
                     </div>
                     <div class="chat-window col-sm-9">
                         <div class="chatMessage" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">

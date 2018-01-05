@@ -17,6 +17,7 @@
                 chatConnectionStatus: {},
                 chatConnectionChangeRequest: {},
                 chatMessage: {},
+                chatUpdate: {},
                 eventLog: {},
                 error: {},
                 updateError: {},
@@ -42,6 +43,7 @@
                 CHAT_CONNECTION_STATUS: "chatConnectionStatus",
                 CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
                 CHAT_MESSAGE: "chatMessage",
+                CHAT_UPDATE: "chatUpdate",
                 EVENT_LOG: "eventLog",
                 ERROR: "error",
                 UPDATE_ERROR: "updateError",
@@ -233,6 +235,14 @@
             // Recieves an event from main process when a chat message is processed.
             ipcRenderer.on('chatMessage', function (event, data) {
                 _.forEach(registeredListeners.chatMessage, (listener) => {
+                    runListener(listener, data);
+                });
+            });
+
+            // Chat Update
+            // Recieves an event from main process when a chat event happens.
+            ipcRenderer.on('chatUpdate', function (event, data) {
+                _.forEach(registeredListeners.chatUpdate, (listener) => {
                     runListener(listener, data);
                 });
             });

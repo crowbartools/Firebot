@@ -85,6 +85,15 @@
             color: $ownercolor;
         }
     }
+    &[role="System"]{
+        color: $alertcolor;
+        .chatUserAvatar img {
+            border: 1px solid $alertcolor;
+        }
+        a{
+            color: $alertcolor;
+        }
+    }
     .chatUserAvatar{
         display:inline-block;
         padding:5px;
