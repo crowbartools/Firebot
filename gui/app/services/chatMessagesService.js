@@ -31,6 +31,21 @@
                 console.log(arr);
             };
 
+            // Purge Chat Message
+            service.purgeChatMessages = function(data) {
+                let chatQueue = service.chatQueue;
+
+                Object.keys(chatQueue).forEach((key) => {
+                    let message = chatQueue[key];
+
+                    // If user id matches, then mark the message as deleted.
+                    if (message.user_id === data.user_id) {
+                        message.deleted = true;
+                        message.eventInfo = "Purged by " + data.moderator.user_name + '.';
+                    }
+                });
+            };
+
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
                 let data = {
@@ -40,9 +55,46 @@
                         "System"
                     ],
                     user_avatar: "../images/logo.jpg", // eslint-disable-line
+                    message: {
+                        meta: {
+                            me: true
+                        }
+                    },
                     messageHTML: message
                 };
                 service.chatQueue.push(data);
+            };
+
+            // Poll Update
+            // This is fired when a poll starts or is updated.
+            // Does this fire on every vote? If so it'll need fixed.
+            service.pollUpdate = function(data) {
+                let answers = data.responses;
+                answers = answers.join(", ");
+                service.chatAlertMessage(data.author.user_name + ' is running a poll. Question: ' + data.q + '. Answers: ' + answers + '.');
+            };
+
+            // Poll End
+            // This will find the winner(s) and output an alert to chat.
+            service.pollEnd = function(data) {
+                let answers = data.responses,
+                    winners = [],
+                    winnerVotes = 0;
+                Object.keys(answers).forEach((key) => {
+                    let answerVotes = answers[key];
+                    if (answerVotes === winnerVotes) {
+                        // We have a tie, push to the winner array.
+                        winners.push(key);
+                        winnerVotes = answerVotes;
+                    } else if (answerVotes > winnerVotes) {
+                        // This one has more votes. Clear winner array so far and push this one in there.
+                        winners = [];
+                        winners.push(key);
+                        winnerVotes = answerVotes;
+                    }
+                });
+                winners = winners.join(", ");
+                service.chatAlertMessage(data.author.user_name + '\'s poll has ended. Question: ' + data.q + '. Winner(s): ' + winners + '.');
             };
 
             // Chat Update Handler
@@ -51,27 +103,31 @@
                 switch (data.fbEvent) {
                 case "ClearMessage":
                     console.log('Chat cleared');
-                    console.log(data);
                     service.clearChatQueue();
                     service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
                     break;
                 case "DeleteMessage":
                     console.log('Chat message deleted');
-                    console.log(data);
                     service.deleteChatMessage(data);
                     break;
                 case "PurgeMessage":
                     console.log('Chat message purged');
-                    console.log(data);
+                    service.purgeChatMessages(data);
                     break;
                 case "UserTimeout":
                     console.log('Chat user timed out');
                     console.log(data);
+                    service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
                     break;
                 case "PollStart":
-                case "PollEnd":
-                    console.log('Chat poll update');
+                    console.log('Chat poll start');
                     console.log(data);
+                    service.pollUpdate(data);
+                    break;
+                case "PollEnd":
+                    console.log('Chat poll end');
+                    console.log(data);
+                    service.pollEnd(data);
                     break;
                 case "UserJoin":
                     console.log('Chat User Joined');
