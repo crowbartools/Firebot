@@ -21,11 +21,6 @@
         border-radius: 0px 5px 5px 0px;
     }
 }
-.chat-users{
-    border: 1px solid $chatBorder;
-    border-radius: 5px 0px 0px 5px;
-    height:375px; 
-}
 
 .chatMessage{
     padding-bottom:.1em;
@@ -58,7 +53,7 @@
             color: $procolor;
         }
     }
-    &[role="Mod"]{
+    &[role="Mod"], &[role="ChannelEditor"]{
         color: $modcolor;
         .chatUserAvatar img {
             border: 1px solid $modcolor;
@@ -129,6 +124,40 @@
     &.isWhisper{
         .chatContent{
             color: $chatWhisperColor;
+        }
+    }
+}
+
+// Userlist
+.chat-users{
+    border: 1px solid $chatBorder;
+    border-radius: 5px 0px 0px 5px;
+    height:375px; 
+    overflow:hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    .chatUser{
+        &[role="Banned"]{
+            color: $bannedcolor;
+        }
+        &[role="User"]{
+            color: $usercolor;
+        }
+        &[role="Pro"]{
+            color: $procolor;
+        }
+        &[role="Mod"], &[role="ChannelEditor"]{
+            color: $modcolor;
+        }
+        &[role="Staff"]{
+            color: $staffcolor;
+        }
+        &[role="Owner"]{
+            color: $ownercolor;
+        }
+        &[role="System"]{
+            color: $alertcolor;
         }
     }
 }

@@ -90,6 +90,22 @@
                         service.loadLogin();
                         $rootScope.showSpinner = false;
                     });
+
+
+                    // Request channel info
+                    // We do this to get the sub icon to use in the chat window.
+                    request({
+                        url: 'https://mixer.com/api/v1/channels/' + data.username + '?fields=badge,partnered'
+                    }, function (err, res) {
+                        let data = JSON.parse(res.body);
+
+                        // Push all to db.
+                        if (data.partnered === true) {
+                            dbAuth.push('./' + type + '/subBadge', data.badge.url);
+                        } else {
+                            dbAuth.push('./' + type + '/subBadge', false);
+                        }
+                    });
                 });
             }
 

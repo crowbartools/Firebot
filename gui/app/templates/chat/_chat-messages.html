@@ -12,8 +12,8 @@
               <div class="row">
                     <div class="chat-users col-sm-3">
                         <!-- This is where chat user list will go -->
-                        <div class="chatUser" role="">
-                            Chat User Here
+                        <div class="chatUser" ng-attr-role="{{getRole(user)}}" ng-repeat="user in getChatUsers()">
+                            {{user.userName}}
                         </div>
                     </div>
                     <div class="chat-window col-sm-9">
@@ -25,7 +25,7 @@
                             </div>
                             <div class="chatRight">
                                 <div class="chatUsername">
-                                    <a ng-click="openLinkExternally('https://mixer.com/{{message.user_name}}')" href>{{message.user_name}}</a>
+                                    {{message.user_name}}
                                 </div>
                                 <div class="chatContent" ng-bind-html="getMessageContent(message)"></div>
                                 <div class="chatEventInfo">

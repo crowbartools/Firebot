@@ -11,6 +11,9 @@
             // Chat Message Queue
             service.chatQueue = [];
 
+            // Chat User List
+            service.chatUsers = [];
+
             // Return the chat queue.
             service.getChatQueue = function() {
                 return service.chatQueue;
@@ -21,14 +24,33 @@
                 service.chatQueue = [];
             };
 
+            // Return User List
+            service.getChatUsers = function () {
+                // Sort list and reverse it so we are in alphabetical order
+                let userList = service.chatUsers;
+                userList.sort(function(a, b) {
+                    return a.userName.localeCompare(b.userName);
+                });
+                return userList;
+            };
+
+            // Clear User List
+            service.clearUserList = function () {
+                service.chatUsers = [];
+            };
+
+            // Full Chat User Refresh
+            // This replaces chat users with a fresh list pulled from the backend in the chat processor file.
+            service.chatUserRefresh = function (data) {
+                service.chatUsers = data.chatUsers;
+            };
+
             // Delete Chat Message
             service.deleteChatMessage = function(data) {
                 let arr = service.chatQueue,
                     message = arr.find(message => message.id === data.id);
-                console.log(message);
                 message.deleted = true;
                 message.eventInfo = "Deleted by " + data.moderator.user_name + '.';
-                console.log(arr);
             };
 
             // Purge Chat Message
@@ -148,6 +170,10 @@
                     service.clearChatQueue();
                     service.chatAlertMessage('Chat has been disconnected.');
                     break;
+                case "UsersRefresh":
+                    console.log('Chat userlist refreshed.');
+                    service.chatUserRefresh(data);
+                    break;
                 default:
                     // Nothing
                     console.log('Unknown chat event sent');
@@ -169,6 +195,11 @@
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHAT_MESSAGE },
                 (data) => {
+
+                    if (data.user_avatar === null || data.user_avatar === undefined) {
+                        data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"; // eslint-disable-line
+                    }
+
                     // Push new message to queue.
                     service.chatQueue.push(data);
 
