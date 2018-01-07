@@ -46,27 +46,27 @@
             $scope.getRole = function(data) {
                 // Because mixer chat user packets and api user packets are different, we check for both formats of user_role.
                 let roles = data.user_roles,
-                    apiRole = data.userRoles,
                     newRoles = [];
-                if (roles != null) {
-                    newRoles = roles.filter(role => role !== "Subscriber");
-                } else {
-                    newRoles = apiRole.filter(role => role !== "Subscriber");
-                }
 
+                newRoles = roles.filter(role => role !== "Subscriber");
                 return newRoles[0];
             };
 
-
+            // Returns true if user is a sub.
             $scope.isSubscriber = function(data) {
                 let roles = data.user_roles,
                     newRoles = roles.find(role => role === "Subscriber");
 
-                if (newRoles.length > 0) {
+                if (newRoles != null) {
                     return true;
                 }
 
                 return false;
+            };
+
+            // Returns sub icon url if there is one, else returns false.
+            $scope.getSubIcon = function() {
+                return chatMessagesService.getSubIcon();
             };
 
             // Returns the message id of the message.

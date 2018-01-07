@@ -26,6 +26,9 @@
                             <div class="chatRight">
                                 <div class="chatUsername">
                                     {{message.user_name}}
+                                    <span class="chatSubIcon" ng-if="isSubscriber(message)">
+                                        <img ng-src="{{getSubIcon(message)}}">
+                                    </span>
                                 </div>
                                 <div class="chatContent" ng-bind-html="getMessageContent(message)"></div>
                                 <div class="chatEventInfo">

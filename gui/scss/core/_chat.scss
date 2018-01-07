@@ -28,7 +28,8 @@
     .chatLeft{
         display:inline-block;
         vertical-align: top;
-        width:45px;
+        width:9%;
+        min-width:45px;
     }
     .chatRight{
         display:inline-block;
@@ -101,6 +102,7 @@
     .chatUsername{
         display:inline-block;
         font-weight:bold;
+        font-size:1.1em;
     }
     .chatContent{
         color: $chatTextColor;

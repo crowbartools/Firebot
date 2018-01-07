@@ -2,6 +2,7 @@
 (function() {
 
     //This manages the chat window.
+    const dataAccess = require('../../lib/common/data-access.js');
 
     angular
         .module('firebotApp')
@@ -13,6 +14,9 @@
 
             // Chat User List
             service.chatUsers = [];
+
+            // Sub Icon Cache
+            service.subIconCache = false;
 
             // Return the chat queue.
             service.getChatQueue = function() {
@@ -43,6 +47,21 @@
             // This replaces chat users with a fresh list pulled from the backend in the chat processor file.
             service.chatUserRefresh = function (data) {
                 service.chatUsers = data.chatUsers;
+            };
+
+            // User joined the channel.
+            service.chatUserJoined = function (data) {
+                service.chatUsers.push(data);
+            };
+
+            // User left the channel.
+            service.chatUserLeft = function (data) {
+                let username = data.username,
+                    arr = service.chatUsers,
+                    userList = arr.filter(x => x.username !== username);
+
+                console.log(userList);
+                service.chatUsers = userList;
             };
 
             // Delete Chat Message
@@ -154,10 +173,16 @@
                 case "UserJoin":
                     console.log('Chat User Joined');
                     console.log(data);
+                    // Standardize user roles naming.
+                    data.userRoles = data.roles;
+                    service.chatUserJoined(data);
                     break;
                 case "UserLeave":
                     console.log('Chat User Left');
                     console.log(data);
+                    // Standardize user roles naming.
+                    data.userRoles = data.roles;
+                    service.chatUserLeft(data);
                     break;
                 case "UserUpdate":
                     console.log('User updated');
@@ -187,6 +212,40 @@
                 let arr = service.chatQueue;
                 if (arr.length > 200) {
                     arr.splice(0, 1);
+                }
+            };
+
+            service.getSubIcon = function() {
+                if (service.subIconCache !== false) {
+                    // Check to see if we've cached the icon yet. If we have, use it.
+                    return service.subIconCache;
+                }
+
+                // We haven't cached the icon yet, lets do that.
+                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"),
+                    streamer = dbAuth.getData('/streamer'),
+                    subIcon = [];
+
+                try {
+                    // If this runs it means we have saved it to the auth file.
+                    subIcon = dbAuth.getData('/streamer/subBadge');
+                    service.subIconCache = subIcon;
+                    return service.subIconCache;
+                } catch (err) {
+                    // If this runs it means we've never saved the sub badge.
+                    request({
+                        url: 'https://mixer.com/api/v1/channels/' + streamer.username + '?fields=badge,partnered'
+                    }, function (err, res) {
+                        let data = JSON.parse(res.body);
+
+                        // Push all to db.
+                        if (data.partnered === true) {
+                            dbAuth.push('./streamer/subBadge', data.badge.url);
+                            service.subIconCache = data.badge.url;
+                        }
+
+                        return service.subIconCache;
+                    });
                 }
             };
 
