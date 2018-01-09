@@ -30,11 +30,13 @@
 
             // Return User List
             service.getChatUsers = function () {
-                // Sort list and reverse it so we are in alphabetical order
+                // Sort list so we are in alphabetical order
                 let userList = service.chatUsers;
-                userList.sort(function(a, b) {
-                    return a.userName.localeCompare(b.userName);
-                });
+                if (userList.length > 0) {
+                    userList.sort(function(a, b) {
+                        return a.username.localeCompare(b.username);
+                    });
+                }
                 return userList;
             };
 
@@ -172,16 +174,19 @@
                     break;
                 case "UserJoin":
                     console.log('Chat User Joined');
-                    console.log(data);
+
                     // Standardize user roles naming.
-                    data.userRoles = data.roles;
+                    data.user_roles = data.roles; // eslint-disable-line
+
                     service.chatUserJoined(data);
                     break;
                 case "UserLeave":
                     console.log('Chat User Left');
                     console.log(data);
+
                     // Standardize user roles naming.
-                    data.userRoles = data.roles;
+                    data.user_roles = data.roles; // eslint-disable-line
+                    
                     service.chatUserLeft(data);
                     break;
                 case "UserUpdate":
