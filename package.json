@@ -48,6 +48,7 @@
         "angular-sanitize": "^1.6.6",
         "angular-ui-bootstrap": "^2.5.0",
         "angular-ui-sortable": "^0.18.0",
+        "angularjs-scroll-glue": "^2.2.0",
         "angularjs-slider": "^6.2.2",
         "archiver": "^2.0.3",
         "beam-client-node": "^1.0.2",

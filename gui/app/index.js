@@ -22,6 +22,7 @@ require('angular-ui-bootstrap');
 require('angularjs-slider');
 require('ui-select');
 require('angular-ui-sortable');
+require('angularjs-scroll-glue');
 
 function boot() {
     angular.bootstrap(document, ['firebotApp'], {
