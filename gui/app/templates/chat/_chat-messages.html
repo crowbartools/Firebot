@@ -8,7 +8,8 @@
     </div>
     <div class="content-block-body">
       <div class="page-content" style="min-height: 600px;">
-          <div class="chat-messages-wrapper">
+
+          <div class="chat-messages-wrapper" ng-if="getChatFeed() === true">
               <div class="row">
                     <div class="chat-users col-sm-3">
                         <!-- This is where chat user list will go -->
@@ -45,6 +46,11 @@
                     </div>
               </div>
           </div><!-- End Chat Command Wrapper-->
+
+          <div class="chat-messages-off" ng-if="getChatFeed() === false">
+              The chat feed is currently disabled in the settings menu.
+          </div>
+
       </div><!-- End Page Content-->
     </div><!-- End content body block-->
 </div><!-- End content block-->

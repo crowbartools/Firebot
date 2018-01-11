@@ -6,7 +6,7 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function (listenerService) {
+        .factory('chatMessagesService', function (listenerService, settingsService) {
             let service = {};
 
             // Chat Message Queue
@@ -17,6 +17,11 @@
 
             // Sub Icon Cache
             service.subIconCache = false;
+
+            // Tells us if we should process in app chat or not.
+            service.getChatFeed = function() {
+                return settingsService.getRealChatFeed();
+            };
 
             // Return the chat queue.
             service.getChatQueue = function() {
@@ -142,73 +147,77 @@
 
             // Chat Update Handler
             // This handles all of the chat stuff that isn't a message.
+            // This will only work when chat feed is turned on in the settings area.
             service.chatUpdateHandler = function(data) {
-                switch (data.fbEvent) {
-                case "ClearMessage":
-                    console.log('Chat cleared');
-                    service.clearChatQueue();
-                    service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
-                    break;
-                case "DeleteMessage":
-                    console.log('Chat message deleted');
-                    service.deleteChatMessage(data);
-                    break;
-                case "PurgeMessage":
-                    console.log('Chat message purged');
-                    service.purgeChatMessages(data);
-                    break;
-                case "UserTimeout":
-                    console.log('Chat user timed out');
-                    console.log(data);
-                    service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
-                    break;
-                case "PollStart":
-                    console.log('Chat poll start');
-                    console.log(data);
-                    service.pollUpdate(data);
-                    break;
-                case "PollEnd":
-                    console.log('Chat poll end');
-                    console.log(data);
-                    service.pollEnd(data);
-                    break;
-                case "UserJoin":
-                    console.log('Chat User Joined');
+                if (settingsService.getRealChatFeed() === true) {
+                    switch (data.fbEvent) {
+                    case "ClearMessage":
+                        console.log('Chat cleared');
+                        service.clearChatQueue();
+                        service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
+                        break;
+                    case "DeleteMessage":
+                        console.log('Chat message deleted');
+                        service.deleteChatMessage(data);
+                        break;
+                    case "PurgeMessage":
+                        console.log('Chat message purged');
+                        service.purgeChatMessages(data);
+                        break;
+                    case "UserTimeout":
+                        console.log('Chat user timed out');
+                        console.log(data);
+                        service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
+                        break;
+                    case "PollStart":
+                        console.log('Chat poll start');
+                        console.log(data);
+                        service.pollUpdate(data);
+                        break;
+                    case "PollEnd":
+                        console.log('Chat poll end');
+                        console.log(data);
+                        service.pollEnd(data);
+                        break;
+                    case "UserJoin":
+                        console.log('Chat User Joined');
 
-                    // Standardize user roles naming.
-                    data.user_roles = data.roles; // eslint-disable-line
+                        // Standardize user roles naming.
+                            data.user_roles = data.roles; // eslint-disable-line
 
-                    service.chatUserJoined(data);
-                    break;
-                case "UserLeave":
-                    console.log('Chat User Left');
-                    console.log(data);
+                        service.chatUserJoined(data);
+                        break;
+                    case "UserLeave":
+                        console.log('Chat User Left');
+                        console.log(data);
 
-                    // Standardize user roles naming.
-                    data.user_roles = data.roles; // eslint-disable-line
-                    
-                    service.chatUserLeft(data);
-                    break;
-                case "UserUpdate":
-                    console.log('User updated');
-                    console.log(data);
-                    break;
-                case "Disconnected":
-                    // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
-                    console.log('Chat Disconnected!');
-                    console.log(data);
-                    service.clearChatQueue();
-                    service.chatAlertMessage('Chat has been disconnected.');
-                    break;
-                case "UsersRefresh":
-                    console.log('Chat userlist refreshed.');
-                    service.chatUserRefresh(data);
-                    break;
-                default:
-                    // Nothing
-                    console.log('Unknown chat event sent');
-                    console.log(data);
+                        // Standardize user roles naming.
+                            data.user_roles = data.roles; // eslint-disable-line
+
+                        service.chatUserLeft(data);
+                        break;
+                    case "UserUpdate":
+                        console.log('User updated');
+                        console.log(data);
+                        break;
+                    case "Disconnected":
+                        // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
+                        console.log('Chat Disconnected!');
+                        console.log(data);
+                        service.clearChatQueue();
+                        service.chatAlertMessage('Chat has been disconnected.');
+                        break;
+                    case "UsersRefresh":
+                        console.log('Chat userlist refreshed.');
+                        service.chatUserRefresh(data);
+                        break;
+                    default:
+                        // Nothing
+                        console.log('Unknown chat event sent');
+                        console.log(data);
+                    }
                 }
+                return;
             };
 
             // Prune Messages

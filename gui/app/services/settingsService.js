@@ -178,6 +178,24 @@
                 pushDataToFile('/settings/emulation', emulator);
             };
 
+            // Used for settings menu.
+            service.getChatFeed = function() {
+                let chatFeed = getDataFromFile('/settings/chatFeed');
+                if (chatFeed === true) {
+                    return "On";
+                }
+                return "Off";
+            };
+
+            service.setChatFeed = function(chatFeed) {
+                pushDataToFile('/settings/chatFeed', chatFeed === true);
+            };
+
+            // Used for the app itself.
+            service.getRealChatFeed = function() {
+                return getDataFromFile('/settings/chatFeed');
+            };
+
             service.getOverlayCompatibility = function() {
                 let overlay = getDataFromFile('/settings/overlayImages');
                 return overlay != null ? overlay : "Other";

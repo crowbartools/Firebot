@@ -120,8 +120,28 @@
           </div>
         </uib-tab>
 
+        <!-- Chat Settings -->
+        <uib-tab index="2" heading="Chat">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Chat Feed</div>
+              <div class="setting-description">Turn on/off the in app chat feed. Turning this off could improve performance.</div>
+              <div class="dropdown options-chatfeed-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-chat-feed" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getChatFeed()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-emulation">
+                  <li><a href ng-click="settings.setChatFeed(true)">On</a></li>
+                  <li><a href ng-click="settings.setChatFeed(false)">Off</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </uib-tab>
+
         <!-- Overlay Settings -->
-        <uib-tab index="2" heading="Overlay">
+        <uib-tab index="3" heading="Overlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Overlay Filepath</div>
@@ -137,7 +157,7 @@
         </uib-tab>
         
         <!-- Backup Settings -->
-        <uib-tab index="3" heading="Backup">
+        <uib-tab index="4" heading="Backup">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">              
                 <div class="setting-heading">Backup Options</div>
@@ -187,7 +207,7 @@
         </uib-tab>
         
         <!-- Advanced Settings -->
-        <uib-tab index="4" heading="Advanced">
+        <uib-tab index="5" heading="Advanced">
           <div class="row" style="margin-top: 15px">
             <div class="alert alert-warning">
                 Most users won't need to change settings in this tab. Only change them if you understand what you are doing.

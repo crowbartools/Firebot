@@ -79,5 +79,10 @@
                 return $sce.trustAsHtml(data.messageHTML);
             };
 
+            // This tells us if the chat feed is on or not.
+            $scope.getChatFeed = function() {
+                return chatMessagesService.getChatFeed();
+            };
+
         });
 }());
