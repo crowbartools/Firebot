@@ -197,13 +197,9 @@
                         service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
                         break;
                     case "PollStart":
-                        console.log('Chat poll start');
-                        console.log(data);
                         service.pollUpdate(data);
                         break;
                     case "PollEnd":
-                        console.log('Chat poll end');
-                        console.log(data);
                         service.pollEnd(data);
                         break;
                     case "UserJoin":
@@ -237,6 +233,10 @@
                     case "UsersRefresh":
                         console.log('Chat userlist refreshed.');
                         service.chatUserRefresh(data);
+                        break;
+                    case "ChatAlert":
+                        console.log('Chat alert from backend.');
+                        service.chatAlertMessage(data.message);
                         break;
                     default:
                         // Nothing
