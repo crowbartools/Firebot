@@ -18,6 +18,10 @@
             // Sub Icon Cache
             service.subIconCache = false;
 
+            // Poll Cache
+            // This stores poll durations.
+            service.pollCache = false;
+
             // Tells us if we should process in app chat or not.
             service.getChatFeed = function() {
                 return settingsService.getRealChatFeed();
@@ -115,11 +119,31 @@
 
             // Poll Update
             // This is fired when a poll starts or is updated.
-            // Does this fire on every vote? If so it'll need fixed.
+            // Mixer fires this every second or so, but we only display chat alerts every 30 seconds.
             service.pollUpdate = function(data) {
-                let answers = data.responses;
-                answers = answers.join(", ");
-                service.chatAlertMessage(data.author.user_name + ' is running a poll. Question: ' + data.q + '. Answers: ' + answers + '.');
+                // If we aren't running a poll, display data right away. Otherwise display update every 30 seconds.
+                if (service.pollCache === false || service.pollCache >= data.duration + 30000) {
+                    let votes = data.responses,
+                        stringHolder = [],
+                        answers = [];
+
+                    // Parse vote data so we can form a string out of it.
+                    Object.keys(votes).forEach((key) => {
+                        stringHolder.push(key + ' (' + votes[key] + ' votes)');
+                    });
+
+                    // If more than one answer, join it together into a string.
+                    if (stringHolder.length > 1) {
+                        answers = stringHolder.join(', ');
+                    } else {
+                        answers = stringHolder[0];
+                    }
+
+                    service.chatAlertMessage(data.author.user_name + ' is running a poll. Question: ' + data.q + '. Answers: ' + answers + '.');
+
+                    // Update Poll Cache
+                    service.pollCache = data.duration;
+                }
             };
 
             // Poll End
@@ -143,6 +167,9 @@
                 });
                 winners = winners.join(", ");
                 service.chatAlertMessage(data.author.user_name + '\'s poll has ended. Question: ' + data.q + '. Winner(s): ' + winners + '.');
+
+                // Clear poll cache.
+                service.pollCache = false;
             };
 
             // Chat Update Handler
