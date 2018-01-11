@@ -41,7 +41,6 @@
 
                 // Sort list and reverse it so that active events always come first.
                 eventsList = _.sortBy(eventsList, 'active');
-                eventsList = eventsList.reverse();
 
                 // Return our new list.
                 return eventsList;
