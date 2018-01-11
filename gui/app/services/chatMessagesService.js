@@ -290,6 +290,17 @@
                 }
             };
 
+            // This submits a chat message to mixer.
+            service.submitChat = function(sender, message) {
+                let chatPacket = {
+                    message: message,
+                    chatter: sender
+                };
+
+                // Refresh the backend cache
+                ipcRenderer.send('uiChatMessage', chatPacket);
+            };
+
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.
             listenerService.registerListener(

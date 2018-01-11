@@ -7,6 +7,9 @@
         .module('firebotApp')
         .controller('chatMessagesController', function($scope, $timeout, $q, $sce, chatMessagesService) {
 
+            $scope.chatMessage = '';
+            $scope.chatSender = "Streamer";
+
             // Gets all chat messages from chat message service.
             $scope.getMessages = function() {
                 return chatMessagesService.chatQueue;
@@ -82,6 +85,13 @@
             // This tells us if the chat feed is on or not.
             $scope.getChatFeed = function() {
                 return chatMessagesService.getChatFeed();
+            };
+
+            // This happens when a chat message is submitted.
+            $scope.submitChat = function() {
+                console.log($scope.chatMessage, $scope.chatSender);
+                chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);
+                $scope.chatMessage = '';
             };
 
         });

@@ -40,9 +40,30 @@
                     </div>
               </div>
               <div class="row">
-                    <div class="chat-messages-input col-sm-12">
+                    <div class="chat-messages-input">
                         <!-- There is where the chat input field would go.-->
-                        <textarea class="form-control send-message" rows="3" maxlength="360" placeholder="Write a message..."></textarea>
+                        <form ng-submit="submitChat()" id="chatbox">
+                            <div class="chatFormLeft">
+                                <textarea 
+                                    class="form-control chat-message" 
+                                    ng-model="$parent.chatMessage"
+                                    required
+                                    rows="3" 
+                                    ng-maxlength="360"
+                                    placeholder="Write a message..." 
+                                    form="chatbox"
+                                    ng-keyup="$event.keyCode == 13 && submitChat()"
+                                >
+                                </textarea>
+                            </div>
+                            <div class="chatFormRight">
+                                <select ng-model="$parent.chatSender">
+                                    <option value="Streamer">Streamer</option>
+                                    <option value="Bot">Bot</option>
+                                </select>
+                                <input type="submit" id="chatSubmit" value="Send">
+                            </div>
+                        </form>
                     </div>
               </div>
           </div><!-- End Chat Command Wrapper-->
