@@ -60,12 +60,14 @@ $bannedcolor: red;
 $procolor: #b143d1;
 $modcolor: #36e53a;
 $staffcolor: #dcb235;
-$ownercolor: black;
+$ownercolor: white;
 $alertcolor: red;
+$alert-bg-color: darkgray;
 $chatWhisperColor: darkblue;
 $chatDeletedColor: gray;
-$chatTextColor: #ffffff;
+$chatTextColor: white;
 $chatBorder: #cecece;
+
 
 // Import Core Styles
 @import './core/$importer';

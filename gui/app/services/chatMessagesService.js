@@ -96,6 +96,8 @@
                         message.eventInfo = "Purged by " + data.moderator.user_name + '.';
                     }
                 });
+
+                service.chatAlertMessage(data.moderator.user_name + ' purged all messages from ' + data.user_id + '.');
             };
 
             // Chat Alert Message
@@ -176,75 +178,72 @@
             // This handles all of the chat stuff that isn't a message.
             // This will only work when chat feed is turned on in the settings area.
             service.chatUpdateHandler = function(data) {
-                if (settingsService.getRealChatFeed() === true) {
-                    switch (data.fbEvent) {
-                    case "ClearMessage":
-                        console.log('Chat cleared');
-                        service.clearChatQueue();
-                        service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
-                        break;
-                    case "DeleteMessage":
-                        console.log('Chat message deleted');
-                        service.deleteChatMessage(data);
-                        break;
-                    case "PurgeMessage":
-                        console.log('Chat message purged');
-                        service.purgeChatMessages(data);
-                        break;
-                    case "UserTimeout":
-                        console.log('Chat user timed out');
-                        console.log(data);
-                        service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
-                        break;
-                    case "PollStart":
-                        service.pollUpdate(data);
-                        break;
-                    case "PollEnd":
-                        service.pollEnd(data);
-                        break;
-                    case "UserJoin":
-                        console.log('Chat User Joined');
+                switch (data.fbEvent) {
+                case "ClearMessages":
+                    console.log('Chat cleared');
+                    service.clearChatQueue();
+                    service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
+                    break;
+                case "DeleteMessage":
+                    console.log('Chat message deleted');
+                    service.deleteChatMessage(data);
+                    break;
+                case "PurgeMessage":
+                    console.log('Chat message purged');
+                    service.purgeChatMessages(data);
+                    break;
+                case "UserTimeout":
+                    console.log('Chat user timed out');
+                    console.log(data);
+                    service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
+                    break;
+                case "PollStart":
+                    service.pollUpdate(data);
+                    break;
+                case "PollEnd":
+                    service.pollEnd(data);
+                    break;
+                case "UserJoin":
+                    console.log('Chat User Joined');
 
-                        // Standardize user roles naming.
+                    // Standardize user roles naming.
                             data.user_roles = data.roles; // eslint-disable-line
 
-                        service.chatUserJoined(data);
-                        break;
-                    case "UserLeave":
-                        console.log('Chat User Left');
-                        console.log(data);
+                    service.chatUserJoined(data);
+                    break;
+                case "UserLeave":
+                    console.log('Chat User Left');
+                    console.log(data);
 
-                        // Standardize user roles naming.
+                    // Standardize user roles naming.
                             data.user_roles = data.roles; // eslint-disable-line
 
-                        service.chatUserLeft(data);
-                        break;
-                    case "UserUpdate":
-                        console.log('User updated');
-                        console.log(data);
-                        break;
-                    case "Disconnected":
-                        // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
-                        console.log('Chat Disconnected!');
-                        console.log(data);
-                        service.clearChatQueue();
-                        service.chatAlertMessage('Chat has been disconnected.');
-                        break;
-                    case "UsersRefresh":
-                        console.log('Chat userlist refreshed.');
-                        service.chatUserRefresh(data);
-                        break;
-                    case "ChatAlert":
-                        console.log('Chat alert from backend.');
-                        service.chatAlertMessage(data.message);
-                        break;
-                    default:
-                        // Nothing
-                        console.log('Unknown chat event sent');
-                        console.log(data);
-                    }
+                    service.chatUserLeft(data);
+                    break;
+                case "UserUpdate":
+                    console.log('User updated');
+                    console.log(data);
+                    break;
+                case "Disconnected":
+                    // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
+                    console.log('Chat Disconnected!');
+                    console.log(data);
+                    service.clearChatQueue();
+                    service.chatAlertMessage('Chat has been disconnected.');
+                    break;
+                case "UsersRefresh":
+                    console.log('Chat userlist refreshed.');
+                    service.chatUserRefresh(data);
+                    break;
+                case "ChatAlert":
+                    console.log('Chat alert from backend.');
+                    service.chatAlertMessage(data.message);
+                    break;
+                default:
+                    // Nothing
+                    console.log('Unknown chat event sent');
+                    console.log(data);
                 }
-                return;
             };
 
             // Prune Messages
@@ -307,15 +306,17 @@
                 { type: listenerService.ListenerType.CHAT_MESSAGE },
                 (data) => {
 
-                    if (data.user_avatar === null || data.user_avatar === undefined) {
-                        data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"; // eslint-disable-line
+                    if (settingsService.getRealChatFeed() === true) {
+                        if (data.user_avatar === null || data.user_avatar === undefined) {
+                            data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"; // eslint-disable-line
+                        }
+
+                        // Push new message to queue.
+                        service.chatQueue.push(data);
+
+                        // Trim messages over 200.
+                        service.chatPrune();
                     }
-
-                    // Push new message to queue.
-                    service.chatQueue.push(data);
-
-                    // Trim messages over 200.
-                    service.chatPrune();
                 });
 
             // Watches for an chat update from main process
@@ -323,7 +324,9 @@
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHAT_UPDATE },
                 (data) => {
-                    service.chatUpdateHandler(data);
+                    if (settingsService.getRealChatFeed() === true) {
+                        service.chatUpdateHandler(data);
+                    }
                 });
 
             return service;

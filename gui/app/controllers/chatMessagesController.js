@@ -89,7 +89,6 @@
 
             // This happens when a chat message is submitted.
             $scope.submitChat = function() {
-                console.log($scope.chatMessage, $scope.chatSender);
                 chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);
                 $scope.chatMessage = '';
             };

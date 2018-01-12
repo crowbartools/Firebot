@@ -18,7 +18,7 @@
                         </div>
                     </div>
                     <div class="chat-window col-sm-9" scroll-glue>
-                        <div class="chatMessage" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
+                        <div class="chatMessage" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()" ng-animate="{enter: 'slideInUp', leave: 'slideOutUp'}">
                             <div class="chatLeft">
                                 <div class="chatUserAvatar">
                                     <img ng-src="{{message.user_avatar}}">
@@ -50,7 +50,7 @@
                                     required
                                     rows="3" 
                                     ng-maxlength="360"
-                                    placeholder="Write a message..." 
+                                    placeholder="Write a message and hit enter to send." 
                                     form="chatbox"
                                     ng-keyup="$event.keyCode == 13 && submitChat()"
                                 >

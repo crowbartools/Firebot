@@ -23,18 +23,44 @@
 }
 
 .chatMessage{
-    padding-bottom:.1em;
-    margin-bottom:.1em;
+    padding-bottom:.5em;
+    margin-bottom:.5em;
+    clear:both;
+    float:left;
+    width:100%;
     .chatLeft{
-        display:inline-block;
         vertical-align: top;
         width:9%;
         min-width:45px;
+        float:left;
+        @media only screen and (max-width: 980px) {
+            display:none;
+        }
     }
     .chatRight{
-        display:inline-block;
         vertical-align: top;
-        padding:.5em;
+        background-color: $light-background-color;
+        border-radius: 0px 5px 5px 5px;
+        padding: 5px 10px 5px 10px;
+        position:relative;
+        top:5px;
+        margin-left:10%;
+        @media only screen and (min-width: 980px) {
+            &::before{
+                content: ' ';
+                border-width: 0 10px 10px 0px;
+                border-color: transparent $light-background-color transparent transparent;
+                position:absolute;
+                top:0px;
+                left:-10px;
+                width:0px;
+                height:0px;
+                border-style: solid;
+            }
+        }
+        @media only screen and (max-width: 980px) {
+            margin-left:0px;
+        }
     }
     &[role="User"]{
         color: $usercolor;
@@ -89,6 +115,12 @@
         a{
             color: $alertcolor;
         }
+        .chatRight{
+            background-color:$alert-bg-color;
+            &::before{
+                border-color:transparent $alert-bg-color transparent transparent;
+            }
+        }
     }
     .chatUserAvatar{
         display:inline-block;
@@ -106,6 +138,8 @@
     }
     .chatContent{
         color: $chatTextColor;
+        line-height:24px;
+        font-size:1.25em;
         .chatEmoticon{
             position:relative;
             top:7px;
@@ -113,6 +147,7 @@
     }
     .chatEventInfo{
         font-size: .85em;
+        color: $alertcolor;
     }
     &.isDeleted .chatContent{
         text-decoration: line-through;
@@ -161,5 +196,22 @@
         &[role="System"]{
             color: $alertcolor;
         }
+    }
+}
+
+// Chat submit box
+.chatFormRight{
+    text-align:right;
+    padding-top:.5em;
+    #chatSubmit{
+        background-color: $navbar-collapse-btn;
+        padding:10px 20px 10px 20px;
+        border-radius:10px;
+        border:none;
+        color:$dark-background-color;
+    }
+    select{
+        padding:10px 20px 10px 20px;
+        border-radius:10px;
     }
 }
