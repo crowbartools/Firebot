@@ -23,8 +23,8 @@
 }
 
 .chatMessage{
-    padding-bottom:.5em;
-    margin-bottom:.5em;
+    padding-bottom:.2em;
+    margin-bottom:.2em;
     clear:both;
     float:left;
     width:100%;
@@ -39,7 +39,7 @@
     }
     .chatRight{
         vertical-align: top;
-        background-color: $medium-background-color;
+        background-color: $dark-background-color;
         border-radius: 0px 5px 5px 5px;
         padding: 5px 10px 5px 10px;
         position:relative;
@@ -49,7 +49,7 @@
             &::before{
                 content: ' ';
                 border-width: 0 10px 10px 0px;
-                border-color: transparent $medium-background-color transparent transparent;
+                border-color: transparent $dark-background-color transparent transparent;
                 position:absolute;
                 top:0px;
                 left:-10px;
@@ -139,7 +139,7 @@
     .chatContent{
         color: $chatTextColor;
         line-height:24px;
-        font-size:1.25em;
+        font-size:1em;
         .chatEmoticon{
             position:relative;
             top:7px;
@@ -168,6 +168,7 @@
 // Userlist
 .chat-users{
     border: 1px solid $chatBorder;
+    background-color: $dark-background-color;
     border-radius: 5px 0px 0px 5px;
     height:375px; 
     overflow:hidden;

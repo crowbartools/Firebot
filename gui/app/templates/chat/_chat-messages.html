@@ -8,13 +8,13 @@
 
           <div class="chat-messages-wrapper" ng-if="getChatFeed() === true">
               <div class="row">
-                    <div class="chat-users col-sm-3">
+                    <div class="chat-users col-sm-2">
                         <!-- This is where chat user list will go -->
                         <div class="chatUser" ng-attr-role="{{getRole(user)}}" ng-repeat="user in getChatUsers()">
                             {{user.username}}
                         </div>
                     </div>
-                    <div class="chat-window col-sm-9" scroll-glue>
+                    <div class="chat-window col-sm-10" scroll-glue>
                         <div class="chatMessage" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()" ng-animate="{enter: 'slideInUp', leave: 'slideOutUp'}">
                             <div class="chatLeft">
                                 <div class="chatUserAvatar">
