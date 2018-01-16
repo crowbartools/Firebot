@@ -8,6 +8,13 @@
         .module('firebotApp',
             ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable', 'luegg.directives']);
 
+    app.run(
+        function initializeApplication(chatMessagesService) { // eslint-disable-line no-unused-vars
+            // This does nothing but require the injected services to be
+            // instantiated on app start
+        }
+    );
+
     app.controller('MainController', function($scope, $rootScope, $timeout, boardService,
         connectionService, groupsService, utilityService, settingsService, updatesService,
         eventLogService, websocketService, notificationService) {

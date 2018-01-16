@@ -1,4 +1,7 @@
 <div class="chat-tab-content">
+    <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
+        <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
+    </div>
     <div class="viewer-list-column">
         <div class="viewer-list-header">
             <span>
@@ -43,7 +46,7 @@
         <div class="text-input-wrapper">
             <div class="text-input">
                 <div class="dropup">
-                    <span class="dropdown-toggle chatter-dropdown" data-toggle="dropdown">
+                    <span class="dropdown-toggle chatter-dropdown" data-toggle="dropdown" uib-tooltip="Chat as">
                         <span style="margin-left: 10px;">{{chatSender}}</span>
                         <div class="fb-arrow down" style="margin-left: 10px;margin-right: 10px;margin-bottom: 3px;"></div>
                     </span>
@@ -53,7 +56,6 @@
                     </ul>
                 </div>
                 
-
                 <input type="text" 
                     placeholder="Message the stream"
                     class="text-input-field"

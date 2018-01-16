@@ -7,10 +7,11 @@
 
     angular
         .module('firebotApp')
-        .controller('chatMessagesController', function($scope, $timeout, $q, $sce, chatMessagesService) {
+        .controller('chatMessagesController', function($scope, $timeout, $q, $sce, chatMessagesService, connectionService) {
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
+            $scope.disabledMessage = "";
 
             // Gets all chat messages from chat message service.
             $scope.getMessages = function() {
@@ -92,6 +93,18 @@
             // This tells us if the chat feed is on or not.
             $scope.getChatFeed = function() {
                 return chatMessagesService.getChatFeed();
+            };
+
+            $scope.chatFeedIsEnabled = function() {
+                // if chat feed is disabled in settings
+                if (!chatMessagesService.getChatFeed()) {
+                    $scope.disabledMessage = "The chat feed is currently disabled. Please go to Settings > Chat > Chat Feed to enable.";
+                    return false;
+                } else if (!connectionService.connectedToChat) {
+                    $scope.disabledMessage = "The chat feed will enable once a connection to Chat has been made.";
+                    return false;
+                }
+                return true;
             };
 
             // This happens when a chat message is submitted.
