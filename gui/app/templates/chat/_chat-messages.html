@@ -31,11 +31,22 @@
         </div>
         <div style="height: 60px;display: flex;flex-direction: column;justify-content: center;">
             <div style="height: 45px; border: 2px solid #aaa4a4; border-radius: 8px; display: flex;">
-                <span style="height: 100%;display: flex;justify-content: center;border-right: 2px solid #aaa4a4;align-items: center;">
-                    <span style="margin-left: 10px;">Streamer</span>
-                    <div class="fb-arrow down" style="margin-left: 10px;margin-right: 10px;margin-bottom: 3px;"></div>
-                </span>
-                <input type="text" placeholder="Message the stream" style="border: none;background: none;width: 100%; padding-left: 10px;">
+                <div class="dropup">
+                    <span style="height: 100%;display: flex;justify-content: center;border-right: 2px solid #aaa4a4;align-items: center;" class="dropdown-toggle" data-toggle="dropdown">
+                        <span style="margin-left: 10px;">{{chatSender}}</span>
+                        <div class="fb-arrow down" style="margin-left: 10px;margin-right: 10px;margin-bottom: 3px;"></div>
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li ng-click="chatSender = 'Streamer'"><a href>Streamer</a></li>
+                        <li ng-click="chatSender = 'Bot'"><a href>Bot</a></li>
+                    </ul>
+                </div>
+                
+
+                <input type="text" placeholder="Message the stream" style="border: none;background: none;width: 100%; padding-left: 10px;"
+                    ng-maxlength="360"
+                    ng-model="chatMessage"
+                    ng-keyup="$event.keyCode == 13 && submitChat()">
             </div>
         </div>
     </div>
