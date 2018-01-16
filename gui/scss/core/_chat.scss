@@ -71,10 +71,10 @@
 
 .text-input {
     height: 45px; 
-    border: 2px solid #dee0e0; 
+    border: 2px solid rgba(170,164,164,0.43); 
     border-radius: 5px; 
     display: flex; 
-    background:white;
+    background:$light-background-color + 20%;
 }
 
 .text-input-field {
@@ -91,14 +91,18 @@
     height: 100%;
     display: flex;
     justify-content: center;
-    border-right: 2px solid #dee0e0;
+    border-right: 2px solid rgba(170,164,164,0.43);
     align-items: center;
+    &:hover {
+        background: rgba(128, 128, 128, 0.267);
+        cursor: pointer;
+    }
 }
 
 // Userlist
 .chat-users{
-    border: 2px solid #dee0e0;
-    background-color: white;
+    border: 2px solid rgba(170,164,164,0.43);
+    background-color: $light-background-color + 20%;
     border-radius: 5px;
     padding: 10px;
     overflow: hidden;
@@ -146,7 +150,7 @@
     padding-top:10px; 
     padding-left:10px; 
     padding-right: 10px;
-    background: white;
+    background: $light-background-color + 20%;
     border-radius: 5px;
     border: 2px solid rgba(170, 164, 164, 0.43);
     overflow: hidden;
