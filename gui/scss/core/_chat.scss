@@ -20,6 +20,42 @@
     font-size:1.11em;
 }
 
+// Userlist
+.chat-users{
+    border: 2px solid #dee0e0;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    overflow: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    .chatUser{
+        &[role="Banned"]{
+            color: $bannedcolor;
+        }
+        &[role="User"]{
+            color: $usercolor;
+        }
+        &[role="Pro"]{
+            color: $procolor;
+        }
+        &[role="Mod"], &[role="ChannelEditor"]{
+            color: $modcolor;
+        }
+        &[role="Staff"]{
+            color: $staffcolor;
+        }
+        &[role="Owner"]{
+            color: $ownercolor;
+        }
+        &[role="System"]{
+            color: $alertcolor;
+        }
+    }
+}
+
 
 // Chat Screen
 .chat-window{
@@ -180,54 +216,3 @@
     }
 }
 
-// Userlist
-.chat-users{
-    border: 1px solid $chatBorder;
-    background-color: $dark-background-color;
-    border-radius: 5px 0px 0px 5px;
-    height:375px; 
-    overflow:hidden;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    .chatUser{
-        &[role="Banned"]{
-            color: $bannedcolor;
-        }
-        &[role="User"]{
-            color: $usercolor;
-        }
-        &[role="Pro"]{
-            color: $procolor;
-        }
-        &[role="Mod"], &[role="ChannelEditor"]{
-            color: $modcolor;
-        }
-        &[role="Staff"]{
-            color: $staffcolor;
-        }
-        &[role="Owner"]{
-            color: $ownercolor;
-        }
-        &[role="System"]{
-            color: $alertcolor;
-        }
-    }
-}
-
-// Chat submit box
-.chatFormRight{
-    text-align:right;
-    padding-top:.5em;
-    #chatSubmit{
-        background-color: $navbar-collapse-btn;
-        padding:10px 20px 10px 20px;
-        border-radius:10px;
-        border:none;
-        color:$dark-background-color;
-    }
-    select{
-        padding:10px 20px 10px 20px;
-        border-radius:10px;
-    }
-}
