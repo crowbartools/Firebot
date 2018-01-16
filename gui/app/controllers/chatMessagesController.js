@@ -1,6 +1,8 @@
 'use strict';
 (function() {
 
+    const moment = require('moment');
+
     //This handles the Settings tab
 
     angular
@@ -80,6 +82,11 @@
             // This gets the html from the message.
             $scope.getMessageContent = function(data) {
                 return $sce.trustAsHtml(data.messageHTML);
+            };
+
+            $scope.getTimeStamp = function(message) {
+                //Todo: create setting to allow user to switch to 24 hr time
+                return moment(message.date).format('h:mm A');
             };
 
             // This tells us if the chat feed is on or not.

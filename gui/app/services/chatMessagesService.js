@@ -193,8 +193,6 @@
                     service.purgeChatMessages(data);
                     break;
                 case "UserTimeout":
-                    console.log('Chat user timed out');
-                    console.log(data);
                     service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
                     break;
                 case "PollStart":
@@ -305,6 +303,8 @@
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHAT_MESSAGE },
                 (data) => {
+
+                    console.log(data);
 
                     if (settingsService.getRealChatFeed() === true) {
                         if (data.user_avatar === null || data.user_avatar === undefined) {

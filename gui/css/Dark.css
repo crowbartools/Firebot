@@ -9373,6 +9373,12 @@ body {
   .fb-nav-link-category span.contracted {
     opacity: 0; }
 
+.fullpage-tab {
+  height: 100%; }
+
+.no-scroll {
+  overflow-y: hidden; }
+
 .fb-nav-link {
   color: white;
   display: block;
@@ -9661,11 +9667,29 @@ body {
     .fb-tile.orange .header {
       background: linear-gradient(16deg, #F17F1E, #F6953A); }
   .fb-tile.gray {
-    background: linear-gradient(16deg, #525657, #5A5B5C); }
+    background: #656D78; }
+    .fb-tile.gray .header {
+      background: #434A54; }
+  .fb-tile.lavender {
+    background: #AC92ED; }
+    .fb-tile.lavender .header {
+      background: #967BDC; }
+  .fb-tile.grapefruit {
+    background: #ED5564; }
+    .fb-tile.grapefruit .header {
+      background: #DB4453; }
+  .fb-tile.mint {
+    background: #48CFAE; }
+    .fb-tile.mint .header {
+      background: #34BD9B; }
   .fb-tile.green {
     background: linear-gradient(16deg, #76BA60, #8CC673); }
     .fb-tile.green .header {
       background: linear-gradient(16deg, #6BA65D, #81BD68); }
+  .fb-tile.inactive {
+    background: #A9A9A9; }
+    .fb-tile.inactive .header {
+      background: #b3b3b3; }
   .fb-tile.centered {
     justify-content: center; }
   .fb-tile.space-around {
@@ -10689,6 +10713,173 @@ input:checked + .slider:before {
 
 .command-permissions {
   padding: 1em; }
+
+/* Chat - second pass*/
+.chat-message {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 50px; }
+
+.chat-username {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 1.11em; }
+
+.chat-window {
+  border-left: 0px;
+  border-radius: 0px 5px 5px 0px;
+  height: 375px;
+  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden; }
+  @media only screen and (max-width: 779px) {
+    .chat-window {
+      border-left: 1px solid #cecece; } }
+  .chat-window ::-webkit-scrollbar-track {
+    border-radius: 0px 5px 5px 0px; }
+
+.chatMessage {
+  padding-bottom: .2em;
+  margin-bottom: .2em;
+  clear: both;
+  float: left;
+  width: 100%; }
+  .chatMessage .chatLeft {
+    vertical-align: top;
+    width: 9%;
+    min-width: 45px;
+    float: left; }
+    @media only screen and (max-width: 980px) {
+      .chatMessage .chatLeft {
+        display: none; } }
+  .chatMessage .chatRight {
+    vertical-align: top;
+    background-color: #141828;
+    border-radius: 0px 5px 5px 5px;
+    padding: 5px 10px 5px 10px;
+    position: relative;
+    top: 5px;
+    margin-left: 10%; }
+    @media only screen and (min-width: 980px) {
+      .chatMessage .chatRight::before {
+        content: ' ';
+        border-width: 0 10px 10px 0px;
+        border-color: transparent #141828 transparent transparent;
+        position: absolute;
+        top: 0px;
+        left: -10px;
+        width: 0px;
+        height: 0px;
+        border-style: solid; } }
+    @media only screen and (max-width: 980px) {
+      .chatMessage .chatRight {
+        margin-left: 0px; } }
+  .chatMessage[role="User"] {
+    color: #37aad5; }
+    .chatMessage[role="User"] .chatUserAvatar img {
+      border: 1px solid #37aad5; }
+    .chatMessage[role="User"] a {
+      color: #37aad5; }
+  .chatMessage[role="Pro"] {
+    color: #b143d1; }
+    .chatMessage[role="Pro"] .chatUserAvatar img {
+      border: 1px solid #b143d1; }
+    .chatMessage[role="Pro"] a {
+      color: #b143d1; }
+  .chatMessage[role="Mod"], .chatMessage[role="ChannelEditor"] {
+    color: #36e53a; }
+    .chatMessage[role="Mod"] .chatUserAvatar img, .chatMessage[role="ChannelEditor"] .chatUserAvatar img {
+      border: 1px solid #36e53a; }
+    .chatMessage[role="Mod"] a, .chatMessage[role="ChannelEditor"] a {
+      color: #36e53a; }
+  .chatMessage[role="Staff"] {
+    color: #dcb235; }
+    .chatMessage[role="Staff"] .chatUserAvatar img {
+      border: 1px solid #dcb235; }
+    .chatMessage[role="Staff"] a {
+      color: #dcb235; }
+  .chatMessage[role="Owner"] {
+    color: white; }
+    .chatMessage[role="Owner"] .chatUserAvatar img {
+      border: 1px solid white; }
+    .chatMessage[role="Owner"] a {
+      color: white; }
+  .chatMessage[role="System"] {
+    color: red; }
+    .chatMessage[role="System"] .chatUserAvatar img {
+      border: 1px solid red; }
+    .chatMessage[role="System"] a {
+      color: red; }
+    .chatMessage[role="System"] .chatRight {
+      background-color: darkgray; }
+      .chatMessage[role="System"] .chatRight::before {
+        border-color: transparent darkgray transparent transparent; }
+  .chatMessage .chatUserAvatar {
+    display: inline-block;
+    padding: 5px;
+    width: 100%; }
+    .chatMessage .chatUserAvatar img {
+      border-radius: 50%;
+      width: 100%; }
+  .chatMessage .chatUsername {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 1.1em; }
+  .chatMessage .chatContent {
+    color: white;
+    line-height: 24px;
+    font-size: 1em; }
+    .chatMessage .chatContent .chatEmoticon {
+      position: relative;
+      top: 7px; }
+  .chatMessage .chatEventInfo {
+    font-size: .85em;
+    color: red; }
+  .chatMessage.isDeleted .chatContent {
+    text-decoration: line-through;
+    color: gray; }
+  .chatMessage.isAction .chatContent {
+    font-style: italic; }
+  .chatMessage.isWhisper .chatContent {
+    color: lightblue; }
+
+.chat-users {
+  border: 1px solid #cecece;
+  background-color: #141828;
+  border-radius: 5px 0px 0px 5px;
+  height: 375px;
+  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  text-overflow: ellipsis; }
+  .chat-users .chatUser[role="Banned"] {
+    color: red; }
+  .chat-users .chatUser[role="User"] {
+    color: #37aad5; }
+  .chat-users .chatUser[role="Pro"] {
+    color: #b143d1; }
+  .chat-users .chatUser[role="Mod"], .chat-users .chatUser[role="ChannelEditor"] {
+    color: #36e53a; }
+  .chat-users .chatUser[role="Staff"] {
+    color: #dcb235; }
+  .chat-users .chatUser[role="Owner"] {
+    color: white; }
+  .chat-users .chatUser[role="System"] {
+    color: red; }
+
+.chatFormRight {
+  text-align: right;
+  padding-top: .5em; }
+  .chatFormRight #chatSubmit {
+    background-color: orange;
+    padding: 10px 20px 10px 20px;
+    border-radius: 10px;
+    border: none;
+    color: #141828; }
+  .chatFormRight select {
+    padding: 10px 20px 10px 20px;
+    border-radius: 10px; }
 
 .list-group-item {
   background-color: #323851;
