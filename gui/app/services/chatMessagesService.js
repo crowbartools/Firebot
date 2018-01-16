@@ -6,7 +6,7 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function (listenerService, settingsService) {
+        .factory('chatMessagesService', function (listenerService, settingsService, groupsService) {
             let service = {};
 
             // Chat Message Queue
@@ -174,6 +174,29 @@
                 service.pollCache = false;
             };
 
+            // User Update
+            // This is sent when a user's roles are updated. For example, when someone is banned.
+            // Currently, this only checks for bans. It does not automatically unban the user after.
+            // Reason is, people can be added to our banned user group without being banned from the channel.
+            // But we're assuming here that if they're banned from the channel we should ban them from interactive always.
+            service.userUpdate = function (data) {
+                let roles = data.roles;
+
+                // Check each role. If one is "banned" then we ban the person from interactive and show a chat alert.
+                Object.keys(roles).forEach((key) => {
+                    let roleCheck = roles[key];
+                    if (roleCheck === 'Banned') {
+                        // User got banned.
+                        // Check to see if they're on the banned list already or not before sending an alert.
+                        let bannedUsers = groupsService.getBannedGroup().users;
+                        if (bannedUsers.indexOf(data.username) === -1) {
+                            groupsService.addUserToBannedGroup(data.username);
+                            service.chatAlertMessage(data.username + ' has been banned. Firebot has added them to the banned interactive user group automatically.');
+                        }
+                    }
+                });
+            };
+
             // Chat Update Handler
             // This handles all of the chat stuff that isn't a message.
             // This will only work when chat feed is turned on in the settings area.
@@ -222,7 +245,7 @@
                     break;
                 case "UserUpdate":
                     console.log('User updated');
-                    console.log(data);
+                    service.userUpdate(data);
                     break;
                 case "Disconnected":
                     // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
