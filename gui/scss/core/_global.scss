@@ -167,7 +167,15 @@ body {
     opacity: 0;
   } 
 }
-//
+//nav stuff
+
+.fullpage-tab {
+  height: 100%;
+}
+
+.no-scroll {
+  overflow-y: hidden;
+}
 
 .fb-nav-link {
  color:$left-nav-link-text-color;

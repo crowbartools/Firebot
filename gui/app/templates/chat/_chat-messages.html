@@ -1,74 +1,120 @@
-<!-- Commands Board -->
-<div class="content-block">
-    <div class="content-block-header">
-      <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Chat</span>
+<div style="width: 100%; height: 100%; display: flex; flex-direction: row;">
+    <div style="width: 25%; height: 100%; display: flex; flex-direction: column;">
+        <div style="height: 27px;font-size: 15px;color: #9a9797;padding-left: 3px;padding-right: 3px;display: flex;justify-content: space-between;align-items: flex-start;">
+            <span>
+                VIEWERS
+            </span>
+            <span>
+                <i class="fas fa-eye" style="font-size:12px"></i>
+                <b>{{getChatUsers().length}}</b>
+            </span>
+        </div>
+        <div class="chat-users" style="height: 100%;">
+            <div class="chatUser" ng-attr-role="{{getRole(user)}}" ng-repeat="user in getChatUsers()">
+                    {{user.username}}
+            </div>
+        </div>       
     </div>
-    <div class="content-block-body">
-      <div class="page-content" style="min-height: 600px;">
+    <div style="display:flex; flex-direction: column;width: 100%; height: 100%;padding-left: 10px;">
+        <div class="chat-window" style="height: 100%; padding-top:10px; padding-left:10px; padding-right: 10px;background: white;border-radius: 5px;border: 2px solid rgba(170, 164, 164, 0.43);" scroll-glue>
+            <div class="chat-message" style="margin-bottom: 15px;" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
+                <div style="width: 50px; height: 50px; display: flex;align-items: center;justify-content: center;">
+                    <span>
+                        <img style="width: 50px; border-radius: 10px;" ng-src="{{message.user_avatar}}">
+                    </span>                 
+                </div>
+                <div style="padding-left: 10px">
+                    <div class="chat-username">
+                        <b>{{message.user_name}}</b>
+                        <span class="chatSubIcon" ng-if="isSubscriber(message)">
+                            <img ng-src="{{getSubIcon(message)}}">
+                        </span>
+                        <span ng-hide="message.historical" class="muted" style="font-size: 0.9em; font-weight: 400; padding-left: 5px;">
+                            {{getTimeStamp(message)}}
+                        </span>
+                    </div>
+                    <div class="chatContent" style="font-size: 1.17em;" ng-bind-html="getMessageContent(message)"></div>
+                    <div class="chatEventInfo">
+                        {{message.eventInfo}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="height: 60px;display: flex;flex-direction: column;justify-content: flex-end;">
+            <div style="height: 45px; border: 2px solid #dee0e0; border-radius: 5px; display: flex; background:white;">
+                <div class="dropup">
+                    <span style="height: 100%;display: flex;justify-content: center;border-right: 2px solid #dee0e0;align-items: center;" class="dropdown-toggle" data-toggle="dropdown">
+                        <span style="margin-left: 10px;">{{chatSender}}</span>
+                        <div class="fb-arrow down" style="margin-left: 10px;margin-right: 10px;margin-bottom: 3px;"></div>
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li ng-click="chatSender = 'Streamer'"><a href>Streamer</a></li>
+                        <li ng-click="chatSender = 'Bot'"><a href>Bot</a></li>
+                    </ul>
+                </div>
+                
 
-          <div class="chat-messages-wrapper" ng-if="getChatFeed() === true">
-              <div class="row">
-                    <div class="chat-users col-sm-2">
-                        <!-- This is where chat user list will go -->
-                        <div class="chatUser" ng-attr-role="{{getRole(user)}}" ng-repeat="user in getChatUsers()">
-                            {{user.username}}
-                        </div>
-                    </div>
-                    <div class="chat-window col-sm-10" scroll-glue>
-                        <div class="chatMessage" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()" ng-animate="{enter: 'slideInUp', leave: 'slideOutUp'}">
-                            <div class="chatLeft">
-                                <div class="chatUserAvatar">
-                                    <img ng-src="{{message.user_avatar}}">
-                                </div>
-                            </div>
-                            <div class="chatRight">
-                                <div class="chatUsername">
-                                    {{message.user_name}}
-                                    <span class="chatSubIcon" ng-if="isSubscriber(message)">
-                                        <img ng-src="{{getSubIcon(message)}}">
-                                    </span>
-                                </div>
-                                <div class="chatContent" ng-bind-html="getMessageContent(message)"></div>
-                                <div class="chatEventInfo">
-                                    {{message.eventInfo}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <input type="text" placeholder="Message the stream" style="border: none;background: none;width: 100%; padding-left: 10px;"
+                    ng-maxlength="360"
+                    ng-model="chatMessage"
+                    ng-keyup="$event.keyCode == 13 && submitChat()">
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class="chat-messages-wrapper" ng-if="getChatFeed() === true">
+    <div class="row">
+          <div class="chat-users col-sm-2">
+              <div class="chatUser" ng-attr-role="{{getRole(user)}}" ng-repeat="user in getChatUsers()">
+                  {{user.username}}
               </div>
-              <div class="row">
-                    <div class="chat-messages-input">
-                        <!-- There is where the chat input field would go.-->
-                        <form ng-submit="submitChat()" id="chatbox">
-                            <div class="chatFormLeft">
-                                <textarea 
-                                    class="form-control chat-message" 
-                                    ng-model="$parent.chatMessage"
-                                    required
-                                    rows="3" 
-                                    ng-maxlength="360"
-                                    placeholder="Write a message and hit enter to send." 
-                                    form="chatbox"
-                                    ng-keyup="$event.keyCode == 13 && submitChat()"
-                                >
-                                </textarea>
-                            </div>
-                            <div class="chatFormRight">
-                                <select ng-model="$parent.chatSender">
-                                    <option value="Streamer">Streamer</option>
-                                    <option value="Bot">Bot</option>
-                                </select>
-                                <input type="submit" id="chatSubmit" value="Send">
-                            </div>
-                        </form>
-                    </div>
-              </div>
-          </div><!-- End Chat Command Wrapper-->
-
-          <div class="chat-messages-off" ng-if="getChatFeed() === false">
-              The chat feed is currently disabled in the settings menu.
           </div>
-
-      </div><!-- End Page Content-->
-    </div><!-- End content body block-->
-</div><!-- End content block-->
+          <div class="chat-window col-sm-10" scroll-glue>
+              <div class="chatMessage" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()" ng-animate="{enter: 'slideInUp', leave: 'slideOutUp'}">
+                  <div class="chatLeft">
+                      <div class="chatUserAvatar">
+                          <img ng-src="{{message.user_avatar}}">
+                      </div>
+                  </div>
+                  <div class="chatRight">
+                      <div class="chatUsername">
+                          {{message.user_name}}
+                          <span class="chatSubIcon" ng-if="isSubscriber(message)">
+                              <img ng-src="{{getSubIcon(message)}}">
+                          </span>
+                      </div>
+                      <div class="chatContent" ng-bind-html="getMessageContent(message)"></div>
+                      <div class="chatEventInfo">
+                          {{message.eventInfo}}
+                      </div>
+                  </div>
+              </div>
+          </div>
+    </div>
+    <div class="row">
+          <div class="chat-messages-input">
+              <form ng-submit="submitChat()" id="chatbox">
+                  <div class="chatFormLeft">
+                      <textarea 
+                          class="form-control chat-message" 
+                          ng-model="$parent.chatMessage"
+                          required
+                          rows="3" 
+                          ng-maxlength="360"
+                          placeholder="Write a message and hit enter to send." 
+                          form="chatbox"
+                          ng-keyup="$event.keyCode == 13 && submitChat()"
+                      >
+                      </textarea>
+                  </div>
+                  <div class="chatFormRight">
+                      <select ng-model="$parent.chatSender">
+                          <option value="Streamer">Streamer</option>
+                          <option value="Bot">Bot</option>
+                      </select>
+                      <input type="submit" id="chatSubmit" value="Send">
+                  </div>
+              </form>
+          </div>
+    </div>
+</div>-->

@@ -36,6 +36,10 @@
             return $scope.currentTab.toLowerCase() === tabId.toLowerCase();
         };
 
+        $scope.currentTabIsFullScreen = function() {
+            return $scope.currentTab === 'chat feed';
+        };
+
         $timeout(() => {
             notificationService.loadAllNotifications();
             notificationService.startExternalIntervalCheck();

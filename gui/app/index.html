@@ -111,7 +111,7 @@
           <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Commands</div>
         </a>
-        <a class="fb-nav-link" href="#!chat-messages" ng-class="{'selected': tabIsSelected('Chat')}" ng-click="setTab('Chat')">
+        <a class="fb-nav-link" href="#!chat-messages" ng-class="{'selected': tabIsSelected('Chat Feed')}" ng-click="setTab('Chat Feed')">
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-commenting"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Chat Feed</div>
@@ -232,8 +232,8 @@
           </ul>
         </div>
       </div>
-      <div class="tab-body-wrapper"> 
-        <div class="tab-body">
+      <div class="tab-body-wrapper" ng-class="{ 'no-scroll': currentTabIsFullScreen() }"> 
+        <div class="tab-body" ng-class="{ 'fullpage-tab': currentTabIsFullScreen() }">
           <!-- angular templating -->
           <!-- this is where tab content will be injected -->
           <div ng-view style="width: 100%"></div>
