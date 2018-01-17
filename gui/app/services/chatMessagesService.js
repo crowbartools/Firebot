@@ -330,7 +330,7 @@
                     console.log(data);
 
                     if (settingsService.getRealChatFeed() === true) {
-                        if (data.user_avatar != null) {
+                        if (data.user_avatar == null) {
                             data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
                         }
 
