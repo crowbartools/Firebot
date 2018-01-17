@@ -9,7 +9,7 @@
             </span>
             <span>
                 <i class="fas fa-eye" style="font-size:12px"></i>
-                <b>{{getChatUsers().length}}</b>
+                <b>{{currentViewers}}</b>
             </span>
         </div>
         <div class="chat-users" style="height: 100%;">
@@ -46,7 +46,7 @@
         <div class="text-input-wrapper">
             <div class="text-input">
                 <div class="dropup">
-                    <span class="dropdown-toggle chatter-dropdown" data-toggle="dropdown" uib-tooltip="Chat as">
+                    <span class="dropdown-toggle chatter-dropdown" data-toggle="dropdown" uib-tooltip="Chat as" tooltip-placement="left">
                         <span style="margin-left: 10px;">{{chatSender}}</span>
                         <div class="fb-arrow down" style="margin-left: 10px;margin-right: 10px;margin-bottom: 3px;"></div>
                     </span>

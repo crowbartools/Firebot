@@ -7,11 +7,13 @@
 
     angular
         .module('firebotApp')
-        .controller('chatMessagesController', function($scope, $timeout, $q, $sce, chatMessagesService, connectionService) {
+        .controller('chatMessagesController', function($scope, $timeout, $q, $sce, chatMessagesService, connectionService, listenerService) {
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
+
+            $scope.currentViewers = 0;
 
             $scope.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
 
@@ -114,6 +116,12 @@
                 chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);
                 $scope.chatMessage = '';
             };
+
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.CURRENT_VIEWERS_UPDATE },
+                (data) => {
+                    $scope.currentViewers = data.viewersCurrent;
+                });
 
         });
 }());

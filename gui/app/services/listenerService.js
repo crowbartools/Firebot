@@ -29,7 +29,8 @@
                 showHtml: {},
                 celebrate: {},
                 info: {},
-                backupComplete: {}
+                backupComplete: {},
+                currentViewersUpdate: {}
             };
 
             let ListenerType = {
@@ -44,6 +45,7 @@
                 CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
                 CHAT_MESSAGE: "chatMessage",
                 CHAT_UPDATE: "chatUpdate",
+                CURRENT_VIEWERS_UPDATE: "currentViewersUpdate",
                 EVENT_LOG: "eventLog",
                 ERROR: "error",
                 UPDATE_ERROR: "updateError",
@@ -243,6 +245,14 @@
             // Recieves an event from main process when a chat event happens.
             ipcRenderer.on('chatUpdate', function (event, data) {
                 _.forEach(registeredListeners.chatUpdate, (listener) => {
+                    runListener(listener, data);
+                });
+            });
+
+            // current viewers
+            // Recieves an event from main process when a current viewer count has changed
+            ipcRenderer.on('currentViewersUpdate', function (event, data) {
+                _.forEach(registeredListeners.currentViewersUpdate, (listener) => {
                     runListener(listener, data);
                 });
             });
