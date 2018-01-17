@@ -330,8 +330,8 @@
                     console.log(data);
 
                     if (settingsService.getRealChatFeed() === true) {
-                        if (data.user_avatar === null || data.user_avatar === undefined) {
-                            data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.jpg"; // eslint-disable-line
+                        if (data.user_avatar != null) {
+                            data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
                         }
 
                         // Push new message to queue.
