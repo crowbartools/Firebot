@@ -13,6 +13,8 @@
             $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
 
+            $scope.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
+
             // Gets all chat messages from chat message service.
             $scope.getMessages = function() {
                 return chatMessagesService.chatQueue;
