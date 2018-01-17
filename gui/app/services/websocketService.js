@@ -156,7 +156,8 @@
                     "enterAnimation": data.enterAnimation,
                     "exitAnimation": data.exitAnimation,
                     "overlayInstance": data.overlayInstance,
-                    "customCoords": data.customCoords
+                    "customCoords": data.customCoords,
+                    "loop": data.loop
                 };
 
                 service.broadcast(broadcastdata);
