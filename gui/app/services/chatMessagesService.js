@@ -352,6 +352,16 @@
                     }
                 });
 
+            // Connection Monitor
+            // Recieves event from main process that connection has been established or disconnected.
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.CHAT_CONNECTION_STATUS },
+                (isChatConnected) => {
+                    if (isChatConnected) {
+                        service.chatQueue = [];
+                    }
+                });
+
             return service;
         });
 }());
