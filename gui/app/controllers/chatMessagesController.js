@@ -111,6 +111,10 @@
                 return true;
             };
 
+            $scope.getChatViewCountSetting = function() {
+                return chatMessagesService.getChatViewCountSetting();
+            }
+
             // This happens when a chat message is submitted.
             $scope.submitChat = function() {
                 chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);

@@ -196,6 +196,19 @@
                 return getDataFromFile('/settings/chatFeed');
             };
 
+            // Used for settings menu.
+            service.getChatViewCount = function() {
+                let chatViewCount = getDataFromFile('/settings/chatViewCount');
+                if (chatViewCount === true) {
+                    return "On";
+                }
+                return "Off";
+            };
+
+            service.setChatViewCount = function(chatViewCount) {
+                pushDataToFile('/settings/chatViewCount', chatViewCount === true);
+            };
+
             service.getOverlayCompatibility = function() {
                 let overlay = getDataFromFile('/settings/overlayImages');
                 return overlay != null ? overlay : "Other";

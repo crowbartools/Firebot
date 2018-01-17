@@ -7,7 +7,7 @@
             <span>
                 VIEWERS
             </span>
-            <span>
+            <span ng-hide="{{getChatViewCountSetting() === false}}">
                 <i class="fas fa-eye" style="font-size:12px"></i>
                 <b>{{currentViewers}}</b>
             </span>

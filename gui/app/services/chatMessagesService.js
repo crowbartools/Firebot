@@ -321,6 +321,15 @@
                 ipcRenderer.send('uiChatMessage', chatPacket);
             };
 
+            // Gets view count setting for ui.
+            service.getChatViewCountSetting = function() {
+                let viewCount = settingsService.getChatViewCount();
+                if (viewCount === "On") {
+                    return true;
+                }
+                return false;
+            };
+
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.
             listenerService.registerListener(
