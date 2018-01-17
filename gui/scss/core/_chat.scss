@@ -36,6 +36,93 @@
     width: 100%;
     min-height: 50px;
     margin-bottom: 15px;
+    &[role="User"]{
+        color: $usercolor;
+        .chatUserAvatar img {
+            border: 1px solid $usercolor;
+        }
+        a{
+            color:$usercolor;
+        }
+    }
+    &[role="Pro"]{
+        color: $procolor;
+        .chatUserAvatar img {
+            border: 1px solid $procolor;
+        }
+        a{
+            color: $procolor;
+        }
+    }
+    &[role="Mod"], &[role="ChannelEditor"]{
+        color: $modcolor;
+        .chatUserAvatar img {
+            border: 1px solid $modcolor;
+        }
+        a{
+            color: $modcolor;
+        }
+    }
+    &[role="Staff"]{
+        color: $staffcolor;
+        .chatUserAvatar img {
+            border: 1px solid $staffcolor;
+        }
+        a{
+            color: $staffcolor;
+        }
+    }
+    &[role="Owner"]{
+        color: $ownercolor;
+        .chatUserAvatar img {
+            border: 1px solid $ownercolor;
+        }
+        a{
+            color: $ownercolor;
+        }
+    }
+    &[role="System"]{
+        color: $alertcolor;
+        .chatUserAvatar img {
+            border: 1px solid $alertcolor;
+        }
+        a{
+            color: $alertcolor;
+        }
+        .chatRight{
+            background-color:$alert-bg-color;
+            &::before{
+                border-color:transparent $alert-bg-color transparent transparent;
+            }
+        }
+    }
+    .chatContent{
+        color: $chatTextColor;
+        line-height:24px;
+        font-size:1em;
+        .chatEmoticon{
+            position:relative;
+            top:7px;
+        }
+    }
+    .chatEventInfo{
+        font-size: .85em;
+        color: $alertcolor;
+    }
+    &.isDeleted .chatContent{
+        text-decoration: line-through;
+        color: $chatDeletedColor;
+    }
+    &.isAction{
+        .chatContent{
+            font-style: italic;
+        }
+    }
+    &.isWhisper{
+        .chatContent{
+            color: $chatWhisperColor;
+        }
+    }
 }
 
 .chat-username {
@@ -61,6 +148,7 @@
     font-size: 0.9em; 
     font-weight: 400; 
     padding-left: 5px;
+    color: white;
 }
 
 .text-input-wrapper {
@@ -215,107 +303,6 @@
         }
         @media only screen and (max-width: 980px) {
             margin-left:0px;
-        }
-    }
-    &[role="User"]{
-        color: $usercolor;
-        .chatUserAvatar img {
-            border: 1px solid $usercolor;
-        }
-        a{
-            color:$usercolor;
-        }
-    }
-    &[role="Pro"]{
-        color: $procolor;
-        .chatUserAvatar img {
-            border: 1px solid $procolor;
-        }
-        a{
-            color: $procolor;
-        }
-    }
-    &[role="Mod"], &[role="ChannelEditor"]{
-        color: $modcolor;
-        .chatUserAvatar img {
-            border: 1px solid $modcolor;
-        }
-        a{
-            color: $modcolor;
-        }
-    }
-    &[role="Staff"]{
-        color: $staffcolor;
-        .chatUserAvatar img {
-            border: 1px solid $staffcolor;
-        }
-        a{
-            color: $staffcolor;
-        }
-    }
-    &[role="Owner"]{
-        color: $ownercolor;
-        .chatUserAvatar img {
-            border: 1px solid $ownercolor;
-        }
-        a{
-            color: $ownercolor;
-        }
-    }
-    &[role="System"]{
-        color: $alertcolor;
-        .chatUserAvatar img {
-            border: 1px solid $alertcolor;
-        }
-        a{
-            color: $alertcolor;
-        }
-        .chatRight{
-            background-color:$alert-bg-color;
-            &::before{
-                border-color:transparent $alert-bg-color transparent transparent;
-            }
-        }
-    }
-    .chatUserAvatar{
-        display:inline-block;
-        padding:5px;
-        width:100%;
-        img{
-            border-radius: 50%;
-            width:100%;
-        }
-    }
-    .chatUsername{
-        display:inline-block;
-        font-weight:bold;
-        font-size:1.1em;
-    }
-    .chatContent{
-        color: $chatTextColor;
-        line-height:24px;
-        font-size:1em;
-        .chatEmoticon{
-            position:relative;
-            top:7px;
-        }
-    }
-    .chatEventInfo{
-        font-size: .85em;
-        color: $alertcolor;
-    }
-    &.isDeleted .chatContent{
-        text-decoration: line-through;
-        color: $chatDeletedColor;
-    }
-    &.isAction{
-        .chatContent{
-            font-style: italic;
-        }
-    }
-    &.isWhisper{
-        .chatContent{
-            color: $chatWhisperColor;
         }
     }
 }
