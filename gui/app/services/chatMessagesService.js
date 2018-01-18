@@ -228,7 +228,7 @@
                     console.log('Chat User Joined');
 
                     // Standardize user roles naming.
-                            data.user_roles = data.roles; // eslint-disable-line
+                    data.user_roles = data.roles; // eslint-disable-line
 
                     service.chatUserJoined(data);
                     break;
