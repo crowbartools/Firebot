@@ -237,6 +237,14 @@
         };
 
         $rootScope.showSpinner = false;
+
+        /*hotkeyService.startHotkeyCapture((keys) => {
+            let display = [];
+            keys.forEach((k) => {
+                display.push(k.displayName);
+            });
+            console.log(display.join(" + "));
+        });*/
     });
 
     app.config(['$routeProvider', '$locationProvider', function($routeProvider) {
