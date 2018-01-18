@@ -270,8 +270,14 @@
             // Prune Messages
             // If message count is over 200, prune down
             service.pruneChatQueue = function() {
-                if (service.chatQueue.length > 200) {
-                    service.chatQueue.length = 200;
+                let arr = service.chatQueue,
+                    overflowChat = arr.length - 200;
+
+                // Overflow chat is how many messages we need to remove to bring it back down to 200.
+                if (overflowChat > 0) {
+                    // Start at 0 in the array and delete X number of messages.
+                    // The oldest messages are the first ones in the array.
+                    arr.splice(0, overflowChat);
                 }
             };
 
