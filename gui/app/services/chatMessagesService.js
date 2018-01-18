@@ -237,7 +237,7 @@
                     console.log(data);
 
                     // Standardize user roles naming.
-                            data.user_roles = data.roles; // eslint-disable-line
+                    data.user_roles = data.roles; // eslint-disable-line
 
                     service.chatUserLeft(data);
                     break;
@@ -268,11 +268,10 @@
             };
 
             // Prune Messages
-            // This checks the chat queue and purges anything over 200 messages.
-            service.chatPrune = function() {
-                let arr = service.chatQueue;
-                if (arr.length > 200) {
-                    arr.splice(0, 1);
+            // If message count is over 200, prune down
+            service.pruneChatQueue = function() {
+                if (service.chatQueue.length > 200) {
+                    service.chatQueue.length = 200;
                 }
             };
 
@@ -336,8 +335,6 @@
                 { type: listenerService.ListenerType.CHAT_MESSAGE },
                 (data) => {
 
-                    console.log(data);
-
                     if (settingsService.getRealChatFeed() === true) {
                         if (data.user_avatar == null) {
                             data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
@@ -347,7 +344,7 @@
                         service.chatQueue.push(data);
 
                         // Trim messages over 200.
-                        service.chatPrune();
+                        service.pruneChatQueue();
                     }
                 });
 
