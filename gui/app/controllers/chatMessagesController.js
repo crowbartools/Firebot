@@ -89,6 +89,11 @@
                 return $sce.trustAsHtml(data.messageHTML);
             };
 
+            $scope.getWhisperData = function(data) {
+                let target = data.target;
+                return 'Whispered to ' + target + '.';
+            };
+
             $scope.getTimeStamp = function(message) {
                 //Todo: create setting to allow user to switch to 24 hr time
                 return moment(message.date).format('h:mm A');

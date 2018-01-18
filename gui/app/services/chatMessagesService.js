@@ -321,8 +321,6 @@
                     message: message,
                     chatter: sender
                 };
-
-                // Refresh the backend cache
                 ipcRenderer.send('uiChatMessage', chatPacket);
             };
 
