@@ -12,11 +12,7 @@
     <script src="https://use.fontawesome.com/b4d71b289b.js"></script>
 
     <!--Webfont version of font awesome 5, use these from now on-->
-    <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-core.css">
-    <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-solid.css">
-    <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-regular.css">
-    <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-light.css">
-    <link rel="stylesheet" href="../fonts/fontawesome5/font-awesome-brands.css">
+    <link rel="stylesheet" href="../fonts/fontawesome5/fontawesome-all.min.css">
   
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700" rel="stylesheet">
     
@@ -130,6 +126,11 @@
           <div class="nav-link-bar"></div>
           <div class="nav-link-icon"><i class="fal fa-users"></i></div>
           <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
+        </a>
+        <a class="fb-nav-link" href="#!hotkeys" ng-class="{'selected': tabIsSelected('Hotkeys')}" ng-click="setTab('Hotkeys')">
+          <div class="nav-link-bar"></div>
+          <div class="nav-link-icon"><i class="fal fa-keyboard"></i></div>
+          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Hotkeys</div>
         </a>
         <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
           <div class="nav-link-bar"></div>
