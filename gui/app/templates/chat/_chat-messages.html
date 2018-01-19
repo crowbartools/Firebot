@@ -2,7 +2,7 @@
     <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
         <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
     </div>
-    <div class="viewer-list-column">
+    <div class="viewer-list-column" ng-hide="{{getChatViewerListSetting() === false}}">
         <div class="viewer-list-header">
             <span>
                 VIEWERS

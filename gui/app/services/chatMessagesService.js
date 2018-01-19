@@ -333,6 +333,16 @@
                 return false;
             };
 
+            // Gets view count setting for ui.
+            service.getChatViewerListSetting = function() {
+                let viewerList = settingsService.getChatViewerList();
+                if (viewerList === "On") {
+                    return true;
+                }
+                return false;
+            };
+
+
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.
             listenerService.registerListener(
