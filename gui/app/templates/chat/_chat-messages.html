@@ -37,6 +37,9 @@
                         </span>
                     </div>
                     <div class="chatContent" style="font-size: 1.17em;" ng-bind-html="getMessageContent(message)"></div>
+                    <div ng-if="isWhisper(message)" class="whisperData">
+                        {{getWhisperData(message)}}
+                    </div>
                     <div class="chatEventInfo">
                         {{message.eventInfo}}
                     </div>
