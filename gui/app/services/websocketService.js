@@ -9,7 +9,7 @@
 
     angular
         .module('firebotApp')
-        .factory('websocketService', function (listenerService, settingsService) {
+        .factory('websocketService', function (listenerService, settingsService, $interval) {
             let service = {};
 
             // Setup the WebSocketServer with the saved port.
@@ -179,6 +179,11 @@
                     client.send(data);
                 });
             };
+
+            service.hasClientsConnected = false;
+            $interval(() => {
+                service.hasClientsConnected = wss.clients.size > 0;
+            }, 1250);
 
             // Watches for an event from main process
             listenerService.registerListener(

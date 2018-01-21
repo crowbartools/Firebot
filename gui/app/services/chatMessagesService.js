@@ -114,7 +114,8 @@
                             me: true
                         }
                     },
-                    messageHTML: message
+                    messageHTML: message,
+                    date: new Date()
                 };
                 service.chatQueue.push(data);
             };

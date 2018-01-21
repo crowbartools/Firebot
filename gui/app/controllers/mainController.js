@@ -164,6 +164,13 @@
             utilityService.showModal(addBoardModalContext);
         };
 
+        $scope.showConnectionPanelModal = function() {
+            utilityService.showModal({
+                component: "connectionPanelModal",
+                windowClass: "connection-panel-modal"
+            });
+        };
+
         /**
       * Initial App Load
       */
@@ -188,6 +195,78 @@
       * Connection stuff
       */
         $scope.connService = connectionService;
+
+        $scope.connectedServiceCount = function() {
+            let services = settingsService.getSidebarControlledServices();
+
+            let count = 0;
+
+            services.forEach((s) => {
+                switch (s) {
+                case 'interactive':
+                    if (connectionService.connectedToInteractive) {
+                        count++;
+                    }
+                    break;
+                case 'chat':
+                    if (connectionService.connectedToChat) {
+                        count++;
+                    }
+                    break;
+                }
+            });
+
+            return count;
+        };
+
+        $scope.partialServicesConnected = function() {
+            let services = settingsService.getSidebarControlledServices();
+            let connectedCount = $scope.connectedServiceCount();
+
+            return (services.length > connectedCount);
+        };
+
+        $scope.allServicesConnected = function() {
+            let services = settingsService.getSidebarControlledServices();
+            let connectedCount = $scope.connectedServiceCount();
+
+            return (services.length === connectedCount);
+        };
+
+        $scope.waitingForServicesStatusChange = function() {
+            return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange);
+        };
+
+        $scope.toggleSidebarControlledServices = function() {
+            let services = settingsService.getSidebarControlledServices();
+
+            // we only want to connect if none of the connections are currently connected
+            // otherwise we will attempt to disconnect everything.
+
+            let shouldConnect = $scope.connectedServiceCount() === 0;
+            console.log(services);
+            services.forEach((s) => {
+                switch (s) {
+                case 'interactive': {
+                    if (shouldConnect) {
+                        console.log("connecting to interactive");
+                        connectionService.connectToInteractive();
+                    } else if (connectionService.connectedToInteractive) {
+                        connectionService.disconnectFromInteractive();
+                    }
+                    break;
+                }
+                case 'chat':
+                    if (shouldConnect) {
+                        console.log("connecting to chat");
+                        connectionService.connectToChat();
+                    } else if (connectionService.connectedToChat) {
+                        connectionService.disconnectFromChat();
+                    }
+                    break;
+                }
+            });
+        };
 
         // Interactive
         $scope.getConnectionMessage = function() {

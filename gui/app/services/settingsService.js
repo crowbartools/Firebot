@@ -433,6 +433,15 @@
                 pushDataToFile('/settings/audioOutputDevice', device);
             };
 
+            service.getSidebarControlledServices = function() {
+                let services = getDataFromFile('/settings/sidebarControlledServices');
+                return services != null ? services : ['interactive', 'chat'];
+            };
+
+            service.setSidebarControlledServices = function(services) {
+                pushDataToFile('/settings/sidebarControlledServices', services);
+            };
+
             return service;
         });
 }());

@@ -1,0 +1,44 @@
+.connection-tile {
+    width: 150px;
+    height: 175px;
+    /* background: linear-gradient(135deg, #25292a 0%, #383d3f 98%); */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    background-color: white;
+    box-shadow: 3px 3px 5px lightgray;
+    border-radius: 4px;
+    & .connection-title {
+        color: black;
+        opacity: 0.7;
+        font-size: 20px;
+        font-weight: 100;
+    }
+    & .connection-button {
+        cursor: pointer;
+        color: #ff2020;
+        font-size: 50px;
+        &:hover {
+            color: #d81919;
+        }
+        &.connected {
+            color: green;
+        }
+        &.connecting {
+            color: black;
+        }
+    }
+
+    & .overlay-button {
+        color: #ffd602;
+        font-size: 50px;
+        &.connected {
+            color: green;
+        }
+    }
+}
+
+.connection-panel-modal .modal-dialog {
+    width: 500px;
+}

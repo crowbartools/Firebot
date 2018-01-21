@@ -137,8 +137,31 @@ body {
  overflow: hidden;
  flex-shrink: 0;
 }
+
 .nav-links-wrapper {
- margin-top: 15px;
+  padding-top: 15px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+  &:hover::-webkit-scrollbar {
+    width: 5px;
+  }
+  &:hover::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: #9a9fa0;
+    border-radius: 5px;
+  }
+
+  &.contracted::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
 }
 
 .fb-nav-link-category {
@@ -178,7 +201,7 @@ body {
 }
 
 .fb-nav-link {
- color:$left-nav-link-text-color;
+ color:#dadada;
  display: block;
  height: 42px;
  text-transform: uppercase;
@@ -191,8 +214,8 @@ body {
 }
 
 .fb-nav-link.selected, .fb-nav-link.selected:hover {
- color: $left-nav-link-text-selected-color;
- background: $light-background-color;
+ color: white;
+ background: #383d3f;
 }
 .nav-link-bar {
  height: 100%;
@@ -390,8 +413,10 @@ body {
 }
 
 .connection-status-wrapper{
-  position:absolute;
-  bottom:0px;
+  //position:absolute;
+  //bottom:0px;
+  padding: 20px 0;
+  border-top: 2px solid #383d3f;
   width:100%;
 }
 
@@ -401,6 +426,9 @@ body {
   padding:0em 0em 0em 1em;
   text-align:left;
   margin-bottom: .25em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   .interative-status-icon {
     cursor: pointer;
     color: $bad-color;

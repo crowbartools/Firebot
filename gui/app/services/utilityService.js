@@ -103,6 +103,7 @@
                 }
 
                 // Pull values out of the context
+                let component = showModalContext.component;
                 let templateUrl = showModalContext.templateUrl;
                 let controllerFunc = showModalContext.controllerFunc;
                 let resolveObj = showModalContext.resolveObj || {};
@@ -114,18 +115,25 @@
                     return modalId;
                 };
 
-                // Show the modal
-                let modalInstance = $uibModal.open({
+                let modal = {
                     ariaLabelledBy: 'modal-title',
                     ariaDescribedBy: 'modal-body',
-                    templateUrl: templateUrl,
-                    controller: controllerFunc,
                     resolve: resolveObj,
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard,
                     backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
-                    windowClass: modalId
-                });
+                    windowClass: showModalContext.windowClass + " " + modalId
+                };
+
+                if (component != null && component.length !== 0) {
+                    modal.component = component;
+                } else {
+                    modal.templateUrl = templateUrl;
+                    modal.controller = controllerFunc;
+                }
+
+                // Show the modal
+                let modalInstance = $uibModal.open(modal);
 
                 // If no callbacks were defined, create blank ones. This avoids a console error
                 if (typeof closeCallback !== "function") {

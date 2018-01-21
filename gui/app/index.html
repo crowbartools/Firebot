@@ -73,6 +73,7 @@
     <script type="text/javascript" src="./directives/controls/effectList.js"></script>
     <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
     <script type="text/javascript" src="./directives/misc/tooltip.js"></script>
+    <script type="text/javascript" src="./directives/modals/connectionPanelModal.js"></script>
   </head>
   <body>
     <div class='loader-wrapper' ng-if="showSpinner">
@@ -89,134 +90,143 @@
           <i class="fal fa-angle-left"></i>
         </span>
       </div>
-      <div class="nav-links-wrapper">
-        <div class="fb-nav-link-category">
-          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>          
-          <span ng-class="{'contracted': !navExpanded}">Interactive</span>
-        </div>
-        <a class="fb-nav-link" href="#" ng-class="{'selected': tabIsSelected('Interactive')}" ng-click="setTab('Interactive')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-gamepad"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Buttons</div>
-        </a>
-        <div class="fb-nav-link-category pad-top">
-          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>          
-          <span ng-class="{'contracted': !navExpanded}">Chat</span>
-        </div>
-        <a class="fb-nav-link" href="#!commands" ng-class="{'selected': tabIsSelected('Commands')}" ng-click="setTab('Commands')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Commands</div>
-        </a>
-        <a class="fb-nav-link" href="#!chat-messages" ng-class="{'selected': tabIsSelected('Chat Feed')}" ng-click="setTab('Chat Feed')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-commenting"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Chat Feed</div>
-        </a>
-        <div class="fb-nav-link-category pad-top">  
-          <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>        
-          <span ng-class="{'contracted': !navExpanded}">General</span>
-        </div>
-        <a class="fb-nav-link" href="#!events" ng-class="{'selected': tabIsSelected('Events')}" ng-click="setTab('Events')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-star"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Events</div>
-        </a>
-        <a class="fb-nav-link" href="#!groups" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-users"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
-        </a>
-        <a class="fb-nav-link" href="#!hotkeys" ng-class="{'selected': tabIsSelected('Hotkeys')}" ng-click="setTab('Hotkeys')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-keyboard"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Hotkeys</div>
-        </a>
-        <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-gavel"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Moderation</div>
-        </a>
-        <a class="fb-nav-link" href="#!settings" ng-class="{'selected': tabIsSelected('Settings')}" ng-click="setTab('Settings')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-cog"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Settings</div>
-        </a>
-        <a class="fb-nav-link" href="#!updates" ng-class="{'selected': tabIsSelected('Updates')}" ng-click="setTab('Updates')">
-          <div class="nav-link-bar"></div>
-          <div class="nav-link-icon"><i class="fal fa-download"></i></div>
-          <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Updates</div>
-          <div ng-show="updateIsAvailable" class="nav-update-badge" ng-class="{'contracted': !navExpanded}">
-            <span class="label label-danger">NEW</span>
+      <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="nav-links-wrapper" ng-class="{'contracted': !navExpanded}">
+          <div class="fb-nav-link-category">
+            <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>          
+            <span ng-class="{'contracted': !navExpanded}">Interactive</span>
           </div>
-        </a>
-      </div>
+          <a class="fb-nav-link" href="#" ng-class="{'selected': tabIsSelected('Interactive')}" ng-click="setTab('Interactive')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-gamepad"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Buttons</div>
+          </a>
+          <div class="fb-nav-link-category pad-top">
+            <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>          
+            <span ng-class="{'contracted': !navExpanded}">Chat</span>
+          </div>
+          <a class="fb-nav-link" href="#!commands" ng-class="{'selected': tabIsSelected('Commands')}" ng-click="setTab('Commands')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-bullhorn"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Commands</div>
+          </a>
+          <a class="fb-nav-link" href="#!chat-messages" ng-class="{'selected': tabIsSelected('Chat Feed')}" ng-click="setTab('Chat Feed')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-commenting"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Chat Feed</div>
+          </a>
+          <div class="fb-nav-link-category pad-top">  
+            <div ng-class="{'contracted': !navExpanded}" class="spacing"></div>        
+            <span ng-class="{'contracted': !navExpanded}">General</span>
+          </div>
+          <a class="fb-nav-link" href="#!events" ng-class="{'selected': tabIsSelected('Events')}" ng-click="setTab('Events')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-star"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Events</div>
+          </a>
+          <a class="fb-nav-link" href="#!groups" ng-class="{'selected': tabIsSelected('Groups')}" ng-click="setTab('Groups')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-users"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Viewer Groups</div>
+          </a>
+          <a class="fb-nav-link" href="#!hotkeys" ng-class="{'selected': tabIsSelected('Hotkeys')}" ng-click="setTab('Hotkeys')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-keyboard"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Hotkeys</div>
+          </a>
+          <a class="fb-nav-link" href="#!moderation" ng-class="{'selected': tabIsSelected('Moderation')}" ng-click="setTab('Moderation')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-gavel"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Moderation</div>
+          </a>
+          <a class="fb-nav-link" href="#!settings" ng-class="{'selected': tabIsSelected('Settings')}" ng-click="setTab('Settings')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-cog"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Settings</div>
+          </a>
+          <a class="fb-nav-link" href="#!updates" ng-class="{'selected': tabIsSelected('Updates')}" ng-click="setTab('Updates')">
+            <div class="nav-link-bar"></div>
+            <div class="nav-link-icon"><i class="fal fa-download"></i></div>
+            <div class="nav-link-title" ng-class="{'contracted': !navExpanded}">Updates</div>
+            <div ng-show="updateIsAvailable" class="nav-update-badge" ng-class="{'contracted': !navExpanded}">
+              <span class="label label-danger">NEW</span>
+            </div>
+          </a>
+        </div>
 
-      <div class="connection-status-wrapper">
+
+        <div class="connection-status-wrapper">
+            <!--<div class='interactive-status-wrapper'>
+              <div class="interative-status-icon" 
+                    ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}" 
+                    uib-tooltip-template="'connectTooltipTemplate.html'" 
+                    tooltip-placement="{{!navExpanded ? 'right-bottom' : 'right'}}"
+                    tooltip-append-to-body="true"
+                    ng-click="connService.toggleConnectionToChat()"
+                    ng-hide="connService.waitingForChatStatusChange">
+                <i class="fal fa-power-off"></i>
+              </div>
+              <div class="interative-status-icon" 
+                    style="color:white;" 
+                    ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}"
+                    ng-show="connService.waitingForChatStatusChange"
+                    uib-tooltip="{{getChatConnectionMessage()}}" 
+                    tooltip-placement="right"
+                    tooltip-append-to-body="true">
+                    <i class="fal fa-sync fa-spin"></i>
+              </div>
+              <div class="interactive-status-text">
+                <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
+                  <span>Chat:</span>
+                </div>
+                <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
+                  <span>{{getChatConnectionMessage()}}</span>
+                </div>
+              </div>
+          </div>-->
+    
           <div class='interactive-status-wrapper'>
-            <div class="interative-status-icon" 
-                  ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}" 
-                  uib-tooltip-template="'connectTooltipTemplate.html'" 
-                  tooltip-placement="{{!navExpanded ? 'right-bottom' : 'right'}}"
-                  tooltip-append-to-body="true"
-                  ng-click="connService.toggleConnectionToChat()"
-                  ng-hide="connService.waitingForChatStatusChange">
-              <i class="fal fa-power-off"></i>
-            </div>
-            <div class="interative-status-icon" 
-                  style="color:white;" 
-                  ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}"
-                  ng-show="connService.waitingForChatStatusChange"
-                  uib-tooltip="{{getChatConnectionMessage()}}" 
-                  tooltip-placement="right"
-                  tooltip-append-to-body="true">
-                  <i class="fal fa-sync fa-spin"></i>
-            </div>
-            <div class="interactive-status-text">
-              <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
-                <span>Chat:</span>
-              </div>
-              <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
-                <span>{{getChatConnectionMessage()}}</span>
-              </div>
-            </div>
-        </div>
-  
-        <div class='interactive-status-wrapper'>
-          <div class="interative-status-icon" 
-                ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}" 
+            <div>
+              <div class="interative-status-icon" 
+                ng-class="{'contracted': !navExpanded, 'connected': allServicesConnected(), 'partial-connected': partialServicesConnected()}" 
                 uib-tooltip-template="'connectTooltipTemplate.html'" 
-                tooltip-placement="{{!navExpanded || connService.connectedToInteractive ? 'right-bottom' : 'right'}}"
+                tooltip-placement="{{!navExpanded || allServicesConnected() ? 'right-bottom' : 'right'}}"
                 tooltip-append-to-body="true"
-                ng-click="connService.toggleConnectionToInteractive()"
-                ng-hide="connService.waitingForStatusChange">
-            <i class="fal fa-power-off"></i>
-          </div>
-          <div class="interative-status-icon" 
-                style="color:white;" 
-                ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToInteractive}"
-                ng-show="connService.waitingForStatusChange"
-                uib-tooltip="{{getConnectionMessage()}}" 
-                tooltip-placement="right"
-                tooltip-append-to-body="true">
-                <i class="fal fa-sync fa-spin"></i>
-          </div>
-          <div class="interactive-status-text">
-            <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
-              <span>Interactive:</span>
+                ng-click="toggleSidebarControlledServices()"
+                ng-hide="waitingForServicesStatusChange()">
+                <i class="fal fa-power-off"></i>
+              </div>
+              <div class="interative-status-icon" 
+                    style="color:white;" 
+                    ng-class="{'contracted': !navExpanded }"
+                    ng-show="waitingForServicesStatusChange()"
+                    uib-tooltip="{{getConnectionMessage()}}" 
+                    tooltip-placement="right"
+                    tooltip-append-to-body="true">
+                    <i class="fal fa-sync fa-spin"></i>
+              </div>
+              <div class="interactive-status-text">
+                <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
+                  <span>Mixer Services:</span>
+                </div>
+                <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
+                  <span>{{getConnectionMessage()}}</span>
+                </div>
+              </div>
             </div>
-            <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
-              <span>{{getConnectionMessage()}}</span>
+            
+            <div style="color: gray; font-size: 30px; padding-right: 15px; cursor: pointer; width: 50px; text-align: right;"
+                ng-click="showConnectionPanelModal()">
+              <span><i class="fal fa-angle-right"></i></span>
             </div>
           </div>
-        </div>
-        <div class="about-link" 
-              ng-class="{'contracted': !navExpanded}"
-              ng-click="showAboutFirebotModal()">
-          About
+          <div class="about-link" 
+                ng-class="{'contracted': !navExpanded}"
+                ng-click="showAboutFirebotModal()">
+            About
+          </div>
         </div>
       </div>
-
     </div>  
 
     <div class="fb-tab-content">
