@@ -97,7 +97,7 @@
                     }
                 });
 
-                service.chatAlertMessage(data.moderator.user_name + ' purged all messages from ' + data.user_id + '.');
+                service.chatAlertMessage(data.moderator.user_name + ' purged all messages from a user (' + data.user_id + ').');
             };
 
             // Chat Alert Message
