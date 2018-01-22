@@ -120,6 +120,10 @@
                 return chatMessagesService.getChatViewCountSetting();
             };
 
+            $scope.getChatViewerListSetting = function() {
+                return chatMessagesService.getChatViewerListSetting();
+            };
+
             // This happens when a chat message is submitted.
             $scope.submitChat = function() {
                 chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);

@@ -34,7 +34,7 @@
             <dropdown-select options="$ctrl.metadata.options" selected="$ctrl.metadata.value"></dropdown-select>
           </div>
           <div ng-switch-when="filepath">
-            <file-chooser model="$ctrl.metadata.value"></file-chooser>
+            <file-chooser model="$ctrl.metadata.value" options="$ctrl.metadata.fileOptions"></file-chooser></file-chooser>
           </div>
        </div>
        <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />

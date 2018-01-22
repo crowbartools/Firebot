@@ -209,6 +209,19 @@
                 pushDataToFile('/settings/chatViewCount', chatViewCount === true);
             };
 
+            // Used for settings menu.
+            service.getChatViewerList = function() {
+                let chatViewerList = getDataFromFile('/settings/chatViewerList');
+                if (chatViewerList === true) {
+                    return "On";
+                }
+                return "Off";
+            };
+
+            service.setChatViewerList = function(chatViewerList) {
+                pushDataToFile('/settings/chatViewerList', chatViewerList === true);
+            };
+
             service.getOverlayCompatibility = function() {
                 let overlay = getDataFromFile('/settings/overlayImages');
                 return overlay != null ? overlay : "Other";

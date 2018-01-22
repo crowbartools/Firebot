@@ -97,7 +97,7 @@
                     }
                 });
 
-                service.chatAlertMessage(data.moderator.user_name + ' purged all messages from ' + data.user_id + '.');
+                service.chatAlertMessage(data.moderator.user_name + ' purged all messages from a user (' + data.user_id + ').');
             };
 
             // Chat Alert Message
@@ -333,6 +333,16 @@
                 }
                 return false;
             };
+
+            // Gets view count setting for ui.
+            service.getChatViewerListSetting = function() {
+                let viewerList = settingsService.getChatViewerList();
+                if (viewerList === "On") {
+                    return true;
+                }
+                return false;
+            };
+
 
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.
