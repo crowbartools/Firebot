@@ -259,9 +259,9 @@
                 case 'chat':
                     if (shouldConnect) {
                         console.log("connecting to chat");
-                        connectionService.connectToChat();
+                        //connectionService.connectToChat();
                     } else if (connectionService.connectedToChat) {
-                        connectionService.disconnectFromChat();
+                        //connectionService.disconnectFromChat();
                     }
                     break;
                 }
