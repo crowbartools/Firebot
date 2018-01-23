@@ -443,6 +443,9 @@ body {
   .interative-status-icon.connected {
     color: $good-color;
   }
+  .interative-status-icon.partial-connected {
+    color: gold;
+  }
   .interative-status-icon:hover {
     opacity: 0.5;
   }
