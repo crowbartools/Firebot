@@ -342,7 +342,7 @@
 
                 let lastBoard = boardService.getBoardById(settingsService.getLastBoardId());
 
-                service.connectedBoard = lastBoard.name;
+                service.connectedBoard = lastBoard ? lastBoard.name : "";
                 refreshToken('interactive');
             };
 
