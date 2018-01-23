@@ -186,11 +186,12 @@
               </div>
             </div>
             
-            <div class="connection-panel-btn" ng-class="{'contracted': !navExpanded}"
+            <div class="connection-panel-btn" ng-class="{'contracted': !navExpanded}" uib-tooltip="Open Connection Panel" tooltip-append-to-body="true"
                 ng-click="showConnectionPanelModal()">
-              <span><i class="fal fa-angle-right"></i></span>
+              <span><i class="fal fa-external-link-alt"></i></span>
             </div>
           </div>
+
           <div class="about-link" 
                 ng-class="{'contracted': !navExpanded}"
                 ng-click="showAboutFirebotModal()">
