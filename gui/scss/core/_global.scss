@@ -419,12 +419,27 @@ body {
   width:100%;
 }
 
+.connection-panel-btn {
+  transition: 0.5s;
+  opacity: 1;
+  color: gray; 
+  font-size: 30px; 
+  padding-right: 15px; 
+  cursor: pointer; 
+  width: 50px; 
+  text-align: right;
+  &.contracted {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 .interactive-status-wrapper {
   align-self: left;
   margin-top: auto;
   padding:0em 0em 0em 1em;
   text-align:left;
-  margin-bottom: .25em;
+  margin-bottom: .70em;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -434,7 +449,6 @@ body {
     font-size: 35px;
     display:inline-block;
     padding: 0px .25em 0em 0em;
-    //transition: font-size 0.4s linear;
   }
   .interactive-status-text{
     display:inline-block;

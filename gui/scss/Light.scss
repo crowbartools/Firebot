@@ -70,6 +70,10 @@ $chatDeletedColor: gray;
 $chatTextColor: black;
 $chatBorder: #cecece;
 
+//connection panel
+$connection-tile-bg: white;
+$connection-tile-title: black;
+
 
 // Import Core Styles
 @import './core/$importer';

@@ -68,6 +68,9 @@ $chatDeletedColor: gray;
 $chatTextColor: white;
 $chatBorder: #cecece;
 
+//connection panel
+$connection-tile-bg: #3e4356;
+$connection-tile-title: white;
 
 // Import Core Styles
 @import './core/$importer';
