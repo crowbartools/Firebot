@@ -413,8 +413,7 @@ body {
 }
 
 .connection-status-wrapper{
-  //position:absolute;
-  //bottom:0px;
+  position: relative;
   padding: 20px 0;
   border-top: 2px solid #383d3f;
   width:100%;
@@ -477,11 +476,13 @@ body {
 .about-link {
   text-align: center;
   color: $highlight-color;
-  font-size: 12.5px;
+  font-size: 11px;
   text-decoration: underline;
   margin-bottom: 3px;
   cursor: pointer;
   transition: 0.4s;
+  position: absolute;
+  width: 100%;
 }
 
 .text-dropdown {
