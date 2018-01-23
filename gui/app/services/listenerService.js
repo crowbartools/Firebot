@@ -133,6 +133,8 @@
                 default:
                     registeredListeners[listener.type][uuid] = listener;
                 }
+
+                return uuid;
             };
 
             service.unregisterListener = function(type, uuid) {

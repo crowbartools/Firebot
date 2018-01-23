@@ -56,6 +56,7 @@
     <script type="text/javascript" src="./services/websocketService.js"></script>
     <script type="text/javascript" src="./services/notificationService.js"></script>
     <script type="text/javascript" src="./services/hotKeyService.js"></script>
+    <script type="text/javascript" src="./services/connectionManager.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
     <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosContainer.js"></script>
@@ -156,41 +157,12 @@
 
 
         <div class="connection-status-wrapper">
-            <!--<div class='interactive-status-wrapper'>
-              <div class="interative-status-icon" 
-                    ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}" 
-                    uib-tooltip-template="'connectTooltipTemplate.html'" 
-                    tooltip-placement="{{!navExpanded ? 'right-bottom' : 'right'}}"
-                    tooltip-append-to-body="true"
-                    ng-click="connService.toggleConnectionToChat()"
-                    ng-hide="connService.waitingForChatStatusChange">
-                <i class="fal fa-power-off"></i>
-              </div>
-              <div class="interative-status-icon" 
-                    style="color:white;" 
-                    ng-class="{'contracted': !navExpanded, 'connected': connService.connectedToChat}"
-                    ng-show="connService.waitingForChatStatusChange"
-                    uib-tooltip="{{getChatConnectionMessage()}}" 
-                    tooltip-placement="right"
-                    tooltip-append-to-body="true">
-                    <i class="fal fa-sync fa-spin"></i>
-              </div>
-              <div class="interactive-status-text">
-                <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
-                  <span>Chat:</span>
-                </div>
-                <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
-                  <span>{{getChatConnectionMessage()}}</span>
-                </div>
-              </div>
-          </div>-->
-    
           <div class='interactive-status-wrapper'>
             <div>
               <div class="interative-status-icon" 
                 ng-class="{'contracted': !navExpanded, 'connected': allServicesConnected(), 'partial-connected': partialServicesConnected()}" 
                 uib-tooltip-template="'connectTooltipTemplate.html'" 
-                tooltip-placement="{{!navExpanded || allServicesConnected() ? 'right-bottom' : 'right'}}"
+                tooltip-placement="{{!navExpanded ? 'right-bottom' : 'top-left'}}"
                 tooltip-append-to-body="true"
                 ng-click="toggleSidebarControlledServices()"
                 ng-hide="waitingForServicesStatusChange()">
@@ -411,19 +383,20 @@
     
     <!-- Tooltip template -->
     <script type="text/ng-template" id="connectTooltipTemplate.html">
-      <span ng-if="!navExpanded">
-        <span><b>Interactive Status:</b></span>
+      <span>
+        <span style="font-weight: 900"><b>Interactive Status:</b></span>
         </br> 
-        <span>{{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}</span>     
+        <span>{{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}</span>
+        <span ng-if="connService.connectedToInteractive"></br>{{'(' +  connService.connectedBoard + ')'}}</span>     
         </br></br>
       </span>
-      <span ng-if="connService.connectedToInteractive">
-        <span><b>Connected Board:</b></span>
+      <span>
+        <span><b>Chat Status:</b></span>
         </br> 
-        <span>{{connService.connectedBoard}}</span>
+        <span>{{connService.connectedToChat ? 'Connected' : 'Disconnected'}}</span>     
         </br></br>
       </span>
-      <span>Click or press Ctrl + Alt + F12 to toggle.</span>
+      <span>[Click to toggle]</span>
     </script>
     
     <!-- Download Modal -->

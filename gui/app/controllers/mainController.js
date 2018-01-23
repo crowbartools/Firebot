@@ -16,7 +16,7 @@
     );
 
     app.controller('MainController', function($scope, $rootScope, $timeout, boardService,
-        connectionService, groupsService, utilityService, settingsService, updatesService,
+        connectionService, connectionManager, groupsService, utilityService, settingsService, updatesService,
         eventLogService, websocketService, notificationService) {
 
         $rootScope.showSpinner = true;
@@ -196,95 +196,30 @@
       */
         $scope.connService = connectionService;
 
-        $scope.connectedServiceCount = function() {
-            let services = settingsService.getSidebarControlledServices();
+        $scope.partialServicesConnected = connectionManager.partialServicesConnected;
 
-            let count = 0;
-
-            services.forEach((s) => {
-                switch (s) {
-                case 'interactive':
-                    if (connectionService.connectedToInteractive) {
-                        count++;
-                    }
-                    break;
-                case 'chat':
-                    if (connectionService.connectedToChat) {
-                        count++;
-                    }
-                    break;
-                }
-            });
-
-            return count;
-        };
-
-        $scope.partialServicesConnected = function() {
-            let services = settingsService.getSidebarControlledServices();
-            let connectedCount = $scope.connectedServiceCount();
-
-            return (services.length > connectedCount);
-        };
-
-        $scope.allServicesConnected = function() {
-            let services = settingsService.getSidebarControlledServices();
-            let connectedCount = $scope.connectedServiceCount();
-
-            return (services.length === connectedCount);
-        };
+        $scope.allServicesConnected = connectionManager.allServicesConnected;
 
         $scope.waitingForServicesStatusChange = function() {
             return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange);
         };
 
         $scope.toggleSidebarControlledServices = function() {
-            let services = settingsService.getSidebarControlledServices();
-
-            // we only want to connect if none of the connections are currently connected
-            // otherwise we will attempt to disconnect everything.
-
-            let shouldConnect = $scope.connectedServiceCount() === 0;
-            console.log(services);
-            services.forEach((s) => {
-                switch (s) {
-                case 'interactive': {
-                    if (shouldConnect) {
-                        console.log("connecting to interactive");
-                        connectionService.connectToInteractive();
-                    } else if (connectionService.connectedToInteractive) {
-                        connectionService.disconnectFromInteractive();
-                    }
-                    break;
-                }
-                case 'chat':
-                    if (shouldConnect) {
-                        console.log("connecting to chat");
-                        //connectionService.connectToChat();
-                    } else if (connectionService.connectedToChat) {
-                        //connectionService.disconnectFromChat();
-                    }
-                    break;
-                }
-            });
+            connectionManager.toggleSidebarServices();
         };
 
-        // Interactive
         $scope.getConnectionMessage = function() {
             let message = "";
-            if (connectionService.waitingForStatusChange) {
-                message = connectionService.connectedToInteractive ? 'Disconnecting...' : 'Connecting...';
+            if ($scope.waitingForServicesStatusChange()) {
+                message = "Waiting...";
             } else {
-                message = connectionService.connectedToInteractive ? 'Connected' : 'Disconnected';
-            }
-            return message;
-        };
-        // Chat
-        $scope.getChatConnectionMessage = function() {
-            let message = "";
-            if (connectionService.waitingForChatStatusChange) {
-                message = connectionService.connectedToChat ? 'Disconnecting...' : 'Connecting...';
-            } else {
-                message = connectionService.connectedToChat ? 'Connected' : 'Disconnected';
+                if ($scope.allServicesConnected()) {
+                    message = "Connected";
+                } else if ($scope.partialServicesConnected()) {
+                    message = "Some Connected";
+                } else {
+                    message = "Disconnected";
+                }
             }
             return message;
         };

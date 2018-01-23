@@ -8,7 +8,7 @@
 
     angular
         .module('firebotApp')
-        .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q, $rootScope) {
+        .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q, $rootScope, boardService) {
             let service = {};
 
             let ListenerType = listenerService.ListenerType;
@@ -339,7 +339,10 @@
             service.connectToInteractive = function() {
                 // Let's connect! Get new tokens and connect.
                 service.waitingForStatusChange = true;
-                service.connectedBoard = settingsService.getLastBoardId();
+
+                let lastBoard = boardService.getBoardById(settingsService.getLastBoardId());
+
+                service.connectedBoard = lastBoard.name;
                 refreshToken('interactive');
             };
 
