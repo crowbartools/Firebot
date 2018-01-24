@@ -122,6 +122,13 @@
 
 // Misc 
 
+.table-hover > tbody > tr:hover {
+    background-color: $light-background-color;
+}
+.control-list:hover>td, .command-list:hover>td {
+    color: $content-text-color; 
+}
+
 .dropdown-menu {
     border-radius: 2px;
     border: 2px solid $dropdown-menu-border;
