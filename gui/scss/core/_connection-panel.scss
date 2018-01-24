@@ -41,3 +41,32 @@
 .connection-panel-modal .modal-dialog {
     width: 500px;
 }
+
+.connection-icon {
+    position: relative;
+    color: white;
+    font-size: 16px;
+    .status-bubble {
+        position: absolute;
+        bottom: -2px;
+        right: -7px;
+        width: 14px;
+        height: 14px;
+        border-radius: 7px;    
+        border: 2px solid $connection-status-bubble-border;
+        font-size: 6px;
+        color: $connection-status-bubble-border;        
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &.connected {
+            background: lightgreen;
+        }
+        &.disconnected {
+            background: red;
+        }
+        &.warning {
+            background: gold;
+        }
+    }
+}

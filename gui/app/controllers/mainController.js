@@ -196,12 +196,14 @@
       */
         $scope.connService = connectionService;
 
+        $scope.wss = websocketService;
+
         $scope.partialServicesConnected = connectionManager.partialServicesConnected;
 
         $scope.allServicesConnected = connectionManager.allServicesConnected;
 
         $scope.waitingForServicesStatusChange = function() {
-            return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange);
+            return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange || connectionService.isConnectingAll);
         };
 
         $scope.toggleSidebarControlledServices = function() {

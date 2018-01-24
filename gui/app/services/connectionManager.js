@@ -7,7 +7,7 @@
 
     angular
         .module('firebotApp')
-        .factory('connectionManager', function (connectionService, listenerService, settingsService) {
+        .factory('connectionManager', function (connectionService, listenerService, settingsService, websocketService, soundService) {
             let service = {};
 
             service.setConnectionToChat = function(shouldConnect) {
@@ -90,6 +90,7 @@
 
                 let shouldConnect = service.connectedServiceCount() === 0;
 
+                connectionService.isConnectingAll = true;
                 for (let i = 0; i < services.length; i++) {
                     let s = services[i];
                     switch (s) {
@@ -110,6 +111,38 @@
                         break;
                     }
                 }
+                connectionService.isConnectingAll = false;
+
+                let soundType = service.connectedServiceCount() > 0 ? "Online" : "Offline";
+                soundService.connectSound(soundType);
+            };
+
+            service.getConnectionStatusForService = function(service) {
+                let connectionStatus = null;
+                switch (service) {
+                case "interactive":
+                    if (connectionService.connectedToInteractive) {
+                        connectionStatus = "connected";
+                    } else {
+                        connectionStatus = "disconnected";
+                    }
+                    break;
+                case "chat":
+                    if (connectionService.connectedToChat) {
+                        connectionStatus = "connected";
+                    } else {
+                        connectionStatus = "disconnected";
+                    }
+                    break;
+                case "overlay":
+                    if (websocketService.hasClientsConnected) {
+                        connectionStatus = "connected";
+                    } else {
+                        connectionStatus = "warning";
+                    }
+                    break;
+                }
+                return connectionStatus;
             };
 
             return service;

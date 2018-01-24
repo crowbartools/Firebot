@@ -446,12 +446,14 @@ body {
   .interative-status-icon {
     cursor: pointer;
     color: $bad-color;
-    font-size: 35px;
+    font-size: 30px;
     display:inline-block;
     padding: 0px .25em 0em 0em;
   }
   .interactive-status-text{
     display:inline-block;
+    width: 100px;
+    text-align: center;
   }
   .interative-status-icon.connected {
     color: $good-color;
@@ -469,6 +471,8 @@ body {
     color:white;
     opacity: 0.5;
     transition: 0.3s;
+    font-size: 11px;
+    text-transform: uppercase;
   }
   .interative-status-title.contracted {
     opacity: 0;
@@ -482,6 +486,10 @@ body {
     opacity: 0;
   }
 
+}
+
+.force-white-text {
+  color: white !important;
 }
 
 

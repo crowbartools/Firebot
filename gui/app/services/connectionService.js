@@ -324,6 +324,9 @@
             /**
             * Interactive Connection Stuff
             */
+
+            service.isConnectingAll = false;
+
             service.connectedToInteractive = false;
             service.waitingForStatusChange = false;
             service.connectedBoard = "";
@@ -359,8 +362,13 @@
                 (isConnected) => {
                     service.connectedToInteractive = isConnected;
 
-                    let soundType = isConnected ? "Online" : "Offline";
-                    soundService.connectSound(soundType);
+                    if (!service.isConnectingAll) {
+                        let soundType = isConnected ? "Online" : "Offline";
+                        soundService.connectSound(soundType);
+                    }
+
+                    let status = isConnected ? "connected" : "disconnected";
+                    $rootScope.$broadcast("connection:update", { type: "interactive", status: status });
 
                     service.waitingForStatusChange = false;
                 });
@@ -407,8 +415,13 @@
                 (isChatConnected) => {
                     service.connectedToChat = isChatConnected;
 
-                    let soundType = isChatConnected ? "Online" : "Offline";
-                    soundService.connectSound(soundType);
+                    if (!service.isConnectingAll) {
+                        let soundType = isChatConnected ? "Online" : "Offline";
+                        soundService.connectSound(soundType);
+                    }
+
+                    let status = isChatConnected ? "connected" : "disconnected";
+                    $rootScope.$broadcast("connection:update", { type: "chat", status: status });
 
                     service.waitingForChatStatusChange = false;
                 });

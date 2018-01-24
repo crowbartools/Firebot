@@ -74,6 +74,7 @@
     <script type="text/javascript" src="./directives/controls/effectList.js"></script>
     <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
     <script type="text/javascript" src="./directives/misc/tooltip.js"></script>
+    <script type="text/javascript" src="./directives/misc/connectionIcon.js"></script>
     <script type="text/javascript" src="./directives/modals/connectionPanelModal.js"></script>
   </head>
   <body>
@@ -157,31 +158,25 @@
 
         <div class="connection-status-wrapper">
           <div class='interactive-status-wrapper'>
+              <div class="interative-status-icon" 
+              ng-class="{'contracted': !navExpanded, 'connected': allServicesConnected(), 'partial-connected': partialServicesConnected()}" 
+              uib-tooltip-template="'connectTooltipTemplate.html'" 
+              tooltip-placement="{{!navExpanded ? 'right-bottom' : 'top-left'}}"
+              tooltip-append-to-body="true"
+              ng-click="toggleSidebarControlledServices()">
+              <i class="fal" ng-class="waitingForServicesStatusChange() ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
+            </div>
             <div>
-              <div class="interative-status-icon" 
-                ng-class="{'contracted': !navExpanded, 'connected': allServicesConnected(), 'partial-connected': partialServicesConnected()}" 
-                uib-tooltip-template="'connectTooltipTemplate.html'" 
-                tooltip-placement="{{!navExpanded ? 'right-bottom' : 'top-left'}}"
-                tooltip-append-to-body="true"
-                ng-click="toggleSidebarControlledServices()"
-                ng-hide="waitingForServicesStatusChange()">
-                <i class="fal fa-power-off"></i>
-              </div>
-              <div class="interative-status-icon" 
-                    style="color:white;" 
-                    ng-class="{'contracted': !navExpanded }"
-                    ng-show="waitingForServicesStatusChange()"
-                    uib-tooltip="{{getConnectionMessage()}}" 
-                    tooltip-placement="right"
-                    tooltip-append-to-body="true">
-                    <i class="fal fa-sync fa-spin"></i>
-              </div>
               <div class="interactive-status-text">
                 <div class="interative-status-title" ng-class="{'contracted': !navExpanded}">
-                  <span>Mixer Services:</span>
+                  <span>Connections</span>
                 </div>
                 <div class="interative-status-subtitle" ng-class="{'contracted': !navExpanded}">
-                  <span>{{getConnectionMessage()}}</span>
+                  <span style="width: 100%;display: flex;justify-content: space-between;margin-top: 5px;">
+                    <connection-icon type="interactive"></connection-icon>
+                    <connection-icon type="chat"></connection-icon>
+                    <connection-icon type="overlay"></connection-icon>
+                  </span>
                 </div>
               </div>
             </div>
@@ -384,20 +379,28 @@
     
     <!-- Tooltip template -->
     <script type="text/ng-template" id="connectTooltipTemplate.html">
-      <span>
-        <span style="font-weight: 900"><b>Interactive Status:</b></span>
-        </br> 
-        <span>{{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}</span>
-        <span ng-if="connService.connectedToInteractive"></br>{{'(' +  connService.connectedBoard + ')'}}</span>     
-        </br></br>
-      </span>
-      <span>
-        <span><b>Chat Status:</b></span>
-        </br> 
-        <span>{{connService.connectedToChat ? 'Connected' : 'Disconnected'}}</span>     
-        </br></br>
-      </span>
-      <span>[Click to toggle]</span>
+      <div ng-if="!navExpanded">
+        <span>
+            <span><b>Interactive Status:</b></span>
+            </br> 
+            <span>{{connService.connectedToInteractive ? 'Connected' : 'Disconnected'}}</span>
+            <span ng-if="connService.connectedToInteractive"></br>{{'(' +  connService.connectedBoard + ')'}}</span>     
+            </br></br>
+          </span>
+          <span>
+            <span><b>Chat Status:</b></span>
+            </br> 
+            <span>{{connService.connectedToChat ? 'Connected' : 'Disconnected'}}</span>     
+            </br></br>
+          </span>
+          <span>
+              <span><b>Overlay Status:</b></span>
+              </br> 
+              <span>{{wss.hasClientsConnected ? 'Connected' : 'Running, but nothing is connected'}}</span>     
+              </br></br>
+            </span>
+      </div>
+      <span>Click to toggle connection to Mixer services.</span>
     </script>
     
     <!-- Download Modal -->
