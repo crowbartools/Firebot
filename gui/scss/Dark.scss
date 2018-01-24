@@ -21,6 +21,7 @@ $scrollbar-bar-color: $light-background-border + 40%;
 $left-nav-link-text-color: white;
 $left-nav-link-text-hover-color:#141828;
 $left-nav-link-text-selected-color: whitesmoke;
+$nav-link-bg: #141828;
 
 // Tiles
 $tile-text-color: white;
@@ -68,12 +69,34 @@ $chatDeletedColor: gray;
 $chatTextColor: white;
 $chatBorder: #cecece;
 
-//connection panel
+// Connection panel
 $connection-tile-bg: #3e4356;
 $connection-tile-title: white;
 
-// Import Core Styles
-@import './core/$importer';
+// Bootstrap overrides
+$nav-border-bottom: #b1b1b1;
+$nav-border-hover: rgb(228, 228, 228);
+$nav-border-selected: white;
+$selected-tab-text-color: white;
+$unselected-tab-text-color: #c5c5c5;
+$default-btn-bg-color: #838488;
+$default-btn-text-color: white;
+$default-btn-border: #838488;
+$default-btn-hover-bg: #5c637a;
+$default-btn-hover-border: #5c637a;
+
+$form-control-bg: #525565;
+$form-control-border: transparent;
+$form-control-text: white;
+$add-on-group-bg: #7f808c;
+$add-on-group-border: transparent;
+$add-on-group-text: white;
+
+$dropdown-menu-bg: #3e4356;
+$dropdown-menu-border: #d3d3d3;
+$dropdown-menu-text: white;
+
+$muted-text-color: #e4e4e4;
 
 .list-group-item {
     background-color: #323851;
@@ -81,3 +104,14 @@ $connection-tile-title: white;
 }
 
 
+$alert-info-text-color: #f9fdff;
+$alert-info-bg: #3f7d9c;
+
+$alert-warning-text-color: #8a6d3b;
+$alert-warning-bg: #ffee73;
+
+$alert-danger-text-color: #f9fdff;
+$alert-danger-bg: #ce6c6c;
+
+// Import Core Styles
+@import './core/$importer';

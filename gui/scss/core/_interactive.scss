@@ -35,6 +35,21 @@
   position: relative;
   width: 250px;
 }
+
+.searchbar-header-wrapper {
+  display:inline-block;
+  float:right;
+  position: absolute;
+  right: 7px;
+}
+
+.searchbar-icon {
+  position: absolute; 
+  left: 8px; 
+  top: 9px;
+}
+
+
 .interactive-control-tile {
   margin-top: 20px;
   color: white;
@@ -147,8 +162,8 @@
     height: 200px;
     overflow:hidden;
     overflow-y: scroll;
-    border: 1px solid #ccc;
-    border-radius:4px;
+    border: 2px solid #909090;
+    border-radius:2px;
     padding:6px 12px;
     margin: 10px 0px;
 
