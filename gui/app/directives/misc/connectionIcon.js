@@ -43,8 +43,8 @@
                 };
 
                 const BubbleIcon = {
-                    CONNECTED: "fa-check",
-                    DISCONNECTED: "fa-times",
+                    CONNECTED: "fa-plug",
+                    DISCONNECTED: "fa-plug",
                     WARNING: "fa-exclamation"
                 };
 

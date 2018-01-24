@@ -50,11 +50,11 @@
         position: absolute;
         bottom: -2px;
         right: -7px;
-        width: 14px;
-        height: 14px;
-        border-radius: 7px;    
+        width: 16px;
+        height: 16px;
+        border-radius: 8px;    
         border: 2px solid $connection-status-bubble-border;
-        font-size: 6px;
+        font-size: 9px;
         color: $connection-status-bubble-border;        
         display: flex;
         justify-content: center;
@@ -63,7 +63,7 @@
             background: lightgreen;
         }
         &.disconnected {
-            background: red;
+            background: #ff5f5f;
         }
         &.warning {
             background: gold;
