@@ -7,8 +7,15 @@
 
     angular
         .module('firebotApp')
-        .factory('connectionManager', function (connectionService, listenerService, settingsService, websocketService, soundService) {
+        .factory('connectionManager', function (connectionService, listenerService, settingsService, websocketService,
+            soundService) {
+
             let service = {};
+
+            service.isWaitingForServicesStatusChange = function() {
+                return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange ||
+                    connectionService.isConnectingAll);
+            };
 
             service.setConnectionToChat = function(shouldConnect) {
                 return new Promise(resolve => {

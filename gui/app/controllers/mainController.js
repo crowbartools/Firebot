@@ -9,53 +9,41 @@
             ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable', 'luegg.directives']);
 
     app.run(
-        function initializeApplication(chatMessagesService) { // eslint-disable-line no-unused-vars
-            // This does nothing but require the injected services to be
-            // instantiated on app start
+        function initializeApplication(chatMessagesService, groupsService, connectionService, notificationService,
+            $timeout, updatesService) {
+            // 'chatMessagesService' is included so its instantiated on app start
+
+            // Run loadLogin to update the UI on page load.
+            connectionService.loadLogin();
+
+            //Attempt to load viewer groups into memory
+            groupsService.loadViewerGroups();
+
+            //start notification check
+            $timeout(() => {
+                notificationService.loadAllNotifications();
+                notificationService.startExternalIntervalCheck();
+            }, 1000);
+
+            //check for updates
+            if (!updatesService.hasCheckedForUpdates) {
+                updatesService.checkForUpdate();
+            }
         }
     );
 
     app.controller('MainController', function($scope, $rootScope, $timeout, boardService,
-        connectionService, connectionManager, groupsService, utilityService, settingsService, updatesService,
-        eventLogService, websocketService, notificationService) {
+        connectionService, connectionManager, utilityService, settingsService, updatesService,
+        eventLogService, websocketService, sidebarManager) {
 
         $rootScope.showSpinner = true;
 
-        $scope.currentTab = "Interactive";
-
-        $scope.navExpanded = true;
-
-        $scope.toggleNav = function() {
-            $scope.navExpanded = !$scope.navExpanded;
-        };
-
-        $scope.setTab = function(tabId) {
-            $scope.currentTab = tabId.toLowerCase();
-            $timeout(function () {
-                $scope.$broadcast('rzSliderForceRender');
-            });
-            $timeout(function () {
-                $scope.$broadcast('rzSliderForceRender');
-            }, 50);
-        };
-
-        $scope.tabIsSelected = function(tabId) {
-            return $scope.currentTab.toLowerCase() === tabId.toLowerCase();
-        };
-
-        $scope.currentTabIsFullScreen = function() {
-            return $scope.currentTab === 'chat feed';
-        };
-
-        $timeout(() => {
-            notificationService.loadAllNotifications();
-            notificationService.startExternalIntervalCheck();
-        }, 1000);
+        $scope.sbm = sidebarManager;
 
         /**
-      * rootScope functions. This means they are accessable in all scopes in the front end
-      * This is probably bad form, so putting functions in rootScope shouldnt be abused too much
-      */
+         * rootScope functions. This means they are accessable in all scopes in the front end
+        * This is probably bad form, so putting functions in rootScope shouldnt be abused too much
+        */
         $rootScope.pasteClipboard = function(elementId, shouldUnfocus) {
             angular.element(`#${elementId}`).focus();
             document.execCommand('paste');
@@ -138,49 +126,11 @@
             utilityService.showModal(showManageLoginsModal);
         };
 
-        /*
-      * ABOUT FIREBOT MODAL
-      */
-        $scope.showAboutFirebotModal = function() {
-            let addBoardModalContext = {
-                templateUrl: "aboutFirebotModal.html",
-                // This is the controller to be used for the modal.
-                controllerFunc: ($scope, $uibModalInstance) => {
-                    // The model for the board id text field
-                    $scope.version = electron.remote.app.getVersion();
-
-                    // When the user clicks "Save", we want to pass the id back to interactiveController
-                    $scope.close = function() {
-                        $uibModalInstance.close();
-                    };
-
-                    // When they hit cancel or click outside the modal, we dont want to do anything
-                    $scope.dismiss = function() {
-                        $uibModalInstance.dismiss('cancel');
-                    };
-                },
-                size: 'sm'
-            };
-            utilityService.showModal(addBoardModalContext);
-        };
-
-        $scope.showConnectionPanelModal = function() {
-            utilityService.showModal({
-                component: "connectionPanelModal",
-                windowClass: "connection-panel-modal"
-            });
-        };
-
         /**
-      * Initial App Load
-      */
-        /**
-      * Login preview stuff
-      */
+         * Initial App Load
+        */
+
         $scope.accounts = connectionService.accounts;
-
-        // Run loadLogin to update the UI on page load.
-        connectionService.loadLogin();
 
         if (settingsService.hasJustUpdated()) {
             utilityService.showUpdatedModal();
@@ -190,57 +140,15 @@
             settingsService.setFirstTimeUse(false);
         }
 
-
         /**
-      * Connection stuff
-      */
-        $scope.connService = connectionService;
-
-        $scope.wss = websocketService;
-
-        $scope.partialServicesConnected = connectionManager.partialServicesConnected;
-
-        $scope.allServicesConnected = connectionManager.allServicesConnected;
-
-        $scope.waitingForServicesStatusChange = function() {
-            return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange || connectionService.isConnectingAll);
-        };
-
-        $scope.toggleSidebarControlledServices = function() {
-            connectionManager.toggleSidebarServices();
-        };
-
-        $scope.getConnectionMessage = function() {
-            let message = "";
-            if ($scope.waitingForServicesStatusChange()) {
-                message = "Waiting...";
-            } else {
-                if ($scope.allServicesConnected()) {
-                    message = "Connected";
-                } else if ($scope.partialServicesConnected()) {
-                    message = "Some Connected";
-                } else {
-                    message = "Disconnected";
-                }
-            }
-            return message;
-        };
+         * Connection stuff
+        */
 
         // Get app version and change titlebar.
         let appVersion = electron.remote.app.getVersion();
-        let version = appVersion;
-        $scope.appTitle = 'Firebot Interactive || v' + version + ' || @FirebotApp';
+        $scope.appTitle = 'Firebot Interactive || v' + appVersion + ' || @FirebotApp';
 
-        //Attempt to load viewer groups into memory
-        groupsService.loadViewerGroups();
 
-        //check for updates
-        // Get update information if we havent alreday
-        if (!updatesService.hasCheckedForUpdates) {
-            updatesService.checkForUpdate().then((updateData) => {
-                $scope.updateIsAvailable = updateData.updateIsAvailable;
-            });
-        }
 
         //make sure sliders render properly
         $timeout(function () {
@@ -262,58 +170,6 @@
             console.log(display.join(" + "));
         });*/
     });
-
-    app.config(['$routeProvider', '$locationProvider', function($routeProvider) {
-        $routeProvider
-
-        // route for the interactive tab
-            .when('/', {
-                templateUrl: './templates/interactive/_interactive.html',
-                controller: 'interactiveController'
-            })
-
-        // route for the viewer groups page
-            .when('/groups', {
-                templateUrl: './templates/_viewergroups.html',
-                controller: 'groupsController'
-            })
-
-        // route for the commands page
-            .when('/commands', {
-                templateUrl: './templates/chat/_commands.html',
-                controller: 'commandsController'
-            })
-
-        // route for the chat messages page
-            .when('/chat-messages', {
-                templateUrl: './templates/chat/_chat-messages.html',
-                controller: 'chatMessagesController'
-            })
-
-        // route for the moderation page
-            .when('/moderation', {
-                templateUrl: './templates/_moderation.html',
-                controller: 'moderationController'
-            })
-
-        // route for the settings page
-            .when('/settings', {
-                templateUrl: './templates/_settings.html',
-                controller: 'settingsController'
-            })
-
-        // route for the updates page
-            .when('/updates', {
-                templateUrl: './templates/_updates.html',
-                controller: 'updatesController'
-            })
-
-        // route for the events page
-            .when('/events', {
-                templateUrl: './templates/live-events/_events.html',
-                controller: 'eventsController'
-            });
-    }]);
 
     // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
     app.filter('startFrom', function() {
