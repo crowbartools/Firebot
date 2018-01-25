@@ -82,6 +82,9 @@
 .btn-primary {
     background-color: #2aa1c0;
     border-color: transparent;
+    &:hover {
+        background-color: #1f849e;
+    }
 }
 
 .btn-default {
