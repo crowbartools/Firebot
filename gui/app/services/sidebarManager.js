@@ -50,7 +50,7 @@
                     controller: 'interactiveController'
                 })
 
-                .when('/viewer-groupsh', {
+                .when('/viewer-groups', {
                     templateUrl: './templates/_viewergroups.html',
                     controller: 'groupsController'
                 })
@@ -83,6 +83,11 @@
                 .when('/events', {
                     templateUrl: './templates/live-events/_events.html',
                     controller: 'eventsController'
+                })
+
+                .when('/hotkeys', {
+                    templateUrl: './templates/_hotkeys.html',
+                    controller: 'hotkeysController'
                 });
         }]);
 }(window.angular));
