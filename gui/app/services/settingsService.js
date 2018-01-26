@@ -448,7 +448,7 @@
 
             service.getSidebarControlledServices = function() {
                 let services = getDataFromFile('/settings/sidebarControlledServices');
-                return services != null ? services : ['interactive', 'chat'];
+                return services != null ? services : ['interactive', 'chat', 'constellation'];
             };
 
             service.setSidebarControlledServices = function(services) {

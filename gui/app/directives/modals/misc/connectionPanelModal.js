@@ -46,6 +46,22 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="connection-tile">
+                            <span class="connection-title">Constellation</span>
+                            <div class="connection-button"
+                                ng-class="{'connected': $ctrl.conn.connectedToConstellation, 'connecting': $ctrl.conn.waitingForConstellationStatusChange}"
+                                ng-click="$ctrl.conn.toggleConnectionToConstellation()">
+                                <i class="fal"
+                                ng-class="$ctrl.conn.waitingForConstellationStatusChange ? 'fa-sync fa-spin' : 'fa-power-off'"></i>
+                            </div>
+                            <div style="display: flex;flex-direction: column;align-items: center;">
+                                <div style="font-size:13px;padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Constellation be controlled by the sidebar connect button.'"></tooltip></div>
+                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
+                                    <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('constellation')" ng-click="$ctrl.toggledServiceIsChecked('constellation')">
+                                    <div class="control__indicator"></div>                                             
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div>

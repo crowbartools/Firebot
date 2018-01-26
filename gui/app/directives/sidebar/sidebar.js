@@ -54,6 +54,7 @@
                                         <span style="width: 100%;display: flex;justify-content: space-between;margin-top: 5px;">
                                             <connection-icon type="interactive"></connection-icon>
                                             <connection-icon type="chat"></connection-icon>
+                                            <connection-icon type="constellation"></connection-icon>
                                             <connection-icon type="overlay"></connection-icon>
                                         </span>
                                     </div>
@@ -87,6 +88,12 @@
                         <span><b>Chat Status:</b></span>
                         </br> 
                         <span>{{$ctrl.cs.connectedToChat ? 'Connected' : 'Disconnected'}}</span>     
+                        </br></br>
+                      </span>
+                      <span>
+                        <span><b>Constellation Status:</b></span>
+                        </br> 
+                        <span>{{$ctrl.cs.connectedToConstellation ? 'Connected' : 'Disconnected'}}</span>     
                         </br></br>
                       </span>
                       <span>
