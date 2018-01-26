@@ -1,10 +1,12 @@
 'use strict';
+
 (function() {
 
     // This handles logins and connections to mixer interactive
 
     const electronOauth2 = require('electron-oauth2');
     const dataAccess = require('../../lib/common/data-access.js');
+    const {session} = require('electron').remote;
 
     angular
         .module('firebotApp')
@@ -113,6 +115,10 @@
                 $rootScope.showSpinner = true;
 
                 let scopes = type === "streamer" ? streamerScopes : botScopes;
+
+                // clear out any previous sessions
+                const ses = session.fromPartition(type);
+                ses.clearStorageData();
 
                 authWindowParams.webPreferences.partition = type;
                 const oauthProvider = electronOauth2(authInfo, authWindowParams);
