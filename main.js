@@ -40,7 +40,7 @@ if (process.platform === 'win32') {
         // cleanup from last instance
 
         // use case-fallthrough to do normal installation
-
+        break;
     case '--squirrel-install': //eslint-disable-line no-fallthrough
         // Optional - do things such as:
         // - Install desktop and start menu shortcuts
