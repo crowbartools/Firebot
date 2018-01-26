@@ -34,6 +34,23 @@
                 });
             };
 
+            service.setConnectionToConstellation = function(shouldConnect) {
+                return new Promise(resolve => {
+                    listenerService.registerListener(
+                        { type: listenerService.ListenerType.CONSTELLATION_CONNECTION_STATUS,
+                            runOnce: true },
+                        (isConstellationConnected) => {
+                            resolve(isConstellationConnected);
+                        });
+
+                    if (shouldConnect) {
+                        connectionService.connectToConstellation();
+                    } else {
+                        connectionService.disconnectFromConstellation();
+                    }
+                });
+            };
+
             service.setConnectionToInteractive = function(shouldConnect) {
                 return new Promise(resolve => {
                     listenerService.registerListener(
@@ -69,6 +86,11 @@
                             count++;
                         }
                         break;
+                    case 'constellation':
+                        if (connectionService.connectedToConstellation) {
+                            count++;
+                        }
+                        break;
                     }
                 });
 
@@ -101,19 +123,25 @@
                 for (let i = 0; i < services.length; i++) {
                     let s = services[i];
                     switch (s) {
-                    case 'interactive': {
+                    case 'interactive':
                         if (shouldConnect) {
                             await service.setConnectionToInteractive(true);
                         } else if (connectionService.connectedToInteractive) {
                             await service.setConnectionToInteractive(false);
                         }
                         break;
-                    }
                     case 'chat':
                         if (shouldConnect) {
                             await service.setConnectionToChat(true);
                         } else if (connectionService.connectedToChat) {
                             await service.setConnectionToChat(false);
+                        }
+                        break;
+                    case 'constellation':
+                        if (shouldConnect) {
+                            await service.setConnectionToConstellation(true);
+                        } else if (connectionService.connectedToConstellation) {
+                            await service.setConnectionToConstellation(false);
                         }
                         break;
                     }
@@ -136,6 +164,13 @@
                     break;
                 case "chat":
                     if (connectionService.connectedToChat) {
+                        connectionStatus = "connected";
+                    } else {
+                        connectionStatus = "disconnected";
+                    }
+                    break;
+                case "constellation":
+                    if (connectionService.connectedToConstellation) {
                         connectionStatus = "connected";
                     } else {
                         connectionStatus = "disconnected";

@@ -27,6 +27,7 @@
                 const ConnectionType = {
                     INTERACTIVE: "interactive",
                     CHAT: "chat",
+                    CONSTELLATION: "constellation",
                     OVERLAY: "overlay"
                 };
 
@@ -39,6 +40,7 @@
                 const ConnectionIcon = {
                     INTERACTIVE: "fa-gamepad",
                     CHAT: "fa-comment",
+                    CONSTELLATION: "fa-rocket",
                     OVERLAY: "fa-tv-retro"
                 };
 
@@ -91,6 +93,13 @@
                             ctrl.tooltip = "<b>Chat:</b> Disconnected";
                         }
                         break;
+                    case ConnectionType.CONSTELLATION:
+                        if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
+                            ctrl.tooltip = "<b>Constellation:</b> Connected";
+                        } else {
+                            ctrl.tooltip = "<b>Constellation:</b> Disconnected";
+                        }
+                        break;
                     case ConnectionType.OVERLAY:
                         if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
                             ctrl.tooltip = "<b>Overlay:</b> Connected";
@@ -118,6 +127,9 @@
                         break;
                     case ConnectionType.CHAT:
                         ctrl.connectionIcon = ConnectionIcon.CHAT;
+                        break;
+                    case ConnectionType.CONSTELLATION:
+                        ctrl.connectionIcon = ConnectionIcon.CONSTELLATION;
                         break;
                     case ConnectionType.OVERLAY:
                         ctrl.connectionIcon = ConnectionIcon.OVERLAY;

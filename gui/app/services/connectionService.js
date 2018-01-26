@@ -206,6 +206,8 @@
                                         ipcRenderer.send('gotRefreshToken');
                                     } else if (connectionType === "chat") {
                                         ipcRenderer.send('gotChatRefreshToken');
+                                    } else if (connectionType === "constellation") {
+                                        ipcRenderer.send('gotConstellationRefreshToken');
                                     }
 
                                 }, err => {
@@ -228,6 +230,8 @@
                                     ipcRenderer.send('gotRefreshToken');
                                 } else if (connectionType === "chat") {
                                     ipcRenderer.send('gotChatRefreshToken');
+                                } else if (connectionType === "constellation") {
+                                    ipcRenderer.send('gotConstellationRefreshToken');
                                 }
                             }
 
@@ -438,6 +442,59 @@
                 { type: ListenerType.CHAT_CONNECTION_CHANGE_REQUEST },
                 () => {
                     service.toggleConnectionToChat();
+                });
+
+
+            /**
+            * Constellation Connection Stuff
+            */
+            service.connectedToConstellation = false;
+            service.waitingForConstellationStatusChange = false;
+
+            service.toggleConnectionToConstellation = function() {
+                if (service.connectedToConstellation === true) {
+                    service.disconnectFromConstellation();
+                } else if (!service.waitingForStatusChange) {
+                    service.connectToConstellation();
+                }
+            };
+
+            service.connectToConstellation = function() {
+                // Let's connect! Get new tokens and connect.
+                service.waitingForConstellationStatusChange = true;
+                refreshToken('constellation');
+            };
+
+            service.disconnectFromConstellation = function() {
+                // Disconnect!
+                service.waitingForConstellationStatusChange = true;
+                ipcRenderer.send('mixerConstellation', 'disconnect');
+            };
+
+            // Connection Monitor
+            // Recieves event from main process that connection has been established or disconnected.
+            listenerService.registerListener(
+                { type: ListenerType.CONSTELLATION_CONNECTION_STATUS },
+                (isConstellationConnected) => {
+                    service.connectedToConstellation = isConstellationConnected;
+
+                    if (!service.isConnectingAll) {
+                        let soundType = isConstellationConnected ? "Online" : "Offline";
+                        soundService.connectSound(soundType);
+                    }
+
+                    let status = isConstellationConnected ? "connected" : "disconnected";
+                    $rootScope.$broadcast("connection:update", { type: "constellation", status: status });
+
+                    service.waitingForConstellationStatusChange = false;
+                });
+
+            // Connect Request
+            // Recieves an event from the main process when the global hotkey is hit for connecting.
+            listenerService.registerListener(
+                { type: ListenerType.CONSTELLATION_CONNECTION_CHANGE_REQUEST },
+                () => {
+                    service.toggleConnectionToConstellation();
                 });
 
             return service;
