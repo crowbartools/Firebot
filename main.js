@@ -83,7 +83,8 @@ function createWindow () {
     mainWindow = new BrowserWindow({
         width: 1285,
         height: 720,
-        minWidth: 600,
+        minWidth: 300,
+        minHeight: 50,
         icon: path.join(__dirname, './gui/images/logo.ico'),
         show: false
     });
