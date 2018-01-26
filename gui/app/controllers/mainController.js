@@ -149,7 +149,6 @@
         $scope.appTitle = 'Firebot Interactive || v' + appVersion + ' || @FirebotApp';
 
 
-
         //make sure sliders render properly
         $timeout(function () {
             $scope.$broadcast('rzSliderForceRender');
@@ -161,14 +160,6 @@
         };
 
         $rootScope.showSpinner = false;
-
-        /*hotkeyService.startHotkeyCapture((keys) => {
-            let display = [];
-            keys.forEach((k) => {
-                display.push(k.displayName);
-            });
-            console.log(display.join(" + "));
-        });*/
     });
 
     // This adds a filter that we can use for ng-repeat, useful when we want to paginate something

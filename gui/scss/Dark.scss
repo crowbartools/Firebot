@@ -94,16 +94,11 @@ $add-on-group-border: transparent;
 $add-on-group-text: white;
 
 $dropdown-menu-bg: #3e4356;
-$dropdown-menu-border: #d3d3d3;
+$dropdown-menu-border: #5a617b;
 $dropdown-menu-text: white;
+$dropdown-menu-divider-color: #5a617b;
 
 $muted-text-color: #e4e4e4;
-
-.list-group-item {
-    background-color: #323851;
-    border: 1px solid #1c2a3b;
-}
-
 
 $alert-info-text-color: #f9fdff;
 $alert-info-bg: #3f7d9c;
@@ -116,3 +111,8 @@ $alert-danger-bg: #ce6c6c;
 
 // Import Core Styles
 @import './core/$importer';
+
+.list-group-item {
+    background-color: #3E4356;
+    border: 1px solid #2a2f42;
+}

@@ -120,7 +120,13 @@
 .btn-default.active, .btn-default:active, .open>.dropdown-toggle.btn-default {
     color: $default-btn-text-color;
     background-color: $default-btn-hover-bg;
-    border-color: $default-btn-hover-border;
+    border-color: transparent;
+}
+
+.btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {
+    outline: none;
+    outline-offset: 0;
+    border-color: transparent;
 }
 
 // Misc 
@@ -136,6 +142,8 @@
     border-radius: 2px;
     border: 2px solid $dropdown-menu-border;
     background-color: $dropdown-menu-bg;
+    z-index: 2080;
+    min-width: 125px;
 }
 
 .dropdown-menu>li>a {
@@ -144,6 +152,10 @@
         color: $dropdown-menu-text;
         background-color: $dropdown-menu-bg - 15%;
     }
+}
+
+.dropdown-menu .divider {
+    background-color: $dropdown-menu-divider-color;
 }
 
 .text-muted {

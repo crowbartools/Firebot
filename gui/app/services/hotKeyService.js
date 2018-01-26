@@ -1,5 +1,6 @@
 'use strict';
 
+const dataAccess = require('../../lib/common/data-access.js');
 
 (function() {
 
@@ -7,9 +8,12 @@
 
     angular
         .module('firebotApp')
-        .factory('hotkeyService', function () {
+        .factory('hotkeyService', function ($rootScope, utilityService) {
             let service = {};
 
+            /**
+             * Hotkey Capturing
+             */
             service.isCapturingHotkey = false;
 
             // keys not accepted by Electron for global shortcuts
@@ -45,7 +49,7 @@
                 case 'Control':
                     return 'CmdOrCtrl';
                 default:
-                    if (key.length === 0) {
+                    if (key.length === 1) {
                         return key.toUpperCase();
                     }
                     return key;
@@ -75,6 +79,10 @@
                 }
             }
 
+            function getAcceleratorCodeFromKeys(keys) {
+                return keys.map(k => k.code).join("+");
+            }
+
             let cachedKeys = [];
             let releasedKeyCodes = [];
             let stopCallback;
@@ -82,17 +90,18 @@
             const keyDownListener = function(event) {
                 if (!service.isCapturingHotkey) return;
 
-                if (prohibitedKeys.includes(event.key)) return;
-
-                let alreadyPressed = cachedKeys.some(k => k.rawKey === event.key);
+                let alreadyPressed = cachedKeys.some(k => k.rawKey.toUpperCase() === event.key.toUpperCase());
 
                 //skip if repeat of keys already inputted and no keys have been released
                 if (alreadyPressed && releasedKeyCodes.length === 0) return;
 
+                if (prohibitedKeys.includes(event.key)) return;
+
                 //clear out any keys that have since been released
                 releasedKeyCodes.forEach(k => {
-                    if (cachedKeys.some(key => key.rawKey === k)) {
-                        cachedKeys = cachedKeys.filter(key => key.rawKey !== k);
+                    let normalizedK = k.toUpperCase();
+                    if (cachedKeys.some(key => key.rawKey.toUpperCase() === normalizedK)) {
+                        cachedKeys = cachedKeys.filter(key => key.rawKey.toUpperCase() !== normalizedK);
                     }
                 });
                 releasedKeyCodes = [];
@@ -108,6 +117,8 @@
                         isModifier: isModifier,
                         rawKey: event.key
                     });
+
+                    $rootScope.$broadcast("hotkey:capture:update", { hotkey: getAcceleratorCodeFromKeys(cachedKeys) });
                 }
             };
 
@@ -116,7 +127,12 @@
                 releasedKeyCodes.push(event.key);
             };
 
-            const clickListener = function() {
+            const clickListener = function(event) {
+                if (service.isCapturingHotkey) {
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+                    event.preventDefault();
+                }
                 service.stopHotkeyCapture();
             };
 
@@ -131,7 +147,7 @@
                 console.log("starting hotkey capture");
                 window.addEventListener('keydown', keyDownListener, true);
                 window.addEventListener('keyup', keyUpListener, true);
-                window.addEventListener('mousedown', clickListener, true);
+                window.addEventListener('click', clickListener, true);
             };
 
             service.stopHotkeyCapture = function() {
@@ -142,17 +158,88 @@
                     service.isCapturingHotkey = false;
 
                     if (typeof stopCallback === "function") {
-                        stopCallback(cachedKeys.splice(0));
+                        stopCallback(getAcceleratorCodeFromKeys(cachedKeys));
                     }
                     cachedKeys = [];
                 }
-                window.removeEventListener('mousedown', clickListener, true);
+                window.removeEventListener('click', clickListener, true);
             };
 
             service.getCurrentlyPressedHotkey = function() {
-                return cachedKeys.splice(0);
+                return JSON.parse(JSON.stringify(cachedKeys));
             };
 
+            service.getDisplayFromAcceleratorCode = function(code) {
+                if (code == null) return "";
+
+                let keys = code.split("+");
+
+                keys = keys.map(k => getDisplayNameFromKeyCode(k).toUpperCase());
+
+                return keys.join(" + ");
+            };
+
+            /**
+             * Hotkey Data Access
+             */
+
+            let userHotkeys = [];
+
+            service.loadHotkeys = function() {
+                let hotkeyDb = dataAccess.getJsonDbInUserData("/user-settings/hotkeys");
+                try {
+                    let hotkeyData = hotkeyDb.getData('/');
+                    console.log(hotkeyData);
+                    if (hotkeyData != null) {
+                        userHotkeys = hotkeyData || [];
+                    }
+                } catch (err) {
+                    console.log(err);
+                }
+            };
+
+            function saveHotkeysToFile() {
+                let hotkeyDb = dataAccess.getJsonDbInUserData("/user-settings/hotkeys");
+                try {
+                    hotkeyDb.push("/", userHotkeys);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+
+            service.saveHotkey = function(hotkey) {
+                hotkey.uuid = utilityService.generateUuid();
+
+                userHotkeys.push(hotkey);
+
+                saveHotkeysToFile();
+            };
+
+            service.updateHotkey = function(hotkey) {
+
+                let index = userHotkeys.findIndex(k => k.uuid === hotkey.uuid);
+
+                userHotkeys[index] = hotkey;
+
+                saveHotkeysToFile();
+            };
+
+            service.deleteHotkey = function(hotkey) {
+
+                userHotkeys = userHotkeys.filter(k => k.uuid !== hotkey.uuid);
+
+                saveHotkeysToFile();
+            };
+
+            service.hotkeyCodeExists = function(hotkeyId, hotkeyCode) {
+                return userHotkeys.some(k => k.code === hotkeyCode && k.uuid !== hotkeyId);
+            };
+
+            service.getHotkeys = function() {
+                return userHotkeys;
+            };
+
+            service.loadHotkeys();
 
             return service;
         });

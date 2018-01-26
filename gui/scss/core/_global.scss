@@ -1087,9 +1087,6 @@ thead th{
   pointer-events: none;
 }
 
-.dropdown-menu {
-  z-index: 2080;
-}
 
 .notification-popover {
   max-width: none;
@@ -1320,10 +1317,6 @@ thead th{
   &::after {
     content: none !important;
   }
-}
-
-.dropdown-menu {
-  min-width: 125px;
 }
 
 .tooltip {

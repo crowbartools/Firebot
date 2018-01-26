@@ -1,0 +1,37 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="$ctrl.dismiss()">&times;</span></button>
+    <h4 class="modal-title">
+        {{$ctrl.isNewHotkey ? 'Add New Hotkey' : 'Edit Hotkey' }}
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="general-button-settings" ng-if="!$ctrl.isNewHotkey">
+        <div class="settings-title">
+            <h3>General Settings</h3>
+        </div>
+
+        <div class="controls-fb-inline">
+            <label class="control-fb control--checkbox">Is Active
+                <input type="checkbox" ng-model="$ctrl.hotkey.active">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+    </div>
+    <div class="function-button-settings">
+        <h4>Name</h4>
+        <input type="text" class="form-control" ng-model="$ctrl.hotkey.name">
+
+        <h4 style="margin-top:20px;">Hotkey</h4>
+        <hotkey-capture on-capture="$ctrl.onHotkeyCapture(hotkey)" hotkey="$ctrl.hotkey.code"></hotkey-capture>
+        
+        <h4 style="margin-top:20px;">Action</h4>
+        <dropdown-select options="['Run Button', 'Run Command', 'Run Effects']" selected="$ctrl.hotkey.action.type"></dropdown-select>
+        <!--<effect-list header="What should this command do?" effects="effects" trigger="command" update="effectListUpdated(effects)"></effect-list>-->
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewHotkey" ng-click="$ctrl.delete()">Delete Hotkey</button>
+    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
+</div>
