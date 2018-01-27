@@ -22,7 +22,6 @@
                         hotkey: () => hotkey
                     },
                     closeCallback: (resp) => {
-                        console.log(resp);
                         let action = resp.action,
                             hotkey = resp.hotkey;
 

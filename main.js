@@ -10,6 +10,7 @@ const settings = require('./lib/common/settings-access').settings;
 const dataAccess = require('./lib/common/data-access.js');
 const backupManager = require("./lib/backupManager");
 const apiServer = require('./api/apiServer.js');
+const hotkeyManager = require('./lib/hotkeys/hotkey-manager');
 
 const Effect = require('./lib/common/EffectType');
 
@@ -113,8 +114,8 @@ function createWindow () {
     // Global var for main window.
     global.renderWindow = mainWindow;
 
-    // Register the Kill Switch
-    mixerConnect.shortcut();
+
+    hotkeyManager.refreshHotkeyCache();
 }
 
 // This method will be called when Electron has finished
@@ -185,6 +186,7 @@ app.on('ready', function() {
     createWindow();
 
     backupManager.onceADayBackUpCheck();
+
     //start the REST api server
     apiServer.start();
 });
@@ -213,7 +215,7 @@ app.on('activate', () => {
 app.on('will-quit', () => {
 
     // Unregister all shortcuts.
-    mixerConnect.shortcutUnregister();
+    hotkeyManager.unregisterAllHotkeys();
 });
 
 // Run Updater

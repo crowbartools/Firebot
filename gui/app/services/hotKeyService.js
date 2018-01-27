@@ -189,8 +189,7 @@ const dataAccess = require('../../lib/common/data-access.js');
                 let hotkeyDb = dataAccess.getJsonDbInUserData("/user-settings/hotkeys");
                 try {
                     let hotkeyData = hotkeyDb.getData('/');
-                    console.log(hotkeyData);
-                    if (hotkeyData != null) {
+                    if (hotkeyData != null && hotkeyData.length > 0) {
                         userHotkeys = hotkeyData || [];
                     }
                 } catch (err) {
@@ -205,6 +204,9 @@ const dataAccess = require('../../lib/common/data-access.js');
                 } catch (err) {
                     console.log(err);
                 }
+
+                // Refresh the backend hotkeycache
+                ipcRenderer.send('refreshHotkeyCache');
             }
 
             service.saveHotkey = function(hotkey) {
