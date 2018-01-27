@@ -17,6 +17,10 @@
                     $ctrl.hotkey.code = hotkey;
                 };
 
+                $ctrl.effectListUpdated = function(effects) {
+                    $ctrl.hotkey.action.metadata.effects = effects;
+                };
+
                 $ctrl.$onInit = function () {
 
                     if ($ctrl.resolve.hotkey != null) {
