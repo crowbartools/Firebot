@@ -53,6 +53,13 @@
                     <small class="muted"><b>Id:</b> {{button.id}} | <b>Scene:</b> {{button.scene}} | <b>Board:</b> {{button.board.name}}</small>
                 </ui-select-choices>
             </ui-select>
+            
+            <div class="effect-info alert alert-warning">
+                Hotkeys that trigger a button only work if the button is in the currently active board. 
+                <br><br>
+                Also keep in mind certain effects on buttons (like Change Group) won't work with hoykeys as there is no viewer associated with the button "press".
+            </div>
+                  
         </div>
   
     </div>
