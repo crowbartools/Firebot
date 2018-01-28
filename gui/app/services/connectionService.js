@@ -238,6 +238,7 @@
                         },
                         (err) => {
                             //error getting streamer refresh token
+                            console.log(err);
 
                             // Set connecting to false and log the streamer out because we have oauth issues.
                             service.waitingForChatStatusChange = false;
@@ -342,6 +343,9 @@
             service.connectedBoard = "";
 
             service.toggleConnectionToInteractive = function() {
+                // Clear all reconnect timeouts if any are running.
+                ipcRenderer.send('clearReconnect', "Interactive");
+
                 if (service.connectedToInteractive === true) {
                     service.disconnectFromInteractive();
                 } else if (!service.waitingForChatStatusChange) {
@@ -399,6 +403,9 @@
             service.waitingForChatStatusChange = false;
 
             service.toggleConnectionToChat = function() {
+                // Clear all reconnect timeouts if any are running.
+                ipcRenderer.send('clearReconnect', "Chat");
+
                 if (service.connectedToChat === true) {
                     service.disconnectFromChat();
                 } else if (!service.waitingForStatusChange) {
@@ -452,6 +459,9 @@
             service.waitingForConstellationStatusChange = false;
 
             service.toggleConnectionToConstellation = function() {
+                // Clear all reconnect timeouts if any are running.
+                ipcRenderer.send('clearReconnect', "Constellation");
+
                 if (service.connectedToConstellation === true) {
                     service.disconnectFromConstellation();
                 } else if (!service.waitingForStatusChange) {

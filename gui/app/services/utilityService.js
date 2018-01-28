@@ -254,6 +254,8 @@
             service.showErrorModal = function(errorMessage) {
                 if (errorModalOpen && previousErrorMessage === errorMessage) {
                     return;
+                } else if (errorModalOpen) {
+                    return;
                 }
                 previousErrorMessage = errorMessage;
 

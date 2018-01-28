@@ -112,6 +112,10 @@
             };
 
             service.toggleSidebarServices = async function () {
+
+                // Clear all reconnect timeouts if any are running.
+                ipcRenderer.send('clearReconnect', "All");
+
                 let services = settingsService.getSidebarControlledServices();
 
                 // we only want to connect if none of the connections are currently connected
