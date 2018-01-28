@@ -27,9 +27,6 @@ process.on('uncaughtException', console.error);
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-// Interactive handler
-let mixerConnect;
-
 // Handle Squirrel events for windows machines
 if (process.platform === 'win32') {
     let cp;
