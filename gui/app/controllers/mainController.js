@@ -10,7 +10,7 @@
 
     app.run(
         function initializeApplication(chatMessagesService, groupsService, connectionService, notificationService,
-            $timeout, updatesService) {
+            $timeout, updatesService, commandsService) {
             // 'chatMessagesService' is included so its instantiated on app start
 
             // Run loadLogin to update the UI on page load.
@@ -18,6 +18,9 @@
 
             //Attempt to load viewer groups into memory
             groupsService.loadViewerGroups();
+
+            //load commands
+            commandsService.refreshCommands();
 
             //start notification check
             $timeout(() => {

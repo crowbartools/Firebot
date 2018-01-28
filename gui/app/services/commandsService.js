@@ -55,6 +55,14 @@
                 return commandArray;
             };
 
+            service.getAllCommands = function() {
+                let commands = [];
+                Object.values(commandsCache).forEach(t => {
+                    commands = commands.concat(Object.values(t));
+                });
+                return commands;
+            };
+
             // Saves out a command
             service.saveCommand = function(command) {
                 let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");

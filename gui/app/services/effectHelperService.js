@@ -348,7 +348,6 @@
                                 };
                             });
 
-                        console.log($scope.buttons);
                     };
                     break;
                 case EffectList.DICE:

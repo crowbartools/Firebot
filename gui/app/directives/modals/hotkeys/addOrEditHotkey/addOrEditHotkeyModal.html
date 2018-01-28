@@ -32,6 +32,29 @@
         <div style="margin-top:20px;" ng-if="$ctrl.hotkey.action.type === 'Run Effects'">
             <effect-list header="Effect List" effects="$ctrl.hotkey.action.metadata.effects" trigger="hotkey" update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
         </div>
+
+        <div style="margin-top:20px;" ng-show="$ctrl.hotkey.action.type === 'Run Command'">
+            <h3>Command To Run</h3>
+            <ui-select ng-model="$ctrl.hotkey.action.metadata.command" theme="bootstrap">
+                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
+                <ui-select-choices repeat="command in $ctrl.commands | filter: { trigger: $select.search }" style="position:relative;">
+                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
+                    <small class="muted">Id: {{command.id}}</small>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        
+        <div style="margin-top:20px;" ng-show="$ctrl.hotkey.action.type === 'Run Button'">
+            <h3>Button To Run</h3>
+            <ui-select ng-model="$ctrl.hotkey.action.metadata.button" theme="bootstrap">
+                <ui-select-match placeholder="Select or search for a button... ">{{$select.selected.text}}</ui-select-match>
+                <ui-select-choices repeat="button in $ctrl.buttons | filter: { text: $select.search }" style="position:relative;">
+                    <div ng-bind-html="button.text | highlight: $select.search"></div>
+                    <small class="muted"><b>Id:</b> {{button.id}} | <b>Scene:</b> {{button.scene}} | <b>Board:</b> {{button.board.name}}</small>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+  
     </div>
 </div>
 

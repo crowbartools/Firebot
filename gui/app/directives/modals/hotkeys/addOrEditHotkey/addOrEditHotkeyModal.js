@@ -10,7 +10,7 @@
                 close: '&',
                 dismiss: '&'
             },
-            controller: function(hotkeyService) {
+            controller: function(hotkeyService, commandsService, boardService) {
                 let $ctrl = this;
 
                 $ctrl.onHotkeyCapture = function(hotkey) {
@@ -32,6 +32,25 @@
                     $ctrl.hotkey.action.metadata.effects = effects;
                 };
 
+                $ctrl.commands = commandsService.getAllCommands().map(c => {
+                    return { id: c.commandID, trigger: c.trigger};
+                });
+
+                $ctrl.buttons = [];
+                boardService.getAllBoards().forEach(b => {
+                    Object.values(b.controls).forEach(c => {
+                        $ctrl.buttons.push({
+                            id: c.controlId,
+                            text: c.text,
+                            scene: c.scene,
+                            board: {
+                                id: b.versionId,
+                                name: b.name
+                            }
+                        });
+                    });
+                });
+
                 $ctrl.$onInit = function () {
 
                     if ($ctrl.resolve.hotkey != null) {
@@ -46,7 +65,11 @@
                             code: "",
                             action: {
                                 type: "Run Effects",
-                                metadata: {}
+                                metadata: {
+                                    command: { id: "", trigger: ""},
+                                    button: {},
+                                    effects: []
+                                }
                             }
                         };
                     }
