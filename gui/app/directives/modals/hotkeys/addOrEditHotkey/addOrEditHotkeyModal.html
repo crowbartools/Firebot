@@ -18,6 +18,13 @@
 
         <h3 style="margin-top:20px;">Hotkey</h3>
         <hotkey-capture on-capture="$ctrl.onHotkeyCapture(hotkey)" hotkey="$ctrl.hotkey.code"></hotkey-capture>
+
+        <eos-collapsable-panel show-label="Advanced" hide-label="Hide Advanced">
+            <h4>Add Virtual Button</h4>
+            <p style="margin-bottom:10px";>While you can't press these buttons on a typical keyboard, some apps can still send them in key combinations.</p>
+            <dropdown-select options="['F13', 'F14', 'F15', 'F16', 'F17', 'F18', 'F19', 'F20', 'F21', 'F22', 'F23', 'F24']" ng-init="$ctrl.virtualBtn = 'F13'" selected="$ctrl.virtualBtn"></dropdown-select>
+            <button class="btn btn-link" ng-click="$ctrl.onAddVirtualButtonToHotkey()">Add To Hotkey</button>
+        </eos-collapsable-panel>
         
         <h3 style="margin-top:20px;">Action</h3>
         <dropdown-select options="['Run Button', 'Run Command', 'Run Effects']" selected="$ctrl.hotkey.action.type"></dropdown-select>

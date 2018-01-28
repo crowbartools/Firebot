@@ -17,6 +17,17 @@
                     $ctrl.hotkey.code = hotkey;
                 };
 
+                $ctrl.onAddVirtualButtonToHotkey = function() {
+                    let button = $ctrl.virtualBtn;
+                    if ($ctrl.hotkey.code != null && $ctrl.hotkey.code.length !== 0) {
+                        if (!$ctrl.hotkey.code.includes(button)) {
+                            $ctrl.hotkey.code += "+" + button;
+                        }
+                    } else {
+                        $ctrl.hotkey.code = button;
+                    }
+                };
+
                 $ctrl.effectListUpdated = function(effects) {
                     $ctrl.hotkey.action.metadata.effects = effects;
                 };

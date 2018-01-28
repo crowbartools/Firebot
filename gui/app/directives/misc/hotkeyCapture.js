@@ -31,6 +31,10 @@
                     });
                 };
 
+                $ctrl.$onChanges = function (changes) {
+                    $ctrl.hotkeyDisplay = hotkeyService.getDisplayFromAcceleratorCode(changes.hotkey.currentValue);
+                };
+
                 $ctrl.$onInit = function() {
                     $ctrl.hotkeyDisplay = hotkeyService.getDisplayFromAcceleratorCode($ctrl.hotkey);
                 };
