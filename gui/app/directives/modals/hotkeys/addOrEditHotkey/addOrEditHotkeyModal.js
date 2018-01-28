@@ -65,11 +65,7 @@
                             code: "",
                             action: {
                                 type: "Run Effects",
-                                metadata: {
-                                    command: { id: "", trigger: ""},
-                                    button: {},
-                                    effects: []
-                                }
+                                metadata: {}
                             }
                         };
                     }
