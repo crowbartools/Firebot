@@ -12,6 +12,15 @@
 
             let service = {};
 
+            // listen for toggle service requests from the backend
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.TOGGLE_SERVICES_REQUEST },
+                (services) => {
+                    if (service.isWaitingForServicesStatusChange()) return;
+                    let shouldConnect = service.connectedServiceCount(services) === 0;
+                    service.toggleConnectionForServices(services, shouldConnect);
+                });
+
             service.isWaitingForServicesStatusChange = function() {
                 return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange ||
                     connectionService.isConnectingAll);
@@ -69,8 +78,10 @@
                 });
             };
 
-            service.connectedServiceCount = function() {
-                let services = settingsService.getSidebarControlledServices();
+            service.connectedServiceCount = function(services) {
+                if (services == null) {
+                    services = settingsService.getSidebarControlledServices();
+                }
 
                 let count = 0;
 
@@ -111,19 +122,24 @@
                 return (services.length === connectedCount);
             };
 
-            service.toggleSidebarServices = async function () {
-
-                // Clear all reconnect timeouts if any are running.
-                ipcRenderer.send('clearReconnect', "All");
+            service.toggleSidebarServices = function () {
 
                 let services = settingsService.getSidebarControlledServices();
 
                 // we only want to connect if none of the connections are currently connected
                 // otherwise we will attempt to disconnect everything.
-
                 let shouldConnect = service.connectedServiceCount() === 0;
 
+                service.toggleConnectionForServices(services, shouldConnect);
+            };
+
+            service.toggleConnectionForServices = async function(services, shouldConnect = false) {
+
+                // Clear all reconnect timeouts if any are running.
+                ipcRenderer.send('clearReconnect', "All");
+
                 connectionService.isConnectingAll = true;
+
                 for (let i = 0; i < services.length; i++) {
                     let s = services[i];
                     switch (s) {

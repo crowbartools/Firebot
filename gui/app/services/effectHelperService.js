@@ -583,6 +583,24 @@
 
                     };
                     break;
+                case EffectList.TOGGLE_CONNECTION:
+                    controller = ($scope) => {
+
+                        if ($scope.effect.services == null) {
+                            $scope.effect.services = [];
+                        }
+
+                        $scope.serviceIsChecked = (service) => $scope.effect.services.includes(service);
+
+                        $scope.toggleService = (service) => {
+                            if ($scope.serviceIsChecked(service)) {
+                                $scope.effect.services = $scope.effect.services.filter(s => s !== service);
+                            } else {
+                                $scope.effect.services.push(service);
+                            }
+                        };
+                    };
+                    break;
 
                 }
 

@@ -18,6 +18,7 @@
                 constellationConnectionChangeRequest: {},
                 chatConnectionStatus: {},
                 chatConnectionChangeRequest: {},
+                toggleServicesRequest: {},
                 chatMessage: {},
                 chatUpdate: {},
                 eventLog: {},
@@ -47,6 +48,7 @@
                 CONSTELLATION_CONNECTION_CHANGE_REQUEST: "constellationConnectionChangeRequest",
                 CHAT_CONNECTION_STATUS: "chatConnectionStatus",
                 CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
+                TOGGLE_SERVICES_REQUEST: "toggleServicesRequest",
                 CHAT_MESSAGE: "chatMessage",
                 CHAT_UPDATE: "chatUpdate",
                 CURRENT_VIEWERS_UPDATE: "currentViewersUpdate",
@@ -229,6 +231,14 @@
                 let isConstellationConnected = data ? (data.toLowerCase() === "online") : false;
                 _.forEach(registeredListeners.constellationConnectionStatus, (listener) => {
                     runListener(listener, isConstellationConnected);
+                });
+            });
+
+            // Toggle Services Request Monitor
+            ipcRenderer.on('toggleServicesRequest', function (event, data) {
+                let services = data ? data : [];
+                _.forEach(registeredListeners.toggleServicesRequest, (listener) => {
+                    runListener(listener, services);
                 });
             });
 
