@@ -124,10 +124,30 @@
                     });
             }
 
+            function mixerStatusNotification() {
+                // This will check the mixer status page every once in awhile to see if there is it is having issues.
+                $http.get("https://00qbcbkrqn0y.statuspage.io/api/v2/status.json")
+                    .then((response) => {
+                        let data = response.data,
+                            statusIndicator = data.status.indicator,
+                            statusText = data.status.description,
+                            notification = {
+                                "id": "MixerStatus",
+                                "title": "Mixer Issue",
+                                "message": "Mixer is reporting:<br>" + statusText + ". <br><br> This could cause issues with Firebot. Please be patient as they address the issues.",
+                                "icon": "alert"
+                            };
+
+                        if (statusIndicator !== "none") {
+                            service.addNotification(notification, false);
+                        } else {
+                            service.deleteNotification(notification);
+                        }
+                    });
+            }
+
             service.NotificationIconType = NotificationIconType;
             service.NotificationType = NotificationType;
-
-
 
             service.getNotifications = function() {
                 return notifications;
@@ -180,9 +200,8 @@
                 notifications = [];
                 loadSavedNotifications();
                 loadExternalNotifications();
+                mixerStatusNotification();
             };
-
-
 
             let externalIntervalCheck = null;
             service.startExternalIntervalCheck = function() {
@@ -193,6 +212,7 @@
 
                 externalIntervalCheck = $interval(() => {
                     loadExternalNotifications();
+                    mixerStatusNotification();
                 }, 5 * 60000);
             };
 
