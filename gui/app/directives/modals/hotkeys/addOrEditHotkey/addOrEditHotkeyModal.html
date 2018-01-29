@@ -13,6 +13,15 @@
             </label>
         </div>
 
+        <div class="alert alert-warning" ng-show="$ctrl.isNewHotkey">
+            <b>Things to keep in mind with hotkeys:</b>
+            <ul>
+                <li>Firebot cannot override hotkeys that are already reserved by other apps. </li>
+                <li>Firebot cannot detect if a hotkey is already in use by another app.</li>
+                <li>If you bind a hotkey to a single letter, you will not be able to type that letter in other applications.</li>
+            </ul>
+        </div>
+
         <h3>Name</h3>
         <input type="text" class="form-control" ng-model="$ctrl.hotkey.name">
 
@@ -25,10 +34,6 @@
             <dropdown-select options="['F13', 'F14', 'F15', 'F16', 'F17', 'F18', 'F19', 'F20', 'F21', 'F22', 'F23', 'F24']" ng-init="$ctrl.virtualBtn = 'F13'" selected="$ctrl.virtualBtn"></dropdown-select>
             <button class="btn btn-link" ng-click="$ctrl.onAddVirtualButtonToHotkey()">Add To Hotkey</button>
         </eos-collapsable-panel>
-
-        <div class="alert alert-warning">
-            Please note: Firebot cannot override hotkeys that are already reserved by other apps.
-        </div>
         
         <h3 style="margin-top:20px;">Action</h3>
         <dropdown-select options="['Run Button', 'Run Command', 'Run Effects']" selected="$ctrl.hotkey.action.type"></dropdown-select>
