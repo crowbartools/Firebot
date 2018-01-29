@@ -94,7 +94,7 @@
 
                 $ctrl.save = function() {
                     if ($ctrl.hotkey.name == null || $ctrl.hotkey.name === "") return;
-                    if ($ctrl.hotkey.code == null  || $ctrl.hotkey.code === "") return;
+                    if ($ctrl.hotkey.code == null || $ctrl.hotkey.code === "") return;
                     if (hotkeyService.hotkeyCodeExists($ctrl.hotkey.uuid, $ctrl.hotkey.code)) return;
                     let action = $ctrl.isNewHotkey ? 'add' : 'update';
                     $ctrl.close({ $value: {
