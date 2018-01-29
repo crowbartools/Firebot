@@ -10,7 +10,6 @@ const settings = require('./lib/common/settings-access').settings;
 const dataAccess = require('./lib/common/data-access.js');
 const backupManager = require("./lib/backupManager");
 const apiServer = require('./api/apiServer.js');
-const hotkeyManager = require('./lib/hotkeys/hotkey-manager');
 
 const Effect = require('./lib/common/EffectType');
 
@@ -78,7 +77,7 @@ if (process.platform === 'win32') {
 
 
 function createWindow () {
-    console.log('createWindow called');
+    console.log('Creating window...');
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -114,40 +113,41 @@ function createWindow () {
     // Global var for main window.
     global.renderWindow = mainWindow;
 
-
+    let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
     hotkeyManager.refreshHotkeyCache();
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', function() {
-    let port;
-
+async function createDefaultFoldersAndFiles() {
+    console.log("Ensuring default folders and files exist...");
     //create the root "firebot-data" folder in user-settings
     dataAccess.createFirebotDataDir();
 
     // Create the user-settings folder if it doesn't exist. It's required
     // for the folders below that are within it
-    dataAccess.userDataPathExists("/user-settings/").then(() => {
+    if (!dataAccess.userDataPathExistsSync("/user-settings/")) {
         console.log("Can't find the user-settings folder, creating one now...");
-        dataAccess.makeDirInUserData("/user-settings");
-    });
+        dataAccess.makeDirInUserDataSync("/user-settings");
+    }
+
+    if (!dataAccess.userDataPathExistsSync("/user-settings/hotkeys.json")) {
+        console.log("Can't find the hotkeys file, creating the default one now...");
+        dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/user-settings/");
+    }
 
     // Create the scripts folder if it doesn't exist
-    dataAccess.userDataPathExists("/user-settings/scripts/").then(() => {
+    if (!dataAccess.userDataPathExistsSync("/user-settings/scripts/")) {
         console.log("Can't find the scripts folder, creating one now...");
-        dataAccess.makeDirInUserData("/user-settings/scripts");
-    });
+        dataAccess.makeDirInUserDataSync("/user-settings/scripts");
+    }
 
     // Create the scripts folder if it doesn't exist
-    dataAccess.userDataPathExists("/backups/").then(() => {
+    if (!dataAccess.userDataPathExistsSync("/backups/")) {
         console.log("Can't find the backup folder, creating one now...");
-        dataAccess.makeDirInUserData("/backups");
-    });
+        dataAccess.makeDirInUserDataSync("/backups");
+    }
 
     // Update the port.js file
-    port = settings.getWebSocketPort();
+    let port = settings.getWebSocketPort();
     dataAccess.writeFileInWorkingDir(
         '/resources/overlay/js/port.js',
         `window.WEBSOCKET_PORT = ${port}`,
@@ -156,32 +156,40 @@ app.on('ready', function() {
         });
 
     // Create the controls folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/controls")
-        .then(() => {
-            console.log("Can't find the controls folder, creating one now...");
-            dataAccess.makeDirInUserData("/user-settings/controls");
-        });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/controls")) {
+        console.log("Can't find the controls folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/controls");
+    }
 
     // Create the logs folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/logs")
-        .then(() => {
-            console.log("Can't find the logs folder, creating one now...");
-            dataAccess.makeDirInUserData("/user-settings/logs");
-        });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/logs")) {
+        console.log("Can't find the logs folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/logs");
+    }
 
     // Create the chat folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/chat")
-        .then(() => {
-            console.log("Can't find the chat folder, creating one now...");
-            dataAccess.makeDirInUserData("/user-settings/chat");
-        });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/chat")) {
+        console.log("Can't find the chat folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/chat");
+    }
 
     // Create the chat folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/live-events")
-        .then(() => {
-            console.log("Can't find the live-events folder, creating one now...");
-            dataAccess.makeDirInUserData("/user-settings/live-events");
-        });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/live-events")) {
+        console.log("Can't find the live-events folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/live-events");
+    }
+
+    console.log("Finished verifying default folders and files.");
+}
+
+
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', async function() {
+
+    await createDefaultFoldersAndFiles();
 
     createWindow();
 
@@ -213,7 +221,7 @@ app.on('activate', () => {
 
 // When Quitting.
 app.on('will-quit', () => {
-
+    let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
     // Unregister all shortcuts.
     hotkeyManager.unregisterAllHotkeys();
 });
