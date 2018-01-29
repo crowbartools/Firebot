@@ -8,9 +8,10 @@
             bindings: {
                 resolve: '<',
                 close: '&',
-                dismiss: '&'
+                dismiss: '&',
+                modalInstance: "<"
             },
-            controller: function(hotkeyService, commandsService, boardService) {
+            controller: function($scope, hotkeyService, commandsService, boardService, utilityService) {
                 let $ctrl = this;
 
                 $ctrl.onHotkeyCapture = function(hotkey) {
@@ -52,6 +53,21 @@
                 });
 
                 $ctrl.$onInit = function () {
+
+                    let modalId = $ctrl.resolve.modalId;
+                    utilityService.addSlidingModal($ctrl.modalInstance.rendered.then(() => {
+                        let modalElement = $("." + modalId).children();
+                        return {
+                            element: modalElement,
+                            name: "Edit Hotkey",
+                            id: modalId,
+                            instance: $ctrl.modalInstance
+                        };
+                    }));
+
+                    $scope.$on('modal.closing', function() {
+                        utilityService.removeSlidingModal();
+                    });
 
                     if ($ctrl.resolve.hotkey != null) {
                         $ctrl.hotkey = JSON.parse(JSON.stringify($ctrl.resolve.hotkey));

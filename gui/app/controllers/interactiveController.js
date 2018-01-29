@@ -205,8 +205,6 @@
                         // The model for the button we are editting
                         $scope.control = control;
 
-                        $scope.modalId = modalId;
-
                         // Default to active for controls unless told otherwise.
                         if ($scope.control.active != null) {
                             // Don't do anything because active has already been set to something.
@@ -214,6 +212,7 @@
                             $scope.control.active = true;
                         }
 
+                        $scope.modalId = modalId;
                         utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
                             let modalElement = $("." + modalId).children();
                             return {
