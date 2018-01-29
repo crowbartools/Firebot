@@ -247,6 +247,7 @@ input:checked + .slider:before {
 
 .hotkey-capture {
   display: inline-flex;
+  align-items: center;
   .hotkey-display {
     border: 2px solid #5cb85c;
     height: 36px;
