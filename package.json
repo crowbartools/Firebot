@@ -35,8 +35,8 @@
     "license": "GPL-3.0",
     "devDependencies": {
         "electron": "1.7.10",
-        "electron-packager": "^8.5.1",
-        "electron-rebuild": "^1.5.6",
+        "electron-packager": "10.1.2",
+        "electron-rebuild": "1.7.3",
         "grunt": "^1.0.1",
         "grunt-electron-installer": "^2.1.0",
         "node-sass": "^4.7.2"
