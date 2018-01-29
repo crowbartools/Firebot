@@ -23,7 +23,7 @@
 
             service.isWaitingForServicesStatusChange = function() {
                 return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange ||
-                    connectionService.isConnectingAll);
+                    connectionService.waitingForConstellationStatusChange || connectionService.isConnectingAll);
             };
 
             service.setConnectionToChat = function(shouldConnect) {
@@ -134,6 +134,8 @@
             };
 
             service.toggleConnectionForServices = async function(services, shouldConnect = false) {
+
+                if (service.isWaitingForServicesStatusChange()) return;
 
                 // Clear all reconnect timeouts if any are running.
                 ipcRenderer.send('clearReconnect', "All");

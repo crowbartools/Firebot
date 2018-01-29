@@ -355,6 +355,7 @@
 
             service.connectToInteractive = function() {
                 // Let's connect! Get new tokens and connect.
+                if (service.waitingForStatusChange) return;
                 service.waitingForStatusChange = true;
 
                 let lastBoard = boardService.getBoardById(settingsService.getLastBoardId());
@@ -415,6 +416,7 @@
 
             service.connectToChat = function() {
                 // Let's connect! Get new tokens and connect.
+                if (service.waitingForChatStatusChange) return;
                 service.waitingForChatStatusChange = true;
                 refreshToken('chat');
             };
@@ -471,6 +473,7 @@
 
             service.connectToConstellation = function() {
                 // Let's connect! Get new tokens and connect.
+                if (service.waitingForConstellationStatusChange) return;
                 service.waitingForConstellationStatusChange = true;
                 refreshToken('constellation');
             };
