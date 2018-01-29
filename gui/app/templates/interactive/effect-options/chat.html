@@ -33,7 +33,8 @@
         </ul>
         <h4>Chat Commands Only</h4>
         <ul>
-            <li><b>$(arg1)</b> - Replaced by the argument provided after a chat command. For example $(arg1) pulls the first word after the command, but $(arg5) would pull the fifth word.</li>
+            <li><b>$(arg)</b> - Replaced by the argument provided after a chat command. For example $(arg) pulls the first word after the command, but $(arg5) would pull the fifth word (Leaving no number after "arg" is treated as "arg1").</li>
+            <li><b>$(target)</b> - Acts like the $(arg) variable but strips out any leading "@", useful when the argument is expected to be a username. Also supports putting a number at the end like arg to select which word to use.</li>
         </ul>
         <h4>Events Only</h4>
         <ul>
