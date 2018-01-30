@@ -355,7 +355,13 @@
 
             service.connectToInteractive = function() {
                 // Let's connect! Get new tokens and connect.
-                if (service.waitingForStatusChange) return;
+                if (service.waitingForStatusChange) return false;
+
+                if (!boardService.hasBoardsLoaded()) {
+                    utilityService.showInfoModal("Interactive will not connect as you do not have any boards loaded. If you do not plan to use Interactive right now, you can disable it's use by the sidebar connection button via the Connection Panel.");
+                    return;
+                }
+
                 service.waitingForStatusChange = true;
 
                 let lastBoard = boardService.getBoardById(settingsService.getLastBoardId());

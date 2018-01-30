@@ -8,7 +8,7 @@
     angular
         .module('firebotApp')
         .factory('connectionManager', function (connectionService, listenerService, settingsService, websocketService,
-            soundService) {
+            soundService, boardService, utilityService) {
 
             let service = {};
 
@@ -62,6 +62,13 @@
 
             service.setConnectionToInteractive = function(shouldConnect) {
                 return new Promise(resolve => {
+
+                    if (!boardService.hasBoardsLoaded()) {
+                        utilityService.showInfoModal("Interactive will not connect as you do not have any boards loaded. If you do not plan to use Interactive right now, you can disable it's use by the sidebar connection button via the Connection Panel.");
+                        resolve(false);
+                        return;
+                    }
+
                     listenerService.registerListener(
                         { type: listenerService.ListenerType.CONNECTION_STATUS,
                             runOnce: true },
