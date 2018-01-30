@@ -19,6 +19,9 @@
             <textarea ng-if="$ctrl.metadata.useTextArea" ng-model="$ctrl.metadata.value" class="form-control" placeholder="Enter text" rows="5" style="width:100%"></textarea>
             <input ng-if="!$ctrl.metadata.useTextArea" class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.metadata.value">
           </div>
+          <div ng-switch-when="password">
+            <input class="form-control" type="password" placeholder="********" ng-model="$ctrl.metadata.value">
+          </div>
           <div>
           </div>
           <div ng-switch-when="number">
