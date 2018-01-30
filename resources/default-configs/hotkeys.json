@@ -1,0 +1,40 @@
+[
+    {
+        "active": true,
+        "code": "CmdOrCtrl+Alt+F12",
+        "action": {
+            "type": "Run Effects",
+            "metadata": {
+                "effects": [
+                    {
+                        "type": "Toggle Connection",
+                        "services": [
+                            "interactive"
+                        ]
+                    }
+                ]
+            }
+        },
+        "name": "Toggle Interactive",
+        "uuid": "541ca1c2-5061-4e00-b953-65fbfa33f4df"
+    },
+    {
+        "active": true,
+        "code": "CmdOrCtrl+Alt+F11",
+        "action": {
+            "type": "Run Effects",
+            "metadata": {
+                "effects": [
+                    {
+                        "type": "Toggle Connection",
+                        "services": [
+                            "chat"
+                        ]
+                    }
+                ]
+            }
+        },
+        "name": "Toggle Chat",
+        "uuid": "2887aff3-590a-4ef3-846f-b72f9f363846"
+    }
+]

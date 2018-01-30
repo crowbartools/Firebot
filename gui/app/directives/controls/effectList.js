@@ -159,6 +159,7 @@
                         } else {
                             ctrl.effectsArray = utilityService.getCopiedEffects(ctrl.trigger);
                         }
+                        ctrl.effectsUpdate();
                     }
                 };
 
@@ -169,6 +170,7 @@
                         }
                         let copiedEffects = utilityService.getCopiedEffects(ctrl.trigger);
                         ctrl.effectsArray.splice(index, 0, ...copiedEffects);
+                        ctrl.effectsUpdate();
                     }
                 };
 

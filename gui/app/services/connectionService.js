@@ -1,14 +1,16 @@
 'use strict';
+
 (function() {
 
     // This handles logins and connections to mixer interactive
 
     const electronOauth2 = require('electron-oauth2');
     const dataAccess = require('../../lib/common/data-access.js');
+    const {session} = require('electron').remote;
 
     angular
         .module('firebotApp')
-        .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q, $rootScope) {
+        .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q, $rootScope, boardService) {
             let service = {};
 
             let ListenerType = listenerService.ListenerType;
@@ -114,6 +116,10 @@
 
                 let scopes = type === "streamer" ? streamerScopes : botScopes;
 
+                // clear out any previous sessions
+                const ses = session.fromPartition(type);
+                ses.clearStorageData();
+
                 authWindowParams.webPreferences.partition = type;
                 const oauthProvider = electronOauth2(authInfo, authWindowParams);
                 $q.when(oauthProvider.getAccessToken({ scope: scopes }))
@@ -200,6 +206,8 @@
                                         ipcRenderer.send('gotRefreshToken');
                                     } else if (connectionType === "chat") {
                                         ipcRenderer.send('gotChatRefreshToken');
+                                    } else if (connectionType === "constellation") {
+                                        ipcRenderer.send('gotConstellationRefreshToken');
                                     }
 
                                 }, err => {
@@ -222,12 +230,15 @@
                                     ipcRenderer.send('gotRefreshToken');
                                 } else if (connectionType === "chat") {
                                     ipcRenderer.send('gotChatRefreshToken');
+                                } else if (connectionType === "constellation") {
+                                    ipcRenderer.send('gotConstellationRefreshToken');
                                 }
                             }
 
                         },
                         (err) => {
                             //error getting streamer refresh token
+                            console.log(err);
 
                             // Set connecting to false and log the streamer out because we have oauth issues.
                             service.waitingForChatStatusChange = false;
@@ -324,11 +335,17 @@
             /**
             * Interactive Connection Stuff
             */
+
+            service.isConnectingAll = false;
+
             service.connectedToInteractive = false;
             service.waitingForStatusChange = false;
             service.connectedBoard = "";
 
             service.toggleConnectionToInteractive = function() {
+                // Clear all reconnect timeouts if any are running.
+                ipcRenderer.send('clearReconnect', "Interactive");
+
                 if (service.connectedToInteractive === true) {
                     service.disconnectFromInteractive();
                 } else if (!service.waitingForChatStatusChange) {
@@ -338,8 +355,18 @@
 
             service.connectToInteractive = function() {
                 // Let's connect! Get new tokens and connect.
+                if (service.waitingForStatusChange) return false;
+
+                if (!boardService.hasBoardsLoaded()) {
+                    utilityService.showInfoModal("Interactive will not connect as you do not have any boards loaded. If you do not plan to use Interactive right now, you can disable it's use by the sidebar connection button via the Connection Panel.");
+                    return;
+                }
+
                 service.waitingForStatusChange = true;
-                service.connectedBoard = settingsService.getLastBoardId();
+
+                let lastBoard = boardService.getBoardById(settingsService.getLastBoardId());
+
+                service.connectedBoard = lastBoard ? lastBoard.name : "";
                 refreshToken('interactive');
             };
 
@@ -356,8 +383,13 @@
                 (isConnected) => {
                     service.connectedToInteractive = isConnected;
 
-                    let soundType = isConnected ? "Online" : "Offline";
-                    soundService.connectSound(soundType);
+                    if (!service.isConnectingAll) {
+                        let soundType = isConnected ? "Online" : "Offline";
+                        soundService.connectSound(soundType);
+                    }
+
+                    let status = isConnected ? "connected" : "disconnected";
+                    $rootScope.$broadcast("connection:update", { type: "interactive", status: status });
 
                     service.waitingForStatusChange = false;
                 });
@@ -378,6 +410,9 @@
             service.waitingForChatStatusChange = false;
 
             service.toggleConnectionToChat = function() {
+                // Clear all reconnect timeouts if any are running.
+                ipcRenderer.send('clearReconnect', "Chat");
+
                 if (service.connectedToChat === true) {
                     service.disconnectFromChat();
                 } else if (!service.waitingForStatusChange) {
@@ -387,6 +422,7 @@
 
             service.connectToChat = function() {
                 // Let's connect! Get new tokens and connect.
+                if (service.waitingForChatStatusChange) return;
                 service.waitingForChatStatusChange = true;
                 refreshToken('chat');
             };
@@ -404,8 +440,13 @@
                 (isChatConnected) => {
                     service.connectedToChat = isChatConnected;
 
-                    let soundType = isChatConnected ? "Online" : "Offline";
-                    soundService.connectSound(soundType);
+                    if (!service.isConnectingAll) {
+                        let soundType = isChatConnected ? "Online" : "Offline";
+                        soundService.connectSound(soundType);
+                    }
+
+                    let status = isChatConnected ? "connected" : "disconnected";
+                    $rootScope.$broadcast("connection:update", { type: "chat", status: status });
 
                     service.waitingForChatStatusChange = false;
                 });
@@ -416,6 +457,63 @@
                 { type: ListenerType.CHAT_CONNECTION_CHANGE_REQUEST },
                 () => {
                     service.toggleConnectionToChat();
+                });
+
+
+            /**
+            * Constellation Connection Stuff
+            */
+            service.connectedToConstellation = false;
+            service.waitingForConstellationStatusChange = false;
+
+            service.toggleConnectionToConstellation = function() {
+                // Clear all reconnect timeouts if any are running.
+                ipcRenderer.send('clearReconnect', "Constellation");
+
+                if (service.connectedToConstellation === true) {
+                    service.disconnectFromConstellation();
+                } else if (!service.waitingForStatusChange) {
+                    service.connectToConstellation();
+                }
+            };
+
+            service.connectToConstellation = function() {
+                // Let's connect! Get new tokens and connect.
+                if (service.waitingForConstellationStatusChange) return;
+                service.waitingForConstellationStatusChange = true;
+                refreshToken('constellation');
+            };
+
+            service.disconnectFromConstellation = function() {
+                // Disconnect!
+                service.waitingForConstellationStatusChange = true;
+                ipcRenderer.send('mixerConstellation', 'disconnect');
+            };
+
+            // Connection Monitor
+            // Recieves event from main process that connection has been established or disconnected.
+            listenerService.registerListener(
+                { type: ListenerType.CONSTELLATION_CONNECTION_STATUS },
+                (isConstellationConnected) => {
+                    service.connectedToConstellation = isConstellationConnected;
+
+                    if (!service.isConnectingAll) {
+                        let soundType = isConstellationConnected ? "Online" : "Offline";
+                        soundService.connectSound(soundType);
+                    }
+
+                    let status = isConstellationConnected ? "connected" : "disconnected";
+                    $rootScope.$broadcast("connection:update", { type: "constellation", status: status });
+
+                    service.waitingForConstellationStatusChange = false;
+                });
+
+            // Connect Request
+            // Recieves an event from the main process when the global hotkey is hit for connecting.
+            listenerService.registerListener(
+                { type: ListenerType.CONSTELLATION_CONNECTION_CHANGE_REQUEST },
+                () => {
+                    service.toggleConnectionToConstellation();
                 });
 
             return service;

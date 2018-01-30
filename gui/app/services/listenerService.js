@@ -14,8 +14,11 @@
                 filePath: {},
                 connectionStatus: {},
                 connectionChangeRequest: {},
+                constellationConnectionStatus: {},
+                constellationConnectionChangeRequest: {},
                 chatConnectionStatus: {},
                 chatConnectionChangeRequest: {},
+                toggleServicesRequest: {},
                 chatMessage: {},
                 chatUpdate: {},
                 eventLog: {},
@@ -41,8 +44,11 @@
                 IMPORT_FOLDER: "importFolder",
                 CONNECTION_STATUS: "connectionStatus",
                 CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
+                CONSTELLATION_CONNECTION_STATUS: "constellationConnectionStatus",
+                CONSTELLATION_CONNECTION_CHANGE_REQUEST: "constellationConnectionChangeRequest",
                 CHAT_CONNECTION_STATUS: "chatConnectionStatus",
                 CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
+                TOGGLE_SERVICES_REQUEST: "toggleServicesRequest",
                 CHAT_MESSAGE: "chatMessage",
                 CHAT_UPDATE: "chatUpdate",
                 CURRENT_VIEWERS_UPDATE: "currentViewersUpdate",
@@ -133,6 +139,8 @@
                 default:
                     registeredListeners[listener.type][uuid] = listener;
                 }
+
+                return uuid;
             };
 
             service.unregisterListener = function(type, uuid) {
@@ -214,6 +222,23 @@
                 let isChatConnected = data ? (data.toLowerCase() === "online") : false;
                 _.forEach(registeredListeners.chatConnectionStatus, (listener) => {
                     runListener(listener, isChatConnected);
+                });
+            });
+
+            // Constellation Connection Monitor
+            // Recieves event from main process that connection has been established or disconnected.
+            ipcRenderer.on('constellationConnection', function (event, data) {
+                let isConstellationConnected = data ? (data.toLowerCase() === "online") : false;
+                _.forEach(registeredListeners.constellationConnectionStatus, (listener) => {
+                    runListener(listener, isConstellationConnected);
+                });
+            });
+
+            // Toggle Services Request Monitor
+            ipcRenderer.on('toggleServicesRequest', function (event, data) {
+                let services = data ? data : [];
+                _.forEach(registeredListeners.toggleServicesRequest, (listener) => {
+                    runListener(listener, services);
                 });
             });
 

@@ -1,6 +1,4 @@
-.command-permission-label{
-    border-right:1px solid #ccc!important;
-}
+
 .command-permissions{
     padding:1em;
 }
@@ -8,6 +6,7 @@
 /* Chat - second pass*/
 
 .chat-tab-content {
+    padding: 15px;
     width: 100%; 
     height: 100%; 
     display: flex; 
@@ -105,6 +104,7 @@
         color: $chatTextColor;
         line-height:24px;
         font-size:1em;
+        word-break: break-all;
         .chatEmoticon{
             position:relative;
             top:7px;
@@ -189,7 +189,6 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.65);
     z-index: 100000;
-    border-radius: 3px;
     display: flex;
     justify-content: center;
     align-items: center;

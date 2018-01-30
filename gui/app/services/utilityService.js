@@ -103,6 +103,7 @@
                 }
 
                 // Pull values out of the context
+                let component = showModalContext.component;
                 let templateUrl = showModalContext.templateUrl;
                 let controllerFunc = showModalContext.controllerFunc;
                 let resolveObj = showModalContext.resolveObj || {};
@@ -114,18 +115,25 @@
                     return modalId;
                 };
 
-                // Show the modal
-                let modalInstance = $uibModal.open({
+                let modal = {
                     ariaLabelledBy: 'modal-title',
                     ariaDescribedBy: 'modal-body',
-                    templateUrl: templateUrl,
-                    controller: controllerFunc,
                     resolve: resolveObj,
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard,
                     backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
-                    windowClass: modalId
-                });
+                    windowClass: showModalContext.windowClass + " " + modalId
+                };
+
+                if (component != null && component.length !== 0) {
+                    modal.component = component;
+                } else {
+                    modal.templateUrl = templateUrl;
+                    modal.controller = controllerFunc;
+                }
+
+                // Show the modal
+                let modalInstance = $uibModal.open(modal);
 
                 // If no callbacks were defined, create blank ones. This avoids a console error
                 if (typeof closeCallback !== "function") {
@@ -245,6 +253,8 @@
             let errorModalOpen = false;
             service.showErrorModal = function(errorMessage) {
                 if (errorModalOpen && previousErrorMessage === errorMessage) {
+                    return;
+                } else if (errorModalOpen) {
                     return;
                 }
                 previousErrorMessage = errorMessage;
@@ -573,6 +583,13 @@
 
             service.capitalize = function([first, ...rest]) {
                 return first.toUpperCase() + rest.join('').toLowerCase();
+            };
+
+            service.generateUuid = function() {
+                // RFC4122 version 4 compliant
+                return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                );
             };
 
             return service;

@@ -15,9 +15,9 @@
                 if (settingsService.soundsEnabled() === "On") {
                     let outputDevice = settingsService.getAudioOutputDevice();
                     if (type === "Online") {
-                        service.playSound("../sounds/online.mp3", 0.2, outputDevice);
+                        service.playSound("../sounds/connect.mp3", 0.2, outputDevice);
                     } else {
-                        service.playSound("../sounds/offline.mp3", 0.2, outputDevice);
+                        service.playSound("../sounds/disconnect.mp3", 0.2, outputDevice);
                     }
                 }
             };

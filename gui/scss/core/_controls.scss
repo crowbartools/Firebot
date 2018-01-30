@@ -244,3 +244,31 @@ input:checked + .slider:before {
 }
 
 /* end slider */
+
+.hotkey-capture {
+  display: inline-flex;
+  align-items: center;
+  .hotkey-display {
+    border: 2px solid #5cb85c;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    min-width: 200px;
+    padding: 0 20px;
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+    border-right: none;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 900;
+  }
+  button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  &.capturing {
+    .hotkey-display {
+      border-color: #C9302C;
+    }
+  }
+}

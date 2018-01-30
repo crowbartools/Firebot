@@ -47,7 +47,8 @@
                         };
 
                         $scope.deleteUserAtIndex = function(index) {
-                            $scope.group.users.splice(index, 1);
+                            let mappedIndex = index + (($scope.pagination.currentPage - 1) * $scope.pagination.pageSize);
+                            $scope.group.users.splice(mappedIndex, 1);
                         };
 
                         // When the user clicks "Save/Add", we want to pass the group back

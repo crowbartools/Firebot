@@ -2,9 +2,9 @@
   <div class="content-block" style="width: 49%">
     <div class="content-block-header">
       <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Event Log</span>
-      <div style="display:inline-block;float:right;position: absolute;top: 9px;right: 7px;">
+      <div class="searchbar-header-wrapper">
         <input type="text" class="form-control" placeholder="Search events" ng-model="eventLogSearch" style="padding-left: 27px;">
-        <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+        <span class="searchbar-icon"><i class="far fa-search"></i></span>
       </div>
     </div>
     <div class="content-block-body">
@@ -56,9 +56,9 @@
   <div class="content-block" style="width: 49%">
     <div class="content-block-header">
       <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Banned Users</span>
-      <div style="display:inline-block;float:right;position: absolute;top: 9px;right: 7px;">
+      <div class="searchbar-header-wrapper">
         <input type="text" class="form-control" placeholder="Search users" ng-model="bannedSearch" style="padding-left: 27px;">
-        <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+        <span class="searchbar-icon"><i class="far fa-search"></i></span>
       </div>
     </div>
     <div class="content-block-body">      
@@ -97,9 +97,9 @@
   <div class="content-block" style="width: 49%; margin-top:2%">
     <div class="content-block-header">
       <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Spark Exemptions</span>
-      <div style="display:inline-block;float:right;position: absolute;top: 9px;right: 7px;" ng-if="activeExemptTab == '0'">
+      <div class="searchbar-header-wrapper" ng-if="activeExemptTab == '0'">
         <input type="text" class="form-control" placeholder="Search users" ng-model="exemptSearch" style="padding-left: 27px;">
-        <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+        <span class="searchbar-icon"><i class="far fa-search"></i></span>
       </div>
     </div>
     <div class="content-block-body">
