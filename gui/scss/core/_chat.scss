@@ -104,6 +104,7 @@
         color: $chatTextColor;
         line-height:24px;
         font-size:1em;
+        word-break: break-all;
         .chatEmoticon{
             position:relative;
             top:7px;
