@@ -30,6 +30,7 @@
                 showImage: {},
                 showVideo: {},
                 showHtml: {},
+                showText: {},
                 celebrate: {},
                 info: {},
                 backupComplete: {},
@@ -61,6 +62,7 @@
                 PLAY_SOUND: "playSound",
                 SHOW_IMAGE: "showImage",
                 SHOW_VIDEO: "showVideo",
+                SHOW_TEXT: "showText",
                 SHOW_HTML: "showHtml",
                 CELEBREATE: "celebrate",
                 INFO: "info",
@@ -356,7 +358,16 @@
             });
 
             /**
-            * Show Text listener
+            * Show text event listener
+            */
+            ipcRenderer.on('showtext', function (event, data) {
+                _.forEach(registeredListeners.showText, (listener) => {
+                    runListener(listener, data);
+                });
+            });
+
+            /**
+            * Show Events listener
             */
             ipcRenderer.on('showEvents', function (event, data) {
                 _.forEach(registeredListeners.showEvents, (listener) => {

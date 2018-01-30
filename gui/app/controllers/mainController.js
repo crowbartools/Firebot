@@ -6,7 +6,8 @@
 
     let app = angular
         .module('firebotApp',
-            ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable', 'luegg.directives']);
+            ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable',
+                'luegg.directives', 'summernote']);
 
     app.run(
         function initializeApplication(chatMessagesService, groupsService, connectionService, notificationService,
