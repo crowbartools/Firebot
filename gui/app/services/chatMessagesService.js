@@ -87,17 +87,21 @@
             service.purgeChatMessages = function(data) {
                 let chatQueue = service.chatQueue;
 
-                Object.keys(chatQueue).forEach((key) => {
-                    let message = chatQueue[key];
+                let cachedUserName = null;
+                chatQueue.forEach((message) => {
+
+                    if (cachedUserName == null) {
+                        cachedUserName = message.user_name;
+                    }
 
                     // If user id matches, then mark the message as deleted.
                     if (message.user_id === data.user_id) {
                         message.deleted = true;
-                        message.eventInfo = "Purged by " + data.moderator.user_name + '.';
+                        message.eventInfo = "Timed out by " + data.moderator.user_name + '.';
                     }
                 });
 
-                service.chatAlertMessage(data.moderator.user_name + ' purged all messages from a user (' + data.user_id + ').');
+                service.chatAlertMessage(data.moderator.user_name + ' timed out ' + cachedUserName);
             };
 
             // Chat Alert Message
@@ -110,6 +114,12 @@
                     ],
                     user_avatar: "../images/logo.jpg", // eslint-disable-line
                     message: {
+                        message: [
+                            {
+                                type: "text",
+                                data: message
+                            }
+                        ],
                         meta: {
                             me: true
                         }
@@ -217,6 +227,7 @@
                     service.purgeChatMessages(data);
                     break;
                 case "UserTimeout":
+                    console.log("user timed out");
                     service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
                     break;
                 case "PollStart":

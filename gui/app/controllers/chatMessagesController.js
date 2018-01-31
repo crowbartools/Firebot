@@ -7,7 +7,7 @@
 
     angular
         .module('firebotApp')
-        .controller('chatMessagesController', function($scope, $timeout, $q, $sce, chatMessagesService, connectionService, listenerService) {
+        .controller('chatMessagesController', function($rootScope, $scope, $timeout, $q, $sce, chatMessagesService, connectionService, listenerService) {
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";

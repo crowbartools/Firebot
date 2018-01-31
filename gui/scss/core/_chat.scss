@@ -181,6 +181,9 @@
     &:focus {
         outline: none;
     }
+    &[disabled] {
+        cursor: not-allowed;
+    }
 }
 
 .chatfeed-disabled-overlay {
@@ -192,6 +195,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
 }
 
 .chatter-dropdown {
@@ -254,21 +258,25 @@
 
 .chat-window{
     height: 100%; 
-    padding-top:10px; 
-    padding-left:10px; 
-    padding-right: 10px;
     background: $light-background-color + 20%;
     border-radius: 5px;
     border: 2px solid rgba(170, 164, 164, 0.43);
     overflow: hidden;
     overflow-y: scroll;
     overflow-x: hidden;
+    position: relative;
     @media only screen and (max-width: 779px) {
         border-left: 1px solid $chatBorder;
     }
     ::-webkit-scrollbar-track {
         border-radius: 0px 5px 5px 0px;
     }
+}
+
+.chat-window-message-wrapper {
+    padding-top:10px; 
+    padding-left:10px; 
+    padding-right: 10px;
 }
 
 .chatMessage{
@@ -310,6 +318,14 @@
         @media only screen and (max-width: 980px) {
             margin-left:0px;
         }
+    }
+}
+
+.clickable-link {
+    cursor: pointer;
+    color: rgb(62, 135, 218) !important;
+    &:hover {
+        color: rgb(52, 118, 189) !important;
     }
 }
 

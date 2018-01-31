@@ -1,6 +1,3 @@
-<div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
-    <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
-</div>
 <div class="chat-tab-content">
     <div class="viewer-list-column" ng-hide="{{getChatViewerListSetting() === false}}">
         <div class="viewer-list-header">
@@ -20,28 +17,47 @@
     </div>
     <div class="chat-window-column">
         <div class="chat-window" scroll-glue>
-            <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
-                <div class="chat-user-avatar-wrapper">
-                    <span>
-                        <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
-                    </span>                 
-                </div>
-                <div style="padding-left: 10px">
-                    <div class="chat-username">
-                        <b>{{message.user_name}}</b>
-                        <span class="chatSubIcon" ng-if="isSubscriber(message)">
-                            <img ng-src="{{getSubIcon(message)}}">
-                        </span>
-                        <span ng-hide="message.historical" class="muted chat-timestamp">
-                            {{getTimeStamp(message)}}
-                        </span>
+
+            <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
+                <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
+            </div>
+            <div class="chat-window-message-wrapper">
+                <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
+                    <div class="chat-user-avatar-wrapper">
+                        <span>
+                            <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
+                        </span>                 
                     </div>
-                    <div class="chatContent" style="font-size: 1.17em;" ng-bind-html="getMessageContent(message)"></div>
-                    <div ng-if="isWhisper(message)" class="whisperData">
-                        {{getWhisperData(message)}}
-                    </div>
-                    <div class="chatEventInfo">
-                        {{message.eventInfo}}
+                    <div style="padding-left: 10px">
+                        <div class="chat-username">
+                            <b>{{message.user_name}}</b>
+                            <span class="chatSubIcon" ng-if="isSubscriber(message)">
+                                <img ng-src="{{getSubIcon(message)}}">
+                            </span>
+                            <span ng-hide="message.historical" class="muted chat-timestamp">
+                                {{getTimeStamp(message)}}
+                            </span>
+                        </div>
+                        <div class="chatContent" style="font-size: 1.17em;">
+                            <span ng-repeat="segment in message.message.message">
+                                <span ng-if="segment.type === 'text'">
+                                    {{segment.data}}
+                                </span>
+                                <span ng-if="segment.type === 'emoticon'" class="chatEmoticon" ng-style="segment.emoticonStyles"></span>
+                                <span ng-if="segment.type === 'link'">
+                                    <a class="clickable-link" ng-click="openLinkExternally(segment.url)">{{segment.url}}</a>
+                                </span>
+                                <span ng-if="segment.type === 'tag'">
+                                    {{segment.text}}
+                                </span>
+                            </span>
+                        </div>
+                        <div ng-if="isWhisper(message)" class="whisperData">
+                            {{getWhisperData(message)}}
+                        </div>
+                        <div class="chatEventInfo">
+                            {{message.eventInfo}}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -64,6 +80,7 @@
                     class="text-input-field"
                     ng-maxlength="360"
                     ng-model="chatMessage"
+                    ng-disabled="!chatFeedIsEnabled()"
                     ng-keyup="$event.keyCode == 13 && submitChat()">
             </div>
         </div>

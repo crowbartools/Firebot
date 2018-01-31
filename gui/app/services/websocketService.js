@@ -181,12 +181,20 @@
             };
 
             service.hasClientsConnected = false;
-            $interval(() => {
+
+            wss.on('connection', function connection() {
+                service.hasClientsConnected = true;
+                $rootScope.$broadcast("connection:update", { type: "overlay", status: "connected" });
+                $rootScope.$applyAsync();
+            });
+
+            setInterval(() => {
                 let prevValue = service.hasClientsConnected === true;
                 service.hasClientsConnected = wss.clients.size > 0;
                 if (service.hasClientsConnected !== prevValue) {
                     let status = service.hasClientsConnected ? "connected" : "warning";
                     $rootScope.$broadcast("connection:update", { type: "overlay", status: status });
+                    $rootScope.$applyAsync();
                 }
             }, 1250);
 
