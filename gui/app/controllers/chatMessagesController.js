@@ -7,7 +7,7 @@
 
     angular
         .module('firebotApp')
-        .controller('chatMessagesController', function($rootScope, $scope, $timeout, $q, $sce, chatMessagesService, connectionService, listenerService) {
+        .controller('chatMessagesController', function($rootScope, $scope, chatMessagesService, connectionService, listenerService) {
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
@@ -82,11 +82,6 @@
             // Returns the message id of the message.
             $scope.getMessageId = function(data) {
                 return data.id;
-            };
-
-            // This gets the html from the message.
-            $scope.getMessageContent = function(data) {
-                return $sce.trustAsHtml(data.messageHTML);
             };
 
             $scope.getWhisperData = function(data) {
