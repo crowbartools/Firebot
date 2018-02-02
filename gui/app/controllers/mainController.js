@@ -9,7 +9,7 @@
             ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable', 'luegg.directives']);
 
     app.run(
-        function initializeApplication(chatMessagesService, groupsService, connectionService, notificationService,
+        function initializeApplication(logger, chatMessagesService, groupsService, connectionService, notificationService,
             $timeout, updatesService, commandsService) {
             // 'chatMessagesService' is included so its instantiated on app start
 
