@@ -4,6 +4,8 @@ const electron = require('electron');
 const {ipcRenderer} = electron;
 const {remote} = electron;
 
+const logger = require('../../lib/logwrapper');
+
 //from old Gobal.js
 const shell = require('electron').shell;
 const fs = require('fs');
@@ -31,3 +33,7 @@ function boot() {
 }
 
 document.addEventListener('DOMContentLoaded', boot);
+
+window.onerror = function(error, url, line) {
+    logger.error("(Renderer) " + error, { url: url, line: line });
+};
