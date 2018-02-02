@@ -2,6 +2,7 @@
 
 const path = require('path');
 const url = require('url');
+const logger = require('./lib/logwrapper');
 
 const electron = require('electron');
 const {app, BrowserWindow, ipcMain, shell, dialog} = electron;
@@ -76,7 +77,7 @@ if (process.platform === 'win32') {
 
 
 function createWindow () {
-    console.log('Creating window...');
+    logger.info('Creating window...');
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -117,31 +118,31 @@ function createWindow () {
 }
 
 async function createDefaultFoldersAndFiles() {
-    console.log("Ensuring default folders and files exist...");
+    logger.info("Ensuring default folders and files exist...");
     //create the root "firebot-data" folder in user-settings
     dataAccess.createFirebotDataDir();
 
     // Create the user-settings folder if it doesn't exist. It's required
     // for the folders below that are within it
     if (!dataAccess.userDataPathExistsSync("/user-settings/")) {
-        console.log("Can't find the user-settings folder, creating one now...");
+        logger.info("Can't find the user-settings folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/user-settings");
     }
 
     if (!dataAccess.userDataPathExistsSync("/user-settings/hotkeys.json")) {
-        console.log("Can't find the hotkeys file, creating the default one now...");
+        logger.info("Can't find the hotkeys file, creating the default one now...");
         dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/user-settings/");
     }
 
     // Create the scripts folder if it doesn't exist
     if (!dataAccess.userDataPathExistsSync("/user-settings/scripts/")) {
-        console.log("Can't find the scripts folder, creating one now...");
+        logger.info("Can't find the scripts folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/user-settings/scripts");
     }
 
     // Create the scripts folder if it doesn't exist
     if (!dataAccess.userDataPathExistsSync("/backups/")) {
-        console.log("Can't find the backup folder, creating one now...");
+        logger.info("Can't find the backup folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/backups");
     }
 
@@ -151,36 +152,35 @@ async function createDefaultFoldersAndFiles() {
         '/resources/overlay/js/port.js',
         `window.WEBSOCKET_PORT = ${port}`,
         () => {
-            console.log(`Set overlay port to: ${port}`);
+            logger.info(`Set overlay port to: ${port}`);
         });
 
     // Create the controls folder if it doesn't exist.
     if (!dataAccess.userDataPathExistsSync("/user-settings/controls")) {
-        console.log("Can't find the controls folder, creating one now...");
+        logger.info("Can't find the controls folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/user-settings/controls");
     }
 
     // Create the logs folder if it doesn't exist.
     if (!dataAccess.userDataPathExistsSync("/user-settings/logs")) {
-        console.log("Can't find the logs folder, creating one now...");
+        logger.info("Can't find the logs folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/user-settings/logs");
     }
 
     // Create the chat folder if it doesn't exist.
     if (!dataAccess.userDataPathExistsSync("/user-settings/chat")) {
-        console.log("Can't find the chat folder, creating one now...");
+        logger.info("Can't find the chat folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/user-settings/chat");
     }
 
     // Create the chat folder if it doesn't exist.
     if (!dataAccess.userDataPathExistsSync("/user-settings/live-events")) {
-        console.log("Can't find the live-events folder, creating one now...");
+        logger.info("Can't find the live-events folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/user-settings/live-events");
     }
 
-    console.log("Finished verifying default folders and files.");
+    logger.info("Finished verifying default folders and files.");
 }
-
 
 
 // This method will be called when Electron has finished
@@ -196,6 +196,8 @@ app.on('ready', async function() {
 
     //start the REST api server
     apiServer.start();
+
+    return true;
 });
 
 // Quit when all windows are closed.
@@ -242,19 +244,19 @@ ipcMain.on('downloadUpdate', () => {
     let updater = new GhReleases(options);
 
     updater.check((err, status) => {
-        console.log('Should we download an update? ' + status);
+        logger.info('Should we download an update? ' + status);
 
         // Download the update
         updater.download();
 
         if (err) {
-            console.log(err);
+            logger.info(err);
         }
     });
 
     // When an update has been downloaded
     updater.on('update-downloaded', () => {
-        console.log('Updated downloaded. Installing...');
+        logger.info('Updated downloaded. Installing...');
         //let the front end know and wait a few secs.
         renderWindow.webContents.send('updateDownloaded');
 
@@ -306,7 +308,7 @@ ipcMain.on('openBackupFolder', () => {
 
 ipcMain.on('startBackup', (event, manualActivation = false) => {
     backupManager.startBackup(manualActivation, () => {
-        console.log("backup complete");
+        logger.info("backup complete");
         renderWindow.webContents.send('backupComplete', manualActivation);
     });
 });
