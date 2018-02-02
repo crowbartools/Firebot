@@ -10,15 +10,26 @@
 
             let service = {};
 
-            function callLogger(type, ...args) {
+            function prefixMsgInArgs(...args) {
+                let msg = "(Renderer)";
                 if (args != null && args.length > 0) {
                     if (typeof args[0] === 'string' || args[0] instanceof String) {
-                        args[0] = "(Renderer) " + args[0];
+                        msg += " " + args.shift();
                     }
                 }
-                return logger[type](...args);
+                args.unshift(msg);
+                return args;
             }
 
+            function callLogger(type, ...args) {
+                let argsNew = prefixMsgInArgs(...args);
+                return logger[type](...argsNew);
+            }
+
+            /** Wrappers for the main Winston Logger methods. All these do is prefix the "msg" argument
+            * with "(Renderer)" so its easier to differentiate logs from the renderer vs main processes
+            * in the log file
+            */
             service.error = (...args) => {
                 return callLogger("error", ...args);
             };
@@ -44,18 +55,9 @@
             };
 
             service.log = (type, ...args) => {
-                args[0] = "(Renderer) " + args[0];
-                return logger.log(type, ...args);
+                let argsNew = prefixMsgInArgs(...args);
+                return logger.log(type, ...argsNew);
             };
-
-            logger.on('logging', (transport, level, msg, meta) => {
-                if (transport != null && transport.name === 'console') {
-                    console.log(level.toUpperCase() + ": " + msg);
-                    if (meta && Object.keys(meta).length > 0) {
-                        console.log(meta);
-                    }
-                }
-            });
 
             return service;
         });

@@ -34,6 +34,20 @@ function boot() {
 
 document.addEventListener('DOMContentLoaded', boot);
 
+// Catch browser window (renderer) errors and log them via Winston
 window.onerror = function(error, url, line) {
     logger.error("(Renderer) " + error, { url: url, line: line });
 };
+
+// Prints all logs from the "console" transport into the Browser Console
+logger.on('logging', (transport, level, msg, meta) => {
+    if (transport != null && transport.name === 'console') {
+        if (msg != null && msg.trim() !== '(Renderer)') {
+            // Only print if the msg isnt 'empty' aka has more than just the prefix
+            console.log(level.toUpperCase() + ": " + msg);
+        }
+        if (meta && Object.keys(meta).length > 0) {
+            console.log(meta);
+        }
+    }
+});
