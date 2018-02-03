@@ -39,12 +39,68 @@ window.onerror = function(error, url, line) {
     logger.error("(Renderer) " + error, { url: url, line: line });
 };
 
+
+// pointless fancy firebot at the top of the log
+function printRow(colorOne, colorTwo, ...args) {
+    let msg = "";
+    let styles = [];
+
+    const size = "13px";
+
+    args.forEach(a => {
+        msg += "%c   ";
+        if (a === 1) {
+            styles.push(`background:${colorOne};font-size:${size};`);
+        } else {
+            styles.push(`background:${colorTwo};font-size:${size};`);
+        }
+    });
+
+    console.log(msg, ...styles);
+}
+
+const letterColor = "#EBB11F", spaceColor = "transparent", ruleColor = "darkgray";
+/* eslint-disable no-multi-spaces */
+printRow(ruleColor, spaceColor,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+
+//console.log("%cWELCOME TO", "color:gray;font-weight:900;font-size:18px;");
+printRow(letterColor, spaceColor, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1);
+printRow(letterColor, spaceColor, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0);
+printRow(letterColor, spaceColor, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0);
+printRow(letterColor, spaceColor, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0);
+printRow(letterColor, spaceColor, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0);
+
+//console.log("%cPlease excuse the mess.", "color:gray;font-weight:900;font-size:16px;");
+printRow(ruleColor, spaceColor,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+/* eslint-enable no-multi-spaces */
+console.log(""); //extra line for breathing room
+
+
+function getLogLevelColor(level) {
+    switch (level) {
+    case "error":
+        return "#CC3128";
+    case "warn":
+        return "#E3D919";
+    case "info":
+        return "#0DAD4A";
+    case "verbose":
+        return "#11A7AB";
+    case "debug":
+        return "#2171C7";
+    case "silly":
+        return "#973EBB";
+    default:
+        return "black";
+    }
+}
+
 // Prints all logs from the "console" transport into the Browser Console
 logger.on('logging', (transport, level, msg, meta) => {
     if (transport != null && transport.name === 'console') {
         if (msg != null && msg.trim() !== '(Renderer)') {
             // Only print if the msg isnt 'empty' aka has more than just the prefix
-            console.log(level.toUpperCase() + ": " + msg);
+            console.log("%c" + level.toUpperCase() + "%c " + msg, `color:${getLogLevelColor(level)}`, "color:black");
         }
         if (meta && Object.keys(meta).length > 0) {
             console.log(meta);
