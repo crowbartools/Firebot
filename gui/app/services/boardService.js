@@ -6,7 +6,6 @@
     const fs = require('fs');
     const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
-    const logger = require('../../lib/errorLogging.js');
 
     angular
         .module('firebotApp')
