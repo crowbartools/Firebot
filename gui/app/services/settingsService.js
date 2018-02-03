@@ -8,7 +8,7 @@
 
     angular
         .module('firebotApp')
-        .factory('settingsService', function (utilityService) {
+        .factory('settingsService', function (utilityService, logger) {
             let service = {};
 
             let settingsCache = {};
@@ -59,7 +59,7 @@
                 try {
                     deleteDataAtPath('/boards/' + boardId);
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
             };
 
@@ -70,7 +70,7 @@
                 try {
                     lastUpdatedDatetime = getSettingsFile().getData(`/boards/${id}/lastUpdated`);
                 } catch (err) {
-                    console.log("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first");
+                    logger.error("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first", err);
                 }
                 return lastUpdatedDatetime;
             };
@@ -90,7 +90,7 @@
                 try {
                     boardId = getSettingsFile().getData('/interactive/lastBoardId');
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
                 return boardId;
             }
@@ -344,7 +344,7 @@
                 // Overwrite the 'port.js' file in the overlay settings folder with the new port
                 fs.writeFile(path, `window.WEBSOCKET_PORT = ${port}`,
                     'utf8', () => {
-                        console.log(`Set overlay port to: ${port}`);
+                        logger.info(`Set overlay port to: ${port}`);
                     });
             };
 

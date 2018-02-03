@@ -8,7 +8,7 @@
 
     angular
         .module('firebotApp')
-        .factory('updatesService', function ($q, $http, $sce, settingsService, utilityService, listenerService) {
+        .factory('updatesService', function (logger, $q, $http, $sce, settingsService, utilityService, listenerService) {
             // factory/service object
             let service = {};
 
@@ -112,7 +112,7 @@
                         resolve(updateObject);
                     }, (error) => {
                         service.isCheckingForUpdates = false;
-                        console.log(error);
+                        logger.error(error);
                         reject(false);
                     });
                 });

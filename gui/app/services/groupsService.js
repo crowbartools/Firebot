@@ -10,7 +10,7 @@
 
     angular
         .module('firebotApp')
-        .factory('groupsService', function (boardService, listenerService) {
+        .factory('groupsService', function (boardService, listenerService, logger) {
             let service = {};
 
             let groups = [];
@@ -83,7 +83,7 @@
                     }
                     ensureBannedGroupExists();
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
 
                 // Load up exempt group

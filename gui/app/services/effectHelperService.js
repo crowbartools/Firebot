@@ -9,7 +9,7 @@
 
     angular
         .module('firebotApp')
-        .factory('effectHelperService', function ($q, utilityService) {
+        .factory('effectHelperService', function ($q, utilityService, logger) {
             let service = {};
 
             // Returns a controller to be used for the template of a given effectype
@@ -208,7 +208,6 @@
 
                         // When an api is clicked in the dropdown save its name and if it has images available.
                         $scope.effectClick = function(api) {
-                            console.log(api);
                             $scope.effect.api = api.name;
                             $scope.effect.imageAvailable = api.image;
                         };
@@ -363,7 +362,7 @@
                     controller = ($scope, $rootScope) => {
 
                         function loadParameters(scriptName) {
-                            console.log("Attempting to load custom script parameters...");
+                            logger.info("Attempting to load custom script parameters...");
                             $scope.isLoadingParameters = true;
 
                             let scriptsFolder = dataAccess.getPathInUserData('/user-settings/scripts');
@@ -424,7 +423,7 @@
                                 }
                             } catch (err) {
                                 utilityService.showErrorModal("Error loading the script '" + scriptName + "'\n\n" + err);
-                                console.log(err);
+                                logger.error(err);
                             }
                         }
 

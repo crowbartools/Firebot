@@ -97,7 +97,7 @@
 
                 // We dont want to do anything if there's no context
                 if (showModalContext == null) {
-                    console.log("showModal() was called but no context was provided!");
+                    logger.warn("showModal() was called but no context was provided!");
                     return;
                 }
 
