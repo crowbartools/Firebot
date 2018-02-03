@@ -6,7 +6,7 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function (listenerService, settingsService, groupsService) {
+        .factory('chatMessagesService', function (logger, listenerService, settingsService, groupsService) {
             let service = {};
 
             // Chat Message Queue
@@ -71,7 +71,6 @@
                     arr = service.chatUsers,
                     userList = arr.filter(x => x.username !== username);
 
-                console.log(userList);
                 service.chatUsers = userList;
             };
 
@@ -214,20 +213,20 @@
             service.chatUpdateHandler = function(data) {
                 switch (data.fbEvent) {
                 case "ClearMessages":
-                    console.log('Chat cleared');
+                    logger.info('Chat cleared');
                     service.clearChatQueue();
                     service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
                     break;
                 case "DeleteMessage":
-                    console.log('Chat message deleted');
+                    logger.info('Chat message deleted');
                     service.deleteChatMessage(data);
                     break;
                 case "PurgeMessage":
-                    console.log('Chat message purged');
+                    logger.info('Chat message purged');
                     service.purgeChatMessages(data);
                     break;
                 case "UserTimeout":
-                    console.log("user timed out");
+                    logger.info("user timed out");
                     service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
                     break;
                 case "PollStart":
@@ -237,7 +236,7 @@
                     service.pollEnd(data);
                     break;
                 case "UserJoin":
-                    console.log('Chat User Joined');
+                    logger.info('Chat User Joined');
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -245,8 +244,7 @@
                     service.chatUserJoined(data);
                     break;
                 case "UserLeave":
-                    console.log('Chat User Left');
-                    console.log(data);
+                    logger.info('Chat User Left');
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -254,28 +252,26 @@
                     service.chatUserLeft(data);
                     break;
                 case "UserUpdate":
-                    console.log('User updated');
+                    logger.info('User updated');
                     service.userUpdate(data);
                     break;
                 case "Disconnected":
                     // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
-                    console.log('Chat Disconnected!');
-                    console.log(data);
+                    logger.info('Chat Disconnected!');
                     service.clearChatQueue();
                     service.chatAlertMessage('Chat has been disconnected.');
                     break;
                 case "UsersRefresh":
-                    console.log('Chat userlist refreshed.');
+                    logger.info('Chat userlist refreshed.');
                     service.chatUserRefresh(data);
                     break;
                 case "ChatAlert":
-                    console.log('Chat alert from backend.');
+                    logger.info('Chat alert from backend.');
                     service.chatAlertMessage(data.message);
                     break;
                 default:
                     // Nothing
-                    console.log('Unknown chat event sent');
-                    console.log(data);
+                    logger.warn('Unknown chat event sent', data);
                 }
             };
 
