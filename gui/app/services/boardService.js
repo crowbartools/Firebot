@@ -10,7 +10,7 @@
 
     angular
         .module('firebotApp')
-        .factory('boardService', function ($http, $q, settingsService, $rootScope, utilityService) {
+        .factory('boardService', function (logger, $http, $q, settingsService, $rootScope, utilityService) {
 
             // in memory board storage
             let _boards = {};
@@ -58,7 +58,6 @@
                             });
                         } else {
                             renderWindow.webContents.send('error', "Well this is weird. The board you tried to delete is already gone. Try restarting the app.");
-                            console.log("This file doesn't exist, cannot delete");
                             resolve();
                         }
                     } catch (err) {
@@ -125,7 +124,7 @@
                         for (let button of firebotButtonArray) {
                             try {
                                 dbControls.delete('./firebot/controls/' + button);
-                                console.log('Button ' + button + ' is not on the mixer board. Deleting.');
+                                logger.info('Button ' + button + ' is not on the mixer board. Deleting.');
 
                                 // Go through cooldown groups and remove the button if it is listed there.
                                 for (let cooldown in firebotSettings.cooldownGroups) {
@@ -135,7 +134,7 @@
                                         while (i--) {
                                             if (cooldownButtons[i] === button) {
                                                 cooldownButtons.splice(i, 1);
-                                                console.log('Removing ' + button + ' from cooldown group ' + cooldown + '.');
+                                                logger.info('Removing ' + button + ' from cooldown group ' + cooldown + '.');
                                                 break;
                                             }
                                         }
@@ -145,7 +144,7 @@
                                     }
                                 }
                             } catch (err) {
-                                console.log(err);
+                                logger.error(err);
                             }
                         }
 
@@ -153,16 +152,16 @@
                         for (let scene of firebotSceneArray) {
                             try {
                                 dbControls.delete('./firebot/scenes/' + scene);
-                                console.log('Scene ' + scene + ' is not on the mixer board. Deleting.');
+                                logger.info('Scene ' + scene + ' is not on the mixer board. Deleting.');
                             } catch (err) {
-                                console.log(err);
+                                logger.error(err);
                             }
                         }
 
                         resolve(true);
                     } catch (err) {
                         // We don't have any saved settings yet. Resolve this and don't cleanup anything.
-                        console.log(err);
+                        logger.error(err);
                         resolve(true);
                     }
                 });
@@ -176,23 +175,22 @@
                 const gameUpdated = gameUpdatedInfo;
                 const versionid = versionIdInfo;
 
-                console.log('Backend builder is pushing settings to ' + gameName + ' (' + versionid + ').');
+                logger.info('Backend builder is pushing settings to ' + gameName + ' (' + versionid + ').');
 
                 // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
                 settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameName, gameUpdated);
 
                 // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
-                    console.log('Converting control files to new versionid format.');
+                    logger.info('Converting control files to new versionid format.');
                     let oldPath = dataAccess.getPathInUserData("/user-settings/controls/" + gameName + '.json');
                     let newPath = dataAccess.getPathInUserData("/user-settings/controls/" + versionid + '.json');
 
                     try {
                         fs.renameSync(oldPath, newPath);
-                        logger.log('Converted control file ' + gameName + '.json to version id format.');
+                        logger.info('Converted control file ' + gameName + '.json to version id format.');
                     } catch (err) {
-                        console.log(err);
-                        logger.log('Error converting control file ' + gameName + '.json to version id format.');
+                        logger.error(err);
                         utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere? If so, close it down and restart Firebot.");
                         return;
                     }
@@ -272,7 +270,7 @@
                                     }
 
                                 } catch (err) {
-                                    console.log('Problem getting button info to save to json.');
+                                    logger.error('Problem getting button info to save to json.', err);
                                 }
                             }
                             // Setup scenes in Firebot json if they haven't been made yet.
@@ -313,29 +311,27 @@
                                 if (boardUpdated != null) {
                                     let boardExists = dataAccess.userDataPathExistsSync("/user-settings/controls/" + id + ".json");
                                     if (!boardExists) {
-                                        console.log('Board was in settings, but the controls file is missing. Rebuilding.');
+                                        logger.info('Board was in settings, but the controls file is missing. Rebuilding.');
                                         return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                     }
                                 }
 
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
                                 if (boardUpdated !== gameUpdated) {
-                                    console.log('Board updated. Rebuilding.');
+                                    logger.info('Board updated. Rebuilding.');
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                 } // Date matches, no need to rebuild.
 
                             } catch (err) {
-                                console.log(err);
+                                logger.warning(err);
                                 // This board doesn't exist, recreate the board to get it into knownBoards
-                                console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
+                                logger.log(`Error occured, not able to find boardid ${id} in settings, build it`);
                                 return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                             }
                         } catch (err) {
-                            console.log('There was a problem loading this board!');
-                            console.log(err);
+                            logger.warning('There was a problem loading this board!');
+                            logger.error(err);
                         }
-                        // return backendBuilder(gameName, gameJson, gameUpdated, id);
-
                     });
             }
 
@@ -376,10 +372,7 @@
                             _boards[versionId] = board;
                             addedBoards.push(board);
                         } catch (err) {
-                            console.log('Board ' + id + ' errored out while trying to load.');
-                            console.log(err);
-                            logger.log('Board ' + id + ' errored out while trying to load.');
-                            logger.log(err);
+                            logger.error('Board ' + id + ' errored out while trying to load.' + err);
 
                             // Remove the corrupted board from settings so we don't get stuck on next restart.
                             loadBoardById(id);
