@@ -6,7 +6,6 @@
     const fs = require('fs');
     const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
-    const logger = require('../../lib/errorLogging.js');
 
     angular
         .module('firebotApp')
@@ -70,6 +69,7 @@
             // This takes the mixer json and compares it against the Firebot json to remove any items no longer needed.
             function backendCleanup(dbControls) {
                 return new Promise((resolve) => {
+                    logger.info('Backend Cleanup: Checking for differences between mixer and firebot boards.');
 
                     // Check if Firebot settings exist
                     try {
@@ -101,14 +101,14 @@
 
                         // Add Firebot scenes to firebot array.
                         for (let scene in firebotSettings.scenes) {
-                            if (firebotSettings.hasOwnProperty(scene)) {
+                            if (scene != null) {
                                 firebotSceneArray.push(scene);
                             }
                         }
 
                         // Add Firebot buttons to firebot array for comparison.
                         for (let control in firebotSettings.controls) {
-                            if (firebotSettings.controls.hasOwnProperty(control)) {
+                            if (control != null) {
                                 firebotButtonArray.push(control);
                             }
                         }
@@ -152,12 +152,13 @@
                         for (let scene of firebotSceneArray) {
                             try {
                                 dbControls.delete('./firebot/scenes/' + scene);
-                                logger.info('Scene ' + scene + ' is not on the mixer board. Deleting.');
+                                logger.info('Scene ' + scene + ' is not on the mixer board. Deleting from firebot.');
                             } catch (err) {
                                 logger.error(err);
                             }
                         }
 
+                        logger.info('Backend Cleanup: Completed.');
                         resolve(true);
                     } catch (err) {
                         // We don't have any saved settings yet. Resolve this and don't cleanup anything.
