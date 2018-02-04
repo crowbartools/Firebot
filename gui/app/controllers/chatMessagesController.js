@@ -7,7 +7,8 @@
 
     angular
         .module('firebotApp')
-        .controller('chatMessagesController', function($rootScope, $scope, chatMessagesService, connectionService, listenerService) {
+        .controller('chatMessagesController', function($rootScope, $scope, chatMessagesService, connectionService,
+            listenerService, logger) {
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
@@ -120,9 +121,38 @@
             };
 
             // This happens when a chat message is submitted.
+            let chatHistory = [];
+            let currrentHistoryIndex = -1;
             $scope.submitChat = function() {
                 chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);
+                chatHistory.unshift($scope.chatMessage);
+                currrentHistoryIndex = -1;
                 $scope.chatMessage = '';
+            };
+
+            $scope.onMessageFieldUpdate = () => {
+                currrentHistoryIndex = -1;
+            };
+
+            $scope.onMessageFieldKeypress = $event => {
+                let keyCode = $event.which || $event.keyCode;
+                if (keyCode === 38) { //up arrow
+                    if ($scope.chatMessage.length < 1 || $scope.chatMessage === chatHistory[currrentHistoryIndex]) {
+                        if (currrentHistoryIndex + 1 < chatHistory.length) {
+                            currrentHistoryIndex++;
+                            $scope.chatMessage = chatHistory[currrentHistoryIndex];
+                        }
+                    }
+                } else if (keyCode === 40) { //down arrow
+                    if ($scope.chatMessage.length > 0 || $scope.chatMessage === chatHistory[currrentHistoryIndex]) {
+                        if (currrentHistoryIndex - 1 >= 0) {
+                            currrentHistoryIndex--;
+                            $scope.chatMessage = chatHistory[currrentHistoryIndex];
+                        }
+                    }
+                } else if (keyCode === 13) { // enter
+                    $scope.submitChat();
+                }
             };
 
             listenerService.registerListener(

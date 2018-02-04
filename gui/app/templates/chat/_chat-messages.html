@@ -80,8 +80,9 @@
                     class="text-input-field"
                     ng-maxlength="360"
                     ng-model="chatMessage"
-                    ng-disabled="!chatFeedIsEnabled()"
-                    ng-keyup="$event.keyCode == 13 && submitChat()">
+                    ng-change="onMessageFieldUpdate()"
+                    ng-keyup="onMessageFieldKeypress($event)"
+                    ng-disabled="!chatFeedIsEnabled()">
             </div>
         </div>
     </div>
