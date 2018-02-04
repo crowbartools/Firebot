@@ -100,7 +100,7 @@ function getLogLevelColor(level) {
 
 // Prints all logs from the "console" transport into the Browser Console
 /* eslint-disable no-console */
-logger.on('logging', (transport, level, msg, meta) => {
+function printLogToBrowserConsole(transport, level, msg, meta) {
     if (transport != null && transport.name === 'console') {
         if (msg != null && msg.trim() !== '(Renderer)') {
             // Only print if the msg isnt 'empty' aka has more than just the prefix
@@ -110,5 +110,19 @@ logger.on('logging', (transport, level, msg, meta) => {
             console.log(meta);
         }
     }
-});
+}
 /* eslint-enable no-console */
+
+// Back end log feed
+ipcRenderer.on('logging', (event, data) => {
+    let transport = data.transport,
+        level = data.level,
+        msg = data.msg,
+        meta = data.meta;
+    printLogToBrowserConsole(transport, level, msg, meta);
+});
+
+// front end log feed
+logger.on('logging', (transport, level, msg, meta) => {
+    printLogToBrowserConsole(transport, level, msg, meta);
+});

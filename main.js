@@ -113,6 +113,15 @@ function createWindow () {
     // Global var for main window.
     global.renderWindow = mainWindow;
 
+    logger.on('logging', (transport, level, msg, meta) => {
+        renderWindow.webContents.send('logging', {
+            transport: transport,
+            level: level,
+            msg: msg,
+            meta: meta
+        });
+    });
+
     let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
     hotkeyManager.refreshHotkeyCache();
 }
@@ -312,6 +321,9 @@ ipcMain.on('startBackup', (event, manualActivation = false) => {
         renderWindow.webContents.send('backupComplete', manualActivation);
     });
 });
+
+
+
 
 
 mixerConnect = require('./lib/common/mixer-interactive.js');
