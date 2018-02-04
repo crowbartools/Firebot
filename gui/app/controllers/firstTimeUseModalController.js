@@ -9,7 +9,7 @@
 
     angular
         .module('firebotApp')
-        .controller('firstTimeUseModalController', function ($rootScope, $scope, $uibModalInstance,
+        .controller('firstTimeUseModalController', function (logger, $rootScope, $scope, $uibModalInstance,
             $q, connectionService, boardService, settingsService, listenerService, groupsService) {
 
             function copyUserSettingsToUserDataFolder(filePath, callback) {
@@ -17,11 +17,12 @@
                 let destination = dataAccess.getPathInUserData("/user-settings");
                 ncp(source, destination, function (err) {
                     if (err) {
-                        console.log("Failed to copy 'user-settings'!");
+                        logger.error("Failed to copy 'user-settings'!");
+                        logger.error(err);
                         callback();
-                        return console.error(err);
+                        return;
                     }
-                    console.log('Copied "user-settings" to user data.');
+                    logger.info('Copied "user-settings" to user data.');
                     callback();
                 });
             }

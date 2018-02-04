@@ -56,7 +56,7 @@ function printRow(colorOne, colorTwo, ...args) {
         }
     });
 
-    console.log(msg, ...styles);
+    console.log(msg, ...styles); // eslint-disable-line no-console
 }
 
 const letterColor = "#EBB11F", spaceColor = "transparent", ruleColor = "darkgray";
@@ -73,7 +73,10 @@ printRow(letterColor, spaceColor, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0
 //console.log("%cPlease excuse the mess.", "color:gray;font-weight:900;font-size:16px;");
 printRow(ruleColor, spaceColor,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 /* eslint-enable no-multi-spaces */
-console.log(""); //extra line for breathing room
+
+//extra line for breathing room
+console.log(""); // eslint-disable-line no-console
+
 
 
 function getLogLevelColor(level) {
@@ -96,6 +99,7 @@ function getLogLevelColor(level) {
 }
 
 // Prints all logs from the "console" transport into the Browser Console
+/* eslint-disable no-console */
 logger.on('logging', (transport, level, msg, meta) => {
     if (transport != null && transport.name === 'console') {
         if (msg != null && msg.trim() !== '(Renderer)') {
@@ -107,3 +111,4 @@ logger.on('logging', (transport, level, msg, meta) => {
         }
     }
 });
+/* eslint-enable no-console */

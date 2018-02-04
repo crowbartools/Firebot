@@ -37,7 +37,7 @@
 
     app.controller('MainController', function($scope, $rootScope, $timeout, boardService,
         connectionService, connectionManager, utilityService, settingsService, updatesService,
-        eventLogService, websocketService, sidebarManager) {
+        eventLogService, websocketService, sidebarManager, logger) {
 
         $rootScope.showSpinner = true;
 
@@ -88,9 +88,9 @@
             try {
                 let successful = document.execCommand('copy');
                 let msg = successful ? 'successful' : 'unsuccessful';
-                console.log('Copying text command was ' + msg);
+                logger.info('Copying text command was ' + msg);
             } catch (err) {
-                console.log('Oops, unable to copy');
+                logger.error('Oops, unable to copy text to clipboard.');
             }
 
             document.body.removeChild(textArea);
