@@ -8,6 +8,16 @@
         .module('firebotApp',
             ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable', 'luegg.directives']);
 
+    app.factory('$exceptionHandler',
+        function(logger) {
+            // this catches angular exceptions so we can send it to winston
+            return function(exception, cause) {
+                logger.error(cause, exception);
+                throw exception;
+            };
+        }
+    );
+
     app.run(
         function initializeApplication(logger, chatMessagesService, groupsService, connectionService, notificationService,
             $timeout, updatesService, commandsService) {
