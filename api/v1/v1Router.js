@@ -2,10 +2,11 @@
 
 const express = require('express');
 const router = express.Router(); //eslint-disable-line new-cap
+const logger = require('../../lib/logwrapper');
 
 router.use(function log(req, res, next) {
     // here we could do stuff for every request if we wanted
-    console.log(`API Request from: ${req.headers.host}, for path: ${req.originalUrl}`);
+    logger.info(`API Request from: ${req.headers.host}, for path: ${req.originalUrl}`);
     next();
 });
 
