@@ -108,18 +108,21 @@ function createWindow () {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null;
+        global.renderWindow = null;
     });
 
     // Global var for main window.
     global.renderWindow = mainWindow;
 
     logger.on('logging', (transport, level, msg, meta) => {
-        renderWindow.webContents.send('logging', {
-            transport: transport,
-            level: level,
-            msg: msg,
-            meta: meta
-        });
+        if (renderWindow) {
+            renderWindow.webContents.send('logging', {
+                transport: transport,
+                level: level,
+                msg: msg,
+                meta: meta
+            });
+        }
     });
 
     let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
