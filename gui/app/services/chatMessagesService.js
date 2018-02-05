@@ -350,6 +350,23 @@
                 return false;
             };
 
+            service.deleteMessage = messageId => {
+                listenerService.fireEvent(
+                    listenerService.EventType.DELETE_CHAT_MESSAGE,
+                    { messageId: messageId }
+                );
+            };
+
+            service.changeModStatus = (userName, modStatus) => {
+                listenerService.fireEvent(
+                    listenerService.EventType.CHANGE_USER_MOD_STATUS,
+                    {
+                        userName: userName,
+                        modStatus: modStatus
+                    }
+                );
+            };
+
 
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.

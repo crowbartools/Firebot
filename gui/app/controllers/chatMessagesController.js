@@ -122,7 +122,36 @@
                 return chatMessagesService.getChatViewerListSetting();
             };
 
+            function focusMessageInput() {
+                angular.element('#chatMessageInput').trigger('focus');
+            }
+
             $scope.messageActionSelected = (action, userName, msgId) => {
+                switch (action.toLowerCase()) {
+                case "delete":
+                    chatMessagesService.deleteMessage(msgId);
+                    break;
+                case "timeout":
+                    $scope.chatMessage = "/timeout @" + userName + " 5m";
+                    focusMessageInput();
+                    break;
+                case "ban":
+                    $scope.chatMessage = "/ban @" + userName;
+                    focusMessageInput();
+                    break;
+                case "mod":
+                    chatMessagesService.changeModStatus(userName, true);
+                    break;
+                case "unmod":
+                    chatMessagesService.changeModStatus(userName, false);
+                    break;
+                case "whisper":
+                    $scope.chatMessage = "/w @" + userName + " ";
+                    focusMessageInput();
+                    break;
+                default:
+                    return;
+                }
                 console.log(action, userName, msgId);
             };
 

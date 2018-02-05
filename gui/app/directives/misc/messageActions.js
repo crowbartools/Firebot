@@ -85,7 +85,7 @@
                             if (vm.message.user_roles.includes("Mod")) {
                                 actions.push({
                                     name: "Unmod",
-                                    icon: "fa-user-minus"
+                                    icon: "fa-user-times"
                                 });
                             } else {
                                 actions.push({
