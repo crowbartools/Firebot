@@ -23,13 +23,13 @@
             </div>
             <div class="chat-window-message-wrapper">
                 <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
-                    <div class="chat-user-avatar-wrapper">
+                    <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)">
                         <span>
                             <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
                         </span>                 
                     </div>
                     <div style="padding-left: 10px">
-                        <div class="chat-username">
+                        <div class="chat-username" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, msgId)">
                             <b>{{message.user_name}}</b>
                             <span class="chatSubIcon" ng-if="isSubscriber(message)">
                                 <img ng-src="{{getSubIcon(message)}}">
@@ -87,3 +87,14 @@
         </div>
     </div>
 </div>
+
+<script type="text/ng-template" id="userActionsPopover.html">
+    <div style="width: 175px;height: 35px;display: flex;flex-direction: row;justify-content: center;align-items: center;">
+        <img style="width: 20px; border-radius: 10px" ng-src="{{selectedUserData.user_avatar}}">
+        <span style="margin-left: 10px">{{selectedUserData.user_name}}</span>   
+    </div>
+    <div>Delete</div>
+    <div>Whisper</div>
+    <div>Ban</div>
+    <div>Timeout</div>
+</script>

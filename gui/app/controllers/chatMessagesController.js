@@ -8,11 +8,13 @@
     angular
         .module('firebotApp')
         .controller('chatMessagesController', function($rootScope, $scope, chatMessagesService, connectionService,
-            listenerService, logger) {
+            listenerService) {
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
+
+            $scope.selectedUserData = {};
 
             $scope.currentViewers = 0;
 
@@ -118,6 +120,10 @@
 
             $scope.getChatViewerListSetting = function() {
                 return chatMessagesService.getChatViewerListSetting();
+            };
+
+            $scope.messageActionSelected = (action, userName, msgId) => {
+                console.log(action, userName, msgId);
             };
 
             // This happens when a chat message is submitted.

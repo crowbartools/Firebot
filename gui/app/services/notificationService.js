@@ -8,7 +8,7 @@
 
     angular
         .module('firebotApp')
-        .factory('notificationService', function ($http, $interval) {
+        .factory('notificationService', function ($http, $interval, logger) {
 
             let service = {};
             let notifications = [];
@@ -97,7 +97,7 @@
             }
 
             function loadExternalNotifications() {
-                $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json")
+                /*$http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json")
                     .then((response) => {
                         let externalNotifications = response.data;
 
@@ -118,10 +118,12 @@
                                 service.addNotification(n, true);
 
                             }
+                        }, (err) => {
+                            logger.error(err);
                         });
 
                         setKnownExternalNotifications(newKnownExtNotis);
-                    });
+                    });*/
             }
 
             function mixerStatusNotification() {
