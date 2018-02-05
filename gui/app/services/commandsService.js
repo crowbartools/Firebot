@@ -63,6 +63,19 @@
                 return commands;
             };
 
+            service.getCommandRoles = function(command) {
+                let commandRoles = command.permissions;
+                let final = [];
+                if (commandRoles != null) {
+                    if (commandRoles instanceof Array) {
+                        final = commandRoles;
+                    } else {
+                        final.push(commandRoles);
+                    }
+                }
+                return final;
+            };
+
             // Saves out a command
             service.saveCommand = function(command) {
                 let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");

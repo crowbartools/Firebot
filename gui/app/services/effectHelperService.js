@@ -626,7 +626,7 @@
             // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
             service.getCheckedBoxes = function (list, item) {
                 let itemArray = list, itemIndex;
-                if (list == null) {
+                if (list == null || list instanceof Array === false) {
                     itemArray = [];
                 }
 
