@@ -152,7 +152,6 @@
                 default:
                     return;
                 }
-                console.log(action, userName, msgId);
             };
 
             // This happens when a chat message is submitted.
