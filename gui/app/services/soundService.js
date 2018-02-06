@@ -22,6 +22,10 @@
                 }
             };
 
+            service.playChatNotification = function() {
+
+            };
+
 
             service.playSound = function(path, volume, outputDevice) {
 
