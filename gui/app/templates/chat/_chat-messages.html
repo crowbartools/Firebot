@@ -86,17 +86,46 @@
                     ng-keyup="onMessageFieldKeypress($event)"
                     ng-disabled="!chatFeedIsEnabled()">
             </div>
+            <div class="settings-btn-wrapper">
+                <span class="settings-btn" 
+                    uib-popover-template="'userActionsPopover.html'" 
+                    popover-append-to-body="true" 
+                    popover-placement="auto top-right" 
+                    popover-class="settings-popover" 
+                    popover-trigger="outsideClick">
+                    <i class="fas fa-cog"></i>
+                </span>
+            </div>
         </div>
     </div>
 </div>
 
 <script type="text/ng-template" id="userActionsPopover.html">
-    <div style="width: 175px;height: 35px;display: flex;flex-direction: row;justify-content: center;align-items: center;">
-        <img style="width: 20px; border-radius: 10px" ng-src="{{selectedUserData.user_avatar}}">
-        <span style="margin-left: 10px">{{selectedUserData.user_name}}</span>   
+    <div style="width:100%;height:100%; padding: 10px;font-family: 'Open Sans';">
+        <h3>Chat Settings</h3>
+        <div style="padding: 0 10px">
+            <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
+                <span>Chat Feed Enabled</span>
+                <span>
+                    <input class="tgl tgl-light" id="cb4" type="checkbox"/>
+                    <label class="tgl-btn" for="cb4"></label>
+                </span>
+            </div>
+            <div style="display: flex;align-items: center;justify-content: space-between;">
+                <span>Viewer List</span>
+                <span>
+                    <input class="tgl tgl-light" id="cb5" type="checkbox"/>
+                    <label class="tgl-btn" for="cb5"></label>
+                </span>
+            </div>
+            <div style="display: flex;align-items: center;justify-content: space-between; padding-left: 10px">
+                <span>Viewer Count</span>
+                <span>
+                    <input class="tgl tgl-light" id="cb6" type="checkbox"/>
+                    <label class="tgl-btn" for="cb6"></label>
+                </span>
+            </div>
+        </div>
+                  
     </div>
-    <div>Delete</div>
-    <div>Whisper</div>
-    <div>Ban</div>
-    <div>Timeout</div>
 </script>
