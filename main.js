@@ -114,7 +114,7 @@ function createWindow () {
     global.renderWindow = mainWindow;
 
     logger.on('logging', (transport, level, msg, meta) => {
-        if (renderWindow != null && renderWindow.isDestroyed() == false) {
+        if (renderWindow != null && renderWindow.isDestroyed() === false) {
             renderWindow.webContents.send('logging', {
                 transport: transport,
                 level: level,
@@ -122,7 +122,7 @@ function createWindow () {
                 meta: meta
             });
         } else {
-            console.log("Post-Close: " + msg);
+            logger.info("Post-Close: " + msg);
         }
     });
 
