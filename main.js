@@ -121,8 +121,6 @@ function createWindow () {
                 msg: msg,
                 meta: meta
             });
-        } else {
-            logger.info("Post-Close: " + msg);
         }
     });
 
