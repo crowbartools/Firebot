@@ -114,12 +114,16 @@ function createWindow () {
     global.renderWindow = mainWindow;
 
     logger.on('logging', (transport, level, msg, meta) => {
-        renderWindow.webContents.send('logging', {
-            transport: transport,
-            level: level,
-            msg: msg,
-            meta: meta
-        });
+        if (renderWindow != null && renderWindow.isDestroyed() === false) {
+            renderWindow.webContents.send('logging', {
+                transport: transport,
+                level: level,
+                msg: msg,
+                meta: meta
+            });
+        } else {
+            logger.info("Post-Close: " + msg);
+        }
     });
 
     let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
