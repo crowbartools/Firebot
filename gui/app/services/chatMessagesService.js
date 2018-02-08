@@ -89,12 +89,11 @@
                 let cachedUserName = null;
                 chatQueue.forEach((message) => {
 
-                    if (cachedUserName == null) {
-                        cachedUserName = message.user_name;
-                    }
-
                     // If user id matches, then mark the message as deleted.
                     if (message.user_id === data.user_id) {
+                        if (cachedUserName == null) {
+                            cachedUserName = message.user_name;
+                        }
                         message.deleted = true;
                         message.eventInfo = "Timed out by " + data.moderator.user_name + '.';
                     }
