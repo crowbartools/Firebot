@@ -485,6 +485,15 @@
                 pushDataToFile('/settings/chat/tagged/volume', volume);
             };
 
+            service.debugModeEnabled = function() {
+                let enabled = getDataFromFile('/settings/debugMode');
+                return enabled != null ? enabled : false;
+            };
+
+            service.setDebugModeEnabled = function(enabled) {
+                pushDataToFile('/settings/debugMode', enabled === true);
+            };
+
             return service;
         });
 }());
