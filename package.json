@@ -81,6 +81,7 @@
         "validator": "^9.1.2",
         "winston": "^2.3.1",
         "winston-daily-rotate-file": "^1.4.6",
+        "winston-raven-sentry": "^1.0.1",
         "ws": "^4.0.0"
     }
 }
