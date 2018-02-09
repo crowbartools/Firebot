@@ -37,3 +37,13 @@
         transition: 0.2s;
     }
 }
+
+.viewer-group-list{
+    height:150px;
+    overflow-y: scroll;
+    background: $light-background-color + 20%;
+    border-radius: 3px;
+    border: 0.01em solid $light-background-border;
+    box-shadow: 2px 2px 7px $light-background-box-shadow;
+    padding:8px;
+}

@@ -124,7 +124,9 @@
                     "Pro",
                     "Subscribers",
                     "Moderators",
-                    "Staff"
+                    "Channel Editors",
+                    "Staff",
+                    "Streamer"
                 ];
             };
 
