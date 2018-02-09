@@ -49,16 +49,17 @@
       </div>
     </div>
     <div class="settings-permission" style="padding-bottom:1em">
-      <label ng-if="control.permissionType === 'Group'" ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
-          <input type="checkbox" ng-click="groupArray(control.permissions, group)" ng-checked="groupCheckboxer(control.permissions, group)"  aria-label="..." >
-          <div class="control__indicator"></div>
-      </label>
+      <div class=" viewer-group-list" ng-if="control.permissionType === 'Group'">
+        <label ng-if="control.permissionType === 'Group'" ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
+            <input type="checkbox" ng-click="groupArray(control.permissions, group)" ng-checked="groupCheckboxer(control.permissions, group)"  aria-label="..." >
+            <div class="control__indicator"></div>
+        </label>
+      </div>
       <div ng-if="control.permissionType === 'Individual'" class="input-group">
         <span class="input-group-addon" id="basic-addon3">Username</span>
         <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="control.permissions">        
       </div>
     </div>
-
     <div class="other-settings" style="padding-bottom:1em">
         <div class="settings-title">
             <h3>Other</h3>

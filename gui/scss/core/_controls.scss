@@ -272,3 +272,99 @@ input:checked + .slider:before {
     }
   }
 }
+
+.tgl {
+	display: none;
+  
+	// add default box-sizing for this scope
+	&,
+  &:after,
+  &:before,
+	& *,
+  & *:after,
+  & *:before,
+	& + .tgl-btn {
+		box-sizing: border-box;
+		&::selection {
+			background: none;
+		}
+	}
+  
+	+ .tgl-btn {
+		outline: 0;
+		display: inline-block;
+		width: 45px;
+		height: 25px;
+    position: relative;
+    margin-bottom: 0;
+		cursor: pointer;
+    user-select: none;
+		&:after,
+    &:before {
+			position: relative;
+			display: block;
+			content: "";
+			width: 50%;
+			height: 100%;
+		}
+    
+		&:after {
+			left: 0;
+		}
+    
+		&:before {
+			display: none;
+		}
+	}
+  
+	&:checked + .tgl-btn:after {
+		left: 50%;
+	}
+}
+
+.tgl-flat {
+	+ .tgl-btn {
+		padding: 2px;
+		transition: all .2s ease;
+		background: transparent;
+		border: 4px solid #f2f2f2;
+		border-radius: 2em;
+		&:after {
+			transition: all .2s ease;
+			background: #f2f2f2;
+			content: "";
+			border-radius: 1em;
+		}
+	}
+  
+	&:checked + .tgl-btn {
+    border: 4px solid #7FC6A6;
+    &:after {
+      left: 50%;
+      background: #7FC6A6;
+    }
+  }
+}
+
+.tgl-light {
+	+ .tgl-btn {
+		background: #adacac;
+		border-radius: 1px;
+		padding: 4px;
+		transition: all .4s ease;
+		&:after {
+			border-radius: 1px;
+			background: #fff;
+			transition: all .2s ease;
+		}
+	}
+  
+	&:checked + .tgl-btn {
+		background: #2aa1c0;
+  }
+  
+  &:disabled + .tgl-btn {
+    opacity: 0.6;
+    cursor: not-allowed;
+	}
+}

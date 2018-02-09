@@ -187,13 +187,17 @@
                 return "Off";
             };
 
-            service.setChatFeed = function(chatFeed) {
-                pushDataToFile('/settings/chatFeed', chatFeed === true);
-            };
-
             // Used for the app itself.
             service.getRealChatFeed = function() {
                 return getDataFromFile('/settings/chatFeed');
+            };
+
+            service.chatFeedEnabled = function() {
+                return getDataFromFile('/settings/chatFeed');
+            };
+
+            service.setChatFeed = function(chatFeed) {
+                pushDataToFile('/settings/chatFeed', chatFeed === true);
             };
 
             // Used for settings menu.
@@ -209,6 +213,10 @@
                 pushDataToFile('/settings/chatViewCount', chatViewCount === true);
             };
 
+            service.showViewerCount = function() {
+                return getDataFromFile('/settings/chatViewCount');
+            };
+
             // Used for settings menu.
             service.getChatViewerList = function() {
                 let chatViewerList = getDataFromFile('/settings/chatViewerList');
@@ -216,6 +224,10 @@
                     return "On";
                 }
                 return "Off";
+            };
+
+            service.showViewerList = function() {
+                return getDataFromFile('/settings/chatViewerList');
             };
 
             service.setChatViewerList = function(chatViewerList) {
@@ -453,6 +465,24 @@
 
             service.setSidebarControlledServices = function(services) {
                 pushDataToFile('/settings/sidebarControlledServices', services);
+            };
+
+            service.getTaggedNotificationSound = function() {
+                let sound = getDataFromFile('/settings/chat/tagged/sound');
+                return sound != null ? sound : { name: "None" };
+            };
+
+            service.setTaggedNotificationSound = function(sound) {
+                pushDataToFile('/settings/chat/tagged/sound', sound);
+            };
+
+            service.getTaggedNotificationVolume = function() {
+                let volume = getDataFromFile('/settings/chat/tagged/volume');
+                return volume != null ? volume : 5;
+            };
+
+            service.setTaggedNotificationVolume = function(volume) {
+                pushDataToFile('/settings/chat/tagged/volume', volume);
             };
 
             return service;

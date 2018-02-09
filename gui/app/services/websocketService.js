@@ -163,6 +163,14 @@
                 service.broadcast(broadcastdata);
             }
 
+            // Shows Text
+            // This function takes info given from the main process and then sends a request to the overlay to render it.
+            function showText(data) {
+                data.event = "text";
+
+                service.broadcast(data);
+            }
+
             // Shows HTML
             // This function takes info given from the main process and then sends a request to the overlay to render it.
             function showHtml(data) {
@@ -211,28 +219,30 @@
                     showVideo(data);
                 });
 
-            // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_IMAGE },
                 (data) => {
                     showImage(data);
                 });
 
-            // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.API_BUTTON },
                 (data) => {
                     showImage(data);
                 });
 
-            // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_HTML },
                 (data) => {
                     showHtml(data);
                 });
 
-            // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.SHOW_TEXT },
+                (data) => {
+                    showText(data);
+                });
+
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CELEBREATE },
                 (data) => {

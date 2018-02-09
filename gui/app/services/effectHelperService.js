@@ -600,7 +600,39 @@
                         };
                     };
                     break;
+                case EffectList.SHOW_TEXT:
+                    controller = ($scope) => {
 
+                        if ($scope.effect.height == null || $scope.effect.height < 1) {
+                            $scope.effect.height = 200;
+                        }
+
+                        if ($scope.effect.width == null || $scope.effect.width < 1) {
+                            $scope.effect.width = 400;
+                        }
+
+                        $scope.editorOptions = {
+                            height: 300,
+                            disableDragAndDrop: true,
+                            toolbar: [
+                                ['style', ['bold', 'italic', 'underline', 'clear']],
+                                ['fontname', ['fontname']],
+                                ['fontsize', ['fontsize']],
+                                ['color', ['color']],
+                                ['para', ['ul', 'ol']],
+                                ['misc', ['undo', 'redo', 'codeview']]
+                            ],
+                            hint: {
+                                variables: ["$(user)", "$(game)", "$(time)", "$(uptime)"],
+                                match: /(\$\([\w\[\]\:\-]*)$/, //eslint-disable-line
+                                search: function (keyword, callback) {
+                                    callback($.grep(this.variables, function (item) {
+                                        return item.indexOf(keyword) === 0;
+                                    }));
+                                }
+                            }
+                        };
+                    };
                 }
 
                 return controller;

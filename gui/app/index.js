@@ -25,6 +25,7 @@ require('angularjs-slider');
 require('ui-select');
 require('angular-ui-sortable');
 require('angularjs-scroll-glue');
+require('../../node_modules/angular-summernote/dist/angular-summernote');
 
 function boot() {
     angular.bootstrap(document, ['firebotApp'], {

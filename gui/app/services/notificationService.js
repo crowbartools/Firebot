@@ -8,7 +8,7 @@
 
     angular
         .module('firebotApp')
-        .factory('notificationService', function ($http, $interval) {
+        .factory('notificationService', function ($http, $interval, logger) {
 
             let service = {};
             let notifications = [];
@@ -118,6 +118,8 @@
                                 service.addNotification(n, true);
 
                             }
+                        }, (err) => {
+                            logger.error(err);
                         });
 
                         setKnownExternalNotifications(newKnownExtNotis);

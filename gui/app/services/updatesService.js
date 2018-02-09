@@ -51,7 +51,7 @@
                     }
                 }
 
-                return $q((resolve, reject) => {
+                return $q((resolve) => {
 
                     let firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
 
@@ -113,7 +113,7 @@
                     }, (error) => {
                         service.isCheckingForUpdates = false;
                         logger.error(error);
-                        reject(false);
+                        resolve(false);
                     });
                 });
             };
