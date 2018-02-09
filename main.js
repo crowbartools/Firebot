@@ -115,7 +115,7 @@ function createWindow () {
     global.renderWindow = mainWindow;
 
     logger.on('logging', (transport, level, msg, meta) => {
-        if (renderWindow) {
+        if (renderWindow != null && renderWindow.isDestroyed() === false) {
             renderWindow.webContents.send('logging', {
                 transport: transport,
                 level: level,
