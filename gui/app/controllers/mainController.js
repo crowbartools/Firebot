@@ -9,8 +9,18 @@
             ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable',
                 'luegg.directives', 'summernote']);
 
+    app.factory('$exceptionHandler',
+        function(logger) {
+            // this catches angular exceptions so we can send it to winston
+            return function(exception, cause) {
+                logger.error(cause, exception);
+                throw exception;
+            };
+        }
+    );
+
     app.run(
-        function initializeApplication(chatMessagesService, groupsService, connectionService, notificationService,
+        function initializeApplication(logger, chatMessagesService, groupsService, connectionService, notificationService,
             $timeout, updatesService, commandsService) {
             // 'chatMessagesService' is included so its instantiated on app start
 
@@ -38,7 +48,7 @@
 
     app.controller('MainController', function($scope, $rootScope, $timeout, boardService,
         connectionService, connectionManager, utilityService, settingsService, updatesService,
-        eventLogService, websocketService, sidebarManager) {
+        eventLogService, websocketService, sidebarManager, logger) {
 
         $rootScope.showSpinner = true;
 
@@ -89,9 +99,9 @@
             try {
                 let successful = document.execCommand('copy');
                 let msg = successful ? 'successful' : 'unsuccessful';
-                console.log('Copying text command was ' + msg);
+                logger.info('Copying text command was ' + msg);
             } catch (err) {
-                console.log('Oops, unable to copy');
+                logger.error('Oops, unable to copy text to clipboard.');
             }
 
             document.body.removeChild(textArea);

@@ -13,6 +13,11 @@
              */
             eventsService.loadEvents();
 
+            // Fire event manually
+            $scope.fireEventManually = function(eventId) {
+                ipcRenderer.send('manualEvent', eventId);
+            };
+
             /*
              * ADD/EDIT EVENT MODAL
              */

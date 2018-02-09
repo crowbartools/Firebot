@@ -78,7 +78,6 @@
                         if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
                             ctrl.tooltip = "<b>Interactive:</b> Connected";
                             let connectedBoard = connectionService.connectedBoard;
-                            console.log(connectedBoard);
                             if (connectedBoard !== "") {
                                 ctrl.tooltip += "<br/>(" + connectedBoard + ")";
                             }

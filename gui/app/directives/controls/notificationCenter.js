@@ -3,8 +3,6 @@
 
     //This a wrapped dropdown element that automatically handles the particulars
 
-    //popover-placement="'bottom'" popover-trigger="'outsideClick'"
-
     angular
         .module('firebotApp')
         .component("notificationCenter", {

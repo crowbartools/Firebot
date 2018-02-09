@@ -104,7 +104,7 @@
         color: $chatTextColor;
         line-height:24px;
         font-size:1em;
-        word-break: break-all;
+        word-break: break-word;
         .chatEmoticon{
             position:relative;
             top:7px;
@@ -128,12 +128,19 @@
             color: $chatWhisperColor;
         }
     }
+
+    &.isTagged {
+        .chatContent {
+            font-weight: 700;
+        }
+    }
 }
 
 .chat-username {
     display:inline-block;
     font-weight:bold;
     font-size:1.11em;
+    cursor: pointer;
 }
 
 .chat-user-avatar-wrapper {
@@ -142,13 +149,103 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 .chat-user-avatar {
     width: 50px; 
     border-radius: 10px;
-} 
+}
 
+.message-actions {
+    .name-wrapper {
+        width: 175px;
+        height: 50px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border-bottom: inherit;
+        padding-left: 10px;
+        background: rgba(206, 208, 208, 0.07);
+    }
+
+    .user-name {
+        margin-left: 10px;
+        font-size: 18px;
+        font-weight: 100;
+        font-family: 'Open Sans';
+        text-overflow: ellipsis;
+        white-space: nowrap
+        ;overflow: hidden;    
+    }
+
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+        border: 2px solid gray;
+    }
+
+    &[role="User"]{
+        .user-name{
+            color: $usercolor;
+        }
+        .user-avatar {
+            border-color: $usercolor;
+        }
+    }
+    &[role="Pro"]{
+        .user-name{
+            color: $procolor;
+        }
+        .user-avatar {
+            border-color: $procolor;
+        }
+    }
+    &[role="Mod"], &[role="ChannelEditor"]{
+        .user-name{
+            color: $modcolor;
+        }
+        .user-avatar {
+            border-color: $modcolor;
+        }
+    }
+    &[role="Staff"]{
+        .user-name{
+            color: $staffcolor;
+        }
+        .user-avatar {
+            border-color: $staffcolor;
+        }
+    }
+    &[role="Owner"]{
+        .user-name{
+            color: $ownercolor;
+        }
+        .user-avatar {
+            border-color: $ownercolor;
+        }
+    }
+    .message-action {       
+        height: 35px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        border-bottom: inherit;
+        cursor: pointer;
+        padding-left: 15px;
+        &:hover {
+            opacity: 0.8;
+        }
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+    .action-icon {
+        margin-right: 10px;
+    }
+}
 
 .chat-timestamp {
     font-size: 0.9em; 
@@ -160,14 +257,15 @@
 .text-input-wrapper {
     height: 60px;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    flex-direction: row;
+    align-items: flex-end;
 }
 
 .text-input {
     height: 45px; 
     border: 2px solid rgba(170,164,164,0.43); 
     border-radius: 5px; 
+    width: 100%;
     display: flex; 
     background:$light-background-color + 20%;
 }
@@ -181,6 +279,31 @@
     &:focus {
         outline: none;
     }
+    &[disabled] {
+        cursor: not-allowed;
+    }
+}
+
+.settings-popover {
+    width: 350px;
+    max-width: 400px;
+    height: 450px;
+}
+
+.settings-btn-wrapper {  
+    width: 45px;
+    display: flex;
+    height: 45px;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-btn {
+    font-size: 18px;
+    cursor: pointer;
+    &:hover {
+        opacity: 0.7;
+    }
 }
 
 .chatfeed-disabled-overlay {
@@ -188,10 +311,11 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.65);
-    z-index: 100000;
+    z-index: 1049;
     display: flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
 }
 
 .chatter-dropdown {
@@ -254,21 +378,25 @@
 
 .chat-window{
     height: 100%; 
-    padding-top:10px; 
-    padding-left:10px; 
-    padding-right: 10px;
     background: $light-background-color + 20%;
     border-radius: 5px;
     border: 2px solid rgba(170, 164, 164, 0.43);
     overflow: hidden;
     overflow-y: scroll;
     overflow-x: hidden;
+    position: relative;
     @media only screen and (max-width: 779px) {
         border-left: 1px solid $chatBorder;
     }
     ::-webkit-scrollbar-track {
         border-radius: 0px 5px 5px 0px;
     }
+}
+
+.chat-window-message-wrapper {
+    padding-top:10px; 
+    padding-left:10px; 
+    padding-right: 10px;
 }
 
 .chatMessage{
@@ -310,6 +438,14 @@
         @media only screen and (max-width: 980px) {
             margin-left:0px;
         }
+    }
+}
+
+.clickable-link {
+    cursor: pointer;
+    color: rgb(62, 135, 218) !important;
+    &:hover {
+        color: rgb(52, 118, 189) !important;
     }
 }
 

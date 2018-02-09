@@ -4,6 +4,7 @@ let express = require("express");
 let bodyParser = require("body-parser");
 const resourceTokenManager = require('../lib/resourceTokenManager');
 const {settings} = require('../lib/common/settings-access');
+const logger = require('../lib/logwrapper');
 
 let server = null;
 
@@ -47,6 +48,6 @@ exports.start = function() {
 
 
     server = api.listen(settings.getWebServerPort(), function () {
-        console.log("REST API listening on port %s.", server.address().port);
+        logger.info("REST API listening on port %s.", server.address().port);
     });
 };

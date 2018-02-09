@@ -7,7 +7,7 @@
 
     angular
         .module('firebotApp')
-        .factory('commandsService', function () {
+        .factory('commandsService', function (logger) {
             let service = {};
 
             // in memory commands storage
@@ -63,6 +63,19 @@
                 return commands;
             };
 
+            service.getCommandRoles = function(command) {
+                let commandRoles = command.permissions;
+                let final = [];
+                if (commandRoles != null) {
+                    if (commandRoles instanceof Array) {
+                        final = commandRoles;
+                    } else {
+                        final.push(commandRoles);
+                    }
+                }
+                return final;
+            };
+
             // Saves out a command
             service.saveCommand = function(command) {
                 let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
@@ -75,13 +88,13 @@
 
                 // If the command is active, throw it into the active group. Otherwise put it in the inactive group.
                 if (command.active === true) {
-                    console.log('Saving ' + command.commandID + ' to active');
+                    logger.info('Saving ' + command.commandID + ' to active');
                     try {
                         commandDb.delete("/Inactive/" + command.commandID);
                     } catch (err) {} //eslint-disable-line no-empty
                     commandDb.push("/Active/" + command.commandID, cleanedCommands);
                 } else {
-                    console.log('Saving ' + command.commandID + ' to inactive');
+                    logger.info('Saving ' + command.commandID + ' to inactive');
                     try {
                         commandDb.delete("/Active/" + command.commandID);
                     } catch (err) {} //eslint-disable-line no-empty
@@ -116,7 +129,7 @@
                 try {
                     commandDb.push('./timedGroups/' + timedGroup.groupName, timedGroup);
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
 
                 // Check to see if we are renaming a group and need to remove the old one.
@@ -124,7 +137,7 @@
                     try {
                         commandDb.delete('./timedGroups/' + previousGroupName);
                     } catch (err) {
-                        console.log(err);
+                        logger.error(err);
                     }
                 }
             };
@@ -135,13 +148,13 @@
                 try {
                     commandDb.delete('./timedGroups/' + previousGroupName);
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
 
                 try {
                     commandDb.delete('./timedGroups/' + timedGroup.groupName);
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
             };
 

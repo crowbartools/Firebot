@@ -54,7 +54,7 @@
                                 <td>{{command.commandID}}</td>
                                 <td>{{command.trigger}}</td>
                                 <td><i class="fa fa-clock-o button-title-spark" aria-hidden="true"></i> {{command.cooldown ? command.cooldown : "0"}}</td>
-                                <td><span ng-repeat="role in command.permissions">{{role}}{{$last ? '' : ', '}}</span></td>
+                                <td><span ng-repeat="role in getCommandRoles(command)">{{role}}{{$last ? '' : ', '}}</span></td>
                                 <td><a class="clickable" ng-click="showAddCommandModal(command)"><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a></td>
                             </tr>
                         </tbody>

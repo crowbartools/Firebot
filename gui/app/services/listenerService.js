@@ -172,7 +172,9 @@
                 SPARK_EXEMPT_UPDATED: "sparkExemptUpdated",
                 OPEN_BACKUP: "openBackupFolder",
                 INITIATE_BACKUP: "startBackup",
-                RESTART_APP: "restartApp"
+                RESTART_APP: "restartApp",
+                DELETE_CHAT_MESSAGE: "deleteChatMessage",
+                CHANGE_USER_MOD_STATUS: "changeUserModStatus"
             };
             service.EventType = EventType;
 
@@ -181,8 +183,8 @@
             };
 
             /**
-    * File path event listeners
-    */
+            * File path event listeners
+            */
             ipcRenderer.on('gotSoundFilePath', function (event, data) {
                 parseFilePathEvent(data);
             });

@@ -8,7 +8,7 @@ const dataAccess = require('../../lib/common/data-access.js');
 
     angular
         .module('firebotApp')
-        .factory('hotkeyService', function ($rootScope, utilityService) {
+        .factory('hotkeyService', function ($rootScope, utilityService, logger) {
             let service = {};
 
             /**
@@ -144,7 +144,7 @@ const dataAccess = require('../../lib/common/data-access.js');
                 stopCallback = callback;
 
                 service.isCapturingHotkey = true;
-                console.log("starting hotkey capture");
+                logger.info("Starting hotkey capture...");
                 window.addEventListener('keydown', keyDownListener, true);
                 window.addEventListener('keyup', keyUpListener, true);
                 window.addEventListener('click', clickListener, true);
@@ -152,7 +152,7 @@ const dataAccess = require('../../lib/common/data-access.js');
 
             service.stopHotkeyCapture = function() {
                 if (service.isCapturingHotkey) {
-                    console.log("stopping hotkey recording");
+                    logger.info("Stopping hotkey recording");
                     window.removeEventListener('keydown', keyDownListener, true);
                     window.removeEventListener('keyup', keyUpListener, true);
                     service.isCapturingHotkey = false;
@@ -193,7 +193,7 @@ const dataAccess = require('../../lib/common/data-access.js');
                         userHotkeys = hotkeyData || [];
                     }
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
             };
 
@@ -202,7 +202,7 @@ const dataAccess = require('../../lib/common/data-access.js');
                 try {
                     hotkeyDb.push("/", userHotkeys);
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
 
                 // Refresh the backend hotkeycache

@@ -4,13 +4,12 @@
     // This contains utility functions
     // Just inject "utilityService" into any controller that you want access to these
     const electron = require('electron');
-    const logger = require('../../lib/errorLogging.js');
 
     const _ = require('underscore')._;
 
     angular
         .module('firebotApp')
-        .factory('utilityService', function($rootScope, $uibModal, listenerService) {
+        .factory('utilityService', function($rootScope, $uibModal, listenerService, logger) {
             let service = {};
 
             let copiedEffectsCache = {};
@@ -98,7 +97,7 @@
 
                 // We dont want to do anything if there's no context
                 if (showModalContext == null) {
-                    console.log("showModal() was called but no context was provided!");
+                    logger.warn("showModal() was called but no context was provided!");
                     return;
                 }
 
@@ -289,7 +288,7 @@
                 service.showModal(errorModalContext);
 
                 // Log error to file.
-                logger.log(errorMessage);
+                logger.error(errorMessage);
             };
 
             /*
@@ -417,7 +416,7 @@
                 service.showModal(infoModalContext);
 
                 // Log info to file.
-                logger.log(infoMessage);
+                logger.info(infoMessage);
             };
 
             /*

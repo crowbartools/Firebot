@@ -7,11 +7,16 @@
 
     angular
         .module('firebotApp')
-        .controller('chatMessagesController', function($scope, $timeout, $q, $sce, chatMessagesService, connectionService, listenerService) {
+        .controller('chatMessagesController', function(logger, $rootScope, $scope, chatMessagesService, connectionService,
+            listenerService, settingsService, soundService) {
+
+            $scope.settings = settingsService;
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
+
+            $scope.selectedUserData = {};
 
             $scope.currentViewers = 0;
 
@@ -84,11 +89,6 @@
                 return data.id;
             };
 
-            // This gets the html from the message.
-            $scope.getMessageContent = function(data) {
-                return $sce.trustAsHtml(data.messageHTML);
-            };
-
             $scope.getWhisperData = function(data) {
                 let target = data.target;
                 return 'Whispered to ' + target + '.';
@@ -107,7 +107,7 @@
             $scope.chatFeedIsEnabled = function() {
                 // if chat feed is disabled in settings
                 if (!chatMessagesService.getChatFeed()) {
-                    $scope.disabledMessage = "The chat feed is currently disabled. Please go to Settings > Chat > Chat Feed to enable.";
+                    $scope.disabledMessage = "The chat feed is currently disabled. Click the gear in the bottom right corner to enable.";
                     return false;
                 } else if (!connectionService.connectedToChat) {
                     $scope.disabledMessage = "The chat feed will enable once a connection to Chat has been made.";
@@ -124,10 +124,113 @@
                 return chatMessagesService.getChatViewerListSetting();
             };
 
+            function focusMessageInput() {
+                angular.element('#chatMessageInput').trigger('focus');
+            }
+
+            $scope.messageActionSelected = (action, userName, msgId) => {
+                switch (action.toLowerCase()) {
+                case "delete":
+                    chatMessagesService.deleteMessage(msgId);
+                    break;
+                case "timeout":
+                    $scope.chatMessage = "/timeout @" + userName + " 5m";
+                    focusMessageInput();
+                    break;
+                case "ban":
+                    $scope.chatMessage = "/ban @" + userName;
+                    focusMessageInput();
+                    break;
+                case "mod":
+                    chatMessagesService.changeModStatus(userName, true);
+                    break;
+                case "unmod":
+                    chatMessagesService.changeModStatus(userName, false);
+                    break;
+                case "whisper":
+                    $scope.chatMessage = "/w @" + userName + " ";
+                    focusMessageInput();
+                    break;
+                default:
+                    return;
+                }
+            };
+
             // This happens when a chat message is submitted.
+            let chatHistory = [];
+            let currrentHistoryIndex = -1;
             $scope.submitChat = function() {
                 chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);
+                chatHistory.unshift($scope.chatMessage);
+                currrentHistoryIndex = -1;
                 $scope.chatMessage = '';
+            };
+
+            $scope.onMessageFieldUpdate = () => {
+                currrentHistoryIndex = -1;
+            };
+
+            $scope.onMessageFieldKeypress = $event => {
+                let keyCode = $event.which || $event.keyCode;
+                if (keyCode === 38) { //up arrow
+                    if ($scope.chatMessage.length < 1 || $scope.chatMessage === chatHistory[currrentHistoryIndex]) {
+                        if (currrentHistoryIndex + 1 < chatHistory.length) {
+                            currrentHistoryIndex++;
+                            $scope.chatMessage = chatHistory[currrentHistoryIndex];
+                        }
+                    }
+                } else if (keyCode === 40) { //down arrow
+                    if ($scope.chatMessage.length > 0 || $scope.chatMessage === chatHistory[currrentHistoryIndex]) {
+                        if (currrentHistoryIndex - 1 >= 0) {
+                            currrentHistoryIndex--;
+                            $scope.chatMessage = chatHistory[currrentHistoryIndex];
+                        }
+                    }
+                } else if (keyCode === 13) { // enter
+                    $scope.submitChat();
+                }
+            };
+
+            $scope.playNotification = function() {
+                soundService.playChatNotification();
+            };
+
+            $scope.selectedNotificationSound = settingsService.getTaggedNotificationSound();
+
+            $scope.notificationVolume = settingsService.getTaggedNotificationVolume();
+
+            $scope.volumeUpdated = function() {
+                logger.debug('updating noti volume: ' + $scope.notificationVolume);
+                settingsService.setTaggedNotificationVolume($scope.notificationVolume);
+            };
+
+            $scope.sliderOptions = {
+                floor: 1,
+                ceil: 10,
+                hideLimitLabels: true,
+                onChange: $scope.volumeUpdated
+            };
+
+            $scope.notificationOptions = soundService.notificationSoundOptions;
+
+            $scope.selectNotification = function(n) {
+                $scope.selectedNotificationSound = n;
+                $scope.saveSelectedNotification();
+            };
+
+            $scope.setCustomNotiPath = function(filepath) {
+                $scope.selectedNotificationSound.path = filepath;
+                $scope.saveSelectedNotification();
+            };
+
+            $scope.saveSelectedNotification = function() {
+
+                let sound = $scope.selectedNotificationSound;
+
+                settingsService.setTaggedNotificationSound({
+                    name: sound.name,
+                    path: sound.name === 'Custom' ? sound.path : undefined
+                });
             };
 
             listenerService.registerListener(
