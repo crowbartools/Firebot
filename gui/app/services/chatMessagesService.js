@@ -6,7 +6,8 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function (logger, listenerService, settingsService, groupsService) {
+        .factory('chatMessagesService', function (logger, listenerService, settingsService, groupsService, soundService,
+            connectionService) {
             let service = {};
 
             // Chat Message Queue
@@ -377,6 +378,20 @@
                     if (settingsService.getRealChatFeed() === true) {
                         if (data.user_avatar == null) {
                             data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
+                        }
+
+                        let streamerName = connectionService.accounts.streamer.username,
+                            botName = connectionService.accounts.bot.username;
+
+                        let isTagged =
+                            data.message.message.some(s => s.type === "tag" &&
+                            (s.username === streamerName || s.username === botName));
+
+                        if (isTagged) {
+                            data.tagged = true;
+                            if (!data.historical) {
+                                soundService.playChatNotification();
+                            }
                         }
 
                         // Push new message to queue.

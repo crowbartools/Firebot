@@ -7,8 +7,10 @@
 
     angular
         .module('firebotApp')
-        .controller('chatMessagesController', function($rootScope, $scope, chatMessagesService, connectionService,
-            listenerService) {
+        .controller('chatMessagesController', function(logger, $rootScope, $scope, chatMessagesService, connectionService,
+            listenerService, settingsService, soundService) {
+
+            $scope.settings = settingsService;
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
@@ -105,7 +107,7 @@
             $scope.chatFeedIsEnabled = function() {
                 // if chat feed is disabled in settings
                 if (!chatMessagesService.getChatFeed()) {
-                    $scope.disabledMessage = "The chat feed is currently disabled. Please go to Settings > Chat > Chat Feed to enable.";
+                    $scope.disabledMessage = "The chat feed is currently disabled. Click the gear in the bottom right corner to enable.";
                     return false;
                 } else if (!connectionService.connectedToChat) {
                     $scope.disabledMessage = "The chat feed will enable once a connection to Chat has been made.";
@@ -187,6 +189,48 @@
                 } else if (keyCode === 13) { // enter
                     $scope.submitChat();
                 }
+            };
+
+            $scope.playNotification = function() {
+                soundService.playChatNotification();
+            };
+
+            $scope.selectedNotificationSound = settingsService.getTaggedNotificationSound();
+
+            $scope.notificationVolume = settingsService.getTaggedNotificationVolume();
+
+            $scope.volumeUpdated = function() {
+                logger.debug('updating noti volume: ' + $scope.notificationVolume);
+                settingsService.setTaggedNotificationVolume($scope.notificationVolume);
+            };
+
+            $scope.sliderOptions = {
+                floor: 1,
+                ceil: 10,
+                hideLimitLabels: true,
+                onChange: $scope.volumeUpdated
+            };
+
+            $scope.notificationOptions = soundService.notificationSoundOptions;
+
+            $scope.selectNotification = function(n) {
+                $scope.selectedNotificationSound = n;
+                $scope.saveSelectedNotification();
+            };
+
+            $scope.setCustomNotiPath = function(filepath) {
+                $scope.selectedNotificationSound.path = filepath;
+                $scope.saveSelectedNotification();
+            };
+
+            $scope.saveSelectedNotification = function() {
+
+                let sound = $scope.selectedNotificationSound;
+
+                settingsService.setTaggedNotificationSound({
+                    name: sound.name,
+                    path: sound.name === 'Custom' ? sound.path : undefined
+                });
             };
 
             listenerService.registerListener(

@@ -360,6 +360,11 @@ input:checked + .slider:before {
 	}
   
 	&:checked + .tgl-btn {
-		background: #279cd9;
+		background: #2aa1c0;
+  }
+  
+  &:disabled + .tgl-btn {
+    opacity: 0.6;
+    cursor: not-allowed;
 	}
 }
