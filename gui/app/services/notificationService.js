@@ -97,7 +97,7 @@
             }
 
             function loadExternalNotifications() {
-                /*$http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json")
+                $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json")
                     .then((response) => {
                         let externalNotifications = response.data;
 
@@ -123,7 +123,7 @@
                         });
 
                         setKnownExternalNotifications(newKnownExtNotis);
-                    });*/
+                    });
             }
 
             function mixerStatusNotification() {
