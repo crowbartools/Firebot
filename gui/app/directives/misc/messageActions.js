@@ -45,17 +45,6 @@
                     loadPopover();
 
 
-                    /*function assignOuterScopeValue(attributeName, value) {
-                        let scopeName = $attrs[attributeName];
-                        if (angular.isDefined(scopeName)) {
-                            if ($parse(scopeName).assign) {
-                                $parse(scopeName).assign($scope, value);
-                            } else {
-                                logger.warn('Could not set value of ' + attributeName + ' to ' + value + '. This is normally because the value is not a variable.');
-                            }
-                        }
-                    }*/
-
                     function evaluateOuterScopeValue(scopeName, defaultValue, locals) {
                         if (angular.isDefined(scopeName)) {
                             return $parse(scopeName)($scope, locals);
@@ -123,7 +112,6 @@
                             popover.css({display: 'block'});
                             positionPopover();
                             vm.isVisible = true;
-                            //assignOuterScopeValue('isOpen', true);
                         }
                     }
 
@@ -132,7 +120,6 @@
                             popover.css({display: 'none'});
                             popover.remove();
                             vm.isVisible = false;
-                            //assignOuterScopeValue('isOpen', false);
                         }
                     }
 
