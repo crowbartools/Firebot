@@ -249,7 +249,8 @@
                 } catch (err) {
                     // The streamer isn't logged in... stop everything.
                     service.waitingForChatStatusChange = false;
-                    logger.error('No streamer logged in. Skipping refresh token.');
+                    service.isConnectingAll = false;
+                    logger.warn('No streamer logged in. Skipping refresh token.');
                     utilityService.showErrorModal("You need to log into the app before trying to connect to Mixer.");
                     return;
                 }

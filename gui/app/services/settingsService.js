@@ -59,7 +59,7 @@
                 try {
                     deleteDataAtPath('/boards/' + boardId);
                 } catch (err) {
-                    logger.error(err);
+                    logger.info(err);
                 }
             };
 
@@ -70,7 +70,7 @@
                 try {
                     lastUpdatedDatetime = getSettingsFile().getData(`/boards/${id}/lastUpdated`);
                 } catch (err) {
-                    logger.error("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first", err);
+                    logger.info("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first", err);
                 }
                 return lastUpdatedDatetime;
             };
@@ -90,7 +90,7 @@
                 try {
                     boardId = getSettingsFile().getData('/interactive/lastBoardId');
                 } catch (err) {
-                    logger.error(err);
+                    logger.info(err);
                 }
                 return boardId;
             }
