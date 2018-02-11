@@ -21,7 +21,7 @@ global.EffectType = Effect.EffectType;
 global.SCRIPTS_DIR = dataAccess.getPathInUserData('/user-settings/scripts/');
 
 // uncaught exception - log the error
-process.on('uncaughtException', console.error); //eslint-disable-line no-console
+process.on('uncaughtException', logger.error); //eslint-disable-line no-console
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
