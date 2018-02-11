@@ -183,17 +183,21 @@
 
                 // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
-                    logger.info('Converting control files to new versionid format.');
-                    let oldPath = dataAccess.getPathInUserData("/user-settings/controls/" + gameName + '.json');
-                    let newPath = dataAccess.getPathInUserData("/user-settings/controls/" + versionid + '.json');
+                    if (!dataAccess.userDataPathExistsSync('/user-settings/controls/' + versionid + '.json')) {
+                        logger.info('Converting control files to new versionid format.');
+                        let oldPath = dataAccess.getPathInUserData("/user-settings/controls/" + gameName + '.json');
+                        let newPath = dataAccess.getPathInUserData("/user-settings/controls/" + versionid + '.json');
 
-                    try {
-                        fs.renameSync(oldPath, newPath);
-                        logger.info('Converted control file ' + gameName + '.json to version id format.');
-                    } catch (err) {
-                        logger.error(err);
-                        utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere? If so, close it down and restart Firebot.");
-                        return;
+                        try {
+                            fs.renameSync(oldPath, newPath);
+                            logger.info('Converted control file ' + gameName + '.json to version id format.');
+                        } catch (err) {
+                            logger.error(err);
+                            utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere? If so, close it down and restart Firebot.");
+                            return;
+                        }
+                    } else {
+                        logger.info("We detected a control file still using the board name, but it looks like it has already been converted so we will ignore it.");
                     }
                 }
 
