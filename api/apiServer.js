@@ -18,6 +18,11 @@ exports.start = function() {
     api.use(bodyParser.json());
     api.use(bodyParser.urlencoded({ extended: true }));
 
+    api.use((req, res, next) => {
+        res.append('Access-Control-Allow-Origin', ['*']);
+        next();
+    });
+
     // get our router for the current v1 api methods
     let v1Router = require("./v1/v1Router.js");
     api.use("/api/v1", v1Router);
