@@ -9,7 +9,7 @@
 
     angular
         .module('firebotApp')
-        .factory('websocketService', function (listenerService, settingsService, $interval, $rootScope) {
+        .factory('websocketService', function (logger, listenerService, settingsService, $timeout, $interval, $rootScope) {
             let service = {};
 
             // Setup the WebSocketServer with the saved port.
@@ -184,7 +184,13 @@
             service.broadcast = function(data) {
                 data = JSON.stringify(data);
                 wss.clients.forEach(function each(client) {
-                    client.send(data);
+                    if (client.readyState === 1) {
+                        client.send(data, (err) => {
+                            if (err) {
+                                logger.error(err);
+                            }
+                        });
+                    }
                 });
             };
 
@@ -192,19 +198,20 @@
 
             wss.on('connection', function connection() {
                 service.hasClientsConnected = true;
-                $rootScope.$broadcast("connection:update", { type: "overlay", status: "connected" });
-                $rootScope.$applyAsync();
+                $timeout(() => {
+                    $rootScope.$broadcast("connection:update", { type: "overlay", status: "connected" });
+                });
             });
 
-            setInterval(() => {
+            $interval(() => {
                 let prevValue = service.hasClientsConnected === true;
-                service.hasClientsConnected = wss.clients.size > 0;
-                if (service.hasClientsConnected !== prevValue) {
+                let hasConnectedClients = wss.clients.size > 0;
+                if (hasConnectedClients !== prevValue) {
+                    service.hasClientsConnected = hasConnectedClients;
                     let status = service.hasClientsConnected ? "connected" : "warning";
                     $rootScope.$broadcast("connection:update", { type: "overlay", status: status });
-                    $rootScope.$applyAsync();
                 }
-            }, 1250);
+            }, 1500);
 
             // Watches for an event from main process
             listenerService.registerListener(

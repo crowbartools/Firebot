@@ -14,7 +14,6 @@
             // this catches angular exceptions so we can send it to winston
             return function(exception, cause) {
                 logger.error(cause, exception);
-                throw exception;
             };
         }
     );
