@@ -31,7 +31,7 @@ function mixerSocketConnect(){
 			var event = data.event;
 			
 			var olInstance = params.get("instance");
-			console.log(`Instance: ${olInstance}, Event Instance: ${data.overlayInstance}`)
+			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.overlayInstance}`)
 			if(olInstance != null && olInstance != "") {
 				if(data.overlayInstance != olInstance) {
 					console.log("Event detected but it's for a different instance. Ignoring.")
