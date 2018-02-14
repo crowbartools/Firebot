@@ -622,15 +622,7 @@
                                 ['para', ['ul', 'ol']],
                                 ['misc', ['undo', 'redo', 'codeview']]
                             ],
-                            hint: {
-                                variables: ["$(user)", "$(game)", "$(time)", "$(uptime)"],
-                                match: /(\$\([\w\[\]\:\-]*)$/, //eslint-disable-line
-                                search: function (keyword, callback) {
-                                    callback($.grep(this.variables, function (item) {
-                                        return item.indexOf(keyword) === 0;
-                                    }));
-                                }
-                            }
+                            fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '64', '82', '150', '200', '250', '300']
                         };
 
                         $scope.showOverlayInfoModal = function(overlayInstance) {
