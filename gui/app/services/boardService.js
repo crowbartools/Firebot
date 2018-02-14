@@ -82,6 +82,7 @@
                         // Make an array containing all of the buttons and scenes from each json so we can compare.
                         let mixerButtonArray = [];
                         let firebotButtonArray = [];
+                        let mixerJoysticks = [];
                         let mixerSceneArray = [];
                         let firebotSceneArray = [];
 
@@ -95,7 +96,11 @@
                             let controls = scene.controls;
                             for (let control of controls) {
                                 let controlID = control.controlID;
-                                mixerButtonArray.push(controlID);
+                                if (control.type === 'joystick') {
+                                    mixerJoysticks.push(controlID);
+                                } else {
+                                    mixerButtonArray.push(controlID);
+                                }
                             }
                         }
 
@@ -112,6 +117,24 @@
                                 firebotButtonArray.push(control);
                             }
                         }
+
+                        // add firebot joystick ids
+                        let firebotJoysticks = Object.keys(firebotSettings.joysticks);
+
+                        // filter to deleted joysticks
+                        let deletedJoysticks = firebotJoysticks.filter(id => !mixerJoysticks.includes(id));
+
+                        // delete deleted joysticks from file
+                        deletedJoysticks.forEach(joystickId => {
+                            try {
+                                dbControls.delete('./firebot/joysticks/' + joystickId);
+                                logger.info('Joystick ' + joystickId + ' is not on the mixer board. Deleting.');
+
+                            } catch (err) {
+                                logger.error(err);
+                            }
+                        });
+
 
                         // Filter out all buttons that match. Anything left in the firebotButtonArray no longer exists on the mixer board.
                         firebotButtonArray = firebotButtonArray.filter(val => !mixerButtonArray.includes(val));
@@ -157,6 +180,9 @@
                                 logger.error(err);
                             }
                         }
+
+                        // remove deleted joysticks
+                        firebotJoysticks =
 
                         logger.info('Backend Cleanup: Completed.');
                         resolve(true);
