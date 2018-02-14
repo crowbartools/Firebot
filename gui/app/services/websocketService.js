@@ -167,7 +167,7 @@
             // This function takes info given from the main process and then sends a request to the overlay to render it.
             function showText(data) {
                 data.event = "text";
-
+                logger.debug("Recieved show text effect from backend, sending to overlay");
                 service.broadcast(data);
             }
 

@@ -4,6 +4,7 @@ function showText(data){
 
 	var customPosStyles = "";
 	if(data.position == 'Custom') {
+		console.log("Getting styles for custom coords");
 		customPosStyles = getStylesForCustomCoords(data.customCoords)
 	}
 
@@ -19,6 +20,7 @@ function showText(data){
 		</div>
 	`;
 
+	console.log("adding text to page");
 	// Throw text on page.
 	$('#wrapper').append(container);
 
