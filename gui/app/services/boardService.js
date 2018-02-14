@@ -181,9 +181,6 @@
                             }
                         }
 
-                        // remove deleted joysticks
-                        firebotJoysticks =
-
                         logger.info('Backend Cleanup: Completed.');
                         resolve(true);
                     } catch (err) {
