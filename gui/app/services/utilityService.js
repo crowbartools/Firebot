@@ -149,13 +149,13 @@
             /*
              * FIRST TIME USE MODAL
              */
-            service.showSetupWizard = function() {
+            service.showSetupWizard = function(allowExit = false) {
                 let firstTimeUseModalContext = {
                     templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: "firstTimeUseModalController",
-                    keyboard: false,
-                    backdrop: 'static',
+                    keyboard: allowExit ? true : false,
+                    backdrop: allowExit ? undefined : 'static',
                     closeCallback: () => {}
                 };
                 service.showModal(firstTimeUseModalContext);
@@ -425,6 +425,8 @@
             service.showEditEffectModal = function (effect, index, triggerType, closeCallback) {
                 let showEditEffectContext = {
                     templateUrl: "editEffectModal.html",
+                    keyboard: false,
+                    backdrop: 'static',
                     controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, index, triggerType) => {
 
                         $scope.effect = JSON.parse(angular.toJson(effect));
