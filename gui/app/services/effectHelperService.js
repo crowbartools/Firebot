@@ -632,6 +632,10 @@
                                 }
                             }
                         };
+
+                        $scope.showOverlayInfoModal = function(overlayInstance) {
+                            utilityService.showOverlayInfoModal(overlayInstance);
+                        };
                     };
                 }
 
