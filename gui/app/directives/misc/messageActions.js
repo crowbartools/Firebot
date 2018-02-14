@@ -39,7 +39,6 @@
                     function loadPopover() {
                         popover = angular.element(template);
                         popover.css('display', 'none');
-                        //popover.css('height', '230px');
                         $compile(popover)(popoverScope);
                         return popover;
                     }
