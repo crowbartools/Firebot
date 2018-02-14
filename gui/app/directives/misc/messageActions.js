@@ -13,7 +13,7 @@
                     role: '<',
                     onActionSelected: "&"
                 },
-                controller: function(logger, $scope, $rootScope, $element, $compile, $document, $window, $uibPosition, $parse, $attrs, connectionService) {
+                controller: function(logger, $scope, $rootScope, $element, $compile, $document, $window, $uibPosition, $parse, $attrs, $timeout, connectionService) {
                     let vm = this;
 
                     let shouldOpen = $scope.message.id !== "System";
@@ -39,6 +39,7 @@
                     function loadPopover() {
                         popover = angular.element(template);
                         popover.css('display', 'none');
+                        //popover.css('height', '230px');
                         $compile(popover)(popoverScope);
                         return popover;
                     }
@@ -64,12 +65,13 @@
                             icon: "fa-trash-alt"
                         });
 
+                        actions.push({
+                            name: "Whisper",
+                            icon: "fa-envelope"
+                        });
+
                         if (vm.message.user_name !== connectionService.accounts.streamer.username &&
                             vm.message.user_name !== connectionService.accounts.bot.username) {
-                            actions.push({
-                                name: "Whisper",
-                                icon: "fa-envelope"
-                            });
 
                             if (vm.message.user_roles.includes("Mod")) {
                                 actions.push({
@@ -98,18 +100,40 @@
 
                     vm.actions = getActions();
 
+                    let lastPlacement;
                     function positionPopover() {
-                        let position = $uibPosition.positionElements($element, popover, "auto top", true);
-                        position.top += 'px';
-                        position.left += 'px';
-                        popover.css(position);
+                        $timeout(() => {
+                            popover.css({display: 'block'});
+                            let position = $uibPosition.positionElements($element, popover, "auto right", true);
+                            let initialHeight = angular.isDefined(popover.offsetHeight) ? popover.offsetHeight : popover.prop('offsetHeight');
+                            let elementPos = $uibPosition.offset($element);
+                            let placementClasses = position.placement.split('-');
+
+                            if (!popover.hasClass(placementClasses[0])) {
+                                if (lastPlacement != null) {
+                                    popover.removeClass(lastPlacement.split('-')[0]);
+                                }
+                                popover.addClass(placementClasses[0]);
+                            }
+                            position.top += 'px';
+                            position.left += 'px';
+                            popover.css(position);
+                            $timeout(() => {
+                                let currentHeight = angular.isDefined(popover.offsetHeight) ? popover.offsetHeight : popover.prop('offsetHeight');
+                                let adjustment = $uibPosition.adjustTop(placementClasses, elementPos, initialHeight, currentHeight);
+                                if (adjustment) {
+                                    popover.css(adjustment);
+                                }
+
+                            }, 0);
+                            lastPlacement = position.placement;
+                        }, 0);
                     }
 
                     function showPopover() {
                         if (shouldOpen && !vm.isVisible && !evaluateOuterScopeValue($attrs.isDisabled, false)) {
                             loadPopover();
                             $document.find('body').append(popover);
-                            popover.css({display: 'block'});
                             positionPopover();
                             vm.isVisible = true;
                         }
