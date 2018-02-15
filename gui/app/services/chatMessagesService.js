@@ -190,6 +190,8 @@
             // Reason is, people can be added to our banned user group without being banned from the channel.
             // But we're assuming here that if they're banned from the channel we should ban them from interactive always.
             service.userUpdate = function (data) {
+                if (data == null || data.roles == null) return;
+
                 let roles = data.roles;
 
                 // Check each role. If one is "banned" then we ban the person from interactive and show a chat alert.
