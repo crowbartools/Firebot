@@ -13,7 +13,7 @@
                     role: '<',
                     onActionSelected: "&"
                 },
-                controller: function(logger, $scope, $rootScope, $element, $compile, $document, $window, $uibPosition, $parse, $attrs, $timeout, connectionService) {
+                controller: function(logger, $scope, $rootScope, $element, $compile, $document, $window, $uibPosition, $attrs, $timeout, connectionService) {
                     let vm = this;
 
                     let shouldOpen = $scope.message.id !== "System";
@@ -43,15 +43,6 @@
                         return popover;
                     }
                     loadPopover();
-
-
-                    function evaluateOuterScopeValue(scopeName, defaultValue, locals) {
-                        if (angular.isDefined(scopeName)) {
-                            return $parse(scopeName)($scope, locals);
-                        }
-                        return defaultValue;
-
-                    }
 
                     vm.isVisible = false;
                     vm.message = $scope.message;
@@ -130,7 +121,7 @@
                     }
 
                     function showPopover() {
-                        if (shouldOpen && !vm.isVisible && !evaluateOuterScopeValue($attrs.isDisabled, false)) {
+                        if (shouldOpen && !vm.isVisible) {
                             loadPopover();
                             $document.find('body').append(popover);
                             positionPopover();
