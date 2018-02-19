@@ -72,53 +72,62 @@
                     logger.info('Backend Cleanup: Checking for differences between mixer and firebot boards.');
 
                     // Check if Firebot settings exist
+                    let mixerSettings, firebotSettings;
                     try {
-
                         // We have saved settings. Time to clean up!
-                        let mixerSettings = dbControls.getData('./mixer');
-                        let firebotSettings = dbControls.getData('./firebot');
+                        mixerSettings = dbControls.getData('./mixer');
+                        firebotSettings = dbControls.getData('./firebot');
+
+                    } catch (err) {
+                        // We don't have any saved settings yet. Resolve this and don't cleanup anything.
+                        logger.error("Failed to check if we have any saved settings", err);
+                        resolve(true);
+                        return;
+                    }
 
 
-                        // Make an array containing all of the buttons and scenes from each json so we can compare.
-                        let mixerButtonArray = [];
-                        let firebotButtonArray = [];
-                        let mixerJoysticks = [];
-                        let mixerSceneArray = [];
-                        let firebotSceneArray = [];
 
-                        // Add mixer stuff to mixer arrays for comparison.
-                        for (let scene of mixerSettings) {
-                            // Save Scenes
-                            let sceneID = scene.sceneID;
-                            mixerSceneArray.push(sceneID);
+                    // Make an array containing all of the buttons and scenes from each json so we can compare.
+                    let mixerButtonArray = [];
+                    let firebotButtonArray = [];
+                    let mixerJoysticks = [];
+                    let mixerSceneArray = [];
+                    let firebotSceneArray = [];
 
-                            // Save Buttons
-                            let controls = scene.controls;
-                            for (let control of controls) {
-                                let controlID = control.controlID;
-                                if (control.type === 'joystick') {
-                                    mixerJoysticks.push(controlID);
-                                } else {
-                                    mixerButtonArray.push(controlID);
-                                }
+                    // Add mixer stuff to mixer arrays for comparison.
+                    for (let scene of mixerSettings) {
+                        // Save Scenes
+                        let sceneID = scene.sceneID;
+                        mixerSceneArray.push(sceneID);
+
+                        // Save Buttons
+                        let controls = scene.controls;
+                        for (let control of controls) {
+                            let controlID = control.controlID;
+                            if (control.type === 'joystick') {
+                                mixerJoysticks.push(controlID);
+                            } else {
+                                mixerButtonArray.push(controlID);
                             }
                         }
+                    }
 
-                        // Add Firebot scenes to firebot array.
-                        for (let scene in firebotSettings.scenes) {
-                            if (scene != null) {
-                                firebotSceneArray.push(scene);
-                            }
+                    // Add Firebot scenes to firebot array.
+                    for (let scene in firebotSettings.scenes) {
+                        if (scene != null) {
+                            firebotSceneArray.push(scene);
                         }
+                    }
 
-                        // Add Firebot buttons to firebot array for comparison.
-                        for (let control in firebotSettings.controls) {
-                            if (control != null) {
-                                firebotButtonArray.push(control);
-                            }
+                    // Add Firebot buttons to firebot array for comparison.
+                    for (let control in firebotSettings.controls) {
+                        if (control != null) {
+                            firebotButtonArray.push(control);
                         }
+                    }
 
-                        // add firebot joystick ids
+                    // add firebot joystick ids
+                    if (firebotSettings.joysticks) {
                         let firebotJoysticks = Object.keys(firebotSettings.joysticks);
 
                         // filter to deleted joysticks
@@ -134,60 +143,55 @@
                                 logger.error(err);
                             }
                         });
-
-
-                        // Filter out all buttons that match. Anything left in the firebotButtonArray no longer exists on the mixer board.
-                        firebotButtonArray = firebotButtonArray.filter(val => !mixerButtonArray.includes(val));
-
-                        // Filter out all scenes that match. Anything left in the firebotScenenArray no longer exists on the mixer board.
-                        firebotSceneArray = firebotSceneArray.filter(val => !mixerSceneArray.includes(val));
-
-                        // Remove buttons that are no longer needed.
-                        // If a scene was deleted from Mixer, the buttons for that scene should be gone as well.
-                        for (let button of firebotButtonArray) {
-                            try {
-                                dbControls.delete('./firebot/controls/' + button);
-                                logger.info('Button ' + button + ' is not on the mixer board. Deleting.');
-
-                                // Go through cooldown groups and remove the button if it is listed there.
-                                for (let cooldown in firebotSettings.cooldownGroups) {
-                                    if (firebotSettings.cooldownGroups.hasOwnProperty(cooldown)) {
-                                        let cooldownButtons = dbControls.getData('./firebot/cooldownGroups/' + cooldown + '/buttons');
-                                        let i = cooldownButtons.length;
-                                        while (i--) {
-                                            if (cooldownButtons[i] === button) {
-                                                cooldownButtons.splice(i, 1);
-                                                logger.info('Removing ' + button + ' from cooldown group ' + cooldown + '.');
-                                                break;
-                                            }
-                                        }
-
-                                        // Push corrected cooldown array to db.
-                                        dbControls.push('./firebot/cooldownGroups/' + cooldown + '/buttons', cooldownButtons);
-                                    }
-                                }
-                            } catch (err) {
-                                logger.error(err);
-                            }
-                        }
-
-                        // Remove scenes that are no longer needed.
-                        for (let scene of firebotSceneArray) {
-                            try {
-                                dbControls.delete('./firebot/scenes/' + scene);
-                                logger.info('Scene ' + scene + ' is not on the mixer board. Deleting from firebot.');
-                            } catch (err) {
-                                logger.error(err);
-                            }
-                        }
-
-                        logger.info('Backend Cleanup: Completed.');
-                        resolve(true);
-                    } catch (err) {
-                        // We don't have any saved settings yet. Resolve this and don't cleanup anything.
-                        logger.error(err);
-                        resolve(true);
                     }
+
+                    // Filter out all buttons that match. Anything left in the firebotButtonArray no longer exists on the mixer board.
+                    firebotButtonArray = firebotButtonArray.filter(val => !mixerButtonArray.includes(val));
+
+                    // Filter out all scenes that match. Anything left in the firebotScenenArray no longer exists on the mixer board.
+                    firebotSceneArray = firebotSceneArray.filter(val => !mixerSceneArray.includes(val));
+
+                    // Remove buttons that are no longer needed.
+                    // If a scene was deleted from Mixer, the buttons for that scene should be gone as well.
+                    for (let button of firebotButtonArray) {
+                        try {
+                            dbControls.delete('./firebot/controls/' + button);
+                            logger.info('Button ' + button + ' is not on the mixer board. Deleting.');
+
+                            // Go through cooldown groups and remove the button if it is listed there.
+                            for (let cooldown in firebotSettings.cooldownGroups) {
+                                if (firebotSettings.cooldownGroups.hasOwnProperty(cooldown)) {
+                                    let cooldownButtons = dbControls.getData('./firebot/cooldownGroups/' + cooldown + '/buttons');
+                                    let i = cooldownButtons.length;
+                                    while (i--) {
+                                        if (cooldownButtons[i] === button) {
+                                            cooldownButtons.splice(i, 1);
+                                            logger.info('Removing ' + button + ' from cooldown group ' + cooldown + '.');
+                                            break;
+                                        }
+                                    }
+
+                                    // Push corrected cooldown array to db.
+                                    dbControls.push('./firebot/cooldownGroups/' + cooldown + '/buttons', cooldownButtons);
+                                }
+                            }
+                        } catch (err) {
+                            logger.error(err);
+                        }
+                    }
+
+                    // Remove scenes that are no longer needed.
+                    for (let scene of firebotSceneArray) {
+                        try {
+                            dbControls.delete('./firebot/scenes/' + scene);
+                            logger.info('Scene ' + scene + ' is not on the mixer board. Deleting from firebot.');
+                        } catch (err) {
+                            logger.error(err);
+                        }
+                    }
+
+                    logger.info('Backend Cleanup: Completed.');
+                    resolve(true);
                 });
             }
 
