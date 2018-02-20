@@ -80,7 +80,7 @@
 
                     } catch (err) {
                         // We don't have any saved settings yet. Resolve this and don't cleanup anything.
-                        logger.error("Failed to check if we have any saved settings", err);
+                        logger.info("It doesnt appear we have previously saved settings", err);
                         resolve(true);
                         return;
                     }
