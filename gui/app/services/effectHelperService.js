@@ -9,7 +9,7 @@
 
     angular
         .module('firebotApp')
-        .factory('effectHelperService', function ($q, utilityService) {
+        .factory('effectHelperService', function ($q, utilityService, logger) {
             let service = {};
 
             // Returns a controller to be used for the template of a given effectype
@@ -208,7 +208,6 @@
 
                         // When an api is clicked in the dropdown save its name and if it has images available.
                         $scope.effectClick = function(api) {
-                            console.log(api);
                             $scope.effect.api = api.name;
                             $scope.effect.imageAvailable = api.image;
                         };
@@ -363,7 +362,7 @@
                     controller = ($scope, $rootScope) => {
 
                         function loadParameters(scriptName) {
-                            console.log("Attempting to load custom script parameters...");
+                            logger.info("Attempting to load custom script parameters...");
                             $scope.isLoadingParameters = true;
 
                             let scriptsFolder = dataAccess.getPathInUserData('/user-settings/scripts');
@@ -424,7 +423,7 @@
                                 }
                             } catch (err) {
                                 utilityService.showErrorModal("Error loading the script '" + scriptName + "'\n\n" + err);
-                                console.log(err);
+                                logger.error(err);
                             }
                         }
 
@@ -601,7 +600,35 @@
                         };
                     };
                     break;
+                case EffectList.SHOW_TEXT:
+                    controller = ($scope) => {
 
+                        if ($scope.effect.height == null || $scope.effect.height < 1) {
+                            $scope.effect.height = 200;
+                        }
+
+                        if ($scope.effect.width == null || $scope.effect.width < 1) {
+                            $scope.effect.width = 400;
+                        }
+
+                        $scope.editorOptions = {
+                            height: 300,
+                            disableDragAndDrop: true,
+                            toolbar: [
+                                ['style', ['bold', 'italic', 'underline', 'clear']],
+                                ['fontname', ['fontname']],
+                                ['fontsize', ['fontsize']],
+                                ['color', ['color']],
+                                ['para', ['ul', 'ol']],
+                                ['misc', ['undo', 'redo', 'codeview']]
+                            ],
+                            fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '64', '82', '150', '200', '250', '300']
+                        };
+
+                        $scope.showOverlayInfoModal = function(overlayInstance) {
+                            utilityService.showOverlayInfoModal(overlayInstance);
+                        };
+                    };
                 }
 
                 return controller;
@@ -627,7 +654,7 @@
             // This is used by effects that make use of lists of checkboxes. Returns and array of selected boxes.
             service.getCheckedBoxes = function (list, item) {
                 let itemArray = list, itemIndex;
-                if (list == null) {
+                if (list == null || list instanceof Array === false) {
                     itemArray = [];
                 }
 

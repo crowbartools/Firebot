@@ -1,0 +1,75 @@
+<eos-container header="Text">
+    <summernote ng-model="effect.text" config="editorOptions"></summernote>
+    <eos-collapsable-panel show-label="Show Text Variables" hide-label="Hide Text Variables">
+        <div>
+            <h4>General</h4>
+            <ul>
+                <li><b>$(user)</b> - Replaced by the name of the person running the button, command, or event</li>
+                <li><b>$(time)</b> - The current time. Use $(time24) for 24 hour time.</li>
+                <li><b>$(uptime)</b> - How long the stream has been broadcasting</li>
+                <li><b>$(game)</b> - The game you are currenly or last played</li>
+                <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$(target)])</li>
+            </ul>
+            <h4>Interactive & Chat</h4>
+            <ul>
+                <li><b>$(text)</b> - Replaced by the interactive button text or the chat command ID.</li>
+                <li><b>$(cost)</b> - Replaced by the cost of the command or button.</li>
+                <li><b>$(cooldown)</b> - Replaced by the cooldown of the command or button.</li>
+            </ul>
+            <h4>Chat Commands Only</h4>
+            <ul>
+                <li><b>$(arg#)</b> - Replaced by the argument provided after a chat command. For example, $(arg) or $(arg1) pulls the first word after the command, whereas $(arg5) would pull the fifth word.</li>
+                <li><b>$(arg#-#)</b> - Grab a range of arguments. Combines them with spaces. IE if command was "<i>!command these are some words</i>":
+                    <ul>
+                        <li><b>$(arg2-3)</b> = "are some" </li>
+                        <li><b>$(arg2-last)</b> = "are some words"</li>
+                        <li><b>$(argAll)</b> = "these are some words"</li>
+                    </ul>
+                </li>
+                <li><b>$(target)</b> - Acts like the $(arg) variable but strips out any leading "@", useful when the argument is expected to be a username. Like $(arg), it also supports the $(target#) format for selecting different words.</li>
+            </ul>
+            <h4>Events Only</h4>
+            <ul>
+                <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed. Meant to be used on subscriber events.</li>
+            </ul>
+        </div>
+    </eos-collapsable-panel>
+</eos-container>
+
+<eos-container header="Dimensions" class="setting-padtop">
+    <p>This defines the size of the (invisible) box that the above text will be placed in.</p>
+    <div class="input-group">
+        <span class="input-group-addon">Width (in pixels)</span>
+        <input 
+          class="form-control" 
+          type="number"
+          min="1" max="10000"
+          ng-model="effect.width">
+        <span class="input-group-addon">Height (in pixels)</span>
+        <input 
+          class="form-control"
+          type="number"
+          min="1" max="10000"
+          ng-model="effect.height">
+    </div>
+</eos-container>
+
+<eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
+
+<eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
+
+<eos-container header="Duration" class="setting-padtop">
+    <div class="input-group">
+        <span class="input-group-addon">Seconds</span>
+        <input
+            class="form-control"
+            type="number"
+            ng-model="effect.duration">
+    </div>
+</eos-container>
+
+<eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
+
+<div class="effect-info alert alert-warning">
+    This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal(effect.overlayInstance)" style="text-decoration:underline">Learn more</a>
+</div>

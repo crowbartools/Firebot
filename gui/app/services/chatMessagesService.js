@@ -6,7 +6,8 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function (listenerService, settingsService, groupsService) {
+        .factory('chatMessagesService', function (logger, listenerService, settingsService, groupsService, soundService,
+            connectionService) {
             let service = {};
 
             // Chat Message Queue
@@ -71,7 +72,6 @@
                     arr = service.chatUsers,
                     userList = arr.filter(x => x.username !== username);
 
-                console.log(userList);
                 service.chatUsers = userList;
             };
 
@@ -87,17 +87,20 @@
             service.purgeChatMessages = function(data) {
                 let chatQueue = service.chatQueue;
 
-                Object.keys(chatQueue).forEach((key) => {
-                    let message = chatQueue[key];
+                let cachedUserName = null;
+                chatQueue.forEach((message) => {
 
                     // If user id matches, then mark the message as deleted.
                     if (message.user_id === data.user_id) {
+                        if (cachedUserName == null) {
+                            cachedUserName = message.user_name;
+                        }
                         message.deleted = true;
-                        message.eventInfo = "Purged by " + data.moderator.user_name + '.';
+                        message.eventInfo = "Timed out by " + data.moderator.user_name + '.';
                     }
                 });
 
-                service.chatAlertMessage(data.moderator.user_name + ' purged all messages from a user (' + data.user_id + ').');
+                service.chatAlertMessage(data.moderator.user_name + ' timed out ' + cachedUserName);
             };
 
             // Chat Alert Message
@@ -110,6 +113,12 @@
                     ],
                     user_avatar: "../images/logo.jpg", // eslint-disable-line
                     message: {
+                        message: [
+                            {
+                                type: "text",
+                                data: message
+                            }
+                        ],
                         meta: {
                             me: true
                         }
@@ -181,6 +190,8 @@
             // Reason is, people can be added to our banned user group without being banned from the channel.
             // But we're assuming here that if they're banned from the channel we should ban them from interactive always.
             service.userUpdate = function (data) {
+                if (data == null || data.roles == null) return;
+
                 let roles = data.roles;
 
                 // Check each role. If one is "banned" then we ban the person from interactive and show a chat alert.
@@ -204,19 +215,20 @@
             service.chatUpdateHandler = function(data) {
                 switch (data.fbEvent) {
                 case "ClearMessages":
-                    console.log('Chat cleared');
+                    logger.info('Chat cleared');
                     service.clearChatQueue();
                     service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
                     break;
                 case "DeleteMessage":
-                    console.log('Chat message deleted');
+                    logger.info('Chat message deleted');
                     service.deleteChatMessage(data);
                     break;
                 case "PurgeMessage":
-                    console.log('Chat message purged');
+                    logger.info('Chat message purged');
                     service.purgeChatMessages(data);
                     break;
                 case "UserTimeout":
+                    logger.info("user timed out");
                     service.chatAlertMessage(data.user.username + ' has been timed out for ' + data.user.duration + '.');
                     break;
                 case "PollStart":
@@ -226,7 +238,7 @@
                     service.pollEnd(data);
                     break;
                 case "UserJoin":
-                    console.log('Chat User Joined');
+                    logger.info('Chat User Joined');
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -234,8 +246,7 @@
                     service.chatUserJoined(data);
                     break;
                 case "UserLeave":
-                    console.log('Chat User Left');
-                    console.log(data);
+                    logger.info('Chat User Left');
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -243,28 +254,26 @@
                     service.chatUserLeft(data);
                     break;
                 case "UserUpdate":
-                    console.log('User updated');
+                    logger.info('User updated');
                     service.userUpdate(data);
                     break;
                 case "Disconnected":
                     // We disconnected. Clear messages, post alert, and then let the reconnect handle repopulation.
-                    console.log('Chat Disconnected!');
-                    console.log(data);
+                    logger.info('Chat Disconnected!');
                     service.clearChatQueue();
                     service.chatAlertMessage('Chat has been disconnected.');
                     break;
                 case "UsersRefresh":
-                    console.log('Chat userlist refreshed.');
+                    logger.info('Chat userlist refreshed.');
                     service.chatUserRefresh(data);
                     break;
                 case "ChatAlert":
-                    console.log('Chat alert from backend.');
+                    logger.info('Chat alert from backend.');
                     service.chatAlertMessage(data.message);
                     break;
                 default:
                     // Nothing
-                    console.log('Unknown chat event sent');
-                    console.log(data);
+                    logger.warn('Unknown chat event sent', data);
                 }
             };
 
@@ -343,6 +352,23 @@
                 return false;
             };
 
+            service.deleteMessage = messageId => {
+                listenerService.fireEvent(
+                    listenerService.EventType.DELETE_CHAT_MESSAGE,
+                    { messageId: messageId }
+                );
+            };
+
+            service.changeModStatus = (userName, modStatus) => {
+                listenerService.fireEvent(
+                    listenerService.EventType.CHANGE_USER_MOD_STATUS,
+                    {
+                        userName: userName,
+                        modStatus: modStatus
+                    }
+                );
+            };
+
 
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.
@@ -353,6 +379,20 @@
                     if (settingsService.getRealChatFeed() === true) {
                         if (data.user_avatar == null) {
                             data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
+                        }
+
+                        let streamerName = connectionService.accounts.streamer.username,
+                            botName = connectionService.accounts.bot.username;
+
+                        let isTagged =
+                            data.message.message.some(s => s.type === "tag" &&
+                            (s.username === streamerName || s.username === botName));
+
+                        if (isTagged) {
+                            data.tagged = true;
+                            if (!data.historical) {
+                                soundService.playChatNotification();
+                            }
                         }
 
                         // Push new message to queue.

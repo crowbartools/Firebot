@@ -6,11 +6,10 @@
     const fs = require('fs');
     const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
-    const logger = require('../../lib/errorLogging.js');
 
     angular
         .module('firebotApp')
-        .factory('boardService', function ($http, $q, settingsService, $rootScope, utilityService) {
+        .factory('boardService', function (logger, $http, $q, settingsService, $rootScope, utilityService) {
 
             // in memory board storage
             let _boards = {};
@@ -58,7 +57,6 @@
                             });
                         } else {
                             renderWindow.webContents.send('error', "Well this is weird. The board you tried to delete is already gone. Try restarting the app.");
-                            console.log("This file doesn't exist, cannot delete");
                             resolve();
                         }
                     } catch (err) {
@@ -71,100 +69,129 @@
             // This takes the mixer json and compares it against the Firebot json to remove any items no longer needed.
             function backendCleanup(dbControls) {
                 return new Promise((resolve) => {
+                    logger.info('Backend Cleanup: Checking for differences between mixer and firebot boards.');
 
                     // Check if Firebot settings exist
+                    let mixerSettings, firebotSettings;
                     try {
-
                         // We have saved settings. Time to clean up!
-                        let mixerSettings = dbControls.getData('./mixer');
-                        let firebotSettings = dbControls.getData('./firebot');
+                        mixerSettings = dbControls.getData('./mixer');
+                        firebotSettings = dbControls.getData('./firebot');
+
+                    } catch (err) {
+                        // We don't have any saved settings yet. Resolve this and don't cleanup anything.
+                        logger.error("Failed to check if we have any saved settings", err);
+                        resolve(true);
+                        return;
+                    }
 
 
-                        // Make an array containing all of the buttons and scenes from each json so we can compare.
-                        let mixerButtonArray = [];
-                        let firebotButtonArray = [];
-                        let mixerSceneArray = [];
-                        let firebotSceneArray = [];
 
-                        // Add mixer stuff to mixer arrays for comparison.
-                        for (let scene of mixerSettings) {
-                            // Save Scenes
-                            let sceneID = scene.sceneID;
-                            mixerSceneArray.push(sceneID);
+                    // Make an array containing all of the buttons and scenes from each json so we can compare.
+                    let mixerButtonArray = [];
+                    let firebotButtonArray = [];
+                    let mixerJoysticks = [];
+                    let mixerSceneArray = [];
+                    let firebotSceneArray = [];
 
-                            // Save Buttons
-                            let controls = scene.controls;
-                            for (let control of controls) {
-                                let controlID = control.controlID;
+                    // Add mixer stuff to mixer arrays for comparison.
+                    for (let scene of mixerSettings) {
+                        // Save Scenes
+                        let sceneID = scene.sceneID;
+                        mixerSceneArray.push(sceneID);
+
+                        // Save Buttons
+                        let controls = scene.controls;
+                        for (let control of controls) {
+                            let controlID = control.controlID;
+                            if (control.type === 'joystick') {
+                                mixerJoysticks.push(controlID);
+                            } else {
                                 mixerButtonArray.push(controlID);
                             }
                         }
-
-                        // Add Firebot scenes to firebot array.
-                        for (let scene in firebotSettings.scenes) {
-                            if (firebotSettings.hasOwnProperty(scene)) {
-                                firebotSceneArray.push(scene);
-                            }
-                        }
-
-                        // Add Firebot buttons to firebot array for comparison.
-                        for (let control in firebotSettings.controls) {
-                            if (firebotSettings.controls.hasOwnProperty(control)) {
-                                firebotButtonArray.push(control);
-                            }
-                        }
-
-                        // Filter out all buttons that match. Anything left in the firebotButtonArray no longer exists on the mixer board.
-                        firebotButtonArray = firebotButtonArray.filter(val => !mixerButtonArray.includes(val));
-
-                        // Filter out all scenes that match. Anything left in the firebotScenenArray no longer exists on the mixer board.
-                        firebotSceneArray = firebotSceneArray.filter(val => !mixerSceneArray.includes(val));
-
-                        // Remove buttons that are no longer needed.
-                        // If a scene was deleted from Mixer, the buttons for that scene should be gone as well.
-                        for (let button of firebotButtonArray) {
-                            try {
-                                dbControls.delete('./firebot/controls/' + button);
-                                console.log('Button ' + button + ' is not on the mixer board. Deleting.');
-
-                                // Go through cooldown groups and remove the button if it is listed there.
-                                for (let cooldown in firebotSettings.cooldownGroups) {
-                                    if (firebotSettings.cooldownGroups.hasOwnProperty(cooldown)) {
-                                        let cooldownButtons = dbControls.getData('./firebot/cooldownGroups/' + cooldown + '/buttons');
-                                        let i = cooldownButtons.length;
-                                        while (i--) {
-                                            if (cooldownButtons[i] === button) {
-                                                cooldownButtons.splice(i, 1);
-                                                console.log('Removing ' + button + ' from cooldown group ' + cooldown + '.');
-                                                break;
-                                            }
-                                        }
-
-                                        // Push corrected cooldown array to db.
-                                        dbControls.push('./firebot/cooldownGroups/' + cooldown + '/buttons', cooldownButtons);
-                                    }
-                                }
-                            } catch (err) {
-                                console.log(err);
-                            }
-                        }
-
-                        // Remove scenes that are no longer needed.
-                        for (let scene of firebotSceneArray) {
-                            try {
-                                dbControls.delete('./firebot/scenes/' + scene);
-                                console.log('Scene ' + scene + ' is not on the mixer board. Deleting.');
-                            } catch (err) {
-                                console.log(err);
-                            }
-                        }
-
-                        resolve(true);
-                    } catch (err) {
-                        // We don't have any saved settings yet. Resolve this and don't cleanup anything.
-                        console.log(err);
-                        resolve(true);
                     }
+
+                    // Add Firebot scenes to firebot array.
+                    for (let scene in firebotSettings.scenes) {
+                        if (scene != null) {
+                            firebotSceneArray.push(scene);
+                        }
+                    }
+
+                    // Add Firebot buttons to firebot array for comparison.
+                    for (let control in firebotSettings.controls) {
+                        if (control != null) {
+                            firebotButtonArray.push(control);
+                        }
+                    }
+
+                    // add firebot joystick ids
+                    if (firebotSettings.joysticks) {
+                        let firebotJoysticks = Object.keys(firebotSettings.joysticks);
+
+                        // filter to deleted joysticks
+                        let deletedJoysticks = firebotJoysticks.filter(id => !mixerJoysticks.includes(id));
+
+                        // delete deleted joysticks from file
+                        deletedJoysticks.forEach(joystickId => {
+                            try {
+                                dbControls.delete('./firebot/joysticks/' + joystickId);
+                                logger.info('Joystick ' + joystickId + ' is not on the mixer board. Deleting.');
+
+                            } catch (err) {
+                                logger.error(err);
+                            }
+                        });
+                    }
+
+                    // Filter out all buttons that match. Anything left in the firebotButtonArray no longer exists on the mixer board.
+                    firebotButtonArray = firebotButtonArray.filter(val => !mixerButtonArray.includes(val));
+
+                    // Filter out all scenes that match. Anything left in the firebotScenenArray no longer exists on the mixer board.
+                    firebotSceneArray = firebotSceneArray.filter(val => !mixerSceneArray.includes(val));
+
+                    // Remove buttons that are no longer needed.
+                    // If a scene was deleted from Mixer, the buttons for that scene should be gone as well.
+                    for (let button of firebotButtonArray) {
+                        try {
+                            dbControls.delete('./firebot/controls/' + button);
+                            logger.info('Button ' + button + ' is not on the mixer board. Deleting.');
+
+                            // Go through cooldown groups and remove the button if it is listed there.
+                            for (let cooldown in firebotSettings.cooldownGroups) {
+                                if (firebotSettings.cooldownGroups.hasOwnProperty(cooldown)) {
+                                    let cooldownButtons = dbControls.getData('./firebot/cooldownGroups/' + cooldown + '/buttons');
+                                    let i = cooldownButtons.length;
+                                    while (i--) {
+                                        if (cooldownButtons[i] === button) {
+                                            cooldownButtons.splice(i, 1);
+                                            logger.info('Removing ' + button + ' from cooldown group ' + cooldown + '.');
+                                            break;
+                                        }
+                                    }
+
+                                    // Push corrected cooldown array to db.
+                                    dbControls.push('./firebot/cooldownGroups/' + cooldown + '/buttons', cooldownButtons);
+                                }
+                            }
+                        } catch (err) {
+                            logger.error(err);
+                        }
+                    }
+
+                    // Remove scenes that are no longer needed.
+                    for (let scene of firebotSceneArray) {
+                        try {
+                            dbControls.delete('./firebot/scenes/' + scene);
+                            logger.info('Scene ' + scene + ' is not on the mixer board. Deleting from firebot.');
+                        } catch (err) {
+                            logger.error(err);
+                        }
+                    }
+
+                    logger.info('Backend Cleanup: Completed.');
+                    resolve(true);
                 });
             }
 
@@ -176,25 +203,28 @@
                 const gameUpdated = gameUpdatedInfo;
                 const versionid = versionIdInfo;
 
-                console.log('Backend builder is pushing settings to ' + gameName + ' (' + versionid + ').');
+                logger.info('Backend builder is pushing settings to ' + gameName + ' (' + versionid + ').');
 
                 // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
                 settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameName, gameUpdated);
 
                 // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
                 if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
-                    console.log('Converting control files to new versionid format.');
-                    let oldPath = dataAccess.getPathInUserData("/user-settings/controls/" + gameName + '.json');
-                    let newPath = dataAccess.getPathInUserData("/user-settings/controls/" + versionid + '.json');
+                    if (!dataAccess.userDataPathExistsSync('/user-settings/controls/' + versionid + '.json')) {
+                        logger.info('Converting control files to new versionid format.');
+                        let oldPath = dataAccess.getPathInUserData("/user-settings/controls/" + gameName + '.json');
+                        let newPath = dataAccess.getPathInUserData("/user-settings/controls/" + versionid + '.json');
 
-                    try {
-                        fs.renameSync(oldPath, newPath);
-                        logger.log('Converted control file ' + gameName + '.json to version id format.');
-                    } catch (err) {
-                        console.log(err);
-                        logger.log('Error converting control file ' + gameName + '.json to version id format.');
-                        utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere? If so, close it down and restart Firebot.");
-                        return;
+                        try {
+                            fs.renameSync(oldPath, newPath);
+                            logger.info('Converted control file ' + gameName + '.json to version id format.');
+                        } catch (err) {
+                            logger.error(err);
+                            utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere? If so, close it down and restart Firebot.");
+                            return;
+                        }
+                    } else {
+                        logger.info("We detected a control file still using the board name, but it looks like it has already been converted so we will ignore it.");
                     }
                 }
 
@@ -272,7 +302,7 @@
                                     }
 
                                 } catch (err) {
-                                    console.log('Problem getting button info to save to json.');
+                                    logger.error('Problem getting button info to save to json.', err);
                                 }
                             }
                             // Setup scenes in Firebot json if they haven't been made yet.
@@ -313,29 +343,27 @@
                                 if (boardUpdated != null) {
                                     let boardExists = dataAccess.userDataPathExistsSync("/user-settings/controls/" + id + ".json");
                                     if (!boardExists) {
-                                        console.log('Board was in settings, but the controls file is missing. Rebuilding.');
+                                        logger.info('Board was in settings, but the controls file is missing. Rebuilding.');
                                         return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                     }
                                 }
 
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
                                 if (boardUpdated !== gameUpdated) {
-                                    console.log('Board updated. Rebuilding.');
+                                    logger.info('Board updated. Rebuilding.');
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                                 } // Date matches, no need to rebuild.
 
                             } catch (err) {
-                                console.log(err);
+                                logger.warning(err);
                                 // This board doesn't exist, recreate the board to get it into knownBoards
-                                console.log(`Error occured, not able to find boardid ${id} in settings, build it`);
+                                logger.log(`Error occured, not able to find boardid ${id} in settings, build it`);
                                 return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
                             }
                         } catch (err) {
-                            console.log('There was a problem loading this board!');
-                            console.log(err);
+                            logger.warning('There was a problem loading this board!');
+                            logger.error(err);
                         }
-                        // return backendBuilder(gameName, gameJson, gameUpdated, id);
-
                     });
             }
 
@@ -376,10 +404,7 @@
                             _boards[versionId] = board;
                             addedBoards.push(board);
                         } catch (err) {
-                            console.log('Board ' + id + ' errored out while trying to load.');
-                            console.log(err);
-                            logger.log('Board ' + id + ' errored out while trying to load.');
-                            logger.log(err);
+                            logger.error('Board ' + id + ' errored out while trying to load.' + err);
 
                             // Remove the corrupted board from settings so we don't get stuck on next restart.
                             loadBoardById(id);

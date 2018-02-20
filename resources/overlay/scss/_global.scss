@@ -41,7 +41,7 @@ canvas{
 }
 
 
-/** Show text overlay **/
+/** Show event overlay **/
 .showEventsOverlay{
 	display:inline-block;
 	text-overflow: ellipsis;
@@ -61,4 +61,12 @@ canvas{
 			box-sizing: border-box
 		}
 	}
+}
+
+// show text container
+.text-container {
+	display: flex;
+    justify-content: center;
+	align-items: center;
+	color: black;
 }

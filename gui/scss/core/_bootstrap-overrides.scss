@@ -138,6 +138,24 @@
     color: $content-text-color; 
 }
 
+.popover {
+    border: 2px solid $dropdown-menu-border;
+    background-color: $dropdown-menu-bg; 
+    border-radius: 2px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.35);
+}
+
+.popover.top > .arrow {
+    border-top-color: transparent;
+    &:after {
+        border-top-color: $dropdown-menu-border;
+    }
+}
+
+.popover-content {
+    padding: 0;
+}
+
 .dropdown-menu {
     border-radius: 2px;
     border: 2px solid $dropdown-menu-border;

@@ -10,7 +10,7 @@
 
     angular
         .module('firebotApp')
-        .factory('eventsService', function () {
+        .factory('eventsService', function (logger) {
             let service = {};
             let events = [];
 
@@ -77,7 +77,7 @@
                         events = rawEvents;
                     }
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
             };
 

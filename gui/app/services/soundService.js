@@ -7,7 +7,7 @@
 
     angular
         .module('firebotApp')
-        .factory('soundService', function (settingsService, listenerService, $q, websocketService) {
+        .factory('soundService', function (logger, settingsService, listenerService, $q, websocketService) {
             let service = {};
 
             // Connection Sounds
@@ -22,8 +22,55 @@
                 }
             };
 
+            service.notificationSoundOptions = [
+                {
+                    name: "None",
+                    path: ""
+                },
+                {
+                    name: "Computer Chime",
+                    path: "../sounds/alerts/computer-chime.wav"
+                },
+                {
+                    name: "Computer Chirp",
+                    path: "../sounds/alerts/computer-chirp.wav"
+                },
+                {
+                    name: "Piano",
+                    path: "../sounds/alerts/piano.wav"
+                },
+                {
+                    name: "Ping",
+                    path: "../sounds/alerts/ping.wav"
+                },
+                {
+                    name: "Doorbell",
+                    path: "../sounds/alerts/doorbell.wav"
+                },
+                {
+                    name: "Custom",
+                    path: ""
+                }
+            ];
 
-            service.playSound = function(path, volume, outputDevice) {
+            service.playChatNotification = function() {
+                let selectedSound = settingsService.getTaggedNotificationSound();
+
+                if (selectedSound.name === "None") return;
+
+                if (selectedSound.name !== "Custom") {
+                    selectedSound = service.notificationSoundOptions.find(n => n.name === selectedSound.name);
+                }
+
+                let volume = (settingsService.getTaggedNotificationVolume() / 100) * 10;
+                logger.debug("noti volume: " + volume);
+                if (selectedSound.path != null && selectedSound.path !== "") {
+                    service.playSound(selectedSound.path, volume);
+                }
+            };
+
+
+            service.playSound = function(path, volume, outputDevice = settingsService.getAudioOutputDevice()) {
 
                 $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
                     let filteredDevice = deviceList.filter(d => d.label === outputDevice.label || d.deviceId === outputDevice.deviceId);

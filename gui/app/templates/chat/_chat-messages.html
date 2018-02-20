@@ -1,13 +1,10 @@
-<div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
-    <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
-</div>
 <div class="chat-tab-content">
-    <div class="viewer-list-column" ng-hide="{{getChatViewerListSetting() === false}}">
+    <div class="viewer-list-column" ng-show="getChatViewerListSetting()">
         <div class="viewer-list-header">
             <span>
                 VIEWERS
             </span>
-            <span ng-hide="{{getChatViewCountSetting() === false}}">
+            <span ng-show="getChatViewCountSetting()">
                 <i class="fas fa-eye" style="font-size:12px"></i>
                 <b>{{currentViewers}}</b>
             </span>
@@ -20,28 +17,47 @@
     </div>
     <div class="chat-window-column">
         <div class="chat-window" scroll-glue>
-            <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message)}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
-                <div class="chat-user-avatar-wrapper">
-                    <span>
-                        <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
-                    </span>                 
-                </div>
-                <div style="padding-left: 10px">
-                    <div class="chat-username">
-                        <b>{{message.user_name}}</b>
-                        <span class="chatSubIcon" ng-if="isSubscriber(message)">
-                            <img ng-src="{{getSubIcon(message)}}">
-                        </span>
-                        <span ng-hide="message.historical" class="muted chat-timestamp">
-                            {{getTimeStamp(message)}}
-                        </span>
+
+            <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
+                <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
+            </div>
+            <div class="chat-window-message-wrapper">
+                <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message),isTagged: message.tagged}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
+                    <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)">
+                        <span>
+                            <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
+                        </span>                 
                     </div>
-                    <div class="chatContent" style="font-size: 1.17em;" ng-bind-html="getMessageContent(message)"></div>
-                    <div ng-if="isWhisper(message)" class="whisperData">
-                        {{getWhisperData(message)}}
-                    </div>
-                    <div class="chatEventInfo">
-                        {{message.eventInfo}}
+                    <div style="padding-left: 10px">
+                        <div class="chat-username" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, msgId)">
+                            <b>{{message.user_name}}</b>
+                            <span class="chatSubIcon" ng-if="isSubscriber(message)">
+                                <img ng-src="{{getSubIcon(message)}}">
+                            </span>
+                            <span ng-hide="message.historical" class="muted chat-timestamp">
+                                {{getTimeStamp(message)}}
+                            </span>
+                        </div>
+                        <div class="chatContent" style="font-size: 1.17em;">
+                            <span ng-repeat="segment in message.message.message">
+                                <span ng-if="segment.type === 'text'">
+                                    {{segment.data}}
+                                </span>
+                                <span ng-if="segment.type === 'emoticon'" class="chatEmoticon" ng-style="segment.emoticonStyles"></span>
+                                <span ng-if="segment.type === 'link'">
+                                    <a class="clickable-link" ng-click="openLinkExternally(segment.url)">{{segment.url}}</a>
+                                </span>
+                                <span ng-if="segment.type === 'tag'">
+                                    {{segment.text}}
+                                </span>
+                            </span>
+                        </div>
+                        <div ng-if="isWhisper(message)" class="whisperData">
+                            {{getWhisperData(message)}}
+                        </div>
+                        <div class="chatEventInfo">
+                            {{message.eventInfo}}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -59,13 +75,89 @@
                     </ul>
                 </div>
                 
-                <input type="text" 
+                <input 
+                    id="chatMessageInput"
+                    type="text" 
                     placeholder="Message the stream"
                     class="text-input-field"
                     ng-maxlength="360"
                     ng-model="chatMessage"
-                    ng-keyup="$event.keyCode == 13 && submitChat()">
+                    ng-change="onMessageFieldUpdate()"
+                    ng-keyup="onMessageFieldKeypress($event)"
+                    ng-disabled="!chatFeedIsEnabled()"                    
+                    uib-typeahead="command for command in commands | filter:$viewValue | limitTo:8">
+            </div>
+            <div class="settings-btn-wrapper">
+                <span class="settings-btn" 
+                    uib-popover-template="'userActionsPopover.html'" 
+                    popover-append-to-body="true" 
+                    popover-placement="auto top-right" 
+                    popover-class="settings-popover" 
+                    popover-trigger="'outsideClick'">
+                    <i class="fas fa-cog"></i>
+                </span>
             </div>
         </div>
     </div>
 </div>
+
+<script type="text/ng-template" id="userActionsPopover.html">
+    <div style="width:100%;height:100%; padding: 10px;font-family: 'Open Sans';">
+        <h3>Chat Settings</h3>
+        <div style="padding: 0 10px">
+            <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
+                <span>Chat Feed Enabled</span>
+                <span>
+                    <input class="tgl tgl-light" id="cb4" type="checkbox" 
+                        ng-checked="settings.chatFeedEnabled()" 
+                        ng-click="settings.setChatFeed(!settings.chatFeedEnabled())"/>
+                    <label class="tgl-btn" for="cb4"></label>
+                </span>
+            </div>
+            <div style="display: flex;align-items: center;justify-content: space-between;">
+                <span>Viewer List</span>
+                <span>
+                    <input class="tgl tgl-light" id="cb5" type="checkbox"
+                        ng-checked="settings.showViewerList()" 
+                        ng-click="settings.setChatViewerList(!settings.showViewerList())"/>
+                    <label class="tgl-btn" for="cb5"></label>
+                </span>
+            </div>
+            <div style="display: flex;align-items: center;justify-content: space-between; padding-left: 10px;">
+                <span>Viewer Count</span>
+                <span>
+                    <input class="tgl tgl-light" id="cb6" type="checkbox"
+                        ng-checked="settings.showViewerCount()" 
+                        ng-click="settings.setChatViewCount(!settings.showViewerCount())"
+                        ng-disabled="!settings.showViewerList()"/>
+                    <label class="tgl-btn" for="cb6"></label>
+                </span>
+            </div>
+            <div style="padding-top: 10px;">
+                <div>Notification Sound</div>
+                <span class="btn-group" uib-dropdown style="margin-bottom: 5px;">
+                    <button type="button" class="btn btn-primary" uib-dropdown-toggle>
+                        {{$parent.selectedNotificationSound.name}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                        <li role="menuitem" ng-repeat="n in $parent.notificationOptions">
+                            <a href ng-click="$parent.selectNotification(n)">{{n.name}}</a>
+                        </li>
+                    </ul>
+                </span>
+                <span class="clickable" ng-click="$parent.playNotification()" style="color: #1f849e; font-size: 18px; padding-left: 5px;">
+                    <i class="fas fa-play-circle"></i>
+                </span>
+                <file-chooser ng-show="$parent.selectedNotificationSound.name === 'Custom'" 
+                    model="$parent.selectedNotificationSound.path"
+                    options="{title: 'Select Sound File', filters: [{name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']}]}" 
+                    on-update="$parent.setCustomNotiPath(filepath)"></file-chooser>
+                <div class="volume-slider-wrapper" ng-hide="$parent.selectedNotificationSound.name === 'None'">
+                    <i class="fal fa-volume-down volume-low" style="font-size:25px; padding-bottom:5px"></i>
+                    <rzslider rz-slider-model="$parent.notificationVolume" rz-slider-options="$parent.sliderOptions"></rzslider>
+                    <i class="fal fa-volume-up volume-high" style="font-size:25px; padding-bottom:5px"></i>
+                </div>                      
+            </div>
+        </div>               
+    </div>
+</script>

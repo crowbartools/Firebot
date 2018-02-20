@@ -9,7 +9,7 @@
 
     angular
         .module('firebotApp')
-        .factory('websocketService', function (listenerService, settingsService, $interval, $rootScope) {
+        .factory('websocketService', function (logger, listenerService, settingsService, $timeout, $interval, $rootScope) {
             let service = {};
 
             // Setup the WebSocketServer with the saved port.
@@ -163,6 +163,14 @@
                 service.broadcast(broadcastdata);
             }
 
+            // Shows Text
+            // This function takes info given from the main process and then sends a request to the overlay to render it.
+            function showText(data) {
+                data.event = "text";
+                logger.debug("Recieved show text effect from backend, sending to overlay");
+                service.broadcast(data);
+            }
+
             // Shows HTML
             // This function takes info given from the main process and then sends a request to the overlay to render it.
             function showHtml(data) {
@@ -176,19 +184,34 @@
             service.broadcast = function(data) {
                 data = JSON.stringify(data);
                 wss.clients.forEach(function each(client) {
-                    client.send(data);
+                    if (client.readyState === 1) {
+                        client.send(data, (err) => {
+                            if (err) {
+                                logger.error(err);
+                            }
+                        });
+                    }
                 });
             };
 
             service.hasClientsConnected = false;
+
+            wss.on('connection', function connection() {
+                service.hasClientsConnected = true;
+                $timeout(() => {
+                    $rootScope.$broadcast("connection:update", { type: "overlay", status: "connected" });
+                });
+            });
+
             $interval(() => {
                 let prevValue = service.hasClientsConnected === true;
-                service.hasClientsConnected = wss.clients.size > 0;
-                if (service.hasClientsConnected !== prevValue) {
+                let hasConnectedClients = wss.clients.size > 0;
+                if (hasConnectedClients !== prevValue) {
+                    service.hasClientsConnected = hasConnectedClients;
                     let status = service.hasClientsConnected ? "connected" : "warning";
                     $rootScope.$broadcast("connection:update", { type: "overlay", status: status });
                 }
-            }, 1250);
+            }, 1500);
 
             // Watches for an event from main process
             listenerService.registerListener(
@@ -203,28 +226,30 @@
                     showVideo(data);
                 });
 
-            // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_IMAGE },
                 (data) => {
                     showImage(data);
                 });
 
-            // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.API_BUTTON },
                 (data) => {
                     showImage(data);
                 });
 
-            // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_HTML },
                 (data) => {
                     showHtml(data);
                 });
 
-            // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.SHOW_TEXT },
+                (data) => {
+                    showText(data);
+                });
+
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CELEBREATE },
                 (data) => {

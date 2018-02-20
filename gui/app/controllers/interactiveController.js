@@ -212,6 +212,20 @@
                             $scope.control.active = true;
                         }
 
+                        // Temporary: Check group permissions radio button if control permissions are an array.
+                        // This can be removed after a few releases.
+                        if ($scope.control.permissions instanceof Array) {
+                            $scope.control.permissionType = "Group";
+                        }
+
+                        // Clear permissions array.
+                        // When a person clicks "individual" for permissions we want to clear out the array.
+                        $scope.clearPermissions = function() {
+                            if ($scope.control.permissions instanceof Array) {
+                                $scope.control.permissions = "";
+                            }
+                        };
+
                         $scope.modalId = modalId;
                         utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
                             let modalElement = $("." + modalId).children();

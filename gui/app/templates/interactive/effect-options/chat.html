@@ -19,7 +19,7 @@
     </div>   
 </eos-container>
 
-<eos-collapsable-panel show-label="Show Message Variables" hide-label="Hide Message Variables">
+<eos-collapsable-panel show-label="Show Text Variables" hide-label="Hide Text Variables">
     <div>
         <h4>General</h4>
         <ul>
@@ -27,7 +27,7 @@
             <li><b>$(time)</b> - The current time. Use $(time24) for 24 hour time.</li>
             <li><b>$(uptime)</b> - How long the stream has been broadcasting</li>
             <li><b>$(game)</b> - The game you are currenly or last played</li>
-            <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$target])</li>
+            <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$(target)])</li>
         </ul>
         <h4>Interactive & Chat</h4>
         <ul>

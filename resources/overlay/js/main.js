@@ -31,15 +31,16 @@ function mixerSocketConnect(){
 			var event = data.event;
 			
 			var olInstance = params.get("instance");
-			console.log(`Instance: ${olInstance}, Event Instance: ${data.overlayInstance}`)
+			console.log(`Recieved Event: ${event}`);
+			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.overlayInstance}`)
 			if(olInstance != null && olInstance != "") {
 				if(data.overlayInstance != olInstance) {
-					console.log("Event detected but it's for a different instance. Ignoring.")
+					console.log("Event is for a different instance. Ignoring.")
 					return;
 				}
 			} else {
 				if(data.overlayInstance != null && data.overlayInstance != "") {
-					console.log("Event detected but it's for a specific instance. Ignoring.")
+					console.log("Event i's for a specific instance. Ignoring.")
 					return;
 				}
 			}
@@ -60,6 +61,9 @@ function mixerSocketConnect(){
 					break;
 				case "sound":
 					playSound(data);
+					break;
+				case "text":
+					showText(data);
 					break;
 				case "showEvents":
 					showEvents(data);

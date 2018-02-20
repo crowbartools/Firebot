@@ -33,30 +33,53 @@
       <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="control.threshold">
     </div>
 
-    <div class="input-group settings-permission">
-      <div class="input-group-addon command-permission-label" id="basic-addon3">Restrict To</div>
-      <div class="command-permissions">
-          <label ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
-              <input type="checkbox" ng-click="groupArray(control.permissions, group)" ng-checked="groupCheckboxer(control.permissions, group)"  aria-label="..." >
-              <div class="control__indicator"></div>
-          </label>
+    <div class="settings-restrict" style="padding-bottom:1em">
+      <div class="settings-title">
+          <h3>Permissions</h3>
       </div>
-    </div>
-
-     <div class="controls-fb-inline">
-        <label class="control-fb control--checkbox">Active Button
-            <input type="checkbox" ng-model="control.active" aria-label="..." checked>
+      <div class="permission-type controls-fb-inline">
+        <label class="control-fb control--radio">Group
+            <input type="radio" ng-model="control.permissionType" value="Group"/>
             <div class="control__indicator"></div>
         </label>
-        <label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone clicks this button'"></tooltip>
-          <input type="checkbox" ng-model="control.chatFeedAlert" aria-label="...">
+        <label class="control-fb control--radio">Individual
+          <input type="radio" ng-model="control.permissionType" value="Individual" ng-click="clearPermissions()"/>
           <div class="control__indicator"></div>
         </label>
-        <label class="control-fb control--checkbox">Skip Logging
-          <input type="checkbox" ng-model="control.skipLog" aria-label="...">
-          <div class="control__indicator"></div>
+      </div>
+    </div>
+    <div class="settings-permission" style="padding-bottom:1em">
+      <div class=" viewer-group-list" ng-if="control.permissionType === 'Group'">
+        <label ng-if="control.permissionType === 'Group'" ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
+            <input type="checkbox" ng-click="groupArray(control.permissions, group)" ng-checked="groupCheckboxer(control.permissions, group)"  aria-label="..." >
+            <div class="control__indicator"></div>
         </label>
-     </div>
+      </div>
+      <div ng-if="control.permissionType === 'Individual'" class="input-group">
+        <span class="input-group-addon" id="basic-addon3">Username</span>
+        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="control.permissions">        
+      </div>
+    </div>
+    <div class="other-settings" style="padding-bottom:1em">
+        <div class="settings-title">
+            <h3>Other</h3>
+        </div>
+        <div class="controls-fb-inline">
+          <label class="control-fb control--checkbox">Active Button
+              <input type="checkbox" ng-model="control.active" aria-label="..." checked>
+              <div class="control__indicator"></div>
+          </label>
+          <label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone clicks this button'"></tooltip>
+            <input type="checkbox" ng-model="control.chatFeedAlert" aria-label="...">
+            <div class="control__indicator"></div>
+          </label>
+          <label class="control-fb control--checkbox">Skip Logging
+            <input type="checkbox" ng-model="control.skipLog" aria-label="...">
+            <div class="control__indicator"></div>
+          </label>
+        </div>
+    </div>
+
    </div>
    <div class="function-button-settings">
 

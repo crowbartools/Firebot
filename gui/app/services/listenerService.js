@@ -30,6 +30,7 @@
                 showImage: {},
                 showVideo: {},
                 showHtml: {},
+                showText: {},
                 celebrate: {},
                 info: {},
                 backupComplete: {},
@@ -61,6 +62,7 @@
                 PLAY_SOUND: "playSound",
                 SHOW_IMAGE: "showImage",
                 SHOW_VIDEO: "showVideo",
+                SHOW_TEXT: "showText",
                 SHOW_HTML: "showHtml",
                 CELEBREATE: "celebrate",
                 INFO: "info",
@@ -170,7 +172,9 @@
                 SPARK_EXEMPT_UPDATED: "sparkExemptUpdated",
                 OPEN_BACKUP: "openBackupFolder",
                 INITIATE_BACKUP: "startBackup",
-                RESTART_APP: "restartApp"
+                RESTART_APP: "restartApp",
+                DELETE_CHAT_MESSAGE: "deleteChatMessage",
+                CHANGE_USER_MOD_STATUS: "changeUserModStatus"
             };
             service.EventType = EventType;
 
@@ -179,8 +183,8 @@
             };
 
             /**
-    * File path event listeners
-    */
+            * File path event listeners
+            */
             ipcRenderer.on('gotSoundFilePath', function (event, data) {
                 parseFilePathEvent(data);
             });
@@ -356,7 +360,16 @@
             });
 
             /**
-            * Show Text listener
+            * Show text event listener
+            */
+            ipcRenderer.on('showtext', function (event, data) {
+                _.forEach(registeredListeners.showText, (listener) => {
+                    runListener(listener, data);
+                });
+            });
+
+            /**
+            * Show Events listener
             */
             ipcRenderer.on('showEvents', function (event, data) {
                 _.forEach(registeredListeners.showEvents, (listener) => {

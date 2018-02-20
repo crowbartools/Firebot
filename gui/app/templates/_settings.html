@@ -10,7 +10,7 @@
             <div class="setting col-sm-6">
               <div class="setting-heading">Setup Wizard</div>
               <div class="setting-description">Want to run the setup wizard again? Click the button below.</div>
-              <button class="btn btn-default" ng-click="showSetupWizard()">Open Setup Wizard</button>
+              <button class="btn btn-default" ng-click="showSetupWizard(true)">Open Setup Wizard</button>
             </div>
             <div class="setting col-sm-6">
               <div class="setting-heading">App Sounds</div>
@@ -104,18 +104,6 @@
               </div>
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">Custom Script Buttons</div>
-              <div class="setting-description">Firebot supports a button effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
-              <div class="dropdown options-customscript-dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-customscript">
-                  <li><a href ng-click="settings.setCustomScriptsEnabled(true)">On</a></li>
-                  <li><a href ng-click="settings.setCustomScriptsEnabled(false)">Off</a></li>
-                </ul>
-              </div>
             </div>
           </div>
         </uib-tab>
@@ -246,23 +234,49 @@
                 Most users won't need to change settings in this tab. Only change them if you understand what you are doing.
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Instances</div>
-              <div class="setting-description">
-                Enable or disable the ability to use multiple overlay instances in your broadcasting software. When on, you will be able to pick which instance you want a video or image effect to show in. This is useful if you use greenscreen footage that you need to chroma key but don't want to affect your other videos and images. 
-              </div>
-              <div class="dropdown options-customscript-dropdown"style="display: inline-block">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.useOverlayInstances() ? 'On' : 'Off'}}</span>
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-customscript">
-                  <li><a href ng-click="settings.setUseOverlayInstances(true)">On</a></li>
-                  <li><a href ng-click="settings.setUseOverlayInstances(false)">Off</a></li>
-                </ul>
-              </div>
-              <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
+                <div class="setting-heading">Debug Mode</div>
+                <div class="setting-description">
+                  When Debug Mode is enbabled, Firebot will log a lot more information to it's log files. This is often useful when troubleshooting an obscure problem. <b>Firebot must be restarted for changes to this setting to take effect.</b>
+                </div>
+                <button class="btn btn-default" ng-click="settings.setDebugModeEnabled(!settings.debugModeEnabled())">{{settings.debugModeEnabled() ? 'Disable Debug Mode' : 'Enable Debug Mode' }} </button>        
+            </div>
+            <div class="setting col-sm-6">
+
+                <div class="setting-heading">Custom Script Effect</div>
+                <div class="setting-description">Firebot supports an effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
+                <div class="dropdown options-customscript-dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                    <li><a href ng-click="settings.setCustomScriptsEnabled(true)">On</a></li>
+                    <li><a href ng-click="settings.setCustomScriptsEnabled(false)">Off</a></li>
+                  </ul>
+                </div>
+
+            </div>
+          </div>
+          <div class="row" style="margin-top:15px;">
+            <div class="setting col-sm-6">
+                <div class="setting-heading">Overlay Instances</div>
+                <div class="setting-description">
+                  Enable or disable the ability to use multiple overlay instances in your broadcasting software. When on, you will be able to pick which instance you want a video or image effect to show in. This is useful if you use greenscreen footage that you need to chroma key but don't want to affect your other videos and images. 
+                </div>
+                <div class="dropdown options-customscript-dropdown"style="display: inline-block">
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{settings.useOverlayInstances() ? 'On' : 'Off'}}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                    <li><a href ng-click="settings.setUseOverlayInstances(true)">On</a></li>
+                    <li><a href ng-click="settings.setUseOverlayInstances(false)">Off</a></li>
+                  </ul>
+                </div>
+                <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
             </div>
             <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
+                
               <div class="setting-heading">Clear Custom Script Cache</div>
               <div class="setting-description">
                 Whether or not you want the cached version of a custom script to be cleared on every button press. 
@@ -278,6 +292,7 @@
                   <li><a href ng-click="settings.setClearCustomScriptCache(false)">Off</a></li>
                 </ul>
               </div>
+
             </div>
           </div>
           <div class="row" style="margin-top: 15px">

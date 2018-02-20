@@ -130,7 +130,6 @@
                 ];
 
                 ctrl.$onInit = function() {
-                    console.log(ctrl.hideRandom);
                     if (ctrl.effect.position == null) {
                         ctrl.effect.position = "Middle";
                     }

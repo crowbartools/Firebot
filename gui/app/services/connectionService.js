@@ -10,7 +10,7 @@
 
     angular
         .module('firebotApp')
-        .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q, $rootScope, boardService) {
+        .factory('connectionService', function (listenerService, settingsService, soundService, utilityService, $q, $rootScope, boardService, logger) {
             let service = {};
 
             let ListenerType = listenerService.ListenerType;
@@ -126,14 +126,14 @@
                     .then(token => {
                         if (token.name != null && token.name === "ValidationError") {
                             utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
-                            console.log(token);
+                            logger.error("There was an issue logging into Mixer. Error: " + token.details[0].message, token);
                         } else {
                             userInfo(type, token.access_token, token.refresh_token);
                         }
                     }, err => {
                         //error requesting access
                         $rootScope.showSpinner = false;
-                        console.log(err);
+                        logger.error("Error requesting access for oauth token. " + err);
                         utilityService.showErrorModal('Error requesting access for oauth token.');
                     });
             }
@@ -143,7 +143,7 @@
             function refreshToken(connectionType) {
                 let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
 
-                console.log('Trying to get refresh tokens...');
+                logger.info('Trying to get refresh tokens...');
 
                 // Refresh streamer token if the streamer is logged in.
                 try {
@@ -152,7 +152,7 @@
                     let oauthProvider = electronOauth2(authInfo, authWindowParams);
                     oauthProvider.refreshToken(refresh)
                         .then(token => {
-                            console.log('Got refresh token!');
+                            logger.info('Got refresh token!');
 
                             // Success!
                             let accessToken = token.access_token;
@@ -164,8 +164,7 @@
                                 dbAuth.push('./streamer/accessToken', accessToken);
                                 dbAuth.push('./streamer/refreshToken', refreshToken);
                             } else {
-                                console.log('something went wrong with streamer refresh token.');
-                                console.log(token);
+                                logger.error('Something went wrong with streamer refresh token.', token);
 
                                 // Set connecting to false and log the streamer out because we have oauth issues.
                                 service.waitingForChatStatusChange = false;
@@ -190,7 +189,7 @@
                                         dbAuth.push('./bot/accessToken', accessToken);
                                         dbAuth.push('./bot/refreshToken', refreshToken);
                                     } else {
-                                        console.log('something went wrong with bot refresh token.');
+                                        logger.error('Something went wrong with bot refresh token.', token);
                                         utilityService.showErrorModal('There was an error authenticating your bot account. Please log in again.');
 
                                         // Set connecting to false and log the streamer out because we have oauth issues.
@@ -212,7 +211,7 @@
 
                                 }, err => {
                                     // There was an error getting the bot token.
-                                    console.log(err);
+                                    logger.error(err);
                                     utilityService.showErrorModal('There was an error authenticating your bot account. Please log in again.');
 
                                     // Set connecting to false and log the streamer out because we have oauth issues.
@@ -223,7 +222,7 @@
                                     return;
                                 });
                             } catch (err) {
-                                console.log('No bot logged in. Skipping refresh token.', err);
+                                logger.debug('No bot logged in. Skipping refresh token.');
 
                                 // We have the streamer token, but there is no bot logged in. So... start up the login process.
                                 if (connectionType === "interactive") {
@@ -238,20 +237,20 @@
                         },
                         (err) => {
                             //error getting streamer refresh token
-                            console.log(err);
+                            logger.error(err);
 
                             // Set connecting to false and log the streamer out because we have oauth issues.
                             service.waitingForChatStatusChange = false;
                             logout('streamer');
 
-                            console.log(err);
                             utilityService.showErrorModal('There was an error authenticating your streamer account. Please log in again.');
                             return;
                         });
                 } catch (err) {
                     // The streamer isn't logged in... stop everything.
                     service.waitingForChatStatusChange = false;
-                    console.log('No streamer logged in. Skipping refresh token.', err);
+                    service.isConnectingAll = false;
+                    logger.warn('No streamer logged in. Skipping refresh token.');
                     utilityService.showErrorModal("You need to log into the app before trying to connect to Mixer.");
                     return;
                 }
@@ -307,7 +306,7 @@
                         }
                     }
                 } catch (error) {
-                    console.log('No streamer logged into the app.');
+                    logger.warn('No streamer logged into the app.');
                 }
                 // Get bot info
                 try {
@@ -328,7 +327,7 @@
                         }
                     }
                 } catch (error) {
-                    console.log('No bot logged into the app.');
+                    logger.warn('No bot logged into the app.');
                 }
             };
 

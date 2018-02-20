@@ -13,7 +13,7 @@
     angular
         .module('firebotApp')
         .controller('settingsController', function($scope, $timeout, $q, settingsService,
-            utilityService, listenerService) {
+            utilityService, listenerService, logger) {
 
             $scope.settings = settingsService;
 
@@ -170,11 +170,12 @@
                             let destination = dataAccess.getPathInUserData("/user-settings");
                             ncp(source, destination, function (err) {
                                 if (err) {
-                                    console.log("Failed to copy 'user-settings'!");
+                                    logger.error("Failed to copy 'user-settings'!");
+                                    logger.error(err);
                                     $scope.restoreHasError = true;
                                     $scope.errorMessage = "The restore failed when trying to copy data.";
                                 } else {
-                                    console.log('Copied "user-settings" to user data.');
+                                    logger.info('Copied "user-settings" to user data.');
                                     reloadEverything();
                                 }
                             });
@@ -187,7 +188,7 @@
                                 .pipe(
                                     unzipper.Extract({ path: dataAccess.getPathInTmpDir("/restore") }) //eslint-disable-line new-cap
                                         .on('close', () => {
-                                            console.log("extracted!");
+                                            logger.info("extracted!");
                                             copyFilesOver();
                                         }));
 

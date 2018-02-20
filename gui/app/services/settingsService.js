@@ -8,7 +8,7 @@
 
     angular
         .module('firebotApp')
-        .factory('settingsService', function (utilityService) {
+        .factory('settingsService', function (utilityService, logger) {
             let service = {};
 
             let settingsCache = {};
@@ -59,7 +59,7 @@
                 try {
                     deleteDataAtPath('/boards/' + boardId);
                 } catch (err) {
-                    console.log(err);
+                    logger.info(err);
                 }
             };
 
@@ -70,7 +70,7 @@
                 try {
                     lastUpdatedDatetime = getSettingsFile().getData(`/boards/${id}/lastUpdated`);
                 } catch (err) {
-                    console.log("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first");
+                    logger.info("We encountered an error, most likely there are no boards in file so we need to build the boards and save them first", err);
                 }
                 return lastUpdatedDatetime;
             };
@@ -90,7 +90,7 @@
                 try {
                     boardId = getSettingsFile().getData('/interactive/lastBoardId');
                 } catch (err) {
-                    console.log(err);
+                    logger.info(err);
                 }
                 return boardId;
             }
@@ -187,13 +187,17 @@
                 return "Off";
             };
 
-            service.setChatFeed = function(chatFeed) {
-                pushDataToFile('/settings/chatFeed', chatFeed === true);
-            };
-
             // Used for the app itself.
             service.getRealChatFeed = function() {
                 return getDataFromFile('/settings/chatFeed');
+            };
+
+            service.chatFeedEnabled = function() {
+                return getDataFromFile('/settings/chatFeed');
+            };
+
+            service.setChatFeed = function(chatFeed) {
+                pushDataToFile('/settings/chatFeed', chatFeed === true);
             };
 
             // Used for settings menu.
@@ -209,6 +213,10 @@
                 pushDataToFile('/settings/chatViewCount', chatViewCount === true);
             };
 
+            service.showViewerCount = function() {
+                return getDataFromFile('/settings/chatViewCount');
+            };
+
             // Used for settings menu.
             service.getChatViewerList = function() {
                 let chatViewerList = getDataFromFile('/settings/chatViewerList');
@@ -216,6 +224,10 @@
                     return "On";
                 }
                 return "Off";
+            };
+
+            service.showViewerList = function() {
+                return getDataFromFile('/settings/chatViewerList');
             };
 
             service.setChatViewerList = function(chatViewerList) {
@@ -344,7 +356,7 @@
                 // Overwrite the 'port.js' file in the overlay settings folder with the new port
                 fs.writeFile(path, `window.WEBSOCKET_PORT = ${port}`,
                     'utf8', () => {
-                        console.log(`Set overlay port to: ${port}`);
+                        logger.info(`Set overlay port to: ${port}`);
                     });
             };
 
@@ -453,6 +465,33 @@
 
             service.setSidebarControlledServices = function(services) {
                 pushDataToFile('/settings/sidebarControlledServices', services);
+            };
+
+            service.getTaggedNotificationSound = function() {
+                let sound = getDataFromFile('/settings/chat/tagged/sound');
+                return sound != null ? sound : { name: "None" };
+            };
+
+            service.setTaggedNotificationSound = function(sound) {
+                pushDataToFile('/settings/chat/tagged/sound', sound);
+            };
+
+            service.getTaggedNotificationVolume = function() {
+                let volume = getDataFromFile('/settings/chat/tagged/volume');
+                return volume != null ? volume : 5;
+            };
+
+            service.setTaggedNotificationVolume = function(volume) {
+                pushDataToFile('/settings/chat/tagged/volume', volume);
+            };
+
+            service.debugModeEnabled = function() {
+                let enabled = getDataFromFile('/settings/debugMode');
+                return enabled != null ? enabled : false;
+            };
+
+            service.setDebugModeEnabled = function(enabled) {
+                pushDataToFile('/settings/debugMode', enabled === true);
             };
 
             return service;

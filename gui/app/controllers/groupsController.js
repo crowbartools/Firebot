@@ -59,13 +59,15 @@
                                 "Pro",
                                 "Subscribers",
                                 "Moderators",
-                                "Staff"
+                                "Channel Editors",
+                                "Staff",
+                                "Streamer"
                             ];
 
                             let groupName = $scope.group.groupName;
 
                             if (defaultGroups.includes(groupName)) {
-                                utilityService.showErrorModal("You cannot create a custom group with the same name as a default Mixer group (Pro, Subscribers, Moderators, Staff).");
+                                utilityService.showErrorModal("You cannot create a custom group with the same name as a default Mixer group (Pro, Subscribers, Moderators, Channel Editors, Staff, Streamer).");
                                 return;
                             }
 
