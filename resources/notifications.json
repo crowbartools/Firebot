@@ -4,11 +4,5 @@
         "title": "Subs not seeing their board?",
         "message": "<div>Firebot's auto grouping functionality requires a chat connection to see viewer roles. Make sure to connect to both. The event log will let you know when the auto grouper starts up.</div>",
         "icon": "tip"
-    },
-    {
-        "id": 15,
-        "title": "Issues with 4.10.0?",
-        "message": "<div>If your on an early version of v4.10.0 and are having issues loading your board, please go to the firebot.pro website to download v4.9.0 and then rerun the installer. This will change you back to the previous version. We apologize for the inconvenience!</div>",
-        "icon": "alert"
     }
 ]
