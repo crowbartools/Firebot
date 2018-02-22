@@ -38,6 +38,10 @@
           <h3>Permissions</h3>
       </div>
       <div class="permission-type controls-fb-inline">
+        <label class="control-fb control--radio">None
+          <input type="radio" ng-model="control.permissionType" ng-value="undefined" ng-click="clearPermissions()"/>
+          <div class="control__indicator"></div>
+        </label>
         <label class="control-fb control--radio">Group
             <input type="radio" ng-model="control.permissionType" value="Group"/>
             <div class="control__indicator"></div>

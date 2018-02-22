@@ -80,11 +80,10 @@
 
                     } catch (err) {
                         // We don't have any saved settings yet. Resolve this and don't cleanup anything.
-                        logger.error("Failed to check if we have any saved settings", err);
+                        logger.info("It doesnt appear that we have previously saved settings, skipping board cleanup");
                         resolve(true);
                         return;
                     }
-
 
 
                     // Make an array containing all of the buttons and scenes from each json so we can compare.
@@ -321,13 +320,23 @@
             }
 
             function loadBoardById(id) {
+                logger.info(`Getting ${id} from Mixer...`);
                 return $http.get("https://mixer.com/api/v1/interactive/versions/" + id)
                     .then(function(response) {
+
                         let data = response.data;
+
+                        logger.info(`Got ${id} from Mixer!`);
 
                         if (data.controlVersion === "1.0") {
                             utilityService.showErrorModal("The board you're trying to load was created using Mixer Interactive v1. Please create a new board using Mixer Interactive v2.");
-                            return;
+                            return false;
+                        }
+
+                        if (data.id !== null && data.game == null) {
+                            service.deleteBoardById(id);
+                            utilityService.showErrorModal(`The board (${id}) has been deleted on the Mixer Dev Lab. It has been automatically removed from Firebot.`);
+                            return false;
                         }
 
                         try {
@@ -344,40 +353,55 @@
                                     let boardExists = dataAccess.userDataPathExistsSync("/user-settings/controls/" + id + ".json");
                                     if (!boardExists) {
                                         logger.info('Board was in settings, but the controls file is missing. Rebuilding.');
-                                        return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
+                                        return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService).then(() => {
+                                            return id;
+                                        });
                                     }
                                 }
 
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
                                 if (boardUpdated !== gameUpdated) {
                                     logger.info('Board updated. Rebuilding.');
-                                    return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
+                                    return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService).then(() => {
+                                        return id;
+                                    });
                                 } // Date matches, no need to rebuild.
 
                             } catch (err) {
                                 logger.warning(err);
                                 // This board doesn't exist, recreate the board to get it into knownBoards
                                 logger.log(`Error occured, not able to find boardid ${id} in settings, build it`);
-                                return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService);
+                                return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService).then(() => {
+                                    return id;
+                                });
                             }
                         } catch (err) {
                             logger.warning('There was a problem loading this board!');
                             logger.error(err);
+                            return false;
                         }
+                        return id;
+                    }, function(response) {
+                        logger.info("Error getting board");
+                        logger.info(response);
+                        return false;
                     });
             }
 
             function loadBoardsById(boardVersionIds, clearPreviousBoards) {
 
                 //create a list of board load promises
+                logger.debug("Create list of board promises...");
                 let boardLoadPromises = [];
                 _.each(boardVersionIds, function(id) {
+                    logger.debug("Loading board " + id);
                     let promise = loadBoardById(id);
                     boardLoadPromises.push(promise);
                 });
 
                 //return a promise that will be resolved once all other promises have completed
-                return Promise.all(boardLoadPromises).then(() => {
+                return Promise.all(boardLoadPromises).then((loadedIds) => {
+                    logger.info("All boards synced to mixer");
                     //clear out previously loaded boards
                     if (clearPreviousBoards === true) {
                         _boards = {};
@@ -385,7 +409,8 @@
 
                     let addedBoards = [];
                     // load each board
-                    _.each(boardVersionIds, function (id) {
+                    _.each(loadedIds, function (id) {
+                        if (id === false) return;
                         let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + id);
                         let boardData = boardDb.getData('/');
                         try {
@@ -407,7 +432,7 @@
                             logger.error('Board ' + id + ' errored out while trying to load.' + err);
 
                             // Remove the corrupted board from settings so we don't get stuck on next restart.
-                            loadBoardById(id);
+                            //loadBoardById(id);
                         }
                     });
 
@@ -416,6 +441,7 @@
                         return addedBoards;
                     });
                 }, (error) => {
+                    logger.warn(error);
                     $rootScope.showSpinner = false;
                     return $q.reject(error);
                 });
@@ -478,6 +504,30 @@
                 });
             };
 
+            service.deleteBoardById = function(id) {
+                let isCurrentBoard = settingsService.getLastBoardId() == id; //eslint-disable-line
+
+                return deleteBoard(id).then(() => {
+
+                    // Remove last board setting entry
+                    settingsService.deleteKnownBoard(id);
+
+                    delete _boards[id];
+
+                    if (isCurrentBoard) {
+                        let remainingBoards = Object.keys(_boards);
+
+                        if (remainingBoards.length < 1) {
+                            service.setSelectedBoard(null);
+                        } else {
+                            let key = remainingBoards[0];
+                            service.setSelectedBoard(_boards[key]);
+                        }
+                    }
+
+                });
+            };
+
             service.deleteCurrentBoard = function() {
                 let currentBoardId = service.getSelectedBoard().versionid;
 
@@ -506,6 +556,7 @@
 
             // reload boards into memory
             service.loadAllBoards = function() {
+                logger.info("Attempting to load all boards...");
                 isloadingBoards = true;
 
                 let knownBoards, boardVersionIds;
@@ -519,6 +570,8 @@
                     _.each(knownBoards, function(board) {
                         boardVersionIds.push(board.boardId);
                     });
+
+                    logger.debug("Loading boards: " + boardVersionIds ? boardVersionIds.join(", ") : "No boards found");
                     /* Step 2 */
                     // Load each board.
                     return loadBoardsById(boardVersionIds, true).then(() => {

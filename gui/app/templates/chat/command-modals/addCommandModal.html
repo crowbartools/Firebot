@@ -32,14 +32,18 @@
                 <h3>Permissions</h3>
             </div>
             <div class="permission-type controls-fb-inline">
+                <label class="control-fb control--radio">None
+                    <input type="radio" ng-model="command.permissionType" ng-value="undefined" ng-click="clearPermissions()"/>
+                    <div class="control__indicator"></div>
+                </label>
                 <label class="control-fb control--radio">Group
                     <input type="radio" ng-model="command.permissionType" value="Group"/>
                     <div class="control__indicator"></div>
                 </label>
                 <label class="control-fb control--radio">Individual
-                <input type="radio" ng-model="command.permissionType" value="Individual" ng-click="clearPermissions()"/>
-                <div class="control__indicator"></div>
-                </label>
+                    <input type="radio" ng-model="command.permissionType" value="Individual" ng-click="clearPermissions()"/>
+                    <div class="control__indicator"></div>
+                </label>             
             </div>
         </div>
         <div class="settings-permission" style="padding-bottom:1em">
