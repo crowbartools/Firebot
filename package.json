@@ -1,6 +1,6 @@
 {
     "name": "Firebot",
-    "version": "4.10.4",
+    "version": "4.10.5-Alpha-1",
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
     "scripts": {
@@ -52,8 +52,8 @@
         "angularjs-scroll-glue": "^2.2.0",
         "angularjs-slider": "^6.2.2",
         "archiver": "^2.0.3",
-        "beam-client-node": "^1.0.2",
-        "beam-interactive-node2": "^2.4.0",
+        "beam-client-node": "^1.0.3",
+        "beam-interactive-node2": "^2.8.0",
         "body-parser": "^1.18.1",
         "carina": "^0.11.0",
         "compare-versions": "^3.0.1",
