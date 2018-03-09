@@ -110,7 +110,20 @@
           <div class="fb-arrow down login-arrow"></div>
           <ul class="dropdown-menu" uib-dropdown-menu>
             <li>
-              <a href ng-click="showManageLoginsModal()"><span style="vertical-align:-11.5%;"><i class="fal fa-sign-in"></i></span> Manage logins</a>
+              <a href ng-click="#">
+                <span style="vertical-align:-11.5%;">
+                  <i class="fal fa-sign-in"></i>
+                </span> 
+                Add Profile
+              </a>
+            </li>
+            <li>
+              <a href ng-click="showManageLoginsModal()">
+                <span style="vertical-align:-11.5%;">
+                  <i class="fal fa-sign-in"></i>
+                </span> 
+                Manage Profile
+              </a>
             </li>
           </ul>
         </div>
@@ -124,11 +137,11 @@
       </div>
     </div>
     
-    <!-- Manage Logins Modal -->
+    <!-- Manage Profile Modal -->
     <script type="text/ng-template" id="manageLoginsModal.html">
       <div class="modal-header">
         <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="errorLabel">Manage Logins</h4>
+        <h4 class="modal-title" id="errorLabel">Manage Profile</h4>
       </div>
       <div class="modal-body">
             <div class="row" style="text-align: center;">

@@ -130,32 +130,16 @@ function createWindow () {
 }
 
 async function createDefaultFoldersAndFiles() {
-    logger.info("Ensuring default folders and files exist...");
-    //create the root "firebot-data" folder in user-settings
+    logger.info("Ensuring default folders and files exist for all users...");
+
+    //create the root "firebot-data" folder
     dataAccess.createFirebotDataDir();
 
-    // Create the user-settings folder if it doesn't exist. It's required
+    // Create the profiles folder if it doesn't exist. It's required
     // for the folders below that are within it
-    if (!dataAccess.userDataPathExistsSync("/user-settings/")) {
-        logger.info("Can't find the user-settings folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings");
-    }
-
-    if (!dataAccess.userDataPathExistsSync("/user-settings/hotkeys.json")) {
-        logger.info("Can't find the hotkeys file, creating the default one now...");
-        dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/user-settings/");
-    }
-
-    // Create the scripts folder if it doesn't exist
-    if (!dataAccess.userDataPathExistsSync("/user-settings/scripts/")) {
-        logger.info("Can't find the scripts folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/scripts");
-    }
-
-    // Create the scripts folder if it doesn't exist
-    if (!dataAccess.userDataPathExistsSync("/backups/")) {
-        logger.info("Can't find the backup folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/backups");
+    if (!dataAccess.userDataPathExistsSync("/profiles")) {
+        logger.info("Can't find the profiles folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/profiles");
     }
 
     // Update the port.js file
@@ -167,30 +151,84 @@ async function createDefaultFoldersAndFiles() {
             logger.info(`Set overlay port to: ${port}`);
         });
 
-    // Create the controls folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/user-settings/controls")) {
-        logger.info("Can't find the controls folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/controls");
+
+    // Okay, now we're going to want to set up individual profile folders or missing folders.
+    let globalSettingsDb = dataAccess.getJsonDbInUserData('./global-settings'),
+        activeProfiles = [];
+
+    // Check to see if globalSettings file has active profiles listed, otherwise create it.
+    try {
+        activeProfiles = globalSettingsDb.getData('/profiles/activeProfiles');
+    } catch (err) {
+        globalSettingsDb.push('/profiles/profilesCreated', 1);
+        globalSettingsDb.push('/profiles/activeProfiles', [1]);
+        activeProfiles = [1];
     }
 
-    // Create the logs folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/user-settings/logs")) {
-        logger.info("Can't find the logs folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/logs");
+    // Loop through active profiles and make sure all folders needed are created.
+    activeProfiles = Object.keys(activeProfiles).map(k => activeProfiles[k]);
+    activeProfiles.forEach((profileId) => {
+        // Create the scripts folder if it doesn't exist
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId)) {
+            logger.info("Can't find a specific profile folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
+        }
+
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/hotkeys.json")) {
+            logger.info("Can't find the hotkeys file, creating the default one now...");
+            dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/profiles/" + profileId);
+        }
+
+        // Create the scripts folder if it doesn't exist
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/scripts")) {
+            logger.info("Can't find the scripts folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/scripts");
+        }
+
+        // Create the scripts folder if it doesn't exist
+        if (!dataAccess.userDataPathExistsSync("/profies/" + profileId + "/backups")) {
+            logger.info("Can't find the backup folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/backups");
+        }
+
+        // Create the controls folder if it doesn't exist.
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/controls")) {
+            logger.info("Can't find the controls folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/controls");
+        }
+
+        // Create the logs folder if it doesn't exist.
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/logs")) {
+            logger.info("Can't find the logs folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/logs");
+        }
+
+        // Create the chat folder if it doesn't exist.
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/chat")) {
+            logger.info("Can't find the chat folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/chat");
+        }
+
+        // Create the chat folder if it doesn't exist.
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/live-events")) {
+            logger.info("Can't find the live-events folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/live-events");
+        }
+    });
+
+    // Check to see if we have a "lastLoggedInProfile", if not select one.
+    // If we DO have a lastLoggedInProfile, check and make sure that profile is still in our active profile list, if not select the first in the active list.
+    try {
+        if (activeProfiles.indexOf(globalSettingsDb.getData('/profiles/lastLoggedInProfile')) === -1) {
+            globalSettingsDb.push('/profiles/lastLoggedInProfile', activeProfiles[0]);
+            logger.info("Last logged in profile is no longer on the active profile list. Changing it to an active one.");
+        }
+    } catch (err) {
+        globalSettingsDb.push('/profiles/lastLoggedInProfile', activeProfiles[0]);
+        logger.info('Last logged in profile info is missing or this is a new install. Adding it in now.');
     }
 
-    // Create the chat folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/user-settings/chat")) {
-        logger.info("Can't find the chat folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/chat");
-    }
-
-    // Create the chat folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/user-settings/live-events")) {
-        logger.info("Can't find the live-events folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/live-events");
-    }
-
+    // And... we're done.
     logger.info("Finished verifying default folders and files.");
 }
 
