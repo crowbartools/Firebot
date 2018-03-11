@@ -9,6 +9,7 @@ const {app, BrowserWindow, ipcMain, shell, dialog} = electron;
 const GhReleases = require('electron-gh-releases');
 const settings = require('./lib/common/settings-access').settings;
 const dataAccess = require('./lib/common/data-access.js');
+const profileManager = require('./lib/common/profile-manager.js');
 const backupManager = require("./lib/backupManager");
 const apiServer = require('./api/apiServer.js');
 
@@ -141,6 +142,8 @@ async function createDefaultFoldersAndFiles() {
         activeProfiles = [];
 
     // Check to see if globalSettings file has active profiles listed, otherwise create it.
+    // ActiveProfiles is a list of profiles that have not been deleted through the app.
+    // This could happen if someone manually deletes a profile.
     try {
         activeProfiles = globalSettingsDb.getData('/profiles/activeProfiles');
     } catch (err) {
@@ -149,6 +152,7 @@ async function createDefaultFoldersAndFiles() {
     }
 
     // Loop through active profiles and make sure all folders needed are created.
+    // This ensures that even if a folder is manually deleted, it will be recreated instead of erroring out the app somewhere down the line.
     activeProfiles = Object.keys(activeProfiles).map(k => activeProfiles[k]);
     activeProfiles.forEach((profileId) => {
         // Create the scripts folder if it doesn't exist
@@ -201,11 +205,13 @@ async function createDefaultFoldersAndFiles() {
 
     // Check to see if we have a "loggedInProfile", if not select one.
     // If we DO have a loggedInProfile, check and make sure that profile is still in our active profile list, if not select the first in the active list.
-    // This is backup just in case.
+    // All of this is backup, just in case. It makes sure that we at least have some profile logged in no matter what happens.
     try {
         if (activeProfiles.indexOf(globalSettingsDb.getData('/profiles/loggedInProfile')) === -1) {
             globalSettingsDb.push('/profiles/loggedInProfile', activeProfiles[0]);
             logger.info("Last logged in profile is no longer on the active profile list. Changing it to an active one.");
+        } else {
+            logger.info("Last logged in profile is still active!");
         }
     } catch (err) {
         globalSettingsDb.push('/profiles/loggedInProfile', activeProfiles[0]);
@@ -224,7 +230,7 @@ async function createDefaultFoldersAndFiles() {
 
 
     // And... we're done.
-    logger.info("Finished verifying default folders and files.");
+    logger.info("Finished verifying default folder and files for all profiles, as well as making sure our logged in profile is valid.");
 }
 
 
@@ -241,7 +247,7 @@ app.on('ready', async function() {
     // We will probably wnat to handle these differently but we shouldn't
     // change anything until we are ready as changing this will break most scripts
     global.EffectType = Effect.EffectType;
-    global.SCRIPTS_DIR = dataAccess.getPathInProfile('/scripts/');
+    global.SCRIPTS_DIR = profileManager.getPathInProfile('/scripts/');
 
     backupManager.onceADayBackUpCheck();
 
@@ -364,7 +370,15 @@ ipcMain.on('startBackup', (event, manualActivation = false) => {
     });
 });
 
+// When we get an event from the renderer to create a new profile.
+ipcMain.on('createProfile', () => {
+    profileManager.createNewProfile();
+});
 
+// When we get an event from the renderer to delete a particular profile.
+ipcMain.on('deleteProfile', (event, profileId) => {
+    profileManager.deleteProfile(profileId);
+});
 
 
 

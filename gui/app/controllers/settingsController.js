@@ -6,6 +6,7 @@
     const fs = require("fs");
     const path = require("path");
     const dataAccess = require("../../lib/common/data-access");
+    const profileManager = require("../../lib/common/profile-manager");
     const moment = require("moment");
     const unzipper = require("unzipper");
     const ncp = require("ncp");
@@ -167,7 +168,7 @@
 
                         function copyFilesOver() {
                             let source = dataAccess.getPathInTmpDir("/restore/profiles");
-                            let destination = dataAccess.getPathInProfile("/");
+                            let destination = profileManager.getPathInProfile("/");
                             ncp(source, destination, function (err) {
                                 if (err) {
                                     logger.error("Failed to copy 'user-settings'!");

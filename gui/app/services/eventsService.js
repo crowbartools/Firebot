@@ -6,6 +6,7 @@
     const _ = require('underscore')._;
     const EventType = require('../../lib/live-events/EventType.js');
     const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
     const {ipcRenderer} = require('electron');
 
     angular
@@ -63,14 +64,14 @@
 
             // Deletes events.
             function deleteEvent(eventName) {
-                let dbEvents = dataAccess.getJsonDbInProfile("/live-events/events");
+                let dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
                 dbEvents.delete("/" + eventName);
             }
 
             // This will load up all saved events for the ui.
             service.loadEvents = function() {
                 // Load up all custom made groups in each dropdown.
-                let dbEvents = dataAccess.getJsonDbInProfile("/live-events/events");
+                let dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
                 try {
                     let rawEvents = dbEvents.getData('/');
                     if (rawEvents != null) {
@@ -83,7 +84,7 @@
 
             // Adds or Updates and event.
             service.addOrUpdateEvent = function(event, previousEvent) {
-                let dbEvents = dataAccess.getJsonDbInProfile("/live-events/events");
+                let dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
 
                 if (previousEvent != null && previousEvent !== "" && previousEvent !== event.eventName) {
                     deleteEvent(previousEvent);

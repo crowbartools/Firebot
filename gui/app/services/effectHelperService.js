@@ -5,6 +5,7 @@
 
     const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
     const EffectType = require('../../lib/common/EffectType.js');
 
     angular
@@ -365,7 +366,7 @@
                             logger.info("Attempting to load custom script parameters...");
                             $scope.isLoadingParameters = true;
 
-                            let scriptsFolder = dataAccess.getPathInProfile('/scripts');
+                            let scriptsFolder = profileManager.getPathInProfile('/scripts');
                             let scriptFilePath = path.resolve(scriptsFolder, scriptName);
                             // Attempt to load the script
                             try {
@@ -429,7 +430,7 @@
 
                         $scope.isLoadingParameters = true;
 
-                        let scriptFolderPath = dataAccess.getPathInProfile("/scripts");
+                        let scriptFolderPath = profileManager.getPathInProfile("/scripts");
                         // Grab files in folder when button effect shown.
                         $scope.scriptArray = fs.readdirSync(scriptFolderPath);
 

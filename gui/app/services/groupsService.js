@@ -6,6 +6,7 @@
 
     const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
     const {ipcRenderer} = require('electron');
 
     angular
@@ -18,13 +19,13 @@
 
 
             function saveBannedGroup() {
-                let dbGroup = dataAccess.getJsonDbInProfile("/groups");
+                let dbGroup = profileManager.getJsonDbInProfile("/groups");
                 let bannedGroup = service.getBannedGroup();
                 dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
             }
 
             function saveExemptGroup() {
-                let dbGroup = dataAccess.getJsonDbInProfile("/settings");
+                let dbGroup = profileManager.getJsonDbInProfile("/settings");
                 let exemptGroup = service.getExemptGroup();
                 dbGroup.push("/sparkExempt", exemptGroup);
             }
@@ -40,14 +41,14 @@
                         users: [],
                         groups: []
                     };
-                    let dbGroup = dataAccess.getJsonDbInProfile("/settings");
+                    let dbGroup = profileManager.getJsonDbInProfile("/settings");
                     dbGroup.push("/sparkExempt", exemptGroup);
                     sparkExemptGroup.push(exemptGroup);
                 }
             }
 
             function deleteViewerGroup(groupName) {
-                let dbGroup = dataAccess.getJsonDbInProfile("/groups");
+                let dbGroup = profileManager.getJsonDbInProfile("/groups");
                 dbGroup.delete("/" + groupName);
 
                 boardService.deleteViewerGroupFromAllBoards(groupName);
@@ -67,7 +68,7 @@
                         groupName: 'banned',
                         users: []
                     };
-                    let dbGroup = dataAccess.getJsonDbInProfile("/groups");
+                    let dbGroup = profileManager.getJsonDbInProfile("/groups");
                     dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
                     groups.push(bannedGroup);
                 }
@@ -75,7 +76,7 @@
 
             service.loadViewerGroups = function() {
                 // Load up all custom made groups in each dropdown.
-                let dbGroup = dataAccess.getJsonDbInProfile("/groups");
+                let dbGroup = profileManager.getJsonDbInProfile("/groups");
                 try {
                     let rawGroups = dbGroup.getData('/');
                     if (rawGroups != null) {
@@ -87,7 +88,7 @@
                 }
 
                 // Load up exempt group
-                dbGroup = dataAccess.getJsonDbInProfile("/settings");
+                dbGroup = profileManager.getJsonDbInProfile("/settings");
                 try {
                     sparkExemptGroup.push(dbGroup.getData('/sparkExempt'));
                 } catch (err) {} //eslint-disable-line no-empty
@@ -209,7 +210,7 @@
 
             service.addOrUpdateViewerGroup = function(group, previousName) {
                 if (group.groupName === "banned") return;
-                let dbGroup = dataAccess.getJsonDbInProfile("/groups");
+                let dbGroup = profileManager.getJsonDbInProfile("/groups");
 
                 if (previousName != null && previousName !== "" && previousName !== group.groupName) {
                     deleteViewerGroup(previousName);

@@ -4,6 +4,7 @@
     //This handles settings access for frontend
 
     const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
     const fs = require('fs');
 
     angular
@@ -14,7 +15,7 @@
             let settingsCache = {};
 
             function getSettingsFile() {
-                return dataAccess.getJsonDbInProfile("/settings");
+                return profileManager.getJsonDbInProfile("/settings");
             }
 
             function pushDataToFile(path, data) {

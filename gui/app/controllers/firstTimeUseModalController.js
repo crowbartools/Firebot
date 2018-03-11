@@ -3,7 +3,7 @@
 
     //TODO: Rename this to setupWizardModalController
 
-    const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
     const fs = require('fs');
     const ncp = require('ncp');
 
@@ -14,7 +14,7 @@
 
             function copyUserSettingsToUserDataFolder(filePath, callback) {
                 let source = filePath;
-                let destination = dataAccess.getPathInProfile("/");
+                let destination = profileManager.getPathInProfile("/");
                 ncp(source, destination, function (err) {
                     if (err) {
                         logger.error("Failed to copy 'user-settings'!");

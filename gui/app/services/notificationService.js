@@ -5,6 +5,7 @@
     // This provides methods for notifications
 
     const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
 
     angular
         .module('firebotApp')
@@ -26,7 +27,7 @@
             };
             /* Helpers */
             function getNotificationsFile() {
-                return dataAccess.getJsonDbInProfile("/notifications");
+                return profileManager.getJsonDbInProfile("/notifications");
             }
 
             function deleteDataFromFile(path) {

@@ -6,6 +6,7 @@
 
     const electronOauth2 = require('electron-oauth2');
     const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
     const {session} = require('electron').remote;
 
     angular
@@ -42,7 +43,7 @@
             let defaultPhotoUrl = "../images/placeholders/default.jpg";
 
             function logout(type) {
-                let dbAuth = dataAccess.getJsonDbInProfile("/auth");
+                let dbAuth = profileManager.getJsonDbInProfile("/auth");
 
                 if (type === "streamer") {
                     // Delete Info
@@ -68,7 +69,7 @@
             // User Info
             // This function grabs info from the currently logged in user.
             function userInfo(type, accessToken, refreshToken) {
-                let dbAuth = dataAccess.getJsonDbInProfile("/auth");
+                let dbAuth = profileManager.getJsonDbInProfile("/auth");
 
                 // Request user info and save out everything to auth file.
                 request({
@@ -141,7 +142,7 @@
             // Refresh Token
             // This will get a new access token for the streamer and bot account.
             function refreshToken(connectionType) {
-                let dbAuth = dataAccess.getJsonDbInProfile("/auth");
+                let dbAuth = profileManager.getJsonDbInProfile("/auth");
 
                 logger.info('Trying to get refresh tokens...');
 
@@ -284,7 +285,7 @@
             // Load Login
             // This function populates the accounnt fields which will in turn update the ui
             service.loadLogin = function() {
-                let dbAuth = dataAccess.getJsonDbInProfile("/auth");
+                let dbAuth = profileManager.getJsonDbInProfile("/auth");
 
                 let username, avatar;
                 // Get streamer info.
