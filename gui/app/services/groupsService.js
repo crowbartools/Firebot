@@ -5,7 +5,6 @@
     //This handles groups
 
     const _ = require('underscore')._;
-    const dataAccess = require('../../lib/common/data-access.js');
     const profileManager = require('../../lib/common/profile-manager.js');
     const {ipcRenderer} = require('electron');
 

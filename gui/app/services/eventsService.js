@@ -5,7 +5,6 @@
     //This handles events
     const _ = require('underscore')._;
     const EventType = require('../../lib/live-events/EventType.js');
-    const dataAccess = require('../../lib/common/data-access.js');
     const profileManager = require('../../lib/common/profile-manager.js');
     const {ipcRenderer} = require('electron');
 

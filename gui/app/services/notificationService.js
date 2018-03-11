@@ -3,8 +3,6 @@
 (function() {
 
     // This provides methods for notifications
-
-    const dataAccess = require('../../lib/common/data-access.js');
     const profileManager = require('../../lib/common/profile-manager.js');
 
     angular
