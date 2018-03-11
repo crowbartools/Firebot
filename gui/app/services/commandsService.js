@@ -16,7 +16,7 @@
 
             // Refresh commands cache
             service.refreshCommands = function() {
-                let commandsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+                let commandsDb = dataAccess.getJsonDbInProfile("/chat/commands");
                 commandsCache = commandsDb.getData('/');
 
                 try {
@@ -78,7 +78,7 @@
 
             // Saves out a command
             service.saveCommand = function(command) {
-                let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+                let commandDb = dataAccess.getJsonDbInProfile("/chat/commands");
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -104,7 +104,7 @@
 
             // Deletes a command.
             service.deleteCommand = function(command) {
-                let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+                let commandDb = dataAccess.getJsonDbInProfile("/chat/commands");
                 let cleanedCommands = JSON.parse(angular.toJson(command));
 
                 if (cleanedCommands.active === true) {
@@ -125,7 +125,7 @@
 
             // Save Timed Group
             service.saveTimedGroup = function(previousGroupName, timedGroup) {
-                let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+                let commandDb = dataAccess.getJsonDbInProfile("/chat/commands");
                 try {
                     commandDb.push('./timedGroups/' + timedGroup.groupName, timedGroup);
                 } catch (err) {
@@ -144,7 +144,7 @@
 
             // Delete timed Group
             service.deleteTimedGroup = function(previousGroupName, timedGroup) {
-                let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+                let commandDb = dataAccess.getJsonDbInProfile("/chat/commands");
                 try {
                     commandDb.delete('./timedGroups/' + previousGroupName);
                 } catch (err) {

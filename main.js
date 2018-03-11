@@ -14,12 +14,6 @@ const apiServer = require('./api/apiServer.js');
 
 const Effect = require('./lib/common/EffectType');
 
-// These are defined globally for Custom Scripts.
-// We will probably wnat to handle these differently but we shouldn't
-// change anything until we are ready as changing this will break most scripts
-global.EffectType = Effect.EffectType;
-global.SCRIPTS_DIR = dataAccess.getPathInUserData('/user-settings/scripts/');
-
 // uncaught exception - log the error
 process.on('uncaughtException', logger.error); //eslint-disable-line no-console
 
@@ -142,16 +136,6 @@ async function createDefaultFoldersAndFiles() {
         dataAccess.makeDirInUserDataSync("/profiles");
     }
 
-    // Update the port.js file
-    let port = settings.getWebSocketPort();
-    dataAccess.writeFileInWorkingDir(
-        '/resources/overlay/js/port.js',
-        `window.WEBSOCKET_PORT = ${port}`,
-        () => {
-            logger.info(`Set overlay port to: ${port}`);
-        });
-
-
     // Okay, now we're going to want to set up individual profile folders or missing folders.
     let globalSettingsDb = dataAccess.getJsonDbInUserData('./global-settings'),
         activeProfiles = [];
@@ -160,7 +144,6 @@ async function createDefaultFoldersAndFiles() {
     try {
         activeProfiles = globalSettingsDb.getData('/profiles/activeProfiles');
     } catch (err) {
-        globalSettingsDb.push('/profiles/profilesCreated', 1);
         globalSettingsDb.push('/profiles/activeProfiles', [1]);
         activeProfiles = [1];
     }
@@ -186,7 +169,7 @@ async function createDefaultFoldersAndFiles() {
         }
 
         // Create the scripts folder if it doesn't exist
-        if (!dataAccess.userDataPathExistsSync("/profies/" + profileId + "/backups")) {
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/backups")) {
             logger.info("Can't find the backup folder, creating one now...");
             dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/backups");
         }
@@ -216,17 +199,29 @@ async function createDefaultFoldersAndFiles() {
         }
     });
 
-    // Check to see if we have a "lastLoggedInProfile", if not select one.
-    // If we DO have a lastLoggedInProfile, check and make sure that profile is still in our active profile list, if not select the first in the active list.
+    // Check to see if we have a "loggedInProfile", if not select one.
+    // If we DO have a loggedInProfile, check and make sure that profile is still in our active profile list, if not select the first in the active list.
+    // This is backup just in case.
     try {
-        if (activeProfiles.indexOf(globalSettingsDb.getData('/profiles/lastLoggedInProfile')) === -1) {
-            globalSettingsDb.push('/profiles/lastLoggedInProfile', activeProfiles[0]);
+        if (activeProfiles.indexOf(globalSettingsDb.getData('/profiles/loggedInProfile')) === -1) {
+            globalSettingsDb.push('/profiles/loggedInProfile', activeProfiles[0]);
             logger.info("Last logged in profile is no longer on the active profile list. Changing it to an active one.");
         }
     } catch (err) {
-        globalSettingsDb.push('/profiles/lastLoggedInProfile', activeProfiles[0]);
+        globalSettingsDb.push('/profiles/loggedInProfile', activeProfiles[0]);
         logger.info('Last logged in profile info is missing or this is a new install. Adding it in now.');
     }
+
+
+    // Update the port.js file
+    let port = settings.getWebSocketPort();
+    dataAccess.writeFileInWorkingDir(
+        '/resources/overlay/js/port.js',
+        `window.WEBSOCKET_PORT = ${port}`,
+        () => {
+            logger.info(`Set overlay port to: ${port}`);
+        });
+
 
     // And... we're done.
     logger.info("Finished verifying default folders and files.");
@@ -241,6 +236,12 @@ app.on('ready', async function() {
     await createDefaultFoldersAndFiles();
 
     createWindow();
+
+    // These are defined globally for Custom Scripts.
+    // We will probably wnat to handle these differently but we shouldn't
+    // change anything until we are ready as changing this will break most scripts
+    global.EffectType = Effect.EffectType;
+    global.SCRIPTS_DIR = dataAccess.getPathInProfile('/scripts/');
 
     backupManager.onceADayBackUpCheck();
 

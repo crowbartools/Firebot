@@ -26,7 +26,7 @@
             };
             /* Helpers */
             function getNotificationsFile() {
-                return dataAccess.getJsonDbInUserData("/user-settings/notifications");
+                return dataAccess.getJsonDbInProfile("/notifications");
             }
 
             function deleteDataFromFile(path) {

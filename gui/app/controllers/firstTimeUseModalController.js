@@ -14,7 +14,7 @@
 
             function copyUserSettingsToUserDataFolder(filePath, callback) {
                 let source = filePath;
-                let destination = dataAccess.getPathInUserData("/user-settings");
+                let destination = dataAccess.getPathInProfile("/");
                 ncp(source, destination, function (err) {
                     if (err) {
                         logger.error("Failed to copy 'user-settings'!");

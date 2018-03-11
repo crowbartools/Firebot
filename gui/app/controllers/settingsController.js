@@ -166,8 +166,8 @@
                         }
 
                         function copyFilesOver() {
-                            let source = dataAccess.getPathInTmpDir("/restore/user-settings");
-                            let destination = dataAccess.getPathInUserData("/user-settings");
+                            let source = dataAccess.getPathInTmpDir("/restore/profiles");
+                            let destination = dataAccess.getPathInProfile("/");
                             ncp(source, destination, function (err) {
                                 if (err) {
                                     logger.error("Failed to copy 'user-settings'!");

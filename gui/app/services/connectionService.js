@@ -42,7 +42,7 @@
             let defaultPhotoUrl = "../images/placeholders/default.jpg";
 
             function logout(type) {
-                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
+                let dbAuth = dataAccess.getJsonDbInProfile("/auth");
 
                 if (type === "streamer") {
                     // Delete Info
@@ -68,7 +68,7 @@
             // User Info
             // This function grabs info from the currently logged in user.
             function userInfo(type, accessToken, refreshToken) {
-                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
+                let dbAuth = dataAccess.getJsonDbInProfile("/auth");
 
                 // Request user info and save out everything to auth file.
                 request({
@@ -141,7 +141,7 @@
             // Refresh Token
             // This will get a new access token for the streamer and bot account.
             function refreshToken(connectionType) {
-                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
+                let dbAuth = dataAccess.getJsonDbInProfile("/auth");
 
                 logger.info('Trying to get refresh tokens...');
 
@@ -284,7 +284,7 @@
             // Load Login
             // This function populates the accounnt fields which will in turn update the ui
             service.loadLogin = function() {
-                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
+                let dbAuth = dataAccess.getJsonDbInProfile("/auth");
 
                 let username, avatar;
                 // Get streamer info.

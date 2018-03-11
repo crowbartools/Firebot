@@ -365,7 +365,7 @@
                             logger.info("Attempting to load custom script parameters...");
                             $scope.isLoadingParameters = true;
 
-                            let scriptsFolder = dataAccess.getPathInUserData('/user-settings/scripts');
+                            let scriptsFolder = dataAccess.getPathInProfile('/scripts');
                             let scriptFilePath = path.resolve(scriptsFolder, scriptName);
                             // Attempt to load the script
                             try {
@@ -429,7 +429,7 @@
 
                         $scope.isLoadingParameters = true;
 
-                        let scriptFolderPath = dataAccess.getPathInUserData("/user-settings/scripts");
+                        let scriptFolderPath = dataAccess.getPathInProfile("/scripts");
                         // Grab files in folder when button effect shown.
                         $scope.scriptArray = fs.readdirSync(scriptFolderPath);
 

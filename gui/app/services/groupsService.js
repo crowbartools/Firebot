@@ -18,13 +18,13 @@
 
 
             function saveBannedGroup() {
-                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                let dbGroup = dataAccess.getJsonDbInProfile("/groups");
                 let bannedGroup = service.getBannedGroup();
                 dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
             }
 
             function saveExemptGroup() {
-                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
+                let dbGroup = dataAccess.getJsonDbInProfile("/settings");
                 let exemptGroup = service.getExemptGroup();
                 dbGroup.push("/sparkExempt", exemptGroup);
             }
@@ -40,14 +40,14 @@
                         users: [],
                         groups: []
                     };
-                    let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
+                    let dbGroup = dataAccess.getJsonDbInProfile("/settings");
                     dbGroup.push("/sparkExempt", exemptGroup);
                     sparkExemptGroup.push(exemptGroup);
                 }
             }
 
             function deleteViewerGroup(groupName) {
-                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                let dbGroup = dataAccess.getJsonDbInProfile("/groups");
                 dbGroup.delete("/" + groupName);
 
                 boardService.deleteViewerGroupFromAllBoards(groupName);
@@ -67,7 +67,7 @@
                         groupName: 'banned',
                         users: []
                     };
-                    let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                    let dbGroup = dataAccess.getJsonDbInProfile("/groups");
                     dbGroup.push("/" + bannedGroup.groupName, bannedGroup);
                     groups.push(bannedGroup);
                 }
@@ -75,7 +75,7 @@
 
             service.loadViewerGroups = function() {
                 // Load up all custom made groups in each dropdown.
-                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                let dbGroup = dataAccess.getJsonDbInProfile("/groups");
                 try {
                     let rawGroups = dbGroup.getData('/');
                     if (rawGroups != null) {
@@ -87,7 +87,7 @@
                 }
 
                 // Load up exempt group
-                dbGroup = dataAccess.getJsonDbInUserData("/user-settings/settings");
+                dbGroup = dataAccess.getJsonDbInProfile("/settings");
                 try {
                     sparkExemptGroup.push(dbGroup.getData('/sparkExempt'));
                 } catch (err) {} //eslint-disable-line no-empty
@@ -209,7 +209,7 @@
 
             service.addOrUpdateViewerGroup = function(group, previousName) {
                 if (group.groupName === "banned") return;
-                let dbGroup = dataAccess.getJsonDbInUserData("/user-settings/groups");
+                let dbGroup = dataAccess.getJsonDbInProfile("/groups");
 
                 if (previousName != null && previousName !== "" && previousName !== group.groupName) {
                     deleteViewerGroup(previousName);

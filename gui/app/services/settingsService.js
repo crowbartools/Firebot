@@ -14,7 +14,7 @@
             let settingsCache = {};
 
             function getSettingsFile() {
-                return dataAccess.getJsonDbInUserData("/user-settings/settings");
+                return dataAccess.getJsonDbInProfile("/settings");
             }
 
             function pushDataToFile(path, data) {

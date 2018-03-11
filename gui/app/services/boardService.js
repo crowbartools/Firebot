@@ -47,7 +47,7 @@
 
                     // Check for last board and load ui if one exists.
                     try {
-                        let filepath = dataAccess.getPathInUserData('/user-settings/controls/' + boardId + '.json');
+                        let filepath = dataAccess.getPathInProfile('/controls/' + boardId + '.json');
 
                         let exists = fs.existsSync(filepath);
                         if (exists) {
@@ -208,11 +208,11 @@
                 settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameName, gameUpdated);
 
                 // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
-                if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
-                    if (!dataAccess.userDataPathExistsSync('/user-settings/controls/' + versionid + '.json')) {
+                if (dataAccess.profilePathExistsSync('/controls/' + gameName + '.json')) {
+                    if (!dataAccess.profileDataPathExistsSync('/controls/' + versionid + '.json')) {
                         logger.info('Converting control files to new versionid format.');
-                        let oldPath = dataAccess.getPathInUserData("/user-settings/controls/" + gameName + '.json');
-                        let newPath = dataAccess.getPathInUserData("/user-settings/controls/" + versionid + '.json');
+                        let oldPath = dataAccess.getPathInProfile("/controls/" + gameName + '.json');
+                        let newPath = dataAccess.getPathInProfile("/controls/" + versionid + '.json');
 
                         try {
                             fs.renameSync(oldPath, newPath);
@@ -227,7 +227,7 @@
                     }
                 }
 
-                let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
+                let dbControls = dataAccess.getJsonDbInProfile("/controls/" + versionid);
 
                 // Push mixer Json to controls file.
                 dbControls.push('/gameName', gameName);
@@ -350,7 +350,7 @@
 
                                 // If id is in settings, check to see if the actual file exists.
                                 if (boardUpdated != null) {
-                                    let boardExists = dataAccess.userDataPathExistsSync("/user-settings/controls/" + id + ".json");
+                                    let boardExists = dataAccess.profileDataPathExistsSync("/controls/" + id + ".json");
                                     if (!boardExists) {
                                         logger.info('Board was in settings, but the controls file is missing. Rebuilding.');
                                         return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService).then(() => {
@@ -411,7 +411,7 @@
                     // load each board
                     _.each(loadedIds, function (id) {
                         if (id === false) return;
-                        let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + id);
+                        let boardDb = dataAccess.getJsonDbInProfile("/controls/" + id);
                         let boardData = boardDb.getData('/');
                         try {
                             let board = boardData.firebot;
@@ -585,7 +585,7 @@
             };
 
             service.saveControlForCurrentBoard = function(control) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
+                let boardDb = dataAccess.getJsonDbInProfile("/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -600,7 +600,7 @@
             };
 
             service.saveSceneForCurrentBoard = function(scene) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
+                let boardDb = dataAccess.getJsonDbInProfile("/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -624,7 +624,7 @@
                 }
 
 
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
+                let boardDb = dataAccess.getJsonDbInProfile("/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -653,7 +653,7 @@
             };
 
             service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName, cooldownGroup) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
+                let boardDb = dataAccess.getJsonDbInProfile("/controls/" + settingsService.getLastBoardId());
 
                 if (cooldownGroup.buttons != null) {
                     cooldownGroup.buttons.forEach((buttonName) => {
@@ -683,7 +683,7 @@
                             // remove from array
                             groups.splice(index, 1);
                             //save to file
-                            let boardDb = dataAccess.getJsonDbInUserData(`/user-settings/controls/${board.name}`);
+                            let boardDb = dataAccess.getJsonDbInProfile(`/controls/${board.name}`);
                             boardDb.push(`./firebot/scenes/${scene.sceneName}/default`, groups);
                         }
                     });

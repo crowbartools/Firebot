@@ -298,7 +298,7 @@
                 }
 
                 // We haven't cached the icon yet, lets do that.
-                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"),
+                let dbAuth = dataAccess.getJsonDbInProfile("/auth"),
                     streamer = dbAuth.getData('/streamer'),
                     subIcon = [];
 
