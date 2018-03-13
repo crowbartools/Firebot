@@ -139,6 +139,64 @@
             utilityService.showModal(showManageLoginsModal);
         };
 
+        /*
+        * New Profile MODAL
+        */
+        $scope.showNewProfileModal = function() {
+            let showNewProfileModal = {
+                templateUrl: "newProfileModal.html",
+                // This is the controller to be used for the modal.
+                controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+
+                    // Login Kickoff
+                    $scope.createNewProfile = function() {
+                        $uibModalInstance.close();
+                        connectionService.createNewProfile();
+                    };
+
+                    // Close when close is clicked.
+                    $scope.close = function() {
+                        $uibModalInstance.close();
+                    };
+
+                    // When they hit cancel or click outside the modal, we dont want to do anything
+                    $scope.dismiss = function() {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+                }
+            };
+            utilityService.showModal(showNewProfileModal);
+        };
+
+        /*
+        * Delete Profile MODAL
+        */
+        $scope.showDeleteProfileModal = function() {
+            let deleteProfileModal = {
+                templateUrl: "deleteProfileModal.html",
+                // This is the controller to be used for the modal.
+                controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+
+                    // Delete Profile
+                    $scope.deleteProfile = function() {
+                        $uibModalInstance.close();
+                        connectionService.deleteProfile();
+                    };
+
+                    // Close when close is clicked.
+                    $scope.close = function() {
+                        $uibModalInstance.close();
+                    };
+
+                    // When they hit cancel or click outside the modal, we dont want to do anything
+                    $scope.dismiss = function() {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+                }
+            };
+            utilityService.showModal(deleteProfileModal);
+        };
+
         /**
          * Initial App Load
         */

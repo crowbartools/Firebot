@@ -269,6 +269,16 @@
                 }
             };
 
+            // Create new profile
+            service.createNewProfile = function() {
+                ipcRenderer.send('createProfile');
+            };
+
+            // delete profile
+            service.deleteProfile = function() {
+                ipcRenderer.send('deleteProfile');
+            };
+
             // Login Kickoff
             service.loginOrLogout = function(type) {
                 if ((type === 'streamer' && !service.accounts.streamer.isLoggedIn) ||
