@@ -95,7 +95,7 @@
   <body>
 
     <div class='loader-wrapper' ng-if="showSpinner">
-      <div class="loader">Loading...</div>
+      <div class="loader">{{'MAIN.LOADING' | translate }}</div>
     </div>
 
     <sidebar></sidebar>  
@@ -128,7 +128,7 @@
     <script type="text/ng-template" id="manageLoginsModal.html">
       <div class="modal-header">
         <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="errorLabel">Manage Logins</h4>
+        <h4 class="modal-title" id="errorLabel">{{'MAIN.MANAGE_LOGINS' | translate }}</h4>
       </div>
       <div class="modal-body">
             <div class="row" style="text-align: center;">

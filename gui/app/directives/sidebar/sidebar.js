@@ -18,20 +18,20 @@
                 <div class="nav-body-wrapper">
                     <div class="nav-links-wrapper" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
 
-                        <nav-category name="Interactive"></nav-category>
-                        <nav-link name="Buttons" icon="fa-gamepad" is-index="true"></nav-link>
+                        <nav-category name="Interactive" text="SIDEBAR.INTERACTIVE"></nav-category>
+                        <nav-link name="Buttons" text="SIDEBAR.INTERACTIVE.BUTTONS" icon="fa-gamepad" is-index="true"></nav-link>
 
-                        <nav-category name="Chat" pad-top="true"></nav-category>
-                        <nav-link name="Commands" icon="fa-bullhorn"></nav-link>
-                        <nav-link name="Chat Feed" icon="fa-commenting"></nav-link>
+                        <nav-category name="Chat" text="SIDEBAR.CHAT" pad-top="true"></nav-category>
+                        <nav-link name="Commands" text="SIDEBAR.CHAT.COMMANDS" icon="fa-bullhorn"></nav-link>
+                        <nav-link name="Chat Feed" text="SIDEBAR.CHAT.CHAT_FEED" icon="fa-commenting"></nav-link>
 
-                        <nav-category name="General" pad-top="true"></nav-category>
-                        <nav-link name="Events" icon="fa-star"></nav-link>
-                        <nav-link name="Viewer Groups" icon="fa-users"></nav-link>
-                        <nav-link name="Hotkeys" icon="fa-keyboard"></nav-link>
-                        <nav-link name="Moderation" icon="fa-gavel"></nav-link>
-                        <nav-link name="Settings" icon="fa-cog"></nav-link>
-                        <nav-link name="Updates" icon="fa-download" badge-text="$ctrl.updateIsAvailable() ? 'NEW' : ''"></nav-link>
+                        <nav-category name="General" text="SIDEBAR.GENERAL" pad-top="true"></nav-category>
+                        <nav-link name="Events" text="SIDEBAR.GENERAL.EVENTS" icon="fa-star"></nav-link>
+                        <nav-link name="Viewer Groups" text="SIDEBAR.GENERAL.VIEWER_GROUPS" icon="fa-users"></nav-link>
+                        <nav-link name="Hotkeys" text="SIDEBAR.GENERAL.HOTKEYS" icon="fa-keyboard"></nav-link>
+                        <nav-link name="Moderation" text="SIDEBAR.GENERAL.MODERATION" icon="fa-gavel"></nav-link>
+                        <nav-link name="Settings" text="SIDEBAR.GENERAL.SETTINGS" icon="fa-cog"></nav-link>
+                        <nav-link name="Updates" text="SIDEBAR.GENERAL.UPDATES" icon="fa-download" badge-text="$ctrl.updateIsAvailable() ? 'NEW' : ''"></nav-link>
 
                     </div>
         
@@ -69,41 +69,14 @@
             
                         <div class="about-link" 
                             ng-class="{'contracted': !$ctrl.sbm.navExpanded}"
-                            ng-click="$ctrl.showAboutFirebotModal()">About
+                            ng-click="$ctrl.showAboutFirebotModal()">{{"SIDEBAR.ABOUT" | translate }}
                         </div>
                     </div>
                 </div>
 
                 <!-- Tooltip template -->
                 <script type="text/ng-template" id="connectTooltipTemplate.html">
-                  <div ng-if="!$ctrl.sbm.navExpanded">
-                    <span>
-                        <span><b>Interactive Status:</b></span>
-                        </br> 
-                        <span>{{$ctrl.cs.connectedToInteractive ? 'Connected' : 'Disconnected'}}</span>
-                        <span ng-if="$ctrl.cs.connectedToInteractive"></br>{{'(' +  $ctrl.cs.connectedBoard + ')'}}</span>     
-                        </br></br>
-                      </span>
-                      <span>
-                        <span><b>Chat Status:</b></span>
-                        </br> 
-                        <span>{{$ctrl.cs.connectedToChat ? 'Connected' : 'Disconnected'}}</span>     
-                        </br></br>
-                      </span>
-                      <span>
-                        <span><b>Constellation Status:</b></span>
-                        </br> 
-                        <span>{{$ctrl.cs.connectedToConstellation ? 'Connected' : 'Disconnected'}}</span>     
-                        </br></br>
-                      </span>
-                      <span>
-                          <span><b>Overlay Status:</b></span>
-                          </br> 
-                          <span>{{$ctrl.wss.hasClientsConnected ? 'Connected' : 'Running, but nothing is connected'}}</span>     
-                          </br></br>
-                        </span>
-                  </div>
-                  <span>Click to toggle connection to Mixer services.</span>
+                  <span>{{'SIDEBAR.CONNECTIONS.MIXER_TOGGLE' | translate }}</span>
                 </script>
             </div>
             `,

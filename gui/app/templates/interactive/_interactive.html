@@ -6,30 +6,30 @@
       <i class="fas fa-cog"></i>
     </span>
     <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
-      <span class="noselect pointer">CHANGE BOARD</span>
+      <span class="noselect pointer">{{'BUTTONS.CHANGE_BOARD' | translate}}</span>
       <div class="fb-arrow down"></div>
       <ul class="dropdown-menu" uib-dropdown-menu>
         <li ng-repeat="boardName in getBoardNames()">
           <a href ng-click="switchToBoard(boardName)">{{boardName}}</a>
         </li>
         <li ng-hide="getBoardNames().length == 0" role="separator" class="divider"></li>
-        <li><a href ng-click="showAddBoardModal()">Add New Board</a></li>
-        <li ng-hide="selectedBoard() == null"><a href ng-click="showDeleteBoardModal()">Delete Board</a></li>
-        <li ng-hide="selectedBoard() == null"><a href ng-click="resyncCurrentBoard()">Resync Board</a></li>
+        <li><a href ng-click="showAddBoardModal()">{{'BUTTONS.CHANGE_BOARD.ADD_NEW_BOARD' | translate }}</a></li>
+        <li ng-hide="selectedBoard() == null"><a href ng-click="showDeleteBoardModal()">{{'BUTTONS.CHANGE_BOARD.DELETE_BOARD' | translate }}</a></li>
+        <li ng-hide="selectedBoard() == null"><a href ng-click="resyncCurrentBoard()">{{'BUTTONS.CHANGE_BOARD.RESYNC_BOARD' | translate }}</a></li>
       </ul>
     </div>
-    <span class="mixer-studio-link"><a href ng-click="openLinkExternally('https://mixer.com/lab/interactive')">Mixer Studio <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
+    <span class="mixer-studio-link"><a href ng-click="openLinkExternally('https://mixer.com/lab/interactive')">{{'BUTTONS.MIXER_STUDIO' | translate }} <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
   </div>
   <div class="content-block-body">
 
-    <p ng-show="getBoardNames().length == 0 && isLoadingBoards()" class="muted" style="margin-top:15px;">Loading boards...</p>
-    <button ng-show="(!isLoadingBoards() && getBoardNames().length == 0)" ng-click="showAddBoardModal()" class="btn btn-default">+ Add First Board</button>
-    <p ng-show="selectedBoard() == null && getBoardNames().length > 0" class="muted" style="margin-top:15px;">We couldn't auto select a board but don't worry, you have boards saved! Click the dropdown above and select a board.</p>
+    <p ng-show="getBoardNames().length == 0 && isLoadingBoards()" class="muted" style="margin-top:15px;">{{'BUTTONS.LOADING_BOARDS' | translate }}</p>
+    <button ng-show="(!isLoadingBoards() && getBoardNames().length == 0)" ng-click="showAddBoardModal()" class="btn btn-default">+ {{'BUTTONS.ADD_FIRST_BOARD' | translate }}</button>
+    <p ng-show="selectedBoard() == null && getBoardNames().length > 0" class="muted" style="margin-top:15px;">{{'BUTTONS.COULD_NOT_AUTOSELECT' | translate }}</p>
     
     <div class="page-content" >
       <div class="row interactive-board-container" ng-if="selectedBoard() != null && getBoardNames().length > 0">
         <div class="scene-tools-wrapper">
-          <span class="scenes-title">SCENES</span>
+          <span class="scenes-title">{{'BUTTONS.SCENES' | translate }}</span>
           <div class="scene-tools">
             <div class="btn-group" style="margin-right: 15px">
               <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" ng-click="saveCurrentButtomViewMode('interactive')" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
@@ -48,7 +48,7 @@
               <!--Create buttons in each scene -->
               <!--Grid View-->
               <div ng-show="buttonViewMode == 'grid'" ng-class="{'interactive-control-tile': control, 'inactive-control' : !control.active && control.active != null}" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
-                <a ng-hide="control.kind ==='joystick'" class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">EDIT</a>
+                <a ng-hide="control.kind ==='joystick'" class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">{{'BUTTONS.EDIT' | translate}}</a>
                 <a ng-show="control.kind ==='joystick'" class="info-btn" tooltip-append-to-body="true" uib-tooltip="Joysticks will automatically control your mouse when the board is connected."><i class="fal fa-info-circle"></i></a>                
                 <div ng-hide="control.kind ==='joystick'" ng-mouseenter="setHoverOverControlId(control.controlId)" ng-mouseleave="setHoverOverControlId('')" class="button-name noselect" ng-class="{ 'muted' : !control.text || isHoverOverControlName(control.controlId) }">{{getControlIdOrName(control)}}</div>
                 <div ng-show="control.kind ==='joystick'" class="button-name noselect">{{control.controlID}}</div>
@@ -62,9 +62,9 @@
                 <thead style="text-transform: uppercase;color: #4a4a4a;">
                   <tr>
                     <th style="width:5%;"></th>
-                    <th style="width:25%;">ID</th>
-                    <th style="width:25%;">Name</th>
-                    <th style="width:25%;">Cost</th>
+                    <th style="width:25%;">{{'BUTTONS.ID' | translate }}</th>
+                    <th style="width:25%;">{{'BUTTONS.NAME' | translate }}</th>
+                    <th style="width:25%;">{{'BUTTONS.COST' | translate }}</th>
                     <th style="width:20%;"></th>
                   </tr>
                 </thead>
