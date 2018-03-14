@@ -1340,3 +1340,17 @@ thead th{
 .tooltip {
   z-index:999999999999999999;
 }
+
+.logins-wrapper{
+  .accounts-dropdown{
+    right:0px!important;
+    left:inherit!important;
+  }
+  img{
+    height:42px;
+    width:42px;
+  }
+  hr{
+    margin:5px 0px 5px 0px!important;
+  }
+}

@@ -6,6 +6,7 @@
 
     const electronOauth2 = require('electron-oauth2');
     const profileManager = require('../../lib/common/profile-manager.js');
+    const dataAccess = require('../../lib/common/data-access.js');
     const {session} = require('electron').remote;
 
     angular
@@ -279,6 +280,11 @@
                 ipcRenderer.send('deleteProfile');
             };
 
+            // switch profile
+            service.switchProfiles = function(profileId) {
+                ipcRenderer.send('switchProfile', profileId);
+            };
+
             // Login Kickoff
             service.loginOrLogout = function(type) {
                 if ((type === 'streamer' && !service.accounts.streamer.isLoggedIn) ||
@@ -297,7 +303,7 @@
                 let dbAuth = profileManager.getJsonDbInProfile("/auth");
 
                 let username, avatar;
-                // Get streamer info.
+                // Get streamer info for logged in profile.
                 try {
                     let streamer = dbAuth.getData('/streamer');
 
@@ -318,7 +324,8 @@
                 } catch (error) {
                     logger.warn('No streamer logged into the app.');
                 }
-                // Get bot info
+
+                // Get bot info for logged in profile.
                 try {
                     let bot = dbAuth.getData('/bot');
 
@@ -338,6 +345,39 @@
                     }
                 } catch (error) {
                     logger.warn('No bot logged into the app.');
+                }
+
+                // Get full list of active profiles.
+                try {
+                    let globalSettingDb = dataAccess.getJsonDbInUserData('./global-settings'),
+                        activeProfiles = globalSettingDb.getData('./profiles/activeProfiles'),
+                        profiles = [];
+
+                    // Loop through active profiles, get username and avatar for ui.
+                    Object.keys(activeProfiles).forEach((profile) => {
+                        let streamer = [],
+                            username = "User",
+                            avatar = "../images/placeholders/default.jpg";
+
+                        // Try to get streamer settings for this profile.
+                        // If it exists, overwrite defaults.
+                        try {
+                            let profileDb = dataAccess.getJsonDbInUserData('./profiles/' + profile + '/auth');
+                            streamer = profileDb.getData('/streamer');
+                            username = streamer.username;
+                            avatar = streamer.avatar;
+                        } catch (err) {
+                            logger.info('Couldnt get streamer data for profile ' + profile + ' while updating the UI. Its possible this account hasnt logged in yet.');
+                        }
+
+                        // Push each profile to the profiles array.
+                        profiles.push({username: username, avatar: avatar, profileId: profile});
+                    });
+
+                    // Push to our service variable for easy ui access once finished.
+                    service.accounts.profiles = profiles;
+                } catch (err) {
+                    logger.warn('Couldnt get active profiles for updating ui.');
                 }
             };
 

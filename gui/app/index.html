@@ -108,7 +108,16 @@
           <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
           <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
           <div class="fb-arrow down login-arrow"></div>
-          <ul class="dropdown-menu" uib-dropdown-menu>
+          <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
+            <li ng-repeat="profile in accounts.profiles">
+              <a href ng-click="switchProfiles(profile.profileId)">
+                  <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
+                  <span class="accounts-info">{{profile.username}} (#{{profile.profileId}})</span>
+              </a>
+            </li>
+            <li>
+              <hr>
+            </li>
             <li>
               <a href ng-click="showManageLoginsModal()">
                 <span style="vertical-align:-11.5%;">
@@ -123,7 +132,7 @@
             <li>
               <a href ng-click="showNewProfileModal()">
                 <span style="vertical-align:-11.5%;">
-                  <i class="fal fa-sign-in"></i>
+                  <i class="fal fa-plus-square"></i>
                 </span> 
                 Add Profile
               </a>
@@ -131,7 +140,7 @@
             <li>
               <a href ng-click="showDeleteProfileModal()">
                 <span style="vertical-align:-11.5%;">
-                  <i class="fal fa-sign-in"></i>
+                  <i class="fal fa-minus-square"></i>
                 </span> 
                 Delete Profile
               </a>

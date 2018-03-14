@@ -197,6 +197,11 @@
             utilityService.showModal(deleteProfileModal);
         };
 
+        // Switch Profiles
+        $scope.switchProfiles = function(profileId) {
+            connectionService.switchProfiles(profileId);
+        };
+
         /**
          * Initial App Load
         */

@@ -436,6 +436,10 @@ ipcMain.on('deleteProfile', () => {
     profileManager.deleteProfile();
 });
 
+// Change profile when we get event from renderer
+ipcMain.on('switchProfile', function(event, profileId) {
+    profileManager.logInProfile(profileId);
+});
 
 
 mixerConnect = require('./lib/common/mixer-interactive.js');
