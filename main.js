@@ -174,7 +174,6 @@ async function deleteProfiles() {
             logger.warn('Successfully deleted profile: ' + deletedProfile);
         }
     } catch (err) {
-        logger.error(err);
         logger.info('No profiles are queued to be deleted or there was an error.');
         return;
     }
@@ -191,6 +190,12 @@ async function createDefaultFoldersAndFiles() {
     if (!dataAccess.userDataPathExistsSync("/profiles")) {
         logger.info("Can't find the profiles folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/profiles");
+    }
+
+    // Create the backup folder if it doesn't exist
+    if (!dataAccess.userDataPathExistsSync("/backups")) {
+        logger.info("Can't find the backup folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/backups");
     }
 
     // Okay, now we're going to want to set up individual profile folders or missing folders.
@@ -241,12 +246,6 @@ async function createDefaultFoldersAndFiles() {
         if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/scripts")) {
             logger.info("Can't find the scripts folder, creating one now...");
             dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/scripts");
-        }
-
-        // Create the scripts folder if it doesn't exist
-        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/backups")) {
-            logger.info("Can't find the backup folder, creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/backups");
         }
 
         // Create the controls folder if it doesn't exist.
