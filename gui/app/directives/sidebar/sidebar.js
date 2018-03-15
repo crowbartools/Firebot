@@ -76,6 +76,33 @@
 
                 <!-- Tooltip template -->
                 <script type="text/ng-template" id="connectTooltipTemplate.html">
+                  <div ng-if="!$ctrl.sbm.navExpanded">
+                    <span>
+                        <span><b>Interactive Status:</b></span>
+                        </br> 
+                        <span>{{$ctrl.cs.connectedToInteractive ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
+                        <span ng-if="$ctrl.cs.connectedToInteractive"></br>{{'(' +  $ctrl.cs.connectedBoard + ')'}}</span>     
+                        </br></br>
+                      </span>
+                      <span>
+                        <span><b>Chat Status:</b></span>
+                        </br> 
+                        <span>{{$ctrl.cs.connectedToChat ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>     
+                        </br></br>
+                      </span>
+                      <span>
+                        <span><b>Constellation Status:</b></span>
+                        </br> 
+                        <span>{{$ctrl.cs.connectedToConstellation ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>     
+                        </br></br>
+                      </span>
+                      <span>
+                          <span><b>Overlay Status:</b></span>
+                          </br> 
+                          <span>{{$ctrl.wss.hasClientsConnected ? 'CONNECTED' : 'RUNNING_NOT_CONNECTED' | translate }}</span>     
+                          </br></br>
+                        </span>
+                  </div>
                   <span>{{'SIDEBAR.CONNECTIONS.MIXER_TOGGLE' | translate }}</span>
                 </script>
             </div>

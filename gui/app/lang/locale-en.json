@@ -51,5 +51,5 @@
     "NEW": "New",
     "CONNECTED": "Connected",
     "DISCONNECTED": "Disconnected",
-    "RUNNING_NOT_CONNECTED": "We're Running, but nothing is connected man"
+    "RUNNING_NOT_CONNECTED": "Running, but nothing is connected"
 }
