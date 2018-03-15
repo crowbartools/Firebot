@@ -1,0 +1,55 @@
+{
+    "MAIN": {
+        "MANAGE_LOGINS": "Manage Logins",
+        "LOADING": "Loading..."
+    },
+    "SIDEBAR": {
+        "INTERACTIVE": {
+            "INTERACTIVE": "Interactive",
+            "BUTTONS": "Buttons"
+        },
+        "CHAT":{
+            "CHAT": "Chat",
+            "COMMANDS": "Commands",
+            "CHAT_FEED": "Chat Feed"
+        },
+        "GENERAL": {
+            "GENERAL": "General",
+            "EVENTS": "Events",
+            "VIEWER_GROUPS": "Viewer Groups",
+            "HOTKEYS": "Hotkeys",
+            "MODERATION": "Moderation",
+            "SETTINGS": "Settings",
+            "UPDATES":"Updates"
+        },
+        "CONNECTIONS": {
+            "CONNECTIONS": "Connections",
+            "MIXER_TOGGLE": "Click to toggle connection to Mixer services",
+            "OPEN_CONNECTION_PANNEL": "Open Connection Panel"
+        },
+        "ABOUT":"About"
+    },
+    "BUTTONS":{
+        "BUTTONS": "Buttons",
+        "CHANGE_BOARD": {
+            "CHANGE_BOARD": "Change Board",
+            "ADD_NEW_BOARD": "Add New Board",
+            "DELETE_BOARD": "Delete Board",
+            "RESYNC_BOARD": "Resync Board"
+        },
+        "MIXER_STUDIO": "Mixer Studio",
+        "SCENES": "Scenes",
+        "EDIT": "Edit",
+        "SEARCH_CONTROLS": "Search controls",
+        "LOADING_BOARDS": "Loading boards...",
+        "ADD_FIRST_BOARD": "Add First Board",
+        "COULD_NOT_AUTOSELECT": "We couldn't auto select a board but don't worry, you have boards saved! Click the dropdown above and select a board.",
+        "ID": "ID",
+        "NAME": "Name",
+        "COST": "Cost"
+    },
+    "NEW": "New",
+    "CONNECTED": "Connected",
+    "DISCONNECTED": "Disconnected",
+    "RUNNING_NOT_CONNECTED": "Running, but nothing is connected"
+}

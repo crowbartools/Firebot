@@ -7,7 +7,7 @@
     let app = angular
         .module('firebotApp',
             ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable',
-                'luegg.directives', 'summernote']);
+                'luegg.directives', 'summernote', 'pascalprecht.translate']);
 
     app.factory('$exceptionHandler',
         function(logger) {
@@ -17,6 +17,15 @@
             };
         }
     );
+
+    app.config(['$translateProvider', function($translateProvider) {
+        $translateProvider
+            .useStaticFilesLoader({
+                prefix: 'lang/locale-',
+                suffix: '.json'
+            })
+            .preferredLanguage('en');
+    }]);
 
     app.run(
         function initializeApplication(logger, chatMessagesService, groupsService, connectionService, notificationService,
