@@ -9,16 +9,11 @@ const {app, BrowserWindow, ipcMain, shell, dialog} = electron;
 const GhReleases = require('electron-gh-releases');
 const settings = require('./lib/common/settings-access').settings;
 const dataAccess = require('./lib/common/data-access.js');
+const profileManager = require('./lib/common/profile-manager.js');
 const backupManager = require("./lib/backupManager");
 const apiServer = require('./api/apiServer.js');
 
 const Effect = require('./lib/common/EffectType');
-
-// These are defined globally for Custom Scripts.
-// We will probably wnat to handle these differently but we shouldn't
-// change anything until we are ready as changing this will break most scripts
-global.EffectType = Effect.EffectType;
-global.SCRIPTS_DIR = dataAccess.getPathInUserData('/user-settings/scripts/');
 
 // uncaught exception - log the error
 process.on('uncaughtException', logger.error); //eslint-disable-line no-console
@@ -26,6 +21,19 @@ process.on('uncaughtException', logger.error); //eslint-disable-line no-console
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+// Focus first firebot window if people try to launch a second one.
+let iShouldQuit = app.makeSingleInstance(function() {
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.show();
+        mainWindow.focus();
+    }
+    return true;
+});
+if (iShouldQuit) {
+    app.quit(); return;
+}
 
 // Interactive handler
 let mixerConnect; //eslint-disable-line
@@ -129,34 +137,141 @@ function createWindow () {
     hotkeyManager.refreshHotkeyCache();
 }
 
+// This checks to see if we have any profiles scheduled for deletion.
+// If they are, this deletes it.
+async function deleteProfiles() {
+    let globalSettingsDb = dataAccess.getJsonDbInUserData('./global-settings');
+
+    try {
+        let deletedProfile = globalSettingsDb.getData('./profiles/deleteProfile'),
+            activeProfiles = globalSettingsDb.getData('./profiles/activeProfiles');
+
+        // Stop here if we have no deleted profile info.
+        if (deletedProfile != null) {
+            // Delete the profile.
+            logger.warn('Profile ' + deletedProfile + ' is marked for deletion. Removing it now.');
+            logger.warn(dataAccess.getPathInUserData('/profiles') + '\\' + deletedProfile);
+            dataAccess.deleteFolderRecursive(dataAccess.getPathInUserData('/profiles') + '\\' + deletedProfile);
+
+            // Remove it from active profiles.
+            let profilePosition = activeProfiles.indexOf(deletedProfile);
+            activeProfiles.splice(profilePosition, 1);
+            globalSettingsDb.push('/profiles/activeProfiles', activeProfiles);
+
+            // Remove loggedInProfile setting and let restart process handle it.
+            if (activeProfiles.length > 0 && activeProfiles != null) {
+                // Switch to whatever the first profile is in our new active profiles list.
+                globalSettingsDb.push('./profiles/loggedInProfile', activeProfiles[0]);
+            } else {
+                // We have no more active profiles, delete the loggedInProfile setting.
+                globalSettingsDb.delete('./profiles/loggedInProfile');
+            }
+
+            // Reset the deleteProfile setting.
+            globalSettingsDb.delete('./profiles/deleteProfile');
+
+            // Let our logger know we successfully deleted a profile.
+            logger.warn('Successfully deleted profile: ' + deletedProfile);
+        }
+    } catch (err) {
+        logger.info('No profiles are queued to be deleted or there was an error.');
+        return;
+    }
+}
+
 async function createDefaultFoldersAndFiles() {
-    logger.info("Ensuring default folders and files exist...");
-    //create the root "firebot-data" folder in user-settings
+    logger.info("Ensuring default folders and files exist for all users...");
+
+    //create the root "firebot-data" folder
     dataAccess.createFirebotDataDir();
 
-    // Create the user-settings folder if it doesn't exist. It's required
+    // Create the profiles folder if it doesn't exist. It's required
     // for the folders below that are within it
-    if (!dataAccess.userDataPathExistsSync("/user-settings/")) {
-        logger.info("Can't find the user-settings folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings");
+    if (!dataAccess.userDataPathExistsSync("/profiles")) {
+        logger.info("Can't find the profiles folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/profiles");
     }
 
-    if (!dataAccess.userDataPathExistsSync("/user-settings/hotkeys.json")) {
-        logger.info("Can't find the hotkeys file, creating the default one now...");
-        dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/user-settings/");
-    }
-
-    // Create the scripts folder if it doesn't exist
-    if (!dataAccess.userDataPathExistsSync("/user-settings/scripts/")) {
-        logger.info("Can't find the scripts folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/scripts");
-    }
-
-    // Create the scripts folder if it doesn't exist
-    if (!dataAccess.userDataPathExistsSync("/backups/")) {
+    // Create the backup folder if it doesn't exist
+    if (!dataAccess.userDataPathExistsSync("/backups")) {
         logger.info("Can't find the backup folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/backups");
     }
+
+    // Okay, now we're going to want to set up individual profile folders or missing folders.
+    let globalSettingsDb = dataAccess.getJsonDbInUserData('./global-settings'),
+        activeProfiles = [];
+
+    // Check to see if globalSettings file has active profiles listed, otherwise create it.
+    // ActiveProfiles is a list of profiles that have not been deleted through the app.
+    // This could happen if someone manually deletes a profile.
+    try {
+        activeProfiles = globalSettingsDb.getData('/profiles/activeProfiles');
+    } catch (err) {
+        globalSettingsDb.push('/profiles/activeProfiles', [1]);
+        activeProfiles = [1];
+    }
+
+    // Check to see if we have a "loggedInProfile", if not select one.
+    // If we DO have a loggedInProfile, check and make sure that profile is still in our active profile list, if not select the first in the active list.
+    // All of this is backup, just in case. It makes sure that we at least have some profile logged in no matter what happens.
+    try {
+        if (activeProfiles.indexOf(globalSettingsDb.getData('/profiles/loggedInProfile')) === -1) {
+            globalSettingsDb.push('/profiles/loggedInProfile', activeProfiles[0]);
+            logger.info("Last logged in profile is no longer on the active profile list. Changing it to an active one.");
+        } else {
+            logger.info("Last logged in profile is still active!");
+        }
+    } catch (err) {
+        globalSettingsDb.push('/profiles/loggedInProfile', activeProfiles[0]);
+        logger.info('Last logged in profile info is missing or this is a new install. Adding it in now.');
+    }
+
+    // Loop through active profiles and make sure all folders needed are created.
+    // This ensures that even if a folder is manually deleted, it will be recreated instead of erroring out the app somewhere down the line.
+    activeProfiles = Object.keys(activeProfiles).map(k => activeProfiles[k]);
+    activeProfiles.forEach((profileId) => {
+        // Create the scripts folder if it doesn't exist
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId)) {
+            logger.info("Can't find a profile folder for " + profileId + ", creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
+        }
+
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/hotkeys.json")) {
+            logger.info("Can't find the hotkeys file, creating the default one now...");
+            dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/profiles/" + profileId);
+        }
+
+        // Create the scripts folder if it doesn't exist
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/scripts")) {
+            logger.info("Can't find the scripts folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/scripts");
+        }
+
+        // Create the controls folder if it doesn't exist.
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/controls")) {
+            logger.info("Can't find the controls folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/controls");
+        }
+
+        // Create the logs folder if it doesn't exist.
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/logs")) {
+            logger.info("Can't find the logs folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/logs");
+        }
+
+        // Create the chat folder if it doesn't exist.
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/chat")) {
+            logger.info("Can't find the chat folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/chat");
+        }
+
+        // Create the chat folder if it doesn't exist.
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/live-events")) {
+            logger.info("Can't find the live-events folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/live-events");
+        }
+    });
 
     // Update the port.js file
     let port = settings.getWebSocketPort();
@@ -167,31 +282,9 @@ async function createDefaultFoldersAndFiles() {
             logger.info(`Set overlay port to: ${port}`);
         });
 
-    // Create the controls folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/user-settings/controls")) {
-        logger.info("Can't find the controls folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/controls");
-    }
 
-    // Create the logs folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/user-settings/logs")) {
-        logger.info("Can't find the logs folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/logs");
-    }
-
-    // Create the chat folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/user-settings/chat")) {
-        logger.info("Can't find the chat folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/chat");
-    }
-
-    // Create the chat folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/user-settings/live-events")) {
-        logger.info("Can't find the live-events folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/user-settings/live-events");
-    }
-
-    logger.info("Finished verifying default folders and files.");
+    // And... we're done.
+    logger.info("Finished verifying default folder and files for all profiles, as well as making sure our logged in profile is valid.");
 }
 
 
@@ -199,10 +292,15 @@ async function createDefaultFoldersAndFiles() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async function() {
-
     await createDefaultFoldersAndFiles();
 
     createWindow();
+
+    // These are defined globally for Custom Scripts.
+    // We will probably wnat to handle these differently but we shouldn't
+    // change anything until we are ready as changing this will break most scripts
+    global.EffectType = Effect.EffectType;
+    global.SCRIPTS_DIR = profileManager.getPathInProfile('/scripts/');
 
     backupManager.onceADayBackUpCheck();
 
@@ -214,9 +312,12 @@ app.on('ready', async function() {
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
+    // Unregister all shortcuts.
+    let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
+    hotkeyManager.unregisterAllHotkeys();
+
     if (settings.backupOnExit()) {
         backupManager.startBackup(false, app.quit);
-
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     } else if (process.platform !== 'darwin') {
@@ -233,10 +334,9 @@ app.on('activate', () => {
 });
 
 // When Quitting.
-app.on('will-quit', () => {
-    let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
-    // Unregister all shortcuts.
-    hotkeyManager.unregisterAllHotkeys();
+app.on('quit', () => {
+    deleteProfiles();
+    logger.warn('THIS IS THE END OF THE SHUTDOWN PROCESS.');
 });
 
 // Run Updater
@@ -325,8 +425,20 @@ ipcMain.on('startBackup', (event, manualActivation = false) => {
     });
 });
 
+// When we get an event from the renderer to create a new profile.
+ipcMain.on('createProfile', () => {
+    profileManager.createNewProfile();
+});
 
+// When we get an event from the renderer to delete a particular profile.
+ipcMain.on('deleteProfile', () => {
+    profileManager.deleteProfile();
+});
 
+// Change profile when we get event from renderer
+ipcMain.on('switchProfile', function(event, profileId) {
+    profileManager.logInProfile(profileId);
+});
 
 
 mixerConnect = require('./lib/common/mixer-interactive.js');

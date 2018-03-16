@@ -108,9 +108,42 @@
           <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
           <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
           <div class="fb-arrow down login-arrow"></div>
-          <ul class="dropdown-menu" uib-dropdown-menu>
+          <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
+            <li ng-repeat="profile in accounts.profiles">
+              <a href ng-click="switchProfiles(profile.profileId)">
+                  <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
+                  <span class="accounts-info">{{profile.username}} (#{{profile.profileId}})</span>
+              </a>
+            </li>
             <li>
-              <a href ng-click="showManageLoginsModal()"><span style="vertical-align:-11.5%;"><i class="fal fa-sign-in"></i></span> Manage logins</a>
+              <hr>
+            </li>
+            <li>
+              <a href ng-click="showManageLoginsModal()">
+                <span style="vertical-align:-11.5%;">
+                  <i class="fal fa-sign-in"></i>
+                </span> 
+                Manage Profile
+              </a>
+            </li>
+            <li>
+              <hr>
+            </li>
+            <li>
+              <a href ng-click="showNewProfileModal()">
+                <span style="vertical-align:-11.5%;">
+                  <i class="fal fa-plus-square"></i>
+                </span> 
+                Add Profile
+              </a>
+            </li>
+            <li>
+              <a href ng-click="showDeleteProfileModal()">
+                <span style="vertical-align:-11.5%;">
+                  <i class="fal fa-minus-square"></i>
+                </span> 
+                Delete Profile
+              </a>
             </li>
           </ul>
         </div>
@@ -124,7 +157,7 @@
       </div>
     </div>
     
-    <!-- Manage Logins Modal -->
+    <!-- Manage Profile Modal -->
     <script type="text/ng-template" id="manageLoginsModal.html">
       <div class="modal-header">
         <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
@@ -145,6 +178,36 @@
             </div>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+      </div>
+    </script>
+
+    <!-- New Profile Modal -->
+    <script type="text/ng-template" id="newProfileModal.html">
+      <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="errorLabel">Add New Profile</h4>
+      </div>
+      <div class="modal-body">
+        Creating a new profile requires an application restart. Is this okay?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-click="createNewProfile()">Create Profile</button>
+        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+      </div>
+    </script>
+
+    <!-- Delete Profile Modal -->
+    <script type="text/ng-template" id="deleteProfileModal.html">
+      <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="errorLabel">Delete Profile</h4>
+      </div>
+      <div class="modal-body">
+        WARNING! You are about to delete this profile and all settings associated with it. Are you sure this is what you want to do?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" ng-click="deleteProfile()">Delete Profile</button>
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>
       </div>
     </script>

@@ -1,6 +1,5 @@
 'use strict';
-
-const dataAccess = require('../../lib/common/data-access.js');
+const profileManager = require('../../lib/common/profile-manager.js');
 
 (function() {
 
@@ -186,7 +185,7 @@ const dataAccess = require('../../lib/common/data-access.js');
             let userHotkeys = [];
 
             service.loadHotkeys = function() {
-                let hotkeyDb = dataAccess.getJsonDbInUserData("/user-settings/hotkeys");
+                let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
                 try {
                     let hotkeyData = hotkeyDb.getData('/');
                     if (hotkeyData != null && hotkeyData.length > 0) {
@@ -198,7 +197,7 @@ const dataAccess = require('../../lib/common/data-access.js');
             };
 
             function saveHotkeysToFile() {
-                let hotkeyDb = dataAccess.getJsonDbInUserData("/user-settings/hotkeys");
+                let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
                 try {
                     hotkeyDb.push("/", userHotkeys);
                 } catch (err) {

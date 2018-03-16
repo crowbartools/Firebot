@@ -2,7 +2,7 @@
 (function() {
 
     //This manages the chat window.
-    const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
 
     angular
         .module('firebotApp')
@@ -298,7 +298,7 @@
                 }
 
                 // We haven't cached the icon yet, lets do that.
-                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth"),
+                let dbAuth = profileManager.getJsonDbInProfile("/auth"),
                     streamer = dbAuth.getData('/streamer'),
                     subIcon = [];
 

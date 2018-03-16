@@ -5,7 +5,7 @@
 
     const fs = require('fs');
     const _ = require('underscore')._;
-    const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require('../../lib/common/profile-manager.js');
 
     angular
         .module('firebotApp')
@@ -47,7 +47,7 @@
 
                     // Check for last board and load ui if one exists.
                     try {
-                        let filepath = dataAccess.getPathInUserData('/user-settings/controls/' + boardId + '.json');
+                        let filepath = profileManager.getPathInProfile('/controls/' + boardId + '.json');
 
                         let exists = fs.existsSync(filepath);
                         if (exists) {
@@ -207,27 +207,7 @@
                 // Pushing boardid: ${versionIdInfo} with ${gameUpdatedInfo} to settings/boards
                 settingsService.setBoardLastUpdatedDatetimeById(versionIdInfo, gameName, gameUpdated);
 
-                // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
-                if (dataAccess.userDataPathExistsSync('/user-settings/controls/' + gameName + '.json')) {
-                    if (!dataAccess.userDataPathExistsSync('/user-settings/controls/' + versionid + '.json')) {
-                        logger.info('Converting control files to new versionid format.');
-                        let oldPath = dataAccess.getPathInUserData("/user-settings/controls/" + gameName + '.json');
-                        let newPath = dataAccess.getPathInUserData("/user-settings/controls/" + versionid + '.json');
-
-                        try {
-                            fs.renameSync(oldPath, newPath);
-                            logger.info('Converted control file ' + gameName + '.json to version id format.');
-                        } catch (err) {
-                            logger.error(err);
-                            utilityService.showErrorModal("Unable to convert controls file " + gameName + ".json to new format. Do you have the file open somewhere? If so, close it down and restart Firebot.");
-                            return;
-                        }
-                    } else {
-                        logger.info("We detected a control file still using the board name, but it looks like it has already been converted so we will ignore it.");
-                    }
-                }
-
-                let dbControls = dataAccess.getJsonDbInUserData("/user-settings/controls/" + versionid);
+                let dbControls = profileManager.getJsonDbInProfile("/controls/" + versionid);
 
                 // Push mixer Json to controls file.
                 dbControls.push('/gameName', gameName);
@@ -350,7 +330,7 @@
 
                                 // If id is in settings, check to see if the actual file exists.
                                 if (boardUpdated != null) {
-                                    let boardExists = dataAccess.userDataPathExistsSync("/user-settings/controls/" + id + ".json");
+                                    let boardExists = profileManager.profileDataPathExistsSync("/controls/" + id + ".json");
                                     if (!boardExists) {
                                         logger.info('Board was in settings, but the controls file is missing. Rebuilding.');
                                         return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService).then(() => {
@@ -411,7 +391,7 @@
                     // load each board
                     _.each(loadedIds, function (id) {
                         if (id === false) return;
-                        let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + id);
+                        let boardDb = profileManager.getJsonDbInProfile("/controls/" + id);
                         let boardData = boardDb.getData('/');
                         try {
                             let board = boardData.firebot;
@@ -585,7 +565,7 @@
             };
 
             service.saveControlForCurrentBoard = function(control) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
+                let boardDb = profileManager.getJsonDbInProfile("/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -600,7 +580,7 @@
             };
 
             service.saveSceneForCurrentBoard = function(scene) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
+                let boardDb = profileManager.getJsonDbInProfile("/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -624,7 +604,7 @@
                 }
 
 
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
+                let boardDb = profileManager.getJsonDbInProfile("/controls/" + settingsService.getLastBoardId());
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -653,7 +633,7 @@
             };
 
             service.deleteCooldownGroupForCurrentBoard = function(cooldownGroupName, cooldownGroup) {
-                let boardDb = dataAccess.getJsonDbInUserData("/user-settings/controls/" + settingsService.getLastBoardId());
+                let boardDb = profileManager.getJsonDbInProfile("/controls/" + settingsService.getLastBoardId());
 
                 if (cooldownGroup.buttons != null) {
                     cooldownGroup.buttons.forEach((buttonName) => {
@@ -683,7 +663,7 @@
                             // remove from array
                             groups.splice(index, 1);
                             //save to file
-                            let boardDb = dataAccess.getJsonDbInUserData(`/user-settings/controls/${board.name}`);
+                            let boardDb = profileManager.getJsonDbInProfile(`/controls/${board.name}`);
                             boardDb.push(`./firebot/scenes/${scene.sceneName}/default`, groups);
                         }
                     });
