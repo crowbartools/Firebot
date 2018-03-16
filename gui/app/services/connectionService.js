@@ -355,6 +355,7 @@
 
                     // Loop through active profiles, get username and avatar for ui.
                     Object.keys(activeProfiles).forEach((profile) => {
+                        profile = activeProfiles[profile];
                         let streamer = [],
                             username = "User",
                             avatar = "../images/placeholders/default.jpg";
