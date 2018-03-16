@@ -34,6 +34,9 @@
     "author": "A Mixer Community Project",
     "license": "GPL-3.0",
     "devDependencies": {
+        "angular-translate": "^2.17.0",
+        "angular-translate-loader-static-files": "^2.17.0",
+        "angular-translate-loader-url": "^2.17.0",
         "electron": "1.7.10",
         "electron-packager": "10.1.2",
         "electron-rebuild": "1.7.3",
