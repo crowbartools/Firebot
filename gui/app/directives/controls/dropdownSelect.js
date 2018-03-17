@@ -1,18 +1,15 @@
-'use strict';
+"use strict";
 
 (function() {
+  //This a wrapped dropdown element that automatically handles the particulars
 
-    //This a wrapped dropdown element that automatically handles the particulars
-
-    angular
-        .module('firebotApp')
-        .component("dropdownSelect", {
-            bindings: {
-                options: "=",
-                selected: "=",
-                onUpdate: '&'
-            },
-            template: `
+  angular.module("firebotApp").component("dropdownSelect", {
+    bindings: {
+      options: "=",
+      selected: "=",
+      onUpdate: "&"
+    },
+    template: `
        <div class="btn-group" uib-dropdown>
          <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
            {{$ctrl.selected}} <span class="caret"></span>
@@ -22,12 +19,12 @@
          </ul>
        </div>
        `,
-            controller: function() {
-                let ctrl = this;
-                ctrl.selectOption = function(option) {
-                    ctrl.selected = option;
-                    ctrl.onUpdate({option: option});
-                };
-            }
-        });
-}());
+    controller: function() {
+      let ctrl = this;
+      ctrl.selectOption = function(option) {
+        ctrl.selected = option;
+        ctrl.onUpdate({ option: option });
+      };
+    }
+  });
+})();

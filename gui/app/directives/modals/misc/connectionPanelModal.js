@@ -1,10 +1,8 @@
-'use strict';
+"use strict";
 //
 (function() {
-    angular
-        .module('firebotApp')
-        .component("connectionPanelModal", {
-            template: `
+  angular.module("firebotApp").component("connectionPanelModal", {
+    template: `
             <div class="modal-header" style="text-align: center">
                 <h4 class="modal-title">Connection Panel</h4>
             </div>
@@ -80,36 +78,38 @@
                 </div>
             </div>
             `,
-            bindings: {
-                resolve: '<',
-                close: '&',
-                dismiss: '&'
-            },
-            controller: function(connectionService, websocketService, settingsService) {
-                let $ctrl = this;
+    bindings: {
+      resolve: "<",
+      close: "&",
+      dismiss: "&"
+    },
+    controller: function(connectionService, websocketService, settingsService) {
+      let $ctrl = this;
 
-                $ctrl.$onInit = function () {
-                    $ctrl.conn = connectionService;
-                    $ctrl.wss = websocketService;
-                };
+      $ctrl.$onInit = function() {
+        $ctrl.conn = connectionService;
+        $ctrl.wss = websocketService;
+      };
 
-                let sidebarControlledServices = settingsService.getSidebarControlledServices();
-                $ctrl.toggledServiceIsChecked = function(service) {
-                    if (sidebarControlledServices.includes(service)) {
-                        sidebarControlledServices = sidebarControlledServices.filter(s => s !== service);
-                    } else {
-                        sidebarControlledServices.push(service);
-                    }
-                    settingsService.setSidebarControlledServices(sidebarControlledServices);
-                };
+      let sidebarControlledServices = settingsService.getSidebarControlledServices();
+      $ctrl.toggledServiceIsChecked = function(service) {
+        if (sidebarControlledServices.includes(service)) {
+          sidebarControlledServices = sidebarControlledServices.filter(
+            s => s !== service
+          );
+        } else {
+          sidebarControlledServices.push(service);
+        }
+        settingsService.setSidebarControlledServices(sidebarControlledServices);
+      };
 
-                $ctrl.serviceIsChecked = function(service) {
-                    return sidebarControlledServices.includes(service);
-                };
+      $ctrl.serviceIsChecked = function(service) {
+        return sidebarControlledServices.includes(service);
+      };
 
-                $ctrl.ok = function () {
-                    $ctrl.close();
-                };
-            }
-        });
-}());
+      $ctrl.ok = function() {
+        $ctrl.close();
+      };
+    }
+  });
+})();

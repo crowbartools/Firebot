@@ -1,17 +1,14 @@
-'use strict';
+"use strict";
 
 (function() {
+  //This adds the <eos-overlay-instance> element
 
-    //This adds the <eos-overlay-instance> element
-
-    angular
-        .module('firebotApp')
-        .component("eosOverlayPosition", {
-            bindings: {
-                effect: '=',
-                hideRandom: "<"
-            },
-            template: `
+  angular.module("firebotApp").component("eosOverlayPosition", {
+    bindings: {
+      effect: "=",
+      hideRandom: "<"
+    },
+    template: `
       <div class="effect-setting-container">
          <div class="effect-specific-title">
              <h4>Overlay Display Location</h4>
@@ -61,103 +58,104 @@
          </div>
       </div>
        `,
-            controller: function() {
-                let ctrl = this;
+    controller: function() {
+      let ctrl = this;
 
-                ctrl.topOrBottom = "top";
-                ctrl.topOrBottomValue = 0;
-                ctrl.leftOrRight = "left";
-                ctrl.leftOrRightValue = 0;
+      ctrl.topOrBottom = "top";
+      ctrl.topOrBottomValue = 0;
+      ctrl.leftOrRight = "left";
+      ctrl.leftOrRightValue = 0;
 
-                ctrl.updateTopOrBottom = function(option) {
-                    ctrl.topOrBottom = option;
-                    ctrl.updateAllValues();
-                };
+      ctrl.updateTopOrBottom = function(option) {
+        ctrl.topOrBottom = option;
+        ctrl.updateAllValues();
+      };
 
-                ctrl.updateLeftOrRight = function(option) {
-                    ctrl.leftOrRight = option;
-                    ctrl.updateAllValues();
-                };
+      ctrl.updateLeftOrRight = function(option) {
+        ctrl.leftOrRight = option;
+        ctrl.updateAllValues();
+      };
 
-                ctrl.isRandom = function() {
-                    return ctrl.effect.position === 'Random';
-                };
+      ctrl.isRandom = function() {
+        return ctrl.effect.position === "Random";
+      };
 
-                ctrl.toggleRandomPreset = function() {
-                    if (ctrl.isRandom()) {
-                        ctrl.effect.position = 'Middle';
-                    } else {
-                        ctrl.effect.position = 'Random';
-                    }
-                };
+      ctrl.toggleRandomPreset = function() {
+        if (ctrl.isRandom()) {
+          ctrl.effect.position = "Middle";
+        } else {
+          ctrl.effect.position = "Random";
+        }
+      };
 
-                ctrl.updateAllValues = function() {
-                    if (ctrl.topOrBottom === 'top') {
-                        ctrl.effect.customCoords.top = ctrl.topOrBottomValue;
-                        ctrl.effect.customCoords.bottom = null;
-                    } else {
-                        ctrl.effect.customCoords.top = null;
-                        ctrl.effect.customCoords.bottom = ctrl.topOrBottomValue;
-                    }
+      ctrl.updateAllValues = function() {
+        if (ctrl.topOrBottom === "top") {
+          ctrl.effect.customCoords.top = ctrl.topOrBottomValue;
+          ctrl.effect.customCoords.bottom = null;
+        } else {
+          ctrl.effect.customCoords.top = null;
+          ctrl.effect.customCoords.bottom = ctrl.topOrBottomValue;
+        }
 
-                    if (ctrl.leftOrRight === 'left') {
-                        ctrl.effect.customCoords.left = ctrl.leftOrRightValue;
-                        ctrl.effect.customCoords.right = null;
-                    } else {
-                        ctrl.effect.customCoords.left = null;
-                        ctrl.effect.customCoords.right = ctrl.leftOrRightValue;
-                    }
-                };
+        if (ctrl.leftOrRight === "left") {
+          ctrl.effect.customCoords.left = ctrl.leftOrRightValue;
+          ctrl.effect.customCoords.right = null;
+        } else {
+          ctrl.effect.customCoords.left = null;
+          ctrl.effect.customCoords.right = ctrl.leftOrRightValue;
+        }
+      };
 
-                ctrl.togglePresetCustom = function() {
-                    if (ctrl.presetOrCustom === "custom") {
-                        ctrl.effect.position = "Custom";
-                    } else {
-                        ctrl.effect.position = "Middle";
-                    }
-                };
+      ctrl.togglePresetCustom = function() {
+        if (ctrl.presetOrCustom === "custom") {
+          ctrl.effect.position = "Custom";
+        } else {
+          ctrl.effect.position = "Middle";
+        }
+      };
 
-                ctrl.presetPositions = [
-                    "Top Left",
-                    "Top Middle",
-                    "Top Right",
-                    "Middle Left",
-                    "Middle",
-                    "Middle Right",
-                    "Bottom Left",
-                    "Bottom Middle",
-                    "Bottom Right"
-                ];
+      ctrl.presetPositions = [
+        "Top Left",
+        "Top Middle",
+        "Top Right",
+        "Middle Left",
+        "Middle",
+        "Middle Right",
+        "Bottom Left",
+        "Bottom Middle",
+        "Bottom Right"
+      ];
 
-                ctrl.$onInit = function() {
-                    if (ctrl.effect.position == null) {
-                        ctrl.effect.position = "Middle";
-                    }
-                    if (ctrl.effect.customCoords == null) {
-                        ctrl.effect.customCoords = {
-                            top: 0,
-                            bottom: null,
-                            left: 0,
-                            right: null
-                        };
-                    } else {
-                        if (ctrl.effect.customCoords.top != null) {
-                            ctrl.topOrBottom = "top";
-                            ctrl.topOrBottomValue = ctrl.effect.customCoords.top;
-                        } else {
-                            ctrl.topOrBottom = "bottom";
-                            ctrl.topOrBottomValue = ctrl.effect.customCoords.bottom;
-                        }
-                        if (ctrl.effect.customCoords.left != null) {
-                            ctrl.leftOrRight = "left";
-                            ctrl.leftOrRightValue = ctrl.effect.customCoords.left;
-                        } else {
-                            ctrl.leftOrRight = "right";
-                            ctrl.leftOrRightValue = ctrl.effect.customCoords.right;
-                        }
-                    }
-                    ctrl.presetOrCustom = ctrl.effect.position === "Custom" ? "custom" : "preset";
-                };
-            }
-        });
-}());
+      ctrl.$onInit = function() {
+        if (ctrl.effect.position == null) {
+          ctrl.effect.position = "Middle";
+        }
+        if (ctrl.effect.customCoords == null) {
+          ctrl.effect.customCoords = {
+            top: 0,
+            bottom: null,
+            left: 0,
+            right: null
+          };
+        } else {
+          if (ctrl.effect.customCoords.top != null) {
+            ctrl.topOrBottom = "top";
+            ctrl.topOrBottomValue = ctrl.effect.customCoords.top;
+          } else {
+            ctrl.topOrBottom = "bottom";
+            ctrl.topOrBottomValue = ctrl.effect.customCoords.bottom;
+          }
+          if (ctrl.effect.customCoords.left != null) {
+            ctrl.leftOrRight = "left";
+            ctrl.leftOrRightValue = ctrl.effect.customCoords.left;
+          } else {
+            ctrl.leftOrRight = "right";
+            ctrl.leftOrRightValue = ctrl.effect.customCoords.right;
+          }
+        }
+        ctrl.presetOrCustom =
+          ctrl.effect.position === "Custom" ? "custom" : "preset";
+      };
+    }
+  });
+})();

@@ -1,64 +1,60 @@
-'use strict';
+"use strict";
 
 (function() {
+  const logger = require("../../lib/logwrapper");
 
-    const logger = require('../../lib/logwrapper');
+  angular.module("firebotApp").factory("logger", function() {
+    let service = {};
 
-    angular
-        .module('firebotApp')
-        .factory('logger', function () {
+    function prefixMsgInArgs(...args) {
+      let msg = "(Renderer)";
+      if (args != null && args.length > 0) {
+        if (typeof args[0] === "string" || args[0] instanceof String) {
+          msg += " " + args.shift();
+        }
+      }
+      args.unshift(msg);
+      return args;
+    }
 
-            let service = {};
+    function callLogger(type, ...args) {
+      let argsNew = prefixMsgInArgs(...args);
+      return logger[type](...argsNew);
+    }
 
-            function prefixMsgInArgs(...args) {
-                let msg = "(Renderer)";
-                if (args != null && args.length > 0) {
-                    if (typeof args[0] === 'string' || args[0] instanceof String) {
-                        msg += " " + args.shift();
-                    }
-                }
-                args.unshift(msg);
-                return args;
-            }
+    /** Wrappers for the main Winston Logger methods. All these do is prefix the "msg" argument
+     * with "(Renderer)" so its easier to differentiate logs from the renderer vs main processes
+     * in the log file
+     */
+    service.error = (...args) => {
+      return callLogger("error", ...args);
+    };
 
-            function callLogger(type, ...args) {
-                let argsNew = prefixMsgInArgs(...args);
-                return logger[type](...argsNew);
-            }
+    service.warn = (...args) => {
+      return callLogger("warn", ...args);
+    };
 
-            /** Wrappers for the main Winston Logger methods. All these do is prefix the "msg" argument
-            * with "(Renderer)" so its easier to differentiate logs from the renderer vs main processes
-            * in the log file
-            */
-            service.error = (...args) => {
-                return callLogger("error", ...args);
-            };
+    service.info = (...args) => {
+      return callLogger("info", ...args);
+    };
 
-            service.warn = (...args) => {
-                return callLogger("warn", ...args);
-            };
+    service.verbose = (...args) => {
+      return callLogger("verbose", ...args);
+    };
 
-            service.info = (...args) => {
-                return callLogger("info", ...args);
-            };
+    service.debug = (...args) => {
+      return callLogger("debug", ...args);
+    };
 
-            service.verbose = (...args) => {
-                return callLogger("verbose", ...args);
-            };
+    service.silly = (...args) => {
+      return callLogger("silly", ...args);
+    };
 
-            service.debug = (...args) => {
-                return callLogger("debug", ...args);
-            };
+    service.log = (type, ...args) => {
+      let argsNew = prefixMsgInArgs(...args);
+      return logger.log(type, ...argsNew);
+    };
 
-            service.silly = (...args) => {
-                return callLogger("silly", ...args);
-            };
-
-            service.log = (type, ...args) => {
-                let argsNew = prefixMsgInArgs(...args);
-                return logger.log(type, ...argsNew);
-            };
-
-            return service;
-        });
-}(window.angular));
+    return service;
+  });
+})(window.angular);
