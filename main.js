@@ -1,5 +1,9 @@
 "use strict";
 
+/**
+ * @module Main
+ */
+
 const path = require("path");
 const url = require("url");
 const logger = require("./lib/logwrapper");
@@ -36,7 +40,7 @@ if (iShouldQuit) {
   return;
 }
 
-// Interactive handler
+/** Interactive handler */
 let mixerConnect; //eslint-disable-line
 
 // Handle Squirrel events for windows machines
@@ -96,6 +100,7 @@ if (process.platform === "win32") {
   }
 }
 
+/** Creates the electron window. */
 function createWindow() {
   logger.info("Creating window...");
 
