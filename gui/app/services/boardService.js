@@ -38,7 +38,7 @@ return true;
 }
 return false;
 
-}
+    }
 
             // Delete Board
             // This deletes the currently selected board on confirmation.
