@@ -1,15 +1,12 @@
-'use strict';
+"use strict";
 (function() {
+  //This adds the <eos-overlay-instance> element
 
-    //This adds the <eos-overlay-instance> element
-
-    angular
-        .module('firebotApp')
-        .component("eosOverlayInstance", {
-            bindings: {
-                effect: '='
-            },
-            template: `
+  angular.module("firebotApp").component("eosOverlayInstance", {
+    bindings: {
+      effect: "="
+    },
+    template: `
        <div class="effect-setting-container" ng-if="$ctrl.settings.useOverlayInstances()">
          <div class="effect-specific-title"><h4>Overlay Instance</h4></div>
          <div class="effect-setting-content">
@@ -25,20 +22,23 @@
          </div> 
        </div>
        `,
-            controller: function($scope, $element, $attrs, settingsService) {
-                let ctrl = this;
+    controller: function($scope, $element, $attrs, settingsService) {
+      let ctrl = this;
 
-                ctrl.settings = settingsService;
+      ctrl.settings = settingsService;
 
-                ctrl.$onInit = function() {
-
-                    // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore
-                    if (ctrl.effect.overlayInstance != null) {
-                        if (!settingsService.getOverlayInstances().includes(ctrl.effect.overlayInstance)) {
-                            ctrl.effect.overlayInstance = null;
-                        }
-                    }
-                };
-            }
-        });
-}());
+      ctrl.$onInit = function() {
+        // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore
+        if (ctrl.effect.overlayInstance != null) {
+          if (
+            !settingsService
+              .getOverlayInstances()
+              .includes(ctrl.effect.overlayInstance)
+          ) {
+            ctrl.effect.overlayInstance = null;
+          }
+        }
+      };
+    }
+  });
+})();

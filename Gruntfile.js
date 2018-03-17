@@ -11,10 +11,27 @@ module.exports = function(grunt) {
                 iconUrl: 'https://firebottle.tv/Firebot/installer/logo.ico',
                 setupIcon: 'G:/GitHub/Firebot/gui/images/logo.ico'
             }
-        }
+        },
+		'jsdoc' : {
+            src: [
+                './main.js',
+                './lib',
+                './gui',
+                './api',
+                './resources'
+            ],
+            options: {
+                destination: 'doc',
+                verbose: true,
+                recurse: true
+            }
+		}
     });
 
     // Load installer builder.
     grunt.loadNpmTasks('grunt-electron-installer');
+	
+	// Generate our docs
+	grunt.loadNpmTasks('grunt-jsdoc');
 
 };

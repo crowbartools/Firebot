@@ -1,12 +1,9 @@
-'use strict';
+"use strict";
 
 (function() {
-    angular
-        .module('firebotApp')
-        .component("sidebar", {
-            bindings: {
-            },
-            template: `
+  angular.module("firebotApp").component("sidebar", {
+    bindings: {},
+    template: `
             <div class="fb-nav" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
                 <div class="nav-header">
                     <img class="nav-header-icon" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" src="../images/logo_transparent.png">      
@@ -107,39 +104,43 @@
                 </script>
             </div>
             `,
-            controller: function(sidebarManager, connectionManager, updatesService, connectionService,
-                websocketService, utilityService) {
-                let ctrl = this;
+    controller: function(
+      sidebarManager,
+      connectionManager,
+      updatesService,
+      connectionService,
+      websocketService,
+      utilityService
+    ) {
+      let ctrl = this;
 
-                ctrl.sbm = sidebarManager;
+      ctrl.sbm = sidebarManager;
 
-                ctrl.cm = connectionManager;
+      ctrl.cm = connectionManager;
 
-                ctrl.cs = connectionService;
+      ctrl.cs = connectionService;
 
-                ctrl.wss = websocketService;
+      ctrl.wss = websocketService;
 
-                ctrl.showConnectionPanelModal = function() {
-                    utilityService.showModal({
-                        component: "connectionPanelModal",
-                        windowClass: "connection-panel-modal"
-                    });
-                };
-
-                ctrl.showAboutFirebotModal = function() {
-                    utilityService.showModal({
-                        component: "aboutModal",
-                        size: 'sm'
-                    });
-                };
-
-                ctrl.updateIsAvailable = () => {
-                    return updatesService.updateIsAvailable();
-                };
-
-                ctrl.$onInit = function() {
-
-                };
-            }
+      ctrl.showConnectionPanelModal = function() {
+        utilityService.showModal({
+          component: "connectionPanelModal",
+          windowClass: "connection-panel-modal"
         });
-}());
+      };
+
+      ctrl.showAboutFirebotModal = function() {
+        utilityService.showModal({
+          component: "aboutModal",
+          size: "sm"
+        });
+      };
+
+      ctrl.updateIsAvailable = () => {
+        return updatesService.updateIsAvailable();
+      };
+
+      ctrl.$onInit = function() {};
+    }
+  });
+})();
