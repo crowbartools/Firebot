@@ -22,85 +22,100 @@ const Effect = require("./lib/common/EffectType");
 // uncaught exception - log the error
 process.on("uncaughtException", logger.error); //eslint-disable-line no-console
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+/**
+ * Keeps a global reference of the window object, if you don't, the window will
+ * be closed automatically when the JavaScript object is garbage collected.
+ */
 let mainWindow;
-
-// Focus first firebot window if people try to launch a second one.
-let iShouldQuit = app.makeSingleInstance(function() {
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.show();
-    mainWindow.focus();
-  }
-  return true;
-});
-if (iShouldQuit) {
-  app.quit();
-  return;
-}
 
 /** Interactive handler */
 let mixerConnect; //eslint-disable-line
 
-// Handle Squirrel events for windows machines
-if (process.platform === "win32") {
-  let cp;
-  let updateDotExe;
-  let target;
-  let child;
-  switch (process.argv[1]) {
-    case "--squirrel-updated":
-    // cleanup from last instance
-
-    // use case-fallthrough to do normal installation
-    case "--squirrel-install": //eslint-disable-line no-fallthrough
-      // Optional - do things such as:
-      // - Install desktop and start menu shortcuts
-      // - Add your .exe to the PATH
-      // - Write to the registry for things like file associations and explorer context menus
-
-      // Install shortcuts
-      cp = require("child_process");
-      updateDotExe = path.resolve(
-        path.dirname(process.execPath),
-        "..",
-        "update.exe"
-      );
-      target = path.basename(process.execPath);
-      child = cp.spawn(updateDotExe, ["--createShortcut", target], {
-        detached: true
-      });
-      child.on("close", app.quit);
-      return;
-
-    case "--squirrel-uninstall":
-      // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
-
-      // Remove shortcuts
-      cp = require("child_process");
-      updateDotExe = path.resolve(
-        path.dirname(process.execPath),
-        "..",
-        "update.exe"
-      );
-      target = path.basename(process.execPath);
-      child = cp.spawn(updateDotExe, ["--removeShortcut", target], {
-        detached: true
-      });
-      child.on("close", app.quit);
-      return true;
-
-    case "--squirrel-obsolete":
-      // This is called on the outgoing version of your app before
-      // we update to the new version - it's the opposite of
-      // --squirrel-updated
-      app.quit();
-      return;
+/**
+ * This function makes sure we focus on the currently opened Firebot window should we try to open a new one.
+ * @param {*} mainWindow
+ */
+function mainFocus(mainWindow) {
+  let iShouldQuit = app.makeSingleInstance(function() {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+    }
+    return true;
+  });
+  if (iShouldQuit) {
+    app.quit();
+    return;
   }
 }
+mainFocus();
 
-/** Creates the electron window. */
+/** Handle Squirrel events for windows machines */
+function squirrelEvents() {
+  if (process.platform === "win32") {
+    let cp;
+    let updateDotExe;
+    let target;
+    let child;
+    switch (process.argv[1]) {
+      case "--squirrel-updated":
+      // cleanup from last instance
+
+      // use case-fallthrough to do normal installation
+      case "--squirrel-install": //eslint-disable-line no-fallthrough
+        // Optional - do things such as:
+        // - Install desktop and start menu shortcuts
+        // - Add your .exe to the PATH
+        // - Write to the registry for things like file associations and explorer context menus
+
+        // Install shortcuts
+        cp = require("child_process");
+        updateDotExe = path.resolve(
+          path.dirname(process.execPath),
+          "..",
+          "update.exe"
+        );
+        target = path.basename(process.execPath);
+        child = cp.spawn(updateDotExe, ["--createShortcut", target], {
+          detached: true
+        });
+        child.on("close", app.quit);
+        return;
+
+      case "--squirrel-uninstall":
+        // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
+
+        // Remove shortcuts
+        cp = require("child_process");
+        updateDotExe = path.resolve(
+          path.dirname(process.execPath),
+          "..",
+          "update.exe"
+        );
+        target = path.basename(process.execPath);
+        child = cp.spawn(updateDotExe, ["--removeShortcut", target], {
+          detached: true
+        });
+        child.on("close", app.quit);
+        return true;
+
+      case "--squirrel-obsolete":
+        // This is called on the outgoing version of your app before
+        // we update to the new version - it's the opposite of
+        // --squirrel-updated
+        app.quit();
+        return;
+    }
+  }
+}
+squirrelEvents();
+
+/**
+ * Creates the electron window. Sets up a few events such as on closed that are used to control the window.
+ * This is also where we start up logging for renderer errors.
+ * We also load up our global hotkeys created through the app here.
+ * */
 function createWindow() {
   logger.info("Creating window...");
 
@@ -156,8 +171,11 @@ function createWindow() {
   hotkeyManager.refreshHotkeyCache();
 }
 
-// This checks to see if we have any profiles scheduled for deletion.
-// If they are, this deletes it.
+/**
+ * This checks to see if any profiles are marked for deletion. If so, the profile folder is deleted.
+ * We mark profiles for deletion so we can delete the files during a restart when they are not in use.
+ * Note, most profile management stuff other than this is taken care of in the profile-manager.js file.
+ */
 async function deleteProfiles() {
   let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
 
@@ -206,6 +224,10 @@ async function deleteProfiles() {
   }
 }
 
+/**
+ * This function creates all of the default folders and files we need to run the app.
+ * It will cycle through all profiles and make sure those have default folders as well.
+ */
 async function createDefaultFoldersAndFiles() {
   logger.info("Ensuring default folders and files exist for all users...");
 
@@ -349,101 +371,126 @@ async function createDefaultFoldersAndFiles() {
   );
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on("ready", async function() {
-  await createDefaultFoldersAndFiles();
+/**
+ * This is called when Electron is finished initialization and is ready to create browser windows.
+ * This is where we set global variables for custom scripts, start our backup manager, and start the api server.
+ */
+function appOnReady() {
+  app.on("ready", async function() {
+    await createDefaultFoldersAndFiles();
 
-  createWindow();
-
-  // These are defined globally for Custom Scripts.
-  // We will probably wnat to handle these differently but we shouldn't
-  // change anything until we are ready as changing this will break most scripts
-  global.EffectType = Effect.EffectType;
-  global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
-
-  backupManager.onceADayBackUpCheck();
-
-  //start the REST api server
-  apiServer.start();
-
-  return true;
-});
-
-// Quit when all windows are closed.
-app.on("window-all-closed", () => {
-  // Unregister all shortcuts.
-  let hotkeyManager = require("./lib/hotkeys/hotkey-manager");
-  hotkeyManager.unregisterAllHotkeys();
-
-  if (settings.backupOnExit()) {
-    backupManager.startBackup(false, app.quit);
-    // On OS X it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-  } else if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
-
-app.on("activate", () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
     createWindow();
-  }
-});
 
-// When Quitting.
-app.on("quit", () => {
-  deleteProfiles();
-  logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");
-});
+    // These are defined globally for Custom Scripts.
+    // We will probably wnat to handle these differently but we shouldn't
+    // change anything until we are ready as changing this will break most scripts
+    global.EffectType = Effect.EffectType;
+    global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
 
-// Run Updater
-ipcMain.on("downloadUpdate", () => {
-  //back up first
-  if (settings.backupBeforeUpdates()) {
-    backupManager.startBackup();
-  }
+    backupManager.onceADayBackUpCheck();
 
-  // Download Update
-  let options = {
-    repo: "firebottle/firebot",
-    currentVersion: app.getVersion()
-  };
+    //start the REST api server
+    apiServer.start();
 
-  let updater = new GhReleases(options);
+    return true;
+  });
+}
+appOnReady();
 
-  updater.check((err, status) => {
-    logger.info("Should we download an update? " + status);
+/**
+ * This is run when all windows are closed. It lets us unregister global hotkeys, run our last backup, and quit.
+ */
+function windowClosed() {
+  app.on("window-all-closed", () => {
+    // Unregister all shortcuts.
+    let hotkeyManager = require("./lib/hotkeys/hotkey-manager");
+    hotkeyManager.unregisterAllHotkeys();
 
-    // Download the update
-    updater.download();
-
-    if (err) {
-      logger.info(err);
+    if (settings.backupOnExit()) {
+      backupManager.startBackup(false, app.quit);
+      // On OS X it is common for applications and their menu bar
+      // to stay active until the user quits explicitly with Cmd + Q
+    } else if (process.platform !== "darwin") {
+      app.quit();
     }
   });
+}
+windowClosed();
 
-  // When an update has been downloaded
-  updater.on("update-downloaded", () => {
-    logger.info("Updated downloaded. Installing...");
-    //let the front end know and wait a few secs.
-    renderWindow.webContents.send("updateDownloaded");
-
-    setTimeout(function() {
-      // Restart the app and install the update
-      settings.setJustUpdated(true);
-
-      updater.install();
-    }, 3 * 1000);
+/**
+ * TODO: Is this mac only?
+ */
+function appOnActivate() {
+  app.on("activate", () => {
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) {
+      createWindow();
+    }
   });
+}
+appOnActivate();
 
-  // Access electrons autoUpdater
-  // eslint-disable-next-line no-unused-expressions
-  updater.autoUpdater;
-});
+/**
+ * Activated when quitting the app. This allows us to clean up our deleted profiles and log the shutdown.
+ */
+function onAppQuit() {
+  app.on("quit", () => {
+    deleteProfiles();
+    logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");
+  });
+}
+onAppQuit();
+
+/**
+ * Run Updater
+ */
+function startAutoUpdater() {
+  ipcMain.on("downloadUpdate", () => {
+    //back up first
+    if (settings.backupBeforeUpdates()) {
+      backupManager.startBackup();
+    }
+
+    // Download Update
+    let options = {
+      repo: "firebottle/firebot",
+      currentVersion: app.getVersion()
+    };
+
+    let updater = new GhReleases(options);
+
+    updater.check((err, status) => {
+      logger.info("Should we download an update? " + status);
+
+      // Download the update
+      updater.download();
+
+      if (err) {
+        logger.info(err);
+      }
+    });
+
+    // When an update has been downloaded
+    updater.on("update-downloaded", () => {
+      logger.info("Updated downloaded. Installing...");
+      //let the front end know and wait a few secs.
+      renderWindow.webContents.send("updateDownloaded");
+
+      setTimeout(function() {
+        // Restart the app and install the update
+        settings.setJustUpdated(true);
+
+        updater.install();
+      }, 3 * 1000);
+    });
+
+    // Access electrons autoUpdater
+    // eslint-disable-next-line no-unused-expressions
+    updater.autoUpdater;
+  });
+}
+startAutoUpdater();
 
 // restarts the app
 ipcMain.on("restartApp", () => {
