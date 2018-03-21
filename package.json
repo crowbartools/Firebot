@@ -81,6 +81,7 @@
         "mathjs": "^3.20.2",
         "moment": "^2.21.0",
         "ncp": "^2.0.0",
+        "nedb": "^1.8.0",
         "node-cache": "^4.1.1",
         "node-json-db": "^0.7.5",
         "random-puppy": "^1.1.0",
