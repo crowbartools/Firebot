@@ -18,6 +18,7 @@ const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
 const connectionManager = require("./lib/common/connection-manager");
 const apiServer = require("./api/apiServer.js");
+const userdb = require('./lib/database/userDatabase');
 
 const Effect = require("./lib/common/EffectType");
 
@@ -377,10 +378,10 @@ async function createDefaultFoldersAndFiles() {
     }
   );
 
-  // And... we're done.
-  logger.info(
-    "Finished verifying default folder and files for all profiles, as well as making sure our logged in profile is valid."
-  );
+    logger.debug('Creating or connecting user database');
+    userdb.connectUserDatabase();
+
+    logger.info("Finished verifying default folders and files.");
 }
 
 /**
