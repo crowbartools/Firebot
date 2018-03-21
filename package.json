@@ -71,6 +71,7 @@
         "compare-versions": "^3.0.1",
         "electron-gh-releases": "^2.0.4",
         "electron-oauth2": "^3.0.0",
+        "empty-folder": "^2.0.1",
         "eslint": "^4.19.0",
         "express": "^4.16.3",
         "howler": "https://github.com/ebiggz/howler.js/tarball/master",
