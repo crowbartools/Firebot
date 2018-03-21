@@ -9,6 +9,7 @@
   const moment = require("moment");
   const unzipper = require("unzipper");
   const ncp = require("ncp");
+  const empty = require("empty-folder");
 
   angular
     .module("firebotApp")
@@ -189,18 +190,51 @@
 
             function copyFilesOver() {
               let source = dataAccess.getPathInTmpDir("/restore/profiles");
-              let destination = profileManager.getPathInProfile("/");
-              ncp(source, destination, function(err) {
-                if (err) {
-                  logger.error("Failed to copy 'user-settings'!");
-                  logger.error(err);
-                  $scope.restoreHasError = true;
+              let destination = dataAccess.getPathInUserData("/profiles");
+
+              // Clear profiles directory
+              empty(dataAccess.getPathInUserData("/profiles"), false, o => {
+                if (o.error) {
+                  logger.error(o.error);
                   $scope.errorMessage =
                     "The restore failed when trying to copy data.";
-                } else {
-                  logger.info('Copied "user-settings" to user data.');
-                  reloadEverything();
+                  return;
                 }
+
+                // Load in backup.
+                ncp(source, destination, function(err) {
+                  if (err) {
+                    logger.error("Failed to copy 'user-settings'!");
+                    logger.error(err);
+                    $scope.restoreHasError = true;
+                    $scope.errorMessage =
+                      "The restore failed when trying to copy data.";
+                  } else {
+                    logger.info('Copied "user-settings" to user data.');
+
+                    // Now that we copied over everything, we need to make sure our global settings active profiles is in sync.
+                    // Get all profiles by looking at folder names, change names to integers.
+                    let profiles = fs.readdirSync(
+                      dataAccess.getPathInUserData("/profiles")
+                    );
+                    profiles = profiles.map(function(x) {
+                      return parseInt(x, 10);
+                    });
+                    // Get the global settings file.
+                    let globalDb = dataAccess.getJsonDbInUserData(
+                      "/global-settings"
+                    );
+                    // Find highest number profile so we can set our profile counter.
+                    let maxProfile = Math.max(...profiles);
+                    // Update our global settings file.
+                    globalDb.push("/profiles/loggedInProfile", profiles[0]);
+                    globalDb.push("/profiles/activeProfiles", profiles);
+                    globalDb.push("/profiles/profileCounter", maxProfile);
+
+                    // Reload the app
+                    reloadEverything();
+                  }
+                });
               });
             }
 
