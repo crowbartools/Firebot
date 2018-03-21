@@ -189,7 +189,7 @@
 
             function copyFilesOver() {
               let source = dataAccess.getPathInTmpDir("/restore/profiles");
-              let destination = profileManager.getPathInProfile("/");
+              let destination = dataAccess.getPathInUserData("/profiles");
               ncp(source, destination, function(err) {
                 if (err) {
                   logger.error("Failed to copy 'user-settings'!");
