@@ -3,6 +3,7 @@
 const path = require('path');
 const url = require('url');
 const logger = require('./lib/logwrapper');
+logger.info("Starting Firebot...");
 
 const electron = require('electron');
 const {app, BrowserWindow, ipcMain, shell, dialog} = electron;
