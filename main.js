@@ -16,8 +16,9 @@ const settings = require("./lib/common/settings-access").settings;
 const dataAccess = require("./lib/common/data-access.js");
 const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
-const apiServer = require('./api/apiServer.js');
-const userdb = require('./lib/database/userDatabase');
+const apiServer = require("./api/apiServer.js");
+const userdb = require("./lib/database/userDatabase");
+const currencydb = require("./lib/database/currencyDatabase");
 
 const Effect = require("./lib/common/EffectType");
 
@@ -372,8 +373,11 @@ async function createDefaultFoldersAndFiles() {
     }
   );
 
-    logger.debug('Creating or connecting user database');
+  logger.debug("Creating or connecting user database");
     userdb.connectUserDatabase();
+
+  logger.debug("Creating or connecting currency database");
+  currencydb.connectCurrencyDatabase();
 
     logger.info("Finished verifying default folders and files.");
 }
@@ -443,6 +447,7 @@ appOnActivate();
  */
 function onAppQuit() {
   app.on("quit", () => {
+    userdb.setAllUsersOffline();
     deleteProfiles();
     logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");
   });
