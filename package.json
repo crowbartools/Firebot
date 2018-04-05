@@ -73,6 +73,7 @@
         "random-puppy": "^1.1.0",
         "request": "^2.81.0",
         "request-image-size": "^2.1.0",
+        "rimraf": "^2.6.2",
         "robotjs": "^0.4.7",
         "roll": "^1.2.0",
         "ui-select": "^0.19.8",

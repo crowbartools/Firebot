@@ -42,6 +42,7 @@ if (process.platform === 'win32') {
         // cleanup from last instance
 
         // use case-fallthrough to do normal installation
+        break;
     case '--squirrel-install': //eslint-disable-line no-fallthrough
         // Optional - do things such as:
         // - Install desktop and start menu shortcuts
@@ -58,13 +59,25 @@ if (process.platform === 'win32') {
 
     case '--squirrel-uninstall':
         // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
+        backupManager.startBackup(false, () => {
 
-        // Remove shortcuts
-        cp = require('child_process');
-        updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-        target = path.basename(process.execPath);
-        child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
-        child.on('close', app.quit);
+            try {
+
+                //attempt to delete the user-settings folder
+                let rimraf = require('rimraf');
+                rimraf.sync(dataAccess.getPathInUserData("/user-settings"));
+
+            } catch (err) {
+                logger.error("error removing user-settings folder on uninstall", err);
+            }
+
+            // Remove shortcuts
+            cp = require('child_process');
+            updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+            target = path.basename(process.execPath);
+            child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
+            child.on('close', app.quit);
+        });
         return true;
 
     case '--squirrel-obsolete':
