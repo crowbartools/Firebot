@@ -142,7 +142,9 @@
                             $scope.isNewGroup = false;
                         }
 
-                        $scope.allControlIds = boardService.getControlIdsForSelectedBoard();
+                        $scope.allControlIds = boardService.getControlsForSelectedBoard()
+                            .filter(c => c.kind === "button" || c.kind === "textbox")
+                            .map(b => b.controlId);
 
                         $scope.updateCheckedArrayWithElement = function(array, element) {
                             $scope.cooldownGroup.buttons = utilityService.getNewArrayWithToggledElement(array, element);

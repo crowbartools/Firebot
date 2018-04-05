@@ -267,7 +267,9 @@
                     controller = ($scope, boardService) => {
 
                         // Get all control id's in an array so we can add checkboxes.
-                        $scope.boardButtons = boardService.getControlIdsForSelectedBoard();
+                        $scope.boardButtons = boardService.getControlsForSelectedBoard()
+                            .filter(c => c.kind === "button" || c.kind === "textbox")
+                            .map(b => b.controlId);
 
                         // This sets the effect.buttons to an array of checked items.
                         $scope.buttonArray = function(list, item) {

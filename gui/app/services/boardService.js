@@ -289,6 +289,24 @@
                                         dbControls.push('./firebot/controls/' + controlID + '/tooltip', button.tooltip);
                                     }
 
+                                    if (type === "label") {
+                                        let controlID = button.controlID;
+                                        dbControls.push('./firebot/controls/' + controlID + '/kind', type);
+                                        dbControls.push('./firebot/controls/' + controlID + '/controlId', controlID);
+                                        dbControls.push('./firebot/controls/' + controlID + '/scene', sceneName);
+                                        dbControls.push('./firebot/controls/' + controlID + '/text', button.text);
+                                    }
+
+                                    if (type === "textbox") {
+                                        let controlID = button.controlID;
+                                        dbControls.push('./firebot/controls/' + controlID + '/kind', type);
+                                        dbControls.push('./firebot/controls/' + controlID + '/controlId', button.controlID);
+                                        dbControls.push('./firebot/controls/' + controlID + '/scene', sceneName);
+                                        dbControls.push('./firebot/controls/' + controlID + '/multiline', button.multiline);
+                                        dbControls.push('./firebot/controls/' + controlID + '/hasSubmit', button.hasSubmit);
+                                        dbControls.push('./firebot/controls/' + controlID + '/placeholder', button.placeholder);
+                                    }
+
 
                                     if (type === "joystick") {
                                         joystick = {
@@ -319,7 +337,7 @@
                     });
             }
 
-            function loadBoardById(id) {
+            function loadBoardById(id, forceSync = false) {
                 logger.info(`Getting ${id} from Mixer...`);
                 return $http.get("https://mixer.com/api/v1/interactive/versions/" + id)
                     .then(function(response) {
@@ -360,7 +378,7 @@
                                 }
 
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
-                                if (boardUpdated !== gameUpdated) {
+                                if (boardUpdated !== gameUpdated || forceSync) {
                                     logger.info('Board updated. Rebuilding.');
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService).then(() => {
                                         return id;
@@ -388,14 +406,14 @@
                     });
             }
 
-            function loadBoardsById(boardVersionIds, clearPreviousBoards) {
+            function loadBoardsById(boardVersionIds, clearPreviousBoards, forceSync = false) {
 
                 //create a list of board load promises
                 logger.debug("Create list of board promises...");
                 let boardLoadPromises = [];
                 _.each(boardVersionIds, function(id) {
                     logger.debug("Loading board " + id);
-                    let promise = loadBoardById(id);
+                    let promise = loadBoardById(id, forceSync);
                     boardLoadPromises.push(promise);
                 });
 
@@ -491,7 +509,7 @@
                 ipcRenderer.send('refreshInteractiveCache');
             };
 
-            service.loadBoardWithId = function(id) {
+            service.loadBoardWithId = function(id, forceSync = false) {
                 $rootScope.showSpinner = true;
                 return loadBoardsById([id], false).then((boards) => {
                     let board = service.getBoardById(id);
