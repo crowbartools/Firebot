@@ -105,24 +105,26 @@
 
                         let newKnownExtNotis = [];
 
-                        externalNotifications.forEach((n) => {
+                        if (externalNotifications != null) {
+                            externalNotifications.forEach((n) => {
 
-                            newKnownExtNotis.push(n.id);
+                                newKnownExtNotis.push(n.id);
 
-                            if (!knownExtNotis.includes(n.id)) {
+                                if (!knownExtNotis.includes(n.id)) {
 
-                                n.type = NotificationType.EXTERNAL;
-                                n.externalId = n.id;
-                                n.id = undefined;
+                                    n.type = NotificationType.EXTERNAL;
+                                    n.externalId = n.id;
+                                    n.id = undefined;
 
-                                service.addNotification(n, true);
+                                    service.addNotification(n, true);
 
-                            }
-                        }, (err) => {
-                            logger.error(err);
-                        });
+                                }
+                            }, (err) => {
+                                logger.error(err);
+                            });
 
-                        setKnownExternalNotifications(newKnownExtNotis);
+                            setKnownExternalNotifications(newKnownExtNotis);
+                        }
                     });
             }
 
