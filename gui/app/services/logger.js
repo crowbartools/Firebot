@@ -23,6 +23,13 @@
 
             function callLogger(type, ...args) {
                 if (type != null && args != null) {
+
+                    // Connection issues should be logged as "warn".
+                    if (args[0] === "read ECONNRESET") {
+                        let argsNew = prefixMsgInArgs(...args);
+                        return logger['warn'](...argsNew);
+                    }
+
                     let argsNew = prefixMsgInArgs(...args);
                     return logger[type](...argsNew);
                 }
