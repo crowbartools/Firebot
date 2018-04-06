@@ -12,6 +12,8 @@
 
             $scope.settings = settingsService;
 
+            $scope.compactDisplay = settingsService.isChatCompactMode();
+
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
@@ -21,6 +23,11 @@
             $scope.currentViewers = 0;
 
             $scope.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
+
+            $scope.toggleCompactMode = function() {
+                $scope.compactDisplay = !$scope.compactDisplay;
+                settingsService.setChatCompactMode($scope.compactDisplay);
+            };
 
             // Gets all chat messages from chat message service.
             $scope.getMessages = function() {
