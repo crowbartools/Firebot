@@ -31,7 +31,6 @@ let mainWindow;
 // Interactive handler
 let mixerConnect; //eslint-disable-line
 
-
 // Handle Squirrel events for windows machines
 if (process.platform === 'win32') {
     let cp;
