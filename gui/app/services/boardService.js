@@ -515,7 +515,7 @@
 
             service.loadBoardWithId = function(id, forceSync = false) {
                 $rootScope.showSpinner = true;
-                return loadBoardsById([id], false).then((boards) => {
+                return loadBoardsById([id], false, forceSync).then((boards) => {
                     let board = service.getBoardById(id);
                     if (board != null) {
                         service.setSelectedBoard(board);
