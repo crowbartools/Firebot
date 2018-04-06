@@ -31,6 +31,7 @@ let mainWindow;
 // Interactive handler
 let mixerConnect; //eslint-disable-line
 
+
 // Handle Squirrel events for windows machines
 if (process.platform === 'win32') {
     let cp;
@@ -57,29 +58,21 @@ if (process.platform === 'win32') {
         child.on('close', app.quit);
         return;
 
-    case '--squirrel-uninstall':
+    case '--squirrel-uninstall': {
         // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
-        backupManager.startBackup(false, () => {
 
-            try {
+        //attempt to delete the user-settings folder
+        let rimraf = require('rimraf');
+        rimraf.sync(dataAccess.getPathInUserData("/user-settings"));
 
-                //attempt to delete the user-settings folder
-                let rimraf = require('rimraf');
-                rimraf.sync(dataAccess.getPathInUserData("/user-settings"));
-
-            } catch (err) {
-                logger.error("error removing user-settings folder on uninstall", err);
-            }
-
-            // Remove shortcuts
-            cp = require('child_process');
-            updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-            target = path.basename(process.execPath);
-            child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
-            child.on('close', app.quit);
-        });
+        // Remove shortcuts
+        cp = require('child_process');
+        updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+        target = path.basename(process.execPath);
+        child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
+        child.on('close', app.quit);
         return true;
-
+    }
     case '--squirrel-obsolete':
         // This is called on the outgoing version of your app before
         // we update to the new version - it's the opposite of
