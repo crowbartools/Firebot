@@ -322,7 +322,11 @@
                                     logger.error('Problem getting button info to save to json.', err);
                                 }
                             }
+
                             // Setup scenes in Firebot json if they haven't been made yet.
+                            if (sceneName.includes("/")) {
+                                utilityService.showErrorModal("Scene: '" + sceneName + "' contains a forward slash (/) in it's name which can cause errors when connecting to Interactive. It is recommended that you rename your scene to use an & or + instead and resync with Firebot.");
+                            }
                             try {
                                 dbControls.getData('./firebot/scenes/' + sceneName);
                             } catch (err) {
