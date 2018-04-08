@@ -154,6 +154,10 @@
                     // If a scene was deleted from Mixer, the buttons for that scene should be gone as well.
                     for (let button of firebotButtonArray) {
                         try {
+                            if (button === "") {
+                                utilityService.showErrorModal("Detected a button with a name that shouldnt be possible and could cause issues. Please reach out to the Firebot Dev team for help (Click the About link in the sidebar to find our Discord).");
+                                continue;
+                            }
                             dbControls.delete('./firebot/controls/' + button);
                             logger.info('Button ' + button + ' is not on the mixer board. Deleting.');
 
@@ -255,6 +259,11 @@
                             // Loop through controls for this scene.
                             for (let a = 0; a < sceneControls.length; a++) {
                                 button = sceneControls[a];
+
+                                if (button.controlID.includes("/")) {
+                                    utilityService.showErrorModal(`A control with the id of '${button.controlID}' contains a forwardslash which can cause major issues. Please rename the control to remove the / from the name. Sorry for the inconvienence.`);
+                                    continue;
+                                }
 
                                 // Try to get info for button. If there is nothing it errors out.
                                 try {
