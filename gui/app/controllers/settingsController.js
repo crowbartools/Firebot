@@ -223,7 +223,7 @@
                                             let backupDate = moment(fileStats.birthtime);
 
                                             let version = "Unknown Version";
-                                            let versionRe = /_(v?\d\.\d\.\d(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
+                                            let versionRe = /_(v?\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
                                             let match = v.match(versionRe);
                                             if (match != null) {
                                                 version = match[1];
