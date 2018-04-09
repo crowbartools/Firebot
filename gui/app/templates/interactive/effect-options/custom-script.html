@@ -32,7 +32,11 @@
   <div ng-hide="isLoadingParameters">
     <span ng-hide="scriptHasParameters()" class="muted">Script has no options.</span>
     <div ng-show="scriptHasParameters()">
-      <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters" name="parameterName" metadata="parameterMetadata"></script-parameter-option>
+      <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters" 
+        name="parameterName" 
+        metadata="parameterMetadata" 
+        trigger="{{trigger}}" 
+        modalId="{{modalId}}"></script-parameter-option>
     </div>
   </div>
 </div>
