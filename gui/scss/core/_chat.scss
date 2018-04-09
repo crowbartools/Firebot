@@ -175,12 +175,14 @@
 
 .isCompact {
     & .chat-user-avatar-wrapper {
-        width: 20px; 
-        height: 20px; 
+        width: 25px; 
+        height: 25px;
+        padding-top: 3px;
+        display: inline-block; 
     }
     
     & .chat-user-avatar {
-        width: 20px;
+        width: 25px;
     }
 }
 

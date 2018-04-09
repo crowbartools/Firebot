@@ -23,9 +23,6 @@
             </div>
             <div class="chat-window-message-wrapper">
                 <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message),isTagged: message.tagged, isCompact: compactDisplay }" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
-                    <span ng-if="compactDisplay" class="muted chat-timestamp">
-                        {{message.historical ? '----' : getTimeStamp(message)}}
-                    </span>
                     <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)">
                         <span>
                             <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
@@ -161,14 +158,18 @@
                     <i class="fal fa-volume-up volume-high" style="font-size:25px; padding-bottom:5px"></i>
                 </div>                      
             </div>
-            <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
-                <span>Compact Mode</span>
-                <span>
-                    <input class="tgl tgl-light" id="cb8" type="checkbox" 
-                        ng-checked="settings.isChatCompactMode()" 
-                        ng-click="toggleCompactMode()"/>
-                    <label class="tgl-btn" for="cb8"></label>
-                </span>
+            <div style="padding-top: 10px;">
+                <div>Display Style</div>
+                <div class="permission-type controls-fb-inline">
+                    <label class="control-fb control--radio">Modern
+                      <input type="radio" ng-model="compactDisplay" ng-value="false" ng-click="toggleCompactMode()"/>
+                      <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--radio">Compact
+                        <input type="radio" ng-model="compactDisplay" ng-value="true" ng-click="toggleCompactMode()"/>
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
             </div>
         </div>               
     </div>
