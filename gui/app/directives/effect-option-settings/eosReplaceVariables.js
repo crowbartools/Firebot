@@ -15,10 +15,11 @@
                         <li><b>$(uptime)</b> - How long the stream has been broadcasting</li>
                         <li><b>$(game)</b> - The game you are currenly or last played</li>
                         <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$(target)])</li>
+                        <li><b>$(streamTitle)</b> - The current title of your stream.</li>
                         <li><b>$(randomViewer)</b> - The name of a random viewer in chat.</li>
                         <li><b>$(randomNumber[low-high])</b> - Get a random number between the low and high numbers, ie $(randomNumber[1-10])</li>
                         <li><b>$(math[expression])</b> - Evaluate the given expression. Can combine with other vars like randomNumber, ie $(math[2 + $(randomNumber[1-5])]) Learn more <a class="clickable" ng-click="$ctrl.openLinkExternally('http://mathjs.org/docs/expressions/syntax.html')">here</a>.</li>
-                        <li><b>$(readApi[url])</b> - Calls the given url and inserts the response. If the response is JSON, you can traverse the object. Learn more <a class="clickable" ng-click="$ctrl.openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Advanced-Uses#advanced-replace-variables')"></a>here.</li>
+                        <li><b>$(readApi[url])</b> - Calls the given url and inserts the response. If the response is JSON, you can traverse the object. Learn more <a class="clickable" ng-click="$ctrl.openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Advanced-Uses#advanced-replace-variables')">here</a>.</li>
                         <li><b>$(readFile[filepath])</b> - Gets the contents of the given txt file, ie $(readFile[C:/some/path/file.txt])</li>
                         <li><b>$(readRandomLine[filepath])</b> - A random line from the given txt file</li>
                     </ul>
