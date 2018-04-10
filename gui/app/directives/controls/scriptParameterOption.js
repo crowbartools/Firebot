@@ -6,7 +6,9 @@
     bindings: {
       metadata: "=",
       name: "<",
-      onUpdate: "&"
+      onUpdate: "&",
+      trigger: "@",
+      modalId: "@"
     },
     template: `
        <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 10px;font-size: 15px;font-weight: 600;">
@@ -36,6 +38,9 @@
           <div ng-switch-when="filepath">
             <file-chooser model="$ctrl.metadata.value" options="$ctrl.metadata.fileOptions"></file-chooser></file-chooser>
           </div>
+          <div ng-switch-when="effectlist">
+            <effect-list header="" effects="$ctrl.metadata.value" trigger="{{$ctrl.trigger}}" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}" is-array="true"></effect-list>
+          </div>
        </div>
        <hr ng-if="$ctrl.metadata.showBottomHr" style="margin-top:10px; margin-bottom:15px;" />
        `,
@@ -54,6 +59,10 @@
             }
           }
         }
+      };
+
+      ctrl.effectListUpdated = function(effects) {
+        ctrl.metadata.value = effects;
       };
     }
   });

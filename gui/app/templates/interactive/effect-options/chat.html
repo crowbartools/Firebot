@@ -1,10 +1,8 @@
 <eos-chatter-select effect="effect" title="Chat as"></eos-chatter-select>
 
 <eos-container header="Message To Send" pad-top="true">
-    <div class="input-group">
-        <span class="input-group-addon" id="chat-text-effect-type">Message</span>
-        <input ng-model="effect.message" type="text" class="form-control" id="chat-text-setting" aria-describedby="chat-text-effect-type" maxlength="360">
-    </div>
+    <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40"></textarea>
+    <div style="color:red" ng-if="effect.message && effect.message.length > 360">Chat messages cannot be longer than 360 characters. This message will get automatically trimmed if the length is still too long after all replace variables have been populated.</div>
     <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
         <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Whisper</tooltip>
             <input type="checkbox" ng-init="whisper = (effect.whisper != null && effect.whisper !== '')" ng-model="whisper" ng-click="effect.whisper = ''">
@@ -19,38 +17,5 @@
     </div>   
 </eos-container>
 
-<eos-collapsable-panel show-label="Show Text Variables" hide-label="Hide Text Variables">
-    <div>
-        <h4>General</h4>
-        <ul>
-            <li><b>$(user)</b> - Replaced by the name of the person running the button, command, or event</li>
-            <li><b>$(time)</b> - The current time. Use $(time24) for 24 hour time.</li>
-            <li><b>$(uptime)</b> - How long the stream has been broadcasting</li>
-            <li><b>$(game)</b> - The game you are currenly or last played</li>
-            <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$(target)])</li>
-        </ul>
-        <h4>Interactive & Chat</h4>
-        <ul>
-            <li><b>$(text)</b> - Replaced by the interactive button text or the chat command ID.</li>
-            <li><b>$(cost)</b> - Replaced by the cost of the command or button.</li>
-            <li><b>$(cooldown)</b> - Replaced by the cooldown of the command or button.</li>
-        </ul>
-        <h4>Chat Commands Only</h4>
-        <ul>
-            <li><b>$(arg#)</b> - Replaced by the argument provided after a chat command. For example, $(arg) or $(arg1) pulls the first word after the command, whereas $(arg5) would pull the fifth word.</li>
-            <li><b>$(arg#-#)</b> - Grab a range of arguments. Combines them with spaces. IE if command was "<i>!command these are some words</i>":
-                <ul>
-                    <li><b>$(arg2-3)</b> = "are some" </li>
-                    <li><b>$(arg2-last)</b> = "are some words"</li>
-                    <li><b>$(argAll)</b> = "these are some words"</li>
-                </ul>
-            </li>
-            <li><b>$(target)</b> - Acts like the $(arg) variable but strips out any leading "@", useful when the argument is expected to be a username. Like $(arg), it also supports the $(target#) format for selecting different words.</li>
-        </ul>
-        <h4>Events Only</h4>
-        <ul>
-            <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed. Meant to be used on subscriber events.</li>
-        </ul>
-    </div>
-</eos-collapsable-panel>
+<eos-replace-variables></eos-replace-variables>
 

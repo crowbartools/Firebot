@@ -1,232 +1,200 @@
-"use strict";
+'use strict';
 (function($) {
-  const _ = require("underscore")._;
 
-  angular
-    .module("firebotApp")
-    .controller("editBoardSettingsModalController", function(
-      $scope,
-      $uibModalInstance,
-      utilityService,
-      boardService,
-      board
-    ) {
-      $scope.board = board;
+    const _ = require('underscore')._;
 
-      $scope.getScenesForBoard = function() {
-        let scenes = [];
-        if (board != null) {
-          scenes = Object.keys(board.scenes);
-        }
-        return scenes;
-      };
+    angular
+        .module('firebotApp')
+        .controller('editBoardSettingsModalController', function($scope, $uibModalInstance, utilityService, boardService, board) {
 
-      $scope.getViewerGroupSettingsForScene = function(scene) {
-        let settings = [];
-        if (board != null) {
-          settings = board.scenes[scene].default;
-        }
-        return settings;
-      };
+            $scope.board = board;
 
-      $scope.getCooldownGroupSettings = function() {
-        let settings = [];
-        if (board != null) {
-          settings = _.values(board.cooldownGroups);
-        }
-        return settings;
-      };
+            $scope.getScenesForBoard = function() {
+                let scenes = [];
+                if (board != null) {
+                    scenes = Object.keys(board.scenes);
+                }
+                return scenes;
+            };
 
-      $scope.close = function() {
-        $uibModalInstance.close();
-      };
+            $scope.getViewerGroupSettingsForScene = function(scene) {
+                let settings = [];
+                if (board != null) {
+                    settings = board.scenes[scene].default;
+                }
+                return settings;
+            };
 
-      $scope.dismiss = function() {
-        $uibModalInstance.dismiss();
-      };
+            $scope.getCooldownGroupSettings = function() {
+                let settings = [];
+                if (board != null) {
+                    settings = _.values(board.cooldownGroups);
+                }
+                return settings;
+            };
 
-      /*
+            $scope.close = function() {
+                $uibModalInstance.close();
+            };
+
+            $scope.dismiss = function() {
+                $uibModalInstance.dismiss();
+            };
+
+            /*
              * EDIT VIEWER GROUP MODAL
              */
-      $scope.showEditViewerGroupDefaultsModal = function(sceneName) {
-        let editViewerGroupDefaultsModalContext = {
-          templateUrl:
-            "./templates/interactive/modals/editViewerGroupModal.html",
-          // This is the controller to be used for the modal.
-          controllerFunc: (
-            $scope,
-            $uibModalInstance,
-            utilityService,
-            groupsService,
-            scene
-          ) => {
-            $scope.scene = scene;
+            $scope.showEditViewerGroupDefaultsModal = function(sceneName) {
+                let editViewerGroupDefaultsModalContext = {
+                    templateUrl: "./templates/interactive/modals/editViewerGroupModal.html",
+                    // This is the controller to be used for the modal.
+                    controllerFunc: ($scope, $uibModalInstance, utilityService, groupsService, scene) => {
 
-            $scope.groups = groupsService;
+                        $scope.scene = scene;
 
-            function getGroupList() {
-              let inactiveGroups = groupsService.getInactiveGroups();
-              let combinedGroups = inactiveGroups.concat(
-                scene.default.filter(e => {
-                  return e !== "None";
-                })
-              );
+                        $scope.groups = groupsService;
 
-              // Filter out duplicates
-              combinedGroups = combinedGroups.filter(function(elem, pos) {
-                return combinedGroups.indexOf(elem) === pos;
-              });
+                        function getGroupList() {
 
-              return combinedGroups;
-            }
+                            let inactiveGroups = groupsService.getInactiveGroups();
+                            let combinedGroups = inactiveGroups.concat(scene.default.filter((e) => {
+                                return e !== 'None';
+                            }));
 
-            $scope.groupList = getGroupList();
+                            // Filter out duplicates
+                            combinedGroups = combinedGroups.filter(function(elem, pos) {
+                                return combinedGroups.indexOf(elem) === pos;
+                            });
 
-            $scope.saveChanges = function() {
-              $uibModalInstance.close();
+                            return combinedGroups;
+                        }
 
-              // Refresh the interactive control cache.
-              ipcRenderer.send("refreshInteractiveCache");
+                        $scope.groupList = getGroupList();
+
+                        $scope.saveChanges = function() {
+                            $uibModalInstance.close();
+
+                            // Refresh the interactive control cache.
+                            ipcRenderer.send('refreshInteractiveCache');
+                        };
+
+                        $scope.updateCheckedArrayWithElement = function(array, element) {
+                            // Remove "None"
+                            // Later on this can be removed and replaced with a "uncheck all" button in the UI.
+                            // But for now this will help convert files over to not use "None" anymore.
+                            let index = array.indexOf("None");
+                            if (index !== -1) {
+                                array.splice(index, 1);
+                            }
+
+                            // Update array
+                            $scope.scene.default = utilityService.getNewArrayWithToggledElement(array, element);
+                        };
+
+                        // This wipes out all checked items. This is a lame "uncheck all button".
+                        // We can remove this later and replace with an actual uncheck all button after a few versions.
+                        $scope.clearSavedArray = function() {
+                            $scope.scene.default = ["None"];
+                        };
+
+                        $scope.arrayContainsElement = utilityService.arrayContainsElement;
+
+                        $scope.save = function() {
+                            $uibModalInstance.close($scope.scene);
+
+                            // Refresh the interactive control cache.
+                            ipcRenderer.send('refreshInteractiveCache');
+                        };
+
+                        // When they hit cancel or click outside the modal, we dont want to do anything
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss('cancel');
+                        };
+                    },
+                    closeCallback: (scene) => {
+                        boardService.saveSceneForCurrentBoard(scene);
+                    },
+                    resolveObj: {
+                        scene: () => {
+                            return $.extend(true, {}, board.scenes[sceneName]);
+                        }
+                    }
+                };
+                utilityService.showModal(editViewerGroupDefaultsModalContext);
             };
 
-            $scope.updateCheckedArrayWithElement = function(array, element) {
-              // Remove "None"
-              // Later on this can be removed and replaced with a "uncheck all" button in the UI.
-              // But for now this will help convert files over to not use "None" anymore.
-              let index = array.indexOf("None");
-              if (index !== -1) {
-                array.splice(index, 1);
-              }
-
-              // Update array
-              $scope.scene.default = utilityService.getNewArrayWithToggledElement(
-                array,
-                element
-              );
-            };
-
-            // This wipes out all checked items. This is a lame "uncheck all button".
-            // We can remove this later and replace with an actual uncheck all button after a few versions.
-            $scope.clearSavedArray = function() {
-              $scope.scene.default = ["None"];
-            };
-
-            $scope.arrayContainsElement = utilityService.arrayContainsElement;
-
-            $scope.save = function() {
-              $uibModalInstance.close($scope.scene);
-
-              // Refresh the interactive control cache.
-              ipcRenderer.send("refreshInteractiveCache");
-            };
-
-            // When they hit cancel or click outside the modal, we dont want to do anything
-            $scope.dismiss = function() {
-              $uibModalInstance.dismiss("cancel");
-            };
-          },
-          closeCallback: scene => {
-            boardService.saveSceneForCurrentBoard(scene);
-          },
-          resolveObj: {
-            scene: () => {
-              return $.extend(true, {}, board.scenes[sceneName]);
-            }
-          }
-        };
-        utilityService.showModal(editViewerGroupDefaultsModalContext);
-      };
-
-      /*
+            /*
              * ADD OR EDIT COOLDOWN GROUP MODAL
              */
-      $scope.showAddOrEditCooldownGroupModal = function(cooldownGroup) {
-        let editViewerGroupDefaultsModalContext = {
-          templateUrl:
-            "./templates/interactive/modals/addOrEditCooldownGroupModal.html",
-          // This is the controller to be used for the modal.
-          controllerFunc: (
-            $scope,
-            $uibModalInstance,
-            boardService,
-            utilityService,
-            cooldownGroup
-          ) => {
-            $scope.cooldownGroup = {};
+            $scope.showAddOrEditCooldownGroupModal = function(cooldownGroup) {
+                let editViewerGroupDefaultsModalContext = {
+                    templateUrl: "./templates/interactive/modals/addOrEditCooldownGroupModal.html",
+                    // This is the controller to be used for the modal.
+                    controllerFunc: ($scope, $uibModalInstance, boardService, utilityService, cooldownGroup) => {
 
-            $scope.isNewGroup = true;
+                        $scope.cooldownGroup = {};
 
-            if (cooldownGroup != null) {
-              $scope.cooldownGroup = cooldownGroup;
-              $scope.isNewGroup = false;
-            }
+                        $scope.isNewGroup = true;
 
-            $scope.allControlIds = boardService.getControlIdsForSelectedBoard();
 
-            $scope.updateCheckedArrayWithElement = function(array, element) {
-              $scope.cooldownGroup.buttons = utilityService.getNewArrayWithToggledElement(
-                array,
-                element
-              );
+                        if (cooldownGroup != null) {
+                            $scope.cooldownGroup = cooldownGroup;
+                            $scope.isNewGroup = false;
+                        }
+
+                        $scope.allControlIds = boardService.getControlsForSelectedBoard()
+                            .filter(c => c.kind === "button" || c.kind === "textbox")
+                            .map(b => b.controlId);
+
+                        $scope.updateCheckedArrayWithElement = function(array, element) {
+                            $scope.cooldownGroup.buttons = utilityService.getNewArrayWithToggledElement(array, element);
+                        };
+
+                        $scope.arrayContainsElement = utilityService.arrayContainsElement;
+
+                        $scope.save = function() {
+                            if ($scope.cooldownGroup.groupName != null && $scope.cooldownGroup.groupName !== "") {
+                                $uibModalInstance.close({ shouldDelete: false, newCooldownGroup: $scope.cooldownGroup });
+
+                                // Refresh the interactive control cache.
+                                ipcRenderer.send('refreshInteractiveCache');
+                            }
+                        };
+
+                        $scope.delete = function() {
+                            $uibModalInstance.close({ shouldDelete: true });
+                        };
+
+                        // When they hit cancel or click outside the modal, we dont want to do anything
+                        $scope.dismiss = function() {
+                            $uibModalInstance.dismiss('cancel');
+                        };
+                    },
+                    closeCallback: (response) => {
+                        let previousName = "";
+                        if (cooldownGroup != null) {
+                            previousName = cooldownGroup.groupName;
+                        }
+
+                        if (response.shouldDelete) {
+                            boardService.deleteCooldownGroupForCurrentBoard(previousName, cooldownGroup);
+                        } else {
+                            boardService.saveCooldownGroupForCurrentBoard(previousName, response.newCooldownGroup);
+                        }
+
+                        // Refresh the interactive control cache.
+                        ipcRenderer.send('refreshInteractiveCache');
+                    },
+                    resolveObj: {
+                        cooldownGroup: () => {
+                            if (cooldownGroup == null) {
+                                return null;
+                            }
+                            return $.extend(true, {}, cooldownGroup);
+                        }
+                    }
+                };
+                utilityService.showModal(editViewerGroupDefaultsModalContext);
             };
-
-            $scope.arrayContainsElement = utilityService.arrayContainsElement;
-
-            $scope.save = function() {
-              if (
-                $scope.cooldownGroup.groupName != null &&
-                $scope.cooldownGroup.groupName !== ""
-              ) {
-                $uibModalInstance.close({
-                  shouldDelete: false,
-                  newCooldownGroup: $scope.cooldownGroup
-                });
-
-                // Refresh the interactive control cache.
-                ipcRenderer.send("refreshInteractiveCache");
-              }
-            };
-
-            $scope.delete = function() {
-              $uibModalInstance.close({ shouldDelete: true });
-            };
-
-            // When they hit cancel or click outside the modal, we dont want to do anything
-            $scope.dismiss = function() {
-              $uibModalInstance.dismiss("cancel");
-            };
-          },
-          closeCallback: response => {
-            let previousName = "";
-            if (cooldownGroup != null) {
-              previousName = cooldownGroup.groupName;
-            }
-
-            if (response.shouldDelete) {
-              boardService.deleteCooldownGroupForCurrentBoard(
-                previousName,
-                cooldownGroup
-              );
-            } else {
-              boardService.saveCooldownGroupForCurrentBoard(
-                previousName,
-                response.newCooldownGroup
-              );
-            }
-
-            // Refresh the interactive control cache.
-            ipcRenderer.send("refreshInteractiveCache");
-          },
-          resolveObj: {
-            cooldownGroup: () => {
-              if (cooldownGroup == null) {
-                return null;
-              }
-              return $.extend(true, {}, cooldownGroup);
-            }
-          }
-        };
-        utilityService.showModal(editViewerGroupDefaultsModalContext);
-      };
-    });
-})(window.jQuery);
+        });
+}(window.jQuery));

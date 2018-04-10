@@ -22,7 +22,7 @@
                 <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
             </div>
             <div class="chat-window-message-wrapper">
-                <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message),isTagged: message.tagged}" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
+                <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message),isTagged: message.tagged, isCompact: compactDisplay }" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
                     <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)">
                         <span>
                             <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
@@ -34,7 +34,7 @@
                             <span class="chatSubIcon" ng-if="isSubscriber(message)">
                                 <img ng-src="{{getSubIcon(message)}}">
                             </span>
-                            <span ng-hide="message.historical" class="muted chat-timestamp">
+                            <span ng-if="!message.historical && !compactDisplay" class="muted chat-timestamp">
                                 {{getTimeStamp(message)}}
                             </span>
                         </div>
@@ -106,7 +106,7 @@
         <h3>Chat Settings</h3>
         <div style="padding: 0 10px">
             <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
-                <span>Chat Feed Enabled</span>
+                <span style="font-weight: 900;">Chat Feed Enabled</span>
                 <span>
                     <input class="tgl tgl-light" id="cb4" type="checkbox" 
                         ng-checked="settings.chatFeedEnabled()" 
@@ -115,7 +115,7 @@
                 </span>
             </div>
             <div style="display: flex;align-items: center;justify-content: space-between;">
-                <span>Viewer List</span>
+                <span style="font-weight: 900;">Viewer List</span>
                 <span>
                     <input class="tgl tgl-light" id="cb5" type="checkbox"
                         ng-checked="settings.showViewerList()" 
@@ -124,7 +124,7 @@
                 </span>
             </div>
             <div style="display: flex;align-items: center;justify-content: space-between; padding-left: 10px;">
-                <span>Viewer Count</span>
+                <span style="font-weight: 900;">Viewer Count</span>
                 <span>
                     <input class="tgl tgl-light" id="cb6" type="checkbox"
                         ng-checked="settings.showViewerCount()" 
@@ -134,7 +134,7 @@
                 </span>
             </div>
             <div style="padding-top: 10px;">
-                <div>Notification Sound</div>
+                <div style="font-weight: 900;">Notification Sound</div>
                 <span class="btn-group" uib-dropdown style="margin-bottom: 5px;">
                     <button type="button" class="btn btn-primary" uib-dropdown-toggle>
                         {{$parent.selectedNotificationSound.name}} <span class="caret"></span>
@@ -157,6 +157,19 @@
                     <rzslider rz-slider-model="$parent.notificationVolume" rz-slider-options="$parent.sliderOptions"></rzslider>
                     <i class="fal fa-volume-up volume-high" style="font-size:25px; padding-bottom:5px"></i>
                 </div>                      
+            </div>
+            <div style="padding-top: 10px;">
+                <div style="font-weight: 900;">Display Style</div>
+                <div class="permission-type controls-fb-inline">
+                    <label class="control-fb control--radio">Modern
+                      <input type="radio" ng-model="compactDisplay" ng-value="false" ng-click="toggleCompactMode()"/>
+                      <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--radio">Compact
+                        <input type="radio" ng-model="compactDisplay" ng-value="true" ng-click="toggleCompactMode()"/>
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
             </div>
         </div>               
     </div>

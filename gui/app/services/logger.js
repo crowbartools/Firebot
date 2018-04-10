@@ -18,8 +18,17 @@
     }
 
     function callLogger(type, ...args) {
-      let argsNew = prefixMsgInArgs(...args);
-      return logger[type](...argsNew);
+        if (type != null && args != null) {
+
+            // Connection issues should be logged as "warn".
+            if (args[0] === "read ECONNRESET") {
+                let argsNew = prefixMsgInArgs(...args);
+                return logger['warn'](...argsNew);
+            }
+
+            let argsNew = prefixMsgInArgs(...args);
+            return logger[type](...argsNew);
+        }
     }
 
     /** Wrappers for the main Winston Logger methods. All these do is prefix the "msg" argument
@@ -51,8 +60,10 @@
     };
 
     service.log = (type, ...args) => {
-      let argsNew = prefixMsgInArgs(...args);
-      return logger.log(type, ...argsNew);
+        if (type != null && args != null) {
+            let argsNew = prefixMsgInArgs(...args);
+            return logger.log(type, ...argsNew);
+        }
     };
 
     return service;

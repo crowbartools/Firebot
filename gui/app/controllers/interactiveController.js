@@ -88,7 +88,7 @@
       $scope.resyncCurrentBoard = function() {
         let board = boardService.getSelectedBoard();
         if (board != null) {
-          boardService.loadBoardWithId(board.versionId);
+          boardService.loadBoardWithId(board.versionId, true);
         }
 
         // Refresh the interactive control cache.

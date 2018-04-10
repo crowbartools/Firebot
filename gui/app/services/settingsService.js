@@ -244,6 +244,15 @@
         pushDataToFile("/settings/chatViewerList", chatViewerList === true);
       };
 
+      service.isChatCompactMode = function() {
+        let compact = getDataFromFile('/settings/chatCompactMode');
+        return compact != null ? compact : false;
+      };
+
+      service.setChatCompactMode = function(compact) {
+          pushDataToFile('/settings/chatCompactMode', compact === true);
+      };
+
       service.getOverlayCompatibility = function() {
         let overlay = getDataFromFile("/settings/overlayImages");
         return overlay != null ? overlay : "Other";

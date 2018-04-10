@@ -1,19 +1,19 @@
 <!-- Modal for editting button effects-->
  <div class="modal-header">
    <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-   <h4 class="modal-title" id="editControlsLabel">Edit Button - {{control.controlId}}<span class="edit-title-controlid"></span></h4>
+   <h4 class="modal-title" id="editControlsLabel">Edit {{control.kind === 'textbox' ? "Textbox" : "Button"}} - {{control.controlId}}<span class="edit-title-controlid"></span></h4>
  </div>
  <div class="modal-body">
    <div class="general-button-settings">
       <div class="settings-title">
           <h3>Settings</h3>
       </div>
-     <div class="input-group settings-buttontext">
+     <div class="input-group settings-buttontext" ng-hide="control.kind === 'textbox'">
        <span class="input-group-addon" id="basic-addon3">Button Text</span>
        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="control.text">
      </div>
 
-     <div class="input-group settings-buttontext">
+     <div class="input-group settings-buttontext" ng-hide="control.kind === 'textbox'">
       <span class="input-group-addon" id="basic-addon3">Tooltip</span>
       <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="control.tooltip">
     </div>
@@ -28,7 +28,7 @@
        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="control.cooldown">
      </div>
 
-     <div class="input-group settings-cooldown">
+     <div class="input-group settings-cooldown" ng-hide="control.kind === 'textbox'">
       <span class="input-group-addon" id="basic-addon3">Threshold <tooltip text="'The number of clicks before button effects are run. A progress bar is shown on the button.'"></tooltip></span>
       <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="control.threshold">
     </div>
@@ -69,7 +69,7 @@
             <h3>Other</h3>
         </div>
         <div class="controls-fb-inline">
-          <label class="control-fb control--checkbox">Active Button
+          <label class="control-fb control--checkbox">Active {{control.kind === 'textbox' ? "Textbox" : "Button"}}
               <input type="checkbox" ng-model="control.active" aria-label="..." checked>
               <div class="control__indicator"></div>
           </label>
@@ -87,7 +87,7 @@
    </div>
    <div class="function-button-settings">
 
-    <effect-list header="What should this button do?" effects="effects" trigger="interactive" update="effectListUpdated(effects)" modalId="{{modalId}}"></effect-list>
+    <effect-list header="What should this {{control.kind === 'textbox' ? 'Textbox' : 'Button'}} do?" effects="effects" trigger="interactive" update="effectListUpdated(effects)" modalId="{{modalId}}"></effect-list>
 
    </div>
  </div>

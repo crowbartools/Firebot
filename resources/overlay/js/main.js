@@ -143,7 +143,7 @@ $.fn.extend({
     }
 });
 
-function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration) {
+function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration, token) {
 	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
 	var id = `.${elementClass}`;
@@ -151,6 +151,9 @@ function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, d
 		setTimeout(function(){ 
 			$(id).animateCss(exitAnimation, () => {
 				$(id).remove();
+				if(token != null) {
+					removeToken(token); 
+				}
 			});
 		}, (duration === 0 || duration != null) ? duration : 5000);
 	});
@@ -173,6 +176,14 @@ function getStylesForCustomCoords(customCoords) {
 	}
 	
 	return style;
+}
+
+function removeToken(token) {
+	var tokenEncoded = encodeURIComponent(token);
+	var url = `http://${window.location.hostname}:7473/rtoken/${tokenEncoded}`;
+	$.ajax({
+		url: url
+	});
 }
  
 

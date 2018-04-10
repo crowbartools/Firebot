@@ -7,6 +7,7 @@
 const path = require("path");
 const url = require("url");
 const logger = require("./lib/logwrapper");
+logger.info("Starting Firebot...");
 
 const electron = require("electron");
 const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
@@ -59,11 +60,12 @@ function squirrelEvents() {
     let target;
     let child;
     switch (process.argv[1]) {
-      case "--squirrel-updated":
+    case "--squirrel-updated":
       // cleanup from last instance
 
-      // use case-fallthrough to do normal installation
-      case "--squirrel-install": //eslint-disable-line no-fallthrough
+        // use case-fallthrough to do normal installation
+        break;
+    case '--squirrel-install': //eslint-disable-line no-fallthrough
         // Optional - do things such as:
         // - Install desktop and start menu shortcuts
         // - Add your .exe to the PATH
@@ -83,8 +85,12 @@ function squirrelEvents() {
         child.on("close", app.quit);
         return;
 
-      case "--squirrel-uninstall":
+    case '--squirrel-uninstall': {
         // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
+
+        //attempt to delete the user-settings folder
+        let rimraf = require('rimraf');
+        rimraf.sync(dataAccess.getPathInUserData("/user-settings"));
 
         // Remove shortcuts
         cp = require("child_process");
@@ -99,8 +105,8 @@ function squirrelEvents() {
         });
         child.on("close", app.quit);
         return true;
-
-      case "--squirrel-obsolete":
+    }
+    case '--squirrel-obsolete':
         // This is called on the outgoing version of your app before
         // we update to the new version - it's the opposite of
         // --squirrel-updated
@@ -517,6 +523,30 @@ ipcMain.on("getImportFolderPath", (event, uniqueid) => {
     properties: ["openDirectory"]
   });
   event.sender.send("gotImportFolderPath", { path: path, id: uniqueid });
+});
+
+// Get Get Backup Zip Path
+// This listens for an event from the render media.js file to open a dialog to get a filepath.
+ipcMain.on('getBackupZipPath', (event, uniqueid) => {
+    const backupsFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
+
+    let fs = require('fs');
+    let backupsFolderExists = false;
+    try {
+        backupsFolderExists = fs.existsSync(backupsFolderPath);
+    } catch (err) {
+        logger.warn("cannot check if backup folder exists", err);
+    }
+
+    let zipPath = dialog.showOpenDialog({
+        title: "Select backup zp",
+        buttonLabel: "Select Backup",
+        defaultPath: backupsFolderExists ? backupsFolderPath : undefined,
+        filters: [
+            {name: 'Zip', extensions: ['zip']}
+        ]
+    });
+    event.sender.send('gotBackupZipPath', {path: zipPath, id: uniqueid});
 });
 
 // Opens the firebot backup folder
