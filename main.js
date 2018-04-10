@@ -316,6 +316,30 @@ ipcMain.on('getImportFolderPath', (event, uniqueid) => {
     event.sender.send('gotImportFolderPath', {path: path, id: uniqueid});
 });
 
+// Get Get Backup Zip Path
+// This listens for an event from the render media.js file to open a dialog to get a filepath.
+ipcMain.on('getBackupZipPath', (event, uniqueid) => {
+    const backupsFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
+
+    let fs = require('fs');
+    let backupsFolderExists = false;
+    try {
+        backupsFolderExists = fs.existsSync(backupsFolderPath);
+    } catch (err) {
+        logger.warn("cannot check if backup folder exists", err);
+    }
+
+    let zipPath = dialog.showOpenDialog({
+        title: "Select backup zp",
+        buttonLabel: "Select Backup",
+        defaultPath: backupsFolderExists ? backupsFolderPath : undefined,
+        filters: [
+            {name: 'Zip', extensions: ['zip']}
+        ]
+    });
+    event.sender.send('gotBackupZipPath', {path: zipPath, id: uniqueid});
+});
+
 // Opens the firebot backup folder
 ipcMain.on('openBackupFolder', () => {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead

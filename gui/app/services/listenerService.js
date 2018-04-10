@@ -43,6 +43,7 @@
                 VIDEO_FILE: "videoFile",
                 ANY_FILE: "anyFile",
                 IMPORT_FOLDER: "importFolder",
+                IMPORT_BACKUP_ZIP: "importBackup",
                 CONNECTION_STATUS: "connectionStatus",
                 CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
                 CONSTELLATION_CONNECTION_STATUS: "constellationConnectionStatus",
@@ -122,6 +123,7 @@
                 case ListenerType.IMAGE_FILE:
                 case ListenerType.SOUND_FILE:
                 case ListenerType.IMPORT_FOLDER:
+                case ListenerType.IMPORT_BACKUP_ZIP:
                 case ListenerType.ANY_FILE:
                     registeredListeners.filePath[uuid] = listener;
                     if (publishEvent) {
@@ -133,6 +135,8 @@
                             ipcRenderer.send('getVideoPath', uuid);
                         } else if (listener.type === ListenerType.IMPORT_FOLDER) {
                             ipcRenderer.send('getImportFolderPath', uuid);
+                        } else if (listener.type === ListenerType.IMPORT_BACKUP_ZIP) {
+                            ipcRenderer.send('getBackupZipPath', uuid);
                         } else if (listener.type === ListenerType.ANY_FILE) {
                             ipcRenderer.send('getAnyFilePath', request.data);
                         }
@@ -152,6 +156,7 @@
                 case ListenerType.SOUND_FILE:
                 case ListenerType.IMPORT_FOLDER:
                 case ListenerType.ANY_FILE:
+                case ListenerType.IMPORT_BACKUP_ZIP:
                     delete registeredListeners.filePath[uuid];
                     break;
                 default:
@@ -198,6 +203,10 @@
             });
 
             ipcRenderer.on('gotImportFolderPath', function (event, data) {
+                parseFilePathEvent(data);
+            });
+
+            ipcRenderer.on('gotBackupZipPath', function (event, data) {
                 parseFilePathEvent(data);
             });
 
