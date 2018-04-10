@@ -46,6 +46,19 @@ exports.start = function() {
         res.status(404).send({status: "error", message: req.originalUrl + ' not found'});
     });
 
+    // set up resource endpoint
+    api.get('/rtoken/:token', function (req, res) {
+
+        let token = req.params.token || null;
+        if (token !== null) {
+            resourceTokenManager.deleteToken(token);
+            res.status(200);
+            return;
+        }
+
+        res.status(404).send({status: "error", message: req.originalUrl + ' not found'});
+    });
+
     // Catch all remaining paths and send the caller a 404
     api.use(function(req, res) {
         res.status(404).send({status: "error", message: req.originalUrl + ' not found'});

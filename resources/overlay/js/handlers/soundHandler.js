@@ -30,5 +30,8 @@ function playSound(data){
 
 	audio.oncanplay = () => audio.play();
 
-	audio.onended = () => $("#" + uuid).remove();
+	audio.onended = () => { 
+		$("#" + uuid).remove();
+		removeToken(data.resourceToken); 
+	}
 }

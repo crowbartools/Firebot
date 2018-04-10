@@ -45,25 +45,24 @@ function showVideo(data){
 		const loopTag = loop ? 'loop' : '';
 		if (videoHeight === false && videoWidth === false){
 			// Both height and width fields left blank.
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" autoplay ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else if (videoWidth === false){
 			// Width field left blank, but height provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" autoplay ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else if (videoHeight === false) {
 			// Height field left blank, but width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; width:'+ videoWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" autoplay ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else {
 			// Both height and width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" autoplay ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		}
 		// Put the div on the page.
-		$('#wrapper').append(videoFinal);
 		
-		$(videoId).animateCss(enterAnimation);
-
+		
+		$('#wrapper').append(videoFinal);
 		// Adjust volume
 		if(isNaN(videoVolume)) {
 			videoVolume = 5;
@@ -71,18 +70,29 @@ function showVideo(data){
 		
 		videoVolume = parseInt(videoVolume) / 10;
 		$('.player').prop("volume", videoVolume);
+		
+		var video = document.getElementById('video-'+divClass);
 
-		// Remove div after X time.
-		if(videoDuration){
-			setTimeout(function(){ 
-				animateVideoExit(videoId, exitAnimation);
-			}, videoDuration);
-		}else{
-			var video = document.getElementById('video-'+divClass);
-			video.onended = function(e){
-				animateVideoExit(videoId, exitAnimation);
+		video.oncanplay = function() {
+			console.log("video " + divClass + " can play");
+
+			$(videoId).animateCss(enterAnimation);
+			video.play();
+			// Remove div after X time.
+			if(videoDuration){
+				setTimeout(function(){
+					removeToken(data.resourceToken); 
+					animateVideoExit(videoId, exitAnimation);
+				}, videoDuration);
+			}else{
+				
+				video.onended = function(e){
+					removeToken(data.resourceToken); 
+					animateVideoExit(videoId, exitAnimation);
+				}
 			}
-		}
+		};
+		
 		
 		
 	}else{

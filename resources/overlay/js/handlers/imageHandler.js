@@ -43,5 +43,5 @@ function showImage(data){
 	}
 	
 	$('#wrapper').append(imageFinal);
-	showTimedAnimatedElement(divClass+'-image', data.enterAnimation, data.exitAnimation, imageDuration);
+	showTimedAnimatedElement(divClass+'-image', data.enterAnimation, data.exitAnimation, imageDuration, data.resourceToken);
 }
