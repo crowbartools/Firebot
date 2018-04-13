@@ -28,7 +28,7 @@
         let showEventsPosition = data.showEventsPosition;
         let showEventsHeight = data.showEventsHeight;
         let showEventsWidth = data.showEventsWidth;
-        let showEventsDuration = parseInt(data.showEventsDuration);
+        let showEventsDuration = parseFloat(data.showEventsDuration);
         let showEventsColor = data.showEventsColor;
         let showEventsBackgroundColor = data.showEventsBackgroundColor;
         let showEventsFontSize = data.showEventsFontSize;
@@ -88,7 +88,7 @@
         let imagePosition = data.imagePosition;
         let imageHeight = data.imageHeight;
         let imageWidth = data.imageWidth;
-        let imageDuration = parseInt(data.imageDuration);
+        let imageDuration = parseFloat(data.imageDuration);
 
         // Set defaults if they werent filled out.
         if (imagePosition === "" || imagePosition == null) {
@@ -131,7 +131,7 @@
         let videoPosition = data.videoPosition;
         let videoHeight = data.videoHeight;
         let videoWidth = data.videoWidth;
-        let videoDuration = parseInt(data.videoDuration);
+        let videoDuration = parseFloat(data.videoDuration);
         let videoVolume = data.videoVolume;
         let videoStarttime = data.videoStarttime;
 
@@ -251,13 +251,6 @@
 
       listenerService.registerListener(
         { type: listenerService.ListenerType.SHOW_IMAGE },
-        data => {
-          showImage(data);
-        }
-      );
-
-      listenerService.registerListener(
-        { type: listenerService.ListenerType.API_BUTTON },
         data => {
           showImage(data);
         }

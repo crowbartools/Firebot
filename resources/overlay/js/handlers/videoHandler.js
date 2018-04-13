@@ -81,13 +81,11 @@ function showVideo(data){
 			// Remove div after X time.
 			if(videoDuration){
 				setTimeout(function(){
-					removeToken(data.resourceToken); 
 					animateVideoExit(videoId, exitAnimation);
 				}, videoDuration);
 			}else{
 				
 				video.onended = function(e){
-					removeToken(data.resourceToken); 
 					animateVideoExit(videoId, exitAnimation);
 				}
 			}

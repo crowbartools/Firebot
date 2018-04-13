@@ -58,7 +58,7 @@
                 ERROR: "error",
                 UPDATE_ERROR: "updateError",
                 UPDATE_DOWNLOADED: "updateDownloaded",
-                API_BUTTON: "showImage",
+                API_BUTTON: "apiButton",
                 SHOW_EVENTS: "showEvents",
                 PLAY_SOUND: "playSound",
                 SHOW_IMAGE: "showImage",

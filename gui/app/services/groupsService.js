@@ -117,6 +117,14 @@
         return service.getDefaultGroups().concat(service.getViewerGroupNames());
       };
 
+      // Returns all valid groups for spark exemption.
+      service.getDefaultAndCustomViewerGroupsForSparkExempt = function () {
+          // This removes the "Streamer" role because streamers are always spark exempt on their own channel.
+          let groups = service.getDefaultGroups(),
+              groupsFixed = groups.filter(item => item !== 'Streamer');
+          return groupsFixed.concat(service.getViewerGroupNames());
+      };
+
       service.getDefaultGroups = function() {
         return [
           "Pro",

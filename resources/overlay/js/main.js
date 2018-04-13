@@ -28,11 +28,14 @@ function mixerSocketConnect(){
 		// When we get a message from the Firebot GUI...
 		ws.onmessage = function (evt){
 			var data = JSON.parse(evt.data);
-			var event = data.event;
+			var event = data.event;			
 			
 			var olInstance = params.get("instance");
+
 			console.log(`Recieved Event: ${event}`);
 			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.overlayInstance}`)
+			console.log(data);
+
 			if(olInstance != null && olInstance != "") {
 				if(data.overlayInstance != olInstance) {
 					console.log("Event is for a different instance. Ignoring.")
@@ -126,7 +129,7 @@ function notification(status, text){
 }
 
 $.fn.extend({
-    animateCss: function (animationName, callback) {
+    animateCss: function (animationName, callback, data) {
 		if(callback == null || !(callback instanceof Function)) {
 			callback = () => {};
 		}
@@ -134,29 +137,26 @@ $.fn.extend({
 		if(animationName !== "none") {
 			this.addClass('animated ' + animationName).one(animationEnd, function() {
 				$(this).removeClass('animated ' + animationName);
-				callback();
+				callback(data);
 			});
 		} else { 
-			callback();
+			callback(data);
 		}	
         return this;
     }
 });
 
-function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration, token) {
+function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration, tokenArg) {
 	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
 	var id = `.${elementClass}`;
-	$(id).animateCss(enterAnimation, () => {
+	$(id).animateCss(enterAnimation, (data) => {
 		setTimeout(function(){ 
-			$(id).animateCss(exitAnimation, () => {
-				$(id).remove();
-				if(token != null) {
-					removeToken(token); 
-				}
-			});
+			$(data.id).animateCss(data.exitAnimation, (data1) => {
+				$(data1.id).remove();
+			}, data);
 		}, (duration === 0 || duration != null) ? duration : 5000);
-	});
+	}, { token: tokenArg, id: id, exitAnimation: exitAnimation });
 }
 
 function getStylesForCustomCoords(customCoords) {
@@ -176,14 +176,6 @@ function getStylesForCustomCoords(customCoords) {
 	}
 	
 	return style;
-}
-
-function removeToken(token) {
-	var tokenEncoded = encodeURIComponent(token);
-	var url = `http://${window.location.hostname}:7473/rtoken/${tokenEncoded}`;
-	$.ajax({
-		url: url
-	});
 }
  
 

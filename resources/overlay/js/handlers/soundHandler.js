@@ -32,6 +32,5 @@ function playSound(data){
 
 	audio.onended = () => { 
 		$("#" + uuid).remove();
-		removeToken(data.resourceToken); 
 	}
 }
