@@ -380,12 +380,12 @@ async function createDefaultFoldersAndFiles() {
   );
 
   logger.debug("Creating or connecting user database");
-    userdb.connectUserDatabase();
+  userdb.connectUserDatabase();
 
   logger.debug("Creating or connecting currency database");
   currencydb.connectCurrencyDatabase();
 
-    logger.info("Finished verifying default folders and files.");
+  logger.info("Finished verifying default folders and files.");
 }
 
 /**
