@@ -6,7 +6,7 @@
 
   const _ = require("underscore")._;
 
-  const EffectType = require('../../lib/common/EffectType');
+  const EffectType = require("../../lib/common/EffectType");
 
   angular
     .module("firebotApp")
@@ -20,29 +20,28 @@
 
       let copiedEffectsCache = {};
       service.copyEffects = function(type, effects) {
-          copiedEffectsCache = JSON.parse(angular.toJson(effects));
+        copiedEffectsCache = JSON.parse(angular.toJson(effects));
       };
 
       service.getCopiedEffects = function(trigger) {
-          let effects = JSON.parse(JSON.stringify(copiedEffectsCache));
+        let effects = JSON.parse(JSON.stringify(copiedEffectsCache));
 
-          if (!Array.isArray(effects)) {
-              effects = Object.values(effects);
+        if (!Array.isArray(effects)) {
+          effects = Object.values(effects);
+        }
+
+        let compatibleEffects = [];
+        effects.forEach(e => {
+          if (EffectType.effectCanBeTriggered(e.type, trigger)) {
+            compatibleEffects.push(e);
           }
+        });
 
-          let compatibleEffects = [];
-          effects.forEach(e => {
-              if (EffectType.effectCanBeTriggered(e.type, trigger)) {
-                  compatibleEffects.push(e);
-              }
-          });
-
-          return compatibleEffects;
+        return compatibleEffects;
       };
 
       service.hasCopiedEffects = function(trigger) {
-
-          return service.getCopiedEffects(trigger).length > 0;
+        return service.getCopiedEffects(trigger).length > 0;
       };
 
       let slidingModals = [];

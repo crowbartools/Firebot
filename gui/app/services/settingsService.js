@@ -245,12 +245,12 @@
       };
 
       service.isChatCompactMode = function() {
-        let compact = getDataFromFile('/settings/chatCompactMode');
+        let compact = getDataFromFile("/settings/chatCompactMode");
         return compact != null ? compact : false;
       };
 
       service.setChatCompactMode = function(compact) {
-          pushDataToFile('/settings/chatCompactMode', compact === true);
+        pushDataToFile("/settings/chatCompactMode", compact === true);
       };
 
       service.getOverlayCompatibility = function() {

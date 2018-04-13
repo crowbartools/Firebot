@@ -257,7 +257,8 @@
           case EffectList.COOLDOWN:
             controller = ($scope, boardService) => {
               // Get all control id's in an array so we can add checkboxes.
-              $scope.boardButtons = boardService.getControlsForSelectedBoard()
+              $scope.boardButtons = boardService
+                .getControlsForSelectedBoard()
                 .filter(c => c.kind === "button" || c.kind === "textbox")
                 .map(b => b.controlId);
 
