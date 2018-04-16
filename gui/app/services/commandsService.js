@@ -6,74 +6,56 @@
   angular.module("firebotApp").factory("commandsService", function(logger) {
     let service = {};
 
+    let getCommandsDb = () =>
+      profileManager.getJsonDbInProfile("/chat/commands");
+
     // in memory commands storage
-    let commandsCache = {};
-    let timedGroupsCache = {};
+    let commandsCache = {
+      systemCommands: [],
+      customCommands: [],
+      timers: []
+    };
 
     // Refresh commands cache
     service.refreshCommands = function() {
-      let commandsDb = profileManager.getJsonDbInProfile("/chat/commands");
-      commandsCache = commandsDb.getData("/");
+      let commandsDb = getCommandsDb();
 
+      let cmdData;
       try {
-        timedGroupsCache = commandsDb.getData("/timedGroups");
+        cmdData = commandsDb.getData("/");
       } catch (err) {
-        timedGroupsCache = {};
+        logger.warning("error getting command data", err);
+        return;
+      }
+
+      if (cmdData.systemCommands) {
+        commandsCache.systemCommands = Object.values(cmdData.systemCommands);
+
+        // TODO: Add and save any system command entries that should exist but dont.
+        // Should only happen when we introduce a new system command or someone messes with the json
+      }
+
+      if (cmdData.customCommands) {
+        commandsCache.customCommands = Object.values(cmdData.customCommands);
+      }
+
+      if (cmdData.timers) {
+        commandsCache.timers = Object.values(cmdData.timers);
       }
 
       // Refresh the interactive control cache.
       ipcRenderer.send("refreshCommandCache");
     };
 
-    // Get an array of command types. Filters out timed groups list.
-    service.getCommandTypes = function() {
-      let commandTypes = [];
-      if (commandsCache != null) {
-        commandTypes = Object.keys(commandsCache).filter(key => {
-          return key !== "timedGroups";
-        });
-      }
-      return commandTypes;
-    };
+    service.getSystemCommands = () => commandsCache.systemCommands;
 
-    // Return all commands for a specific command type.
-    service.getAllCommandsForType = function(commandType) {
-      let commandArray = [];
-      if (commandsCache != null) {
-        let commands = commandsCache[commandType];
-        for (let command in commands) {
-          if (commands.hasOwnProperty(command)) {
-            commandArray.push(commands[command]);
-          }
-        }
-      }
-      return commandArray;
-    };
+    service.getCustomCommands = () => commandsCache.customCommands;
 
-    service.getAllCommands = function() {
-      let commands = [];
-      Object.values(commandsCache).forEach(t => {
-        commands = commands.concat(Object.values(t));
-      });
-      return commands;
-    };
-
-    service.getCommandRoles = function(command) {
-      let commandRoles = command.permissions;
-      let final = [];
-      if (commandRoles != null) {
-        if (commandRoles instanceof Array) {
-          final = commandRoles;
-        } else {
-          final.push(commandRoles);
-        }
-      }
-      return final;
-    };
+    service.getTimers = () => commandsCache.timers;
 
     // Saves out a command
     service.saveCommand = function(command) {
-      let commandDb = profileManager.getJsonDbInProfile("/chat/commands");
+      let commandDb = getCommandsDb();
 
       // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
       // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
@@ -99,7 +81,7 @@
 
     // Deletes a command.
     service.deleteCommand = function(command) {
-      let commandDb = profileManager.getJsonDbInProfile("/chat/commands");
+      let commandDb = profileManager.getCommandsDb();
       let cleanedCommands = JSON.parse(angular.toJson(command));
 
       if (cleanedCommands.active === true) {

@@ -1,14 +1,18 @@
 <!-- Commands Board -->
 <div class="content-block">
-  <div class="content-block-header">
-    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Chat Commands</span>
-    <span class="clickable board-settings-icon" ng-click="showCommandSettingsModal()">
-        <i class="fas fa-cog"></i>
-    </span>
-  </div>
   <div class="content-block-body">
     <div class="page-content" style="min-height: 600px;">
-        <div class="chat-commands-wrapper">
+            <uib-tabset active="selectionCommandSection">
+                    <!--Create a tab for each control type -->
+                    <uib-tab index="1" heading="System Commands">
+                    </uib-tab>
+                    <uib-tab index="2" heading="Custom Commands">
+
+                    </uib-tab>
+                    <uib-tab index="3" heading="Timers">
+                    </uib-tab>
+            </uib-tabset>
+        <!--<div class="chat-commands-wrapper">
             <div class="scene-tools-wrapper">
                 <span class="scenes-title">
 
@@ -28,17 +32,13 @@
                 </div>
             </div>
             <uib-tabset active="activeSceneTab">
-                <!--Create a tab for each control type -->
                 <uib-tab index="$index" ng-repeat="commandType in getCommandTypes() | orderBy:'toString()'" heading="{{commandType}}">
                     <div class="tab-pane interactive-button-holder active">
-                    <!--Create buttons in each scene -->
-                    <!--Grid View-->
                     <div ng-show="buttonViewModeCommands == 'grid'" ng-class="{'interactive-control-tile': command}" ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch">
                         <a class="control-edit-btn clickable" ng-click="showAddCommandModal(command)">EDIT</a>
                         <div class="button-name noselect">{{command.commandID}}</div>
                         <div class="button-trigger noselect">{{command.trigger}}</div>
                     </div>
-                    <!--List View-->
                     <table ng-show="buttonViewModeCommands == 'list'" class="table table-hover">
                         <thead style="text-transform: uppercase;color: #4a4a4a;">
                             <tr>
@@ -61,7 +61,7 @@
                     </table>
                     </div>
                 </uib-tab>
-            </uib-tabset>
+            </uib-tabset>-->
         </div><!-- End Chat Command Wrapper-->
     </div><!-- End Page Content-->
   </div><!-- End content body block-->
