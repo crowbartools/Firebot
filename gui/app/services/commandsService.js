@@ -3,7 +3,8 @@
   //This manages command data
   const profileManager = require("../../lib/common/profile-manager.js");
 
-  angular.module("firebotApp").factory("commandsService", function(logger) {
+  angular.module("firebotApp")
+  .factory("commandsService", function(logger) {
     let service = {};
 
     let getCommandsDb = () =>
@@ -53,90 +54,67 @@
 
     service.getTimers = () => commandsCache.timers;
 
-    // Saves out a command
-    service.saveCommand = function(command) {
+    service.saveCustomCommand = function(command) {
       let commandDb = getCommandsDb();
 
       // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
       // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
       // while removing internal angular properties. We then convert this string back to an object with
       // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
-      let cleanedCommands = JSON.parse(angular.toJson(command));
+      let cleanedCommand = JSON.parse(angular.toJson(command));
 
-      // If the command is active, throw it into the active group. Otherwise put it in the inactive group.
-      if (command.active === true) {
-        logger.info("Saving " + command.commandID + " to active");
-        try {
-          commandDb.delete("/Inactive/" + command.commandID);
-        } catch (err) {} //eslint-disable-line no-empty
-        commandDb.push("/Active/" + command.commandID, cleanedCommands);
-      } else {
-        logger.info("Saving " + command.commandID + " to inactive");
-        try {
-          commandDb.delete("/Active/" + command.commandID);
-        } catch (err) {} //eslint-disable-line no-empty
-        commandDb.push("/Inactive/" + command.commandID, cleanedCommands);
-      }
+      try {
+        commandDb.push("/customCommands/" + command.id, cleanedCommand);
+      } catch (err) {} //eslint-disable-line no-empty
+     
+    };
+
+    service.saveSystemCommand = function(command) {
+      let commandDb = getCommandsDb();
+
+      let cleanedCommand = JSON.parse(angular.toJson(command));
+
+      try {
+        commandDb.push("/systemCommands/" + command.id, cleanedCommand);
+      } catch (err) {} //eslint-disable-line no-empty
+     
+    };
+
+    service.saveTimer = function(timer) {
+      let commandDb = getCommandsDb();
+
+      let cleanedTimer = JSON.parse(angular.toJson(timer));
+
+      try {
+        commandDb.push("/timers/" + cleanedTimer.id, cleanedTimer);
+      } catch (err) {} //eslint-disable-line no-empty
+     
     };
 
     // Deletes a command.
-    service.deleteCommand = function(command) {
-      let commandDb = profileManager.getCommandsDb();
-      let cleanedCommands = JSON.parse(angular.toJson(command));
+    service.deleteCustomCommand = function(command) {
+      let commandDb = getCommandsDb();
 
-      if (cleanedCommands.active === true) {
-        commandDb.delete("./Active/" + cleanedCommands.commandID);
-      } else {
-        commandDb.delete("./Inactive/" + cleanedCommands.commandID);
-      }
-    };
-
-    ///////////////
-    // Timed Groups
-    ///////////////
-
-    // Gets the cached timed groups
-    service.getTimedGroupSettings = function() {
-      return timedGroupsCache;
-    };
-
-    // Save Timed Group
-    service.saveTimedGroup = function(previousGroupName, timedGroup) {
-      let commandDb = profileManager.getJsonDbInProfile("/chat/commands");
-      try {
-        commandDb.push("./timedGroups/" + timedGroup.groupName, timedGroup);
-      } catch (err) {
-        logger.error(err);
-      }
-
-      // Check to see if we are renaming a group and need to remove the old one.
-      if (
-        previousGroupName !== timedGroup.groupName &&
-        previousGroupName != null &&
-        previousGroupName !== ""
-      ) {
-        try {
-          commandDb.delete("./timedGroups/" + previousGroupName);
-        } catch (err) {
-          logger.error(err);
-        }
-      }
-    };
-
-    // Delete timed Group
-    service.deleteTimedGroup = function(previousGroupName, timedGroup) {
-      let commandDb = profileManager.getJsonDbInProfile("/chat/commands");
-      try {
-        commandDb.delete("./timedGroups/" + previousGroupName);
-      } catch (err) {
-        logger.error(err);
-      }
+      if(command == null) return;
 
       try {
-        commandDb.delete("./timedGroups/" + timedGroup.groupName);
-      } catch (err) {
-        logger.error(err);
-      }
+        commandDb.delete("/customCommands/" + command.id);
+       } catch (err) {
+         logger.warn("error when deleting command", err);
+       } //eslint-disable-line no-empty
+    };
+
+    // Deletes a command.
+    service.deleteTimer = function(timer) {
+      let commandDb = getCommandsDb();
+
+      if(timer == null) return;
+
+      try {
+        commandDb.delete("/timers/" + timer.id);
+       } catch (err) {
+         logger.warn("error when deleting timer", err);
+       } //eslint-disable-line no-empty
     };
 
     return service;

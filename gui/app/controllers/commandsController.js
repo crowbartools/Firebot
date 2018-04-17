@@ -11,38 +11,14 @@
       groupsService,
       effectHelperService
     ) {
+      
       // Cache commands on app load.
       commandsService.refreshCommands();
 
-      // Set button view to user setting value.
-      $scope.buttonViewModeCommands = settingsService.getButtonViewMode(
-        "commands"
-      );
-
-      // Set active viewer groups for command permissions.
-      $scope.viewerGroups = groupsService.getAllGroups();
-
       $scope.activeSceneTab = 0;
 
-      //Save button view.
-      $scope.saveCurrentButtonViewMode = function(type) {
-        settingsService.setButtonViewMode($scope.buttonViewModeCommands, type);
-      };
+      $scope.commandsService = commandsService;
 
-      // Gets an array of command types.
-      $scope.getCommandTypes = function() {
-        return commandsService.getCommandTypes();
-      };
-
-      // Gets all commands within a certain command type.
-      $scope.getAllCommandsForType = function(commandType) {
-        return commandsService.getAllCommandsForType(commandType);
-      };
-
-      // Return command roles array.
-      $scope.getCommandRoles = function(command) {
-        return commandsService.getCommandRoles(command);
-      };
 
       /**
        * MODAL CONTROL

@@ -2,16 +2,33 @@
 <div class="content-block">
   <div class="content-block-body">
     <div class="page-content" style="min-height: 600px;">
-            <uib-tabset active="selectionCommandSection">
-                    <!--Create a tab for each control type -->
-                    <uib-tab index="1" heading="System Commands">
-                    </uib-tab>
-                    <uib-tab index="2" heading="Custom Commands">
-
-                    </uib-tab>
-                    <uib-tab index="3" heading="Timers">
-                    </uib-tab>
-            </uib-tabset>
+        <uib-tabset active="selectionCommandSection">
+            <!--Create a tab for each control type -->
+            <uib-tab index="1" heading="System Commands">
+            </uib-tab>
+            <uib-tab index="2" heading="Custom Commands">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>TRIGGER</th> 
+                            <th>COOLDOWNS</th> 
+                            <th></th> 
+                            <th></th> 
+                        </tr> 
+                    </thead> 
+                    <tbody> 
+                        <tr ng-repeat="command in commandsService.getCustomCommands()"> 
+                            <th>{{command.trigger}}</th>
+                            <td><i class="fal fa-globe"></i>{{command.cooldown.global}} <i class="fas fa-user"></i>{{command.cooldown.user}}</td>
+                            <td></td> 
+                            <td><i class="fas fa-ellipsis-h"></i></td> 
+                        </tr>
+                    </tbody>
+                </table>
+            </uib-tab>
+            <uib-tab index="3" heading="Timers">
+            </uib-tab>
+        </uib-tabset>
         <!--<div class="chat-commands-wrapper">
             <div class="scene-tools-wrapper">
                 <span class="scenes-title">
