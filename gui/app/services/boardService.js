@@ -52,7 +52,7 @@
             // Check for last board and load ui if one exists.
             try {
               let filepath = profileManager.getPathInProfile(
-                "/user-settings/controls/" + boardId + ".json"
+                "/controls/" + boardId + ".json"
               );
 
               let exists = fs.existsSync(filepath);
@@ -270,20 +270,20 @@
         // If file is still based on game name, convert the filename to versionid format. This bit of code will be obsolete in a few versions.
         if (
           profileManager.profileDataPathExistsSync(
-            "/user-settings/controls/" + gameName + ".json"
+            "/controls/" + gameName + ".json"
           )
         ) {
           if (
             !profileManager.profileDataPathExistsSync(
-              "/user-settings/controls/" + versionid + ".json"
+              "/controls/" + versionid + ".json"
             )
           ) {
             logger.info("Converting control files to new versionid format.");
             let oldPath = profileManager.getPathInProfile(
-              "/user-settings/controls/" + gameName + ".json"
+              "/controls/" + gameName + ".json"
             );
             let newPath = profileManager.getPathInProfile(
-              "/user-settings/controls/" + versionid + ".json"
+              "/controls/" + versionid + ".json"
             );
 
             try {
@@ -310,7 +310,7 @@
         }
 
         let dbControls = profileManager.getJsonDbInProfile(
-          "/user-settings/controls/" + versionid
+          "/controls/" + versionid
         );
 
         // Push mixer Json to controls file.
@@ -544,7 +544,7 @@
                   // If id is in settings, check to see if the actual file exists.
                   if (boardUpdated != null) {
                     let boardExists = profileManager.profileDataPathExistsSync(
-                      "/user-settings/controls/" + id + ".json"
+                      "/controls/" + id + ".json"
                     );
                     if (!boardExists) {
                       logger.info(
@@ -634,7 +634,7 @@
             _.each(loadedIds, function(id) {
               if (id === false) return;
               let boardDb = profileManager.getJsonDbInProfile(
-                "/user-settings/controls/" + id
+                "/controls/" + id
               );
               let boardData = boardDb.getData("/");
               try {
@@ -814,7 +814,7 @@
 
       service.saveControlForCurrentBoard = function(control) {
         let boardDb = profileManager.getJsonDbInProfile(
-          "/user-settings/controls/" + settingsService.getLastBoardId()
+          "/controls/" + settingsService.getLastBoardId()
         );
 
         // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
@@ -831,7 +831,7 @@
 
       service.saveSceneForCurrentBoard = function(scene) {
         let boardDb = profileManager.getJsonDbInProfile(
-          "/user-settings/controls/" + settingsService.getLastBoardId()
+          "/controls/" + settingsService.getLastBoardId()
         );
 
         // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
@@ -860,7 +860,7 @@
         }
 
         let boardDb = profileManager.getJsonDbInProfile(
-          "/user-settings/controls/" + settingsService.getLastBoardId()
+          "/controls/" + settingsService.getLastBoardId()
         );
 
         // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
@@ -902,7 +902,7 @@
         cooldownGroup
       ) {
         let boardDb = profileManager.getJsonDbInProfile(
-          "/user-settings/controls/" + settingsService.getLastBoardId()
+          "/controls/" + settingsService.getLastBoardId()
         );
 
         if (cooldownGroup.buttons != null) {
@@ -934,7 +934,7 @@
               groups.splice(index, 1);
               //save to file
               let boardDb = profileManager.getJsonDbInProfile(
-                `/user-settings/controls/${board.name}`
+                `/controls/${board.name}`
               );
               boardDb.push(
                 `./firebot/scenes/${scene.sceneName}/default`,
