@@ -385,7 +385,9 @@ async function createDefaultFoldersAndFiles() {
   logger.debug("Creating or connecting currency database");
   currencydb.connectCurrencyDatabase();
 
-  logger.info("Finished verifying default folders and files.");
+  logger.info(
+    "Finished verifying default folder and files for all profiles, as well as making sure our logged in profile is valid."
+  );
 }
 
 /**
