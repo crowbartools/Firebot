@@ -11,14 +11,12 @@
       groupsService,
       effectHelperService
     ) {
-      
       // Cache commands on app load.
       commandsService.refreshCommands();
 
       $scope.activeSceneTab = 0;
 
       $scope.commandsService = commandsService;
-
 
       /**
        * MODAL CONTROL

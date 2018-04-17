@@ -3,8 +3,7 @@
   //This manages command data
   const profileManager = require("../../lib/common/profile-manager.js");
 
-  angular.module("firebotApp")
-  .factory("commandsService", function(logger) {
+  angular.module("firebotApp").factory("commandsService", function(logger) {
     let service = {};
 
     let getCommandsDb = () =>
@@ -66,7 +65,6 @@
       try {
         commandDb.push("/customCommands/" + command.id, cleanedCommand);
       } catch (err) {} //eslint-disable-line no-empty
-     
     };
 
     service.saveSystemCommand = function(command) {
@@ -77,7 +75,6 @@
       try {
         commandDb.push("/systemCommands/" + command.id, cleanedCommand);
       } catch (err) {} //eslint-disable-line no-empty
-     
     };
 
     service.saveTimer = function(timer) {
@@ -88,33 +85,32 @@
       try {
         commandDb.push("/timers/" + cleanedTimer.id, cleanedTimer);
       } catch (err) {} //eslint-disable-line no-empty
-     
     };
 
     // Deletes a command.
     service.deleteCustomCommand = function(command) {
       let commandDb = getCommandsDb();
 
-      if(command == null) return;
+      if (command == null) return;
 
       try {
         commandDb.delete("/customCommands/" + command.id);
-       } catch (err) {
-         logger.warn("error when deleting command", err);
-       } //eslint-disable-line no-empty
+      } catch (err) {
+        logger.warn("error when deleting command", err);
+      } //eslint-disable-line no-empty
     };
 
     // Deletes a command.
     service.deleteTimer = function(timer) {
       let commandDb = getCommandsDb();
 
-      if(timer == null) return;
+      if (timer == null) return;
 
       try {
         commandDb.delete("/timers/" + timer.id);
-       } catch (err) {
-         logger.warn("error when deleting timer", err);
-       } //eslint-disable-line no-empty
+      } catch (err) {
+        logger.warn("error when deleting timer", err);
+      } //eslint-disable-line no-empty
     };
 
     return service;
