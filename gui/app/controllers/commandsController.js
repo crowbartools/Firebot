@@ -22,8 +22,34 @@
        * MODAL CONTROL
        */
 
+      $scope.openAddOrEditCustomCommandModal = function(command) {
+        utilityService.showModal({
+          component: "addOrEditCustomCommandModal",
+          resolveObj: {
+            command: () => command
+          },
+          closeCallback: resp => {
+            let action = resp.action,
+              command = resp.command;
+
+            switch (action) {
+              case "add":
+              case "update":
+                commandsService.saveCustomCommand(command);
+                break;
+              case "delete":
+                commandsService.deleteCustomCommand(command);
+                break;
+            }
+
+            // Refresh Commands
+            commandsService.refreshCommands();
+          }
+        });
+      };
+
       // This opens up a modal when adding a new command.
-      $scope.showAddCommandModal = function(command) {
+      /*$scope.showAddCommandModal = function(command) {
         let addCommandModalContext = {
           templateUrl: "./templates/chat/command-modals/addCommandModal.html",
           // This is the controller to be used for the modal.
@@ -42,12 +68,6 @@
             } else {
               $scope.command = { active: true, permissions: [], effects: {} };
             }
-
-            $scope.effects = $scope.command.effects;
-
-            $scope.effectListUpdated = function(effects) {
-              $scope.effects = effects;
-            };
 
             // Temporary: Check group permissions radio button if control permissions are an array.
             // This can be removed after a few releases.
@@ -144,7 +164,7 @@
           }
         };
         utilityService.showModal(addCommandModalContext);
-      }; // End add command modal
+      }; // End add command modal*/
 
       // This opens up the command settings modal.
       $scope.showCommandSettingsModal = function() {

@@ -38,8 +38,8 @@
         $ctrl.hotkey.action.metadata.effects = effects;
       };
 
-      $ctrl.commands = commandsService.getAllCommands().map(c => {
-        return { id: c.commandID, trigger: c.trigger };
+      $ctrl.commands = commandsService.getCustomCommands().map(c => {
+        return { id: c.id, trigger: c.trigger };
       });
 
       $ctrl.buttons = [];

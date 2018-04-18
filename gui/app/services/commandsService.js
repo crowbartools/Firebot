@@ -36,6 +36,7 @@
       }
 
       if (cmdData.customCommands) {
+        logger.debug("loading custom commands: " + cmdData.customCommands);
         commandsCache.customCommands = Object.values(cmdData.customCommands);
       }
 
@@ -54,6 +55,13 @@
     service.getTimers = () => commandsCache.timers;
 
     service.saveCustomCommand = function(command) {
+      logger.debug("saving command: " + command.trigger);
+      if (command.id == null || command.id === "") {
+        // generate id for new command
+        const uuidv1 = require("uuid/v1");
+        command.id = uuidv1();
+      }
+
       let commandDb = getCommandsDb();
 
       // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
@@ -87,11 +95,28 @@
       } catch (err) {} //eslint-disable-line no-empty
     };
 
+    service.triggerExists = function(trigger, id = null) {
+      if (trigger == null) return false;
+
+      trigger = trigger.toLowerCase();
+
+      let foundDuplicateCustomCmdTrigger = commandsCache.customCommands.some(
+        command =>
+          command.id !== id && command.trigger.toLowerCase() === trigger
+      );
+
+      let foundDuplicateSystemCmdTrigger = commandsCache.systemCommands.some(
+        command => command.active && command.trigger.toLowerCase() === trigger
+      );
+
+      return foundDuplicateCustomCmdTrigger || foundDuplicateSystemCmdTrigger;
+    };
+
     // Deletes a command.
     service.deleteCustomCommand = function(command) {
       let commandDb = getCommandsDb();
 
-      if (command == null) return;
+      if (command == null || command.id == null || command.id === "") return;
 
       try {
         commandDb.delete("/customCommands/" + command.id);
