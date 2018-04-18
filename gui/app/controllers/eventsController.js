@@ -8,22 +8,47 @@
     .controller("eventsController", function(
       $scope,
       eventsService,
-      utilityService
+      utilityService,
+      settingsService
     ) {
       $scope.eventsService = eventsService;
-      /*
-             * On tab load
-             */
-      eventsService.loadEvents();
+      $scope.eventsViewMode = settingsService.getButtonViewMode("liveEvents");
+
+      /**
+       *  Returns an integer of total number of event groups.
+       */
+      $scope.getEventGroupCount = function() {
+        return Object.keys(eventsService.getAllEventGroups()).length;
+      };
+
+      /**
+       * Returns full event json.
+       */
+      $scope.getAllEventGroups = function() {
+        return eventsService.getAllEventGroups();
+      };
+
+      /**
+       * Returns the json for the selected event group.
+       */
+      $scope.selectedEventGroup = function() {
+        return eventsService.getActiveEventGroupJson();
+      };
 
       // Fire event manually
       $scope.fireEventManually = function(eventId) {
         ipcRenderer.send("manualEvent", eventId);
       };
 
+      // Set Events view mode.
+      $scope.saveCurrentEventsViewMode = function(mode, type) {
+        $scope.eventsViewMode = mode;
+        settingsService.setButtonViewMode(mode, type);
+      };
+
       /*
-             * ADD/EDIT EVENT MODAL
-             */
+      * ADD/EDIT EVENT MODAL
+      */
       $scope.showAddEditEventModal = function(eventToEdit) {
         let addEditEventsModalContext = {
           templateUrl: "addEditEventModal.html",

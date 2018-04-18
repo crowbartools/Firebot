@@ -1,37 +1,90 @@
-<div style="margin-bottom: 10px">
-  <button class="btn btn-primary" ng-click="showAddEditEventModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Event</button>
-</div>
-
-<div class="content-block live-events">
+<!--Live Events Tab View-->
+<div class="content-block">
+  <div ng-hide="getEventGroupCount() == 0" class="content-block-header">
+    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;" ng-hide="selectedEventGroup() == null || selectedEventGroup() == ''">{{selectedEventGroup().name}} <span class="muted" style="font-size: 12px;">({{selectedEventGroup().id}})</span></span>
+    <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
+      <span class="noselect pointer">{{'LIVE_EVENTS.EVENT_GROUPS' | translate}}</span>
+      <div class="fb-arrow down"></div>
+      <ul class="dropdown-menu" uib-dropdown-menu>
+        <li ng-repeat="eventGroup in getAllEventGroups()">
+          <a href ng-click="switchToBoard(boardName)">{{eventGroup.name}} <span class="muted">({{eventGroup.id}})</span></a>
+        </li>
+        <li ng-hide="getEventGroupCount() == 0" role="separator" class="divider"></li>
+        <li ng-hide="getEventGroupCount() == 0" ><a href="#">Add New Event</a></li>
+        <li ng-hide="getEventGroupCount() == 0" role="separator" class="divider"></li>
+        <li><a href ng-click="showAddBoardModal()">{{'LIVE_EVENTS.CHANGE_EVENT_GROUP.ADD_NEW_EVENT_GROUP' | translate }}</a></li>
+        <li ng-hide="selectedEventGroup() == null"><a href ng-click="showDeleteBoardModal()">{{'LIVE_EVENTS.CHANGE_EVENT_GROUP.DELETE_EVENT_GROUP' | translate }}</a></li>
+      </ul>
+    </div>
+  </div>
   <div class="content-block-body">
-    <!-- Events Tab -->
-    <div class="row events-container">
-      
-      <!-- Show each event -->
-      <div class="events-cat-wrap" ng-repeat="category in eventsService.getCategories() track by $index">
-        <h3 ng-style="{'margin-top': $index === 0 ? '0' : '20px'}">{{category}}</h3>
-        <div class = "interactive-group-container">
-          <div ng-repeat="event in eventsService.getEvents(category) track by $index" class="fb-tile grapefruit centered" ng-class="{'inactive' : !event.active}">
-            <div class="edit-btn" ng-click="showAddEditEventModal(event)"></div>
-            <div class="header">
-              <div class="title edit-btn-spacer">
-                {{event.eventName}}
-              </div>
+    <button ng-show="getEventGroupCount() == 0" ng-click="showAddBoardModal()" class="btn btn-default">+ {{'LIVE_EVENTS.ADD_FIRST_BOARD' | translate }}</button>
+    <p ng-show="selectedEventGroup() == null && getEventGroupCount() > 0" class="muted" style="margin-top:15px;">{{'LIVE_EVENTS.COULD_NOT_AUTOSELECT' | translate }}</p>
+    
+    <div class="page-content" >
+      <div class="row interactive-board-container" ng-if="selectedEventGroup() != null && getEventGroupCount() > 0">
+        <div class="scene-tools-wrapper">
+          <span class="scenes-title">{{'LIVE_EVENTS.EVENTS' | translate }}</span>
+          <div class="scene-tools">
+            <div class="btn-group" style="margin-right: 15px">
+              <label class="btn btn-default" ng-model="eventsViewMode" uib-btn-radio="'grid'" ng-click="saveCurrentEventsViewMode('grid', 'liveEvents')" uib-tooltip="Events View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
+              <label class="btn btn-default" ng-model="eventsViewMode" uib-btn-radio="'list'" ng-click="saveCurrentEventsViewMode('list', 'liveEvents')" uib-tooltip="Events View: List" tooltip-append-to-body="true"><i class="fas fa-list"></i></label>
             </div>
-            <div class="content row">
-              <div class="detail-wrapper nomargin">
-                <span ng-if="event.active" class="play-button clickable event-play-button" ng-click="fireEventManually(event.eventType)"><i class="fas fa-play-circle"></i></span>
-                <span ng-if="!event.active" class="inactive-event-text">Inactive</span>
-                <div class="event-button-details">
-                  {{event.effectCount ? event.effectCount : "0"}} Effect(s)
-                </div>
-              </div>
+            <div class="searchbar-wrapper">
+              <input type="text" class="form-control" placeholder="Search events" ng-model="buttonSearch" style="padding-left: 27px;">
+              <span class="searchbar-icon"><i class="far fa-search"></i></span>
             </div>
           </div>
         </div>
-      </div>
+        <div class="events-content">
+          <div class="tab-pane interactive-button-holder active">
 
-      <div ng-if="eventsService.getCategories().length === 0">No events saved yet.</div>
+            <!--Grid View-->
+            <div ng-show="eventsViewMode == 'grid'" ng-class="{'interactive-control-tile': event, 'inactive-control' : !event.active && event.active != null}" ng-repeat="event in selectedEventGroup().events | filter:buttonSearch">
+              <a class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(event)">{{'LIVE_EVENTS.EDIT' | translate}}</a>
+              <div class="button-name noselect">{{event.name}}</div>
+              <div class="event-type">{{event.type}}</div>
+              <span class="play-button clickable" ng-click="fireEventManually(event.id)"><i class="fas fa-play-circle"></i></span>
+            </div>
+
+            <!--List View-->
+            <!--
+            <table ng-show="eventsViewMode == 'list'" class="table table-hover">
+              <thead style="text-transform: uppercase;color: #4a4a4a;">
+                <tr>
+                  <th style="width:5%;"></th>
+                  <th style="width:25%;">{{'LIVE_EVENTS.ID' | translate }}</th>
+                  <th style="width:25%;">{{'LIVE_EVENTS.NAME' | translate }}</th>
+                  <th style="width:25%;">{{'LIVE_EVENTS.COST' | translate }}</th>
+                  <th style="width:20%;"></th>
+                </tr>
+              </thead>
+              <tbody style="font-size: 16px;">
+                <tr ng-class="{'control-list': control, 'inactive-control' : !control.active && control.active != null}" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
+                  <td>
+                    <a ng-hide="control.kind ==='joystick' || control.kind ==='label'" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle clickable"></i></a>
+                    <a ng-show="control.kind ==='joystick'"><img height="18" src="../images/joystick-black.svg"></img></a>
+                    <a ng-show="control.kind ==='label'"><span style="color:black;"><i class="fas fa-tag"></i></span></a>
+                  </td>
+                  <td>{{control.kind ==='joystick' ? control.controlID : control.controlId}}</td>
+                  <td ng-class="{'muted': !control.text}">
+                    <span ng-hide="control.kind ==='joystick' || control.kind ==='textbox'">{{control.text ? control.text : "Unnamed"}}</span>
+                    <span ng-show="control.kind ==='joystick' || control.kind ==='textbox'">n/a</span>
+                  </td>
+                  <td>
+                    <span ng-hide="control.kind ==='joystick' || control.kind ==='label'"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</span>
+                    <span ng-show="control.kind ==='joystick' || control.kind ==='label'"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> n/a </span>
+                  </td>
+                  <td>
+                    <a ng-hide="control.kind ==='joystick' || control.kind ==='label'" class="clickable" ng-click="showEditControlEffectsModal(control)"><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            -->
+          </div>
+        </div> <!-- End events content -->
+      </div>
     </div>
   </div>
 </div>

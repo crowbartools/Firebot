@@ -48,6 +48,23 @@
         "NAME": "Name",
         "COST": "Cost"
     },
+    "LIVE_EVENTS":{
+        "EVENTS": "Events",
+        "EVENT_GROUPS": "Event Groups",
+        "CHANGE_EVENT_GROUP": {
+            "CHANGE_BOARD": "Change Event Group",
+            "ADD_NEW_EVENT_GROUP": "Add New Event Group",
+            "DELETE_EVENT_GROUP": "Delete Event Group"
+        },
+        "SCENES": "Scenes",
+        "EDIT": "Edit",
+        "SEARCH_EVENTS": "Search events",
+        "ADD_FIRST_BOARD": "Add First Board",
+        "COULD_NOT_AUTOSELECT": "We couldn't auto select a board but don't worry, you have boards saved! Click the dropdown above and select a board.",
+        "ID": "ID",
+        "NAME": "Name",
+        "COST": "Cost"
+    },
     "NEW": "New",
     "CONNECTED": "Connected",
     "DISCONNECTED": "Disconnected",
