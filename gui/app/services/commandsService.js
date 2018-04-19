@@ -2,142 +2,150 @@
 (function() {
   //This manages command data
   const profileManager = require("../../lib/common/profile-manager.js");
+  const moment = require("moment");
 
-  angular.module("firebotApp").factory("commandsService", function(logger) {
-    let service = {};
+  angular
+    .module("firebotApp")
+    .factory("commandsService", function(logger, connectionService) {
+      let service = {};
 
-    let getCommandsDb = () =>
-      profileManager.getJsonDbInProfile("/chat/commands");
+      let getCommandsDb = () =>
+        profileManager.getJsonDbInProfile("/chat/commands");
 
-    // in memory commands storage
-    let commandsCache = {
-      systemCommands: [],
-      customCommands: [],
-      timers: []
-    };
+      // in memory commands storage
+      let commandsCache = {
+        systemCommands: [],
+        customCommands: [],
+        timers: []
+      };
 
-    // Refresh commands cache
-    service.refreshCommands = function() {
-      let commandsDb = getCommandsDb();
+      // Refresh commands cache
+      service.refreshCommands = function() {
+        let commandsDb = getCommandsDb();
 
-      let cmdData;
-      try {
-        cmdData = commandsDb.getData("/");
-      } catch (err) {
-        logger.warning("error getting command data", err);
-        return;
-      }
+        let cmdData;
+        try {
+          cmdData = commandsDb.getData("/");
+        } catch (err) {
+          logger.warning("error getting command data", err);
+          return;
+        }
 
-      if (cmdData.systemCommands) {
-        commandsCache.systemCommands = Object.values(cmdData.systemCommands);
+        if (cmdData.systemCommands) {
+          commandsCache.systemCommands = Object.values(cmdData.systemCommands);
 
-        // TODO: Add and save any system command entries that should exist but dont.
-        // Should only happen when we introduce a new system command or someone messes with the json
-      }
+          // TODO: Add and save any system command entries that should exist but dont.
+          // Should only happen when we introduce a new system command or someone messes with the json
+        }
 
-      if (cmdData.customCommands) {
-        logger.debug("loading custom commands: " + cmdData.customCommands);
-        commandsCache.customCommands = Object.values(cmdData.customCommands);
-      }
+        if (cmdData.customCommands) {
+          logger.debug("loading custom commands: " + cmdData.customCommands);
+          commandsCache.customCommands = Object.values(cmdData.customCommands);
+        }
 
-      if (cmdData.timers) {
-        commandsCache.timers = Object.values(cmdData.timers);
-      }
+        if (cmdData.timers) {
+          commandsCache.timers = Object.values(cmdData.timers);
+        }
 
-      // Refresh the interactive control cache.
-      ipcRenderer.send("refreshCommandCache");
-    };
+        // Refresh the interactive control cache.
+        ipcRenderer.send("refreshCommandCache");
+      };
 
-    service.getSystemCommands = () => commandsCache.systemCommands;
+      service.getSystemCommands = () => commandsCache.systemCommands;
 
-    service.getCustomCommands = () => commandsCache.customCommands;
+      service.getCustomCommands = () => commandsCache.customCommands;
 
-    service.getTimers = () => commandsCache.timers;
+      service.getTimers = () => commandsCache.timers;
 
-    service.saveCustomCommand = function(command) {
-      logger.debug("saving command: " + command.trigger);
-      if (command.id == null || command.id === "") {
-        // generate id for new command
-        const uuidv1 = require("uuid/v1");
-        command.id = uuidv1();
-      }
+      service.saveCustomCommand = function(command, createdBy = null) {
+        logger.debug("saving command: " + command.trigger);
+        if (command.id == null || command.id === "") {
+          // generate id for new command
+          const uuidv1 = require("uuid/v1");
+          command.id = uuidv1();
 
-      let commandDb = getCommandsDb();
+          command.createdBy = createdBy
+            ? createdBy
+            : connectionService.accounts.streamer.username;
+          command.createdAt = moment().format();
+        }
 
-      // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
-      // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
-      // while removing internal angular properties. We then convert this string back to an object with
-      // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
-      let cleanedCommand = JSON.parse(angular.toJson(command));
+        let commandDb = getCommandsDb();
 
-      try {
-        commandDb.push("/customCommands/" + command.id, cleanedCommand);
-      } catch (err) {} //eslint-disable-line no-empty
-    };
+        // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
+        // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
+        // while removing internal angular properties. We then convert this string back to an object with
+        // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
+        let cleanedCommand = JSON.parse(angular.toJson(command));
 
-    service.saveSystemCommand = function(command) {
-      let commandDb = getCommandsDb();
+        try {
+          commandDb.push("/customCommands/" + command.id, cleanedCommand);
+        } catch (err) {} //eslint-disable-line no-empty
+      };
 
-      let cleanedCommand = JSON.parse(angular.toJson(command));
+      service.saveSystemCommand = function(command) {
+        let commandDb = getCommandsDb();
 
-      try {
-        commandDb.push("/systemCommands/" + command.id, cleanedCommand);
-      } catch (err) {} //eslint-disable-line no-empty
-    };
+        let cleanedCommand = JSON.parse(angular.toJson(command));
 
-    service.saveTimer = function(timer) {
-      let commandDb = getCommandsDb();
+        try {
+          commandDb.push("/systemCommands/" + command.id, cleanedCommand);
+        } catch (err) {} //eslint-disable-line no-empty
+      };
 
-      let cleanedTimer = JSON.parse(angular.toJson(timer));
+      service.saveTimer = function(timer) {
+        let commandDb = getCommandsDb();
 
-      try {
-        commandDb.push("/timers/" + cleanedTimer.id, cleanedTimer);
-      } catch (err) {} //eslint-disable-line no-empty
-    };
+        let cleanedTimer = JSON.parse(angular.toJson(timer));
 
-    service.triggerExists = function(trigger, id = null) {
-      if (trigger == null) return false;
+        try {
+          commandDb.push("/timers/" + cleanedTimer.id, cleanedTimer);
+        } catch (err) {} //eslint-disable-line no-empty
+      };
 
-      trigger = trigger.toLowerCase();
+      service.triggerExists = function(trigger, id = null) {
+        if (trigger == null) return false;
 
-      let foundDuplicateCustomCmdTrigger = commandsCache.customCommands.some(
-        command =>
-          command.id !== id && command.trigger.toLowerCase() === trigger
-      );
+        trigger = trigger.toLowerCase();
 
-      let foundDuplicateSystemCmdTrigger = commandsCache.systemCommands.some(
-        command => command.active && command.trigger.toLowerCase() === trigger
-      );
+        let foundDuplicateCustomCmdTrigger = commandsCache.customCommands.some(
+          command =>
+            command.id !== id && command.trigger.toLowerCase() === trigger
+        );
 
-      return foundDuplicateCustomCmdTrigger || foundDuplicateSystemCmdTrigger;
-    };
+        let foundDuplicateSystemCmdTrigger = commandsCache.systemCommands.some(
+          command => command.active && command.trigger.toLowerCase() === trigger
+        );
 
-    // Deletes a command.
-    service.deleteCustomCommand = function(command) {
-      let commandDb = getCommandsDb();
+        return foundDuplicateCustomCmdTrigger || foundDuplicateSystemCmdTrigger;
+      };
 
-      if (command == null || command.id == null || command.id === "") return;
+      // Deletes a command.
+      service.deleteCustomCommand = function(command) {
+        let commandDb = getCommandsDb();
 
-      try {
-        commandDb.delete("/customCommands/" + command.id);
-      } catch (err) {
-        logger.warn("error when deleting command", err);
-      } //eslint-disable-line no-empty
-    };
+        if (command == null || command.id == null || command.id === "") return;
 
-    // Deletes a command.
-    service.deleteTimer = function(timer) {
-      let commandDb = getCommandsDb();
+        try {
+          commandDb.delete("/customCommands/" + command.id);
+        } catch (err) {
+          logger.warn("error when deleting command", err);
+        } //eslint-disable-line no-empty
+      };
 
-      if (timer == null) return;
+      // Deletes a command.
+      service.deleteTimer = function(timer) {
+        let commandDb = getCommandsDb();
 
-      try {
-        commandDb.delete("/timers/" + timer.id);
-      } catch (err) {
-        logger.warn("error when deleting timer", err);
-      } //eslint-disable-line no-empty
-    };
+        if (timer == null) return;
 
-    return service;
-  });
+        try {
+          commandDb.delete("/timers/" + timer.id);
+        } catch (err) {
+          logger.warn("error when deleting timer", err);
+        } //eslint-disable-line no-empty
+      };
+
+      return service;
+    });
 })();

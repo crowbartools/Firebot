@@ -18,7 +18,9 @@
       $ctrl.command = {
         active: true,
         cooldown: {},
-        permission: {},
+        permission: {
+          type: "none"
+        },
         effects: []
       };
 

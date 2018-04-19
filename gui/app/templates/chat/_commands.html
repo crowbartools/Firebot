@@ -29,8 +29,12 @@
                         <td>
                             <i class="fal fa-globe"></i>{{command.cooldown.global}} <i class="fal fa-user"></i>{{command.cooldown.user}}
                         </td>
-                        <td>None</td>
-                        <td><span class="status-dot" ng-class="{'active': command.active, 'notactive': !command.active}"></span> {{command.active ? "Active" : "Disabled"}}</td>  
+                        <td><span style="text-transform: capitalize;">{{command.permission.type}}</span> <tooltip type="info" text="getPermissionTooltip(command)"></tooltip></td>
+                        <td>
+                            <div style="min-width: 75px">
+                                <span class="status-dot" ng-class="{'active': command.active, 'notactive': !command.active}"></span> {{command.active ? "Active" : "Disabled"}}
+                            </div>                            
+                        </td>  
                         <td>
                             <div style="text-align: right;">
                                     <div uib-dropdown uib-dropdown-toggle class="pull-right">
@@ -40,7 +44,7 @@
                                                 <a href ng-click="openAddOrEditCustomCommandModal(command)">Edit</a>
                                             </li>
                                             <li>
-                                                <a href ng-click="">{{command.active ? 'Disable' : 'Enable'}}</a>
+                                                <a href ng-click="toggleCustomCommandActiveState(command)">{{command.active ? 'Disable' : 'Enable'}}</a>
                                             </li>
                                             <li>
                                                 <a href ng-click="$ctrl.removeAllEffects()" style="color:red">Delete</a>
