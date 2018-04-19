@@ -48,6 +48,11 @@
         commandsService.refreshCommands();
       };
 
+      $scope.deleteCustomCommand = command => {
+        commandsService.deleteCustomCommand(command);
+        commandsService.refreshCommands();
+      };
+
       $scope.openAddOrEditCustomCommandModal = function(command) {
         utilityService.showModal({
           component: "addOrEditCustomCommandModal",

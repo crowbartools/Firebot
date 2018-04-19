@@ -11,9 +11,9 @@
                 <thead>
                     <tr>
                         <th style="width:5%"></th> 
-                        <th>TRIGGER</th> 
-                        <th>COOLDOWNS</th> 
-                        <th>PERMISSIONS</th>
+                        <th class="muted"><i class="fas fa-exclamation"></i> TRIGGER</th> 
+                        <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th> 
+                        <th class="muted"><i class="fas fa-lock-alt"></i> PERMISSIONS</th>
                         <th></th> 
                         <th></th> 
                     </tr> 
@@ -27,9 +27,16 @@
                         </td> 
                         <td>{{command.trigger}}</td>
                         <td>
-                            <i class="fal fa-globe"></i>{{command.cooldown.global}} <i class="fal fa-user"></i>{{command.cooldown.user}}
+                            <span style="min-width: 46px; display: inline-block;" uib-tooltip="Global cooldown">
+                                <i class="fal fa-globe"></i> {{command.cooldown.global ? command.cooldown.global + "s" : "-" }}
+                            </span>
+                            <span uib-tooltip="User cooldown">
+                                <i class="fal fa-user"></i> {{command.cooldown.user ? command.cooldown.user + "s" : "-" }}
+                            </span>                           
                         </td>
-                        <td><span style="text-transform: capitalize;">{{command.permission.type}}</span> <tooltip type="info" text="getPermissionTooltip(command)"></tooltip></td>
+                        <td>
+                            <span style="text-transform: capitalize;">{{command.permission.type}}</span> <tooltip type="info" text="getPermissionTooltip(command)"></tooltip>
+                        </td>
                         <td>
                             <div style="min-width: 75px">
                                 <span class="status-dot" ng-class="{'active': command.active, 'notactive': !command.active}"></span> {{command.active ? "Active" : "Disabled"}}
@@ -37,20 +44,20 @@
                         </td>  
                         <td>
                             <div style="text-align: right;">
-                                    <div uib-dropdown uib-dropdown-toggle class="pull-right">
-                                        <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
-                                        <ul class="dropdown-menu" uib-dropdown-menu>
-                                            <li>
-                                                <a href ng-click="openAddOrEditCustomCommandModal(command)">Edit</a>
-                                            </li>
-                                            <li>
-                                                <a href ng-click="toggleCustomCommandActiveState(command)">{{command.active ? 'Disable' : 'Enable'}}</a>
-                                            </li>
-                                            <li>
-                                                <a href ng-click="$ctrl.removeAllEffects()" style="color:red">Delete</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div uib-dropdown uib-dropdown-toggle class="pull-right">
+                                    <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
+                                    <ul class="dropdown-menu" uib-dropdown-menu>
+                                        <li>
+                                            <a href ng-click="openAddOrEditCustomCommandModal(command)">Edit</a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="toggleCustomCommandActiveState(command)">{{command.active ? 'Disable' : 'Enable'}}</a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="deleteCustomCommand(command)" style="color:red">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>                       
                         </td> 
                     </tr>
