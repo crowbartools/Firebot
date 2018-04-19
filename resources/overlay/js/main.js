@@ -16,7 +16,7 @@ function mixerSocketConnect(){
 				console.warn("Saved websocket port is not valid. Using 8080 instead...")
 			}
 		} else {
-			console.warn("/user-settings/overlay-settings/port.js could not be found. Assuming port is 8080. Resave the port setting in Firebot to generate a new port.js file.")
+			console.warn("/overlay-settings/port.js could not be found. Assuming port is 8080. Resave the port setting in Firebot to generate a new port.js file.")
 		}
 
 		ws = new ReconnectingWebSocket(`ws://${window.location.hostname}:${port}`);
