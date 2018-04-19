@@ -56,14 +56,13 @@
             "ADD_NEW_EVENT_GROUP": "Add New Event Group",
             "DELETE_EVENT_GROUP": "Delete Event Group"
         },
-        "SCENES": "Scenes",
         "EDIT": "Edit",
         "SEARCH_EVENTS": "Search events",
-        "ADD_FIRST_BOARD": "Add First Board",
-        "COULD_NOT_AUTOSELECT": "We couldn't auto select a board but don't worry, you have boards saved! Click the dropdown above and select a board.",
+        "ADD_NEW_EVENT": "Add New Event",
+        "COULD_NOT_AUTOSELECT": "We could not auto select a live event group. Click the dropdown and select one!",
         "ID": "ID",
         "NAME": "Name",
-        "COST": "Cost"
+        "TYPE": "Type"
     },
     "NEW": "New",
     "CONNECTED": "Connected",

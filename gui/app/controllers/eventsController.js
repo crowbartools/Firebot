@@ -35,6 +35,30 @@
         return eventsService.getActiveEventGroupJson();
       };
 
+      /**
+       * Returns events from current group in an array for the ui.
+       */
+      $scope.selectedEventsArray = function() {
+        let groupJson = eventsService.getActiveEventGroupJson(),
+          eventsJson = groupJson.events,
+          finalArray = [];
+
+        for (event in eventsJson) {
+          if (event != null) {
+            finalArray.push(eventsJson[event]);
+          }
+        }
+
+        return finalArray;
+      };
+
+      /**
+       * Switches to a new event group.
+       */
+      $scope.switchToEventGroup = function(groupId) {
+        eventsService.setActiveEventGroup(groupId);
+      };
+
       // Fire event manually
       $scope.fireEventManually = function(eventId) {
         ipcRenderer.send("manualEvent", eventId);
@@ -44,6 +68,13 @@
       $scope.saveCurrentEventsViewMode = function(mode, type) {
         $scope.eventsViewMode = mode;
         settingsService.setButtonViewMode(mode, type);
+      };
+
+      /**
+       * Gets user friendly event name from the EventType list.
+       */
+      $scope.friendlyEventTypeName = function(type) {
+        return eventsService.getEventTypeName(type);
       };
 
       /*
@@ -63,7 +94,7 @@
 
             // The model for the board id text field
             $scope.event = {
-              eventName: ""
+              name: ""
             };
 
             $scope.isNewEvent = eventToEdit == null;
@@ -72,13 +103,13 @@
               $scope.event = $.extend(true, {}, eventToEdit);
             }
 
-            $scope.selectedEventTypeName = $scope.event.eventType
-              ? EventType.getEvent($scope.event.eventType).name
+            $scope.selectedEventTypeName = $scope.event.type
+              ? EventType.getEvent($scope.event.type).name
               : "Pick one";
 
             $scope.eventTypeSelected = function(event) {
               $scope.selectedEventTypeName = event.name;
-              $scope.event.eventType = event.id;
+              $scope.event.type = event.id;
             };
 
             $scope.effectListUpdated = function(effects) {
@@ -89,9 +120,9 @@
             $scope.saveChanges = function(shouldDelete) {
               shouldDelete = shouldDelete === true;
 
-              let eventName = $scope.event.eventName;
+              let name = $scope.event.name;
 
-              if (!shouldDelete && eventName === "") return;
+              if (!shouldDelete && name === "") return;
               $uibModalInstance.close({
                 shouldDelete: shouldDelete,
                 event: shouldDelete ? eventToEdit : $scope.event
@@ -115,13 +146,9 @@
           closeCallback: context => {
             let event = context.event;
             if (context.shouldDelete === true) {
-              eventsService.removeEvent(event.eventName);
+              eventsService.removeEvent(event.id);
             } else {
-              let previousEventName = null;
-              if (eventToEdit != null) {
-                previousEventName = eventToEdit.eventName;
-              }
-              eventsService.addOrUpdateEvent(event, previousEventName);
+              eventsService.addOrUpdateEvent(event);
             }
           }
         };
