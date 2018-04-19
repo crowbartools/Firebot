@@ -1,10 +1,21 @@
 <div style="min-width: 500px;">
-    <uib-tabset active="selectionCommandSection">
-        <!--Create a tab for each control type -->
-        <uib-tab index="1" heading="System Commands">
-        </uib-tab>
-        <uib-tab index="2" heading="Custom Commands">
-            <div style="margin: 15px 0;">
+    <div class="fb-commands-tab-wrapper">
+        <ul class="nav nav-tabs fb-tabs">
+            <li role="presentation" ng-class="{'active' : activeSceneTab === 0}" ng-click="activeSceneTab = 0">
+                <a href>SYSTEM COMMANDS</a>
+            </li>
+            <li role="presentation" ng-class="{'active' : activeSceneTab === 1}" ng-click="activeSceneTab = 1">
+                <a href>CUSTOM COMMANDS</a>
+            </li>
+            <li role="presentation" ng-class="{'active' : activeSceneTab === 2}" ng-click="activeSceneTab = 2">
+                <a href>TIMERS</a>
+            </li>
+        </ul>
+    </div>
+
+    <div style="padding: 15px;">
+        <div ng-show="activeSceneTab === 1">
+        <div style="margin: 15px 0;">
                 <button ng-click="openAddOrEditCustomCommandModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Custom Command</button>
             </div>
             <table class="fb-table">
@@ -63,8 +74,6 @@
                     </tr>
                 </tbody>
             </table>
-        </uib-tab>
-        <uib-tab index="3" heading="Timers">
-        </uib-tab>
-    </uib-tabset>
+        </div>
+    </div>
 </div>

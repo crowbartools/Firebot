@@ -240,3 +240,36 @@
     background-color: $alert-danger-bg;
     border-color: transparent;
 }
+
+.fb-commands-tab-wrapper {
+    height: 55px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  
+  }
+  
+  .fb-tabs {
+    margin: 0 10px;
+    border-bottom: 0px solid #eaecec;
+    font-weight: 600;
+    & > li.active > a, & > li.active > a:focus, & > li.active > a:hover {
+      color: #2aa1c0;
+      background-color: transparent;
+      border: 1px solid transparent;
+      border-bottom: 3px solid #2aa1c0;
+    }
+    & > li > a:hover {
+      border-color: transparent;
+      border-bottom: 3px solid #bfb7b7;
+      color: black;
+    }
+    & > li > a {
+        margin-right: 2px;
+        line-height: 1.42857143;
+        border: 1px solid transparent;
+        border-radius: 4px 4px 0 0;
+        color: gray;
+    }
+  }

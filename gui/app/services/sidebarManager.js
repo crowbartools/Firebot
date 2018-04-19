@@ -31,7 +31,10 @@
       };
 
       service.currentTabIsFullScreen = function() {
-        return service.currentTab.toLowerCase() === "chat feed";
+        return (
+          service.currentTab.toLowerCase() === "chat feed" ||
+          service.currentTab.toLowerCase() === "commands"
+        );
       };
 
       return service;
