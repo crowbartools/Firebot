@@ -78,6 +78,70 @@
       };
 
       /*
+      * ADD Event Group Modal
+      */
+      $scope.showEventGroupModal = function(eventGroupToEdit) {
+        let showEventGroupModalContext = {
+          templateUrl: "showEventGroupModal.html",
+          // This is the controller to be used for the modal.
+          controllerFunc: (
+            $scope,
+            $uibModalInstance,
+            utilityService,
+            eventGroupToEdit
+          ) => {
+            console.log(eventGroupToEdit);
+            // The model for the board id text field
+            $scope.eventGroup = {
+              name: ""
+            };
+
+            $scope.isNewGroup = eventGroupToEdit == null;
+
+            if (!$scope.isNewGroup) {
+              $scope.eventGroup = $.extend(true, {}, eventGroupToEdit);
+            }
+
+            // When the user clicks "Save/Add", we want to pass the event back
+            $scope.saveChanges = function(shouldDelete) {
+              shouldDelete = shouldDelete === true;
+
+              let name = $scope.eventGroup.name;
+
+              if (!shouldDelete && name === "") return;
+              $uibModalInstance.close({
+                shouldDelete: shouldDelete,
+                eventGroup: shouldDelete ? eventGroupToEdit : $scope.eventGroup
+              });
+            };
+
+            // When they hit cancel or click outside the modal, we dont want to do anything
+            $scope.dismiss = function() {
+              $uibModalInstance.dismiss();
+            };
+          },
+          resolveObj: {
+            eventGroupToEdit: () => {
+              if (eventGroupToEdit != null) {
+                return $.extend(true, {}, eventGroupToEdit);
+              }
+              return null;
+            }
+          },
+          // The callback to run after the modal closed via "Save changes" or "Delete"
+          closeCallback: context => {
+            let eventGroup = context.eventGroup;
+            if (context.shouldDelete === true) {
+              eventsService.removeEventGroup(eventGroup.id);
+            } else {
+              eventsService.addOrUpdateEventGroup(eventGroup);
+            }
+          }
+        };
+        utilityService.showModal(showEventGroupModalContext);
+      };
+
+      /*
       * ADD/EDIT EVENT MODAL
       */
       $scope.showAddEditEventModal = function(eventToEdit) {

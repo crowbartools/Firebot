@@ -88,8 +88,8 @@
       } catch (err) {
         console.log(err);
         // This is a new event, lets make a new one.
-        let parsedGroups = Object.keys(dbEvents.getData("/")).map(x =>
-            parseInt(x)
+        let parsedGroups = Object.keys(dbEvents.getData("/" + lastGroupId)).map(
+            x => parseInt(x)
           ),
           sortedGroups = parsedGroups.sort(function(a, b) {
             return b - a;
@@ -123,6 +123,80 @@
           "There was an error while trying to delete a live event. Event Id: " +
             eventId
         );
+      }
+      // Update events cache.
+      logger.info("Live events renderer cache updated.");
+      eventsCache = dbEvents.getData("/");
+    };
+
+    /**
+     * Add or Edit Event Group
+     */
+    service.addOrUpdateEventGroup = function(eventGroup) {
+      console.log(eventGroup);
+
+      let eventGroupId = eventGroup.id,
+        dbSettings = profileManager.getJsonDbInProfile("/settings"),
+        dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
+
+      try {
+        // If this passes it means we're editing an event group.
+        let editEventGroupTest = dbEvents.getData("/" + eventGroupId);
+        dbEvents.push("/" + eventGroupId + "/name", eventGroup.name);
+        logger.info("Edited name for event group: " + eventGroup.id);
+      } catch (err) {
+        // If this happens it means we're adding a new group.
+
+        // This is a new event group, lets make a new one.
+        let parsedGroups = Object.keys(dbEvents.getData("/")).map(x =>
+            parseInt(x)
+          ),
+          sortedGroups = parsedGroups.sort(function(a, b) {
+            return b - a;
+          }),
+          newId = parseInt(sortedGroups.slice(0, 1)) + 1;
+
+        // Push new group.
+        dbEvents.push("/" + newId, {
+          id: newId,
+          name: eventGroup.name,
+          events: {}
+        });
+
+        // Make the new group active.
+        let dbSettings = profileManager.getJsonDbInProfile("/settings");
+        dbSettings.push("/liveEvents/lastGroupId", newId);
+      }
+
+      // Update events cache.
+      logger.info("Live events renderer cache updated.");
+      eventsCache = dbEvents.getData("/");
+    };
+
+    /**
+     * Removes an event group.
+     */
+    service.removeEventGroup = function(groupId) {
+      let dbSettings = profileManager.getJsonDbInProfile("/settings"),
+        lastGroupId = dbSettings.getData("/liveEvents/lastGroupId"),
+        dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
+
+      dbEvents.delete("/" + lastGroupId);
+
+      // We need to get another group to use.
+      let parsedGroups = Object.keys(dbEvents.getData("/")).map(x =>
+          parseInt(x)
+        ),
+        sortedGroups = parsedGroups.sort(function(a, b) {
+          return b - a;
+        }),
+        newId = parseInt(sortedGroups.slice(0, 1));
+
+      // Set active profile to something else.
+      if (newId != null) {
+        dbSettings.push("/liveEvents/lastGroupId", newId);
+      } else {
+        dbSettings.delete("/liveEvents/lastGroupId");
       }
 
       // Update events cache.
