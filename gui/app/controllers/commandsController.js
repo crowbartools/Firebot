@@ -9,7 +9,8 @@
       utilityService,
       settingsService,
       groupsService,
-      effectHelperService
+      effectHelperService,
+      listenerService
     ) {
       // Cache commands on app load.
       commandsService.refreshCommands();
@@ -46,6 +47,13 @@
         command.active = !command.active;
         commandsService.saveCustomCommand(command);
         commandsService.refreshCommands();
+      };
+
+      $scope.manuallyTriggerCommand = id => {
+        listenerService.fireEvent(
+          listenerService.EventType.COMMAND_MANUAL_TRIGGER,
+          id
+        );
       };
 
       $scope.deleteCustomCommand = command => {

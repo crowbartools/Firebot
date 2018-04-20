@@ -283,7 +283,7 @@
     return function(commands, query) {
       if (commands == null || query == null) return commands;
       return commands.filter(c =>
-        c.trigger.toLowerCase().startsWith(query.toLowerCase())
+        c.trigger.toLowerCase().includes(query.toLowerCase())
       );
     };
   });

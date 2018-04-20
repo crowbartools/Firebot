@@ -24,7 +24,7 @@
             </div>
             <table ng-show="commandsService.getCustomCommands().length > 0" class="fb-table">
                 <thead>
-                    <tr>
+                    <tr style="font-size: 11px;">
                         <th style="width:5%"></th> 
                         <th class="muted"><i class="fas fa-exclamation"></i> TRIGGER</th> 
                         <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th> 
@@ -36,13 +36,13 @@
                 <tbody> 
                     <tr ng-repeat="command in commandsService.getCustomCommands() | triggerSearch:commandSearch track by command.id">
                         <td style="text-align: center;">
-                            <span style="color: #2aa1c0; font-size: 20px;">
+                            <span style="color: #2aa1c0; font-size: 20px;" ng-click="manuallyTriggerCommand(command.id)">
                                 <i class="fas fa-play-circle clickable"></i>
                             </span>
                         </td> 
                         <td>{{command.trigger}}</td>
                         <td>
-                            <span style="min-width: 46px; display: inline-block;" uib-tooltip="Global cooldown">
+                            <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
                                 <i class="fal fa-globe"></i> {{command.cooldown.global ? command.cooldown.global + "s" : "-" }}
                             </span>
                             <span uib-tooltip="User cooldown">
@@ -70,6 +70,60 @@
                                         </li>
                                         <li>
                                             <a href ng-click="deleteCustomCommand(command)" style="color:red">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>                       
+                        </td> 
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div ng-show="activeSceneTab === 2">
+            <div style="margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
+                <button ng-click="" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Timer</button>
+                <searchbar ng-show="commandsService.getTimers().length > 0" placeholder-text="Search timers" query="timerSearch" style="flex-basis: 250px;"></searchbar>
+            </div>
+            <div ng-if="commandsService.getTimers().length === 0" class="muted">
+                No timers saved. You should make one! :) 
+            </div>
+            <table ng-show="commandsService.getTimers().length > 0" class="fb-table">
+                <thead>
+                    <tr style="font-size: 11px;">
+                        <th class="muted"><i class="fas fa-tag"></i> NAME</th> 
+                        <th class="muted"><i class="fas fa-clock"></i> INTERVAL</th> 
+                        <th class="muted"><i class="fas fa-terminal"></i> COMMANDS</th>
+                        <th></th> 
+                        <th></th> 
+                    </tr> 
+                </thead> 
+                <tbody> 
+                    <tr ng-repeat="timer in commandsService.getTimers() | filter:timerSearch track by timer.id">
+                        <td>{{timer.name}}</td>
+                        <td>
+                            {{timer.interval + "s"}}                          
+                        </td>
+                        <td>
+                            {{timer.commands.length}}
+                        </td>
+                        <td>
+                            <div style="min-width: 75px">
+                                <span class="status-dot" ng-class="{'active': timer.active, 'notactive': !timer.active}"></span> {{timer.active ? "Active" : "Disabled"}}
+                            </div>                            
+                        </td>  
+                        <td>
+                            <div style="text-align: right;">
+                                <div uib-dropdown uib-dropdown-toggle class="pull-right">
+                                    <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
+                                    <ul class="dropdown-menu" uib-dropdown-menu>
+                                        <li>
+                                            <a href ng-click="">Edit</a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="">{{command.active ? 'Disable' : 'Enable'}}</a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="" style="color:red">Delete</a>
                                         </li>
                                     </ul>
                                 </div>

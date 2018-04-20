@@ -163,8 +163,8 @@
     };
 
     /*
-            * Events
-            */
+    * Events
+    */
     let EventType = {
       DOWNLOAD_UPDATE: "downloadUpdate",
       OPEN_ROOT: "openRootFolder",
@@ -177,11 +177,13 @@
       INITIATE_BACKUP: "startBackup",
       RESTART_APP: "restartApp",
       DELETE_CHAT_MESSAGE: "deleteChatMessage",
-      CHANGE_USER_MOD_STATUS: "changeUserModStatus"
+      CHANGE_USER_MOD_STATUS: "changeUserModStatus",
+      COMMAND_MANUAL_TRIGGER: "commandManualTrigger"
     };
     service.EventType = EventType;
 
     service.fireEvent = function(type, data) {
+      console.log("sending event " + type);
       ipcRenderer.send(type, data);
     };
 
