@@ -15,10 +15,14 @@
 
     <div style="padding: 15px;">
         <div ng-show="activeSceneTab === 1">
-        <div style="margin: 15px 0;">
+            <div style="margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
                 <button ng-click="openAddOrEditCustomCommandModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Custom Command</button>
+                <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandSearch" style="flex-basis: 250px;"></searchbar>
             </div>
-            <table class="fb-table">
+            <div ng-if="commandsService.getCustomCommands().length === 0" class="muted">
+                No custom commands saved. You should make one! :) 
+            </div>
+            <table ng-show="commandsService.getCustomCommands().length > 0" class="fb-table">
                 <thead>
                     <tr>
                         <th style="width:5%"></th> 
@@ -30,7 +34,7 @@
                     </tr> 
                 </thead> 
                 <tbody> 
-                    <tr ng-repeat="command in commandsService.getCustomCommands()">
+                    <tr ng-repeat="command in commandsService.getCustomCommands() | triggerSearch:commandSearch track by command.id">
                         <td style="text-align: center;">
                             <span style="color: #2aa1c0; font-size: 20px;">
                                 <i class="fas fa-play-circle clickable"></i>

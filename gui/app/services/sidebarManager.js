@@ -37,6 +37,10 @@
         );
       };
 
+      service.currentTabShouldntScroll = function() {
+        return service.currentTab.toLowerCase() === "chat feed";
+      };
+
       return service;
     });
 

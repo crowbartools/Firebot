@@ -247,13 +247,14 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-  
+    border-bottom: 1px solid #eaecec;
   }
   
   .fb-tabs {
     margin: 0 10px;
     border-bottom: 0px solid #eaecec;
     font-weight: 600;
+    font-size: 12px;
     & > li.active > a, & > li.active > a:focus, & > li.active > a:hover {
       color: #2aa1c0;
       background-color: transparent;

@@ -277,4 +277,14 @@
       return input.slice(startFrom);
     };
   });
+
+  // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
+  app.filter("triggerSearch", function() {
+    return function(commands, query) {
+      if (commands == null || query == null) return commands;
+      return commands.filter(c =>
+        c.trigger.toLowerCase().startsWith(query.toLowerCase())
+      );
+    };
+  });
 })(angular);

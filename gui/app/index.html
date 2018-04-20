@@ -88,6 +88,7 @@
     <script type="text/javascript" src="./directives/misc/hotkeyCapture.js"></script>
     <script type="text/javascript" src="./directives/misc/messageActions.js"></script>
     <script type="text/javascript" src="./directives/misc/permissionOptions.js"></script>
+    <script type="text/javascript" src="./directives/misc/searchbar.js"></script>
     <script type="text/javascript" src="./directives/sidebar/navLink.js"></script>
     <script type="text/javascript" src="./directives/sidebar/navCategory.js"></script>
     <script type="text/javascript" src="./directives/sidebar/sidebar.js"></script>
@@ -152,7 +153,7 @@
           </ul>
         </div>
       </div>
-      <div class="tab-body-wrapper" ng-class="{ 'no-scroll': sbm.currentTabIsFullScreen() }"> 
+      <div class="tab-body-wrapper" ng-class="{ 'no-scroll': sbm.currentTabShouldntScroll() }"> 
         <div class="tab-body" ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }">
           <!-- angular templating -->
           <!-- this is where tab content will be injected -->
