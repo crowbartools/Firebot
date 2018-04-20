@@ -105,7 +105,7 @@
             };
 
             $scope.getControlIdOrName = function(control) {
-                if (control.text == null || control.text === "") {
+                if (control.text == null || control.text.trim() === "") {
                     return `ID: ${control.controlId}`;
                 }
                 if ($scope.isHoverOverControlName(control.controlId)) {
