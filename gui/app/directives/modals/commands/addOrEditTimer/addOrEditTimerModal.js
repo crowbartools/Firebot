@@ -9,67 +9,60 @@
     bindings: {
       resolve: "<",
       close: "&",
-      dismiss: "&",
-      modalInstance: "<"
+      dismiss: "&"
     },
-    controller: function($scope, utilityService, commandsService) {
+    controller: function($scope, commandsService) {
       let $ctrl = this;
 
-      $ctrl.command = {
+      $ctrl.timer = {
         active: true,
-        cooldown: {},
-        permission: {
-          type: "none"
-        },
-        effects: []
+        onlyWhenLive: true,
+        randomize: false,
+        name: "",
+        interval: 0,
+        commands: []
       };
+
+      $ctrl.commandList = commandsService.getCustomCommands().map(c => {
+        return { id: c.id, trigger: c.trigger };
+      });
+
+      $ctrl.toggleCommand = id => {
+        if ($ctrl.timer.commands.includes(id)) {
+          $ctrl.timer.commands.filter(c => c.id !== id);
+        } else {
+          $ctrl.timer.commands.push(id);
+        }
+      };
+
+      $ctrl.commandIsAdded = id => $ctrl.timer.commands.includes(id);
 
       $ctrl.$onInit = function() {
-        if ($ctrl.resolve.command == null) {
-          $ctrl.isNewCommand = true;
+        if ($ctrl.resolve.timer == null) {
+          $ctrl.isNewTimer = true;
         } else {
-          $ctrl.command = JSON.parse(JSON.stringify($ctrl.resolve.command));
+          $ctrl.timer = JSON.parse(JSON.stringify($ctrl.resolve.timer));
         }
-
-        let modalId = $ctrl.resolve.modalId;
-        utilityService.addSlidingModal(
-          $ctrl.modalInstance.rendered.then(() => {
-            let modalElement = $("." + modalId).children();
-            return {
-              element: modalElement,
-              name: "Edit Command",
-              id: modalId,
-              instance: $ctrl.modalInstance
-            };
-          })
-        );
-
-        $scope.$on("modal.closing", function() {
-          utilityService.removeSlidingModal();
-        });
-      };
-
-      $ctrl.effectListUpdated = function(effects) {
-        $ctrl.command.effects = effects;
       };
 
       $ctrl.delete = function() {
-        if ($ctrl.isNewCommand) return;
-        $ctrl.close({ $value: { command: $ctrl.command, action: "delete" } });
+        if ($ctrl.timer) return;
+        $ctrl.close({ $value: { timer: $ctrl.timer, action: "delete" } });
       };
 
       $ctrl.save = function() {
-        if ($ctrl.command.trigger == null || $ctrl.command.trigger === "")
-          return;
-        if (
-          commandsService.triggerExists($ctrl.command.trigger, $ctrl.command.id)
-        )
-          return;
+        if ($ctrl.timer.name === "" || $ctrl.timer.interval < 1) return;
 
-        let action = $ctrl.isNewCommand ? "add" : "update";
+        //remove commands that dont exist anymore
+        let idList = $ctrl.commandList.filter(c => c.id);
+        $ctrl.timer.commands = $ctrl.timer.commands.fitler(c =>
+          idList.includes(c)
+        );
+
+        let action = $ctrl.isNewTimer ? "add" : "update";
         $ctrl.close({
           $value: {
-            command: $ctrl.command,
+            timer: $ctrl.timer,
             action: action
           }
         });

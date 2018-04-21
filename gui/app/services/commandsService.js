@@ -94,6 +94,16 @@
       };
 
       service.saveTimer = function(timer) {
+        logger.debug("saving timer: " + timer.name);
+        if (timer.id == null || timer.id === "") {
+          // generate id for new command
+          const uuidv1 = require("uuid/v1");
+          timer.id = uuidv1();
+
+          timer.createdBy = connectionService.accounts.streamer.username;
+          timer.createdAt = moment().format();
+        }
+
         let commandDb = getCommandsDb();
 
         let cleanedTimer = JSON.parse(angular.toJson(timer));

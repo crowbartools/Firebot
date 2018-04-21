@@ -81,7 +81,7 @@
         </div>
         <div ng-show="activeSceneTab === 2">
             <div style="margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
-                <button ng-click="" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Timer</button>
+                <button ng-click="openAddOrEditTimerModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Timer</button>
                 <searchbar ng-show="commandsService.getTimers().length > 0" placeholder-text="Search timers" query="timerSearch" style="flex-basis: 250px;"></searchbar>
             </div>
             <div ng-if="commandsService.getTimers().length === 0" class="muted">
@@ -90,18 +90,18 @@
             <table ng-show="commandsService.getTimers().length > 0" class="fb-table">
                 <thead>
                     <tr style="font-size: 11px;">
-                        <th class="muted"><i class="fas fa-tag"></i> NAME</th> 
-                        <th class="muted"><i class="fas fa-clock"></i> INTERVAL</th> 
-                        <th class="muted"><i class="fas fa-terminal"></i> COMMANDS</th>
+                        <th class="muted" style="padding-left: 15px;width: 25%"><i class="fas fa-tag"></i> NAME</th> 
+                        <th class="muted"><i class="fas fa-stopwatch"></i> INTERVAL</th> 
+                        <th class="muted"><i class="fas fa-terminal"></i> COMMAND COUNT</th>
                         <th></th> 
                         <th></th> 
                     </tr> 
                 </thead> 
                 <tbody> 
                     <tr ng-repeat="timer in commandsService.getTimers() | filter:timerSearch track by timer.id">
-                        <td>{{timer.name}}</td>
+                        <td style="padding-left: 15px;">{{timer.name}}</td>
                         <td>
-                            {{timer.interval + "s"}}                          
+                            {{timer.interval + "m"}}                          
                         </td>
                         <td>
                             {{timer.commands.length}}
@@ -117,13 +117,13 @@
                                     <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
                                     <ul class="dropdown-menu" uib-dropdown-menu>
                                         <li>
-                                            <a href ng-click="">Edit</a>
+                                            <a href ng-click="openAddOrEditTimerModal(timer)">Edit</a>
                                         </li>
                                         <li>
-                                            <a href ng-click="">{{command.active ? 'Disable' : 'Enable'}}</a>
+                                            <a href ng-click="toggleTimerActiveState(timer)">{{timer.active ? 'Disable' : 'Enable'}}</a>
                                         </li>
                                         <li>
-                                            <a href ng-click="" style="color:red">Delete</a>
+                                            <a href ng-click="deleteTimer(timer)" style="color:red">Delete</a>
                                         </li>
                                     </ul>
                                 </div>
