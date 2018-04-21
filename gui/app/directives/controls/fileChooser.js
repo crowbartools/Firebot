@@ -27,7 +27,8 @@
                         runOnce: true,
                         publishEvent: true,
                         data: {
-                            options: ctrl.options
+                            options: ctrl.options,
+                            currentPath: ctrl.model && ctrl.model !== "" ? ctrl.model : undefined
                         }
                     };
                     listenerService.registerListener(registerRequest, (filepath) => {
