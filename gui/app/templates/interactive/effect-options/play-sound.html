@@ -1,10 +1,5 @@
 <div class="effect-specific-title"><h4>What sound should I play?</h4></div>
-<div class="input-group">
-    <span class="input-group-btn">
-      <button class="btn btn-default play-sound-effect-chooser" type="button" ng-click="openFileExporer()">Choose</button>
-    </span>
-    <input type="text" class="form-control play-sound-effect-input" ng-model="effect.file">
-</div>
+<file-chooser model="effect.file" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}"></file-chooser>
 
 <div class="effect-specific-title"><h4>How loud should it be?</h4></div>
 <div class="volume-slider-wrapper">

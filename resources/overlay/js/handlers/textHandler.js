@@ -15,7 +15,7 @@ function showText(data){
 	let container = `
 		<div class="${divClass} text-container"
 			position="${data.position}"
-			style="height:${data.height};width:${data.width};${customPosStyles}">
+			style="height:${data.height}px;width:${data.width}px;${customPosStyles}">
 				${data.text}
 		</div>
 	`;

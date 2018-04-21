@@ -15,8 +15,7 @@
             </label>
         </div>
         <div ng-if="effect.imageType === 'local'" style="display: flex;flex-direction: row;align-items: center;">
-            <button class="btn btn-default" ng-click="openFileExporer()">Choose File</button>
-            <span style="padding-left: 10px; font-size: 12px; width: 400px; text-overflow:ellipsis;overflow: hidden;display:inline-block;">{{effect.file ? effect.file : "No file selected."}}</span>
+            <file-chooser model="effect.file" options="{ filters: [ {name: 'Image', extensions: ['jpg', 'gif', 'png', 'jpeg']} ]}"></file-chooser>
         </div>
         <div ng-if="effect.imageType === 'url'">
             <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url">
