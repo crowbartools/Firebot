@@ -90,7 +90,6 @@
             utilityService,
             eventGroupToEdit
           ) => {
-            console.log(eventGroupToEdit);
             // The model for the board id text field
             $scope.eventGroup = {
               name: ""
