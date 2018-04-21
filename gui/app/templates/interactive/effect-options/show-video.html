@@ -14,13 +14,7 @@
         </ul>
     </div>
     <div ng-show="effect.videoType == 'Local Video'" class="input-group">
-        <span class="input-group-btn">
-        <button 
-          class="btn btn-default show-video-effect-chooser" 
-          type="button"
-          ng-click="openFileExporer()">Choose File</button>
-        </span>
-        <input type="text" class="form-control show-video-effect-input" ng-model="effect.file">
+        <file-chooser model="effect.file" options="{ filters: [ {name: 'Video', extensions: ['mp4', 'webm', 'ogv']} ]}"></file-chooser>
     </div>
     <div ng-show="effect.videoType == 'YouTube Video'" class="input-group">
         <span class="input-group-addon">YouTube ID</span>
