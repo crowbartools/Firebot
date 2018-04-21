@@ -145,6 +145,7 @@
 
                 ctrl.removeAllEffects = function() {
                     ctrl.effectsArray = [];
+                    ctrl.effectsUpdate();
                 };
 
                 ctrl.hasCopiedEffects = function() {
