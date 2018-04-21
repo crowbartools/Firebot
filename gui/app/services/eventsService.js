@@ -86,11 +86,10 @@
         dbEvents.push("/" + lastGroupId + "/events/" + eventId, event);
         logger.info("Edited live event id:" + eventId);
       } catch (err) {
-        console.log(err);
         // This is a new event, lets make a new one.
-        let parsedGroups = Object.keys(dbEvents.getData("/" + lastGroupId)).map(
-            x => parseInt(x)
-          ),
+        let parsedGroups = Object.keys(
+            dbEvents.getData("/" + lastGroupId + "/events")
+          ).map(x => parseInt(x)),
           sortedGroups = parsedGroups.sort(function(a, b) {
             return b - a;
           }),
@@ -103,7 +102,7 @@
       }
 
       // Update events cache.
-      logger.info("Live events renderer cache updated.");
+      ipcRenderer.send("refreshEventCache");
       eventsCache = dbEvents.getData("/");
     };
 
@@ -125,7 +124,7 @@
         );
       }
       // Update events cache.
-      logger.info("Live events renderer cache updated.");
+      ipcRenderer.send("refreshEventCache");
       eventsCache = dbEvents.getData("/");
     };
 
@@ -133,8 +132,6 @@
      * Add or Edit Event Group
      */
     service.addOrUpdateEventGroup = function(eventGroup) {
-      console.log(eventGroup);
-
       let eventGroupId = eventGroup.id,
         dbSettings = profileManager.getJsonDbInProfile("/settings"),
         dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
@@ -169,7 +166,7 @@
       }
 
       // Update events cache.
-      logger.info("Live events renderer cache updated.");
+      ipcRenderer.send("refreshEventCache");
       eventsCache = dbEvents.getData("/");
     };
 
@@ -200,7 +197,7 @@
       }
 
       // Update events cache.
-      logger.info("Live events renderer cache updated.");
+      ipcRenderer.send("refreshEventCache");
       eventsCache = dbEvents.getData("/");
     };
 

@@ -41,11 +41,11 @@
           <div class="tab-pane interactive-button-holder active">
 
             <!--Grid View-->
-            <div ng-show="eventsViewMode == 'grid'" class="mint" ng-class="{'interactive-control-tile': event, 'inactive-control' : !event.active && event.active != null}" ng-repeat="event in selectedEventsArray() | filter:buttonSearch track by event.id">
+            <div ng-show="eventsViewMode == 'grid'" class="mint" ng-class="{'interactive-control-tile': event, 'inactive-control' : event.active !== true}" ng-repeat="event in selectedEventsArray() | filter:buttonSearch | orderBy: 'type' track by event.id">
               <a class="control-edit-btn clickable" ng-click="showAddEditEventModal(event)">{{'LIVE_EVENTS.EDIT' | translate}}</a>
               <div class="button-name noselect">{{event.name}}</div>
               <div class="event-type">{{event.type ? friendlyEventTypeName(event.type) : "No Type"}}</div>
-              <span class="play-button clickable" ng-click="fireEventManually(event.id)"><i class="fas fa-play-circle"></i></span>
+              <span class="play-button clickable" ng-click="fireEventManually(event)"><i class="fas fa-play-circle"></i></span>
             </div>
 
             <!--List View-->
@@ -60,9 +60,9 @@
                 </tr>
               </thead>
               <tbody style="font-size: 16px;">
-                <tr ng-class="{'control-list': event, 'inactive-control' : !event.active && event.active != null}" ng-repeat="event in selectedEventsArray() | filter:buttonSearch track by event.id">
+                <tr ng-class="{'control-list': event, 'inactive-control' : event.active !== true}" ng-repeat="event in selectedEventsArray() | filter:buttonSearch | orderBy: 'id' track by event.id">
                   <td>
-                    <a ng-click="fireEventManually(event.id)"><i class="fas fa-play-circle clickable"></i></a>
+                    <a ng-click="fireEventManually(event)"><i class="fas fa-play-circle clickable"></i></a>
                   </td>
                   <td>{{event.id}}</td>
                   <td ng-class="{'muted': !event.name}">
