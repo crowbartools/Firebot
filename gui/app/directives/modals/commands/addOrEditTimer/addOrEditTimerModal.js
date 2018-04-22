@@ -54,8 +54,8 @@
         if ($ctrl.timer.name === "" || $ctrl.timer.interval < 1) return;
 
         //remove commands that dont exist anymore
-        let idList = $ctrl.commandList.filter(c => c.id);
-        $ctrl.timer.commands = $ctrl.timer.commands.fitler(c =>
+        let idList = $ctrl.commandList.map(c => c.id);
+        $ctrl.timer.commands = $ctrl.timer.commands.filter(c =>
           idList.includes(c)
         );
 
