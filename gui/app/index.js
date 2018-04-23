@@ -25,6 +25,7 @@ require("angularjs-slider");
 require("ui-select");
 require("angular-ui-sortable");
 require("angularjs-scroll-glue");
+require("ng-toast");
 require("../../node_modules/angular-summernote/dist/angular-summernote");
 require("../../node_modules/angular-translate/dist/angular-translate");
 require("../../node_modules/angular-translate-loader-url/angular-translate-loader-url");
@@ -40,6 +41,7 @@ document.addEventListener("DOMContentLoaded", boot);
 
 // Catch browser window (renderer) errors and log them via Winston
 window.onerror = function(error, url, line) {
+  console.log(error, url, line);
   logger.error("(Renderer) " + error, { url: url, line: line });
 };
 

@@ -16,6 +16,7 @@ const settings = require("./lib/common/settings-access").settings;
 const dataAccess = require("./lib/common/data-access.js");
 const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
+const connectionManager = require("./lib/common/connection-manager");
 const apiServer = require("./api/apiServer.js");
 
 const Effect = require("./lib/common/EffectType");
@@ -175,6 +176,8 @@ function createWindow() {
 
   let hotkeyManager = require("./lib/hotkeys/hotkey-manager");
   hotkeyManager.refreshHotkeyCache();
+
+  connectionManager.startOnlineCheckInterval();
 }
 
 /**

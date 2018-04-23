@@ -1,20 +1,17 @@
 <div style="min-width: 500px;">
     <div class="fb-commands-tab-wrapper">
         <ul class="nav nav-tabs fb-tabs">
-            <li role="presentation" ng-class="{'active' : activeSceneTab === 0}" ng-click="activeSceneTab = 0">
-                <a href>SYSTEM COMMANDS</a>
-            </li>
-            <li role="presentation" ng-class="{'active' : activeSceneTab === 1}" ng-click="activeSceneTab = 1">
+            <li role="presentation" ng-class="{'active' : activeCmdTab === 0}" ng-click="activeCmdTab = 0">
                 <a href>CUSTOM COMMANDS</a>
             </li>
-            <li role="presentation" ng-class="{'active' : activeSceneTab === 2}" ng-click="activeSceneTab = 2">
-                <a href>TIMERS</a>
+            <li role="presentation" ng-class="{'active' : activeCmdTab === 1}" ng-click="activeCmdTab = 1">
+                <a href>SYSTEM COMMANDS</a>
             </li>
         </ul>
     </div>
 
     <div style="padding: 15px;">
-        <div ng-show="activeSceneTab === 1">
+        <div ng-show="activeCmdTab === 0">
             <div style="margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
                 <button ng-click="openAddOrEditCustomCommandModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Custom Command</button>
                 <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandSearch" style="flex-basis: 250px;"></searchbar>
@@ -70,60 +67,6 @@
                                         </li>
                                         <li>
                                             <a href ng-click="deleteCustomCommand(command)" style="color:red">Delete</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>                       
-                        </td> 
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div ng-show="activeSceneTab === 2">
-            <div style="margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
-                <button ng-click="openAddOrEditTimerModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Timer</button>
-                <searchbar ng-show="commandsService.getTimers().length > 0" placeholder-text="Search timers" query="timerSearch" style="flex-basis: 250px;"></searchbar>
-            </div>
-            <div ng-if="commandsService.getTimers().length === 0" class="muted">
-                No timers saved. You should make one! :) 
-            </div>
-            <table ng-show="commandsService.getTimers().length > 0" class="fb-table">
-                <thead>
-                    <tr style="font-size: 11px;">
-                        <th class="muted" style="padding-left: 15px;width: 25%"><i class="fas fa-tag"></i> NAME</th> 
-                        <th class="muted"><i class="fas fa-stopwatch"></i> INTERVAL</th> 
-                        <th class="muted"><i class="fas fa-terminal"></i> COMMAND COUNT</th>
-                        <th></th> 
-                        <th></th> 
-                    </tr> 
-                </thead> 
-                <tbody> 
-                    <tr ng-repeat="timer in commandsService.getTimers() | filter:timerSearch track by timer.id">
-                        <td style="padding-left: 15px;">{{timer.name}}</td>
-                        <td>
-                            {{timer.interval + "m"}}                          
-                        </td>
-                        <td>
-                            {{timer.commands.length}}
-                        </td>
-                        <td>
-                            <div style="min-width: 75px">
-                                <span class="status-dot" ng-class="{'active': timer.active, 'notactive': !timer.active}"></span> {{timer.active ? "Active" : "Disabled"}}
-                            </div>                            
-                        </td>  
-                        <td>
-                            <div style="text-align: right;">
-                                <div uib-dropdown uib-dropdown-toggle class="pull-right">
-                                    <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
-                                    <ul class="dropdown-menu" uib-dropdown-menu>
-                                        <li>
-                                            <a href ng-click="openAddOrEditTimerModal(timer)">Edit</a>
-                                        </li>
-                                        <li>
-                                            <a href ng-click="toggleTimerActiveState(timer)">{{timer.active ? 'Disable' : 'Enable'}}</a>
-                                        </li>
-                                        <li>
-                                            <a href ng-click="deleteTimer(timer)" style="color:red">Delete</a>
                                         </li>
                                     </ul>
                                 </div>

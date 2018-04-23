@@ -15,7 +15,7 @@
       // Cache commands on app load.
       commandsService.refreshCommands();
 
-      $scope.activeSceneTab = 0;
+      $scope.activeCmdTab = 0;
 
       $scope.commandsService = commandsService;
 
@@ -78,47 +78,6 @@
                 break;
               case "delete":
                 commandsService.deleteCustomCommand(command);
-                break;
-            }
-
-            // Refresh Commands
-            commandsService.refreshCommands();
-          }
-        });
-      };
-
-      /*
-      * TIMERS
-      */
-      $scope.toggleTimerActiveState = timer => {
-        if (timer == null) return;
-        timer.active = !timer.active;
-        commandsService.saveTimer(timer);
-        commandsService.refreshCommands();
-      };
-
-      $scope.deleteTimer = timer => {
-        commandsService.deleteTimer(timer);
-        commandsService.refreshCommands();
-      };
-
-      $scope.openAddOrEditTimerModal = function(timer) {
-        utilityService.showModal({
-          component: "addOrEditTimerModal",
-          resolveObj: {
-            timer: () => timer
-          },
-          closeCallback: resp => {
-            let action = resp.action,
-              timer = resp.timer;
-
-            switch (action) {
-              case "add":
-              case "update":
-                commandsService.saveTimer(timer);
-                break;
-              case "delete":
-                commandsService.deleteTimer(timer);
                 break;
             }
 

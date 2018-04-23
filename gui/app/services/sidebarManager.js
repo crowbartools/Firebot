@@ -94,6 +94,11 @@
         .when("/hotkeys", {
           templateUrl: "./templates/_hotkeys.html",
           controller: "hotkeysController"
+        })
+
+        .when("/timers", {
+          templateUrl: "./templates/_timers.html",
+          controller: "timersController"
         });
     }
   ]);

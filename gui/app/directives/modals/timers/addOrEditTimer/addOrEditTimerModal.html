@@ -24,31 +24,18 @@
                 <input type="checkbox" ng-model="$ctrl.timer.randomize" aria-label="...">
                 <div class="control__indicator"></div>
             </label>
-            <label class="control-fb control--checkbox">Only Run Commands When Live <tooltip text="'Uncheck this if you want this timer to run commands even when you aren\'t live.'"></tooltip>
+            <label class="control-fb control--checkbox">Only Run Actions When Live <tooltip text="'Uncheck this if you want this timer to run actions even when you aren\'t live.'"></tooltip>
                 <input type="checkbox" ng-model="$ctrl.timer.onlyWhenLive" aria-label="...">
                 <div class="control__indicator"></div>
             </label>
          </div>
     </div>
 
-    <div class="cooldown-group-button-container">
-        <h3>Which commands will we loop through?</h3>
-        <div class="searchbar-wrapper">
-            <input type="text" class="form-control" placeholder="Search commands" ng-model="commandSearch" style="padding-left: 27px;">
-            <span class="searchbar-icon"><i class="far fa-search"></i></span>
-        </div>
-        <div class="cooldown-group-buttons">
-        <div ng-repeat="command in $ctrl.commandList | filter:commandSearch" class="cooldown-list-btn-wrapper">
-            <label class="control-fb control--checkbox" style="margin-bottom: 0">{{command.trigger}}
-                <input type="checkbox" ng-click="$ctrl.toggleCommand(command.id)" ng-checked="$ctrl.commandIsAdded(command.id)"/>
-                <div class="control__indicator"></div>
-            </label>
-        </div>
-        </div>
-        <div class="cooldown-group-button-reset">
-        <button class="btn btn-warning" ng-click="$ctrl.timer.commands = []">Uncheck all</button>
-        </div>
+    <div class="settings-title">
+        <h3>Actions</h3>
     </div>
+    <p>Timers cycle through these actions on the given interval.</p>
+    <action-list actions="$ctrl.timer.actions" is-random="$ctrl.timer.randomize" update="$ctrl.actionListUpdated(actions)" modalId="{{$ctrl.modalId}}"></action-list>
 </div>
 
 <div class="modal-footer">

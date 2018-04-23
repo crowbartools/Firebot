@@ -15,8 +15,7 @@
       // in memory commands storage
       let commandsCache = {
         systemCommands: [],
-        customCommands: [],
-        timers: []
+        customCommands: []
       };
 
       // Refresh commands cache
@@ -43,10 +42,6 @@
           commandsCache.customCommands = Object.values(cmdData.customCommands);
         }
 
-        if (cmdData.timers) {
-          commandsCache.timers = Object.values(cmdData.timers);
-        }
-
         // Refresh the interactive control cache.
         ipcRenderer.send("refreshCommandCache");
       };
@@ -54,8 +49,6 @@
       service.getSystemCommands = () => commandsCache.systemCommands;
 
       service.getCustomCommands = () => commandsCache.customCommands;
-
-      service.getTimers = () => commandsCache.timers;
 
       service.saveCustomCommand = function(command, createdBy = null) {
         logger.debug("saving command: " + command.trigger);
@@ -93,26 +86,6 @@
         } catch (err) {} //eslint-disable-line no-empty
       };
 
-      service.saveTimer = function(timer) {
-        logger.debug("saving timer: " + timer.name);
-        if (timer.id == null || timer.id === "") {
-          // generate id for new command
-          const uuidv1 = require("uuid/v1");
-          timer.id = uuidv1();
-
-          timer.createdBy = connectionService.accounts.streamer.username;
-          timer.createdAt = moment().format();
-        }
-
-        let commandDb = getCommandsDb();
-
-        let cleanedTimer = JSON.parse(angular.toJson(timer));
-
-        try {
-          commandDb.push("/timers/" + cleanedTimer.id, cleanedTimer);
-        } catch (err) {} //eslint-disable-line no-empty
-      };
-
       service.triggerExists = function(trigger, id = null) {
         if (trigger == null) return false;
 
@@ -140,19 +113,6 @@
           commandDb.delete("/customCommands/" + command.id);
         } catch (err) {
           logger.warn("error when deleting command", err);
-        } //eslint-disable-line no-empty
-      };
-
-      // Deletes a command.
-      service.deleteTimer = function(timer) {
-        let commandDb = getCommandsDb();
-
-        if (timer == null) return;
-
-        try {
-          commandDb.delete("/timers/" + timer.id);
-        } catch (err) {
-          logger.warn("error when deleting timer", err);
         } //eslint-disable-line no-empty
       };
 

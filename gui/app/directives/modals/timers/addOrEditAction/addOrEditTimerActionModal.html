@@ -1,0 +1,45 @@
+<div class="modal-header">
+    <button type="button" class="close"><span ng-click="$ctrl.dismiss()">&times;</span></button>
+    <h4 class="modal-title">{{$ctrl.isNewAction ? 'Add New Timer Action' : 'Edit Timer Action- ' + $ctrl.action.type}}</h4>
+</div>
+<div class="modal-body">
+    <h3 style="margin-top:20px;">Action</h3>
+    <dropdown-select options="['Run Effects', 'Run Command','Run Button']" selected="$ctrl.action.type"></dropdown-select>
+
+    <div style="margin-top:20px;" ng-if="$ctrl.action.type === 'Run Effects'">
+        <effect-list header="Effect List" effects="$ctrl.action.metadata.effects" trigger="timer" update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
+    </div>
+
+    <div style="margin-top:20px;" ng-show="$ctrl.action.type === 'Run Command'">
+        <h3>Command To Run</h3>
+        <ui-select ng-model="$ctrl.action.metadata.command" theme="bootstrap">
+            <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
+            <ui-select-choices repeat="command in $ctrl.commands | filter: { trigger: $select.search }" style="position:relative;">
+                <div ng-bind-html="command.trigger | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+    
+    <div style="margin-top:20px;" ng-show="$ctrl.action.type === 'Run Button'">
+        <h3>Button To Run</h3>
+        <ui-select ng-model="$ctrl.action.metadata.button" theme="bootstrap">
+            <ui-select-match placeholder="Select or search for a button... ">{{$select.selected.text}}</ui-select-match>
+            <ui-select-choices repeat="button in $ctrl.buttons | filter: { text: $select.search }" style="position:relative;">
+                <div ng-bind-html="button.text | highlight: $select.search"></div>
+                <small class="muted"><b>Id:</b> {{button.id}} | <b>Scene:</b> {{button.scene}} | <b>Board:</b> {{button.board.name}}</small>
+            </ui-select-choices>
+        </ui-select>
+        
+        <div class="effect-info alert alert-warning">
+            Timer Actions that trigger a button only work if the button is in the currently active board. 
+            <br><br>
+            Also keep in mind certain effects on buttons (like Change Group) won't work with Timer Actions as there is no viewer associated with the button "press".
+        </div>             
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-click="$ctrl.delete()">Delete</button>
+    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
+</div>

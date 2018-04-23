@@ -24,8 +24,9 @@
 
                         <nav-category name="General" text="SIDEBAR.GENERAL" pad-top="true"></nav-category>
                         <nav-link name="Events" text="SIDEBAR.GENERAL.EVENTS" icon="fa-star"></nav-link>
-                        <nav-link name="Viewer Groups" text="SIDEBAR.GENERAL.VIEWER_GROUPS" icon="fa-users"></nav-link>
+                        <nav-link name="Timers" text="SIDEBAR.GENERAL.TIMERS" icon="fa-stopwatch"></nav-link>
                         <nav-link name="Hotkeys" text="SIDEBAR.GENERAL.HOTKEYS" icon="fa-keyboard"></nav-link>
+                        <nav-link name="Viewer Groups" text="SIDEBAR.GENERAL.VIEWER_GROUPS" icon="fa-users"></nav-link>
                         <nav-link name="Moderation" text="SIDEBAR.GENERAL.MODERATION" icon="fa-gavel"></nav-link>
                         <nav-link name="Settings" text="SIDEBAR.GENERAL.SETTINGS" icon="fa-cog"></nav-link>
                         <nav-link name="Updates" text="SIDEBAR.GENERAL.UPDATES" icon="fa-download" badge-text="$ctrl.updateIsAvailable() ? 'NEW' : ''"></nav-link>

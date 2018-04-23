@@ -15,9 +15,13 @@
     <link rel="stylesheet" href="../fonts/fontawesome5/fontawesome-all.min.css">
   
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700" rel="stylesheet">
     
     <!-- Custom styles for this template -->
     <link ng-href="../css/{{appTheme()}}.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../node_modules/ng-toast/dist/ngToast.min.css">
     
     <script src="../js/plugins/jquery-3.1.1.slim.min.js"></script>
     <script src="../js/plugins/jquery.min.js"></script>
@@ -44,9 +48,11 @@
     <script type="text/javascript" src="./controllers/eventsController.js"></script>
     <script type="text/javascript" src="./controllers/chatMessagesController.js"></script>
     <script type="text/javascript" src="./controllers/hotkeysController.js"></script>
+    <script type="text/javascript" src="./controllers/timersController.js"></script>
     <script type="text/javascript" src="./services/boardService.js"></script>
     <script type="text/javascript" src="./services/eventsService.js"></script>
     <script type="text/javascript" src="./services/commandsService.js"></script>
+    <script type="text/javascript" src="./services/timerService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/groupsService.js"></script>
     <script type="text/javascript" src="./services/eventLogService.js"></script>
@@ -81,6 +87,7 @@
     <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
     <script type="text/javascript" src="./directives/controls/searchableEffectDropdown.js"></script>
     <script type="text/javascript" src="./directives/controls/effectList.js"></script>
+    <script type="text/javascript" src="./directives/controls/actionList.js"></script>
     <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
     <script type="text/javascript" src="./directives/misc/tooltip.js"></script>
     <script type="text/javascript" src="./directives/misc/connectionIcon.js"></script>
@@ -96,10 +103,12 @@
     <script type="text/javascript" src="./directives/modals/misc/aboutModal.js"></script>
     <script type="text/javascript" src="./directives/modals/hotkeys/addOrEditHotkey/addOrEditHotkeyModal.js"></script>
     <script type="text/javascript" src="./directives/modals/commands/addOrEditCustomCommand/addOrEditCustomCommandModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/commands/addOrEditTimer/addOrEditTimerModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/timers/addOrEditTimer/addOrEditTimerModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/timers/addOrEditAction/addOrEditTimerActionModal.js"></script>
   </head>
   <body>
-
+    <toast></toast>
+    
     <div class='loader-wrapper' ng-if="showSpinner">
       <div class="loader">{{'MAIN.LOADING' | translate }}</div>
     </div>
