@@ -178,6 +178,9 @@ function createWindow() {
   hotkeyManager.refreshHotkeyCache();
 
   connectionManager.startOnlineCheckInterval();
+
+  const timerManager = require("./lib/chat/timer-manager");
+  timerManager.startTimers();
 }
 
 /**
