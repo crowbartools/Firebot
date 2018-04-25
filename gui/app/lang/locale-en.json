@@ -60,6 +60,7 @@
         "EDIT": "Edit",
         "SEARCH_EVENTS": "Search events",
         "ADD_NEW_EVENT": "Add New Event",
+        "ADD_FIRST_EVENT_GROUP": "Add First Event Group",
         "COULD_NOT_AUTOSELECT": "We could not auto select a live event group. Click the dropdown and select one!",
         "ID": "ID",
         "NAME": "Name",

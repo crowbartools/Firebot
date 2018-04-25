@@ -6,6 +6,7 @@
   const EventType = require("../../lib/live-events/EventType.js");
   const profileManager = require("../../lib/common/profile-manager.js");
   const { ipcRenderer } = require("electron");
+  const uuidv1 = require("uuid/v1");
 
   angular.module("firebotApp").factory("eventsService", function(logger) {
     let service = {},
@@ -87,13 +88,7 @@
         logger.info("Edited live event id:" + eventId);
       } catch (err) {
         // This is a new event, lets make a new one.
-        let parsedGroups = Object.keys(
-            dbEvents.getData("/" + lastGroupId + "/events")
-          ).map(x => parseInt(x)),
-          sortedGroups = parsedGroups.sort(function(a, b) {
-            return b - a;
-          }),
-          newId = parseInt(sortedGroups.slice(0, 1)) + 1;
+        let newId = uuidv1();
 
         // We now have the next highest id in the array.
         event["id"] = newId;
@@ -144,14 +139,8 @@
       } catch (err) {
         // If this happens it means we're adding a new group.
 
-        // This is a new event group, lets make a new one.
-        let parsedGroups = Object.keys(dbEvents.getData("/")).map(x =>
-            parseInt(x)
-          ),
-          sortedGroups = parsedGroups.sort(function(a, b) {
-            return b - a;
-          }),
-          newId = parseInt(sortedGroups.slice(0, 1)) + 1;
+        // generate id for new group
+        let newId = uuidv1();
 
         // Push new group.
         dbEvents.push("/" + newId, {

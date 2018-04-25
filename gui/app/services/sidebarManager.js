@@ -33,7 +33,8 @@
       service.currentTabIsFullScreen = function() {
         return (
           service.currentTab.toLowerCase() === "chat feed" ||
-          service.currentTab.toLowerCase() === "commands"
+          service.currentTab.toLowerCase() === "commands" ||
+          service.currentTab.toLowerCase() === "events"
         );
       };
 
