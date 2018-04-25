@@ -1,0 +1,86 @@
+<div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">
+      <span ng-if="!$ctrl.isNewCommand">Edit Command - </span> {{$ctrl.isNewCommand ? 'Add New Command' : $ctrl.command.trigger }}
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="general-button-settings">
+
+        <div style="padding-bottom:1em">
+            <div class="settings-title">
+                <h3>General Settings</h3>
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon3">Trigger</span>
+                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.command.trigger" placeholder="!something">
+            </div>
+
+            <div class="controls-fb-inline">
+                <label class="control-fb control--checkbox">Auto Delete Trigger <tooltip text="'Have Firebot automatically delete the message that triggers this command to keep chat cleaner.'"></tooltip>
+                    <input type="checkbox" ng-model="$ctrl.command.autoDeleteTrigger" aria-label="...">
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--checkbox">Scan Whole Message <tooltip text="'Scan the whole message for the trigger instead just the first word'"></tooltip>
+                    <input type="checkbox" ng-model="$ctrl.command.scanWholeMessage" aria-label="...">
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
+        </div>
+
+        <div style="padding-bottom:1em">
+            <div class="settings-title">
+                <h3>Cooldowns</h3>
+            </div>
+
+            <div class="input-group">
+            <span class="input-group-addon">Global</span>
+            <input 
+                class="form-control" 
+                type="number"
+                min="0"
+                placeholder="secs"
+                ng-model="$ctrl.command.cooldown.global">
+            <span class="input-group-addon">User</span>
+            <input 
+                class="form-control"
+                type="number"
+                min="0"
+                placeholder="secs"
+                ng-model="$ctrl.command.cooldown.user">
+            </div>
+        </div>
+
+        <permission-options permission="$ctrl.command.permission"></permission-options>
+
+        <div class="other-settings" style="padding-bottom:1em">
+            <div class="settings-title">
+                <h3>Other</h3>
+            </div>
+            <div class="controls-fb-inline">
+                <label class="control-fb control--checkbox">Active Command
+                    <input type="checkbox" ng-model="$ctrl.command.active" aria-label="..." checked>
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone uses this command'"></tooltip>
+                    <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--checkbox">Skip Logging
+                    <input type="checkbox" ng-model="$ctrl.command.skipLog" aria-label="...">
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="function-button-settings">
+        <effect-list header="What should this command do?" effects="$ctrl.command.effects" trigger="command" update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewCommand" ng-click="$ctrl.delete()">Delete Command</button>
+    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary add-new-board-save" ng-click="$ctrl.save()">Save Changes</button>
+</div>

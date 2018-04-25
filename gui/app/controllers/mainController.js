@@ -14,13 +14,15 @@
     "ui.sortable",
     "luegg.directives",
     "summernote",
-    "pascalprecht.translate"
+    "pascalprecht.translate",
+    "ngToast"
   ]);
 
   app.factory("$exceptionHandler", function(logger) {
     // this catches angular exceptions so we can send it to winston
     return function(exception, cause) {
-      logger.error(cause, exception);
+      console.log(exception, cause);
+      logger.error(exception, cause);
     };
   });
 
@@ -33,6 +35,18 @@
           suffix: ".json"
         })
         .preferredLanguage("en");
+    }
+  ]);
+
+  app.config([
+    "ngToastProvider",
+    function(ngToast) {
+      ngToast.configure({
+        verticalPosition: "top",
+        horizontalPosition: "center",
+        maxNumber: 5,
+        className: "danger"
+      });
     }
   ]);
 
@@ -275,6 +289,16 @@
     return function(input, startFrom) {
       startFrom = +startFrom;
       return input.slice(startFrom);
+    };
+  });
+
+  // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
+  app.filter("triggerSearch", function() {
+    return function(commands, query) {
+      if (commands == null || query == null) return commands;
+      return commands.filter(c =>
+        c.trigger.toLowerCase().includes(query.toLowerCase())
+      );
     };
   });
 })(angular);

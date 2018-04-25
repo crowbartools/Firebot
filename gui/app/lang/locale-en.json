@@ -16,6 +16,7 @@
         "GENERAL": {
             "GENERAL": "General",
             "EVENTS": "Events",
+            "TIMERS": "Timers",
             "VIEWER_GROUPS": "Viewer Groups",
             "HOTKEYS": "Hotkeys",
             "MODERATION": "Moderation",

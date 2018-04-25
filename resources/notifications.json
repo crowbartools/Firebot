@@ -4,5 +4,11 @@
         "title": "Subs not seeing their board?",
         "message": "<div>Firebot's auto grouping functionality requires a chat connection to see viewer roles. Make sure to connect to both. The event log will let you know when the auto grouper starts up.</div>",
         "icon": "tip"
+    },
+    {
+        "id": 200,
+        "title": "Some Videos Not Working In Steamlabs OBS",
+        "message": "<div>The latest version of Streamlabs OBS has a bug preventing MP4's in overlays from playing. This causes Firebot's Video Effects that use MP4 files to fail. SL-OBS can still play videos using the WEBM format. The current workaround is to either use a MP4-to-WEBM file converter or use regular OBS. We apologize for this inconvenience.</div>",
+        "icon": "alert"
     }
 ]

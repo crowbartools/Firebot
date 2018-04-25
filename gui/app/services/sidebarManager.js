@@ -31,6 +31,13 @@
       };
 
       service.currentTabIsFullScreen = function() {
+        return (
+          service.currentTab.toLowerCase() === "chat feed" ||
+          service.currentTab.toLowerCase() === "commands"
+        );
+      };
+
+      service.currentTabShouldntScroll = function() {
         return service.currentTab.toLowerCase() === "chat feed";
       };
 
@@ -87,6 +94,11 @@
         .when("/hotkeys", {
           templateUrl: "./templates/_hotkeys.html",
           controller: "hotkeysController"
+        })
+
+        .when("/timers", {
+          templateUrl: "./templates/_timers.html",
+          controller: "timersController"
         });
     }
   ]);
