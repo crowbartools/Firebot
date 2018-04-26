@@ -165,18 +165,13 @@
     service.removeEventGroup = function(groupId) {
       let dbSettings = profileManager.getJsonDbInProfile("/settings"),
         lastGroupId = dbSettings.getData("/liveEvents/lastGroupId"),
-        dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
+        dbEvents = profileManager.getJsonDbInProfile("/live-events/events"),
+        fullEvents = dbEvents.getData("/");
 
       dbEvents.delete("/" + lastGroupId);
 
       // We need to get another group to use.
-      let parsedGroups = Object.keys(dbEvents.getData("/")).map(x =>
-          parseInt(x)
-        ),
-        sortedGroups = parsedGroups.sort(function(a, b) {
-          return b - a;
-        }),
-        newId = parseInt(sortedGroups.slice(0, 1));
+      let newId = Object.keys(fullEvents)[0];
 
       // Set active profile to something else.
       if (newId != null) {
@@ -184,6 +179,37 @@
       } else {
         dbSettings.delete("/liveEvents/lastGroupId");
       }
+
+      // Update events cache.
+      ipcRenderer.send("refreshEventCache");
+      eventsCache = dbEvents.getData("/");
+    };
+
+    /**
+     * Toggle active state of an event.
+     */
+    service.toggleEventActiveState = function(eventId) {
+      let dbSettings = profileManager.getJsonDbInProfile("/settings"),
+        lastGroupId = dbSettings.getData("/liveEvents/lastGroupId"),
+        dbEvents = profileManager.getJsonDbInProfile("/live-events/events"),
+        activeStatus = false;
+
+      try {
+        activeStatus = dbEvents.getData(
+          "/" + lastGroupId + "/events/" + eventId + "/active"
+        );
+      } catch (err) {
+        logger.debug(err);
+      }
+
+      // Set active status to opposite of whatever it's at right now.
+      dbEvents.push(
+        "/" + lastGroupId + "/events/" + eventId + "/active",
+        !activeStatus
+      );
+      logger.debug(
+        "Event " + eventId + " set to " + activeStatus + " via UI dropdown."
+      );
 
       // Update events cache.
       ipcRenderer.send("refreshEventCache");

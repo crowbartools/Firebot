@@ -18,7 +18,50 @@
        *  Returns an integer of total number of event groups.
        */
       $scope.getEventGroupCount = function() {
-        return Object.keys(eventsService.getAllEventGroups()).length;
+        let allEventGroups = eventsService.getAllEventGroups();
+
+        if (allEventGroups != null) {
+          return Object.keys(eventsService.getAllEventGroups()).length;
+        }
+
+        return 0;
+      };
+
+      /**
+       * Returns an integer of total number of events in selected event group.
+       */
+      $scope.getGroupEventsCount = function() {
+        let groupJson = eventsService.getActiveEventGroupJson(),
+          eventsLength = 0;
+
+        if (groupJson != null && groupJson.events != null) {
+          eventsLength = Object.keys(groupJson.events).length;
+        }
+
+        if (eventsLength != null) {
+          return eventsLength;
+        }
+
+        return 0;
+      };
+
+      /**
+       * Returns an integer of total number of effects in an event.
+       */
+      $scope.getEventEffectsCount = function(eventId) {
+        let groupJson = eventsService.getActiveEventGroupJson(),
+          eventJson = groupJson.events[eventId],
+          effectsLength = 0;
+
+        if (eventJson != null && eventJson.effects != null) {
+          effectsLength = Object.keys(eventJson.effects).length;
+        }
+
+        if (effectsLength != null) {
+          return effectsLength;
+        }
+
+        return 0;
       };
 
       /**
@@ -60,8 +103,8 @@
       };
 
       // Fire event manually
-      $scope.fireEventManually = function(eventId) {
-        ipcRenderer.send("manualEvent", eventId);
+      $scope.fireEventManually = function(event) {
+        ipcRenderer.send("manualEvent", event);
       };
 
       // Set Events view mode.
@@ -75,6 +118,14 @@
        */
       $scope.friendlyEventTypeName = function(type) {
         return eventsService.getEventTypeName(type);
+      };
+
+      /**
+       * Toggles the active state of a given event id.
+       * @param {*} eventId;
+       */
+      $scope.toggleEventActiveState = function(eventId) {
+        eventsService.toggleEventActiveState(eventId);
       };
 
       /*
@@ -216,6 +267,41 @@
           }
         };
         utilityService.showModal(addEditEventsModalContext);
+      };
+
+      /**
+       * Delete Event Modal
+       */
+      $scope.showEventDeleteModal = function(event) {
+        utilityService
+          .showConfirmationModal({
+            title: "Delete Event",
+            question: "Are you sure you'd like to delete this event?",
+            confirmLabel: "Delete"
+          })
+          .then(confirmed => {
+            if (confirmed) {
+              console.log(event);
+              eventsService.removeEvent(event.id);
+            }
+          });
+      };
+
+      /**
+       * Delete Event Group Modal
+       */
+      $scope.showEventGroupDeleteModal = function(eventGroup) {
+        utilityService
+          .showConfirmationModal({
+            title: "Delete Event Group",
+            question: "Are you sure you'd like to delete this event group?",
+            confirmLabel: "Delete"
+          })
+          .then(confirmed => {
+            if (confirmed) {
+              eventsService.removeEventGroup(eventGroup.id);
+            }
+          });
       };
     });
 })(window.jQuery);

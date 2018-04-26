@@ -55,7 +55,8 @@
         "CHANGE_EVENT_GROUP": {
             "CHANGE_BOARD": "Change Event Group",
             "ADD_NEW_EVENT_GROUP": "Add New Event Group",
-            "EDIT_EVENT_GROUP": "Edit Event Group"
+            "EDIT_EVENT_GROUP": "Edit Event Group",
+            "DELETE_EVENT_GROUP": "Delete Event Group"
         },
         "EDIT": "Edit",
         "SEARCH_EVENTS": "Search events",
