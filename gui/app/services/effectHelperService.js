@@ -328,6 +328,10 @@
                                     shouldUpdate: false,
                                     value: ""
                                 },
+                                cooldown: {
+                                    shouldUpdate: false,
+                                    value: ""
+                                },
                                 progress: {
                                     shouldUpdate: false,
                                     value: ""
