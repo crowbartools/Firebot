@@ -101,12 +101,15 @@
                     }
 
                     if (selectedOutputDevice.deviceId === 'overlay') {
+
                         websocketService.broadcast({
                             event: "sound",
                             filepath: filepath,
                             volume: volume,
-                            resourceToken: data.resourceToken
+                            resourceToken: data.resourceToken,
+                            overlayInstance: data.overlayInstance
                         });
+
                     } else {
                         service.playSound(filepath, volume, selectedOutputDevice);
                     }
