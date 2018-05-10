@@ -6,7 +6,7 @@
 
 <content-block>
     <div class = "interactive-group-container">
-        <div ng-repeat="hotkey in getHotkeys() track by $index" class="fb-tile mint centered">
+        <div ng-repeat="hotkey in getHotkeys() track by $index" class="fb-tile mint centered" ng-class="{'inactive' : !hotkey.active}">
             <div class="edit-btn" ng-click="openAddOrEditHotkeyModal(hotkey)"></div>
             <div class="header">
             <div class="title edit-btn-spacer">
