@@ -573,6 +573,16 @@
                             "Shift"
                         ];
 
+                        if (process.platform === 'darwin') {
+                            $scope.validControls.push("option", "command");
+                            $scope.validModifiers = [
+                                "Control",
+                                "Option",
+                                "Shift",
+                                "Command"
+                            ];
+                        }
+
                         // This sets the effect.modifier to an array of checked items.
                         $scope.modifierArray = function(list, item) {
                             $scope.effect.modifiers = service.getCheckedBoxes(list, item);
