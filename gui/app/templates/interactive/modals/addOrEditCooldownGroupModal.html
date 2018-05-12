@@ -3,7 +3,7 @@
   <h4 class="modal-title" id="newCooldownGroupLabel">{{isNewGroup ? 'Add New Cooldown Group' : 'Edit Cooldown Group - ' + cooldownGroup.groupName}}</h4>
 </div>
 <div class="modal-body">
-  <div class="general-group-settings">
+  <div class="general-button-settings">
     <div class="settings-title">
       <h3>General Settings</h3>
     </div>
@@ -21,7 +21,7 @@
     <h3>Which buttons should cool down together?</h3>
     <div class="searchbar-wrapper">
       <input type="text" class="form-control" placeholder="Search buttons" ng-model="controlSearch" style="padding-left: 27px;">
-      <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+      <span class="searchbar-icon"><i class="far fa-search"></i></span>
     </div>
     <div class="cooldown-group-buttons">
       <div ng-repeat="controlId in allControlIds | filter:controlSearch" class="cooldown-list-btn-wrapper">

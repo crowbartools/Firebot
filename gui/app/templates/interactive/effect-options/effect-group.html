@@ -1,4 +1,11 @@
-<p>All effects in the below list will be treated as one effect. This is useful when used in a Random Effect.</p>
+<p>All effects in the below list will be treated as one effect. This is useful when used in a Random Effect. You can optionally give it a label to help identify what this effect does in the root effect list.</p>
+
+<eos-container header="Effect Label">
+        <div class="input-group">
+                <span class="input-group-addon">Label</span>
+                <input ng-model="effect.effectLabel" type="text" class="form-control" type="text">
+        </div>
+</eos-container>
 
 <effect-list effects="effect.effectList" 
         trigger="{{trigger}}" 

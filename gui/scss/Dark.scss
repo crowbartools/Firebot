@@ -1,5 +1,5 @@
 $light-background-color: #2A2F42;
-$light-background-border: #00295D;
+$light-background-border: #262c40;
 $light-background-box-shadow: #2A2F42 +7%;
 $medium-background-color: #022B69;
 $dark-background-color: #141828;
@@ -21,6 +21,7 @@ $scrollbar-bar-color: $light-background-border + 40%;
 $left-nav-link-text-color: white;
 $left-nav-link-text-hover-color:#141828;
 $left-nav-link-text-selected-color: whitesmoke;
+$nav-link-bg: #141828;
 
 // Tiles
 $tile-text-color: white;
@@ -54,12 +55,64 @@ $change-board-dropdown-color: darkgray;
 $navbar-collapse-btn: orange;
 $downarrow-color: darkgray;
 
+// Chat Window
+$usercolor: #37aad5;
+$bannedcolor: red;
+$procolor: #b143d1;
+$modcolor: #36e53a;
+$staffcolor: #dcb235;
+$ownercolor: white;
+$alertcolor: red;
+$alert-bg-color: darkgray;
+$chatWhisperColor: #c235ef;
+$chatDeletedColor: gray;
+$chatTextColor: white;
+$chatBorder: #cecece;
+
+// Connection panel
+$connection-tile-bg: #3e4356;
+$connection-tile-title: white;
+$connection-status-bubble-border: #282c3a;
+
+// Bootstrap overrides
+$nav-border-bottom: #b1b1b1;
+$nav-border-hover: rgb(228, 228, 228);
+$nav-border-selected: white;
+$selected-tab-text-color: white;
+$unselected-tab-text-color: #c5c5c5;
+$default-btn-bg-color: #838488;
+$default-btn-text-color: white;
+$default-btn-border: #838488;
+$default-btn-hover-bg: #5c637a;
+$default-btn-hover-border: #5c637a;
+
+$form-control-bg: #525565;
+$form-control-border: transparent;
+$form-control-text: white;
+$add-on-group-bg: #7f808c;
+$add-on-group-border: transparent;
+$add-on-group-text: white;
+
+$dropdown-menu-bg: #3e4356;
+$dropdown-menu-border: #5a617b;
+$dropdown-menu-text: white;
+$dropdown-menu-divider-color: #5a617b;
+
+$muted-text-color: #e4e4e4;
+
+$alert-info-text-color: #f9fdff;
+$alert-info-bg: #3f7d9c;
+
+$alert-warning-text-color: #8a6d3b;
+$alert-warning-bg: #ffee73;
+
+$alert-danger-text-color: #f9fdff;
+$alert-danger-bg: #ce6c6c;
+
 // Import Core Styles
 @import './core/$importer';
 
 .list-group-item {
-    background-color: #323851;
-    border: 1px solid #1c2a3b;
+    background-color: #3E4356;
+    border: 1px solid #2a2f42;
 }
-
-

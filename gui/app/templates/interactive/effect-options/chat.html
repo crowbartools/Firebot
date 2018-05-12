@@ -1,40 +1,21 @@
-<eos-chatter-select effect="effect" title="Who should I chat as?"></eos-chatter-select>
+<eos-chatter-select effect="effect" title="Chat as"></eos-chatter-select>
 
-<div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>What should I say?</h4></div>
-    <div class="input-group">
-        <span class="input-group-addon" id="chat-text-effect-type">Message</span>
-        <!-- All we have to do here is define the model of the input as effect.message and now that property will get updated with this input is typed in -->
-        <input ng-model="effect.message" type="text" class="form-control" id="chat-text-setting" aria-describedby="chat-text-effect-type" maxlength="360">
-    </div>
-</div>
-<div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Who should I whisper this to? Leave blank to broadcast to everyone.</h4></div>
-    <div class="input-group">
-        <span class="input-group-addon" id="chat-whisper-effect-type">Whisper</span>
-        <!-- Exact same deal as the input before, define the model -->
-        <input ng-model="effect.whisper" type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type">
-    </div>
-</div>
-<div class="effect-info alert alert-info">
-    <div style="padding-bottom: 1em">
-        There are several variables you can use in your chat message. Please note that some can only be used in chat commands and others only in interactive buttons.
-    </div>
-    <div>
-        <h4>Interactive & Chat</h4>
-        <ul>
-            <li><b>$(user)</b> - Replaced by the name of the person running the button or using the command.</li>
-            <li><b>$(text)</b> - Replaced by the interactive button text or the chat command ID.</li>
-            <li><b>$(cost)</b> - Replaced by the cost of the command or button.</li>
-            <li><b>$(cooldown)</b> - Replaced by the cooldown of the command or button.</li>
-        </ul>
-        <h4>Chat Commands Only</h4>
-        <ul>
-            <li><b>$(arg1)</b> - Replaced by the argument provided after a chat command. For example $(arg1) pulls the first word after the command, but $(arg5) would pull the fifth word.</li>
-        </ul>
-        <h4>Events Only</h4>
-        <ul>
-            <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed. Meant to be used on subscriber events.</li>
-        </ul>
-    </div>
-</div>
+<eos-container header="Message To Send" pad-top="true">
+    <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40"></textarea>
+    <div style="color:red" ng-if="effect.message && effect.message.length > 360">Chat messages cannot be longer than 360 characters. This message will get automatically trimmed if the length is still too long after all replace variables have been populated.</div>
+    <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
+        <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Whisper</tooltip>
+            <input type="checkbox" ng-init="whisper = (effect.whisper != null && effect.whisper !== '')" ng-model="whisper" ng-click="effect.whisper = ''">
+            <div class="control__indicator"></div>
+        </label>
+        <div ng-show="whisper">
+            <div class="input-group">
+                <span class="input-group-addon" id="chat-whisper-effect-type">To</span>
+                <input ng-model="effect.whisper" type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type" placeholder="Username">
+            </div>
+        </div>
+    </div>   
+</eos-container>
+
+<eos-replace-variables></eos-replace-variables>
+

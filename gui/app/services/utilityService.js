@@ -4,26 +4,41 @@
     // This contains utility functions
     // Just inject "utilityService" into any controller that you want access to these
     const electron = require('electron');
-    const logger = require('../../lib/errorLogging.js');
 
     const _ = require('underscore')._;
 
+    const EffectType = require('../../lib/common/EffectType');
+
     angular
         .module('firebotApp')
-        .factory('utilityService', function($rootScope, $uibModal, listenerService) {
+        .factory('utilityService', function($rootScope, $uibModal, listenerService, logger) {
             let service = {};
 
             let copiedEffectsCache = {};
             service.copyEffects = function(type, effects) {
-                copiedEffectsCache[type] = JSON.parse(angular.toJson(effects));
+                copiedEffectsCache = JSON.parse(angular.toJson(effects));
             };
 
-            service.getCopiedEffects = function(type) {
-                return JSON.parse(JSON.stringify(copiedEffectsCache[type]));
+            service.getCopiedEffects = function(trigger) {
+                let effects = JSON.parse(JSON.stringify(copiedEffectsCache));
+
+                if (!Array.isArray(effects)) {
+                    effects = Object.values(effects);
+                }
+
+                let compatibleEffects = [];
+                effects.forEach(e => {
+                    if (EffectType.effectCanBeTriggered(e.type, trigger)) {
+                        compatibleEffects.push(e);
+                    }
+                });
+
+                return compatibleEffects;
             };
 
-            service.hasCopiedEffects = function(type) {
-                return copiedEffectsCache[type] != null;
+            service.hasCopiedEffects = function(trigger) {
+
+                return service.getCopiedEffects(trigger).length > 0;
             };
 
             let slidingModals = [];
@@ -98,11 +113,12 @@
 
                 // We dont want to do anything if there's no context
                 if (showModalContext == null) {
-                    console.log("showModal() was called but no context was provided!");
+                    logger.warn("showModal() was called but no context was provided!");
                     return;
                 }
 
                 // Pull values out of the context
+                let component = showModalContext.component;
                 let templateUrl = showModalContext.templateUrl;
                 let controllerFunc = showModalContext.controllerFunc;
                 let resolveObj = showModalContext.resolveObj || {};
@@ -114,18 +130,25 @@
                     return modalId;
                 };
 
-                // Show the modal
-                let modalInstance = $uibModal.open({
+                let modal = {
                     ariaLabelledBy: 'modal-title',
                     ariaDescribedBy: 'modal-body',
-                    templateUrl: templateUrl,
-                    controller: controllerFunc,
                     resolve: resolveObj,
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard,
                     backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
-                    windowClass: modalId
-                });
+                    windowClass: showModalContext.windowClass + " " + modalId
+                };
+
+                if (component != null && component.length !== 0) {
+                    modal.component = component;
+                } else {
+                    modal.templateUrl = templateUrl;
+                    modal.controller = controllerFunc;
+                }
+
+                // Show the modal
+                let modalInstance = $uibModal.open(modal);
 
                 // If no callbacks were defined, create blank ones. This avoids a console error
                 if (typeof closeCallback !== "function") {
@@ -142,13 +165,13 @@
             /*
              * FIRST TIME USE MODAL
              */
-            service.showSetupWizard = function() {
+            service.showSetupWizard = function(allowExit = false) {
                 let firstTimeUseModalContext = {
                     templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: "firstTimeUseModalController",
-                    keyboard: false,
-                    backdrop: 'static',
+                    keyboard: allowExit ? true : false,
+                    backdrop: allowExit ? undefined : 'static',
                     closeCallback: () => {}
                 };
                 service.showModal(firstTimeUseModalContext);
@@ -246,6 +269,8 @@
             service.showErrorModal = function(errorMessage) {
                 if (errorModalOpen && previousErrorMessage === errorMessage) {
                     return;
+                } else if (errorModalOpen) {
+                    return;
                 }
                 previousErrorMessage = errorMessage;
 
@@ -279,7 +304,7 @@
                 service.showModal(errorModalContext);
 
                 // Log error to file.
-                logger.log(errorMessage);
+                logger.error(errorMessage);
             };
 
             /*
@@ -407,7 +432,7 @@
                 service.showModal(infoModalContext);
 
                 // Log info to file.
-                logger.log(infoMessage);
+                logger.info(infoMessage);
             };
 
             /*
@@ -416,6 +441,8 @@
             service.showEditEffectModal = function (effect, index, triggerType, closeCallback) {
                 let showEditEffectContext = {
                     templateUrl: "editEffectModal.html",
+                    keyboard: false,
+                    backdrop: 'static',
                     controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, index, triggerType) => {
 
                         $scope.effect = JSON.parse(angular.toJson(effect));
@@ -573,6 +600,13 @@
 
             service.capitalize = function([first, ...rest]) {
                 return first.toUpperCase() + rest.join('').toLowerCase();
+            };
+
+            service.generateUuid = function() {
+                // RFC4122 version 4 compliant
+                return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                );
             };
 
             return service;

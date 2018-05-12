@@ -9,7 +9,7 @@
 
     angular
         .module('firebotApp')
-        .factory('websocketService', function (listenerService, settingsService) {
+        .factory('websocketService', function (logger, listenerService, settingsService, $timeout, $interval, $rootScope) {
             let service = {};
 
             // Setup the WebSocketServer with the saved port.
@@ -22,7 +22,7 @@
                 let showEventsPosition = data.showEventsPosition;
                 let showEventsHeight = data.showEventsHeight;
                 let showEventsWidth = data.showEventsWidth;
-                let showEventsDuration = parseInt(data.showEventsDuration);
+                let showEventsDuration = parseFloat(data.showEventsDuration);
                 let showEventsColor = data.showEventsColor;
                 let showEventsBackgroundColor = data.showEventsBackgroundColor;
                 let showEventsFontSize = data.showEventsFontSize;
@@ -75,11 +75,13 @@
             }
 
             function showImage(data) {
+                logger.debug("Showing image... ");
+
                 let filepath = data.filepath;
                 let imagePosition = data.imagePosition;
                 let imageHeight = data.imageHeight;
                 let imageWidth = data.imageWidth;
-                let imageDuration = parseInt(data.imageDuration);
+                let imageDuration = parseFloat(data.imageDuration);
 
                 // Set defaults if they werent filled out.
                 if (imagePosition === "" || imagePosition == null) {
@@ -122,7 +124,7 @@
                 let videoPosition = data.videoPosition;
                 let videoHeight = data.videoHeight;
                 let videoWidth = data.videoWidth;
-                let videoDuration = parseInt(data.videoDuration);
+                let videoDuration = parseFloat(data.videoDuration);
                 let videoVolume = data.videoVolume;
                 let videoStarttime = data.videoStarttime;
 
@@ -156,10 +158,19 @@
                     "enterAnimation": data.enterAnimation,
                     "exitAnimation": data.exitAnimation,
                     "overlayInstance": data.overlayInstance,
-                    "customCoords": data.customCoords
+                    "customCoords": data.customCoords,
+                    "loop": data.loop
                 };
 
                 service.broadcast(broadcastdata);
+            }
+
+            // Shows Text
+            // This function takes info given from the main process and then sends a request to the overlay to render it.
+            function showText(data) {
+                data.event = "text";
+                logger.debug("Recieved show text effect from backend, sending to overlay");
+                service.broadcast(data);
             }
 
             // Shows HTML
@@ -175,9 +186,34 @@
             service.broadcast = function(data) {
                 data = JSON.stringify(data);
                 wss.clients.forEach(function each(client) {
-                    client.send(data);
+                    if (client.readyState === 1) {
+                        client.send(data, (err) => {
+                            if (err) {
+                                logger.error(err);
+                            }
+                        });
+                    }
                 });
             };
+
+            service.hasClientsConnected = false;
+
+            wss.on('connection', function connection() {
+                service.hasClientsConnected = true;
+                $timeout(() => {
+                    $rootScope.$broadcast("connection:update", { type: "overlay", status: "connected" });
+                });
+            });
+
+            $interval(() => {
+                let prevValue = service.hasClientsConnected === true;
+                let hasConnectedClients = wss.clients.size > 0;
+                if (hasConnectedClients !== prevValue) {
+                    service.hasClientsConnected = hasConnectedClients;
+                    let status = service.hasClientsConnected ? "connected" : "warning";
+                    $rootScope.$broadcast("connection:update", { type: "overlay", status: status });
+                }
+            }, 1500);
 
             // Watches for an event from main process
             listenerService.registerListener(
@@ -192,28 +228,30 @@
                     showVideo(data);
                 });
 
-            // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_IMAGE },
                 (data) => {
                     showImage(data);
                 });
 
-            // Watches for an event from main process
-            listenerService.registerListener(
+            /*listenerService.registerListener(
                 { type: listenerService.ListenerType.API_BUTTON },
                 (data) => {
                     showImage(data);
-                });
+                });*/
 
-            // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_HTML },
                 (data) => {
                     showHtml(data);
                 });
 
-            // Watches for an event from main process
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.SHOW_TEXT },
+                (data) => {
+                    showText(data);
+                });
+
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CELEBREATE },
                 (data) => {

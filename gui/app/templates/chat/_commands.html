@@ -15,7 +15,7 @@
                 </span>
                 <div class="scene-tools">
                     <div class="commandTools" style="margin-right: 15px">
-                        <button ng-click="showAddCommandModal()" class="btn btn-default">+ Add Command</button>
+                        <button ng-click="showAddCommandModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Command</button>
                     </div>
                     <div class="btn-group" style="margin-right: 15px">
                     <label class="btn btn-default" ng-model="buttonViewModeCommands" uib-btn-radio="'grid'" ng-click="saveCurrentButtonViewMode('commands')" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
@@ -23,7 +23,7 @@
                     </div>
                     <div class="searchbar-wrapper">
                         <input type="text" class="form-control" placeholder="Search commands" ng-model="commandSearch" style="padding-left: 27px;">
-                        <span style="position: absolute; left: 8px; top: 7px;"><i class="far fa-search"></i></span>
+                        <span class="searchbar-icon"><i class="far fa-search"></i></span>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                                 <td>{{command.commandID}}</td>
                                 <td>{{command.trigger}}</td>
                                 <td><i class="fa fa-clock-o button-title-spark" aria-hidden="true"></i> {{command.cooldown ? command.cooldown : "0"}}</td>
-                                <td><span ng-repeat="role in command.permissions">{{role}}{{$last ? '' : ', '}}</span></td>
+                                <td><span ng-repeat="role in getCommandRoles(command)">{{role}}{{$last ? '' : ', '}}</span></td>
                                 <td><a class="clickable" ng-click="showAddCommandModal(command)"><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a></td>
                             </tr>
                         </tbody>

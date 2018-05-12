@@ -6,10 +6,11 @@
     const dataAccess = require('../../lib/common/data-access.js');
     const fs = require('fs');
     const ncp = require('ncp');
+    const unzipper = require('unzipper');
 
     angular
         .module('firebotApp')
-        .controller('firstTimeUseModalController', function ($rootScope, $scope, $uibModalInstance,
+        .controller('firstTimeUseModalController', function (logger, $rootScope, $scope, $uibModalInstance,
             $q, connectionService, boardService, settingsService, listenerService, groupsService) {
 
             function copyUserSettingsToUserDataFolder(filePath, callback) {
@@ -17,11 +18,12 @@
                 let destination = dataAccess.getPathInUserData("/user-settings");
                 ncp(source, destination, function (err) {
                     if (err) {
-                        console.log("Failed to copy 'user-settings'!");
+                        logger.error("Failed to copy 'user-settings'!");
+                        logger.error(err);
                         callback();
-                        return console.error(err);
+                        return;
                     }
-                    console.log('Copied "user-settings" to user data.');
+                    logger.info('Copied "user-settings" to user data.');
                     callback();
                 });
             }
@@ -52,8 +54,8 @@
                 }
             }
 
-            $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six'];
-            $scope.stepTitles = ['', 'Import Data', 'Get Signed In', 'Sync Controls From Mixer', 'Your First Board', ''];
+            $scope.steps = ['one', 'two', 'three', 'four', 'five', 'six', 'seven'];
+            $scope.stepTitles = ['', 'Import Data', 'Restore Backup', 'Get Signed In', 'Sync Controls From Mixer', 'Your First Board', ''];
             $scope.step = 0;
 
             $scope.isFirstStep = function () {
@@ -89,6 +91,7 @@
 
             $scope.handlePrevious = function () {
                 switch ($scope.step) {
+                case 3:
                 case 2:
                     $scope.step = 0;
                     break;
@@ -114,9 +117,9 @@
 
             $scope.canGoToNext = function() {
                 switch ($scope.step) {
-                case 2:
+                case 3:
                     return connectionService.accounts.streamer.isLoggedIn;
-                case 4:
+                case 5:
                     return $scope.hasBoardsLoaded;
                 }
                 return true;
@@ -129,8 +132,8 @@
                     switch ($scope.step) {
                     case 0:
                         break;
-                    case 2:
-                    case 4:
+                    case 3:
+                    case 5:
                         if (!$scope.canGoToNext() && !forceNext) return;
                         break;
                     }
@@ -140,9 +143,9 @@
 
             $scope.getTooltipText = function() {
                 switch ($scope.step) {
-                case 2:
+                case 3:
                     return "Please sign into your Streamer account.";
-                case 4:
+                case 5:
                     return "A board needs to be added.";
                 }
                 return "";
@@ -164,6 +167,59 @@
                     validateUserSettingsFolder(filepath);
                 });
             };
+
+            function validateBackupZip(filepath) {
+                let foundUserSettings = false;
+                return fs.createReadStream(filepath)
+                    .pipe(unzipper.Parse() //eslint-disable-line new-cap
+                        .on('entry', entry => {
+                            if (entry.path.includes("user-settings")) {
+                                foundUserSettings = true;
+                            }
+                            entry.autodrain();
+                        }))
+                    .promise()
+                    .then(() => {
+                        logger.info(foundUserSettings);
+                        return { valid: foundUserSettings, path: filepath };
+                    }, e => logger.error('error while reading backup zip', e));
+            }
+
+            function extractBackupToTemp(filepath) {
+                fs.createReadStream(filepath)
+                    .pipe(
+                        unzipper.Extract({ path: dataAccess.getPathInTmpDir("/restore") }) //eslint-disable-line new-cap
+                            .on('close', () => {
+                                logger.info("extracted backup!");
+                                let source = dataAccess.getPathInTmpDir("/restore/user-settings");
+                                copyUserSettingsToUserDataFolder(source, () => {
+                                    loadBoardsAndLogins();
+                                });
+                            }));
+            }
+
+            $scope.openBackupBrowser = function() {
+                let registerRequest = {
+                    type: listenerService.ListenerType.IMPORT_BACKUP_ZIP,
+                    runOnce: true,
+                    publishEvent: true
+                };
+                listenerService.registerListener(registerRequest, (filepath) => {
+                    validateBackupZip(filepath).then(resp => {
+                        if (resp.valid) {
+                            logger.debug("Backup is valid, attempting to extract...");
+                            let filepath = resp.path;
+                            extractBackupToTemp(filepath);
+                        } else {
+                            $scope.importErrorOccured = true;
+                            $scope.importErrorMessage = "Provided backup zip does not appear to be valid!";
+                        }
+                    }, e => {
+                        logger.warn("backup restore failed: " + e);
+                    });
+                });
+            };
+
             $scope.importErrorOccured = false;
             $scope.importErrorMessage = "";
 

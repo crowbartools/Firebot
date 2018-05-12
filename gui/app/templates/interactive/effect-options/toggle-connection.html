@@ -1,0 +1,18 @@
+<div class="alert alert-info">
+    This effect will toggle Firebot's connection to Mixer services. Most often used with hotkeys!
+</div>
+
+<eos-container header="Connections To Toggle">
+    <label class="control-fb control--checkbox"> Interactive
+        <input type="checkbox" ng-checked="serviceIsChecked('interactive')" ng-click="toggleService('interactive')">
+        <div class="control__indicator"></div>
+    </label>
+    <label class="control-fb control--checkbox"> Chat
+        <input type="checkbox" ng-checked="serviceIsChecked('chat')" ng-click="toggleService('chat')">
+        <div class="control__indicator"></div>
+    </label>
+    <label class="control-fb control--checkbox"> Constellation
+        <input type="checkbox" ng-checked="serviceIsChecked('constellation')" ng-click="toggleService('constellation')">
+        <div class="control__indicator"></div>
+    </label>
+</eos-container>

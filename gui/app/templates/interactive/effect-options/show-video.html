@@ -14,13 +14,7 @@
         </ul>
     </div>
     <div ng-show="effect.videoType == 'Local Video'" class="input-group">
-        <span class="input-group-btn">
-        <button 
-          class="btn btn-default show-video-effect-chooser" 
-          type="button"
-          ng-click="openFileExporer()">Choose File</button>
-        </span>
-        <input type="text" class="form-control show-video-effect-input" ng-model="effect.file">
+        <file-chooser model="effect.file" options="{ filters: [ {name: 'Video', extensions: ['mp4', 'webm', 'ogv']} ]}"></file-chooser>
     </div>
     <div ng-show="effect.videoType == 'YouTube Video'" class="input-group">
         <span class="input-group-addon">YouTube ID</span>
@@ -90,6 +84,10 @@
             type="number"
             ng-model="effect.length">
       </div>
+      <label class="control-fb control--checkbox" style="margin-top:15px;"> Loop <tooltip text="'Loop the video until the duration is reached.'"></tooltip>
+        <input type="checkbox" ng-model="effect.loop">
+        <div class="control__indicator"></div>
+      </label>
   </div>
   <div class="effect-specific-title"><h4>How loud should it be?</h4></div>
   <div class="volume-slider-wrapper">

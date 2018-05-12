@@ -11,8 +11,7 @@
                 effect: '='
             },
             template: `
-                <div class="effect-setting-container">
-                    <div class="effect-specific-title"><h4>{{$ctrl.title}}</h4></div>
+                <eos-container header="{{$ctrl.title}}">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="chat-effect-type">{{$ctrl.effect.chatter}}</span> <span class="caret"></span>
@@ -22,7 +21,7 @@
                             <li ng-if="$ctrl.botLoggedIn" ng-click="$ctrl.effect.chatter = 'Bot'"><a href>Bot</a></li>
                         </ul>
                     </div>
-                </div>
+                </eos-container>
                 `,
             controller: function(connectionService) {
                 let ctrl = this;

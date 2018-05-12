@@ -81,7 +81,7 @@
             $scope.resyncCurrentBoard = function() {
                 let board = boardService.getSelectedBoard();
                 if (board != null) {
-                    boardService.loadBoardWithId(board.versionId);
+                    boardService.loadBoardWithId(board.versionId, true);
                 }
 
                 // Refresh the interactive control cache.
@@ -105,7 +105,7 @@
             };
 
             $scope.getControlIdOrName = function(control) {
-                if (control.text == null || control.text === "") {
+                if (control.text == null || control.text.trim() === "") {
                     return `ID: ${control.controlId}`;
                 }
                 if ($scope.isHoverOverControlName(control.controlId)) {
@@ -205,8 +205,6 @@
                         // The model for the button we are editting
                         $scope.control = control;
 
-                        $scope.modalId = modalId;
-
                         // Default to active for controls unless told otherwise.
                         if ($scope.control.active != null) {
                             // Don't do anything because active has already been set to something.
@@ -214,6 +212,21 @@
                             $scope.control.active = true;
                         }
 
+                        // Temporary: Check group permissions radio button if control permissions are an array.
+                        // This can be removed after a few releases.
+                        if ($scope.control.permissions instanceof Array) {
+                            $scope.control.permissionType = "Group";
+                        }
+
+                        // Clear permissions array.
+                        // When a person clicks "individual" for permissions we want to clear out the array.
+                        $scope.clearPermissions = function() {
+                            if ($scope.control.permissions instanceof Array) {
+                                $scope.control.permissions = "";
+                            }
+                        };
+
+                        $scope.modalId = modalId;
                         utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
                             let modalElement = $("." + modalId).children();
                             return {

@@ -1,0 +1,30 @@
+<p class="muted" style="margin: 10px 0 20px;">Hotkeys can be used to manually trigger a button, command, or custom list of effects.</p>
+
+<div style="margin-bottom: 10px">
+    <button class="btn btn-primary" ng-click="openAddOrEditHotkeyModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Hotkey</button>
+</div>
+
+<content-block>
+    <div class = "interactive-group-container">
+        <div ng-repeat="hotkey in getHotkeys() track by $index" class="fb-tile mint centered" ng-class="{'inactive' : !hotkey.active}">
+            <div class="edit-btn" ng-click="openAddOrEditHotkeyModal(hotkey)"></div>
+            <div class="header">
+            <div class="title edit-btn-spacer">
+                {{hotkey.name}}
+            </div>
+            </div>
+            <div class="content row">
+            <div class="detail-wrapper nomargin">
+                <div class="detail" style="font-size: 1.6em;">
+                {{getDisplayForCode(hotkey.code)}}
+                </div>
+                <div class="detail-description">
+                {{hotkey.action.type}}
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="muted" ng-if="getHotkeys().length < 1">No hotkeys saved yet.</div>
+</content-block>

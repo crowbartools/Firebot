@@ -10,7 +10,7 @@
 
     angular
         .module('firebotApp')
-        .factory('eventsService', function () {
+        .factory('eventsService', function (logger) {
             let service = {};
             let events = [];
 
@@ -41,7 +41,6 @@
 
                 // Sort list and reverse it so that active events always come first.
                 eventsList = _.sortBy(eventsList, 'active');
-                eventsList = eventsList.reverse();
 
                 // Return our new list.
                 return eventsList;
@@ -78,7 +77,7 @@
                         events = rawEvents;
                     }
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
             };
 

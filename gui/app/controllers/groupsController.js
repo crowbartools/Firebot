@@ -47,7 +47,8 @@
                         };
 
                         $scope.deleteUserAtIndex = function(index) {
-                            $scope.group.users.splice(index, 1);
+                            let mappedIndex = index + (($scope.pagination.currentPage - 1) * $scope.pagination.pageSize);
+                            $scope.group.users.splice(mappedIndex, 1);
                         };
 
                         // When the user clicks "Save/Add", we want to pass the group back
@@ -58,13 +59,15 @@
                                 "Pro",
                                 "Subscribers",
                                 "Moderators",
-                                "Staff"
+                                "Channel Editors",
+                                "Staff",
+                                "Streamer"
                             ];
 
                             let groupName = $scope.group.groupName;
 
                             if (defaultGroups.includes(groupName)) {
-                                utilityService.showErrorModal("You cannot create a custom group with the same name as a default Mixer group (Pro, Subscribers, Moderators, Staff).");
+                                utilityService.showErrorModal("You cannot create a custom group with the same name as a default Mixer group (Pro, Subscribers, Moderators, Channel Editors, Staff, Streamer).");
                                 return;
                             }
 

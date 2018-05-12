@@ -31,6 +31,11 @@
                 return commandsService.getAllCommandsForType(commandType);
             };
 
+            // Return command roles array.
+            $scope.getCommandRoles = function (command) {
+                return commandsService.getCommandRoles(command);
+            };
+
 
             /**
       * MODAL CONTROL
@@ -63,6 +68,20 @@
 
                         $scope.effectListUpdated = function(effects) {
                             $scope.effects = effects;
+                        };
+
+                        // Temporary: Check group permissions radio button if control permissions are an array.
+                        // This can be removed after a few releases.
+                        if ($scope.command.permissions instanceof Array) {
+                            $scope.command.permissionType = "Group";
+                        }
+
+                        // Clear permissions array.
+                        // When a person clicks "individual" for permissions we want to clear out the array.
+                        $scope.clearPermissions = function() {
+                            if ($scope.command.permissions instanceof Array) {
+                                $scope.command.permissions = "";
+                            }
                         };
 
                         utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {

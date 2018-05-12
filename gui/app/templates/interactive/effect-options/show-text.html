@@ -1,0 +1,43 @@
+<eos-container header="Text">
+    <summernote ng-model="effect.text" config="editorOptions"></summernote>
+    
+    <eos-replace-variables></eos-replace-variables>
+</eos-container>
+
+<eos-container header="Dimensions" class="setting-padtop">
+    <p>This defines the size of the (invisible) box that the above text will be placed in.</p>
+    <div class="input-group">
+        <span class="input-group-addon">Width (in pixels)</span>
+        <input 
+          class="form-control" 
+          type="number"
+          min="1" max="10000"
+          ng-model="effect.width">
+        <span class="input-group-addon">Height (in pixels)</span>
+        <input 
+          class="form-control"
+          type="number"
+          min="1" max="10000"
+          ng-model="effect.height">
+    </div>
+</eos-container>
+
+<eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
+
+<eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
+
+<eos-container header="Duration" class="setting-padtop">
+    <div class="input-group">
+        <span class="input-group-addon">Seconds</span>
+        <input
+            class="form-control"
+            type="number"
+            ng-model="effect.duration">
+    </div>
+</eos-container>
+
+<eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
+
+<div class="effect-info alert alert-warning">
+    This effect requires the Firebot overlay to be loaded in your broadcasting software. <a href ng-click="showOverlayInfoModal(effect.overlayInstance)" style="text-decoration:underline">Learn more</a>
+</div>

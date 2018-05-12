@@ -1,13 +1,17 @@
-<div class="content-block">
+<div style="margin-bottom: 10px">
+  <button class="btn btn-primary" ng-click="showAddEditEventModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Event</button>
+</div>
+
+<div class="content-block live-events">
   <div class="content-block-body">
     <!-- Events Tab -->
     <div class="row events-container">
       
       <!-- Show each event -->
       <div class="events-cat-wrap" ng-repeat="category in eventsService.getCategories() track by $index">
-        <h3>{{category}}</h3>
+        <h3 ng-style="{'margin-top': $index === 0 ? '0' : '20px'}">{{category}}</h3>
         <div class = "interactive-group-container">
-          <div ng-repeat="event in eventsService.getEvents(category) track by $index" class="fb-tile grapefruit centered" ng-class="{'inactive' : !event.active && event.active != null}">
+          <div ng-repeat="event in eventsService.getEvents(category) track by $index" class="fb-tile grapefruit centered" ng-class="{'inactive' : !event.active}">
             <div class="edit-btn" ng-click="showAddEditEventModal(event)"></div>
             <div class="header">
               <div class="title edit-btn-spacer">
@@ -16,11 +20,10 @@
             </div>
             <div class="content row">
               <div class="detail-wrapper nomargin">
-                <div class="detail" style="font-size: 2em;">
-                  {{event.effectCount ? event.effectCount : "0"}}
-                </div>
-                <div class="detail-description">
-                  Effects
+                <span ng-if="event.active" class="play-button clickable event-play-button" ng-click="fireEventManually(event.eventType)"><i class="fas fa-play-circle"></i></span>
+                <span ng-if="!event.active" class="inactive-event-text">Inactive</span>
+                <div class="event-button-details">
+                  {{event.effectCount ? event.effectCount : "0"}} Effect(s)
                 </div>
               </div>
             </div>
@@ -28,9 +31,7 @@
         </div>
       </div>
 
-    </div>
-    <div style="padding-top: 15px">
-      <button class="btn btn-default" ng-click="showAddEditEventModal()"><i class="far fa-plus"></i> New Event</button>
+      <div ng-if="eventsService.getCategories().length === 0">No events saved yet.</div>
     </div>
   </div>
 </div>
@@ -58,6 +59,10 @@
       <div class="controls-fb-inline effect-setting-container setting-padtop">
           <label class="control-fb control--checkbox">Active Event
               <input type="checkbox" ng-model="event.active" aria-label="..." checked>
+              <div class="control__indicator"></div>
+          </label>
+          <label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when this event happens.'"></tooltip>
+              <input type="checkbox" ng-model="event.chatFeedAlert" aria-label="...">
               <div class="control__indicator"></div>
           </label>
           <label class="control-fb control--checkbox">Skip Logging

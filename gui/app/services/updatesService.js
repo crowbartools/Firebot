@@ -8,7 +8,7 @@
 
     angular
         .module('firebotApp')
-        .factory('updatesService', function ($q, $http, $sce, settingsService, utilityService, listenerService) {
+        .factory('updatesService', function (logger, $q, $http, $sce, settingsService, utilityService, listenerService) {
             // factory/service object
             let service = {};
 
@@ -51,7 +51,7 @@
                     }
                 }
 
-                return $q((resolve, reject) => {
+                return $q((resolve) => {
 
                     let firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
 
@@ -112,8 +112,8 @@
                         resolve(updateObject);
                     }, (error) => {
                         service.isCheckingForUpdates = false;
-                        console.log(error);
-                        reject(false);
+                        logger.error(error);
+                        resolve(false);
                     });
                 });
             };

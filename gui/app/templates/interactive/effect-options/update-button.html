@@ -40,6 +40,15 @@
         <div uib-collapse="!effect.properties.progress.shouldUpdate" style="margin: 0 0 15px 15px;">
             <input type="text" class="form-control" ng-model="effect.properties.progress.value" placeholder="Enter value or expression">
         </div>
+
+        <label class="control-fb control--checkbox"> Cooldown
+            <input type="checkbox" ng-model="effect.properties.cooldown.shouldUpdate">
+            <div class="control__indicator"></div>
+        </label>
+        <div uib-collapse="!effect.properties.cooldown.shouldUpdate" style="margin: 0 0 15px 15px;">
+            <input type="text" class="form-control" ng-model="effect.properties.cooldown.value" placeholder="Enter value or expression">
+        </div>
+
         <label class="control-fb control--checkbox"> Edit Active Status
             <input type="checkbox" ng-model="effect.properties.disabled.shouldUpdate">
             <div class="control__indicator"></div>

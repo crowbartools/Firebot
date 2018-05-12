@@ -3,10 +3,17 @@ module.exports = {
     // Indicated by a wrench @ https://eslint.org/docs/rules/
     "extends": "eslint:recommended",
 
-    "env":{
-        "node": true,
-        "browser": true,
-        "es6": true
+    "parserOptions": {
+        "ecmaVersion": 8,
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+        }
+    },
+    
+    "env": {
+      "node": true,
+      "browser": true,
+      "es6": true
     },
 
     // Project specific globals
@@ -17,7 +24,7 @@ module.exports = {
     "rules":{
 
         // Deviations from https://eslint.org/docs/rules/#possible-errors
-        "no-console": 0, // Enable the use of console
+        //"no-console": 0, // Enable the use of console
 
         // Deviations from < https://eslint.org/docs/rules/#best-practices >
         "eqeqeq": [2, "smart"],     // No coersion unless comparing against null

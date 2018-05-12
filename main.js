@@ -2,6 +2,8 @@
 
 const path = require('path');
 const url = require('url');
+const logger = require('./lib/logwrapper');
+logger.info("Starting Firebot...");
 
 const electron = require('electron');
 const {app, BrowserWindow, ipcMain, shell, dialog} = electron;
@@ -20,14 +22,14 @@ global.EffectType = Effect.EffectType;
 global.SCRIPTS_DIR = dataAccess.getPathInUserData('/user-settings/scripts/');
 
 // uncaught exception - log the error
-process.on('uncaughtException', console.error);
+process.on('uncaughtException', logger.error); //eslint-disable-line no-console
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 // Interactive handler
-let mixerConnect;
+let mixerConnect; //eslint-disable-line
 
 // Handle Squirrel events for windows machines
 if (process.platform === 'win32') {
@@ -40,7 +42,7 @@ if (process.platform === 'win32') {
         // cleanup from last instance
 
         // use case-fallthrough to do normal installation
-
+        break;
     case '--squirrel-install': //eslint-disable-line no-fallthrough
         // Optional - do things such as:
         // - Install desktop and start menu shortcuts
@@ -55,8 +57,12 @@ if (process.platform === 'win32') {
         child.on('close', app.quit);
         return;
 
-    case '--squirrel-uninstall':
+    case '--squirrel-uninstall': {
         // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
+
+        //attempt to delete the user-settings folder
+        let rimraf = require('rimraf');
+        rimraf.sync(dataAccess.getPathInUserData("/user-settings"));
 
         // Remove shortcuts
         cp = require('child_process');
@@ -65,7 +71,7 @@ if (process.platform === 'win32') {
         child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
         child.on('close', app.quit);
         return true;
-
+    }
     case '--squirrel-obsolete':
         // This is called on the outgoing version of your app before
         // we update to the new version - it's the opposite of
@@ -77,13 +83,14 @@ if (process.platform === 'win32') {
 
 
 function createWindow () {
-    console.log('createWindow called');
+    logger.info('Creating window...');
 
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1285,
         height: 720,
-        minWidth: 600,
+        minWidth: 300,
+        minHeight: 50,
         icon: path.join(__dirname, './gui/images/logo.ico'),
         show: false
     });
@@ -107,85 +114,108 @@ function createWindow () {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null;
+        global.renderWindow = null;
     });
 
     // Global var for main window.
     global.renderWindow = mainWindow;
 
-    // Register the Kill Switch
-    mixerConnect.shortcut();
+    logger.on('logging', (transport, level, msg, meta) => {
+        if (renderWindow != null && renderWindow.isDestroyed() === false) {
+            renderWindow.webContents.send('logging', {
+                transport: transport,
+                level: level,
+                msg: msg,
+                meta: meta
+            });
+        }
+    });
+
+    let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
+    hotkeyManager.refreshHotkeyCache();
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', function() {
-    let port;
-
+async function createDefaultFoldersAndFiles() {
+    logger.info("Ensuring default folders and files exist...");
     //create the root "firebot-data" folder in user-settings
     dataAccess.createFirebotDataDir();
 
     // Create the user-settings folder if it doesn't exist. It's required
     // for the folders below that are within it
-    dataAccess.userDataPathExists("/user-settings/").then(() => {
-        console.log("Can't find the user-settings folder, creating one now...");
-        dataAccess.makeDirInUserData("/user-settings");
-    });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/")) {
+        logger.info("Can't find the user-settings folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings");
+    }
+
+    if (!dataAccess.userDataPathExistsSync("/user-settings/hotkeys.json")) {
+        logger.info("Can't find the hotkeys file, creating the default one now...");
+        dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/user-settings/");
+    }
 
     // Create the scripts folder if it doesn't exist
-    dataAccess.userDataPathExists("/user-settings/scripts/").then(() => {
-        console.log("Can't find the scripts folder, creating one now...");
-        dataAccess.makeDirInUserData("/user-settings/scripts");
-    });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/scripts/")) {
+        logger.info("Can't find the scripts folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/scripts");
+    }
 
     // Create the scripts folder if it doesn't exist
-    dataAccess.userDataPathExists("/backups/").then(() => {
-        console.log("Can't find the backup folder, creating one now...");
-        dataAccess.makeDirInUserData("/backups");
-    });
+    if (!dataAccess.userDataPathExistsSync("/backups/")) {
+        logger.info("Can't find the backup folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/backups");
+    }
 
     // Update the port.js file
-    port = settings.getWebSocketPort();
+    let port = settings.getWebSocketPort();
     dataAccess.writeFileInWorkingDir(
         '/resources/overlay/js/port.js',
         `window.WEBSOCKET_PORT = ${port}`,
         () => {
-            console.log(`Set overlay port to: ${port}`);
+            logger.info(`Set overlay port to: ${port}`);
         });
 
     // Create the controls folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/controls")
-        .then(() => {
-            console.log("Can't find the controls folder, creating one now...");
-            dataAccess.makeDirInUserData("/user-settings/controls");
-        });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/controls")) {
+        logger.info("Can't find the controls folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/controls");
+    }
 
     // Create the logs folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/logs")
-        .then(() => {
-            console.log("Can't find the logs folder, creating one now...");
-            dataAccess.makeDirInUserData("/user-settings/logs");
-        });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/logs")) {
+        logger.info("Can't find the logs folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/logs");
+    }
 
     // Create the chat folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/chat")
-        .then(() => {
-            console.log("Can't find the chat folder, creating one now...");
-            dataAccess.makeDirInUserData("/user-settings/chat");
-        });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/chat")) {
+        logger.info("Can't find the chat folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/chat");
+    }
 
     // Create the chat folder if it doesn't exist.
-    dataAccess.userDataPathExists("/user-settings/live-events")
-        .then(() => {
-            console.log("Can't find the live-events folder, creating one now...");
-            dataAccess.makeDirInUserData("/user-settings/live-events");
-        });
+    if (!dataAccess.userDataPathExistsSync("/user-settings/live-events")) {
+        logger.info("Can't find the live-events folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/live-events");
+    }
+
+    logger.info("Finished verifying default folders and files.");
+}
+
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', async function() {
+
+    await createDefaultFoldersAndFiles();
 
     createWindow();
 
     backupManager.onceADayBackUpCheck();
+
     //start the REST api server
     apiServer.start();
+
+    return true;
 });
 
 // Quit when all windows are closed.
@@ -210,9 +240,9 @@ app.on('activate', () => {
 
 // When Quitting.
 app.on('will-quit', () => {
-
+    let hotkeyManager = require('./lib/hotkeys/hotkey-manager');
     // Unregister all shortcuts.
-    mixerConnect.shortcutUnregister();
+    hotkeyManager.unregisterAllHotkeys();
 });
 
 // Run Updater
@@ -232,19 +262,19 @@ ipcMain.on('downloadUpdate', () => {
     let updater = new GhReleases(options);
 
     updater.check((err, status) => {
-        console.log('Should we download an update? ' + status);
+        logger.info('Should we download an update? ' + status);
 
         // Download the update
         updater.download();
 
         if (err) {
-            console.log(err);
+            logger.info(err);
         }
     });
 
     // When an update has been downloaded
     updater.on('update-downloaded', () => {
-        console.log('Updated downloaded. Installing...');
+        logger.info('Updated downloaded. Installing...');
         //let the front end know and wait a few secs.
         renderWindow.webContents.send('updateDownloaded');
 
@@ -286,6 +316,30 @@ ipcMain.on('getImportFolderPath', (event, uniqueid) => {
     event.sender.send('gotImportFolderPath', {path: path, id: uniqueid});
 });
 
+// Get Get Backup Zip Path
+// This listens for an event from the render media.js file to open a dialog to get a filepath.
+ipcMain.on('getBackupZipPath', (event, uniqueid) => {
+    const backupsFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
+
+    let fs = require('fs');
+    let backupsFolderExists = false;
+    try {
+        backupsFolderExists = fs.existsSync(backupsFolderPath);
+    } catch (err) {
+        logger.warn("cannot check if backup folder exists", err);
+    }
+
+    let zipPath = dialog.showOpenDialog({
+        title: "Select backup zp",
+        buttonLabel: "Select Backup",
+        defaultPath: backupsFolderExists ? backupsFolderPath : undefined,
+        filters: [
+            {name: 'Zip', extensions: ['zip']}
+        ]
+    });
+    event.sender.send('gotBackupZipPath', {path: zipPath, id: uniqueid});
+});
+
 // Opens the firebot backup folder
 ipcMain.on('openBackupFolder', () => {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
@@ -296,10 +350,13 @@ ipcMain.on('openBackupFolder', () => {
 
 ipcMain.on('startBackup', (event, manualActivation = false) => {
     backupManager.startBackup(manualActivation, () => {
-        console.log("backup complete");
+        logger.info("backup complete");
         renderWindow.webContents.send('backupComplete', manualActivation);
     });
 });
+
+
+
 
 
 mixerConnect = require('./lib/common/mixer-interactive.js');

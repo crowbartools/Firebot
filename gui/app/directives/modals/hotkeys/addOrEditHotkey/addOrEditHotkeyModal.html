@@ -1,0 +1,81 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="$ctrl.dismiss()">&times;</span></button>
+    <h4 class="modal-title">
+        {{$ctrl.isNewHotkey ? 'Add New Hotkey' : 'Edit Hotkey' }}
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="function-button-settings">
+        <div class="controls-fb-inline" ng-if="!$ctrl.isNewHotkey">
+            <label class="control-fb control--checkbox">Is Active
+                <input type="checkbox" ng-model="$ctrl.hotkey.active">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+
+        <div class="alert alert-warning" ng-show="$ctrl.isNewHotkey">
+            <b>Things to keep in mind with hotkeys:</b>
+            <ul>
+                <li>Firebot cannot override hotkeys that are already reserved by other apps. </li>
+                <li>Firebot cannot detect if a hotkey is already in use by another app.</li>
+                <li>If you bind a hotkey to a single letter, you will not be able to type that letter in other applications.</li>
+            </ul>
+        </div>
+
+        <h3>Name</h3>
+        <input type="text" class="form-control" ng-model="$ctrl.hotkey.name">
+
+        <h3 style="margin-top:20px;">Hotkey</h3>
+        <hotkey-capture on-capture="$ctrl.onHotkeyCapture(hotkey)" hotkey="$ctrl.hotkey.code"></hotkey-capture>
+
+        <eos-collapsable-panel show-label="Advanced" hide-label="Hide Advanced">
+            <h4>Add Virtual Button</h4>
+            <p style="margin-bottom:10px";>While you can't press these buttons on a typical keyboard, some apps can still send them in key combinations.</p>
+            <dropdown-select options="['F13', 'F14', 'F15', 'F16', 'F17', 'F18', 'F19', 'F20', 'F21', 'F22', 'F23', 'F24']" ng-init="$ctrl.virtualBtn = 'F13'" selected="$ctrl.virtualBtn"></dropdown-select>
+            <button class="btn btn-link" ng-click="$ctrl.onAddVirtualButtonToHotkey()" style="color: #092965;">Add To Hotkey</button>
+        </eos-collapsable-panel>
+        
+        <h3 style="margin-top:20px;">Action</h3>
+        <dropdown-select options="['Run Button', 'Run Command', 'Run Effects']" selected="$ctrl.hotkey.action.type"></dropdown-select>
+
+        <div style="margin-top:20px;" ng-if="$ctrl.hotkey.action.type === 'Run Effects'">
+            <effect-list header="Effect List" effects="$ctrl.hotkey.action.metadata.effects" trigger="hotkey" update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
+        </div>
+
+        <div style="margin-top:20px;" ng-show="$ctrl.hotkey.action.type === 'Run Command'">
+            <h3>Command To Run</h3>
+            <ui-select ng-model="$ctrl.hotkey.action.metadata.command" theme="bootstrap">
+                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
+                <ui-select-choices repeat="command in $ctrl.commands | filter: { trigger: $select.search }" style="position:relative;">
+                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
+                    <small class="muted">Id: {{command.id}}</small>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        
+        <div style="margin-top:20px;" ng-show="$ctrl.hotkey.action.type === 'Run Button'">
+            <h3>Button To Run</h3>
+            <ui-select ng-model="$ctrl.hotkey.action.metadata.button" theme="bootstrap">
+                <ui-select-match placeholder="Select or search for a button... ">{{$select.selected.text}}</ui-select-match>
+                <ui-select-choices repeat="button in $ctrl.buttons | filter: { text: $select.search }" style="position:relative;">
+                    <div ng-bind-html="button.text | highlight: $select.search"></div>
+                    <small class="muted"><b>Id:</b> {{button.id}} | <b>Scene:</b> {{button.scene}} | <b>Board:</b> {{button.board.name}}</small>
+                </ui-select-choices>
+            </ui-select>
+            
+            <div class="effect-info alert alert-warning">
+                Hotkeys that trigger a button only work if the button is in the currently active board. 
+                <br><br>
+                Also keep in mind certain effects on buttons (like Change Group) won't work with hoykeys as there is no viewer associated with the button "press".
+            </div>
+                  
+        </div>
+  
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewHotkey" ng-click="$ctrl.delete()">Delete Hotkey</button>
+    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
+</div>
