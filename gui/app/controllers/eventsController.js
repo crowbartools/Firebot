@@ -8,22 +8,192 @@
     .controller("eventsController", function(
       $scope,
       eventsService,
-      utilityService
+      utilityService,
+      settingsService
     ) {
       $scope.eventsService = eventsService;
-      /*
-             * On tab load
-             */
-      eventsService.loadEvents();
+      $scope.eventsViewMode = settingsService.getButtonViewMode("liveEvents");
+
+      /**
+       *  Returns an integer of total number of event groups.
+       */
+      $scope.getEventGroupCount = function() {
+        let allEventGroups = eventsService.getAllEventGroups();
+
+        if (allEventGroups != null) {
+          return Object.keys(eventsService.getAllEventGroups()).length;
+        }
+
+        return 0;
+      };
+
+      /**
+       * Returns an integer of total number of events in selected event group.
+       */
+      $scope.getGroupEventsCount = function() {
+        let groupJson = eventsService.getActiveEventGroupJson(),
+          eventsLength = 0;
+
+        if (groupJson != null && groupJson.events != null) {
+          eventsLength = Object.keys(groupJson.events).length;
+        }
+
+        if (eventsLength != null) {
+          return eventsLength;
+        }
+
+        return 0;
+      };
+
+      /**
+       * Returns an integer of total number of effects in an event.
+       */
+      $scope.getEventEffectsCount = function(eventId) {
+        let groupJson = eventsService.getActiveEventGroupJson(),
+          eventJson = groupJson.events[eventId],
+          effectsLength = 0;
+
+        if (eventJson != null && eventJson.effects != null) {
+          effectsLength = Object.keys(eventJson.effects).length;
+        }
+
+        if (effectsLength != null) {
+          return effectsLength;
+        }
+
+        return 0;
+      };
+
+      /**
+       * Returns full event json.
+       */
+      $scope.getAllEventGroups = function() {
+        return eventsService.getAllEventGroups();
+      };
+
+      /**
+       * Returns the json for the selected event group.
+       */
+      $scope.selectedEventGroup = function() {
+        return eventsService.getActiveEventGroupJson();
+      };
+
+      /**
+       * Returns events from current group in an array for the ui.
+       */
+      $scope.selectedEventsArray = function() {
+        let groupJson = eventsService.getActiveEventGroupJson(),
+          eventsJson = groupJson.events,
+          finalArray = [];
+
+        for (event in eventsJson) {
+          if (event != null) {
+            finalArray.push(eventsJson[event]);
+          }
+        }
+
+        return finalArray;
+      };
+
+      /**
+       * Switches to a new event group.
+       */
+      $scope.switchToEventGroup = function(groupId) {
+        eventsService.setActiveEventGroup(groupId);
+      };
 
       // Fire event manually
-      $scope.fireEventManually = function(eventId) {
-        ipcRenderer.send("manualEvent", eventId);
+      $scope.fireEventManually = function(event) {
+        ipcRenderer.send("manualEvent", event);
+      };
+
+      // Set Events view mode.
+      $scope.saveCurrentEventsViewMode = function(mode, type) {
+        $scope.eventsViewMode = mode;
+        settingsService.setButtonViewMode(mode, type);
+      };
+
+      /**
+       * Gets user friendly event name from the EventType list.
+       */
+      $scope.friendlyEventTypeName = function(type) {
+        return eventsService.getEventTypeName(type);
+      };
+
+      /**
+       * Toggles the active state of a given event id.
+       * @param {*} eventId;
+       */
+      $scope.toggleEventActiveState = function(eventId) {
+        eventsService.toggleEventActiveState(eventId);
       };
 
       /*
-             * ADD/EDIT EVENT MODAL
-             */
+      * ADD Event Group Modal
+      */
+      $scope.showEventGroupModal = function(eventGroupToEdit) {
+        let showEventGroupModalContext = {
+          templateUrl: "showEventGroupModal.html",
+          // This is the controller to be used for the modal.
+          controllerFunc: (
+            $scope,
+            $uibModalInstance,
+            utilityService,
+            eventGroupToEdit
+          ) => {
+            // The model for the board id text field
+            $scope.eventGroup = {
+              name: ""
+            };
+
+            $scope.isNewGroup = eventGroupToEdit == null;
+
+            if (!$scope.isNewGroup) {
+              $scope.eventGroup = $.extend(true, {}, eventGroupToEdit);
+            }
+
+            // When the user clicks "Save/Add", we want to pass the event back
+            $scope.saveChanges = function(shouldDelete) {
+              shouldDelete = shouldDelete === true;
+
+              let name = $scope.eventGroup.name;
+
+              if (!shouldDelete && name === "") return;
+              $uibModalInstance.close({
+                shouldDelete: shouldDelete,
+                eventGroup: shouldDelete ? eventGroupToEdit : $scope.eventGroup
+              });
+            };
+
+            // When they hit cancel or click outside the modal, we dont want to do anything
+            $scope.dismiss = function() {
+              $uibModalInstance.dismiss();
+            };
+          },
+          resolveObj: {
+            eventGroupToEdit: () => {
+              if (eventGroupToEdit != null) {
+                return $.extend(true, {}, eventGroupToEdit);
+              }
+              return null;
+            }
+          },
+          // The callback to run after the modal closed via "Save changes" or "Delete"
+          closeCallback: context => {
+            let eventGroup = context.eventGroup;
+            if (context.shouldDelete === true) {
+              eventsService.removeEventGroup(eventGroup.id);
+            } else {
+              eventsService.addOrUpdateEventGroup(eventGroup);
+            }
+          }
+        };
+        utilityService.showModal(showEventGroupModalContext);
+      };
+
+      /*
+      * ADD/EDIT EVENT MODAL
+      */
       $scope.showAddEditEventModal = function(eventToEdit) {
         let addEditEventsModalContext = {
           templateUrl: "addEditEventModal.html",
@@ -38,7 +208,7 @@
 
             // The model for the board id text field
             $scope.event = {
-              eventName: ""
+              name: ""
             };
 
             $scope.isNewEvent = eventToEdit == null;
@@ -47,13 +217,13 @@
               $scope.event = $.extend(true, {}, eventToEdit);
             }
 
-            $scope.selectedEventTypeName = $scope.event.eventType
-              ? EventType.getEvent($scope.event.eventType).name
+            $scope.selectedEventTypeName = $scope.event.type
+              ? EventType.getEvent($scope.event.type).name
               : "Pick one";
 
             $scope.eventTypeSelected = function(event) {
               $scope.selectedEventTypeName = event.name;
-              $scope.event.eventType = event.id;
+              $scope.event.type = event.id;
             };
 
             $scope.effectListUpdated = function(effects) {
@@ -64,9 +234,9 @@
             $scope.saveChanges = function(shouldDelete) {
               shouldDelete = shouldDelete === true;
 
-              let eventName = $scope.event.eventName;
+              let name = $scope.event.name;
 
-              if (!shouldDelete && eventName === "") return;
+              if (!shouldDelete && name === "") return;
               $uibModalInstance.close({
                 shouldDelete: shouldDelete,
                 event: shouldDelete ? eventToEdit : $scope.event
@@ -90,17 +260,48 @@
           closeCallback: context => {
             let event = context.event;
             if (context.shouldDelete === true) {
-              eventsService.removeEvent(event.eventName);
+              eventsService.removeEvent(event.id);
             } else {
-              let previousEventName = null;
-              if (eventToEdit != null) {
-                previousEventName = eventToEdit.eventName;
-              }
-              eventsService.addOrUpdateEvent(event, previousEventName);
+              eventsService.addOrUpdateEvent(event);
             }
           }
         };
         utilityService.showModal(addEditEventsModalContext);
+      };
+
+      /**
+       * Delete Event Modal
+       */
+      $scope.showEventDeleteModal = function(event) {
+        utilityService
+          .showConfirmationModal({
+            title: "Delete Event",
+            question: "Are you sure you'd like to delete this event?",
+            confirmLabel: "Delete"
+          })
+          .then(confirmed => {
+            if (confirmed) {
+              console.log(event);
+              eventsService.removeEvent(event.id);
+            }
+          });
+      };
+
+      /**
+       * Delete Event Group Modal
+       */
+      $scope.showEventGroupDeleteModal = function(eventGroup) {
+        utilityService
+          .showConfirmationModal({
+            title: "Delete Event Group",
+            question: "Are you sure you'd like to delete this event group?",
+            confirmLabel: "Delete"
+          })
+          .then(confirmed => {
+            if (confirmed) {
+              eventsService.removeEventGroup(eventGroup.id);
+            }
+          });
       };
     });
 })(window.jQuery);

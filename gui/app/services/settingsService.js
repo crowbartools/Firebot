@@ -331,6 +331,14 @@
           );
           return buttonViewMode != null ? buttonViewMode : "list";
         }
+
+        if (type === "liveEvents") {
+          let buttonViewMode = getDataFromFile(
+            "/settings/buttonViewModeLiveEvents"
+          );
+          return buttonViewMode != null ? buttonViewMode : "grid";
+        }
+
         let buttonViewMode = getDataFromFile("/settings/buttonViewMode");
         return buttonViewMode != null ? buttonViewMode : "grid";
       };
@@ -338,6 +346,8 @@
       service.setButtonViewMode = function(buttonViewMode, type) {
         if (type === "commands") {
           pushDataToFile("/settings/buttonViewModeCommands", buttonViewMode);
+        } else if (type === "liveEvents") {
+          pushDataToFile("/settings/buttonViewModeLiveEvents", buttonViewMode);
         } else {
           pushDataToFile("/settings/buttonViewMode", buttonViewMode);
         }

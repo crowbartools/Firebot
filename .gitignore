@@ -100,3 +100,5 @@ doc/
 
 ## File-based project format:
 *.iws
+
+\.idea/
