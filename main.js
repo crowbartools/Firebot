@@ -7,6 +7,7 @@ logger.info("Starting Firebot...");
 
 const electron = require('electron');
 const {app, BrowserWindow, ipcMain, shell, dialog} = electron;
+const windowStateKeeper = require('electron-window-state');
 const GhReleases = require('electron-gh-releases');
 const settings = require('./lib/common/settings-access').settings;
 const dataAccess = require('./lib/common/data-access.js');
@@ -85,15 +86,28 @@ if (process.platform === 'win32') {
 function createWindow () {
     logger.info('Creating window...');
 
+    let mainWindowState = windowStateKeeper({
+        defaultWidth: 1285,
+        defaultHeight: 720
+    });
+
+
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 1285,
-        height: 720,
+        x: mainWindowState.x,
+        y: mainWindowState.y,
+        width: mainWindowState.width,
+        height: mainWindowState.height,
         minWidth: 300,
         minHeight: 50,
         icon: path.join(__dirname, './gui/images/logo.ico'),
         show: false
     });
+
+    // register listeners on the window, so we can update the state
+    // automatically (the listeners will be removed when the window is closed)
+    // and restore the maximized or full screen state
+    mainWindowState.manage(mainWindow);
 
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
@@ -101,6 +115,8 @@ function createWindow () {
         protocol: 'file:',
         slashes: true
     }));
+
+
 
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on('did-finish-load', () => {
