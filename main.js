@@ -18,7 +18,7 @@ const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
 const connectionManager = require("./lib/common/connection-manager");
 const apiServer = require("./api/apiServer.js");
-const userdb = require('./lib/database/userDatabase');
+const userdb = require("./lib/database/userDatabase");
 const currencydb = require("./lib/database/currencyDatabase");
 
 const Effect = require("./lib/common/EffectType");
