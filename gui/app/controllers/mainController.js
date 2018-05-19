@@ -3,6 +3,8 @@
   const electron = require("electron");
   const shell = electron.shell;
 
+  agGrid.initialiseAgGridWithAngular1(angular);
+
   let app = angular.module("firebotApp", [
     "ngAnimate",
     "ngRoute",
@@ -15,7 +17,8 @@
     "luegg.directives",
     "summernote",
     "pascalprecht.translate",
-    "ngToast"
+    "ngToast",
+    "agGrid"
   ]);
 
   app.factory("$exceptionHandler", function(logger) {

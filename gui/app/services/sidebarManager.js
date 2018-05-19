@@ -100,6 +100,11 @@
         .when("/timers", {
           templateUrl: "./templates/_timers.html",
           controller: "timersController"
+        })
+
+        .when("/viewers", {
+          templateUrl: "./templates/viewers/_viewers.html",
+          controller: "viewersController"
         });
     }
   ]);
