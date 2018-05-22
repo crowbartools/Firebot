@@ -8,29 +8,40 @@
 
   angular
     .module("firebotApp")
-    .controller("viewersController", function($scope, viewersService) {
+    .controller("viewersController", function($scope, viewersService, ngToast, connectionService) {
       //This handles the Viewers tab
 
-      $scope.gridOptions = {
-        columnDefs: [
-          { headerName: "Username", field: "username" },
-          { headerName: "Last Seen", field: "lastSeen" }
-        ],
-        rowData: [],
-        pagination: true,
-        paginationAutoPageSize: true,
-          enableSorting: true,
-          enableFilter: true
-      };
+      $scope.gridOptions = viewersService.gridOptions;
 
+      // Send request to main process to get all of our rows.
       function updateRowData() {
         ipcRenderer.send("request-viewer-db");
       }
 
+      // Refresh the viewer table on button click.
+      $scope.refreshViewerTable = function() {
+        updateRowData();
+
+        ngToast.create({
+          className: "success",
+          content: "Yay you done did it"
+        });
+      };
+
+      // Receives table data from main process.
       ipcRenderer.on("viewer-db-response", function(event, rows) {
         $scope.gridOptions.api.setRowData(rows);
       });
 
+      // Update table rows when first visiting the page.
       updateRowData();
+
+      if (!connectionService.connectedToChat) {
+        ngToast.create({
+          content: "You need to connect to chat to something something",
+          dismissButton: true,
+          dismissOnTimeout: false
+        });
+      }
     });
 })();
