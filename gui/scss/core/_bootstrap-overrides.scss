@@ -244,11 +244,11 @@
 // This is for pages that use tabbed navigation. IE: Commands
 .fb-commands-tab-wrapper {
     height: 55px;
-    background: white;
+    background: $fb-tab-wrapper-bg;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    border-bottom: 1px solid #eaecec;
+    border-bottom: 1px solid $fb-tab-wrapper-border-color;
   }
   
   .fb-tabs {
@@ -264,7 +264,7 @@
     }
     & > li > a:hover {
       border-color: transparent;
-      border-bottom: 3px solid #bfb7b7;
+      border-bottom: 3px solid $fb-tab-border-bottom-hover;
       color: black;
     }
     & > li > a {
