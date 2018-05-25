@@ -30,6 +30,10 @@
                 case EffectList.HTML:
                     controller = ($scope, utilityService) => {
 
+                        if ($scope.effect.length == null) {
+                            $scope.effect.length = 10;
+                        }
+
                         $scope.showOverlayInfoModal = function(overlayInstance) {
                             utilityService.showOverlayInfoModal(overlayInstance);
                         };

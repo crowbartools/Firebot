@@ -200,6 +200,8 @@
             $scope.showEditControlEffectsModal = function(controlButton) {
                 let editControlEffectsModalContext = {
                     templateUrl: "./templates/interactive/modals/editControlEffectsModal.html",
+                    keyboard: false,
+                    backdrop: 'static',
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModal, $uibModalInstance, groupsService, effectHelperService, utilityService, control, modalId) => {
                         // The model for the button we are editting
