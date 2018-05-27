@@ -376,10 +376,10 @@ table.fb-table {
   border-spacing: 0 10px; /* NOTE: syntax is <horizontal value> <vertical value> */
   & td {
     height: 45px;
-    background: white;
+    background: $fb-table-row-bg;
   }
   & tbody tr {
-    box-shadow: 1px 1px 5px #dedede;
+    box-shadow: $fb-table-shadow;
   }
   & tr > :first-child {
     border-top-left-radius: 5px;

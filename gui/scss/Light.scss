@@ -115,7 +115,10 @@ $fb-tab-wrapper-bg: white;
 $fb-tab-wrapper-border-color: #eaecec;
 $fb-tab-border-bottom-hover: #bfb7b7;
 
-$fb-table-row-bg: #3e4356;
+$fb-tab-title-color: black;
+
+$fb-table-row-bg: white;
+$fb-table-shadow: 1px 1px 5px #dedede;
 
 // Import Core Styles
 @import './core/$importer';

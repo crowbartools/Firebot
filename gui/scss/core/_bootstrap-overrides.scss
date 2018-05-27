@@ -279,10 +279,10 @@
 // This is for pages that do NOT use tabbed navigation. IE: Live Events
 .fb-notab-header-wrapper{
     height: 55px;
-    background: white;
+    background: $fb-tab-wrapper-bg;
     display: flex;
     align-items: flex-end;
-    border-bottom: 1px solid #eaecec;
+    border-bottom: 1px solid $fb-tab-wrapper-border-color;
 
     .fb-notab-title{
         margin: 0 10px;
@@ -290,11 +290,10 @@
         border-bottom: 0px solid #eaecec;
         font-weight: 600;
         font-size: 12px;
-        color: #2aa1c0;
+        color: $fb-tab-title-color;
         background-color: transparent;
         border: 1px solid transparent;
         text-transform: uppercase;
-        border-bottom: 3px solid #2aa1c0;
     }
 
     .fb-notab-dropdown .noselect{

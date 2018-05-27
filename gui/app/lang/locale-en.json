@@ -52,6 +52,7 @@
     "LIVE_EVENTS":{
         "EVENTS": "Events",
         "EVENT_GROUPS": "Event Groups",
+        "CHANGE_GROUP": "Change Group",
         "CHANGE_EVENT_GROUP": {
             "CHANGE_BOARD": "Change Event Group",
             "ADD_NEW_EVENT_GROUP": "Add New Event Group",
