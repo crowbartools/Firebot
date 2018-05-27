@@ -8,7 +8,12 @@
 
   angular
     .module("firebotApp")
-    .controller("viewersController", function($scope, viewersService, ngToast, connectionService) {
+    .controller("viewersController", function(
+      $scope,
+      viewersService,
+      ngToast,
+      connectionService
+    ) {
       //This handles the Viewers tab
 
       $scope.gridOptions = viewersService.gridOptions;
@@ -24,7 +29,7 @@
 
         ngToast.create({
           className: "success",
-          content: "Yay you done did it"
+          content: "Success!"
         });
       };
 
@@ -38,7 +43,8 @@
 
       if (!connectionService.connectedToChat) {
         ngToast.create({
-          content: "You need to connect to chat to something something",
+          content:
+            "A chat connection is required for many systems here to work.",
           dismissButton: true,
           dismissOnTimeout: false
         });
