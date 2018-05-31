@@ -10,7 +10,7 @@
             </span>
         </div>
         <div class="chat-users" style="height: 100%;">
-            <div class="chatUser" ng-attr-role="{{getRole(user)}}" ng-repeat="user in getChatUsers()">
+            <div class="chatUser" ng-attr-role="{{getUserRole(user)}}" ng-repeat="user in getChatUsers() track by user.username">
                     {{user.username}}
             </div>
         </div>       
@@ -22,7 +22,11 @@
                 <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
             </div>
             <div class="chat-window-message-wrapper">
-                <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message),isTagged: message.tagged, isCompact: compactDisplay }" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
+                <div class="chat-message" 
+                    ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message),isTagged: message.tagged, isCompact: compactDisplay }" 
+                    ng-attr-role="{{getRole(message)}}" 
+                    ng-attr-messageId="{{getMessageId(message)}}" 
+                    ng-repeat="message in getMessages() | limitTo:messageDisplayLimit track by message.id">
                     <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)">
                         <span>
                             <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">

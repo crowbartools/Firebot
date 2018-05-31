@@ -24,6 +24,10 @@
 
             $scope.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
 
+            // the number of messages to show visually, we have to make the number negative so angular knows to limit
+            // from the end of the array instead of the front
+            $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
+
             $scope.toggleCompactMode = function() {
                 $scope.compactDisplay = !$scope.compactDisplay;
                 settingsService.setChatCompactMode($scope.compactDisplay);
@@ -41,18 +45,12 @@
 
             // Takes a complete message packet and checks to see if it's a whisper.
             $scope.isWhisper = function(data) {
-                if (data.message.meta.whisper === true) {
-                    return true;
-                }
-                return false;
+                return data.whispser;
             };
 
             // Takes a complete message packet and checks to see if it's a /me.
             $scope.isAction = function(data) {
-                if (data.message.meta.me === true) {
-                    return true;
-                }
-                return false;
+                return data.action;
             };
 
             // Takes a compelete message packet and checks to see if it's deleted.
@@ -66,24 +64,19 @@
             // Returns first role in set of roles which should be their primary.
             // Filters out subscriber, because we have a separate function for that and it doesnt have it's own chat color.
             $scope.getRole = function(data) {
-                // Because mixer chat user packets and api user packets are different, we check for both formats of user_role.
-                let roles = data.user_roles,
-                    newRoles = [];
+                return data.mainColorRole;
+            };
 
-                newRoles = roles.filter(role => role !== "Subscriber");
-                return newRoles[0];
+            // Returns first role in set of roles which should be their primary.
+            // Filters out subscriber, because we have a separate function for that and it doesnt have it's own chat color.
+            $scope.getUserRole = function(user) {
+                // Because mixer chat user packets and api user packets are different, we check for both formats of user_role.
+                return user.user_roles.find(r => r !== "Subscriber");
             };
 
             // Returns true if user is a sub.
             $scope.isSubscriber = function(data) {
-                let roles = data.user_roles,
-                    newRoles = roles.find(role => role === "Subscriber");
-
-                if (newRoles != null) {
-                    return true;
-                }
-
-                return false;
+                return data.subscriber;
             };
 
             // Returns sub icon url if there is one, else returns false.
@@ -103,7 +96,7 @@
 
             $scope.getTimeStamp = function(message) {
                 //Todo: create setting to allow user to switch to 24 hr time
-                return moment(message.date).format('h:mm A');
+                return message.timestamp;
             };
 
             // This tells us if the chat feed is on or not.
