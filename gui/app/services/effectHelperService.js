@@ -296,6 +296,10 @@
 
                 case EffectList.CELEBRATION:
                     controller = ($scope) => {
+                        
+                        $scope.showOverlayInfoModal = function(overlayInstance) {
+                            utilityService.showOverlayInfoModal(overlayInstance);
+                        };
 
                         $scope.celebrationTypes = [
                             "Fireworks"
