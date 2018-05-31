@@ -31,9 +31,9 @@
                     <div style="padding-left: 10px">
                         <div class="chat-username" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, msgId)">
                             <b>{{message.user_name}}</b>
-                            <span class="chatSubIcon" ng-if="isSubscriber(message)">
+                            <!--<span class="chatSubIcon" ng-if="isSubscriber(message)">
                                 <img ng-src="{{getSubIcon(message)}}">
-                            </span>
+                            </span>-->
                             <span ng-if="!message.historical && !compactDisplay" class="muted chat-timestamp">
                                 {{getTimeStamp(message)}}
                             </span>
