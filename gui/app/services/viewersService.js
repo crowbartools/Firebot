@@ -38,6 +38,16 @@
       }
     }
 
+    const defaultColDefs = [
+      { headerName: "UserId", field: "_id", hide: true, editable: false },
+      {
+        headerName: "Username",
+        field: "username",
+        sort: "desc",
+        editable: false
+      }
+    ];
+
     // This manages the entire DB for the UI.
     // https://www.ag-grid.com
     // To add or remove rows, change here and also in /lib/userDatabase.js getRowsForUi();
@@ -49,14 +59,15 @@
           field: "username",
           sort: "desc",
           editable: false
-        },
-        { headerName: "Last Seen (MM/DD/YY)", field: "lastSeen" }
+        }
       ],
       rowData: [],
       pagination: true,
       paginationAutoPageSize: true,
       enableSorting: true,
       enableFilter: true,
+      enableColResize: true,
+      suppressMenuHide: true,
       defaultColDef: {
         editable: true
       },
@@ -72,6 +83,63 @@
         onCellChanged(event);
       }
     };
+
+    // Definitions of all of the fields that we allow to be shown in the UI.
+    service.fieldDefs = {
+      lastSeen: {
+        headerName: "Last Seen",
+        field: "lastSeen",
+        editable: true
+      },
+      minutesInChannel: {
+        headerName: "View Time",
+        field: "minutesInChannel",
+        editable: false
+      },
+      joinDate: {
+        headerName: "Join Date",
+        field: "joinDate",
+        editable: true
+      }
+    };
+
+    /*
+     Example columnPrefs:
+     {
+       lastSeen: true,
+       joinDate: false,
+       minutesInChannel: true
+     }
+    */
+    service.setColumns = function(columnPrefs) {
+      // copy over default defs
+      let customColumnDefs = service.getColumnDefsforPrefs(columnPrefs);
+
+      service.gridOptions.api.setColumnDefs(customColumnDefs);
+
+      // get the grid to space out its columns
+      service.gridOptions.api.refreshView();
+    };
+
+    service.getColumnDefsforPrefs = function(columnPrefs) {
+      let customColumnDefs = JSON.parse(JSON.stringify(defaultColDefs));
+
+      if (columnPrefs.lastSeen) {
+        customColumnDefs.push(service.fieldDefs.lastSeen);
+      }
+
+      if (columnPrefs.joinDate) {
+        customColumnDefs.push(service.fieldDefs.joinDate);
+      }
+
+      if (columnPrefs.minutesInChannel) {
+        customColumnDefs.push(service.fieldDefs.minutesInChannel);
+      }
+
+      return customColumnDefs;
+    };
+
+    service.sawWarningAlert = false;
 
     return service;
   });

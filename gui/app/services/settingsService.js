@@ -534,6 +534,15 @@
         pushDataToFile("/settings/debugMode", enabled === true);
       };
 
+      service.getViewerColumnPreferences = function() {
+        let prefs = getDataFromFile("/settings/viewerColumnPreferences");
+        return prefs != null ? prefs : { lastSeen: true };
+      };
+
+      service.setViewerColumnPreferences = function(prefs) {
+        pushDataToFile("/settings/viewerColumnPreferences", prefs);
+      };
+
       return service;
     });
 })();
