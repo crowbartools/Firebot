@@ -84,18 +84,25 @@
                         let activationState = createActivationState($parse, $attrs[attrName], $scope);
                         let $win = angular.element($window);
                         let el = $el[0];
+                        let isProgrammaticallyScrolling = false;
 
                         function scrollIfGlued() {
-                            console.log("scrolling!");
                             if (activationState.getValue() && !direction.isAttached(el)) {
+                                isProgrammaticallyScrolling = true;
                                 $timeout(() => {
+                                    console.log("scrolling");
                                     direction.scroll(el);
-                                }, 100, false);
+                                    $timeout(() => isProgrammaticallyScrolling = false, 10);
+                                }, 140);
                             }
                         }
 
                         function onElementScroll() {
-                            activationState.setValue(direction.isAttached(el));
+                            if (!isProgrammaticallyScrolling) {
+                                activationState.setValue(direction.isAttached(el, true));
+                            } else {
+                                console.log("detected programmatic scroll");
+                            }
                         }
 
                         $scope.$watch(scrollIfGlued);
@@ -126,10 +133,10 @@
     }
 
     let bottom = {
-        isAttached: function (el) {
+        isAttached: function (el, fuzzy) {
             // + 1 catches off by one errors in chrome
-            console.log(`${el.scrollTop + el.clientHeight + 50} >= ${el.scrollHeight}`);
-            return el.scrollTop + el.clientHeight + 50 >= el.scrollHeight;
+            let extra = fuzzy ? 75 : 2;
+            return el.scrollTop + el.clientHeight + extra >= el.scrollHeight;
         },
 
         scroll: function (el) {
