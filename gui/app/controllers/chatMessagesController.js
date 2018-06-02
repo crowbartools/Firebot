@@ -13,6 +13,8 @@
             $scope.settings = settingsService;
 
             $scope.compactDisplay = settingsService.isChatCompactMode();
+            $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
+            $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
 
             $scope.chatMessage = '';
             $scope.chatSender = "Streamer";
@@ -31,6 +33,16 @@
             $scope.toggleCompactMode = function() {
                 $scope.compactDisplay = !$scope.compactDisplay;
                 settingsService.setChatCompactMode($scope.compactDisplay);
+            };
+
+            $scope.toggleAlternateBackgrounds = function() {
+                $scope.alternateBackgrounds = !$scope.alternateBackgrounds;
+                settingsService.setChatAlternateBackgrounds($scope.alternateBackgrounds);
+            };
+
+            $scope.toggleHideDeletedMessages = function() {
+                $scope.hideDeletedMessages = !$scope.hideDeletedMessages;
+                settingsService.setChatHideDeletedMessages($scope.hideDeletedMessages);
             };
 
             // Gets all chat messages from chat message service.

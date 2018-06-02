@@ -8,8 +8,8 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function (logger, listenerService, settingsService, groupsService, soundService,
-            connectionService) {
+        .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService, groupsService,
+            soundService, connectionService, $timeout) {
             let service = {};
 
             // Chat Message Queue
@@ -431,6 +431,11 @@
 
                         // Trim messages over 200.
                         service.pruneChatQueue();
+
+                        $timeout(() => {
+                            $rootScope.$broadcast('ngScrollGlue.scroll');
+                        }, 1);
+
                     }
                 });
 

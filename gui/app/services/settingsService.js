@@ -243,6 +243,24 @@
                 pushDataToFile('/settings/chatCompactMode', compact === true);
             };
 
+            service.chatAlternateBackgrounds = function() {
+                let alternate = getDataFromFile('/settings/chatAlternateBackgrounds');
+                return alternate != null ? alternate : true;
+            };
+
+            service.setChatAlternateBackgrounds = function(alternate) {
+                pushDataToFile('/settings/chatAlternateBackgrounds', alternate === true);
+            };
+
+            service.chatHideDeletedMessages = function() {
+                let hide = getDataFromFile('/settings/chatHideDeletedMessages');
+                return hide != null ? hide : false;
+            };
+
+            service.setChatHideDeletedMessages = function(hide) {
+                pushDataToFile('/settings/chatHideDeletedMessages', hide === true);
+            };
+
             service.getOverlayCompatibility = function() {
                 let overlay = getDataFromFile('/settings/overlayImages');
                 return overlay != null ? overlay : "Other";

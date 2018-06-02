@@ -7,7 +7,7 @@
     let app = angular
         .module('firebotApp',
             ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable',
-                'luegg.directives', 'summernote']);
+                'ngScrollGlue', 'summernote']);
 
     app.factory('$exceptionHandler',
         function(logger) {
