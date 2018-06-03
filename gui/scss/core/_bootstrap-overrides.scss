@@ -190,6 +190,10 @@
     background-color: $dropdown-menu-bg - 15%;
 }
 
+.ui-select-bootstrap > .ui-select-choices, .ui-select-bootstrap > .ui-select-no-choice {
+    max-height: 332px;
+}
+
 
 // Form Control
 .input-group-addon {
