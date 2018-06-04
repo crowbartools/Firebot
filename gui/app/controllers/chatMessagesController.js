@@ -57,7 +57,7 @@
 
             // Takes a complete message packet and checks to see if it's a whisper.
             $scope.isWhisper = function(data) {
-                return data.whispser;
+                return data.whisper;
             };
 
             // Takes a complete message packet and checks to see if it's a /me.
