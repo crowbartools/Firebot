@@ -188,6 +188,15 @@
         pushDataToFile("/settings/emulation", emulator);
       };
 
+      service.getViewerDB = function() {
+        let viewerDB = getDataFromFile("/settings/viewerDB");
+        return viewerDB != null ? viewerDB : "On";
+      };
+
+      service.setViewerDB = function(status) {
+        pushDataToFile("/settings/viewerDB", status);
+      };
+
       // Used for settings menu.
       service.getChatFeed = function() {
         let chatFeed = getDataFromFile("/settings/chatFeed");
