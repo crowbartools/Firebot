@@ -5,6 +5,7 @@
   const dataAccess = require("../../lib/common/data-access.js");
   const profileManager = require("../../lib/common/profile-manager.js");
   const fs = require("fs");
+  const { ipcRenderer } = require("electron");
 
   angular
     .module("firebotApp")
@@ -190,11 +191,17 @@
 
       service.getViewerDB = function() {
         let viewerDB = getDataFromFile("/settings/viewerDB");
-        return viewerDB != null ? viewerDB : "On";
+        return viewerDB != null ? viewerDB : true;
       };
 
       service.setViewerDB = function(status) {
         pushDataToFile("/settings/viewerDB", status);
+
+        if (status === true) {
+          ipcRenderer.send("viewerDbConnect");
+        } else {
+          ipcRenderer.send("viewerDbDisconnect");
+        }
       };
 
       // Used for settings menu.

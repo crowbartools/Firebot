@@ -18,8 +18,6 @@ const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
 const connectionManager = require("./lib/common/connection-manager");
 const apiServer = require("./api/apiServer.js");
-const userdb = require("./lib/database/userDatabase");
-const currencydb = require("./lib/database/currencyDatabase");
 
 const Effect = require("./lib/common/EffectType");
 
@@ -379,12 +377,6 @@ async function createDefaultFoldersAndFiles() {
     }
   );
 
-  logger.debug("Creating or connecting user database");
-  userdb.connectUserDatabase();
-
-  logger.debug("Creating or connecting currency database");
-  currencydb.connectCurrencyDatabase();
-
   logger.info(
     "Finished verifying default folder and files for all profiles, as well as making sure our logged in profile is valid."
   );
@@ -410,6 +402,15 @@ function appOnReady() {
 
     //start the REST api server
     apiServer.start();
+
+    const userdb = require("./lib/database/userDatabase");
+    const currencydb = require("./lib/database/currencyDatabase");
+    // Connect to DBs.
+    logger.debug("Creating or connecting user database");
+    userdb.connectUserDatabase();
+
+    logger.debug("Creating or connecting currency database");
+    currencydb.connectCurrencyDatabase();
 
     return true;
   });
@@ -455,6 +456,7 @@ appOnActivate();
  */
 function onAppQuit() {
   app.on("quit", () => {
+    const userdb = require("./lib/database/userDatabase");
     userdb.setAllUsersOffline();
     deleteProfiles();
     logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");

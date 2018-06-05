@@ -22,6 +22,7 @@
 
       let gridOptions = viewersService.gridOptions;
       let columnsPreferences = settingsService.getViewerColumnPreferences();
+      $scope.isViewerDbOn = viewersService.isViewerDbOn;
       gridOptions.columnDefs = viewersService.getColumnDefsforPrefs(
         columnsPreferences
       );
@@ -29,11 +30,19 @@
 
       // Send request to main process to get all of our rows.
       function updateRowData() {
+        if (!viewersService.isViewerDbOn()) {
+          return;
+        }
+
         ipcRenderer.send("request-viewer-db");
       }
 
       // Refresh the viewer table on button click.
       $scope.refreshViewerTable = function() {
+        if (!viewersService.isViewerDbOn()) {
+          return;
+        }
+
         updateRowData();
 
         ngToast.create({
@@ -64,6 +73,10 @@
 
       // Receives table data from main process.
       ipcRenderer.on("viewer-db-response", function(event, rows) {
+        if (!viewersService.isViewerDbOn()) {
+          return;
+        }
+
         $scope.gridOptions.api.setRowData(rows);
 
         $timeout(function() {
@@ -72,9 +85,16 @@
       });
 
       // Update table rows when first visiting the page.
-      updateRowData();
+      if (viewersService.isViewerDbOn()) {
+        updateRowData();
+      }
 
-      if (!connectionService.connectedToChat && !viewersService.sawWarningAlert) {
+      // show alert that you need to be connected to chat for stuff to work.
+      if (
+        !connectionService.connectedToChat &&
+        !viewersService.sawWarningAlert &&
+        viewersService.isViewerDbOn()
+      ) {
         viewersService.sawWarningAlert = true;
         ngToast.create({
           content:
