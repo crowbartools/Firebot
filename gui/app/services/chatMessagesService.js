@@ -328,7 +328,10 @@
                 } catch (err) {
                     // If this runs it means we've never saved the sub badge.
                     request({
-                        url: 'https://mixer.com/api/v1/channels/' + streamer.username + '?fields=badge,partnered'
+                        url: 'https://mixer.com/api/v1/channels/' + streamer.username + '?fields=badge,partnered',
+                        headers: {
+                            'Client-ID': 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9'
+                        }
                     }, function (err, res) {
                         let data = JSON.parse(res.body);
 
