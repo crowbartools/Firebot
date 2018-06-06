@@ -38,8 +38,6 @@
 
           case EffectList.PLAY_SOUND:
             controller = ($scope, listenerService) => {
-              let uuid = _.uniqueId();
-
               if ($scope.effect.volume == null) {
                 $scope.effect.volume = 5;
               }
@@ -47,7 +45,6 @@
               $scope.openFileExporer = function() {
                 let registerRequest = {
                   type: listenerService.ListenerType.SOUND_FILE,
-                  uuid: uuid,
                   runOnce: true,
                   publishEvent: true
                 };
