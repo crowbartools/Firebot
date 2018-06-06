@@ -18,7 +18,8 @@
     "summernote",
     "pascalprecht.translate",
     "ngToast",
-    "agGrid"
+    "agGrid",
+    "slidingPuzzle"
   ]);
 
   app.factory("$exceptionHandler", function(logger) {
@@ -285,6 +286,13 @@
     };
 
     $rootScope.showSpinner = false;
+
+    //show puzzle
+    /*utilityService.showModal({
+        component: "puzzleModal",
+        keyboard: false,
+        backdrop: "static"
+    });*/
   });
 
   // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
