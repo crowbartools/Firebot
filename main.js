@@ -19,6 +19,8 @@ const backupManager = require("./lib/backupManager");
 const connectionManager = require("./lib/common/connection-manager");
 const apiServer = require("./api/apiServer.js");
 
+const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
+
 const Effect = require("./lib/common/EffectType");
 
 // uncaught exception - log the error
@@ -390,6 +392,9 @@ async function createDefaultFoldersAndFiles() {
 function appOnReady() {
   app.on("ready", async function() {
     await createDefaultFoldersAndFiles();
+
+    // load effects
+    builtInEffectLoader.loadEffects();
 
     createWindow();
 

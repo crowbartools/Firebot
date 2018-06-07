@@ -187,6 +187,11 @@
       ipcRenderer.send(type, data);
     };
 
+    service.fireEventSync = function(type, data) {
+      console.log("firing sync event " + type);
+      return ipcRenderer.sendSync(type, data);
+    };
+
     /**
      * File path event listeners
      */

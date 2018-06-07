@@ -486,7 +486,7 @@
             $scope.isAddMode = index == null;
 
             $scope.effectTypeChanged = function(effectType) {
-              $scope.effect.type = effectType.name;
+              $scope.effect.type = effectType.id;
               utilityService.updateNameForSlidingModal(
                 effectType.name,
                 modalId
