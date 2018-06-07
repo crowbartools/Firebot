@@ -15,7 +15,7 @@ An app that allows streamers on Mixer.com to quickly and easily setup versatile 
 Yes, just head on over to [the releases page](https://github.com/Firebottle/Firebot/releases) and download the newest version!
 
 ## But how do I use it?
-The app will help you with the first steps when you first open the app. You can also head to [our website](https://firebot.pro/tutorials/) where we have lot of great video tutorials made by the community.
+The app will help you with the first steps when you first open the app. You can also head to [our website](https://crowbartools.com/tools/firebot/#tutorials) where we have lot of great video tutorials made by the community.
 
 ## What if I have a question or need more help?
 Feel free send us a [tweet](https://twitter.com/FirebotApp) or come visit our [Discord server](https://discord.gg/DegW792). 
