@@ -5,6 +5,7 @@ let bodyParser = require("body-parser");
 const resourceTokenManager = require("../lib/resourceTokenManager");
 const { settings } = require("../lib/common/settings-access");
 const logger = require("../lib/logwrapper");
+const effectManager = require("../lib/effects/effectManager");
 
 let server = null;
 
@@ -18,6 +19,8 @@ exports.start = function() {
   api.use(bodyParser.json());
   api.use(bodyParser.urlencoded({ extended: true }));
 
+  api.set("view engine", "ejs");
+
   api.use((req, res, next) => {
     res.append("Access-Control-Allow-Origin", ["*"]);
     next();
@@ -28,7 +31,14 @@ exports.start = function() {
   api.use("/api/v1", v1Router);
 
   // set up route to serve overlay
-  api.use("/overlay", express.static("resources/overlay"));
+  api.use("/overlay/", express.static("resources/overlay"));
+  api.get("/overlay", function(req, res) {
+    let effectDefs = effectManager.getEffectOverlayExtensions();
+    console.log(effectDefs);
+    res.render("../resources/overlay", {
+      effects: effectDefs
+    });
+  });
 
   // set up resource endpoint
   api.get("/resource/:token", function(req, res) {
