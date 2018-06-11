@@ -120,7 +120,7 @@
       };
 
       ctrl.effectTypeChanged = function(effectType, index) {
-        ctrl.effectsArray[index].type = effectType.name;
+        ctrl.effectsArray[index].id = effectType.id;
       };
 
       ctrl.sortableOptions = {
@@ -190,7 +190,7 @@
       };
 
       ctrl.addEffect = function() {
-        let newEffect = { type: "Nothing" };
+        let newEffect = { id: "Nothing" };
 
         ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
       };
