@@ -12,7 +12,7 @@
               <div class="viewer-db-switches">
                 <div ng-repeat="column in $ctrl.columns">
                   <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom:5px;">
-                      <span style="font-weight: 900;">{{column.headerName}} ({{column.field}})</span>
+                      <span style="font-weight: 900;">{{column.headerName}}</span>
                       <span>
                           <input class="tgl tgl-light" id="{{column.field}}" type="checkbox" 
                             ng-checked="$ctrl.columnIsChecked(column)" 
@@ -40,14 +40,14 @@
       $ctrl.columns = Object.values(viewersService.fieldDefs);
 
       $ctrl.flipColumnPreference = function(column) {
-        console.log(column);
-        console.log(`flipping ${column.field}`);
-        $ctrl.userColumnPrefs[column.field] = !$ctrl.userColumnPrefs[column.field];
+        $ctrl.userColumnPrefs[column.field] = !$ctrl.userColumnPrefs[
+          column.field
+        ];
       };
 
       $ctrl.columnIsChecked = function(column) {
         return $ctrl.userColumnPrefs[column.field] === true;
-      }
+      };
 
       $ctrl.userColumnPrefs = {};
 
@@ -59,9 +59,9 @@
 
       $ctrl.save = function() {
         $ctrl.close({
-           $value: {
+          $value: {
             preferences: $ctrl.userColumnPrefs
-          }     
+          }
         });
       };
     }

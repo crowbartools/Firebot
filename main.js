@@ -16,6 +16,7 @@ const settings = require("./lib/common/settings-access").settings;
 const dataAccess = require("./lib/common/data-access.js");
 const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
+const userDatabase = require("./lib/database/userDatabase");
 const connectionManager = require("./lib/common/connection-manager");
 const apiServer = require("./api/apiServer.js");
 
@@ -426,13 +427,21 @@ function windowClosed() {
     let hotkeyManager = require("./lib/hotkeys/hotkey-manager");
     hotkeyManager.unregisterAllHotkeys();
 
-    if (settings.backupOnExit()) {
-      backupManager.startBackup(false, app.quit);
+    userDatabase.setAllUsersOffline().then(() => {
+      
+      console.log("Finished setting users to online false...quiting");
+      
+      if (settings.backupOnExit()) {
+        backupManager.startBackup(false, app.quit);
+
       // On OS X it is common for applications and their menu bar
       // to stay active until the user quits explicitly with Cmd + Q
-    } else if (process.platform !== "darwin") {
-      app.quit();
-    }
+      } else if (process.platform !== "darwin") {
+        app.quit();
+      }
+      
+    });
+
   });
 }
 windowClosed();
@@ -456,8 +465,7 @@ appOnActivate();
  */
 function onAppQuit() {
   app.on("quit", () => {
-    const userdb = require("./lib/database/userDatabase");
-    userdb.setAllUsersOffline();
+    
     deleteProfiles();
     logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");
   });

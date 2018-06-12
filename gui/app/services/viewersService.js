@@ -81,9 +81,6 @@
         onGridReady: function(params) {
           params.api.sizeColumnsToFit();
         },
-        onCellEditingStarted: function(event) {
-          onEditStart();
-        },
         onCellValueChanged: function(event) {
           onCellChanged(event);
         }
@@ -97,13 +94,23 @@
           editable: true
         },
         minutesInChannel: {
-          headerName: "View Time",
+          headerName: "View Time (min)",
           field: "minutesInChannel",
           editable: false
         },
         joinDate: {
           headerName: "Join Date",
           field: "joinDate",
+          editable: true
+        },
+        mixplayInteractions: {
+          headerName: "Mixplay Interactions",
+          field: "mixplayInteractions",
+          editable: true
+        },
+        chatMessages: {
+          headerName: "Chat Messages",
+          field: "chatMessages",
           editable: true
         }
       };
@@ -139,6 +146,14 @@
 
         if (columnPrefs.minutesInChannel) {
           customColumnDefs.push(service.fieldDefs.minutesInChannel);
+        }
+
+        if (columnPrefs.mixplayInteractions) {
+          customColumnDefs.push(service.fieldDefs.mixplayInteractions);
+        }
+
+        if (columnPrefs.chatMessages) {
+          customColumnDefs.push(service.fieldDefs.chatMessages);
         }
 
         return customColumnDefs;
