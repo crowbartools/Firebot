@@ -32,7 +32,7 @@
 
         let compatibleEffects = [];
         effects.forEach(e => {
-          if (EffectType.effectCanBeTriggered(e.type, trigger)) {
+          if (EffectType.effectCanBeTriggered(e.id, trigger)) {
             compatibleEffects.push(e);
           }
         });
@@ -486,7 +486,7 @@
             $scope.isAddMode = index == null;
 
             $scope.effectTypeChanged = function(effectType) {
-              $scope.effect.type = effectType.id;
+              $scope.effect.id = effectType.id;
               utilityService.updateNameForSlidingModal(
                 effectType.name,
                 modalId
@@ -501,7 +501,7 @@
                 let modalElement = $("." + modalId).children();
                 return {
                   element: modalElement,
-                  name: effect.type,
+                  name: effect.id,
                   id: modalId,
                   instance: $uibModalInstance,
                   onSaveAll: () => {

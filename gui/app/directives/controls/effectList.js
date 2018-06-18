@@ -40,7 +40,7 @@
                                 ng-mouseleave="hovering = false">
                                     <span style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;padding-right: 10px;">
                                         <span class="muted">{{$index + 1}}. </span>
-                                        {{effect.type}}
+                                        {{effect.id}}
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
                                     <span class="flex-row-center ">

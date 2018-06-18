@@ -596,4 +596,19 @@ ipcMain.on("switchProfile", function(event, profileId) {
   profileManager.logInProfile(profileId);
 });
 
+// Get Any kind of file Path
+// This listens for an event from the front end.
+ipcMain.on("getAnyFilePath", (event, data) => {
+  let uuid = data.uuid,
+    options = data.options || {};
+  let path = dialog.showOpenDialog({
+    title: options.title ? options.title : undefined,
+    buttonLabel: options.buttonLabel ? options.buttonLabel : undefined,
+    properties: options.directoryOnly ? ["openDirectory"] : ["openFile"],
+    filters: options.filters ? options.filters : undefined,
+    defaultPath: data.currentPath ? data.currentPath : undefined
+  });
+  event.sender.send("gotAnyFilePath", { path: path, id: uuid });
+});
+
 mixerConnect = require("./lib/common/mixer-interactive.js");

@@ -32,12 +32,9 @@
               $scope.type
             );
 
-            console.log(effectDef.optionsTemplate ? true : false);
             let el = angular.element(
               `<div id="child">${effectDef.optionsTemplate}</div>`
             );
-
-            console.log(`<div id="child">${effectDef.optionsTemplate}</div>`);
 
             let template = $compile(el)($scope);
 
