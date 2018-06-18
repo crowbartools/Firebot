@@ -406,12 +406,17 @@ function appOnReady() {
 
     const userdb = require("./lib/database/userDatabase");
     const currencydb = require("./lib/database/currencyDatabase");
+    const statsdb = require("./lib/database/statsDatabase");
+
     // Connect to DBs.
     logger.debug("Creating or connecting user database");
     userdb.connectUserDatabase();
 
     logger.debug("Creating or connecting currency database");
     currencydb.connectCurrencyDatabase();
+
+    logger.debug("Creating or connecting stats database");
+    statsdb.connectStatsDatabase();
 
     return true;
   });
@@ -428,9 +433,8 @@ function windowClosed() {
     hotkeyManager.unregisterAllHotkeys();
 
     userDatabase.setAllUsersOffline().then(() => {
-      
       console.log("Finished setting users to online false...quiting");
-      
+
       if (settings.backupOnExit()) {
         backupManager.startBackup(false, app.quit);
 
@@ -439,7 +443,6 @@ function windowClosed() {
       } else if (process.platform !== "darwin") {
         app.quit();
       }
-      
     });
 
   });
