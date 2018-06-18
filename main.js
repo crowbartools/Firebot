@@ -16,6 +16,7 @@ const settings = require("./lib/common/settings-access").settings;
 const dataAccess = require("./lib/common/data-access.js");
 const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
+const userDatabase = require("./lib/database/userDatabase");
 const connectionManager = require("./lib/common/connection-manager");
 const apiServer = require("./api/apiServer.js");
 
@@ -377,7 +378,6 @@ async function createDefaultFoldersAndFiles() {
     }
   );
 
-  // And... we're done.
   logger.info(
     "Finished verifying default folder and files for all profiles, as well as making sure our logged in profile is valid."
   );
@@ -404,6 +404,20 @@ function appOnReady() {
     //start the REST api server
     apiServer.start();
 
+    const userdb = require("./lib/database/userDatabase");
+    const currencydb = require("./lib/database/currencyDatabase");
+    const statsdb = require("./lib/database/statsDatabase");
+
+    // Connect to DBs.
+    logger.debug("Creating or connecting user database");
+    userdb.connectUserDatabase();
+
+    logger.debug("Creating or connecting currency database");
+    currencydb.connectCurrencyDatabase();
+
+    logger.debug("Creating or connecting stats database");
+    statsdb.connectStatsDatabase();
+
     return true;
   });
 }
@@ -418,13 +432,19 @@ function windowClosed() {
     let hotkeyManager = require("./lib/hotkeys/hotkey-manager");
     hotkeyManager.unregisterAllHotkeys();
 
-    if (settings.backupOnExit()) {
-      backupManager.startBackup(false, app.quit);
+    userDatabase.setAllUsersOffline().then(() => {
+      console.log("Finished setting users to online false...quiting");
+
+      if (settings.backupOnExit()) {
+        backupManager.startBackup(false, app.quit);
+
       // On OS X it is common for applications and their menu bar
       // to stay active until the user quits explicitly with Cmd + Q
-    } else if (process.platform !== "darwin") {
-      app.quit();
-    }
+      } else if (process.platform !== "darwin") {
+        app.quit();
+      }
+    });
+
   });
 }
 windowClosed();
@@ -448,6 +468,7 @@ appOnActivate();
  */
 function onAppQuit() {
   app.on("quit", () => {
+    
     deleteProfiles();
     logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");
   });
