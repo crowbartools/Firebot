@@ -4,7 +4,7 @@ An app that allows streamers on Mixer.com to quickly and easily setup versatile 
 
 [![Build Status](https://api.travis-ci.org/Firebottle/Firebot.svg)](https://travis-ci.org/Firebottle/Firebot)
 [![Dependencies Status](https://david-dm.org/Firebottle/Firebot/status.png)](https://david-dm.org/Firebottle/Firebot)
-[![Total Downloads](https://img.shields.io/github/downloads/firebottle/firebot/total.svg)](https://firebot.pro)
+[![Total Downloads](https://img.shields.io/github/downloads/firebottle/firebot/total.svg)](https://crowbartools.com)
 [![Version](https://img.shields.io/github/release/firebottle/firebot.svg)](https://github.com/Firebottle/Firebot/releases)
 [![Discord](https://img.shields.io/discord/372817064034959370.svg?label=Discord+(chat))](https://discord.gg/DegW792)
 [![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)](https://twitter.com/FirebotApp)
@@ -15,7 +15,7 @@ An app that allows streamers on Mixer.com to quickly and easily setup versatile 
 Yes, just head on over to [the releases page](https://github.com/Firebottle/Firebot/releases) and download the newest version!
 
 ## But how do I use it?
-The app will help you with the first steps when you first open the app. You can also head to [our website](https://crowbartools.com/tools/firebot/#tutorials) where we have lot of great video tutorials made by the community.
+The app will help you with the first steps when you first open the app. You can also head to [our website](https://crowbartools.com/firebot) where we have lot of great video tutorials made by the community.
 
 ## What if I have a question or need more help?
 Feel free send us a [tweet](https://twitter.com/FirebotApp) or come visit our [Discord server](https://discord.gg/DegW792). 

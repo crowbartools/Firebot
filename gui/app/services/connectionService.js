@@ -24,7 +24,7 @@
                 authorizationUrl: "https://mixer.com/oauth/authorize",
                 tokenUrl: "https://mixer.com/api/v1/oauth/token",
                 useBasicAuthorizationHeader: false,
-                redirectUri: "https://firebottle.tv/Firebot/oauth/redirect.php"
+                redirectUri: "https://crowbartools.com/projects/firebot/redirect.php"
             };
 
             let authWindowParams = {
