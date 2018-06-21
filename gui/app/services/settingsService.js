@@ -367,28 +367,31 @@
         return serverPort != null ? serverPort : 7473;
       };
 
-      service.getWebSocketPort = function() {
-        let websocketPort = getDataFromFile("/settings/websocketPort");
-        return websocketPort != null ? websocketPort : 8080;
-      };
-
-      service.setWebSocketPort = function(port) {
+      service.setWebServerPort = function(port) {
         // Ensure port is a number.
         if (!Number.isInteger(port)) {
           return;
         }
 
         // Save to settings file for app front end
-        pushDataToFile("/settings/websocketPort", port);
+        pushDataToFile("/settings/webServerPort", port);
 
         let path = dataAccess.getPathInWorkingDir(
           "/resources/overlay/js/port.js"
         );
 
         // Overwrite the 'port.js' file in the overlay settings folder with the new port
-        fs.writeFile(path, `window.WEBSOCKET_PORT = ${port}`, "utf8", () => {
+        fs.writeFile(path, `window.WEBSERVER_PORT = ${port}`, "utf8", () => {
           logger.info(`Set overlay port to: ${port}`);
         });
+      };
+
+      service.getWebSocketPort = function() {
+        return service.getWebServerPort();
+      };
+
+      service.setWebSocketPort = function(port) {
+        return service.setWebServerPort(port);
       };
 
       service.showOverlayInfoModal = function(instanceName) {

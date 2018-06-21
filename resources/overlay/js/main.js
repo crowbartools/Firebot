@@ -7,16 +7,7 @@ let params = new URL(location).searchParams;
 function mixerSocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
-		var port = 8080;
-		if("WEBSOCKET_PORT" in window) {
-			if(window.WEBSOCKET_PORT != null && Number.isInteger(window.WEBSOCKET_PORT) && window.WEBSOCKET_PORT > 1024 && window.WEBSOCKET_PORT < 49151) {
-				port = window.WEBSOCKET_PORT;
-			} else {
-				console.warn("Saved websocket port is not valid. Using 8080 instead...")
-			}
-		} else {
-			console.warn("/overlay-settings/port.js could not be found. Assuming port is 8080. Resave the port setting in Firebot to generate a new port.js file.")
-		}
+		let port = new URL(window.location.href).port;
 
 		ws = new ReconnectingWebSocket(`ws://${window.location.hostname}:${port}`);
 		ws.onopen = function(){
@@ -42,12 +33,18 @@ function mixerSocketConnect(){
 				}
 			} else {
 				if(data.overlayInstance != null && data.overlayInstance != "") {
-					console.log("Event i's for a specific instance. Ignoring.")
+					console.log("Event is for a specific instance. Ignoring.")
 					return;
 				}
 			}
 
-			firebotOverlay.emit(event, data);
+			if(event == "OVERLAY:REFRESH") {
+				console.log("Refreshing overlay...");
+				location.reload();
+				return;
+			}
+
+			firebotOverlay.emit(event, data.meta);
 		};
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.

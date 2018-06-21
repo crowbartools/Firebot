@@ -17,7 +17,7 @@ const dataAccess = require("./lib/common/data-access.js");
 const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
 const connectionManager = require("./lib/common/connection-manager");
-const apiServer = require("./api/apiServer.js");
+const webServer = require("./server/httpServer");
 
 const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
 
@@ -370,10 +370,10 @@ async function createDefaultFoldersAndFiles() {
   });
 
   // Update the port.js file
-  let port = settings.getWebSocketPort();
+  let port = settings.getWebServerPort();
   dataAccess.writeFileInWorkingDir(
     "/resources/overlay/js/port.js",
-    `window.WEBSOCKET_PORT = ${port}`,
+    `window.WEBSERVER_PORT = ${port}`,
     () => {
       logger.info(`Set overlay port to: ${port}`);
     }
@@ -407,7 +407,7 @@ function appOnReady() {
     backupManager.onceADayBackUpCheck();
 
     //start the REST api server
-    apiServer.start();
+    webServer.start();
 
     return true;
   });
@@ -601,6 +601,7 @@ ipcMain.on("switchProfile", function(event, profileId) {
 ipcMain.on("getAnyFilePath", (event, data) => {
   let uuid = data.uuid,
     options = data.options || {};
+
   let path = dialog.showOpenDialog({
     title: options.title ? options.title : undefined,
     buttonLabel: options.buttonLabel ? options.buttonLabel : undefined,
@@ -608,7 +609,14 @@ ipcMain.on("getAnyFilePath", (event, data) => {
     filters: options.filters ? options.filters : undefined,
     defaultPath: data.currentPath ? data.currentPath : undefined
   });
+
   event.sender.send("gotAnyFilePath", { path: path, id: uuid });
+});
+
+// Change profile when we get event from renderer
+ipcMain.on("sendToOverlay", function(event, data) {
+  if (data == null) return;
+  webServer.sendToOverlay(data.event, data.meta);
 });
 
 mixerConnect = require("./lib/common/mixer-interactive.js");
