@@ -8,10 +8,14 @@ const logger = require("../lib/logwrapper");
 const effectManager = require("../lib/effects/effectManager");
 const http = require("http");
 const WebSocket = require("ws");
+const { ipcMain } = require("electron");
 
 let server = null;
 let httpServer = null;
 let wss = null;
+
+let serverStarted = false;
+let overlayHasClients = false;
 
 exports.start = function() {
   //server is already running.
@@ -73,8 +77,14 @@ exports.start = function() {
       .send({ status: "error", message: req.originalUrl + " not found" });
   });
 
-  server = httpServer.listen(settings.getWebServerPort());
-  logger.info("Web Server listening on port %s.", server.address().port);
+  try {
+    server = httpServer.listen(settings.getWebServerPort());
+    logger.info("Web Server listening on port %s.", server.address().port);
+    serverStarted = true;
+  } catch (err) {
+    console.log("DETECTED ERROR STARTING SERVER" + err);
+    logger.error(err);
+  }
 };
 
 exports.sendToOverlay = function(eventName, meta = {}, overlayInstance) {
@@ -94,6 +104,26 @@ exports.sendToOverlay = function(eventName, meta = {}, overlayInstance) {
   });
 };
 
+setInterval(() => {
+  let clientsConnected = wss.clients.size > 0;
+
+  if (clientsConnected !== overlayHasClients) {
+    renderWindow.webContents.send("overlayStatusUpdate", {
+      clientsConnected: clientsConnected,
+      serverStarted: serverStarted
+    });
+    overlayHasClients = clientsConnected;
+  }
+}, 3000);
+
+ipcMain.on("getOverlayStatus", event => {
+  event.returnValue = {
+    clientsConnected: overlayHasClients,
+    serverStarted: serverStarted
+  };
+});
+
 effectManager.on("effectRegistered", () => {
+  // tell the overlay to refresh because a new effect has been registered
   exports.sendToOverlay("OVERLAY:REFRESH");
 });

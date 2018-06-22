@@ -12,7 +12,8 @@
       websocketService,
       soundService,
       boardService,
-      utilityService
+      utilityService,
+      logger
     ) {
       let service = {};
 
@@ -226,13 +227,25 @@
               connectionStatus = "disconnected";
             }
             break;
-          case "overlay":
-            if (websocketService.hasClientsConnected) {
+          case "overlay": {
+            logger.info("getting sync event");
+            let overlayStatus = listenerService.fireEventSync(
+              "getOverlayStatus"
+            );
+
+            logger.info(overlayStatus);
+
+            if (!overlayStatus.serverStarted) {
+              connectionStatus = "disconnected";
+            } else if (overlayStatus.clientsConnected) {
               connectionStatus = "connected";
             } else {
               connectionStatus = "warning";
             }
+
+            logger.info("here");
             break;
+          }
         }
         return connectionStatus;
       };

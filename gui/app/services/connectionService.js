@@ -651,6 +651,27 @@
         }
       );
 
+      // Connection Monitor for Overlay
+      // Recieves event from main process that connection has been established or disconnected.
+      listenerService.registerListener(
+        { type: ListenerType.OVERLAY_CONNECTION_STATUS },
+        overlayStatusData => {
+          let status;
+          if (!overlayStatusData.serverStarted) {
+            status = "disconnected";
+          } else if (overlayStatusData.clientsConnected) {
+            status = "connected";
+          } else {
+            status = "warning";
+          }
+
+          $rootScope.$broadcast("connection:update", {
+            type: "overlay",
+            status: status
+          });
+        }
+      );
+
       return service;
     });
 })();

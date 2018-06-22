@@ -15,6 +15,7 @@
       constellationConnectionChangeRequest: {},
       chatConnectionStatus: {},
       chatConnectionChangeRequest: {},
+      overlayStatusUpdate: {},
       toggleServicesRequest: {},
       chatMessage: {},
       chatUpdate: {},
@@ -48,6 +49,7 @@
         "constellationConnectionChangeRequest",
       CHAT_CONNECTION_STATUS: "chatConnectionStatus",
       CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
+      OVERLAY_CONNECTION_STATUS: "overlayStatusUpdate",
       TOGGLE_SERVICES_REQUEST: "toggleServicesRequest",
       CHAT_MESSAGE: "chatMessage",
       CHAT_UPDATE: "chatUpdate",
@@ -249,6 +251,14 @@
         : false;
       _.forEach(registeredListeners.constellationConnectionStatus, listener => {
         runListener(listener, isConstellationConnected);
+      });
+    });
+
+    // Overlay Connection Monitor
+    // Recieves event from main process that connection has been established or disconnected.
+    ipcRenderer.on("overlayStatusUpdate", function(event, data) {
+      _.forEach(registeredListeners.overlayStatusUpdate, listener => {
+        runListener(listener, data);
       });
     });
 
