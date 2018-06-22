@@ -366,7 +366,7 @@
     <!-- Edit Effect Modal -->
     <script type="text/ng-template" id="editEffectModal.html">
       <div class="modal-header flex-row-center jspacebetween no-before no-after" style="padding-bottom: 0">
-        <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}{{effect.id !== 'Nothing' ? " - " + effect.id : ""}}</h4>
+        <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}{{effect.id !== 'Nothing' ? " - " + effectDefinition.definition.name : ""}}</h4>
 
         <div uib-dropdown uib-dropdown-toggle>
             <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
@@ -385,12 +385,11 @@
       </div>
       <ol class="breadcrumb" style="margin-bottom: 0px;padding-bottom:11px;background-color:transparent;">
           <li ng-repeat="modal in openModals"><a href ng-click="closeToModal(modal.id)">{{modal.name}}</a></li>
-          <li class="active">{{effect.id}}</li>
+          <li class="active">{{effectDefinition.definition.name}}</li>
       </ol>
       <div class="modal-body">
           <div class="effect-select-wrapper">
               <searchable-effect-dropdown trigger="{{triggerType}}" selected="effect.id" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
-
           </div>
           <div class="effect-settings-panel">
               <div ng-show="effect.id == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>

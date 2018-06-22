@@ -40,7 +40,7 @@
                                 ng-mouseleave="hovering = false">
                                     <span style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;padding-right: 10px;">
                                         <span class="muted">{{$index + 1}}. </span>
-                                        {{effect.id}}
+                                        {{$ctrl.getEffectNameById(effect.id)}}
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
                                     <span class="flex-row-center ">
@@ -68,47 +68,29 @@
                 
             </div>
             `,
-    controller: function(utilityService) {
+    controller: function(utilityService, effectHelperService) {
       let ctrl = this;
 
       ctrl.effectsArray = [];
+
+      let effectDefinitions = [];
+
       function createEffectsArray() {
         if (ctrl.effects == null) {
-          if (ctrl.isArray) {
-            ctrl.effects = [];
-          } else {
-            ctrl.effects = {};
-          }
+          ctrl.effects = [];
         }
 
-        if (ctrl.isArray) {
-          ctrl.effectsArray = ctrl.effects;
-        } else {
-          ctrl.effectsArray = Object.keys(ctrl.effects).map(
-            k => ctrl.effects[k]
-          );
-        }
-      }
-
-      function getEffectsObject() {
-        let obj;
-        if (ctrl.isArray) {
-          obj = ctrl.effectsArray;
-        } else {
-          let effects = {};
-          let count = 1;
-          ctrl.effectsArray.forEach(e => {
-            effects[count.toString()] = e;
-            count++;
-          });
-          obj = effects;
-        }
-        return obj;
+        ctrl.effectsArray = ctrl.effects;
       }
 
       // when the element is initialized
       ctrl.$onInit = function() {
         createEffectsArray();
+        effectDefinitions = effectHelperService.getAllEffectDefinitions();
+      };
+
+      ctrl.getEffectNameById = id => {
+        return effectDefinitions.find(e => e.id === id).name;
       };
 
       ctrl.$onChanges = function() {
@@ -116,7 +98,7 @@
       };
 
       ctrl.effectsUpdate = function() {
-        ctrl.update({ effects: getEffectsObject() });
+        ctrl.update({ effects: ctrl.effectsArray });
       };
 
       ctrl.effectTypeChanged = function(effectType, index) {

@@ -36,6 +36,14 @@
         return def;
       };
 
+      service.getAllEffectDefinitions = function() {
+        let effectDefs = listenerService
+          .fireEventSync("getAllEffectDefinitions")
+          .map(e => e.definition);
+
+        return effectDefs;
+      };
+
       // Returns a controller to be used for the template of a given effectype
       service.getControllerForEffectTypeTemplate = function(
         trigger,

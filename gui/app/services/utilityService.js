@@ -486,11 +486,17 @@
             $scope.modalId = modalId;
 
             $scope.isAddMode = index == null;
+            $scope.effectDefinition = effectHelperService.getEffectDefinition(
+              $scope.effect.id
+            );
 
             $scope.effectTypeChanged = function(effectType) {
               $scope.effect.id = effectType.id;
+              $scope.effectDefinition = effectHelperService.getEffectDefinition(
+                $scope.effect.id
+              );
               utilityService.updateNameForSlidingModal(
-                effectType.name,
+                $scope.effectDefinition.definition.name,
                 modalId
               );
             };
@@ -503,7 +509,10 @@
                 let modalElement = $("." + modalId).children();
                 return {
                   element: modalElement,
-                  name: effect.id,
+                  name:
+                    $scope.effectDefinition.definition != null
+                      ? $scope.effectDefinition.definition.name
+                      : "Nothing",
                   id: modalId,
                   instance: $uibModalInstance,
                   onSaveAll: () => {
@@ -522,11 +531,9 @@
             };
 
             $scope.save = function() {
-              let effectDef = effectHelperService.getEffectDefinition(
-                $scope.effect.id
+              let errors = $scope.effectDefinition.optionsValidator(
+                $scope.effect
               );
-
-              let errors = effectDef.optionsValidator($scope.effect);
 
               if (errors != null && errors.length > 0) {
                 for (let error of errors) {
@@ -534,6 +541,9 @@
                 }
                 return;
               }
+
+              // clear any toasts
+              ngToast.dismiss();
 
               $uibModalInstance.close({
                 action: $scope.isAddMode ? "add" : "update",

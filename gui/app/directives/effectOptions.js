@@ -32,8 +32,9 @@
               $scope.type
             );
 
+            let optionsTemplate = effectDef.optionsTemplate || "";
             let el = angular.element(
-              `<div id="child">${effectDef.optionsTemplate}</div>`
+              `<div id="child">${optionsTemplate}</div>`
             );
 
             let template = $compile(el)($scope);
