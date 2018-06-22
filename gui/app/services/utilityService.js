@@ -473,7 +473,9 @@
           controllerFunc: (
             $scope,
             $uibModalInstance,
+            ngToast,
             utilityService,
+            effectHelperService,
             modalId,
             effect,
             index,
@@ -520,6 +522,19 @@
             };
 
             $scope.save = function() {
+              let effectDef = effectHelperService.getEffectDefinition(
+                $scope.effect.id
+              );
+
+              let errors = effectDef.optionsValidator($scope.effect);
+
+              if (errors != null && errors.length > 0) {
+                for (let error of errors) {
+                  ngToast.create(error);
+                }
+                return;
+              }
+
               $uibModalInstance.close({
                 action: $scope.isAddMode ? "add" : "update",
                 effect: $scope.effect,

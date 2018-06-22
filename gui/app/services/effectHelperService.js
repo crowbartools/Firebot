@@ -8,8 +8,33 @@
 
   angular
     .module("firebotApp")
-    .factory("effectHelperService", function($q, utilityService, logger) {
+    .factory("effectHelperService", function(
+      $q,
+      utilityService,
+      listenerService,
+      logger
+    ) {
       let service = {};
+
+      service.getEffectDefinition = function(id) {
+        if (id == null) return null;
+        let effectDef = listenerService.fireEventSync(
+          "getEffectDefinition",
+          id
+        );
+
+        if (effectDef == null) return null;
+
+        let def = {
+          definition: effectDef.definition,
+          optionsTemplate: effectDef.optionsTemplate,
+          optionsTemplateUrl: effectDef.optionsTemplateUrl,
+          optionsController: eval(effectDef.optionsControllerRaw), // eslint-disable-line no-eval
+          optionsValidator: eval(effectDef.optionsValidatorRaw) // eslint-disable-line no-eval
+        };
+
+        return def;
+      };
 
       // Returns a controller to be used for the template of a given effectype
       service.getControllerForEffectTypeTemplate = function(
