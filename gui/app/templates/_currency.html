@@ -1,0 +1,20 @@
+<div style="margin-bottom: 10px">
+    <button class="btn btn-primary" ng-click="openAddOrEditCurrencyModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> Add Currency</button>
+</div>
+
+<content-block>
+    <div class = "interactive-group-container">
+        <div ng-repeat="currency in getCurrencies() track by $index" class="fb-tile mint centered">
+            <div class="edit-btn" ng-click="openAddOrEditCurrencyModal(currency)"></div>
+            <div class="content row">
+            <div class="detail-wrapper nomargin">
+                <div class="detail" style="font-size: 1.6em;">
+                    {{currency.name}}
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="muted" ng-if="getCurrencies().length < 1">No currencies saved yet.</div>
+</content-block>
