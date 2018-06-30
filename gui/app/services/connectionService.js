@@ -16,7 +16,7 @@
             let ListenerType = listenerService.ListenerType;
 
             // Auth Options
-            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self";
+            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create";
             let botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat";
 
             let authInfo = {
@@ -79,34 +79,43 @@
                 }, function (err, res) {
                     let data = JSON.parse(res.body);
 
-                    // Push all to db.
-                    dbAuth.push('./' + type + '/username', data.username);
-                    dbAuth.push('./' + type + '/userId', data.id);
-                    dbAuth.push('./' + type + '/channelId', data.channel.id);
-                    dbAuth.push('./' + type + '/avatar', data.avatarUrl);
-                    dbAuth.push('./' + type + '/accessToken', accessToken);
-                    dbAuth.push('./' + type + '/refreshToken', refreshToken);
+                    let otherType = type.toLowerCase() === "bot" ? "streamer" : "bot";
+                    let otherLoggedIn = service.accounts[otherType].isLoggedIn;
+                    let otherUsername = service.accounts[otherType].username;
+
+                    if (otherLoggedIn && otherUsername === data.username) {
+                        utilityService.showErrorModal('You cannot sign into the same account for both Streamer and Bot. The bot account should be a seperate account. If you dont have a seperate account, simply dont use the Bot account feature, it is not required.');
+                    } else {
+                        // Push all to db.
+                        dbAuth.push('./' + type + '/username', data.username);
+                        dbAuth.push('./' + type + '/userId', data.id);
+                        dbAuth.push('./' + type + '/channelId', data.channel.id);
+                        dbAuth.push('./' + type + '/avatar', data.avatarUrl);
+                        dbAuth.push('./' + type + '/accessToken', accessToken);
+                        dbAuth.push('./' + type + '/refreshToken', refreshToken);
+
+                        // Request channel info
+                        // We do this to get the sub icon to use in the chat window.
+                        request({
+                            url: 'https://mixer.com/api/v1/channels/' + data.username + '?fields=badge,partnered'
+                        }, function (err, res) {
+                            let data = JSON.parse(res.body);
+
+                            // Push all to db.
+                            if (data.partnered === true) {
+                                dbAuth.push('./' + type + '/subBadge', data.badge.url);
+                            } else {
+                                dbAuth.push('./' + type + '/subBadge', false);
+                            }
+
+                            dbAuth.push('./' + type + '/partnered', data.partnered);
+                        });
+                    }
 
                     // Style up the login page.
                     $q.resolve(true, () => {
                         service.loadLogin();
                         $rootScope.showSpinner = false;
-                    });
-
-
-                    // Request channel info
-                    // We do this to get the sub icon to use in the chat window.
-                    request({
-                        url: 'https://mixer.com/api/v1/channels/' + data.username + '?fields=badge,partnered'
-                    }, function (err, res) {
-                        let data = JSON.parse(res.body);
-
-                        // Push all to db.
-                        if (data.partnered === true) {
-                            dbAuth.push('./' + type + '/subBadge', data.badge.url);
-                        } else {
-                            dbAuth.push('./' + type + '/subBadge', false);
-                        }
                     });
                 });
             }
@@ -168,9 +177,8 @@
 
                                 // Set connecting to false and log the streamer out because we have oauth issues.
                                 service.waitingForChatStatusChange = false;
-                                logout('streamer');
 
-                                utilityService.showErrorModal('There was an error authenticating your streamer account. Please log in again.');
+                                utilityService.showErrorModal('There was an error authenticating your streamer account. Please try again. If it continues to fail, try relogging in.');
                                 return;
                             }
 
@@ -190,12 +198,11 @@
                                         dbAuth.push('./bot/refreshToken', refreshToken);
                                     } else {
                                         logger.error('Something went wrong with bot refresh token.', token);
-                                        utilityService.showErrorModal('There was an error authenticating your bot account. Please log in again.');
+                                        utilityService.showErrorModal('There was an error authenticating your bot account. Please try again. If it continues to fail, try relogging in.');
 
                                         // Set connecting to false and log the streamer out because we have oauth issues.
                                         service.waitingForChatStatusChange = false;
                                         service.disconnectFromInteractive();
-                                        logout('bot');
 
                                         return;
                                     }
@@ -212,12 +219,11 @@
                                 }, err => {
                                     // There was an error getting the bot token.
                                     logger.error(err);
-                                    utilityService.showErrorModal('There was an error authenticating your bot account. Please log in again.');
+                                    utilityService.showErrorModal('There was an error authenticating your bot account. Please try again. If it continues to fail, try relogging in.');
 
                                     // Set connecting to false and log the streamer out because we have oauth issues.
                                     service.waitingForChatStatusChange = false;
                                     service.disconnectFromInteractive();
-                                    logout('bot');
 
                                     return;
                                 });
@@ -241,9 +247,8 @@
 
                             // Set connecting to false and log the streamer out because we have oauth issues.
                             service.waitingForChatStatusChange = false;
-                            logout('streamer');
 
-                            utilityService.showErrorModal('There was an error authenticating your streamer account. Please log in again.');
+                            utilityService.showErrorModal('There was an error authenticating your streamer account. Please try again. If it continues to fail, try relogging in.');
                             return;
                         });
                 } catch (err) {
@@ -296,6 +301,8 @@
 
                         username = streamer.username;
                         avatar = streamer.avatar;
+
+                        service.accounts.streamer.partnered = streamer.partnered === true;
 
                         if (avatar != null) {
                             service.accounts.streamer.photoUrl = avatar;
