@@ -12,7 +12,10 @@
                         <ul>
                             <li><b>$(user)</b> - Replaced by the name of the person running the button, command, or event</li>
                             <li><b>$(time)</b> - The current time. Use $(time24) for 24 hour time.</li>
+                            <li><b>$(date)</b> - The current date, formatted ie "Jun 1st 2018"</li>
                             <li><b>$(uptime)</b> - How long the stream has been broadcasting</li>
+                            <li><b>$(streamer)</b> - The name of the account signed in as the Streamer</li>
+                            <li><b>$(bot)</b> - The name of the account signed in as the Bot</li>
                             <li><b>$(game)</b> - The game you are currenly or last played</li>
                             <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$(target)])</li>
                             <li><b>$(streamTitle)</b> - The current title of your stream.</li>
@@ -38,6 +41,8 @@
                             <li><b>$(textboxValue)</b> - Only works if this effect is attached to a Textbox. This will contain the value of the Textbox.</li>
                             <li><b>$(tooltip)</b> - The tooltip of the button that was pressed.</li>
                             <li><b>$(progress)</b> - The current percentage of the progress bar on a button.</li>
+                            <li><b>$(activeState)</b> - The active state of a button, displays 'enabled' or 'disabled'.</li>
+                            <li><b>$(activeStateReverse)</b> - The reverse active state of a button, displays 'disabled' or 'enabled'.</li>
                         </ul>
                     </eos-replace-variable-section>
 
