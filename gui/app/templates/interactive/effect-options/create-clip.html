@@ -1,0 +1,11 @@
+    <eos-container header="Clip Duration">
+        <div class="input-group">
+            <span class="input-group-addon">Seconds</span>
+            <input ng-model="effect.clipDuration" type="number" class="form-control" type="number" ng-blur="onDurationChange()">
+        </div>
+        <p class="muted">Clips can be between 15 seconds and 300 seconds (5 minutes).</p>
+    </eos-container>
+
+    <div class="effect-info alert alert-warning">
+        You must be live for this effect to work.
+    </div>
