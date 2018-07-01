@@ -651,6 +651,14 @@
                             $scope.effect.width = 400;
                         }
 
+                        if ($scope.effect.justify == null) {
+                            $scope.effect.justify = "center";
+                        }
+
+                        if ($scope.effect.dontWrap == null) {
+                            $scope.effect.dontWrap = false;
+                        }
+
                         $scope.editorOptions = {
                             height: 300,
                             disableDragAndDrop: true,

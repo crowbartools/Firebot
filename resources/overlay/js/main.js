@@ -32,6 +32,9 @@ function mixerSocketConnect(){
 			
 			var olInstance = params.get("instance");
 
+			borderColor = params.get("borderColor");
+
+
 			console.log(`Recieved Event: ${event}`);
 			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.overlayInstance}`)
 			console.log(data);

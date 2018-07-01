@@ -4,9 +4,9 @@
     <eos-replace-variables></eos-replace-variables>
 </eos-container>
 
-<eos-container header="Dimensions" class="setting-padtop">
+<eos-container header="Container Settings" class="setting-padtop">
     <p>This defines the size of the (invisible) box that the above text will be placed in.</p>
-    <div class="input-group">
+    <div class="input-group" style="padding-bottom: 15px;">
         <span class="input-group-addon">Width (in pixels)</span>
         <input 
           class="form-control" 
@@ -20,6 +20,24 @@
           min="1" max="10000"
           ng-model="effect.height">
     </div>
+
+    <label class="control-fb control--checkbox"> Dont Wrap Text</tooltip>
+        <input type="checkbox" ng-model="effect.dontWrap">
+        <div class="control__indicator"></div>
+    </label>
+    <p>Justification</p>
+    <label class="control-fb control--radio">Left
+    <input type="radio" ng-model="effect.justify" value="flex-start"/> 
+        <div class="control__indicator"></div>
+    </label>
+    <label class="control-fb control--radio" >Center
+        <input type="radio" ng-model="effect.justify" value="center"/>
+        <div class="control__indicator"></div>
+    </label>
+    <label class="control-fb control--radio" >Right
+        <input type="radio" ng-model="effect.justify" value="flex-end"/>
+        <div class="control__indicator"></div>
+    </label>
 </eos-container>
 
 <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>

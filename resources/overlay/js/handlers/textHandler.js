@@ -12,15 +12,27 @@ function showText(data){
 	var d = new Date();
 	var divClass = d.getTime() + "-text";
 
+	//border: 2px solid green;
+	let styles = `height:${data.height}px;width:${data.width}px;${customPosStyles}`;
+
+	styles += `justify-content:${data.justify};`
+
+	if(data.dontWrap) {
+		styles += "overflow: hidden; white-space: nowrap;"
+	}
+
+	if(borderColor) {
+		styles += `border: 2px solid ${borderColor};`
+	}
+
 	let container = `
 		<div class="${divClass} text-container"
 			position="${data.position}"
-			style="height:${data.height}px;width:${data.width}px;${customPosStyles}">
+			style="${styles}">
 				${data.text}
 		</div>
 	`;
 
-	console.log("adding text to page");
 	// Throw text on page.
 	$('#wrapper').append(container);
 
