@@ -5,11 +5,11 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         'create-windows-installer': {
             x64: {
-                appDirectory: 'C:/Users/erik.bigler/Documents/GitHub/Firebot/dist/Firebot-win32-x64',
-                outputDirectory: 'C:/Users/erik.bigler/Documents/GitHub/Firebot/dist/installer64',
-                loadingGif: 'C:/Users/erik.bigler/Documents/GitHub/Firebot/gui/images/animated.gif',
+                appDirectory: 'G:/GitHub/Firebot/dist/Firebot-win32-x64',
+                outputDirectory: 'G:/GitHub/Firebot/dist/installer64',
+                loadingGif: 'G:/GitHub/Firebot/gui/images/animated.gif',
                 iconUrl: 'https://crowbartools.com/projects/firebot/logo.ico',
-                setupIcon: 'C:/Users/erik.bigler/Documents/GitHub/Firebot/gui/images/logo.ico'
+                setupIcon: 'G:/GitHub/Firebot/gui/images/logo.ico'
             }
         }
     });
