@@ -1,26 +1,11 @@
 "use strict";
-const profileManager = require("../../lib/common/profile-manager.js");
 
 (function() {
-  // This provides methods for handling currency
+  //This handles events
 
-  angular
-    .module("firebotApp")
-    .factory("currencyService", function($rootScope, utilityService, logger) {
-      let service = {};
+  angular.module("firebotApp").factory("currencyService", function(logger) {
+    let service = {};
 
-      service.saveCurrency = function(currency) {
-        // currency modal saved.
-      };
-
-      service.updateCurrency = function(currency) {
-        // currency modal edit
-      };
-
-      service.deleteCurrency = function(currency) {
-        // currency deleted
-      };
-
-      return service;
-    });
-})(window.angular);
+    return service;
+  });
+})();
