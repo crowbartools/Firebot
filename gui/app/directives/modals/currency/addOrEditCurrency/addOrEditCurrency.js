@@ -1,6 +1,6 @@
 "use strict";
 
-// Modal for adding or editting a command
+// Modal for adding or editing a currency
 
 (function() {
   angular.module("firebotApp").component("addOrEditCurrencyModal", {

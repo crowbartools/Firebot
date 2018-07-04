@@ -81,6 +81,7 @@
       };
 
       // Definitions of all of the fields that we allow to be shown in the UI.
+      // Note: Dynamic fields (like currencies) get added into here on app launch.
       service.fieldDefs = {
         lastSeen: {
           headerName: "Last Seen",
@@ -149,12 +150,9 @@
         Object.keys(currencies).forEach(function(currency) {
           currency = currencies[currency];
 
-          service.fieldDefs[currency.id] = {
+          service.fieldDefs["currency." + currency.id] = {
             headerName: currency.name,
-            field: currency.id,
-            cellRenderer: function(params) {
-              return params.data.currency[currency.id];
-            },
+            field: "currency." + currency.id,
             editable: true
           };
         });
