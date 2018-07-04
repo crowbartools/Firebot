@@ -184,6 +184,9 @@ function createWindow() {
 
   const timerManager = require("./lib/chat/timer-manager");
   timerManager.startTimers();
+
+  const currencyManager = require("./lib/currency/currencyManager");
+  currencyManager.startTimer();
 }
 
 /**

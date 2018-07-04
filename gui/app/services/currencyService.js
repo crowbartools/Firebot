@@ -27,12 +27,14 @@
       let currencyId = currency.id;
       currencyDb.push("/" + currencyId, currency);
       ipcRenderer.send("createCurrency", currencyId);
+      ipcRenderer.send("refreshCurrencyCache");
     };
 
     // Updated a pre-existing currency through the modal.
     service.updateCurrency = function(currency) {
       let currencyId = currency.id;
       currencyDb.push("/" + currencyId, currency);
+      ipcRenderer.send("refreshCurrencyCache");
     };
 
     // Purged a currency through the modal.
@@ -45,6 +47,7 @@
       let currencyId = currency.id;
       currencyDb.delete("/" + currencyId);
       ipcRenderer.send("deleteCurrency", currencyId);
+      ipcRenderer.send("refreshCurrencyCache");
     };
 
     return service;
