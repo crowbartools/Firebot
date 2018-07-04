@@ -1,0 +1,27 @@
+
+
+.ag-theme-material{
+    background-color: transparent!important;
+    .ag-paging-panel{
+        border-top: 0px !important;
+    }
+}
+
+.ag-header-row{
+    width:100%!important;
+}
+
+.ag-body{
+    .ag-body-container{
+        width:100%!important;
+        box-shadow: 1px 1px 5px #dedede!important;
+        background-color:white!important;
+        .eLabel{
+            font-size:11px;
+            color: #25292a;
+            opacity: 0.5;
+        }
+    }
+}
+
+

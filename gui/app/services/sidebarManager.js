@@ -97,9 +97,19 @@
           controller: "hotkeysController"
         })
 
+        .when("/currency", {
+          templateUrl: "./templates/_currency.html",
+          controller: "currencyController"
+        })
+
         .when("/timers", {
           templateUrl: "./templates/_timers.html",
           controller: "timersController"
+        })
+
+        .when("/viewers", {
+          templateUrl: "./templates/viewers/_viewers.html",
+          controller: "viewersController"
         });
     }
   ]);

@@ -20,8 +20,10 @@
             "VIEWER_GROUPS": "Viewer Groups",
             "HOTKEYS": "Hotkeys",
             "MODERATION": "Moderation",
+            "VIEWERS": "Viewers",
             "SETTINGS": "Settings",
-            "UPDATES":"Updates"
+            "UPDATES": "Updates",
+            "CURRENCY": "Currency"
         },
         "CONNECTIONS": {
             "CONNECTIONS": "Connections",

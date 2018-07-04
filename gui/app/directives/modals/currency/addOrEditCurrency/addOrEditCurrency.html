@@ -1,0 +1,50 @@
+<div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">
+      <span ng-if="!$ctrl.isNewCurrency">Edit Currency - </span> {{$ctrl.isNewCurrency ? 'Add New Currency' : $ctrl.currency.name }}
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="general-button-settings">
+
+        <div style="padding-bottom:1em">
+            <div class="settings-title">
+                <h3>General Settings</h3>
+            </div>
+
+            <label class="control-fb control--checkbox">Active Currency
+                <input type="checkbox" ng-model="$ctrl.currency.active" aria-label="..." checked>
+                <div class="control__indicator"></div>
+            </label>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon3">Name</span>
+                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.name" placeholder="Coins">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon3">Currency Limit</span>
+                <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.limit" placeholder="1000">
+            </div>
+            
+            <div class="dropdown options-sounds-dropdown">
+                <h4>Transfers</h4>
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{$ctrl.currency.transfer}}</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-sounds">
+                    <li><a href ng-click="$ctrl.setTransferEnabled('Allow')">Allow</a></li>
+                    <li><a href ng-click="$ctrl.setTransferEnabled('Disallow')">Disallow</a></li>
+                </ul>
+            </div>
+
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyDeleteModal($ctrl.currency)">Delete Currency</button>
+    <button type="button" class="btn btn-warning pull-left" ng-show="!$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyPurgeModal($ctrl.currency)">Purge Currency</button>
+    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save Changes</button>
+</div>

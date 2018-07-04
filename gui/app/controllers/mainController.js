@@ -3,6 +3,8 @@
   const electron = require("electron");
   const shell = electron.shell;
 
+  agGrid.initialiseAgGridWithAngular1(angular);
+
   let app = angular.module("firebotApp", [
     "ngAnimate",
     "ngRoute",
@@ -15,7 +17,9 @@
     "luegg.directives",
     "summernote",
     "pascalprecht.translate",
-    "ngToast"
+    "ngToast",
+    "agGrid",
+    "slidingPuzzle"
   ]);
 
   app.factory("$exceptionHandler", function(logger) {
@@ -286,6 +290,13 @@
     };
 
     $rootScope.showSpinner = false;
+
+    //show puzzle
+    /*utilityService.showModal({
+        component: "puzzleModal",
+        keyboard: false,
+        backdrop: "static"
+    });*/
   });
 
   // This adds a filter that we can use for ng-repeat, useful when we want to paginate something

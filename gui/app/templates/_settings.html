@@ -108,6 +108,28 @@
           </div>
         </uib-tab>
 
+        <!-- Database Settings -->
+        <uib-tab index="2" heading="Database">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Viewer Database</div>
+              <div class="setting-description">Turn on/off the viewer tracking database. This could improve performance in some cases.</div>
+              <div class="dropdown options-emulation-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getViewerDB() ? "On" : "Off"}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-emulation">
+                  <li><a href ng-click="settings.setViewerDB(true)">On</a></li>
+                  <li><a href ng-click="settings.setViewerDB(false)">Off</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="setting col-sm-6">
+            </div>
+          </div>
+        </uib-tab>
+
         <!-- Overlay Settings -->
         <uib-tab index="3" heading="Overlay">
           <div class="row" style="margin-top: 15px">

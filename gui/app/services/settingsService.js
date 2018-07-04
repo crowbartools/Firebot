@@ -5,6 +5,7 @@
   const dataAccess = require("../../lib/common/data-access.js");
   const profileManager = require("../../lib/common/profile-manager.js");
   const fs = require("fs");
+  const { ipcRenderer } = require("electron");
 
   angular
     .module("firebotApp")
@@ -186,6 +187,21 @@
 
       service.setEmulator = function(emulator) {
         pushDataToFile("/settings/emulation", emulator);
+      };
+
+      service.getViewerDB = function() {
+        let viewerDB = getDataFromFile("/settings/viewerDB");
+        return viewerDB != null ? viewerDB : true;
+      };
+
+      service.setViewerDB = function(status) {
+        pushDataToFile("/settings/viewerDB", status);
+
+        if (status === true) {
+          ipcRenderer.send("viewerDbConnect");
+        } else {
+          ipcRenderer.send("viewerDbDisconnect");
+        }
       };
 
       // Used for settings menu.
@@ -535,6 +551,19 @@
 
       service.setDebugModeEnabled = function(enabled) {
         pushDataToFile("/settings/debugMode", enabled === true);
+      };
+
+      service.getViewerColumnPreferences = function() {
+        let prefs = getDataFromFile("/settings/viewerColumnPreferences");
+        return prefs != null ? prefs : { lastSeen: true };
+      };
+
+      service.setViewerColumnPreferences = function(prefs) {
+        pushDataToFile("/settings/viewerColumnPreferences", prefs);
+      };
+
+      service.deleteFromViewerColumnPreferences = function(columnName) {
+        deleteDataAtPath("/settings/viewerColumnPreferences/" + columnName);
       };
 
       return service;
