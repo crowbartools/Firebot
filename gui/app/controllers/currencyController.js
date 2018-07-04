@@ -9,7 +9,13 @@
       utilityService,
       currencyService
     ) {
-      $scope.openAddOrEditCurrency = function(currency) {
+      // Returns an array of all currencies.
+      $scope.getCurrencies = function() {
+        return currencyService.getCurrencies();
+      };
+
+      // Open currency modal.
+      $scope.openAddOrEditCurrencyModal = function(currency) {
         utilityService.showModal({
           component: "addOrEditCurrencyModal",
           resolveObj: {
@@ -29,6 +35,10 @@
               case "delete":
                 currencyService.deleteCurrency(currency);
                 break;
+              case "purge":
+                currencyService.purgeCurrency(currency);
+                break;
+              default:
             }
           }
         });

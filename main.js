@@ -355,6 +355,14 @@ async function createDefaultFoldersAndFiles() {
       dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/chat");
     }
 
+    // Create the currency folder if it doesn't exist.
+    if (
+      !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/currency")
+    ) {
+      logger.info("Can't find the currency folder, creating one now...");
+      dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/currency");
+    }
+
     // Create the chat folder if it doesn't exist.
     if (
       !dataAccess.userDataPathExistsSync(
@@ -405,15 +413,11 @@ function appOnReady() {
     apiServer.start();
 
     const userdb = require("./lib/database/userDatabase");
-    const currencydb = require("./lib/database/currencyDatabase");
     const statsdb = require("./lib/database/statsDatabase");
 
     // Connect to DBs.
     logger.debug("Creating or connecting user database");
     userdb.connectUserDatabase();
-
-    logger.debug("Creating or connecting currency database");
-    currencydb.connectCurrencyDatabase();
 
     logger.debug("Creating or connecting stats database");
     statsdb.connectStatsDatabase();
