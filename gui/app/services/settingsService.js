@@ -559,6 +559,10 @@
         pushDataToFile("/settings/viewerColumnPreferences", prefs);
       };
 
+      service.deleteFromViewerColumnPreferences = function(columnName) {
+        deleteDataAtPath("/settings/viewerColumnPreferences/" + columnName);
+      };
+
       return service;
     });
 })();

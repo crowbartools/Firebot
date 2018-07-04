@@ -2,6 +2,7 @@
 (function() {
   //This handles viewer lists.
   const { ipcRenderer } = require("electron");
+  const profileManager = require("../../lib/common/profile-manager.js");
 
   angular
     .module("firebotApp")
@@ -45,6 +46,8 @@
         }
       }
 
+      // Default Column Defs
+      // These are columns that the user can't toggle and are always visible.
       const defaultColDefs = [
         { headerName: "UserId", field: "_id", hide: true, editable: false },
         {
@@ -57,17 +60,8 @@
 
       // This manages the entire DB for the UI.
       // https://www.ag-grid.com
-      // To add or remove rows, change here and also in /lib/userDatabase.js getRowsForUi();
       service.gridOptions = {
-        columnDefs: [
-          { headerName: "UserId", field: "_id", hide: true, editable: false },
-          {
-            headerName: "Username",
-            field: "username",
-            sort: "desc",
-            editable: false
-          }
-        ],
+        columnDefs: defaultColDefs,
         rowData: [],
         pagination: true,
         paginationAutoPageSize: true,
@@ -115,52 +109,77 @@
         }
       };
 
-      /*
-     Example columnPrefs:
-     {
-       lastSeen: true,
-       joinDate: false,
-       minutesInChannel: true
-     }
-    */
+      // This will move our user selected column defs over to our ag-grid defs.
       service.setColumns = function(columnPrefs) {
         // copy over default defs
         let customColumnDefs = service.getColumnDefsforPrefs(columnPrefs);
-
         service.gridOptions.api.setColumnDefs(customColumnDefs);
 
         // get the grid to space out its columns
         service.gridOptions.api.refreshView();
       };
 
+      // This checks our user selection to determine which column defs should be moved to ag-grid.
       service.getColumnDefsforPrefs = function(columnPrefs) {
+        // Update all dynamic DB columns here.
+        service.updateCurrencyDefs();
+
+        // Now we can start pushing our user selected columns.
         let customColumnDefs = JSON.parse(JSON.stringify(defaultColDefs));
 
-        if (columnPrefs.lastSeen) {
-          customColumnDefs.push(service.fieldDefs.lastSeen);
-        }
+        // Cycle through user selected columns, find defs, pass defs to grid.
+        Object.keys(columnPrefs).forEach(function(pref) {
+          let setting = columnPrefs[pref];
 
-        if (columnPrefs.joinDate) {
-          customColumnDefs.push(service.fieldDefs.joinDate);
-        }
-
-        if (columnPrefs.minutesInChannel) {
-          customColumnDefs.push(service.fieldDefs.minutesInChannel);
-        }
-
-        if (columnPrefs.mixplayInteractions) {
-          customColumnDefs.push(service.fieldDefs.mixplayInteractions);
-        }
-
-        if (columnPrefs.chatMessages) {
-          customColumnDefs.push(service.fieldDefs.chatMessages);
-        }
+          if (setting) {
+            if (service.fieldDefs[pref] != null) {
+              customColumnDefs.push(service.fieldDefs[pref]);
+            }
+          }
+        });
 
         return customColumnDefs;
       };
 
-      service.sawWarningAlert = false;
+      // Will go through our currencies and add them to our defs.
+      service.updateCurrencyDefs = function() {
+        let db = profileManager.getJsonDbInProfile("/currency/currency"),
+          currencies = db.getData("/");
 
+        Object.keys(currencies).forEach(function(currency) {
+          currency = currencies[currency];
+
+          service.fieldDefs[currency.id] = {
+            headerName: currency.name,
+            field: currency.id,
+            cellRenderer: function(params) {
+              return params.data.currency[currency.id];
+            },
+            editable: true
+          };
+        });
+      };
+
+      // This will delete a currency from our defs.
+      // This is used when a user deletes currency from the currency page and ensures
+      // We dont have a currency in our grid that no longer exists.
+      service.deleteCurrencyDefs = function(currencyId) {
+        delete service.fieldDefs[currencyId];
+        settingsService.deleteFromViewerColumnPreferences(currencyId);
+      };
+
+      //////////////
+      // Events
+
+      // Sent from currencyDatabase.js when a currency is deleted.
+      ipcRenderer.on("delete-currency-def", function(event, currencyId) {
+        if (currencyId != null) {
+          service.deleteCurrencyDefs(currencyId);
+        }
+      });
+
+      // Did user see warning alert about connecting to chat first?
+      service.sawWarningAlert = false;
       return service;
     });
 })();
