@@ -86,27 +86,47 @@
         lastSeen: {
           headerName: "Last Seen",
           field: "lastSeen",
-          editable: true
+          editable: true,
+          valueParser: function(params) {
+            // convert to number
+            return Number(params.newValue);
+          }
         },
         minutesInChannel: {
           headerName: "View Time (min)",
           field: "minutesInChannel",
-          editable: false
+          editable: false,
+          valueParser: function(params) {
+            // convert to number
+            return Number(params.newValue);
+          }
         },
         joinDate: {
           headerName: "Join Date",
           field: "joinDate",
-          editable: true
+          editable: true,
+          valueParser: function(params) {
+            // convert to number
+            return Number(params.newValue);
+          }
         },
         mixplayInteractions: {
           headerName: "Mixplay Interactions",
           field: "mixplayInteractions",
-          editable: true
+          editable: true,
+          valueParser: function(params) {
+            // convert to number
+            return Number(params.newValue);
+          }
         },
         chatMessages: {
           headerName: "Chat Messages",
           field: "chatMessages",
-          editable: true
+          editable: true,
+          valueParser: function(params) {
+            // convert to number
+            return Number(params.newValue);
+          }
         }
       };
 
@@ -153,7 +173,11 @@
           service.fieldDefs["currency." + currency.id] = {
             headerName: currency.name,
             field: "currency." + currency.id,
-            editable: true
+            editable: true,
+            valueParser: function(params) {
+              // convert to number
+              return Number(params.newValue);
+            }
           };
         });
       };
