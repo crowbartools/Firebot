@@ -16,7 +16,9 @@
             let ListenerType = listenerService.ListenerType;
 
             // Auth Options
-            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self";
+            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self";
+            let clipsScope = "channel:clip:create:self";
+
             let botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat";
 
             let authInfo = {
@@ -52,6 +54,8 @@
                     streamerAccount.username = "Broadcaster";
                     streamerAccount.photoUrl = defaultPhotoUrl;
                     streamerAccount.isLoggedIn = false;
+                    streamerAccount.reauthedForClips = false;
+                    streamerAccount.loggedInThisSession = false;
 
                 } else {
                     // Delete Info
@@ -67,7 +71,7 @@
 
             // User Info
             // This function grabs info from the currently logged in user.
-            function userInfo(type, accessToken, refreshToken) {
+            function userInfo(type, accessToken, refreshToken, authedForClips = false) {
                 let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
 
                 // Request user info and save out everything to auth file.
@@ -93,6 +97,7 @@
                         dbAuth.push('./' + type + '/avatar', data.avatarUrl);
                         dbAuth.push('./' + type + '/accessToken', accessToken);
                         dbAuth.push('./' + type + '/refreshToken', refreshToken);
+                        dbAuth.push('./' + type + '/authedForClips', authedForClips === true);
 
                         // Request channel info
                         // We do this to get the sub icon to use in the chat window.
@@ -120,14 +125,18 @@
                 });
             }
 
-            function login(type) {
+            function login(type, clipsReauth = false) {
                 $rootScope.showSpinner = true;
 
                 let scopes = type === "streamer" ? streamerScopes : botScopes;
 
-                // clear out any previous sessions
-                const ses = session.fromPartition(type);
-                ses.clearStorageData();
+                if (!clipsReauth) {
+                    // clear out any previous sessions
+                    const ses = session.fromPartition(type);
+                    ses.clearStorageData();
+                } else {
+                    scopes += ` ${clipsScope}`;
+                }
 
                 authWindowParams.webPreferences.partition = type;
                 const oauthProvider = electronOauth2(authInfo, authWindowParams);
@@ -137,7 +146,8 @@
                             utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
                             logger.error("There was an issue logging into Mixer. Error: " + token.details[0].message, token);
                         } else {
-                            userInfo(type, token.access_token, token.refresh_token);
+                            service.accounts.streamer.loggedInThisSession = true;
+                            userInfo(type, token.access_token, token.refresh_token, clipsReauth);
                         }
                     }, err => {
                         //error requesting access
@@ -146,6 +156,11 @@
                         utilityService.showErrorModal('Error requesting access for oauth token.');
                     });
             }
+
+            service.reauthForClips = function() {
+                login('streamer', true);
+            };
+
 
             // Refresh Token
             // This will get a new access token for the streamer and bot account.
@@ -302,6 +317,8 @@
                         username = streamer.username;
                         avatar = streamer.avatar;
 
+
+                        service.accounts.streamer.authedForClips = streamer.authedForClips === true;
                         service.accounts.streamer.partnered = streamer.partnered === true;
 
                         if (avatar != null) {

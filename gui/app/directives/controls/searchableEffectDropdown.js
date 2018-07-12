@@ -39,7 +39,7 @@
                         ctrl.options = ctrl.options.filter(e => e.name !== Effect.EffectType.CUSTOM_SCRIPT);
                     }
 
-                    if (!connectionService.accounts.streamer.partnered) {
+                    if (!connectionService.accounts.streamer.authedForClips) {
                         ctrl.options = ctrl.options.filter(e => e.name !== Effect.EffectType.CREATE_CLIP);
                     }
 
