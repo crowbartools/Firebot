@@ -114,6 +114,8 @@
                             }
 
                             dbAuth.push('./' + type + '/partnered', data.partnered);
+
+                            service.accounts.streamer.partnered = data.partnered;
                         });
                     }
 
