@@ -174,10 +174,15 @@ async function createDefaultFoldersAndFiles() {
         dataAccess.makeDirInUserDataSync("/user-settings/scripts");
     }
 
-    // Create the scripts folder if it doesn't exist
+    // Create the backups folder if it doesn't exist
     if (!dataAccess.userDataPathExistsSync("/backups/")) {
         logger.info("Can't find the backup folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/backups");
+    }
+
+    // Create the clips folder if it doesn't exist
+    if (!dataAccess.userDataPathExistsSync("/clips/")) {
+        dataAccess.makeDirInUserDataSync("/clips");
     }
 
     // Update the port.js file

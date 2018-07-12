@@ -13,9 +13,13 @@
     angular
         .module('firebotApp')
         .controller('settingsController', function($scope, $timeout, $q, settingsService,
-            utilityService, listenerService, logger) {
+            utilityService, listenerService, logger, connectionService) {
 
             $scope.settings = settingsService;
+
+            $scope.authedForClips = connectionService.accounts.streamer.authedForClips;
+
+            $scope.clipsFolder = settingsService.getClipDownloadFolder();
 
             $scope.showSetupWizard = utilityService.showSetupWizard;
 

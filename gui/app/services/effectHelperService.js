@@ -373,6 +373,10 @@
                             $scope.effect.postLink = true;
                         }
 
+                        if ($scope.effect.download == null) {
+                            $scope.effect.download = false;
+                        }
+
                         if ($scope.effect.clipTitle == null) {
                             $scope.effect.clipTitle = "$(streamTitle) (Created by $(user))";
                         }

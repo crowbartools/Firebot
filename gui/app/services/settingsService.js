@@ -476,6 +476,15 @@
                 pushDataToFile('/settings/maxBackupCount', maxBackupCount);
             };
 
+            service.getClipDownloadFolder = function() {
+                let dlFolder = getDataFromFile('/settings/clips/downloadFolder');
+                return dlFolder != null && dlFolder !== "" ? dlFolder : dataAccess.getPathInUserData("/clips/");
+            };
+
+            service.setClipDownloadFolder = function(filepath) {
+                pushDataToFile('/settings/clips/downloadFolder', filepath);
+            };
+
             service.getAudioOutputDevice = function() {
                 let device = getDataFromFile('/settings/audioOutputDevice');
                 return device != null ? device : { label: "System Default", deviceId: "default"};
