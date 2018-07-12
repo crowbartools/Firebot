@@ -113,9 +113,11 @@
                                 dbAuth.push('./' + type + '/subBadge', false);
                             }
 
-                            dbAuth.push('./' + type + '/partnered', data.partnered);
+                            if (type === "streamer") {
+                                dbAuth.push('./' + type + '/partnered', data.partnered);
+                                service.accounts.streamer.partnered = data.partnered;
+                            }
 
-                            service.accounts.streamer.partnered = data.partnered;
                         });
                     }
 
@@ -148,7 +150,9 @@
                             utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
                             logger.error("There was an issue logging into Mixer. Error: " + token.details[0].message, token);
                         } else {
-                            service.accounts.streamer.loggedInThisSession = true;
+                            if (type === "streamer") {
+                                service.accounts.streamer.loggedInThisSession = true;
+                            }
                             userInfo(type, token.access_token, token.refresh_token, clipsReauth);
                         }
                     }, err => {
