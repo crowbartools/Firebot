@@ -11,7 +11,20 @@
     // The currency settings.
     let currencyDb = profileManager.getJsonDbInProfile("/currency/currency");
 
-    service.getCurrencies = function() {
+    // This will get currency information.
+    // Can pass option param to just get one currency, otherwise it gets all of them.
+    service.getCurrencies = function(currencyId) {
+      // If we have an optional param return settings for that currency.
+      if (currencyId != null) {
+        try {
+          return currencyDb.getData("/" + currencyId);
+        } catch (err) {
+          logger.error(err);
+          return;
+        }
+      }
+
+      // If no param, just return all currency data.
       let currencies = [],
         currencyData = currencyDb.getData("/");
 
