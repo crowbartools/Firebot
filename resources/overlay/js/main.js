@@ -46,7 +46,7 @@ function mixerSocketConnect(){
 				}
 			} else {
 				if(data.overlayInstance != null && data.overlayInstance != "") {
-					console.log("Event i's for a specific instance. Ignoring.")
+					console.log("Event is for a specific instance. Ignoring.")
 					return;
 				}
 			}
@@ -73,6 +73,9 @@ function mixerSocketConnect(){
 					break;
 				case "showEvents":
 					showEvents(data);
+					break;
+				case "firebot:reloadoverlay": 
+					location.reload();
 					break;
 				default:
 					console.log('Unrecognized event type.', data);

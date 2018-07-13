@@ -258,6 +258,13 @@
                     service.broadcast(data);
                 });
 
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.CLEAR_EFFECTS },
+                () => {
+                    logger.info("Refreshing overlay...");
+                    service.broadcast({ event: "firebot:reloadoverlay" });
+                });
+
             return service;
         });
 }());

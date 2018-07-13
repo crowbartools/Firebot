@@ -34,7 +34,8 @@
                 celebrate: {},
                 info: {},
                 backupComplete: {},
-                currentViewersUpdate: {}
+                currentViewersUpdate: {},
+                clearEffects: {}
             };
 
             let ListenerType = {
@@ -67,7 +68,8 @@
                 SHOW_HTML: "showHtml",
                 CELEBREATE: "celebrate",
                 INFO: "info",
-                BACKUP_COMPLETE: "backupComplete"
+                BACKUP_COMPLETE: "backupComplete",
+                CLEAR_EFFECTS: "clearEffects"
             };
 
             function runListener(listener, returnPayload) {
@@ -412,6 +414,16 @@
                     runListener(listener, data);
                 });
             });
+
+            /**
+            * Clear effect listener
+            */
+            ipcRenderer.on('clearEffects', function (event, data) {
+                _.forEach(registeredListeners.clearEffects, (listener) => {
+                    runListener(listener, data);
+                });
+            });
+
 
 
             /**
