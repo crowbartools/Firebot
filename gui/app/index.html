@@ -138,10 +138,7 @@
               <div class="col-sm-6 streamer-login top-padding">
                 <img class="login-pic" ng-src="{{accounts.streamer.photoUrl}}">
                 <h2>{{accounts.streamer.username}}</h2>
-                <button type="button" class="btn" ng-class="accounts.streamer.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{accounts.streamer.isLoggedIn ? "Logout" : "Login"}}</button>
-                <div ng-show="accounts.streamer.isLoggedIn && accounts.streamer.loggedInThisSession && accounts.streamer.partnered && !accounts.streamer.authedForClips">
-                  <button type="button" class="btn btn-link" ng-click="reauthForClips()">Auth for Clips feature</button><tooltip text="'This lets you reauthorize your account to use the new clips feature. You MUST have the Anniversary Design set on your account.'"></tooltip>
-                </div>                
+                <button type="button" class="btn" ng-class="accounts.streamer.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{accounts.streamer.isLoggedIn ? "Logout" : "Login"}}</button>                
               </div>
               <div class="col-sm-6 bot-login top-padding">
                 <img class="login-pic" ng-src="{{accounts.bot.photoUrl}}">

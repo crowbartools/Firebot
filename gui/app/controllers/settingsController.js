@@ -17,7 +17,7 @@
 
             $scope.settings = settingsService;
 
-            $scope.authedForClips = connectionService.accounts.streamer.authedForClips;
+            $scope.streamerPartnered = connectionService.accounts.streamer.partnered;
 
             $scope.clipsFolder = settingsService.getClipDownloadFolder();
 

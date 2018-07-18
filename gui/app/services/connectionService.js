@@ -16,8 +16,7 @@
             let ListenerType = listenerService.ListenerType;
 
             // Auth Options
-            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self";
-            let clipsScope = "channel:clip:create:self";
+            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self";
 
             let botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat";
 
@@ -118,14 +117,14 @@
                                 service.accounts.streamer.partnered = data.partnered;
                             }
 
+                            // Style up the login page.
+                            $q.resolve(true, () => {
+                                service.loadLogin();
+                                $rootScope.showSpinner = false;
+                            });
+
                         });
                     }
-
-                    // Style up the login page.
-                    $q.resolve(true, () => {
-                        service.loadLogin();
-                        $rootScope.showSpinner = false;
-                    });
                 });
             }
 
