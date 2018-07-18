@@ -3,6 +3,7 @@
   //This handles viewer lists.
   const { ipcRenderer } = require("electron");
   const profileManager = require("../../lib/common/profile-manager.js");
+  const moment = require("moment");
 
   angular
     .module("firebotApp")
@@ -21,11 +22,11 @@
 
       // This is fired when a cells value is changed. Log the results and then send info to backend to update DB.
       function onCellChanged(event) {
+        console.log(event);
         if (event != null) {
           let rowNode = service.gridOptions.api.getDisplayedRowAtIndex(
               event.rowIndex
             ),
-            newValue = event.newValue,
             changePacket = {
               userId: rowNode.data._id,
               field: event.colDef.field,
@@ -87,9 +88,11 @@
           headerName: "Last Seen",
           field: "lastSeen",
           editable: true,
-          valueParser: function(params) {
-            // convert to number
-            return Number(params.newValue);
+          valueFormatter: function(params) {
+            return moment(params.data.lastSeen).format("MM/DD/YYYY");
+          },
+          valueGetter: function(params) {
+            return moment(params.data.lastSeen).format("MM/DD/YYYY");
           }
         },
         minutesInChannel: {
@@ -105,9 +108,11 @@
           headerName: "Join Date",
           field: "joinDate",
           editable: true,
-          valueParser: function(params) {
-            // convert to number
-            return Number(params.newValue);
+          valueFormatter: function(params) {
+            return moment(params.data.joinDate).format("MM/DD/YYYY");
+          },
+          valueGetter: function(params) {
+            return moment(params.data.joinDate).format("MM/DD/YYYY");
           }
         },
         mixplayInteractions: {
