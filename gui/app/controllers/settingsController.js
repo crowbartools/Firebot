@@ -27,7 +27,6 @@
                 listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
             };
 
-
             $scope.startBackup = function() {
                 $scope.isBackingUp = true;
                 $scope.backupCompleted = false;
