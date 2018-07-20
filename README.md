@@ -1,5 +1,6 @@
-Firebot
-======
+
+![Firebot Logo](https://i.imgur.com/DBH1G1e.png)
+
 An app that allows streamers on Mixer.com to quickly and easily setup versatile interactive boards and chat commands. It supports sound board buttons, api buttons, game controls, scene changes, group changes, and more all on the same interactive board at the same time. This allows any user to have a variety of fun buttons for their audience to interact with at any time.
 
 [![Build Status](https://api.travis-ci.org/crowbartools/Firebot.svg)](https://travis-ci.org/crowbartools/Firebot)
@@ -12,7 +13,7 @@ An app that allows streamers on Mixer.com to quickly and easily setup versatile 
 ***
 
 ## Can I use it now?
-Yes, just head on over to [the releases page](https://github.com/crowbartools/Firebot/releases) and download the newest version!
+Yes, just head on over to [Firebot's webpage](https://crowbartools.com/tools/firebot/) and download the newest version!
 
 ## But how do I use it?
 The app will help you with the first steps when you first open the app. You can also head to [our website](https://crowbartools.com/tools/firebot/#tutorials) where we have lot of great video tutorials made by the community.
