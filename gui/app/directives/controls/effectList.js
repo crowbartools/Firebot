@@ -42,7 +42,11 @@
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false">
-                                    <span>{{effect.type}}</span>
+                                    <span style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;padding-right: 10px;">
+                                        <span class="muted">{{$index + 1}}. </span>
+                                        {{effect.type}}
+                                        <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
+                                    </span>
                                     <span class="flex-row-center ">
                                         <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" style="margin-right:15px" ng-click="$event.stopPropagation()"></i>
                                         <div class="clickable" style="margin-right:15px; font-size: 20px; width: 15px; text-align: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
@@ -141,6 +145,7 @@
 
                 ctrl.removeAllEffects = function() {
                     ctrl.effectsArray = [];
+                    ctrl.effectsUpdate();
                 };
 
                 ctrl.hasCopiedEffects = function() {

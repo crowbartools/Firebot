@@ -11,7 +11,6 @@ const shell = require('electron').shell;
 const fs = require('fs');
 const request = require('request');
 const List = require('list.js');
-const howler = require('howler');
 const compareVersions = require('compare-versions');
 const marked = require('marked');
 const path = require('path');
@@ -24,7 +23,6 @@ require('angular-ui-bootstrap');
 require('angularjs-slider');
 require('ui-select');
 require('angular-ui-sortable');
-require('angularjs-scroll-glue');
 require('../../node_modules/angular-summernote/dist/angular-summernote');
 
 function boot() {

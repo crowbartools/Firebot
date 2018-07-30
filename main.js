@@ -3,9 +3,11 @@
 const path = require('path');
 const url = require('url');
 const logger = require('./lib/logwrapper');
+logger.info("Starting Firebot...");
 
 const electron = require('electron');
 const {app, BrowserWindow, ipcMain, shell, dialog} = electron;
+const windowStateKeeper = require('electron-window-state');
 const GhReleases = require('electron-gh-releases');
 const settings = require('./lib/common/settings-access').settings;
 const dataAccess = require('./lib/common/data-access.js');
@@ -41,6 +43,7 @@ if (process.platform === 'win32') {
         // cleanup from last instance
 
         // use case-fallthrough to do normal installation
+        break;
     case '--squirrel-install': //eslint-disable-line no-fallthrough
         // Optional - do things such as:
         // - Install desktop and start menu shortcuts
@@ -55,8 +58,12 @@ if (process.platform === 'win32') {
         child.on('close', app.quit);
         return;
 
-    case '--squirrel-uninstall':
+    case '--squirrel-uninstall': {
         // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
+
+        //attempt to delete the user-settings folder
+        let rimraf = require('rimraf');
+        rimraf.sync(dataAccess.getPathInUserData("/user-settings"));
 
         // Remove shortcuts
         cp = require('child_process');
@@ -65,7 +72,7 @@ if (process.platform === 'win32') {
         child = cp.spawn(updateDotExe, ["--removeShortcut", target], { detached: true });
         child.on('close', app.quit);
         return true;
-
+    }
     case '--squirrel-obsolete':
         // This is called on the outgoing version of your app before
         // we update to the new version - it's the opposite of
@@ -79,15 +86,28 @@ if (process.platform === 'win32') {
 function createWindow () {
     logger.info('Creating window...');
 
+    let mainWindowState = windowStateKeeper({
+        defaultWidth: 1285,
+        defaultHeight: 720
+    });
+
+
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 1285,
-        height: 720,
+        x: mainWindowState.x,
+        y: mainWindowState.y,
+        width: mainWindowState.width,
+        height: mainWindowState.height,
         minWidth: 300,
         minHeight: 50,
         icon: path.join(__dirname, './gui/images/logo.ico'),
         show: false
     });
+
+    // register listeners on the window, so we can update the state
+    // automatically (the listeners will be removed when the window is closed)
+    // and restore the maximized or full screen state
+    mainWindowState.manage(mainWindow);
 
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
@@ -95,6 +115,8 @@ function createWindow () {
         protocol: 'file:',
         slashes: true
     }));
+
+
 
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on('did-finish-load', () => {
@@ -152,10 +174,15 @@ async function createDefaultFoldersAndFiles() {
         dataAccess.makeDirInUserDataSync("/user-settings/scripts");
     }
 
-    // Create the scripts folder if it doesn't exist
+    // Create the backups folder if it doesn't exist
     if (!dataAccess.userDataPathExistsSync("/backups/")) {
         logger.info("Can't find the backup folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/backups");
+    }
+
+    // Create the clips folder if it doesn't exist
+    if (!dataAccess.userDataPathExistsSync("/clips/")) {
+        dataAccess.makeDirInUserDataSync("/clips");
     }
 
     // Update the port.js file
@@ -308,6 +335,30 @@ ipcMain.on('getImportFolderPath', (event, uniqueid) => {
         properties: ['openDirectory']
     });
     event.sender.send('gotImportFolderPath', {path: path, id: uniqueid});
+});
+
+// Get Get Backup Zip Path
+// This listens for an event from the render media.js file to open a dialog to get a filepath.
+ipcMain.on('getBackupZipPath', (event, uniqueid) => {
+    const backupsFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups" + path.sep);
+
+    let fs = require('fs');
+    let backupsFolderExists = false;
+    try {
+        backupsFolderExists = fs.existsSync(backupsFolderPath);
+    } catch (err) {
+        logger.warn("cannot check if backup folder exists", err);
+    }
+
+    let zipPath = dialog.showOpenDialog({
+        title: "Select backup zp",
+        buttonLabel: "Select Backup",
+        defaultPath: backupsFolderExists ? backupsFolderPath : undefined,
+        filters: [
+            {name: 'Zip', extensions: ['zip']}
+        ]
+    });
+    event.sender.send('gotBackupZipPath', {path: zipPath, id: uniqueid});
 });
 
 // Opens the firebot backup folder

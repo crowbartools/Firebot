@@ -14,8 +14,8 @@ $info-color:#30a6ce;
 $highlight-color: #EBB11F;
 
 // Scrollbar
-$scrollbar-background-color: $light-background-color + 30%;
-$scrollbar-bar-color: $light-background-border + 40%; 
+$scrollbar-background-color: rgba(97, 97, 105, 0.58);
+$scrollbar-bar-color: #2f2f30; 
 
 // Navigation
 $left-nav-link-text-color: white;
@@ -68,6 +68,8 @@ $chatWhisperColor: #c235ef;
 $chatDeletedColor: gray;
 $chatTextColor: white;
 $chatBorder: #cecece;
+$chat-message-alternate-bg: #393e51;
+
 
 // Connection panel
 $connection-tile-bg: #3e4356;

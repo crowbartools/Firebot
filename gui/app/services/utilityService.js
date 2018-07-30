@@ -7,6 +7,8 @@
 
     const _ = require('underscore')._;
 
+    const EffectType = require('../../lib/common/EffectType');
+
     angular
         .module('firebotApp')
         .factory('utilityService', function($rootScope, $uibModal, listenerService, logger) {
@@ -14,15 +16,29 @@
 
             let copiedEffectsCache = {};
             service.copyEffects = function(type, effects) {
-                copiedEffectsCache[type] = JSON.parse(angular.toJson(effects));
+                copiedEffectsCache = JSON.parse(angular.toJson(effects));
             };
 
-            service.getCopiedEffects = function(type) {
-                return JSON.parse(JSON.stringify(copiedEffectsCache[type]));
+            service.getCopiedEffects = function(trigger) {
+                let effects = JSON.parse(JSON.stringify(copiedEffectsCache));
+
+                if (!Array.isArray(effects)) {
+                    effects = Object.values(effects);
+                }
+
+                let compatibleEffects = [];
+                effects.forEach(e => {
+                    if (EffectType.effectCanBeTriggered(e.type, trigger)) {
+                        compatibleEffects.push(e);
+                    }
+                });
+
+                return compatibleEffects;
             };
 
-            service.hasCopiedEffects = function(type) {
-                return copiedEffectsCache[type] != null;
+            service.hasCopiedEffects = function(trigger) {
+
+                return service.getCopiedEffects(trigger).length > 0;
             };
 
             let slidingModals = [];
@@ -288,7 +304,7 @@
                 service.showModal(errorModalContext);
 
                 // Log error to file.
-                logger.error(errorMessage);
+                logger.warning(errorMessage);
             };
 
             /*

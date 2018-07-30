@@ -234,6 +234,33 @@
                 pushDataToFile('/settings/chatViewerList', chatViewerList === true);
             };
 
+            service.isChatCompactMode = function() {
+                let compact = getDataFromFile('/settings/chatCompactMode');
+                return compact != null ? compact : false;
+            };
+
+            service.setChatCompactMode = function(compact) {
+                pushDataToFile('/settings/chatCompactMode', compact === true);
+            };
+
+            service.chatAlternateBackgrounds = function() {
+                let alternate = getDataFromFile('/settings/chatAlternateBackgrounds');
+                return alternate != null ? alternate : true;
+            };
+
+            service.setChatAlternateBackgrounds = function(alternate) {
+                pushDataToFile('/settings/chatAlternateBackgrounds', alternate === true);
+            };
+
+            service.chatHideDeletedMessages = function() {
+                let hide = getDataFromFile('/settings/chatHideDeletedMessages');
+                return hide != null ? hide : false;
+            };
+
+            service.setChatHideDeletedMessages = function(hide) {
+                pushDataToFile('/settings/chatHideDeletedMessages', hide === true);
+            };
+
             service.getOverlayCompatibility = function() {
                 let overlay = getDataFromFile('/settings/overlayImages');
                 return overlay != null ? overlay : "Other";
@@ -447,6 +474,15 @@
 
             service.setMaxBackupCount = function(maxBackupCount) {
                 pushDataToFile('/settings/maxBackupCount', maxBackupCount);
+            };
+
+            service.getClipDownloadFolder = function() {
+                let dlFolder = getDataFromFile('/settings/clips/downloadFolder');
+                return dlFolder != null && dlFolder !== "" ? dlFolder : dataAccess.getPathInUserData("/clips/");
+            };
+
+            service.setClipDownloadFolder = function(filepath) {
+                pushDataToFile('/settings/clips/downloadFolder', filepath);
             };
 
             service.getAudioOutputDevice = function() {

@@ -3,6 +3,8 @@
 
 (function() {
 
+    const { Howl, Howler } = require("howler");
+
     // This provides methods for playing sounds
 
     angular
@@ -77,7 +79,7 @@
 
                     let sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
 
-                    let sound = new howler.Howl({
+                    let sound = new Howl({
                         src: [path],
                         volume: volume,
                         html5: true,
@@ -101,17 +103,31 @@
                     }
 
                     if (selectedOutputDevice.deviceId === 'overlay') {
+
                         websocketService.broadcast({
                             event: "sound",
                             filepath: filepath,
                             volume: volume,
-                            resourceToken: data.resourceToken
+                            resourceToken: data.resourceToken,
+                            overlayInstance: data.overlayInstance
                         });
+
                     } else {
                         service.playSound(filepath, volume, selectedOutputDevice);
                     }
 
 
+                });
+
+            service.stopAllSounds = function() {
+                logger.info("Stopping all sounds...");
+                Howler.unload();
+            };
+
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.CLEAR_EFFECTS },
+                () => {
+                    service.stopAllSounds();
                 });
 
             return service;

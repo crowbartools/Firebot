@@ -7,7 +7,7 @@
     let app = angular
         .module('firebotApp',
             ['ngAnimate', 'ngRoute', 'ui.bootstrap', 'rzModule', 'ui.select', 'ngSanitize', 'ui.select', 'ui.sortable',
-                'luegg.directives', 'summernote']);
+                'ngScrollGlue', 'summernote']);
 
     app.factory('$exceptionHandler',
         function(logger) {
@@ -124,6 +124,11 @@
                     $scope.loginOrLogout = function(type) {
                         connectionService.loginOrLogout(type);
                     };
+
+                    $scope.reauthForClips = function() {
+                        connectionService.reauthForClips();
+                    };
+
 
                     // When the user clicks "Save", we want to pass the id back to interactiveController
                     $scope.close = function() {

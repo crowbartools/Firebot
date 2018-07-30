@@ -18,7 +18,7 @@
 
                 <h5><b>Support</b></h5> 
                 <span>Experiencing a problem or have a suggestion?</span></br>
-                <p> Visit our <a href ng-click="$root.openLinkExternally('https://github.com/Firebottle/Firebot/issues')">Issues page</a> or come chat with us in the <i>#firebot</i> channels of our <a href ng-click="openLinkExternally('https://discord.gg/tTmMbrG')">Discord server</a>.</p>
+                <p> Visit our <a href ng-click="$root.openLinkExternally('https://github.com/Firebottle/Firebot/issues')">Issues page</a> or come chat with us in the <i>#firebot</i> channels of our <a href ng-click="$root.openLinkExternally('https://discord.gg/tTmMbrG')">Discord server</a>.</p>
 
                 <h5><b>Team Crowbar</b></h5> 
                 <div>

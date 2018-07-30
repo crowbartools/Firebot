@@ -28,11 +28,17 @@ function mixerSocketConnect(){
 		// When we get a message from the Firebot GUI...
 		ws.onmessage = function (evt){
 			var data = JSON.parse(evt.data);
-			var event = data.event;
+			var event = data.event;			
 			
 			var olInstance = params.get("instance");
+
+			borderColor = params.get("borderColor");
+
+
 			console.log(`Recieved Event: ${event}`);
 			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.overlayInstance}`)
+			console.log(data);
+
 			if(olInstance != null && olInstance != "") {
 				if(data.overlayInstance != olInstance) {
 					console.log("Event is for a different instance. Ignoring.")
@@ -40,7 +46,7 @@ function mixerSocketConnect(){
 				}
 			} else {
 				if(data.overlayInstance != null && data.overlayInstance != "") {
-					console.log("Event i's for a specific instance. Ignoring.")
+					console.log("Event is for a specific instance. Ignoring.")
 					return;
 				}
 			}
@@ -67,6 +73,9 @@ function mixerSocketConnect(){
 					break;
 				case "showEvents":
 					showEvents(data);
+					break;
+				case "firebot:reloadoverlay": 
+					location.reload();
 					break;
 				default:
 					console.log('Unrecognized event type.', data);
@@ -126,7 +135,7 @@ function notification(status, text){
 }
 
 $.fn.extend({
-    animateCss: function (animationName, callback) {
+    animateCss: function (animationName, callback, data) {
 		if(callback == null || !(callback instanceof Function)) {
 			callback = () => {};
 		}
@@ -134,26 +143,26 @@ $.fn.extend({
 		if(animationName !== "none") {
 			this.addClass('animated ' + animationName).one(animationEnd, function() {
 				$(this).removeClass('animated ' + animationName);
-				callback();
+				callback(data);
 			});
 		} else { 
-			callback();
+			callback(data);
 		}	
         return this;
     }
 });
 
-function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration) {
+function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration, tokenArg) {
 	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
 	var id = `.${elementClass}`;
-	$(id).animateCss(enterAnimation, () => {
+	$(id).animateCss(enterAnimation, (data) => {
 		setTimeout(function(){ 
-			$(id).animateCss(exitAnimation, () => {
-				$(id).remove();
-			});
+			$(data.id).animateCss(data.exitAnimation, (data1) => {
+				$(data1.id).remove();
+			}, data);
 		}, (duration === 0 || duration != null) ? duration : 5000);
-	});
+	}, { token: tokenArg, id: id, exitAnimation: exitAnimation });
 }
 
 function getStylesForCustomCoords(customCoords) {

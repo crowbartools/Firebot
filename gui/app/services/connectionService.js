@@ -16,7 +16,8 @@
             let ListenerType = listenerService.ListenerType;
 
             // Auth Options
-            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self";
+            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self";
+
             let botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat";
 
             let authInfo = {
@@ -24,7 +25,7 @@
                 authorizationUrl: "https://mixer.com/oauth/authorize",
                 tokenUrl: "https://mixer.com/api/v1/oauth/token",
                 useBasicAuthorizationHeader: false,
-                redirectUri: "https://firebottle.tv/Firebot/oauth/redirect.php"
+                redirectUri: "https://crowbartools.com/projects/firebot/redirect.php"
             };
 
             let authWindowParams = {
@@ -52,6 +53,8 @@
                     streamerAccount.username = "Broadcaster";
                     streamerAccount.photoUrl = defaultPhotoUrl;
                     streamerAccount.isLoggedIn = false;
+                    streamerAccount.reauthedForClips = false;
+                    streamerAccount.loggedInThisSession = false;
 
                 } else {
                     // Delete Info
@@ -67,7 +70,7 @@
 
             // User Info
             // This function grabs info from the currently logged in user.
-            function userInfo(type, accessToken, refreshToken) {
+            function userInfo(type, accessToken, refreshToken, authedForClips = false) {
                 let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
 
                 // Request user info and save out everything to auth file.
@@ -79,46 +82,64 @@
                 }, function (err, res) {
                     let data = JSON.parse(res.body);
 
-                    // Push all to db.
-                    dbAuth.push('./' + type + '/username', data.username);
-                    dbAuth.push('./' + type + '/userId', data.id);
-                    dbAuth.push('./' + type + '/channelId', data.channel.id);
-                    dbAuth.push('./' + type + '/avatar', data.avatarUrl);
-                    dbAuth.push('./' + type + '/accessToken', accessToken);
-                    dbAuth.push('./' + type + '/refreshToken', refreshToken);
+                    let otherType = type.toLowerCase() === "bot" ? "streamer" : "bot";
+                    let otherLoggedIn = service.accounts[otherType].isLoggedIn;
+                    let otherUsername = service.accounts[otherType].username;
 
-                    // Style up the login page.
-                    $q.resolve(true, () => {
-                        service.loadLogin();
-                        $rootScope.showSpinner = false;
-                    });
-
-
-                    // Request channel info
-                    // We do this to get the sub icon to use in the chat window.
-                    request({
-                        url: 'https://mixer.com/api/v1/channels/' + data.username + '?fields=badge,partnered'
-                    }, function (err, res) {
-                        let data = JSON.parse(res.body);
-
+                    if (otherLoggedIn && otherUsername === data.username) {
+                        utilityService.showErrorModal('You cannot sign into the same account for both Streamer and Bot. The bot account should be a seperate account. If you dont have a seperate account, simply dont use the Bot account feature, it is not required.');
+                    } else {
                         // Push all to db.
-                        if (data.partnered === true) {
-                            dbAuth.push('./' + type + '/subBadge', data.badge.url);
-                        } else {
-                            dbAuth.push('./' + type + '/subBadge', false);
-                        }
-                    });
+                        dbAuth.push('./' + type + '/username', data.username);
+                        dbAuth.push('./' + type + '/userId', data.id);
+                        dbAuth.push('./' + type + '/channelId', data.channel.id);
+                        dbAuth.push('./' + type + '/avatar', data.avatarUrl);
+                        dbAuth.push('./' + type + '/accessToken', accessToken);
+                        dbAuth.push('./' + type + '/refreshToken', refreshToken);
+                        dbAuth.push('./' + type + '/authedForClips', authedForClips === true);
+
+                        // Request channel info
+                        // We do this to get the sub icon to use in the chat window.
+                        request({
+                            url: 'https://mixer.com/api/v1/channels/' + data.username + '?fields=badge,partnered'
+                        }, function (err, res) {
+                            let data = JSON.parse(res.body);
+
+                            // Push all to db.
+                            if (data.partnered === true) {
+                                dbAuth.push('./' + type + '/subBadge', data.badge.url);
+                            } else {
+                                dbAuth.push('./' + type + '/subBadge', false);
+                            }
+
+                            if (type === "streamer") {
+                                dbAuth.push('./' + type + '/partnered', data.partnered);
+                                service.accounts.streamer.partnered = data.partnered;
+                            }
+
+                            // Style up the login page.
+                            $q.resolve(true, () => {
+                                service.loadLogin();
+                                $rootScope.showSpinner = false;
+                            });
+
+                        });
+                    }
                 });
             }
 
-            function login(type) {
+            function login(type, clipsReauth = false) {
                 $rootScope.showSpinner = true;
 
                 let scopes = type === "streamer" ? streamerScopes : botScopes;
 
-                // clear out any previous sessions
-                const ses = session.fromPartition(type);
-                ses.clearStorageData();
+                if (!clipsReauth) {
+                    // clear out any previous sessions
+                    const ses = session.fromPartition(type);
+                    ses.clearStorageData();
+                } else {
+                    scopes += ` ${clipsScope}`;
+                }
 
                 authWindowParams.webPreferences.partition = type;
                 const oauthProvider = electronOauth2(authInfo, authWindowParams);
@@ -128,7 +149,10 @@
                             utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
                             logger.error("There was an issue logging into Mixer. Error: " + token.details[0].message, token);
                         } else {
-                            userInfo(type, token.access_token, token.refresh_token);
+                            if (type === "streamer") {
+                                service.accounts.streamer.loggedInThisSession = true;
+                            }
+                            userInfo(type, token.access_token, token.refresh_token, clipsReauth);
                         }
                     }, err => {
                         //error requesting access
@@ -137,6 +161,11 @@
                         utilityService.showErrorModal('Error requesting access for oauth token.');
                     });
             }
+
+            service.reauthForClips = function() {
+                login('streamer', true);
+            };
+
 
             // Refresh Token
             // This will get a new access token for the streamer and bot account.
@@ -168,9 +197,8 @@
 
                                 // Set connecting to false and log the streamer out because we have oauth issues.
                                 service.waitingForChatStatusChange = false;
-                                logout('streamer');
 
-                                utilityService.showErrorModal('There was an error authenticating your streamer account. Please log in again.');
+                                utilityService.showErrorModal('There was an error authenticating your streamer account. Please try again. If it continues to fail, try relogging in.');
                                 return;
                             }
 
@@ -190,12 +218,11 @@
                                         dbAuth.push('./bot/refreshToken', refreshToken);
                                     } else {
                                         logger.error('Something went wrong with bot refresh token.', token);
-                                        utilityService.showErrorModal('There was an error authenticating your bot account. Please log in again.');
+                                        utilityService.showErrorModal('There was an error authenticating your bot account. Please try again. If it continues to fail, try relogging in.');
 
                                         // Set connecting to false and log the streamer out because we have oauth issues.
                                         service.waitingForChatStatusChange = false;
                                         service.disconnectFromInteractive();
-                                        logout('bot');
 
                                         return;
                                     }
@@ -212,12 +239,11 @@
                                 }, err => {
                                     // There was an error getting the bot token.
                                     logger.error(err);
-                                    utilityService.showErrorModal('There was an error authenticating your bot account. Please log in again.');
+                                    utilityService.showErrorModal('There was an error authenticating your bot account. Please try again. If it continues to fail, try relogging in.');
 
                                     // Set connecting to false and log the streamer out because we have oauth issues.
                                     service.waitingForChatStatusChange = false;
                                     service.disconnectFromInteractive();
-                                    logout('bot');
 
                                     return;
                                 });
@@ -241,9 +267,8 @@
 
                             // Set connecting to false and log the streamer out because we have oauth issues.
                             service.waitingForChatStatusChange = false;
-                            logout('streamer');
 
-                            utilityService.showErrorModal('There was an error authenticating your streamer account. Please log in again.');
+                            utilityService.showErrorModal('There was an error authenticating your streamer account. Please try again. If it continues to fail, try relogging in.');
                             return;
                         });
                 } catch (err) {
@@ -296,6 +321,10 @@
 
                         username = streamer.username;
                         avatar = streamer.avatar;
+
+
+                        service.accounts.streamer.authedForClips = streamer.authedForClips === true;
+                        service.accounts.streamer.partnered = streamer.partnered === true;
 
                         if (avatar != null) {
                             service.accounts.streamer.photoUrl = avatar;

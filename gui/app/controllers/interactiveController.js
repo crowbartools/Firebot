@@ -81,7 +81,7 @@
             $scope.resyncCurrentBoard = function() {
                 let board = boardService.getSelectedBoard();
                 if (board != null) {
-                    boardService.loadBoardWithId(board.versionId);
+                    boardService.loadBoardWithId(board.versionId, true);
                 }
 
                 // Refresh the interactive control cache.
@@ -105,7 +105,7 @@
             };
 
             $scope.getControlIdOrName = function(control) {
-                if (control.text == null || control.text === "") {
+                if (control.text == null || control.text.trim() === "") {
                     return `ID: ${control.controlId}`;
                 }
                 if ($scope.isHoverOverControlName(control.controlId)) {
@@ -200,6 +200,8 @@
             $scope.showEditControlEffectsModal = function(controlButton) {
                 let editControlEffectsModalContext = {
                     templateUrl: "./templates/interactive/modals/editControlEffectsModal.html",
+                    keyboard: false,
+                    backdrop: 'static',
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModal, $uibModalInstance, groupsService, effectHelperService, utilityService, control, modalId) => {
                         // The model for the button we are editting

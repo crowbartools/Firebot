@@ -154,6 +154,10 @@
                     // If a scene was deleted from Mixer, the buttons for that scene should be gone as well.
                     for (let button of firebotButtonArray) {
                         try {
+                            if (button === "") {
+                                utilityService.showErrorModal("Detected a button with a name that shouldnt be possible and could cause issues. Please reach out to the Firebot Dev team for help (Click the About link in the sidebar to find our Discord).");
+                                continue;
+                            }
                             dbControls.delete('./firebot/controls/' + button);
                             logger.info('Button ' + button + ' is not on the mixer board. Deleting.');
 
@@ -256,6 +260,11 @@
                             for (let a = 0; a < sceneControls.length; a++) {
                                 button = sceneControls[a];
 
+                                if (button.controlID.includes("/")) {
+                                    utilityService.showErrorModal(`A control with the id of '${button.controlID}' contains a forwardslash which can cause major issues. Please rename the control to remove the / from the name. Sorry for the inconvienence.`);
+                                    continue;
+                                }
+
                                 // Try to get info for button. If there is nothing it errors out.
                                 try {
                                     type = button.kind;
@@ -289,6 +298,24 @@
                                         dbControls.push('./firebot/controls/' + controlID + '/tooltip', button.tooltip);
                                     }
 
+                                    if (type === "label") {
+                                        let controlID = button.controlID;
+                                        dbControls.push('./firebot/controls/' + controlID + '/kind', type);
+                                        dbControls.push('./firebot/controls/' + controlID + '/controlId', controlID);
+                                        dbControls.push('./firebot/controls/' + controlID + '/scene', sceneName);
+                                        dbControls.push('./firebot/controls/' + controlID + '/text', button.text);
+                                    }
+
+                                    if (type === "textbox") {
+                                        let controlID = button.controlID;
+                                        dbControls.push('./firebot/controls/' + controlID + '/kind', type);
+                                        dbControls.push('./firebot/controls/' + controlID + '/controlId', button.controlID);
+                                        dbControls.push('./firebot/controls/' + controlID + '/scene', sceneName);
+                                        dbControls.push('./firebot/controls/' + controlID + '/multiline', button.multiline);
+                                        dbControls.push('./firebot/controls/' + controlID + '/hasSubmit', button.hasSubmit);
+                                        dbControls.push('./firebot/controls/' + controlID + '/placeholder', button.placeholder);
+                                    }
+
 
                                     if (type === "joystick") {
                                         joystick = {
@@ -304,7 +331,11 @@
                                     logger.error('Problem getting button info to save to json.', err);
                                 }
                             }
+
                             // Setup scenes in Firebot json if they haven't been made yet.
+                            if (sceneName.includes("/")) {
+                                utilityService.showErrorModal("Scene: '" + sceneName + "' contains a forward slash (/) in it's name which can cause errors when connecting to Interactive. It is recommended that you rename your scene to use an & or + instead and resync with Firebot.");
+                            }
                             try {
                                 dbControls.getData('./firebot/scenes/' + sceneName);
                             } catch (err) {
@@ -319,7 +350,7 @@
                     });
             }
 
-            function loadBoardById(id) {
+            function loadBoardById(id, forceSync = false) {
                 logger.info(`Getting ${id} from Mixer...`);
                 return $http.get("https://mixer.com/api/v1/interactive/versions/" + id)
                     .then(function(response) {
@@ -360,7 +391,7 @@
                                 }
 
                                 // If the board is up to date, OR if the file exists under the game name then run the backend builder.
-                                if (boardUpdated !== gameUpdated) {
+                                if (boardUpdated !== gameUpdated || forceSync) {
                                     logger.info('Board updated. Rebuilding.');
                                     return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService).then(() => {
                                         return id;
@@ -388,14 +419,14 @@
                     });
             }
 
-            function loadBoardsById(boardVersionIds, clearPreviousBoards) {
+            function loadBoardsById(boardVersionIds, clearPreviousBoards, forceSync = false) {
 
                 //create a list of board load promises
                 logger.debug("Create list of board promises...");
                 let boardLoadPromises = [];
                 _.each(boardVersionIds, function(id) {
                     logger.debug("Loading board " + id);
-                    let promise = loadBoardById(id);
+                    let promise = loadBoardById(id, forceSync);
                     boardLoadPromises.push(promise);
                 });
 
@@ -491,9 +522,9 @@
                 ipcRenderer.send('refreshInteractiveCache');
             };
 
-            service.loadBoardWithId = function(id) {
+            service.loadBoardWithId = function(id, forceSync = false) {
                 $rootScope.showSpinner = true;
-                return loadBoardsById([id], false).then((boards) => {
+                return loadBoardsById([id], false, forceSync).then((boards) => {
                     let board = service.getBoardById(id);
                     if (board != null) {
                         service.setSelectedBoard(board);

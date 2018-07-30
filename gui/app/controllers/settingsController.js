@@ -13,16 +13,19 @@
     angular
         .module('firebotApp')
         .controller('settingsController', function($scope, $timeout, $q, settingsService,
-            utilityService, listenerService, logger) {
+            utilityService, listenerService, logger, connectionService) {
 
             $scope.settings = settingsService;
+
+            $scope.streamerPartnered = connectionService.accounts.streamer.partnered;
+
+            $scope.clipsFolder = settingsService.getClipDownloadFolder();
 
             $scope.showSetupWizard = utilityService.showSetupWizard;
 
             $scope.openRootFolder = function() {
                 listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
             };
-
 
             $scope.startBackup = function() {
                 $scope.isBackingUp = true;
@@ -223,7 +226,7 @@
                                             let backupDate = moment(fileStats.birthtime);
 
                                             let version = "Unknown Version";
-                                            let versionRe = /_(v?\d\.\d\.\d(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
+                                            let versionRe = /_(v?\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+(?:\.\d+)?)?)(?:_|\b)/;
                                             let match = v.match(versionRe);
                                             if (match != null) {
                                                 version = match[1];

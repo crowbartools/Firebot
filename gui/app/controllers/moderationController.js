@@ -46,7 +46,7 @@
             // Exempt Group Functions
             $scope.exemptGroup = groupsService.getExemptGroup();
 
-            $scope.allViewerGroups = groupsService.getDefaultAndCustomViewerGroupNames();
+            $scope.allViewerGroups = groupsService.getDefaultAndCustomViewerGroupsForSparkExempt();
 
             $scope.newExemptUser = "";
             $scope.addUserToExemptGroup = function() {

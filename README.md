@@ -1,4 +1,3 @@
-
 ![Firebot Logo](https://i.imgur.com/DBH1G1e.png)
 
 An app that allows streamers on Mixer.com to quickly and easily setup versatile interactive boards and chat commands. It supports sound board buttons, api buttons, game controls, scene changes, group changes, and more all on the same interactive board at the same time. This allows any user to have a variety of fun buttons for their audience to interact with at any time.
