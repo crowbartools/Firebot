@@ -21,6 +21,7 @@ const connectionManager = require("./lib/common/connection-manager");
 const webServer = require("./server/httpServer");
 
 const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
+const systemCommandLoader = require("./lib/chat/commands/systemCommandLoader");
 
 const Effect = require("./lib/common/EffectType");
 
@@ -407,6 +408,9 @@ function appOnReady() {
     // load effects
     builtInEffectLoader.loadEffects();
 
+    //load commands
+    systemCommandLoader.loadCommands();
+
     createWindow();
 
     // These are defined globally for Custom Scripts.
@@ -450,13 +454,12 @@ function windowClosed() {
       if (settings.backupOnExit()) {
         backupManager.startBackup(false, app.quit);
 
-      // On OS X it is common for applications and their menu bar
-      // to stay active until the user quits explicitly with Cmd + Q
+        // On OS X it is common for applications and their menu bar
+        // to stay active until the user quits explicitly with Cmd + Q
       } else if (process.platform !== "darwin") {
         app.quit();
       }
     });
-
   });
 }
 windowClosed();
@@ -480,7 +483,6 @@ appOnActivate();
  */
 function onAppQuit() {
   app.on("quit", () => {
-    
     deleteProfiles();
     logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");
   });
