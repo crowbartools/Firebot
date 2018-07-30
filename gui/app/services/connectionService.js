@@ -35,7 +35,7 @@
         authorizationUrl: "https://mixer.com/oauth/authorize",
         tokenUrl: "https://mixer.com/api/v1/oauth/token",
         useBasicAuthorizationHeader: false,
-        redirectUri: "https://firebottle.tv/Firebot/oauth/redirect.php"
+        redirectUri: "https://crowbartools.com/projects/firebot/redirect.php"
       };
 
       let authWindowParams = {
@@ -648,6 +648,27 @@
         { type: ListenerType.CONSTELLATION_CONNECTION_CHANGE_REQUEST },
         () => {
           service.toggleConnectionToConstellation();
+        }
+      );
+
+      // Connection Monitor for Overlay
+      // Recieves event from main process that connection has been established or disconnected.
+      listenerService.registerListener(
+        { type: ListenerType.OVERLAY_CONNECTION_STATUS },
+        overlayStatusData => {
+          let status;
+          if (!overlayStatusData.serverStarted) {
+            status = "disconnected";
+          } else if (overlayStatusData.clientsConnected) {
+            status = "connected";
+          } else {
+            status = "warning";
+          }
+
+          $rootScope.$broadcast("connection:update", {
+            type: "overlay",
+            status: status
+          });
         }
       );
 

@@ -1,5 +1,4 @@
-// Global
-notificationShown = false;
+firebotOverlay = new EventEmitter();
 
 let params = new URL(location).searchParams;
 
@@ -8,16 +7,7 @@ let params = new URL(location).searchParams;
 function mixerSocketConnect(){
 	if ("WebSocket" in window){
 		// Let us open a web socket
-		var port = 8080;
-		if("WEBSOCKET_PORT" in window) {
-			if(window.WEBSOCKET_PORT != null && Number.isInteger(window.WEBSOCKET_PORT) && window.WEBSOCKET_PORT > 1024 && window.WEBSOCKET_PORT < 49151) {
-				port = window.WEBSOCKET_PORT;
-			} else {
-				console.warn("Saved websocket port is not valid. Using 8080 instead...")
-			}
-		} else {
-			console.warn("/overlay-settings/port.js could not be found. Assuming port is 8080. Resave the port setting in Firebot to generate a new port.js file.")
-		}
+		let port = new URL(window.location.href).port;
 
 		ws = new ReconnectingWebSocket(`ws://${window.location.hostname}:${port}`);
 		ws.onopen = function(){
@@ -43,37 +33,18 @@ function mixerSocketConnect(){
 				}
 			} else {
 				if(data.overlayInstance != null && data.overlayInstance != "") {
-					console.log("Event i's for a specific instance. Ignoring.")
+					console.log("Event is for a specific instance. Ignoring.")
 					return;
 				}
 			}
 
-			// Pass data on to the correct function.
-			switch(event){
-				case "image":
-					showImage(data);
-					break;
-				case "video":
-					showVideo(data);
-					break;
-				case "celebration":
-					celebrate(data);
-					break;
-				case "html":
-					showHtml(data);
-					break;
-				case "sound":
-					playSound(data);
-					break;
-				case "text":
-					showText(data);
-					break;
-				case "showEvents":
-					showEvents(data);
-					break;
-				default:
-					console.log('Unrecognized event type.', data);
+			if(event == "OVERLAY:REFRESH") {
+				console.log("Refreshing overlay...");
+				location.reload();
+				return;
 			}
+
+			firebotOverlay.emit(event, data.meta);
 		};
 
 		// Connection closed for some reason. Reconnecting Websocket will try to reconnect.
@@ -103,79 +74,6 @@ function errorHandle(ws){
     // Connection open, send keep alive.
     ws.send(2);
   }
-}
-
-// Handle notifications
-function notification(status, text){
-	var divStatus = $('.notification').is(':visible');
-
-	// Check if we need to show notification or not.
-	if(divStatus === false && status === "open" && notificationShown === false){
-		// Show the notification
-		notificationShown = true;
-		$('body').prepend('<div class="notification" style="display:none"><p>'+text+'</p></div>');
-		$('.notification').fadeIn('fast');
-		setTimeout(function(){ 
-			$(".notification p").text("I'll keep trying in the background...");
-			setTimeout(function(){ 
-				$(".notification").fadeOut(300, function() { $(this).remove(); });
-			}, 5000);
-		}, 30000);
-	} else if (status === "close"){
-		// Fade out and remove notification
-		notificationShown = false;
-		$(".notification").fadeOut(300, function() { $(this).remove(); });
-	}
-}
-
-$.fn.extend({
-    animateCss: function (animationName, callback, data) {
-		if(callback == null || !(callback instanceof Function)) {
-			callback = () => {};
-		}
-		var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-		if(animationName !== "none") {
-			this.addClass('animated ' + animationName).one(animationEnd, function() {
-				$(this).removeClass('animated ' + animationName);
-				callback(data);
-			});
-		} else { 
-			callback(data);
-		}	
-        return this;
-    }
-});
-
-function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration, tokenArg) {
-	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
-	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
-	var id = `.${elementClass}`;
-	$(id).animateCss(enterAnimation, (data) => {
-		setTimeout(function(){ 
-			$(data.id).animateCss(data.exitAnimation, (data1) => {
-				$(data1.id).remove();
-			}, data);
-		}, (duration === 0 || duration != null) ? duration : 5000);
-	}, { token: tokenArg, id: id, exitAnimation: exitAnimation });
-}
-
-function getStylesForCustomCoords(customCoords) {
-	
-	var style = "position:absolute;margin:auto;"
-	if(customCoords.top !== null) {
-		style = style + "top:" + customCoords.top.toString() + "px;"
-	}
-	if(customCoords.bottom !== null) {
-		style = style + "bottom:" + customCoords.bottom.toString() + "px;"
-	}
-	if(customCoords.left !== null) {
-		style = style + "left:" + customCoords.left.toString() + "px;"
-	}
-	if(customCoords.right !== null) {
-		style = style + "right:" + customCoords.right.toString() + "px;"
-	}
-	
-	return style;
 }
  
 

@@ -1,6 +1,6 @@
 "use strict";
 
-const groupsAccess = require("../../../lib/common/groups-access");
+const groupsAccess = require("../../../../lib/common/groups-access");
 
 exports.getAllGroups = function(req, res) {
   let response;

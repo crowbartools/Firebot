@@ -105,8 +105,11 @@
           case ConnectionType.OVERLAY:
             if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
               ctrl.tooltip = "<b>Overlay:</b> Connected";
-            } else {
+            } else if (ctrl.connectionStatus === ConnectionStatus.WARNING) {
               ctrl.tooltip = "<b>Overlay:</b> Running, but nothing connected";
+            } else {
+              ctrl.tooltip =
+                "<b>Overlay:</b> Error starting web server. App restart required.";
             }
             break;
         }

@@ -17,16 +17,14 @@
     
     <script src="js/port.js"></script>
     <script src="js/reconnecting-websocket.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/plugins/create.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
 
-    <!-- Effect Handlers-->
-    <script src="js/handlers/imageHandler.js"></script>
-    <script src="js/handlers/videoHandler.js"></script>
-    <script src="js/handlers/soundHandler.js"></script>
-    <script src="js/handlers/htmlHandler.js"></script>
-    <script src="js/handlers/celebrationHandler.js"></script>
-    <script src="js/handlers/showEventsHandler.js"></script>
-    <script src="js/handlers/textHandler.js"></script>
-
-    <!-- Start up everything -->
-	<script src="js/main.js"></script>
+    <script>
+        <% for(let effect of effects) {%>
+            firebotOverlay.on('<%-effect.event.name%>', <%-effect.event.onOverlayEvent%>);
+        <% } %>
+    </script>
 </html> 

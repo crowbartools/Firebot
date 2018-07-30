@@ -102,3 +102,6 @@ doc/
 *.iws
 
 \.idea/
+.vs/slnx.sqlite
+.vs/slnx.sqlite
+.vs/slnx.sqlite

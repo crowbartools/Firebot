@@ -32,7 +32,7 @@
 
         let compatibleEffects = [];
         effects.forEach(e => {
-          if (EffectType.effectCanBeTriggered(e.type, trigger)) {
+          if (EffectType.effectCanBeTriggered(e.id, trigger)) {
             compatibleEffects.push(e);
           }
         });
@@ -473,7 +473,9 @@
           controllerFunc: (
             $scope,
             $uibModalInstance,
+            ngToast,
             utilityService,
+            effectHelperService,
             modalId,
             effect,
             index,
@@ -484,11 +486,17 @@
             $scope.modalId = modalId;
 
             $scope.isAddMode = index == null;
+            $scope.effectDefinition = effectHelperService.getEffectDefinition(
+              $scope.effect.id
+            );
 
             $scope.effectTypeChanged = function(effectType) {
-              $scope.effect.type = effectType.name;
+              $scope.effect.id = effectType.id;
+              $scope.effectDefinition = effectHelperService.getEffectDefinition(
+                $scope.effect.id
+              );
               utilityService.updateNameForSlidingModal(
-                effectType.name,
+                $scope.effectDefinition.definition.name,
                 modalId
               );
             };
@@ -501,7 +509,10 @@
                 let modalElement = $("." + modalId).children();
                 return {
                   element: modalElement,
-                  name: effect.type,
+                  name:
+                    $scope.effectDefinition.definition != null
+                      ? $scope.effectDefinition.definition.name
+                      : "Nothing",
                   id: modalId,
                   instance: $uibModalInstance,
                   onSaveAll: () => {
@@ -520,6 +531,20 @@
             };
 
             $scope.save = function() {
+              let errors = $scope.effectDefinition.optionsValidator(
+                $scope.effect
+              );
+
+              if (errors != null && errors.length > 0) {
+                for (let error of errors) {
+                  ngToast.create(error);
+                }
+                return;
+              }
+
+              // clear any toasts
+              ngToast.dismiss();
+
               $uibModalInstance.close({
                 action: $scope.isAddMode ? "add" : "update",
                 effect: $scope.effect,

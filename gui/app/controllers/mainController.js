@@ -49,7 +49,11 @@
         verticalPosition: "top",
         horizontalPosition: "center",
         maxNumber: 5,
-        className: "danger"
+        timeout: 3000,
+        className: "danger",
+        animation: "fade",
+        combineDuplications: true,
+        dismissButton: true
       });
     }
   ]);

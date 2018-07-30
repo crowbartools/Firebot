@@ -18,7 +18,9 @@ const profileManager = require("./lib/common/profile-manager.js");
 const backupManager = require("./lib/backupManager");
 const userDatabase = require("./lib/database/userDatabase");
 const connectionManager = require("./lib/common/connection-manager");
-const apiServer = require("./api/apiServer.js");
+const webServer = require("./server/httpServer");
+
+const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
 
 const Effect = require("./lib/common/EffectType");
 
@@ -182,6 +184,9 @@ function createWindow() {
 
   const timerManager = require("./lib/chat/timer-manager");
   timerManager.startTimers();
+
+  const currencyManager = require("./lib/currency/currencyManager");
+  currencyManager.startTimer();
 }
 
 /**
@@ -355,6 +360,14 @@ async function createDefaultFoldersAndFiles() {
       dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/chat");
     }
 
+    // Create the currency folder if it doesn't exist.
+    if (
+      !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/currency")
+    ) {
+      logger.info("Can't find the currency folder, creating one now...");
+      dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/currency");
+    }
+
     // Create the chat folder if it doesn't exist.
     if (
       !dataAccess.userDataPathExistsSync(
@@ -369,10 +382,10 @@ async function createDefaultFoldersAndFiles() {
   });
 
   // Update the port.js file
-  let port = settings.getWebSocketPort();
+  let port = settings.getWebServerPort();
   dataAccess.writeFileInWorkingDir(
     "/resources/overlay/js/port.js",
-    `window.WEBSOCKET_PORT = ${port}`,
+    `window.WEBSERVER_PORT = ${port}`,
     () => {
       logger.info(`Set overlay port to: ${port}`);
     }
@@ -391,6 +404,9 @@ function appOnReady() {
   app.on("ready", async function() {
     await createDefaultFoldersAndFiles();
 
+    // load effects
+    builtInEffectLoader.loadEffects();
+
     createWindow();
 
     // These are defined globally for Custom Scripts.
@@ -402,18 +418,14 @@ function appOnReady() {
     backupManager.onceADayBackUpCheck();
 
     //start the REST api server
-    apiServer.start();
+    webServer.start();
 
     const userdb = require("./lib/database/userDatabase");
-    const currencydb = require("./lib/database/currencyDatabase");
     const statsdb = require("./lib/database/statsDatabase");
 
     // Connect to DBs.
     logger.debug("Creating or connecting user database");
     userdb.connectUserDatabase();
-
-    logger.debug("Creating or connecting currency database");
-    currencydb.connectCurrencyDatabase();
 
     logger.debug("Creating or connecting stats database");
     statsdb.connectStatsDatabase();
@@ -610,6 +622,29 @@ ipcMain.on("deleteProfile", () => {
 // Change profile when we get event from renderer
 ipcMain.on("switchProfile", function(event, profileId) {
   profileManager.logInProfile(profileId);
+});
+
+// Get Any kind of file Path
+// This listens for an event from the front end.
+ipcMain.on("getAnyFilePath", (event, data) => {
+  let uuid = data.uuid,
+    options = data.options || {};
+
+  let path = dialog.showOpenDialog({
+    title: options.title ? options.title : undefined,
+    buttonLabel: options.buttonLabel ? options.buttonLabel : undefined,
+    properties: options.directoryOnly ? ["openDirectory"] : ["openFile"],
+    filters: options.filters ? options.filters : undefined,
+    defaultPath: data.currentPath ? data.currentPath : undefined
+  });
+
+  event.sender.send("gotAnyFilePath", { path: path, id: uuid });
+});
+
+// Change profile when we get event from renderer
+ipcMain.on("sendToOverlay", function(event, data) {
+  if (data == null) return;
+  webServer.sendToOverlay(data.event, data.meta);
 });
 
 mixerConnect = require("./lib/common/mixer-interactive.js");

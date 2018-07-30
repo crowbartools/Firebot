@@ -21,27 +21,35 @@
         </ui-select-choices>
       </ui-select>
       `,
-    controller: function($scope, $element, $attrs, settingsService) {
+    controller: function(
+      $scope,
+      $element,
+      $attrs,
+      settingsService,
+      listenerService
+    ) {
       let ctrl = this;
 
       function getSelected() {
-        // grab the effect definitions for the given trigger
-        ctrl.options = Effect.getEffectDefinitions(ctrl.trigger).sort(
-          (a, b) => {
-            let textA = a.name.toUpperCase();
-            let textB = b.name.toUpperCase();
-            return textA < textB ? -1 : textA > textB ? 1 : 0;
-          }
-        );
+        let effectDefs = listenerService
+          .fireEventSync("getAllEffectDefinitions")
+          .map(e => e.definition);
 
-        if (!settingsService.getCustomScriptsEnabled()) {
+        // grab the effect definitions for the given trigger
+        ctrl.options = effectDefs.sort((a, b) => {
+          let textA = a.name.toUpperCase();
+          let textB = b.name.toUpperCase();
+          return textA < textB ? -1 : textA > textB ? 1 : 0;
+        });
+
+        /*if (!settingsService.getCustomScriptsEnabled()) {
           ctrl.options = ctrl.options.filter(
             e => e.name !== Effect.EffectType.CUSTOM_SCRIPT
           );
-        }
+        }*/
 
         //find the selected effect in the list
-        let selected = ctrl.options.filter(e => e.name === ctrl.selected);
+        let selected = ctrl.options.filter(e => e.id === ctrl.selected);
 
         //if we have a match, set it as selected
         if (selected.length > 0) {

@@ -2,7 +2,11 @@
   <button class="btn btn-primary" ng-click="showAddEditGroupModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Group</button>
 </div>
 
-<div class="content-block">
+<div ng-if="groupsService.getViewerGroups(true).length === 0" class="muted">
+    No viewer groups saved. You should make one! :) 
+</div>
+
+<div class="content-block" ng-if="groupsService.getViewerGroups(true).length !== 0">
   <div class="content-block-body">
     <!-- Groups Tab -->
     <div class="row interactive-group-container">

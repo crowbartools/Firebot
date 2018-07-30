@@ -20,9 +20,6 @@
 
       // Setup the WebSocketServer with the saved port.
       let port = settingsService.getWebSocketPort();
-      const wss = new WebSocketServer({
-        port: port
-      });
 
       function showEvents(data) {
         let showEventsPosition = data.showEventsPosition;
@@ -197,7 +194,7 @@
       // Websocket Server
       // This allows for the guiBroadcast call to send out data via websocket.
       service.broadcast = function(data) {
-        data = JSON.stringify(data);
+        /*data = JSON.stringify(data);
         wss.clients.forEach(function each(client) {
           if (client.readyState === 1) {
             client.send(data, err => {
@@ -206,12 +203,12 @@
               }
             });
           }
-        });
+        });*/
       };
 
       service.hasClientsConnected = false;
 
-      wss.on("connection", function connection() {
+      /*wss.on("connection", function connection() {
         service.hasClientsConnected = true;
         $timeout(() => {
           $rootScope.$broadcast("connection:update", {
@@ -232,7 +229,7 @@
             status: status
           });
         }
-      }, 1500);
+      }, 1500);*/
 
       // Watches for an event from main process
       listenerService.registerListener(

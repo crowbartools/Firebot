@@ -248,4 +248,4 @@ const profileManager = require("../../lib/common/profile-manager.js");
 
       return service;
     });
-})(window.angular);
+})();
