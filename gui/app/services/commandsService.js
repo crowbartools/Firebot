@@ -6,7 +6,11 @@
 
   angular
     .module("firebotApp")
-    .factory("commandsService", function(logger, connectionService) {
+    .factory("commandsService", function(
+      logger,
+      connectionService,
+      listenerService
+    ) {
       let service = {};
 
       let getCommandsDb = () =>

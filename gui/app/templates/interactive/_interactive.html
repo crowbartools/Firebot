@@ -1,5 +1,6 @@
 <!--Interactive Tab View-->
-<div class="content-block">
+<span class="muted">Coming soon! :)</span>
+<!--<div class="content-block">
   <div ng-hide="getBoardNames().length == 0" class="content-block-header">
     <span style="padding-left: 15px;font-weight: 600;font-size: 15px;" ng-hide="selectedBoard() == null || selectedBoard() == ''">{{selectedBoard().name}} <span class="muted" style="font-size: 12px;">({{selectedBoard().versionid}})</span></span>
     <span class="clickable board-settings-icon" ng-hide="selectedBoard() == null || selectedBoard() == ''" ng-click="showBoardSettingsModal()">
@@ -42,11 +43,11 @@
           </div>
         </div>
         <uib-tabset active="activeSceneTab">
-          <!--Create a tab for each scene -->
+          <!--Create a tab for each scene ->
           <uib-tab index="$index" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
             <div class="tab-pane interactive-button-holder active">
-              <!--Create buttons in each scene -->
-              <!--Grid View-->
+              <!--Create buttons in each scene ->
+              <!--Grid View->
               <div ng-show="buttonViewMode == 'grid'" ng-class="{'interactive-control-tile': control, 'inactive-control' : !control.active && control.active != null}" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
                 <a ng-hide="control.kind ==='joystick' || control.kind ==='label'" class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">{{'BUTTONS.EDIT' | translate}}</a>
                 <a ng-show="control.kind ==='joystick'" class="info-btn" tooltip-append-to-body="true" uib-tooltip="Joysticks will automatically control your mouse when the board is connected."><i class="fal fa-info-circle"></i></a>
@@ -59,7 +60,7 @@
                 <div ng-hide="control.kind ==='joystick' || control.kind ==='label'" class="spark-cost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
                 <div ng-show="control.kind ==='joystick' || control.kind ==='label'" class="spark-cost"></div>
               </div>
-              <!--List View-->
+              <!--List View->
               <table ng-show="buttonViewMode == 'list'" class="table table-hover">
                 <thead style="text-transform: uppercase;color: #4a4a4a;">
                   <tr>
@@ -97,6 +98,6 @@
         </uib-tabset>
       </div>
     </div>
-  </div>
-</div>
+  </div> 
+</div>-->
 

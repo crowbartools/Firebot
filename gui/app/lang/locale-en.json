@@ -5,8 +5,8 @@
     },
     "SIDEBAR": {
         "INTERACTIVE": {
-            "INTERACTIVE": "Interactive",
-            "BUTTONS": "Buttons"
+            "INTERACTIVE": "MixPlay",
+            "BUTTONS": "Controls"
         },
         "CHAT":{
             "CHAT": "Chat",
