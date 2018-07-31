@@ -30,17 +30,14 @@
           return;
         }
 
-        if (cmdData.systemCommands) {
-          commandsCache.systemCommands = Object.values(cmdData.systemCommands);
-
-          // TODO: Add and save any system command entries that should exist but dont.
-          // Should only happen when we introduce a new system command or someone messes with the json
-        }
-
         if (cmdData.customCommands) {
           logger.debug("loading custom commands: " + cmdData.customCommands);
           commandsCache.customCommands = Object.values(cmdData.customCommands);
         }
+
+        commandsCache.systemCommands = listenerService.fireEventSync(
+          "getAllSystemCommandDefinitions"
+        );
 
         // Refresh the interactive control cache.
         ipcRenderer.send("refreshCommandCache");
