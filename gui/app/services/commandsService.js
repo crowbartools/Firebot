@@ -43,6 +43,8 @@
           "getAllSystemCommandDefinitions"
         );
 
+        console.log(commandsCache.systemCommands);
+
         // Refresh the interactive control cache.
         ipcRenderer.send("refreshCommandCache");
       };

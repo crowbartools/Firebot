@@ -76,5 +76,16 @@
                 </tbody>
             </table>
         </div>
+        <div ng-show="activeCmdTab === 1">
+            <div style="display:flex;font-size: 11px; font-weight: bold; padding-bottom: 10px;">
+                <div class="muted" style="flex-basis: 25%;padding-left: 20px;"><i class="fas fa-tag"></i> NAME</div>
+                <div class="muted" style="width: 20%"><i class="fas fa-exclamation"></i> TRIGGER</div>
+                <div class="muted" style="width: 20%"><i class="fas fa-clock"></i> COOLDOWNS</div>
+                <div class="muted" style="width: 20%"><i class="fas fa-lock-alt"></i> PERMISSIONS</div>
+                <div class="muted" style="width: 20%"></div>
+                <div class="muted" style="flex-basis:30px; flex-shrink: 0;padding-right: 20px;"></div>
+            </div>
+            <sys-command-row ng-repeat="sysCommand in commandsService.getSystemCommands() track by $index" command="sysCommand"></sys-command-row>
+        </div>
     </div>
 </div>

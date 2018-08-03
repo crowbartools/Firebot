@@ -404,3 +404,16 @@ table.fb-table {
     background: gray;
   }
 }
+
+.sys-command-row { 
+  background: white;
+  height: 45px;
+  border-radius: 5px;
+  box-shadow: 1px 1px 5px #dedede;
+  display: flex;
+  align-items: center;
+  &.expanded {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
