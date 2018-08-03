@@ -34,13 +34,13 @@
             <p style="font-size: 18px">{{$ctrl.command.description}}</p>
             <div>
               <div class="muted" style="font-weight:bold; font-size: 12px;">USAGE</div>
-              <p style="font-size: 15px"><i>{{$ctrl.command.trigger}} {{$ctrl.command.usage ? $ctrl.command.usage : ''}}</i></p>
+              <p style="font-size: 15px;font-weight: 600;">{{$ctrl.command.trigger}} {{$ctrl.command.usage ? $ctrl.command.usage : ''}}</p>
             </div>
             <p class="muted" ng-if="$ctrl.command.usage">{{$ctrl.command.trigger}} {{$ctrl.command.usage}}</p>
             <div style="padding-top: 5px;" ng-if="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0">
               <div class="muted" style="font-weight:bold; font-size: 12px;padding-bottom: 5px;">SUBCOMMANDS</div>
               <div ng-repeat="subCmd in $ctrl.command.subCommands track by $index">
-                <span style="font-weight: 600;">{{$ctrl.command.trigger}} {{subCmd.usage}}</span>  —  <i>{{subCmd.description}}</i>
+                <span style="font-weight: 600;">{{$ctrl.command.trigger}} {{subCmd.usage}}</span>  —  <span style="font-size: 13px;">{{subCmd.description}}</span>
                 <div style="padding-left:15px;">
                 <div style="display: inline-block; margin-right: 25px;">
                   <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> COOLDOWNS</span></div>
