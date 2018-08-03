@@ -3,12 +3,13 @@
 (function() {
   angular.module("firebotApp").component("permissionOptions", {
     bindings: {
-      permission: "="
+      permission: "=",
+      hideTitle: "<"
     },
     template: `
       <div>
         <div class="settings-restrict" style="padding-bottom:1em">
-            <div class="settings-title">
+            <div ng-hide="$ctrl.hideTitle === true" class="settings-title">
                 <h3>Permissions</h3>
             </div>
             <div class="permission-type controls-fb-inline">

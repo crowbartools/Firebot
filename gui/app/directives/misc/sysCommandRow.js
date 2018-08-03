@@ -61,13 +61,13 @@
               </div>
             </div>
             <div style="padding-top: 10px">
-              <button class="btn btn-primary">Edit</button>
+              <button class="btn btn-primary" ng-click="$ctrl.openEditSystemCommandModal()">Edit</button>
             </div>  
           </div>
         </div>
       </div>
     `,
-    controller: function() {
+    controller: function(utilityService) {
       let $ctrl = this;
 
       $ctrl.$onInit = function() {};
@@ -93,6 +93,18 @@
           default:
             return `This ${cmdType} is available to everyone`;
         }
+      };
+
+      $ctrl.openEditSystemCommandModal = function() {
+        let cmd = $ctrl.command;
+
+        utilityService.showModal({
+          component: "editSystemCommandModal",
+          resolveObj: {
+            command: () => cmd
+          },
+          closeCallback: resp => {}
+        });
       };
     }
   });
