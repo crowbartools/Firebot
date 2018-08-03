@@ -29,7 +29,7 @@
 
                         <nav-category name="{{'SIDEBAR.MANAGEMENT' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users" ng-if="$ctrl.isViewerDBOn()"></nav-link>
-                        <nav-link page="Viewer Groups" name="{{'SIDEBAR.MANAGEMENT.VIEWER_GROUPS' | translate }}" icon="fa-users"></nav-link>
+                        <nav-link page="Viewer Groups" name="{{'SIDEBAR.MANAGEMENT.VIEWER_GROUPS' | translate }}" icon="fa-users-class"></nav-link>
                         <nav-link page="Moderation" name="{{'SIDEBAR.MANAGEMENT.MODERATION' | translate }}" icon="fa-gavel"></nav-link>
                         <nav-link page="Currency" name="{{'SIDEBAR.MANAGEMENT.CURRENCY' | translate }}" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>           
                         <nav-link page="Settings" name="{{'SIDEBAR.MANAGEMENT.SETTINGS' | translate }}" icon="fa-cog"></nav-link>
