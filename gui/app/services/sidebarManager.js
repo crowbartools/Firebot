@@ -13,9 +13,12 @@
       };
 
       service.currentTab = "buttons";
+      service.currentTabName = "Controls";
 
-      service.setTab = function(tabId) {
+      service.setTab = function(tabId, name) {
         service.currentTab = tabId.toLowerCase();
+
+        service.currentTabName = name ? name : tabId;
 
         //hack that somewhat helps with the autoupdate slider styling issues on first load
         $timeout(function() {

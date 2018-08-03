@@ -406,14 +406,31 @@ table.fb-table {
 }
 
 .sys-command-row { 
-  background: white;
+  background: $fb-table-row-bg;
   height: 45px;
   border-radius: 5px;
-  box-shadow: 1px 1px 5px #dedede;
+  box-shadow: $fb-table-shadow;
   display: flex;
   align-items: center;
+
+  &:hover {
+    cursor: pointer;
+    background: $fb-table-row-bg - 5%;
+  }
+
   &.expanded {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+    background: $fb-table-row-bg - 5%;
+    &:hover {
+      background: $fb-table-row-bg - 7%;
+    }
   }
+}
+
+.sys-command-expanded {
+  background: $fb-table-row-bg;
+  box-shadow: $sys-cmd-expanded-shadow;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }

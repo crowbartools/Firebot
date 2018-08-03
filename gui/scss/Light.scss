@@ -114,11 +114,15 @@ $alert-danger-bg: #f2dede;
 $fb-tab-wrapper-bg: white;
 $fb-tab-wrapper-border-color: #eaecec;
 $fb-tab-border-bottom-hover: #bfb7b7;
+$fb-tab-hightlight-color: #2aa1c0;
+$fb-unselected-text-color: grey;
 
 $fb-tab-title-color: black;
 
 $fb-table-row-bg: white;
 $fb-table-shadow: 1px 1px 5px #dedede;
+
+$sys-cmd-expanded-shadow: 3px 3px 5px -2px #dedede;
 
 // Import Core Styles
 @import './core/$importer';

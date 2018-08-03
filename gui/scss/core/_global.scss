@@ -855,6 +855,11 @@ body {
   cursor: pointer;
 }
 
+.clickable-minimal:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
 .clickable-dark:hover {
   opacity: 0.96;
   cursor: pointer;

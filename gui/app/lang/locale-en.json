@@ -13,12 +13,15 @@
             "COMMANDS": "Commands",
             "CHAT_FEED": "Chat Feed"
         },
-        "GENERAL": {
-            "GENERAL": "General",
+        "OTHER": {
+            "OTHER": "Other",
             "EVENTS": "Events",
             "TIMERS": "Timers",
+            "HOTKEYS": "Hotkeys"
+        },
+        "MANAGEMENT": {
+            "MANAGEMENT": "Management",
             "VIEWER_GROUPS": "Viewer Groups",
-            "HOTKEYS": "Hotkeys",
             "MODERATION": "Moderation",
             "VIEWERS": "Viewers",
             "SETTINGS": "Settings",

@@ -15,23 +15,25 @@
                 <div class="nav-body-wrapper">
                     <div class="nav-links-wrapper" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
 
-                        <nav-category name="Interactive" text="SIDEBAR.INTERACTIVE"></nav-category>
-                        <nav-link name="Buttons" text="SIDEBAR.INTERACTIVE.BUTTONS" icon="fa-gamepad" is-index="true"></nav-link>
+                        <nav-category name="{{'SIDEBAR.INTERACTIVE' | translate }}"></nav-category>
+                        <nav-link page="Buttons" name="{{'SIDEBAR.INTERACTIVE.BUTTONS' | translate }}" icon="fa-gamepad" is-index="true"></nav-link>
 
-                        <nav-category name="Chat" text="SIDEBAR.CHAT" pad-top="true"></nav-category>
-                        <nav-link name="Commands" text="SIDEBAR.CHAT.COMMANDS" icon="fa-bullhorn"></nav-link>
-                        <nav-link name="Chat Feed" text="SIDEBAR.CHAT.CHAT_FEED" icon="fa-commenting"></nav-link>
+                        <nav-category name="{{'SIDEBAR.CHAT' | translate }}" pad-top="true"></nav-category>
+                        <nav-link page="Commands" name="{{'SIDEBAR.CHAT.COMMANDS' | translate }}" icon="fa-bullhorn"></nav-link>
+                        <nav-link page="Chat Feed" name="{{'SIDEBAR.CHAT.CHAT_FEED' | translate }}" icon="fa-commenting"></nav-link>
 
-                        <nav-category name="General" text="SIDEBAR.GENERAL" pad-top="true"></nav-category>
-                        <nav-link name="Events" text="SIDEBAR.GENERAL.EVENTS" icon="fa-star"></nav-link>
-                        <nav-link name="Timers" text="SIDEBAR.GENERAL.TIMERS" icon="fa-stopwatch"></nav-link>
-                        <nav-link name="Hotkeys" text="SIDEBAR.GENERAL.HOTKEYS" icon="fa-keyboard"></nav-link>
-                        <nav-link name="Viewer Groups" text="SIDEBAR.GENERAL.VIEWER_GROUPS" icon="fa-users"></nav-link>
-                        <nav-link name="Moderation" text="SIDEBAR.GENERAL.MODERATION" icon="fa-gavel"></nav-link>
-                        <nav-link name="Currency" text="SIDEBAR.GENERAL.CURRENCY" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>
-                        <nav-link name="Viewers" text="SIDEBAR.GENERAL.VIEWERS" icon="fa-users" ng-if="$ctrl.isViewerDBOn()"></nav-link>
-                        <nav-link name="Settings" text="SIDEBAR.GENERAL.SETTINGS" icon="fa-cog"></nav-link>
-                        <nav-link name="Updates" text="SIDEBAR.GENERAL.UPDATES" icon="fa-download" badge-text="$ctrl.updateIsAvailable() ? 'NEW' : ''"></nav-link>
+                        <nav-category name="{{'SIDEBAR.OTHER' | translate }}" pad-top="true"></nav-category>
+                        <nav-link page="Events" name="{{'SIDEBAR.OTHER.EVENTS' | translate }}" icon="fa-star"></nav-link>
+                        <nav-link page="Timers" name="{{'SIDEBAR.OTHER.TIMERS' | translate }}" icon="fa-stopwatch"></nav-link>
+                        <nav-link page="Hotkeys" name="{{'SIDEBAR.OTHER.HOTKEYS' | translate }}" icon="fa-keyboard"></nav-link>
+
+                        <nav-category name="{{'SIDEBAR.MANAGEMENT' | translate }}" pad-top="true"></nav-category>
+                        <nav-link page="Viewers" name="{{'SIDEBAR.MANAGEMENT.VIEWERS' | translate }}" icon="fa-users" ng-if="$ctrl.isViewerDBOn()"></nav-link>
+                        <nav-link page="Viewer Groups" name="{{'SIDEBAR.MANAGEMENT.VIEWER_GROUPS' | translate }}" icon="fa-users"></nav-link>
+                        <nav-link page="Moderation" name="{{'SIDEBAR.MANAGEMENT.MODERATION' | translate }}" icon="fa-gavel"></nav-link>
+                        <nav-link page="Currency" name="{{'SIDEBAR.MANAGEMENT.CURRENCY' | translate }}" icon="fa-money-bill" ng-if="$ctrl.isViewerDBOn()"></nav-link>           
+                        <nav-link page="Settings" name="{{'SIDEBAR.MANAGEMENT.SETTINGS' | translate }}" icon="fa-cog"></nav-link>
+                        <nav-link page="Updates" name="{{'SIDEBAR.MANAGEMENT.UPDATES' | translate }}" icon="fa-download" badge-text="$ctrl.updateIsAvailable() ? 'NEW' : ''"></nav-link>
 
                     </div>
         

@@ -257,10 +257,10 @@
     font-weight: 600;
     font-size: 12px;
     & > li.active > a, & > li.active > a:focus, & > li.active > a:hover {
-      color: #2aa1c0;
+      color: $fb-tab-hightlight-color;
       background-color: transparent;
       border: 1px solid transparent;
-      border-bottom: 3px solid #2aa1c0;
+      border-bottom: 3px solid $fb-tab-hightlight-color;
     }
     & > li > a:hover {
       border-color: transparent;
@@ -272,7 +272,7 @@
         line-height: 1.42857143;
         border: 1px solid transparent;
         border-radius: 4px 4px 0 0;
-        color: gray;
+        color: $fb-unselected-text-color;
     }
   }
 
