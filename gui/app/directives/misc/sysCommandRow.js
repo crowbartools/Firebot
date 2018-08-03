@@ -39,7 +39,7 @@
             <p class="muted" ng-if="$ctrl.command.usage">{{$ctrl.command.trigger}} {{$ctrl.command.usage}}</p>
             <div style="padding-top: 5px;" ng-if="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0">
               <div class="muted" style="font-weight:bold; font-size: 12px;">SUBCOMMANDS</div>
-              <div ng-repeat="subCmd in $ctrl.command.subCommands track by $index">
+              <div ng-repeat="subCmd in $ctrl.command.subCommands track by $index" style="padding-top: 5px; padding-bottom: 15px;">
                 <span style="font-weight: 600;">{{$ctrl.command.trigger}} {{subCmd.usage}}</span>  —  <span style="font-size: 13px;">{{subCmd.description}}</span>
                 <div style="padding-left:15px;">
                 <div style="display: inline-block; margin-right: 25px;">
@@ -55,7 +55,7 @@
                   </div>
                   <div style="display: inline-block;">
                     <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> PERMISSIONS</span></div>
-                    <div><span style="text-transform: capitalize;">{{subCmd.permission.type}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd)"></tooltip></div>
+                    <div><span style="text-transform: capitalize;">{{subCmd.permission.type}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd, true)"></tooltip></div>
                   </div>
                 </div>                
               </div>
@@ -72,26 +72,26 @@
 
       $ctrl.$onInit = function() {};
 
-      $ctrl.getPermissionTooltip = command => {
+      $ctrl.getPermissionTooltip = (command, isSub) => {
         let type = command.permission.type;
+        let cmdType = isSub ? "subcommand" : "command";
         switch (type) {
           case "group":
             let groups = command.permission.groups;
             if (groups == null || groups.length < 1) {
-              return "Command is set to Group permissions, but no groups are selected.";
+              return `This ${cmdType} is set to Group permissions, but no groups are selected.`;
             }
-            return (
-              "This command is restricted to the groups: " +
-              command.permission.groups.join(", ")
-            );
+            return `This ${cmdType} is restricted to the groups: ${command.permission.groups.join(
+              ", "
+            )}`;
           case "individual":
             let username = command.permission.username;
             if (username == null || username === "") {
-              return "Command is set to restrict to an individual but a name has not been provided.";
+              return `This ${cmdType} is set to restrict to an individual but a name has not been provided.`;
             }
-            return "This command is restricted to the user: " + username;
+            return `This ${cmdType} is restricted to the user: ${username}`;
           default:
-            return "This command is available to everyone";
+            return `This ${cmdType} is available to everyone`;
         }
       };
     }
