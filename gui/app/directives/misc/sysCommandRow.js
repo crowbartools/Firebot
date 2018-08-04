@@ -67,7 +67,7 @@
         </div>
       </div>
     `,
-    controller: function(utilityService) {
+    controller: function(utilityService, commandsService) {
       let $ctrl = this;
 
       $ctrl.$onInit = function() {};
@@ -103,7 +103,9 @@
           resolveObj: {
             command: () => cmd
           },
-          closeCallback: resp => {}
+          closeCallback: resp => {
+            commandsService.saveSystemCommandOverride(resp.command);
+          }
         });
       };
     }

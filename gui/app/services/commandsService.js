@@ -79,14 +79,17 @@
         } catch (err) {} //eslint-disable-line no-empty
       };
 
-      service.saveSystemCommand = function(command) {
-        let commandDb = getCommandsDb();
+      service.saveSystemCommandOverride = function(command) {
+        listenerService.fireEvent(
+          "saveSystemCommandOverride",
+          JSON.parse(angular.toJson(command))
+        );
 
-        let cleanedCommand = JSON.parse(angular.toJson(command));
+        let index = commandsCache.systemCommands.findIndex(
+          c => c.id === command.id
+        );
 
-        try {
-          commandDb.push("/systemCommands/" + command.id, cleanedCommand);
-        } catch (err) {} //eslint-disable-line no-empty
+        commandsCache.systemCommands[index] = command;
       };
 
       service.triggerExists = function(trigger, id = null) {
