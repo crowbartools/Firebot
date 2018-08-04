@@ -67,7 +67,7 @@
         </div>
       </div>
     `,
-    controller: function(utilityService, commandsService) {
+    controller: function(utilityService, commandsService, listenerService) {
       let $ctrl = this;
 
       $ctrl.$onInit = function() {};
@@ -104,7 +104,12 @@
             command: () => cmd
           },
           closeCallback: resp => {
-            commandsService.saveSystemCommandOverride(resp.command);
+            let action = resp.action;
+            if (action === "save") {
+              commandsService.saveSystemCommandOverride(resp.command);
+            } else if (action === "reset") {
+              listenerService.fireEvent("removeSystemCommandOverride", cmd.id);
+            }
           }
         });
       };

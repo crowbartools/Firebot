@@ -32,7 +32,8 @@
       celebrate: {},
       info: {},
       backupComplete: {},
-      currentViewersUpdate: {}
+      currentViewersUpdate: {},
+      systemCommandsUpdated: {}
     };
 
     let ListenerType = {
@@ -67,7 +68,8 @@
       SHOW_HTML: "showHtml",
       CELEBREATE: "celebrate",
       INFO: "info",
-      BACKUP_COMPLETE: "backupComplete"
+      BACKUP_COMPLETE: "backupComplete",
+      SYS_CMDS_UPDATED: "systemCommandsUpdated"
     };
 
     function runListener(listener, returnPayload) {
@@ -423,6 +425,15 @@
      */
     ipcRenderer.on("backupComplete", function(event, data) {
       _.forEach(registeredListeners.backupComplete, listener => {
+        runListener(listener, data);
+      });
+    });
+
+    /**
+     * Update download listener
+     */
+    ipcRenderer.on("systemCommandsUpdated", function(event, data) {
+      _.forEach(registeredListeners.systemCommandsUpdated, listener => {
         runListener(listener, data);
       });
     });

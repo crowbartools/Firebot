@@ -24,15 +24,21 @@
         }
       };
 
+      $ctrl.reset = function() {
+        $ctrl.close({
+          $value: {
+            action: "reset",
+            command: $ctrl.command
+          }
+        });
+      };
       $ctrl.save = function() {
         if ($ctrl.command.trigger == null || $ctrl.command.trigger === "")
           return;
-        /*if (
-          commandsService.triggerExists($ctrl.command.trigger, $ctrl.command.id)
-        )
-          return;*/
+
         $ctrl.close({
           $value: {
+            action: "save",
             command: $ctrl.command
           }
         });

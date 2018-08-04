@@ -43,9 +43,7 @@
           "getAllSystemCommandDefinitions"
         );
 
-        console.log(commandsCache.systemCommands);
-
-        // Refresh the interactive control cache.
+        // Refresh the interactive command cache.
         ipcRenderer.send("refreshCommandCache");
       };
 
@@ -121,6 +119,15 @@
           logger.warn("error when deleting command", err);
         } //eslint-disable-line no-empty
       };
+
+      listenerService.registerListener(
+        {
+          type: listenerService.ListenerType.SYS_CMDS_UPDATED
+        },
+        () => {
+          service.refreshCommands();
+        }
+      );
 
       return service;
     });
