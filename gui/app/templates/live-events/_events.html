@@ -56,7 +56,7 @@
                     {{event.name ? event.name : "Unnamed"}}
                   </td>
                   <td>
-                    {{event.type ? friendlyEventTypeName(event.type) : "No Type"}}                
+                    {{event.eventId && event.sourceId ? friendlyEventTypeName(event.sourceId, event.eventId) : "No Type"}}                
                   </td>
                   <td>
                     {{getEventEffectsCount(event.id)}}
@@ -168,21 +168,11 @@
 
       <div class="effect-setting-container setting-padtop">
         <div class="effect-specific-title"><h4>Trigger On</h4></div>
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="event-type">{{selectedEventTypeName}}</span> <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu event-dropdown">
-                <li ng-repeat="eventType in eventDefinitions"
-                    ng-click="eventTypeSelected(eventType)">
-                    <a href>{{eventType.name}}</a>
-                </li>
-            </ul>
-        </div>
+        <searchable-event-dropdown selected="{ eventId: event.eventId, sourceId: event.sourceId }" style="width:100%" update="eventChanged(event)"></searchable-event-dropdown>
       </div>
 
     </div>
-    <div ng-if="event.type != null" class="effect-setting-container setting-padtop">
+    <div ng-if="event.eventId != null" class="effect-setting-container setting-padtop">
       <effect-list header="What should this event do?" effects="event.effects" trigger="event" update="effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>      
     </div>
     <div class="modal-footer">

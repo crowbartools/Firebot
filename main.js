@@ -22,6 +22,7 @@ const webServer = require("./server/httpServer");
 
 const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
 const systemCommandLoader = require("./lib/chat/commands/systemCommandLoader");
+const builtInEventSourceLoader = require("./lib/live-events/builtinEventSourceLoader");
 
 const Effect = require("./lib/common/EffectType");
 
@@ -410,6 +411,9 @@ function appOnReady() {
 
     //load commands
     systemCommandLoader.loadCommands();
+
+    //load event sources
+    builtInEventSourceLoader.loadEventSources();
 
     createWindow();
 

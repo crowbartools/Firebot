@@ -9,7 +9,8 @@
       $scope,
       eventsService,
       utilityService,
-      settingsService
+      settingsService,
+      listenerService
     ) {
       $scope.eventsService = eventsService;
       $scope.eventsViewMode = settingsService.getButtonViewMode("liveEvents");
@@ -104,7 +105,10 @@
 
       // Fire event manually
       $scope.fireEventManually = function(event) {
-        ipcRenderer.send("manualEvent", event);
+        ipcRenderer.send("triggerManualEvent", {
+          eventId: event.eventId,
+          sourceId: event.sourceId
+        });
       };
 
       // Set Events view mode.
@@ -116,8 +120,17 @@
       /**
        * Gets user friendly event name from the EventType list.
        */
-      $scope.friendlyEventTypeName = function(type) {
-        return eventsService.getEventTypeName(type);
+
+      let sources = listenerService.fireEventSync("getAllEventSources");
+      $scope.friendlyEventTypeName = function(sourceId, eventId) {
+        let source = sources.find(s => s.id === sourceId);
+        if (source != null) {
+          let event = source.events.find(e => e.id === eventId);
+          if (event != null) {
+            return `${event.name} (${source.name})`;
+          }
+        }
+        return null;
       };
 
       /**
@@ -217,17 +230,13 @@
               $scope.event = $.extend(true, {}, eventToEdit);
             }
 
-            $scope.selectedEventTypeName = $scope.event.type
-              ? EventType.getEvent($scope.event.type).name
-              : "Pick one";
-
-            $scope.eventTypeSelected = function(event) {
-              $scope.selectedEventTypeName = event.name;
-              $scope.event.type = event.id;
-            };
-
             $scope.effectListUpdated = function(effects) {
               $scope.event["effects"] = effects;
+            };
+
+            $scope.eventChanged = function(event) {
+              $scope.event.eventId = event.eventId;
+              $scope.event.sourceId = event.sourceId;
             };
 
             // When the user clicks "Save/Add", we want to pass the event back
