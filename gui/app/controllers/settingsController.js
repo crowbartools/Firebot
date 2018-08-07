@@ -20,11 +20,14 @@
       settingsService,
       utilityService,
       listenerService,
+      integrationService,
       logger
     ) {
       $scope.settings = settingsService;
 
       $scope.showSetupWizard = utilityService.showSetupWizard;
+
+      $scope.integrations = integrationService;
 
       $scope.openRootFolder = function() {
         listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);

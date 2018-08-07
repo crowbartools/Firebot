@@ -66,7 +66,8 @@
     notificationService,
     $timeout,
     updatesService,
-    commandsService
+    commandsService,
+    integrationService
   ) {
     // 'chatMessagesService' is included so its instantiated on app start
 
@@ -78,6 +79,9 @@
 
     //load commands
     commandsService.refreshCommands();
+
+    //load integratiosn
+    integrationService.loadIntegrations();
 
     //start notification check
     $timeout(() => {
