@@ -246,6 +246,8 @@
             logger.info("here");
             break;
           }
+          default:
+            connectionStatus = "disconnected";
         }
         return connectionStatus;
       };

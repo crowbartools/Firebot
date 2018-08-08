@@ -58,6 +58,7 @@
                                             <connection-icon type="chat"></connection-icon>
                                             <connection-icon type="constellation"></connection-icon>
                                             <connection-icon type="overlay"></connection-icon>
+                                            <connection-icon type="integrations"></connection-icon>
                                         </span>
                                     </div>
                                 </div>

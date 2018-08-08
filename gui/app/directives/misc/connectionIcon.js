@@ -6,13 +6,13 @@
       type: "@"
     },
     template: `
-            <span class="connection-icon" uib-tooltip-html="$ctrl.tooltip" tooltip-append-to-body="true" tooltip-placement="top-left">
-                <i class="fas" ng-class="$ctrl.connectionIcon"></i>
-                <span class="status-bubble" ng-class="$ctrl.bubbleClass">
-                    <i class="fas" ng-class="$ctrl.bubbleIconClass"></i>
-                </span>
-            </span>
-            `,
+      <span class="connection-icon" uib-tooltip-html="$ctrl.tooltip" tooltip-append-to-body="true" tooltip-placement="top-left">
+          <i class="fas" ng-class="$ctrl.connectionIcon"></i>
+          <span class="status-bubble" ng-class="$ctrl.bubbleClass">
+              <i class="fas" ng-class="$ctrl.bubbleIconClass"></i>
+          </span>
+      </span>
+      `,
     controller: function(
       $rootScope,
       $timeout,
@@ -31,7 +31,8 @@
         INTERACTIVE: "interactive",
         CHAT: "chat",
         CONSTELLATION: "constellation",
-        OVERLAY: "overlay"
+        OVERLAY: "overlay",
+        INTEGRATIONS: "integrations"
       };
 
       const ConnectionStatus = {
@@ -44,7 +45,8 @@
         INTERACTIVE: "fa-gamepad",
         CHAT: "fa-comment",
         CONSTELLATION: "fa-rocket",
-        OVERLAY: "fa-tv-retro"
+        OVERLAY: "fa-tv-retro",
+        INTEGRATIONS: "fa-globe"
       };
 
       const BubbleIcon = {
@@ -112,6 +114,8 @@
                 "<b>Overlay:</b> Error starting web server. App restart required.";
             }
             break;
+          default:
+            return "";
         }
       }
 
@@ -137,6 +141,8 @@
           case ConnectionType.OVERLAY:
             ctrl.connectionIcon = ConnectionIcon.OVERLAY;
             break;
+          case ConnectionType.INTEGRATIONS:
+            ctrl.connectionIcon = ConnectionIcon.INTEGRATIONS;
         }
 
         ctrl.connectionStatus = connectionManager.getConnectionStatusForService(
