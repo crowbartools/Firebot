@@ -80,8 +80,8 @@
     //load commands
     commandsService.refreshCommands();
 
-    //load integratiosn
-    integrationService.loadIntegrations();
+    //get integrations from backend
+    integrationService.updateIntegrations();
 
     //start notification check
     $timeout(() => {

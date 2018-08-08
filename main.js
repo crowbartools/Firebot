@@ -416,8 +416,7 @@ function appOnReady() {
     //load event sources
     builtInEventSourceLoader.loadEventSources();
 
-    integrationManager.loadIntegrations();
-    integrationManager.connectIntegrations();
+    integrationManager.loadIntegrationSettings();
 
     createWindow();
 
