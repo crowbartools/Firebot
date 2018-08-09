@@ -331,6 +331,9 @@ async function createDefaultFoldersAndFiles() {
       );
     }
 
+    //always copy over overlay wrapper
+    dataAccess.copyResourceToUserData(null, "overlay.html", "");
+
     // Create the scripts folder if it doesn't exist
     if (
       !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/scripts")
@@ -383,16 +386,6 @@ async function createDefaultFoldersAndFiles() {
       );
     }
   });
-
-  // Update the port.js file
-  let port = settings.getWebServerPort();
-  dataAccess.writeFileInWorkingDir(
-    "/resources/overlay/js/port.js",
-    `window.WEBSERVER_PORT = ${port}`,
-    () => {
-      logger.info(`Set overlay port to: ${port}`);
-    }
-  );
 
   logger.info(
     "Finished verifying default folder and files for all profiles, as well as making sure our logged in profile is valid."

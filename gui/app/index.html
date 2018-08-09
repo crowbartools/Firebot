@@ -282,7 +282,11 @@
           <h3>How To Add The Overlay</h3>
           <p>In your broadcasting software, add a <b>Browser/Webpage Source</b></p>
           
-          <p>Then in the settings for this <b>Browser/Webpage Source</b>, there should be a URL field. Copy and paste the following URL into that field:</p>
+          <p>Then in the settings for this <b>Browser/Webpage Source</b>, there should be a URL field. Copy and paste the beloew URL into that field.</p>
+
+          <p>Do <b>not</b> select "Local file".</p>
+
+          <p>Make sure the browser source fills your canvas, ie 1920x1080 or 1280x720.</p>
         </div>
         <div style="width:75%; margin-bottom:25px;">
           <div class="input-group">
@@ -294,10 +298,6 @@
           <p ng-if="pathCopied" style="color: green;">
             Overlay path copied!
           </p>
-        </div>
-
-        <div class="effect-info alert alert-warning">
-          <b>Please Note:</b> The overlay is hosted once Firebot starts running, so you may notice images and videos not showing up if you start your broadcasting software before Firebot. To prevent this, make sure to select <b>Refresh browser when scene becomes active</b> for the overlay Browser/Webpage source or just make sure Firebot is started first.
         </div>
       </div>
       <div class="modal-footer" style="text-align:center;">

@@ -8,6 +8,8 @@
 
   const EffectType = require("../../lib/common/EffectType");
 
+  const dataAccess = require("../../lib/common/data-access.js");
+
   angular
     .module("firebotApp")
     .factory("utilityService", function(
@@ -197,15 +199,34 @@
             settingsService,
             instanceName
           ) => {
-            $scope.overlayPath = `http://localhost:${settingsService.getWebServerPort()}/overlay`;
+            dataAccess.getPathInUserData("overlay.html");
+            // $scope.overlayPath = `http://localhost:${settingsService.getWebServerPort()}/overlay`;
+
+            $scope.overlayPath = dataAccess.getPathInUserData("overlay.html");
+
+            let port = settingsService.getWebServerPort();
+
+            let params = {};
+            if (port !== 7473 && !isNaN(port)) {
+              params["port"] = settingsService.getWebServerPort();
+            }
 
             if (instanceName != null && instanceName !== "") {
               $scope.showingInstance = true;
-              $scope.overlayPath =
-                $scope.overlayPath +
-                "?instance=" +
-                encodeURIComponent(instanceName);
+              params["instance"] = encodeURIComponent(instanceName);
             }
+
+            let paramCount = 0;
+            Object.entries(params).forEach(p => {
+              let key = p[0],
+                value = p[1];
+
+              let prefix = paramCount === 0 ? "?" : "&";
+
+              $scope.overlayPath += `${prefix}${key}=${value}`;
+
+              paramCount++;
+            });
 
             $scope.usingOverlayInstances = settingsService.useOverlayInstances();
 

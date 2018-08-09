@@ -1,0 +1,76 @@
+<!--
+	WRAPPER FOR FIREBOT'S OVERLAY. 
+	IT ENSURES THE OVERLAY LOADS EVEN IF BROADCASTING SOFTWARE IS OPENNED BEFORE FIREBOT.
+	THIS FILE GETS REGENERATED ON EVERY FIREBOT RESTART.
+
+	v1.0.0
+-->
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Firebot Overlay</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">	
+    </head>
+	
+	<style>
+		html, body, iframe {
+			width:100%;
+			height: 100%;
+		}
+		body {
+			margin: 0;
+		}
+		iframe {
+			border: none;
+		}
+	</style>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+	<script>
+		
+		$(function() {
+		
+			const params = new URL(location).searchParams;
+			
+			const HOST = params.get("host") || "localhost"
+			const PORT = params.get("port") || "7473";
+			const INSTANCE = params.get("instance") || "";
+			const QUERY_STRING = INSTANCE ? `?instance=${INSTANCE}` : '';
+			const OVERLAY_URL = `http://${HOST}:${PORT}/overlay/${QUERY_STRING}`;
+			
+			const waitForOverlay = () => {
+				return new Promise(resolve => {
+					console.log(`Checking if overlay is hosted at ${OVERLAY_URL}...`);
+					$.get(OVERLAY_URL)
+					  .done(function() {
+						console.log("Overlay is available!");
+						resolve();
+					  })
+					  .fail(function() {
+						console.log("Overlay isn't available. Lets try again in 1 second.");
+						setTimeout(() => {
+							waitForOverlay().then(() =>{ resolve(); });
+						}, 1000);					
+					  });
+				});
+			}
+
+			// Wait for the overlay to be available, then refresh the iframe
+			waitForOverlay().then(() => {
+				console.log("Reloading iframe");
+				let frame = $("#frame");
+				frame.attr('src', OVERLAY_URL);
+				frame.show();
+			});
+		});
+
+	</script>
+    
+    <body>
+          <iframe id="frame" src="" style="display:none;"></iframe>
+    </body>
+</html> 
