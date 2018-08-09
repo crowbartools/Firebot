@@ -57,8 +57,8 @@
                                             <connection-icon type="interactive"></connection-icon>
                                             <connection-icon type="chat"></connection-icon>
                                             <connection-icon type="constellation"></connection-icon>
-                                            <connection-icon type="overlay"></connection-icon>
-                                            <connection-icon type="integrations"></connection-icon>
+                                            <connection-icon type="overlay"></connection-icon>                                          
+                                            <connection-icon type="integrations" ng-if="$ctrl.is.oneIntegrationIsLinked()"></connection-icon>
                                         </span>
                                     </div>
                                 </div>
@@ -115,6 +115,7 @@
       connectionManager,
       updatesService,
       connectionService,
+      integrationService,
       websocketService,
       utilityService,
       settingsService
@@ -128,6 +129,8 @@
       ctrl.cs = connectionService;
 
       ctrl.wss = websocketService;
+
+      ctrl.is = integrationService;
 
       ctrl.isViewerDBOn = settingsService.getViewerDB;
 

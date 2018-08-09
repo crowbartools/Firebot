@@ -23,7 +23,7 @@ const webServer = require("./server/httpServer");
 const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
 const systemCommandLoader = require("./lib/chat/commands/systemCommandLoader");
 const builtInEventSourceLoader = require("./lib/live-events/builtinEventSourceLoader");
-const integrationManager = require("./lib/live-events/integrations/IntegrationManager");
+const integrationLoader = require("./lib/live-events/integrations/integrationLoader");
 
 const Effect = require("./lib/common/EffectType");
 
@@ -416,7 +416,7 @@ function appOnReady() {
     //load event sources
     builtInEventSourceLoader.loadEventSources();
 
-    integrationManager.loadIntegrationSettings();
+    integrationLoader.loadIntegrations();
 
     createWindow();
 

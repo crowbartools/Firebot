@@ -33,7 +33,9 @@
       info: {},
       backupComplete: {},
       currentViewersUpdate: {},
-      systemCommandsUpdated: {}
+      systemCommandsUpdated: {},
+      integrationConnectionUpdate: {},
+      integrationsUpdated: {}
     };
 
     let ListenerType = {
@@ -69,7 +71,9 @@
       CELEBREATE: "celebrate",
       INFO: "info",
       BACKUP_COMPLETE: "backupComplete",
-      SYS_CMDS_UPDATED: "systemCommandsUpdated"
+      SYS_CMDS_UPDATED: "systemCommandsUpdated",
+      INTEGRATION_CONNECTION_UPDATE: "integrationConnectionUpdate",
+      INTEGRATIONS_UPDATED: "integrationsUpdated"
     };
 
     function runListener(listener, returnPayload) {
@@ -430,10 +434,28 @@
     });
 
     /**
-     * Update download listener
+     * sys cmd listener
      */
     ipcRenderer.on("systemCommandsUpdated", function(event, data) {
       _.forEach(registeredListeners.systemCommandsUpdated, listener => {
+        runListener(listener, data);
+      });
+    });
+
+    /**
+     * integration conn update listener
+     */
+    ipcRenderer.on("integrationConnectionUpdate", function(event, data) {
+      _.forEach(registeredListeners.integrationConnectionUpdate, listener => {
+        runListener(listener, data);
+      });
+    });
+
+    /**
+     * integrations updated listener
+     */
+    ipcRenderer.on("integrationsUpdated", function(event, data) {
+      _.forEach(registeredListeners.integrationsUpdated, listener => {
         runListener(listener, data);
       });
     });

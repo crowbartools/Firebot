@@ -13,6 +13,7 @@
       soundService,
       boardService,
       utilityService,
+      integrationService,
       logger
     ) {
       let service = {};
@@ -129,6 +130,13 @@
                 count++;
               }
               break;
+            default:
+              if (s.startsWith("integration.")) {
+                let intId = s.replace("integration.");
+                if (integrationService.integrationIsConnected(intId)) {
+                  count++;
+                }
+              }
           }
         });
 
@@ -194,6 +202,23 @@
                 await service.setConnectionToConstellation(false);
               }
               break;
+            default:
+              if (s.startsWith("integration.")) {
+                let intId = s.replace("integration.");
+                if (integrationService.integrationIsLinked(intId)) {
+                  if (shouldConnect) {
+                    await integrationService.setConnectionForIntegration(
+                      intId,
+                      true
+                    );
+                  } else if (integrationService.integrationIsConnected(intId)) {
+                    await integrationService.setConnectionForIntegration(
+                      intId,
+                      false
+                    );
+                  }
+                }
+              }
           }
         }
         connectionService.isConnectingAll = false;
@@ -245,6 +270,29 @@
 
             logger.info("here");
             break;
+          }
+          case "integrations": {
+            let sidebarControlledIntegrations = settingsService
+              .getSidebarControlledServices()
+              .filter(s => s.startsWith("integration."))
+              .map(s => s.replace("integration."));
+
+            let connectedCount;
+            sidebarControlledIntegrations.forEach(i => {
+              if (integrationService.integrationIsConnected(i)) {
+                connectedCount++;
+              }
+            });
+
+            if (connectedCount === 0) {
+              connectionStatus = "disconnected";
+            } else if (
+              connectedCount === sidebarControlledIntegrations.length
+            ) {
+              connectionStatus = "connected";
+            } else {
+              connectionStatus = "warning";
+            }
           }
           default:
             connectionStatus = "disconnected";

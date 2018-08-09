@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body" style="padding-bottom: 30px;">
                 <div style="display: flex;justify-content: space-around">
-                <div>
+                <div style="width: 70%;">
                     <div style="text-align: center;font-size: 18px;color: gray;font-weight: 100;padding-bottom: 15px;">
                         MIXER SERVICES
                     </div>
@@ -77,7 +77,30 @@
                         </div>
                     </div>
                 </div>
-                </div>             
+                </div>
+                <div ng-if="$ctrl.is.oneIntegrationIsLinked()">
+                    <div style="text-align: center;font-size: 18px;color: gray;font-weight: 100;padding-bottom: 15px; padding-top: 30px;">
+                        <i class="fas fa-globe"></i> INTEGRATIONS
+                    </div>
+                    <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
+                        <div class="connection-tile" ng-repeat="integration in $ctrl.is.getIntegrations()">
+                            <span class="connection-title">{{integration.name}} <tooltip text="integration.description"></tooltip></span>
+                            <div class="connection-button"
+                                ng-class="{'connected': $ctrl.is.integrationIsConnected(integration.id), 'connecting': $ctrl.is.integrationIsConnected(integration.id)}"
+                                ng-click="$ctrl.is.toggleConnectionForIntegration(integration.id)">
+                                <i class="fal"
+                                ng-class="$ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id) ? 'fa-sync fa-spin' : 'fa-power-off'"></i>
+                            </div>
+                            <div class="sub-title">
+                                <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have ' + integration.name + ' be controlled by the sidebar connect button.'"></tooltip></div>
+                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
+                                    <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('integration.' + integration.id)" ng-click="$ctrl.toggledServiceIsChecked('integration.' + integration.id)">
+                                    <div class="control__indicator"></div>                                             
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>           
             </div>
             `,
     bindings: {
@@ -85,12 +108,18 @@
       close: "&",
       dismiss: "&"
     },
-    controller: function(connectionService, websocketService, settingsService) {
+    controller: function(
+      connectionService,
+      websocketService,
+      settingsService,
+      integrationService
+    ) {
       let $ctrl = this;
 
       $ctrl.$onInit = function() {
         $ctrl.conn = connectionService;
         $ctrl.wss = websocketService;
+        $ctrl.is = integrationService;
       };
 
       let sidebarControlledServices = settingsService.getSidebarControlledServices();
