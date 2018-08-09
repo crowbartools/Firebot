@@ -83,7 +83,7 @@
                         <i class="fas fa-globe"></i> INTEGRATIONS
                     </div>
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
-                        <div class="connection-tile" ng-repeat="integration in $ctrl.is.getIntegrations()">
+                        <div class="connection-tile" style="margin-right: 10px;" ng-repeat="integration in $ctrl.is.getLinkedIntegrations()">
                             <span class="connection-title">{{integration.name}} <tooltip text="integration.description"></tooltip></span>
                             <div class="connection-button"
                                 ng-class="{'connected': $ctrl.is.integrationIsConnected(integration.id), 'connecting': $ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id)}"

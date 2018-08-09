@@ -42,6 +42,10 @@
         return integrations;
       };
 
+      service.getLinkedIntegrations = function() {
+        return service.getIntegrations().filter(i => i.linked);
+      };
+
       service.oneIntegrationIsLinked = function() {
         return integrations.some(i => i.linked);
       };
