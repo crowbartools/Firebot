@@ -132,7 +132,7 @@
               break;
             default:
               if (s.startsWith("integration.")) {
-                let intId = s.replace("integration.");
+                let intId = s.replace("integration.", "");
                 if (integrationService.integrationIsConnected(intId)) {
                   count++;
                 }
@@ -178,6 +178,7 @@
 
         connectionService.isConnectingAll = true;
 
+        console.log(services);
         for (let i = 0; i < services.length; i++) {
           let s = services[i];
           switch (s) {
@@ -203,8 +204,10 @@
               }
               break;
             default:
+              console.log(s);
               if (s.startsWith("integration.")) {
-                let intId = s.replace("integration.");
+                let intId = s.replace("integration.", "");
+                logger.info("connecting " + intId);
                 if (integrationService.integrationIsLinked(intId)) {
                   if (shouldConnect) {
                     await integrationService.setConnectionForIntegration(
@@ -275,14 +278,19 @@
             let sidebarControlledIntegrations = settingsService
               .getSidebarControlledServices()
               .filter(s => s.startsWith("integration."))
-              .map(s => s.replace("integration."));
+              .map(s => s.replace("integration.", ""));
 
-            let connectedCount;
+            let connectedCount = 0;
             sidebarControlledIntegrations.forEach(i => {
               if (integrationService.integrationIsConnected(i)) {
                 connectedCount++;
               }
             });
+
+            console.log("INT CNT:");
+            console.log(sidebarControlledIntegrations);
+
+            console.log(connectedCount);
 
             if (connectedCount === 0) {
               connectionStatus = "disconnected";
@@ -293,8 +301,11 @@
             } else {
               connectionStatus = "warning";
             }
+            break;
           }
           default:
+            console.log("SERVICE:");
+            console.log(service);
             connectionStatus = "disconnected";
         }
         return connectionStatus;

@@ -434,3 +434,14 @@ table.fb-table {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 }
+
+.integration-row { 
+  background: $integration-row-bg;
+  height: 60px;
+  border-radius: 5px;
+  box-shadow: $fb-table-shadow;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+}

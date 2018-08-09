@@ -17,7 +17,8 @@
       $rootScope,
       $timeout,
       connectionManager,
-      connectionService
+      connectionService,
+      integrationService
     ) {
       let ctrl = this;
 
@@ -114,6 +115,33 @@
                 "<b>Overlay:</b> Error starting web server. App restart required.";
             }
             break;
+          case ConnectionType.INTEGRATIONS:
+            if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
+              ctrl.tooltip = "<b>Overlay:</b> Connected";
+            } else if (ctrl.connectionStatus === ConnectionStatus.WARNING) {
+              ctrl.tooltip = "<b>Overlay:</b> Running, but nothing connected";
+            } else {
+              ctrl.tooltip =
+                "<b>Overlay:</b> Error starting web server. App restart required.";
+            }
+            let integrations = integrationService
+              .getIntegrations()
+              .filter(i => i.linked);
+
+            let intTooltip = "",
+              count = 0;
+
+            integrations.forEach(i => {
+              if (count !== 0) {
+                intTooltip += "<br/>";
+              }
+              let connectionStatus = i.connected ? "Connected" : "Disconnected";
+              intTooltip += `<b>${i.name}</b>: ${connectionStatus}`;
+              count++;
+            });
+
+            ctrl.tooltip = intTooltip;
+            break;
           default:
             return "";
         }
@@ -122,7 +150,10 @@
       $rootScope.$on("connection:update", (event, data) => {
         if (data.type !== ctrl.type) return;
 
-        ctrl.connectionStatus = data.status;
+        ctrl.connectionStatus = connectionManager.getConnectionStatusForService(
+          ctrl.type
+        );
+
         setBubbleClasses();
         generateTooltip();
       });

@@ -148,13 +148,15 @@
 
          <!-- Integration Settings -->
          <uib-tab index="4" heading="Integrations">
-          <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Streamlabs</div>
-              <div class="setting-description">Link to SL to recieve donation events!</div>
-              <button class="btn btn-default" ng-click="integrations.linkIntegration('streamlabs')">{{integrations.integrationIsLinked("streamlabs") ? 'Unlink' : 'Link'}}</button>
-            </div>
-            <div class="setting col-sm-6">
+          <div class="row" style="margin-top: 30px">
+            <div class="integration-row" ng-repeat="integration in integrations.getIntegrations()">
+              <div>
+                <span><b>{{integration.name}}</b></span>
+                <span class="muted" style="font-size: 13px;padding-left:10px;">{{integration.description}}</span>
+              </div>
+              <div>
+                  <button class="btn btn-default" ng-click="integrations.toggleLinkforIntegration(integration.id)">{{integrations.integrationIsLinked(integration.id) ? 'Unlink' : 'Link'}}</button>
+              </div>
             </div>
           </div>
         </uib-tab>

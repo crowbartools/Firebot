@@ -86,7 +86,7 @@
                         <div class="connection-tile" ng-repeat="integration in $ctrl.is.getIntegrations()">
                             <span class="connection-title">{{integration.name}} <tooltip text="integration.description"></tooltip></span>
                             <div class="connection-button"
-                                ng-class="{'connected': $ctrl.is.integrationIsConnected(integration.id), 'connecting': $ctrl.is.integrationIsConnected(integration.id)}"
+                                ng-class="{'connected': $ctrl.is.integrationIsConnected(integration.id), 'connecting': $ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id)}"
                                 ng-click="$ctrl.is.toggleConnectionForIntegration(integration.id)">
                                 <i class="fal"
                                 ng-class="$ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id) ? 'fa-sync fa-spin' : 'fa-power-off'"></i>

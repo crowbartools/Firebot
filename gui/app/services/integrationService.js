@@ -11,7 +11,11 @@
 
   angular
     .module("firebotApp")
-    .factory("integrationService", function(listenerService, logger) {
+    .factory("integrationService", function(
+      $rootScope,
+      listenerService,
+      logger
+    ) {
       let service = {};
 
       let integrations = [];
@@ -102,10 +106,8 @@
       };
 
       service.integrationIsLinked = function(id) {
-        console.log("got int is linked");
         let integration = getIntegrationById(id);
         if (integration == null) return false;
-        console.log(integration.linked);
         return integration.linked === true;
       };
 
@@ -123,6 +125,14 @@
         listenerService.fireEvent("unlinkIntegration", id);
       };
 
+      service.toggleLinkforIntegration = function(id) {
+        if (service.integrationIsLinked(id)) {
+          service.unlinkIntegration(id);
+        } else {
+          service.linkIntegration(id);
+        }
+      };
+
       listenerService.registerListener(
         {
           type: listenerService.ListenerType.INTEGRATIONS_UPDATED
@@ -137,14 +147,22 @@
           type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
         },
         data => {
+          console.log("got status change");
+          console.log(data);
           let integration = integrations.find(i => i.id === data.id);
           if (integration != null) {
             integration.connected = data.connected;
+            console.log(integration);
           }
 
           integrationsWaitingForConnectionUpdate = integrationsWaitingForConnectionUpdate.filter(
             id => id !== data.id
           );
+
+          $rootScope.$broadcast("connection:update", {
+            type: "integrations",
+            status: ""
+          });
         }
       );
 
