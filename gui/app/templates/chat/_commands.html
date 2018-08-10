@@ -26,6 +26,7 @@
                         <th class="muted"><i class="fas fa-exclamation"></i> TRIGGER</th> 
                         <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th> 
                         <th class="muted"><i class="fas fa-lock-alt"></i> PERMISSIONS</th>
+                        <th class="muted"><i class="fas fa-hand-peace"></i> COUNT</th> 
                         <th></th> 
                         <th></th> 
                     </tr> 
@@ -50,8 +51,11 @@
                             <span style="text-transform: capitalize;">{{command.permission.type}}</span> <tooltip type="info" text="getPermissionTooltip(command)"></tooltip>
                         </td>
                         <td>
-                            <div style="min-width: 75px">
-                                <span class="status-dot" ng-class="{'active': command.active, 'notactive': !command.active}"></span> {{command.active ? "Active" : "Disabled"}}
+                            {{command.count}}
+                        </td>
+                        <td>
+                            <div style="min-width: 75px;display: flex;align-items: center;justify-content: center;">
+                                <span class="status-dot" style="margin-right: 5px;" ng-class="{'active': command.active, 'notactive': !command.active}"></span>{{command.active ? "Active" : "Disabled"}}
                             </div>                            
                         </td>  
                         <td>

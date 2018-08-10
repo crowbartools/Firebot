@@ -64,6 +64,10 @@
           command.createdAt = moment().format();
         }
 
+        if (command.count == null) {
+          command.count = 0;
+        }
+
         let commandDb = getCommandsDb();
 
         // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
@@ -128,6 +132,16 @@
           service.refreshCommands();
         }
       );
+
+      ipcRenderer.on("commandCountUpdate", function(event, data) {
+        let command = service
+          .getCustomCommands()
+          .find(c => c.id === data.commandId);
+        if (command != null) {
+          command.count = data.count;
+          service.saveCustomCommand(command);
+        }
+      });
 
       return service;
     });
