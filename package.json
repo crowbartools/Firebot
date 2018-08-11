@@ -92,6 +92,7 @@
         "rimraf": "^2.6.2",
         "robotjs": "^0.4.7",
         "roll": "^1.2.0",
+        "simple-oauth2": "^2.2.1",
         "socket.io-client": "^2.1.1",
         "ui-select": "^0.19.8",
         "underscore": "^1.8.3",

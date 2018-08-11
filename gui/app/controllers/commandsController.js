@@ -20,7 +20,8 @@
       $scope.commandsService = commandsService;
 
       $scope.getPermissionTooltip = command => {
-        let type = command.permission.type;
+        let type = command.permission ? command.permission.type : "";
+
         switch (type) {
           case "group":
             let groups = command.permission.groups;

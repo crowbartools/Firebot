@@ -19,6 +19,7 @@ const backupManager = require("./lib/backupManager");
 const userDatabase = require("./lib/database/userDatabase");
 const connectionManager = require("./lib/common/connection-manager");
 const webServer = require("./server/httpServer");
+const authLoginManager = require("./lib/AuthLoginManager");
 
 const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
 const systemCommandLoader = require("./lib/chat/commands/systemCommandLoader");
@@ -423,6 +424,9 @@ function appOnReady() {
 
     //start the REST api server
     webServer.start();
+
+    //start auth logic server
+    authLoginManager.startServer();
 
     const userdb = require("./lib/database/userDatabase");
     const statsdb = require("./lib/database/statsDatabase");

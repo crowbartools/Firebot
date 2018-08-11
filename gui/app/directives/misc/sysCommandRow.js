@@ -73,7 +73,7 @@
       $ctrl.$onInit = function() {};
 
       $ctrl.getPermissionTooltip = (command, isSub) => {
-        let type = command.permission.type;
+        let type = command.permission ? command.permission.type : "";
         let cmdType = isSub ? "subcommand" : "command";
         switch (type) {
           case "group":
@@ -91,6 +91,9 @@
             }
             return `This ${cmdType} is restricted to the user: ${username}`;
           default:
+            if (isSub) {
+              return `This ${cmdType} will use the permissions of the root command.`;
+            }
             return `This ${cmdType} is available to everyone`;
         }
       };
