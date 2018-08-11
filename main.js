@@ -139,7 +139,7 @@ function createWindow() {
     height: 720,
     minWidth: 300,
     minHeight: 50,
-    icon: path.join(__dirname, "./gui/images/logo.ico"),
+    icon: path.join(__dirname, "./gui/images/logo_transparent_2.png"),
     show: false
   });
 

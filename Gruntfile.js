@@ -9,7 +9,7 @@ module.exports = function(grunt) {
                 outputDirectory: 'G:/GitHub/Firebot/dist/installer64',
                 loadingGif: 'G:/GitHub/Firebot/gui/images/animated.gif',
                 iconUrl: 'https://firebottle.tv/Firebot/installer/logo.ico',
-                setupIcon: 'G:/GitHub/Firebot/gui/images/logo.ico'
+                setupIcon: 'G:/GitHub/Firebot/gui/images/logo_transparent_2.png'
             }
         },
 		'jsdoc' : {
