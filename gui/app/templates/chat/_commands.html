@@ -26,7 +26,7 @@
                         <th class="muted"><i class="fas fa-exclamation"></i> TRIGGER</th> 
                         <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th> 
                         <th class="muted"><i class="fas fa-lock-alt"></i> PERMISSIONS</th>
-                        <th class="muted"><i class="fas fa-hand-peace"></i> COUNT</th> 
+                        <th class="muted"><i class="fas fa-hashtag"></i> COUNT</th> 
                         <th></th> 
                         <th></th> 
                     </tr> 
@@ -41,10 +41,10 @@
                         <td>{{command.trigger}}</td>
                         <td>
                             <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
-                                <i class="fal fa-globe"></i> {{command.cooldown.global ? command.cooldown.global + "s" : "-" }}
+                                <i class="far fa-globe-americas"></i> {{command.cooldown.global ? command.cooldown.global + "s" : "-" }}
                             </span>
                             <span uib-tooltip="User cooldown">
-                                <i class="fal fa-user"></i> {{command.cooldown.user ? command.cooldown.user + "s" : "-" }}
+                                <i class="far fa-user"></i> {{command.cooldown.user ? command.cooldown.user + "s" : "-" }}
                             </span>                           
                         </td>
                         <td>

@@ -12,10 +12,10 @@
           <div style="width: 20%">{{$ctrl.command.trigger}}</div>
           <div style="width: 20%">
             <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
-                <i class="fal fa-globe"></i> {{$ctrl.command.cooldown.global ? $ctrl.command.cooldown.global + "s" : "-" }}
+                <i class="far fa-globe-americas"></i> {{$ctrl.command.cooldown.global ? $ctrl.command.cooldown.global + "s" : "-" }}
             </span>
             <span uib-tooltip="User cooldown">
-                <i class="fal fa-user"></i> {{$ctrl.command.cooldown.user ? $ctrl.command.cooldown.user + "s" : "-" }}
+                <i class="far fa-user"></i> {{$ctrl.command.cooldown.user ? $ctrl.command.cooldown.user + "s" : "-" }}
             </span>
           </div>
           <div style="width: 20%"><span style="text-transform: capitalize;">{{$ctrl.command.permission.type}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip($ctrl.command)"></tooltip></div>
