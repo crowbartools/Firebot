@@ -280,8 +280,7 @@
 
     // Get app version and change titlebar.
     let appVersion = electron.remote.app.getVersion();
-    $scope.appTitle =
-      "Firebot Interactive || v" + appVersion + " || @FirebotApp";
+    $scope.appTitle = "Firebot | v" + appVersion + " | @FirebotApp";
 
     //make sure sliders render properly
     $timeout(function() {

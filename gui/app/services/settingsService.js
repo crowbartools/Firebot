@@ -281,7 +281,7 @@
 
       service.getTheme = function() {
         let theme = getDataFromFile("/settings/theme");
-        return theme != null ? theme : "Midnight";
+        return theme != null ? theme : "Obsidian";
       };
 
       service.setTheme = function(theme) {
