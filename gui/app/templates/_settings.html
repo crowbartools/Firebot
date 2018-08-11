@@ -38,7 +38,7 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="options-sounds">
                   <li><a href ng-click="settings.setTheme('Light')">Light</a></li>
-                  <li><a href ng-click="settings.setTheme('Dark')">Dark</a></li>
+                  <li><a href ng-click="settings.setTheme('Midnight')">Midnight</a></li>
                   <li><a href ng-click="settings.setTheme('Obsidian')">Obsidian</a></li>
                 </ul>
               </div>
@@ -215,9 +215,6 @@
         <!-- Advanced Settings -->
         <uib-tab index="6" heading="Advanced">
           <div class="row" style="margin-top: 15px">
-            <div class="alert alert-warning">
-                Most users won't need to change settings in this tab. Only change them if you understand what you are doing.
-            </div>
             <div class="setting col-sm-6">
                 <div class="setting-heading">Debug Mode</div>
                 <div class="setting-description">
@@ -281,25 +278,6 @@
             </div>
           </div>
           <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Web Socket Port</div>
-              <div class="setting-description">
-                This is the port that the Firebot and the overlay webpage use to talk to each other. 
-                You usually only need to change this if you are having a problem with the overlay. 
-              </div>
-              <div class="input-group" style="width: 50%; margin-bottom: 10px;">
-                <input type="text" class="form-control" ng-model="currentPort" disabled>
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="button" ng-click="showChangePortModal()">Edit</button>
-                </span>
-              </div>          
-              <div class="alert alert-danger">
-                  <b>Note</b>: If a new port is set, both Firebot and anything previewing the overlay (ie broadcasting software) will need to be restarted for the new port to take effect.
-              </div>
-              <div class="alert alert-warning">
-                <b>Warning</b>: This is NOT the port used in the overlay URL (7473). If you absolutely need to change that port, please reach out to us on Discord or Twitter.
-              </div>
-            </div>
           </div>
         </uib-tab>
       </uib-tabset>

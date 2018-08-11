@@ -19,7 +19,7 @@
                         <nav-link page="Buttons" name="{{'SIDEBAR.INTERACTIVE.BUTTONS' | translate }}" icon="fa-gamepad" is-index="true"></nav-link>
 
                         <nav-category name="{{'SIDEBAR.CHAT' | translate }}" pad-top="true"></nav-category>
-                        <nav-link page="Commands" name="{{'SIDEBAR.CHAT.COMMANDS' | translate }}" icon="fa-bullhorn"></nav-link>
+                        <nav-link page="Commands" name="{{'SIDEBAR.CHAT.COMMANDS' | translate }}" icon="fa-exclamation"></nav-link>
                         <nav-link page="Chat Feed" name="{{'SIDEBAR.CHAT.CHAT_FEED' | translate }}" icon="fa-commenting"></nav-link>
 
                         <nav-category name="{{'SIDEBAR.OTHER' | translate }}" pad-top="true"></nav-category>
