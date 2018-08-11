@@ -19,9 +19,10 @@ $scrollbar-bar-color: $light-background-border + 40%;
 
 // Navigation
 $left-nav-link-text-color: white;
-$left-nav-link-text-hover-color:#1a1a1f + 4%;
+$left-nav-link-text-hover-color:#1E2023 + 4%;
 $left-nav-link-text-selected-color: whitesmoke;
-$nav-link-bg: #1a1a1f;
+$nav-link-bg: #181a1d;
+$sidebar-bg: linear-gradient(-140deg, #1e2023 30%, #2e2f30 98%);
 
 // Tiles
 $tile-text-color: white;

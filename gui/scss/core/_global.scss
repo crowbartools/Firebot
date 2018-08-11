@@ -121,10 +121,7 @@ body {
  flex-direction: column;
  transition: 0.5s;
  white-space: nowrap;
- background: $dark-background-color; /* Old browsers */
- background: -moz-linear-gradient(-45deg, $dark-background-color 0%, $dark-background-border 98%); /* FF3.6-15 */
- background: -webkit-linear-gradient(-45deg, $dark-background-color 0%,$dark-background-border 98%); /* Chrome10-25,Safari5.1-6 */
- background: linear-gradient(135deg, $dark-background-color 0%,$dark-background-border 98%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+ background: $sidebar-bg; /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 }
 .fb-nav.contracted {
  width: 62px;
