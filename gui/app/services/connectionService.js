@@ -50,7 +50,7 @@
        * Login Stuff
        */
 
-      let defaultPhotoUrl = "../images/placeholders/default.jpg";
+      let defaultPhotoUrl = "../images/placeholders/nologin.png";
 
       function logout(type) {
         let dbAuth = profileManager.getJsonDbInProfile("/auth");
@@ -312,12 +312,12 @@
       service.accounts = {
         streamer: {
           username: "Streamer",
-          photoUrl: "../images/placeholders/default.jpg",
+          photoUrl: defaultPhotoUrl,
           isLoggedIn: false
         },
         bot: {
           username: "Bot",
-          photoUrl: "../images/placeholders/default.jpg",
+          photoUrl: defaultPhotoUrl,
           isLoggedIn: false
         }
       };
@@ -416,7 +416,7 @@
             profile = activeProfiles[profile];
             let streamer = [],
               username = "User",
-              avatar = "../images/placeholders/default.jpg";
+              avatar = defaultPhotoUrl;
 
             // Try to get streamer settings for this profile.
             // If it exists, overwrite defaults.
