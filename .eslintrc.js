@@ -15,13 +15,14 @@ module.exports = {
 
     // Project specific globals
     "globals": {
-        "renderWindow": true
+        "renderWindow": true,
+        "$": true
     },
 
     "rules":{
 
         // Deviations from https://eslint.org/docs/rules/#possible-errors
-        //"no-console": 0, // Enable the use of console
+        "no-console": 0, // Enable the use of console
 
         // Deviations from < https://eslint.org/docs/rules/#best-practices >
         "eqeqeq": [2, "smart"],     // No coersion unless comparing against null
