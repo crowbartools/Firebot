@@ -1,5 +1,5 @@
 {
-    "name": "Firebot",
+    "name": "firebot",
     "version": "5.0.0-alpha",
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
@@ -42,15 +42,13 @@
         "electron": "^2.0.7",
         "electron-packager": "10.1.2",
         "electron-rebuild": "^1.8.2",
-        "eslint-config-prettier": "^2.9.0",
-        "eslint-plugin-prettier": "^2.6.0",
+        "eslint": "^5.3.0",
         "grunt": "^1.0.3",
         "grunt-electron-installer": "^2.1.0",
         "grunt-jsdoc": "^2.2.1",
         "husky": "^0.14.3",
         "jsdoc": "^3.5.5",
-        "node-sass": "^4.9.3",
-        "prettier": "1.11.1"
+        "node-sass": "^4.9.3"
     },
     "dependencies": {
         "ag-grid": "^17.1.1",
@@ -73,7 +71,6 @@
         "electron-gh-releases": "^2.0.4",
         "electron-oauth2": "^3.0.0",
         "empty-folder": "^2.0.1",
-        "eslint": "^4.19.0",
         "express": "^4.16.3",
         "howler": "https://github.com/ebiggz/howler.js/tarball/master",
         "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",
