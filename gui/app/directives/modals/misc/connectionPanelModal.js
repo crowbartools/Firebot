@@ -70,10 +70,10 @@
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div class="connection-tile">
                             <span class="connection-title">Overlay</span>
-                            <div class="overlay-button" ng-class="{ 'connected': $ctrl.wss.hasClientsConnected }">
+                            <div class="overlay-button" ng-class="{ 'connected': $ctrl.getOverlayStatusId() == 1, 'warning': $ctrl.getOverlayStatusId() == 0,'disconnected': $ctrl.getOverlayStatusId() == -1  }">
                                 <i class="fal fa-tv-retro"></i>
                             </div>
-                            <div style="text-align: center; font-size: 11px;" class="muted">{{ $ctrl.wss.hasClientsConnected ? 'Running and connected to a client.' : 'Running, but nothing connected.'}}</div>
+                            <div style="text-align: center; font-size: 11px;" class="muted">{{ $ctrl.overlayConnectionMessage()}}</div>
                         </div>
                     </div>
                 </div>
@@ -112,7 +112,8 @@
       connectionService,
       websocketService,
       settingsService,
-      integrationService
+      integrationService,
+      connectionManager
     ) {
       let $ctrl = this;
 
@@ -120,6 +121,7 @@
         $ctrl.conn = connectionService;
         $ctrl.wss = websocketService;
         $ctrl.is = integrationService;
+        $ctrl.cm = connectionManager;
       };
 
       let sidebarControlledServices = settingsService.getSidebarControlledServices();
@@ -136,6 +138,27 @@
 
       $ctrl.serviceIsChecked = function(service) {
         return sidebarControlledServices.includes(service);
+      };
+
+      let overlayStatusId = 0;
+      $ctrl.overlayConnectionMessage = function() {
+        let connectionStatus = connectionManager.getConnectionStatusForService(
+          "overlay"
+        );
+
+        if (connectionStatus === "connected") {
+          overlayStatusId = 1;
+          return "Connected";
+        } else if (connectionStatus === "warning") {
+          overlayStatusId = 0;
+          return "Running, but nothing connected";
+        }
+        overlayStatusId = -1;
+        return "Error starting web server. App restart required.";
+      };
+
+      $ctrl.getOverlayStatusId = function() {
+        return overlayStatusId;
       };
 
       $ctrl.ok = function() {

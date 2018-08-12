@@ -261,8 +261,6 @@
               "getOverlayStatus"
             );
 
-            logger.info(overlayStatus);
-
             if (!overlayStatus.serverStarted) {
               connectionStatus = "disconnected";
             } else if (overlayStatus.clientsConnected) {
