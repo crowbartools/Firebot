@@ -15,6 +15,7 @@
 .modal-title {
     font-weight: 100;
     font-size: 30px;
+    word-wrap: break-word;
 }
 .btn {
     border-radius: 2px;
@@ -153,7 +154,12 @@
 }
 
 .popover-content {
-    padding: 0;
+    padding: 2px;
+    word-wrap: break-word;
+}
+
+.tooltip-inner {
+    word-wrap: break-word;
 }
 
 .dropdown-menu {
@@ -275,6 +281,19 @@
         color: $fb-unselected-text-color;
     }
   }
+
+.command-trigger-cell {
+    max-width: 135px;
+    min-width: 135px;
+    & .trigger {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 240px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
 
 // This is for pages that do NOT use tabbed navigation. IE: Live Events
 .fb-notab-header-wrapper{

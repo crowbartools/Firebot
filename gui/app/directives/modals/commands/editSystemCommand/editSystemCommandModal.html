@@ -8,9 +8,6 @@
     <div class="general-button-settings">
 
         <div style="padding-bottom:1em">
-            <div class="settings-title">
-                <h3>General Settings</h3>
-            </div>
 
             <div class="input-group">
                 <span class="input-group-addon" id="basic-addon3">Trigger</span>
@@ -52,7 +49,7 @@
 
         <div class="other-settings" style="padding-bottom:1em">
             <div class="settings-title">
-                <h3>Other</h3>
+                <h3>Settings</h3>
             </div>
             <div class="controls-fb-inline">
                 <label class="control-fb control--checkbox">Is Active
@@ -65,6 +62,10 @@
                 </label>
                 <label class="control-fb control--checkbox">Skip Logging
                     <input type="checkbox" ng-model="$ctrl.command.skipLog" aria-label="...">
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--checkbox">Allow in Costreams <tooltip text="'Allow this command to be used by anyone in a costream chat. If unchecked only viewers in your channel can use this command.'"></tooltip>
+                    <input type="checkbox" ng-model="$ctrl.command.allowInCostreams" aria-label="...">
                     <div class="control__indicator"></div>
                 </label>
             </div>
