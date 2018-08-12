@@ -47,7 +47,13 @@
       // Set active viewer groups for command permissions.
       $ctrl.viewerGroups = groupsService.getAllGroups();
 
-      $ctrl.$onInit = function() {};
+      $ctrl.$onInit = function() {
+        if ($ctrl.permission === null) {
+          $ctrl.permission = {
+            type: "none"
+          };
+        }
+      };
 
       // This is run each time a group checkbox is clicked or unclicked.
       // This will build an array of currently selected groups to be saved to JSON.
