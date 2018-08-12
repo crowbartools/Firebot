@@ -1,12 +1,12 @@
 "use strict";
 (function() {
-  //This a wrapped dropdown element that automatically handles the particulars
+    //This a wrapped dropdown element that automatically handles the particulars
 
-  angular
-    .module("firebotApp")
-    .component("notificationCenter", {
-      bindings: {},
-      template: `
+    angular
+        .module("firebotApp")
+        .component("notificationCenter", {
+            bindings: {},
+            template: `
        <div class="notifications-wrapper">
           <div uib-popover-template="$ctrl.templateUrl" popover-placement="bottom-right" popover-trigger="'outsideClick'" popover-append-to-body="true" popover-class="notification-popover">
             <i class="far fa-bell clickable" style="cursor:pointer;"></i>
@@ -53,111 +53,111 @@
           </div>
         </script>
        `,
-      controller: function(
-        $scope,
-        $element,
-        $attrs,
-        notificationService,
-        utilityService
-      ) {
-        let ctrl = this;
+            controller: function(
+                $scope,
+                $element,
+                $attrs,
+                notificationService,
+                utilityService
+            ) {
+                let ctrl = this;
 
-        ctrl.unreadCount = notificationService.getUnreadCount;
-        ctrl.getNotifications = notificationService.getNotifications;
+                ctrl.unreadCount = notificationService.getUnreadCount;
+                ctrl.getNotifications = notificationService.getNotifications;
 
-        ctrl.templateUrl = "notificationCenterPopupTemplate.html";
+                ctrl.templateUrl = "notificationCenterPopupTemplate.html";
 
-        $scope.deleteNotification = notificationService.deleteNotification;
+                $scope.deleteNotification = notificationService.deleteNotification;
 
-        $scope.getIconTypeText = function(iconType) {
-          let NotificationIconType = notificationService.NotificationIconType;
-          switch (iconType) {
-            case NotificationIconType.UPDATE:
-              return "UPDATE";
-            case NotificationIconType.ALERT:
-              return "ALERT";
-            case NotificationIconType.TIP:
-              return "TIP";
-            case NotificationIconType.INFO:
-            default:
-              return "INFO";
-          }
-        };
+                $scope.getIconTypeText = function(iconType) {
+                    let NotificationIconType = notificationService.NotificationIconType;
+                    switch (iconType) {
+                    case NotificationIconType.UPDATE:
+                        return "UPDATE";
+                    case NotificationIconType.ALERT:
+                        return "ALERT";
+                    case NotificationIconType.TIP:
+                        return "TIP";
+                    case NotificationIconType.INFO:
+                    default:
+                        return "INFO";
+                    }
+                };
 
-        $scope.getIconClass = function(iconType) {
-          let NotificationIconType = notificationService.NotificationIconType;
-          let iconClass = "";
-          switch (iconType) {
-            case NotificationIconType.UPDATE:
-              iconClass = "download";
-              break;
-            case NotificationIconType.ALERT:
-              iconClass = "exclamation-circle";
-              break;
-            case NotificationIconType.TIP:
-              iconClass = "question-circle";
-              break;
-            case NotificationIconType.INFO:
-            default:
-              iconClass = "info-circle";
-          }
-          return `fa-${iconClass}`;
-        };
+                $scope.getIconClass = function(iconType) {
+                    let NotificationIconType = notificationService.NotificationIconType;
+                    let iconClass = "";
+                    switch (iconType) {
+                    case NotificationIconType.UPDATE:
+                        iconClass = "download";
+                        break;
+                    case NotificationIconType.ALERT:
+                        iconClass = "exclamation-circle";
+                        break;
+                    case NotificationIconType.TIP:
+                        iconClass = "question-circle";
+                        break;
+                    case NotificationIconType.INFO:
+                    default:
+                        iconClass = "info-circle";
+                    }
+                    return `fa-${iconClass}`;
+                };
 
-        ctrl.openNotification = function(notification, index) {
-          notificationService.markNotificationAsRead(notification, index);
-          let justUpdatedModalContext = {
-            templateUrl: "notificationModal.html",
-            size: "sm",
-            resolveObj: {
-              notification: () => notification,
-              index: () => index
-            },
-            controllerFunc: (
-              $scope,
-              $uibModalInstance,
-              $compile,
-              $sce,
-              notificationService,
-              notification
-            ) => {
-              $scope.notification = notification;
+                ctrl.openNotification = function(notification, index) {
+                    notificationService.markNotificationAsRead(notification, index);
+                    let justUpdatedModalContext = {
+                        templateUrl: "notificationModal.html",
+                        size: "sm",
+                        resolveObj: {
+                            notification: () => notification,
+                            index: () => index
+                        },
+                        controllerFunc: (
+                            $scope,
+                            $uibModalInstance,
+                            $compile,
+                            $sce,
+                            notificationService,
+                            notification
+                        ) => {
+                            $scope.notification = notification;
 
-              $scope.ok = function() {
-                $uibModalInstance.dismiss("cancel");
-              };
+                            $scope.ok = function() {
+                                $uibModalInstance.dismiss("cancel");
+                            };
+                        }
+                    };
+                    utilityService.showModal(justUpdatedModalContext);
+                };
             }
-          };
-          utilityService.showModal(justUpdatedModalContext);
-        };
-      }
-    })
-    .directive("dynamicElement", [
-      "$compile",
-      function($compile) {
-        return {
-          restrict: "E",
-          scope: {
-            message: "="
-          },
-          replace: true,
-          link: function(scope, element) {
-            let htmlWrap = `<div style="width:100%; height: 100%; position: relative;">${
-              scope.message
-            }</div>`.trim();
+        })
+        .directive("dynamicElement", [
+            "$compile",
+            function($compile) {
+                return {
+                    restrict: "E",
+                    scope: {
+                        message: "="
+                    },
+                    replace: true,
+                    link: function(scope, element) {
+                        let htmlWrap = `<div style="width:100%; height: 100%; position: relative;">${
+                            scope.message
+                        }</div>`.trim();
 
-            let el = angular.element(htmlWrap);
-            let template = $compile(el)(scope);
-            element.replaceWith(template);
-          },
-          controller: [
-            "$scope",
-            "$rootScope",
-            function($scope, $rootScope) {
-              $scope.rootScope = $rootScope;
+                        let el = angular.element(htmlWrap);
+                        let template = $compile(el)(scope);
+                        element.replaceWith(template);
+                    },
+                    controller: [
+                        "$scope",
+                        "$rootScope",
+                        function($scope, $rootScope) {
+                            $scope.rootScope = $rootScope;
+                        }
+                    ]
+                };
             }
-          ]
-        };
-      }
-    ]);
-})();
+        ]);
+}());

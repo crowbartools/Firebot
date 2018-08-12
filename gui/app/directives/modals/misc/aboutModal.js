@@ -1,8 +1,8 @@
 "use strict";
 
 (function() {
-  angular.module("firebotApp").component("aboutModal", {
-    template: `
+    angular.module("firebotApp").component("aboutModal", {
+        template: `
             <div class="modal-header" style="text-align: center;">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                 <h4 class="modal-title">About Firebot</h4>
@@ -35,17 +35,17 @@
                 </div>
             </div>
             `,
-    bindings: {
-      resolve: "<",
-      close: "&",
-      dismiss: "&"
-    },
-    controller: function() {
-      let $ctrl = this;
+        bindings: {
+            resolve: "<",
+            close: "&",
+            dismiss: "&"
+        },
+        controller: function() {
+            let $ctrl = this;
 
-      $ctrl.$onInit = function() {
-        $ctrl.version = electron.remote.app.getVersion();
-      };
-    }
-  });
-})();
+            $ctrl.$onInit = function() {
+                $ctrl.version = electron.remote.app.getVersion();
+            };
+        }
+    });
+}());

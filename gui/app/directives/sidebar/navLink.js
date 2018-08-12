@@ -1,15 +1,15 @@
 "use strict";
 
 (function() {
-  angular.module("firebotApp").component("navLink", {
-    bindings: {
-      name: "@",
-      page: "@",
-      icon: "@",
-      isIndex: "<",
-      badgeText: "<"
-    },
-    template: `
+    angular.module("firebotApp").component("navLink", {
+        bindings: {
+            name: "@",
+            page: "@",
+            icon: "@",
+            isIndex: "<",
+            badgeText: "<"
+        },
+        template: `
             <a class="fb-nav-link" href="{{$ctrl.href}}" ng-class="{'selected': $ctrl.sbm.tabIsSelected($ctrl.page)}" ng-click="$ctrl.sbm.setTab($ctrl.page, $ctrl.name)"  uib-tooltip="{{!$ctrl.sbm.navExpanded ? $ctrl.name : ''}}" tooltip-placement="right" tooltip-append-to-body="true">
                 <div class="nav-link-bar"></div>
                 <div class="nav-link-icon">
@@ -23,22 +23,22 @@
                 </div>
             </a>
             `,
-    controller: function(sidebarManager) {
-      let ctrl = this;
+        controller: function(sidebarManager) {
+            let ctrl = this;
 
-      ctrl.sbm = sidebarManager;
+            ctrl.sbm = sidebarManager;
 
-      ctrl.$onInit = function() {
-        ctrl.hasBadge = ctrl.badgeText != null && ctrl.badgeText !== "";
-        ctrl.href = ctrl.isIndex
-          ? "#"
-          : "#!" + ctrl.page.toLowerCase().replace(/\W/g, "-");
-      };
+            ctrl.$onInit = function() {
+                ctrl.hasBadge = ctrl.badgeText != null && ctrl.badgeText !== "";
+                ctrl.href = ctrl.isIndex
+                    ? "#"
+                    : "#!" + ctrl.page.toLowerCase().replace(/\W/g, "-");
+            };
 
-      ctrl.getClass = function() {
-        let isSelected = sidebarManager.tabIsSelected(ctrl.page);
-        return `${isSelected ? "fas" : "fal"} ${ctrl.icon}`;
-      };
-    }
-  });
-})();
+            ctrl.getClass = function() {
+                let isSelected = sidebarManager.tabIsSelected(ctrl.page);
+                return `${isSelected ? "fas" : "fal"} ${ctrl.icon}`;
+            };
+        }
+    });
+}());

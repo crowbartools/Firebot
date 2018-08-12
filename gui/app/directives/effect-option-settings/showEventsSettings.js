@@ -1,10 +1,10 @@
 "use strict";
 (function() {
-  angular.module("firebotApp").component("showEventsSettings", {
-    bindings: {
-      model: "="
-    },
-    template: `
+    angular.module("firebotApp").component("showEventsSettings", {
+        bindings: {
+            model: "="
+        },
+        template: `
                 <div>
                     <eos-container header="Display Style">
                         <div class="controls-fb-inline">
@@ -43,22 +43,22 @@
                         <eos-overlay-instance effect="$ctrl.model" class="setting-padtop"></eos-overlay-instance>
                 </div>
                 `,
-    controller: function() {
-      let ctrl = this;
+        controller: function() {
+            let ctrl = this;
 
-      ctrl.$onInit = function() {
-        if (ctrl.model.textType == null) {
-          ctrl.model.textType = "list";
-        }
+            ctrl.$onInit = function() {
+                if (ctrl.model.textType == null) {
+                    ctrl.model.textType = "list";
+                }
 
-        if (ctrl.model.width == null) {
-          ctrl.model.width = 150;
-        }
+                if (ctrl.model.width == null) {
+                    ctrl.model.width = 150;
+                }
 
-        if (ctrl.model.height == null) {
-          ctrl.model.height = 100;
+                if (ctrl.model.height == null) {
+                    ctrl.model.height = 100;
+                }
+            };
         }
-      };
-    }
-  });
-})();
+    });
+}());

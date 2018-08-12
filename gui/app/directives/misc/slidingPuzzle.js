@@ -1,15 +1,17 @@
 'use strict';
-(function(angular) {  
+(function(angular) {
 
-    var module = angular.module('slidingPuzzle', []);
+    let module = angular.module('slidingPuzzle', []);
 
     /**
      * Service
      */
     module.factory('slidingPuzzle', function() {
         function shuffle(a) {
-            var q;
-            for (var j, x, i = a.length; i; j = parseInt(Math.random() * i, 10), x = a[--i], a[i] = a[j], a[j] = x) { q = 0; }
+            let q;
+            for (var j, x, i = a.length; i; j = parseInt(Math.random() * i, 10), x = a[--i], a[i] = a[j], a[j] = x) {
+                q = 0;
+            }
             return a;
         }
 
@@ -32,10 +34,10 @@
              * @param scol
              */
             this.move = function(srow, scol) {
-                var dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]],
+                let dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]],
                     tref, trow, tcol;
 
-                for (var d = 0; d < dirs.length; d++) {
+                for (let d = 0; d < dirs.length; d++) {
                     trow = srow + dirs[d][0];
                     tcol = scol + dirs[d][1];
                     if (this.grid[trow] && this.grid[trow][tcol] && this.grid[trow][tcol].empty) {
@@ -51,7 +53,7 @@
              * Shuffles grid
              */
             this.shuffle = function() {
-                var tiles = [];
+                let tiles = [];
                 this.traverse(function(tile) {
                     tiles.push(tile);
                 });
@@ -66,7 +68,7 @@
              * Solves puzzle
              */
             this.solve = function() {
-                var tiles = [];
+                let tiles = [];
                 this.traverse(function(tile) {
                     tiles.push(tile);
                 });
@@ -83,9 +85,9 @@
              * @type {Boolean}
              */
             this.isSolved = function() {
-                var id = 1;
-                for (var row = 0; row < rows; row++) {
-                    for (var col = 0; col < cols; col++) {
+                let id = 1;
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
                         if (this.grid[row][col].id !== id++) {
                             return false;
                         }
@@ -99,15 +101,15 @@
              * @param fn
              */
             this.traverse = function(fn) {
-                for (var row = 0; row < rows; row++) {
-                    for (var col = 0; col < cols; col++) {
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
                         fn.call(this, this.grid && this.grid[row] ? this.grid[row][col] : undefined, row, col);
                     }
                 }
             };
 
             // initialize grid
-            var id = 1;
+            let id = 1;
             this.traverse(function(tile, row, col) {
                 if (!this.grid[row]) {
                     this.grid[row] = [];
@@ -145,7 +147,7 @@
                 api: '='
             },
             link: function(scope, element, attrs) {
-                var rows, cols,
+                let rows, cols,
                     loading = true,
                     image = new Image();
 
@@ -164,7 +166,7 @@
                         return;
                     }
 
-                    var width = image.width / cols,
+                    let width = image.width / cols,
                         height = image.height / rows;
 
                     scope.puzzle.traverse(function(tile, row, col) {
@@ -200,4 +202,4 @@
             }
         };
     });
-})(window.angular);
+}(window.angular));

@@ -1,17 +1,17 @@
 "use strict";
 (function() {
-  angular.module("firebotApp").component("effectList", {
-    bindings: {
-      trigger: "@",
-      effects: "<",
-      isArray: "<",
-      update: "&",
-      modalId: "@",
-      header: "@",
-      headerClasses: "@",
-      effectContainerClasses: "@"
-    },
-    template: `
+    angular.module("firebotApp").component("effectList", {
+        bindings: {
+            trigger: "@",
+            effects: "<",
+            isArray: "<",
+            update: "&",
+            modalId: "@",
+            header: "@",
+            headerClasses: "@",
+            effectContainerClasses: "@"
+        },
+        template: `
             <div>
                 <div class="flex-row-center jspacebetween" style="margin-bottom:10px;">
                     <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;">{{$ctrl.header}}</h3>
@@ -68,127 +68,127 @@
                 
             </div>
             `,
-    controller: function(utilityService, effectHelperService) {
-      let ctrl = this;
+        controller: function(utilityService, effectHelperService) {
+            let ctrl = this;
 
-      ctrl.effectsArray = [];
+            ctrl.effectsArray = [];
 
-      let effectDefinitions = [];
+            let effectDefinitions = [];
 
-      function createEffectsArray() {
-        if (ctrl.effects == null) {
-          ctrl.effects = [];
-        }
+            function createEffectsArray() {
+                if (ctrl.effects == null) {
+                    ctrl.effects = [];
+                }
 
-        ctrl.effectsArray = ctrl.effects;
-      }
+                ctrl.effectsArray = ctrl.effects;
+            }
 
-      // when the element is initialized
-      ctrl.$onInit = function() {
-        createEffectsArray();
-        effectDefinitions = effectHelperService.getAllEffectDefinitions();
-      };
+            // when the element is initialized
+            ctrl.$onInit = function() {
+                createEffectsArray();
+                effectDefinitions = effectHelperService.getAllEffectDefinitions();
+            };
 
-      ctrl.getEffectNameById = id => {
-        return effectDefinitions.find(e => e.id === id).name;
-      };
+            ctrl.getEffectNameById = id => {
+                return effectDefinitions.find(e => e.id === id).name;
+            };
 
-      ctrl.$onChanges = function() {
-        createEffectsArray();
-      };
+            ctrl.$onChanges = function() {
+                createEffectsArray();
+            };
 
-      ctrl.effectsUpdate = function() {
-        ctrl.update({ effects: ctrl.effectsArray });
-      };
+            ctrl.effectsUpdate = function() {
+                ctrl.update({ effects: ctrl.effectsArray });
+            };
 
-      ctrl.effectTypeChanged = function(effectType, index) {
-        ctrl.effectsArray[index].id = effectType.id;
-      };
+            ctrl.effectTypeChanged = function(effectType, index) {
+                ctrl.effectsArray[index].id = effectType.id;
+            };
 
-      ctrl.sortableOptions = {
-        handle: ".dragHandle",
-        stop: () => {
-          ctrl.effectsUpdate();
-        }
-      };
+            ctrl.sortableOptions = {
+                handle: ".dragHandle",
+                stop: () => {
+                    ctrl.effectsUpdate();
+                }
+            };
 
-      ctrl.duplicateEffectAtIndex = function(index) {
-        let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
-        ctrl.effectsArray.splice(index + 1, 0, effect);
-        ctrl.effectsUpdate();
-      };
+            ctrl.duplicateEffectAtIndex = function(index) {
+                let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
+                ctrl.effectsArray.splice(index + 1, 0, effect);
+                ctrl.effectsUpdate();
+            };
 
-      ctrl.removeEffectAtIndex = function(index) {
-        ctrl.effectsArray.splice(index, 1);
-        ctrl.effectsUpdate();
-      };
+            ctrl.removeEffectAtIndex = function(index) {
+                ctrl.effectsArray.splice(index, 1);
+                ctrl.effectsUpdate();
+            };
 
-      ctrl.removeAllEffects = function() {
-        ctrl.effectsArray = [];
-        ctrl.effectsUpdate();
-      };
+            ctrl.removeAllEffects = function() {
+                ctrl.effectsArray = [];
+                ctrl.effectsUpdate();
+            };
 
-      ctrl.hasCopiedEffects = function() {
-        return utilityService.hasCopiedEffects(ctrl.trigger);
-      };
+            ctrl.hasCopiedEffects = function() {
+                return utilityService.hasCopiedEffects(ctrl.trigger);
+            };
 
-      ctrl.hasMultipleCopiedEffects = function() {
-        return (
-          utilityService.hasCopiedEffects(ctrl.trigger) &&
+            ctrl.hasMultipleCopiedEffects = function() {
+                return (
+                    utilityService.hasCopiedEffects(ctrl.trigger) &&
           utilityService.getCopiedEffects(ctrl.trigger).length > 1
-        );
-      };
+                );
+            };
 
-      ctrl.pasteEffects = function(append = false) {
-        if (utilityService.hasCopiedEffects(ctrl.trigger)) {
-          if (append) {
-            ctrl.effectsArray = ctrl.effectsArray.concat(
-              utilityService.getCopiedEffects(ctrl.trigger)
-            );
-          } else {
-            ctrl.effectsArray = utilityService.getCopiedEffects(ctrl.trigger);
-          }
-          ctrl.effectsUpdate();
+            ctrl.pasteEffects = function(append = false) {
+                if (utilityService.hasCopiedEffects(ctrl.trigger)) {
+                    if (append) {
+                        ctrl.effectsArray = ctrl.effectsArray.concat(
+                            utilityService.getCopiedEffects(ctrl.trigger)
+                        );
+                    } else {
+                        ctrl.effectsArray = utilityService.getCopiedEffects(ctrl.trigger);
+                    }
+                    ctrl.effectsUpdate();
+                }
+            };
+
+            ctrl.pasteEffectsAtIndex = function(index, above) {
+                if (utilityService.hasCopiedEffects(ctrl.trigger)) {
+                    if (!above) {
+                        index++;
+                    }
+                    let copiedEffects = utilityService.getCopiedEffects(ctrl.trigger);
+                    ctrl.effectsArray.splice(index, 0, ...copiedEffects);
+                    ctrl.effectsUpdate();
+                }
+            };
+
+            ctrl.copyEffectAtIndex = function(index) {
+                utilityService.copyEffects(ctrl.trigger, [ctrl.effectsArray[index]]);
+            };
+
+            ctrl.copyEffects = function() {
+                utilityService.copyEffects(ctrl.trigger, ctrl.effectsArray);
+            };
+
+            ctrl.addEffect = function() {
+                let newEffect = { id: "Nothing" };
+
+                ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
+            };
+
+            ctrl.openEditEffectModal = function(effect, index, trigger) {
+                utilityService.showEditEffectModal(effect, index, trigger, response => {
+                    if (response.action === "add") {
+                        ctrl.effectsArray.push(response.effect);
+                    } else if (response.action === "update") {
+                        ctrl.effectsArray[response.index] = response.effect;
+                    } else if (response.action === "delete") {
+                        ctrl.removeEffectAtIndex(response.index);
+                    }
+                    ctrl.effectsUpdate();
+                });
+            };
         }
-      };
-
-      ctrl.pasteEffectsAtIndex = function(index, above) {
-        if (utilityService.hasCopiedEffects(ctrl.trigger)) {
-          if (!above) {
-            index++;
-          }
-          let copiedEffects = utilityService.getCopiedEffects(ctrl.trigger);
-          ctrl.effectsArray.splice(index, 0, ...copiedEffects);
-          ctrl.effectsUpdate();
-        }
-      };
-
-      ctrl.copyEffectAtIndex = function(index) {
-        utilityService.copyEffects(ctrl.trigger, [ctrl.effectsArray[index]]);
-      };
-
-      ctrl.copyEffects = function() {
-        utilityService.copyEffects(ctrl.trigger, ctrl.effectsArray);
-      };
-
-      ctrl.addEffect = function() {
-        let newEffect = { id: "Nothing" };
-
-        ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
-      };
-
-      ctrl.openEditEffectModal = function(effect, index, trigger) {
-        utilityService.showEditEffectModal(effect, index, trigger, response => {
-          if (response.action === "add") {
-            ctrl.effectsArray.push(response.effect);
-          } else if (response.action === "update") {
-            ctrl.effectsArray[response.index] = response.effect;
-          } else if (response.action === "delete") {
-            ctrl.removeEffectAtIndex(response.index);
-          }
-          ctrl.effectsUpdate();
-        });
-      };
-    }
-  });
-})();
+    });
+}());

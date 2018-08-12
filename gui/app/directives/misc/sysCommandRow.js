@@ -1,11 +1,11 @@
 "use strict";
 
 (function() {
-  angular.module("firebotApp").component("sysCommandRow", {
-    bindings: {
-      command: "<"
-    },
-    template: `
+    angular.module("firebotApp").component("sysCommandRow", {
+        bindings: {
+            command: "<"
+        },
+        template: `
       <div style="margin-bottom: 20px">
         <div class="sys-command-row" ng-init="hidePanel = true" ng-click="hidePanel = !hidePanel" ng-class="{'expanded': !hidePanel}">
           <div style="flex-basis: 25%;padding-left: 20px;">{{$ctrl.command.name}}</div>
@@ -67,55 +67,57 @@
         </div>
       </div>
     `,
-    controller: function(utilityService, commandsService, listenerService) {
-      let $ctrl = this;
+        controller: function(utilityService, commandsService, listenerService) {
+            let $ctrl = this;
 
-      $ctrl.$onInit = function() {};
+            $ctrl.$onInit = function() {};
 
-      $ctrl.getPermissionTooltip = (command, isSub) => {
-        let type = command.permission ? command.permission.type : "";
-        let cmdType = isSub ? "subcommand" : "command";
-        switch (type) {
-          case "group":
-            let groups = command.permission.groups;
-            if (groups == null || groups.length < 1) {
-              return `This ${cmdType} is set to Group permissions, but no groups are selected.`;
-            }
-            return `This ${cmdType} is restricted to the groups: ${command.permission.groups.join(
-              ", "
-            )}`;
-          case "individual":
-            let username = command.permission.username;
-            if (username == null || username === "") {
-              return `This ${cmdType} is set to restrict to an individual but a name has not been provided.`;
-            }
-            return `This ${cmdType} is restricted to the user: ${username}`;
-          default:
-            if (isSub) {
-              return `This ${cmdType} will use the permissions of the root command.`;
-            }
-            return `This ${cmdType} is available to everyone`;
+            $ctrl.getPermissionTooltip = (command, isSub) => {
+                let type = command.permission ? command.permission.type : "";
+                let cmdType = isSub ? "subcommand" : "command";
+                switch (type) {
+                case "group": {
+                    let groups = command.permission.groups;
+                    if (groups == null || groups.length < 1) {
+                        return `This ${cmdType} is set to Group permissions, but no groups are selected.`;
+                    }
+                    return `This ${cmdType} is restricted to the groups: ${command.permission.groups.join(
+                        ", "
+                    )}`;
+                }
+                case "individual": {
+                    let username = command.permission.username;
+                    if (username == null || username === "") {
+                        return `This ${cmdType} is set to restrict to an individual but a name has not been provided.`;
+                    }
+                    return `This ${cmdType} is restricted to the user: ${username}`;
+                }
+                default:
+                    if (isSub) {
+                        return `This ${cmdType} will use the permissions of the root command.`;
+                    }
+                    return `This ${cmdType} is available to everyone`;
+                }
+            };
+
+            $ctrl.openEditSystemCommandModal = function() {
+                let cmd = $ctrl.command;
+
+                utilityService.showModal({
+                    component: "editSystemCommandModal",
+                    resolveObj: {
+                        command: () => cmd
+                    },
+                    closeCallback: resp => {
+                        let action = resp.action;
+                        if (action === "save") {
+                            commandsService.saveSystemCommandOverride(resp.command);
+                        } else if (action === "reset") {
+                            listenerService.fireEvent("removeSystemCommandOverride", cmd.id);
+                        }
+                    }
+                });
+            };
         }
-      };
-
-      $ctrl.openEditSystemCommandModal = function() {
-        let cmd = $ctrl.command;
-
-        utilityService.showModal({
-          component: "editSystemCommandModal",
-          resolveObj: {
-            command: () => cmd
-          },
-          closeCallback: resp => {
-            let action = resp.action;
-            if (action === "save") {
-              commandsService.saveSystemCommandOverride(resp.command);
-            } else if (action === "reset") {
-              listenerService.fireEvent("removeSystemCommandOverride", cmd.id);
-            }
-          }
-        });
-      };
-    }
-  });
-})();
+    });
+}());

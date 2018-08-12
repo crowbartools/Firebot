@@ -1,13 +1,13 @@
 "use strict";
 (function() {
-  //This adds the <eos-chatter-select> element
+    //This adds the <eos-chatter-select> element
 
-  angular.module("firebotApp").component("eosChatterSelect", {
-    bindings: {
-      title: "@",
-      effect: "="
-    },
-    template: `
+    angular.module("firebotApp").component("eosChatterSelect", {
+        bindings: {
+            title: "@",
+            effect: "="
+        },
+        template: `
                 <eos-container header="{{$ctrl.title}}">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -20,21 +20,21 @@
                     </div>
                 </eos-container>
                 `,
-    controller: function(connectionService) {
-      let ctrl = this;
+        controller: function(connectionService) {
+            let ctrl = this;
 
-      ctrl.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
+            ctrl.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
 
-      ctrl.$onInit = function() {
-        // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore
-        if (ctrl.effect.chatter == null) {
-          if (ctrl.botLoggedIn) {
-            ctrl.effect.chatter = "Bot";
-          } else {
-            ctrl.effect.chatter = "Streamer";
-          }
+            ctrl.$onInit = function() {
+                // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore
+                if (ctrl.effect.chatter == null) {
+                    if (ctrl.botLoggedIn) {
+                        ctrl.effect.chatter = "Bot";
+                    } else {
+                        ctrl.effect.chatter = "Streamer";
+                    }
+                }
+            };
         }
-      };
-    }
-  });
-})();
+    });
+}());

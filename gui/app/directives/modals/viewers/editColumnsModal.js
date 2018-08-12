@@ -1,8 +1,8 @@
 "use strict";
 
 (function() {
-  angular.module("firebotApp").component("editColumnsModal", {
-    template: `
+    angular.module("firebotApp").component("editColumnsModal", {
+        template: `
             <div class="modal-header" style="text-align: center">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                 <h4 class="modal-title">Edit Viewer Columns</h4>
@@ -28,42 +28,42 @@
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
             `,
-    bindings: {
-      resolve: "<",
-      close: "&",
-      dismiss: "&"
-    },
-    controller: function(viewersService) {
-      let $ctrl = this;
+        bindings: {
+            resolve: "<",
+            close: "&",
+            dismiss: "&"
+        },
+        controller: function(viewersService) {
+            let $ctrl = this;
 
-      //turns the object into an array so we can ng-repeat it. we dont need the keys since they are also in the object
-      $ctrl.columns = Object.values(viewersService.fieldDefs);
+            //turns the object into an array so we can ng-repeat it. we dont need the keys since they are also in the object
+            $ctrl.columns = Object.values(viewersService.fieldDefs);
 
-      $ctrl.flipColumnPreference = function(column) {
-        $ctrl.userColumnPrefs[column.field] = !$ctrl.userColumnPrefs[
-          column.field
-        ];
-      };
+            $ctrl.flipColumnPreference = function(column) {
+                $ctrl.userColumnPrefs[column.field] = !$ctrl.userColumnPrefs[
+                    column.field
+                ];
+            };
 
-      $ctrl.columnIsChecked = function(column) {
-        return $ctrl.userColumnPrefs[column.field] === true;
-      };
+            $ctrl.columnIsChecked = function(column) {
+                return $ctrl.userColumnPrefs[column.field] === true;
+            };
 
-      $ctrl.userColumnPrefs = {};
+            $ctrl.userColumnPrefs = {};
 
-      $ctrl.$onInit = function() {
-        $ctrl.userColumnPrefs = $ctrl.resolve.columnPrefs;
+            $ctrl.$onInit = function() {
+                $ctrl.userColumnPrefs = $ctrl.resolve.columnPrefs;
 
-        $ctrl.version = electron.remote.app.getVersion();
-      };
+                $ctrl.version = electron.remote.app.getVersion();
+            };
 
-      $ctrl.save = function() {
-        $ctrl.close({
-          $value: {
-            preferences: $ctrl.userColumnPrefs
-          }
-        });
-      };
-    }
-  });
-})();
+            $ctrl.save = function() {
+                $ctrl.close({
+                    $value: {
+                        preferences: $ctrl.userColumnPrefs
+                    }
+                });
+            };
+        }
+    });
+}());

@@ -1,8 +1,8 @@
 "use strict";
 //
 (function() {
-  angular.module("firebotApp").component("connectionPanelModal", {
-    template: `
+    angular.module("firebotApp").component("connectionPanelModal", {
+        template: `
             <div class="modal-header" style="text-align: center">
                 <h4 class="modal-title">Connection Panel</h4>
             </div>
@@ -103,67 +103,67 @@
                 </div>           
             </div>
             `,
-    bindings: {
-      resolve: "<",
-      close: "&",
-      dismiss: "&"
-    },
-    controller: function(
-      connectionService,
-      websocketService,
-      settingsService,
-      integrationService,
-      connectionManager
-    ) {
-      let $ctrl = this;
+        bindings: {
+            resolve: "<",
+            close: "&",
+            dismiss: "&"
+        },
+        controller: function(
+            connectionService,
+            websocketService,
+            settingsService,
+            integrationService,
+            connectionManager
+        ) {
+            let $ctrl = this;
 
-      $ctrl.$onInit = function() {
-        $ctrl.conn = connectionService;
-        $ctrl.wss = websocketService;
-        $ctrl.is = integrationService;
-        $ctrl.cm = connectionManager;
-      };
+            $ctrl.$onInit = function() {
+                $ctrl.conn = connectionService;
+                $ctrl.wss = websocketService;
+                $ctrl.is = integrationService;
+                $ctrl.cm = connectionManager;
+            };
 
-      let sidebarControlledServices = settingsService.getSidebarControlledServices();
-      $ctrl.toggledServiceIsChecked = function(service) {
-        if (sidebarControlledServices.includes(service)) {
-          sidebarControlledServices = sidebarControlledServices.filter(
-            s => s !== service
-          );
-        } else {
-          sidebarControlledServices.push(service);
+            let sidebarControlledServices = settingsService.getSidebarControlledServices();
+            $ctrl.toggledServiceIsChecked = function(service) {
+                if (sidebarControlledServices.includes(service)) {
+                    sidebarControlledServices = sidebarControlledServices.filter(
+                        s => s !== service
+                    );
+                } else {
+                    sidebarControlledServices.push(service);
+                }
+                settingsService.setSidebarControlledServices(sidebarControlledServices);
+            };
+
+            $ctrl.serviceIsChecked = function(service) {
+                return sidebarControlledServices.includes(service);
+            };
+
+            let overlayStatusId = 0;
+            $ctrl.overlayConnectionMessage = function() {
+                let connectionStatus = connectionManager.getConnectionStatusForService(
+                    "overlay"
+                );
+
+                if (connectionStatus === "connected") {
+                    overlayStatusId = 1;
+                    return "Connected";
+                } else if (connectionStatus === "warning") {
+                    overlayStatusId = 0;
+                    return "Running, but nothing connected";
+                }
+                overlayStatusId = -1;
+                return "Error starting web server. App restart required.";
+            };
+
+            $ctrl.getOverlayStatusId = function() {
+                return overlayStatusId;
+            };
+
+            $ctrl.ok = function() {
+                $ctrl.close();
+            };
         }
-        settingsService.setSidebarControlledServices(sidebarControlledServices);
-      };
-
-      $ctrl.serviceIsChecked = function(service) {
-        return sidebarControlledServices.includes(service);
-      };
-
-      let overlayStatusId = 0;
-      $ctrl.overlayConnectionMessage = function() {
-        let connectionStatus = connectionManager.getConnectionStatusForService(
-          "overlay"
-        );
-
-        if (connectionStatus === "connected") {
-          overlayStatusId = 1;
-          return "Connected";
-        } else if (connectionStatus === "warning") {
-          overlayStatusId = 0;
-          return "Running, but nothing connected";
-        }
-        overlayStatusId = -1;
-        return "Error starting web server. App restart required.";
-      };
-
-      $ctrl.getOverlayStatusId = function() {
-        return overlayStatusId;
-      };
-
-      $ctrl.ok = function() {
-        $ctrl.close();
-      };
-    }
-  });
-})();
+    });
+}());

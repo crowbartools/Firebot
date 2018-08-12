@@ -1,8 +1,8 @@
 "use strict";
 
 (function() {
-  angular.module("firebotApp").component("eosReplaceVariables", {
-    template: `
+    angular.module("firebotApp").component("eosReplaceVariables", {
+        template: `
             <eos-collapsable-panel show-label="Show Text Variables" hide-label="Hide Text Variables">
                 <div>
                     <eos-replace-variable-section name="General">
@@ -60,9 +60,9 @@
                 </div>
             </eos-collapsable-panel>
             `,
-    controller: function($rootScope) {
-      let ctrl = this;
-      ctrl.openLinkExternally = $rootScope.openLinkExternally;
-    }
-  });
-})();
+        controller: function($rootScope) {
+            let ctrl = this;
+            ctrl.openLinkExternally = $rootScope.openLinkExternally;
+        }
+    });
+}());

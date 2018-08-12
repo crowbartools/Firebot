@@ -1,12 +1,12 @@
 "use strict";
 
 (function() {
-  angular.module("firebotApp").component("subcommandRow", {
-    bindings: {
-      subcommand: "=",
-      cmdTrigger: "@"
-    },
-    template: `
+    angular.module("firebotApp").component("subcommandRow", {
+        bindings: {
+            subcommand: "=",
+            cmdTrigger: "@"
+        },
+        template: `
       <div style="margin-bottom: 10px">
         <div class="sys-command-row" ng-init="hidePanel = true" ng-click="hidePanel = !hidePanel" ng-class="{'expanded': !hidePanel}">
 
@@ -87,36 +87,36 @@
         </div>
       </div>
     `,
-    controller: function() {
-      let $ctrl = this;
+        controller: function() {
+            let $ctrl = this;
 
-      $ctrl.$onInit = function() {};
+            $ctrl.$onInit = function() {};
 
-      $ctrl.getPermissionTooltip = (command, isSub) => {
-        let type = command.permission ? command.permission.type : "";
-        let cmdType = isSub ? "subcommand" : "command";
-        switch (type) {
-          case "group":
-            let groups = command.permission.groups;
-            if (groups == null || groups.length < 1) {
-              return `This ${cmdType} is set to Group permissions, but no groups are selected.`;
-            }
-            return `This ${cmdType} is restricted to the groups: ${command.permission.groups.join(
-              ", "
-            )}`;
-          case "individual":
-            let username = command.permission.username;
-            if (username == null || username === "") {
-              return `This ${cmdType} is set to restrict to an individual but a name has not been provided.`;
-            }
-            return `This ${cmdType} is restricted to the user: ${username}`;
-          default:
-            if (isSub) {
-              return `This ${cmdType} will use the permissions of the root command.`;
-            }
-            return `This ${cmdType} is available to everyone`;
+            $ctrl.getPermissionTooltip = (command, isSub) => {
+                let type = command.permission ? command.permission.type : "";
+                let cmdType = isSub ? "subcommand" : "command";
+                switch (type) {
+                case "group":
+                    let groups = command.permission.groups;
+                    if (groups == null || groups.length < 1) {
+                        return `This ${cmdType} is set to Group permissions, but no groups are selected.`;
+                    }
+                    return `This ${cmdType} is restricted to the groups: ${command.permission.groups.join(
+                        ", "
+                    )}`;
+                case "individual":
+                    let username = command.permission.username;
+                    if (username == null || username === "") {
+                        return `This ${cmdType} is set to restrict to an individual but a name has not been provided.`;
+                    }
+                    return `This ${cmdType} is restricted to the user: ${username}`;
+                default:
+                    if (isSub) {
+                        return `This ${cmdType} will use the permissions of the root command.`;
+                    }
+                    return `This ${cmdType} is available to everyone`;
+                }
+            };
         }
-      };
-    }
-  });
-})();
+    });
+}());

@@ -1,12 +1,12 @@
 "use strict";
 
 (function() {
-  angular.module("firebotApp").component("permissionOptions", {
-    bindings: {
-      permission: "=",
-      hideTitle: "<"
-    },
-    template: `
+    angular.module("firebotApp").component("permissionOptions", {
+        bindings: {
+            permission: "=",
+            hideTitle: "<"
+        },
+        template: `
       <div>
         <div class="settings-restrict" style="padding-bottom:1em">
             <div ng-hide="$ctrl.hideTitle === true" class="settings-title">
@@ -41,42 +41,42 @@
         </div>
       </div>
     `,
-    controller: function(groupsService) {
-      let $ctrl = this;
+        controller: function(groupsService) {
+            let $ctrl = this;
 
-      // Set active viewer groups for command permissions.
-      $ctrl.viewerGroups = groupsService.getAllGroups();
+            // Set active viewer groups for command permissions.
+            $ctrl.viewerGroups = groupsService.getAllGroups();
 
-      $ctrl.$onInit = function() {
-        if ($ctrl.permission === null) {
-          $ctrl.permission = {
-            type: "none"
-          };
+            $ctrl.$onInit = function() {
+                if ($ctrl.permission === null) {
+                    $ctrl.permission = {
+                        type: "none"
+                    };
+                }
+            };
+
+            // This is run each time a group checkbox is clicked or unclicked.
+            // This will build an array of currently selected groups to be saved to JSON.
+            $ctrl.toggleGroup = function(group) {
+                if ($ctrl.permission.groups == null) {
+                    $ctrl.permission.groups = [];
+                }
+
+                if ($ctrl.permission.groups.includes(group)) {
+                    $ctrl.permission.groups = $ctrl.permission.groups.filter(
+                        g => g !== group
+                    );
+                } else {
+                    $ctrl.permission.groups.push(group);
+                }
+            };
+
+            // This checks if an item is in the command.permission array and returns true.
+            // This allows us to check boxes when loading up this button effect.
+            $ctrl.groupIsChecked = function(group) {
+                if ($ctrl.permission.groups == null) return false;
+                return $ctrl.permission.groups.includes(group);
+            };
         }
-      };
-
-      // This is run each time a group checkbox is clicked or unclicked.
-      // This will build an array of currently selected groups to be saved to JSON.
-      $ctrl.toggleGroup = function(group) {
-        if ($ctrl.permission.groups == null) {
-          $ctrl.permission.groups = [];
-        }
-
-        if ($ctrl.permission.groups.includes(group)) {
-          $ctrl.permission.groups = $ctrl.permission.groups.filter(
-            g => g !== group
-          );
-        } else {
-          $ctrl.permission.groups.push(group);
-        }
-      };
-
-      // This checks if an item is in the command.permission array and returns true.
-      // This allows us to check boxes when loading up this button effect.
-      $ctrl.groupIsChecked = function(group) {
-        if ($ctrl.permission.groups == null) return false;
-        return $ctrl.permission.groups.includes(group);
-      };
-    }
-  });
-})();
+    });
+}());

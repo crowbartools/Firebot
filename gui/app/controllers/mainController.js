@@ -1,322 +1,322 @@
 "use strict";
 (function() {
-  const electron = require("electron");
-  const shell = electron.shell;
+    const electron = require("electron");
+    const shell = electron.shell;
 
-  agGrid.initialiseAgGridWithAngular1(angular);
+    agGrid.initialiseAgGridWithAngular1(angular);
 
-  let app = angular.module("firebotApp", [
-    "ngAnimate",
-    "ngRoute",
-    "ui.bootstrap",
-    "rzModule",
-    "ui.select",
-    "ngSanitize",
-    "ui.select",
-    "ui.sortable",
-    "luegg.directives",
-    "summernote",
-    "pascalprecht.translate",
-    "ngToast",
-    "agGrid",
-    "slidingPuzzle"
-  ]);
+    let app = angular.module("firebotApp", [
+        "ngAnimate",
+        "ngRoute",
+        "ui.bootstrap",
+        "rzModule",
+        "ui.select",
+        "ngSanitize",
+        "ui.select",
+        "ui.sortable",
+        "luegg.directives",
+        "summernote",
+        "pascalprecht.translate",
+        "ngToast",
+        "agGrid",
+        "slidingPuzzle"
+    ]);
 
-  app.factory("$exceptionHandler", function(logger) {
+    app.factory("$exceptionHandler", function(logger) {
     // this catches angular exceptions so we can send it to winston
-    return function(exception, cause) {
-      console.log(exception, cause);
-      logger.error(exception, cause);
-    };
-  });
+        return function(exception, cause) {
+            console.log(exception, cause);
+            logger.error(exception, cause);
+        };
+    });
 
-  app.config([
-    "$translateProvider",
-    function($translateProvider) {
-      $translateProvider
-        .useStaticFilesLoader({
-          prefix: "lang/locale-",
-          suffix: ".json"
-        })
-        .preferredLanguage("en");
-    }
-  ]);
+    app.config([
+        "$translateProvider",
+        function($translateProvider) {
+            $translateProvider
+                .useStaticFilesLoader({
+                    prefix: "lang/locale-",
+                    suffix: ".json"
+                })
+                .preferredLanguage("en");
+        }
+    ]);
 
-  app.config([
-    "ngToastProvider",
-    function(ngToast) {
-      ngToast.configure({
-        verticalPosition: "top",
-        horizontalPosition: "center",
-        maxNumber: 5,
-        timeout: 3000,
-        className: "danger",
-        animation: "fade",
-        combineDuplications: true,
-        dismissButton: true
-      });
-    }
-  ]);
+    app.config([
+        "ngToastProvider",
+        function(ngToast) {
+            ngToast.configure({
+                verticalPosition: "top",
+                horizontalPosition: "center",
+                maxNumber: 5,
+                timeout: 3000,
+                className: "danger",
+                animation: "fade",
+                combineDuplications: true,
+                dismissButton: true
+            });
+        }
+    ]);
 
-  app.run(function initializeApplication(
-    logger,
-    chatMessagesService,
-    groupsService,
-    connectionService,
-    notificationService,
-    $timeout,
-    updatesService,
-    commandsService,
-    integrationService
-  ) {
+    app.run(function initializeApplication(
+        logger,
+        chatMessagesService,
+        groupsService,
+        connectionService,
+        notificationService,
+        $timeout,
+        updatesService,
+        commandsService,
+        integrationService
+    ) {
     // 'chatMessagesService' is included so its instantiated on app start
 
-    // Run loadLogin to update the UI on page load.
-    connectionService.loadLogin();
+        // Run loadLogin to update the UI on page load.
+        connectionService.loadLogin();
 
-    //Attempt to load viewer groups into memory
-    groupsService.loadViewerGroups();
+        //Attempt to load viewer groups into memory
+        groupsService.loadViewerGroups();
 
-    //load commands
-    commandsService.refreshCommands();
+        //load commands
+        commandsService.refreshCommands();
 
-    //get integrations from backend
-    integrationService.updateIntegrations();
+        //get integrations from backend
+        integrationService.updateIntegrations();
 
-    //start notification check
-    $timeout(() => {
-      notificationService.loadAllNotifications();
-      notificationService.startExternalIntervalCheck();
-    }, 1000);
+        //start notification check
+        $timeout(() => {
+            notificationService.loadAllNotifications();
+            notificationService.startExternalIntervalCheck();
+        }, 1000);
 
-    //check for updates
-    if (!updatesService.hasCheckedForUpdates) {
-      updatesService.checkForUpdate();
-    }
-  });
+        //check for updates
+        if (!updatesService.hasCheckedForUpdates) {
+            updatesService.checkForUpdate();
+        }
+    });
 
-  app.controller("MainController", function(
-    $scope,
-    $rootScope,
-    $timeout,
-    boardService,
-    connectionService,
-    connectionManager,
-    utilityService,
-    settingsService,
-    updatesService,
-    eventLogService,
-    websocketService,
-    sidebarManager,
-    logger
-  ) {
-    $rootScope.showSpinner = true;
+    app.controller("MainController", function(
+        $scope,
+        $rootScope,
+        $timeout,
+        boardService,
+        connectionService,
+        connectionManager,
+        utilityService,
+        settingsService,
+        updatesService,
+        eventLogService,
+        websocketService,
+        sidebarManager,
+        logger
+    ) {
+        $rootScope.showSpinner = true;
 
-    $scope.sbm = sidebarManager;
+        $scope.sbm = sidebarManager;
 
-    /**
+        /**
      * rootScope functions. This means they are accessable in all scopes in the front end
      * This is probably bad form, so putting functions in rootScope shouldnt be abused too much
      */
-    $rootScope.pasteClipboard = function(elementId, shouldUnfocus) {
-      angular.element(`#${elementId}`).focus();
-      document.execCommand("paste");
-      if (shouldUnfocus === true || shouldUnfocus == null) {
-        angular.element(`#${elementId}`).blur();
-      }
-    };
+        $rootScope.pasteClipboard = function(elementId, shouldUnfocus) {
+            angular.element(`#${elementId}`).focus();
+            document.execCommand("paste");
+            if (shouldUnfocus === true || shouldUnfocus == null) {
+                angular.element(`#${elementId}`).blur();
+            }
+        };
 
-    $rootScope.copyTextToClipboard = function(text) {
-      let textArea = document.createElement("textarea");
-      // Place in top-left corner of screen regardless of scroll position.
-      textArea.style.position = "fixed";
-      textArea.style.top = 0;
-      textArea.style.left = 0;
+        $rootScope.copyTextToClipboard = function(text) {
+            let textArea = document.createElement("textarea");
+            // Place in top-left corner of screen regardless of scroll position.
+            textArea.style.position = "fixed";
+            textArea.style.top = 0;
+            textArea.style.left = 0;
 
-      // Ensure it has a small width and height. Setting to 1px / 1em
-      // doesn't work as this gives a negative w/h on some browsers.
-      textArea.style.width = "2em";
-      textArea.style.height = "2em";
+            // Ensure it has a small width and height. Setting to 1px / 1em
+            // doesn't work as this gives a negative w/h on some browsers.
+            textArea.style.width = "2em";
+            textArea.style.height = "2em";
 
-      // We don't need padding, reducing the size if it does flash render.
-      textArea.style.padding = 0;
+            // We don't need padding, reducing the size if it does flash render.
+            textArea.style.padding = 0;
 
-      // Clean up any borders.
-      textArea.style.border = "none";
-      textArea.style.outline = "none";
-      textArea.style.boxShadow = "none";
+            // Clean up any borders.
+            textArea.style.border = "none";
+            textArea.style.outline = "none";
+            textArea.style.boxShadow = "none";
 
-      // Avoid flash of white box if rendered for any reason.
-      textArea.style.background = "transparent";
+            // Avoid flash of white box if rendered for any reason.
+            textArea.style.background = "transparent";
 
-      textArea.value = text;
+            textArea.value = text;
 
-      document.body.appendChild(textArea);
+            document.body.appendChild(textArea);
 
-      textArea.select();
+            textArea.select();
 
-      try {
-        let successful = document.execCommand("copy");
-        let msg = successful ? "successful" : "unsuccessful";
-        logger.info("Copying text command was " + msg);
-      } catch (err) {
-        logger.error("Oops, unable to copy text to clipboard.");
-      }
+            try {
+                let successful = document.execCommand("copy");
+                let msg = successful ? "successful" : "unsuccessful";
+                logger.info("Copying text command was " + msg);
+            } catch (err) {
+                logger.error("Oops, unable to copy text to clipboard.");
+            }
 
-      document.body.removeChild(textArea);
-    };
+            document.body.removeChild(textArea);
+        };
 
-    $rootScope.openLinkExternally = function(url) {
-      shell.openExternal(url);
-    };
+        $rootScope.openLinkExternally = function(url) {
+            shell.openExternal(url);
+        };
 
-    /*
+        /*
       * MANAGE LOGINS MODAL
       */
-    $scope.showManageLoginsModal = function() {
-      let showManageLoginsModal = {
-        templateUrl: "manageLoginsModal.html",
-        // This is the controller to be used for the modal.
-        controllerFunc: ($scope, $uibModalInstance, connectionService) => {
-          $scope.accounts = connectionService.accounts;
+        $scope.showManageLoginsModal = function() {
+            let showManageLoginsModal = {
+                templateUrl: "manageLoginsModal.html",
+                // This is the controller to be used for the modal.
+                controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+                    $scope.accounts = connectionService.accounts;
 
-          // Login Kickoff
-          $scope.loginOrLogout = function(type) {
-            connectionService.loginOrLogout(type);
-          };
+                    // Login Kickoff
+                    $scope.loginOrLogout = function(type) {
+                        connectionService.loginOrLogout(type);
+                    };
 
-          // When the user clicks "Save", we want to pass the id back to interactiveController
-          $scope.close = function() {
-            $uibModalInstance.close();
-          };
+                    // When the user clicks "Save", we want to pass the id back to interactiveController
+                    $scope.close = function() {
+                        $uibModalInstance.close();
+                    };
 
-          // When they hit cancel or click outside the modal, we dont want to do anything
-          $scope.dismiss = function() {
-            $uibModalInstance.dismiss("cancel");
-          };
-        }
-      };
-      utilityService.showModal(showManageLoginsModal);
-    };
+                    // When they hit cancel or click outside the modal, we dont want to do anything
+                    $scope.dismiss = function() {
+                        $uibModalInstance.dismiss("cancel");
+                    };
+                }
+            };
+            utilityService.showModal(showManageLoginsModal);
+        };
 
-    /*
+        /*
         * New Profile MODAL
         */
-    $scope.showNewProfileModal = function() {
-      let showNewProfileModal = {
-        templateUrl: "newProfileModal.html",
-        // This is the controller to be used for the modal.
-        controllerFunc: ($scope, $uibModalInstance, connectionService) => {
-          // Login Kickoff
-          $scope.createNewProfile = function() {
-            $uibModalInstance.close();
-            connectionService.createNewProfile();
-          };
+        $scope.showNewProfileModal = function() {
+            let showNewProfileModal = {
+                templateUrl: "newProfileModal.html",
+                // This is the controller to be used for the modal.
+                controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+                    // Login Kickoff
+                    $scope.createNewProfile = function() {
+                        $uibModalInstance.close();
+                        connectionService.createNewProfile();
+                    };
 
-          // Close when close is clicked.
-          $scope.close = function() {
-            $uibModalInstance.close();
-          };
+                    // Close when close is clicked.
+                    $scope.close = function() {
+                        $uibModalInstance.close();
+                    };
 
-          // When they hit cancel or click outside the modal, we dont want to do anything
-          $scope.dismiss = function() {
-            $uibModalInstance.dismiss("cancel");
-          };
-        }
-      };
-      utilityService.showModal(showNewProfileModal);
-    };
+                    // When they hit cancel or click outside the modal, we dont want to do anything
+                    $scope.dismiss = function() {
+                        $uibModalInstance.dismiss("cancel");
+                    };
+                }
+            };
+            utilityService.showModal(showNewProfileModal);
+        };
 
-    /*
+        /*
         * Delete Profile MODAL
         */
-    $scope.showDeleteProfileModal = function() {
-      let deleteProfileModal = {
-        templateUrl: "deleteProfileModal.html",
-        // This is the controller to be used for the modal.
-        controllerFunc: ($scope, $uibModalInstance, connectionService) => {
-          // Delete Profile
-          $scope.deleteProfile = function() {
-            $uibModalInstance.close();
-            connectionService.deleteProfile();
-          };
+        $scope.showDeleteProfileModal = function() {
+            let deleteProfileModal = {
+                templateUrl: "deleteProfileModal.html",
+                // This is the controller to be used for the modal.
+                controllerFunc: ($scope, $uibModalInstance, connectionService) => {
+                    // Delete Profile
+                    $scope.deleteProfile = function() {
+                        $uibModalInstance.close();
+                        connectionService.deleteProfile();
+                    };
 
-          // Close when close is clicked.
-          $scope.close = function() {
-            $uibModalInstance.close();
-          };
+                    // Close when close is clicked.
+                    $scope.close = function() {
+                        $uibModalInstance.close();
+                    };
 
-          // When they hit cancel or click outside the modal, we dont want to do anything
-          $scope.dismiss = function() {
-            $uibModalInstance.dismiss("cancel");
-          };
-        }
-      };
-      utilityService.showModal(deleteProfileModal);
-    };
+                    // When they hit cancel or click outside the modal, we dont want to do anything
+                    $scope.dismiss = function() {
+                        $uibModalInstance.dismiss("cancel");
+                    };
+                }
+            };
+            utilityService.showModal(deleteProfileModal);
+        };
 
-    // Switch Profiles
-    $scope.switchProfiles = function(profileId) {
-      connectionService.switchProfiles(profileId);
-    };
+        // Switch Profiles
+        $scope.switchProfiles = function(profileId) {
+            connectionService.switchProfiles(profileId);
+        };
 
-    /**
+        /**
      * Initial App Load
      */
 
-    $scope.accounts = connectionService.accounts;
+        $scope.accounts = connectionService.accounts;
 
-    if (settingsService.hasJustUpdated()) {
-      utilityService.showUpdatedModal();
-      settingsService.setJustUpdated(false);
-    } else if (settingsService.isFirstTimeUse()) {
-      utilityService.showSetupWizard();
-      settingsService.setFirstTimeUse(false);
-    }
+        if (settingsService.hasJustUpdated()) {
+            utilityService.showUpdatedModal();
+            settingsService.setJustUpdated(false);
+        } else if (settingsService.isFirstTimeUse()) {
+            utilityService.showSetupWizard();
+            settingsService.setFirstTimeUse(false);
+        }
 
-    /**
+        /**
      * Connection stuff
      */
 
-    // Get app version and change titlebar.
-    let appVersion = electron.remote.app.getVersion();
-    $scope.appTitle = "Firebot | v" + appVersion + " | @FirebotApp";
+        // Get app version and change titlebar.
+        let appVersion = electron.remote.app.getVersion();
+        $scope.appTitle = "Firebot | v" + appVersion + " | @FirebotApp";
 
-    //make sure sliders render properly
-    $timeout(function() {
-      $scope.$broadcast("rzSliderForceRender");
-    }, 250);
+        //make sure sliders render properly
+        $timeout(function() {
+            $scope.$broadcast("rzSliderForceRender");
+        }, 250);
 
-    // Apply Theme
-    $scope.appTheme = function() {
-      return settingsService.getTheme();
-    };
+        // Apply Theme
+        $scope.appTheme = function() {
+            return settingsService.getTheme();
+        };
 
-    $rootScope.showSpinner = false;
+        $rootScope.showSpinner = false;
 
-    //show puzzle
+        //show puzzle
     /*utilityService.showModal({
         component: "puzzleModal",
         keyboard: false,
         backdrop: "static"
     });*/
-  });
+    });
 
-  // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
-  app.filter("startFrom", function() {
-    return function(input, startFrom) {
-      startFrom = +startFrom;
-      return input.slice(startFrom);
-    };
-  });
+    // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
+    app.filter("startFrom", function() {
+        return function(input, startFrom) {
+            startFrom = +startFrom;
+            return input.slice(startFrom);
+        };
+    });
 
-  // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
-  app.filter("triggerSearch", function() {
-    return function(commands, query) {
-      if (commands == null || query == null) return commands;
-      return commands.filter(c =>
-        c.trigger.toLowerCase().includes(query.toLowerCase())
-      );
-    };
-  });
-})(angular);
+    // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
+    app.filter("triggerSearch", function() {
+        return function(commands, query) {
+            if (commands == null || query == null) return commands;
+            return commands.filter(c =>
+                c.trigger.toLowerCase().includes(query.toLowerCase())
+            );
+        };
+    });
+}(angular));

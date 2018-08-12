@@ -32,262 +32,262 @@ require("../../node_modules/angular-translate-loader-url/angular-translate-loade
 require("../../node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files");
 
 function boot() {
-  angular.bootstrap(document, ["firebotApp"], {
-    strictDi: false
-  });
+    angular.bootstrap(document, ["firebotApp"], {
+        strictDi: false
+    });
 }
 
 document.addEventListener("DOMContentLoaded", boot);
 
 // Catch browser window (renderer) errors and log them via Winston
 window.onerror = function(error, url, line) {
-  console.log(error, url, line);
-  logger.error("(Renderer) " + error, { url: url, line: line });
+    console.log(error, url, line);
+    logger.error("(Renderer) " + error, { url: url, line: line });
 };
 
 // pointless fancy firebot at the top of the log
 function printRow(colorOne, colorTwo, ...args) {
-  let msg = "";
-  let styles = [];
+    let msg = "";
+    let styles = [];
 
-  const size = "13px";
+    const size = "13px";
 
-  args.forEach(a => {
-    msg += "%c   ";
-    if (a === 1) {
-      styles.push(`background:${colorOne};font-size:${size};`);
-    } else {
-      styles.push(`background:${colorTwo};font-size:${size};`);
-    }
-  });
+    args.forEach(a => {
+        msg += "%c   ";
+        if (a === 1) {
+            styles.push(`background:${colorOne};font-size:${size};`);
+        } else {
+            styles.push(`background:${colorTwo};font-size:${size};`);
+        }
+    });
 
-  console.log(msg, ...styles); // eslint-disable-line no-console
+    console.log(msg, ...styles); // eslint-disable-line no-console
 }
 
 const letterColor = "#EBB11F",
-  spaceColor = "transparent",
-  ruleColor = "darkgray";
+    spaceColor = "transparent",
+    ruleColor = "darkgray";
 /* eslint-disable no-multi-spaces */
 printRow(
-  ruleColor,
-  spaceColor,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1
+    ruleColor,
+    spaceColor,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
 );
 
 //console.log("%cWELCOME TO", "color:gray;font-weight:900;font-size:18px;");
 printRow(
-  letterColor,
-  spaceColor,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  1
+    letterColor,
+    spaceColor,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1
 );
 printRow(
-  letterColor,
-  spaceColor,
-  1,
-  0,
-  0,
-  0,
-  0,
-  1,
-  0,
-  0,
-  1,
-  0,
-  1,
-  0,
-  1,
-  0,
-  0,
-  0,
-  1,
-  0,
-  1,
-  0,
-  1,
-  0,
-  1,
-  0,
-  0,
-  1,
-  0
+    letterColor,
+    spaceColor,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0
 );
 printRow(
-  letterColor,
-  spaceColor,
-  1,
-  1,
-  1,
-  0,
-  0,
-  1,
-  0,
-  0,
-  1,
-  1,
-  0,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  0,
-  0,
-  1,
-  0,
-  1,
-  0,
-  0,
-  1,
-  0
+    letterColor,
+    spaceColor,
+    1,
+    1,
+    1,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1,
+    1,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0
 );
 printRow(
-  letterColor,
-  spaceColor,
-  1,
-  0,
-  0,
-  0,
-  0,
-  1,
-  0,
-  0,
-  1,
-  0,
-  1,
-  0,
-  1,
-  0,
-  0,
-  0,
-  1,
-  0,
-  1,
-  0,
-  1,
-  0,
-  1,
-  0,
-  0,
-  1,
-  0
+    letterColor,
+    spaceColor,
+    1,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    1,
+    0
 );
 printRow(
-  letterColor,
-  spaceColor,
-  1,
-  0,
-  0,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  0,
-  1,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  1,
-  0,
-  1,
-  1,
-  1,
-  0,
-  0,
-  1,
-  0
+    letterColor,
+    spaceColor,
+    1,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    0,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    0,
+    0,
+    1,
+    0
 );
 
 //console.log("%cPlease excuse the mess.", "color:gray;font-weight:900;font-size:16px;");
 printRow(
-  ruleColor,
-  spaceColor,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1,
-  1
+    ruleColor,
+    spaceColor,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
 );
 /* eslint-enable no-multi-spaces */
 
@@ -295,53 +295,53 @@ printRow(
 console.log(""); // eslint-disable-line no-console
 
 function getLogLevelColor(level) {
-  switch (level) {
+    switch (level) {
     case "error":
-      return "#CC3128";
+        return "#CC3128";
     case "warn":
-      return "#E3D919";
+        return "#E3D919";
     case "info":
-      return "#0DAD4A";
+        return "#0DAD4A";
     case "verbose":
-      return "#11A7AB";
+        return "#11A7AB";
     case "debug":
-      return "#2171C7";
+        return "#2171C7";
     case "silly":
-      return "#973EBB";
+        return "#973EBB";
     default:
-      return "black";
-  }
+        return "black";
+    }
 }
 
 // Prints all logs from the "console" transport into the Browser Console
 /* eslint-disable no-console */
 function printLogToBrowserConsole(transport, level, msg, meta) {
-  if (transport != null && transport.name === "console") {
-    if (msg != null && msg.trim() !== "(Renderer)") {
-      // Only print if the msg isnt 'empty' aka has more than just the prefix
-      console.log(
-        "%c" + level.toUpperCase() + "%c " + msg,
-        `color:${getLogLevelColor(level)}`,
-        "color:black"
-      );
+    if (transport != null && transport.name === "console") {
+        if (msg != null && msg.trim() !== "(Renderer)") {
+            // Only print if the msg isnt 'empty' aka has more than just the prefix
+            console.log(
+                "%c" + level.toUpperCase() + "%c " + msg,
+                `color:${getLogLevelColor(level)}`,
+                "color:black"
+            );
+        }
+        if (meta && Object.keys(meta).length > 0) {
+            console.log(meta);
+        }
     }
-    if (meta && Object.keys(meta).length > 0) {
-      console.log(meta);
-    }
-  }
 }
 /* eslint-enable no-console */
 
 // Back end log feed
 ipcRenderer.on("logging", (event, data) => {
-  let transport = data.transport,
-    level = data.level,
-    msg = data.msg,
-    meta = data.meta;
-  printLogToBrowserConsole(transport, level, msg, meta);
+    let transport = data.transport,
+        level = data.level,
+        msg = data.msg,
+        meta = data.meta;
+    printLogToBrowserConsole(transport, level, msg, meta);
 });
 
 // front end log feed
 logger.on("logging", (transport, level, msg, meta) => {
-  printLogToBrowserConsole(transport, level, msg, meta);
+    printLogToBrowserConsole(transport, level, msg, meta);
 });

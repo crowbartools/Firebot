@@ -1,13 +1,13 @@
 "use strict";
 (function() {
-  angular.module("firebotApp").component("actionList", {
-    bindings: {
-      actions: "<",
-      isRandom: "<",
-      update: "&",
-      modalId: "@"
-    },
-    template: `
+    angular.module("firebotApp").component("actionList", {
+        bindings: {
+            actions: "<",
+            isRandom: "<",
+            update: "&",
+            modalId: "@"
+        },
+        template: `
         <div>
           <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.actionsArray">
               <div ng-repeat="action in $ctrl.actionsArray track by $index">
@@ -41,71 +41,71 @@
             </div>            
         </div>
             `,
-    controller: function(utilityService) {
-      let $ctrl = this;
+        controller: function(utilityService) {
+            let $ctrl = this;
 
-      $ctrl.actionsArray = [];
+            $ctrl.actionsArray = [];
 
-      // when the element is initialized
-      $ctrl.$onInit = function() {
-        if ($ctrl.actions != null) {
-          $ctrl.actionsArray = JSON.parse(JSON.stringify($ctrl.actions));
+            // when the element is initialized
+            $ctrl.$onInit = function() {
+                if ($ctrl.actions != null) {
+                    $ctrl.actionsArray = JSON.parse(JSON.stringify($ctrl.actions));
+                }
+            };
+
+            $ctrl.actionsUpdate = function() {
+                console.log("Actions update");
+                $ctrl.update({ actions: $ctrl.actionsArray });
+            };
+
+            $ctrl.actionTypeChanged = function(actionType, index) {
+                $ctrl.actionsArray[index].type = actionType;
+            };
+
+            $ctrl.sortableOptions = {
+                handle: ".dragHandle",
+                stop: () => {
+                    $ctrl.actionsUpdate();
+                }
+            };
+
+            $ctrl.duplicateActionAtIndex = function(index) {
+                let action = JSON.parse(angular.toJson($ctrl.actionsArray[index]));
+                $ctrl.actionsArray.splice(index + 1, 0, actions);
+                $ctrl.actionsUpdate();
+            };
+
+            $ctrl.removeActionAtIndex = function(index) {
+                $ctrl.actionsArray.splice(index, 1);
+                $ctrl.actionsUpdate();
+            };
+
+            $ctrl.openAddOrEditActionModal = function(action, index) {
+                utilityService.showModal({
+                    component: "addOrEditTimerActionModal",
+                    resolveObj: {
+                        action: () => action,
+                        index: () => index
+                    },
+                    closeCallback: resp => {
+                        let responseAction = resp.responseAction;
+
+                        switch (responseAction) {
+                        case "add":
+                            $ctrl.actionsArray.push(resp.action);
+                            break;
+                        case "update":
+                            $ctrl.actionsArray[resp.index] = resp.action;
+                            break;
+                        case "delete":
+                            $ctrl.removeActionAtIndex(resp.index);
+                            break;
+                        }
+
+                        $ctrl.actionsUpdate();
+                    }
+                });
+            };
         }
-      };
-
-      $ctrl.actionsUpdate = function() {
-        console.log("Actions update");
-        $ctrl.update({ actions: $ctrl.actionsArray });
-      };
-
-      $ctrl.actionTypeChanged = function(actionType, index) {
-        $ctrl.actionsArray[index].type = actionType;
-      };
-
-      $ctrl.sortableOptions = {
-        handle: ".dragHandle",
-        stop: () => {
-          $ctrl.actionsUpdate();
-        }
-      };
-
-      $ctrl.duplicateActionAtIndex = function(index) {
-        let action = JSON.parse(angular.toJson($ctrl.actionsArray[index]));
-        $ctrl.actionsArray.splice(index + 1, 0, actions);
-        $ctrl.actionsUpdate();
-      };
-
-      $ctrl.removeActionAtIndex = function(index) {
-        $ctrl.actionsArray.splice(index, 1);
-        $ctrl.actionsUpdate();
-      };
-
-      $ctrl.openAddOrEditActionModal = function(action, index) {
-        utilityService.showModal({
-          component: "addOrEditTimerActionModal",
-          resolveObj: {
-            action: () => action,
-            index: () => index
-          },
-          closeCallback: resp => {
-            let responseAction = resp.responseAction;
-
-            switch (responseAction) {
-              case "add":
-                $ctrl.actionsArray.push(resp.action);
-                break;
-              case "update":
-                $ctrl.actionsArray[resp.index] = resp.action;
-                break;
-              case "delete":
-                $ctrl.removeActionAtIndex(resp.index);
-                break;
-            }
-
-            $ctrl.actionsUpdate();
-          }
-        });
-      };
-    }
-  });
-})();
+    });
+}());
