@@ -35,7 +35,9 @@
             currentViewersUpdate: {},
             systemCommandsUpdated: {},
             integrationConnectionUpdate: {},
-            integrationsUpdated: {}
+            integrationsUpdated: {},
+            saveCustomCommand: {},
+            removeCustomCommand: {}
         };
 
         let ListenerType = {
@@ -73,7 +75,9 @@
             BACKUP_COMPLETE: "backupComplete",
             SYS_CMDS_UPDATED: "systemCommandsUpdated",
             INTEGRATION_CONNECTION_UPDATE: "integrationConnectionUpdate",
-            INTEGRATIONS_UPDATED: "integrationsUpdated"
+            INTEGRATIONS_UPDATED: "integrationsUpdated",
+            SAVE_CUSTOM_COMMAND: "saveCustomCommand",
+            REMOVE_CUSTOM_COMMAND: "removeCustomCommand"
         };
 
         function runListener(listener, returnPayload) {
@@ -456,6 +460,24 @@
      */
         ipcRenderer.on("integrationsUpdated", function(event, data) {
             _.forEach(registeredListeners.integrationsUpdated, listener => {
+                runListener(listener, data);
+            });
+        });
+
+        /**
+         * save cmd listener
+         */
+        ipcRenderer.on("saveCustomCommand", function(event, data) {
+            _.forEach(registeredListeners.saveCustomCommand, listener => {
+                runListener(listener, data);
+            });
+        });
+
+        /**
+         * remove cmd listener
+         */
+        ipcRenderer.on("removeCustomCommandByTrigger", function(event, data) {
+            _.forEach(registeredListeners.removeCustomCommand, listener => {
                 runListener(listener, data);
             });
         });

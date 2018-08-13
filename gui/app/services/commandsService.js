@@ -43,7 +43,7 @@
                     "getAllSystemCommandDefinitions"
                 );
 
-                // Refresh the interactive command cache.
+                // Refresh the command cache.
                 ipcRenderer.send("refreshCommandCache");
             };
 
@@ -51,17 +51,22 @@
 
             service.getCustomCommands = () => commandsCache.customCommands;
 
-            service.saveCustomCommand = function(command, createdBy = null) {
+            service.saveCustomCommand = function(command, user = null) {
                 logger.debug("saving command: " + command.trigger);
                 if (command.id == null || command.id === "") {
                     // generate id for new command
                     const uuidv1 = require("uuid/v1");
                     command.id = uuidv1();
 
-                    command.createdBy = createdBy
-                        ? createdBy
+                    command.createdBy = user
+                        ? user
                         : connectionService.accounts.streamer.username;
                     command.createdAt = moment().format();
+                } else {
+                    command.lastEditBy = user
+                        ? user
+                        : connectionService.accounts.streamer.username;
+                    command.lastEditAt = moment().format();
                 }
 
                 if (command.count == null) {
@@ -142,6 +147,45 @@
                     service.saveCustomCommand(command);
                 }
             });
+
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.SAVE_CUSTOM_COMMAND
+                },
+                (data) => {
+                    service.saveCustomCommand(data.command, data.user);
+
+                    let currentIndex = commandsCache.customCommands.findIndex(c => c.trigger === data.command.trigger);
+
+                    console.log(commandsCache.customCommands);
+                    if (currentIndex === -1) {
+                        commandsCache.customCommands.push(data.command);
+                    } else {
+                        commandsCache.customCommands[currentIndex] = data.command;
+                    }
+
+                    // Refresh the backend command cache.
+                    ipcRenderer.send("refreshCommandCache");
+                }
+            );
+
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.REMOVE_CUSTOM_COMMAND
+                },
+                (data) => {
+
+                    let command = commandsCache.customCommands.find(c => c.trigger === data.trigger);
+
+                    service.deleteCustomCommand(command);
+
+                    commandsCache.customCommands = commandsCache.customCommands.filter(c => c.id !== command.id);
+
+                    // Refresh the backend command cache.
+                    ipcRenderer.send("refreshCommandCache");
+                }
+            );
+
 
             return service;
         });
