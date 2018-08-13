@@ -70,6 +70,9 @@ module.exports = {
         // Deviation from < https://eslint.org/docs/rules/#ecmascript-6 >
         "arrow-spacing": 2,                               // Spaces required around fat-arrow function's "=>"
         "no-confusing-arrow": 2,                          // Don't use arrows functions in conditions
-        "no-var": 1                                      // Warning; Use let/const instead of var
+        "no-var": 1,                                      // Warning; Use let/const instead of var
+
+        // Other deviations
+        "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}] // warn about todo comments
     }
 }
