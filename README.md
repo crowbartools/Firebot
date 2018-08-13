@@ -2,7 +2,7 @@ Firebot
 ======
 An app that allows streamers on Mixer.com to quickly and easily setup versatile interactive boards and chat commands. It supports sound board buttons, api buttons, game controls, scene changes, group changes, and more all on the same interactive board at the same time. This allows any user to have a variety of fun buttons for their audience to interact with at any time.
 
-[![Build Status](https://api.travis-ci.org/Firebottle/Firebot.svg)](https://travis-ci.org/Firebottle/Firebot)
+[![Build Status](https://travis-ci.org/crowbartools/Firebot.svg?branch=v5)](https://travis-ci.org/crowbartools/Firebot)
 [![Dependencies Status](https://david-dm.org/Firebottle/Firebot/status.png)](https://david-dm.org/Firebottle/Firebot)
 [![Total Downloads](https://img.shields.io/github/downloads/firebottle/firebot/total.svg)](https://firebot.pro)
 [![Version](https://img.shields.io/github/release/firebottle/firebot.svg)](https://github.com/Firebottle/Firebot/releases)
