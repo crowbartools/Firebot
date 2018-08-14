@@ -16,7 +16,7 @@ const marked = require('marked');
 const path = require('path');
 
 require('angular');
-require('angular-animate');
+require('angular-animate');  
 require('angular-route');
 require('angular-sanitize');
 require('angular-ui-bootstrap');
@@ -60,23 +60,20 @@ function printRow(colorOne, colorTwo, ...args) {
 
 const letterColor = "#EBB11F", spaceColor = "transparent", ruleColor = "darkgray";
 /* eslint-disable no-multi-spaces */
+console.log("%cWELCOME TO", "color:gray;font-weight:900;font-size:18px;"); // eslint-disable-line no-console
 printRow(ruleColor, spaceColor,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
-//console.log("%cWELCOME TO", "color:gray;font-weight:900;font-size:18px;");
 printRow(letterColor, spaceColor, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1);
 printRow(letterColor, spaceColor, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0);
 printRow(letterColor, spaceColor, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0);
 printRow(letterColor, spaceColor, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0);
 printRow(letterColor, spaceColor, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0);
 
-//console.log("%cPlease excuse the mess.", "color:gray;font-weight:900;font-size:16px;");
 printRow(ruleColor, spaceColor,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 /* eslint-enable no-multi-spaces */
 
 //extra line for breathing room
 console.log(""); // eslint-disable-line no-console
-
-
 
 function getLogLevelColor(level) {
     switch (level) {
