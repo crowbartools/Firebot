@@ -64,13 +64,8 @@
           </div>
           <div class="row">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Auto Update</div>
-              <div class="setting-description">Firebot can automatically update when a new version is available. Below you can choose what kinds of updates you want to be automatically downloaded. For any updates that aren't automatically downloaded, you will recieve a notification so you can update at your convenience.</div>
-              <div style="display: flex; flex-direction: row; justify-content: center;">
-                <div style="display:inline-block; width: 90%; font-weight: 600;">    
-                  <rzslider rz-slider-model="autoUpdateSlider.value" rz-slider-options="autoUpdateSlider.options"></rzslider>
-                </div>            
-              </div>
+              <div class="setting-heading">Beta Notifications</div>
+              <div class="setting-description">Firebot automatically updates to new stable versions. It does not automatically update to betas or major new releases however. Below you can choose if you want to be notified of new beta releases.</div>
               <div style="padding-top: 10px; padding-left: 10px;">
                 <label class="control-fb control--checkbox"> Subscribe to beta notifications <i class="fal fa-question-circle" uib-tooltip="Get notified when a new beta is available. You will be able to review the change log and update from within the app, if you so desire." tooltip-append-to-body="true" ></i>
                   <input type="checkbox" ng-click="settings.setNotifyOnBeta(!settings.notifyOnBeta())" ng-checked="settings.notifyOnBeta()" aria-label="..." >

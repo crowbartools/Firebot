@@ -7,7 +7,9 @@
         </div>
       
         <div class="update-alert alert alert-warning" style="display: inline-block;" ng-if="getUpdateData().updateIsAvailable">
-            <p>Hey! It looks like there was an update released!</p> <p>You can update by clicking the button below.</p>
+            <p>Hey! It looks like there was an update released!</p> 
+            <p ng-if="!getUpdateData().updateIsMajorRelease">You can update by clicking the button below.</p>
+            <p ng-if="getUpdateData().updateIsMajorRelease">Auto updating is disabled because the update is a major new version and there is likely breaking changes. Please take this into consideration before updating.</p>
         </div>
         
         <div class="latest-update" style="font-size:30px;font-weight:200;">
@@ -18,7 +20,8 @@
         </div>
         <div class="update-notes" ng-bind-html="getUpdateData().gitNotes"></div>
         <div class="update-buttons">
-            <a class="github-link" href><button class="btn btn-primary" ng-if="getUpdateData().updateIsAvailable" ng-click="downloadAndInstallUpdate()">Update</button></a>
+            <a class="github-link" href><button class="btn btn-primary" ng-if="getUpdateData().updateIsAvailable && !getUpdateData().updateIsMajorRelease" ng-click="downloadAndInstallUpdate()">Update</button></a>
+            <a ng-if="getUpdateData().updateIsMajorRelease" class="github-link" href ng-click="openLinkExternally('https://github.com/crowbartools/Firebot/releases/latest')"><button class="btn btn-primary">View update</button></a>
             <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3Abug')"><button class="btn btn-danger">Report Bugs</button></a>
             <a href ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/issues?q=is%3Aopen+is%3Aissue+label%3A%22Feature+Request%22')"><button class="btn btn-info">Suggest Features</button></a>
         </div>
