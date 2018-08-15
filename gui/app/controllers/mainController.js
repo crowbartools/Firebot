@@ -26,8 +26,8 @@
     app.factory("$exceptionHandler", function(logger) {
     // this catches angular exceptions so we can send it to winston
         return function(exception, cause) {
-            console.log(exception, cause);
-            logger.error(exception, cause);
+            console.log(exception || "", cause || {});
+            logger.error(exception || "", cause || {});
         };
     });
 

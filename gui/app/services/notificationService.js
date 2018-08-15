@@ -132,7 +132,7 @@
             function mixerStatusNotification() {
                 // This will check the mixer status page every once in awhile to see if there is it is having issues.
                 $http
-                    .get("https://00qbcbkrqn0y.statuspage.io/api/v2/status.json")
+                    .get("https://status.mixer.com/index.json")
                     .then(response => {
                         let data = response.data,
                             statusIndicator = data.status.indicator,
@@ -141,17 +141,19 @@
                                 id: "MixerStatus",
                                 title: "Mixer Issue",
                                 message:
-                  "Mixer is reporting:<br>" +
-                  statusText +
-                  ". <br><br> This could cause issues with Firebot. Please be patient as they address the issues.",
+                                    "Mixer is reporting:<br>" +
+                                    statusText +
+                                     ". <br><br> This could cause issues with Firebot. Please be patient as they address the issues.",
                                 icon: "alert"
                             };
 
-                        if (statusIndicator !== "none") {
+                        if (statusIndicator !== "none" && !service.notificationsContainsId(notification.id)) {
                             service.addNotification(notification, false);
                         } else {
                             service.deleteNotification(notification);
                         }
+                    }, (reason) => {
+                        logger.info("Failed to get mixer status: " + reason);
                     });
             }
 
@@ -160,6 +162,10 @@
 
             service.getNotifications = function() {
                 return notifications;
+            };
+
+            service.notificationsContainsId = function(id) {
+                return notifications.some(n => n.id === id);
             };
 
             service.getUnreadCount = function() {
