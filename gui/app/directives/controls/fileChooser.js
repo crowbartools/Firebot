@@ -47,11 +47,6 @@
                         ctrl.onUpdate({filepath: filepath});
                     });
                 };
-                listenerService.registerListener(registerRequest, filepath => {
-                    ctrl.model = filepath;
-                    ctrl.onUpdate({ filepath: filepath });
-                });
-            };
-        }
-    });
+            }
+        });
 }());
