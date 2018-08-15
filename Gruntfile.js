@@ -8,8 +8,8 @@ module.exports = function(grunt) {
                 appDirectory: 'G:/GitHub/Firebot/dist/Firebot-win32-x64',
                 outputDirectory: 'G:/GitHub/Firebot/dist/installer64',
                 loadingGif: 'G:/GitHub/Firebot/gui/images/animated.gif',
-                iconUrl: 'https://firebottle.tv/Firebot/installer/logo.ico',
-                setupIcon: 'G:/GitHub/Firebot/gui/images/logo_transparent_2.png'
+                iconUrl: 'https://crowbartools.com/projects/firebot/logo.ico',
+                setupIcon: 'G:/GitHub/Firebot/gui/images/logo.ico'
             }
         },
 		'jsdoc' : {

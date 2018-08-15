@@ -37,7 +37,8 @@
             integrationConnectionUpdate: {},
             integrationsUpdated: {},
             saveCustomCommand: {},
-            removeCustomCommand: {}
+            removeCustomCommand: {},
+            clearEffects: {}
         };
 
         let ListenerType = {
@@ -50,8 +51,7 @@
             CONNECTION_STATUS: "connectionStatus",
             CONNECTION_CHANGE_REQUEST: "connectionChangeRequest",
             CONSTELLATION_CONNECTION_STATUS: "constellationConnectionStatus",
-            CONSTELLATION_CONNECTION_CHANGE_REQUEST:
-        "constellationConnectionChangeRequest",
+            CONSTELLATION_CONNECTION_CHANGE_REQUEST: "constellationConnectionChangeRequest",
             CHAT_CONNECTION_STATUS: "chatConnectionStatus",
             CHAT_CONNECTION_CHANGE_REQUEST: "chatConnectionChangeRequest",
             OVERLAY_CONNECTION_STATUS: "overlayStatusUpdate",
@@ -77,7 +77,8 @@
             INTEGRATION_CONNECTION_UPDATE: "integrationConnectionUpdate",
             INTEGRATIONS_UPDATED: "integrationsUpdated",
             SAVE_CUSTOM_COMMAND: "saveCustomCommand",
-            REMOVE_CUSTOM_COMMAND: "removeCustomCommand"
+            REMOVE_CUSTOM_COMMAND: "removeCustomCommand",
+            CLEAR_EFFECTS: "clearEffects"
         };
 
         function runListener(listener, returnPayload) {
@@ -481,6 +482,17 @@
                 runListener(listener, data);
             });
         });
+
+        /**
+        * Clear effect listener
+        */
+        ipcRenderer.on('clearEffects', function (event, data) {
+            _.forEach(registeredListeners.clearEffects, (listener) => {
+                runListener(listener, data);
+            });
+        });
+
+
 
         /**
      *  Helpers

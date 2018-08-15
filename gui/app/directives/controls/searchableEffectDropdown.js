@@ -26,7 +26,8 @@
             $element,
             $attrs,
             settingsService,
-            listenerService
+            listenerService,
+            connectionService
         ) {
             let ctrl = this;
 
@@ -43,10 +44,14 @@
                 });
 
                 /*if (!settingsService.getCustomScriptsEnabled()) {
-          ctrl.options = ctrl.options.filter(
-            e => e.name !== Effect.EffectType.CUSTOM_SCRIPT
-          );
-        }*/
+                ctrl.options = ctrl.options.filter(
+                    e => e.name !== Effect.EffectType.CUSTOM_SCRIPT
+                );
+                }*/
+
+                if (!connectionService.accounts.streamer.partnered) {
+                    ctrl.options = ctrl.options.filter(e => e.name !== Effect.EffectType.CREATE_CLIP);
+                }
 
                 //find the selected effect in the list
                 let selected = ctrl.options.filter(e => e.id === ctrl.selected);

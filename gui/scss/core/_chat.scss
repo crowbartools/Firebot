@@ -34,11 +34,17 @@
     flex-direction: row;
     width: 100%;
     min-height: 50px;
-    margin-bottom: 15px;
+    padding: 0 10px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    &.alternate:nth-child(even) {
+        background: $chat-message-alternate-bg;
+    }
     &.isCompact {
         align-items: baseline;
-        min-height: 20px;
-        margin-bottom: 7px;
+        min-height: 25px;
+        padding-top: 2px;
+        padding-bottom: 7px;
     }
     &[role="User"]{
         color: $usercolor;
@@ -119,10 +125,6 @@
         font-size: .85em;
         color: $alertcolor;
     }
-    &.isDeleted .chatContent{
-        text-decoration: line-through;
-        color: $chatDeletedColor;
-    }
     &.isAction{
         .chatContent{
             font-style: italic;
@@ -148,6 +150,36 @@
         .chat-timestamp {
             flex-shrink: 0;
             width: 75px;
+        }
+    }
+    .chatContent .chat-link {
+        cursor: pointer;
+        color: #3e87da;
+    }
+    &.isDeleted .chatContent{
+        text-decoration: line-through;
+        color: $chatDeletedColor;
+    }
+    &.isDeleted.spoilers .chatContent{
+        text-decoration: none;
+        color: transparent;
+        background:black;
+        .chatEmoticon {
+            opacity: 0;
+        }
+        .chat-link {
+            color: transparent;
+        }
+        &:hover {
+            background:transparent;
+            color: $chatDeletedColor;
+            .chat-link {
+                color: #3e87da;
+                opacity: 0.5;
+            }
+            .chatEmoticon {
+                opacity: 0.5;
+            }
         }
     }
 }
@@ -345,6 +377,7 @@
     justify-content: center;
     align-items: center;
     user-select: none;
+    border-radius: 5px;
 }
 
 .chatter-dropdown {
@@ -410,22 +443,30 @@
     background: $light-background-color + 20%;
     border-radius: 5px;
     border: 2px solid rgba(170, 164, 164, 0.43);
-    overflow: hidden;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    position: relative;
+    flex: 1;
+    height:100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
     @media only screen and (max-width: 779px) {
         border-left: 1px solid $chatBorder;
     }
     ::-webkit-scrollbar-track {
         border-radius: 0px 5px 5px 0px;
+        background: transparent;
     }
 }
 
+.chat-window-wrapper {
+    display: flex;
+    height: 100%;
+    position: relative;
+}
+
+
 .chat-window-message-wrapper {
-    padding-top:10px; 
-    padding-left:10px; 
-    padding-right: 10px;
+    padding-bottom:6px; 
+    margin-bottom: auto;
 }
 
 .chatMessage{

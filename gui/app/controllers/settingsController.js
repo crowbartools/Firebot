@@ -21,9 +21,14 @@
             utilityService,
             listenerService,
             integrationService,
+            connectionService,
             logger
         ) {
             $scope.settings = settingsService;
+
+            $scope.streamerPartnered = connectionService.accounts.streamer.partnered;
+
+            $scope.clipsFolder = settingsService.getClipDownloadFolder();
 
             $scope.showSetupWizard = utilityService.showSetupWizard;
 

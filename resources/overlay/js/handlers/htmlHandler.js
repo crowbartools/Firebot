@@ -1,21 +1,20 @@
 // Show HTML
 // This will take the data that is sent to it from the GUI and render on the overlay.
 function showHtml(data){
-	// HTML Packet...
-	// {"event":"html","html": HTML, "length": length, "removal": removal}
-    var HTML = data.html;
-    var length = parseFloat(data.length) * 1000;
-    var mainClass = data.removal;
-    
-    var exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeOut";
+    var element, _element;
+    element = _element = $('#wrapper').append(data.html);
 
-	// Throw HTML on page.
-	$('#wrapper').append(HTML);
+    setTimeout(function(){
+        // If CSS class is provided, remove element(s) with provided CSS class.
+        if(data.removal){
+            element = element.parent().find("." + data.removal);
+            
+            //If no elements found, remove original element.
+            if(!element.length) element = _element;
+        }
 
-	// In X time remove it.
-	setTimeout(function(){ 
-		$('.'+mainClass).animateCss(exitAnimation, function(){
-			$('.'+mainClass).remove();
-		});
-	}, length);
+        element.animateCss(data.exitAnimation || "fadeOut", function(){ // Default Animation: Fade Out
+            element.remove();
+        });
+    }, parseFloat(data.length || 10) * 1000); // Default Show Time: 10 Seconds
 }

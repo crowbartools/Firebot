@@ -19,7 +19,8 @@
         "pascalprecht.translate",
         "ngToast",
         "agGrid",
-        "slidingPuzzle"
+        "slidingPuzzle",
+        'ngScrollGlue'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {
@@ -184,6 +185,11 @@
                     $scope.loginOrLogout = function(type) {
                         connectionService.loginOrLogout(type);
                     };
+
+                    $scope.reauthForClips = function() {
+                        connectionService.reauthForClips();
+                    };
+
 
                     // When the user clicks "Save", we want to pass the id back to interactiveController
                     $scope.close = function() {

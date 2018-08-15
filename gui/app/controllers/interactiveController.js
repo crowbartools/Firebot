@@ -205,8 +205,9 @@
           */
             $scope.showEditControlEffectsModal = function(controlButton) {
                 let editControlEffectsModalContext = {
-                    templateUrl:
-            "./templates/interactive/modals/editControlEffectsModal.html",
+                    templateUrl: "./templates/interactive/modals/editControlEffectsModal.html",
+                    keyboard: false,
+                    backdrop: 'static',
                     // This is the controller to be used for the modal.
                     controllerFunc: (
                         $scope,

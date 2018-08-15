@@ -10,19 +10,24 @@
             </span>
         </div>
         <div class="chat-users" style="height: 100%;">
-            <div class="chatUser" ng-attr-role="{{getRole(user)}}" ng-repeat="user in getChatUsers()">
+            <div class="chatUser" ng-attr-role="{{getUserRole(user)}}" ng-repeat="user in getChatUsers() track by user.username">
                     {{user.username}}
             </div>
         </div>       
     </div>
     <div class="chat-window-column">
-        <div class="chat-window" scroll-glue>
-
-            <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
+        <div class="chat-window-wrapper">
+        <div ng-hide="chatFeedIsEnabled()" class="chatfeed-disabled-overlay">
                 <span style="color: white; font-size: 1.2em;">{{disabledMessage}}</span>
-            </div>
+        </div>
+        <div class="chat-window" scroll-glue>
+            
             <div class="chat-window-message-wrapper">
-                <div class="chat-message" ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message),isTagged: message.tagged, isCompact: compactDisplay }" ng-attr-role="{{getRole(message)}}" ng-attr-messageId="{{getMessageId(message)}}" ng-repeat="message in getMessages()">
+                <div class="chat-message" 
+                    ng-class="{isAction: isAction(message), isWhisper: isWhisper(message), isDeleted: isDeleted(message),isTagged: message.tagged, isCompact: compactDisplay, alternate: alternateBackgrounds, spoilers: hideDeletedMessages }" 
+                    ng-attr-role="{{getRole(message)}}" 
+                    ng-attr-messageId="{{getMessageId(message)}}" 
+                    ng-repeat="message in getMessages() | limitTo:messageDisplayLimit track by message.id">
                     <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)">
                         <span>
                             <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
@@ -45,7 +50,7 @@
                                 </span>
                                 <span ng-if="segment.type === 'emoticon'" class="chatEmoticon" ng-style="segment.emoticonStyles"></span>
                                 <span ng-if="segment.type === 'link'">
-                                    <a class="clickable-link" ng-click="openLinkExternally(segment.url)">{{segment.url}}</a>
+                                    <a class="chat-link" ng-click="openLinkExternally(segment.url)">{{segment.url}}</a>
                                 </span>
                                 <span ng-if="segment.type === 'tag'">
                                     {{segment.text}}
@@ -61,6 +66,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         </div>
         <div class="text-input-wrapper">
             <div class="text-input">
@@ -170,6 +176,24 @@
                         <div class="control__indicator"></div>
                     </label>
                 </div>
+            </div>
+            <div style="display: flex;align-items: center;justify-content: space-between;">
+                <span style="font-weight: 900;">Alternate Backgrounds</span>
+                <span>
+                    <input class="tgl tgl-light" id="cb9" type="checkbox"
+                        ng-checked="alternateBackgrounds" 
+                        ng-click="toggleAlternateBackgrounds()"/>
+                    <label class="tgl-btn" for="cb9"></label>
+                </span>
+            </div>
+            <div style="display: flex;align-items: center;justify-content: space-between;">
+                <span style="font-weight: 900;">Hide Deleted Messages <tooltip text="'Turning this on will cover deleted messages with a blackbox. Hovering over the message will reveal it. Great for letting your mods hide spoilers!'"></tooltip></span> 
+                <span>
+                    <input class="tgl tgl-light" id="cb10" type="checkbox"
+                        ng-checked="hideDeletedMessages" 
+                        ng-click="toggleHideDeletedMessages()"/>
+                    <label class="tgl-btn" for="cb10"></label>
+                </span>
             </div>
         </div>               
     </div>

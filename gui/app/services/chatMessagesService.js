@@ -3,20 +3,19 @@
     //This manages the chat window.
     const profileManager = require("../../lib/common/profile-manager.js");
 
+    const moment = require('moment');
+
     angular
-        .module("firebotApp")
-        .factory("chatMessagesService", function(
-            logger,
-            listenerService,
-            settingsService,
-            groupsService,
-            soundService,
-            connectionService
-        ) {
+        .module('firebotApp')
+        .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService, groupsService,
+            soundService, connectionService, $timeout) {
             let service = {};
 
             // Chat Message Queue
             service.chatQueue = [];
+
+            // the number of messages to show at any given time. This helps performance
+            service.chatMessageDisplayLimit = 75;
 
             // Chat User List
             service.chatUsers = [];
@@ -67,8 +66,10 @@
             };
 
             // User joined the channel.
-            service.chatUserJoined = function(data) {
-                service.chatUsers.push(data);
+            service.chatUserJoined = function (data) {
+                if (!service.chatUsers.some(u => u.username === data.username)) {
+                    service.chatUsers.push(data);
+                }
             };
 
             // User left the channel.
@@ -113,7 +114,7 @@
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
                 let data = {
-                    id: "System",
+                    id: "System" + Date.now(),
                     user_name: "System", // eslint-disable-line
                     user_roles: [ // eslint-disable-line
                         "System"
@@ -131,7 +132,12 @@
                         }
                     },
                     messageHTML: message,
-                    date: new Date()
+                    date: new Date(),
+                    whisper: false,
+                    action: true,
+                    mainColorRole: "System",
+                    subscriber: false,
+                    timestamp: moment(new Date()).format('h:mm A')
                 };
                 service.chatQueue.push(data);
             };
@@ -315,13 +321,19 @@
             // If message count is over 200, prune down
             service.pruneChatQueue = function() {
                 let arr = service.chatQueue,
-                    overflowChat = arr.length - 200;
+                    overflowChat = arr.length - service.chatMessageDisplayLimit * 2;
 
-                // Overflow chat is how many messages we need to remove to bring it back down to 200.
+                // Overflow chat is how many messages we need to remove to bring it back down
+                // to service.chatMessageDisplayLimit x 2.
                 if (overflowChat > 0) {
+
+                    // Recalculate to overflow over the set display limit so we arent pruning after every
+                    // message once we hit chatMessageDisplayLimit x 2.
+                    let bufferOverflowAmmount = arr.length - service.chatMessageDisplayLimit;
+
                     // Start at 0 in the array and delete X number of messages.
                     // The oldest messages are the first ones in the array.
-                    arr.splice(0, overflowChat);
+                    arr.splice(0, bufferOverflowAmmount);
                 }
             };
 
@@ -343,24 +355,22 @@
                     return service.subIconCache;
                 } catch (err) {
                     // If this runs it means we've never saved the sub badge.
-                    request(
-                        {
-                            url:
-                "https://mixer.com/api/v1/channels/" +
-                streamer.username +
-                "?fields=badge,partnered"
-                        },
-                        function(err, res) {
-                            let data = JSON.parse(res.body);
-
-                            // Push all to db.
-                            if (data.partnered === true) {
-                                dbAuth.push("./streamer/subBadge", data.badge.url);
-                                service.subIconCache = data.badge.url;
-                            }
-
-                            return service.subIconCache;
+                    request({
+                        url: 'https://mixer.com/api/v1/channels/' + streamer.username + '?fields=badge,partnered',
+                        headers: {
+                            'Client-ID': 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9'
                         }
+                    }, function (err, res) {
+                        let data = JSON.parse(res.body);
+
+                        // Push all to db.
+                        if (data.partnered === true) {
+                            dbAuth.push('./streamer/subBadge', data.badge.url);
+                            service.subIconCache = data.badge.url;
+                        }
+
+                        return service.subIconCache;
+                    }
                     );
                 }
             };
@@ -435,11 +445,29 @@
                             }
                         }
 
+                        data.whisper = data.message.meta.whisper === true;
+
+                        data.action = data.message.meta.me === true;
+
+                        // Returns first role in set of roles which should be their primary.
+                        // Filters out subscriber, because we have a separate function for that and
+                        // it doesnt have it's own chat color.
+                        data.mainColorRole = data.user_roles.find(r => r !== "Subscriber");
+
+                        data.subscriber = data.user_roles.some(r => r === "Subscriber");
+
+                        data.timestamp = moment(data.date).format('h:mm A');
+
                         // Push new message to queue.
                         service.chatQueue.push(data);
 
                         // Trim messages over 200.
                         service.pruneChatQueue();
+
+                        $timeout(() => {
+                            $rootScope.$broadcast('ngScrollGlue.scroll');
+                        }, 1);
+
                     }
                 }
             );

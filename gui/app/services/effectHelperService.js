@@ -63,6 +63,11 @@
                 switch (effectType) {
                 case EffectList.HTML:
                     controller = ($scope, utilityService) => {
+
+                        if ($scope.effect.length == null) {
+                            $scope.effect.length = 10;
+                        }
+
                         $scope.showOverlayInfoModal = function(overlayInstance) {
                             utilityService.showOverlayInfoModal(overlayInstance);
                         };
@@ -311,8 +316,16 @@
                     break;
 
                 case EffectList.CELEBRATION:
-                    controller = $scope => {
-                        $scope.celebrationTypes = ["Fireworks"];
+                    controller = ($scope) => {
+
+                        $scope.showOverlayInfoModal = function(overlayInstance) {
+                            utilityService.showOverlayInfoModal(overlayInstance);
+                        };
+
+                        $scope.celebrationTypes = [
+                            "Fireworks"
+                        ];
+
                     };
                     break;
 
@@ -344,6 +357,10 @@
                                     shouldUpdate: false,
                                     value: ""
                                 },
+                                cooldown: {
+                                    shouldUpdate: false,
+                                    value: ""
+                                },
                                 progress: {
                                     shouldUpdate: false,
                                     value: ""
@@ -355,16 +372,43 @@
                             };
                         }
 
-                        $scope.buttons = boardService
-                            .getControlsForSelectedBoard()
-                            .filter(c => c.kind === "button")
+                        $scope.buttons = boardService.getControlsForSelectedBoard()
+                            .filter(c => c.kind === "button" || c.kind === "textbox")
                             .map(b => {
                                 return {
                                     controlId: b.controlId,
-                                    text: b.text,
+                                    text: b.text != null && b.text.trim() !== "" ? b.text : b.controlId,
                                     scene: b.scene
                                 };
                             });
+                    };
+                    break;
+                case EffectList.CREATE_CLIP:
+                    controller = ($scope) => {
+                        if ($scope.effect.clipDuration == null) {
+                            $scope.effect.clipDuration = 30;
+                        }
+
+                        if ($scope.effect.postLink == null) {
+                            $scope.effect.postLink = true;
+                        }
+
+                        if ($scope.effect.download == null) {
+                            $scope.effect.download = false;
+                        }
+
+                        if ($scope.effect.clipTitle == null) {
+                            $scope.effect.clipTitle = "$(streamTitle) (Created by $(user))";
+                        }
+
+                        $scope.onDurationChange = function() {
+                            if ($scope.effect.clipDuration > 300) {
+                                $scope.effect.clipDuration = 300;
+                            }
+                            if ($scope.effect.clipDuration < 15) {
+                                $scope.effect.clipDuration = 15;
+                            }
+                        };
                     };
                     break;
                 case EffectList.DICE:
@@ -597,6 +641,16 @@
 
                         $scope.validModifiers = ["Control", "Alt", "Shift"];
 
+                        if (process.platform === 'darwin') {
+                            $scope.validControls.push("option", "command");
+                            $scope.validModifiers = [
+                                "Control",
+                                "Option",
+                                "Shift",
+                                "Command"
+                            ];
+                        }
+
                         // This sets the effect.modifier to an array of checked items.
                         $scope.modifierArray = function(list, item) {
                             $scope.effect.modifiers = service.getCheckedBoxes(list, item);
@@ -637,6 +691,14 @@
 
                         if ($scope.effect.width == null || $scope.effect.width < 1) {
                             $scope.effect.width = 400;
+                        }
+
+                        if ($scope.effect.justify == null) {
+                            $scope.effect.justify = "center";
+                        }
+
+                        if ($scope.effect.dontWrap == null) {
+                            $scope.effect.dontWrap = false;
                         }
 
                         $scope.editorOptions = {
