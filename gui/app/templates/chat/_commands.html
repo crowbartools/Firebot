@@ -13,11 +13,11 @@
     <div style="padding: 15px;">
         <div ng-show="activeCmdTab === 0">
             <div style="margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
-                <button ng-click="openAddOrEditCustomCommandModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Custom Command</button>
+                <button ng-click="openAddOrEditCustomCommandModal()" class="btn btn-primary hvr-icon-grow"><i class="fas fa-plus-circle hvr-icon" style="margin-right:5px;"></i> New Custom Command</button>
                 <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandSearch" style="flex-basis: 250px;"></searchbar>
             </div>
-            <div ng-if="commandsService.getCustomCommands().length === 0" class="muted">
-                No custom commands saved. You should make one! :) 
+            <div ng-if="commandsService.getCustomCommands().length === 0" class="noselect muted" style="padding-left: 13px">
+                <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No custom commands saved. You should make one! :) </span>
             </div>
             <table ng-show="commandsService.getCustomCommands().length > 0" class="fb-table">
                 <thead>

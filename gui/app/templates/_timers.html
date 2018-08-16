@@ -2,8 +2,8 @@
     <button ng-click="openAddOrEditTimerModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Timer</button>
     <searchbar ng-show="timerService.getTimers().length > 0" placeholder-text="Search timers" query="timerSearch" style="flex-basis: 250px;"></searchbar>
 </div>
-<div ng-if="timerService.getTimers().length === 0" class="muted">
-    No timers saved. You should make one! :) 
+<div ng-if="timerService.getTimers().length === 0" class="noselect muted" style="padding-left: 13px">
+    <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No timers saved. You should make one! :)</span>
 </div>
 <table ng-show="timerService.getTimers().length > 0" class="fb-table">
     <thead>
