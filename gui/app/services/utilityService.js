@@ -174,15 +174,12 @@
              * FIRST TIME USE MODAL
              */
             service.showSetupWizard = function(allowExit = false) {
-                let firstTimeUseModalContext = {
-                    templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
-                    // This is the controller to be used for the modal.
-                    controllerFunc: "firstTimeUseModalController",
+                service.showModal({
+                    component: "setupWizardModal",
                     keyboard: allowExit ? true : false,
                     backdrop: allowExit ? undefined : "static",
                     closeCallback: () => {}
-                };
-                service.showModal(firstTimeUseModalContext);
+                });
             };
 
             /*
@@ -341,7 +338,7 @@
                 service.showModal(errorModalContext);
 
                 // Log error to file.
-                logger.warning(errorMessage);
+                logger.warn(errorMessage);
             };
 
             /*
