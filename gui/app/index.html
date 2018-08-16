@@ -137,8 +137,8 @@
           <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
           <div class="fb-arrow down login-arrow"></div>
           <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
-            <li ng-repeat="profile in accounts.profiles">
-              <a href ng-click="switchProfiles(profile.profileId)">
+            <li ng-repeat="profile in accounts.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}">
+              <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}">
                   <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
                   <span class="accounts-info">{{profile.username}} (#{{profile.profileId}})</span>
               </a>
@@ -148,10 +148,10 @@
             </li>
             <li>
               <a href ng-click="showManageLoginsModal()">
-                <span style="vertical-align:-11.5%;">
-                  <i class="fal fa-sign-in"></i>
+                <span>
+                  <i class="fal fa-sign-in-alt"></i>
                 </span> 
-                Manage Profile
+                Manage Logins
               </a>
             </li>
             <li>
@@ -159,16 +159,16 @@
             </li>
             <li>
               <a href ng-click="showNewProfileModal()">
-                <span style="vertical-align:-11.5%;">
-                  <i class="fal fa-plus-square"></i>
+                <span>
+                  <i class="fal fa-user-plus"></i>
                 </span> 
                 Add Profile
               </a>
             </li>
             <li>
               <a href ng-click="showDeleteProfileModal()">
-                <span style="vertical-align:-11.5%;">
-                  <i class="fal fa-minus-square"></i>
+                <span>
+                  <i class="fal fa-user-minus"></i>
                 </span> 
                 Delete Profile
               </a>
