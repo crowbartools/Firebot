@@ -107,9 +107,6 @@
                         <p>
                             If you need help or have a suggestion, we'd love to hear from you. Click the About link in the sidebar to see where you can find us.
                         </p>
-                        <p>
-                            Feel free to check out the <a href ng-click="$ctrl.openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Getting-Started')">getting started guide</a> as well.
-                        </p>
                         <p style="animation-delay: 7s" class="animated tada">
                             <b>Thank you for using Firebot!</b>
                         </p>
