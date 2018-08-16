@@ -100,7 +100,7 @@
                     content:
             "A chat connection is required for many systems here to work.",
                     dismissButton: true,
-                    timeout: 10000
+                    timeout: 3000
                 });
             }
         });

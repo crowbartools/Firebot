@@ -448,18 +448,15 @@ table.fb-table {
 }
 
 .noclick {
-  pointer-events: none !important;
   cursor: default !important;
   opacity: 0.7;
 }
 
 .menunoclick {
-  pointer-events: none !important;
   cursor: default !important;
   font-weight: 600 !important;
 }
 
 .menunoclick:hover {
-  background: $dropdown-menu-bg !important;
   cursor: default !important;
 }

@@ -138,15 +138,6 @@
           <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
           <div class="fb-arrow down login-arrow"></div>
           <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
-            <li ng-repeat="profile in accounts.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}">
-              <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}">
-                  <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
-                  <span class="accounts-info">{{profile.username}} (#{{profile.profileId}})</span>
-              </a>
-            </li>
-            <li>
-              <hr>
-            </li>
             <li>
               <a href ng-click="showManageLoginsModal()">
                 <span>
@@ -155,9 +146,15 @@
                 Manage Logins
               </a>
             </li>
-            <li>
-              <hr>
+            <li class="divider"></li>
+            <li class="dropdown-header">Profiles</li>
+            <li ng-repeat="profile in accounts.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
+              <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}">
+                  <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
+                  <span class="accounts-info">{{profile.username}} (#{{profile.profileId}})</span>
+              </a>
             </li>
+            <li class="divider"></li>
             <li>
               <a href ng-click="showNewProfileModal()">
                 <span>
