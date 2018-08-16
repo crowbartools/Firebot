@@ -3,6 +3,8 @@
     const electron = require("electron");
     const shell = electron.shell;
 
+    const profileManager = require("../../lib/common/profile-manager");
+
     agGrid.initialiseAgGridWithAngular1(angular);
 
     let app = angular.module("firebotApp", [
@@ -186,10 +188,6 @@
                         connectionService.loginOrLogout(type);
                     };
 
-                    $scope.reauthForClips = function() {
-                        connectionService.reauthForClips();
-                    };
-
 
                     // When the user clicks "Save", we want to pass the id back to interactiveController
                     $scope.close = function() {
@@ -263,8 +261,24 @@
 
         // Switch Profiles
         $scope.switchProfiles = function(profileId) {
-            connectionService.switchProfiles(profileId);
+
+            if (profileId !== $scope.currentProfileId) {
+                utilityService
+                    .showConfirmationModal({
+                        title: "Switch Profile",
+                        question: "Switching profiles will cause the app to restart. Do you still want to switch profiles?",
+                        confirmLabel: "Switch",
+                        confirmBtnType: "btn-info"
+                    })
+                    .then(confirmed => {
+                        if (confirmed) {
+                            connectionService.switchProfiles(profileId);
+                        }
+                    });
+            }
         };
+
+        $scope.currentProfileId = profileManager.getLoggedInProfile();
 
         /**
      * Initial App Load
