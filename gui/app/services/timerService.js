@@ -22,7 +22,7 @@
                 try {
                     timerData = timerDb.getData("/");
                 } catch (err) {
-                    logger.warning("error getting timer data", err);
+                    logger.warn("error getting timer data", err);
                     return;
                 }
 

@@ -30,7 +30,7 @@
                 try {
                     cmdData = commandsDb.getData("/");
                 } catch (err) {
-                    logger.warning("error getting command data", err);
+                    logger.warn("error getting command data", err);
                     return;
                 }
 
