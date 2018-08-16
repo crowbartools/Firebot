@@ -62,8 +62,6 @@
                     streamerAccount.username = "Broadcaster";
                     streamerAccount.photoUrl = defaultPhotoUrl;
                     streamerAccount.isLoggedIn = false;
-                    streamerAccount.reauthedForClips = false;
-                    streamerAccount.loggedInThisSession = false;
 
                 } else {
                     // Delete Info
@@ -78,8 +76,8 @@
 
             // User Info
             // This function grabs info from the currently logged in user.
-            function userInfo(type, accessToken, refreshToken, authedForClips = false) {
-                let dbAuth = dataAccess.getJsonDbInUserData("/user-settings/auth");
+            function userInfo(type, accessToken, refreshToken) {
+                let dbAuth = profileManager.getJsonDbInProfile("/auth");
 
                 // Request user info and save out everything to auth file.
                 request({
@@ -104,7 +102,6 @@
                         dbAuth.push('./' + type + '/avatar', data.avatarUrl);
                         dbAuth.push('./' + type + '/accessToken', accessToken);
                         dbAuth.push('./' + type + '/refreshToken', refreshToken);
-                        dbAuth.push('./' + type + '/authedForClips', authedForClips === true);
 
                         // Request channel info
                         // We do this to get the sub icon to use in the chat window.
@@ -138,18 +135,14 @@
                 });
             }
 
-            function login(type, clipsReauth = false) {
+            function login(type) {
                 $rootScope.showSpinner = true;
 
                 let scopes = type === "streamer" ? streamerScopes : botScopes;
 
-                if (!clipsReauth) {
-                    // clear out any previous sessions
-                    const ses = session.fromPartition(type);
-                    ses.clearStorageData();
-                } else {
-                    scopes += ` ${clipsScope}`;
-                }
+                // clear out any previous sessions
+                const ses = session.fromPartition(type);
+                ses.clearStorageData();
 
                 authWindowParams.webPreferences.partition = type;
                 const oauthProvider = electronOauth2(authInfo, authWindowParams);
@@ -166,10 +159,9 @@
                                 token
                             );
                         } else {
-                            if (type === "streamer") {
-                                service.accounts.streamer.loggedInThisSession = true;
-                            }
-                            userInfo(type, token.access_token, token.refresh_token, clipsReauth);
+                            console.log("got tokens");
+                            console.log(token);
+                            userInfo(type, token.access_token, token.refresh_token);
                         }
                     },
                     err => {
@@ -182,11 +174,6 @@
                     }
                 );
             }
-
-            service.reauthForClips = function() {
-                login('streamer', true);
-            };
-
 
             // Refresh Token
             // This will get a new access token for the streamer and bot account.
@@ -369,8 +356,6 @@
                         username = streamer.username;
                         avatar = streamer.avatar;
 
-
-                        service.accounts.streamer.authedForClips = streamer.authedForClips === true;
                         service.accounts.streamer.partnered = streamer.partnered === true;
 
                         if (avatar != null) {
