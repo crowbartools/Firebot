@@ -30,7 +30,14 @@
 
             $scope.clipsFolder = settingsService.getClipDownloadFolder();
 
-            $scope.showSetupWizard = utilityService.showSetupWizard;
+            // $scope.showSetupWizard = utilityService.showSetupWizard;
+            $scope.showSetupWizard = () => {
+                utilityService.showModal({
+                    component: "setupWizardModal"
+                });
+            };
+
+
 
             $scope.integrations = integrationService;
 

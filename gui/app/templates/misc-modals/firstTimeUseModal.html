@@ -1,5 +1,5 @@
 <div class="modal-header" style="text-align:center">
-	<h3>{{getStepTitle()}}</h3>
+	<h3><!--{{getStepTitle()}}--></h3>
 </div>
 <div class="modal-body" style="text-align:center">
 	<div> 
@@ -12,10 +12,10 @@
 				  <span style="animation-delay: 1.3s" class="animated bounceIn">Firebot</span>
 				</div>
 				<div style="animation-delay: 2.0s" class="animated fadeIn welcome-subtitle">
-					<span>A Tool For Mixer Interactive</span>
+					<span>A Tool For Mixer Streamers</span>
 				</div>
 				<div style="animation-delay: 3.2s" class="animated fadeInUp">
-					<a class="btn btn-link" ng-click="setCurrentStep(3)">Get started <i class="fal fa-angle-right"></i></a>
+					<a class="btn btn-info" ng-click="setCurrentStep(3)">Get started <i class="fal fa-angle-right"></i></a>
 				</div>
 			</div>
 			
@@ -208,8 +208,6 @@
 	<div ng-if="isFirstStep()">
 		<span style="animation-delay: 3.3s;display: flex;flex-direction: row;justify-content: center;align-items: center;" class="animated fadeIn">
 			<a class="btn btn-link import-settings-btn" ng-click="setCurrentStep(2)">Restore a backup</a>
-			<span class="muted" style="padding: 0 2px;">|</span>
-			<a class="btn btn-link import-settings-btn" ng-click="setCurrentStep(1)">Upgrade from 3.0 or 4.0-beta</a>
 		</span>
 		
 	</div>
