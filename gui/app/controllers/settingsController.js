@@ -37,8 +37,6 @@
                 });
             };
 
-
-
             $scope.integrations = integrationService;
 
             $scope.openRootFolder = function() {
