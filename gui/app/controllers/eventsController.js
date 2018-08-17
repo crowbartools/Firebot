@@ -221,7 +221,8 @@
 
                         // The model for the board id text field
                         $scope.event = {
-                            name: ""
+                            name: "",
+                            active: true
                         };
 
                         $scope.isNewEvent = eventToEdit == null;
