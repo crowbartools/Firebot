@@ -104,7 +104,7 @@ exports.sendToOverlay = function(eventName, meta = {}, overlayInstance) {
 };
 
 setInterval(() => {
-    let clientsConnected = wss.clients.size > 0;
+    let clientsConnected = wss == null ? false : wss.clients.size > 0;
 
     if (clientsConnected !== overlayHasClients) {
         renderWindow.webContents.send("overlayStatusUpdate", {

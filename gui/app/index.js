@@ -27,7 +27,7 @@ require("angular-ui-sortable");
 require("angularjs-scroll-glue");
 require("ng-toast");
 require("../../node_modules/angular-summernote/dist/angular-summernote");
-require("../../node_modules/angular-translate/dist/angular-translate");
+require("angular-translate");
 require("../../node_modules/angular-translate-loader-url/angular-translate-loader-url");
 require("../../node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files");
 

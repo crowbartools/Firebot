@@ -80,7 +80,9 @@
                 $scope.gridOptions.api.setRowData(rows);
 
                 $timeout(function() {
-                    $scope.gridOptions.api.sizeColumnsToFit();
+                    if ($scope.gridOptions.api) {
+                        $scope.gridOptions.api.sizeColumnsToFit();
+                    }
                 }, 500);
             });
 

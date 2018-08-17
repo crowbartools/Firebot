@@ -170,8 +170,8 @@ function createWindow() {
 
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", () => {
-    // mainWindow.webContents.openDevTools();
         mainWindow.show();
+        //mainWindow.webContents.openDevTools();
     });
 
     // Emitted when the window is closed.
@@ -202,7 +202,7 @@ function createWindow() {
 
     connectionManager.startOnlineCheckInterval();
 
-    const timerManager = require("./lib/chat/timer-manager");
+    const timerManager = require("./lib/timers/timer-manager");
     timerManager.startTimers();
 
     const currencyManager = require("./lib/currency/currencyManager");
@@ -257,6 +257,7 @@ async function deleteProfiles() {
             logger.warn("Successfully deleted profile: " + deletedProfile);
         }
     } catch (err) {
+        logger.error(err);
         logger.info("No profiles are queued to be deleted or there was an error.");
         return;
     }
@@ -327,9 +328,11 @@ async function createDefaultFoldersAndFiles() {
         );
     }
 
+
     // Loop through active profiles and make sure all folders needed are created.
     // This ensures that even if a folder is manually deleted, it will be recreated instead of erroring out the app somewhere down the line.
     activeProfiles = Object.keys(activeProfiles).map(k => activeProfiles[k]);
+
     activeProfiles.forEach(profileId => {
     // Create the scripts folder if it doesn't exist
         if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId)) {
@@ -355,6 +358,7 @@ async function createDefaultFoldersAndFiles() {
 
         //always copy over overlay wrapper
         dataAccess.copyResourceToUserData(null, "overlay.html", "");
+
 
         // Create the scripts folder if it doesn't exist
         if (
@@ -421,6 +425,8 @@ async function createDefaultFoldersAndFiles() {
 function appOnReady() {
     app.on("ready", async function() {
         await createDefaultFoldersAndFiles();
+
+        mixerConnect = require("./lib/common/mixer-interactive.js");
 
         // load effects
         builtInEffectLoader.loadEffects();
@@ -673,5 +679,3 @@ ipcMain.on("sendToOverlay", function(event, data) {
     if (data == null) return;
     webServer.sendToOverlay(data.event, data.meta);
 });
-
-mixerConnect = require("./lib/common/mixer-interactive.js");
