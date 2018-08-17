@@ -99,18 +99,22 @@
 
 
 
-                    <div ng-switch-when="3" class="wave">
-                        <div style="margin-top: 20px">
+                    <div ng-switch-when="3" class="slide-fade">
+                        <div style="margin-top: 20px" class="animated fadeIn">
                             <img style="width: 80px; height: 80px" class="jump-infinite" src="../images/logo_transparent.png">
                         </div>
-                        <h1 style="margin-top: 0px;">You're all set!</h1>
-                        <p>
-                            If you need help or have a suggestion, we'd love to hear from you. Click the About link in the sidebar to see where you can find us.
+                        <h1 style="margin-top: 0px;animation-delay: 0.4s" class="animated bounceIn">You're all set!</h1>
+                        <br>
+                        <p style="animation-delay: 0.8s" class="animated fadeIn">
+                            If you need help or have a suggestion, we'd love to hear from you.<br>Click the About link in the sidebar to see where you can find us.
                         </p>
-                        <p style="animation-delay: 7s" class="animated tada">
-                            <b>Thank you for using Firebot!</b>
+                        <br>
+                        <p style="animation-delay: 1.8s" class="animated fadeIn">
+                            <b>Thank you for using Firebot.</b>
                         </p>
-                        <a style="margin-top: 5px;" class="btn btn-primary shake-slow" ng-click="$ctrl.handleNext()">I'm so ready!</a> 
+                        <div style="animation-delay: 2.3s" class="animated fadeIn">
+                            <a style="margin-top: 5px;" class="btn btn-primary shake-slow" ng-click="$ctrl.handleNext()">I'm so ready!</a> 
+                        </div>
                     </div>
                 </div>
                 
