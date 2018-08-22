@@ -20,12 +20,13 @@ const backupManager = require("./lib/backupManager");
 const userDatabase = require("./lib/database/userDatabase");
 const connectionManager = require("./lib/common/connection-manager");
 const webServer = require("./server/httpServer");
-const authLoginManager = require("./lib/AuthLoginManager");
+const authManager = require("./lib/common/perform-auth");
 
 const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
 const systemCommandLoader = require("./lib/chat/commands/systemCommandLoader");
 const builtInEventSourceLoader = require("./lib/live-events/builtinEventSourceLoader");
 const integrationLoader = require("./lib/live-events/integrations/integrationLoader");
+const builtInVariableLoader = require("./lib/variables/builtin-variable-loader");
 
 const Effect = require("./lib/common/EffectType");
 
@@ -437,7 +438,16 @@ function appOnReady() {
         //load event sources
         builtInEventSourceLoader.loadEventSources();
 
+        /*authManager.register({
+            platform: "mixer",
+            authURI: "https://mixer.com/oauth/authorize"
+        });*/
+
+        //load integrations
         integrationLoader.loadIntegrations();
+
+        //load variables
+        builtInVariableLoader.loadReplaceVariables();
 
         createWindow();
 
@@ -451,9 +461,6 @@ function appOnReady() {
 
         //start the REST api server
         webServer.start();
-
-        //start auth logic server
-        authLoginManager.startServer();
 
         const userdb = require("./lib/database/userDatabase");
         const statsdb = require("./lib/database/statsDatabase");
