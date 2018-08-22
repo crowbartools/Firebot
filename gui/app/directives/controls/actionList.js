@@ -12,7 +12,7 @@
           <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.actionsArray">
               <div ng-repeat="action in $ctrl.actionsArray track by $index">
                   <div class="effect-bar clickable-dark"
-                      ng-click="$ctrl.openAddOrEditActionModal(action)"
+                      ng-click="$ctrl.openAddOrEditActionModal($index)"
                       ng-mouseenter="hovering = true"
                       ng-mouseleave="hovering = false">
                           <span style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;padding-right: 10px;">
@@ -24,7 +24,7 @@
                               <div class="clickable" style="margin-right:15px; font-size: 20px; width: 15px; text-align: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
                                   <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
                                   <ul class="dropdown-menu" uib-dropdown-menu>
-                                      <li><a href ng-click="$ctrl.openAddOrEditActionModal(action, $index)"><i class="fal fa-edit" style="margin-right: 10px;" aria-hidden="true"></i>  Edit</a></li>
+                                      <li><a href ng-click="$ctrl.openAddOrEditActionModal($index)"><i class="fal fa-edit" style="margin-right: 10px;" aria-hidden="true"></i>  Edit</a></li>
                                       <li><a href ng-click="$ctrl.duplicateActionAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
                                       <li><a href ng-click="$ctrl.removeActionAtIndex($index)" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
                                   </ul>
@@ -71,7 +71,7 @@
 
             $ctrl.duplicateActionAtIndex = function(index) {
                 let action = JSON.parse(angular.toJson($ctrl.actionsArray[index]));
-                $ctrl.actionsArray.splice(index + 1, 0, actions);
+                $ctrl.actionsArray.splice(index + 1, 0, action);
                 $ctrl.actionsUpdate();
             };
 
@@ -80,15 +80,24 @@
                 $ctrl.actionsUpdate();
             };
 
-            $ctrl.openAddOrEditActionModal = function(action, index) {
+            $ctrl.openAddOrEditActionModal = function(index) {
+                console.log("array:");
+                console.log($ctrl.actionsArray);
+                console.log("index:");
+                console.log(index);
+                console.log("action:");
+                console.log($ctrl.actionsArray[index]);
                 utilityService.showModal({
                     component: "addOrEditTimerActionModal",
                     resolveObj: {
-                        action: () => action,
+                        action: () => $ctrl.actionsArray[index],
                         index: () => index
                     },
                     closeCallback: resp => {
+                        console.log("resp:");
+                        console.log(resp);
                         let responseAction = resp.responseAction;
+
 
                         switch (responseAction) {
                         case "add":
@@ -96,6 +105,7 @@
                             break;
                         case "update":
                             $ctrl.actionsArray[resp.index] = resp.action;
+                            console.log(resp.action);
                             break;
                         case "delete":
                             $ctrl.removeActionAtIndex(resp.index);

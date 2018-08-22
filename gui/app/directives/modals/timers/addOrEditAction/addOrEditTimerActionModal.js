@@ -76,7 +76,7 @@
             $ctrl.delete = function() {
                 if ($ctrl.action) return;
                 $ctrl.close({
-                    $value: { action: $ctrl.action, responseAction: "delete" }
+                    $value: { action: $ctrl.action, index: $ctrl.resolve.index, responseAction: "delete" }
                 });
             };
 
