@@ -101,7 +101,7 @@
                         // Request channel info
                         // We do this to get the sub icon to use in the chat window.
                         request({
-                            url: 'https://mixer.com/api/v1/channels/' + data.username + '?fields=badge,partnered'
+                            url: 'https://mixer.com/api/v1/channels/' + data.username
                         }, function (err, res) {
                             let data = JSON.parse(res.body);
 
@@ -115,6 +115,15 @@
                             if (type === "streamer") {
                                 dbAuth.push('./' + type + '/partnered', data.partnered);
                                 service.accounts.streamer.partnered = data.partnered;
+                                let groups = data.user.groups;
+
+                                let canClip = groups.some(g =>
+                                    g.name === "Partner " ||
+                                    g.name === "VerifiedPartner" ||
+                                    g.name === "Staff" ||
+                                    g.name === "Founder");
+                                service.accounts.streamer.canClip = canClip;
+                                dbAuth.push('./' + type + '/canClip', canClip);
                             }
 
                             // Style up the login page.
