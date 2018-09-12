@@ -9,7 +9,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService, groupsService,
-            soundService, connectionService, $timeout) {
+            soundService, connectionService, $timeout, $interval) {
             let service = {};
 
             // Chat Message Queue
@@ -391,6 +391,24 @@
             };
 
 
+            let messageHoldingQueue = [];
+
+            $interval(() => {
+                if (messageHoldingQueue.length > 0) {
+                    service.chatQueue = service.chatQueue.concat(messageHoldingQueue);
+                    messageHoldingQueue = [];
+
+                    // Trim messages over 200.
+                    service.pruneChatQueue();
+
+                    //hacky way to ensure we stay scroll glued
+                    $timeout(() => {
+                        $rootScope.$broadcast('ngScrollGlue.scroll');
+                    }, 1);
+                }
+            }, 250);
+
+
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.
             listenerService.registerListener(
@@ -430,15 +448,7 @@
                         data.timestamp = moment(data.date).format('h:mm A');
 
                         // Push new message to queue.
-                        service.chatQueue.push(data);
-
-                        // Trim messages over 200.
-                        service.pruneChatQueue();
-
-                        $timeout(() => {
-                            $rootScope.$broadcast('ngScrollGlue.scroll');
-                        }, 1);
-
+                        messageHoldingQueue.push(data);
                     }
                 });
 
