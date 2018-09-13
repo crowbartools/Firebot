@@ -164,8 +164,8 @@
                         $rootScope.showSpinner = false;
 
                         if (!err.message.startsWith("window was closed by user")) {
-                            logger.error("Error requesting access for oauth token: " + err.message, err);
-                            utilityService.showErrorModal('There was an error logging in. Error: ' + err.message);
+                            logger.error("There was an error when attempting to log in: " + err.message, err);
+                            utilityService.showErrorModal(`There was an error when attempting to log in. Error: ${err.message}`);
                         }
                     });
             }
