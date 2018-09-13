@@ -85,11 +85,12 @@
             $scope.selectedEventsArray = function() {
                 let groupJson = eventsService.getActiveEventGroupJson(),
                     eventsJson = groupJson.events,
+                    eventName,
                     finalArray = [];
 
-                for (event in eventsJson) {
-                    if (event != null) {
-                        finalArray.push(eventsJson[event]);
+                for (eventName in eventsJson) {
+                    if (eventName != null) {
+                        finalArray.push(eventsJson[eventName]);
                     }
                 }
 

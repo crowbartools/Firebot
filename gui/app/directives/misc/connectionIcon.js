@@ -79,6 +79,10 @@
             }
 
             function generateTooltip() {
+                let integrations,
+                    intTooltip = "",
+                    count = 0;
+
                 switch (ctrl.type) {
                 case ConnectionType.INTERACTIVE:
                     if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
@@ -91,6 +95,7 @@
                         ctrl.tooltip = "<b>Interactive:</b> Disconnected";
                     }
                     break;
+
                 case ConnectionType.CHAT:
                     if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
                         ctrl.tooltip = "<b>Chat:</b> Connected";
@@ -98,6 +103,7 @@
                         ctrl.tooltip = "<b>Chat:</b> Disconnected";
                     }
                     break;
+
                 case ConnectionType.CONSTELLATION:
                     if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
                         ctrl.tooltip = "<b>Constellation:</b> Connected";
@@ -105,31 +111,29 @@
                         ctrl.tooltip = "<b>Constellation:</b> Disconnected";
                     }
                     break;
+
                 case ConnectionType.OVERLAY:
                     if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
                         ctrl.tooltip = "<b>Overlay:</b> Connected";
                     } else if (ctrl.connectionStatus === ConnectionStatus.WARNING) {
                         ctrl.tooltip = "<b>Overlay:</b> Running, but nothing connected";
                     } else {
-                        ctrl.tooltip =
-                "<b>Overlay:</b> Error starting web server. App restart required.";
+                        ctrl.tooltip = "<b>Overlay:</b> Error starting web server. App restart required.";
                     }
                     break;
+
                 case ConnectionType.INTEGRATIONS:
                     if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
                         ctrl.tooltip = "<b>Overlay:</b> Connected";
                     } else if (ctrl.connectionStatus === ConnectionStatus.WARNING) {
                         ctrl.tooltip = "<b>Overlay:</b> Running, but nothing connected";
                     } else {
-                        ctrl.tooltip =
-                "<b>Overlay:</b> Error starting web server. App restart required.";
+                        ctrl.tooltip = "<b>Overlay:</b> Error starting web server. App restart required.";
                     }
-                    let integrations = integrationService
+                    integrations = integrationService
                         .getIntegrations()
                         .filter(i => i.linked);
 
-                    let intTooltip = "",
-                        count = 0;
 
                     integrations.forEach(i => {
                         if (count !== 0) {

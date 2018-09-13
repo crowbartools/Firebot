@@ -8,9 +8,12 @@
      */
     module.factory('slidingPuzzle', function() {
         function shuffle(a) {
-            let q;
-            for (var j, x, i = a.length; i; j = parseInt(Math.random() * i, 10), x = a[--i], a[i] = a[j], a[j] = x) {
-                q = 0;
+
+            for (let j, x, i = a.length; i; i -= 1) {
+                j = parseInt(Math.random() * i, 10);
+                x = a[i - 1];
+                a[i] = a[j];
+                a[j] = x;
             }
             return a;
         }
@@ -158,7 +161,7 @@
                         scope.api = scope.puzzle;
                     }
 
-                    tile();
+                    tile(); // eslint-disable-line no-use-before-define
                 }
 
                 function tile() {

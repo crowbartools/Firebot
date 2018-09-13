@@ -26,7 +26,7 @@
           <div style="width: 25%">
             <div style="min-width: 75px">
                 <span class="status-dot" ng-class="{'active': $ctrl.subcommand.active, 'notactive': !$ctrl.subcommand.active}"></span> {{$ctrl.subcommand.active ? "Active" : "Disabled"}}
-            </div> 
+            </div>
           </div>
 
           <div style="flex-basis:30px; flex-shrink: 0;">
@@ -62,14 +62,14 @@
               <div class="muted" style="font-weight:bold; font-size: 12px;">COOLDOWNS</div>
               <div class="input-group">
                 <span class="input-group-addon">Global</span>
-                <input 
-                    class="form-control" 
+                <input
+                    class="form-control"
                     type="number"
                     min="0"
                     placeholder="secs"
                     ng-model="$ctrl.subcommand.cooldown.global">
                 <span class="input-group-addon">User</span>
-                <input 
+                <input
                     class="form-control"
                     type="number"
                     min="0"
@@ -81,7 +81,7 @@
             <div>
               <div class="muted" style="font-weight:bold; font-size: 12px;">PERMISSIONS</div>
               <permission-options permission="$ctrl.subcommand.permission" hide-title="true"></permission-options>
-            </div> 
+            </div>
 
           </div>
         </div>
@@ -95,9 +95,11 @@
             $ctrl.getPermissionTooltip = (command, isSub) => {
                 let type = command.permission ? command.permission.type : "";
                 let cmdType = isSub ? "subcommand" : "command";
+
+                let groups, username;
                 switch (type) {
                 case "group":
-                    let groups = command.permission.groups;
+                    groups = command.permission.groups;
                     if (groups == null || groups.length < 1) {
                         return `This ${cmdType} is set to Group permissions, but no groups are selected.`;
                     }
@@ -105,7 +107,7 @@
                         ", "
                     )}`;
                 case "individual":
-                    let username = command.permission.username;
+                    username = command.permission.username;
                     if (username == null || username === "") {
                         return `This ${cmdType} is set to restrict to an individual but a name has not been provided.`;
                     }

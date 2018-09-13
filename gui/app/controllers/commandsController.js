@@ -20,20 +20,21 @@
             $scope.commandsService = commandsService;
 
             $scope.getPermissionTooltip = command => {
-                let type = command.permission ? command.permission.type : "";
+                let type = command.permission ? command.permission.type : "",
+                    groups,
+                    username;
 
                 switch (type) {
                 case "group":
-                    let groups = command.permission.groups;
+                    groups = command.permission.groups;
                     if (groups == null || groups.length < 1) {
                         return "Command is set to Group permissions, but no groups are selected.";
                     }
                     return (
-                        "This command is restricted to the groups: " +
-              command.permission.groups.join(", ")
+                        "This command is restricted to the groups: " + command.permission.groups.join(", ")
                     );
                 case "individual":
-                    let username = command.permission.username;
+                    username = command.permission.username;
                     if (username == null || username === "") {
                         return "Command is set to restrict to an individual but a name has not been provided.";
                     }

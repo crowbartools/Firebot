@@ -6,7 +6,7 @@ module.exports = {
     "parserOptions": {
         "ecmaVersion": 9
     },
-    
+
     "env": {
       "node": true,
       "browser": true,
@@ -73,6 +73,7 @@ module.exports = {
         "no-var": 1,                                      // Warning; Use let/const instead of var
 
         // Other deviations
-        "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}] // warn about todo comments
+        "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}], // warn about todo comments
+        "no-unused-vars": ["warn"]
     }
 }
