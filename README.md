@@ -3,9 +3,9 @@ Firebot
 An app that allows streamers on Mixer.com to quickly and easily setup versatile interactive boards and chat commands. It supports sound board buttons, api buttons, game controls, scene changes, group changes, and more all on the same interactive board at the same time. This allows any user to have a variety of fun buttons for their audience to interact with at any time.
 
 [![Build Status](https://travis-ci.org/crowbartools/Firebot.svg?branch=v5)](https://travis-ci.org/crowbartools/Firebot)
-[![Dependencies Status](https://david-dm.org/Firebottle/Firebot/status.png)](https://david-dm.org/Firebottle/Firebot)
-[![Total Downloads](https://img.shields.io/github/downloads/firebottle/firebot/total.svg)](https://crowbartools.com)
-[![Version](https://img.shields.io/github/release/firebottle/firebot.svg)](https://github.com/Firebottle/Firebot/releases)
+[![Dependencies Status](https://david-dm.org/crowbartools/Firebot/status.png)](https://david-dm.org/crowbartools/Firebot)
+[![Total Downloads](https://img.shields.io/github/downloads/crowbartools/firebot/total.svg)](https://crowbartools.com)
+[![Version](https://img.shields.io/github/release/crowbartools/firebot.svg)](https://github.com/crowbartools/Firebot/releases)
 [![Discord](https://img.shields.io/discord/372817064034959370.svg?label=Discord+(chat))](https://discord.gg/DegW792)
 [![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)](https://twitter.com/FirebotApp)
 
