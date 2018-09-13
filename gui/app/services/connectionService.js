@@ -142,13 +142,9 @@
 
                 let scopes = type === "streamer" ? streamerScopes : botScopes;
 
-                if (!clipsReauth) {
-                    // clear out any previous sessions
-                    const ses = session.fromPartition(type);
-                    ses.clearStorageData();
-                } else {
-                    scopes += ` ${clipsScope}`;
-                }
+                // clear out any previous sessions
+                const ses = session.fromPartition(type);
+                ses.clearStorageData();
 
                 authWindowParams.webPreferences.partition = type;
                 const oauthProvider = electronOauth2(authInfo, authWindowParams);
@@ -166,8 +162,11 @@
                     }, err => {
                         //error requesting access
                         $rootScope.showSpinner = false;
-                        logger.error("Error requesting access for oauth token. " + err);
-                        utilityService.showErrorModal('Error requesting access for oauth token.');
+
+                        if (!err.message.startsWith("window was closed by user")) {
+                            logger.error("Error requesting access for oauth token: " + err.message, err);
+                            utilityService.showErrorModal('There was an error logging in. Error: ' + err.message);
+                        }
                     });
             }
 
