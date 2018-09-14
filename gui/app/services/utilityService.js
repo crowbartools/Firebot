@@ -304,7 +304,7 @@
                 service.showModal(errorModalContext);
 
                 // Log error to file.
-                logger.warning(errorMessage);
+                logger.warn(errorMessage);
             };
 
             /*
