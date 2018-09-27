@@ -3,6 +3,14 @@
     <h4 class="modal-title">{{$ctrl.isNewAction ? 'Add New Timer Action' : 'Edit Timer Action- ' + $ctrl.action.type}}</h4>
 </div>
 <div class="modal-body">
+
+    <eos-container header="Label">
+            <div class="input-group">
+                    <span class="input-group-addon">Label</span>
+                    <input ng-model="$ctrl.action.label" type="text" class="form-control" type="text">
+            </div>
+    </eos-container>
+
     <h3 style="margin-top:20px;">Action</h3>
     <dropdown-select options="['Run Effects', 'Run Command','Run Button']" selected="$ctrl.action.type"></dropdown-select>
 

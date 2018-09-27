@@ -18,6 +18,7 @@
                           <span style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;padding-right: 10px;">
                               <span class="muted" ng-hide="$ctrl.isRandom">{{$index + 1}}. </span>
                               {{action.type}}
+                              <span ng-if="action.label" class="muted"> ({{action.label}})</span>
                           </span>
                           <span class="flex-row-center ">
                               <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering || $ctrl.isRandom }" aria-hidden="true" style="margin-right:15px" ng-click="$event.stopPropagation()"></i>
