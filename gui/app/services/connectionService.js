@@ -29,8 +29,9 @@
 
             let botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat";
 
+            // TODO: Client ID is current for "Firebot V5 Dev" oauth client so we can run v5 and v4 in tandem. Make sure to update this on release
             let authInfo = {
-                clientId: "f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9",
+                clientId: "c22379f1a0ea851c805005b1b0c97ffd940794d61a73b366",
                 authorizationUrl: "https://mixer.com/oauth/authorize",
                 tokenUrl: "https://mixer.com/api/v1/oauth/token",
                 useBasicAuthorizationHeader: false,
