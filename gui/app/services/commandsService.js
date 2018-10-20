@@ -16,11 +16,16 @@
             let getCommandsDb = () =>
                 profileManager.getJsonDbInProfile("/chat/commands");
 
+            let getCommandGroupsDb = () =>
+                profileManager.getJsonDbInProfile("/chat/command-groups");
+
             // in memory commands storage
             let commandsCache = {
                 systemCommands: [],
                 customCommands: []
             };
+
+            let commandGroups = [];
 
             // Refresh commands cache
             service.refreshCommands = function() {
@@ -45,6 +50,16 @@
 
                 // Refresh the command cache.
                 ipcRenderer.send("refreshCommandCache");
+
+                //load cmd groups
+                let groupsDb = getCommandGroupsDb();
+                try {
+                    commandGroups = groupsDb.getData("/groups");
+                } catch (err) {
+                    logger.warn("error getting cmd group data", err);
+                    return;
+                }
+
             };
 
             service.getSystemCommands = () => commandsCache.systemCommands;
@@ -127,6 +142,33 @@
                 } catch (err) {
                     logger.warn("error when deleting command", err);
                 } //eslint-disable-line no-empty
+            };
+
+            function saveCommandGroups() {
+                getCommandGroupsDb.push("/groups", commandGroups, true);
+            }
+
+            service.addCommandGroup = function(groupName) {
+                if (commandGroups.includes(groupName) ||
+                    groupName == null ||
+                    groupName === "" ||
+                    groupName.toLowerCase() === "all") {
+                    return;
+                }
+
+                commandGroups.push(groupName);
+
+                saveCommandGroups();
+            };
+
+            service.removeCommandGroup = function(groupName) {
+                if (!commandGroups.includes(groupName)) {
+                    return;
+                }
+
+                commandGroups = commandGroups.filter(g => g !== groupName);
+
+                saveCommandGroups();
             };
 
             listenerService.registerListener(
