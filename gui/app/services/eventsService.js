@@ -36,6 +36,8 @@
 
                     if (event.eventType === eventCategory) {
                         eventsList.push(event);
+                    } else if (event.eventType == null && eventCategory === "No Event Selected") {
+                        eventsList.push(event);
                     }
                 });
 
@@ -48,16 +50,24 @@
 
             // This will get all events categories that we have active events for.
             service.getCategories = function () {
-                let eventCategories = [],
-                    eventName = [];
+                let eventCategories = [];
+
                 Object.keys(events).forEach(k => {
+                    let catName = "";
                     // Convert from event id to event name for user friendly ui.
-                    eventName = EventType.getEvent(events[k].eventType).name;
-                    eventCategories.push(eventName);
+
+                    let type = events[k].eventType;
+                    if (type == null) {
+                        catName = "No Event Selected";
+                    } else {
+                        catName = EventType.getEvent(type).name;
+                    }
+
+                    if (!eventCategories.includes(catName)) {
+                        eventCategories.push(catName);
+                    }
                 });
 
-                // Filter out duplicates
-                eventCategories = [...new Set(eventCategories)];
                 return eventCategories;
             };
 
