@@ -399,7 +399,7 @@
                                 } // Date matches, no need to rebuild.
 
                             } catch (err) {
-                                logger.warning(err);
+                                logger.warn(err);
                                 // This board doesn't exist, recreate the board to get it into knownBoards
                                 logger.log(`Error occured, not able to find boardid ${id} in settings, build it`);
                                 return backendBuilder(gameName, gameJson, gameUpdated, id, utilityService).then(() => {
@@ -407,7 +407,7 @@
                                 });
                             }
                         } catch (err) {
-                            logger.warning('There was a problem loading this board!');
+                            logger.warn('There was a problem loading this board!');
                             logger.error(err);
                             return false;
                         }

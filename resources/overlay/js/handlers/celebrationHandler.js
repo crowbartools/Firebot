@@ -16,13 +16,20 @@ function celebrate(data){
 		// Throw div on page and start up.
 		$('.wrapper').append(canvas);
 		$('.'+divClass+'-image').fadeIn('fast');
-		fireworks();
+ 
+		let stage = fireworks();
 
-		setTimeout(function(){ 
+		setTimeout(function(stage){
+			
+			stage.removeAllChildren();
+			stage.removeAllEventListeners();
+			stage.canvas = null;
+			stage._eventListeners = null;
+			
 			$('.'+divClass+'-image').fadeOut('fast', function(){
 				$('.'+divClass+'-image').remove();
 			});
-		}, duration);
+		}, duration, stage);
 	}
 }
 
@@ -40,7 +47,6 @@ function fireworks(){
 	canvas.height = window.innerHeight;
 
 	stage = new createjs.Stage(canvas);
-
 	stage.autoClear = false;
 
 	ctx = canvas.getContext("2d");
@@ -153,6 +159,9 @@ function fireworks(){
 	};
 
 	createjs.Ticker.on("tick", repeat);
+
+
+	return stage;
 
 } // End Fireworks
 

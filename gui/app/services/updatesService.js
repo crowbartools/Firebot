@@ -35,8 +35,6 @@
 
                     // check each update type
                     switch (updateType) {
-                    case UpdateType.NONE:
-                        return false;
                     case UpdateType.PRERELEASE:
                         return autoUpdateLevel >= 4;
                     case UpdateType.OFFICIAL:
@@ -44,8 +42,9 @@
                         return autoUpdateLevel >= 1;
                     case UpdateType.MINOR:
                         return autoUpdateLevel >= 2;
+                    case UpdateType.NONE:
                     case UpdateType.MAJOR:
-                        return autoUpdateLevel >= 3;
+                    case UpdateType.MAJOR_PRERELEASE:
                     default:
                         return false;
                     }
@@ -55,7 +54,7 @@
 
                     let firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
 
-                    if (settingsService.notifyOnBeta() || settingsService.getAutoUpdateLevel() >= 4) {
+                    if (settingsService.notifyOnBeta()) {
                         firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases";
                     }
 
@@ -80,9 +79,14 @@
                         // Now lets look to see if there is a newer version.
                         let updateType = VersionCompare.compareVersions(gitNewest.tag_name, currentVersion);
 
-                        let updateIsAvailable = false;
+                        let updateIsAvailable = false, updateIsMajorRelease = false;
                         if (updateType !== UpdateType.NONE) {
                             let autoUpdateLevel = settingsService.getAutoUpdateLevel();
+
+                            if (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE) {
+                                updateIsMajorRelease = true;
+                            }
+
                             // Check if we should auto update based on the users setting
                             if (shouldAutoUpdate(autoUpdateLevel, updateType)) {
                                 utilityService.showDownloadModal();
@@ -101,7 +105,8 @@
                             gitLink: gitLink,
                             gitNotes: $sce.trustAsHtml(gitNotes),
                             gitZipDownloadUrl: gitZipDownloadUrl,
-                            updateIsAvailable: updateIsAvailable
+                            updateIsAvailable: updateIsAvailable,
+                            updateIsMajorPrelease: updateIsMajorRelease
                         };
 
                         service.updateData = updateObject;

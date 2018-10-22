@@ -17,7 +17,8 @@
 
             $scope.settings = settingsService;
 
-            $scope.streamerPartnered = connectionService.accounts.streamer.partnered;
+            $scope.canClip = connectionService.accounts.streamer.partnered
+                || connectionService.accounts.streamer.canClip;
 
             $scope.clipsFolder = settingsService.getClipDownloadFolder();
 

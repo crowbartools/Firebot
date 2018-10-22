@@ -101,7 +101,7 @@
                         // Request channel info
                         // We do this to get the sub icon to use in the chat window.
                         request({
-                            url: 'https://mixer.com/api/v1/channels/' + data.username + '?fields=badge,partnered'
+                            url: 'https://mixer.com/api/v1/channels/' + data.username
                         }, function (err, res) {
                             let data = JSON.parse(res.body);
 
@@ -115,6 +115,15 @@
                             if (type === "streamer") {
                                 dbAuth.push('./' + type + '/partnered', data.partnered);
                                 service.accounts.streamer.partnered = data.partnered;
+                                let groups = data.user.groups;
+
+                                let canClip = groups.some(g =>
+                                    g.name === "Partner " ||
+                                    g.name === "VerifiedPartner" ||
+                                    g.name === "Staff" ||
+                                    g.name === "Founder");
+                                service.accounts.streamer.canClip = canClip;
+                                dbAuth.push('./' + type + '/canClip', canClip);
                             }
 
                             // Style up the login page.
@@ -133,13 +142,9 @@
 
                 let scopes = type === "streamer" ? streamerScopes : botScopes;
 
-                if (!clipsReauth) {
-                    // clear out any previous sessions
-                    const ses = session.fromPartition(type);
-                    ses.clearStorageData();
-                } else {
-                    scopes += ` ${clipsScope}`;
-                }
+                // clear out any previous sessions
+                const ses = session.fromPartition(type);
+                ses.clearStorageData();
 
                 authWindowParams.webPreferences.partition = type;
                 const oauthProvider = electronOauth2(authInfo, authWindowParams);
@@ -157,8 +162,11 @@
                     }, err => {
                         //error requesting access
                         $rootScope.showSpinner = false;
-                        logger.error("Error requesting access for oauth token. " + err);
-                        utilityService.showErrorModal('Error requesting access for oauth token.');
+
+                        if (!err.message.startsWith("window was closed by user")) {
+                            logger.error("There was an error when attempting to log in: " + err.message, err);
+                            utilityService.showErrorModal(`There was an error when attempting to log in. Error: ${err.message}`);
+                        }
                     });
             }
 
