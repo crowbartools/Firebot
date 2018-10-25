@@ -368,3 +368,23 @@ input:checked + .slider:before {
     cursor: not-allowed;
 	}
 }
+
+.effect-list {
+  background: $effect-list-bg-color;
+  border-radius: 3px;
+  .effect-list-header {
+    margin-bottom: 15px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding-left: 15px;
+    padding-right: 10px;
+    height: 50px;
+    font-weight: 100;
+    border-bottom: 1px solid $light-background-color;
+  }
+}
+
+.test-effects-btn {
+  color: rgb(27, 146, 177);
+  font-size: 18px;
+}

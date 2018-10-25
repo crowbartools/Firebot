@@ -16,8 +16,8 @@
                 effectContainerClasses: "@"
             },
             template: `
-            <div style="background: #1f2332;border-radius: 3px;">
-                <div class="flex-row-center jspacebetween" style="margin-bottom: 15px;background: #1f2332;border-top-left-radius: 3px;border-top-right-radius: 3px;padding-left: 15px;padding-right: 10px;height: 50px;font-weight: 100;border-bottom: 1px solid #2a2f42;">
+            <div class="effect-list">
+                <div class="flex-row-center jspacebetween effect-list-header">
                     <div style="display:flex; align-items: center;">
                         <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;font-weight: 100;">EFFECTS</h3>
                         <span style="font-size: 11px; margin-left: 2px;"><tooltip text="$ctrl.header"></tooltip></span>
@@ -25,8 +25,8 @@
                     
 
                     <div style="display:flex;align-items: center;">
-                        <div style="color: rgb(27, 146, 177);font-size: 18px;">
-                            <i class="far fa-play-circle" style="cursor: pointer;" uib-tooltip="Test Effects" ng-click="$ctrl.testEffects()"></i>
+                        <div class="test-effects-btn clickable" uib-tooltip="Test Effects">
+                            <i class="far fa-play-circle" style="cursor: pointer;" ng-click="$ctrl.testEffects()"></i>
                         </div>
                         
                         <div uib-dropdown uib-dropdown-toggle>
