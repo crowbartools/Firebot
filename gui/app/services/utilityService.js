@@ -178,6 +178,25 @@
             };
 
             /*
+            * open get input modal
+            */
+            service.openGetInputModal = function(options, callback) {
+                service.showModal({
+                    component: "inputModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        inputPlaceholder: () => options.inputPlaceholder,
+                        saveText: () => options.saveText
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
+
+            /*
              * OVERLAY INFO MODAL
              */
             service.showOverlayInfoModal = function(instanceName) {

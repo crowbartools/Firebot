@@ -16,26 +16,36 @@
                 effectContainerClasses: "@"
             },
             template: `
-            <div>
-                <div class="flex-row-center jspacebetween" style="margin-bottom:10px;">
-                    <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;">{{$ctrl.header}}</h3>
+            <div style="background: #1f2332;border-radius: 3px;">
+                <div class="flex-row-center jspacebetween" style="margin-bottom: 15px;background: #1f2332;border-top-left-radius: 3px;border-top-right-radius: 3px;padding-left: 15px;padding-right: 10px;height: 50px;font-weight: 100;border-bottom: 1px solid #2a2f42;">
+                    <div style="display:flex; align-items: center;">
+                        <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;font-weight: 100;">EFFECTS</h3>
+                        <span style="font-size: 11px; margin-left: 2px;"><tooltip text="$ctrl.header"></tooltip></span>
+                    </div>
                     
-                    <div uib-dropdown uib-dropdown-toggle>
-                        <span class="noselect pointer effects-actions-btn"><i class="fal fa-ellipsis-h"></i></span>
-                        <ul class="dropdown-menu" uib-dropdown-menu>
-                            <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
-                                <a href ng-click="$ctrl.copyEffects()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects</a>
-                            </li>
-                            <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
-                                <a href ng-click="$ctrl.pasteEffects(true)"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects</a>
-                            </li>
-                            <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
-                                <a href ng-click="$ctrl.removeAllEffects()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
-                            </li>
-                        </ul>
+
+                    <div style="display:flex;align-items: center;">
+                        <div style="color: rgb(27, 146, 177);font-size: 18px;">
+                            <i class="far fa-play-circle" style="cursor: pointer;" uib-tooltip="Test Effects" ng-click="$ctrl.testEffects()"></i>
+                        </div>
+                        
+                        <div uib-dropdown uib-dropdown-toggle>
+                            <span class="noselect pointer effects-actions-btn"><i class="fal fa-ellipsis-v"></i></span>
+                            <ul class="dropdown-menu" uib-dropdown-menu>
+                                <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
+                                    <a href ng-click="$ctrl.copyEffects()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects</a>
+                                </li>
+                                <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
+                                    <a href ng-click="$ctrl.pasteEffects(true)"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects</a>
+                                </li>
+                                <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
+                                    <a href ng-click="$ctrl.removeAllEffects()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="{{$ctrl.effectContainerClasses}}">
+                <div class="{{$ctrl.effectContainerClasses}}" style="margin-left: 15px;margin-right: 15px;padding-bottom: 15px;">
                     <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsArray">
                         <div ng-repeat="effect in $ctrl.effectsArray track by $index">
                             <div class="effect-bar clickable-dark"
@@ -48,10 +58,11 @@
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
                                     <span class="flex-row-center ">
-                                        <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" style="margin-right:15px" ng-click="$event.stopPropagation()"></i>
-                                        <div class="clickable" style="margin-right:15px; font-size: 20px; width: 15px; text-align: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
+                                        <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" ng-click="$event.stopPropagation()"></i>
+                                        <div class="clickable" style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
                                             <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
                                             <ul class="dropdown-menu" uib-dropdown-menu>
+                                                <li><a href ng-click="$ctrl.editLabelForEffectAtIndex($index)"><i class="fal fa-tag" style="margin-right: 10px;" aria-hidden="true"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}</a></li>
                                                 <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
                                                 <li><a href ng-click="$ctrl.copyEffectAtIndex($index)"><i class="fal fa-copy" style="margin-right: 10px;" aria-hidden="true"></i>  Copy</a></li>
                                                 <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null"><a href ng-click="$ctrl.pasteEffectsAtIndex($index, false)"><i class="fal fa-paste" style="margin-right: 10px;" aria-hidden="true"></i>  Paste After</a></li>
@@ -63,10 +74,8 @@
                         </div>
                     </div>
             
-                    <div class="add-more-functionality">
-                        <button type="button" class="btn btn-link" ng-click="$ctrl.addEffect()">
-                            + Add Effect
-                        </button>
+                    <div class="add-more-functionality" style="margin-top: 16px;margin-left: 12px;">
+                        <a class="clickable" ng-click="$ctrl.addEffect()"> <i class="far fa-plus-circle"></i> New Effect</a>
                     </div>
                 </div>
                 
@@ -130,6 +139,36 @@
                     stop: () => {
                         ctrl.effectsUpdate();
                     }
+                };
+
+                ctrl.testEffects = function() {
+                    ipcRenderer.send('runEffectsManually', ctrl.effectsArray);
+                };
+
+
+                ctrl.getLabelButtonTextForLabel = function(labelModel) {
+                    if (labelModel == null || labelModel.length === 0) {
+                        return "Add Label";
+                    }
+                    return "Edit Label";
+                };
+
+                ctrl.editLabelForEffectAtIndex = function(index) {
+                    let effect = ctrl.effectsArray[index];
+                    let label = effect.effectLabel;
+                    utilityService.openGetInputModal(
+                        {
+                            model: label,
+                            label: ctrl.getLabelButtonTextForLabel(label),
+                            saveText: "Save Label"
+                        },
+                        (newLabel) => {
+                            if (newLabel == null || newLabel.length === 0) {
+                                effect.effectLabel = null;
+                            } else {
+                                effect.effectLabel = newLabel;
+                            }
+                        });
                 };
 
                 ctrl.duplicateEffectAtIndex = function(index) {
