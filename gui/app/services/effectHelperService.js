@@ -42,13 +42,36 @@
                     break;
 
                 case EffectList.PLAY_SOUND:
-                    controller = ($scope, listenerService) => {
+                    controller = ($scope, listenerService, soundService) => {
 
                         let uuid = _.uniqueId();
 
                         if ($scope.effect.volume == null) {
                             $scope.effect.volume = 5;
                         }
+
+                        $scope.durationDisplay = "00:00";
+
+                        $scope.soundFileUpdated = function(filepath) {
+                            if (filepath == null || filepath.length === 0) {
+                                $scope.durationDisplay = "00:00";
+                                return;
+                            }
+                            soundService.getSoundDuration(filepath).then((duration) => {
+                                let totalSecs = Math.round(duration);
+
+                                let display = "";
+                                if (totalSecs < 60) {
+                                    display = `0:${totalSecs}`;
+                                } else {
+                                    let totalMins = totalSecs / 60;
+                                    let remainingSecs = totalSecs % 60;
+                                    display = `${totalMins}:${remainingSecs}`;
+                                }
+
+                                $scope.durationDisplay = display;
+                            });
+                        };
 
                         $scope.openFileExporer = function() {
                             let registerRequest = {
