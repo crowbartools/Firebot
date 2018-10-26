@@ -61,6 +61,7 @@
         "electron-window-state": "^4.1.1",
         "eslint": "^4.8.0",
         "express": "^4.15.4",
+        "fs-extra": "^7.0.0",
         "howler": "https://github.com/ebiggz/howler.js/tarball/master",
         "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",
         "list.js": "^1.5.0",
