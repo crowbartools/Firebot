@@ -39,6 +39,9 @@
                 }
 
                 function getDurationDisplay(duration) {
+                    if (isNaN(duration)) {
+                        return "0:00";
+                    }
                     let totalSecs = Math.round(duration);
 
                     let display = "";
