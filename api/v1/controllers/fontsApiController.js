@@ -23,8 +23,6 @@ exports.getFont = function (req, res) {
             res.sendFile(path);
             return;
         }
-        //resourcePath = resourcePath.replace(/\\/g, "/");
-        //
     }
 
     res.status(404).send({status: "error", message: req.originalUrl + ' not found'});

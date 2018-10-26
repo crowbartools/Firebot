@@ -16,7 +16,7 @@
                     <div class="list-group-item flex-row-center jspacebetween" ng-repeat="font in $ctrl.fonts track by $index">
                         <div>
                             <h4 class="list-group-item-heading">{{font.name}}</h4>
-                            <p class="list-group-item-text muted">Type: {{font.format}}</p>
+                            <p class="list-group-item-text muted">Format: {{font.format}}</p>
                         </div>
                         <div style="font-size:17px">
                             <span uib-tooltip="Remove Font" tooltip-append-to-body="true" class="clickable" style="color:red;" ng-click="$ctrl.removeFont(font.name)">
@@ -70,6 +70,7 @@
 
                 $ctrl.openFileExplorer = function() {
                     $ctrl.installError = null;
+                    $ctrl.installSuccessful = null;
                     let registerRequest = {
                         type: listenerService.ListenerType.ANY_FILE,
                         runOnce: true,
@@ -87,7 +88,9 @@
                     };
                     fileListenerId = listenerService.registerListener(registerRequest, (filepath) => {
                         fileListenerId = null;
-                        $ctrl.installSuccessful = false;
+                        if (filepath == null || filepath.length === 0) {
+                            return;
+                        }
                         let filename = path.parse(filepath).base;
                         let destination = path.join(fontManager.FONTS_FOLDER, path.sep, filename);
 
