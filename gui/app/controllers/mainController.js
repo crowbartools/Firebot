@@ -3,6 +3,7 @@
 
     const electron = require('electron');
     const shell = electron.shell;
+    const dataAccess = require('../../lib/common/data-access.js');
 
     let app = angular
         .module('firebotApp',
@@ -166,6 +167,7 @@
         let appVersion = electron.remote.app.getVersion();
         $scope.appTitle = 'Firebot Interactive || v' + appVersion + ' || @FirebotApp';
 
+        $scope.customFontCssPath = dataAccess.getPathInUserData("/user-settings/fonts/fonts.css");
 
         //make sure sliders render properly
         $timeout(function () {

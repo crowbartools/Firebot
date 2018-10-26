@@ -6,6 +6,7 @@
     const _ = require('underscore')._;
     const dataAccess = require('../../lib/common/data-access.js');
     const EffectType = require('../../lib/common/EffectType.js');
+    const fontManager = require('../../lib/fontManager');
 
     angular
         .module('firebotApp')
@@ -682,8 +683,14 @@
                                 ['para', ['ul', 'ol']],
                                 ['misc', ['undo', 'redo', 'codeview']]
                             ],
-                            fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '64', '82', '150', '200', '250', '300']
+                            fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '64', '82', '150', '200', '250', '300'],
+                            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana', 'Open Sans', 'Roboto'],
+                            fontNamesIgnoreCheck: ['Open Sans', 'Roboto']
                         };
+
+                        let installedFontNames = fontManager.getInstalledFonts().map(f => f.name);
+                        $scope.editorOptions.fontNames = $scope.editorOptions.fontNames.concat(installedFontNames);
+                        $scope.editorOptions.fontNamesIgnoreCheck = $scope.editorOptions.fontNamesIgnoreCheck.concat(installedFontNames);
 
                         $scope.showOverlayInfoModal = function(overlayInstance) {
                             utilityService.showOverlayInfoModal(overlayInstance);

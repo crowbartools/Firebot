@@ -302,6 +302,9 @@
                 utilityService.showModal(showBackupListModalContext);
             };
 
+
+
+
             $scope.showChangePortModal = function() {
                 let showChangePortModalContext = {
                     templateUrl: "changePortModal.html",

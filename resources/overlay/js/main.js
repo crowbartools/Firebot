@@ -99,6 +99,28 @@ function mixerSocketConnect(){
 mixerSocketConnect();
 
 
+function loadFonts() {
+	$.get(`http://${window.location.hostname}:7473/api/v1/fonts`, (fonts) => {
+
+		let fontStyleBlock = `<style type="text/css">`;
+
+		fonts.forEach(font => {
+			let fontPath = `http://${window.location.hostname}:7473/api/v1/fonts/${font.name}`
+			fontStyleBlock +=
+`@font-face {
+	font-family: '${font.name}';
+	src: url('${fontPath}') format('${font.format}')
+}
+`;
+		});
+		fontStyleBlock += "</style>";
+
+		$("head").prepend(fontStyleBlock);
+	  });
+}
+
+loadFonts();
+
 // Error Handling & Keep Alive
 function errorHandle(ws){
   var wsState = ws.readyState;

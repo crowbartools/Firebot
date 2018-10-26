@@ -12,6 +12,7 @@ const GhReleases = require('electron-gh-releases');
 const settings = require('./lib/common/settings-access').settings;
 const dataAccess = require('./lib/common/data-access.js');
 const backupManager = require("./lib/backupManager");
+const fontManager = require("./lib/fontManager");
 const apiServer = require('./api/apiServer.js');
 
 const Effect = require('./lib/common/EffectType');
@@ -218,6 +219,12 @@ async function createDefaultFoldersAndFiles() {
         dataAccess.makeDirInUserDataSync("/user-settings/live-events");
     }
 
+    // Create the fonts folder if it doesn't exist.
+    if (!dataAccess.userDataPathExistsSync("/user-settings/fonts")) {
+        logger.info("Can't find the fonts folder, creating one now...");
+        dataAccess.makeDirInUserDataSync("/user-settings/fonts");
+    }
+
     logger.info("Finished verifying default folders and files.");
 }
 
@@ -228,6 +235,8 @@ async function createDefaultFoldersAndFiles() {
 app.on('ready', async function() {
 
     await createDefaultFoldersAndFiles();
+
+    fontManager.generateAppFontCssFile();
 
     createWindow();
 
