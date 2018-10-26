@@ -206,6 +206,13 @@
             /**
             * Modals
             */
+            $scope.showFontManagementModal = function() {
+                utilityService.showModal({
+                    component: "fontManagementModal",
+                    size: "sm"
+                });
+            };
+
             $scope.showBackupListModal = function() {
                 let showBackupListModalContext = {
                     templateUrl: "backupListModal.html",
