@@ -522,6 +522,10 @@
                             utilityService.getCopiedEffects(triggerType).length < 2;
                         };
 
+                        $scope.runEffect = function() {
+                            ipcRenderer.send('runEffectsManually', [$scope.effect]);
+                        };
+
                         $scope.delete = function() {
                             $uibModalInstance.close({
                                 action: "delete",

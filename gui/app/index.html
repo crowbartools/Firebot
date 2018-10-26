@@ -297,19 +297,24 @@
       <div class="modal-header flex-row-center jspacebetween no-before no-after" style="padding-bottom: 0">
         <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}{{effect.type !== 'Nothing' ? " - " + effect.type : ""}}</h4>
 
-        <div uib-dropdown uib-dropdown-toggle>
-            <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
-            <ul class="dropdown-menu" uib-dropdown-menu>
-                <li>
-                    <a href ng-click="copy()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>
-                </li>
-                <li ng-class="{'disabled': !hasCopiedEffect()}" ng-click="!hasCopiedEffect() ? $event.stopPropagation() : null">
-                    <a href ng-click="paste()"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste</a>
-                </li>
-                <li>
-                    <a href ng-click="delete()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>
-                </li>
-            </ul>
+        <div class="flex-row acenter jspacebetween">
+            <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'">
+                <i class="far fa-play-circle" style="cursor: pointer;" ng-click="runEffect()"></i>
+            </div>
+            <div uib-dropdown uib-dropdown-toggle>
+                <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
+                <ul class="dropdown-menu" uib-dropdown-menu>
+                    <li>
+                        <a href ng-click="copy()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>
+                    </li>
+                    <li ng-class="{'disabled': !hasCopiedEffect()}" ng-click="!hasCopiedEffect() ? $event.stopPropagation() : null">
+                        <a href ng-click="paste()"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste</a>
+                    </li>
+                    <li>
+                        <a href ng-click="delete()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>
+                    </li>
+                </ul>
+            </div>
         </div>
       </div>
       <ol class="breadcrumb" style="margin-bottom: 0px;padding-bottom:11px;background-color:transparent;">

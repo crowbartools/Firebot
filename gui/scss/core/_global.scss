@@ -1326,6 +1326,26 @@ thead th{
   }
 }
 
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  &.acenter {
+    align-items: center;
+  }
+  &.astart {
+    align-items: flex-start;
+  }
+  &.aend {
+    align-items: flex-end;
+  }
+  &.jcenter {
+    justify-content: center;
+  }
+  &.jspacebetween {
+    justify-content: space-between;
+  }
+}
+
 .no-before {
   &::before {
     content: none !important;
