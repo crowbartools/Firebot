@@ -13,8 +13,8 @@
               <button class="btn btn-default" ng-click="showSetupWizard(true)">Open Setup Wizard</button>
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">App Sounds</div>
-              <div class="setting-description">Let Firebot play sounds for various app functions. For example, you will get a warning when Firebot connects or disconnects.</div>
+              <div class="setting-heading">Connection Sounds</div>
+              <div class="setting-description">Get audible alerts when Firebot connects or disconnects.</div>
               <div class="dropdown options-sounds-dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
@@ -107,7 +107,7 @@
         <uib-tab index="3" heading="Overlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Filepath</div>
+              <div class="setting-heading">Overlay URL</div>
               <div class="setting-description">Click the button below to get quick access to the Firebot overlay path.</div>
               <button class="btn btn-default" ng-click="settings.showOverlayInfoModal()">Get Overlay Path</button>
             </div>
