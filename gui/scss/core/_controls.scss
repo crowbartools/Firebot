@@ -388,3 +388,19 @@ input:checked + .slider:before {
   color: rgb(27, 146, 177);
   font-size: 18px;
 }
+
+
+.disabled-control {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.sound-player { 
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 16px;
+  padding: 10px;
+  background: $effect-list-bg-color;
+  border-radius: 5px;
+}

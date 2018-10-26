@@ -1,8 +1,6 @@
+<sound-player path="effect.file" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
 <eos-container header="Sound">
     <file-chooser model="effect.file" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
-    <div ng-if="effect.file">
-        <div>Duration: {{durationDisplay}}</div>
-    </div>
 </eos-container>
 
 <eos-container header="Volume" pad-top="true">
