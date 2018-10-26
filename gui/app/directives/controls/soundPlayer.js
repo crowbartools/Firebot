@@ -26,8 +26,8 @@
             controller: function($scope, $interval, soundService) {
                 let $ctrl = this;
 
-                $scope.seekPositionDisplay = "0:00";
-                $scope.durationDisplay = "0:00";
+                $scope.seekPositionDisplay = "-:--";
+                $scope.durationDisplay = "-:--";
                 $scope.controlsEnabled = false;
 
                 let sound = null;
@@ -45,7 +45,7 @@
                     if (totalSecs < 60) {
                         display = `0:${pad(totalSecs)}`;
                     } else {
-                        let totalMins = totalSecs / 60;
+                        let totalMins = Math.round(totalSecs / 60);
                         let remainingSecs = totalSecs % 60;
 
                         display = `${totalMins}:${pad(remainingSecs)}`;
@@ -71,11 +71,13 @@
                         sound = null;
                     }
                     if ($ctrl.path == null || $ctrl.path.length === 0) {
-                        $scope.seekPositionDisplay = "0:00";
-                        $scope.durationDisplay = "0:00";
+                        $scope.seekPositionDisplay = "-:--";
+                        $scope.durationDisplay = "-:--";
                         $scope.controlsEnabled = false;
                         return;
                     }
+
+                    $scope.seekPositionDisplay = "0:00";
 
                     let volume = 0.5;
                     if (!isNaN($ctrl.volume)) {
