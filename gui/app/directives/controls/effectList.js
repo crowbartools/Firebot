@@ -58,7 +58,9 @@
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
                                     <span class="flex-row-center ">
-                                        <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" ng-click="$event.stopPropagation()"></i>
+                                        <span class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
+                                            <i class="fal fa-bars" aria-hidden="true"></i>
+                                        </span> 
                                         <div class="clickable" style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
                                             <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
                                             <ul class="dropdown-menu" uib-dropdown-menu>
