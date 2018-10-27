@@ -16,13 +16,14 @@ const marked = require('marked');
 const path = require('path');
 
 require('angular');
-require('angular-animate');  
+require('angular-animate');
 require('angular-route');
 require('angular-sanitize');
 require('angular-ui-bootstrap');
 require('angularjs-slider');
 require('ui-select');
 require('angular-ui-sortable');
+require('ng-youtube-embed');
 require('../../node_modules/angular-summernote/dist/angular-summernote');
 
 function boot() {

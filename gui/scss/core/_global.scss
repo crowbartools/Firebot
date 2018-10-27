@@ -841,7 +841,7 @@ body {
   align-items: center;
   padding-bottom: 15px;
   margin-bottom: 15px;
-  border-bottom: rgba(51, 122, 183, 0.63) 1px solid;
+  padding: 0px 15px 15px;
 }
 
 .effect-delete-btn {
@@ -1361,3 +1361,4 @@ thead th{
 .tooltip {
   z-index:999999999999999999;
 }
+

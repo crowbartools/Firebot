@@ -150,6 +150,19 @@
                             utilityService.showOverlayInfoModal(overlayInstance);
                         };
 
+                        $scope.shouldShowVideoPlaceholder = () => {
+                            if ($scope.effect.videoType == null || $scope.effect.videoType.length === "") {
+                                return true;
+                            }
+                            if ($scope.effect.videoType === "Local Video") {
+                                return $scope.effect.file == null || $scope.effect.file.length < 1;
+                            }
+                            if ($scope.effect.videoType === "YouTube Video") {
+                                return $scope.effect.youtube == null || $scope.effect.youtube.length < 1;
+                            }
+                            return true;
+                        };
+
                         $scope.videoPositions = [
                             "Top Left",
                             "Top Middle",

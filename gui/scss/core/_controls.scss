@@ -183,8 +183,32 @@
   }
 }
 
+.effect-specific-title {
+  background: #24283a;
+  padding: 1px;
+  padding-left: 15px;
+  margin-bottom: 10px;
+  
+  h4 {
+    font-weight: 300;
+    text-transform: capitalize;
+    font-size: 20px;
+  }
+}
+
 .effect-setting-content {
-  padding-left: 10px;
+  padding-left: 25px;
+  padding-right: 15px;
+}
+
+.effect-edit-modal {
+  .modal-body {
+    padding: 0 !important;
+  }
+}
+
+video::-webkit-media-controls-fullscreen-button {
+  display: none;
 }
 
 /*Switch*/

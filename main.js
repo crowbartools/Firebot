@@ -134,6 +134,11 @@ function createWindow () {
         global.renderWindow = null;
     });
 
+    mainWindow.webContents.on('new-window', function(e, url) {
+        e.preventDefault();
+        require('electron').shell.openExternal(url);
+    });
+
     // Global var for main window.
     global.renderWindow = mainWindow;
 

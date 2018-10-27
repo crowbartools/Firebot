@@ -8,22 +8,20 @@
         .component("eosEnterExitAnimations", {
             bindings: {
                 effect: '=',
-                limitTo: '@'
+                limitTo: '@',
+                padTop: "<"
             },
             template: `
-       <div class="effect-setting-container">
-         <div class="effect-specific-title"><h4>{{$ctrl.limitTo ? $ctrl.limitTo + ' Animation' : 'Enter/Exit Animations'}}</h4></div>
-         <div class="effect-setting-content">
-            <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Exit'">
-                <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">ENTER</div>
-                <select class="fb-select" ng-model="$ctrl.selected.enter" ng-change="$ctrl.enterUpdate()" ng-options="enter.name group by enter.category for enter in $ctrl.animations.enter"></select>
-            </div>
-            <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Enter'">
-                <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">EXIT</div>
-                <select class="fb-select" ng-model="$ctrl.selected.exit" ng-change="$ctrl.exitUpdate()" ng-options="exit.name group by exit.category for exit in $ctrl.animations.exit"></select>
-            </div>
-         </div>
-       </div>
+            <eos-container header="{{$ctrl.limitTo ? $ctrl.limitTo + ' Animation' : 'Enter/Exit Animations'}}" pad-top="$ctrl.padTop">
+                <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Exit'">
+                    <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">ENTER</div>
+                    <select class="fb-select" ng-model="$ctrl.selected.enter" ng-change="$ctrl.enterUpdate()" ng-options="enter.name group by enter.category for enter in $ctrl.animations.enter"></select>
+                </div>
+                <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Enter'">
+                    <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">EXIT</div>
+                    <select class="fb-select" ng-model="$ctrl.selected.exit" ng-change="$ctrl.exitUpdate()" ng-options="exit.name group by exit.category for exit in $ctrl.animations.exit"></select>
+                </div>
+            </eos-container>
        `,
             controller: function() {
                 let ctrl = this;

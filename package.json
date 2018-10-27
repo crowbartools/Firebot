@@ -69,6 +69,7 @@
         "mathjs": "^3.18.0",
         "moment": "^2.19.4",
         "ncp": "^2.0.0",
+        "ng-youtube-embed": "^1.7.14",
         "node-cache": "^4.1.1",
         "node-json-db": "^0.7.3",
         "random-puppy": "^1.1.0",

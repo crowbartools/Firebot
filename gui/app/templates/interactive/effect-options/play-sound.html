@@ -10,12 +10,12 @@
 <eos-container header="Volume" pad-top="true">
     <div class="volume-slider-wrapper">
         <i class="fal fa-volume-down volume-low"></i>
-        <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10, hideLimitLabels: true}"></rzslider>
+        <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10, hideLimitLabels: true, showSelectionBar: true}"></rzslider>
         <i class="fal fa-volume-up volume-high"></i>
     </div>
 </eos-container>
 
-<eos-audio-output-device effect="effect"></eos-audio-output-device>
+<eos-audio-output-device effect="effect" pad-top="true"></eos-audio-output-device>
 
 <eos-overlay-instance ng-if="effect.audioOutputDevice && effect.audioOutputDevice.deviceId === 'overlay'" 
-    effect="effect" class="setting-padtop"></eos-overlay-instance>
+    effect="effect" pad-top="true"></eos-overlay-instance>

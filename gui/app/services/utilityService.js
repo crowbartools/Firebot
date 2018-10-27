@@ -462,6 +462,7 @@
                     templateUrl: "editEffectModal.html",
                     keyboard: false,
                     backdrop: 'static',
+                    windowClass: "effect-edit-modal",
                     controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, index, triggerType) => {
 
                         $scope.effect = JSON.parse(angular.toJson(effect));
