@@ -11,7 +11,7 @@
                 outputDevice: "<"
             },
             template: `
-            <div ng-class="{'disabled-control': !$ctrl.path }" class="sound-player">
+            <div ng-class="{'disabled-control': !$ctrl.path }" class="sound-player noselect">
                 <div ng-click="playOrPause()" ng-class="{'disabled-control': !$ctrl.path,  'clickable': $ctrl.path}" style="padding-right: 10px;">
                     <i class="fas" ng-class="{'fa-play': !isPlaying(), 'fa-pause': isPlaying()}"></i>
                 </div>
