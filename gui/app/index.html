@@ -305,6 +305,9 @@
                 <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
                 <ul class="dropdown-menu" uib-dropdown-menu>
                     <li>
+                      <a href ng-click="editLabel()"><i class="fal fa-tag" style="margin-right: 10px;" aria-hidden="true"></i>  {{getLabelButtonTextForLabel(effect.effectLabel)}}</a>
+                    </li>
+                    <li>
                         <a href ng-click="copy()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>
                     </li>
                     <li ng-class="{'disabled': !hasCopiedEffect()}" ng-click="!hasCopiedEffect() ? $event.stopPropagation() : null">
@@ -334,9 +337,9 @@
       <div class="modal-footer">
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
 
-          <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()">{{isAddMode ? "Add" : "Save"}}</button>
+          <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
           <div ng-if="openModals.length >= 2" class="btn-group" uib-dropdown>
-            <button id="split-button" type="button" class="btn btn-primary" ng-click="save()">{{isAddMode ? "Add" : "Save"}}</button>
+            <button id="split-button" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
             <button type="button" class="btn btn-primary" uib-dropdown-toggle>
               <span class="caret"></span>
             </button>

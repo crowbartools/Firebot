@@ -501,6 +501,8 @@
                         };
 
                         $scope.save = function() {
+                            if ($scope.effect.type === "Nothing") return;
+
                             $uibModalInstance.close({
                                 action: $scope.isAddMode ? "add" : "update",
                                 effect: $scope.effect,
@@ -510,6 +512,30 @@
 
                         $scope.copy = function() {
                             utilityService.copyEffects(triggerType, [$scope.effect]);
+                        };
+
+                        $scope.getLabelButtonTextForLabel = function(labelModel) {
+                            if (labelModel == null || labelModel.length === 0) {
+                                return "Add Label";
+                            }
+                            return "Edit Label";
+                        };
+
+                        $scope.editLabel = () => {
+                            let label = $scope.effect.effectLabel;
+                            utilityService.openGetInputModal(
+                                {
+                                    model: label,
+                                    label: $scope.getLabelButtonTextForLabel(label),
+                                    saveText: "Save Label"
+                                },
+                                (newLabel) => {
+                                    if (newLabel == null || newLabel.length === 0) {
+                                        $scope.effect.effectLabel = null;
+                                    } else {
+                                        $scope.effect.effectLabel = newLabel;
+                                    }
+                                });
                         };
 
                         $scope.paste = function() {
