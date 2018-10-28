@@ -689,6 +689,15 @@
                         };
                     };
                     break;
+                case EffectList.TEXT_TO_FILE:
+                    controller = ($scope) => {
+
+                        if ($scope.effect.writeMode == null) {
+                            $scope.effect.writeMode = "replace";
+                        }
+
+                    };
+                    break;
                 case EffectList.SHOW_TEXT:
                     controller = ($scope) => {
 

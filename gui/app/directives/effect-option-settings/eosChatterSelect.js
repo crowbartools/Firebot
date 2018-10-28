@@ -8,10 +8,11 @@
         .component("eosChatterSelect", {
             bindings: {
                 title: "@",
-                effect: '='
+                effect: '=',
+                padTop: "<"
             },
             template: `
-                <eos-container header="{{$ctrl.title}}">
+                <eos-container header="{{$ctrl.title}}" pad-top="$ctrl.padTop">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="chat-effect-type">{{$ctrl.effect.chatter}}</span> <span class="caret"></span>
