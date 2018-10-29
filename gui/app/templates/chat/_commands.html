@@ -12,7 +12,7 @@
                         <button ng-click="showCommandSettingsModal()" class="btn btn-default"><i class="far fa-stopwatch" style="margin-right:5px;"></i> Edit Timers</button>
                     </div>
                 </div>
-                <div class="searchbar-wrapper">
+                <div class="searchbar-wrapper" ng-show="allCommands.length > 0">
                     <input type="text" class="form-control" placeholder="Search commands" ng-model="commandSearch" style="padding-left: 27px;">
                     <span class="searchbar-icon"><i class="far fa-search"></i></span>
                 </div>
