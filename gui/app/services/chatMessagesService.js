@@ -86,8 +86,12 @@
             service.deleteChatMessage = function(data) {
                 let arr = service.chatQueue,
                     message = arr.find(message => message.id === data.id);
-                message.deleted = true;
-                message.eventInfo = "Deleted by " + data.moderator.user_name + '.';
+
+                if (message) {
+                    message.deleted = true;
+                    message.eventInfo = "Deleted by " + data.moderator.user_name + '.';
+                }
+
             };
 
             // Purge Chat Message
