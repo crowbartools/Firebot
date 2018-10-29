@@ -14,7 +14,6 @@ const dataAccess = require('./lib/common/data-access.js');
 const backupManager = require("./lib/backupManager");
 const fontManager = require("./lib/fontManager");
 const apiServer = require('./api/apiServer.js');
-const extralifeManager = require('./lib/extralifeManager');
 
 const Effect = require('./lib/common/EffectType');
 
@@ -252,6 +251,7 @@ app.on('ready', async function() {
     apiServer.start();
 
     //start extra life manager
+    const extralifeManager = require('./lib/extralifeManager');
     extralifeManager.start();
 
     return true;
