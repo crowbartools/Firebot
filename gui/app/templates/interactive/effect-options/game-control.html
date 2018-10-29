@@ -14,8 +14,8 @@
     </div>
 </eos-container>
 
-<eos-container header="Opposite Key)" pad-top="true">
-    <p>Use this this key is meant to control movement in a game. IE if "W" is forward, "S" might be the opposite. If more people are pressing "W", then that will be used. If more are pressing "S", then that is used. This ensures movement doesn't get completely locked.</p>
+<eos-container header="Opposite Key" pad-top="true">
+    <p>Use when this key is meant to control movement in a game. IE if "W" is forward, "S" might be the opposite. If more people are pressing "W", then that will be used. If more are pressing "S", then that is used. This ensures movement doesn't get completely locked.</p>
     <div class="input-group game-opposite">
         <span class="input-group-addon" id="opposite-button-effect-type">Opposite</span>
         <input type="text" ng-model="effect.opposite" uib-typeahead="control for control in validControls | filter:$viewValue | limitTo:8" class="form-control" id="game-control-opposite-setting" aria-describedby="opposite-button-effect-type">
@@ -32,7 +32,7 @@
             <li ng-click="effect.holding = 'Yes'"><a href>Yes</a></li>
         </ul>
     </div>
-    <p style="padding-top:5px;"><strong>Yes</strong>: The key will be held as long as the button is pressed on Mixer by one or more viewers.<br><strong>No</strong>: A "press and release" will be simulated for the key, regardless of how long the button is held by viewers.</p>
+    <p style="padding-top:5px;"><strong>Yes</strong>: The key will be held as long as the button is pressed on Mixer by one or more viewers.<br><br><strong>No</strong>: A "press and release" will be simulated for the key, regardless of how long the button is held by viewers.</p>
 </eos-container>
 
 <eos-container>
