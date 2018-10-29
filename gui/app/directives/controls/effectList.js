@@ -20,7 +20,7 @@
                 <div class="flex-row-center jspacebetween effect-list-header">
                     <div style="display:flex; align-items: center;">
                         <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;font-weight: 100;">EFFECTS</h3>
-                        <span style="font-size: 11px; margin-left: 2px;"><tooltip text="$ctrl.header"></tooltip></span>
+                        <span style="font-size: 11px; margin-left: 2px;"><tooltip text="$ctrl.header" ng-if="$ctrl.header"></tooltip></span>
                     </div>
                     
 
