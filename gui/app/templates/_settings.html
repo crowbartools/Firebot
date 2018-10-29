@@ -220,18 +220,11 @@
             </div>
             <div class="setting col-sm-6">
 
-                <div class="setting-heading">Custom Script Effect</div>
-                <div class="setting-description">Firebot supports an effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
-                <div class="dropdown options-customscript-dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
-                    <li><a href ng-click="settings.setCustomScriptsEnabled(true)">On</a></li>
-                    <li><a href ng-click="settings.setCustomScriptsEnabled(false)">Off</a></li>
-                  </ul>
+                <div class="setting-heading">Dev Tools</div>
+                <div class="setting-description">
+                  Click the button below to open the developer console. Only use if you know what you are doing. <strong>Never paste code from other people in the console.</strong></b>
                 </div>
+                <button class="btn btn-default" ng-click="openDevTools()">Open Dev Tools</button>
 
             </div>
           </div>
@@ -253,23 +246,20 @@
                 </div>
                 <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
             </div>
-            <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
+            <div class="setting col-sm-6">
                 
-              <div class="setting-heading">Clear Custom Script Cache</div>
-              <div class="setting-description">
-                Whether or not you want the cached version of a custom script to be cleared on every button press. 
-                You usually only need to change this if you are actively developing a custom script, otherwise you wont see changes to your script until you restart Firebot. 
-              </div>
-              <div class="dropdown options-customscript-dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.getClearCustomScriptCache() ? 'On' : 'Off'}}</span>
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-customscript">
-                  <li><a href ng-click="settings.setClearCustomScriptCache(true)">On</a></li>
-                  <li><a href ng-click="settings.setClearCustomScriptCache(false)">Off</a></li>
-                </ul>
-              </div>
+                <div class="setting-heading">Custom Script Effect</div>
+                <div class="setting-description">Firebot supports an effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
+                <div class="dropdown options-customscript-dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                    <li><a href ng-click="settings.setCustomScriptsEnabled(true)">On</a></li>
+                    <li><a href ng-click="settings.setCustomScriptsEnabled(false)">Off</a></li>
+                  </ul>
+                </div>
 
             </div>
           </div>
@@ -292,6 +282,25 @@
               <div class="alert alert-warning">
                 <b>Warning</b>: This is NOT the port used in the overlay URL (7473). If you absolutely need to change that port, please reach out to us on Discord or Twitter.
               </div>
+            </div>
+            <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
+
+              <div class="setting-heading">Clear Custom Script Cache</div>
+              <div class="setting-description">
+                Whether or not you want the cached version of a custom script to be cleared on every button press. 
+                You usually only need to change this if you are actively developing a custom script, otherwise you wont see changes to your script until you restart Firebot. 
+              </div>
+              <div class="dropdown options-customscript-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getClearCustomScriptCache() ? 'On' : 'Off'}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                  <li><a href ng-click="settings.setClearCustomScriptCache(true)">On</a></li>
+                  <li><a href ng-click="settings.setClearCustomScriptCache(false)">Off</a></li>
+                </ul>
+              </div>
+
             </div>
           </div>
         </uib-tab>

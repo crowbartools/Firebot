@@ -9,6 +9,7 @@
     const moment = require("moment");
     const unzipper = require("unzipper");
     const ncp = require("ncp");
+    const { remote } = require("electron");
 
     angular
         .module('firebotApp')
@@ -38,6 +39,10 @@
 
             $scope.updateMaxBackups = function(option) {
                 settingsService.setMaxBackupCount(option);
+            };
+
+            $scope.openDevTools = () => {
+                remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
             };
 
             $scope.audioOutputDevices = [{
