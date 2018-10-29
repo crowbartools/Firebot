@@ -31,15 +31,37 @@
                 return commandsService.getAllCommandsForType(commandType);
             };
 
+            $scope.allCommands = [];
+
+            function combineAllCommandTypes() {
+                let active = commandsService.getAllCommandsForType("Active").map(c => {
+                    c.active = true;
+                    return c;
+                });
+                let inactive = commandsService.getAllCommandsForType("Inactive").map(c => {
+                    c.active = false;
+                    return c;
+                });
+                let combined = active.concat(inactive);
+
+                $scope.allCommands = combined;
+            }
+
+            combineAllCommandTypes();
+
             // Return command roles array.
             $scope.getCommandRoles = function (command) {
-                return commandsService.getCommandRoles(command);
+                let roles = commandsService.getCommandRoles(command);
+                if (roles == null || roles.length < 1) {
+                    roles = ["None"];
+                }
+                return roles;
             };
 
 
             /**
-      * MODAL CONTROL
-    */
+             * MODAL CONTROL
+            */
 
 
             // This opens up a modal when adding a new command.
@@ -47,21 +69,25 @@
                 let addCommandModalContext = {
                     templateUrl: "./templates/chat/command-modals/addCommandModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $uibModalInstance, command, modalId) => {
+                    controllerFunc: ($scope, $uibModalInstance, utilityService, command, modalId) => {
 
                         // Set active viewer groups for command permissions.
                         $scope.viewerGroups = groupsService.getAllGroups();
 
                         $scope.isNewCommand = true;
-                        let previousCmdId = "";
 
                         // If we pass in a command, then we're editing. Otherwise this is a new command and we default to it being active.
                         if (command != null) {
                             $scope.command = command;
                             $scope.isNewCommand = false;
-                            previousCmdId = command.commandID;
                         } else {
-                            $scope.command = {active: true, permissions: [], effects: {}};
+                            $scope.command = {
+                                active: true,
+                                permissions: "",
+                                permissionType: undefined,
+                                effects: {},
+                                commandID: utilityService.generateUuid()
+                            };
                         }
 
                         $scope.effects = $scope.command.effects;
@@ -133,9 +159,6 @@
                         // This deletes the current command.
                         $scope.deleteCommand = function () {
 
-                            //reset to original cmdId in case they altered it before clicking delete.
-                            $scope.command.commandID = previousCmdId;
-
                             // Delete the command
                             commandsService.deleteCommand($scope.command);
 
@@ -150,11 +173,16 @@
                     // The callback to run after the modal closed via "Save changes"
                     closeCallback: (command) => {
 
-                        // Save to json
-                        commandsService.saveCommand(command);
+                        if (command) {
+                            // Save to json
+                            commandsService.saveCommand(command);
 
-                        // Refresh cache
-                        commandsService.refreshCommands();
+                            // Refresh cache
+                            commandsService.refreshCommands();
+
+                        }
+
+                        combineAllCommandTypes();
                     },
                     resolveObj: {
                         command: () => {

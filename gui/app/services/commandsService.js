@@ -64,15 +64,22 @@
             };
 
             service.getCommandRoles = function(command) {
-                let commandRoles = command.permissions;
                 let final = [];
-                if (commandRoles != null) {
-                    if (commandRoles instanceof Array) {
-                        final = commandRoles;
-                    } else {
-                        final.push(commandRoles);
+                if (command != null) {
+                    let commandRoles = command.permissions;
+                    if (commandRoles != null && command.permissionType != null) {
+                        if (command.permissionType === "Group") {
+                            if (commandRoles instanceof Array) {
+                                final = commandRoles;
+                            }
+                        } else if (command.permissionType === "Individual") {
+                            final.push(commandRoles);
+                        }
                     }
                 }
+
+                final = final.filter(r => r != null && r.length > 0);
+
                 return final;
             };
 

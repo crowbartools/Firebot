@@ -45,12 +45,21 @@
 
                         // Get all of the commands to list out in the modal.
                         $scope.allCommandIds = [];
+                        let commandTriggers = {};
+
                         let allCommands = commandsService.getAllCommandsForType('Active');
                         for (let commandItem in allCommands) {
                             if (allCommands.hasOwnProperty(commandItem)) {
-                                $scope.allCommandIds.push(allCommands[commandItem].commandID);
+                                let command = allCommands[commandItem];
+                                commandTriggers[command.commandID] = command.trigger;
+                                $scope.allCommandIds.push(command.commandID);
                             }
                         }
+
+
+                        $scope.getTriggerFromId = (id) => {
+                            return commandTriggers[id];
+                        };
 
 
                         $scope.updateCheckedArrayWithElement = function(array, element) {

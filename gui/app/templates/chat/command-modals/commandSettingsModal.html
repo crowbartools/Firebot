@@ -1,14 +1,17 @@
 <div class="modal-header">
     <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title">Command Settings</h4>
+    <h4 class="modal-title">Timers</h4>
   </div>
   <div class="modal-body">
     <!--put settings stuff here-->
     <div class="board-cooldown-group-settings">
-        <h3>Timed Command Groups <button class="btn btn-default add-new-cooldown-group" ng-click="showAddOrEditTimedGroupModal()">Add New</button></h3>
         <div class="board-cooldown-content">
-            <p>Timed groups let you group together commands that will automatically trigger at a set interval.</p>
-            <div class="board-cooldown-groups">
+
+            <p class="muted">Timers let you group together commands that will automatically trigger at a set interval. Timers wont start until you are connected to Chat.</p>
+
+            <button class="btn btn-default add-new-cooldown-group" ng-click="showAddOrEditTimedGroupModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Timer</button>
+
+            <div class="board-cooldown-groups" style="padding-top: 10px;">
               <!-- Create timed groups -->
               <div ng-repeat="timedGroup in getTimedGroupSettings() track by $index" class="fb-tile flex-start light-blue">
                 <div class="edit-btn" ng-click="showAddOrEditTimedGroupModal(timedGroup)"></div>

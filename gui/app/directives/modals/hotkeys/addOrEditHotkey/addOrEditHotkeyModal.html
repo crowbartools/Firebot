@@ -48,7 +48,6 @@
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command in $ctrl.commands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
-                    <small class="muted">Id: {{command.id}}</small>
                 </ui-select-choices>
             </ui-select>
         </div>
