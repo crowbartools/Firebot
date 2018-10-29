@@ -13,7 +13,7 @@
     angular
         .module('firebotApp')
         .controller('settingsController', function($scope, $timeout, $q, settingsService,
-            utilityService, listenerService, logger, connectionService) {
+            utilityService, listenerService, logger, connectionService, $http) {
 
             $scope.settings = settingsService;
 
@@ -211,6 +211,42 @@
                     component: "fontManagementModal",
                     size: "sm"
                 });
+            };
+
+            $scope.showSetExtraLifeIdModal = function() {
+
+                let id = settingsService.getExtraLifeParticipantId();
+
+                utilityService.openGetInputModal(
+                    {
+                        model: id,
+                        label: "Set Participant Id",
+                        saveText: "Save Id",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+
+                                if (value == null || value.length < 1) return resolve(false);
+
+                                $http.get(`https://www.extra-life.org/api/participants/${value}`)
+                                    .then(resp => {
+                                        if (resp.status === 200) {
+                                            resolve(true);
+                                        } else {
+                                            resolve(false);
+                                        }
+                                    }, () => {
+                                        resolve(false);
+                                    });
+                            });
+                        },
+                        validationText: "This is not a valid participant id."
+
+                    },
+                    (newId) => {
+                        settingsService.setExtraLifeParticipantId(newId);
+
+                        ipcRenderer.send('extraLifeIdUpdated');
+                    });
             };
 
             $scope.showBackupListModal = function() {

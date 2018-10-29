@@ -191,9 +191,22 @@
             </div>
           </div>
         </uib-tab>
+
+        <!-- Integration Settings -->
+        <uib-tab index="6" heading="Integrations">
+
+            <div class="row" style="margin-top: 15px">
+                <div class="setting col-sm-6">              
+                    <div class="setting-heading">ExtraLife Participant Id</div>
+                    <div class="setting-description">Enter your ExtraLife Id (found on your profile page in the URL) to enable ExtraLife Donation Events.</div>
+                    <button class="btn btn-default" ng-click="showSetExtraLifeIdModal()">Set Participant Id</button>
+                </div>
+            </div>
+
+        </uib-tab>
         
         <!-- Advanced Settings -->
-        <uib-tab index="5" heading="Advanced">
+        <uib-tab index="7" heading="Advanced">
           <div class="row" style="margin-top: 15px">
             <div class="alert alert-warning">
                 Most users won't need to change settings in this tab. Only change them if you understand what you are doing.

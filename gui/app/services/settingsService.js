@@ -530,6 +530,15 @@
                 pushDataToFile('/settings/debugMode', enabled === true);
             };
 
+            service.getExtraLifeParticipantId = function() {
+                let id = getDataFromFile('/settings/extraLifeId');
+                return id;
+            };
+
+            service.setExtraLifeParticipantId = function(id) {
+                pushDataToFile('/settings/extraLifeId', id);
+            };
+
             return service;
         });
 }());

@@ -14,6 +14,7 @@ const dataAccess = require('./lib/common/data-access.js');
 const backupManager = require("./lib/backupManager");
 const fontManager = require("./lib/fontManager");
 const apiServer = require('./api/apiServer.js');
+const extralifeManager = require('./lib/extralifeManager');
 
 const Effect = require('./lib/common/EffectType');
 
@@ -249,6 +250,9 @@ app.on('ready', async function() {
 
     //start the REST api server
     apiServer.start();
+
+    //start extra life manager
+    extralifeManager.start();
 
     return true;
 });

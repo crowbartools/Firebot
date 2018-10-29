@@ -188,7 +188,9 @@
                         model: () => options.model,
                         label: () => options.label,
                         inputPlaceholder: () => options.inputPlaceholder,
-                        saveText: () => options.saveText
+                        saveText: () => options.saveText,
+                        validationFn: () => options.validationFn,
+                        validationText: () => options.validationText
                     },
                     closeCallback: (resp) => {
                         callback(resp.model);

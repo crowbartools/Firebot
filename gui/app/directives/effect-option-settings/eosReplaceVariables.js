@@ -64,6 +64,8 @@
                     <eos-replace-variable-section name="Events Only">
                         <ul>
                             <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed. Meant to be used on subscriber events.</li>
+                            <li><b>$(elAmount)</b> - ExtraLife donation amount. Only works on the ExtraLife Donation event. If user chooses not to disclose amount, it will say 'undisclosed amount'.</li>
+                            <li><b>$(elMessage)</b> - ExtraLife donation message. Only works on the ExtraLife Donation event.</li>
                         </ul>
                     </eos-replace-variable-section>               
                 </div>

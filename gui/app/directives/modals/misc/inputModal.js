@@ -70,15 +70,19 @@
                 };
 
                 $ctrl.save = function() {
-                    let isValid = $ctrl.validationFn($ctrl.model);
+                    let validate = $ctrl.validationFn($ctrl.model);
 
-                    if (isValid) {
-                        $ctrl.close({ $value: {
-                            model: $ctrl.model
-                        }});
-                    } else {
-                        $ctrl.hasValidationError = true;
-                    }
+                    Promise.resolve(validate).then((valid) => {
+
+                        if (valid) {
+                            $ctrl.close({ $value: {
+                                model: $ctrl.model
+                            }});
+                        } else {
+                            $ctrl.hasValidationError = true;
+                        }
+
+                    });
                 };
             }
         });
