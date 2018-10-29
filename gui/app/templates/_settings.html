@@ -141,6 +141,19 @@
               </div>
             </div>
           </uib-tab>
+
+                  <!-- Integration Settings -->
+        <uib-tab index="6" heading="Integrations">
+
+            <div class="row" style="margin-top: 15px">
+                <div class="setting col-sm-6">              
+                    <div class="setting-heading">ExtraLife Participant Id</div>
+                    <div class="setting-description">Enter your ExtraLife Id to enable ExtraLife Donation Events. You can find your participant ID in the URL of your profile page. Once a valid ID is added, Firebot will check for new donations every 15 seconds.</div>
+                    <button class="btn btn-default" ng-click="showSetExtraLifeIdModal()">Set Participant Id</button>
+                </div>
+            </div>
+
+        </uib-tab>
         
         <!-- Backup Settings -->
         <uib-tab index="4" heading="Backup">
@@ -190,19 +203,6 @@
               </div>
             </div>
           </div>
-        </uib-tab>
-
-        <!-- Integration Settings -->
-        <uib-tab index="6" heading="Integrations">
-
-            <div class="row" style="margin-top: 15px">
-                <div class="setting col-sm-6">              
-                    <div class="setting-heading">ExtraLife Participant Id</div>
-                    <div class="setting-description">Enter your ExtraLife Id (found on your profile page in the URL) to enable ExtraLife Donation Events.</div>
-                    <button class="btn btn-default" ng-click="showSetExtraLifeIdModal()">Set Participant Id</button>
-                </div>
-            </div>
-
         </uib-tab>
         
         <!-- Advanced Settings -->
