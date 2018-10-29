@@ -30,6 +30,8 @@
 
                         $scope.isNewGroup = groupToEdit == null;
 
+                        $scope.searchText = "";
+
                         if (!$scope.isNewGroup) {
                             $scope.group = $.extend(true, {}, groupToEdit);
                         }
@@ -40,15 +42,22 @@
                         };
 
                         $scope.addNewUser = function() {
-                            if ($scope.newUser != null && $scope.newUser !== "") {
+                            if ($scope.newUser != null
+                                && $scope.newUser !== ""
+                                && !$scope.group.users.includes($scope.newUser)) {
+
                                 $scope.group.users.push($scope.newUser);
+
+                                $scope.newUser = "";
                             }
-                            $scope.newUser = "";
                         };
 
-                        $scope.deleteUserAtIndex = function(index) {
-                            let mappedIndex = index + (($scope.pagination.currentPage - 1) * $scope.pagination.pageSize);
-                            $scope.group.users.splice(mappedIndex, 1);
+                        $scope.deleteUser = function(user) {
+                            let index = $scope.group.users.indexOf(user);
+
+                            if (index !== -1) {
+                                $scope.group.users.splice(index, 1);
+                            }
                         };
 
                         // When the user clicks "Save/Add", we want to pass the group back
