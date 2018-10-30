@@ -39,7 +39,7 @@
         <dropdown-select options="['Run Button', 'Run Command', 'Run Effects']" selected="$ctrl.hotkey.action.type"></dropdown-select>
 
         <div style="margin-top:20px;" ng-if="$ctrl.hotkey.action.type === 'Run Effects'">
-            <effect-list header="Effect List" effects="$ctrl.hotkey.action.metadata.effects" trigger="hotkey" update="$ctrl.effectListUpdated(effects)"></effect-list>
+            <effect-list header="What should this hotkey do?" effects="$ctrl.hotkey.action.metadata.effects" trigger="hotkey" update="$ctrl.effectListUpdated(effects)"></effect-list>
         </div>
 
         <div style="margin-top:20px;" ng-show="$ctrl.hotkey.action.type === 'Run Command'">

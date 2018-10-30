@@ -183,6 +183,27 @@
             };
 
             /*
+            * open get input modal
+            */
+            service.openGetInputModal = function(options, callback) {
+                service.showModal({
+                    component: "inputModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        inputPlaceholder: () => options.inputPlaceholder,
+                        saveText: () => options.saveText,
+                        validationFn: () => options.validationFn,
+                        validationText: () => options.validationText
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
+
+            /*
              * OVERLAY INFO MODAL
              */
             service.showOverlayInfoModal = function(instanceName) {
@@ -488,6 +509,7 @@
                     templateUrl: "editEffectModal.html",
                     keyboard: false,
                     backdrop: "static",
+                    windowClass: "effect-edit-modal",
                     controllerFunc: (
                         $scope,
                         $uibModalInstance,
@@ -549,6 +571,9 @@
                         };
 
                         $scope.save = function() {
+
+                            if ($scope.effect.id === "Nothing") return;
+
                             let errors = $scope.effectDefinition.optionsValidator(
                                 $scope.effect
                             );
@@ -574,6 +599,30 @@
                             utilityService.copyEffects(triggerType, [$scope.effect]);
                         };
 
+                        $scope.getLabelButtonTextForLabel = function(labelModel) {
+                            if (labelModel == null || labelModel.length === 0) {
+                                return "Add Label";
+                            }
+                            return "Edit Label";
+                        };
+
+                        $scope.editLabel = () => {
+                            let label = $scope.effect.effectLabel;
+                            utilityService.openGetInputModal(
+                                {
+                                    model: label,
+                                    label: $scope.getLabelButtonTextForLabel(label),
+                                    saveText: "Save Label"
+                                },
+                                (newLabel) => {
+                                    if (newLabel == null || newLabel.length === 0) {
+                                        $scope.effect.effectLabel = null;
+                                    } else {
+                                        $scope.effect.effectLabel = newLabel;
+                                    }
+                                });
+                        };
+
                         $scope.paste = function() {
                             if ($scope.hasCopiedEffect()) {
                                 $scope.effect = utilityService.getCopiedEffects(triggerType)[0];
@@ -585,6 +634,10 @@
                                 utilityService.hasCopiedEffects(triggerType) &&
                 utilityService.getCopiedEffects(triggerType).length < 2
                             );
+                        };
+
+                        $scope.runEffect = function() {
+                            ipcRenderer.send('runEffectsManually', [$scope.effect]);
                         };
 
                         $scope.delete = function() {

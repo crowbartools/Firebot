@@ -26,7 +26,8 @@
         ) {
             $scope.settings = settingsService;
 
-            $scope.streamerPartnered = connectionService.accounts.streamer.partnered;
+            $scope.canClip = connectionService.accounts.streamer.partnered
+                || connectionService.accounts.streamer.canClip;
 
             $scope.clipsFolder = settingsService.getClipDownloadFolder();
 
@@ -58,12 +59,14 @@
                 settingsService.setMaxBackupCount(option);
             };
 
-            $scope.audioOutputDevices = [
-                {
-                    label: "System Default",
-                    deviceId: "default"
-                }
-            ];
+            $scope.openDevTools = () => {
+                remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
+            };
+
+            $scope.audioOutputDevices = [{
+                label: "System Default",
+                deviceId: "default"
+            }];
 
             $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
                 deviceList = deviceList
@@ -273,8 +276,15 @@
                 utilityService.showModal(downloadModalContext);
             }
             /**
-       * Modals
-       */
+            * Modals
+            */
+            $scope.showFontManagementModal = function() {
+                utilityService.showModal({
+                    component: "fontManagementModal",
+                    size: "sm"
+                });
+            };
+
             $scope.showBackupListModal = function() {
                 let showBackupListModalContext = {
                     templateUrl: "backupListModal.html",
@@ -399,6 +409,9 @@
                 };
                 utilityService.showModal(showBackupListModalContext);
             };
+
+
+
 
             $scope.showChangePortModal = function() {
                 let showChangePortModalContext = {

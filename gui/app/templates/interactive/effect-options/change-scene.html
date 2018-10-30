@@ -1,5 +1,4 @@
-<div class="effect-setting-container">
-    <div class="effect-specific-title"><h4>Will we be resetting scenes to default or changing them?</h4></div>
+<eos-container header="Scene Action">
     <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="change-scene-type-effect-type">{{ufChangeSceneOption()}}</span> <span class="caret"></span>
@@ -13,27 +12,37 @@
             </li>
         </ul>
     </div>
-</div>
 
-<div class="change-scene-wrap" ng-if="effect.reset != null">
-    <div class="effect-setting-container">
-        <div class="effect-specific-title"><h4>{{effect.reset ? 'Which viewer group(s) should we reset?' : 'Which viewer group(s) should change scenes?'}}</h4></div>
+    <div style="padding-top:10px">
+        <p ng-show="effect.reset == false">
+            This effect will change the default scene for a group. This means that <strong>everyone</strong> in that group will see the buttons of whatever scene you select.
+        </p>
+        <p ng-show="effect.reset == true">
+            This effect will reset any groups you choose back to their default scene. This applies to <strong>everyone</strong> in the group.
+        </p>
+    </div> 
+</eos-container>
+
+
+<div ng-if="effect.reset != null">
+    <eos-container header="{{effect.reset ? 'Group(s) To Reset' : 'Group(s) To Change Scene'}}" pad-top="true">
         <div class="change-scene-effect-group-select">
-          <label class="control-fb control--checkbox">Default
-            <input type="checkbox" ng-click="groupArray(effect.groups, 'default')" ng-checked="groupCheckboxer(effect.groups,'default')" aria-label="..." >
-            <div class="control__indicator"></div>
-          </label>
-          <label ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
-            <input type="checkbox" ng-click="groupArray(effect.groups, group)" ng-checked="groupCheckboxer(effect.groups, group)"  aria-label="..." >
-            <div class="control__indicator"></div>
-          </label>
+            <label class="control-fb control--checkbox">Default
+                <input type="checkbox" ng-click="groupArray(effect.groups, 'default')" ng-checked="groupCheckboxer(effect.groups,'default')" aria-label="..." >
+                <div class="control__indicator"></div>
+            </label>
+            <label ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
+                <input type="checkbox" ng-click="groupArray(effect.groups, group)" ng-checked="groupCheckboxer(effect.groups, group)"  aria-label="..." >
+                <div class="control__indicator"></div>
+            </label>
         </div>
-    </div>
-    <div class="effect-info alert alert-warning">
-        Don't see the group you want? This is because you haven't made it active yet! Go back to your board and click the cog wheel at the top. Then add your viewer group to one of your scenes.
-    </div>
-    <div class="effect-setting-container" ng-if="effect.reset === false">
-        <div class="effect-specific-title"><h4>Which scene should we change to?</h4></div>
+
+        <div class="effect-info alert alert-warning">
+            Don't see the group you want? This is because you haven't made it active yet! Go back to your board and click the cog wheel at the top. Then add your viewer group to one of your scenes.
+        </div>
+    </eos-container>
+
+    <eos-container ng-if="effect.reset === false" header="Scene To Change To">
         <div class="btn-group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="change-scene-to-effect-type">{{effect.scene ? effect.scene : 'Pick one'}}</span> <span class="caret"></span>
@@ -44,11 +53,5 @@
                 </li>
             </ul>
         </div>
-    </div>
-    <div class="effect-info alert alert-info" ng-hide="effect.reset">
-        This button will change the default scene for a group. This means that everyone in that group will get the buttons from whatever scene you select. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
-    </div>
-    <div class="effect-info alert alert-info" ng-show="effect.reset">
-        This button will reset any groups you choose back to their default scene. This applies to everyone in the group. I recommend a minimum one second cooldown on any buttons using this, otherwise you risk breaking the board.
-    </div>
+    </eos-container>
 </div>

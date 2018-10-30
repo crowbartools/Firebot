@@ -161,12 +161,12 @@
   border-radius: 50%;
   width: 22px;
   height: 22px;
-  color: #000000;
+  color: $effect-list-overflow-btn-color;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 23px;
+  font-size: 26px;
   cursor: pointer;
   background: none;
   //border: 1px solid #2d2d2d;
@@ -183,8 +183,31 @@
   }
 }
 
+.effect-specific-title {
+  background: $effect-option-title;
+  padding: 1px;
+  padding-left: 15px;
+  margin-bottom: 10px;
+  
+  h4 {
+    font-weight: 300;
+    font-size: 20px;
+  }
+}
+
 .effect-setting-content {
-  padding-left: 10px;
+  padding-left: 25px;
+  padding-right: 15px;
+}
+
+.effect-edit-modal {
+  .modal-body {
+    padding: 0 !important;
+  }
+}
+
+video::-webkit-media-controls-fullscreen-button {
+  display: none;
 }
 
 /*Switch*/
@@ -459,4 +482,39 @@ table.fb-table {
 
 .menunoclick:hover {
   cursor: default !important;
+}
+.effect-list {
+  background: $effect-list-bg-color;
+  border-radius: 3px;
+  .effect-list-header {
+    margin-bottom: 15px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding-left: 15px;
+    padding-right: 10px;
+    height: 50px;
+    font-weight: 100;
+    border-bottom: 1px solid $light-background-color;
+  }
+}
+
+.test-effects-btn {
+  color: rgb(27, 146, 177);
+  font-size: 18px;
+}
+
+
+.disabled-control {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.sound-player { 
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 16px;
+  padding: 10px;
+  background: $effect-list-bg-color;
+  border-radius: 5px;
 }

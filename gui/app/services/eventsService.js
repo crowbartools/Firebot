@@ -58,7 +58,7 @@
 
                 // If for whatever reason the events cache isnt ready, cache new events.
                 if (eventsCache === false) {
-                    dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
+                    let dbEvents = profileManager.getJsonDbInProfile("/live-events/events");
                     eventsCache = dbEvents.getData("/");
                 }
 

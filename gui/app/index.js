@@ -11,7 +11,6 @@ const shell = require("electron").shell;
 const fs = require("fs");
 const request = require("request");
 const List = require("list.js");
-const howler = require("howler");
 const compareVersions = require("compare-versions");
 const marked = require("marked");
 const path = require("path");
@@ -24,7 +23,7 @@ require("angular-ui-bootstrap");
 require("angularjs-slider");
 require("ui-select");
 require("angular-ui-sortable");
-require("angularjs-scroll-glue");
+require('ng-youtube-embed');
 require("ng-toast");
 require("../../node_modules/angular-summernote/dist/angular-summernote");
 require("angular-translate");
@@ -41,8 +40,7 @@ document.addEventListener("DOMContentLoaded", boot);
 
 // Catch browser window (renderer) errors and log them via Winston
 window.onerror = function(error, url, line) {
-    console.log(error, url, line);
-    logger.error("(Renderer) " + error, { url: url, line: line });
+    logger.error("(Renderer) " + error, { error: error, url: url, line: line });
 };
 
 // pointless fancy firebot at the top of the log

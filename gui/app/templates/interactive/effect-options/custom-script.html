@@ -1,8 +1,10 @@
-<div class="effect-setting-container">
+<eos-container>
     <div class="effect-info alert alert-info">
         Place scripts in the <a id="scriptFolderBtn" href="#" ng-click="openScriptsFolder()" style="text-decoration:underline;color:#53afff;">scripts folder</a> of the Firebot user-settings directory, then refresh the dropdown.
     </div>
-    <div class="effect-specific-title" style="margin-bottom: 10px"><h4>Which script would you like to use?</h4></div>
+</eos-container>
+
+<eos-container header="Script">
     <div class="btn-group">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span class="script-type">{{effect.scriptName ? effect.scriptName : 'Pick one'}}</span> <span class="caret"></span>
@@ -17,30 +19,35 @@
             </li>
         </ul>
     </div>
-</div>
-<hr>
-<div class="effect-setting-container" ng-show="effect.scriptName != null">
+</eos-container>
+
+<eos-container ng-show="effect.scriptName != null">
     <div ng-if="scriptManifest != null" style="padding-bottom:10px;"> 
         <div class="script-name">{{scriptManifest.name ? scriptManifest.name : "Unnamed Script"}} <span class="script-version muted">{{scriptManifest.version ? scriptManifest.version : "Unknown"}}</span></div>
         <div style="font-size: 13px;">by <span class="script-author">{{scriptManifest.author ? scriptManifest.author : "Unknown"}}</span><span ng-if="scriptManifest.website" class="script-website"> (<a ng-click="openScriptsWebsite()" class="clickable">{{scriptManifest.website}}</a>)</span><span></span></div>     
         <div class="script-description">{{scriptManifest.description}}</div>
     </div>
-  <div class="effect-specific-title" style="margin-bottom: 15px"><h4>{{ scriptManifest == null ? "Options" : ""}}</h4></div>
-  <div ng-show="isLoadingParameters">
-    Loading options...
-  </div>
-  <div ng-hide="isLoadingParameters">
-    <span ng-hide="scriptHasParameters()" class="muted">Script has no options.</span>
-    <div ng-show="scriptHasParameters()">
-      <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters" 
-        name="parameterName" 
-        metadata="parameterMetadata" 
-        trigger="{{trigger}}" 
-        modalId="{{modalId}}"></script-parameter-option>
-    </div>
-  </div>
-</div>
+</eos-container>
 
-<div class="effect-info alert alert-danger">
-  <strong>Warning:</strong> Only use scripts from sources you absolutely trust!
-</div>
+<eos-container header="Script Options" ng-show="effect.scriptName != null">
+    <div ng-show="isLoadingParameters">
+        Loading options...
+    </div>
+    <div ng-hide="isLoadingParameters">
+        <span ng-hide="scriptHasParameters()" class="muted">Script has no options.</span>
+        <div ng-show="scriptHasParameters()">
+            <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters" 
+            name="parameterName" 
+            metadata="parameterMetadata" 
+            trigger="{{trigger}}" 
+            modalId="{{modalId}}"></script-parameter-option>
+        </div>
+    </div>
+</eos-container>
+
+<eos-container>
+    <div class="effect-info alert alert-danger">
+        <strong>Warning:</strong> Only use scripts from sources you absolutely trust!
+    </div>
+</eos-container>
+

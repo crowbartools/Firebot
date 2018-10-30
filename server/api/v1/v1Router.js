@@ -42,4 +42,14 @@ router.route("/groups/:groupName").get(groups.getGroup);
 
 router.route("/groups/:groupName/users").get(groups.getGroupUsers);
 
+// Fonts
+
+const fonts = require("./controllers/fontsApiController");
+router.route("/fonts")
+    .get(fonts.getFontNames);
+
+router.route("/fonts/:name")
+    .get(fonts.getFont);
+
+
 module.exports = router;

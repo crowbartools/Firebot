@@ -21,6 +21,7 @@ const userDatabase = require("./lib/database/userDatabase");
 const connectionManager = require("./lib/common/connection-manager");
 const webServer = require("./server/httpServer");
 const authManager = require("./lib/common/perform-auth");
+const fontManager = require("./lib/fontManager");
 
 const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
 const systemCommandLoader = require("./lib/chat/commands/systemCommandLoader");
@@ -184,6 +185,11 @@ function createWindow() {
         global.renderWindow = null;
     });
 
+    mainWindow.webContents.on('new-window', function(e, url) {
+        e.preventDefault();
+        require('electron').shell.openExternal(url);
+    });
+
     // Global var for main window.
     global.renderWindow = mainWindow;
 
@@ -343,6 +349,7 @@ async function createDefaultFoldersAndFiles() {
             dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
         }
 
+
         if (
             !dataAccess.userDataPathExistsSync(
                 "/profiles/" + profileId + "/hotkeys.json"
@@ -401,6 +408,14 @@ async function createDefaultFoldersAndFiles() {
             dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/currency");
         }
 
+        // Create the fonts folder if it doesn't exist.
+        if (
+            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/fonts")
+        ) {
+            logger.info("Can't find the fonts folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/fonts");
+        }
+
         // Create the chat folder if it doesn't exist.
         if (
             !dataAccess.userDataPathExistsSync(
@@ -448,6 +463,12 @@ function appOnReady() {
 
         //load variables
         builtInVariableLoader.loadReplaceVariables();
+
+        //start extra life manager
+        //const extralifeManager = require('./lib/extralifeManager');
+        //extralifeManager.start();
+
+        fontManager.generateAppFontCssFile();
 
         createWindow();
 

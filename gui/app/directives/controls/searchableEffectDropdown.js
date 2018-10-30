@@ -49,7 +49,7 @@
                 );
                 }*/
 
-                if (!connectionService.accounts.streamer.partnered) {
+                if (!connectionService.accounts.streamer.partnered && !connectionService.accounts.streamer.canClip) {
                     ctrl.options = ctrl.options.filter(e => e.name !== Effect.EffectType.CREATE_CLIP);
                 }
 

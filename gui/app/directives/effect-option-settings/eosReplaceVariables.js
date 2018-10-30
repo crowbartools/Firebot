@@ -16,6 +16,7 @@
                             <li><b>$(game)</b> - The game you are currenly or last played</li>
                             <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$(target)])</li>
                             <li><b>$(streamTitle)</b> - The current title of your stream.</li>
+                            <li><b>$(userAvatarUrl)</b> - The url of the users avatar. Useful in Show Image effects!</li>
                             <li><b>$(randomViewer)</b> - The name of a random viewer in chat.</li>
                             <li><b>$(randomNumber[low-high])</b> - Get a random number between the low and high numbers, ie $(randomNumber[1-10])</li>
                             <li><b>$(math[expression])</b> - Evaluate the given expression. Can combine with other vars like randomNumber, ie $(math[2 + $(randomNumber[1-5])]) Learn more <a class="clickable" style="color:#53afff;" ng-click="$ctrl.openLinkExternally('http://mathjs.org/docs/expressions/syntax.html')">here</a>.</li>
@@ -60,6 +61,8 @@
                     <eos-replace-variable-section name="Events Only">
                         <ul>
                             <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed. Meant to be used on subscriber events.</li>
+                            <li><b>$(elAmount)</b> - ExtraLife donation amount. Only works on the ExtraLife Donation event. If user chooses not to disclose amount, it will say 'undisclosed amount'.</li>
+                            <li><b>$(elMessage)</b> - ExtraLife donation message. Only works on the ExtraLife Donation event.</li>
                         </ul>
                     </eos-replace-variable-section>               
                 </div>

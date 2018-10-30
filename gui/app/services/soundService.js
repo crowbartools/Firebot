@@ -78,29 +78,57 @@
                 }
             };
 
-            service.playSound = function(
-                path,
-                volume,
-                outputDevice = settingsService.getAudioOutputDevice()
-            ) {
-                $q.when(navigator.mediaDevices.enumerateDevices()).then(deviceList => {
-                    let filteredDevice = deviceList.filter(
-                        d =>
-                            d.label === outputDevice.label ||
-              d.deviceId === outputDevice.deviceId
-                    );
 
-                    let sinkId =
-            filteredDevice.length > 0 ? filteredDevice[0].deviceId : "default";
+            service.playSound = function(path, volume, outputDevice) {
 
+                $q.when(service.getHowlSound(path, volume, outputDevice))
+                    .then(sound => {
+
+                        // Clear listener after first call.
+                        sound.once('load', function() {
+                            sound.play();
+                        });
+
+                        // Fires when the sound finishes playing.
+                        sound.once('end', function() {
+                            sound.unload();
+                        });
+
+                        sound.load();
+                    });
+            };
+
+            service.getHowlSound = function(path, volume, outputDevice = settingsService.getAudioOutputDevice()) {
+                return navigator.mediaDevices.enumerateDevices()
+                    .then(deviceList => {
+                        let filteredDevice = deviceList.filter(d => d.label === outputDevice.label
+                            || d.deviceId === outputDevice.deviceId);
+
+                        let sinkId = filteredDevice.length > 0 ? filteredDevice[0].deviceId : 'default';
+
+                        let sound = new Howl({
+                            src: [path],
+                            volume: volume,
+                            html5: true,
+                            sinkId: sinkId,
+                            preload: false
+                        });
+
+                        return sound;
+                    });
+            };
+
+            service.getSoundDuration = function(path) {
+                return new Promise(resolve => {
                     let sound = new Howl({
-                        src: [path],
-                        volume: volume,
-                        html5: true,
-                        sinkId: sinkId
+                        src: [path]
                     });
 
-                    sound.play();
+                    // Clear listener after first call.
+                    sound.once('load', function() {
+                        resolve(sound.duration());
+                        sound.unload();
+                    });
                 });
             };
 

@@ -2,13 +2,16 @@
 (function() {
     //This adds the <eos-chatter-select> element
 
-    angular.module("firebotApp").component("eosChatterSelect", {
-        bindings: {
-            title: "@",
-            effect: "="
-        },
-        template: `
-                <eos-container header="{{$ctrl.title}}">
+    angular
+        .module('firebotApp')
+        .component("eosChatterSelect", {
+            bindings: {
+                title: "@",
+                effect: '=',
+                padTop: "<"
+            },
+            template: `
+                <eos-container header="{{$ctrl.title}}" pad-top="$ctrl.padTop">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="chat-effect-type">{{$ctrl.effect.chatter}}</span> <span class="caret"></span>
@@ -20,21 +23,21 @@
                     </div>
                 </eos-container>
                 `,
-        controller: function(connectionService) {
-            let ctrl = this;
+            controller: function(connectionService) {
+                let ctrl = this;
 
-            ctrl.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
+                ctrl.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
 
-            ctrl.$onInit = function() {
+                ctrl.$onInit = function() {
                 // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore
-                if (ctrl.effect.chatter == null) {
-                    if (ctrl.botLoggedIn) {
-                        ctrl.effect.chatter = "Bot";
-                    } else {
-                        ctrl.effect.chatter = "Streamer";
+                    if (ctrl.effect.chatter == null) {
+                        if (ctrl.botLoggedIn) {
+                            ctrl.effect.chatter = "Bot";
+                        } else {
+                            ctrl.effect.chatter = "Streamer";
+                        }
                     }
-                }
-            };
-        }
-    });
+                };
+            }
+        });
 }());

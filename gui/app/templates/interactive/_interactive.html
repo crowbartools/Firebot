@@ -3,9 +3,6 @@
 <!--<div class="content-block">
   <div ng-hide="getBoardNames().length == 0" class="content-block-header">
     <span style="padding-left: 15px;font-weight: 600;font-size: 15px;" ng-hide="selectedBoard() == null || selectedBoard() == ''">{{selectedBoard().name}} <span class="muted" style="font-size: 12px;">({{selectedBoard().versionid}})</span></span>
-    <span class="clickable board-settings-icon" ng-hide="selectedBoard() == null || selectedBoard() == ''" ng-click="showBoardSettingsModal()">
-      <i class="fas fa-cog"></i>
-    </span>
     <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
       <span class="noselect pointer">{{'BUTTONS.CHANGE_BOARD' | translate}}</span>
       <div class="fb-arrow down"></div>
@@ -30,7 +27,11 @@
     <div class="page-content" >
       <div class="row interactive-board-container" ng-if="selectedBoard() != null && getBoardNames().length > 0">
         <div class="scene-tools-wrapper">
-          <span class="scenes-title">{{'BUTTONS.SCENES' | translate }}</span>
+          <div>
+              <button ng-click="showBoardSettingsModal()" class="btn btn-default" style="margin-right:10px;"><i class="fas fa-cog" style="margin-right:5px;"></i> Scene Settings</button>
+              <button ng-click="showCooldownGroupsModal()" class="btn btn-default"><i class="fas fa-clock-o" style="margin-right:5px;"></i> Edit Cooldown Groups</button>
+          </div>
+          
           <div class="scene-tools">
             <div class="btn-group" style="margin-right: 15px">
               <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" ng-click="saveCurrentButtomViewMode('interactive')" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>

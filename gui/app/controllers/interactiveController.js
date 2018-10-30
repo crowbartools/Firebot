@@ -140,6 +140,18 @@
                 utilityService.showModal(showBoardSetingsModalContext);
             };
 
+            $scope.showCooldownGroupsModal = function() {
+                utilityService.showModal({
+                    component: "controlCooldownGroupsModal",
+                    size: "lg",
+                    resolveObj: {
+                        board: () => {
+                            return $scope.selectedBoard();
+                        }
+                    }
+                });
+            };
+
             /*
            * ADD BOARD MODAL
            */

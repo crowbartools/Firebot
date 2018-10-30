@@ -11,6 +11,8 @@
 
     <!--Webfont version of font awesome 5, use these from now on-->
     <link rel="stylesheet" href="../fonts/fontawesome5/fontawesome-all.min.css">
+
+    <link ng-href="{{customFontCssPath}}" rel="stylesheet" type="text/css">
   
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="http://csshake.surge.sh/csshake.min.css">
@@ -96,6 +98,7 @@
     <script type="text/javascript" src="./directives/controls/effectList.js"></script>
     <script type="text/javascript" src="./directives/controls/actionList.js"></script>
     <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
+    <script type="text/javascript" src="./directives/controls/soundPlayer.js"></script>
     <script type="text/javascript" src="./directives/misc/tooltip.js"></script>
     <script type="text/javascript" src="./directives/misc/connectionIcon.js"></script>
     <script type="text/javascript" src="./directives/misc/contentBlock.js"></script>
@@ -120,6 +123,9 @@
     <script type="text/javascript" src="./directives/modals/timers/addOrEditAction/addOrEditTimerActionModal.js"></script>
     <script type="text/javascript" src="./directives/modals/viewers/editColumnsModal.js"></script>
     <script type="text/javascript" src="./directives/modals/currency/addOrEditCurrency/addOrEditCurrency.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/inputModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/fontManagementModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/interactive/controlCooldownGroupsModal.js"></script>
   </head>
   <body>
     <toast></toast>
@@ -377,21 +383,29 @@
     <!-- Edit Effect Modal -->
     <script type="text/ng-template" id="editEffectModal.html">
       <div class="modal-header flex-row-center jspacebetween no-before no-after" style="padding-bottom: 0">
-        <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}{{effect.id !== 'Nothing' ? " - " + effectDefinition.definition.name : ""}}</h4>
+        <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}</h4>
 
-        <div uib-dropdown uib-dropdown-toggle>
-            <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
-            <ul class="dropdown-menu" uib-dropdown-menu>
-                <li>
-                    <a href ng-click="copy()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>
-                </li>
-                <li ng-class="{'disabled': !hasCopiedEffect()}" ng-click="!hasCopiedEffect() ? $event.stopPropagation() : null">
-                    <a href ng-click="paste()"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste</a>
-                </li>
-                <li>
-                    <a href ng-click="delete()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>
-                </li>
-            </ul>
+        <div class="flex-row acenter jspacebetween">
+            <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'">
+                <i class="far fa-play-circle" style="cursor: pointer;" ng-click="runEffect()"></i>
+            </div>
+            <div uib-dropdown uib-dropdown-toggle>
+                <span class="noselect pointer effects-actions-btn" style="font-size: 31px"><i class="fal fa-ellipsis-v"></i></span>
+                <ul class="dropdown-menu" uib-dropdown-menu>
+                    <li>
+                      <a href ng-click="editLabel()"><i class="fal fa-tag" style="margin-right: 10px;" aria-hidden="true"></i>  {{getLabelButtonTextForLabel(effect.effectLabel)}}</a>
+                    </li>
+                    <li>
+                        <a href ng-click="copy()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>
+                    </li>
+                    <li ng-class="{'disabled': !hasCopiedEffect()}" ng-click="!hasCopiedEffect() ? $event.stopPropagation() : null">
+                        <a href ng-click="paste()"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste</a>
+                    </li>
+                    <li>
+                        <a href ng-click="delete()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>
+                    </li>
+                </ul>
+            </div>
         </div>
       </div>
       <ol class="breadcrumb" style="margin-bottom: 0px;padding-bottom:11px;background-color:transparent;">
@@ -410,9 +424,9 @@
       <div class="modal-footer">
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
 
-          <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()">{{isAddMode ? "Add" : "Save"}}</button>
+          <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
           <div ng-if="openModals.length >= 2" class="btn-group" uib-dropdown>
-            <button id="split-button" type="button" class="btn btn-primary" ng-click="save()">{{isAddMode ? "Add" : "Save"}}</button>
+            <button id="split-button" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
             <button type="button" class="btn btn-primary" uib-dropdown-toggle>
               <span class="caret"></span>
             </button>

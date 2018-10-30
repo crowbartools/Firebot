@@ -16,13 +16,13 @@
         "ngSanitize",
         "ui.select",
         "ui.sortable",
-        "luegg.directives",
+        "ngScrollGlue",
         "summernote",
         "pascalprecht.translate",
         "ngToast",
         "agGrid",
         "slidingPuzzle",
-        'ngScrollGlue'
+        'ngYoutubeEmbed'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {
@@ -301,6 +301,8 @@
         // Get app version and change titlebar.
         let appVersion = electron.remote.app.getVersion();
         $scope.appTitle = "Firebot | v" + appVersion + " | @FirebotApp";
+
+        $scope.customFontCssPath = profileManager.getPathInProfile("/fonts/fonts.css");
 
         //make sure sliders render properly
         $timeout(function() {

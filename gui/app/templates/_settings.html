@@ -13,8 +13,8 @@
               <button class="btn btn-default" ng-click="showSetupWizard(true)">Open Setup Wizard</button>
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">App Sounds</div>
-              <div class="setting-description">Let Firebot play sounds for various app functions. For example, you will get a warning when Firebot connects or disconnects.</div>
+              <div class="setting-heading">Connection Sounds</div>
+              <div class="setting-description">Get audible alerts when Firebot connects or disconnects.</div>
               <div class="dropdown options-sounds-dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
@@ -130,7 +130,7 @@
         <uib-tab index="3" heading="Overlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Filepath</div>
+              <div class="setting-heading">Overlay URL</div>
               <div class="setting-description">Click the button below to get quick access to the Firebot overlay path.</div>
               <button class="btn btn-default" ng-click="settings.showOverlayInfoModal()">Get Overlay Path</button>
             </div>
@@ -138,6 +138,13 @@
               <div class="setting-heading">Event List Settings</div>
               <div class="setting-description">The Event List is a widget on the overlay that can display various text via the "Show Event" effect that you can add to buttons and commands. Click the button below to edit the style, position, & size of the Event List as well as the global text presets.</div>
               <button class="btn btn-default" ng-click="settings.showOverlayEventsModal()">Edit Settings</button>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Font Management</div>
+              <div class="setting-description">Manage fonts for use with the Show Text effect in the overlay. Any changes to fonts will require a restart to Firebot and then refreshing the overlay.</div>
+              <button class="btn btn-default" ng-click="showFontManagementModal()">Manage Fonts</button>
             </div>
           </div>
         </uib-tab>
@@ -158,7 +165,7 @@
         </uib-tab>
         
         <!-- Clip Settings -->
-        <uib-tab index="2" heading="Clips" ng-show="streamerPartnered">
+        <uib-tab index="2" heading="Clips" ng-show="canClip">
             <div class="row" style="margin-top: 15px">
               <div class="setting col-sm-6">
                 <div class="setting-heading">Clip Download Folder</div>
@@ -224,7 +231,7 @@
         </uib-tab>
         
         <!-- Advanced Settings -->
-        <uib-tab index="6" heading="Advanced">
+        <uib-tab index="7" heading="Advanced">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
                 <div class="setting-heading">Debug Mode</div>
@@ -235,18 +242,11 @@
             </div>
             <div class="setting col-sm-6">
 
-                <div class="setting-heading">Custom Script Effect</div>
-                <div class="setting-description">Firebot supports an effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
-                <div class="dropdown options-customscript-dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
-                    <li><a href ng-click="settings.setCustomScriptsEnabled(true)">On</a></li>
-                    <li><a href ng-click="settings.setCustomScriptsEnabled(false)">Off</a></li>
-                  </ul>
+                <div class="setting-heading">Dev Tools</div>
+                <div class="setting-description">
+                  Click the button below to open the developer console. Only use if you know what you are doing. <strong>Never paste code from other people in the console.</strong></b>
                 </div>
+                <button class="btn btn-default" ng-click="openDevTools()">Open Dev Tools</button>
 
             </div>
           </div>
@@ -268,8 +268,45 @@
                 </div>
                 <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
             </div>
-            <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
+            <div class="setting col-sm-6">
                 
+                <div class="setting-heading">Custom Script Effect</div>
+                <div class="setting-description">Firebot supports an effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
+                <div class="dropdown options-customscript-dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="options-customscript" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{settings.getCustomScriptsEnabled() ? 'On' : 'Off'}}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                    <li><a href ng-click="settings.setCustomScriptsEnabled(true)">On</a></li>
+                    <li><a href ng-click="settings.setCustomScriptsEnabled(false)">Off</a></li>
+                  </ul>
+                </div>
+
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Overlay Web Socket Port</div>
+              <div class="setting-description">
+                This is the port that the Firebot and the overlay webpage use to talk to each other. 
+                You usually only need to change this if you are having a problem with the overlay. 
+              </div>
+              <div class="input-group" style="width: 50%; margin-bottom: 10px;">
+                <input type="text" class="form-control" ng-model="currentPort" disabled>
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" ng-click="showChangePortModal()">Edit</button>
+                </span>
+              </div>          
+              <div class="alert alert-danger">
+                  <b>Note</b>: If a new port is set, both Firebot and anything previewing the overlay (ie broadcasting software) will need to be restarted for the new port to take effect.
+              </div>
+              <div class="alert alert-warning">
+                <b>Warning</b>: This is NOT the port used in the overlay URL (7473). If you absolutely need to change that port, please reach out to us on Discord or Twitter.
+              </div>
+            </div>
+            <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
+
               <div class="setting-heading">Clear Custom Script Cache</div>
               <div class="setting-description">
                 Whether or not you want the cached version of a custom script to be cleared on every button press. 
@@ -287,8 +324,6 @@
               </div>
 
             </div>
-          </div>
-          <div class="row" style="margin-top: 15px">
           </div>
         </uib-tab>
       </uib-tabset>

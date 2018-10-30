@@ -5,6 +5,7 @@
     const _ = require("underscore")._;
     const profileManager = require("../../lib/common/profile-manager.js");
     const EffectType = require("../../lib/common/EffectType.js");
+    const fontManager = require('../../lib/fontManager');
 
     angular
         .module("firebotApp")
@@ -75,10 +76,36 @@
                     break;
 
                 case EffectList.PLAY_SOUND:
-                    controller = ($scope, listenerService) => {
+                    controller = ($scope, listenerService, soundService) => {
+
+                        let uuid = _.uniqueId();
+
                         if ($scope.effect.volume == null) {
                             $scope.effect.volume = 5;
                         }
+
+                        $scope.durationDisplay = "00:00";
+
+                        $scope.soundFileUpdated = function(filepath) {
+                            if (filepath == null || filepath.length === 0) {
+                                $scope.durationDisplay = "00:00";
+                                return;
+                            }
+                            soundService.getSoundDuration(filepath).then((duration) => {
+                                let totalSecs = Math.round(duration);
+
+                                let display = "";
+                                if (totalSecs < 60) {
+                                    display = `0:${totalSecs}`;
+                                } else {
+                                    let totalMins = totalSecs / 60;
+                                    let remainingSecs = totalSecs % 60;
+                                    display = `${totalMins}:${remainingSecs}`;
+                                }
+
+                                $scope.durationDisplay = display;
+                            });
+                        };
 
                         $scope.openFileExporer = function() {
                             let registerRequest = {
@@ -150,6 +177,19 @@
                     controller = ($scope, listenerService, utilityService) => {
                         $scope.showOverlayInfoModal = function(overlayInstance) {
                             utilityService.showOverlayInfoModal(overlayInstance);
+                        };
+
+                        $scope.shouldShowVideoPlaceholder = () => {
+                            if ($scope.effect.videoType == null || $scope.effect.videoType.length === "") {
+                                return true;
+                            }
+                            if ($scope.effect.videoType === "Local Video") {
+                                return $scope.effect.file == null || $scope.effect.file.length < 1;
+                            }
+                            if ($scope.effect.videoType === "YouTube Video") {
+                                return $scope.effect.youtube == null || $scope.effect.youtube.length < 1;
+                            }
+                            return true;
                         };
 
                         $scope.videoPositions = [
@@ -683,6 +723,15 @@
                         };
                     };
                     break;
+                case EffectList.TEXT_TO_FILE:
+                    controller = ($scope) => {
+
+                        if ($scope.effect.writeMode == null) {
+                            $scope.effect.writeMode = "replace";
+                        }
+
+                    };
+                    break;
                 case EffectList.SHOW_TEXT:
                     controller = $scope => {
                         if ($scope.effect.height == null || $scope.effect.height < 1) {
@@ -712,25 +761,14 @@
                                 ["para", ["ul", "ol"]],
                                 ["misc", ["undo", "redo", "codeview"]]
                             ],
-                            fontSizes: [
-                                "8",
-                                "9",
-                                "10",
-                                "11",
-                                "12",
-                                "14",
-                                "18",
-                                "24",
-                                "36",
-                                "48",
-                                "64",
-                                "82",
-                                "150",
-                                "200",
-                                "250",
-                                "300"
-                            ]
+                            fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '64', '82', '150', '200', '250', '300'],
+                            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana', 'Open Sans', 'Roboto'],
+                            fontNamesIgnoreCheck: ['Open Sans', 'Roboto']
                         };
+
+                        let installedFontNames = fontManager.getInstalledFonts().map(f => f.name);
+                        $scope.editorOptions.fontNames = $scope.editorOptions.fontNames.concat(installedFontNames);
+                        $scope.editorOptions.fontNamesIgnoreCheck = $scope.editorOptions.fontNamesIgnoreCheck.concat(installedFontNames);
 
                         $scope.showOverlayInfoModal = function(overlayInstance) {
                             utilityService.showOverlayInfoModal(overlayInstance);
