@@ -1,10 +1,10 @@
 
 <eos-container header="Sound">
     <div style="margin-bottom: 10px">
-        <file-chooser model="effect.file" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
+        <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
     </div>
     
-    <sound-player path="effect.file" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
+    <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
 </eos-container>
 
 <eos-container header="Volume" pad-top="true">
