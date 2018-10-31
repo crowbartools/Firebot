@@ -16,6 +16,16 @@
                 <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Exit'">
                     <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">ENTER</div>
                     <select class="fb-select" ng-model="$ctrl.selected.enter" ng-change="$ctrl.enterUpdate()" ng-options="enter.name group by enter.category for enter in $ctrl.animations.enter"></select>
+                    <div>
+                    <form class="form-inline">
+                        <span>Duration: </span>  
+                        <div class="form-group">
+                            <input type="number" class="form-control" ng-model="$ctrl.topOrBottomValue" ng-change="$ctrl.updateAllValues()" style="width: 85px;">
+                        </div>
+                        <div class="form-group">
+                            <dropdown-select options="['top','bottom']" selected="$ctrl.topOrBottom" on-update="$ctrl.updateTopOrBottom(option)"></dropdown-select>
+                        </div>
+                    </div>
                 </div>
                 <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Enter'">
                     <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">EXIT</div>
