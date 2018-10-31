@@ -138,9 +138,6 @@
                 if (videoWidth === "" || videoWidth == null) {
                     videoWidth = false;
                 }
-                if (videoDuration === null || videoDuration === undefined || isNaN(videoDuration)) {
-                    videoDuration = 5;
-                }
 
                 // Compile data and send to overlay.
                 let broadcastdata = {
