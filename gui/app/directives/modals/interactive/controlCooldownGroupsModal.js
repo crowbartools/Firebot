@@ -59,7 +59,7 @@
 
                 $scope.getCooldownGroupSettings = function() {
                     let settings = [];
-                    if ($ctrl.resolve.board != null) {
+                    if ($ctrl.resolve.board != null && $ctrl.resolve.board.cooldownGroups != null) {
                         settings = Object.values($ctrl.resolve.board.cooldownGroups);
                     }
                     return settings;
