@@ -66,6 +66,7 @@
                 };
 
                 $ctrl.$onInit = function () {
+                    $scope.getCooldownGroupSettings();
                     // When the compontent is initialized
                     // This is where you can start to access bindings, such as variables stored in 'resolve'
                     // IE $ctrl.resolve.shouldDelete or whatever
