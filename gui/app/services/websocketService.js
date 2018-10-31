@@ -68,6 +68,8 @@
                     "showEventsDuration": showEventsDuration,
                     "enterAnimation": data.enterAnimation,
                     "exitAnimation": data.exitAnimation,
+                    "enterDuration": data.enterDuration,
+                    "exitDuration": data.exitDuration,
                     "customCoords": data.customCoords
                 };
 
@@ -110,6 +112,11 @@
                     "imageDuration": imageDuration,
                     "enterAnimation": data.enterAnimation,
                     "exitAnimation": data.exitAnimation,
+                    "enterDuration": data.enterDuration,
+                    "exitDuration": data.exitDuration,
+                    inbetweenAnimation: data.inbetweenAnimation,
+                    inbetweenDelay: data.inbetweenDelay,
+                    inbetweenDuration: data.inbetweenDuration,
                     "overlayInstance": data.overlayInstance,
                     "customCoords": data.customCoords
                 };
@@ -154,6 +161,11 @@
                     "videoStarttime": videoStarttime,
                     "enterAnimation": data.enterAnimation,
                     "exitAnimation": data.exitAnimation,
+                    "enterDuration": data.enterDuration,
+                    "exitDuration": data.exitDuration,
+                    inbetweenAnimation: data.inbetweenAnimation,
+                    inbetweenDelay: data.inbetweenDelay,
+                    inbetweenDuration: data.inbetweenDuration,
                     "overlayInstance": data.overlayInstance,
                     "customCoords": data.customCoords,
                     "loop": data.loop

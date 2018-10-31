@@ -13,7 +13,7 @@ function showHtml(data){
             if(!element.length) element = _element;
         }
 
-        element.animateCss(data.exitAnimation || "fadeOut", function(){ // Default Animation: Fade Out
+        element.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, function(){ // Default Animation: Fade Out
             element.remove();
         });
     }, parseFloat(data.length || 10) * 1000); // Default Show Time: 10 Seconds

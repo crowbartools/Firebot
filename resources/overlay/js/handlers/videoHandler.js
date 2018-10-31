@@ -36,10 +36,16 @@ function showVideo(data){
 	var d = new Date();
 	var divClass = d.getTime();
 	var videoId = `.${divClass}-video`;
-	
+
 	var enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
 	var exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
+	var enterDuration = data.enterDuration;
+	var exitDuration = data.exitDuration;
 
+	var inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
+	var inbetweenDuration = data.inbetweenDuration;
+	var inbetweenDelay = data.inbetweenDelay;
+	
 	if(videoType === "Local Video"){
 
 		const loopTag = loop ? 'loop' : '';
@@ -72,24 +78,30 @@ function showVideo(data){
 		$('.player').prop("volume", videoVolume);
 		
 		var video = document.getElementById('video-'+divClass);
+	
 
 		video.oncanplay = function() {
-			console.log("video " + divClass + " can play");
+			if(startedVidCache[this.id]) { return; }
+			startedVidCache[this.id] = true;
 			
 			video.play();
 			let videoEl= $(videoId);
 			videoEl.show();
-			videoEl.animateCss(enterAnimation);
+			videoEl.animateCss(enterAnimation, enterDuration, null, ()=> {
+				videoEl.animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay);
+			});
 			
 			// Remove div after X time.
 			if(videoDuration){
 				setTimeout(function(){
-					animateVideoExit(videoId, exitAnimation);
+					delete startedVidCache[this.id];
+					animateVideoExit(videoId, exitAnimation, exitDuration);
 				}, videoDuration);
 			}else{
 				
 				video.onended = function(e){
-					animateVideoExit(videoId, exitAnimation);
+					delete startedVidCache[this.id];
+					animateVideoExit(videoId, exitAnimation, exitDuration);
 				}
 			}
 		};
@@ -144,7 +156,11 @@ function showVideo(data){
 		function onPlayerReady(event) {
 
 			// Fade in video.
-			$(videoId).animateCss(enterAnimation);
+			$(videoId).animateCss(enterAnimation, enterDuration, null, () => {
+				$(videoId).animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay);
+			});
+
+
 			$(videoId).show();
 
 			event.target.setVolume(parseInt(videoVolume) * 10);
@@ -154,7 +170,7 @@ function showVideo(data){
 		// Remove div when YouTube video has stopped.
 		function onPlayerStateChange(event){
 			if(event.data === 0 && !videoDuration){
-				animateVideoExit(videoId, exitAnimation);
+				animateVideoExit(videoId, exitAnimation, exitDuration);
 			}
 		}
 
@@ -162,7 +178,7 @@ function showVideo(data){
 		if(videoDuration){
 			// console.log("Waiting for timer to remove div");
 			setTimeout(function(){ 
-				animateVideoExit(videoId, exitAnimation);
+				animateVideoExit(videoId, exitAnimation, exitDuration);
 			}, videoDuration);	
 		}else{
 			// console.log("Waiting for video event to clear div");
@@ -175,8 +191,8 @@ function showVideo(data){
 	}
 };
 
-function animateVideoExit(idString, animation) {
-	$(idString).animateCss(animation, () => {
+function animateVideoExit(idString, animation, duration) {
+	$(idString).animateCss(animation, duration, null, () => {
 		$(idString).remove();
 	});
 }

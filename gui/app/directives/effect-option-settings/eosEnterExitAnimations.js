@@ -12,24 +12,89 @@
                 padTop: "<"
             },
             template: `
-            <eos-container header="{{$ctrl.limitTo ? $ctrl.limitTo + ' Animation' : 'Enter/Exit Animations'}}" pad-top="$ctrl.padTop">
+            <eos-container header="{{$ctrl.limitTo ? $ctrl.limitTo + ' Animation' : 'Animations'}}" pad-top="$ctrl.padTop">
                 <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Exit'">
                     <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">ENTER</div>
                     <select class="fb-select" ng-model="$ctrl.selected.enter" ng-change="$ctrl.enterUpdate()" ng-options="enter.name group by enter.category for enter in $ctrl.animations.enter"></select>
-                    <div>
-                    <form class="form-inline">
-                        <span>Duration: </span>  
-                        <div class="form-group">
-                            <input type="number" class="form-control" ng-model="$ctrl.topOrBottomValue" ng-change="$ctrl.updateAllValues()" style="width: 85px;">
-                        </div>
-                        <div class="form-group">
-                            <dropdown-select options="['top','bottom']" selected="$ctrl.topOrBottom" on-update="$ctrl.updateTopOrBottom(option)"></dropdown-select>
+                    <div ng-hide="$ctrl.effect.enterAnimation === 'none'">
+                        <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 5px 0 15px 25px; align-items: center;">
+                            <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Custom Duration
+                                <input type="checkbox" ng-init="customEnterDur = ($ctrl.effect.enterDuration != null && $ctrl.effect.enterDuration !== '')" ng-model="customEnterDur" ng-click="$ctrl.toggleEnterDurationStatus()">
+                                <div class="control__indicator"></div>
+                            </label>
+                            <div ng-show="customEnterDur">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" ng-model="$ctrl.selected.enterDurationValue" ng-change="$ctrl.enterDurationUpdated()" style="width: 70px;">
+                                    </div>
+                                    <div class="form-group">
+                                        <dropdown-select options="{s: 'seconds', ms: 'milliseconds'}" selected="$ctrl.selected.enterDurationType" on-update="$ctrl.enterDurationUpdated(option)"></dropdown-select>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Enter'">
+                    <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">INBETWEEN</div>
+                    <select class="fb-select" ng-model="$ctrl.selected.inbetween" ng-change="$ctrl.inbetweenUpdate()" ng-options="inbetween.name for inbetween in $ctrl.animations.inbetween"></select>
+                    <div ng-hide="$ctrl.effect.inbetweenAnimation === 'none'">
+                        <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 5px 0 0 25px; align-items: center;">
+                            <span style="margin-right: 5px;">Delay for <tooltip text="'How long to delay after the Enter Animation before running the Inbetween Animation'"></tooltip></span>
+                            <div>
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" ng-model="$ctrl.selected.inbetweenDelayValue" ng-change="$ctrl.inbetweenDelayUpdated()" style="width: 70px;">
+                                    </div>
+                                    <div class="form-group">
+                                        <dropdown-select options="{s: 'seconds', ms: 'milliseconds'}" selected="$ctrl.selected.inbetweenDelayType" on-update="$ctrl.inbetweenDelayUpdated(option)"></dropdown-select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-hide="$ctrl.effect.inbetweenAnimation === 'none'">
+                        <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 5px 0 15px 25px; align-items: center;">
+                            <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Custom Duration
+                                <input type="checkbox" ng-init="customInbetweenDur = ($ctrl.effect.inbetweenDuration != null && $ctrl.effect.inbetweenDuration !== '')" ng-model="customInbetweenDur" ng-click="$ctrl.toggleInbetweenDurationStatus()">
+                                <div class="control__indicator"></div>
+                            </label>
+                            <div ng-show="customInbetweenDur">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" ng-model="$ctrl.selected.inbetweenDurationValue" ng-change="$ctrl.inbetweenDurationUpdated()" style="width: 70px;">
+                                    </div>
+                                    <div class="form-group">
+                                        <dropdown-select options="{s: 'seconds', ms: 'milliseconds'}" selected="$ctrl.selected.inbetweenDurationType" on-update="$ctrl.inbetweenDurationUpdated(option)"></dropdown-select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Enter'">
                     <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">EXIT</div>
                     <select class="fb-select" ng-model="$ctrl.selected.exit" ng-change="$ctrl.exitUpdate()" ng-options="exit.name group by exit.category for exit in $ctrl.animations.exit"></select>
+                    <div ng-hide="$ctrl.effect.exitAnimation === 'none'">
+                        <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 5px 0 15px 25px; align-items: center;">
+                            <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Custom Duration
+                                <input type="checkbox" ng-init="customExitDur = ($ctrl.effect.exitDuration != null && $ctrl.effect.exitDuration !== '')" ng-model="customExitDur" ng-click="$ctrl.toggleExitDurationStatus()">
+                                <div class="control__indicator"></div>
+                            </label>
+                            <div ng-show="customExitDur">
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" ng-model="$ctrl.selected.exitDurationValue" ng-change="$ctrl.exitDurationUpdated()" style="width: 70px;">
+                                    </div>
+                                    <div class="form-group">
+                                        <dropdown-select options="{s: 'seconds', ms: 'milliseconds'}" selected="$ctrl.selected.exitDurationType" on-update="$ctrl.exitDurationUpdated(option)"></dropdown-select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </eos-container>
        `,
@@ -37,7 +102,156 @@
                 let ctrl = this;
                 ctrl.selected = {
                     enter: null,
-                    exit: null
+                    enterDurationValue: 1,
+                    enterDurationType: "s",
+                    inbetween: null,
+                    inbetweenDelayValue: 1,
+                    inbetweenDelayType: "s",
+                    inbetweenDurationValue: 1,
+                    inbetweenDurationType: "s",
+                    exit: null,
+                    exitDurationValue: 1,
+                    exitDurationType: "s"
+                };
+
+                function loadAnimationValues() {
+                    ctrl.effect.enterAnimation = ctrl.effect.enterAnimation ? ctrl.effect.enterAnimation : 'fadeIn';
+                    ctrl.selected.enter = ctrl.animations.enter.filter((ani) => {
+                        return ani.class === ctrl.effect.enterAnimation;
+                    })[0];
+
+                    ctrl.effect.exitAnimation = ctrl.effect.exitAnimation ? ctrl.effect.exitAnimation : 'fadeOut';
+                    ctrl.selected.exit = ctrl.animations.exit.filter((ani) => {
+                        return ani.class === ctrl.effect.exitAnimation;
+                    })[0];
+
+                    ctrl.effect.inbetweenAnimation = ctrl.effect.inbetweenAnimation ? ctrl.effect.inbetweenAnimation : 'none';
+                    ctrl.selected.inbetween = ctrl.animations.inbetween.filter((ani) => {
+                        return ani.class === ctrl.effect.inbetweenAnimation;
+                    })[0];
+
+                    let enterDuration = ctrl.effect.enterDuration;
+                    if (enterDuration != null) {
+                        if (enterDuration.endsWith("ms")) {
+                            ctrl.selected.enterDurationType = "ms";
+                            ctrl.selected.enterDurationValue = parseFloat(enterDuration.replace("ms", ""));
+                        } else if (enterDuration.endsWith("s")) {
+                            ctrl.selected.enterDurationType = "s";
+                            ctrl.selected.enterDurationValue = parseFloat(enterDuration.replace("s", ""));
+                        }
+                    }
+
+                    let exitDuration = ctrl.effect.exitDuration;
+                    if (exitDuration != null) {
+                        if (exitDuration.endsWith("ms")) {
+                            ctrl.selected.exitDurationType = "ms";
+                            ctrl.selected.exitDurationValue = parseFloat(exitDuration.replace("ms", ""));
+                        } else if (exitDuration.endsWith("s")) {
+                            ctrl.selected.exitDurationType = "s";
+                            ctrl.selected.exitDurationValue = parseFloat(exitDuration.replace("s", ""));
+                        }
+                    }
+
+                    let inbetweenDuration = ctrl.effect.inbetweenDuration;
+                    if (inbetweenDuration != null) {
+                        if (inbetweenDuration.endsWith("ms")) {
+                            ctrl.selected.inbetweenDurationType = "ms";
+                            ctrl.selected.inbetweenDurationValue = parseFloat(inbetweenDuration.replace("ms", ""));
+                        } else if (inbetweenDuration.endsWith("s")) {
+                            ctrl.selected.inbetweenDurationType = "s";
+                            ctrl.selected.inbetweenDurationValue = parseFloat(inbetweenDuration.replace("s", ""));
+                        }
+                    }
+
+                    let inbetweenDelay = ctrl.effect.inbetweenDelay;
+                    if (inbetweenDelay != null) {
+                        if (inbetweenDelay.endsWith("ms")) {
+                            ctrl.selected.inbetweenDelayType = "ms";
+                            ctrl.selected.inbetweenDelayValue = parseFloat(inbetweenDelay.replace("ms", ""));
+                        } else if (inbetweenDelay.endsWith("s")) {
+                            ctrl.selected.inbetweenDelayType = "s";
+                            ctrl.selected.inbetweenDelayValue = parseFloat(inbetweenDelay.replace("s", ""));
+                        }
+                    }
+
+                }
+
+                ctrl.$onInit = function() {
+                    loadAnimationValues();
+                };
+
+                ctrl.$onChanges = function(changes) {
+                    if (changes.effect) {
+                        loadAnimationValues();
+                    }
+                };
+
+                ctrl.toggleEnterDurationStatus = () => {
+                    if (ctrl.effect.enterDuration) {
+                        ctrl.effect.enterDuration = undefined;
+                    } else {
+                        ctrl.enterDurationUpdated();
+                    }
+                };
+
+                ctrl.toggleExitDurationStatus = () => {
+                    if (ctrl.effect.exitDuration) {
+                        ctrl.effect.exitDuration = undefined;
+                    } else {
+                        ctrl.exitDurationUpdated();
+                    }
+                };
+
+                ctrl.toggleInbetweenDurationStatus = () => {
+                    if (ctrl.effect.inbetweenDuration) {
+                        ctrl.effect.inbetweenDuration = undefined;
+                    } else {
+                        ctrl.inbetweenDurationUpdated();
+                    }
+                };
+
+                ctrl.enterDurationUpdated = function() {
+                    let durationValue = ctrl.selected.enterDurationValue;
+                    if (durationValue == null || durationValue < 1) {
+                        durationValue = 1;
+                    }
+                    ctrl.effect.enterDuration = ctrl.selected.enterDurationValue + "" + ctrl.selected.enterDurationType;
+                };
+
+                ctrl.exitDurationUpdated = function() {
+                    let durationValue = ctrl.selected.exitDurationValue;
+                    if (durationValue == null || durationValue < 1) {
+                        durationValue = 1;
+                    }
+                    ctrl.effect.exitDuration = durationValue + "" + ctrl.selected.exitDurationType;
+                };
+
+                ctrl.inbetweenDurationUpdated = function() {
+                    let durationValue = ctrl.selected.inbetweenDurationValue;
+                    if (durationValue == null || durationValue < 1) {
+                        durationValue = 1;
+                    }
+                    ctrl.effect.inbetweenDuration = durationValue + "" + ctrl.selected.inbetweenDurationType;
+                };
+
+                ctrl.inbetweenDelayUpdated = function() {
+                    let delayValue = ctrl.selected.inbetweenDelayValue;
+                    if (delayValue == null || delayValue < 0) {
+                        delayValue = 0;
+                    }
+                    ctrl.effect.inbetweenDelay = delayValue + "" + ctrl.selected.inbetweenDelayType;
+                };
+
+                ctrl.enterUpdate = function() {
+                    ctrl.effect.enterAnimation = ctrl.selected.enter.class;
+                };
+
+                ctrl.exitUpdate = function() {
+                    ctrl.effect.exitAnimation = ctrl.selected.exit.class;
+                };
+
+                ctrl.inbetweenUpdate = function() {
+                    ctrl.effect.inbetweenAnimation = ctrl.selected.inbetween.class;
                 };
 
                 ctrl.animations = {
@@ -352,29 +566,47 @@
                             class: "none",
                             category: "Misc"
                         }
+                    ],
+                    inbetween: [
+                        {
+                            name: "None",
+                            class: "none"
+                        },
+                        {
+                            name: "Bounce",
+                            class: "bounce"
+                        },
+                        {
+                            name: "Flash",
+                            class: "flash"
+                        },
+                        {
+                            name: "Pulse",
+                            class: "pulse"
+                        },
+                        {
+                            name: "Shake",
+                            class: "shake"
+                        },
+                        {
+                            name: "Swing",
+                            class: "swing"
+                        },
+                        {
+                            name: "Tada",
+                            class: "tada"
+                        },
+                        {
+                            name: "Wobble",
+                            class: "wobble"
+                        },
+                        {
+                            name: "Jello",
+                            class: "jello"
+                        }
                     ]
                 };
 
-                ctrl.$onInit = function() {
-
-                    ctrl.effect.enterAnimation = ctrl.effect.enterAnimation ? ctrl.effect.enterAnimation : 'fadeIn';
-                    ctrl.selected.enter = ctrl.animations.enter.filter((ani) => {
-                        return ani.class === ctrl.effect.enterAnimation;
-                    })[0];
-
-                    ctrl.effect.exitAnimation = ctrl.effect.exitAnimation ? ctrl.effect.exitAnimation : 'fadeOut';
-                    ctrl.selected.exit = ctrl.animations.exit.filter((ani) => {
-                        return ani.class === ctrl.effect.exitAnimation;
-                    })[0];
-                };
-
-
-                ctrl.enterUpdate = function() {
-                    ctrl.effect.enterAnimation = ctrl.selected.enter.class;
-                };
-                ctrl.exitUpdate = function() {
-                    ctrl.effect.exitAnimation = ctrl.selected.exit.class;
-                };
             }
         });
 }());

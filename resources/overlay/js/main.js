@@ -1,7 +1,10 @@
 // Global
 notificationShown = false;
+console.log("Here");
+startedVidCache = { test: true };
 
 let params = new URL(location).searchParams;
+
 
 // Kickstarter
 // This function kickstarts the connection process.
@@ -157,13 +160,29 @@ function notification(status, text){
 }
 
 $.fn.extend({
-    animateCss: function (animationName, callback, data) {
+    animateCss: function (animationName, animationDuration, animationDelay, callback, data) {
 		if(callback == null || !(callback instanceof Function)) {
 			callback = () => {};
 		}
 		var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 		if(animationName !== "none") {
+			if(animationDuration) {
+				$(this).css("animation-duration", animationDuration);
+			}
+
+			if(animationDelay) {
+				$(this).css("animation-delay", animationDelay);
+			}
+
 			this.addClass('animated ' + animationName).one(animationEnd, function() {
+				if(animationDuration) {
+					$(this).css("animation-duration", "");
+				}
+
+				if(animationDelay) {
+					$(this).css("animation-delay", "");
+				}
+	
 				$(this).removeClass('animated ' + animationName);
 				callback(data);
 			});
@@ -174,17 +193,43 @@ $.fn.extend({
     }
 });
 
-function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration, tokenArg) {
+function showTimedAnimatedElement(
+	elementClass, 
+	enterAnimation, 
+	enterDuration,
+	inbetweenAnimation,
+	inbetweenDelay,
+	inbetweenDuration, 
+	exitAnimation, 
+	exitDuration, 
+	duration, 
+	tokenArg) {
 	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
+	inbetweenAnimation = inbetweenAnimation ? inbetweenAnimation : "none";
 	var id = `.${elementClass}`;
-	$(id).animateCss(enterAnimation, (data) => {
+	$(id).animateCss(enterAnimation, enterDuration, null, (data) => {
+		
+		$(data.id).animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay);
+
 		setTimeout(function(){ 
-			$(data.id).animateCss(data.exitAnimation, (data1) => {
+			if(data.inbetweenAnimation) {
+				$(data.id).css("animation-duration", "");
+				$(data.id).css("animation-delay", "");
+			}
+			$(data.id).animateCss(data.exitAnimation, data.exitDuration, null, (data1) => {
 				$(data1.id).remove();
 			}, data);
 		}, (duration === 0 || duration != null) ? duration : 5000);
-	}, { token: tokenArg, id: id, exitAnimation: exitAnimation });
+	}, { 
+		token: tokenArg, 
+		id: id, 
+		exitAnimation: exitAnimation, 
+		exitDuration: exitDuration,
+		inbetweenAnimation: inbetweenAnimation,
+		inbetweenDuration: inbetweenDuration,
+		inbetweenDelay: inbetweenDelay
+	});
 }
 
 function getStylesForCustomCoords(customCoords) {

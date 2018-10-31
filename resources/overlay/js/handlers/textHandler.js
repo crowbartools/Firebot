@@ -38,6 +38,11 @@ function showText(data){
 
 	var exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeOut",
 	enterAnimation = data.enterAnimation;
+	var enterDuration = data.enterDuration;
+	var exitDuration = data.exitDuration;
+	var inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
+	var inbetweenDuration = data.inbetweenDuration;
+	var inbetweenDelay = data.inbetweenDelay;
 
-	showTimedAnimatedElement(divClass, enterAnimation, exitAnimation, data.duration * 1000);
+	showTimedAnimatedElement(divClass, enterAnimation, enterDuration, inbetweenAnimation, inbetweenDelay, inbetweenDuration, exitAnimation, exitDuration, data.duration * 1000);
 }
