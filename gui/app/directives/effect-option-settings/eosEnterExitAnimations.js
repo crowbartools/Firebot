@@ -41,7 +41,7 @@
                     <select class="fb-select" ng-model="$ctrl.selected.inbetween" ng-change="$ctrl.inbetweenUpdate()" ng-options="inbetween.name for inbetween in $ctrl.animations.inbetween"></select>
                     <div ng-hide="$ctrl.effect.inbetweenAnimation === 'none'">
                         <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 5px 0 0 25px; align-items: center;">
-                            <span style="margin-right: 5px;">Delay for <tooltip text="'How long to delay after the Enter Animation before running the Inbetween Animation'"></tooltip></span>
+                            <span style="margin-right: 5px;width: 85px;">Delay for <tooltip text="'How long to delay after the Enter Animation before running the Inbetween Animation'"></tooltip></span>
                             <div>
                                 <form class="form-inline">
                                     <div class="form-group">
@@ -49,6 +49,16 @@
                                     </div>
                                     <div class="form-group">
                                         <dropdown-select options="{s: 'seconds', ms: 'milliseconds'}" selected="$ctrl.selected.inbetweenDelayType" on-update="$ctrl.inbetweenDelayUpdated(option)"></dropdown-select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 5px 0 0 25px; align-items: center;">
+                            <span style="margin-right: 5px;width: 85px;">Repeat <tooltip text="'How many times to repeat. Will get cut short if the total duration is reached and exit animation starts.'"></tooltip></span>
+                            <div>
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" ng-model="$ctrl.effect.inbetweenRepeat" ng-change="$ctrl.inbetweenRepeatUpdated()" style="width: 70px;">
                                     </div>
                                 </form>
                             </div>
@@ -109,6 +119,7 @@
                     inbetweenDelayType: "s",
                     inbetweenDurationValue: 1,
                     inbetweenDurationType: "s",
+                    inbetweenRepeat: 1,
                     exit: null,
                     exitDurationValue: 1,
                     exitDurationType: "s"
@@ -240,6 +251,14 @@
                         delayValue = 0;
                     }
                     ctrl.effect.inbetweenDelay = delayValue + "" + ctrl.selected.inbetweenDelayType;
+                };
+
+                ctrl.inbetweenRepeatUpdated = function() {
+                    let repeat = ctrl.effect.inbetweenRepeat;
+                    if (repeat == null || repeat < 0) {
+                        repeat = 0;
+                    }
+                    ctrl.effect.inbetweenRepeat = repeat;
                 };
 
                 ctrl.enterUpdate = function() {

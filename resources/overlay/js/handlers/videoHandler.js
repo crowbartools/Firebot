@@ -45,6 +45,7 @@ function showVideo(data){
 	var inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
 	var inbetweenDuration = data.inbetweenDuration;
 	var inbetweenDelay = data.inbetweenDelay;
+	var inbetweenRepeat = data.inbetweenRepeat;
 	
 	if(videoType === "Local Video"){
 
@@ -87,8 +88,8 @@ function showVideo(data){
 			video.play();
 			let videoEl= $(videoId);
 			videoEl.show();
-			videoEl.animateCss(enterAnimation, enterDuration, null, ()=> {
-				videoEl.animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay);
+			videoEl.animateCss(enterAnimation, enterDuration, null, null, ()=> {
+				videoEl.animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay, inbetweenRepeat);
 			});
 			
 			// Remove div after X time.
@@ -156,7 +157,7 @@ function showVideo(data){
 		function onPlayerReady(event) {
 
 			// Fade in video.
-			$(videoId).animateCss(enterAnimation, enterDuration, null, () => {
+			$(videoId).animateCss(enterAnimation, enterDuration, null, null, () => {
 				$(videoId).animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay);
 			});
 
@@ -192,7 +193,7 @@ function showVideo(data){
 };
 
 function animateVideoExit(idString, animation, duration) {
-	$(idString).animateCss(animation, duration, null, () => {
+	$(idString).animateCss(animation, duration, null, null, () => {
 		$(idString).remove();
 	});
 }

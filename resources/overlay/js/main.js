@@ -160,7 +160,7 @@ function notification(status, text){
 }
 
 $.fn.extend({
-    animateCss: function (animationName, animationDuration, animationDelay, callback, data) {
+    animateCss: function (animationName, animationDuration, animationDelay, animationRepeat, callback, data) {
 		if(callback == null || !(callback instanceof Function)) {
 			callback = () => {};
 		}
@@ -172,6 +172,10 @@ $.fn.extend({
 
 			if(animationDelay) {
 				$(this).css("animation-delay", animationDelay);
+			}
+
+			if(animationRepeat) {
+				$(this).css("animation-iteration-count", animationRepeat);
 			}
 
 			this.addClass('animated ' + animationName).one(animationEnd, function() {
@@ -200,6 +204,7 @@ function showTimedAnimatedElement(
 	inbetweenAnimation,
 	inbetweenDelay,
 	inbetweenDuration, 
+	inbetweenRepeat,
 	exitAnimation, 
 	exitDuration, 
 	duration, 
@@ -208,16 +213,18 @@ function showTimedAnimatedElement(
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
 	inbetweenAnimation = inbetweenAnimation ? inbetweenAnimation : "none";
 	var id = `.${elementClass}`;
-	$(id).animateCss(enterAnimation, enterDuration, null, (data) => {
+	$(id).animateCss(enterAnimation, enterDuration, null, null, (data) => {
 		
-		$(data.id).animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay);
+		$(data.id).animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
 
 		setTimeout(function(){ 
 			if(data.inbetweenAnimation) {
 				$(data.id).css("animation-duration", "");
 				$(data.id).css("animation-delay", "");
+				$(data.id).css("animation-iteration-count", "");
+				$(this).removeClass('animated ' + data.inbetweenAnimation);
 			}
-			$(data.id).animateCss(data.exitAnimation, data.exitDuration, null, (data1) => {
+			$(data.id).animateCss(data.exitAnimation, data.exitDuration, null, null, (data1) => {
 				$(data1.id).remove();
 			}, data);
 		}, (duration === 0 || duration != null) ? duration : 5000);
@@ -228,7 +235,8 @@ function showTimedAnimatedElement(
 		exitDuration: exitDuration,
 		inbetweenAnimation: inbetweenAnimation,
 		inbetweenDuration: inbetweenDuration,
-		inbetweenDelay: inbetweenDelay
+		inbetweenDelay: inbetweenDelay,
+		inbetweenRepeat: inbetweenRepeat
 	});
 }
 

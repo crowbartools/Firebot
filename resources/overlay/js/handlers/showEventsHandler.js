@@ -46,9 +46,9 @@ function showEventsElementList(enterAnimation, exitAnimation, duration, textFina
     $('.showEventsHolder').append(textFinal);
     
     // Add in new message and remove it after max duration
-    $('.'+divClass).animateCss(enterAnimation, null,null,() => {
+    $('.'+divClass).animateCss(enterAnimation, null,null,null,() => {
         setTimeout(function(){ 
-            $('.'+divClass).animateCss(exitAnimation, null,null,() => {
+            $('.'+divClass).animateCss(exitAnimation, null,null,null,() => {
                 $('.'+divClass).remove();
             });
         }, (duration === 0 || duration != null) ? duration : 5000);

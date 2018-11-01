@@ -43,6 +43,8 @@ function showText(data){
 	var inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
 	var inbetweenDuration = data.inbetweenDuration;
 	var inbetweenDelay = data.inbetweenDelay;
+	var inbetweenRepeat = data.inbetweenRepeat;
+	console.log(inbetweenRepeat);
 
-	showTimedAnimatedElement(divClass, enterAnimation, enterDuration, inbetweenAnimation, inbetweenDelay, inbetweenDuration, exitAnimation, exitDuration, data.duration * 1000);
+	showTimedAnimatedElement(divClass, enterAnimation, enterDuration, inbetweenAnimation, inbetweenDelay, inbetweenDuration, inbetweenRepeat, exitAnimation, exitDuration, data.duration * 1000);
 }

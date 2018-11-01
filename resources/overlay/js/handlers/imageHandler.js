@@ -43,5 +43,5 @@ function showImage(data){
 	}
 	
 	$('#wrapper').append(imageFinal);
-	showTimedAnimatedElement(divClass+'-image', data.enterAnimation, data.enterDuration, data.inbetweenAnimation, data.inbetweenDelay, data.inbetweenDuration, data.exitAnimation, data.exitDuration, imageDuration, data.resourceToken);
+	showTimedAnimatedElement(divClass+'-image', data.enterAnimation, data.enterDuration, data.inbetweenAnimation, data.inbetweenDelay, data.inbetweenDuration, data.inbetweenRepeat, data.exitAnimation, data.exitDuration, imageDuration, data.resourceToken);
 }

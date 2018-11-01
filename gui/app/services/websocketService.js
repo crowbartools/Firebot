@@ -117,6 +117,7 @@
                     inbetweenAnimation: data.inbetweenAnimation,
                     inbetweenDelay: data.inbetweenDelay,
                     inbetweenDuration: data.inbetweenDuration,
+                    inbetweenRepeat: data.inbetweenRepeat,
                     "overlayInstance": data.overlayInstance,
                     "customCoords": data.customCoords
                 };
@@ -166,6 +167,7 @@
                     inbetweenAnimation: data.inbetweenAnimation,
                     inbetweenDelay: data.inbetweenDelay,
                     inbetweenDuration: data.inbetweenDuration,
+                    inbetweenRepeat: data.inbetweenRepeat,
                     "overlayInstance": data.overlayInstance,
                     "customCoords": data.customCoords,
                     "loop": data.loop
