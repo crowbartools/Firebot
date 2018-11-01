@@ -2,6 +2,8 @@ firebotOverlay = new EventEmitter();
 
 let params = new URL(location).searchParams;
 
+OVERLAY_PORT = 7472;
+
 // Kickstarter
 // This function kickstarts the connection process.
 function mixerSocketConnect(){
@@ -11,6 +13,7 @@ function mixerSocketConnect(){
 
 		ws = new ReconnectingWebSocket(`ws://${window.location.hostname}:${port}`);
 		ws.onopen = function(){
+			OVERLAY_PORT = port;
 			notification('close');
 			console.log(`Connection is opened on port ${port}...`);
 		};
@@ -68,12 +71,12 @@ mixerSocketConnect();
 
 
 function loadFonts() {
-	$.get(`http://${window.location.hostname}:7473/api/v1/fonts`, (fonts) => {
+	$.get(`http://${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts`, (fonts) => {
 
 		let fontStyleBlock = `<style type="text/css">`;
 
 		fonts.forEach(font => {
-			let fontPath = `http://${window.location.hostname}:7473/api/v1/fonts/${font.name}`
+			let fontPath = `http://${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts/${font.name}`
 			fontStyleBlock +=
 `@font-face {
 	font-family: '${font.name}';

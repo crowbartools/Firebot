@@ -1,6 +1,6 @@
 'use strict';
 
-const fontManager = require('../../../lib/fontManager');
+const fontManager = require('../../../../lib/fontManager');
 
 exports.getFontNames = function(req, res) {
     let fonts = fontManager.getInstalledFonts().map(f => {

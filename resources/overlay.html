@@ -37,7 +37,7 @@
 			const params = new URL(location).searchParams;
 			
 			const HOST = params.get("host") || "localhost"
-			const PORT = params.get("port") || "7473";
+			const PORT = params.get("port") || "7472";
 			const INSTANCE = params.get("instance") || "";
 			const QUERY_STRING = INSTANCE ? `?instance=${INSTANCE}` : '';
 			const OVERLAY_URL = `http://${HOST}:${PORT}/overlay/${QUERY_STRING}`;
