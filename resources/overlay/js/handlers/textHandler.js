@@ -15,7 +15,7 @@ function showText(data){
 	//border: 2px solid green;
 	let styles = `height:${data.height}px;width:${data.width}px;${customPosStyles}`;
 
-	styles += `justify-content:${data.justify};`
+	styles += `justify-content:${data.justify};text-align:${data.justify};`
 
 	if(data.dontWrap) {
 		styles += "overflow: hidden; white-space: nowrap;"
