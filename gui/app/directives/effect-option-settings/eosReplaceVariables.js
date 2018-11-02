@@ -63,9 +63,26 @@
                     
                     <eos-replace-variable-section name="Events Only">
                         <ul>
-                            <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed. Meant to be used on subscriber events.</li>
-                            <li><b>$(elAmount)</b> - ExtraLife donation amount. Only works on the ExtraLife Donation event. If user chooses not to disclose amount, it will say 'undisclosed amount'.</li>
-                            <li><b>$(elMessage)</b> - ExtraLife donation message. Only works on the ExtraLife Donation event.</li>
+                            <li> Subscribe Event
+                                <ul>
+                                    <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed.</li>
+                                </ul>
+                            </li>
+                            <li> Skill Event
+                                <ul>
+                                    <li><b>$(skillName)</b> - Name of associated Skill.</li>
+                                    <li><b>$(skillIconUrl)</b> - URL of icon for associated Skill. If sticker, it will be the sticker image.</li>
+                                    <li><b>$(skillCost)</b> - Cost of the associated Skill.</li>
+                                    <li><b>$(skillCurrencyType)</b> - Type of currency used for associated Skill.</li>
+                                </ul>
+                            </li>
+                            <li> ExtraLife Event
+                                <ul>
+                                    <li><b>$(elAmount)</b> - ExtraLife donation amount. If user chooses not to disclose amount, it will say 'undisclosed amount'.</li>
+                                    <li><b>$(elMessage)</b> - ExtraLife donation message.</li>
+                                </ul>
+                            </li>
+                            
                         </ul>
                     </eos-replace-variable-section>               
                 </div>

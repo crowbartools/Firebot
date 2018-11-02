@@ -21,6 +21,9 @@
             // Chat User List
             service.chatUsers = [];
 
+            //this contains executionId and gif url correllations for the mixer gif effect
+            let gifSkillDictionary = {};
+
             // Sub Icon Cache
             service.subIconCache = false;
 
@@ -233,6 +236,7 @@
                 case "ClearMessages":
                     logger.info('Chat cleared');
                     service.clearChatQueue();
+                    gifSkillDictionary = {};
                     service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
                     break;
                 case "DeleteMessage":
@@ -413,6 +417,90 @@
             }, 250);
 
 
+            function parseChatEventObject(data) {
+
+                if (data.user_avatar == null) {
+                    data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
+                }
+
+                if (data.message) {
+                    let streamerName = connectionService.accounts.streamer.username,
+                        botName = connectionService.accounts.bot.username;
+
+                    let isTagged =
+                    data.message.message.some(s => s.type === "tag" &&
+                    (s.username === streamerName || s.username === botName));
+
+                    if (isTagged) {
+                        data.tagged = true;
+                        if (!data.historical) {
+                            soundService.playChatNotification();
+                        }
+                    }
+
+                    data.whisper = data.message.meta.whisper === true;
+
+                    data.action = data.message.meta.me === true;
+                } else if (data.skill) {
+                    data.isSkill = true;
+
+                    // Set the icon for the currency used.
+                    if (data.skill.currency === "Sparks") {
+                        data.currencyIcon = "fas fa-bolt";
+                    } else {
+                        data.currencyIcon = "fas fa-fire";
+                    }
+                }
+
+
+                // Returns first role in set of roles which should be their primary.
+                // Filters out subscriber, because we have a separate function for that and
+                // it doesnt have it's own chat color.
+                data.mainColorRole = data.user_roles.find(r => r !== "Subscriber");
+
+                data.subscriber = data.user_roles.some(r => r === "Subscriber");
+
+                data.timestamp = moment(data.date).format('h:mm A');
+
+                return data;
+            }
+
+            service.skillHasGifUrl = function(executionId) {
+                return gifSkillDictionary[executionId] != null;
+            };
+
+            service.getGifUrlForSkill = function(executionId) {
+                return gifSkillDictionary[executionId];
+            };
+
+            // Watches for a non chat (aka not sticker) skill event
+            // it looks like a regular chat event object except instead of a
+            // .message property, it has a .skill one.
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.GIF_FOR_SKILL },
+                (data) => {
+                    if (settingsService.getRealChatFeed()) {
+                        gifSkillDictionary[data.executionId] = data.gifUrl;
+                    }
+                });
+
+            // Watches for a non chat (aka not sticker) skill event
+            // it looks like a regular chat event object except instead of a
+            // .message property, it has a .skill one.
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.NON_CHAT_SKILL },
+                (data) => {
+
+                    if (settingsService.getRealChatFeed()) {
+
+                        let queueEntry = parseChatEventObject(data);
+
+                        // Push new message to queue.
+                        messageHoldingQueue.push(queueEntry);
+                    }
+                });
+
+
             // Watches for an chat message from main process
             // Pushes it to chat queue when it is recieved.
             listenerService.registerListener(
@@ -420,39 +508,11 @@
                 (data) => {
 
                     if (settingsService.getRealChatFeed() === true) {
-                        if (data.user_avatar == null) {
-                            data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
-                        }
 
-                        let streamerName = connectionService.accounts.streamer.username,
-                            botName = connectionService.accounts.bot.username;
-
-                        let isTagged =
-                            data.message.message.some(s => s.type === "tag" &&
-                            (s.username === streamerName || s.username === botName));
-
-                        if (isTagged) {
-                            data.tagged = true;
-                            if (!data.historical) {
-                                soundService.playChatNotification();
-                            }
-                        }
-
-                        data.whisper = data.message.meta.whisper === true;
-
-                        data.action = data.message.meta.me === true;
-
-                        // Returns first role in set of roles which should be their primary.
-                        // Filters out subscriber, because we have a separate function for that and
-                        // it doesnt have it's own chat color.
-                        data.mainColorRole = data.user_roles.find(r => r !== "Subscriber");
-
-                        data.subscriber = data.user_roles.some(r => r === "Subscriber");
-
-                        data.timestamp = moment(data.date).format('h:mm A');
+                        let queueEntry = parseChatEventObject(data);
 
                         // Push new message to queue.
-                        messageHoldingQueue.push(data);
+                        messageHoldingQueue.push(queueEntry);
                     }
                 });
 

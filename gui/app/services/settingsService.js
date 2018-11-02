@@ -252,6 +252,24 @@
                 pushDataToFile('/settings/chatAlternateBackgrounds', alternate === true);
             };
 
+            service.setChatShowGifs = function(showGifs) {
+                pushDataToFile('/settings/chatShowGifs', showGifs === true);
+            };
+
+            service.chatShowGifs = function() {
+                let showGifs = getDataFromFile('/settings/chatShowGifs');
+                return showGifs != null ? showGifs : true;
+            };
+
+            service.setChatShowStickers = function(showStickers) {
+                pushDataToFile('/settings/chatShowStickers', showStickers === true);
+            };
+
+            service.chatShowStickers = function() {
+                let showStickers = getDataFromFile('/settings/chatShowStickers');
+                return showStickers != null ? showStickers : true;
+            };
+
             service.chatHideDeletedMessages = function() {
                 let hide = getDataFromFile('/settings/chatHideDeletedMessages');
                 return hide != null ? hide : false;

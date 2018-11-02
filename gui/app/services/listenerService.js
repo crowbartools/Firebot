@@ -35,7 +35,9 @@
                 info: {},
                 backupComplete: {},
                 currentViewersUpdate: {},
-                clearEffects: {}
+                clearEffects: {},
+                nonChatSkill: {},
+                gifUrlForSkill: {}
             };
 
             let ListenerType = {
@@ -69,7 +71,9 @@
                 CELEBREATE: "celebrate",
                 INFO: "info",
                 BACKUP_COMPLETE: "backupComplete",
-                CLEAR_EFFECTS: "clearEffects"
+                CLEAR_EFFECTS: "clearEffects",
+                NON_CHAT_SKILL: "nonChatSkill",
+                GIF_FOR_SKILL: "gifUrlForSkill"
             };
 
             function runListener(listener, returnPayload) {
@@ -216,6 +220,21 @@
                 parseFilePathEvent(data);
             });
 
+
+            // gif url for skill
+            ipcRenderer.on('gifUrlForSkill', function (event, data) {
+                _.forEach(registeredListeners.gifUrlForSkill, (listener) => {
+                    runListener(listener, data);
+                });
+            });
+
+
+            // Non skill event listener
+            ipcRenderer.on('nonChatSkill', function (event, data) {
+                _.forEach(registeredListeners.nonChatSkill, (listener) => {
+                    runListener(listener, data);
+                });
+            });
 
 
             /**
