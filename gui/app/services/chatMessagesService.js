@@ -402,7 +402,7 @@
                     service.chatQueue = service.chatQueue.concat(messageHoldingQueue);
                     messageHoldingQueue = [];
 
-                    // Trim messages over 200.
+                    // Trim messages.
                     service.pruneChatQueue();
 
                     //hacky way to ensure we stay scroll glued

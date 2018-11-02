@@ -44,11 +44,15 @@
                             </span>
                         </div>
                         <div class="chatContent" style="font-size: 1.17em;">
-                            <span ng-repeat="segment in message.message.message">
+                            <span ng-repeat="segment in message.message.message" class="chat-content-wrap">
                                 <span ng-if="segment.type === 'text'">
                                     {{segment.data}}
                                 </span>
                                 <span ng-if="segment.type === 'emoticon'" class="chatEmoticon" ng-style="segment.emoticonStyles"></span>
+                                <div ng-if="segment.type === 'image'" class="chatSticker">
+                                    <span class="chatStickerImage"><img ng-src="{{segment.url}}?width=64&height=64" ng-style="segment.stickerStyles"></span>
+                                    <span class="chatStickerCost">{{message.message.meta.skill.cost}} <i ng-class="segment.currencyIcon"></i> </span>
+                                </div>
                                 <span ng-if="segment.type === 'link'">
                                     <a class="chat-link" ng-click="openLinkExternally(segment.url)">{{segment.url}}</a>
                                 </span>
