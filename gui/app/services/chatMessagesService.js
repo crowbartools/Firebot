@@ -110,7 +110,12 @@
                             cachedUserName = message.user_name;
                         }
                         message.deleted = true;
-                        message.eventInfo = "Timed out by " + data.moderator.user_name + '.';
+                        let modName = "a mod";
+                        if (data.moderator) {
+                            modName = data.moderator.user_name;
+                        }
+                        message.eventInfo = `Timed out by ${modName}.`;
+
                     }
                 });
 
