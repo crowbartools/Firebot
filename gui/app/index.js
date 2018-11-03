@@ -36,7 +36,14 @@ document.addEventListener('DOMContentLoaded', boot);
 
 // Catch browser window (renderer) errors and log them via Winston
 window.onerror = function(error, url, line) {
-    logger.error("(Renderer) " + error, { error: error, url: url, line: line });
+    let message = `(Renderer) ${error}`;
+    if (url) {
+        message += ` [url=${url}]`;
+    }
+    if (line) {
+        message += ` [line=${line}]`;
+    }
+    logger.error(message, error);
 };
 
 
