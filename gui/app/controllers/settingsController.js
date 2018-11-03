@@ -45,6 +45,12 @@
                 remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
             };
 
+            $scope.setSparkExemption = (value) => {
+                value = value === true;
+                settingsService.setSparkExemptionEnabled(value);
+                ipcRenderer.send("sparkExemptionToggled", value);
+            };
+
             $scope.audioOutputDevices = [{
                 label: "System Default",
                 deviceId: "default"

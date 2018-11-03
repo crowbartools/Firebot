@@ -422,6 +422,15 @@
                 pushDataToFile('/settings/eventSettings', eventSettings);
             };
 
+            service.sparkExemptionEnabled = function() {
+                let enabled = getDataFromFile('/settings/sparkExemptionEnabled');
+                return enabled != null ? enabled : false;
+            };
+
+            service.setSparkExemptionEnabled = function(enabled) {
+                pushDataToFile('/settings/sparkExemptionEnabled', enabled === true);
+            };
+
             service.getClearCustomScriptCache = function() {
                 let clear = getDataFromFile('/settings/clearCustomScriptCache');
                 return clear != null ? clear : false;

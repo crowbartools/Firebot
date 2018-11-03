@@ -79,7 +79,7 @@
             function logCleaner() {
                 let now = new Date();
                 let nowMilliseconds = now.getTime();
-                let maxAge = 120000;
+                let maxAge = 240000;
 
                 service.generalEvents = _.reject(service.generalEvents, (event) => {
                     let age = event.milliseconds + maxAge;

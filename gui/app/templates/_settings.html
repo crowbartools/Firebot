@@ -99,6 +99,18 @@
               </div>
             </div>
             <div class="setting col-sm-6">
+              <div class="setting-heading">Spark Exemption</div>
+                <div class="setting-description">Enable or disable the spark exemption feature, which lets you specify users or groups who dont get charged sparks.</div>
+                <div class="dropdown options-customscript-dropdown"style="display: inline-block">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span class="dropdown-text">{{settings.sparkExemptionEnabled() ? 'On' : 'Off'}}</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                      <li><a href ng-click="setSparkExemption(true)">On</a></li>
+                      <li><a href ng-click="setSparkExemption(false)">Off</a></li>
+                    </ul>
+                  </div>
             </div>
           </div>
         </uib-tab>
