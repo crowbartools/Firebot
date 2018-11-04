@@ -12,6 +12,7 @@
 
             service.toggleNav = function() {
                 service.navExpanded = !service.navExpanded;
+                $rootScope.$broadcast("navToggled");
             };
 
             service.currentTab = "buttons";

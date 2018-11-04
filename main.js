@@ -254,6 +254,10 @@ app.on('ready', async function() {
     const extralifeManager = require('./lib/extralifeManager');
     extralifeManager.start();
 
+    //load patronage data
+    const patronageManager = require("./lib/patronageManager");
+    patronageManager.loadPatronageData();
+
     return true;
 });
 

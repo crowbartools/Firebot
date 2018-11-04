@@ -37,7 +37,8 @@
                 currentViewersUpdate: {},
                 clearEffects: {},
                 nonChatSkill: {},
-                gifUrlForSkill: {}
+                gifUrlForSkill: {},
+                channelPatronageUpdate: {}
             };
 
             let ListenerType = {
@@ -73,7 +74,8 @@
                 BACKUP_COMPLETE: "backupComplete",
                 CLEAR_EFFECTS: "clearEffects",
                 NON_CHAT_SKILL: "nonChatSkill",
-                GIF_FOR_SKILL: "gifUrlForSkill"
+                GIF_FOR_SKILL: "gifUrlForSkill",
+                CHANNEL_PATRONAGE_UPDATE: "channelPatronageUpdate"
             };
 
             function runListener(listener, returnPayload) {
@@ -193,6 +195,10 @@
                 ipcRenderer.send(type, data);
             };
 
+            service.fireEventSync = function(type, data) {
+                return ipcRenderer.sendSync(type, data);
+            };
+
             /**
             * File path event listeners
             */
@@ -218,6 +224,14 @@
 
             ipcRenderer.on('gotAnyFilePath', function (event, data) {
                 parseFilePathEvent(data);
+            });
+
+
+            // patronage updates
+            ipcRenderer.on('channelPatronageUpdate', function (event, data) {
+                _.forEach(registeredListeners.channelPatronageUpdate, (listener) => {
+                    runListener(listener, data);
+                });
             });
 
 

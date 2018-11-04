@@ -24,6 +24,7 @@ require('angularjs-slider');
 require('ui-select');
 require('angular-ui-sortable');
 require('ng-youtube-embed');
+require('countup.js-angular1');
 require('../../node_modules/angular-summernote/dist/angular-summernote');
 
 function boot() {
