@@ -20,10 +20,10 @@
                         <div style="color: white;opacity: 0.5;transition: 0.3s;font-size: 11px;text-transform: uppercase;padding-bottom: 3px;">
                             <span>Spark Patronage</span>
                         </div>
-                        <div style="font-weight: 200;'Roboto Mono', monospace;width: 100px;height:22px;text-align: center;overflow: hidden;transform: translate(-2px,0);">
-                            <span id="patronageCount" count-up end-val="$ctrl.getEarnedPatronage()" duration="0.2"></span>                    
+                        <div style="font-weight: 200;'Roboto Mono', monospace;width: 100px;height:22px;text-align: center;overflow: hidden;display:flex;justify-content:flex-start; transform: translate(-1px);">
+                            <span id="patronageCount" count-up reanimate-on-click="false" end-val="$ctrl.getEarnedPatronage()" duration="0.2"></span>                    
                         </div>
-                        <div style="height: 2px;display: flex;width: 100%;margin-top: 6px;position:relative;">
+                        <div style="height: 2px;display: flex;width: 100%;margin-top: 10px;position:relative;">
                             <span style="height:2px;background: #424242;display: inline-block;position:absolute;z-index:10;top: 0;right: 0;width:{{$ctrl.getReversedMilestoneCompletedPercentage()}}%;"></span>
                             <span style="position:absolute;height:2px;background: linear-gradient(to right, {{$ctrl.getBackgroundGradientA()}} 0%, {{$ctrl.getBackgroundGradientB()}} 100%);width: 100%;display: inline-block;"></span>
                         </div>
@@ -159,18 +159,6 @@
                 $timeout(() => {
                     recalcTextSize();
                 }, 500);
-
-                function getRandomInt(min, max) {
-                    return Math.floor(Math.random() * (max - min + 1)) + min;
-                }
-                $interval(() => {
-                    patronageService.patronageData.channel.patronageEarned += getRandomInt(20000, 10000000);
-
-                    patronageService.recalucatePercentages();
-                    recalcTextSize();
-
-                }, 1000);
-
             }
         });
 }());

@@ -59,21 +59,18 @@
             function getPercentageOfCurrentVessel() {
                 let percentCompleted = 0;
 
-                console.log("here");
                 if (service.dataLoaded) {
-                    console.log("here2");
                     let periodData = service.patronageData.period;
                     let channelData = service.patronageData.channel;
 
                     let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
-                    console.log("here3");
+
                     let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
                     if (milestoneGroup) {
-                        console.log("here4");
                         let lastMilestone = milestoneGroup.milestones[milestoneGroup.milestones.length - 1];
 
                         if (lastMilestone) {
-                            console.log("here5");
+
                             let targetBase = milestoneGroup.milestoneTargetBase;
                             let lastTarget = lastMilestone.target;
 
@@ -84,8 +81,6 @@
                             } else {
                                 percentCompleted = (patronageEarned - targetBase) / (lastTarget - targetBase) * 100;
                             }
-
-                            console.log(percentCompleted);
                         }
                     }
                 }
