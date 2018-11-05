@@ -20,6 +20,10 @@
                             <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$(target)])</li>
                             <li><b>$(streamTitle)</b> - The current title of your stream.</li>
                             <li><b>$(userAvatarUrl)</b> - The url of the users avatar. Useful in Show Image effects!</li>
+                            <li><b>$(userAvatarUrl[name])</b> - The url of the given users avatar.</li>
+                            <li><b>$(patronageEarned)</b> - Total number of patronage sparks earned.</li>
+                            <li><b>$(patronageNextMilestoneTarget)</b> - The next milestone spark target.</li>
+                            <li><b>$(patronageNextMilestoneReward)</b> - The next milestone reward value, in dollars.</li>
                             <li><b>$(randomViewer)</b> - The name of a random viewer in chat.</li>
                             <li><b>$(randomNumber[low-high])</b> - Get a random number between the low and high numbers, ie $(randomNumber[1-10])</li>
                             <li><b>$(math[expression])</b> - Evaluate the given expression. Can combine with other vars like randomNumber, ie $(math[2 + $(randomNumber[1-5])]) Learn more <a class="clickable" style="color:#53afff;" ng-click="$ctrl.openLinkExternally('http://mathjs.org/docs/expressions/syntax.html')">here</a>.</li>
@@ -68,12 +72,23 @@
                                     <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed.</li>
                                 </ul>
                             </li>
-                            <li> Skill Event
+                            <li> Skill Event & Skill - Sticker Only Event
                                 <ul>
                                     <li><b>$(skillName)</b> - Name of associated Skill.</li>
                                     <li><b>$(skillIconUrl)</b> - URL of icon for associated Skill. If sticker, it will be the sticker image.</li>
                                     <li><b>$(skillCost)</b> - Cost of the associated Skill.</li>
                                     <li><b>$(skillCurrencyType)</b> - Type of currency used for associated Skill.</li>
+                                </ul>
+                            </li>
+                            <li> Skill - GIF Only Event
+                                <ul>
+                                    <li><b>$(skillGifUrl)</b> - Name of associated Skill.</li>
+                                </ul>
+                            </li>
+                            <li> ExtraLife Event
+                                <ul>
+                                    <li><b>$(patronagePreviousMilestoneTarget)</b> - The previous milestone spark amount.</li>
+                                    <li><b>$(patronagePreviousMilestoneReward)</b> - The previous milestone reward value, in dollars.</li>
                                 </ul>
                             </li>
                             <li> ExtraLife Event
