@@ -236,7 +236,7 @@
                         validationFn: (value) => {
                             return new Promise(resolve => {
 
-                                if (value == null || value.length < 1) return resolve(false);
+                                if (value == null || value.length < 1) return resolve(true);
 
                                 $http.get(`https://www.extra-life.org/api/participants/${value}`)
                                     .then(resp => {
