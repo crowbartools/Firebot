@@ -36,7 +36,7 @@
                     </div>
 
                     <div>
-                        <patronage-tracker></patronage-tracker>
+                        <patronage-tracker ng-show="$ctrl.cs.accounts.streamer.partnered"></patronage-tracker>
             
                         <div class="connection-status-wrapper">
                             <div class='interactive-status-wrapper'>

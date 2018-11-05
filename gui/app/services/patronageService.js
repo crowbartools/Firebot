@@ -93,16 +93,29 @@
                 service.percentageCompletedOfCurrentVessel = getPercentageOfCurrentVessel();
             };
 
+            function setData(patronageData) {
+                if (patronageData == null) return;
+                service.patronageData = patronageData;
+                if (service.patronageData.channel && service.patronageData.period) {
+                    service.dataLoaded = true;
+                    service.recalucatePercentages();
+                }
+            }
+
             service.updateData = () => {
-                service.patronageData = listenerService.fireEventSync("getPatronageData");
-                service.dataLoaded = true;
-                service.recalucatePercentages();
+                let data = listenerService.fireEventSync("getPatronageData");
+                setData(data);
             };
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHANNEL_PATRONAGE_UPDATE},
                 (data) => {
                     service.patronageData.channel = data;
+                    if (!service.dataLoaded) {
+                        let data = listenerService.fireEventSync("getPatronageData");
+                        service.patronageData.period = data.period;
+                        service.dataLoaded = true;
+                    }
                     service.recalucatePercentages();
                     $rootScope.$broadcast("patronageUpdated");
                 });
