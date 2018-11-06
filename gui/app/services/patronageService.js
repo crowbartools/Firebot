@@ -14,9 +14,8 @@
                 period: null
             };
 
-            service.percentageCompletedToNextMilestone = 0;
-            service.percentageCompletedOfCurrentVessel = 0;
-
+            service.percentageToNextMilestone = 0;
+            service.percentageOfCurrentMilestoneGroup = 0;
 
             function getPercentageToNextMilestone() {
                 let percentCompleted = 0;
@@ -25,12 +24,12 @@
                     let periodData = service.patronageData.period;
                     let channelData = service.patronageData.channel;
 
-                    let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
-
                     let currentMilestoneId = channelData.currentMilestoneId;
                     let previousMilestoneId = channelData.currentMilestoneId - 1;
 
-                    let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
+                    let milestoneGroup = periodData.milestoneGroups
+                        .find(mg => mg.id === channelData.currentMilestoneGroupId);
+
                     if (milestoneGroup) {
                         let currentMilestone = milestoneGroup.milestones.find(m => m.id === currentMilestoneId);
 
@@ -47,50 +46,49 @@
                             if (patronageEarned > currentTarget) {
                                 percentCompleted = 100;
                             } else {
-                                percentCompleted = ((patronageEarned - previousTarget) / (currentTarget - previousTarget)) * 100;
+                                percentCompleted = (patronageEarned - previousTarget) / (currentTarget - previousTarget);
                             }
                         }
                     }
                 }
 
-                return Math.floor(percentCompleted);
+                return percentCompleted;
             }
 
-            function getPercentageOfCurrentVessel() {
+            function getPercentageOfCurrentMilestoneGroup() {
                 let percentCompleted = 0;
 
                 if (service.dataLoaded) {
-                    let periodData = service.patronageData.period;
                     let channelData = service.patronageData.channel;
+                    let periodData = service.patronageData.period;
 
-                    let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
+                    let currentMilestoneGroup = periodData.milestoneGroups
+                        .find(mg => mg.id === channelData.currentMilestoneGroupId);
 
-                    let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
-                    if (milestoneGroup) {
-                        let lastMilestone = milestoneGroup.milestones[milestoneGroup.milestones.length - 1];
+                    if (currentMilestoneGroup) {
 
-                        if (lastMilestone) {
+                        let completedMilestoneCount = currentMilestoneGroup.milestones
+                            .filter(m => m.id < channelData.currentMilestoneId)
+                            .length;
 
-                            let targetBase = milestoneGroup.milestoneTargetBase;
-                            let lastTarget = lastMilestone.target;
+                        let milestonesCount = currentMilestoneGroup.milestones.length;
 
-                            let patronageEarned = channelData.patronageEarned;
+                        let completedPercentage = completedMilestoneCount / milestonesCount;
 
-                            if (patronageEarned > lastTarget) {
-                                percentCompleted = 100;
-                            } else {
-                                percentCompleted = (patronageEarned - targetBase) / (lastTarget - targetBase) * 100;
-                            }
-                        }
+                        let currentMilestonePercentage = getPercentageToNextMilestone();
+
+                        let scaledPercentage = completedPercentage + (1 / milestonesCount * currentMilestonePercentage);
+
+                        return scaledPercentage;
                     }
                 }
 
-                return Math.floor(percentCompleted);
+                return percentCompleted;
             }
 
             service.recalucatePercentages = () => {
-                service.percentageCompletedToNextMilestone = getPercentageToNextMilestone();
-                service.percentageCompletedOfCurrentVessel = getPercentageOfCurrentVessel();
+                service.percentageToNextMilestone = Math.floor(getPercentageToNextMilestone() * 100);
+                service.percentageOfCurrentMilestoneGroup = Math.floor(getPercentageOfCurrentMilestoneGroup() * 100);
             };
 
             function setData(patronageData) {

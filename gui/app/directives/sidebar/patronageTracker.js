@@ -47,7 +47,7 @@
                 const defaultGradientB = "#1fbaed";
 
                 $ctrl.getReversedMilestoneCompletedPercentage = () => {
-                    return 100 - patronageService.percentageCompletedToNextMilestone;
+                    return 100 - patronageService.percentageToNextMilestone;
                 };
 
                 $ctrl.getReversedVesselCompletedPercentage = () => {
