@@ -663,6 +663,15 @@
                 // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
                 let cleanedCooldownGroup = JSON.parse(angular.toJson(cooldownGroup));
 
+
+                let controls = boardDb.getData("./firebot/controls");
+                if (controls != null) {
+                    controls = Object.values(controls);
+                    controls.forEach(c => {
+                        boardDb.delete(`./firebot/controls/${c.controlId}/cooldownGroup`);
+                    });
+                }
+
                 if (cleanedCooldownGroup.buttons != null) {
                     cleanedCooldownGroup.buttons.forEach((buttonName) => {
                         boardDb.push(`./firebot/controls/${buttonName}/cooldownGroup`, cooldownGroup.groupName);
