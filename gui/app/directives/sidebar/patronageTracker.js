@@ -34,7 +34,7 @@
                 </div>
             </div>
             `,
-            controller: function($rootScope, sidebarManager, patronageService, $timeout, $interval) {
+            controller: function($rootScope, sidebarManager, patronageService, $timeout) {
                 let $ctrl = this;
 
                 let BigText = require("big-text.js");
@@ -51,7 +51,7 @@
                 };
 
                 $ctrl.getReversedVesselCompletedPercentage = () => {
-                    return 100 - patronageService.percentageCompletedOfCurrentVessel;
+                    return 100 - patronageService.percentageOfCurrentMilestoneGroup;
                 };
 
 
