@@ -5,7 +5,7 @@
         .module('firebotApp')
         .component("patronageTracker", {
             template: `
-            <div class="connection-status-wrapper" style="height: 70px;padding:0;">
+            <div class="connection-status-wrapper" style="height: 70px;padding:0; cursor: pointer;" ng-click="$ctrl.showPatronageDetailsModal()">
                 <div style="display:flex; align-items:center;height: 100%;">
                     <div style="position:relative;margin-left:22px;">
                         <img ng-src="{{$ctrl.getFilledVesselImageUrl()}}" style="height: 45px;object-fit: scale-down;"></img>
@@ -34,7 +34,7 @@
                 </div>
             </div>
             `,
-            controller: function($rootScope, sidebarManager, patronageService, $timeout) {
+            controller: function($rootScope, sidebarManager, patronageService, utilityService, $timeout) {
                 let $ctrl = this;
 
                 let BigText = require("big-text.js");
@@ -52,6 +52,12 @@
 
                 $ctrl.getReversedVesselCompletedPercentage = () => {
                     return 100 - patronageService.percentageOfCurrentMilestoneGroup;
+                };
+
+                $ctrl.showPatronageDetailsModal = function() {
+                    utilityService.showModal({
+                        component: "patronageDetailsModal"
+                    });
                 };
 
 
