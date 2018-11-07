@@ -2,6 +2,8 @@
 
 // Basic template for a modal component, copy this and rename to build a modal.
 
+let moment = require("moment");
+
 (function() {
     angular
         .module('firebotApp')
@@ -9,11 +11,24 @@
             template: `
             <div class="modal-header" style="text-align: center;">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">Patronage Details</h4>
+                <h4 class="modal-title">Spark Patronage</h4>
             </div>
             <div class="modal-body">
 
+                <div style="display:flex;justify-content: center; margin: 15px 0;">
+                    <div>
+                        <div style="font-size:25px">{{$ctrl.getTimeRemaining()}}</div>
+                        <div class="muted" style="font-size:13px">Time Left</div>
+                    </div>
+
+                    <div style="margin-left: 75px;">
+                        <div style="font-size:25px"><i class="fas fa-bolt" style="font-size: 22px;"></i> {{$ctrl.getTotalPatronageEarned() | number}}</div>
+                        <div class="muted" style="font-size:13px">Sparks Raised</div>
+                    </div>                    
+                </div>
                 <div>
+
+                    
                     <div style="display:flex;position:relative;margin-left: 25px;">
 
                         <div style="position:relative;transform: translate(20px, 19px);z-index: 100;">
@@ -67,6 +82,22 @@
                         // 225 = the height of the crystal in pixels
                         let divided = 225 / milestones.length;
                         return divided * index;
+                    }
+                    return 0;
+                };
+
+                $ctrl.getTimeRemaining = () => {
+                    if (patronageService.dataLoaded) {
+                        let a = moment();
+                        let b = moment(patronageService.patronageData.period.endTime);
+                        return a.to(b, true);
+                    }
+                    return "Unknown";
+                };
+
+                $ctrl.getTotalPatronageEarned = () => {
+                    if (patronageService.dataLoaded) {
+                        return patronageService.patronageData.channel.patronageEarned;
                     }
                     return 0;
                 };
