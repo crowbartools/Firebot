@@ -110,32 +110,35 @@
     <div class='loader-wrapper' ng-if="showSpinner">
       <div class="loader">Loading...</div>
     </div>
+    
+    <div class="appwrapper">
+      <sidebar></sidebar>  
 
-    <sidebar></sidebar>  
-
-    <div class="fb-tab-content">
-      <div class="tab-header">
-        <span style="width:100%" class="noselect">{{sbm.currentTab}}</span>
-        <notification-center></notification-center>
-        <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
-          <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
-          <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
-          <div class="fb-arrow down login-arrow"></div>
-          <ul class="dropdown-menu" uib-dropdown-menu>
-            <li>
-              <a href ng-click="showManageLoginsModal()"><span style="vertical-align:-11.5%;"><i class="fal fa-sign-in"></i></span> Manage logins</a>
-            </li>
-          </ul>
+      <div class="fb-tab-content">
+        <div class="tab-header">
+          <span style="width:100%" class="noselect">{{sbm.currentTab}}</span>
+          <notification-center></notification-center>
+          <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
+            <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
+            <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
+            <div class="fb-arrow down login-arrow"></div>
+            <ul class="dropdown-menu" uib-dropdown-menu>
+              <li>
+                <a href ng-click="showManageLoginsModal()"><span style="vertical-align:-11.5%;"><i class="fal fa-sign-in"></i></span> Manage logins</a>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="tab-body-wrapper" ng-class="{ 'no-scroll': sbm.currentTabIsFullScreen() }"> 
-        <div class="tab-body" ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }">
-          <!-- angular templating -->
-          <!-- this is where tab content will be injected -->
-          <div ng-view style="width: 100%"></div>
+        <div class="tab-body-wrapper" ng-class="{ 'no-scroll': sbm.currentTabIsFullScreen() }"> 
+          <div class="tab-body" ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }">
+            <!-- angular templating -->
+            <!-- this is where tab content will be injected -->
+            <div ng-view style="width: 100%"></div>
+          </div>
         </div>
       </div>
     </div>
+    
     
     <!-- Manage Logins Modal -->
     <script type="text/ng-template" id="manageLoginsModal.html">

@@ -85,7 +85,7 @@
                                     <li><b>$(skillGifUrl)</b> - Name of associated Skill.</li>
                                 </ul>
                             </li>
-                            <li> ExtraLife Event
+                            <li> Patronage Milestone Reached
                                 <ul>
                                     <li><b>$(patronagePreviousMilestoneTarget)</b> - The previous milestone spark amount.</li>
                                     <li><b>$(patronagePreviousMilestoneReward)</b> - The previous milestone reward value, in dollars.</li>

@@ -67,6 +67,14 @@
 
                     if (currentMilestoneGroup) {
 
+                        let lastMilestone =
+                            currentMilestoneGroup.milestones[currentMilestoneGroup.milestones.length - 1];
+
+                        if (channelData.patronageEarned >= lastMilestone.target) {
+                            return 1;
+                        }
+
+
                         let completedMilestoneCount = currentMilestoneGroup.milestones
                             .filter(m => m.id < channelData.currentMilestoneId)
                             .length;
@@ -92,6 +100,14 @@
                         .find(mg => mg.id === service.patronageData.channel.currentMilestoneGroupId);
                 }
                 return { milestones: []};
+            };
+
+            service.getCurrentMilestone = () => {
+                if (service.dataLoaded) {
+                    let milestoneGroup = service.getCurrentMilestoneGroup();
+                    return milestoneGroup.milestones.find(m => m.id === service.patronageData.channel.currentMilestoneId);
+                }
+                return null;
             };
 
             service.recalucatePercentages = () => {
@@ -122,6 +138,14 @@
                         service.patronageData.period = data.period;
                         service.dataLoaded = true;
                     }
+                    service.recalucatePercentages();
+                    $rootScope.$broadcast("patronageUpdated");
+                });
+
+            listenerService.registerListener(
+                { type: listenerService.ListenerType.PERIOD_PATRONAGE_UPDATE},
+                (data) => {
+                    service.patronageData.period = data;
                     service.recalucatePercentages();
                     $rootScope.$broadcast("patronageUpdated");
                 });

@@ -15,14 +15,17 @@ let moment = require("moment");
             </div>
             <div class="modal-body">
 
-                <div style="display:flex;justify-content: center; margin: 15px 0;">
+                <div style="display:flex;justify-content: center; margin: 15px 0;text-align: center;">
                     <div>
-                        <div style="font-size:25px">{{$ctrl.getTimeRemaining()}}</div>
+                        <div style="font-size:22px">{{$ctrl.getTimeRemaining()}}</div>
                         <div class="muted" style="font-size:13px">Time Left</div>
                     </div>
 
-                    <div style="margin-left: 75px;">
-                        <div style="font-size:25px"><i class="fas fa-bolt" style="font-size: 22px;"></i> {{$ctrl.getTotalPatronageEarned() | number}}</div>
+                    <div style="margin-left: 55px;">
+                        <div style="font-size:22px; width: 145px;">
+                            <i class="fas fa-bolt" style="font-size: 22px;"></i>
+                            <span count-up reanimate-on-click="false" end-val="$ctrl.getTotalPatronageEarned()" duration="1"></span>
+                        </div>
                         <div class="muted" style="font-size:13px">Sparks Raised</div>
                     </div>                    
                 </div>
@@ -34,7 +37,7 @@ let moment = require("moment");
                         <div style="position:relative;transform: translate(20px, 19px);z-index: 100;">
                             <img ng-src="{{$ctrl.getFilledVesselImageUrl()}}" style="height: 225px;width:70px;"></img>
                             <div style="height:225px;width:70px;position:absolute;top:0;left:0;">
-                                <div style="height:{{$ctrl.getReversedVesselCompletedPercentage()}}%;overflow:hidden;">
+                                <div class="animated-height" style="height:{{$ctrl.getReversedVesselCompletedPercentage()}}%;overflow:hidden;">
                                     <img ng-src="{{$ctrl.getVesselImageUrl()}}" style="height: 225px;width:70px;"></img>
                                 </div>
                             </div>
@@ -42,13 +45,13 @@ let moment = require("moment");
 
                         <div ng-repeat="milestone in $ctrl.getMilestones() | orderBy:'-id' track by milestone.id" class="milestone" style="margin-top:{{$ctrl.getMilestonePadding($index)}}px;">
                             <hr>
-                            <span>
+                            <span class="detail">
                                 <div ng-class="{muted: !$ctrl.milestoneIsCompleted(milestone.id)}">
                                     <span style="font-size: 13px;">
                                         <i class="fas fa-bolt"></i>
                                     </span>
                                     <span>{{ milestone.target | number}}</span>
-                                    <span style="color:{{$ctrl.getBackgroundGradientA()}};width:16px;display: inline-block;padding-top: 0px;"><i ng-show="$ctrl.milestoneIsCompleted(milestone.id)" class="far fa-check-circle"></i></span>
+                                    <span style="color:{{$ctrl.getBackgroundGradientA()}};width:16px;display: inline-block;padding-top: 0px;"><i ng-show="$ctrl.milestoneIsCompleted(milestone.id)" class="animated bounceIn far fa-check-circle" style="animation-delay: 0.{{ 9 - $index * 3}}s;"></i></span>
                                 </div>
                                 <div class="subtext">{{'$' + (milestone.reward / 100)}}</div>
                             </span>
@@ -56,15 +59,13 @@ let moment = require("moment");
 
                     </div>
                 </div>
-                <div style="display:flex;justify-content: center;margin-top:10px;text-align: center;">
+                <div style="display:flex;justify-content: center;margin-top:45px;text-align: center;">
                     <div>
                         <div class="muted" style="font-size:13px">Total Rewards Earned</div>
-                        <div style="font-size:25px">{{$ctrl.getTotalRewardsEarned()}}</div> 
+                        <div style="font-size:25px">{{'$' + $ctrl.getTotalRewardsEarned()}}</div> 
                     </div>
                 </div>
                 
-            </div>
-            <div class="modal-footer">
             </div>
             `,
             bindings: {
@@ -72,15 +73,25 @@ let moment = require("moment");
                 close: '&',
                 dismiss: '&'
             },
-            controller: function(patronageService) {
+            controller: function(patronageService, $timeout) {
                 let $ctrl = this;
 
                 const defaultVesselImg = "https://static.mixer.com/img/design/ui/spark-crystal/001_crystal/001_crystal_empty.png";
                 const defaultVesselFilledImg = "https://static.mixer.com/img/design/ui/spark-crystal/001_crystal/001_crystal_filled.png";
 
+                let pausePercentage = true;
                 $ctrl.getReversedVesselCompletedPercentage = () => {
+                    if (pausePercentage) return 100;
                     return 100 - patronageService.percentageOfCurrentMilestoneGroup;
                 };
+
+                $ctrl.$onInit = () => {
+                    $timeout(() => {
+                        pausePercentage = false;
+                    }, 100);
+                };
+
+
 
                 $ctrl.getMilestonePadding = (index) => {
                     let milestones = $ctrl.getMilestones();
@@ -94,9 +105,19 @@ let moment = require("moment");
 
                 $ctrl.getTimeRemaining = () => {
                     if (patronageService.dataLoaded) {
-                        let a = moment();
-                        let b = moment(patronageService.patronageData.period.endTime);
-                        return a.to(b, true);
+                        let now = new Date();
+                        let reset = new Date(patronageService.patronageData.period.endTime);
+
+                        const duration = reset.getTime() - now.getTime();
+                        const days = parseInt(duration / 1000 / 60 / 60 / 24);
+                        const hours = parseInt(duration / 1000 / 60 / 60);
+                        const h = hours - days * 24;
+                        const minutes = parseInt(duration / 1000 / 60);
+                        const m = minutes - hours * 60;
+
+                        return `${days > 0 ? `${days}d` : ""}${h > 0 ? `, ${h}h` : ""}${
+                            m > 0 ? `, ${m}m` : ""
+                        }`;
                     }
                     return "Unknown";
                 };
@@ -113,19 +134,33 @@ let moment = require("moment");
                 };
 
                 $ctrl.getTotalRewardsEarned = () => {
+                    let totalReward = 0;
                     if (patronageService.dataLoaded) {
                         let channelData = patronageService.patronageData.channel,
                             periodData = patronageService.patronageData.period;
 
-                        //let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
-                        //let currentMilestoneId = channelData.curr
+                        let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
+
+                        for (let milestoneGroup of periodData.milestoneGroups) {
+                            if (milestoneGroup.id > currentMilestoneGroupId) break;
+                            for (let milestone of milestoneGroup.milestones) {
+                                if (channelData.patronageEarned >= milestone.target) {
+                                    totalReward += milestone.reward;
+                                }
+                            }
+                        }
                     }
-                    return 0;
+                    return totalReward / 100;
                 };
 
                 $ctrl.milestoneIsCompleted = (milestoneId) => {
                     let channelData = patronageService.patronageData.channel;
-                    return milestoneId < channelData.currentMilestoneId;
+                    let milestone = $ctrl.getMilestones().find(m => m.id === milestoneId);
+                    if (milestone) {
+                        return milestone.target <= channelData.patronageEarned;
+                    }
+
+                    return false;
                 };
 
                 const defaultGradientA = "#0279f0";
@@ -175,12 +210,6 @@ let moment = require("moment");
                     }
 
                     return defaultVesselFilledImg;
-                };
-
-                $ctrl.$onInit = function () {
-                    // When the compontent is initialized
-                    // This is where you can start to access bindings, such as variables stored in 'resolve'
-                    // IE $ctrl.resolve.shouldDelete or whatever
                 };
             }
         });
