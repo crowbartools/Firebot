@@ -86,6 +86,14 @@
                 return percentCompleted;
             }
 
+            service.getCurrentMilestoneGroup = () => {
+                if (service.dataLoaded) {
+                    return service.patronageData.period.milestoneGroups
+                        .find(mg => mg.id === service.patronageData.channel.currentMilestoneGroupId);
+                }
+                return { milestones: []};
+            };
+
             service.recalucatePercentages = () => {
                 service.percentageToNextMilestone = Math.floor(getPercentageToNextMilestone() * 100);
                 service.percentageOfCurrentMilestoneGroup = Math.floor(getPercentageOfCurrentMilestoneGroup() * 100);

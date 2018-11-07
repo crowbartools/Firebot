@@ -1362,3 +1362,36 @@ thead th{
   z-index:999999999999999999;
 }
 
+
+/* Patronage */
+
+.milestone {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  width: 300px;
+  hr {
+    margin-right: 15px;
+    width: 150px;
+    height: 1px;
+    border: none;
+    border-top: 2px dashed $content-text-color;
+    opacity: 0.3;
+  }
+  span {
+    font-size: 16px;
+    font-weight: bolder;
+    line-height: 20px;
+    padding-top: 7px;
+    .subtext {
+      font-size: 13px;
+      padding-left: 13px;
+      padding-bottom: 5px;
+      text-align: left;
+      font-weight: lighter;
+      line-height: 17px;
+      opacity: 0.6;
+    }
+  }
+}
+

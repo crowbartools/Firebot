@@ -21,7 +21,7 @@
                             <span>Spark Patronage</span>
                         </div>
                         <div style="font-weight: 200;'Roboto Mono', monospace;width: 100px;height:22px;text-align: center;overflow: hidden;display:flex;justify-content:flex-start; transform: translate(-1px);">
-                            <span id="patronageCount" count-up reanimate-on-click="false" end-val="$ctrl.getEarnedPatronage()" duration="0.2"></span>                    
+                            <span id="patronageCount" style="color:#dadada;" count-up reanimate-on-click="false" end-val="$ctrl.getEarnedPatronage()" duration="0.2"></span>                    
                         </div>
                         <div style="height: 2px;display: flex;width: 100%;margin-top: 10px;position:relative;">
                             <span style="height:2px;background: #424242;display: inline-block;position:absolute;z-index:10;top: 0;right: 0;width:{{$ctrl.getReversedMilestoneCompletedPercentage()}}%;"></span>
@@ -56,7 +56,8 @@
 
                 $ctrl.showPatronageDetailsModal = function() {
                     utilityService.showModal({
-                        component: "patronageDetailsModal"
+                        component: "patronageDetailsModal",
+                        size: "sm"
                     });
                 };
 
