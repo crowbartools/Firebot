@@ -56,6 +56,12 @@ let moment = require("moment");
 
                     </div>
                 </div>
+                <div style="display:flex;justify-content: center;margin-top:10px;text-align: center;">
+                    <div>
+                        <div class="muted" style="font-size:13px">Total Rewards Earned</div>
+                        <div style="font-size:25px">{{$ctrl.getTotalRewardsEarned()}}</div> 
+                    </div>
+                </div>
                 
             </div>
             <div class="modal-footer">
@@ -104,6 +110,17 @@ let moment = require("moment");
 
                 $ctrl.getMilestones = () => {
                     return patronageService.getCurrentMilestoneGroup().milestones;
+                };
+
+                $ctrl.getTotalRewardsEarned = () => {
+                    if (patronageService.dataLoaded) {
+                        let channelData = patronageService.patronageData.channel,
+                            periodData = patronageService.patronageData.period;
+
+                        //let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
+                        //let currentMilestoneId = channelData.curr
+                    }
+                    return 0;
                 };
 
                 $ctrl.milestoneIsCompleted = (milestoneId) => {
