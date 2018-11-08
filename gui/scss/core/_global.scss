@@ -36,6 +36,7 @@
 html {
   height: 100%;
 }
+
 body {
  height: 100%;
  margin: 0px;
@@ -44,6 +45,7 @@ body {
  font-family: 'Open Sans', sans-serif !important;
  color:$content-text-color;
 }
+
 .fb-tab-content {
  height: 100%;
  width: 100%;
@@ -51,6 +53,7 @@ body {
  flex-direction: column;
  background: $light-background-color;
 }
+
 .tab-header {
   width: 100%;
   height: 65px;
@@ -1409,7 +1412,6 @@ thead th{
   animation-duration: 100ms;
 }
 
-
 .appwrapper {
   display: flex;
   flex-direction: row;
@@ -1418,7 +1420,7 @@ thead th{
   padding-top: 0;
   padding-bottom: 0;
   font-family: 'Open Sans', sans-serif !important;
-  color: white;
+  color:$content-text-color;
 }
 
 .modal-open .appwrapper {
