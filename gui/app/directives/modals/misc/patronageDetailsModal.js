@@ -27,8 +27,15 @@
                         <div class="muted" style="font-size:13px">Sparks Raised</div>
                     </div>                    
                 </div>
-                <div>      
-                    <div style="display:flex;position:relative;margin-left: 25px;">
+
+                <div style="display:flex;position:relative;"> 
+
+                    <div style="display: flex;align-items: center;font-size: 25px;width:25px;">
+                        <!--<i class="fal fa-chevron-left clickable"></i>-->
+                    </div>
+
+                    <div style="display:flex;position:relative;width:100%;margin-left:20px;">
+                        
 
                         <div style="position:relative;transform: translate(20px, 19px);z-index: 100;">
                             <img ng-src="{{$ctrl.getFilledVesselImageUrl()}}" style="height: 225px;width:70px;"></img>
@@ -52,13 +59,17 @@
                                 <div class="subtext">{{'$' + (milestone.reward / 100)}}</div>
                             </span>
                         </div>
-
                     </div>
+
+                    <div style="display: flex;align-items: center;font-size: 25px;width:25px;">
+                        <!--<i class="fal fa-chevron-right clickable"></i>-->
+                    </div>
+
                 </div>
                 <div style="display:flex;justify-content: center;margin-top:45px;text-align: center;">
                     <div>
                         <div class="muted" style="font-size:13px">Total Rewards Earned</div>
-                        <div style="font-size:25px">{{'$' + $ctrl.getTotalRewardsEarned()}}</div> 
+                        <div style="font-size:25px">{{'$' + $ctrl.getTotalRewardsEarned()}} / {{'$' + $ctrl.getTotalRewardsInPeriod()}}</div> 
                     </div>
                 </div>
                 
@@ -86,8 +97,6 @@
                         pausePercentage = false;
                     }, 100);
                 };
-
-
 
                 $ctrl.getMilestonePadding = (index) => {
                     let milestones = $ctrl.getMilestones();
@@ -153,6 +162,20 @@
                                 if (channelData.patronageEarned >= milestone.target) {
                                     totalReward += milestone.reward;
                                 }
+                            }
+                        }
+                    }
+                    return totalReward / 100;
+                };
+
+                $ctrl.getTotalRewardsInPeriod = () => {
+                    let totalReward = 0;
+                    if (patronageService.dataLoaded) {
+                        let periodData = patronageService.patronageData.period;
+
+                        for (let milestoneGroup of periodData.milestoneGroups) {
+                            for (let milestone of milestoneGroup.milestones) {
+                                totalReward += milestone.reward;
                             }
                         }
                     }
