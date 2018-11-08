@@ -24,6 +24,8 @@
                             <li><b>$(patronageEarned)</b> - Total number of patronage sparks earned.</li>
                             <li><b>$(patronageNextMilestoneTarget)</b> - The next milestone spark target.</li>
                             <li><b>$(patronageNextMilestoneReward)</b> - The next milestone reward value, in dollars.</li>
+                            <li><b>$(patronagePreviousMilestoneTarget)</b> - The previous milestone spark amount.</li>
+                            <li><b>$(patronagePreviousMilestoneReward)</b> - The previous milestone reward value, in dollars.</li>
                             <li><b>$(randomViewer)</b> - The name of a random viewer in chat.</li>
                             <li><b>$(randomNumber[low-high])</b> - Get a random number between the low and high numbers, ie $(randomNumber[1-10])</li>
                             <li><b>$(math[expression])</b> - Evaluate the given expression. Can combine with other vars like randomNumber, ie $(math[2 + $(randomNumber[1-5])]) Learn more <a class="clickable" style="color:#53afff;" ng-click="$ctrl.openLinkExternally('http://mathjs.org/docs/expressions/syntax.html')">here</a>.</li>
@@ -82,13 +84,7 @@
                             </li>
                             <li> Skill - GIF Only Event
                                 <ul>
-                                    <li><b>$(skillGifUrl)</b> - Name of associated Skill.</li>
-                                </ul>
-                            </li>
-                            <li> Patronage Milestone Reached
-                                <ul>
-                                    <li><b>$(patronagePreviousMilestoneTarget)</b> - The previous milestone spark amount.</li>
-                                    <li><b>$(patronagePreviousMilestoneReward)</b> - The previous milestone reward value, in dollars.</li>
+                                    <li><b>$(skillGifUrl)</b> - The url of the GIF. Can be used in Show Image effect!</li>
                                 </ul>
                             </li>
                             <li> ExtraLife Event
