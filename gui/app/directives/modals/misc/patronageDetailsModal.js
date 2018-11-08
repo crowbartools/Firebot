@@ -2,8 +2,6 @@
 
 // Basic template for a modal component, copy this and rename to build a modal.
 
-let moment = require("moment");
-
 (function() {
     angular
         .module('firebotApp')
@@ -103,6 +101,10 @@ let moment = require("moment");
                     return 0;
                 };
 
+                function pad(s) {
+                    return s.toString().padStart(2, "0");
+                }
+
                 $ctrl.getTimeRemaining = () => {
                     if (patronageService.dataLoaded) {
                         let now = new Date();
@@ -114,8 +116,14 @@ let moment = require("moment");
                         const h = hours - days * 24;
                         const minutes = parseInt(duration / 1000 / 60);
                         const m = minutes - hours * 60;
+                        const seconds = parseInt(duration / 1000);
+                        const s = seconds - minutes * 60;
 
-                        return `${days > 0 ? `${days}d` : ""}${h > 0 ? `, ${h}h` : ""}${
+                        if (days < 1) {
+                            return `${pad(h)}:${pad(m)}:${pad(s)}`;
+                        }
+
+                        return `${days}d, ${h}h${
                             m > 0 ? `, ${m}m` : ""
                         }`;
                     }
