@@ -27,9 +27,7 @@
                         <div class="muted" style="font-size:13px">Sparks Raised</div>
                     </div>                    
                 </div>
-                <div>
-
-                    
+                <div>      
                     <div style="display:flex;position:relative;margin-left: 25px;">
 
                         <div style="position:relative;transform: translate(20px, 19px);z-index: 100;">
