@@ -34,7 +34,7 @@
                         <!--<i class="fal fa-chevron-left clickable"></i>-->
                     </div>
 
-                    <div style="display:flex;position:relative;width:100%;margin-left:20px;">
+                    <div style="display:flex;position:relative;width:100%;margin-left:5px;">
                         
 
                         <div style="position:relative;transform: translate(20px, 19px);z-index: 100;">
