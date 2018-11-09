@@ -2,7 +2,10 @@
 // This will take the data that is sent to it from the GUI and render on the overlay.
 function showHtml(data){
     var element, _element;
-    element = _element = $('#wrapper').append(data.html);
+
+    element = _element = $(data.html);
+    
+    $('#wrapper').append(_element);
 
     setTimeout(function(){
         // If CSS class is provided, remove element(s) with provided CSS class.
