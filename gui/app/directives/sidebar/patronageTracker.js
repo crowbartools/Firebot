@@ -107,9 +107,11 @@
 
                         let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
 
-                        let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
-                        if (milestoneGroup) {
-                            return milestoneGroup.uiComponents.vesselImageEmptyPath;
+                        if (periodData.milestoneGroups) {
+                            let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
+                            if (milestoneGroup) {
+                                return milestoneGroup.uiComponents.vesselImageEmptyPath;
+                            }
                         }
                     }
                     return defaultVesselImg;
@@ -122,10 +124,11 @@
                         let channelData = patronageService.patronageData.channel;
 
                         let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
-
-                        let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
-                        if (milestoneGroup) {
-                            return milestoneGroup.uiComponents.vesselImageFullPath;
+                        if (periodData.milestoneGroups) {
+                            let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
+                            if (milestoneGroup) {
+                                return milestoneGroup.uiComponents.vesselImageFullPath;
+                            }
                         }
                     }
 
@@ -139,9 +142,11 @@
 
                         let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
 
-                        let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
-                        if (milestoneGroup) {
-                            return milestoneGroup.uiComponents.backgroundGradientA;
+                        if (periodData.milestoneGroups) {
+                            let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
+                            if (milestoneGroup) {
+                                return milestoneGroup.uiComponents.backgroundGradientA;
+                            }
                         }
                     }
 
@@ -155,9 +160,11 @@
 
                         let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
 
-                        let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
-                        if (milestoneGroup) {
-                            return milestoneGroup.uiComponents.backgroundGradientB;
+                        if (periodData.milestoneGroups) {
+                            let milestoneGroup = periodData.milestoneGroups.find(mg => mg.id === currentMilestoneGroupId);
+                            if (milestoneGroup) {
+                                return milestoneGroup.uiComponents.backgroundGradientB;
+                            }
                         }
                     }
 
