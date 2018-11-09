@@ -114,7 +114,7 @@ function showVideo(data){
 		var time = d.getTime();
 		var ytPlayerId = `yt-${time}`;
 		
-		var videoFinal = '<div class="'+divClass+'-video style="display:none;" videoOverlay"><div id="' + ytPlayerId +'" position="'+videoPosition+'" style="'+customPosStyles+'"></div></div>';
+		var videoFinal = '<div class="'+divClass+'-video" style="display:none;" videoOverlay><div id="' + ytPlayerId +'" position="'+videoPosition+'" style="'+customPosStyles+'"></div></div>';
 		
 		// Throw div on page.
 		$('#wrapper').append(videoFinal);
@@ -161,11 +161,10 @@ function showVideo(data){
 				$(videoId).animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay);
 			});
 
-
-			$(videoId).show();
-
 			event.target.setVolume(parseInt(videoVolume) * 10);
 			event.target.playVideo();
+
+			$(videoId).show();
 		}
 
 		// Remove div when YouTube video has stopped.
