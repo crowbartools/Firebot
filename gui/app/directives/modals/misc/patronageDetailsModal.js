@@ -160,7 +160,9 @@
                             if (milestoneGroup.id > currentMilestoneGroupId) break;
                             for (let milestone of milestoneGroup.milestones) {
                                 if (channelData.patronageEarned >= milestone.target) {
-                                    totalReward += milestone.reward;
+                                    if (milestone.incrementalReward) {
+                                        totalReward += milestone.incrementalReward;
+                                    }
                                 }
                             }
                         }
@@ -175,7 +177,9 @@
 
                         for (let milestoneGroup of periodData.milestoneGroups) {
                             for (let milestone of milestoneGroup.milestones) {
-                                totalReward += milestone.reward;
+                                if (milestone.incrementalReward) {
+                                    totalReward += milestone.incrementalReward;
+                                }
                             }
                         }
                     }
