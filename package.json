@@ -1,6 +1,6 @@
 {
     "name": "Firebot",
-    "version": "4.17.3",
+    "version": "4.17.4",
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
     "scripts": {
@@ -43,6 +43,7 @@
     },
     "dependencies": {
         "@mixer/client-node": "^3.0.0",
+        "@mixer/interactive-node": "^3.0.0",
         "angular": "^1.5.5",
         "angular-animate": "^1.5.5",
         "angular-route": "^1.6.4",
@@ -52,7 +53,6 @@
         "angular-ui-sortable": "^0.18.0",
         "angularjs-slider": "^6.2.2",
         "archiver": "^2.0.3",
-        "beam-interactive-node2": "^2.8.4",
         "big-text.js": "^1.0.1",
         "body-parser": "^1.18.1",
         "carina": "^0.11.0",
