@@ -668,7 +668,10 @@
                 if (controls != null) {
                     controls = Object.values(controls);
                     controls.forEach(c => {
-                        boardDb.delete(`./firebot/controls/${c.controlId}/cooldownGroup`);
+                        logger.info(c.cooldownGroup + " === " + cooldownGroup.groupName);
+                        if (c.cooldownGroup === cooldownGroup.groupName) {
+                            boardDb.delete(`./firebot/controls/${c.controlId}/cooldownGroup`);
+                        }
                     });
                 }
 
