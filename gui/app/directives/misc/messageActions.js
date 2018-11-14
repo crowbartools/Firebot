@@ -69,6 +69,11 @@
                         icon: "fa-envelope"
                     });
 
+                    actions.push({
+                        name: "Mention",
+                        icon: "fa-at"
+                    });
+
                     if (
                         vm.message.user_name !==
               connectionService.accounts.streamer.username &&
