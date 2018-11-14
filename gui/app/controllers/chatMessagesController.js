@@ -183,6 +183,10 @@
                     $scope.chatMessage = "/w @" + userName + " ";
                     focusMessageInput();
                     break;
+                case "mention":
+                    $scope.chatMessage = "@" + userName + " ";
+                    focusMessageInput();
+                    break;
                 default:
                     return;
                 }
@@ -222,6 +226,7 @@
                         }
                     }
                 } else if (keyCode === 13) { // enter
+                    logger.info("test");
                     $scope.submitChat();
                 }
             };

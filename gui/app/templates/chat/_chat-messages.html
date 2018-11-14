@@ -106,7 +106,7 @@
                     ng-maxlength="360"
                     ng-model="chatMessage"
                     ng-change="onMessageFieldUpdate()"
-                    ng-keyup="Me($event)"
+                    ng-keyup="onMessageFieldKeypress($event)"
                     ng-disabled="!chatFeedIsEnabled()"                    
                     uib-typeahead="command for command in commands | filter:$viewValue | limitTo:8">
 
