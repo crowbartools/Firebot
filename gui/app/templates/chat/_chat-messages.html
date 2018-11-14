@@ -89,7 +89,7 @@
             <div class="text-input">
                 <div class="dropup">
                     <span class="dropdown-toggle chatter-dropdown" data-toggle="dropdown" uib-tooltip="Chat as" tooltip-placement="left" tooltip-append-to-body="true">
-                        <span style="margin-left: 10px;">{{chatSender}}</span>
+                        <span style="margin-left: 10px;width: 100%;text-align: center;">{{chatSender}}</span>
                         <div class="fb-arrow down" style="margin-left: 10px;margin-right: 10px;margin-bottom: 3px;"></div>
                     </span>
                     <ul class="dropdown-menu">
@@ -106,9 +106,13 @@
                     ng-maxlength="360"
                     ng-model="chatMessage"
                     ng-change="onMessageFieldUpdate()"
-                    ng-keyup="onMessageFieldKeypress($event)"
+                    ng-keyup="Me($event)"
                     ng-disabled="!chatFeedIsEnabled()"                    
                     uib-typeahead="command for command in commands | filter:$viewValue | limitTo:8">
+
+                <div class="chatfeed-send-btn" ng-click="submitChat()">
+                    <span>Send</span>
+                </div>
             </div>
             <div class="settings-btn-wrapper">
                 <span class="settings-btn" 
