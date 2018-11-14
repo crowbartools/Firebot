@@ -8,7 +8,8 @@
             $scope,
             eventLogService,
             groupsService,
-            utilityService
+            utilityService,
+            settingsService
         ) {
             groupsService.loadViewerGroups();
 
@@ -31,6 +32,10 @@
                     currentPage: 1,
                     pageSize: 5
                 }
+            };
+
+            $scope.sparkExemptionEnabled = () => {
+                return settingsService.sparkExemptionEnabled();
             };
 
             // Banned Group Functions

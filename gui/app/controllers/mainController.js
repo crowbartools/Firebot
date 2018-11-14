@@ -22,7 +22,8 @@
         "ngToast",
         "agGrid",
         "slidingPuzzle",
-        'ngYoutubeEmbed'
+        'ngYoutubeEmbed',
+        'countUpModule'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {
@@ -327,6 +328,7 @@
     // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
     app.filter("startFrom", function() {
         return function(input, startFrom) {
+            if (!input) return input;
             startFrom = +startFrom;
             return input.slice(startFrom);
         };

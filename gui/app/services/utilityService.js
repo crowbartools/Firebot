@@ -130,6 +130,7 @@
                 let resolveObj = showModalContext.resolveObj || {};
                 let closeCallback = showModalContext.closeCallback;
                 let dismissCallback = showModalContext.dismissCallback;
+                let windowClass = showModalContext.windowClass ? showModalContext.windowClass : "";
 
                 let modalId = "modal" + _.uniqueId().toString();
                 resolveObj.modalId = () => {
@@ -142,10 +143,9 @@
                     resolve: resolveObj,
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard,
-                    backdrop: showModalContext.backdrop
-                        ? showModalContext.backdrop
-                        : true,
-                    windowClass: showModalContext.windowClass + " " + modalId
+                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
+                    windowClass: windowClass + " " + modalId + " animated fadeIn fastest fb-transition",
+                    animation: true
                 };
 
                 if (component != null && component.length !== 0) {
@@ -165,6 +165,10 @@
                 if (typeof dismissCallback !== "function") {
                     dismissCallback = () => {};
                 }
+
+                modalInstance.rendered.then(() => {
+                    $("." + modalId).removeClass("animated fadeIn fastest");
+                });
 
                 // Handle when the modal is exited
                 modalInstance.result.then(closeCallback, dismissCallback);

@@ -38,7 +38,11 @@
             integrationsUpdated: {},
             saveCustomCommand: {},
             removeCustomCommand: {},
-            clearEffects: {}
+            clearEffects: {},
+            nonChatSkill: {},
+            gifUrlForSkill: {},
+            channelPatronageUpdate: {},
+            periodPatronageUpdate: {}
         };
 
         let ListenerType = {
@@ -78,7 +82,11 @@
             INTEGRATIONS_UPDATED: "integrationsUpdated",
             SAVE_CUSTOM_COMMAND: "saveCustomCommand",
             REMOVE_CUSTOM_COMMAND: "removeCustomCommand",
-            CLEAR_EFFECTS: "clearEffects"
+            CLEAR_EFFECTS: "clearEffects",
+            NON_CHAT_SKILL: "nonChatSkill",
+            GIF_FOR_SKILL: "gifUrlForSkill",
+            CHANNEL_PATRONAGE_UPDATE: "channelPatronageUpdate",
+            PERIOD_PATRONAGE_UPDATE: "periodPatronageUpdate"
         };
 
         function runListener(listener, returnPayload) {
@@ -278,6 +286,36 @@
             let services = data ? data : [];
             _.forEach(registeredListeners.toggleServicesRequest, listener => {
                 runListener(listener, services);
+            });
+        });
+
+        // patronage updates
+        ipcRenderer.on('periodPatronageUpdate', function (event, data) {
+            _.forEach(registeredListeners.periodPatronageUpdate, (listener) => {
+                runListener(listener, data);
+            });
+        });
+
+
+        ipcRenderer.on('channelPatronageUpdate', function (event, data) {
+            _.forEach(registeredListeners.channelPatronageUpdate, (listener) => {
+                runListener(listener, data);
+            });
+        });
+
+
+        // gif url for skill
+        ipcRenderer.on('gifUrlForSkill', function (event, data) {
+            _.forEach(registeredListeners.gifUrlForSkill, (listener) => {
+                runListener(listener, data);
+            });
+        });
+
+
+        // Non skill event listener
+        ipcRenderer.on('nonChatSkill', function (event, data) {
+            _.forEach(registeredListeners.nonChatSkill, (listener) => {
+                runListener(listener, data);
             });
         });
 

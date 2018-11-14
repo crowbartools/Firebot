@@ -19,7 +19,7 @@ function showVideo(data){
 	var videoPosition = data.videoPosition;
 	var videoHeight = data.videoHeight;
 	var videoWidth = data.videoWidth;
-	var videoDuration = parseFloat(data.videoDuration) * 1000;
+	var videoDuration = data.videoDuration != null && data.videoDuration !== "" ? parseFloat(data.videoDuration) * 1000 : null;
 	var videoVolume = data.videoVolume;
 	var videoStarttime = data.videoStarttime || 0;
 	var loop = data.loop;
@@ -36,28 +36,35 @@ function showVideo(data){
 	var d = new Date();
 	var divClass = d.getTime();
 	var videoId = `.${divClass}-video`;
-	
+
 	var enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
 	var exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
+	var enterDuration = data.enterDuration;
+	var exitDuration = data.exitDuration;
 
+	var inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
+	var inbetweenDuration = data.inbetweenDuration;
+	var inbetweenDelay = data.inbetweenDelay;
+	var inbetweenRepeat = data.inbetweenRepeat;
+	
 	if(videoType === "Local Video"){
 
 		const loopTag = loop ? 'loop' : '';
 		if (videoHeight === false && videoWidth === false){
 			// Both height and width fields left blank.
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;'+customPosStyles+'"><video position="'+videoPosition+'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else if (videoWidth === false){
 			// Width field left blank, but height provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else if (videoHeight === false) {
 			// Height field left blank, but width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; width:'+ videoWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="'+customPosStyles+'"><video position="'+videoPosition+'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;'+customPosStyles+'"><video position="'+videoPosition+'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		} else {
 			// Both height and width provided.
 			// var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
+			var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none;height:' +videoHeight+ 'px; width: ' +videoWidth+ 'px;'+customPosStyles+'"><video position="'+videoPosition+'" height="'+ videoHeight +'" width="'+ videoWidth +'" class="player" id="video-'+divClass+'" style="'+customPosStyles+'" ' + loopTag + '><source  src="'+filepathNew+'?time='+divClass+'" type="video/'+fileExt+'" ></video></div>';
 		}
 		// Put the div on the page.
 		
@@ -72,21 +79,30 @@ function showVideo(data){
 		$('.player').prop("volume", videoVolume);
 		
 		var video = document.getElementById('video-'+divClass);
+	
 
 		video.oncanplay = function() {
-			console.log("video " + divClass + " can play");
-
-			$(videoId).animateCss(enterAnimation);
+			if(startedVidCache[this.id]) { return; }
+			startedVidCache[this.id] = true;
+			
 			video.play();
+			let videoEl= $(videoId);
+			videoEl.show();
+			videoEl.animateCss(enterAnimation, enterDuration, null, null, ()=> {
+				videoEl.animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay, inbetweenRepeat);
+			});
+			
 			// Remove div after X time.
 			if(videoDuration){
 				setTimeout(function(){
-					animateVideoExit(videoId, exitAnimation);
+					delete startedVidCache[this.id];
+					animateVideoExit(videoId, exitAnimation, exitDuration);
 				}, videoDuration);
 			}else{
 				
 				video.onended = function(e){
-					animateVideoExit(videoId, exitAnimation);
+					delete startedVidCache[this.id];
+					animateVideoExit(videoId, exitAnimation, exitDuration);
 				}
 			}
 		};
@@ -98,7 +114,7 @@ function showVideo(data){
 		var time = d.getTime();
 		var ytPlayerId = `yt-${time}`;
 		
-		var videoFinal = '<div class="'+divClass+'-video videoOverlay"><div id="' + ytPlayerId +'" position="'+videoPosition+'" style="'+customPosStyles+'"></div></div>';
+		var videoFinal = '<div class="'+divClass+'-video" style="display:none;" videoOverlay><div id="' + ytPlayerId +'" position="'+videoPosition+'" style="'+customPosStyles+'"></div></div>';
 		
 		// Throw div on page.
 		$('#wrapper').append(videoFinal);
@@ -135,20 +151,26 @@ function showVideo(data){
 			ytOptions.width = videoWidth;
 		}
 		var player = new YT.Player(ytPlayerId, ytOptions);
+		
 
-		// Fade in video.
-		$(videoId).animateCss(enterAnimation);
-
-		// Play video when the player is ready.
+		// Show and play video when the player is ready.
 		function onPlayerReady(event) {
+
+			// Fade in video.
+			$(videoId).animateCss(enterAnimation, enterDuration, null, null, () => {
+				$(videoId).animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay);
+			});
+
 			event.target.setVolume(parseInt(videoVolume) * 10);
 			event.target.playVideo();
+
+			$(videoId).show();
 		}
 
 		// Remove div when YouTube video has stopped.
 		function onPlayerStateChange(event){
 			if(event.data === 0 && !videoDuration){
-				animateVideoExit(videoId, exitAnimation);
+				animateVideoExit(videoId, exitAnimation, exitDuration);
 			}
 		}
 
@@ -156,7 +178,7 @@ function showVideo(data){
 		if(videoDuration){
 			// console.log("Waiting for timer to remove div");
 			setTimeout(function(){ 
-				animateVideoExit(videoId, exitAnimation);
+				animateVideoExit(videoId, exitAnimation, exitDuration);
 			}, videoDuration);	
 		}else{
 			// console.log("Waiting for video event to clear div");
@@ -169,8 +191,8 @@ function showVideo(data){
 	}
 };
 
-function animateVideoExit(idString, animation) {
-	$(idString).animateCss(animation, () => {
+function animateVideoExit(idString, animation, duration) {
+	$(idString).animateCss(animation, duration, null, null, () => {
 		$(idString).remove();
 	});
 }

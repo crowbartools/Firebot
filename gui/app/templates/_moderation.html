@@ -1,7 +1,7 @@
 <div style="display: flex; width: 100%; justify-content: space-between; flex-wrap:wrap">
   <div class="content-block" style="width: 49%">
     <div class="content-block-header">
-      <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Event Log</span>
+      <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Activity Log</span>
       <div class="searchbar-header-wrapper">
         <input type="text" class="form-control" placeholder="Search events" ng-model="eventLogSearch" style="padding-left: 27px;">
         <span class="searchbar-icon"><i class="far fa-search"></i></span>
@@ -27,7 +27,7 @@
           </table>
           <span ng-show="eventLogService.generalEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
           <div ng-show="filteredEvents.length > pagination.generalLog.pageSize" style="text-align: center;">
-              <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.generalLog.currentPage" items-per-page="pagination.generalLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
+              <ul uib-pagination total-items="eventLogService.generalEvents.length" ng-model="pagination.generalLog.currentPage" items-per-page="pagination.generalLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
           </div>
         </uib-tab>
         <uib-tab index="1" heading="Events">
@@ -94,7 +94,7 @@
      </div>
     </div>
   </div>
-  <div class="content-block" style="width: 49%; margin-top:2%">
+  <div class="content-block" style="width: 49%; margin-top:2%" ng-show="sparkExemptionEnabled()">
     <div class="content-block-header">
       <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Spark Exemptions</span>
       <div class="searchbar-header-wrapper" ng-if="activeExemptTab == '0'">

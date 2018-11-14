@@ -23,6 +23,18 @@
 
 <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
 
+<eos-container header="Duration" pad-top="true">
+    <div class="input-group">
+        <span class="input-group-addon">Seconds</span>
+        <input 
+            type="text" 
+            class="form-control" 
+            aria-describedby="image-length-effect-type" 
+            type="number"
+            ng-model="effect.length">
+    </div>
+</eos-container>
+
 <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
 
 <eos-container header="Dimensions" pad-top="true">
@@ -43,18 +55,6 @@
           type="number"
           ng-model="effect.height"
           placeholder="px">
-    </div>
-</eos-container>
-
-<eos-container header="Duration" pad-top="true">
-    <div class="input-group">
-        <span class="input-group-addon">Seconds</span>
-        <input 
-          type="text" 
-          class="form-control" 
-          aria-describedby="image-length-effect-type" 
-          type="number"
-          ng-model="effect.length">
     </div>
 </eos-container>
 

@@ -22,6 +22,8 @@
             $scope.compactDisplay = settingsService.isChatCompactMode();
             $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
             $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
+            $scope.showGifs = settingsService.chatShowGifs();
+            $scope.showStickers = settingsService.chatShowStickers();
 
             $scope.chatMessage = "";
             $scope.chatSender = "Streamer";
@@ -52,6 +54,16 @@
                 settingsService.setChatHideDeletedMessages($scope.hideDeletedMessages);
             };
 
+            $scope.toggleShowGifs = function() {
+                $scope.showGifs = !$scope.showGifs;
+                settingsService.setChatShowGifs($scope.showGifs);
+            };
+
+            $scope.toggleShowStickers = function() {
+                $scope.showStickers = !$scope.showStickers;
+                settingsService.setChatShowStickers($scope.showStickers);
+            };
+
             // Gets all chat messages from chat message service.
             $scope.getMessages = function() {
                 return chatMessagesService.chatQueue;
@@ -78,6 +90,14 @@
                     return true;
                 }
                 return false;
+            };
+
+            $scope.skillHasGif = function(skill) {
+                return chatMessagesService.skillHasGifUrl(skill.execution_id);
+            };
+
+            $scope.getSkillGifUrl = function(skill) {
+                return chatMessagesService.getGifUrlForSkill(skill.execution_id);
             };
 
             // Returns first role in set of roles which should be their primary.

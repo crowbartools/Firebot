@@ -15,7 +15,7 @@ function showText(data){
 	//border: 2px solid green;
 	let styles = `height:${data.height}px;width:${data.width}px;${customPosStyles}`;
 
-	styles += `justify-content:${data.justify};`
+	styles += `justify-content:${data.justify};text-align:${data.justify};`
 
 	if(data.dontWrap) {
 		styles += "overflow: hidden; white-space: nowrap;"
@@ -38,6 +38,13 @@ function showText(data){
 
 	var exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeOut",
 	enterAnimation = data.enterAnimation;
+	var enterDuration = data.enterDuration;
+	var exitDuration = data.exitDuration;
+	var inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
+	var inbetweenDuration = data.inbetweenDuration;
+	var inbetweenDelay = data.inbetweenDelay;
+	var inbetweenRepeat = data.inbetweenRepeat;
+	console.log(inbetweenRepeat);
 
-	showTimedAnimatedElement(divClass, enterAnimation, exitAnimation, data.duration * 1000);
+	showTimedAnimatedElement(divClass, enterAnimation, enterDuration, inbetweenAnimation, inbetweenDelay, inbetweenDuration, inbetweenRepeat, exitAnimation, exitDuration, data.duration * 1000);
 }

@@ -115,7 +115,11 @@
                     enterAnimation: data.enterAnimation,
                     exitAnimation: data.exitAnimation,
                     overlayInstance: data.overlayInstance,
-                    customCoords: data.customCoords
+                    customCoords: data.customCoords,
+                    inbetweenAnimation: data.inbetweenAnimation,
+                    inbetweenDelay: data.inbetweenDelay,
+                    inbetweenDuration: data.inbetweenDuration,
+                    inbetweenRepeat: data.inbetweenRepeat
                 };
 
                 service.broadcast(broadCastData);
@@ -144,8 +148,8 @@
                 }
                 if (
                     videoDuration === null ||
-          videoDuration === undefined ||
-          isNaN(videoDuration)
+                    videoDuration === undefined ||
+                    isNaN(videoDuration)
                 ) {
                     videoDuration = 5;
                 }
@@ -167,7 +171,11 @@
                     exitAnimation: data.exitAnimation,
                     overlayInstance: data.overlayInstance,
                     customCoords: data.customCoords,
-                    loop: data.loop
+                    loop: data.loop,
+                    inbetweenAnimation: data.inbetweenAnimation,
+                    inbetweenDelay: data.inbetweenDelay,
+                    inbetweenDuration: data.inbetweenDuration,
+                    inbetweenRepeat: data.inbetweenRepeat
                 };
 
                 service.broadcast(broadcastdata);

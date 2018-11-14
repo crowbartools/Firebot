@@ -25,13 +25,33 @@ function notification(status, text){
 }
 
 $.fn.extend({
-    animateCss: function (animationName, callback, data) {
+    animateCss: function (animationName, animationDuration, animationDelay, animationRepeat, callback, data) {
 		if(callback == null || !(callback instanceof Function)) {
 			callback = () => {};
 		}
 		var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 		if(animationName !== "none") {
+			if(animationDuration) {
+				$(this).css("animation-duration", animationDuration);
+			}
+
+			if(animationDelay) {
+				$(this).css("animation-delay", animationDelay);
+			}
+
+			if(animationRepeat) {
+				$(this).css("animation-iteration-count", animationRepeat);
+			}
+
 			this.addClass('animated ' + animationName).one(animationEnd, function() {
+				if(animationDuration) {
+					$(this).css("animation-duration", "");
+				}
+
+				if(animationDelay) {
+					$(this).css("animation-delay", "");
+				}
+	
 				$(this).removeClass('animated ' + animationName);
 				callback(data);
 			});
@@ -42,17 +62,47 @@ $.fn.extend({
     }
 });
 
-function showTimedAnimatedElement(elementClass, enterAnimation, exitAnimation, duration, tokenArg) {
+function showTimedAnimatedElement(
+	elementClass, 
+	enterAnimation, 
+	enterDuration,
+	inbetweenAnimation,
+	inbetweenDelay,
+	inbetweenDuration, 
+	inbetweenRepeat,
+	exitAnimation, 
+	exitDuration, 
+	duration, 
+	tokenArg) {
 	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
+	inbetweenAnimation = inbetweenAnimation ? inbetweenAnimation : "none";
 	var id = `.${elementClass}`;
-	$(id).animateCss(enterAnimation, (data) => {
+	$(id).animateCss(enterAnimation, enterDuration, null, null, (data) => {
+		
+		$(data.id).animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
+
 		setTimeout(function(){ 
-			$(data.id).animateCss(data.exitAnimation, (data1) => {
+			if(data.inbetweenAnimation) {
+				$(data.id).css("animation-duration", "");
+				$(data.id).css("animation-delay", "");
+				$(data.id).css("animation-iteration-count", "");
+				$(this).removeClass('animated ' + data.inbetweenAnimation);
+			}
+			$(data.id).animateCss(data.exitAnimation, data.exitDuration, null, null, (data1) => {
 				$(data1.id).remove();
 			}, data);
 		}, (duration === 0 || duration != null) ? duration : 5000);
-	}, { token: tokenArg, id: id, exitAnimation: exitAnimation });
+	}, { 
+		token: tokenArg, 
+		id: id, 
+		exitAnimation: exitAnimation, 
+		exitDuration: exitDuration,
+		inbetweenAnimation: inbetweenAnimation,
+		inbetweenDuration: inbetweenDuration,
+		inbetweenDelay: inbetweenDelay,
+		inbetweenRepeat: inbetweenRepeat
+	});
 }
 
 function getStylesForCustomCoords(customCoords) {
@@ -73,48 +123,3 @@ function getStylesForCustomCoords(customCoords) {
 	
 	return style;
 }
-
-/* Polyfill EventEmitter. */
-var EventEmitter = function () {
-    this.events = {};
-};
-
-EventEmitter.prototype.on = function (event, listener) {
-    if (typeof this.events[event] !== 'object') {
-        this.events[event] = [];
-    }
-
-    this.events[event].push(listener);
-};
-
-EventEmitter.prototype.removeListener = function (event, listener) {
-    var idx;
-
-    if (typeof this.events[event] === 'object') {
-        idx = this.events[event].indexOf(listener);
-
-        if (idx > -1) {
-            this.events[event].splice(idx, 1);
-        }
-    }
-};
-
-EventEmitter.prototype.emit = function (event) {
-    var i, listeners, length, args = [].slice.call(arguments, 1);
-
-    if (typeof this.events[event] === 'object') {
-        listeners = this.events[event].slice();
-        length = listeners.length;
-
-        for (i = 0; i < length; i++) {
-            listeners[i].apply(this, args);
-        }
-    }
-};
-
-EventEmitter.prototype.once = function (event, listener) {
-    this.on(event, function g () {
-        this.removeListener(event, g);
-        listener.apply(this, arguments);
-    });
-};

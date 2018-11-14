@@ -29,6 +29,7 @@ require("../../node_modules/angular-summernote/dist/angular-summernote");
 require("angular-translate");
 require("../../node_modules/angular-translate-loader-url/angular-translate-loader-url");
 require("../../node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files");
+require('countup.js-angular1');
 
 function boot() {
     angular.bootstrap(document, ["firebotApp"], {
@@ -40,7 +41,14 @@ document.addEventListener("DOMContentLoaded", boot);
 
 // Catch browser window (renderer) errors and log them via Winston
 window.onerror = function(error, url, line) {
-    logger.error("(Renderer) " + error, { error: error, url: url, line: line });
+    let message = `(Renderer) ${error}`;
+    if (url) {
+        message += ` [url=${url}]`;
+    }
+    if (line) {
+        message += ` [line=${line}]`;
+    }
+    logger.error(message, error);
 };
 
 // pointless fancy firebot at the top of the log

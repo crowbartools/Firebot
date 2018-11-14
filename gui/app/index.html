@@ -14,7 +14,7 @@
 
     <link ng-href="{{customFontCssPath}}" rel="stylesheet" type="text/css">
   
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700|Roboto+Mono:300" rel="stylesheet"> 
     <link rel="stylesheet" type="text/css" href="http://csshake.surge.sh/csshake.min.css">
     
     <!-- Custom styles for this template -->
@@ -36,6 +36,7 @@
     <script src="https://unpkg.com/ag-grid@17.1.1/dist/ag-grid.min.js"></script>
 
     <script type="text/javascript" src="./index.js"></script>
+    <script type="text/javascript" src="../../node_modules/countup.js/dist/countUp.min.js"></script>    
     <script type="text/javascript" src="./directives/plugins/ngScrollGlue.js"></script>  
     <script type="text/javascript" src="./directives/misc/slidingPuzzle.js"></script>
     <script type="text/javascript" src="./controllers/mainController.js"></script>
@@ -76,6 +77,7 @@
     <script type="text/javascript" src="./services/currencyService.js"></script>
     <script type="text/javascript" src="./services/connectionManager.js"></script>
     <script type="text/javascript" src="./services/sidebarManager.js"></script>
+    <script type="text/javascript" src="./services/patronageService.js"></script>
     <script type="text/javascript" src="./services/logger.js"></script>
     <script type="text/javascript" src="./services/viewersService.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
@@ -112,6 +114,7 @@
     <script type="text/javascript" src="./directives/sidebar/navLink.js"></script>
     <script type="text/javascript" src="./directives/sidebar/navCategory.js"></script>
     <script type="text/javascript" src="./directives/sidebar/sidebar.js"></script>
+    <script type="text/javascript" src="./directives/sidebar/patronageTracker.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/connectionPanelModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/aboutModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/puzzleModal.js"></script>
@@ -125,6 +128,8 @@
     <script type="text/javascript" src="./directives/modals/currency/addOrEditCurrency/addOrEditCurrency.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/inputModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/fontManagementModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/patronageDetailsModal.js"></script>
+
     <script type="text/javascript" src="./directives/modals/interactive/controlCooldownGroupsModal.js"></script>
   </head>
   <body>
@@ -133,61 +138,65 @@
     <div class='loader-wrapper' ng-if="showSpinner">
       <div class="loader">{{'MAIN.LOADING' | translate }}</div>
     </div>
+  
+    <div class="appwrapper">
 
-    <sidebar class="noselect"></sidebar>  
+      <sidebar class="noselect"></sidebar>  
 
-    <div class="fb-tab-content">
-      <div class="tab-header">
-        <span style="width:100%" class="noselect">{{sbm.currentTabName}}</span>
-        <notification-center></notification-center>
-        <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
-          <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
-          <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
-          <div class="fb-arrow down login-arrow"></div>
-          <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
-            <li>
-              <a href ng-click="showManageLoginsModal()">
-                <span>
-                  <i class="fal fa-sign-in-alt"></i>
-                </span> 
-                Manage Logins
-              </a>
-            </li>
-            <li class="divider"></li>
-            <li class="dropdown-header">Profiles</li>
-            <li ng-repeat="profile in accounts.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
-              <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}">
-                  <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
-                  <span class="accounts-info">{{profile.username}} (#{{profile.profileId}})</span>
-              </a>
-            </li>
-            <li class="divider"></li>
-            <li>
-              <a href ng-click="showNewProfileModal()">
-                <span>
-                  <i class="fal fa-user-plus"></i>
-                </span> 
-                Add Profile
-              </a>
-            </li>
-            <li>
-              <a href ng-click="showDeleteProfileModal()">
-                <span>
-                  <i class="fal fa-user-minus"></i>
-                </span> 
-                Delete Profile
-              </a>
-            </li>
-          </ul>
+      <div class="fb-tab-content">
+        <div class="tab-header">
+          <span style="width:100%" class="noselect">{{sbm.currentTabName}}</span>
+          <notification-center></notification-center>
+          <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
+            <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
+            <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
+            <div class="fb-arrow down login-arrow"></div>
+            <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
+              <li>
+                <a href ng-click="showManageLoginsModal()">
+                  <span>
+                    <i class="fal fa-sign-in-alt"></i>
+                  </span> 
+                  Manage Logins
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li class="dropdown-header">Profiles</li>
+              <li ng-repeat="profile in accounts.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
+                <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}">
+                    <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
+                    <span class="accounts-info">{{profile.username}} (#{{profile.profileId}})</span>
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href ng-click="showNewProfileModal()">
+                  <span>
+                    <i class="fal fa-user-plus"></i>
+                  </span> 
+                  Add Profile
+                </a>
+              </li>
+              <li>
+                <a href ng-click="showDeleteProfileModal()">
+                  <span>
+                    <i class="fal fa-user-minus"></i>
+                  </span> 
+                  Delete Profile
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="tab-body-wrapper" ng-class="{ 'no-scroll': sbm.currentTabShouldntScroll() }"> 
+          <div class="tab-body" ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }">
+            <!-- angular templating -->
+            <!-- this is where tab content will be injected -->
+            <div ng-view style="width: 100%"></div>
+          </div>
         </div>
       </div>
-      <div class="tab-body-wrapper" ng-class="{ 'no-scroll': sbm.currentTabShouldntScroll() }"> 
-        <div class="tab-body" ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }">
-          <!-- angular templating -->
-          <!-- this is where tab content will be injected -->
-          <div ng-view style="width: 100%"></div>
-        </div>
-      </div>
+
     </div>
     
     <!-- Manage Profile Modal -->

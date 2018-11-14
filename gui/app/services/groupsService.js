@@ -288,9 +288,19 @@
 
             service.getExemptGroup = function() {
                 ensureExemptGroupExists();
-                let group = _.findWhere(sparkExemptGroup, { groupName: "sparkExempt" });
-                if (group.groups == null) {
-                    group.groups = [];
+                let group = _.findWhere(sparkExemptGroup, {groupName: "sparkExempt"});
+                if (group == null) {
+                    group = {
+                        groups: [],
+                        users: []
+                    };
+                } else {
+                    if (group.groups == null) {
+                        group.groups = [];
+                    }
+                    if (group.users == null) {
+                        group.users = [];
+                    }
                 }
                 return group;
             };

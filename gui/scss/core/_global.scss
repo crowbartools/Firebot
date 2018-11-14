@@ -36,9 +36,8 @@
 html {
   height: 100%;
 }
+
 body {
- display: flex;
- flex-direction: row;
  height: 100%;
  margin: 0px;
  padding-top: 0;
@@ -46,6 +45,7 @@ body {
  font-family: 'Open Sans', sans-serif !important;
  color:$content-text-color;
 }
+
 .fb-tab-content {
  height: 100%;
  width: 100%;
@@ -53,6 +53,7 @@ body {
  flex-direction: column;
  background: $light-background-color;
 }
+
 .tab-header {
   width: 100%;
   height: 65px;
@@ -1384,3 +1385,67 @@ thead th{
 .effect-setting-container{
   //padding:5px 0px;
 }
+
+/* Patronage */
+
+.milestone {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  width: 320px;
+  hr {
+    margin-right: 15px;
+    width: 110px;
+    height: 1px;
+    border: none;
+    border-top: 2px dashed $content-text-color;
+    opacity: 0.3;
+  }
+  .detail {
+    font-size: 16px;
+    font-weight: bolder;
+    line-height: 20px;
+    padding-top: 7px;
+    display: inline-block;
+    width: 125px;
+    .subtext {
+      font-size: 13px;
+      padding-left: 13px;
+      padding-bottom: 5px;
+      text-align: left;
+      font-weight: lighter;
+      line-height: 17px;
+      opacity: 0.6;
+    }
+  }
+}
+
+.animated-height {
+  transition: height 1s cubic-bezier(.2,.43,.25,.91);
+}
+
+.fb-transition {
+  .modal-dialog {
+    transition: transform .2s ease-out 0s;
+  }
+}
+
+.fastest {
+  animation-duration: 100ms;
+}
+
+.appwrapper {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  margin: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-family: 'Open Sans', sans-serif !important;
+  color:$content-text-color;
+}
+
+.modal-open .appwrapper {
+  filter: blur(0.7px);
+}
+

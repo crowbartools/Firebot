@@ -7,15 +7,15 @@ function showEventsElementReplace(enterAnimation, exitAnimation, duration, textF
     
     // Animate old showEvents message off of the page.
     if ( $('.showEventsMessage').length > 0 ){
-        $('.showEventsMessage').animateCss(exitAnimation, () => {
+        $('.showEventsMessage').animateCss(exitAnimation, null, null,() => {
             // Remove old message.
             $('.showEventsMessage').remove();
             $('.showEventsHolder').append(textFinal);
     
             // Add in new message and remove it after max duration
-            $('.showEventsMessage').animateCss(enterAnimation, () => {
+            $('.showEventsMessage').animateCss(enterAnimation, null, null,() => {
                 setTimeout(function(){ 
-                    $('.showEventsMessage').animateCss(exitAnimation, () => {
+                    $('.showEventsMessage').animateCss(exitAnimation, null, null,() => {
                         $('.showEventsMessage').remove();
                     });
                 }, (duration === 0 || duration != null) ? duration : 5000);
@@ -25,9 +25,9 @@ function showEventsElementReplace(enterAnimation, exitAnimation, duration, textF
         $('.showEventsHolder').append(textFinal);
         
         // Add in new message and remove it after max duration
-        $('.showEventsMessage').animateCss(enterAnimation, () => {
+        $('.showEventsMessage').animateCss(enterAnimation, null, null,() => {
             setTimeout(function(){ 
-                $('.showEventsMessage').animateCss(exitAnimation, () => {
+                $('.showEventsMessage').animateCss(exitAnimation, null, null,() => {
                     $('.showEventsMessage').remove();
                 });
             }, (duration === 0 || duration != null) ? duration : 5000);
@@ -46,9 +46,9 @@ function showEventsElementList(enterAnimation, exitAnimation, duration, textFina
     $('.showEventsHolder').append(textFinal);
     
     // Add in new message and remove it after max duration
-    $('.'+divClass).animateCss(enterAnimation, () => {
+    $('.'+divClass).animateCss(enterAnimation, null,null,null,() => {
         setTimeout(function(){ 
-            $('.'+divClass).animateCss(exitAnimation, () => {
+            $('.'+divClass).animateCss(exitAnimation, null,null,null,() => {
                 $('.'+divClass).remove();
             });
         }, (duration === 0 || duration != null) ? duration : 5000);

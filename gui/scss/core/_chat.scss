@@ -144,7 +144,6 @@
     &.isCompact {
         .chatContent {
             display: inline;
-            margin-left: 5px;
             font-weight: 100;
         }
         .chat-timestamp {
@@ -348,7 +347,7 @@
 .settings-popover {
     width: 350px;
     max-width: 400px;
-    height: 450px;
+    height: 485px;
 }
 
 .settings-btn-wrapper {  
@@ -519,3 +518,15 @@
     }
 }
 
+
+.chat-content-wrap{
+    .chatSticker{
+        text-align:center;
+        padding: 5px 10px;
+        background-color: $sticker-bg-color;
+        border-radius: 18px;
+        line-height:24px;
+        color: lightgray;
+        width:150px;
+    }
+}

@@ -22,7 +22,8 @@
             listenerService,
             integrationService,
             connectionService,
-            logger
+            logger,
+            $http
         ) {
             $scope.settings = settingsService;
 
@@ -61,6 +62,12 @@
 
             $scope.openDevTools = () => {
                 remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
+            };
+
+            $scope.setSparkExemption = (value) => {
+                value = value === true;
+                settingsService.setSparkExemptionEnabled(value);
+                ipcRenderer.send("sparkExemptionToggled", value);
             };
 
             $scope.audioOutputDevices = [{
@@ -283,6 +290,42 @@
                     component: "fontManagementModal",
                     size: "sm"
                 });
+            };
+
+            $scope.showSetExtraLifeIdModal = function() {
+
+                let id = settingsService.getExtraLifeParticipantId();
+
+                utilityService.openGetInputModal(
+                    {
+                        model: id,
+                        label: "Set Participant Id",
+                        saveText: "Save Id",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+
+                                if (value == null || value.length < 1) return resolve(true);
+
+                                $http.get(`https://www.extra-life.org/api/participants/${value}`)
+                                    .then(resp => {
+                                        if (resp.status === 200) {
+                                            resolve(true);
+                                        } else {
+                                            resolve(false);
+                                        }
+                                    }, () => {
+                                        resolve(false);
+                                    });
+                            });
+                        },
+                        validationText: "This is not a valid participant id."
+
+                    },
+                    (newId) => {
+                        settingsService.setExtraLifeParticipantId(newId);
+
+                        ipcRenderer.send('extraLifeIdUpdated');
+                    });
             };
 
             $scope.showBackupListModal = function() {

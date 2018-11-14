@@ -4,6 +4,8 @@ let params = new URL(location).searchParams;
 
 OVERLAY_PORT = 7472;
 
+startedVidCache = { test: true };
+
 // Kickstarter
 // This function kickstarts the connection process.
 function mixerSocketConnect(){

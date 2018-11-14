@@ -493,6 +493,10 @@ function appOnReady() {
         logger.debug("Creating or connecting stats database");
         statsdb.connectStatsDatabase();
 
+        //load patronage data
+        const patronageManager = require("./lib/patronageManager");
+        patronageManager.loadPatronageData();
+
         return true;
     });
 }
