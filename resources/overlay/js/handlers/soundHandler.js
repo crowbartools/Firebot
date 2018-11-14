@@ -4,7 +4,7 @@ function playSound(data){
     
 
 	var token = encodeURIComponent(data.resourceToken);
-	resourcePath = `http://${window.location.hostname}:7473/resource/${token}`;
+	resourcePath = `http://${window.location.hostname}:7472/resource/${token}`;
 
 	// Get time in milliseconds to use as class name.
 	var d = new Date();

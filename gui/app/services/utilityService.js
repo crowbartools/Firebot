@@ -229,7 +229,7 @@
                         let port = settingsService.getWebServerPort();
 
                         let params = {};
-                        if (port !== 7473 && !isNaN(port)) {
+                        if (port !== 7472 && !isNaN(port)) {
                             params["port"] = settingsService.getWebServerPort();
                         }
 

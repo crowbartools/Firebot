@@ -25,7 +25,7 @@ function showVideo(data){
 	var loop = data.loop;
 	
 	var token = encodeURIComponent(data.resourceToken);
-	var filepathNew = `http://${window.location.hostname}:7473/resource/${token}`;
+	var filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
 	
 	var customPosStyles = "";
 	if(videoPosition == 'Custom') {
