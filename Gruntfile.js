@@ -1,15 +1,17 @@
 module.exports = function(grunt) {
 
+    const WORKING_DIR = process.cwd();
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         'create-windows-installer': {
             x64: {
-                appDirectory: 'G:/GitHub/Firebot/dist/Firebot-win32-x64',
-                outputDirectory: 'G:/GitHub/Firebot/dist/installer64',
-                loadingGif: 'G:/GitHub/Firebot/gui/images/animated.gif',
+                appDirectory: WORKING_DIR + '/dist/Firebot-win32-x64',
+                outputDirectory: WORKING_DIR + '/dist/installer64',
+                loadingGif: WORKING_DIR + '/gui/images/animated.gif',
                 iconUrl: 'https://crowbartools.com/projects/firebot/logo.ico',
-                setupIcon: 'G:/GitHub/Firebot/gui/images/logo.ico'
+                setupIcon: WORKING_DIR + '/gui/images/logo.ico'
             }
         }
     });
