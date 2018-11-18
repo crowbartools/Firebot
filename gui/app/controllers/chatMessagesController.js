@@ -183,6 +183,10 @@
                     $scope.chatMessage = "/w @" + userName + " ";
                     focusMessageInput();
                     break;
+                case "mention":
+                    $scope.chatMessage = "@" + userName + " ";
+                    focusMessageInput();
+                    break;
                 default:
                     return;
                 }
@@ -192,6 +196,9 @@
             let chatHistory = [];
             let currrentHistoryIndex = -1;
             $scope.submitChat = function() {
+                if ($scope.chatMessage == null || $scope.chatMessage.length < 1) {
+                    return;
+                }
                 chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);
                 chatHistory.unshift($scope.chatMessage);
                 currrentHistoryIndex = -1;
@@ -219,6 +226,7 @@
                         }
                     }
                 } else if (keyCode === 13) { // enter
+                    logger.info("test");
                     $scope.submitChat();
                 }
             };

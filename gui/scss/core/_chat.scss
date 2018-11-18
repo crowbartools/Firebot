@@ -381,10 +381,24 @@
 
 .chatter-dropdown {
     height: 100%;
+    width: 100px;
     display: flex;
     justify-content: center;
     border-right: 2px solid rgba(170,164,164,0.43);
     align-items: center;
+    &:hover {
+        background: rgba(128, 128, 128, 0.267);
+        cursor: pointer;
+    }
+}
+
+.chatfeed-send-btn {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    border-left: 2px solid rgba(170,164,164,0.43);
+    align-items: center;
+    padding: 0px 15px;
     &:hover {
         background: rgba(128, 128, 128, 0.267);
         cursor: pointer;
