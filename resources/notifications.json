@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "id": 9001,
+        "title": "MixPlay Patronage Notice",
+        "message": "<div><strong>Notice for all Partners!</strong><br><br> Please be advised, at this time (11/21/2018), Mixer is experiencing an issue causing sparks spent on MixPlay to not count towards Patronage. <br><br> If this is an issue for you, we recommend disabling MixPlay for the time being. <br><br> Keep an eye on <a href ng-click=\"$rootScope.openLinkExternally('http://status.mixer.com')\">status.mixer.com</a> to know when the issue is resolved. <br><br>Thanks!</div>",
+        "icon": "alert"
+    }
+]
