@@ -15,7 +15,7 @@
                     </div>
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div class="connection-tile">
-                            <span class="connection-title">Interactive <tooltip text="'Used for interactive buttons and controls'"></tooltip></span>
+                            <span class="connection-title">Interactive <tooltip text="'Used for interactive buttons and controls (MixPlay)'"></tooltip></span>
                             <div class="connection-button"
                                 ng-class="{'connected': $ctrl.conn.connectedToInteractive, 'connecting': $ctrl.conn.waitingForStatusChange}"
                                 ng-click="$ctrl.conn.toggleConnectionToInteractive()">
@@ -31,7 +31,7 @@
                             </div>
                         </div>
                         <div class="connection-tile">
-                            <span class="connection-title">Chat <tooltip text="'Used for commands, chat effects, chat feed, auto grouping, etc'"></tooltip></span>
+                            <span class="connection-title">Chat <tooltip text="'Used for commands, chat effects, chat feed, sticker events, etc.'"></tooltip></span>
                             <div class="connection-button"
                                 ng-class="{'connected': $ctrl.conn.connectedToChat, 'connecting': $ctrl.conn.waitingForChatStatusChange}"
                                 ng-click="$ctrl.conn.toggleConnectionToChat()">
@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="connection-tile">
-                            <span class="connection-title">Constellation <tooltip text="'Used for events, live viewer count on chat feed, etc'"></tooltip></span>
+                            <span class="connection-title">Constellation <tooltip text="'Used for events, live viewer count on chat feed, Skills, etc'"></tooltip></span>
                             <div class="connection-button"
                                 ng-class="{'connected': $ctrl.conn.connectedToConstellation, 'connecting': $ctrl.conn.waitingForConstellationStatusChange}"
                                 ng-click="$ctrl.conn.toggleConnectionToConstellation()">
