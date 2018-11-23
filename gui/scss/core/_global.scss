@@ -1153,7 +1153,7 @@ thead th{
   height: 70px;
   display: flex;
   flex-direction: row;
-  border-top: 1px solid #eaedee;
+  border-top: 1px solid $notification-center-header-color;
   align-items: center;
   &:hover {
     cursor: pointer;
