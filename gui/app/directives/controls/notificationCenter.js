@@ -122,13 +122,11 @@
 
                     if (unreadCount > 9) {
                         return '9+';
-                    }
-                    
-                    else if (unreadCount < 0 || notificationService.mixerReportingIssues) {
+                    } else if (unreadCount < 0 || notificationService.mixerReportingIssues) {
                         return "!";
                     }
                     return unreadCount.toString();
-                }
+                };
 
                 $scope.getIconTypeText = function(iconType) {
                     let NotificationIconType = notificationService.NotificationIconType;
@@ -202,7 +200,7 @@
 
                             $scope.getLocaleDateString = (jsonDate) => {
                                 return new Date(jsonDate).toLocaleString();
-                            }
+                            };
                         }
                     };
                     utilityService.showModal(modalContext);
