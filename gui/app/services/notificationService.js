@@ -128,24 +128,45 @@
                     });
             }
 
-            function mixerStatusNotification() {
-                // This will check the mixer status page every once in awhile to see if there is it is having issues.
-                $http.get("https://00qbcbkrqn0y.statuspage.io/api/v2/status.json")
-                    .then((response) => {
-                        let data = response.data,
-                            statusIndicator = data.status.indicator,
-                            statusText = data.status.description,
-                            notification = {
-                                "id": "MixerStatus",
-                                "title": "Mixer Issue",
-                                "message": "Mixer is reporting:<br>" + statusText + ". <br><br> This could cause issues with Firebot. Please be patient as they address the issues.",
-                                "icon": "alert"
-                            };
+            service.mixerReportingIssues = false;
+            service.mixerStatus = {
+                description: "Unknown",
+                unresolvedIncidents: []
+            };
 
-                        if (statusIndicator !== "none") {
-                            service.addNotification(notification, false);
+
+            service.getStatusIcon = () => {
+                if (service.mixerReportingIssues) {
+                    return "fa-exclamation-triangle";
+                }
+                return "fa-check-circle";
+            };
+
+            function checkMixerStatus() {
+                $http.get("https://status.mixer.com/index.json")
+                    .then((response) => {
+
+                        let data = response.data;
+
+                        if (data === null) return;
+
+                        service.mixerStatus.description = data.status.description;
+
+                        if (data.status.indicator !== "none") {
+                            service.mixerReportingIssues = true;
                         } else {
-                            service.deleteNotification(notification);
+                            service.mixerReportingIssues = false;
+                        }
+
+                        let incidents = data.incidents;
+                        if (incidents != null && data.incidents.length > 0) {
+                            service.mixerStatus.unresolvedIncidents =
+                                incidents
+                                    .filter(i => i.status !== "resolved")
+                                    .map(i => {
+                                        i.hasUpdates = i.incident_updates != null && i.incident_updates.length > 0;
+                                        return i;
+                                    });
                         }
                     });
             }
@@ -158,7 +179,7 @@
             };
 
             service.getUnreadCount = function() {
-                return notifications.filter((n) => !n.read).length;
+                return notifications.filter(n => !n.read).length;
             };
 
             service.markNotificationAsRead = function(notification) {
@@ -204,7 +225,7 @@
                 notifications = [];
                 loadSavedNotifications();
                 loadExternalNotifications();
-                mixerStatusNotification();
+                checkMixerStatus();
             };
 
             let externalIntervalCheck = null;
@@ -216,7 +237,7 @@
 
                 externalIntervalCheck = $interval(() => {
                     loadExternalNotifications();
-                    mixerStatusNotification();
+                    checkMixerStatus();
                 }, 5 * 60000);
             };
 

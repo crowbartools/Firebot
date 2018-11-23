@@ -10,12 +10,33 @@
             template: `
        <div class="notifications-wrapper">
           <div uib-popover-template="$ctrl.templateUrl" popover-placement="bottom-right" popover-trigger="'outsideClick'" popover-append-to-body="true" popover-class="notification-popover">
-            <i class="far fa-bell clickable" style="cursor:pointer;"></i>
+            <i class="far fa-bell clickable noti-bell-icon" style="cursor:pointer;"></i>
           </div>
-          <div ng-if="$ctrl.unreadCount() > 0" class="notification-badge noselect animated bounceIn">{{$ctrl.unreadCount() > 9 ? '+' : $ctrl.unreadCount()}}</div>
+          <div ng-if="$ctrl.unreadCount() > 0 || $ctrl.notiService.mixerReportingIssues" class="notification-badge noselect animated bounceIn" ng-class="{ 'mixer-issue': $ctrl.notiService.mixerReportingIssues }">{{getBadgeText()}}</div>
        </div>
 
        <script type="text/ng-template" id="notificationCenterPopupTemplate.html">
+
+        <div class="notification-popover-header">
+            <span>Mixer Status</span>
+        </div>
+        <div class="noti-preview-wrapper">
+            <div class="notification-card" ng-click="$ctrl.openStatusModal()">
+                <span class="noti-unread-indicator read"></span>
+                <span class="mixer-status-icon" ng-class="{ unhealthy: $ctrl.notiService.mixerReportingIssues }">
+                    <i class="fal" ng-class="$ctrl.notiService.getStatusIcon()"></i>
+                </span>
+                <div class="noti-title-wrapper">
+                    <span class="noti-text" style="max-height: 65px; overflow: hidden;">{{$ctrl.notiService.mixerStatus.description}}</span>
+                </div>
+                <div class="flex-center" style="margin-right: 5px;">
+                    <span style="padding: 5px;font-size:20px;">
+                        <i class="fal fa-chevron-right"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+          
           <div class="notification-popover-header">
             <span>Notifications</span>
           </div>
@@ -53,9 +74,41 @@
             <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
           </div>
         </script>
+
+        <script type="text/ng-template" id="mixerStatusModal.html">
+          <div class="modal-header">
+            <h4 class="modal-title" style="text-align: center">Mixer Status</h4>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <h3 style="font-size:13px;text-transform:uppercase;opacity:0.7; margin-bottom: 0px;">Current Status</h3>
+            <div class="mixer-status-modal-icon" ng-class="{ unhealthy: ns.mixerReportingIssues }">
+                <i class="fal" ng-class="ns.getStatusIcon()"></i>
+            </div>
+            <p>{{ns.mixerStatus.description}}</p>
+
+            <h3 style="font-size:13px;text-transform:uppercase;opacity:0.7;margin-top: 35px;">Ongoing Incident(s)</h3>
+            <div ng-repeat="incident in ns.mixerStatus.unresolvedIncidents" style="margin-bottom: 10px;">
+                <div style="font-size:16px;"><strong>{{incident.name}}</strong></div>
+                <div ng-if="incident.incident_updates && incident.incident_updates.length > 0" style="font-size:13px;margin-top:4px;">
+                    <p style="margin-bottom:0;">Update from Mixer: {{incident.incident_updates[0].body}}</p>
+                    <div class="muted" style="font-size:11px;">{{getLocaleDateString(incident.incident_updates[0].updated_at)}}</div>                  
+                </div>
+            </div>
+            <p ng-if="ns.mixerStatus.unresolvedIncidents.length < 1">None</p>
+
+            <div style="margin-top: 35px;">
+                <span>More info at <a href ng-click="$rootScope.openLinkExternally('https://status.mixer.com')">status.mixer.com</a></span>
+            </div>
+          </div>
+          <div class="modal-footer" style="text-align:center;position: relative;">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+          </div>
+        </script>
        `,
             controller: function($scope, $element, $attrs, notificationService, utilityService) {
                 let ctrl = this;
+
+                ctrl.notiService = notificationService;
 
                 ctrl.unreadCount = notificationService.getUnreadCount;
                 ctrl.getNotifications = notificationService.getNotifications;
@@ -63,6 +116,19 @@
                 ctrl.templateUrl = "notificationCenterPopupTemplate.html";
 
                 $scope.deleteNotification = notificationService.deleteNotification;
+
+                $scope.getBadgeText = () => {
+                    let unreadCount = notificationService.getUnreadCount();
+
+                    if (unreadCount > 9) {
+                        return '9+';
+                    }
+                    
+                    else if (unreadCount < 0 || notificationService.mixerReportingIssues) {
+                        return "!";
+                    }
+                    return unreadCount.toString();
+                }
 
                 $scope.getIconTypeText = function(iconType) {
                     let NotificationIconType = notificationService.NotificationIconType;
@@ -119,6 +185,28 @@
                     };
                     utilityService.showModal(justUpdatedModalContext);
                 };
+
+                ctrl.openStatusModal = function() {
+                    let modalContext = {
+                        templateUrl: "mixerStatusModal.html",
+                        size: 'sm',
+                        resolveObj: {},
+                        controllerFunc: ($scope, $rootScope, $uibModalInstance, notificationService) => {
+
+                            $scope.ns = notificationService;
+                            $scope.$rootScope = $rootScope;
+
+                            $scope.ok = function() {
+                                $uibModalInstance.dismiss('cancel');
+                            };
+
+                            $scope.getLocaleDateString = (jsonDate) => {
+                                return new Date(jsonDate).toLocaleString();
+                            }
+                        }
+                    };
+                    utilityService.showModal(modalContext);
+                };
             }
         })
         .directive('dynamicElement', ['$compile', function ($compile) {
@@ -136,7 +224,7 @@
                     element.replaceWith(template);
                 },
                 controller: ['$scope', '$rootScope', function($scope, $rootScope) {
-                    $scope.rootScope = $rootScope;
+                    $scope.$rootScope = $rootScope;
                 }]
             };
         }]);
