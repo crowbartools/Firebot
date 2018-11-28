@@ -1112,6 +1112,26 @@ thead th{
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  &.mixer-issue {
+    background: #ebb120
+  }
+}
+
+.mixer-status-icon {
+  font-size: 27px;
+  padding-left: 10px;
+  color: green;
+  &.unhealthy {
+    color: yellow;
+  }
+}
+
+.mixer-status-modal-icon {
+  font-size: 80px;
+  color: rgb(15, 192, 15);
+  &.unhealthy {
+    color: gold;
+  }
 }
 
 
@@ -1120,18 +1140,14 @@ thead th{
   width: 350px;
   z-index: 1030;
   border-radius: 1px;
-  color: black;
   .popover-content {
     padding: 0;
-  }
-  .arrow:after {
-    border-bottom-color: #f3f5f5 !important;
   }
 }
 
 .notification-popover-header {
   height: 40px;
-  background: #f3f5f5;
+  background: $notification-center-header-color;
   display: flex;
   align-items: center;
   font-size: 18px;
@@ -1143,7 +1159,7 @@ thead th{
 .noti-preview-wrapper {
   max-height: 400px;
   overflow-y: auto;
-  background: white;
+  background: $notification-preview-wrapper-color;
 }
 .no-notifications-card {
   width: 100%;
@@ -1156,11 +1172,11 @@ thead th{
   height: 70px;
   display: flex;
   flex-direction: row;
-  border-top: 1px solid #eaedee;
+  border-top: 1px solid $notification-center-header-color;
   align-items: center;
   &:hover {
     cursor: pointer;
-    background-color: #f3f5f5;
+    background-color: $notification-preview-wrapper-color - 7%;
   }
   &:first-child {
     border-top: none;
@@ -1220,6 +1236,11 @@ thead th{
       background-color:transparent;
     }
   }
+}
+
+.noti-bell-icon:hover {
+  transform-origin: top center;
+  animation: 1s swing infinite;
 }
 
 .noti-more-btn {
@@ -1332,6 +1353,13 @@ thead th{
   margin-bottom: 5px;
   line-height: 1.1;
   justify-content: space-between;
+}
+
+.flex-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center
 }
 
 .flex-row-center {

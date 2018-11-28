@@ -153,6 +153,27 @@
     }
 }
 
+.popover.bottom > .arrow {
+    border-bottom-color: transparent;
+    &:after {
+        border-bottom-color: $dropdown-menu-border;
+    }
+}
+
+.popover.right > .arrow {
+    border-right-color: transparent;
+    &:after {
+        border-right-color: $dropdown-menu-border;
+    }
+}
+
+.popover.left > .arrow {
+    border-left-color: transparent;
+    &:after {
+        border-left-color: $dropdown-menu-border;
+    }
+}
+
 .popover-content {
     padding: 2px;
     word-wrap: break-word;
