@@ -243,6 +243,15 @@
     }
 }
 
+.input-group .form-control {
+    z-index: 0; 
+    float: none;
+}
+
+.input-group .form-control:focus {
+    z-index: 0;
+}
+
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
     background-color: $form-control-bg + 50%;
     opacity: 1;

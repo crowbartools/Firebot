@@ -10,11 +10,11 @@
                         <span class="searchbar-icon"><i class="far fa-search"></i></span>
                     </div>
 
-                    <ul>
-                        <li ng-repeat="variable in $ctrl.variables | filter:variableSearch">
-                            <b>\${{variable.handle}}</b> - {{variable.description || ""}}
-                        </li>
-                    </ul>                        
+                    <dl>
+                        <dt ng-repeat-start="variable in $ctrl.variables | filter:variableSearch" style="font-weight: 900;">\${{variable.handle}}</dt>
+                        <dd ng-repeat-end style="margin-bottom: 8px;" class="muted">{{variable.description || ""}}</dd>
+                    </dl>
+                      
                 </div>
             </eos-collapsable-panel>
             `,
@@ -25,8 +25,8 @@
             $ctrl.variables = listenerService.fireEventSync("getReplaceVariableDefinitions");
 
             $ctrl.$onInit = function() {
-                
-            }
+
+            };
         }
     });
 }());
