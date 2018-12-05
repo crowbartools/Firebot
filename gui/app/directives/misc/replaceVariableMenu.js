@@ -17,13 +17,13 @@
 
                     $scope.toggleMenu = () => {
 
-                        
+
                         $scope.showMenu = !$scope.showMenu;
                     };
 
                     $scope.addVariable = (handle) => {
                         $scope.modelValue = ($scope.modelValue || "") + "$" + handle;
-                    }
+                    };
 
                 },
                 link: function(scope, element) {
@@ -39,14 +39,14 @@
                     button.insertAfter(element);
 
                     let menu = angular.element(`
-                        <div style="width: 300px; height: 400px; background: rgb(29, 28, 28); position: absolute; right: 0px; overflow-y: scroll; z-index: 100;" ng-show="showMenu">
-                            <div style="padding:10px;">
+                        <div style="width: 300px; background: rgb(29, 28, 28); position: absolute; right: 0px; z-index: 100;" ng-show="showMenu">
+                            <div style="padding:10px;border-bottom: 1px solid #48474a;">
                                 <div style="position: relative;">
                                     <input type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearch" style="padding-left: 27px;">
                                     <span class="searchbar-icon"><i class="far fa-search"></i></span>
                                 </div>
                             </div>
-                            <div style="padding: 10px;">
+                            <div style="padding: 10px;overflow-y: scroll; max-height: 350px;">
                                 <dl>
                                     <dt ng-repeat-start="variable in variables | filter:{handle:variableSearch}" style="font-weight: 900;" ng-click="addVariable(variable.handle)" class="clickable">\${{variable.handle}}</dt>
                                     <dd ng-repeat-end style="margin-bottom: 8px;" class="muted">{{variable.description || ""}}</dd>
@@ -71,10 +71,10 @@
                         }
                     }
 
-                    $document.bind("click", documentClick);
+                    $document.bind("mousedown", documentClick);
 
                     scope.$on("$destroy", function() {
-                        $document.unbind("click", documentClick);
+                        $document.unbind("mousedown", documentClick);
                     });
                 }
             };
