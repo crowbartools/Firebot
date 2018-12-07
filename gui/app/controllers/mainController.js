@@ -334,7 +334,7 @@
         };
     });
 
-    // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
+    // This adds a filter that we can use for searching command triggers
     app.filter("triggerSearch", function() {
         return function(commands, query) {
             if (commands == null || query == null) return commands;
@@ -343,4 +343,19 @@
             );
         };
     });
+
+
+    // This adds a filter that we can use for searching varaibles
+    app.filter("variableSearch", function() {
+        return function(variables, query) {
+            if (variables == null || query == null) return variables;
+            let normalizedQuery = query.replace("$", "").toLowerCase();
+            return variables
+                .filter(v =>
+                    v.handle.toLowerCase().includes(normalizedQuery)
+                );
+        };
+    });
+
+
 }(angular));
