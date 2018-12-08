@@ -9,7 +9,9 @@
                 scope: {
                     modelValue: '=ngModel'
                 },
-                controller: function($scope, listenerService) {
+                controller: function($scope, $element, listenerService) {
+
+                    const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
                     $scope.showMenu = false;
 
@@ -20,9 +22,15 @@
                     };
 
                     $scope.addVariable = (variable) => {
+                        let insertIndex = $element.prop("selectionStart");
+
+                        let currentModel = $scope.modelValue ? $scope.modelValue : "";
+
                         let display = variable.usage ? variable.usage : variable.handle;
-                        let prefix = $scope.modelValue ? $scope.modelValue + " " : "";
-                        $scope.modelValue = prefix + "$" + display;
+
+                        let updatedModel = insertAt(currentModel, "$" + display, insertIndex);
+
+                        $scope.modelValue = updatedModel;
                     };
 
                 },
