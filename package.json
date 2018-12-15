@@ -21,7 +21,8 @@
         "build-all": "echo Packaging 32bit versions && npm run rebuild32 && npm run pack:all32 && echo 32bit Packaging done.... && echo Packaging 64bit versions && npm run rebuild64 && npm run pack:all64",
         "rebuild": "npm run rebuild64",
         "build": "npm run build64",
-        "package": "echo Compiling SCSS to CSS && npm run compile:scss && echo Building Electron package && npm run pack:win64 && echo Packing the installer && grunt create-windows-installer && echo Installer package ready!"
+        "package": "echo Compiling SCSS to CSS && npm run compile:scss && echo Building Electron package && npm run pack:win64 && echo Packing the installer && grunt create-windows-installer && echo Installer package ready!",
+        "setup": "npm install && npm rebuild && npm run rebuild"
     },
     "repository": "https://github.com/Firebottle/Firebot",
     "keywords": [
