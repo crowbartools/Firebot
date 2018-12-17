@@ -29,6 +29,30 @@
 
             $scope.activeSceneTab = 0;
 
+
+
+            $scope.tiles = [
+                {
+                    x: 0,
+                    y: 0,
+                    height: 4,
+                    width: 6
+                },
+                {
+                    x: 6,
+                    y: 5,
+                    height: 4,
+                    width: 6
+                }
+            ];
+
+
+            $scope.gridUpdated = function() {
+                console.log("grid updated!");
+                console.log($scope.tiles);
+                $scope.$apply();
+            };
+
             $scope.selectedBoard = function() {
                 return boardService.getSelectedBoard();
             };

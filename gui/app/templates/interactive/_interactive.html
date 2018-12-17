@@ -1,104 +1,37 @@
-<!--Interactive Tab View-->
-<h4 class="muted animated rubberBand infinite" style="display:inline-block;">Coming soon! ;)</h4>
-<!--<div class="content-block">
-  <div ng-hide="getBoardNames().length == 0" class="content-block-header">
-    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;" ng-hide="selectedBoard() == null || selectedBoard() == ''">{{selectedBoard().name}} <span class="muted" style="font-size: 12px;">({{selectedBoard().versionid}})</span></span>
-    <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
-      <span class="noselect pointer">{{'BUTTONS.CHANGE_BOARD' | translate}}</span>
-      <div class="fb-arrow down"></div>
-      <ul class="dropdown-menu" uib-dropdown-menu>
-        <li ng-repeat="boardName in getBoardNames()">
-          <a href ng-click="switchToBoard(boardName)">{{boardName}}</a>
-        </li>
-        <li ng-hide="getBoardNames().length == 0" role="separator" class="divider"></li>
-        <li><a href ng-click="showAddBoardModal()">{{'BUTTONS.CHANGE_BOARD.ADD_NEW_BOARD' | translate }}</a></li>
-        <li ng-hide="selectedBoard() == null"><a href ng-click="showDeleteBoardModal()">{{'BUTTONS.CHANGE_BOARD.DELETE_BOARD' | translate }}</a></li>
-        <li ng-hide="selectedBoard() == null"><a href ng-click="resyncCurrentBoard()">{{'BUTTONS.CHANGE_BOARD.RESYNC_BOARD' | translate }}</a></li>
-      </ul>
-    </div>
-    <span class="mixer-studio-link"><a href ng-click="openLinkExternally('https://mixer.com/lab/interactive')">{{'BUTTONS.MIXER_STUDIO' | translate }} <i class="fa fa-external-link" aria-hidden="true"></i></a></span>
-  </div>
-  <div class="content-block-body">
+<!--Controls Tabs-->
 
-    <p ng-show="getBoardNames().length == 0 && isLoadingBoards()" class="muted" style="margin-top:15px;">{{'BUTTONS.LOADING_BOARDS' | translate }}</p>
-    <button ng-show="(!isLoadingBoards() && getBoardNames().length == 0)" ng-click="showAddBoardModal()" class="btn btn-default">+ {{'BUTTONS.ADD_FIRST_BOARD' | translate }}</button>
-    <p ng-show="selectedBoard() == null && getBoardNames().length > 0" class="muted" style="margin-top:15px;">{{'BUTTONS.COULD_NOT_AUTOSELECT' | translate }}</p>
-    
-    <div class="page-content" >
-      <div class="row interactive-board-container" ng-if="selectedBoard() != null && getBoardNames().length > 0">
-        <div class="scene-tools-wrapper">
-          <div>
-              <button ng-click="showBoardSettingsModal()" class="btn btn-default" style="margin-right:10px;"><i class="fas fa-cog" style="margin-right:5px;"></i> Scene Settings</button>
-              <button ng-click="showCooldownGroupsModal()" class="btn btn-default"><i class="fas fa-clock-o" style="margin-right:5px;"></i> Edit Cooldown Groups</button>
-          </div>
-          
-          <div class="scene-tools">
-            <div class="btn-group" style="margin-right: 15px">
-              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'grid'" ng-click="saveCurrentButtomViewMode('interactive')" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
-              <label class="btn btn-default" ng-model="buttonViewMode" uib-btn-radio="'list'" ng-click="saveCurrentButtomViewMode('interactive')" uib-tooltip="Button View: List" tooltip-append-to-body="true"><i class="fas fa-list"></i></label>
-            </div>
-            <div class="searchbar-wrapper">
-              <input type="text" class="form-control" placeholder="Search controls" ng-model="buttonSearch" style="padding-left: 27px;">
-              <span class="searchbar-icon"><i class="far fa-search"></i></span>
-            </div>
-          </div>
-        </div>
-        <uib-tabset active="activeSceneTab">
-          <!--Create a tab for each scene ->
-          <uib-tab index="$index" ng-repeat="scene in getScenesForSelectedBoard()" heading="{{scene}}">
-            <div class="tab-pane interactive-button-holder active">
-              <!--Create buttons in each scene ->
-              <!--Grid View->
-              <div ng-show="buttonViewMode == 'grid'" ng-class="{'interactive-control-tile': control, 'inactive-control' : !control.active && control.active != null}" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
-                <a ng-hide="control.kind ==='joystick' || control.kind ==='label'" class="control-edit-btn clickable" ng-click="showEditControlEffectsModal(control)">{{'BUTTONS.EDIT' | translate}}</a>
-                <a ng-show="control.kind ==='joystick'" class="info-btn" tooltip-append-to-body="true" uib-tooltip="Joysticks will automatically control your mouse when the board is connected."><i class="fal fa-info-circle"></i></a>
-                <a ng-show="control.kind ==='label'" class="info-btn" tooltip-append-to-body="true" uib-tooltip="Labels cannot have Effects applied to them. Currently all Label settings must be editted in the Mixer Dev Lab."><i class="fal fa-info-circle"></i></a>                  
-                <div ng-hide="control.kind ==='joystick'" ng-mouseenter="setHoverOverControlId(control.controlId)" ng-mouseleave="setHoverOverControlId('')" class="button-name noselect" ng-class="{ 'muted' : !control.text || control.text.trim() == '' || isHoverOverControlName(control.controlId) }">{{getControlIdOrName(control)}}</div>
-                <div ng-show="control.kind ==='joystick'" class="button-name noselect">{{control.controlID}}</div>
-                <span ng-hide="control.kind ==='joystick' || control.kind ==='label'" class="play-button clickable" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle"></i></span>
-                <span ng-show="control.kind ==='joystick'" class="joystick-wrapper" ng-click=""><img class="joystick-grid" src="../images/joystick.svg"></img></span>
-                <span ng-show="control.kind ==='label'" style="font-size:35px"><i class="fas fa-tag"></i></span>
-                <div ng-hide="control.kind ==='joystick' || control.kind ==='label'" class="spark-cost"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</div>
-                <div ng-show="control.kind ==='joystick' || control.kind ==='label'" class="spark-cost"></div>
-              </div>
-              <!--List View->
-              <table ng-show="buttonViewMode == 'list'" class="table table-hover">
-                <thead style="text-transform: uppercase;color: #4a4a4a;">
-                  <tr>
-                    <th style="width:5%;"></th>
-                    <th style="width:25%;">{{'BUTTONS.ID' | translate }}</th>
-                    <th style="width:25%;">{{'BUTTONS.NAME' | translate }}</th>
-                    <th style="width:25%;">{{'BUTTONS.COST' | translate }}</th>
-                    <th style="width:20%;"></th>
-                  </tr>
-                </thead>
-                <tbody style="font-size: 16px;">
-                  <tr ng-class="{'control-list': control, 'inactive-control' : !control.active && control.active != null}" ng-repeat="control in getAllControlsForScene(scene) | filter:buttonSearch">
-                    <td>
-                      <a ng-hide="control.kind ==='joystick' || control.kind ==='label'" ng-click="fireControlManually(control.controlId)"><i class="fas fa-play-circle clickable"></i></a>
-                      <a ng-show="control.kind ==='joystick'"><img height="18" src="../images/joystick-black.svg"></img></a>
-                      <a ng-show="control.kind ==='label'"><span style="color:black;"><i class="fas fa-tag"></i></span></a>
-                    </td>
-                    <td>{{control.kind ==='joystick' ? control.controlID : control.controlId}}</td>
-                    <td ng-class="{'muted': !control.text}">
-                      <span ng-hide="control.kind ==='joystick' || control.kind ==='textbox'">{{control.text ? control.text : "Unnamed"}}</span>
-                      <span ng-show="control.kind ==='joystick' || control.kind ==='textbox'">n/a</span>
-                    </td>
-                    <td>
-                      <span ng-hide="control.kind ==='joystick' || control.kind ==='label'"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> {{control.cost ? control.cost : 0}}</span>
-                      <span ng-show="control.kind ==='joystick' || control.kind ==='label'"><i class="fa fa-bolt button-title-spark" aria-hidden="true"></i> n/a </span>
-                    </td>
-                    <td>
-                      <a ng-hide="control.kind ==='joystick' || control.kind ==='label'" class="clickable" ng-click="showEditControlEffectsModal(control)"><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </uib-tab>
-        </uib-tabset>
+<div style="min-width: 500px;">
+  <div class="fb-notab-header-wrapper">
+      <div class="fb-notab-title">
+          <span>{{'Test'}}</span>
       </div>
-    </div>
-  </div> 
-</div>-->
+      <div class="fb-notab-dropdown">
+        <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
+          <div class="noselect pointer">Change Board<span class="fb-arrow down"></span></div>
+          <ul class="dropdown-menu" uib-dropdown-menu>
+            <li><a href >Add New Board</a></li>
+            <li><a href >Edit This Board</a></li>
+            <li><a href>Delete This Board</a></li>
+          </ul>
+        </div>
+      </div>
+  </div>
+
+  <div style="padding: 15px;">
+
+    <the-grid draggable resizable animated col-count="80" row-count="20" cell-margin="0" cell-height="12" cell-width="12" grid-listener on-update="gridUpdated()">   
+      <div ng-repeat="tile in tiles" class="control animated bounceIn tile" tile="tile" col="{{tile.x}}" row="{{tile.y}}" height="{{tile.height}}" width="{{tile.width}}" min-width="6" max-width="20" min-height="4" max-height="15" bind-polymer>
+        <span resize="left" class="resize"><span class="resize-ball"></span></span>
+        <span resize="right" class="resize"><span class="resize-ball"></span></span>
+        <span resize="top" class="resize"><span class="resize-ball"></span></span>
+        <span resize="bottom" class="resize"><span class="resize-ball"></span></span>
+    
+      </div>
+      <div placeholder style="color: darkgrey"></div>
+    </the-grid>
+
+  </div>
+</div>
+
+
 

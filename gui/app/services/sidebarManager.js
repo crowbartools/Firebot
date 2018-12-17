@@ -38,7 +38,8 @@
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
           service.currentTab.toLowerCase() === "commands" ||
-          service.currentTab.toLowerCase() === "events"
+          service.currentTab.toLowerCase() === "events" ||
+          service.currentTab.toLowerCase() === "buttons"
                 );
             };
 
