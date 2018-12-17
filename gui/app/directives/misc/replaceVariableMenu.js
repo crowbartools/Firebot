@@ -28,9 +28,11 @@
 
                         let display = variable.usage ? variable.usage : variable.handle;
 
-                        let updatedModel = insertAt(currentModel, "$" + display, insertIndex);
+                        let updatedModel = insertAt(currentModel, "$" + display + " ", insertIndex);
 
                         $scope.modelValue = updatedModel;
+
+                        //$scope.showMenu = false;
                     };
 
                 },
@@ -47,14 +49,14 @@
                     button.insertAfter(element);
 
                     let menu = angular.element(`
-                        <div style="width: 375px; background: rgb(29, 28, 28); position: absolute; right: 0px; z-index: 100;" ng-show="showMenu">
+                        <div style="width: 375px; background: #060707; position: absolute; right: 0px; top: -307px; z-index: 100; border-radius: 4px;" ng-show="showMenu">
                             <div style="padding:10px;border-bottom: 1px solid #48474a;">
                                 <div style="position: relative;">
                                     <input type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" style="padding-left: 27px;">
                                     <span class="searchbar-icon"><i class="far fa-search"></i></span>
                                 </div>
                             </div>
-                            <div style="padding: 10px;overflow-y: scroll; max-height: 350px;">
+                            <div style="padding: 10px;overflow-y: scroll; height: 250px;">
                                 <dl>
                                     <dt ng-repeat-start="variable in variables | orderBy:'handle' | variableSearch:variableSearchText" style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></dt>
                                     <dd ng-repeat-end style="margin-bottom: 8px;" class="muted">{{variable.description || ""}}</dd>
