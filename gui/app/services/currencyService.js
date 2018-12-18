@@ -58,10 +58,13 @@
                 return;
             }
 
+            // Push Currency to DB.
             currencyDb.push("/" + currencyId, currency);
 
+            // Log currency name.
             logger.debug('Currency created with name: '+currency.name);
 
+            // Send success message.
             ipcRenderer.send("createCurrency", currencyId);
             ipcRenderer.send("refreshCurrencyCache");
         };
