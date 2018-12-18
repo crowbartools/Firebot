@@ -6,11 +6,33 @@
 
     angular
         .module("firebotApp")
-        .factory("mixplayService", function($rootScope, listenerService, logger) {
+        .factory("mixplayService", function($rootScope, backendCommunicator, logger) {
             let service = {};
 
-            service.createNewProject = function(name) {
+            let projects = [];
 
+            function loadProjects() {
+                projects = backendCommunicator.fireEventSync("getAllProjects");
+            }
+
+            loadProjects();
+
+            service.createNewProject = function(name) {
+                let newProject = backendCommunicator.fireEventSync("createNewProject", name);
+                projects.push(newProject);
+            };
+
+            service.getProjectById = function(id) {
+                return projects.find(p => p.id === id);
+            };
+
+            service.getProjectNameAndIds = function() {
+                return projects.map(p => {
+                    return {
+                        id: p.id,
+                        name: p.name
+                    };
+                });
             };
 
             return service;

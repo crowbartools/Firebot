@@ -9,7 +9,7 @@
 
     angular
         .module("firebotApp")
-        .factory("backendCommunicatorService", function($rootScope, listenerService, logger, $q) {
+        .factory("backendCommunicator", function($rootScope, listenerService, logger, $q) {
 
             const uuidv1 = require("uuid/v1");
 

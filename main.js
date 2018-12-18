@@ -384,6 +384,15 @@ async function createDefaultFoldersAndFiles() {
             dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/controls");
         }
 
+        // Create the controls folder if it doesn't exist.
+        if (
+            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/mixplay")
+        ) {
+            logger.info("Can't find the mixplay folder, creating one now...");
+            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/mixplay");
+        }
+
+
         // Create the logs folder if it doesn't exist.
         if (
             !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/logs")
@@ -469,6 +478,9 @@ function appOnReady() {
         //extralifeManager.start();
 
         fontManager.generateAppFontCssFile();
+
+        const mixplayProjectManager = require("./lib/interactive/mixplay-project-manager");
+        mixplayProjectManager.loadProjects();
 
         createWindow();
 
