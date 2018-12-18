@@ -9,6 +9,9 @@
         .factory("mixplayService", function($rootScope, listenerService, logger) {
             let service = {};
 
+            service.createNewProject = function(name) {
+
+            };
 
             return service;
         });
