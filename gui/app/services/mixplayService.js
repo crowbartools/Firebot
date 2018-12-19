@@ -10,6 +10,7 @@
             let service = {};
 
             let projects = [];
+            let lastProjectId = settingsService.getLastMixplayProjectId();
 
             function loadProjects() {
                 projects = backendCommunicator.fireEventSync("getAllProjects");
@@ -21,10 +22,10 @@
             service.createNewProject = function(name) {
                 let newProject = backendCommunicator.fireEventSync("createNewProject", name);
                 projects.push(newProject);
+                lastProjectId = newProject.id;
             };
 
             service.getCurrentProject = function() {
-                let lastProjectId = settingsService.getLastMixplayProjectId();
                 if (lastProjectId != null) {
                     return service.getProjectById(lastProjectId);
                 }
@@ -32,11 +33,12 @@
             };
 
             service.setCurrentProject = function(id) {
+                lastProjectId = id;
                 settingsService.setLastMixplayProjectId(id);
             };
 
             service.hasCurrentProject = function() {
-                return settingsService.getLastMixplayProjectId() != null;
+                return lastProjectId != null;
             };
 
             service.deleteProject = function(id) {

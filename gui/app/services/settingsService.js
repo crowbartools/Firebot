@@ -100,7 +100,7 @@
                 try {
                     projectId = getSettingsFile().getData("/mixplay/lastProjectId");
                 } catch (err) {
-                    logger.warning(err);
+                    logger.warn(err);
                 }
                 return projectId;
             };
