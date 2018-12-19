@@ -95,3 +95,108 @@ the-grid [resize="bottom"] {
     pointer-events: none;
     display: inline-block;
 }
+
+.editior-column {
+    width: 185px;
+    height: 100%; 
+    background: linear-gradient(to right, #2b2d2e 0%, #292a2c 100%);
+    display: flex;
+    flex-direction: column;
+    position:relative;
+    overflow: hidden;
+
+    .column-header {
+        font-size: 15px;
+        text-transform: uppercase;
+        font-family: "Quicksand";
+        padding: 11px;
+        font-weight: 100;
+    }
+}
+.selected-scene-icon {
+    width:6px;
+    height:6px;
+    border-radius:5px;
+    background: #EBB11F; 
+    margin-right: 6px;
+    &.transparent {
+        background: transparent !important;
+    }
+}
+
+
+
+/* 
+column slide animation 
+*/
+
+.mixplayColumnWrapper {
+    position: relative;
+}
+
+.mixplayColumn {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    animation-duration: 0.30s;
+    animation-timing-function: ease-in-out;
+}
+
+/* When the page enters, slide it from the right */
+/*.mixplayColumn.ng-enter {
+    animation-name: slideFromRight;
+}
+.mixplayColumn.moveToLeft.ng-enter {
+    animation-name: slideFromLeft;
+}
+
+.mixplayColumn.ng-leave {
+    animation-name: slideFromLeft;
+    animation-direction: reverse;
+}
+
+.mixplayColumn.moveToLeft.ng-leave {
+    animation-name: slideFromRight;
+    animation-direction: reverse;
+}*/
+
+.scenes-column.ng-enter {
+    animation-name: slideFromLeft;
+}
+
+.scenes-column.ng-leave {
+    animation-name: slideFromLeft;
+    animation-direction: reverse;
+}
+
+.controls-column.ng-enter {
+    animation-name: slideFromRight;
+}
+
+.controls-column.ng-leave {
+    animation-name: slideFromRight;
+    animation-direction: reverse;
+}
+
+@keyframes slideFromRight {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideFromLeft {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+

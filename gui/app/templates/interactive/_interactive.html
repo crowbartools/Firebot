@@ -1,10 +1,10 @@
 <!--Controls Tabs-->
 
-<div style="min-width: 500px;">
+<div style="min-width: 500px;height: 100%">
   <div ng-hide="mps.hasAtLeastOneProject()" style="padding: 20px;">
     <button ng-click="showCreateMixplayModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> Create MixPlay Project</button>
   </div>
-  <div ng-show="mps.hasAtLeastOneProject()">
+  <div ng-show="mps.hasAtLeastOneProject()" style="height: 100%">
 
     <div class="fb-notab-header-wrapper">
         <div class="fb-notab-title">
@@ -19,27 +19,76 @@
               </li>
               <li role="separator" class="divider"></li>
               <li><a href ng-click="showCreateMixplayModal()">Create New MixPlay Project</a></li>
-              <li><a href >Edit MixPlay Project</a></li>
-              <li><a href ng-click="deleteCurrentProject()">Delete MixPlay Project</a></li>
+              <li><a href >Rename This Project</a></li>
+              <li><a href ng-click="deleteCurrentProject()">Delete This Project</a></li>
             </ul>
           </div>
         </div>
     </div>
 
-    <div style="padding: 15px;">
+    <div class="flex-row" style="height: 100%">
+      <div class="editior-column">
+          <div class="column-header flex-row-center jspacebetween">
+            <span>Scenes</span>
+            <div class="clickable" ng-click="showCreateSceneModal()"><i class="fas fa-plus-circle"></i></div>
+          </div>
+          <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween" style="height: 25px; padding: 0 0 0 15px;">
+            <div class="flex-row-center clickable" ng-click="mps.setSelectedScene(scene.id)">
+              <div class="selected-scene-icon" ng-class="{'transparent': !mps.sceneIsSelected(scene.id)}"></div>
+              <div>{{scene.name}}</div>
+              <div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>
+            </div>
+            <div>
+                <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
+                    <span class="noselect clickable"><i class="fal fa-ellipsis-v"></i></span>
+                    <ul class="dropdown-menu" uib-dropdown-menu>
+                        <li ng-class="{'disabled': mps.sceneIsDefaultForCurrentProject(scene.id)}">
+                            <a href ng-click="mps.setSceneInCurrentProjectAsDefault(scene.id)"><i class="far fa-home" style="margin-right: 10px;"></i> Set as default</a>
+                        </li>
+                        <li ng-click="">
+                            <a href ><i class="far fa-users" style="margin-right: 10px;"></i> Assign groups</a>
+                        </li>
+                        <li ng-click="">
+                            <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename scene</a>
+                        </li>
+                        <li ng-click="deleteScene(scene)">
+                            <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete scene</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+          </div>
 
-      <the-grid draggable resizable animated col-count="80" row-count="20" cell-margin="0" cell-height="12" cell-width="12" grid-listener on-update="gridUpdated()">   
-        <div ng-repeat="tile in tiles" class="control animated bounceIn tile" tile="tile" col="{{tile.x}}" row="{{tile.y}}" height="{{tile.height}}" width="{{tile.width}}" min-width="6" max-width="20" min-height="4" max-height="15" bind-polymer>
-          <span resize="left" class="resize"><span class="resize-ball"></span></span>
-          <span resize="right" class="resize"><span class="resize-ball"></span></span>
-          <span resize="top" class="resize"><span class="resize-ball"></span></span>
-          <span resize="bottom" class="resize"><span class="resize-ball"></span></span>
-      
-        </div>
-        <div placeholder style="color: darkgrey"></div>
-      </the-grid>
+        
+
+      </div>
+      <div class="editior-column">
+          <div class="column-header">Controls</div>
+
+      </div>
+
+      <div style="height: 100%;">
+
+          <div style="padding: 15px;">
+
+              <the-grid draggable resizable animated col-count="80" row-count="20" cell-margin="0" cell-height="12" cell-width="12" grid-listener on-update="gridUpdated()">   
+                <div ng-repeat="tile in tiles" class="control animated bounceIn tile" tile="tile" col="{{tile.x}}" row="{{tile.y}}" height="{{tile.height}}" width="{{tile.width}}" min-width="6" max-width="20" min-height="4" max-height="15" bind-polymer>
+                  <span resize="left" class="resize"><span class="resize-ball"></span></span>
+                  <span resize="right" class="resize"><span class="resize-ball"></span></span>
+                  <span resize="top" class="resize"><span class="resize-ball"></span></span>
+                  <span resize="bottom" class="resize"><span class="resize-ball"></span></span>
+              
+                </div>
+                <div placeholder style="color: darkgrey"></div>
+              </the-grid>
+        
+            </div>
+
+      </div>
 
     </div>
+
+    
 
   </div>
 

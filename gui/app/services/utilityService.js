@@ -717,6 +717,7 @@
 
                             $scope.dismiss = function() {
                                 $uibModalInstance.close();
+                                resolve(false);
                             };
 
                             $scope.$on("modal.closing", function() {

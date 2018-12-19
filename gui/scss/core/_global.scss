@@ -795,7 +795,12 @@ body {
   font-size: 12px;
 }
 
-.wave.ng-enter, .wave.ng-leave, .slide-fade.ng-enter, .slide-fade.ng-leave {
+.wave.ng-enter, 
+.wave.ng-leave, 
+.wave-reverse.ng-enter, 
+.wave-reverse.ng-leave,
+.slide-fade.ng-enter, 
+.slide-fade.ng-leave {
   -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
   transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
@@ -817,6 +822,31 @@ body {
 .wave.ng-leave-active {
   right:100%;
 }
+
+/*backwards*/
+.wave-reverse.ng-enter {
+  position: absolute;
+  right:100%;
+}
+
+.wave-reverse.ng-enter-active {
+  right:0;
+}
+
+.wave-reverse.ng-leave {
+  position: absolute;
+  right:0;
+}
+
+.wave-reverse.ng-leave-active {
+  right:-100%;
+}
+
+.slide-frame-min {
+  position:relative;
+  overflow: hidden;
+}
+/* backwards end */
 
 .slide-fade {
   opacity: 1;
