@@ -59,7 +59,7 @@
 
                 .when("/", {
                     templateUrl: "./templates/interactive/_interactive.html",
-                    controller: "interactiveController"
+                    controller: "controlsController"
                 })
 
                 .when("/viewer-groups", {

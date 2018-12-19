@@ -95,6 +95,20 @@
                 pushDataToFile(`/boards/${boardId}`, settingsBoard);
             };
 
+            service.getLastMixplayProjectId = function() {
+                let projectId;
+                try {
+                    projectId = getSettingsFile().getData("/mixplay/lastProjectId");
+                } catch (err) {
+                    logger.warning(err);
+                }
+                return projectId;
+            };
+
+            service.setLastMixplayProjectId = function(id) {
+                pushDataToFile("/mixplay/lastProjectId", id);
+            };
+
             function getLastBoardIdInternal() {
                 let boardId = "";
                 try {

@@ -1,19 +1,26 @@
 <!--Controls Tabs-->
 
 <div style="min-width: 500px;">
-  <div>
+  <div ng-hide="mps.hasAtLeastOneProject()" style="padding: 20px;">
+    <button ng-click="showCreateMixplayModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> Create MixPlay Project</button>
+  </div>
+  <div ng-show="mps.hasAtLeastOneProject()">
 
     <div class="fb-notab-header-wrapper">
         <div class="fb-notab-title">
-            <span>{{'Test'}}</span>
+            <span>{{getSelectedProjectName()}}</span>
         </div>
         <div class="fb-notab-dropdown">
           <div class="text-dropdown" uib-dropdown uib-dropdown-toggle>
             <div class="noselect pointer">Change Project<span class="fb-arrow down"></span></div>
             <ul class="dropdown-menu" uib-dropdown-menu>
-              <li><a href >Create New MixPlay Project</a></li>
+              <li ng-repeat="projectDef in mps.getProjects() track by projectDef.id">
+                <a href ng-click="mps.setCurrentProject(projectDef.id)">{{projectDef.name}}</a>
+              </li>
+              <li role="separator" class="divider"></li>
+              <li><a href ng-click="showCreateMixplayModal()">Create New MixPlay Project</a></li>
               <li><a href >Edit MixPlay Project</a></li>
-              <li><a href>Delete MixPlay Project</a></li>
+              <li><a href ng-click="deleteCurrentProject()">Delete MixPlay Project</a></li>
             </ul>
           </div>
         </div>

@@ -6,13 +6,14 @@
 
     angular
         .module("firebotApp")
-        .factory("mixplayService", function($rootScope, backendCommunicator, logger) {
+        .factory("mixplayService", function($rootScope, backendCommunicator, logger, settingsService) {
             let service = {};
 
             let projects = [];
 
             function loadProjects() {
                 projects = backendCommunicator.fireEventSync("getAllProjects");
+                console.log(projects);
             }
 
             loadProjects();
@@ -22,17 +23,46 @@
                 projects.push(newProject);
             };
 
+            service.getCurrentProject = function() {
+                let lastProjectId = settingsService.getLastMixplayProjectId();
+                if (lastProjectId != null) {
+                    return service.getProjectById(lastProjectId);
+                }
+                return null;
+            };
+
+            service.setCurrentProject = function(id) {
+                settingsService.setLastMixplayProjectId(id);
+            };
+
+            service.hasCurrentProject = function() {
+                return settingsService.getLastMixplayProjectId() != null;
+            };
+
+            service.deleteProject = function(id) {
+                backendCommunicator.fireEvent("deleteProject", id);
+                projects = projects.filter(p => p.id !== id);
+
+                let lastProjectId = settingsService.getLastMixplayProjectId();
+                if (lastProjectId === id) {
+                    if (projects.length > 0) {
+                        settingsService.setLastMixplayProjectId(projects[0].id);
+                    } else {
+                        settingsService.setLastMixplayProjectId(null);
+                    }
+                }
+            };
+
             service.getProjectById = function(id) {
                 return projects.find(p => p.id === id);
             };
 
-            service.getProjectNameAndIds = function() {
-                return projects.map(p => {
-                    return {
-                        id: p.id,
-                        name: p.name
-                    };
-                });
+            service.getProjects = function() {
+                return projects;
+            };
+
+            service.hasAtLeastOneProject = function() {
+                return projects.length > 0;
             };
 
             return service;
