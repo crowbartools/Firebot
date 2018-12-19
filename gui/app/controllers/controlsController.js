@@ -90,6 +90,24 @@
                 }
             };
 
+            $scope.deleteControl = function(control) {
+                if (control != null) {
+
+                    utilityService
+                        .showConfirmationModal({
+                            title: "Delete Control",
+                            question: `Are you sure you want to delete the Control "${control.name}"?`,
+                            confirmLabel: "Delete",
+                            confirmBtnType: "btn-danger"
+                        })
+                        .then(confirmed => {
+                            if (confirmed) {
+                                mixplayService.deleteControlForCurrentScene(control.id);
+                            }
+                        });
+                }
+            };
+
 
             $scope.showCreateMixplayModal = function() {
 
@@ -135,11 +153,48 @@
 
                     },
                     (name) => {
+                        mixplayService.addNewSceneToCurrentProject(name);
+                    });
+            };
 
-                        let currentProject = mixplayService.getCurrentProject();
-                        if (currentProject != null) {
-                            mixplayService.addNewSceneToCurrentProject(name);
-                        }
+            $scope.getControlPositionForGrid = function(control, gridSize = "large") {
+                let position = control.position.find(p => p.size === gridSize);
+                return position || {};
+            };
+
+            $scope.getAllControlPositionsForGridSize = function(size = "large") {
+                //get all controls for this scene
+                let allControls = mixplayService.getControlsForCurrentScene();
+
+                //filter to just controls that have saved positions for this size
+                return allControls
+                    .filter(c => c.position.some(p => p.size === size));
+            };
+
+
+            $scope.showCreateControlModal = function() {
+
+                utilityService.openGetInputModal(
+                    {
+                        model: "",
+                        label: "New Button Name",
+                        saveText: "Add",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+                                if (value == null || value.trim().length < 1) {
+                                    resolve(false);
+                                } else {
+                                    resolve(true);
+                                }
+                            });
+                        },
+                        validationText: "Button name cannot be empty."
+
+                    },
+                    (name) => {
+
+                        mixplayService.createControlForCurrentScene(name);
+
                     });
             };
         });

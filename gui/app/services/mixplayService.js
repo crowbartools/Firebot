@@ -111,6 +111,55 @@
                 }
             };
 
+            function getCurrentScene() {
+                let currentProject = service.getCurrentProject();
+                if (currentProject != null) {
+                    return currentProject.scenes.find(s => s.id === selectedSceneId);
+                }
+                return null;
+            }
+
+            service.hasSceneSelected = function() {
+                return selectedSceneId != null;
+            };
+
+            service.createControlForCurrentScene = function(controlName, controlType = "button") {
+                console.log("adding new control...");
+                let currentProject = service.getCurrentProject();
+                if (currentProject != null) {
+                    let currentScene = currentProject.scenes.find(s => s.id === selectedSceneId);
+                    if (currentScene != null) {
+                        let newId = uuidv1();
+                        let newControl = {
+                            id: newId,
+                            name: controlName,
+                            kind: controlType,
+                            position: []
+                        };
+                        currentScene.controls.push(newControl);
+
+                        console.log(currentProject);
+                        service.saveProject(currentProject);
+                    }
+                }
+            };
+
+            service.deleteControlForCurrentScene = function(controlId) {
+                let currentScene = getCurrentScene();
+                if (currentScene) {
+                    currentScene.controls = currentScene.controls.filter(c => c.id !== controlId);
+                    service.saveProject(service.getCurrentProject());
+                }
+            };
+
+            service.getControlsForCurrentScene = function() {
+                let currentScene = getCurrentScene();
+                if (currentScene) {
+                    return currentScene.controls;
+                }
+                return [];
+            };
+
             service.setSceneInCurrentProjectAsDefault = function(id) {
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {

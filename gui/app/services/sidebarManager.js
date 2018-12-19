@@ -37,14 +37,17 @@
             service.currentTabIsFullScreen = function() {
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
-          service.currentTab.toLowerCase() === "commands" ||
-          service.currentTab.toLowerCase() === "events" ||
-          service.currentTab.toLowerCase() === "buttons"
+                    service.currentTab.toLowerCase() === "commands" ||
+                    service.currentTab.toLowerCase() === "events" ||
+                    service.currentTab.toLowerCase() === "buttons"
                 );
             };
 
             service.currentTabShouldntScroll = function() {
-                return service.currentTab.toLowerCase() === "chat feed";
+                return (
+                    service.currentTab.toLowerCase() === "chat feed" ||
+                    service.currentTab.toLowerCase() === "buttons"
+                );
             };
 
             return service;
