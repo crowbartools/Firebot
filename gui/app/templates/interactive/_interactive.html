@@ -28,19 +28,19 @@
 
     <div class="flex-row" style="height: 100%">
       <div class="editior-column">
-          <div class="column-header flex-row-center jspacebetween">
+          <div class="mixplay-header flex-row-center jspacebetween">
             <span>Scenes</span>
             <div class="clickable" ng-click="showCreateSceneModal()"><i class="fas fa-plus-circle"></i></div>
           </div>
-          <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween" style="height: 25px; padding: 0 0 0 15px;">
-            <div class="flex-row-center clickable" ng-click="mps.setSelectedScene(scene.id)">
+          <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="mps.setSelectedScene(scene.id)">
+            <div class="flex-row-center" style="height:100%;">
               <div class="selected-scene-icon" ng-class="{'transparent': !mps.sceneIsSelected(scene.id)}"></div>
               <div>{{scene.name}}</div>
               <div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>
             </div>
             <div>
-                <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
-                    <span class="noselect clickable"><i class="fal fa-ellipsis-v"></i></span>
+                <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
+                    <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
                     <ul class="dropdown-menu" uib-dropdown-menu>
                         <li ng-class="{'disabled': mps.sceneIsDefaultForCurrentProject(scene.id)}">
                             <a href ng-click="mps.setSceneInCurrentProjectAsDefault(scene.id)"><i class="far fa-home" style="margin-right: 10px;"></i> Set as default</a>
@@ -63,13 +63,17 @@
 
       </div>
       <div class="editior-column">
-          <div class="column-header">Controls</div>
+          <div class="mixplay-header">Controls</div>
 
       </div>
 
       <div style="height: 100%;">
 
-          <div style="padding: 15px;">
+          <div style="padding: 0 15px 15px 15px;">
+
+            <div class="mixplay-header" style="padding-left: 0px;">
+              <span>Grid</span>
+            </div>
 
               <the-grid draggable resizable animated col-count="80" row-count="20" cell-margin="0" cell-height="12" cell-width="12" grid-listener on-update="gridUpdated()">   
                 <div ng-repeat="tile in tiles" class="control animated bounceIn tile" tile="tile" col="{{tile.x}}" row="{{tile.y}}" height="{{tile.height}}" width="{{tile.width}}" min-width="6" max-width="20" min-height="4" max-height="15" bind-polymer>

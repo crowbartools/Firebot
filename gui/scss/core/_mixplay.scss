@@ -7,7 +7,7 @@
 }
 
 the-grid {
-    background: #212c3d;
+    background: #292a2e;
     background-image: linear-gradient(0deg, transparent, transparent 45%, rgba(107, 107, 107, 0.28) 50%, rgba(0, 0, 0, 0) 55%, transparent 56%, transparent), linear-gradient(90deg, transparent, transparent 45%, rgba(132, 132, 132, 0.22) 50%, rgba(255, 255, 255, 0) 55%, transparent 56%, transparent);
     background-size: 12px 12px;
     background-position: center center;
@@ -80,6 +80,8 @@ the-grid [resize="bottom"] {
 
 .resize {
     opacity: 0;
+    font-size: 0px;
+    line-height: 0px;
 }
 
 .resize:hover,.resize:active  {
@@ -97,28 +99,39 @@ the-grid [resize="bottom"] {
 }
 
 .editior-column {
-    width: 185px;
+    width: 195px;
     height: 100%; 
     background: linear-gradient(to right, #2b2d2e 0%, #292a2c 100%);
     display: flex;
     flex-direction: column;
     position:relative;
     overflow: hidden;
+}
 
-    .column-header {
-        font-size: 15px;
-        text-transform: uppercase;
-        font-family: "Quicksand";
-        padding: 11px;
-        font-weight: 100;
+.mixplay-header {
+    font-size: 15px;
+    text-transform: uppercase;
+    font-family: "Quicksand";
+    padding: 11px;
+    font-weight: 100;
+}
+
+.scene-row {
+    height: 35px;  
+    cursor: pointer;
+    &:hover {
+        background: #1f1f1f;
+    }
+    &.selected {
+        background: #212223;
     }
 }
+
 .selected-scene-icon {
-    width:6px;
-    height:6px;
-    border-radius:5px;
-    background: #EBB11F; 
-    margin-right: 6px;
+    width: 3px;
+    height: 100%;
+    background: #EBB11F;
+    margin-right: 9px;
     &.transparent {
         background: transparent !important;
     }
