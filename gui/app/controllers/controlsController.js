@@ -16,25 +16,9 @@
                 SMALL: "small"
             };
 
-            $scope.tiles = [
-                {
-                    x: 0,
-                    y: 0,
-                    height: 4,
-                    width: 6
-                },
-                {
-                    x: 6,
-                    y: 5,
-                    height: 4,
-                    width: 6
-                }
-            ];
-
             $scope.gridUpdated = function() {
                 console.log("grid updated!");
-                console.log($scope.tiles);
-                $scope.$apply();
+                mixplayService.saveProject(mixplayService.getCurrentProject());
             };
 
             $scope.getSelectedProjectName = function() {
@@ -103,6 +87,7 @@
                         .then(confirmed => {
                             if (confirmed) {
                                 mixplayService.deleteControlForCurrentScene(control.id);
+                                $scope.updateControlPositions();
                             }
                         });
                 }
@@ -168,7 +153,45 @@
 
                 //filter to just controls that have saved positions for this size
                 return allControls
-                    .filter(c => c.position.some(p => p.size === size));
+                    .filter(c => c.position.some(p => p.size === size))
+                    .map(c => {
+                        return {
+                            id: c.id,
+                            name: c.name,
+                            position: c.position.find(p => p.size === size)
+                        };
+                    });
+            };
+
+            $scope.controlPositions = $scope.getAllControlPositionsForGridSize('large');
+
+            $scope.updateControlPositions = function() {
+                $scope.controlPositions = $scope.getAllControlPositionsForGridSize('large');
+            };
+
+            $scope.currentGridSize = $scope.GridSize.LARGE;
+            $scope.addControlToGrid = function(control) {
+                mixplayService.addControlToGrid(control, $scope.currentGridSize);
+                $scope.updateControlPositions();
+            };
+
+            $scope.removeControlFromGrid = function(control) {
+                control.position = control.position.filter(p => p.size !== $scope.currentGridSize);
+                $scope.updateControlPositions();
+                mixplayService.saveProject(mixplayService.getCurrentProject());
+            };
+
+            $scope.addOrRemoveControlToGrid = function(control) {
+                let alreadyAdded = control.position.some(p => p.size === $scope.currentGridSize);
+                if (alreadyAdded) {
+                    $scope.removeControlFromGrid(control);
+                } else {
+                    $scope.addControlToGrid(control);
+                }
+            };
+
+            $scope.controlIsOnGrid = function(control) {
+                return control.position.some(p => p.size === $scope.currentGridSize);
             };
 
 

@@ -4,7 +4,9 @@ angular.module('firebotApp').
     directive('bindPolymer', ['$parse', function($parse) {
         return {
             restrict: 'A',
-            scope: {},
+            scope: {
+                control: "="
+            },
             compile: function bindPolymerCompile($element, $attr) {
                 let attrMap = {};
 

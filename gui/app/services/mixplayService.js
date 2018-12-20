@@ -7,7 +7,7 @@
 
     angular
         .module("firebotApp")
-        .factory("mixplayService", function($rootScope, backendCommunicator, logger, settingsService) {
+        .factory("mixplayService", function($rootScope, backendCommunicator, logger, settingsService, gridHelper) {
             let service = {};
 
             let projects = [];
@@ -49,6 +49,8 @@
             };
 
             service.saveProject = function(project) {
+                if (project == null) return;
+
                 // remove any angular fields
                 let cleanedProject = JSON.parse(angular.toJson(project));
 
@@ -123,8 +125,91 @@
                 return selectedSceneId != null;
             };
 
+            function getGridDimensions(gridSize = "") {
+                gridSize = gridSize.toLowerCase();
+                switch (gridSize) {
+                case "small":
+                    return { w: 30, h: 40 };
+                case "medium":
+                    return { w: 45, h: 25 };
+                case "large":
+                    return { w: 80, h: 20 };
+                }
+                return null;
+            }
+
+            function getMinimumControlDimensions(kind = "") {
+                kind = kind.toLowerCase();
+                switch (kind) {
+                case "button":
+                    return { w: 6, h: 4 };
+                }
+                return null;
+            }
+
+            service.getAllControlPositionsForGridSize = function(size = "large") {
+                //get all controls for this scene
+                let allControls = service.getControlsForCurrentScene();
+
+                //filter to just controls that have saved positions for this size
+                return allControls
+                    .filter(c => c.position.some(p => p.size === size))
+                    .map(c => c.position.find(p => p.size === size));
+            };
+
+            service.addControlToGrid = function(control, gridSize) {
+                let controlAlreadyOnGrid = control.position.some(p => p.size === gridSize);
+                if (controlAlreadyOnGrid) return;
+
+                let gridDimensions = getGridDimensions(gridSize);
+
+                if (!gridDimensions) return;
+
+                let controlDimensions = getMinimumControlDimensions(control.kind);
+
+                let controlsOnGrid = service.getAllControlPositionsForGridSize(gridSize);
+
+                let openArea = gridHelper.findOpenArea(
+                    gridDimensions.w,
+                    gridDimensions.h,
+                    controlDimensions.w,
+                    controlDimensions.h,
+                    controlsOnGrid);
+
+                if (openArea != null) {
+                    let newPosition = {
+                        size: gridSize,
+                        width: controlDimensions.w,
+                        height: controlDimensions.h,
+                        x: openArea.x,
+                        y: openArea.y
+                    };
+
+                    control.position.push(newPosition);
+
+                    logger.info("Added control to grid!");
+                    service.saveProject(service.getCurrentProject());
+                }
+            };
+
+            service.updateControlPosition = function(controlId, position) {
+                if (controlId == null || position == null) return;
+
+                let currentScene = getCurrentScene();
+
+                if (currentScene) {
+                    console.log("found current scene");
+                    let control = currentScene.controls.find(c => c.id === controlId);
+                    console.log(control);
+                    if (control) {
+                        console.log("updating to", position);
+                        control.position = control.position.filter(p => p.size !== position.size);
+                        control.position.push(position);
+                    }
+                }
+            };
+
             service.createControlForCurrentScene = function(controlName, controlType = "button") {
-                console.log("adding new control...");
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {
                     let currentScene = currentProject.scenes.find(s => s.id === selectedSceneId);
@@ -138,7 +223,6 @@
                         };
                         currentScene.controls.push(newControl);
 
-                        console.log(currentProject);
                         service.saveProject(currentProject);
                     }
                 }

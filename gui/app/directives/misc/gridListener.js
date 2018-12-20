@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('firebotApp')
-    .directive('gridListener', ['$parse', function() {
+    .directive('gridListener', ['$parse', '$timeout', function($parse, $timeout) {
         return {
             restrict: 'A',
             scope: {
@@ -11,11 +11,16 @@ angular.module('firebotApp')
                 return function link(scope, element, attrs) {
 
                     element.on("resize", () => {
-                        scope.onUpdate();
+                        $timeout(() => {
+                            scope.onUpdate();
+                        }, 10);
+
                     });
 
                     element.on("move", () => {
-                        scope.onUpdate();
+                        $timeout(() => {
+                            scope.onUpdate();
+                        }, 10);
                     });
                 };
             }
