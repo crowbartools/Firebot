@@ -29,12 +29,22 @@
                 return "No project selected";
             };
 
+            $scope.setCurrentProject = function(projectId) {
+                mixplayService.setCurrentProject(projectId);
+                $scope.updateControlPositions();
+            };
+
             $scope.getScenesForSelectedProject = function() {
                 let currentProject = mixplayService.getCurrentProject();
                 if (currentProject != null) {
                     return currentProject.scenes;
                 }
                 return [];
+            };
+
+            $scope.setSelectedScene = function(sceneId) {
+                mixplayService.setSelectedScene(sceneId);
+                $scope.updateControlPositions();
             };
 
             $scope.deleteCurrentProject = function() {
@@ -51,6 +61,7 @@
                         .then(confirmed => {
                             if (confirmed) {
                                 mixplayService.deleteProject(currentProject.id);
+                                $scope.updateControlPositions();
                             }
                         });
                 }
@@ -69,6 +80,7 @@
                         .then(confirmed => {
                             if (confirmed) {
                                 mixplayService.deleteSceneFromCurrentProject(scene.id);
+                                $scope.updateControlPositions();
                             }
                         });
                 }
@@ -115,6 +127,7 @@
                     },
                     (name) => {
                         mixplayService.createNewProject(name);
+                        $scope.updateControlPositions();
                     });
             };
 
@@ -139,6 +152,7 @@
                     },
                     (name) => {
                         mixplayService.addNewSceneToCurrentProject(name);
+                        $scope.updateControlPositions();
                     });
             };
 

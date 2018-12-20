@@ -263,6 +263,7 @@
             service.setCurrentProject = function(id) {
                 lastProjectId = id;
                 settingsService.setLastMixplayProjectId(id);
+                selectFirstScene();
             };
 
             service.hasCurrentProject = function() {
@@ -276,9 +277,9 @@
                 let lastProjectId = settingsService.getLastMixplayProjectId();
                 if (lastProjectId === id) {
                     if (projects.length > 0) {
-                        settingsService.setLastMixplayProjectId(projects[0].id);
+                        service.setCurrentProject(projects[0].id);
                     } else {
-                        settingsService.setLastMixplayProjectId(null);
+                        service.setCurrentProject(null);
                     }
                 }
             };

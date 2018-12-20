@@ -15,7 +15,7 @@
             <div class="noselect pointer">Change Project<span class="fb-arrow down"></span></div>
             <ul class="dropdown-menu" uib-dropdown-menu>
               <li ng-repeat="projectDef in mps.getProjects() track by projectDef.id">
-                <a href ng-click="mps.setCurrentProject(projectDef.id)">{{projectDef.name}}</a>
+                <a href ng-click="setCurrentProject(projectDef.id)">{{projectDef.name}}</a>
               </li>
               <li role="separator" class="divider"></li>
               <li><a href ng-click="showCreateMixplayModal()">Create New MixPlay Project</a></li>
@@ -34,7 +34,7 @@
             <div class="clickable" ng-click="showCreateSceneModal()"><i class="fas fa-plus-circle"></i></div>
           </div>
 
-          <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="mps.setSelectedScene(scene.id)">
+          <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="setSelectedScene(scene.id)">
             <div class="flex-row-center" style="height:100%;">
               <div class="selected-scene-icon" ng-class="{'transparent': !mps.sceneIsSelected(scene.id)}"></div>
               <div>{{scene.name}}</div>
