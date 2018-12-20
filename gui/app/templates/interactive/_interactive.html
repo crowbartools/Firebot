@@ -78,7 +78,9 @@
             <div class="flex-row-center" style="height:100%;">
               <div style="margin-left: 6px;">{{control.name}}</div>
             </div>
-            <div>
+            <div class="flex-row-center">
+                <div class="clickable" uib-tooltip="Add to grid" tooltip-append-to-body="true"><i class="fal fa-th-large"></i></div>
+                
                 <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
                     <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
                     <ul class="dropdown-menu" uib-dropdown-menu>
