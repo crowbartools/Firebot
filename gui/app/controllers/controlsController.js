@@ -47,6 +47,12 @@
                 $scope.updateControlPositions();
             };
 
+            $scope.checked = false;
+            $scope.toggle = () => {
+                console.log("toggling");
+                $scope.checked = !$scope.checked;
+            };
+
             $scope.deleteCurrentProject = function() {
                 let currentProject = mixplayService.getCurrentProject();
                 if (currentProject != null) {

@@ -217,3 +217,18 @@ column slide animation
     }
 }
 
+/* page slide */
+
+.ng-pageslide {
+    background: #262729;
+}
+
+.panel-placeholder {
+  width: 0;
+  height: 100%;
+  transition: width 0.5s;
+  &.isOpen {
+      width: 400px;
+  }
+}
+

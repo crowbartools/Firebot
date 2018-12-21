@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="flex-row" style="height: 100%">
+    <div id="testDivFb" class="flex-row" style="height: 100%">
       <div class="editior-column">
 
           <div class="mixplay-header flex-row-center jspacebetween">
@@ -63,10 +63,7 @@
                 </div>
             </div>
           </div>
-
-        
-
-      </div>
+        </div>
       <div class="editior-column">
         <div class="mixplay-header flex-row-center jspacebetween">
           <span>Controls</span>
@@ -75,7 +72,7 @@
 
 
         <div ng-repeat="control in mps.getControlsForCurrentScene()" class="flex-row-center jspacebetween control-row" >
-            <div class="flex-row-center" style="height:100%;">
+            <div class="flex-row-center" style="height:100%;" ng-click="toggle()">
               <div style="margin-left: 12px;">{{control.name}}</div>
             </div>
             <div class="flex-row-center">
@@ -126,6 +123,17 @@
           </div>
 
       </div>
+
+      <div class="panel-placeholder" ng-class="{isOpen: checked}">
+
+      </div>
+
+      <pageslide ps-open="checked" ps-size="400px" ps-container="testDivFb" ps-push="true">
+            <div style="padding: 15px;">
+                <p>some random content...</p>
+                <effect-list header="test" effects="[]" trigger="command" update="" is-array="true"></effect-list>
+            </div>
+         </pageslide>
 
     </div>
 

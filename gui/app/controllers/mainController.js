@@ -23,7 +23,8 @@
         "agGrid",
         "slidingPuzzle",
         'ngYoutubeEmbed',
-        'countUpModule'
+        'countUpModule',
+        'pageslide-directive'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {
