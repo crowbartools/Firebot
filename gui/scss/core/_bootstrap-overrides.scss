@@ -221,6 +221,11 @@
     max-height: 332px;
 }
 
+.control-type-list.ui-select-bootstrap .ui-select-choices-row > span {
+    padding: 5px 0px;
+    white-space: unset;
+}
+
 
 // Form Control
 .input-group-addon {

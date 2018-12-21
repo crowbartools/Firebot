@@ -209,7 +209,7 @@
                 }
             };
 
-            service.createControlForCurrentScene = function(controlName, controlType = "button") {
+            service.createControlForCurrentScene = function(controlName, controlKind = "button") {
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {
                     let currentScene = currentProject.scenes.find(s => s.id === selectedSceneId);
@@ -218,7 +218,7 @@
                         let newControl = {
                             id: newId,
                             name: controlName,
-                            kind: controlType,
+                            kind: controlKind,
                             position: []
                         };
                         currentScene.controls.push(newControl);

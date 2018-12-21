@@ -217,28 +217,17 @@
 
             $scope.showCreateControlModal = function() {
 
-                utilityService.openGetInputModal(
-                    {
-                        model: "",
-                        label: "New Button Name",
-                        saveText: "Add",
-                        validationFn: (value) => {
-                            return new Promise(resolve => {
-                                if (value == null || value.trim().length < 1) {
-                                    resolve(false);
-                                } else {
-                                    resolve(true);
-                                }
-                            });
-                        },
-                        validationText: "Button name cannot be empty."
+                utilityService.showModal({
+                    component: "createControlModal",
+                    size: 'sm',
+                    resolveObj: {},
+                    closeCallback: control => {
+                        let name = control.name,
+                            kind = control.kind;
 
-                    },
-                    (name) => {
-
-                        mixplayService.createControlForCurrentScene(name);
-
-                    });
+                        mixplayService.createControlForCurrentScene(name, kind);
+                    }
+                });
             };
         });
 }());
