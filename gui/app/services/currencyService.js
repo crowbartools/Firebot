@@ -67,6 +67,7 @@
             // Send success message.
             ipcRenderer.send("createCurrency", currencyId);
             ipcRenderer.send("refreshCurrencyCache");
+            ipcRenderer.send("refreshCurrencyCommands",  {"action": "create", "currency": currency});
         };
 
         // Updated a pre-existing currency through the modal.
@@ -74,6 +75,7 @@
             let currencyId = currency.id;
             currencyDb.push("/" + currencyId, currency);
             ipcRenderer.send("refreshCurrencyCache");
+            ipcRenderer.send("refreshCurrencyCommands", {"action": "update", "currency": currency});
         };
 
         // Purged a currency through the modal.
@@ -87,6 +89,7 @@
             currencyDb.delete("/" + currencyId);
             ipcRenderer.send("deleteCurrency", currencyId);
             ipcRenderer.send("refreshCurrencyCache");
+            ipcRenderer.send("refreshCurrencyCommands", {"action": "delete", "currency": currency});
         };
 
         return service;
