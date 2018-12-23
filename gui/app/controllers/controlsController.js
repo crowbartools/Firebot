@@ -7,19 +7,14 @@
             mixplayService,
             utilityService,
             controlHelper,
-            $timeout
+            gridHelper
         ) {
 
             $scope.mps = mixplayService;
 
-            $scope.GridSize = {
-                LARGE: "large",
-                MEDIUM: "medium",
-                SMALL: "small"
-            };
+            $scope.currentGridSize = gridHelper.GridSize.LARGE;
 
             $scope.gridUpdated = function() {
-                console.log("grid updated!");
                 mixplayService.saveProject(mixplayService.getCurrentProject());
             };
 
@@ -180,13 +175,27 @@
                     });
             };
 
-            $scope.controlPositions = $scope.getAllControlPositionsForGridSize('large');
+            $scope.controlPositions = $scope.getAllControlPositionsForGridSize($scope.currentGridSize);
 
             $scope.updateControlPositions = function() {
-                $scope.controlPositions = $scope.getAllControlPositionsForGridSize('large');
+                $scope.controlPositions = $scope.getAllControlPositionsForGridSize($scope.currentGridSize);
             };
 
-            $scope.currentGridSize = $scope.GridSize.LARGE;
+            function updateGridSize() {
+                let gridDimensions = gridHelper.GridSizes[$scope.currentGridSize];
+                let grid = angular.element("#controlGrid");
+                grid.attr("col-count", gridDimensions.width);
+                grid.attr("row-count", gridDimensions.height);
+            }
+
+            updateGridSize();
+
+            $scope.gridSizeChanged = function(size) {
+                $scope.currentGridSize = size;
+                updateGridSize();
+                $scope.updateControlPositions();
+            };
+
             $scope.addControlToGrid = function(control) {
                 mixplayService.addControlToGrid(control, $scope.currentGridSize);
                 $scope.updateControlPositions();

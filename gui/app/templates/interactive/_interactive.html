@@ -109,12 +109,30 @@
 
           <div style="padding: 0 15px 15px 15px;margin-right: 1px;overflow-x: auto;height: 100%;">
 
-            <div class="mixplay-header" style="padding-left: 0px;">
-              <span>Grid</span>
+            <div class="flex-row-center">
+                <div class="mixplay-header" style="padding-left: 0px;">
+                    <span>Grid</span>
+                </div>
+                <div style="font-size: 13px;">
+                    <grid-size-selection selected-size="currentGridSize" update="gridSizeChanged(size)"></grid-size-selection>
+                </div>
             </div>
+            
 
             <div>
-                <the-grid draggable resizable animated col-count="80" row-count="20" cell-margin="0" cell-height="12" cell-width="12" grid-listener on-update="gridUpdated()">   
+                <the-grid 
+                    id="controlGrid" 
+                    draggable 
+                    resizable 
+                    animated 
+                    col-count="80" 
+                    row-count="20" 
+                    cell-margin="0" 
+                    cell-height="12" 
+                    cell-width="12" 
+                    grid-listener 
+                    on-update="gridUpdated()"
+                    style="background-position: 18px 18px;">   
                     <div ng-repeat="control in controlPositions track by control.id" 
                             control="control" 
                             class="control animated bounceIn tile"

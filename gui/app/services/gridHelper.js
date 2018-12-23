@@ -76,6 +76,27 @@
                 return null;
             };
 
+            service.GridSize = {
+                SMALL: "small",
+                MEDIUM: "medium",
+                LARGE: "large"
+            };
+
+            service.GridSizes = {
+                small: {
+                    width: 30,
+                    height: 40
+                },
+                medium: {
+                    width: 45,
+                    height: 25
+                },
+                large: {
+                    width: 80,
+                    height: 20
+                }
+            };
+
             return service;
         });
 }());
