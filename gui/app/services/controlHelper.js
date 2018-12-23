@@ -43,6 +43,10 @@
 
             service.controlSettings = {
                 button: {
+                    kind: "button",
+                    name: "Button",
+                    description: "A simple button.",
+                    iconClass: "fa-bullseye",
                     grid: true,
                     resizable: true,
                     minSize: {
@@ -56,6 +60,10 @@
                     effects: true
                 },
                 label: {
+                    kind: "label",
+                    name: "Label",
+                    description: "Just some text that can't be interacted with.",
+                    iconClass: "fa-tag",
                     grid: true,
                     resizable: true,
                     minSize: {
@@ -69,6 +77,10 @@
                     effects: false
                 },
                 textbox: {
+                    kind: "textbox",
+                    name: "Textbox",
+                    description: "A way for viewers to input text.",
+                    iconClass: "fa-font",
                     grid: true,
                     resizable: true,
                     minSize: {
@@ -82,6 +94,10 @@
                     effects: false
                 },
                 joystick: {
+                    kind: "joystick",
+                    name: "Joystick",
+                    description: "Allows viewers to control your mouse.",
+                    iconClass: "fa-gamepad",
                     grid: true,
                     resizable: false,
                     minSize: {
@@ -95,6 +111,10 @@
                     effects: false
                 },
                 screen: {
+                    kind: "screen",
+                    name: "Mouse",
+                    description: "Another mouse control. Tracks viewers cursor position over the stream area.",
+                    iconClass: "fa-mouse-pointer",
                     grid: false,
                     resizable: false,
                     minSize: {

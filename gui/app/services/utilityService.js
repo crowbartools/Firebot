@@ -16,7 +16,8 @@
             $rootScope,
             $uibModal,
             listenerService,
-            logger
+            logger,
+            $timeout
         ) {
             let service = {};
 
@@ -762,6 +763,28 @@
             (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
                     ).toString(16)
                 );
+            };
+
+            service.debounce = function(func, wait, immediate = false) {
+                let timeout;
+
+                return function executedFunction() {
+                    let context = this;
+                    let args = arguments;
+
+                    let later = function() {
+                        timeout = null;
+                        if (!immediate) func.apply(context, args);
+                    };
+
+                    let callNow = immediate && !timeout;
+
+                    $timeout.cancel(timeout);
+
+                    timeout = $timeout(later, wait);
+
+                    if (callNow) func.apply(context, args);
+                };
             };
 
             return service;

@@ -6,7 +6,8 @@
             $scope,
             mixplayService,
             utilityService,
-            controlHelper
+            controlHelper,
+            $timeout
         ) {
 
             $scope.mps = mixplayService;
@@ -197,6 +198,12 @@
                 mixplayService.saveProject(mixplayService.getCurrentProject());
             };
 
+            $scope.controlIsOnGrid = function(control) {
+                return control.position.some(p => p.size === $scope.currentGridSize);
+            };
+
+            let hightlightedControl = "";
+
             $scope.addOrRemoveControlToGrid = function(control) {
                 let alreadyAdded = control.position.some(p => p.size === $scope.currentGridSize);
                 if (alreadyAdded) {
@@ -204,15 +211,32 @@
                 } else {
                     $scope.addControlToGrid(control);
                 }
+                hightlightedControl = null;
             };
 
-            $scope.controlIsOnGrid = function(control) {
-                return control.position.some(p => p.size === $scope.currentGridSize);
+            $scope.setHighlightedControl = utilityService.debounce((id) => {
+                hightlightedControl = id;
+            }, 150);
+
+            $scope.controlShouldHighlight = function(id) {
+                return hightlightedControl === id;
+            };
+            $scope.clearHighlight = function() {
+                hightlightedControl = null;
+                $scope.setHighlightedControl(null);
             };
 
 
             $scope.getControlSettings = function(type) {
                 return controlHelper.controlSettings[type];
+            };
+
+            $scope.getControlIconForKind = function(kind) {
+                let controlModel = controlHelper.controlKinds.find(c => c.kind === kind);
+                if (controlModel) {
+                    return controlModel.iconClass;
+                }
+                return "";
             };
 
 
