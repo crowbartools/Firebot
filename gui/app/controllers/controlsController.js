@@ -5,7 +5,8 @@
         .controller("controlsController", function(
             $scope,
             mixplayService,
-            utilityService
+            utilityService,
+            controlHelper
         ) {
 
             $scope.mps = mixplayService;
@@ -45,12 +46,6 @@
             $scope.setSelectedScene = function(sceneId) {
                 mixplayService.setSelectedScene(sceneId);
                 $scope.updateControlPositions();
-            };
-
-            $scope.checked = false;
-            $scope.toggle = () => {
-                console.log("toggling");
-                $scope.checked = !$scope.checked;
             };
 
             $scope.deleteCurrentProject = function() {
@@ -178,6 +173,7 @@
                         return {
                             id: c.id,
                             name: c.name,
+                            kind: c.kind,
                             position: c.position.find(p => p.size === size)
                         };
                     });
@@ -212,6 +208,11 @@
 
             $scope.controlIsOnGrid = function(control) {
                 return control.position.some(p => p.size === $scope.currentGridSize);
+            };
+
+
+            $scope.getControlSettings = function(type) {
+                return controlHelper.controlSettings[type];
             };
 
 

@@ -76,7 +76,7 @@
               <div style="margin-left: 12px;">{{control.name}}</div>
             </div>
             <div class="flex-row-center">
-                <div class="clickable" ng-click="addOrRemoveControlToGrid(control)" uib-tooltip="{{controlIsOnGrid(control) ? 'Remove from Grid' : 'Add to Grid'}}" tooltip-append-to-body="true"><i class="fa-th-large" ng-class="controlIsOnGrid(control) ? 'fas' : 'fal'"></i></div>
+                <div ng-if="getControlSettings(control.kind).grid" class="clickable" ng-click="addOrRemoveControlToGrid(control)" uib-tooltip="{{controlIsOnGrid(control) ? 'Remove from Grid' : 'Add to Grid'}}" tooltip-append-to-body="true"><i class="fa-th-large" ng-class="controlIsOnGrid(control) ? 'fas' : 'fal'"></i></div>
                 
                 <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
                     <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
@@ -107,9 +107,9 @@
 
             <div>
                 <the-grid draggable resizable animated col-count="80" row-count="20" cell-margin="0" cell-height="12" cell-width="12" grid-listener on-update="gridUpdated()">   
-                    <div ng-repeat="control in controlPositions track by control.id" control="control" class="control animated bounceIn tile" animationend="bounceIn" disable-animate col="{{control.position.x}}" row="{{control.position.y}}" height="{{control.position.height}}" width="{{control.position.width}}" min-width="6" max-width="20" min-height="4" max-height="15" bind-polymer>
+                    <div ng-repeat="control in controlPositions track by control.id" control="control" class="control animated bounceIn tile" animationend="bounceIn" disable-animate col="{{control.position.x}}" row="{{control.position.y}}" height="{{control.position.height}}" width="{{control.position.width}}" min-width="{{getControlSettings(control.kind).minSize.width}}" max-width="{{getControlSettings(control.kind).maxSize.width}}" min-height="{{getControlSettings(control.kind).minSize.height}}" max-height="{{getControlSettings(control.kind).maxSize.height}}" bind-polymer>
                       <div class="flex-center" style="width: 100%; height: 100%;overflow: hidden;pointer-events: none;">{{control.name}}</div>
-                      <span>
+                      <span ng-show="getControlSettings(control.kind).resizable">
                           <span resize="left" class="resize"><span class="resize-ball"></span></span>
                           <span resize="right" class="resize"><span class="resize-ball"></span></span>
                           <span resize="top" class="resize"><span class="resize-ball"></span></span>

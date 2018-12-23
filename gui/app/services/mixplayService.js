@@ -7,7 +7,7 @@
 
     angular
         .module("firebotApp")
-        .factory("mixplayService", function($rootScope, backendCommunicator, logger, settingsService, gridHelper) {
+        .factory("mixplayService", function($rootScope, backendCommunicator, logger, settingsService, gridHelper, controlHelper) {
             let service = {};
 
             let projects = [];
@@ -138,15 +138,6 @@
                 return null;
             }
 
-            function getMinimumControlDimensions(kind = "") {
-                kind = kind.toLowerCase();
-                switch (kind) {
-                case "button":
-                    return { w: 6, h: 4 };
-                }
-                return null;
-            }
-
             service.getAllControlPositionsForGridSize = function(size = "large") {
                 //get all controls for this scene
                 let allControls = service.getControlsForCurrentScene();
@@ -161,11 +152,18 @@
                 let controlAlreadyOnGrid = control.position.some(p => p.size === gridSize);
                 if (controlAlreadyOnGrid) return;
 
+                let controlSettings = controlHelper.controlSettings[control.kind];
+
+                if (controlSettings == null || !controlSettings.grid) return;
+
                 let gridDimensions = getGridDimensions(gridSize);
 
                 if (!gridDimensions) return;
 
-                let controlDimensions = getMinimumControlDimensions(control.kind);
+                let controlDimensions = {
+                    h: controlSettings.minSize.height,
+                    w: controlSettings.minSize.width
+                };
 
                 let controlsOnGrid = service.getAllControlPositionsForGridSize(gridSize);
 
@@ -189,6 +187,8 @@
 
                     logger.info("Added control to grid!");
                     service.saveProject(service.getCurrentProject());
+                } else {
+                    // TODO show error to user and ask them to clear space
                 }
             };
 

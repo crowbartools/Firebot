@@ -115,7 +115,6 @@
 
 
                 $ctrl.save = function() {
-                    console.log($ctrl.kind);
 
                     $ctrl.nameError = false;
                     $ctrl.kindError = false;
