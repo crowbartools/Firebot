@@ -24,7 +24,8 @@
         "slidingPuzzle",
         'ngYoutubeEmbed',
         'countUpModule',
-        'pageslide-directive'
+        'pageslide-directive',
+        'ui.bootstrap.contextMenu'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {

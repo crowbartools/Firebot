@@ -31,6 +31,7 @@ require("../../node_modules/angular-translate-loader-url/angular-translate-loade
 require("../../node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files");
 require('countup.js-angular1');
 require("angular-pageslide-directive");
+require("angular-bootstrap-contextmenu");
 
 function boot() {
     angular.bootstrap(document, ["firebotApp"], {

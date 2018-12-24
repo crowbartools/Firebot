@@ -53,6 +53,7 @@
         "ag-grid": "^17.1.1",
         "angular": "^1.7.4",
         "angular-animate": "^1.7.4",
+        "angular-bootstrap-contextmenu": "^1.2.0",
         "angular-pageslide-directive": "^2.2.0",
         "angular-route": "^1.7.4",
         "angular-sanitize": "^1.7.4",

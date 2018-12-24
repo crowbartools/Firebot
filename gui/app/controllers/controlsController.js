@@ -190,6 +190,33 @@
 
             updateGridSize();
 
+            $scope.controlMenuOptions = [
+                {
+                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                    enabled: false,
+                    click: function ($itemScope) {
+                        //let control = $itemScope.control;
+                    }
+                },
+                {
+                    html: `<a href><i class="fas fa-th-large" style="margin-right: 10px;"></i> Remove From Grid</a>`,
+                    click: function ($itemScope) {
+                        let controlId = $itemScope.control.id;
+                        let control = mixplayService.getControlsForCurrentScene().find(c => c.id === controlId);
+                        if (control) {
+                            $scope.removeControlFromGrid(control);
+                        }
+                    }
+                },
+                {
+                    html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete Control</a>`,
+                    click: function ($itemScope) {
+                        let control = $itemScope.control;
+                        $scope.deleteControl(control);
+                    }
+                }
+            ];
+
             $scope.gridSizeChanged = function(size) {
                 $scope.currentGridSize = size;
                 updateGridSize();
