@@ -137,7 +137,7 @@
                         <div ng-repeat="control in controlPositions track by control.id" 
                                 control="control" 
                                 class="control animated bounceIn tile"
-                                ng-class="{'control-highlight': controlShouldHighlight(control.id)}" 
+                                ng-class="{'control-highlight': controlShouldHighlight(control.id), 'control-transitions': shouldEnableTransitions()}" 
                                 animationend="bounceIn" 
                                 disable-animate 
                                 col="{{control.position.x}}" 

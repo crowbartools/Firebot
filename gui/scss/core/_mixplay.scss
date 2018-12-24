@@ -4,6 +4,9 @@
     color: white;
     cursor: move;
     box-sizing: border-box;
+    &.control-transitions {
+        transition: top 0.5s ease, left 0.5s ease, width 0.5s ease, height 0.5s ease;  
+    }
 }
 
 the-grid {

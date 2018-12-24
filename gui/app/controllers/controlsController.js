@@ -7,7 +7,8 @@
             mixplayService,
             utilityService,
             controlHelper,
-            gridHelper
+            gridHelper,
+            $timeout
         ) {
 
             $scope.mps = mixplayService;
@@ -39,10 +40,28 @@
                 return [];
             };
 
+            $scope.disableControlTransitions = true;
+
             $scope.setSelectedScene = function(sceneId) {
+                $scope.disableControlTransitions = true;
+
                 mixplayService.setSelectedScene(sceneId);
                 $scope.updateControlPositions();
+
+                $timeout(() => {
+                    $scope.disableControlTransitions = false;
+                }, 10);
             };
+
+            $scope.shouldEnableTransitions = function() {
+                return !$scope.disableControlTransitions;
+            };
+
+            $scope.$on('$viewContentLoaded', function() {
+                $timeout(() => {
+                    $scope.disableControlTransitions = false;
+                }, 500);
+            });
 
             $scope.deleteCurrentProject = function() {
                 let currentProject = mixplayService.getCurrentProject();
