@@ -252,7 +252,7 @@
 
             $scope.setHighlightedControl = utilityService.debounce((id) => {
                 hightlightedControl = id;
-            }, 150);
+            }, 75);
 
             $scope.controlShouldHighlight = function(id) {
                 return hightlightedControl === id;
