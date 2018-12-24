@@ -4,6 +4,7 @@
     color: white;
     cursor: move;
     box-sizing: border-box;
+    animation-duration: 650ms !important;
     &.control-transitions {
         transition: top 0.5s ease, left 0.5s ease, width 0.5s ease, height 0.5s ease;  
     }
@@ -14,6 +15,18 @@ the-grid {
     background-image: linear-gradient(0deg, transparent, transparent 45%, rgba(107, 107, 107, 0.28) 50%, rgba(0, 0, 0, 0) 55%, transparent 56%, transparent), linear-gradient(90deg, transparent, transparent 45%, rgba(132, 132, 132, 0.22) 50%, rgba(255, 255, 255, 0) 55%, transparent 56%, transparent);
     background-size: 12px 12px;
     background-position: center center;
+}
+
+the-grid /deep/ #container {
+    transition: width 0.5s ease, height 0.5s ease;
+}
+
+the-grid::shadow #container {
+    transition: width 0.5s ease, height 0.5s ease;
+}
+
+the-grid #container {
+    transition: width 0.5s ease, height 0.5s ease;
 }
 
 the-grid > div[placeholder] {
