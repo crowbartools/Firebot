@@ -92,10 +92,13 @@
             };
 
             $scope.editControl = function(control) {
+
+                let copiedControl = JSON.parse(angular.toJson(control));
+
                 utilityService.showModal({
                     component: "editControlModal",
                     resolveObj: {
-                        control: () => control
+                        control: () => copiedControl
                     },
                     closeCallback: control => {
                         mixplayService.saveControlForCurrentScene(control);

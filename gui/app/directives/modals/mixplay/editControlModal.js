@@ -28,6 +28,14 @@
                 let $ctrl = this;
 
 
+                $ctrl.save = function() {
+                    $ctrl.close({
+                        $value: {
+                            control: $ctrl.control
+                        }
+                    });
+                };
+
                 $ctrl.$onInit = function() {
                 // When the compontent is initialized
                 // This is where you can start to access bindings, such as variables stored in 'resolve'
