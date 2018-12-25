@@ -228,6 +228,19 @@
                 }
             };
 
+            service.saveControlForCurrentScene = function(control) {
+                let currentScene = getCurrentScene();
+                if (!currentScene) return;
+
+                let indexOfControl = currentScene.controls.findIndex(c => c.id === control.id);
+
+                if (indexOfControl !== -1) {
+                    currentScene.controls[indexOfControl] = control;
+
+                    service.saveProject(service.getCurrentProject());
+                }
+            };
+
             service.deleteControlForCurrentScene = function(controlId) {
                 let currentScene = getCurrentScene();
                 if (currentScene) {

@@ -89,7 +89,7 @@
                 <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
                     <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
                     <ul class="dropdown-menu" uib-dropdown-menu>
-                        <li ng-click="" class="disabled">
+                        <li ng-click="editControl(control)">
                             <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>
                         </li>
                         <li ng-click="" class="disabled">
@@ -134,24 +134,24 @@
                         grid-listener 
                         on-update="gridUpdated()"
                         style="background-position: 18px 18px;">   
-                        <div ng-repeat="control in controlPositions track by control.id" 
+                        <div ng-repeat="control in controlPositions track by control.control.id" 
                                 control="control" 
                                 class="control animated bounceIn faster tile"
-                                ng-class="{'control-highlight': controlShouldHighlight(control.id), 'control-transitions': shouldEnableTransitions()}" 
+                                ng-class="{'control-highlight': controlShouldHighlight(control.control.id), 'control-transitions': shouldEnableTransitions()}" 
                                 animationend="bounceIn" 
-                                disable-animate 
+                                disable-animate
                                 col="{{control.position.x}}" 
                                 row="{{control.position.y}}" 
                                 height="{{control.position.height}}" 
                                 width="{{control.position.width}}" 
-                                min-width="{{getControlSettings(control.kind).minSize.width}}" 
-                                max-width="{{getControlSettings(control.kind).maxSize.width}}" 
-                                min-height="{{getControlSettings(control.kind).minSize.height}}" 
-                                max-height="{{getControlSettings(control.kind).maxSize.height}}" 
+                                min-width="{{getControlSettings(control.control.kind).minSize.width}}" 
+                                max-width="{{getControlSettings(control.control.kind).maxSize.width}}" 
+                                min-height="{{getControlSettings(control.control.kind).minSize.height}}" 
+                                max-height="{{getControlSettings(control.control.kind).maxSize.height}}" 
                                 bind-polymer
                                 context-menu="controlMenuOptions">
-                            <control-tile control="control" class="control-tile-wrapper"></control-tile>
-                            <span ng-show="getControlSettings(control.kind).resizable">
+                            <control-tile control="control.control" class="control-tile-wrapper"></control-tile>
+                            <span ng-show="getControlSettings(control.control.kind).resizable">
                                 <span resize="left" class="resize"><span class="resize-ball"></span></span>
                                 <span resize="right" class="resize"><span class="resize-ball"></span></span>
                                 <span resize="top" class="resize"><span class="resize-ball"></span></span>
@@ -161,23 +161,12 @@
     
                         <div placeholder style="color: darkgrey"></div>
                       </the-grid>
-                </div>
-                
-            </div>
-              
-        
+                </div>              
+            </div>             
           </div>
-
       </div>
-
     </div>
-
-    
-
   </div>
-
-
-  
 </div>
 
 

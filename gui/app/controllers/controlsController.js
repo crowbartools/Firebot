@@ -16,6 +16,14 @@
             $scope.currentGridSize = gridHelper.GridSize.LARGE;
 
             $scope.gridUpdated = function() {
+                /*for (let controlData of $scope.controlPositions) {
+                    let indexOfPosition = controlData.control.position.findIndex(p => p.size === controlData.position.size);
+                    if (indexOfPosition > -1) {
+                        console.log("UPDATIING CONTROL");
+                        controlData.control.position[indexOfPosition] = controlData.position;
+                        console.log(controlData.control);
+                    }
+                }*/
                 mixplayService.saveProject(mixplayService.getCurrentProject());
             };
 
@@ -81,6 +89,19 @@
                             }
                         });
                 }
+            };
+
+            $scope.editControl = function(control) {
+                utilityService.showModal({
+                    component: "editControlModal",
+                    resolveObj: {
+                        control: () => control
+                    },
+                    closeCallback: control => {
+                        mixplayService.saveControlForCurrentScene(control);
+                        $scope.updateControlPositions();
+                    }
+                });
             };
 
             $scope.deleteScene = function(scene) {
@@ -186,10 +207,8 @@
                     .filter(c => c.position.some(p => p.size === size))
                     .map(c => {
                         return {
-                            id: c.id,
-                            name: c.name,
-                            kind: c.kind,
-                            position: c.position.find(p => p.size === size)
+                            position: c.position.find(p => p.size === size),
+                            control: c
                         };
                     });
             };
@@ -211,16 +230,17 @@
 
             $scope.controlMenuOptions = [
                 {
-                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
-                    enabled: false,
+                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>`,
                     click: function ($itemScope) {
-                        //let control = $itemScope.control;
+                        let control = $itemScope.control.control;
+                        console.log(control);
+                        $scope.editControl(control);
                     }
                 },
                 {
                     html: `<a href><i class="fas fa-th-large" style="margin-right: 10px;"></i> Remove From Grid</a>`,
                     click: function ($itemScope) {
-                        let controlId = $itemScope.control.id;
+                        let controlId = $itemScope.control.control.id;
                         let control = mixplayService.getControlsForCurrentScene().find(c => c.id === controlId);
                         if (control) {
                             $scope.removeControlFromGrid(control);
@@ -230,7 +250,7 @@
                 {
                     html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete Control</a>`,
                     click: function ($itemScope) {
-                        let control = $itemScope.control;
+                        let control = $itemScope.control.control;
                         $scope.deleteControl(control);
                     }
                 }
