@@ -464,6 +464,10 @@ function appOnReady() {
         //load variables
         builtInVariableLoader.loadReplaceVariables();
 
+        // Load currency system commands.
+        const currencyManager = require('./lib/currency/currencyManager');
+        currencyManager.createAllCurrencyCommands();
+
         //start extra life manager
         //const extralifeManager = require('./lib/extralifeManager');
         //extralifeManager.start();
