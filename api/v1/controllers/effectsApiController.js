@@ -59,17 +59,10 @@ exports.getEffectDependencies = function(req, res) {
 
 
 exports.runEffects = function(req, res) {
-    if (mixerInteractive.getInteractiveStatus() === false) {
-        res.status(500).send({status: 'error', message: "Interactive is not connected."});
-        return;
-
-    } else if (req.body.effects != null) {
+    if (req.body.effects != null) {
         let builtEffects = effectsBuilder.buildEffects(req.body.effects);
 
-        let username = req.body.username;
-        if (username == null) {
-            username = "API Call";
-        }
+        let username = req.body.username || "API Call";
 
         let participant = req.body.participant;
 
