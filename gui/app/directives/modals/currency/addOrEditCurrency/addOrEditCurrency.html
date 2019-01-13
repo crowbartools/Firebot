@@ -32,6 +32,19 @@
                 <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.payout" placeholder="10">
             </div>
 
+            <eos-container header="Bonus Payout" pad-top="true">
+                <div class="bonus-payout-groups">
+                    <div class="bonus-payout-group input-group" ng-repeat="group in $ctrl.viewerGroups">
+                        <span class="input-group-addon" id="basic-addon3">{{group}}</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" placeholder="0" ng-model="$ctrl.currency.bonus[group]">
+                    </div>
+                </div>
+        
+                <div class="effect-info alert alert-warning">
+                    Don't see the group you want? This is because you haven't made it active yet! Go back to your board and click the cog wheel at the top. Then add your viewer group to one of your scenes.
+                </div>
+            </eos-container>
+
             <div class="input-group">
                 <span class="input-group-addon" id="basic-addon3">Currency Limit</span>
                 <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.limit" placeholder="1000">

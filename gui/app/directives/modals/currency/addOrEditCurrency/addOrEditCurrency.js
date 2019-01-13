@@ -12,7 +12,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService, currencyService) {
+        controller: function($scope, utilityService, currencyService, groupsService) {
             const uuidv1 = require("uuid/v1");
             let $ctrl = this;
 
@@ -23,7 +23,8 @@
                 payout: 5,
                 interval: 5,
                 limit: 10000,
-                transfer: "Allow"
+                transfer: "Allow",
+                bonus: {}
             };
 
             $ctrl.$onInit = function() {
@@ -46,9 +47,13 @@
                     })
                 );
 
+                // Set our transfer status.
                 $ctrl.setTransferEnabled = function(state) {
                     $ctrl.currency.transfer = state;
                 };
+
+                // Get the groups we want people to be able to give bonus currency to...
+                $ctrl.viewerGroups = groupsService.getDefaultGroups();
 
                 $scope.$on("modal.closing", function() {
                     utilityService.removeSlidingModal();
@@ -62,6 +67,8 @@
 
             $ctrl.save = function() {
                 if ($ctrl.currency.name == null || $ctrl.currency.name === "") return;
+
+                logger.debug($ctrl.currency);
 
                 let action = $ctrl.isNewCurrency ? "add" : "update";
                 $ctrl.close({
@@ -102,7 +109,7 @@
                     .showConfirmationModal({
                         title: "Purge Currency",
                         question:
-              "Are you sure you'd like to purge this currency? All points for all users will be lost.",
+              "Are you sure you'd like to purge this currency? This currency will be set to 0 for all users.",
                         confirmLabel: "Purge"
                     })
                     .then(confirmed => {

@@ -7,8 +7,7 @@
         .controller("currencyController", function(
             $scope,
             utilityService,
-            currencyService,
-            viewersService
+            currencyService
         ) {
             // Returns an array of all currencies.
             $scope.getCurrencies = function() {
