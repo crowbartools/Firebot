@@ -12,7 +12,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService, currencyService, groupsService) {
+        controller: function($scope, utilityService, currencyService, groupsService, logger) {
             const uuidv1 = require("uuid/v1");
             let $ctrl = this;
 
@@ -53,7 +53,7 @@
                 };
 
                 // Get the groups we want people to be able to give bonus currency to...
-                $ctrl.viewerGroups = groupsService.getDefaultGroups();
+                $ctrl.viewerGroups = groupsService.getDefaultGroups().filter(g => g !== "Streamer");
 
                 $scope.$on("modal.closing", function() {
                     utilityService.removeSlidingModal();
