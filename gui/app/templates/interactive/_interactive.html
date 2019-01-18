@@ -150,13 +150,13 @@
                                 max-height="{{getControlSettings(control.control.kind).maxSize.height}}" 
                                 bind-polymer
                                 context-menu="controlMenuOptions">
-                            <control-tile control="control.control" class="control-tile-wrapper"></control-tile>
-                            <span ng-show="getControlSettings(control.control.kind).resizable">
-                                <span resize="left" class="resize"><span class="resize-ball"></span></span>
-                                <span resize="right" class="resize"><span class="resize-ball"></span></span>
-                                <span resize="top" class="resize"><span class="resize-ball"></span></span>
-                                <span resize="bottom" class="resize"><span class="resize-ball"></span></span>
-                            </span>
+                                    <control-tile control="control.control" class="control-tile-wrapper"></control-tile>
+                                    <span ng-show="getControlSettings(control.control.kind).resizable">
+                                        <span resize="left" class="resize"><span class="resize-ball"></span></span>
+                                        <span resize="right" class="resize"><span class="resize-ball"></span></span>
+                                        <span resize="top" class="resize"><span class="resize-ball"></span></span>
+                                        <span resize="bottom" class="resize"><span class="resize-ball"></span></span>
+                                    </span>
                         </div>
     
                         <div placeholder style="color: darkgrey"></div>

@@ -25,7 +25,8 @@
         'ngYoutubeEmbed',
         'countUpModule',
         'pageslide-directive',
-        'ui.bootstrap.contextMenu'
+        'ui.bootstrap.contextMenu',
+        'color.picker'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {

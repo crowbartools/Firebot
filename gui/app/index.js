@@ -32,6 +32,8 @@ require("../../node_modules/angular-translate-loader-static-files/angular-transl
 require('countup.js-angular1');
 require("angular-pageslide-directive");
 require("angular-bootstrap-contextmenu");
+require("../../node_modules/tinycolor2/dist/tinycolor-min");
+require("angularjs-color-picker");
 
 function boot() {
     angular.bootstrap(document, ["firebotApp"], {

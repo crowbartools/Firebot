@@ -97,11 +97,14 @@
 
                 utilityService.showModal({
                     component: "editControlModal",
+                    keyboard: false,
+                    backdrop: 'static',
                     resolveObj: {
-                        control: () => copiedControl
+                        control: () => copiedControl,
+                        currentGridSize: () => $scope.currentGridSize
                     },
-                    closeCallback: control => {
-                        mixplayService.saveControlForCurrentScene(control);
+                    closeCallback: resp => {
+                        mixplayService.saveControlForCurrentScene(resp.control);
                         $scope.updateControlPositions();
                     }
                 });

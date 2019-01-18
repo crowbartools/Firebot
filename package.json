@@ -63,6 +63,7 @@
         "angular-translate-loader-url": "^2.18.1",
         "angular-ui-bootstrap": "^2.5.0",
         "angular-ui-sortable": "^0.18.0",
+        "angularjs-color-picker": "^3.4.8",
         "angularjs-scroll-glue": "^2.2.0",
         "angularjs-slider": "^6.6.1",
         "archiver": "^2.1.1",
