@@ -116,6 +116,12 @@
                 <div style="font-size: 13px;">
                     <grid-size-selection selected-size="currentGridSize" update="gridSizeChanged(size)"></grid-size-selection>
                 </div>
+                <div style="margin-left: 15px;">
+                    <label class="control-fb control--checkbox small-control noselect"> Preview Mode <tooltip text="'Preview mode makes the controls look more like they will under your stream.'"></tooltip>
+                        <input type="checkbox" ng-checked="previewEnabled" ng-click="togglePreviewMode()" aria-label="...">
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
             </div>
             
 
@@ -133,7 +139,8 @@
                         cell-width="12" 
                         grid-listener 
                         on-update="gridUpdated()"
-                        style="background-position: 18px 18px;">   
+                        style="background-position: 18px 18px;"
+                        ng-class="{'preview': previewEnabled}">   
                         <div ng-repeat="control in controlPositions track by control.control.id" 
                                 control="control" 
                                 class="control animated bounceIn faster tile"
@@ -150,7 +157,7 @@
                                 max-height="{{getControlSettings(control.control.kind).maxSize.height}}" 
                                 bind-polymer
                                 context-menu="controlMenuOptions">
-                                    <control-tile control="control.control" class="control-tile-wrapper"></control-tile>
+                                    <control-tile control="control.control" class="control-tile-wrapper" preview-mode="previewEnabled"></control-tile>
                                     <span ng-show="getControlSettings(control.control.kind).resizable">
                                         <span resize="left" class="resize"><span class="resize-ball"></span></span>
                                         <span resize="right" class="resize"><span class="resize-ball"></span></span>

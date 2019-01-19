@@ -486,6 +486,16 @@
                 pushDataToFile('/settings/sparkExemptionEnabled', enabled === true);
             };
 
+            service.mixPlayPreviewModeEnabled = function() {
+                let enabled = getDataFromFile('/settings/mixplayPreviewMode');
+                return enabled != null ? enabled : false;
+            };
+
+            service.setMixPlayPreviewModeEnabled = function(enabled) {
+                pushDataToFile('/settings/mixplayPreviewMode', enabled === true);
+            };
+
+
             service.getClearCustomScriptCache = function() {
                 let clear = getDataFromFile("/settings/clearCustomScriptCache");
                 return clear != null ? clear : false;

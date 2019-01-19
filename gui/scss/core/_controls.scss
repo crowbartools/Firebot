@@ -9,6 +9,8 @@
   height: 210px;
   margin: 10px;
 }
+
+// checkbox
 .control-fb {
   display: block;
   position: relative;
@@ -17,6 +19,13 @@
   cursor: pointer;
   font-size: 15px;
   font-weight: 400;
+
+  &.small-control {
+    margin-bottom: 0px;
+    font-size: 12px;
+    padding-left: 19px;
+    line-height: 14px;
+  }
 }
 .control-fb input {
   position: absolute;
@@ -31,6 +40,14 @@
   width: 20px;
   background: #e6e6e6;
 }
+
+.small-control .control__indicator {
+  top: 0;
+  left: 0;
+  height: 14px;
+  width: 14px;
+}
+
 .control--radio .control__indicator {
   border-radius: 50%;
 }
@@ -67,9 +84,22 @@
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
+
+.control--checkbox.small-control .control__indicator:after {
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 9px;
+  border-width: 0 1.75px 1.75px 0;
+}
+
+
 .control--checkbox input:disabled ~ .control__indicator:after {
   border-color: #7b7b7b;
 }
+// end checkbox
+
+
 .control--radio .control__indicator:after {
   left: 7px;
   top: 7px;

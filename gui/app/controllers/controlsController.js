@@ -1,4 +1,5 @@
 "use strict";
+
 (function() {
     angular
         .module("firebotApp")
@@ -8,8 +9,16 @@
             utilityService,
             controlHelper,
             gridHelper,
-            $timeout
+            $timeout,
+            settingsService
         ) {
+
+            $scope.previewEnabled = settingsService.mixPlayPreviewModeEnabled();
+
+            $scope.togglePreviewMode = function() {
+                $scope.previewEnabled = !$scope.previewEnabled;
+                settingsService.setMixPlayPreviewModeEnabled($scope.previewEnabled);
+            };
 
             $scope.mps = mixplayService;
 

@@ -18,16 +18,14 @@
                     </div>
                     <div style="display:flex; align-items: center;">
                         <div style="width: {{$ctrl.controlPixelDimensions.width}}px; height: {{$ctrl.controlPixelDimensions.height}}px;">
-                            <control-tile control="$ctrl.control" class="control-tile-wrapper"></control-tile>
+                            <control-tile control="$ctrl.control" class="control-tile-wrapper" preview-mode="true"></control-tile>
                         </div>
                     </div>
                     <div class="settings-title" style="margin-top: 15px;">
                         <h3>Settings</h3>
                     </div>
                     <control-settings control="$ctrl.control"></control-settings>
-
-                    
-                
+               
                 </div>
                     
             </div>

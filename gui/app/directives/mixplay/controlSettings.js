@@ -33,6 +33,11 @@
 
                         <control-color-picker model="$ctrl.control.backgroundColor" label="Background Color"></control-color-picker>
 
+                        <div class="input-group settings-buttontext">
+                            <span class="input-group-addon" id="basic-addon3">Background Image URL</span>
+                            <input type="url" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.backgroundImage">
+                        </div>
+
                     </eos-collapsable-panel>              
 
                     <div class="input-group settings-buttontext" style="margin-top: 15px;">
