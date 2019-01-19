@@ -60,10 +60,43 @@
                         <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.threshold">
                     </div>
                 </div>
+
+
                 <div ng-switch-when="label">
 
+                    <div class="input-group settings-buttontext">
+                        <span class="input-group-addon" id="basic-addon3">Button Text</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.text">
+                    </div>
 
+                    <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
+
+                        <div class="input-group settings-buttontext">
+                            <span class="input-group-addon" id="basic-addon3">Text Size</span>
+                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.textSize">
+                        </div>
+
+                        <control-color-picker model="$ctrl.control.textColor" label="Text Color"></control-color-picker>
+
+                        <label class="control-fb control--checkbox noselect"> Bold
+                            <input type="checkbox" ng-model="$ctrl.control.bold" aria-label="...">
+                            <div class="control__indicator"></div>
+                        </label>
+
+                        <label class="control-fb control--checkbox noselect"> Italic
+                            <input type="checkbox" ng-model="$ctrl.control.italic" aria-label="...">
+                            <div class="control__indicator"></div>
+                        </label>
+
+                        <label class="control-fb control--checkbox noselect"> Underline
+                            <input type="checkbox" ng-model="$ctrl.control.underline" aria-label="...">
+                            <div class="control__indicator"></div>
+                        </label>
+
+                    </eos-collapsable-panel>              
                 </div>
+
+
             </div>
             `,
             controller: function() {

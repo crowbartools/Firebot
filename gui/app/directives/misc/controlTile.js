@@ -13,6 +13,8 @@
 
                         <button-tile ng-switch-when="button" control="$ctrl.control" style="width:100%; height: 100%;"></button-tile>
 
+                        <label-tile ng-switch-when="label" control="$ctrl.control" style="width:100%; height: 100%;"></label-tile>
+
                         <div ng-switch-default class="default-control">
                             {{$ctrl.control.name}}
                         </div>             
