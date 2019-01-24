@@ -49,6 +49,7 @@
                     iconClass: "fa-bullseye",
                     grid: true,
                     resizable: true,
+                    hasSettings: true,
                     minSize: {
                         width: 6,
                         height: 4
@@ -74,7 +75,8 @@
                         width: 20,
                         height: 15
                     },
-                    effects: false
+                    effects: false,
+                    hasSettings: true
                 },
                 textbox: {
                     kind: "textbox",
@@ -91,7 +93,8 @@
                         width: 20,
                         height: 15
                     },
-                    effects: false
+                    effects: false,
+                    hasSettings: true
                 },
                 joystick: {
                     kind: "joystick",
@@ -108,7 +111,8 @@
                         width: 12,
                         height: 12
                     },
-                    effects: false
+                    effects: false,
+                    hasSettings: false
                 },
                 screen: {
                     kind: "screen",
@@ -125,7 +129,8 @@
                         width: 0,
                         height: 0
                     },
-                    effects: false
+                    effects: false,
+                    hasSettings: false
                 }
             };
 

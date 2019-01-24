@@ -8,13 +8,13 @@
             template: `
             <div class="modal-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">Edit Control</h4>
+                <h4 class="modal-title">Edit Control - {{$ctrl.control.name}}</h4>
             </div>
             <div class="modal-body">
                 <div class="general-button-settings">
 
                     <div class="settings-title">
-                        <h3>Control Preview</h3>
+                        <h4>Preview</h4>
                     </div>
                     <div style="display:flex; align-items: center;">
                         <div style="width: {{$ctrl.controlPixelDimensions.width}}px; height: {{$ctrl.controlPixelDimensions.height}}px;">
@@ -22,10 +22,38 @@
                         </div>
                     </div>
                     <div class="settings-title" style="margin-top: 15px;">
-                        <h3>Settings</h3>
+                        <h3>MixPlay Settings</h3>
                     </div>
                     <control-settings control="$ctrl.control"></control-settings>
-               
+
+                </div>
+
+                <div>
+                    <div class="settings-title" style="margin-top: 15px;">
+                        <h3>Other</h3>
+                    </div>
+
+                    <div class="controls-fb-inline">
+                        <label class="control-fb control--checkbox">Active
+                            <input type="checkbox" ng-model="$ctrl.control.active" aria-label="..." checked>
+                            <div class="control__indicator"></div>
+                        </label>
+                        <label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone clicks this control'"></tooltip>
+                            <input type="checkbox" ng-model="$ctrl.control.chatFeedAlert" aria-label="...">
+                            <div class="control__indicator"></div>
+                        </label>
+                        <label class="control-fb control--checkbox">Skip Logging
+                            <input type="checkbox" ng-model="$ctrl.control.skipLog" aria-label="...">
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="function-button-settings" style="margin-top: 15px;">
+
+                    <effect-list header="What should this {{$ctrl.control.kind}} do?" effects="$ctrl.control.effects" trigger="interactive" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
+
                 </div>
                     
             </div>
@@ -37,12 +65,18 @@
             bindings: {
                 resolve: "<",
                 close: "&",
-                dismiss: "&"
+                dismiss: "&",
+                modalInstance: "<"
             },
-            controller: function(controlHelper) {
+            controller: function($scope, controlHelper, utilityService) {
                 let $ctrl = this;
 
                 $ctrl.control = {};
+
+                $ctrl.modalId = "Edit Control";
+                $ctrl.effectListUpdated = function(effects) {
+                    $ctrl.control.effects = effects;
+                };
 
                 $ctrl.save = function() {
                     $ctrl.close({
@@ -75,6 +109,22 @@
                             };
                         }
                     }
+
+                    utilityService.addSlidingModal(
+                        $ctrl.modalInstance.rendered.then(() => {
+                            let modalElement = $("." + $ctrl.modalId).children();
+                            return {
+                                element: modalElement,
+                                name: "Edit Timer",
+                                id: $ctrl.modalId,
+                                instance: $ctrl.modalInstance
+                            };
+                        })
+                    );
+
+                    $scope.$on("modal.closing", function() {
+                        utilityService.removeSlidingModal();
+                    });
                 };
 
 
