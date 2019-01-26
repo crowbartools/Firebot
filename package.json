@@ -9,7 +9,7 @@
         "compile:scss": "npm run compile:scssGui && npm run compile:scssOverlay",
         "compile:scssGui": "./node_modules/.bin/node-sass --recursive --output ./gui/css ./gui/scss",
         "compile:scssOverlay": "./node_modules/.bin/node-sass --recursive --output ./resources/overlay/css ./resources/overlay/scss",
-        "lint": "./node_modules/.bin/eslint .",
+        "lint": "./node_modules/.bin/eslint --quiet .",
         "lint:local": "./node_modules/.bin/eslint . --output-file=eslint.log.htm --format=html --fix",
         "lint:fix": "./node_modules/.bin/eslint . --fix",
         "rebuild32": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=2.0.7 --arch=ia32 --dist-url=https://atom.io/download/atom-shell",
