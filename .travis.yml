@@ -13,6 +13,7 @@ script:
   - npm run lint
 
 deploy:
+  skip_cleanup: true
   provider: script
   script: node deploy.js
   on:
