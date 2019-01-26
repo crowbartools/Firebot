@@ -1,3 +1,4 @@
+"use strict";
 const https = require('https');
 
 const data = JSON.stringify({
