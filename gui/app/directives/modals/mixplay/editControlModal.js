@@ -50,9 +50,9 @@
 
                 </div>
 
-                <div class="function-button-settings" style="margin-top: 15px;">
+                <div ng-if="$ctrl.supportsEffects" class="function-button-settings" style="margin-top: 15px;">
 
-                    <effect-list header="What should this {{$ctrl.control.kind}} do?" effects="$ctrl.control.effects" trigger="interactive" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
+                    <effect-list header="What should this {{$ctrl.kindName}} do?" effects="$ctrl.control.effects" trigger="interactive" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
 
                 </div>
                     
@@ -88,25 +88,34 @@
 
                 $ctrl.controlPixelDimensions = {width: 72, height: 48};
 
+                $ctrl.supportsEffects = false;
+
+                $ctrl.kindName = "";
+
                 $ctrl.$onInit = function() {
                     if ($ctrl.resolve.control != null) {
                         $ctrl.control = JSON.parse(JSON.stringify($ctrl.resolve.control));
 
                         let kind = $ctrl.control.kind;
                         if (kind) {
+                            let controlSettings = controlHelper.controlSettings[kind];
+
                             let gridSize = $ctrl.resolve.currentGridSize;
                             let controlSize;
                             if (gridSize && $ctrl.control.position) {
                                 controlSize = $ctrl.control.position.find(p => p.size === gridSize);
                             }
                             if (!controlSize) {
-                                let controlSettings = controlHelper.controlSettings[kind];
                                 controlSize = controlSettings.minSize;
                             }
                             $ctrl.controlPixelDimensions = {
                                 width: controlSize.width * 12,
                                 height: controlSize.height * 12
                             };
+
+                            $ctrl.supportsEffects = controlSettings.effects;
+
+                            $ctrl.kindName = controlSettings.name;
                         }
                     }
 
@@ -115,7 +124,7 @@
                             let modalElement = $("." + $ctrl.modalId).children();
                             return {
                                 element: modalElement,
-                                name: "Edit Timer",
+                                name: "Edit Control",
                                 id: $ctrl.modalId,
                                 instance: $ctrl.modalInstance
                             };
