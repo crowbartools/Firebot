@@ -44,17 +44,17 @@
             // Check to make sure we don't have a currency with the same name.
             Object.keys(allCurrencies).forEach(function(k) {
                 let savedCurrency = allCurrencies[k];
-                if(savedCurrency.name === currency.name){
+                if (savedCurrency.name === currency.name) {
                     dupe = true;
                 }
             });
 
             // Uh Oh! We have a currency with this name already.
-            if(dupe === true){
+            if (dupe === true) {
                 utilityService.showErrorModal(
                     "You cannot create a currency with the same name as another currency!"
                 );
-                logger.error('User tried to create currency with the same name as another currency: '+currency.name+'.');
+                logger.error('User tried to create currency with the same name as another currency: ' + currency.name + '.');
                 return;
             }
 
@@ -62,12 +62,12 @@
             currencyDb.push("/" + currencyId, currency);
 
             // Log currency name.
-            logger.debug('Currency created with name: '+currency.name);
+            logger.debug('Currency created with name: ' + currency.name);
 
             // Send success message.
             ipcRenderer.send("createCurrency", currencyId);
             ipcRenderer.send("refreshCurrencyCache");
-            ipcRenderer.send("refreshCurrencyCommands",  {"action": "create", "currency": currency});
+            ipcRenderer.send("refreshCurrencyCommands", {"action": "create", "currency": currency});
         };
 
         // Updated a pre-existing currency through the modal.
