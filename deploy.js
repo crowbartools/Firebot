@@ -22,7 +22,7 @@ const req = https.request(
         }
     },
     res => {
-        if (res.statusCode !== 200) {
+        if (res.statusCode < 200 || res.statusCode > 299) {
             console.warn(`server responded with: ${res.statusCode}`);
         }
 
