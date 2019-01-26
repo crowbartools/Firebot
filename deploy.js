@@ -4,7 +4,7 @@ const https = require('https');
 const data = JSON.stringify({
     request: {
         message: 'Build triggered from FireBot',
-        branch: 'source'
+        branch: 'master'
     }
 });
 
