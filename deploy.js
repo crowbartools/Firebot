@@ -14,7 +14,6 @@ const req = https.request(
         hostname: 'api.travis-ci.org',
         path: '/repo/crowbartools%2Ffirebot-dev-builds/requests',
         headers: {
-
             "Content-Type": "application/json",
             "Accept": "application/json",
             "Travis-API-Version": "3",
@@ -29,7 +28,8 @@ const req = https.request(
 
         req.on('data', data => console.log(data));
     }
-).on('error', err => {
+);
+req.on('error', err => {
     console.error(err.message);
 });
 req.write(data);
