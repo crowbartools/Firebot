@@ -17,7 +17,7 @@ angular.module('firebotApp').
                         toLowerCase();
 
                     if (angular.isString($attr[prop])) {
-                        let _match = $attr[prop].match(/\{\{\s*([\.\w]+)\s*\}\}/);
+                        let _match = $attr[prop].match(/\{\{\s*([\.\w]+)\s*\}\}/); // eslint-disable-line no-useless-escape
                         if (_match) {
                             attrMap[prop] = $parse(_match[1]);
                             if (dashProp !== prop) {
@@ -27,7 +27,7 @@ angular.module('firebotApp').
                     }
                 }
 
-                return function bindPolymerLink(scope, element, attrs) {
+                return function bindPolymerLink(scope, element) {
 
                     // When Polymer sees a change to the bound variable,
                     // $apply / $digest the changes here in Angular
@@ -41,9 +41,9 @@ angular.module('firebotApp').
                                 getter = attrMap[attributeName];
                                 oldValue = getter(scope);
 
-			                    if (!isNaN(newValue)) {
+                                if (!isNaN(newValue)) {
                                     newValue = parseInt(newValue);
-			                    }
+                                }
 
                                 if (oldValue !== newValue && angular.isFunction(getter.assign)) {
                                     getter.assign(scope, newValue);

@@ -5,7 +5,8 @@
 
     const profileManager = require("../../lib/common/profile-manager");
 
-    agGrid.initialiseAgGridWithAngular1(angular);
+
+    agGrid.initialiseAgGridWithAngular1(angular); // eslint-disable-line no-undef
 
     let app = angular.module("firebotApp", [
         "ngAnimate",

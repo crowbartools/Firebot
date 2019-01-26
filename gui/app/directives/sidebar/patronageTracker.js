@@ -174,7 +174,7 @@
 
                 function recalcTextSize() {
                     $timeout(() => {
-                        BigText("#patronageCount", {
+                        BigText("#patronageCount", { // eslint-disable-line new-cap
                             fontSizeFactor: 0.9,
                             maximumFontSize: 22,
                             verticalAlign: "bottom"
