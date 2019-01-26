@@ -12,5 +12,8 @@ install:
 script:
   - npm run lint
 
-after_success:
-  - node deploy.js
+deploy:
+  provider: script
+  script: node deploy.js
+  on:
+    branch: v5

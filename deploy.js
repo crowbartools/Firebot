@@ -9,10 +9,12 @@ const data = JSON.stringify({
 });
 
 const req = https.request(
-    'https://api.travis-ci.org/repo/crowbartools%2Ffirebot-dev-builds/requests',
     {
         method: 'POST',
+        hostname: 'api.travis-ci.org',
+        path: '/repo/crowbartools%2Ffirebot-dev-builds/requests',
         headers: {
+
             "Content-Type": "application/json",
             "Accept": "application/json",
             "Travis-API-Version": "3",
@@ -22,7 +24,7 @@ const req = https.request(
     },
     res => {
         if (res.statusCode !== 200) {
-            throw new Error(`server responded with: ${res.statusCode}`);
+            console.warn(`server responded with: ${res.statusCode}`);
         }
 
         req.on('data', data => console.log(data));
