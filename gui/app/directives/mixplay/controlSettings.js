@@ -13,46 +13,46 @@
                 <div ng-switch-when="button">
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Button Text</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.text">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text">
                     </div>
 
                     <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
 
                         <div class="input-group settings-buttontext">
                             <span class="input-group-addon" id="basic-addon3">Text Size</span>
-                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.textSize">
+                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize">
                         </div>
 
-                        <control-color-picker model="$ctrl.control.textColor" label="Text Color"></control-color-picker>
+                        <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
 
-                        <control-color-picker model="$ctrl.control.accentColor" label="Accent Color"></control-color-picker>
+                        <control-color-picker model="$ctrl.control.mixplay.accentColor" label="Accent Color"></control-color-picker>
 
-                        <control-color-picker model="$ctrl.control.borderColor" label="Border Color"></control-color-picker>
+                        <control-color-picker model="$ctrl.control.mixplay.borderColor" label="Border Color"></control-color-picker>
 
-                        <control-color-picker model="$ctrl.control.focusColor" label="Focus Color"></control-color-picker>
+                        <control-color-picker model="$ctrl.control.mixplay.focusColor" label="Focus Color"></control-color-picker>
 
-                        <control-color-picker model="$ctrl.control.backgroundColor" label="Background Color"></control-color-picker>
+                        <control-color-picker model="$ctrl.control.mixplay.backgroundColor" label="Background Color"></control-color-picker>
 
                         <div class="input-group settings-buttontext">
                             <span class="input-group-addon" id="basic-addon3">Background Image URL</span>
-                            <input type="url" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.backgroundImage">
+                            <input type="url" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.backgroundImage">
                         </div>
 
                     </eos-collapsable-panel>              
 
                     <div class="input-group settings-buttontext" style="margin-top: 15px;">
                         <span class="input-group-addon" id="basic-addon3">Tooltip</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.tooltip">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.tooltip">
                     </div>
                 
                     <div class="input-group settings-sparkcost">
                         <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.cost">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cost">
                     </div>
                 
                     <div class="input-group settings-cooldown">
                         <span class="input-group-addon" id="basic-addon3">Cooldown (sec)</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.cooldown">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cooldown">
                     </div>
                 
                     <div class="input-group settings-cooldown">
@@ -66,30 +66,30 @@
 
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Button Text</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.text">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text">
                     </div>
 
                     <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
 
                         <div class="input-group settings-buttontext">
                             <span class="input-group-addon" id="basic-addon3">Text Size</span>
-                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.textSize">
+                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize">
                         </div>
 
-                        <control-color-picker model="$ctrl.control.textColor" label="Text Color"></control-color-picker>
+                        <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
 
                         <label class="control-fb control--checkbox noselect"> Bold
-                            <input type="checkbox" ng-model="$ctrl.control.bold" aria-label="...">
+                            <input type="checkbox" ng-model="$ctrl.control.mixplay.bold" aria-label="...">
                             <div class="control__indicator"></div>
                         </label>
 
                         <label class="control-fb control--checkbox noselect"> Italic
-                            <input type="checkbox" ng-model="$ctrl.control.italic" aria-label="...">
+                            <input type="checkbox" ng-model="$ctrl.control.mixplay.italic" aria-label="...">
                             <div class="control__indicator"></div>
                         </label>
 
                         <label class="control-fb control--checkbox noselect"> Underline
-                            <input type="checkbox" ng-model="$ctrl.control.underline" aria-label="...">
+                            <input type="checkbox" ng-model="$ctrl.control.mixplay.underline" aria-label="...">
                             <div class="control__indicator"></div>
                         </label>
 
@@ -103,7 +103,9 @@
                 let $ctrl = this;
 
                 $ctrl.$onInit = function() {
-
+                    if (!$ctrl.control.mixplay) {
+                        $ctrl.control.mixplay = {};
+                    }
                 };
             }
         });
