@@ -31,6 +31,8 @@ const builtInVariableLoader = require("./lib/variables/builtin-variable-loader")
 
 const Effect = require("./lib/common/EffectType");
 
+require("./lib/interactive/mixplay");
+
 // uncaught exception - log the error
 process.on("uncaughtException", logger.error); //eslint-disable-line no-console
 
