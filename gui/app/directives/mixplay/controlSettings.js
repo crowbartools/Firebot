@@ -47,17 +47,17 @@
                 
                     <div class="input-group settings-sparkcost">
                         <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cost">
+                        <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cost">
                     </div>
                 
                     <div class="input-group settings-cooldown">
                         <span class="input-group-addon" id="basic-addon3">Cooldown (sec)</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cooldown">
+                        <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cooldown">
                     </div>
                 
                     <div class="input-group settings-cooldown">
                         <span class="input-group-addon" id="basic-addon3">Threshold <tooltip text="'The number of clicks before button effects are run. A progress bar is shown on the button.'"></tooltip></span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.threshold">
+                        <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.threshold">
                     </div>
                 </div>
 
@@ -65,7 +65,7 @@
                 <div ng-switch-when="label">
 
                     <div class="input-group settings-buttontext">
-                        <span class="input-group-addon" id="basic-addon3">Button Text</span>
+                        <span class="input-group-addon" id="basic-addon3">Label Text</span>
                         <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text">
                     </div>
 
