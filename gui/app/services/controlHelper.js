@@ -93,7 +93,7 @@
                         width: 20,
                         height: 15
                     },
-                    effects: false,
+                    effects: true,
                     hasSettings: true
                 },
                 joystick: {
@@ -111,7 +111,7 @@
                         width: 12,
                         height: 12
                     },
-                    effects: false,
+                    effects: true,
                     hasSettings: false
                 },
                 screen: {
@@ -129,7 +129,7 @@
                         width: 0,
                         height: 0
                     },
-                    effects: false,
+                    effects: true,
                     hasSettings: false
                 }
             };

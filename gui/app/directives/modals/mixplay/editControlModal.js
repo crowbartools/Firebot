@@ -52,7 +52,7 @@
 
                 <div ng-if="$ctrl.supportsEffects" class="function-button-settings" style="margin-top: 15px;">
 
-                    <effect-list header="What should this {{$ctrl.kindName}} do?" effects="$ctrl.control.effects" trigger="interactive" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
+                    <effect-list header="What should this {{$ctrl.kindName}} do?" effects="$ctrl.control.effects" trigger="interactive" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
 
                 </div>
                     
@@ -72,6 +72,8 @@
                 let $ctrl = this;
 
                 $ctrl.control = {};
+
+                $ctrl.triggerMeta = {};
 
                 $ctrl.modalId = "Edit Control";
                 $ctrl.effectListUpdated = function(effects) {
@@ -95,6 +97,10 @@
                 $ctrl.$onInit = function() {
                     if ($ctrl.resolve.control != null) {
                         $ctrl.control = JSON.parse(JSON.stringify($ctrl.resolve.control));
+
+                        $ctrl.triggerMeta = {
+                            control: $ctrl.control.kind
+                        };
 
                         let kind = $ctrl.control.kind;
                         if (kind) {

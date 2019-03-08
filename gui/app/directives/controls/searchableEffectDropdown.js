@@ -34,8 +34,10 @@
 
             function getSelected() {
                 let effectDefs = listenerService
-                    .fireEventSync("getAllEffectDefinitions")
-                    .map(e => e.definition);
+                    .fireEventSync("getEffectDefinitions", {
+                        triggerType: ctrl.trigger,
+                        triggerMeta: ctrl.triggerMeta
+                    });
 
                 // grab the effect definitions for the given trigger
                 ctrl.options = effectDefs.sort((a, b) => {
