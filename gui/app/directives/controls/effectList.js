@@ -6,6 +6,7 @@
         .component("effectList", {
             bindings: {
                 trigger: "@",
+                triggerMeta: "<",
                 effects: "<",
                 isArray: "<",
                 update: '&',
@@ -122,7 +123,6 @@
                     ipcRenderer.send('runEffectsManually', ctrl.effectsArray);
                 };
 
-
                 ctrl.getLabelButtonTextForLabel = function(labelModel) {
                     if (labelModel == null || labelModel.length === 0) {
                         return "Add Label";
@@ -236,7 +236,7 @@
                             ctrl.removeEffectAtIndex(response.index);
                         }
                         ctrl.effectsUpdate();
-                    });
+                    }, ctrl.triggerMeta);
                 };
             }
         });

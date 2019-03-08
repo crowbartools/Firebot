@@ -508,7 +508,8 @@
                 effect,
                 index,
                 triggerType,
-                closeCallback
+                closeCallback,
+                triggerMeta
             ) {
                 let showEditEffectContext = {
                     templateUrl: "editEffectModal.html",
@@ -524,10 +525,12 @@
                         modalId,
                         effect,
                         index,
-                        triggerType
+                        triggerType,
+                        triggerMeta
                     ) => {
                         $scope.effect = JSON.parse(angular.toJson(effect));
                         $scope.triggerType = triggerType;
+                        $scope.triggerMeta = triggerMeta;
                         $scope.modalId = modalId;
 
                         $scope.isAddMode = index == null;
@@ -663,6 +666,9 @@
                         },
                         triggerType: () => {
                             return triggerType;
+                        },
+                        triggerMeta: () => {
+                            return triggerMeta;
                         },
                         index: () => {
                             return index;

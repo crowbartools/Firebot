@@ -6,6 +6,7 @@
     angular.module("firebotApp").component("searchableEffectDropdown", {
         bindings: {
             trigger: "@",
+            triggerMeta: "<",
             selected: "<",
             update: "&"
         },

@@ -447,7 +447,7 @@
       </ol>
       <div class="modal-body">
           <div class="effect-select-wrapper">
-              <searchable-effect-dropdown trigger="{{triggerType}}" selected="effect.id" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
+              <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.id" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
           </div>
           <div class="effect-settings-panel">
               <div ng-show="effect.id == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
