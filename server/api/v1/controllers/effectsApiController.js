@@ -75,10 +75,7 @@ exports.runEffects = function(req, res) {
     } else if (req.body.effects != null) {
         let builtEffects = effectsBuilder.buildEffects(req.body.effects);
 
-        let username = req.body.username;
-        if (username == null) {
-            username = "API Call";
-        }
+        let username = req.body.username || "API Call";
 
         let participant = req.body.participant;
 
