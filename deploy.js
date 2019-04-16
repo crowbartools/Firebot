@@ -3,7 +3,7 @@ const https = require('https');
 
 const data = JSON.stringify({
     request: {
-        message: `# Build triggered from Firebot\r\n\r\n--\r\n${process.env.TRAVIS_COMMIT_MESSAGE}`,
+        message: `# Build triggered from Firebot\r\n\r\n--\r\nLast commit: ${process.env.TRAVIS_COMMIT_MESSAGE}`,
         branch: 'master'
     }
 });
