@@ -74,6 +74,12 @@
                                     <li><b>$(subMonths)</b> - This is replaced by the total months a person has been subbed.</li>
                                 </ul>
                             </li>
+                            <li> Gifted Subscription Event
+                                <ul>
+                                    <li><b>$(gifterUsername)</b> - This is replaced by the user who gave the gift sub.</li>
+                                    <li><b>$(giftReceiverUsername)</b> - This is replaced by the user who received the gift sub.</li>
+                                </ul>
+                            </li>
                             <li> Skill Event & Skill - Sticker Only Event
                                 <ul>
                                     <li><b>$(skillName)</b> - Name of associated Skill.</li>
