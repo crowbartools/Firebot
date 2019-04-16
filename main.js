@@ -216,6 +216,19 @@ function createWindow() {
 
     const currencyManager = require("./lib/currency/currencyManager");
     currencyManager.startTimer();
+
+    // Connect to DBs.
+    logger.info("Creating or connecting user database");
+    const userdb = require("./lib/database/userDatabase");
+    userdb.connectUserDatabase();
+
+    logger.info("Creating or connecting stats database");
+    const statsdb = require("./lib/database/statsDatabase");
+    statsdb.connectStatsDatabase();
+
+    //load patronage data
+    const patronageManager = require("./lib/patronageManager");
+    patronageManager.loadPatronageData();
 }
 
 /**
@@ -496,20 +509,6 @@ function appOnReady() {
 
         //start the REST api server
         webServer.start();
-
-        const userdb = require("./lib/database/userDatabase");
-        const statsdb = require("./lib/database/statsDatabase");
-
-        // Connect to DBs.
-        logger.debug("Creating or connecting user database");
-        userdb.connectUserDatabase();
-
-        logger.debug("Creating or connecting stats database");
-        statsdb.connectStatsDatabase();
-
-        //load patronage data
-        const patronageManager = require("./lib/patronageManager");
-        patronageManager.loadPatronageData();
 
         return true;
     });
