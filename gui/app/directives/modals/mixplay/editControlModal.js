@@ -121,7 +121,7 @@
 
                             $ctrl.supportsEffects = controlSettings.effects;
 
-                            $ctrl.kindName = controlSettings.display;
+                            $ctrl.kindName = controlSettings.name;
                         }
                     }
 
