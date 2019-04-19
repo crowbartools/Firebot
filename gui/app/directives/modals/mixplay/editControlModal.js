@@ -8,7 +8,7 @@
             template: `
             <div class="modal-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">Edit Control - {{$ctrl.control.name}}</h4>
+                <h4 class="modal-title">Edit {{$ctrl.kindName}} - {{$ctrl.control.name}}</h4>
             </div>
             <div class="modal-body">
                 <div class="general-button-settings">
@@ -121,7 +121,7 @@
 
                             $ctrl.supportsEffects = controlSettings.effects;
 
-                            $ctrl.kindName = controlSettings.name;
+                            $ctrl.kindName = controlSettings.display;
                         }
                     }
 
