@@ -432,9 +432,13 @@
                     let streamerName = connectionService.accounts.streamer.username,
                         botName = connectionService.accounts.bot.username;
 
+                    streamerName = streamerName.toLowerCase();
+                    botName = botName ? botName.toLowerCase() : botName;
+
                     let isTagged =
-                    data.message.message.some(s => s.type === "tag" &&
-                    (s.username === streamerName || s.username === botName));
+                        data.message.message.some(s => s.type === "tag" &&
+                            (s.username.toLowerCase() === streamerName ||
+                            s.username.toLowerCase() === botName));
 
                     if (isTagged) {
                         data.tagged = true;
