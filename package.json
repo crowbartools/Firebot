@@ -38,14 +38,14 @@
     "devDependencies": {
         "electron": "^2.0.9",
         "electron-packager": "^12.1.2",
-        "electron-rebuild": "^1.8.2",
+        "electron-rebuild": "^1.8.4",
         "eslint": "^5.6.0",
         "grunt": "^1.0.4",
         "grunt-electron-installer": "^2.1.0",
-        "grunt-jsdoc": "^2.3.0",
+        "grunt-jsdoc": "^2.3.1",
         "husky": "^0.14.3",
         "jsdoc": "^3.5.5",
-        "node-sass": "^4.9.3"
+        "node-sass": "^4.11.0"
     },
     "dependencies": {
         "@mixer/client-node": "^3.0.0",
@@ -83,7 +83,7 @@
         "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",
         "list.js": "^1.5.0",
         "m3u8stream": "^0.2.2",
-        "marked": "^0.3.19",
+        "marked": "^0.6.2",
         "mathjs": "^3.20.2",
         "moment": "^2.22.2",
         "ncp": "^2.0.0",
