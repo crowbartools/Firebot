@@ -7,7 +7,7 @@
             template: `
             <div class="connection-status-wrapper" style="height: 70px;padding:0;">
                 <div style="display:flex; align-items:center;height: 100%;">
-                    <div class="clickable" style="position:relative;margin-left:22px;" uib-tooltip-html="$ctrl.getCurrentVesselTooltip()" tooltip-placement="right" tooltip-append-to-body="true" ng-click="$ctrl.showPatronageDetailsModal()">
+                    <div class="clickable" aria-label="Open Patronage Detail Modal" style="position:relative;margin-left:22px;" uib-tooltip-html="$ctrl.getCurrentVesselTooltip()" tooltip-placement="right" tooltip-append-to-body="true" ng-click="$ctrl.showPatronageDetailsModal()">
                         <img ng-src="{{$ctrl.getFilledVesselImageUrl()}}" style="height: 45px;object-fit: scale-down;"></img>
                         <div style="height:45px;position:absolute;top:0;left:0;">
                             <div style="height:{{$ctrl.getReversedVesselCompletedPercentage()}}%;overflow:hidden;">
@@ -21,16 +21,16 @@
                             <span>Spark Patronage</span>
                         </div>
                         <div style="font-weight: 200;'Roboto Mono', monospace;width: 100px;height:22px;text-align: center;overflow: hidden;display:flex;justify-content:flex-start; transform: translate(-1px);">
-                            <span id="patronageCount" style="color:#dadada;" count-up reanimate-on-click="false" end-val="$ctrl.getEarnedPatronage()" duration="0.2"></span>                    
+                            <span id="patronageCount" aria-label="Open Patronage Detail Modal" style="color:#dadada;" count-up reanimate-on-click="false" end-val="$ctrl.getEarnedPatronage()" duration="0.2"></span>                    
                         </div>
-                        <div class="clickable" style="height: 10px;width: 100%;margin-top: 6px;display: flex;align-items: center;" uib-tooltip-html="$ctrl.getCurrentMilestoneTooltip()" tooltip-append-to-body="true" ng-click="$ctrl.showPatronageDetailsModal()">
+                        <div class="clickable" aria-label="Open Patronage Detail Modal" style="height: 10px;width: 100%;margin-top: 6px;display: flex;align-items: center;" uib-tooltip-html="$ctrl.getCurrentMilestoneTooltip()" tooltip-append-to-body="true" ng-click="$ctrl.showPatronageDetailsModal()">
                             <div style="height: 2px;display: flex;width: 100%;position:relative;">
                                 <span style="height:2px;background: #424242;display: inline-block;position:absolute;z-index:10;top: 0;right: 0;width:{{$ctrl.getReversedMilestoneCompletedPercentage()}}%;"></span>
                                 <span style="position:absolute;height:2px;background: linear-gradient(to right, {{$ctrl.getBackgroundGradientA()}} 0%, {{$ctrl.getBackgroundGradientB()}} 100%);width: 100%;display: inline-block;"></span>
                             </div>
                         </div>     
                     </div>
-                    <span ng-show="$ctrl.sbm.navExpanded" class="clickable" style="padding-left: 30px;font-size: 20px;color: gray;" ng-click="$ctrl.showPatronageDetailsModal()">
+                    <span ng-show="$ctrl.sbm.navExpanded" aria-label="Open Patronage Detail Modal" class="clickable" style="padding-left: 30px;font-size: 20px;color: gray;" ng-click="$ctrl.showPatronageDetailsModal()">
                         <i class="fal fa-chevron-right"></i>
                     </span>
                 </div>

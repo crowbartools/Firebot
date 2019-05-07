@@ -16,7 +16,7 @@
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div class="connection-tile">
                             <span class="connection-title">Interactive <tooltip text="'Used for interactive buttons and controls (MixPlay)'"></tooltip></span>
-                            <div class="connection-button"
+                            <div class="connection-button" aria-label="Connect to interactive"
                                 ng-class="{'connected': $ctrl.conn.connectedToInteractive, 'connecting': $ctrl.conn.waitingForStatusChange}"
                                 ng-click="$ctrl.conn.toggleConnectionToInteractive()">
                                 <i class="fal"
@@ -25,14 +25,14 @@
                             <div style="display: flex;flex-direction: column;align-items: center;">
                                 <div style="font-size:13px;padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Interactive be controlled by the sidebar connect button.'"></tooltip></div>
                                 <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
-                                    <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('interactive')" ng-click="$ctrl.toggledServiceIsChecked('interactive')">
+                                    <input aria-label="Make interactive sidebar controlled" type="checkbox" ng-checked="$ctrl.serviceIsChecked('interactive')" ng-click="$ctrl.toggledServiceIsChecked('interactive')">
                                     <div class="control__indicator"></div>                                             
                                 </label>
                             </div>
                         </div>
                         <div class="connection-tile">
                             <span class="connection-title">Chat <tooltip text="'Used for commands, chat effects, chat feed, sticker events, etc.'"></tooltip></span>
-                            <div class="connection-button"
+                            <div class="connection-button" aria-label="Connect to chat"
                                 ng-class="{'connected': $ctrl.conn.connectedToChat, 'connecting': $ctrl.conn.waitingForChatStatusChange}"
                                 ng-click="$ctrl.conn.toggleConnectionToChat()">
                                 <i class="fal"
@@ -41,14 +41,14 @@
                             <div style="display: flex;flex-direction: column;align-items: center;">
                                 <div style="font-size:13px;padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Chat be controlled by the sidebar connect button.'"></tooltip></div>
                                 <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
-                                    <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('chat')" ng-click="$ctrl.toggledServiceIsChecked('chat')">
+                                    <input aria-label="Make chat sidebar controlled" type="checkbox" ng-checked="$ctrl.serviceIsChecked('chat')" ng-click="$ctrl.toggledServiceIsChecked('chat')">
                                     <div class="control__indicator"></div>                                             
                                 </label>
                             </div>
                         </div>
                         <div class="connection-tile">
                             <span class="connection-title">Constellation <tooltip text="'Used for events, live viewer count on chat feed, Skills, etc'"></tooltip></span>
-                            <div class="connection-button"
+                            <div class="connection-button" aria-label="Connect to constellation"
                                 ng-class="{'connected': $ctrl.conn.connectedToConstellation, 'connecting': $ctrl.conn.waitingForConstellationStatusChange}"
                                 ng-click="$ctrl.conn.toggleConnectionToConstellation()">
                                 <i class="fal"
@@ -57,7 +57,7 @@
                             <div style="display: flex;flex-direction: column;align-items: center;">
                                 <div style="font-size:13px;padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Constellation be controlled by the sidebar connect button.'"></tooltip></div>
                                 <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
-                                    <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('constellation')" ng-click="$ctrl.toggledServiceIsChecked('constellation')">
+                                    <input aria-label="Make constellation sidebar controlled" type="checkbox" ng-checked="$ctrl.serviceIsChecked('constellation')" ng-click="$ctrl.toggledServiceIsChecked('constellation')">
                                     <div class="control__indicator"></div>                                             
                                 </label>
                             </div>

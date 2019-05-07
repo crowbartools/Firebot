@@ -25,12 +25,12 @@
                     
 
                     <div style="display:flex;align-items: center;">
-                        <div class="test-effects-btn clickable" uib-tooltip="Test Effects">
+                        <div aria-label="Test All Effects" class="test-effects-btn clickable" uib-tooltip="Test Effects">
                             <i class="far fa-play-circle" style="cursor: pointer;" ng-click="$ctrl.testEffects()"></i>
                         </div>
                         
                         <div uib-dropdown uib-dropdown-toggle>
-                            <span class="noselect pointer effects-actions-btn"><i class="fal fa-ellipsis-v"></i></span>
+                            <span class="noselect pointer effects-actions-btn" aria-label="Manage Effects Dropdown"><i class="fal fa-ellipsis-v"></i></span>
                             <ul class="dropdown-menu" uib-dropdown-menu>
                                 <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
                                     <a href ng-click="$ctrl.copyEffects()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects</a>
@@ -58,15 +58,15 @@
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
                                     <span class="flex-row-center ">
-                                        <span class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
+                                        <span aria-hidden="true" class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
                                             <i class="fal fa-bars" aria-hidden="true"></i>
                                         </span> 
-                                        <div class="clickable" style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
-                                            <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
+                                        <div class="clickable" aria-hidden="true" style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
+                                            <span class="noselect pointer" aria-hidden="true"> <i class="fal fa-ellipsis-v"></i> </span>
                                             <ul class="dropdown-menu" uib-dropdown-menu>
-                                                <li><a href ng-click="$ctrl.editLabelForEffectAtIndex($index)"><i class="fal fa-tag" style="margin-right: 10px;" aria-hidden="true"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}</a></li>
-                                                <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
-                                                <li><a href ng-click="$ctrl.copyEffectAtIndex($index)"><i class="fal fa-copy" style="margin-right: 10px;" aria-hidden="true"></i>  Copy</a></li>
+                                                <li><a href ng-click="$ctrl.editLabelForEffectAtIndex($index)"><i class="fal fa-tag" style="margin-right: 10px;"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}</a></li>
+                                                <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;"></i>  Duplicate</a></li>
+                                                <li><a href ng-click="$ctrl.copyEffectAtIndex($index)"><i class="fal fa-copy" style="margin-right: 10px;"></i>  Copy</a></li>
                                                 <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null"><a href ng-click="$ctrl.pasteEffectsAtIndex($index, false)"><i class="fal fa-paste" style="margin-right: 10px;" aria-hidden="true"></i>  Paste After</a></li>
                                                 <li><a href ng-click="$ctrl.removeEffectAtIndex($index)" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
                                             </ul>

@@ -118,7 +118,7 @@
         <div class="tab-header">
           <span style="width:100%" class="noselect">{{sbm.currentTab}}</span>
           <notification-center></notification-center>
-          <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
+          <div class="logins-wrapper noselect" aria-label="Login Menu" tabindex="1" uib-dropdown uib-dropdown-toggle>
             <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
             <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
             <div class="fb-arrow down login-arrow"></div>
@@ -149,12 +149,12 @@
       <div class="modal-body">
             <div class="row" style="text-align: center;">
               <div class="col-sm-6 streamer-login top-padding">
-                <img class="login-pic" ng-src="{{accounts.streamer.photoUrl}}">
+                <img class="login-pic" alt="streamer picture" ng-src="{{accounts.streamer.photoUrl}}">
                 <h2>{{accounts.streamer.username}}</h2>
                 <button type="button" class="btn" ng-class="accounts.streamer.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{accounts.streamer.isLoggedIn ? "Logout" : "Login"}}</button>                
               </div>
               <div class="col-sm-6 bot-login top-padding">
-                <img class="login-pic" ng-src="{{accounts.bot.photoUrl}}">
+                <img class="login-pic" alt="bot picture" ng-src="{{accounts.bot.photoUrl}}">
                 <h2>{{accounts.bot.username}}</h2>
                 <button type="button" class="btn" ng-class="accounts.bot.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('bot')">{{accounts.bot.isLoggedIn ? "Logout" : "Login"}}</button>
               </div>

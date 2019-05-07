@@ -35,8 +35,8 @@
 
                     </div>
 
-                    <div>
-                        <patronage-tracker ng-show="$ctrl.cs.accounts.streamer.partnered"></patronage-tracker>
+                    <div class="nav-connection">
+                        <patronage-tracker ng-show="$ctrl.cs.accounts.streamer.partnered" aria-label="Patronage Tracker"></patronage-tracker>
             
                         <div class="connection-status-wrapper">
                             <div class='interactive-status-wrapper'>
@@ -46,7 +46,7 @@
                                     tooltip-placement="{{!$ctrl.sbm.navExpanded ? 'right-bottom' : 'top-left'}}"
                                     tooltip-append-to-body="true"
                                     ng-click="$ctrl.cm.toggleSidebarServices()">
-                                    <i class="fal" ng-class="$ctrl.cm.isWaitingForServicesStatusChange() ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
+                                    <i aria-label="Toggle Connection" class="fal" ng-class="$ctrl.cm.isWaitingForServicesStatusChange() ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
                                 </div>
                                 <div>
                                     <div class="interactive-status-text">
@@ -55,16 +55,16 @@
                                         </div>
                                         <div class="interative-status-subtitle" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
                                             <span style="width: 100%;display: flex;justify-content: space-between;margin-top: 5px;">
-                                                <connection-icon type="interactive"></connection-icon>
-                                                <connection-icon type="chat"></connection-icon>
-                                                <connection-icon type="constellation"></connection-icon>
-                                                <connection-icon type="overlay"></connection-icon>
+                                                <connection-icon aria-label="Interactive connection icon" type="interactive"></connection-icon>
+                                                <connection-icon aria-label="Chat connection icon" type="chat"></connection-icon>
+                                                <connection-icon aria-label="Constellation connection icon" type="constellation"></connection-icon>
+                                                <connection-icon aria-label="Overlay connection icon" type="overlay"></connection-icon>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             
-                                <div class="connection-panel-btn" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" uib-tooltip="Open Connection Panel" tooltip-append-to-body="true"
+                                <div aria-label="Open connections settings" class="connection-panel-btn" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" uib-tooltip="Open Connection Panel" tooltip-append-to-body="true"
                                     ng-click="$ctrl.showConnectionPanelModal()">
                                     <span><i class="fal fa-external-link-alt"></i></span>
                                 </div>

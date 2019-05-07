@@ -573,6 +573,7 @@ body {
   justify-content: space-between;
   align-items: center;
   position: relative;
+  overflow:hidden;
   .header {
     min-height: 40px;
     width: 100%;
@@ -695,9 +696,8 @@ body {
 
   }
   .edit-btn {
-    visibility: hidden;
     position: absolute;
-    right: 5px;
+    right: -5000px;
     top: 5px;
     transition: 0.2s;
     opacity: 0;
@@ -712,14 +712,14 @@ body {
     &:hover {
       color: $tile-text-color;
       border-color: $tile-text-color;
-      opacity: 1 !important;
+      opacity: 1!important;
     }
     &:before {
       content: 'edit';
     }
   }
   &:hover .edit-btn {
-    visibility: visible;
+    right: 5px;
     opacity: 0.5;
   }
 }

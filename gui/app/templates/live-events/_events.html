@@ -12,16 +12,16 @@
         <h3 ng-style="{'margin-top': $index === 0 ? '0' : '20px'}">{{category}}</h3>
         <div class = "interactive-group-container">
           <div ng-repeat="event in eventsService.getEvents(category) track by $index" class="fb-tile grapefruit centered" ng-class="{'inactive' : !event.active}">
-            <div class="edit-btn" ng-click="showAddEditEventModal(event)"></div>
             <div class="header">
               <div class="title edit-btn-spacer">
                 {{event.eventName}}
               </div>
             </div>
+            <div class="edit-btn" ng-click="showAddEditEventModal(event)"></div>
             <div class="content row">
               <div class="detail-wrapper nomargin">
-                <span ng-if="event.active" class="play-button clickable event-play-button" ng-click="fireEventManually(event.eventType)"><i class="fas fa-play-circle"></i></span>
-                <span ng-if="!event.active" class="inactive-event-text">Inactive</span>
+                <span ng-if="event.active" aria-label="Play Event Effects" class="play-button clickable event-play-button" ng-click="fireEventManually(event.eventType)"><i class="fas fa-play-circle"></i></span>
+                <span ng-if="!event.active" aria-label="Inactive Event" class="inactive-event-text">Inactive</span>
                 <div class="event-button-details">
                   {{event.effectCount ? event.effectCount : "0"}} Effect(s)
                 </div>
