@@ -20,6 +20,7 @@ let overlayHasClients = false;
 exports.start = function() {
     //server is already running.
     if (server != null) {
+        logger.error("Overlay server is already running... is another intance running?");
         return;
     }
 
