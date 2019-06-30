@@ -101,6 +101,74 @@
     display: inline-block;
 }
 
+.mixer-joystick {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    height: 100%;
+    width: 100%;
+    background: #222d4d;
+    touch-action: none;
+    .arrows {
+        position: absolute;
+        left: 9px;
+        right: 9px;
+        top: 9px;
+        bottom: 9px;
+        z-index: 1;
+        pointer-events: none;
+        &.top:before {
+            top: 1px;
+            left: 50%;
+            transform: rotate(45deg);
+            margin-left: -3px;
+        }
+        &.top:after {
+            top: 50%;
+            right: 1px;
+            transform: rotate(135deg);
+            margin-top: -3px;
+        }
+        &.left:before {
+            bottom: 1px;
+            left: 50%;
+            transform: rotate(-135deg);
+            margin-left: -3px;
+        }
+        &.left:after {
+            top: 50%;
+            left: 1px;
+            transform: rotate(-45deg);
+            margin-top: -3px;
+        }
+    }
+    .arrows:after,
+    .arrows:before {
+        content: "";
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border: 2px solid transparent;
+        border-top-color: #465a94;
+        border-left-color: #465a94;
+        border-radius: 2px;
+    }
+    .handle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        border-radius: 50%;
+        background: #465a94;
+        width: 32px;
+        height: 32px;
+        margin-top: -16px;
+        margin-left: -16px;
+    }  
+}
+
 .clear-btn-width {
     width: 70px !important;
 }
