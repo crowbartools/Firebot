@@ -17,6 +17,8 @@
 
                         <joystick-tile ng-switch-when="joystick" control="$ctrl.control" style="width:100%; height: 100%;position: relative;"></joystick-tile>
 
+                        <textbox-tile ng-switch-when="textbox" control="$ctrl.control" style="width:100%; height: 100%;"></textbox-tile>
+
                         <div ng-switch-default class="default-control">
                             {{$ctrl.control.name}}
                         </div>             

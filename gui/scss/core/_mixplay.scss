@@ -169,6 +169,63 @@
     }  
 }
 
+.mixer-textbox-container {
+    height: calc(100% - 8px);
+    display: flex;
+    flex-direction: column;
+    margin: 4px;
+    &.compact {
+        flex-direction: row;
+    }
+    .mixer-textbox {
+        resize: none;
+        border: 2px solid rgba(228,238,242,.22);
+        background: transparent;
+        width: calc(100% - 36px - 4px);
+        font-family: Segoe UI;
+        font-size: 17px;
+        color: #fff;
+        padding: 0 18px;
+        vertical-align: middle;
+        flex: 1;
+        &:disabled {
+            opacity: .2;
+        }
+    }
+    textarea.mixer-textbox {
+        padding: 10px 18px;
+    }
+    .mixer-button {
+        position: relative;
+        max-height: 40px;
+        min-height: 35px;
+        flex: 0.5;
+        top: unset;
+        left: unset;
+        right: unset;
+        bottom: unset;
+        margin-top: 8px;
+        color: #fff;
+        flex-direction: column;
+        font-family: Titillium,sans-serif;
+        .mixer-spark-pill {
+            font-size: 1em;
+        }
+    }
+    .mixer-button-content {
+        overflow: unset;
+    }
+    &.compact {
+        flex-direction: row;
+        .mixer-button {
+            margin-top: 0;
+            margin-left: 5px;
+            text-align: center;
+            max-height: unset;
+        }
+    }
+}
+
 .clear-btn-width {
     width: 70px !important;
 }

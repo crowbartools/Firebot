@@ -97,6 +97,46 @@
                 </div>
 
 
+                <div ng-switch-when="joystick">
+
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon3">Sample Rate <tooltip text="'How often a Joystick should report its coordinates. In milliseconds. (Default: 50)'"></tooltip></span>
+                        <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.sampleRate" placeholder="50">
+                    </div>
+
+                </div>
+
+
+                <div ng-switch-when="textbox">
+
+                    <div class="input-group settings-buttontext">
+                        <span class="input-group-addon" id="basic-addon3">Placeholder</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.placeholder">
+                    </div>
+
+                    <label class="control-fb control--checkbox noselect"> Multiline
+                        <input type="checkbox" ng-model="$ctrl.control.mixplay.multiline" aria-label="...">
+                        <div class="control__indicator"></div>
+                    </label>
+
+                    <label class="control-fb control--checkbox noselect"> Show Submit Button <tooltip text="'Whether or not a submit button should be shown. Note: submit button is always shown if a spark cost is set.'"></tooltip>
+                        <input type="checkbox" ng-model="$ctrl.control.mixplay.hasSubmit" aria-label="...">
+                        <div class="control__indicator"></div>
+                    </label>
+
+                    <div class="input-group settings-buttontext">
+                        <span class="input-group-addon" id="basic-addon3">Submit Button Text</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.submitText" placeholder="Submit">
+                    </div>
+
+                    <div class="input-group settings-sparkcost">
+                        <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
+                        <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cost">
+                    </div>
+
+                </div>
+
+
             </div>
             `,
             controller: function() {

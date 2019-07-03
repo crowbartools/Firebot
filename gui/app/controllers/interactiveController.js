@@ -29,8 +29,6 @@
 
             $scope.activeSceneTab = 0;
 
-
-
             $scope.tiles = [
                 {
                     x: 0,
@@ -48,8 +46,6 @@
 
 
             $scope.gridUpdated = function() {
-                console.log("grid updated!");
-                console.log($scope.tiles);
                 $scope.$apply();
             };
 

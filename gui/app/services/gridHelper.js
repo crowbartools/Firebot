@@ -97,6 +97,8 @@
                 }
             };
 
+            service.currentGridSize = service.GridSize.LARGE;
+
             return service;
         });
 }());

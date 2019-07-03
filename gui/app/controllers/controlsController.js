@@ -22,7 +22,9 @@
 
             $scope.mps = mixplayService;
 
-            $scope.currentGridSize = gridHelper.GridSize.LARGE;
+            $scope.gridHelper = gridHelper;
+
+            gridHelper.currentGridSize = gridHelper.GridSize.LARGE;
 
             $scope.gridUpdated = function() {
                 /*for (let controlData of $scope.controlPositions) {
@@ -110,7 +112,7 @@
                     backdrop: 'static',
                     resolveObj: {
                         control: () => copiedControl,
-                        currentGridSize: () => $scope.currentGridSize
+                        currentGridSize: () => gridHelper.currentGridSize
                     },
                     closeCallback: resp => {
                         mixplayService.saveControlForCurrentScene(resp.control);
@@ -228,14 +230,14 @@
                     });
             };
 
-            $scope.controlPositions = $scope.getAllControlPositionsForGridSize($scope.currentGridSize);
+            $scope.controlPositions = $scope.getAllControlPositionsForGridSize(gridHelper.currentGridSize);
 
             $scope.updateControlPositions = function() {
-                $scope.controlPositions = $scope.getAllControlPositionsForGridSize($scope.currentGridSize);
+                $scope.controlPositions = $scope.getAllControlPositionsForGridSize(gridHelper.currentGridSize);
             };
 
             function updateGridSize() {
-                let gridDimensions = gridHelper.GridSizes[$scope.currentGridSize];
+                let gridDimensions = gridHelper.GridSizes[gridHelper.currentGridSize];
                 let grid = angular.element("#controlGrid");
                 grid.attr("col-count", gridDimensions.width);
                 grid.attr("row-count", gridDimensions.height);
@@ -272,30 +274,30 @@
             ];
 
             $scope.gridSizeChanged = function(size) {
-                $scope.currentGridSize = size;
+                gridHelper.currentGridSize = size;
                 updateGridSize();
                 $scope.updateControlPositions();
             };
 
             $scope.addControlToGrid = function(control) {
-                mixplayService.addControlToGrid(control, $scope.currentGridSize);
+                mixplayService.addControlToGrid(control, gridHelper.currentGridSize);
                 $scope.updateControlPositions();
             };
 
             $scope.removeControlFromGrid = function(control) {
-                control.position = control.position.filter(p => p.size !== $scope.currentGridSize);
+                control.position = control.position.filter(p => p.size !== gridHelper.currentGridSize);
                 $scope.updateControlPositions();
                 mixplayService.saveProject(mixplayService.getCurrentProject());
             };
 
             $scope.controlIsOnGrid = function(control) {
-                return control.position.some(p => p.size === $scope.currentGridSize);
+                return control.position.some(p => p.size === gridHelper.currentGridSize);
             };
 
             let hightlightedControl = "";
 
             $scope.addOrRemoveControlToGrid = function(control) {
-                let alreadyAdded = control.position.some(p => p.size === $scope.currentGridSize);
+                let alreadyAdded = control.position.some(p => p.size === gridHelper.currentGridSize);
                 if (alreadyAdded) {
                     $scope.removeControlFromGrid(control);
                 } else {
