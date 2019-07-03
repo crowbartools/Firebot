@@ -57,6 +57,10 @@
                 backendCommunicator.fireEvent("saveProject", cleanedProject);
             };
 
+            service.triggerControlUpdatedEvent = function(controlId) {
+                backendCommunicator.fireEvent("controlUpdated", controlId);
+            };
+
             service.addNewSceneToCurrentProject = function(sceneName) {
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {

@@ -26,6 +26,17 @@
 
             gridHelper.currentGridSize = gridHelper.GridSize.LARGE;
 
+            function getControlPositionForCurrentGrid(control) {
+                return $scope.getControlPositionForGrid(control, gridHelper.currentGridSize);
+            }
+
+            let lastClickedControl = null;
+            $scope.controlMousedown = function(control) {
+                lastClickedControl = JSON.parse(JSON.stringify({
+                    id: control.id,
+                    position: control.position
+                }));
+            };
             $scope.gridUpdated = function() {
                 /*for (let controlData of $scope.controlPositions) {
                     let indexOfPosition = controlData.control.position.findIndex(p => p.size === controlData.position.size);
@@ -35,7 +46,30 @@
                         console.log(controlData.control);
                     }
                 }*/
+
+
                 mixplayService.saveProject(mixplayService.getCurrentProject());
+
+
+                //getControlPositionForCurrentGrid
+
+                if (lastClickedControl) {
+                    let currentControls = mixplayService.getControlsForCurrentScene();
+                    let updatedControl = currentControls.find(c => c.id === lastClickedControl.id);
+                    if (updatedControl) {
+                        let oldPosition = getControlPositionForCurrentGrid(lastClickedControl);
+                        let newPosition = getControlPositionForCurrentGrid(updatedControl);
+
+                        if (oldPosition.x !== newPosition.x ||
+                            oldPosition.y !== newPosition.y ||
+                            oldPosition.width !== newPosition.width ||
+                            oldPosition.height !== newPosition.height) {
+                            console.log("CONTROL UPDATED!");
+                            mixplayService.triggerControlUpdatedEvent(updatedControl.id);
+                        }
+                    }
+                }
+
             };
 
             $scope.getSelectedProjectName = function() {
@@ -117,6 +151,7 @@
                     closeCallback: resp => {
                         mixplayService.saveControlForCurrentScene(resp.control);
                         $scope.updateControlPositions();
+                        mixplayService.triggerControlUpdatedEvent(resp.control.id);
                     }
                 });
             };

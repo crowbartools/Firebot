@@ -13,9 +13,7 @@
                     <div ng-if="$ctrl.control.mixplay.hasSubmit || $ctrl.control.mixplay.cost" class="mixer-button" ng-class="{'compact': $ctrl.shouldBeCompact() }" >
                         <div class="mixer-button-content">
                             <div class="mixer-button-text">{{$ctrl.control.mixplay.submitText || 'Submit' }}</div>
-                            <div class="mixer-spark-wrapper" ng-show="$ctrl.control.mixplay.cost">
-                                <div class="mixer-spark-pill">{{$ctrl.control.mixplay.cost}}</div>
-                            </div>
+                            <div class="mixer-spark-pill" ng-show="$ctrl.control.mixplay.cost">{{$ctrl.control.mixplay.cost}}</div>
                         </div>
                     </div>
                 </div>               
