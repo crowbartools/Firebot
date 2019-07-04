@@ -48,9 +48,22 @@ exports.start = function() {
     // set up route to serve overlay
     app.use("/overlay/", express.static("resources/overlay"));
     app.get("/overlay", function(req, res) {
+
         let effectDefs = effectManager.getEffectOverlayExtensions();
+
+        let combinedCssDeps = [...new Set([].concat.apply([], effectDefs
+            .filter(ed => ed.dependencies != null && ed.dependencies.css != null)
+            .map(ed => ed.dependencies.css)))];
+        let combinedJsDeps = [...new Set([].concat.apply([], effectDefs
+            .filter(ed => ed.dependencies != null && ed.dependencies.js != null)
+            .map(ed => ed.dependencies.js)))];
+
         res.render("../resources/overlay", {
-            effects: effectDefs
+            events: effectDefs.map(ed => ed.event),
+            dependancies: {
+                css: combinedCssDeps,
+                js: combinedJsDeps
+            }
         });
     });
 
