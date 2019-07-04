@@ -96,12 +96,16 @@
                     }
                 },
                 minutesInChannel: {
-                    headerName: "View Time (min)",
+                    headerName: "View Time (hours)",
                     field: "minutesInChannel",
-                    editable: false,
+                    editable: true,
                     valueParser: function(params) {
-                        // convert to number
-                        return Number(params.newValue);
+                        let newnum = Number(params.newValue) * 60;
+                        return newnum;
+                    },
+                    valueFormatter: function(params) {
+                        console.log(params);
+                        return Math.floor(params.value / 60);
                     }
                 },
                 joinDate: {
