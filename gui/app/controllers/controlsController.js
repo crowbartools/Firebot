@@ -320,9 +320,8 @@
             };
 
             $scope.removeControlFromGrid = function(control) {
-                control.position = control.position.filter(p => p.size !== gridHelper.currentGridSize);
+                mixplayService.removeControlFromGrid(control, gridHelper.currentGridSize);
                 $scope.updateControlPositions();
-                mixplayService.saveProject(mixplayService.getCurrentProject());
             };
 
             $scope.controlIsOnGrid = function(control) {
