@@ -152,6 +152,21 @@
                     .map(c => c.position.find(p => p.size === size));
             };
 
+            service.removeControlFromGrid = function(control, gridSize) {
+                control.position = control.position.filter(p => p.size !== gridSize);
+                service.saveProject(service.getCurrentProject());
+
+                if (control.position.length === 0) {
+                    let currentScene = getCurrentScene();
+                    backendCommunicator.fireEvent("controlRemovedFromGrid", {
+                        sceneId: currentScene.id,
+                        controlId: control.id
+                    });
+                } else {
+                    backendCommunicator.fireEvent("controlUpdated", control.id);
+                }
+            };
+
             service.addControlToGrid = function(control, gridSize) {
                 let controlAlreadyOnGrid = control.position.some(p => p.size === gridSize);
                 if (controlAlreadyOnGrid) return;
@@ -191,6 +206,16 @@
 
                     logger.info("Added control to grid!");
                     service.saveProject(service.getCurrentProject());
+
+                    if (control.position.length > 1) {
+                        backendCommunicator.fireEvent("controlUpdated", control.id);
+                    } else {
+                        let currentScene = getCurrentScene();
+                        backendCommunicator.fireEvent("controlAddedToGrid", {
+                            sceneId: currentScene.id, control
+                        });
+                    }
+
                 } else {
                     // TODO show error to user and ask them to clear space
                 }
@@ -200,13 +225,9 @@
                 if (controlId == null || position == null) return;
 
                 let currentScene = getCurrentScene();
-
                 if (currentScene) {
-                    console.log("found current scene");
                     let control = currentScene.controls.find(c => c.id === controlId);
-                    console.log(control);
                     if (control) {
-                        console.log("updating to", position);
                         control.position = control.position.filter(p => p.size !== position.size);
                         control.position.push(position);
                     }
@@ -251,6 +272,11 @@
                 if (currentScene) {
                     currentScene.controls = currentScene.controls.filter(c => c.id !== controlId);
                     service.saveProject(service.getCurrentProject());
+
+                    backendCommunicator.fireEvent("controlRemovedFromGrid", {
+                        sceneId: currentScene.id,
+                        controlId: controlId
+                    });
                 }
             };
 
