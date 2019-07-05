@@ -11,16 +11,15 @@
                 <h4 class="modal-title">{{$ctrl.isNewFilter ? 'Create New Filter' : 'Edit Filter'}}</h4>
             </div>
             <div class="modal-body">
-
-                <div class="muted" style="padding-bottom: 10px;">Only trigger this event if...</div>
+               
                 <div style="display: flex;flex-wrap: wrap;">
                     <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
                         <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
-                        {{$ctrl.getFilterName($ctrl.selectedFilter.id)}} <span class="caret"></span>
+                        {{$ctrl.getFilterName($ctrl.selectedFilter.id)}}<span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
                             <li role="menuitem" ng-repeat="filter in $ctrl.availableFilters" ng-click="$ctrl.selectFilter(filter.id)">
-                                <a href>{{filter.name}}</a>
+                                <a href>{{filter.name}} <tooltip text="filter.description"></tooltip></a>
                             </li>
                         </ul>
                     </div>

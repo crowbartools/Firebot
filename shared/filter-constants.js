@@ -7,6 +7,7 @@ const ComparisonType = Object.freeze({
     GREATER_THAN_OR_EQUAL_TO: "greater than or equal to",
     LESS_THAN: "less than",
     LESS_THAN_OR_EQUAL_TO: "less than or equal to",
+    CONTAINS: "contains",
     MATCHES_REGEX: "matches regex"
 });
 

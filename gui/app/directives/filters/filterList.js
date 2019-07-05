@@ -11,16 +11,16 @@
             },
             template: `
         <div>
-          <h3>Filters</h3>
-
+          <h3 style="margin-bottom: 5px;">Filters</h3>
+          <div class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';" ng-if="$ctrl.hasFiltersAvailable()">Only trigger this event when:</div>
           <div stlye="display:flex;">
                 <div ng-repeat="filter in $ctrl.filters track by $index"
-                    class="filter-bar clickable"
+                    class="filter-bar"
                     ng-click="$ctrl.openAddOrEditFilterModal($index)">
                         <span>
                             <b>{{$ctrl.getFilterName(filter.id)}}</b> {{filter.comparisonType}} <b>{{filter.value || '[No Value Set]'}}</b>
                         </span>
-                        <span class="clickable-dark" style="padding-left: 10px;" ng-click="$ctrl.removeFilterAtIndex($index)" uib-tooltip="Remove filter" tooltip-append-to-body="true">
+                        <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeFilterAtIndex($index)" uib-tooltip="Remove filter" tooltip-append-to-body="true">
                             <i class="far fa-times"></i>
                         </span>
                 </div>
