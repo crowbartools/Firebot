@@ -95,6 +95,7 @@
                 $ctrl.kindName = "";
 
                 $ctrl.$onInit = function() {
+
                     if ($ctrl.resolve.control != null) {
                         $ctrl.control = JSON.parse(JSON.stringify($ctrl.resolve.control));
 

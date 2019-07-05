@@ -167,8 +167,12 @@
       </div>
 
       <div class="effect-setting-container setting-padtop">
-        <div class="effect-specific-title"><h4>Trigger On</h4></div>
+        <h3>Trigger On</h3>
         <searchable-event-dropdown selected="{ eventId: event.eventId, sourceId: event.sourceId }" style="width:100%" update="eventChanged(event)"></searchable-event-dropdown>
+      </div>
+
+      <div ng-if="event.eventId != null">
+        <filter-list event-source-id="event.sourceId" event-id="event.eventId" filters="event.filters"></filter-list>
       </div>
 
     </div>

@@ -28,6 +28,7 @@ const systemCommandLoader = require("./lib/chat/commands/systemCommandLoader");
 const builtInEventSourceLoader = require("./lib/live-events/builtinEventSourceLoader");
 const integrationLoader = require("./lib/live-events/integrations/integrationLoader");
 const builtInVariableLoader = require("./lib/variables/builtin-variable-loader");
+const builtInEventFilterLoader = require("./lib/live-events/filters/builtin-filter-loader");
 
 const Effect = require("./lib/common/EffectType");
 
@@ -476,6 +477,9 @@ function appOnReady() {
 
         //load event sources
         builtInEventSourceLoader.loadEventSources();
+
+        //load event filters
+        builtInEventFilterLoader.loadFilters();
 
         /*authManager.register({
             platform: "mixer",

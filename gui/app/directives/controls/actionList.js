@@ -55,7 +55,6 @@
             };
 
             $ctrl.actionsUpdate = function() {
-                console.log("Actions update");
                 $ctrl.update({ actions: $ctrl.actionsArray });
             };
 
@@ -82,12 +81,6 @@
             };
 
             $ctrl.openAddOrEditActionModal = function(index) {
-                console.log("array:");
-                console.log($ctrl.actionsArray);
-                console.log("index:");
-                console.log(index);
-                console.log("action:");
-                console.log($ctrl.actionsArray[index]);
                 utilityService.showModal({
                     component: "addOrEditTimerActionModal",
                     resolveObj: {
@@ -95,8 +88,6 @@
                         index: () => index
                     },
                     closeCallback: resp => {
-                        console.log("resp:");
-                        console.log(resp);
                         let responseAction = resp.responseAction;
 
 
@@ -106,7 +97,6 @@
                             break;
                         case "update":
                             $ctrl.actionsArray[resp.index] = resp.action;
-                            console.log(resp.action);
                             break;
                         case "delete":
                             $ctrl.removeActionAtIndex(resp.index);

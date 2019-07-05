@@ -1370,6 +1370,22 @@ thead th{
   margin: 10px 0 25px 0;
 }
 
+.filter-bar {
+  background: #24262A;
+  width: auto;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  color: white;
+  height: 30px;
+  font-size: 13px;
+  padding: 0 10px;
+  border-radius: 3px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  justify-content: space-between;
+}
+
 .effect-bar {
   background: #2aa1c0 - 15%;
   width: 100%;
@@ -1485,6 +1501,12 @@ thead th{
 .fb-transition {
   .modal-dialog {
     transition: transform .2s ease-out 0s;
+  }
+}
+
+.fb-medium-modal {
+  .modal-dialog {
+    width: 475px !important;
   }
 }
 
