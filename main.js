@@ -514,6 +514,9 @@ function appOnReady() {
         //start the REST api server
         webServer.start();
 
+        // Set users in user db to offline if for some reason they are still set to online. (app crash or something)
+        userDatabase.setAllUsersOffline();
+
         return true;
     });
 }
