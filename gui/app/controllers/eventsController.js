@@ -12,8 +12,61 @@
             settingsService,
             listenerService
         ) {
-            $scope.eventsService = eventsService;
-            $scope.eventsViewMode = settingsService.getButtonViewMode("liveEvents");
+            $scope.es = eventsService;
+
+
+            let selectedGroupId = "mainevents";
+            $scope.setSelectedGroup = function(groupId) {
+                selectedGroupId = groupId;
+            };
+
+            $scope.groupIsSelected = function(groupId) {
+                return selectedGroupId === groupId;
+            };
+
+            $scope.showCreateEventGroupModal = function() {
+
+                utilityService.openGetInputModal(
+                    {
+                        model: "",
+                        label: "New Event Group Name",
+                        saveText: "Create",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+                                if (value == null || value.trim().length < 1) {
+                                    resolve(false);
+                                } else {
+                                    resolve(true);
+                                }
+                            });
+                        },
+                        validationText: "Group name cannot be empty."
+
+                    },
+                    (name) => {
+                        eventsService.createGroup(name);
+                    });
+            };
+
+            $scope.showDeleteGroupModal = function(group) {
+                utilityService
+                    .showConfirmationModal({
+                        title: "Delete Event Group",
+                        question: `Are you sure you want to delete the event group "${group.name}"?`,
+                        confirmLabel: "Delete",
+                        confirmBtnType: "btn-danger"
+                    })
+                    .then(confirmed => {
+                        if (confirmed) {
+                            eventsService.deleteGroup(group.id);
+                        }
+                    });
+            };
+
+
+            /**
+             * OLD STUFF !!!!!!!!!!!!!!
+             */
 
             /**
        *  Returns an integer of total number of event groups.

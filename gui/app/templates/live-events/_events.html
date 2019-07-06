@@ -1,5 +1,55 @@
-<!--Live Events Tab View-->
-<div style="min-width: 500px;">
+<!-- Events Tab View-->
+<div style="min-width: 500px;height: 100%">
+
+  <div style="height: 100%;display: flex;flex-direction: column;">
+
+    <div id="testDivFb" class="flex-row" style="height: 100%">
+      <div class="editior-column" style="padding-top:15px;">
+
+          <div class="flex-row-center jspacebetween scene-row" ng-class="{'selected': groupIsSelected('mainevents')}"  ng-click="setSelectedGroup('mainevents')">
+            <div class="flex-row-center" style="height:100%;">
+              <div class="selected-scene-icon" ng-class="{'transparent': !groupIsSelected('mainevents')}"></div>
+              <div>Main Events <tooltip text="'These events are always active.'"></tooltip></div>
+              <!--<div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)" uib-tooltip="Default Scene" append-tooltip-to-body="true"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>-->
+            </div>
+            <div class="flex-row-center jspacebetween">
+              <span class="status-dot active" style="margin-right: 10px;"></span>
+              <i class="fal fa-angle-right" style="font-size: 25px; padding-right:12px;"></i>
+            </div>
+          </div>
+
+          <div style="height: 2px; background: #3e3f40; margin: 15px 0 10px;"></div>
+
+          <div class="mixplay-header flex-row-center jspacebetween">
+            <span>Event Groups</span>
+            <div class="clickable" ng-click="showCreateEventGroupModal()"><i class="fas fa-plus-circle"></i></div>
+          </div>
+
+          <div ng-repeat="group in es.getEventGroups()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': groupIsSelected(group.id)}"  ng-click="setSelectedGroup(group.id)">
+            <div class="flex-row-center" style="height:100%;">
+              <div class="selected-scene-icon" ng-class="{'transparent': !groupIsSelected(group.id)}"></div>
+              <div>{{group.name}}</div>
+              <!--<div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)" uib-tooltip="Default Scene" append-tooltip-to-body="true"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>-->
+            </div>
+            <div>
+                <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
+                    <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
+                    <ul class="dropdown-menu" uib-dropdown-menu>
+                        <li ng-click="showDeleteGroupModal(group)">
+                            <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete group</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--<div style="min-width: 500px;">
     <div class="fb-notab-header-wrapper" ng-if="getEventGroupCount() !== 0">
         <div class="fb-notab-title">
             <span ng-hide="selectedEventGroup() == null || selectedEventGroup() == ''">{{selectedEventGroup().name}}</span>
@@ -89,6 +139,26 @@
       </table>
     </div>
 </div>
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Delete event confirmation modal.-->
 <script type="text/ng-template" id="showEventDeleteModal.html">

@@ -9,8 +9,99 @@
     const uuidv1 = require("uuid/v1");
 
     angular.module("firebotApp").factory("eventsService", function(logger, backendCommunicator) {
-        let service = {},
-            eventsCache = false;
+        let service = {};
+
+        let mainEvents = [],
+            activeGroup = null,
+            groups = [];
+
+
+        function loadAllEventData() {
+            let eventData = backendCommunicator.fireEventSync("getAllEventData");
+
+            if (eventData.mainEvents) {
+                mainEvents = eventData.mainEvents;
+            }
+
+            if (eventData.activeGroup) {
+                activeGroup = eventData.activeGroup;
+            }
+
+            if (eventData.groups) {
+                groups = eventData.groups;
+            }
+        }
+        loadAllEventData();
+
+
+        service.setActiveEventGroup = function(groupId) {
+            activeGroup = groupId;
+            backendCommunicator.fireEvent("eventUpdate", {
+                action: "setActiveGroup",
+                meta: groupId
+            });
+        };
+
+        service.groupIsActive = function(groupId) {
+            return activeGroup === groupId;
+        };
+
+        service.getEventGroups = function() {
+            return groups;
+        };
+
+        service.createGroup = function(name) {
+            const newGroup = {
+                id: uuidv1(),
+                name: name,
+                events: []
+            };
+            service.saveGroup(newGroup);
+        };
+
+        service.saveGroup = function(group) {
+            let existingIndex = groups.findIndex(g => g.id === group.id);
+            if (existingIndex >= 0) {
+                groups[existingIndex] = group;
+            } else {
+                groups.push(group);
+            }
+            backendCommunicator.fireEvent("eventUpdate", {
+                action: "saveGroup",
+                meta: group
+            });
+        };
+
+        service.deleteGroup = function(groupId) {
+            groups = groups.filter(g => g.id !== groupId);
+            if (activeGroup === groupId) {
+                activeGroup = null;
+            }
+            backendCommunicator.fireEvent("eventUpdate", {
+                action: "deleteGroup",
+                meta: groupId
+            });
+        };
+
+        service.getMainEvents = function() {
+            return mainEvents;
+        };
+
+        service.saveMainEvents = function() {
+            backendCommunicator.fireEvent("eventUpdate", {
+                action: "saveMainEvents",
+                meta: mainEvents
+            });
+        };
+
+
+
+        /**
+     * OLD STUFFFFFF
+     */
+
+
+        let eventsCache = false;
 
         /**
      * Returns entire json of event groups.
