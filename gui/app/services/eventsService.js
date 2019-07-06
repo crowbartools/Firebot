@@ -8,7 +8,7 @@
     const { ipcRenderer } = require("electron");
     const uuidv1 = require("uuid/v1");
 
-    angular.module("firebotApp").factory("eventsService", function(logger) {
+    angular.module("firebotApp").factory("eventsService", function(logger, backendCommunicator) {
         let service = {},
             eventsCache = false;
 
