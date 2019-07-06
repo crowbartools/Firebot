@@ -4,8 +4,7 @@
     // This handles the Events tab
     angular
         .module("firebotApp")
-        .controller("eventsController", function($scope, eventsService, utilityService,
-            settingsService, listenerService) {
+        .controller("eventsController", function($scope, eventsService, utilityService, listenerService) {
 
             $scope.es = eventsService;
 
@@ -203,6 +202,24 @@
                 }
                 return eventsService.groupIsActive(groupId);
             };
+
+            $scope.eventMenuOptions = [
+                {
+                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                    click: function ($itemScope) {
+                        let index = $itemScope.$index;
+                        $scope.showAddOrEditEventModal(index);
+                    }
+                },
+                {
+                    html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                    click: function ($itemScope) {
+                        let index = $itemScope.$index;
+                        let event = $itemScope.event;
+                        $scope.showDeleteEventModal(index, event.name ? event.name : 'Unnamed');
+                    }
+                }
+            ];
 
 
             /**

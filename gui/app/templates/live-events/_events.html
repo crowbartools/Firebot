@@ -77,7 +77,7 @@
                   </tr> 
               </thead> 
               <tbody> 
-                  <tr ng-repeat="event in getSelectedEvents() | orderBy: 'type' | filter:eventSearch track by event.id">
+                  <tr ng-repeat="event in getSelectedEvents() | orderBy: 'type' | filter:eventSearch track by event.id" context-menu="eventMenuOptions">
                       <td style="text-align: center;">
                           <span style="color: #2aa1c0; font-size: 20px;" ng-click="fireEventManually(event)">
                               <i class="fas fa-play-circle clickable"></i>
