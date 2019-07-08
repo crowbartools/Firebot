@@ -61,6 +61,7 @@ function mainFocus(mainWindow) {
         return true;
     });
     if (iShouldQuit) {
+        logger.warn("Attempted to start Firebot but another instance is already running. Quitting this instance.");
         app.quit();
         return;
     }
