@@ -126,13 +126,14 @@
                         }
                     }
 
+                    let modalId = $ctrl.resolve.modalId;
                     utilityService.addSlidingModal(
                         $ctrl.modalInstance.rendered.then(() => {
-                            let modalElement = $("." + $ctrl.modalId).children();
+                            let modalElement = $("." + modalId).children();
                             return {
                                 element: modalElement,
                                 name: "Edit Control",
-                                id: $ctrl.modalId,
+                                id: modalId,
                                 instance: $ctrl.modalInstance
                             };
                         })

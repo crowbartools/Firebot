@@ -48,7 +48,7 @@
             };
 
             let slidingModals = [];
-            const shiftAmount = 75;
+            const shiftAmount = 125;
             service.addSlidingModal = function(promise) {
                 // update previous values
                 slidingModals.forEach(em => {
