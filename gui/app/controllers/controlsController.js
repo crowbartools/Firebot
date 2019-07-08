@@ -10,7 +10,9 @@
             controlHelper,
             gridHelper,
             $timeout,
-            settingsService
+            settingsService,
+            $http,
+            backendCommunicator
         ) {
 
             $scope.previewEnabled = settingsService.mixPlayPreviewModeEnabled();
@@ -362,6 +364,56 @@
                     return controlModel.iconClass;
                 }
                 return "";
+            };
+
+            const COVER_GRADIENT = "linear-gradient(to top, rgba(19, 24, 32, 0.8), rgba(18, 23, 32, 0.95))";
+            let previewBackgroundCss = `${COVER_GRADIENT}, url(https://mixer.com/_latest/assets/img/backgrounds/generic-001.jpg)`;
+            function getPreviewBackgroundCss() {
+                let accounts = backendCommunicator.fireEventSync("getAccounts");
+
+                const channelId = accounts.streamer.channelId;
+
+                $http.get(`https://mixer.com/api/v1/channels/${channelId}`)
+                    .then(resp => {
+                        if (resp.status === 200) {
+                            previewBackgroundCss = `${COVER_GRADIENT}, url(${resp.data.cover.url})`;
+                        }
+                    }, () => {
+
+                    });
+            }
+            getPreviewBackgroundCss();
+
+            $scope.getPreviewStyles = function() {
+                if ($scope.previewEnabled) {
+                    return {
+                        "background-image": previewBackgroundCss
+                    };
+                }
+                return {};
+            };
+
+            $scope.showRenameSceneModal = function(scene) {
+                utilityService.openGetInputModal(
+                    {
+                        model: scene.name,
+                        label: "Rename Scene",
+                        saveText: "Save",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+                                if (value == null || value.trim().length < 1) {
+                                    resolve(false);
+                                } else {
+                                    resolve(true);
+                                }
+                            });
+                        },
+                        validationText: "Scene name cannot be empty."
+
+                    },
+                    (newName) => {
+                        mixplayService.renameScene(scene.id, newName);
+                    });
             };
 
 

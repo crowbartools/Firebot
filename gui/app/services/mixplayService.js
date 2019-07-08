@@ -61,6 +61,16 @@
                 backendCommunicator.fireEvent("controlUpdated", controlId);
             };
 
+            service.renameScene = function(sceneId, newName) {
+                let currentProject = service.getCurrentProject();
+                if (currentProject == null) return;
+                let scene = currentProject.scenes.find(s => s.id === sceneId);
+                if (scene) {
+                    scene.name = newName;
+                    service.saveProject(currentProject);
+                }
+            };
+
             service.addNewSceneToCurrentProject = function(sceneName) {
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {

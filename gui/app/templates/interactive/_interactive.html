@@ -47,10 +47,7 @@
                         <li ng-class="{'disabled': mps.sceneIsDefaultForCurrentProject(scene.id)}">
                             <a href ng-click="mps.setSceneInCurrentProjectAsDefault(scene.id)"><i class="far fa-home" style="margin-right: 10px;"></i> Set as default</a>
                         </li>
-                        <li ng-click="" class="disabled">
-                            <a href ><i class="far fa-users" style="margin-right: 10px;"></i> Assign groups</a>
-                        </li>
-                        <li ng-click="" class="disabled">
+                        <li ng-click="showRenameSceneModal(scene)">
                             <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename scene</a>
                         </li>
                         <li ng-click="" class="disabled">
@@ -138,7 +135,8 @@
                         grid-listener 
                         on-update="gridUpdated()"
                         style="background-position: 18px 18px;"
-                        ng-class="{'preview': previewEnabled}">   
+                        ng-class="{'preview': previewEnabled}"
+                        ng-style="getPreviewStyles()">   
                         <div ng-repeat="control in controlPositions track by control.control.id" 
                                 control="control" 
                                 class="control animated bounceIn faster tile"
