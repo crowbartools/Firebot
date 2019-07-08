@@ -29,46 +29,50 @@
     <div id="testDivFb" class="flex-row" style="height: 100%">
       <div class="editior-column">
 
-          <div class="mixplay-header flex-row-center jspacebetween">
+        <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0">
             <span>Scenes</span>
             <div class="clickable" ng-click="showCreateSceneModal()"><i class="fas fa-plus-circle"></i></div>
-          </div>
+        </div>
 
-          <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="setSelectedScene(scene.id)">
-            <div class="flex-row-center" style="height:100%;">
-              <div class="selected-scene-icon" ng-class="{'transparent': !mps.sceneIsSelected(scene.id)}"></div>
-              <div>{{scene.name}}</div>
-              <div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)" uib-tooltip="Default Scene" append-tooltip-to-body="true"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>
-            </div>
-            <div>
-                <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
-                    <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
-                    <ul class="dropdown-menu" uib-dropdown-menu>
-                        <li ng-class="{'disabled': mps.sceneIsDefaultForCurrentProject(scene.id)}">
-                            <a href ng-click="mps.setSceneInCurrentProjectAsDefault(scene.id)"><i class="far fa-home" style="margin-right: 10px;"></i> Set as default</a>
-                        </li>
-                        <li ng-click="showRenameSceneModal(scene)">
-                            <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename scene</a>
-                        </li>
-                        <li ng-click="" class="disabled">
-                            <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate scene</a>
-                        </li>
-                        <li ng-click="deleteScene(scene)">
-                            <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete scene</a>
-                        </li>
-                    </ul>
+        <div style="height: 100%; overflow-y: auto;">
+            <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="setSelectedScene(scene.id)">
+                <div class="flex-row-center" style="height:100%;">
+                  <div class="selected-scene-icon" ng-class="{'transparent': !mps.sceneIsSelected(scene.id)}"></div>
+                  <div>{{scene.name}}</div>
+                  <div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)" uib-tooltip="Default Scene" append-tooltip-to-body="true"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>
                 </div>
-            </div>
-          </div>
+                <div>
+                    <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
+                        <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
+                        <ul class="dropdown-menu" uib-dropdown-menu>
+                            <li ng-class="{'disabled': mps.sceneIsDefaultForCurrentProject(scene.id)}">
+                                <a href ng-click="mps.setSceneInCurrentProjectAsDefault(scene.id)"><i class="far fa-home" style="margin-right: 10px;"></i> Set as default</a>
+                            </li>
+                            <li ng-click="showRenameSceneModal(scene)">
+                                <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename scene</a>
+                            </li>
+                            <li ng-click="" class="disabled">
+                                <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate scene</a>
+                            </li>
+                            <li ng-click="deleteScene(scene)">
+                                <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete scene</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+              </div>
+        </div>
+
+          
         </div>
       <div class="editior-column">
-        <div class="mixplay-header flex-row-center jspacebetween">
+        <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0;">
           <span>Controls</span>
           <div class="clickable" ng-click="showCreateControlModal()" ng-show="mps.hasSceneSelected()"><i class="fas fa-plus-circle"></i></div>
         </div>
 
-
-        <div ng-repeat="control in mps.getControlsForCurrentScene()" 
+        <div style="height: 100%; overflow-y: auto;">
+            <div ng-repeat="control in mps.getControlsForCurrentScene()" 
                 class="flex-row-center jspacebetween control-row" 
                 ng-mouseover="setHighlightedControl(control.id)" 
                 ng-mouseleave="clearHighlight()">
@@ -100,6 +104,8 @@
                 </div>
             </div>
           </div>
+        </div>
+        
       </div>
 
       <div style="display:flex; height: 100%;flex-grow: 3;width: 0px;flex-direction:column;">

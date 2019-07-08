@@ -6,11 +6,10 @@
     <div id="testDivFb" class="flex-row" style="height: 100%">
       <div class="editior-column" style="padding-top:15px; flex-shrink: 0;">
 
-          <div class="flex-row-center jspacebetween scene-row" ng-class="{'selected': es.tabIsSelected('mainevents')}"  ng-click="es.setSelectedTab('mainevents')">
+          <div class="flex-row-center jspacebetween scene-row" style="flex-shrink: 0;" ng-class="{'selected': es.tabIsSelected('mainevents')}"  ng-click="es.setSelectedTab('mainevents')">
             <div class="flex-row-center" style="height:100%;">
               <div class="selected-scene-icon" ng-class="{'transparent': !es.tabIsSelected('mainevents')}"></div>
               <div>Main Events <tooltip text="'A collection of events that are always active, regardless of which event group is active.'"></tooltip></div>
-              <!--<div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)" uib-tooltip="Default Scene" append-tooltip-to-body="true"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>-->
             </div>
             <div class="flex-row-center jspacebetween">
               <span class="status-dot active" style="margin-right: 15px;" uib-tooltip="Main events are always active." tooltip-append-to-body="true"></span>
@@ -18,41 +17,43 @@
             </div>
           </div>
 
-          <div style="height: 2px; background: #3e3f40; margin: 15px 0 10px;"></div>
+          <div style="height: 2px; background: #3e3f40; margin: 15px 0 10px;flex-shrink: 0;"></div>
 
-          <div class="mixplay-header flex-row-center jspacebetween">
+          <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0;">
             <span>Event Groups <tooltip text="'Only one event group can be active at a time. This allows you to switch between groups of events. Useful for creating holiday themes, etc.'"></tooltip></span>
             <div class="clickable" ng-click="showCreateEventGroupModal()"><i class="fas fa-plus-circle"></i></div>
           </div>
 
-          <div class="muted" ng-if="es.getEventGroups().length < 1" style="margin-left: 18px;font-size: 12px;">No groups saved.</div>
+            <div style="height: 100%; overflow-y: auto;">
+                <div class="muted" ng-if="es.getEventGroups().length < 1" style="margin-left: 18px;font-size: 12px;">No groups saved.</div>
 
-          <div ng-repeat="group in es.getEventGroups()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': es.tabIsSelected(group.id)}"  ng-click="es.setSelectedTab(group.id)">
-            <div class="flex-row-center" style="height:100%;">
-              <div class="selected-scene-icon" ng-class="{'transparent': !es.tabIsSelected(group.id)}"></div>
-              <div>{{group.name}}</div>
-            </div>
-            <div class="flex-row-center jspacebetween">
-                <span ng-if="es.groupIsActive(group.id)" class="status-dot active" uib-tooltip="This event group is active" tooltip-append-to-body="true"></span>
-                <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
-                    <span class="noselect pointer" ><i class="fal fa-ellipsis-v"></i></span>
-                    <ul class="dropdown-menu" uib-dropdown-menu>
-                        <li ng-click="showRenameEventGroupModal(group)">
-                            <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename</a>
-                        </li>
-                        <li ng-show="es.groupIsActive(group.id)" ng-click="es.setActiveEventGroup(null)">
-                            <a href ><i class="fas fa-star" style="margin-right: 10px;"></i> Unset as active group</a>
-                        </li>
-                        <li ng-hide="es.groupIsActive(group.id)" ng-click="es.setActiveEventGroup(group.id)">
-                            <a href ><i class="far fa-star" style="margin-right: 10px;"></i> Set as active group</a>
-                        </li>
-                        <li ng-click="showDeleteGroupModal(group)">
-                            <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete group</a>
-                        </li>
-                    </ul>
+                <div ng-repeat="group in es.getEventGroups()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': es.tabIsSelected(group.id)}"  ng-click="es.setSelectedTab(group.id)">
+                    <div class="flex-row-center" style="height:100%;">
+                    <div class="selected-scene-icon" ng-class="{'transparent': !es.tabIsSelected(group.id)}"></div>
+                    <div>{{group.name}}</div>
+                    </div>
+                    <div class="flex-row-center jspacebetween">
+                        <span ng-if="es.groupIsActive(group.id)" class="status-dot active" uib-tooltip="This event group is active" tooltip-append-to-body="true"></span>
+                        <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
+                            <span class="noselect pointer" ><i class="fal fa-ellipsis-v"></i></span>
+                            <ul class="dropdown-menu" uib-dropdown-menu>
+                                <li ng-click="showRenameEventGroupModal(group)">
+                                    <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename</a>
+                                </li>
+                                <li ng-show="es.groupIsActive(group.id)" ng-click="es.setActiveEventGroup(null)">
+                                    <a href ><i class="fas fa-star" style="margin-right: 10px;"></i> Unset as active group</a>
+                                </li>
+                                <li ng-hide="es.groupIsActive(group.id)" ng-click="es.setActiveEventGroup(group.id)">
+                                    <a href ><i class="far fa-star" style="margin-right: 10px;"></i> Set as active group</a>
+                                </li>
+                                <li ng-click="showDeleteGroupModal(group)">
+                                    <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete group</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
-          </div>
+            </div>        
         </div>
 
 
