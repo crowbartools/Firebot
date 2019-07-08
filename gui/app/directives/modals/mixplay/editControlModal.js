@@ -11,7 +11,12 @@
                 <h4 class="modal-title">Edit {{$ctrl.kindName}} - {{$ctrl.control.name}}</h4>
             </div>
             <div class="modal-body">
-                <div class="general-button-settings">
+                    <div class="general-button-settings">
+
+                        <div class="input-group">
+                            <span class="input-group-addon" id="control-name">Control Name <tooltip text="'A name to help you identify this control. Viewers wont see this.'"></tooltip></span>
+                            <input type="text" class="form-control" aria-describedby="control-name" ng-model="$ctrl.control.name">
+                        </div>
 
                     <div class="settings-title">
                         <h4>Preview</h4>
@@ -68,7 +73,7 @@
                 dismiss: "&",
                 modalInstance: "<"
             },
-            controller: function($scope, controlHelper, utilityService) {
+            controller: function($scope, controlHelper, utilityService, ngToast) {
                 let $ctrl = this;
 
                 $ctrl.control = {};
@@ -81,6 +86,10 @@
                 };
 
                 $ctrl.save = function() {
+                    if ($ctrl.control.name == null || $ctrl.control.name.trim() === "") {
+                        ngToast.create("Please provide a control name.");
+                        return;
+                    }
                     $ctrl.close({
                         $value: {
                             control: $ctrl.control
@@ -134,10 +143,7 @@
                                 element: modalElement,
                                 name: "Edit Control",
                                 id: modalId,
-                                instance: $ctrl.modalInstance,
-                                onSaveAll: () => {
-                                    $ctrl.save();
-                                }
+                                instance: $ctrl.modalInstance
                             };
                         })
                     );
