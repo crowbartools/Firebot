@@ -308,8 +308,7 @@ async function renameProfile() {
 
             // Remove old id from active profiles and add new
             let profilePosition = activeProfiles.indexOf(currentProfileId);
-            activeProfiles.splice(profilePosition, 1);
-            activeProfiles.push(newProfileId);
+            activeProfiles[profilePosition] = newProfileId;
             globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);
 
             // Update loggedInProfile
