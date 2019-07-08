@@ -272,7 +272,7 @@
     background-color: transparent;
     border: 1px solid transparent;
     padding-left: 0;
-    &:hover {
+    &:hover, &.open {
         .ddtext {
             color: rgb(78, 78, 78);
         }
