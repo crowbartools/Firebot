@@ -207,7 +207,7 @@
                 let viewerDB = getDataFromFile("/settings/viewerDB");
 
                 // If viewerDB setting is not set, default to true to avoid future "cant find datapath" errors.
-                if(viewerDB == null){
+                if (viewerDB == null) {
                     logger.debug('Viewer DB setting not found. Defaulting to true.');
                     service.setViewerDB(true);
                     viewerDB = getDataFromFile("/settings/viewerDB");
