@@ -256,7 +256,8 @@
                             name: controlName,
                             kind: controlKind,
                             position: [],
-                            mixplay: {}
+                            mixplay: {},
+                            active: true
                         };
                         currentScene.controls.push(newControl);
 
