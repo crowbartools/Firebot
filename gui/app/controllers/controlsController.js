@@ -285,7 +285,6 @@
                     html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>`,
                     click: function ($itemScope) {
                         let control = $itemScope.control.control;
-                        console.log(control);
                         $scope.editControl(control);
                     }
                 },

@@ -441,15 +441,15 @@ async function createDefaultFoldersAndFiles() {
             dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/fonts");
         }
 
-        // Create the chat folder if it doesn't exist.
+        // Create the events folder if it doesn't exist.
         if (
             !dataAccess.userDataPathExistsSync(
-                "/profiles/" + profileId + "/live-events"
+                "/profiles/" + profileId + "/events"
             )
         ) {
-            logger.info("Can't find the live-events folder, creating one now...");
+            logger.info("Can't find the events folder, creating one now...");
             dataAccess.makeDirInUserDataSync(
-                "/profiles/" + profileId + "/live-events"
+                "/profiles/" + profileId + "/events"
             );
         }
     });
@@ -500,6 +500,9 @@ function appOnReady() {
 
         const mixplayProjectManager = require("./lib/interactive/mixplay-project-manager");
         mixplayProjectManager.loadProjects();
+
+        const eventsAccess = require("./lib/live-events/events-access");
+        eventsAccess.loadEventsAndGroups();
 
         createWindow();
 
