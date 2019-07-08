@@ -9,6 +9,7 @@
             bindings: {
                 options: "=",
                 selected: "=",
+                placeholder: "@",
                 onUpdate: '&'
             },
             template: `
@@ -40,6 +41,9 @@
                 };
 
                 ctrl.getSelectedOption = function() {
+                    if (!ctrl.selected) {
+                        return ctrl.placeholder;
+                    }
                     if (!ctrl.objectMode) {
                         return ctrl.selected;
                     }
@@ -55,6 +59,9 @@
 
                 ctrl.$onInit = () => {
                     loadOptions();
+                    if (!ctrl.placeholder) {
+                        ctrl.placeholder = "Please select";
+                    }
                 };
 
                 ctrl.$onChanges = function (changes) {
