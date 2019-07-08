@@ -194,7 +194,7 @@
               <li ng-repeat="profile in accounts.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
                 <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}">
                     <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
-                    <span class="accounts-info">{{profile.username}} (#{{profile.profileId}})</span>
+                    <span class="accounts-info" style="text-transform: unset;">{{profile.profileId}}</span>
                 </a>
               </li>
               <li class="divider"></li>
@@ -206,6 +206,14 @@
                   Add New Profile
                 </a>
               </li>
+              <li>
+                    <a href ng-click="showRenameProfileModal()">
+                      <span>
+                        <i class="fal fa-pencil"></i>
+                      </span> 
+                      Rename This Profile
+                    </a>
+                  </li>
               <li>
                 <a href ng-click="showDeleteProfileModal()">
                   <span>
@@ -257,16 +265,49 @@
     <script type="text/ng-template" id="newProfileModal.html">
       <div class="modal-header">
         <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="errorLabel">Add New Profile</h4>
+        <h4 class="modal-title" id="errorLabel">Create New Profile</h4>
       </div>
       <div class="modal-body">
-        Creating a new profile requires an application restart. Is this okay?
+
+            <div class="input-group">
+                <span class="input-group-addon">Profile Name</span>
+                <input type="text" class="form-control" ng-model="profileName" placeholder="Text here">
+            </div>
+
+          <div class="alert alert-warning" style="margin-top:15px;">
+                Note: Creating a new profile requires an application restart.
+          </div>
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" ng-click="createNewProfile()">Create Profile</button>
-        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+        <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="createNewProfile()">Create Profile & Restart App</button>  
       </div>
     </script>
+
+    <!-- Rename Profile Modal -->
+    <script type="text/ng-template" id="renameProfileModal.html">
+        <div class="modal-header">
+          <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="errorLabel">Rename Profile</h4>
+        </div>
+        <div class="modal-body">
+  
+            <div class="input-group">
+                <span class="input-group-addon">Profile Name</span>
+                <input type="text" class="form-control" ng-model="profileName" placeholder="Text here">
+            </div>
+  
+            <div class="alert alert-warning"  style="margin-top:15px;">
+                  Note: Renaming a profile requires an application restart.
+            </div>
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+          <button type="button" class="btn btn-primary" ng-click="renameProfile()">Rename Profile & Restart App</button>        
+        </div>
+      </script>
 
     <!-- Delete Profile Modal -->
     <script type="text/ng-template" id="deleteProfileModal.html">
@@ -278,8 +319,8 @@
         WARNING! You are about to delete this profile and all settings associated with it. Are you sure this is what you want to do?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" ng-click="deleteProfile()">Delete Profile</button>
-        <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+        <button type="button" class="btn btn-danger" ng-click="deleteProfile()">Delete Profile & Restart App</button>
+        <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
       </div>
     </script>
     

@@ -11,6 +11,7 @@ logger.info("Starting Firebot...");
 
 const electron = require("electron");
 const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
+const fs = require("fs");
 const windowStateKeeper = require('electron-window-state');
 const GhReleases = require("electron-gh-releases");
 const settings = require("./lib/common/settings-access").settings;
@@ -247,14 +248,8 @@ async function deleteProfiles() {
         // Stop here if we have no deleted profile info.
         if (deletedProfile != null) {
             // Delete the profile.
-            logger.warn(
-                "Profile " +
-          deletedProfile +
-          " is marked for deletion. Removing it now."
-            );
-            logger.warn(
-                dataAccess.getPathInUserData("/profiles") + "\\" + deletedProfile
-            );
+            logger.warn("Profile " + deletedProfile + " is marked for deletion. Removing it now.");
+            logger.warn(dataAccess.getPathInUserData("/profiles") + "\\" + deletedProfile);
             dataAccess.deleteFolderRecursive(
                 dataAccess.getPathInUserData("/profiles") + "\\" + deletedProfile
             );
@@ -280,8 +275,50 @@ async function deleteProfiles() {
             logger.warn("Successfully deleted profile: " + deletedProfile);
         }
     } catch (err) {
-        logger.error(err);
-        logger.info("No profiles are queued to be deleted or there was an error.");
+        logger.error("error while deleting profile: ", err);
+        return;
+    }
+}
+
+async function renameProfile() {
+    if (!profileManager.hasProfileRename()) return;
+    let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
+
+    try {
+        let currentProfileId = profileManager.getLoggedInProfile(),
+            newProfileId = profileManager.getNewProfileName(),
+            activeProfiles = globalSettingsDb.getData("./profiles/activeProfiles");
+
+        // Stop here if we have no deleted profile info.
+        if (currentProfileId != null && newProfileId != null && newProfileId !== "") {
+            // Delete the profile.
+            logger.warn("Profile " + currentProfileId + " is marked for renaming. Renaming it now.");
+
+            let currentProfilePath = dataAccess.getPathInUserData("/profiles/" + currentProfileId);
+            let renamedProfilePath = dataAccess.getPathInUserData("/profiles/" + newProfileId);
+            logger.warn(currentProfilePath);
+
+            try {
+                fs.renameSync(currentProfilePath, renamedProfilePath);
+            } catch (err) {
+                logger.error("Failed to rename profile!", err);
+                return;
+            }
+
+            // Remove old id from active profiles and add new
+            let profilePosition = activeProfiles.indexOf(currentProfileId);
+            activeProfiles.splice(profilePosition, 1);
+            activeProfiles.push(newProfileId);
+            globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);
+
+            // Update loggedInProfile
+            globalSettingsDb.push("./profiles/loggedInProfile", newProfileId);
+
+            // Let our logger know we successfully deleted a profile.
+            logger.warn(`Successfully renamed profile "${currentProfileId}" to "${newProfileId}"`);
+        }
+    } catch (err) {
+        logger.error("error while renaming profile!", err);
         return;
     }
 }
@@ -324,31 +361,23 @@ async function createDefaultFoldersAndFiles() {
     try {
         activeProfiles = globalSettingsDb.getData("/profiles/activeProfiles");
     } catch (err) {
-        globalSettingsDb.push("/profiles/activeProfiles", [1]);
-        activeProfiles = [1];
+        globalSettingsDb.push("/profiles/activeProfiles", ["Main Profile"]);
+        activeProfiles = ["Main Profile"];
     }
 
     // Check to see if we have a "loggedInProfile", if not select one.
     // If we DO have a loggedInProfile, check and make sure that profile is still in our active profile list, if not select the first in the active list.
     // All of this is backup, just in case. It makes sure that we at least have some profile logged in no matter what happens.
     try {
-        if (
-            activeProfiles.indexOf(
-                globalSettingsDb.getData("/profiles/loggedInProfile")
-            ) === -1
-        ) {
+        if (activeProfiles.indexOf(globalSettingsDb.getData("/profiles/loggedInProfile")) === -1) {
             globalSettingsDb.push("/profiles/loggedInProfile", activeProfiles[0]);
-            logger.info(
-                "Last logged in profile is no longer on the active profile list. Changing it to an active one."
-            );
+            logger.info("Last logged in profile is no longer on the active profile list. Changing it to an active one.");
         } else {
-            logger.info("Last logged in profile is still active!");
+            logger.debug("Last logged in profile is still active!");
         }
     } catch (err) {
         globalSettingsDb.push("/profiles/loggedInProfile", activeProfiles[0]);
-        logger.info(
-            "Last logged in profile info is missing or this is a new install. Adding it in now."
-        );
+        logger.info("Last logged in profile info is missing or this is a new install. Adding it in now.");
     }
 
 
@@ -357,27 +386,16 @@ async function createDefaultFoldersAndFiles() {
     activeProfiles = Object.keys(activeProfiles).map(k => activeProfiles[k]);
 
     activeProfiles.forEach(profileId => {
-    // Create the scripts folder if it doesn't exist
+
         if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId)) {
-            logger.info(
-                "Can't find a profile folder for " + profileId + ", creating one now..."
-            );
+            logger.info("Can't find a profile folder for " + profileId + ", creating one now...");
             dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
         }
 
 
-        if (
-            !dataAccess.userDataPathExistsSync(
-                "/profiles/" + profileId + "/hotkeys.json"
-            )
-        ) {
-            logger.info(
-                "Can't find the hotkeys file, creating the default one now..."
-            );
-            dataAccess.copyDefaultConfigToUserData(
-                "hotkeys.json",
-                "/profiles/" + profileId
-            );
+        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/hotkeys.json")) {
+            logger.info("Can't find the hotkeys file, creating the default one now...");
+            dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/profiles/" + profileId);
         }
 
         //always copy over overlay wrapper
@@ -570,6 +588,7 @@ appOnActivate();
 function onAppQuit() {
     app.on("quit", () => {
         deleteProfiles();
+        renameProfile();
         logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");
     });
 }
@@ -698,8 +717,8 @@ ipcMain.on("startBackup", (event, manualActivation = false) => {
 });
 
 // When we get an event from the renderer to create a new profile.
-ipcMain.on("createProfile", () => {
-    profileManager.createNewProfile();
+ipcMain.on("createProfile", (_, profileName) => {
+    profileManager.createNewProfile(profileName);
 });
 
 // When we get an event from the renderer to delete a particular profile.
@@ -708,8 +727,12 @@ ipcMain.on("deleteProfile", () => {
 });
 
 // Change profile when we get event from renderer
-ipcMain.on("switchProfile", function(event, profileId) {
+ipcMain.on("switchProfile", function(_, profileId) {
     profileManager.logInProfile(profileId);
+});
+
+ipcMain.on("renameProfile", function(_, newProfileId) {
+    profileManager.renameProfile(newProfileId);
 });
 
 // Get Any kind of file Path

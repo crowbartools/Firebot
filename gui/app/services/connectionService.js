@@ -322,8 +322,12 @@
             };
 
             // Create new profile
-            service.createNewProfile = function() {
-                ipcRenderer.send("createProfile");
+            service.createNewProfile = function(profileId) {
+                ipcRenderer.send("createProfile", profileId);
+            };
+
+            service.renameProfile = function(newProfileId) {
+                ipcRenderer.send("renameProfile", newProfileId);
             };
 
             // delete profile
