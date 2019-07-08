@@ -55,10 +55,10 @@
                         <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cooldown">
                     </div>
                 
-                    <div class="input-group settings-cooldown">
+                    <!--<div class="input-group settings-cooldown">
                         <span class="input-group-addon" id="basic-addon3">Threshold <tooltip text="'The number of clicks before button effects are run. A progress bar is shown on the button.'"></tooltip></span>
                         <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.threshold">
-                    </div>
+                    </div>-->
                 </div>
 
 
