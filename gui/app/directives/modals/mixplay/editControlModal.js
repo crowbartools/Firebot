@@ -134,7 +134,10 @@
                                 element: modalElement,
                                 name: "Edit Control",
                                 id: modalId,
-                                instance: $ctrl.modalInstance
+                                instance: $ctrl.modalInstance,
+                                onSaveAll: () => {
+                                    $ctrl.save();
+                                }
                             };
                         })
                     );

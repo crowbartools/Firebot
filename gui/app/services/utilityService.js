@@ -558,9 +558,9 @@
                                 return {
                                     element: modalElement,
                                     name:
-                    $scope.effectDefinition.definition != null
-                        ? $scope.effectDefinition.definition.name
-                        : "Nothing",
+                                    $scope.effectDefinition.definition != null
+                                        ? $scope.effectDefinition.definition.name
+                                        : "Nothing",
                                     id: modalId,
                                     instance: $uibModalInstance,
                                     onSaveAll: () => {
@@ -574,13 +574,12 @@
                             utilityService.removeSlidingModal();
                         });
 
-                        $scope.saveAll = function() {
-                            utilityService.saveAllSlidingModals();
-                        };
+                        function validateEffect() {
 
-                        $scope.save = function() {
-
-                            if ($scope.effect.id === "Nothing") return;
+                            if ($scope.effect.id === "Nothing") {
+                                ngToast.create("Please select an effect type!");
+                                return false;
+                            }
 
                             let errors = $scope.effectDefinition.optionsValidator(
                                 $scope.effect
@@ -590,8 +589,21 @@
                                 for (let error of errors) {
                                     ngToast.create(error);
                                 }
-                                return;
+                                return false;
                             }
+                            return true;
+                        }
+
+
+                        $scope.saveAll = function() {
+                            if (!validateEffect()) return;
+                            utilityService.saveAllSlidingModals();
+                        };
+
+
+                        $scope.save = function() {
+
+                            if (!validateEffect()) return;
 
                             // clear any toasts
                             ngToast.dismiss();
