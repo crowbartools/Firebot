@@ -272,6 +272,14 @@
     background-color: transparent;
     border: 1px solid transparent;
     padding-left: 0;
+    &:hover {
+        .ddtext {
+            color: rgb(78, 78, 78);
+        }
+        .fb-arrow {
+            border-color: rgb(78, 78, 78);
+        }
+    }   
 }
 
 the-grid {
