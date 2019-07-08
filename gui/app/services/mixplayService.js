@@ -7,7 +7,8 @@
 
     angular
         .module("firebotApp")
-        .factory("mixplayService", function($rootScope, backendCommunicator, logger, settingsService, gridHelper, controlHelper) {
+        .factory("mixplayService", function(backendCommunicator, logger, settingsService,
+            gridHelper, controlHelper, ngToast) {
             let service = {};
 
             let projects = [];
@@ -227,7 +228,7 @@
                     }
 
                 } else {
-                    // TODO show error to user and ask them to clear space
+                    ngToast.create(`Could not find enough space in the grid to place control (${controlDimensions.w}w x ${controlDimensions.h}h)`);
                 }
             };
 

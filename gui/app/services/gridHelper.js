@@ -17,7 +17,7 @@
 
                     for (let y = tileY1; y < tileY2; y++) {
                         for (let x = tileX1; x < tileX2; x++) {
-                            obstructions[`${x}${y}`] = true;
+                            obstructions[`${x},${y}`] = true;
                         }
                     }
                 }
@@ -44,7 +44,7 @@
                     shiftedHeight = startingY + areaHeight;
                 for (let y = startingY; y < shiftedHeight; y++) {
                     for (let x = startingX; x < shiftedWidth; x++) {
-                        let isObstructed = obstructions[`${x}${y}`];
+                        let isObstructed = obstructions[`${x},${y}`];
                         if (isObstructed) return true;
                     }
                 }
