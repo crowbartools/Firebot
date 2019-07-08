@@ -38,7 +38,7 @@
             <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="setSelectedScene(scene.id)">
                 <div class="flex-row-center" style="height:100%;">
                   <div class="selected-scene-icon" ng-class="{'transparent': !mps.sceneIsSelected(scene.id)}"></div>
-                  <div>{{scene.name}}</div>
+                  <div  class="row-text">{{scene.name}}</div>
                   <div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)" uib-tooltip="Default Scene" append-tooltip-to-body="true"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>
                 </div>
                 <div>
@@ -81,7 +81,7 @@
                 <div style="width: 28px;height: 100%;font-size:12px;flex-shrink: 0;" class="flex-center">
                     <i class="far" ng-class="getControlIconForKind(control.kind)" uib-tooltip="{{getControlSettings(control.kind).name}}" tooltip-append-to-body="true"></i>
                 </div>
-                <div>{{control.name}}</div>
+                <div class="row-text">{{control.name}}</div>
             </div>
 
             <div class="flex-row-center">

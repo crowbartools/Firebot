@@ -435,6 +435,13 @@ the-grid [resize="bottom"] {
     }
 }
 
+.row-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 122px;
+}
+
 .grid-icon {
     font-size: 12px;
     color: gray;

@@ -30,7 +30,7 @@
                 <div ng-repeat="group in es.getEventGroups()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': es.tabIsSelected(group.id)}"  ng-click="es.setSelectedTab(group.id)">
                     <div class="flex-row-center" style="height:100%;">
                     <div class="selected-scene-icon" ng-class="{'transparent': !es.tabIsSelected(group.id)}"></div>
-                    <div>{{group.name}}</div>
+                    <div class="row-text" style="max-width: 145px;">{{group.name}}</div>
                     </div>
                     <div class="flex-row-center jspacebetween">
                         <span ng-if="es.groupIsActive(group.id)" class="status-dot active" uib-tooltip="This event group is active" tooltip-append-to-body="true"></span>
