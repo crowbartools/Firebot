@@ -22,6 +22,12 @@
                 settingsService.setMixPlayPreviewModeEnabled($scope.previewEnabled);
             };
 
+            $scope.guideLinesEnabled = settingsService.centerGuideLinesEnabled();
+            $scope.toggleGuideLines = function() {
+                $scope.guideLinesEnabled = !$scope.guideLinesEnabled;
+                settingsService.setCenterGuideLinesEnabled($scope.guideLinesEnabled);
+            };
+
             $scope.mps = mixplayService;
 
             $scope.gridHelper = gridHelper;

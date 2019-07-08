@@ -230,6 +230,50 @@
     width: 70px !important;
 }
 
+.center-line-wrapper {
+    position: absolute;
+    top: auto;left: 0;
+    height: 100%; 
+    width: 100%; 
+    display:flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.horizontal-center-line {
+    height: 1px;
+    width: 100%;
+    background-color: #585858;
+    &.odd {
+        height: 12px;
+        background-color: unset;
+        border-top: 1px solid #585858;
+        border-bottom: 1px solid #585858;
+    }
+}
+
+.vertical-center-line {
+    height: 100%;
+    width: 1px;
+    background-color: #585858;
+    &.odd {
+        width: 12px;
+        background-color: unset;
+        border-left: 1px solid #585858;
+        border-right: 1px solid #585858;
+    }
+}
+
+.grid-tools-dropdown {
+    border-bottom: 0px solid #eaecec;
+    font-weight: 600;
+    font-size: 12px;
+    color: gray;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding-left: 0;
+}
+
 the-grid {
     background: #292a2e;
     background-image: linear-gradient(0deg, transparent, transparent 45%, rgba(107, 107, 107, 0.28) 50%, rgba(0, 0, 0, 0) 55%, transparent 56%, transparent), linear-gradient(90deg, transparent, transparent 45%, rgba(132, 132, 132, 0.22) 50%, rgba(255, 255, 255, 0) 55%, transparent 56%, transparent);

@@ -502,6 +502,15 @@
                 pushDataToFile('/settings/mixplayPreviewMode', enabled === true);
             };
 
+            service.centerGuideLinesEnabled = function() {
+                let enabled = getDataFromFile('/settings/mixplayCenterGuideLines');
+                return enabled != null ? enabled : false;
+            };
+
+            service.setCenterGuideLinesEnabled = function(enabled) {
+                pushDataToFile('/settings/mixplayCenterGuideLines', enabled === true);
+            };
+
 
             service.getClearCustomScriptCache = function() {
                 let clear = getDataFromFile("/settings/clearCustomScriptCache");

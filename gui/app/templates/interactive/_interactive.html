@@ -105,23 +105,45 @@
       <div style="display:flex; height: 100%;flex-grow: 3;width: 0px;flex-direction:column;">
 
             <div class="flex-row-center" style="padding-left: 15px">
-                <div class="mixplay-header" style="padding-left: 0px;">
+                <div class="mixplay-header" style="padding-left: 0px;padding-right: 0px;">
                     <span>Grid</span>
                 </div>
-                <div style="font-size: 13px;">
+                <div style="font-size: 13px;margin-left: 15px;">
                     <grid-size-selection selected-size="gridHelper.currentGridSize" update="gridSizeChanged(size)"></grid-size-selection>
                 </div>
-                <div style="margin-left: 15px;">
-                    <label class="control-fb control--checkbox small-control noselect"> Preview Mode <tooltip text="'Preview mode makes the controls look more like they will under your stream.'"></tooltip>
-                        <input type="checkbox" ng-checked="previewEnabled" ng-click="togglePreviewMode()" aria-label="...">
-                        <div class="control__indicator"></div>
-                    </label>
+                <div class="text-dropdown grid-tools-dropdown" uib-dropdown uib-dropdown-toggle>
+                  <div class="noselect pointer" style="font-size: 12px;">TOOLS<span class="fb-arrow down"></span></div>
+                  <ul class="dropdown-menu" uib-dropdown-menu>
+                    <li ng-click="togglePreviewMode()">
+                      <a style="padding-left: 10px;">
+                        <span style="width: 25px;color:green;display: inline-block;"><i class="fas fa-check" ng-show="previewEnabled"></i></span>
+                        <span>Preview Mode</span>
+                        <tooltip text="'Preview mode makes the controls look more like they will under your stream.'"></tooltip>
+                      </a>
+                    </li>
+                    <li ng-click="toggleGuideLines()">
+                        <a style="padding-left: 10px;">
+                          <span style="width: 25px;color:green;display: inline-block;"><i class="fas fa-check" ng-show="guideLinesEnabled"></i></span>
+                          <span>Center Guide Lines</span>
+                          <tooltip text="'Display centering lines on the grid. Only displays when preview mode is off.'"></tooltip>
+                        </a>
+                    </li>
+                  </ul>
                 </div>
             </div>
             
 
             <div style="margin-right: 1px;overflow-x: auto;padding: 0 15px;height: 100%;">
-                <div class="grid-wrapper" style="margin-right: 0;">
+                <div class="grid-wrapper" style="margin-right: 0;position: relative;">
+
+                    <div ng-show="!previewEnabled && guideLinesEnabled" id="horizontal-center-line-wrapper" class="center-line-wrapper">
+                      <div class="horizontal-center-line" ng-class="{'odd': !gridHelper.currentGridIsEvenHorizontally()}"></div>
+                    </div>
+
+                    <div ng-show="!previewEnabled && guideLinesEnabled" id="vertical-center-line-wrapper" class="center-line-wrapper">
+                      <div class="vertical-center-line" ng-class="{'odd': !gridHelper.currentGridIsEvenVertically()}"></div>
+                    </div>
+                    
                     <the-grid 
                         id="controlGrid" 
                         draggable 

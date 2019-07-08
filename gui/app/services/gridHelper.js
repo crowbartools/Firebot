@@ -99,6 +99,22 @@
 
             service.currentGridSize = service.GridSize.LARGE;
 
+            service.currentGridIsEvenVertically = function() {
+                let gridSize = service.GridSizes[service.currentGridSize];
+                if (gridSize) {
+                    return gridSize.width % 2 === 0;
+                }
+                return true;
+            };
+
+            service.currentGridIsEvenHorizontally = function() {
+                let gridSize = service.GridSizes[service.currentGridSize];
+                if (gridSize) {
+                    return gridSize.height % 2 === 0;
+                }
+                return true;
+            };
+
             return service;
         });
 }());
