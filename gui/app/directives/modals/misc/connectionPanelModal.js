@@ -151,7 +151,7 @@
                     return "Connected";
                 } else if (connectionStatus === "warning") {
                     overlayStatusId = 0;
-                    return "Running, but nothing connected";
+                    return "Ready, but nothing is connected at this time.";
                 }
                 overlayStatusId = -1;
                 return "Error starting web server. App restart required.";

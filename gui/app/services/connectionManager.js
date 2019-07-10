@@ -6,6 +6,7 @@
     angular
         .module("firebotApp")
         .factory("connectionManager", function(
+            $rootScope,
             connectionService,
             listenerService,
             settingsService,
@@ -17,6 +18,27 @@
             logger
         ) {
             let service = {};
+
+            let overlayStatus = listenerService.fireEventSync("getOverlayStatus");
+
+            function delay(time) {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve();
+                    }, time || 100);
+                });
+            }
+
+            // Connection Monitor for Overlay
+            // Recieves event from main process that connection has been established or disconnected.
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.OVERLAY_CONNECTION_STATUS
+                },
+                overlayStatusData => {
+                    overlayStatus = overlayStatusData;
+                }
+            );
 
             // listen for toggle service requests from the backend
             listenerService.registerListener(
@@ -31,9 +53,9 @@
             service.isWaitingForServicesStatusChange = function() {
                 return (
                     connectionService.waitingForStatusChange ||
-          connectionService.waitingForChatStatusChange ||
-          connectionService.waitingForConstellationStatusChange ||
-          connectionService.isConnectingAll
+                    connectionService.waitingForChatStatusChange ||
+                    connectionService.waitingForConstellationStatusChange ||
+                    connectionService.isConnectingAll
                 );
             };
 
@@ -178,47 +200,56 @@
 
                 connectionService.isConnectingAll = true;
 
-                console.log(services);
+                soundService.resetPopCounter();
+
                 for (let i = 0; i < services.length; i++) {
                     let s = services[i];
                     switch (s) {
                     case "interactive":
                         if (shouldConnect) {
-                            await service.setConnectionToInteractive(true);
+                            let didConnect = await service.setConnectionToInteractive(true);
+                            if (didConnect) {
+                                soundService.popSound();
+                                await delay(250);
+                            }
                         } else if (connectionService.connectedToInteractive) {
                             await service.setConnectionToInteractive(false);
                         }
                         break;
                     case "chat":
                         if (shouldConnect) {
-                            await service.setConnectionToChat(true);
+                            let didConnect = await service.setConnectionToChat(true);
+                            if (didConnect) {
+                                soundService.popSound();
+                                await delay(100);
+                            }
                         } else if (connectionService.connectedToChat) {
                             await service.setConnectionToChat(false);
                         }
                         break;
                     case "constellation":
                         if (shouldConnect) {
-                            await service.setConnectionToConstellation(true);
+                            let didConnect = await service.setConnectionToConstellation(true);
+                            if (didConnect) {
+                                soundService.popSound();
+                                await delay(50);
+                            }
                         } else if (connectionService.connectedToConstellation) {
                             await service.setConnectionToConstellation(false);
                         }
                         break;
                     default:
-                        console.log(s);
                         if (s.startsWith("integration.")) {
                             let intId = s.replace("integration.", "");
-                            logger.info("connecting " + intId);
+                            logger.info("Connecting to " + intId);
                             if (integrationService.integrationIsLinked(intId)) {
                                 if (shouldConnect) {
-                                    await integrationService.setConnectionForIntegration(
-                                        intId,
-                                        true
-                                    );
+                                    let didConnect = await integrationService.setConnectionForIntegration(intId, true);
+                                    if (didConnect) {
+                                        soundService.popSound();
+                                    }
                                 } else if (integrationService.integrationIsConnected(intId)) {
-                                    await integrationService.setConnectionForIntegration(
-                                        intId,
-                                        false
-                                    );
+                                    await integrationService.setConnectionForIntegration(intId, false);
                                 }
                             }
                         }
@@ -226,8 +257,7 @@
                 }
                 connectionService.isConnectingAll = false;
 
-                let soundType =
-          service.connectedServiceCount() > 0 ? "Online" : "Offline";
+                let soundType = service.connectedServiceCount() > 0 ? "Online" : "Offline";
                 soundService.connectSound(soundType);
             };
 
@@ -256,11 +286,6 @@
                     }
                     break;
                 case "overlay": {
-                    logger.info("getting sync event");
-                    let overlayStatus = listenerService.fireEventSync(
-                        "getOverlayStatus"
-                    );
-
                     if (!overlayStatus.serverStarted) {
                         connectionStatus = "disconnected";
                     } else if (overlayStatus.clientsConnected) {
@@ -269,7 +294,6 @@
                         connectionStatus = "warning";
                     }
 
-                    logger.info("here");
                     break;
                 }
                 case "integrations": {
@@ -285,11 +309,6 @@
                         }
                     });
 
-                    console.log("INT CNT:");
-                    console.log(sidebarControlledIntegrations);
-
-                    console.log(connectedCount);
-
                     if (connectedCount === 0) {
                         connectionStatus = "disconnected";
                     } else if (
@@ -302,8 +321,6 @@
                     break;
                 }
                 default:
-                    console.log("SERVICE:");
-                    console.log(service);
                     connectionStatus = "disconnected";
                 }
                 return connectionStatus;

@@ -116,7 +116,7 @@
                     if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
                         ctrl.tooltip = "<b>Overlay:</b> Connected";
                     } else if (ctrl.connectionStatus === ConnectionStatus.WARNING) {
-                        ctrl.tooltip = "<b>Overlay:</b> Running, but nothing connected";
+                        ctrl.tooltip = "<b>Overlay:</b> Ready, but nothing is connected at this time.";
                     } else {
                         ctrl.tooltip = "<b>Overlay:</b> Error starting web server. App restart required.";
                     }
@@ -154,9 +154,11 @@
             $rootScope.$on("connection:update", (event, data) => {
                 if (data.type !== ctrl.type) return;
 
-                ctrl.connectionStatus = connectionManager.getConnectionStatusForService(
-                    ctrl.type
-                );
+                if (data.type === "overlay") {
+                    ctrl.connectionStatus = data.status;
+                } else {
+                    ctrl.connectionStatus = connectionManager.getConnectionStatusForService(ctrl.type);
+                }
 
                 setBubbleClasses();
                 generateTooltip();

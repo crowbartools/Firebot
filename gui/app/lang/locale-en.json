@@ -76,5 +76,5 @@
     "NEW": "New",
     "CONNECTED": "Connected",
     "DISCONNECTED": "Disconnected",
-    "RUNNING_NOT_CONNECTED": "Running, but nothing is connected"
+    "RUNNING_NOT_CONNECTED": "Ready, but nothing is connected at this time."
 }

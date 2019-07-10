@@ -22,11 +22,27 @@
                 if (settingsService.soundsEnabled() === "On") {
                     let outputDevice = settingsService.getAudioOutputDevice();
                     if (type === "Online") {
-                        service.playSound("../sounds/connect.mp3", 0.2, outputDevice);
+                        service.playSound("../sounds/connect_new_b.mp3", 0.2, outputDevice);
                     } else {
-                        service.playSound("../sounds/disconnect.mp3", 0.2, outputDevice);
+                        service.playSound("../sounds/disconnect_new_b.mp3", 0.2, outputDevice);
                     }
                 }
+            };
+
+            let popCounter = 0;
+            service.popSound = function() {
+                if (settingsService.soundsEnabled() === "On") {
+                    let outputDevice = settingsService.getAudioOutputDevice();
+                    popCounter++;
+                    if (popCounter > 4) {
+                        popCounter = 1;
+                    }
+                    let popSoundName = `pop${popCounter}.wav`;
+                    service.playSound(`../sounds/pops/${popSoundName}`, 0.1, outputDevice);
+                }
+            };
+            service.resetPopCounter = function() {
+                popCounter = 0;
             };
 
             service.notificationSoundOptions = [
