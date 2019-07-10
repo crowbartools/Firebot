@@ -65,9 +65,9 @@
                     controller: "controlsController"
                 })
 
-                .when("/viewer-groups", {
-                    templateUrl: "./templates/_viewergroups.html",
-                    controller: "groupsController"
+                .when("/viewer-roles", {
+                    templateUrl: "./templates/_viewerroles.html",
+                    controller: "viewerRolesController"
                 })
 
                 .when("/commands", {
