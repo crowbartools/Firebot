@@ -229,6 +229,10 @@ function createWindow() {
     const statsdb = require("./lib/database/statsDatabase");
     statsdb.connectStatsDatabase();
 
+    logger.info("Creating or connecting quotes database");
+    const quotesdb = require("./lib/quotes/quotes-manager");
+    quotesdb.loadQuoteDatabase();
+
     //load patronage data
     const patronageManager = require("./lib/patronageManager");
     patronageManager.loadPatronageData();
