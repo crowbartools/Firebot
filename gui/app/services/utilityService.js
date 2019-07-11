@@ -182,7 +182,7 @@
                 service.showModal({
                     component: "setupWizardModal",
                     keyboard: allowExit ? true : false,
-                    backdrop: allowExit ? undefined : "static",
+                    backdrop: allowExit ? true : "static",
                     closeCallback: () => {}
                 });
             };
