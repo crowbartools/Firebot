@@ -2,9 +2,10 @@
 
 // Modal for adding or editting an event
 
-let uuidv1 = require("uuid/v1");
-
 (function() {
+
+    let uuidv1 = require("uuid/v1");
+
     angular.module("firebotApp").component("addOrEditEventModal", {
         template:
         `

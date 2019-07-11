@@ -1,8 +1,7 @@
 "use strict";
-
-const uuidv1 = require("uuid/v1");
-
 (function() {
+    const uuidv1 = require("uuid/v1");
+
     angular.module("firebotApp").component("addOrEditCooldownGroupModal", {
         template: `
             <div class="modal-header">

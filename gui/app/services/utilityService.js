@@ -145,7 +145,7 @@
                     size: showModalContext.size,
                     keyboard: showModalContext.keyboard ? showModalContext.keyboard : true,
                     backdrop: showModalContext.backdrop ? showModalContext.backdrop : 'static',
-                    windowClass: windowClass + " " + modalId + " animated fadeIn fastest fb-transition",
+                    windowClass: windowClass + " " + modalId + " animated fadeIn fastest fb-transition draggablemodal",
                     animation: true
                 };
 
