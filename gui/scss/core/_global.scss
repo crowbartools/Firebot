@@ -26,6 +26,17 @@
   cursor: pointer;
 }
 
+.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 3000;
+}
+
+.edit-effect-header {
+    background: $light-background-color;
+    border-bottom: 1px solid $effect-option-title;
+}
+
 
 ///
 
