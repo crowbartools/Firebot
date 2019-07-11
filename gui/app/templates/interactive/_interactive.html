@@ -30,12 +30,13 @@
         </div>
 
         <div class="fb-center-tabs" ng-init="activeMixPlayTab = activeMixPlayTab || 0">
+            <div style="height: 15px; width: 2px;background: #3c3c3c;"></div>
             <div class="fb-tab noselect" ng-class="{'active' : activeMixPlayTab === 0}" ng-click="activeMixPlayTab = 0">
-                BUILD
+                <span style="margin-left: 3px;">BUILD</span>
             </div>
-
+            <div style="height: 15px; width: 2px;background: #3c3c3c;"></div>
             <div class="fb-tab noselect" ng-class="{'active' : activeMixPlayTab === 1}" ng-click="activeMixPlayTab = 1">
-                COOLDOWN GROUPS
+                <span style="margin-left: 3px;">COOLDOWN GROUPS</span>
             </div>
         </div>
 
