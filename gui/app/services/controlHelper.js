@@ -4,7 +4,7 @@
 
     angular
         .module("firebotApp")
-        .factory("controlHelper", function(logger) {
+        .factory("controlHelper", function() {
             let service = {};
 
             service.controlKinds = [
@@ -40,7 +40,6 @@
                 }
             ];
 
-
             service.controlSettings = {
                 button: {
                     kind: "button",
@@ -58,7 +57,8 @@
                         width: 20,
                         height: 15
                     },
-                    effects: true
+                    effects: true,
+                    canCooldown: true
                 },
                 label: {
                     kind: "label",
@@ -76,7 +76,8 @@
                         height: 15
                     },
                     effects: false,
-                    hasSettings: true
+                    hasSettings: true,
+                    canCooldown: false
                 },
                 textbox: {
                     kind: "textbox",
@@ -94,7 +95,8 @@
                         height: 15
                     },
                     effects: true,
-                    hasSettings: true
+                    hasSettings: true,
+                    canCooldown: true
                 },
                 joystick: {
                     kind: "joystick",
@@ -112,8 +114,11 @@
                         height: 12
                     },
                     effects: true,
-                    hasSettings: false
-                },
+                    hasSettings: false,
+                    canCooldown: false
+                }
+
+                /*,  // Hiding this control type until we figure out how we wanna handle it
                 screen: {
                     kind: "screen",
                     name: "Mouse",
@@ -130,8 +135,9 @@
                         height: 0
                     },
                     effects: true,
-                    hasSettings: false
-                }
+                    hasSettings: false,
+                    canCooldown: false
+                }*/
             };
 
             return service;
