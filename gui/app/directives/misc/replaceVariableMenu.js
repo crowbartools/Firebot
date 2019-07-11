@@ -9,7 +9,7 @@
                 scope: {
                     modelValue: '=ngModel'
                 },
-                controller: function($scope, $element, listenerService) {
+                controller: function($scope, $element, listenerService, $timeout) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -18,7 +18,19 @@
                     $scope.variables = listenerService.fireEventSync("getReplaceVariableDefinitions");
 
                     $scope.toggleMenu = () => {
-                        $scope.showMenu = !$scope.showMenu;
+                        $scope.setMenu(!$scope.showMenu);
+                    };
+                    $scope.setMenu = (value) => {
+                        $scope.showMenu = value;
+                        if (!value) {
+                            $timeout(() => {
+                                $element.focus();
+                            }, 10);
+                        } else {
+                            $timeout(() => {
+                                angular.element("#variable-search").focus();
+                            }, 10);
+                        }
                     };
 
                     $scope.addVariable = (variable) => {
@@ -31,8 +43,6 @@
                         let updatedModel = insertAt(currentModel, "$" + display + " ", insertIndex);
 
                         $scope.modelValue = updatedModel;
-
-                        //$scope.showMenu = false;
                     };
 
                 },
@@ -52,7 +62,7 @@
                         <div style="width: 375px; background: #060707; position: absolute; right: 0px; top: -307px; z-index: 100; border-radius: 4px;" ng-show="showMenu">
                             <div style="padding:10px;border-bottom: 1px solid #48474a;">
                                 <div style="position: relative;">
-                                    <input type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" style="padding-left: 27px;">
+                                    <input id="variable-search" type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" style="padding-left: 27px;">
                                     <span class="searchbar-icon"><i class="far fa-search"></i></span>
                                 </div>
                             </div>
@@ -61,23 +71,20 @@
                                     <dt ng-repeat-start="variable in variables | orderBy:'handle' | variableSearch:variableSearchText" style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></dt>
                                     <dd ng-repeat-end style="margin-bottom: 8px;" class="muted">{{variable.description || ""}}</dd>
                                 </dl>
-                            </div>
-                            
+                            </div>                    
                         </div>`
                     );
                     $compile(menu)(scope);
                     menu.insertAfter(element);
 
-
                     function documentClick(event) {
                         if (
                             scope.showMenu &&
-                            //!element[0].contains(event.target) &&
                             !wrapper[0].contains(event.target) &&
                             !button[0].contains(event.target) &&
                             !menu[0].contains(event.target)
                         ) {
-                            scope.showMenu = false;
+                            scope.setMenu(false);
                         }
                     }
 
