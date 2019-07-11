@@ -20,11 +20,11 @@
                         <textbox-tile ng-switch-when="textbox" control="$ctrl.control" style="width:100%; height: 100%;"></textbox-tile>
 
                         <div ng-switch-default class="default-control">
-                            {{$ctrl.control.name}}
+                            <span class="control-name">{{$ctrl.control.name}}</span>
                         </div>             
                     </div>
                     <div ng-hide="$ctrl.previewMode" class="default-control">
-                        {{$ctrl.control.name}}
+                        <span class="control-name">{{$ctrl.control.name}}</span>
                     </div>
                 </div>
             `,

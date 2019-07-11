@@ -150,7 +150,6 @@
 
                 utilityService.showModal({
                     component: "editControlModal",
-                    keyboard: false,
                     backdrop: 'static',
                     resolveObj: {
                         control: () => copiedControl,

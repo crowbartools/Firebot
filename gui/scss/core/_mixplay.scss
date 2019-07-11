@@ -29,6 +29,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    .control-name {
+        word-break: break-word;
+        text-align: center;
+    }
 }
 
 .mixer-label-container {

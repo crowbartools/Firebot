@@ -14,12 +14,12 @@
             
                 <div>
                     <div class="mixplay-header" style="padding: 0 0 4px 0">
-                        Name
+                        Name <tooltip text="'A name to help you identify this control. Viewers wont see this.'">
                     </div>
                     <div style="width: 100%; position: relative;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
                             <input type="text" class="form-control" ng-model="$ctrl.name" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter name">
-                            <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">Control name cannot be empty.</span>
+                            <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">Please provide a name.</span>
                         </div>
                     </div>
                 </div>

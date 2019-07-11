@@ -16,7 +16,7 @@
           <div class="text-dropdown" style="margin-left: 0px;" uib-dropdown uib-dropdown-toggle>
             <div class="project-dropdown-text noselect pointer" uib-tooltip="Current MixPlay Project" tooltip-append-to-body="true">{{getSelectedProjectName()}}<span class="fb-arrow down"></span></div>
             <ul class="dropdown-menu" uib-dropdown-menu>
-              <li class="dropdown-header">Projects</li>
+              <li class="dropdown-header noselect">Projects</li>
               <li ng-repeat="projectDef in mps.getProjects() track by projectDef.id">         
                 <a href ng-click="setCurrentProject(projectDef.id)">{{projectDef.name}}</a>
               </li>
@@ -50,7 +50,7 @@
     <div ng-show="activeMixPlayTab === 0" id="testDivFb" class="flex-row" style="height: 100%">
       <div class="editior-column">
         <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0">
-            <span>Scenes</span>
+            <span class="noselect">Scenes</span>
             <div class="clickable" ng-click="showCreateSceneModal()"><i class="fas fa-plus-circle"></i></div>
         </div>
 
@@ -58,7 +58,7 @@
             <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="setSelectedScene(scene.id)">
                 <div class="flex-row-center" style="height:100%;">
                   <div class="selected-scene-icon" ng-class="{'transparent': !mps.sceneIsSelected(scene.id)}"></div>
-                  <div  class="row-text">{{scene.name}}</div>
+                  <div class="row-text noselect">{{scene.name}}</div>
                   <div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)" uib-tooltip="Default Scene" append-tooltip-to-body="true"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>
                 </div>
                 <div>
@@ -87,7 +87,7 @@
         </div>
       <div class="editior-column">
         <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0;">
-          <span>Controls</span>
+          <span class="noselect">Controls</span>
           <div class="clickable" ng-click="showCreateControlModal()" ng-show="mps.hasSceneSelected()"><i class="fas fa-plus-circle"></i></div>
         </div>
 
@@ -101,7 +101,7 @@
                 <div style="width: 28px;height: 100%;font-size:12px;flex-shrink: 0;" class="flex-center">
                     <i class="far" ng-class="getControlIconForKind(control.kind)" uib-tooltip="{{getControlSettings(control.kind).name}}" tooltip-append-to-body="true"></i>
                 </div>
-                <div class="row-text">{{control.name}}</div>
+                <div class="row-text noselect">{{control.name}}</div>
             </div>
 
             <div class="flex-row-center">
@@ -132,7 +132,7 @@
 
             <div class="flex-row-center" style="padding-left: 15px">
                 <div class="mixplay-header" style="padding-left: 0px;padding-right: 0px;">
-                    <span>Grid</span>
+                    <span class="noselect">Grid</span>
                 </div>
                 <div style="font-size: 13px;margin-left: 15px;">
                     <grid-size-selection selected-size="gridHelper.currentGridSize" update="gridSizeChanged(size)"></grid-size-selection>

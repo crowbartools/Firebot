@@ -143,8 +143,8 @@
                     ariaDescribedBy: "modal-body",
                     resolve: resolveObj,
                     size: showModalContext.size,
-                    keyboard: showModalContext.keyboard,
-                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
+                    keyboard: showModalContext.keyboard ? showModalContext.keyboard : true,
+                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : 'static',
                     windowClass: windowClass + " " + modalId + " animated fadeIn fastest fb-transition",
                     animation: true
                 };
