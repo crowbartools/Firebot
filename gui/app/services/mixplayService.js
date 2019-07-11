@@ -316,6 +316,35 @@
                 return false;
             };
 
+            service.saveCooldownGroupsForCurrentProject = function(cooldownGroups) {
+                let currentProject = service.getCurrentProject();
+                if (currentProject != null && cooldownGroups != null) {
+                    currentProject.cooldownGroups = cooldownGroups;
+                    service.saveProject(currentProject);
+                }
+            };
+
+            service.getControlDataForCurrentProject = function() {
+                let currentProject = service.getCurrentProject();
+                if (currentProject != null && currentProject.scenes != null) {
+                    // maps all scenes to array with control data arrays then flattens it to single array
+                    const controls = [].concat.apply([], currentProject.scenes
+                        .filter(s => s.controls != null)
+                        .map(s => s.controls.map(c => {
+                            return {
+                                sceneId: s.id,
+                                sceneName: s.name,
+                                controlId: c.id,
+                                controlName: c.name,
+                                controlKind: c.kind
+                            };
+                        })));
+
+                    return controls;
+                }
+                return [];
+            };
+
             service.setCurrentProject = function(id) {
                 lastProjectId = id;
                 settingsService.setLastMixplayProjectId(id);

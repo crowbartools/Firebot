@@ -46,18 +46,8 @@
                 }));
             };
             $scope.gridUpdated = function() {
-                /*for (let controlData of $scope.controlPositions) {
-                    let indexOfPosition = controlData.control.position.findIndex(p => p.size === controlData.position.size);
-                    if (indexOfPosition > -1) {
-                        console.log("UPDATIING CONTROL");
-                        controlData.control.position[indexOfPosition] = controlData.position;
-                        console.log(controlData.control);
-                    }
-                }*/
-
 
                 mixplayService.saveProject(mixplayService.getCurrentProject());
-
 
                 //getControlPositionForCurrentGrid
 
@@ -77,7 +67,6 @@
                         }
                     }
                 }
-
             };
 
             $scope.getSelectedProjectName = function() {
@@ -435,6 +424,71 @@
                         mixplayService.createControlForCurrentScene(name, kind);
                     }
                 });
+            };
+
+
+            /**
+             * COOLDOWN GROUPS
+             */
+
+            $scope.getCooldownGroupsForSelectedProject = function() {
+                let currentProject = mixplayService.getCurrentProject();
+                if (currentProject != null) {
+                    return currentProject.cooldownGroups || [];
+                }
+                return [];
+            };
+
+            $scope.showAddOrEditCooldownGroupModal = function(index) {
+
+                let cooldownGroup = null;
+                if (index !== null && index !== undefined) {
+                    let cooldownGroups = $scope.getCooldownGroupsForSelectedProject();
+                    cooldownGroup = cooldownGroups[index];
+                }
+
+                utilityService.showModal({
+                    component: "addOrEditCooldownGroupModal",
+                    resolveObj: {
+                        index: () => index,
+                        cooldownGroup: () => cooldownGroup
+                    },
+                    closeCallback: resp => {
+                        let { action, index, cooldownGroup } = resp;
+
+                        let cooldownGroups = $scope.getCooldownGroupsForSelectedProject();
+
+                        switch (action) {
+                        case "add":
+                            cooldownGroups.push(cooldownGroup);
+                            break;
+                        case "update":
+                            cooldownGroups[index] = cooldownGroup;
+                            break;
+                        case "delete":
+                            cooldownGroups.splice(index, 1);
+                            break;
+                        }
+                        mixplayService.saveCooldownGroupsForCurrentProject(cooldownGroups);
+                    }
+                });
+
+                $scope.showDeleteCooldownGroupModal = function(index, name) {
+                    utilityService
+                        .showConfirmationModal({
+                            title: "Delete Cooldown Group",
+                            question: `Are you sure you want to delete the cooldown group '${name}'?`,
+                            confirmLabel: "Delete",
+                            confirmBtnType: "btn-danger"
+                        })
+                        .then(confirmed => {
+                            if (confirmed) {
+                                let cooldownGroups = $scope.getCooldownGroupsForSelectedProject();
+                                cooldownGroups.splice(index, 1);
+                                mixplayService.saveCooldownGroupsForCurrentProject(cooldownGroups);
+                            }
+                        });
+                };
             };
         });
 }());

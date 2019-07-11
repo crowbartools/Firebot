@@ -140,6 +140,12 @@
                 }*/
             };
 
+            service.controlSupportsCooldowns = function(kind) {
+                if (!kind) return false;
+
+                return service.controlSettings[kind].canCooldown;
+            };
+
             return service;
         });
 }());

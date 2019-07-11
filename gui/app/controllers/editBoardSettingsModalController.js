@@ -143,7 +143,7 @@
             $scope.showAddOrEditCooldownGroupModal = function(cooldownGroup) {
                 let editViewerGroupDefaultsModalContext = {
                     templateUrl:
-            "./templates/interactive/modals/addOrEditCooldownGroupModal.html",
+                         "./templates/interactive/modals/addOrEditCooldownGroupModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: (
                         $scope,
