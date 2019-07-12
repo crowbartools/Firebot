@@ -59,7 +59,7 @@
                     button.insertAfter(element);
 
                     let menu = angular.element(`
-                        <div style="width: 375px; background: #060707; position: absolute; right: 0px; top: -307px; z-index: 100; border-radius: 4px;" ng-show="showMenu">
+                        <div style="width: 375px; background: #060707; position: absolute; right: 0px; top: -307px; z-index: 3000; border-radius: 4px;" ng-show="showMenu">
                             <div style="padding:10px;border-bottom: 1px solid #48474a;">
                                 <div style="position: relative;">
                                     <input id="variable-search" type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" style="padding-left: 27px;">
