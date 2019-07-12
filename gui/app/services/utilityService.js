@@ -539,7 +539,12 @@
                         );
 
                         $scope.effectTypeChanged = function(effectType) {
-                            $scope.effect.id = effectType.id;
+                            if ($scope.effect && $scope.effect.id === effectType.id) return;
+
+                            $scope.effect = {
+                                id: effectType.id
+                            };
+
                             $scope.effectDefinition = effectHelperService.getEffectDefinition(
                                 $scope.effect.id
                             );
