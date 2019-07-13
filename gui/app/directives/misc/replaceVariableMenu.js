@@ -7,15 +7,22 @@
             return {
                 restrict: "A",
                 scope: {
-                    modelValue: '=ngModel'
+                    modelValue: '=ngModel',
+                    replaceVariables: "@"
                 },
                 controller: function($scope, $element, listenerService, $timeout) {
+
+                    const { trigger, triggerMeta } = $scope.$parent;
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
                     $scope.showMenu = false;
 
-                    $scope.variables = listenerService.fireEventSync("getReplaceVariableDefinitions");
+                    $scope.variables = listenerService.fireEventSync("getReplaceVariableDefinitions", {
+                        type: trigger,
+                        id: triggerMeta.id,
+                        dataOutput: $scope.replaceVariables
+                    });
 
                     $scope.toggleMenu = () => {
                         $scope.setMenu(!$scope.showMenu);
@@ -28,8 +35,8 @@
                             }, 10);
                         } else {
                             $timeout(() => {
-                                angular.element("#variable-search").focus();
-                            }, 10);
+                                $element.next(".variable-menu").find("#variable-search").focus();
+                            }, 5);
                         }
                     };
 
@@ -59,7 +66,7 @@
                     button.insertAfter(element);
 
                     let menu = angular.element(`
-                        <div style="width: 375px; background: #060707; position: absolute; right: 0px; top: -307px; z-index: 3000; border-radius: 4px;" ng-show="showMenu">
+                        <div class="variable-menu" ng-show="showMenu">
                             <div style="padding:10px;border-bottom: 1px solid #48474a;">
                                 <div style="position: relative;">
                                     <input id="variable-search" type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" style="padding-left: 27px;">

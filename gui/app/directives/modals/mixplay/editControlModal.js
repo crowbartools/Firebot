@@ -109,7 +109,7 @@
                         $ctrl.control = JSON.parse(JSON.stringify($ctrl.resolve.control));
 
                         $ctrl.triggerMeta = {
-                            control: $ctrl.control.kind
+                            triggerId: $ctrl.control.kind
                         };
 
                         let kind = $ctrl.control.kind;

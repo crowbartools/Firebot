@@ -15,17 +15,18 @@
                 scope: {
                     effect: "=",
                     type: "=",
-                    trigger: "@"
+                    trigger: "@",
+                    triggerMeta: "<"
                 },
                 replace: true,
                 template: `<div><div id="child"></div></div>`,
                 link: function($scope, element) {
                     $scope.$watch("type", function() {
                         //
-                        let templateUrlPath = effectHelperService.getTemplateFilePathForEffectType(
+                        /* let templateUrlPath = effectHelperService.getTemplateFilePathForEffectType(
                             $scope.type
                         );
-                        $scope.templateUrl = templateUrlPath;
+                        $scope.templateUrl = templateUrlPath;*/
 
                         let effectDef = listenerService.fireEventSync(
                             "getEffectDefinition",
@@ -51,19 +52,25 @@
                     // and run it.
                     function findController() {
 
+                        /*if ($scope.triggerMeta) {
+                            $scope.triggerMeta.effectType = $scope.type;
+                        }*/
+
                         let effectDef = listenerService.fireEventSync(
                             "getEffectDefinition",
                             $scope.type
                         );
 
-                        // Note(erik) : I know this is bad practice, but it was the only way I could figure out
-                        // how to send over a controller function thats defined in the main process over to the render process
-                        // as the message system between the two sends serialized objects via JSON.stringify (which strips out funcs)
-                        let effectController = eval(effectDef.optionsControllerRaw); // eslint-disable-line no-eval
+                        if (effectDef) {
+                            // Note(erik) : I know this is bad practice, but it was the only way I could figure out
+                            // how to send over a controller function thats defined in the main process over to the render process
+                            // as the message system between the two sends serialized objects via JSON.stringify (which strips out funcs)
+                            let effectController = eval(effectDef.optionsControllerRaw); // eslint-disable-line no-eval
 
-                        if (effectController != null) {
+                            if (effectController != null) {
                             // Invoke the controller and inject any dependancies
-                            $injector.invoke(effectController, {}, { $scope: $scope });
+                                $injector.invoke(effectController, {}, { $scope: $scope });
+                            }
                         }
                     }
 
