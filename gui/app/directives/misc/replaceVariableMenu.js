@@ -20,7 +20,7 @@
 
                     $scope.variables = listenerService.fireEventSync("getReplaceVariableDefinitions", {
                         type: trigger,
-                        id: triggerMeta.triggerId,
+                        id: triggerMeta && triggerMeta.triggerId,
                         dataOutput: $scope.replaceVariables
                     });
 
