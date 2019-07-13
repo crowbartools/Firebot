@@ -51,7 +51,7 @@
             </div>  
         </div>
         <div ng-if="$ctrl.event.eventId != null" class="effect-setting-container setting-padtop">
-            <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>      
+            <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>      
         </div>
         <div class="modal-footer">
             <button ng-if="!$ctrl.isNewEvent" type="button" class="btn btn-danger delete-event-button pull-left" ng-click="$ctrl.delete()">Delete Event</button>
@@ -65,7 +65,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function(utilityService) {
+        controller: function($scope, utilityService) {
             let $ctrl = this;
 
             $ctrl.isNewEvent = true;
@@ -77,6 +77,15 @@
                 effects: []
             };
 
+            $ctrl.triggerMeta = {};
+
+            function updateTriggerId() {
+                if ($ctrl.event.sourceId && $ctrl.event.eventId) {
+                    $ctrl.triggerMeta.triggerId = `${$ctrl.event.sourceId}:${$ctrl.event.eventId}`;
+                }
+            }
+            updateTriggerId();
+
             $ctrl.$onInit = function() {
                 if ($ctrl.resolve.event == null) {
                     $ctrl.isNewEvent = true;
@@ -84,6 +93,23 @@
                     $ctrl.isNewEvent = false;
                     $ctrl.event = JSON.parse(angular.toJson($ctrl.resolve.event));
                 }
+
+                let modalId = $ctrl.resolve.modalId;
+                utilityService.addSlidingModal(
+                    $ctrl.modalInstance.rendered.then(() => {
+                        let modalElement = $("." + modalId).children();
+                        return {
+                            element: modalElement,
+                            name: "Edit Event",
+                            id: modalId,
+                            instance: $ctrl.modalInstance
+                        };
+                    })
+                );
+
+                $scope.$on("modal.closing", function() {
+                    utilityService.removeSlidingModal();
+                });
             };
 
             $ctrl.effectListUpdated = function(effects) {
@@ -93,6 +119,7 @@
             $ctrl.eventChanged = function(event) {
                 $ctrl.event.eventId = event.eventId;
                 $ctrl.event.sourceId = event.sourceId;
+                updateTriggerId();
             };
 
             $ctrl.delete = function() {
