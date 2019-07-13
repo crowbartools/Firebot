@@ -2,7 +2,6 @@
 
 (function() {
 
-    const profileManager = require("../../lib/common/profile-manager.js");
     const uuidv1 = require("uuid/v1");
 
     angular
@@ -19,6 +18,10 @@
 
             service.getProjectById = function(id) {
                 return projects.find(p => p.id === id);
+            };
+
+            service.getCurrentProjectId = function() {
+                return lastProjectId;
             };
 
             service.getCurrentProject = function() {
@@ -325,10 +328,14 @@
             };
 
             service.getControlDataForCurrentProject = function() {
-                let currentProject = service.getCurrentProject();
-                if (currentProject != null && currentProject.scenes != null) {
+                return service.getControlDataForProject(lastProjectId);
+            };
+
+            service.getControlDataForProject = function(projectId) {
+                const project = service.getProjectById(projectId);
+                if (project != null && project.scenes != null) {
                     // maps all scenes to array with control data arrays then flattens it to single array
-                    const controls = [].concat.apply([], currentProject.scenes
+                    const controls = [].concat.apply([], project.scenes
                         .filter(s => s.controls != null)
                         .map(s => s.controls.map(c => {
                             return {

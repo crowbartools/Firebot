@@ -10,11 +10,12 @@
                 options: "=",
                 selected: "=",
                 placeholder: "@",
-                onUpdate: '&'
+                onUpdate: '&',
+                isDisabled: '<'
             },
             template: `
             <div class="btn-group" uib-dropdown>
-                <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle ng-disabled="$ctrl.isDisabled">
                 {{$ctrl.getSelectedOption()}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">

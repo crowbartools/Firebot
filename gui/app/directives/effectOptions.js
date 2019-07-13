@@ -39,24 +39,17 @@
 
                         let template = $compile(el)($scope);
 
-                        console.log(element.children("#child"));
                         element.children("#child").replaceWith(template);
 
-                        //$scope.template = effectDef.optionsTemplate || "";
                     });
                 },
                 controller: ($scope, $injector, listenerService) => {
                     // Add common options to the scope so we can access them in any effect option template
-                    $scope.commonOptions =
-            effectHelperService.commonOptionsForEffectTypes;
+                    $scope.commonOptions = effectHelperService.commonOptionsForEffectTypes;
 
                     // We want to locate the controller of the given effect type (if there is one)
                     // and run it.
                     function findController() {
-                        /*let effectController = effectHelperService.getControllerForEffectTypeTemplate(
-              $scope.trigger,
-              $scope.type
-            );*/
 
                         let effectDef = listenerService.fireEventSync(
                             "getEffectDefinition",
@@ -69,7 +62,6 @@
                         let effectController = eval(effectDef.optionsControllerRaw); // eslint-disable-line no-eval
 
                         if (effectController != null) {
-                            console.log(effectController);
                             // Invoke the controller and inject any dependancies
                             $injector.invoke(effectController, {}, { $scope: $scope });
                         }
