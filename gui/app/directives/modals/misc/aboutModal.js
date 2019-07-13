@@ -20,9 +20,10 @@
 
                 <h5><b>Team Crowbar</b></h5> 
                 <div>
-                    <div uib-tooltip="The Boss">Firebottle</div>
+                    <div uib-tooltip="The Boss">TheLastMage</div>
                     <div uib-tooltip="The Optimizer">ebiggz</div>
                     <div uib-tooltip="The Video Guy">ThePerry</div>
+                    <div>SReject</div>
                 </div>
 
                 <h5><b>Contributors</b></h5> 
