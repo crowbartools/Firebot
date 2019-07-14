@@ -55,11 +55,11 @@
                 return id;
             };
 
-            service.fireEventAsync = function(request) {
+            service.fireEventAsync = function(type, data) {
                 return new Promise(resolve => {
-                    ipcRenderer.send(request.type, request.data);
-                    ipcRenderer.once(request.type + ":reply", (_, data) => {
-                        resolve(data);
+                    ipcRenderer.send(type, data);
+                    ipcRenderer.once(type + ":reply", (_, eventData) => {
+                        resolve(eventData);
                     });
                 });
             };

@@ -367,6 +367,17 @@
                 logger.warn(errorMessage);
             };
 
+            service.showErrorDetailModal = function(title, details, modalSize = "sm") {
+                service.showModal({
+                    component: "errorDetailModal",
+                    size: modalSize,
+                    resolveObj: {
+                        title: () => title,
+                        details: () => details
+                    }
+                });
+            };
+
             /*
              * DOWNLOAD MODAL
              */
@@ -522,6 +533,8 @@
                         ngToast,
                         utilityService,
                         effectHelperService,
+                        backendCommunicator,
+                        logger,
                         modalId,
                         effect,
                         index,
@@ -579,13 +592,14 @@
                             utilityService.removeSlidingModal();
                         });
 
-                        function validateEffect() {
+                        async function validateEffect() {
 
                             if ($scope.effect.id === "Nothing") {
                                 ngToast.create("Please select an effect type!");
                                 return false;
                             }
 
+                            // validate options
                             let errors = $scope.effectDefinition.optionsValidator(
                                 $scope.effect
                             );
@@ -596,19 +610,95 @@
                                 }
                                 return false;
                             }
+
+                            const { triggerType, triggerMeta } = $scope;
+                            try {
+                                let variableErrors = await backendCommunicator.fireEventAsync("validateVariables", {
+                                    data: $scope.effect,
+                                    trigger: {
+                                        type: triggerType,
+                                        id: triggerMeta && triggerMeta.triggerId
+                                    }
+                                });
+
+                                if (variableErrors && variableErrors.length > 0) {
+                                    const firstError = variableErrors[0];
+
+                                    let errorDetails = [];
+
+                                    if (firstError.varname) {
+                                        errorDetails.push({
+                                            title: "Variable",
+                                            message: "$" + firstError.varname
+                                        });
+                                    }
+
+                                    if (firstError.message) {
+                                        errorDetails.push({
+                                            title: "Error",
+                                            message: service.capitalize(firstError.message)
+                                        });
+                                    }
+
+                                    if (firstError.index > -1) {
+                                        errorDetails.push({
+                                            title: "Argument Index",
+                                            message: firstError.index
+                                        });
+                                    }
+
+                                    if (firstError.character) {
+                                        errorDetails.push({
+                                            title: "Character",
+                                            message: "\"" + firstError.character + "\""
+                                        });
+                                    }
+
+                                    if (firstError.position) {
+                                        errorDetails.push({
+                                            title: "Character Position",
+                                            message: firstError.position
+                                        });
+                                    }
+
+                                    if (firstError.rawText) {
+                                        errorDetails.push({
+                                            title: "Raw Text",
+                                            message: "\"" + firstError.rawText + "\""
+                                        });
+                                    }
+
+                                    if (firstError.dataField) {
+                                        errorDetails.push({
+                                            title: "UI Field",
+                                            message: firstError.dataField
+                                        });
+                                    }
+
+                                    service.showErrorDetailModal("Replace Variable Error", errorDetails);
+                                    return false;
+                                }
+                            } catch (err) {
+                                logger.warn("Error while validating variables.", err);
+                            }
+
+                            // validate varialbes
                             return true;
                         }
 
 
-                        $scope.saveAll = function() {
-                            if (!validateEffect()) return;
+                        $scope.saveAll = async function() {
+                            let valid = await validateEffect();
+                            if (!valid) return;
                             utilityService.saveAllSlidingModals();
                         };
 
 
-                        $scope.save = function() {
+                        $scope.save = async function() {
 
-                            if (!validateEffect()) return;
+                            let valid = await validateEffect();
+
+                            if (!valid) return;
 
                             // clear any toasts
                             ngToast.dismiss();
