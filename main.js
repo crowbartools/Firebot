@@ -526,6 +526,9 @@ function appOnReady() {
         const eventsAccess = require("./lib/live-events/events-access");
         eventsAccess.loadEventsAndGroups();
 
+        const customRolesManager = require("./lib/roles/custom-roles-manager");
+        customRolesManager.loadCustomRoles();
+
         createWindow();
 
         // These are defined globally for Custom Scripts.
