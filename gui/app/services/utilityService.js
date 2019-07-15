@@ -10,6 +10,8 @@
 
     const dataAccess = require("../../lib/common/data-access.js");
 
+    const uuidv1 = require("uuid/v1");
+
     angular
         .module("firebotApp")
         .factory("utilityService", function(
@@ -548,18 +550,20 @@
 
                         $scope.isAddMode = index == null;
                         $scope.effectDefinition = effectHelperService.getEffectDefinition(
-                            $scope.effect.id
+                            $scope.effect.type
                         );
 
                         $scope.effectTypeChanged = function(effectType) {
-                            if ($scope.effect && $scope.effect.id === effectType.id) return;
+                            if ($scope.effect && $scope.effect.type === effectType.type) return;
 
+                            let currentId = $scope.effect.id;
                             $scope.effect = {
-                                id: effectType.id
+                                id: currentId,
+                                type: effectType.id
                             };
 
                             $scope.effectDefinition = effectHelperService.getEffectDefinition(
-                                $scope.effect.id
+                                $scope.effect.type
                             );
                             utilityService.updateNameForSlidingModal(
                                 $scope.effectDefinition.definition.name,
@@ -594,7 +598,7 @@
 
                         async function validateEffect() {
 
-                            if ($scope.effect.id === "Nothing") {
+                            if ($scope.effect.type === "Nothing") {
                                 ngToast.create("Please select an effect type!");
                                 return false;
                             }
@@ -752,7 +756,7 @@
                         };
 
                         $scope.runEffect = function() {
-                            ipcRenderer.send('runEffectsManually', [$scope.effect]);
+                            ipcRenderer.send('runEffectsManually', { list: [$scope.effect] });
                         };
 
                         $scope.delete = function() {

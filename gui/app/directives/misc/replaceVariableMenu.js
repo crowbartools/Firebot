@@ -1,6 +1,5 @@
 "use strict";
 (function() {
-    //This adds the <effect-options> element
 
     angular.module("firebotApp")
         .directive("replaceVariables", function($compile, $document) {

@@ -226,8 +226,8 @@
              * Returns an integer of total number of effects in an event.
              */
             $scope.getEventEffectsCount = function(event) {
-                if (event.effects) {
-                    return event.effects.length;
+                if (event.effects && event.effects.list) {
+                    return event.effects.list.length;
                 }
                 return 0;
             };

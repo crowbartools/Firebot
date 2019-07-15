@@ -1,6 +1,8 @@
 "use strict";
 (function() {
 
+    const uuidv1 = require("uuid/v1");
+
     angular
         .module('firebotApp')
         .component("effectList", {
@@ -8,7 +10,6 @@
                 trigger: "@",
                 triggerMeta: "<",
                 effects: "<",
-                isArray: "<",
                 update: '&',
                 modalId: "@",
                 header: "@",
@@ -32,13 +33,13 @@
                         <div uib-dropdown uib-dropdown-toggle>
                             <span class="noselect pointer effects-actions-btn"><i class="fal fa-ellipsis-v"></i></span>
                             <ul class="dropdown-menu" uib-dropdown-menu>
-                                <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
+                                <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
                                     <a href ng-click="$ctrl.copyEffects()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects</a>
                                 </li>
                                 <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
                                     <a href ng-click="$ctrl.pasteEffects(true)"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects</a>
                                 </li>
-                                <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
+                                <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
                                     <a href ng-click="$ctrl.removeAllEffects()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
                                 </li>
                             </ul>
@@ -46,15 +47,15 @@
                     </div>
                 </div>
                 <div class="{{$ctrl.effectContainerClasses}}" style="margin-left: 15px;margin-right: 15px;padding-bottom: 15px;">
-                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsArray">
-                        <div ng-repeat="effect in $ctrl.effectsArray track by $index">
+                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list">
+                        <div ng-repeat="effect in $ctrl.effectsData.list track by $index">
                             <div class="effect-bar clickable-dark"
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false">
                                     <span style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;padding-right: 10px;">
                                         <span class="muted">{{$index + 1}}. </span>
-                                        {{$ctrl.getEffectNameById(effect.id)}}
+                                        {{$ctrl.getEffectNameById(effect.type)}}
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
                                     <span class="flex-row-center ">
@@ -86,21 +87,24 @@
             controller: function(utilityService, effectHelperService) {
                 let ctrl = this;
 
-                ctrl.effectsArray = [];
+                ctrl.effectsData = {
+                    list: []
+                };
 
                 let effectDefinitions = [];
 
-                function createEffectsArray() {
-                    if (ctrl.effects == null) {
-                        ctrl.effects = [];
+                function createEffectsData() {
+                    if (ctrl.effects != null && !Array.isArray(ctrl.effects)) {
+                        ctrl.effectsData = ctrl.effects;
+                    } else {
+                        ctrl.effectsData.id = uuidv1();
+                        ctrl.effectsUpdate();
                     }
-
-                    ctrl.effectsArray = ctrl.effects;
                 }
 
                 // when the element is initialized
                 ctrl.$onInit = function() {
-                    createEffectsArray();
+                    createEffectsData();
                     effectDefinitions = effectHelperService.getAllEffectDefinitions();
                 };
 
@@ -109,18 +113,18 @@
                 };
 
                 ctrl.$onChanges = function() {
-                    createEffectsArray();
+                    createEffectsData();
                 };
 
                 ctrl.effectsUpdate = function() {
-                    ctrl.update({ effects: ctrl.effectsArray });
+                    ctrl.update({ effects: ctrl.effectsData });
                 };
 
                 ctrl.effectTypeChanged = function(effectType, index) {
-                    ctrl.effectsArray[index].id = effectType.id;
+                    ctrl.effectsData.list[index].type = effectType.id;
                 };
                 ctrl.testEffects = function() {
-                    ipcRenderer.send('runEffectsManually', ctrl.effectsArray);
+                    ipcRenderer.send('runEffectsManually', ctrl.effectsData);
                 };
 
                 ctrl.getLabelButtonTextForLabel = function(labelModel) {
@@ -131,7 +135,7 @@
                 };
 
                 ctrl.editLabelForEffectAtIndex = function(index) {
-                    let effect = ctrl.effectsArray[index];
+                    let effect = ctrl.effectsData.list[index];
                     let label = effect.effectLabel;
                     utilityService.openGetInputModal(
                         {
@@ -149,8 +153,8 @@
                 };
 
                 ctrl.duplicateEffectAtIndex = function(index) {
-                    let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
-                    ctrl.effectsArray.splice(index + 1, 0, effect);
+                    let effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
+                    ctrl.effectsData.list.splice(index + 1, 0, effect);
                     ctrl.effectsUpdate();
                 };
 
@@ -162,18 +166,18 @@
                 };
 
                 ctrl.duplicateEffectAtIndex = function(index) {
-                    let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
-                    ctrl.effectsArray.splice(index + 1, 0, effect);
+                    let effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
+                    ctrl.effectsData.list.splice(index + 1, 0, effect);
                     ctrl.effectsUpdate();
                 };
 
                 ctrl.removeEffectAtIndex = function(index) {
-                    ctrl.effectsArray.splice(index, 1);
+                    ctrl.effectsData.list.splice(index, 1);
                     ctrl.effectsUpdate();
                 };
 
                 ctrl.removeAllEffects = function() {
-                    ctrl.effectsArray = [];
+                    ctrl.effectsData.list = [];
                     ctrl.effectsUpdate();
                 };
 
@@ -184,18 +188,18 @@
                 ctrl.hasMultipleCopiedEffects = function() {
                     return (
                         utilityService.hasCopiedEffects(ctrl.trigger) &&
-          utilityService.getCopiedEffects(ctrl.trigger).length > 1
+                        utilityService.getCopiedEffects(ctrl.trigger).length > 1
                     );
                 };
 
                 ctrl.pasteEffects = function(append = false) {
                     if (utilityService.hasCopiedEffects(ctrl.trigger)) {
                         if (append) {
-                            ctrl.effectsArray = ctrl.effectsArray.concat(
+                            ctrl.effectsData.list = ctrl.effectsData.list.concat(
                                 utilityService.getCopiedEffects(ctrl.trigger)
                             );
                         } else {
-                            ctrl.effectsArray = utilityService.getCopiedEffects(ctrl.trigger);
+                            ctrl.effectsData.list = utilityService.getCopiedEffects(ctrl.trigger);
                         }
                         ctrl.effectsUpdate();
                     }
@@ -207,21 +211,24 @@
                             index++;
                         }
                         let copiedEffects = utilityService.getCopiedEffects(ctrl.trigger);
-                        ctrl.effectsArray.splice(index, 0, ...copiedEffects);
+                        ctrl.effectsData.list.splice(index, 0, ...copiedEffects);
                         ctrl.effectsUpdate();
                     }
                 };
 
                 ctrl.copyEffectAtIndex = function(index) {
-                    utilityService.copyEffects(ctrl.trigger, [ctrl.effectsArray[index]]);
+                    utilityService.copyEffects(ctrl.trigger, [ctrl.effectsData.list[index]]);
                 };
 
                 ctrl.copyEffects = function() {
-                    utilityService.copyEffects(ctrl.trigger, ctrl.effectsArray);
+                    utilityService.copyEffects(ctrl.trigger, ctrl.effectsData.list);
                 };
 
                 ctrl.addEffect = function() {
-                    let newEffect = { id: "Nothing" };
+                    let newEffect = {
+                        id: uuidv1(),
+                        type: "Nothing"
+                    };
 
                     ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
                 };
@@ -229,9 +236,9 @@
                 ctrl.openEditEffectModal = function(effect, index, trigger) {
                     utilityService.showEditEffectModal(effect, index, trigger, response => {
                         if (response.action === "add") {
-                            ctrl.effectsArray.push(response.effect);
+                            ctrl.effectsData.list.push(response.effect);
                         } else if (response.action === "update") {
-                            ctrl.effectsArray[response.index] = response.effect;
+                            ctrl.effectsData.list[response.index] = response.effect;
                         } else if (response.action === "delete") {
                             ctrl.removeEffectAtIndex(response.index);
                         }

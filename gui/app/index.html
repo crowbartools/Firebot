@@ -499,13 +499,13 @@
             </ol>
 
             <div class="effect-select-wrapper">
-                <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.id" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
+                <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.type" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
             </div>
       </div>
       <div class="modal-body">        
           <div class="effect-settings-panel">
-              <div ng-show="effect.id == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
-              <effect-options effect="effect" type="effect.id" trigger="{{triggerType}}" ng-show="effect.id != null" trigger-meta="triggerMeta"><effect-options>
+              <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
+              <effect-options effect="effect" type="effect.type" trigger="{{triggerType}}" ng-show="effect.type != null" trigger-meta="triggerMeta"><effect-options>
           </div>
       </div>
       <div class="modal-footer">
