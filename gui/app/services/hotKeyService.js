@@ -1,5 +1,6 @@
 "use strict";
 const profileManager = require("../../lib/common/profile-manager.js");
+const uuidv1 = require("uuid/v1");
 
 (function() {
     // This provides methods for handling hotkeys
@@ -213,7 +214,7 @@ const profileManager = require("../../lib/common/profile-manager.js");
             }
 
             service.saveHotkey = function(hotkey) {
-                hotkey.uuid = utilityService.generateUuid();
+                hotkey.id = uuidv1();
 
                 userHotkeys.push(hotkey);
 
@@ -221,7 +222,7 @@ const profileManager = require("../../lib/common/profile-manager.js");
             };
 
             service.updateHotkey = function(hotkey) {
-                let index = userHotkeys.findIndex(k => k.uuid === hotkey.uuid);
+                let index = userHotkeys.findIndex(k => k.id === hotkey.id);
 
                 userHotkeys[index] = hotkey;
 
@@ -229,14 +230,14 @@ const profileManager = require("../../lib/common/profile-manager.js");
             };
 
             service.deleteHotkey = function(hotkey) {
-                userHotkeys = userHotkeys.filter(k => k.uuid !== hotkey.uuid);
+                userHotkeys = userHotkeys.filter(k => k.id !== hotkey.id);
 
                 saveHotkeysToFile();
             };
 
             service.hotkeyCodeExists = function(hotkeyId, hotkeyCode) {
                 return userHotkeys.some(
-                    k => k.code === hotkeyCode && k.uuid !== hotkeyId
+                    k => k.code === hotkeyCode && k.id !== hotkeyId
                 );
             };
 

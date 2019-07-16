@@ -396,15 +396,8 @@ async function createDefaultFoldersAndFiles() {
             dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
         }
 
-
-        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/hotkeys.json")) {
-            logger.info("Can't find the hotkeys file, creating the default one now...");
-            dataAccess.copyDefaultConfigToUserData("hotkeys.json", "/profiles/" + profileId);
-        }
-
         //always copy over overlay wrapper
         dataAccess.copyResourceToUserData(null, "overlay.html", "");
-
 
         // Create the scripts folder if it doesn't exist
         if (

@@ -35,27 +35,8 @@
             };
 
             $ctrl.effectListUpdated = function(effects) {
-                $ctrl.hotkey.action.metadata.effects = effects;
+                $ctrl.hotkey.effects = effects;
             };
-
-            $ctrl.commands = commandsService.getCustomCommands().map(c => {
-                return { id: c.id, trigger: c.trigger };
-            });
-
-            $ctrl.buttons = [];
-            boardService.getAllBoards().forEach(b => {
-                Object.values(b.controls).forEach(c => {
-                    $ctrl.buttons.push({
-                        id: c.controlId,
-                        text: c.text,
-                        scene: c.scene,
-                        board: {
-                            id: b.versionId,
-                            name: b.name
-                        }
-                    });
-                });
-            });
 
             $ctrl.$onInit = function() {
                 let modalId = $ctrl.resolve.modalId;
@@ -84,11 +65,7 @@
 
                     $ctrl.hotkey = {
                         active: true,
-                        code: "",
-                        action: {
-                            type: "Run Effects",
-                            metadata: {}
-                        }
+                        code: ""
                     };
                 }
             };
@@ -101,10 +78,7 @@
             $ctrl.save = function() {
                 if ($ctrl.hotkey.name == null || $ctrl.hotkey.name === "") return;
                 if ($ctrl.hotkey.code == null || $ctrl.hotkey.code === "") return;
-                if (
-                    hotkeyService.hotkeyCodeExists($ctrl.hotkey.uuid, $ctrl.hotkey.code)
-                )
-                    return;
+                if (hotkeyService.hotkeyCodeExists($ctrl.hotkey.id, $ctrl.hotkey.code)) return;
                 let action = $ctrl.isNewHotkey ? "add" : "update";
                 $ctrl.close({
                     $value: {
