@@ -5,11 +5,7 @@
         .controller("commandsController", function(
             $scope,
             commandsService,
-            updatesService,
             utilityService,
-            settingsService,
-            groupsService,
-            effectHelperService,
             listenerService
         ) {
             // Cache commands on app load.
