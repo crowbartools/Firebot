@@ -20,7 +20,8 @@
                 onlyWhenLive: true,
                 randomize: false,
                 name: "",
-                interval: 0
+                interval: 0,
+                requiredChatLines: 5
             };
 
             $ctrl.$onInit = function() {

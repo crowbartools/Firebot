@@ -15,6 +15,10 @@
             <span class="input-group-addon">Interval(secs)</span>
             <input type="number" class="form-control" ng-model="$ctrl.timer.interval" placeholder="Seconds">
         </div>
+        <div class="input-group settings-commandGroup-timer">
+            <span class="input-group-addon">Required Chat Lines <tooltip text="'The minimum number of chat lines since the last interval.'"></tooltip></span>
+            <input type="number" class="form-control" ng-model="$ctrl.timer.requiredChatLines" placeholder="">
+        </div>
         <div class="controls-fb-inline">
             <label class="control-fb control--checkbox" ng-hide="$ctrl.isNewTimer"> Active
                 <input type="checkbox" ng-model="$ctrl.timer.active" aria-label="...">
