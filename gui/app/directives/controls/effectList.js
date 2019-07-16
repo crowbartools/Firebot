@@ -14,7 +14,8 @@
                 modalId: "@",
                 header: "@",
                 headerClasses: "@",
-                effectContainerClasses: "@"
+                effectContainerClasses: "@",
+                hideNumbers: "<"
             },
             template: `
             <div class="effect-list">
@@ -54,7 +55,7 @@
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false">
                                     <span style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;padding-right: 10px;">
-                                        <span class="muted">{{$index + 1}}. </span>
+                                        <span class="muted" ng-hide="$ctrl.hideNumbers === true">{{$index + 1}}. </span>
                                         {{$ctrl.getEffectNameById(effect.type)}}
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
@@ -96,7 +97,12 @@
                 function createEffectsData() {
                     if (ctrl.effects != null && !Array.isArray(ctrl.effects)) {
                         ctrl.effectsData = ctrl.effects;
-                    } else {
+                    }
+                    if (ctrl.effectsData.list == null) {
+                        ctrl.effectsData.list = [];
+                        ctrl.effectsUpdate();
+                    }
+                    if (ctrl.effectsData.id == null) {
                         ctrl.effectsData.id = uuidv1();
                         ctrl.effectsUpdate();
                     }

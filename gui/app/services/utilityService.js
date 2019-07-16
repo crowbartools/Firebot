@@ -751,7 +751,7 @@
                         $scope.hasCopiedEffect = function() {
                             return (
                                 utilityService.hasCopiedEffects(triggerType) &&
-                utilityService.getCopiedEffects(triggerType).length < 2
+                                utilityService.getCopiedEffects(triggerType).length < 2
                             );
                         };
 

@@ -10,7 +10,7 @@
         <tr style="font-size: 11px;">
             <th class="muted" style="padding-left: 15px;width: 25%"><i class="fas fa-tag"></i> NAME</th> 
             <th class="muted"><i class="fas fa-stopwatch"></i> INTERVAL</th> 
-            <th class="muted"><i class="fas fa-tasks"></i> ACTIONS</th>
+            <th class="muted"><i class="fas fa-magic"></i> EFFECTS</th>
             <th></th> 
             <th></th> 
         </tr> 
@@ -19,10 +19,10 @@
         <tr ng-repeat="timer in timerService.getTimers() | filter:timerSearch track by timer.id">
             <td style="padding-left: 15px;">{{timer.name}}</td>
             <td>
-                {{timer.interval + "m"}}                          
+                {{timer.interval + "s"}}                          
             </td>
             <td>
-                {{timer.actions.length}}
+                {{timer.effects ? timer.effects.list.length : 0}}
             </td>
             <td>
                 <div style="min-width: 75px">

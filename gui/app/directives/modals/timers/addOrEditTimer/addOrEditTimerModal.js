@@ -12,7 +12,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, commandsService, utilityService, ngToast) {
+        controller: function($scope, utilityService, ngToast) {
             let $ctrl = this;
 
             $ctrl.timer = {
@@ -20,8 +20,7 @@
                 onlyWhenLive: true,
                 randomize: false,
                 name: "",
-                interval: 0,
-                actions: []
+                interval: 0
             };
 
             $ctrl.$onInit = function() {
@@ -50,8 +49,8 @@
                 });
             };
 
-            $ctrl.actionListUpdated = function(actions) {
-                $ctrl.timer.actions = actions;
+            $ctrl.effectListUpdated = function(effects) {
+                $ctrl.timer.effects = effects;
             };
 
             $ctrl.delete = function() {
@@ -65,9 +64,6 @@
                     return false;
                 } else if ($ctrl.timer.interval < 1) {
                     ngToast.create("Timer interval must be greater than 0.");
-                    return false;
-                } else if ($ctrl.timer.actions.length < 1) {
-                    ngToast.create("Please add at least one action to this timer.");
                     return false;
                 }
                 return true;
