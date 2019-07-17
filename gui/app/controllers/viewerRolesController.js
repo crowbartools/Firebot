@@ -4,10 +4,9 @@
 
     angular
         .module("firebotApp")
-        .controller("viewerRolesController", function($scope, utilityService, customRolesService) {
-            $scope.getCustomViewerRoles = function() {
-                return customRolesService.getCustomRoles();
-            };
+        .controller("viewerRolesController", function($scope, utilityService, viewerRolesService) {
+
+            $scope.viewerRolesService = viewerRolesService;
 
             $scope.showAddOrEditCustomRole = function() {
 
