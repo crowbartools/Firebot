@@ -319,6 +319,25 @@
                 $scope.updateControlPositions();
             };
 
+            $scope.removeControlsFromGrid = function(gridSize) {
+
+                const currentSceneName = mixplayService.getCurrentSceneName();
+                const gridName = gridSize ? `the ${gridSize} grid` : "all grids";
+
+                utilityService.showConfirmationModal({
+                    title: "Remove From Grid",
+                    question: `Are you sure you want to remove all controls in scene "${currentSceneName}" from ${gridName}?`,
+                    confirmLabel: "Remove",
+                    confirmBtnType: "btn-danger"
+                }).then(confirmed => {
+                    if (confirmed) {
+                        mixplayService.removeControlsFromGrid(gridSize);
+                        $scope.updateControlPositions();
+                    }
+                });
+
+            };
+
             $scope.controlIsOnGrid = function(control) {
                 return control.position.some(p => p.size === gridHelper.currentGridSize);
             };

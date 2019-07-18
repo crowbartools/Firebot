@@ -190,6 +190,7 @@
                 <div class="text-dropdown grid-tools-dropdown" uib-dropdown uib-dropdown-toggle>
                   <div class="noselect pointer ddtext" style="font-size: 12px;">TOOLS<span class="fb-arrow down ddtext"></span></div>
                   <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
+
                     <li ng-click="togglePreviewMode()">
                       <a style="padding-left: 10px;">
                         <span style="width: 25px;color:green;display: inline-block;"><i class="fas fa-check" ng-show="previewEnabled"></i></span>
@@ -197,6 +198,7 @@
                         <tooltip text="'Preview mode makes the controls look more like they will under your stream.'"></tooltip>
                       </a>
                     </li>
+
                     <li ng-click="toggleGuideLines()">
                         <a style="padding-left: 10px;">
                           <span style="width: 25px;color:green;display: inline-block;"><i class="fas fa-check" ng-show="guideLinesEnabled"></i></span>
@@ -204,6 +206,16 @@
                           <tooltip text="'Display centering lines on the grid. Only displays when preview mode is off.'"></tooltip>
                         </a>
                     </li>
+                    <li class="divider"></li>
+                    <li class="dropdown-submenu">
+                        <a href>Remove Controls From...</a>
+                        <ul class="dropdown-menu">
+                            <li ng-click="removeControlsFromGrid('small')"><a href>Small Grid</a></li>
+                            <li ng-click="removeControlsFromGrid('medium')"><a href>Medium Grid</a></li>
+                            <li ng-click="removeControlsFromGrid('large')"><a href>Large Grid</a></li>
+                            <li ng-click="removeControlsFromGrid()"><a href>All Grids</a></li>
+                        </ul>
+                      </li>
                   </ul>
                 </div>
             </div>

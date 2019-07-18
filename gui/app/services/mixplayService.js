@@ -139,6 +139,11 @@
                 return null;
             }
 
+            service.getCurrentSceneName = function() {
+                const currentScene = getCurrentScene();
+                return currentScene && currentScene.name;
+            };
+
             service.hasSceneSelected = function() {
                 return selectedSceneId != null;
             };
@@ -170,15 +175,25 @@
                 control.position = control.position.filter(p => p.size !== gridSize);
                 service.saveProject(service.getCurrentProject());
 
-                if (control.position.length === 0) {
-                    let currentScene = getCurrentScene();
-                    backendCommunicator.fireEvent("controlRemovedFromGrid", {
-                        sceneId: currentScene.id,
-                        controlId: control.id
-                    });
-                } else {
-                    backendCommunicator.fireEvent("controlUpdated", control.id);
-                }
+                backendCommunicator.fireEvent("controlUpdated", control.id);
+            };
+
+            service.removeControlsFromGrid = function(gridSize) {
+                let allControls = service.getControlsForCurrentScene();
+                allControls.forEach(c => {
+                    if (gridSize == null) {
+                        c.position = [];
+                    } else {
+                        c.position = c.position.filter(p => p.size !== gridSize);
+                    }
+                });
+                service.saveProject(service.getCurrentProject());
+
+                let currentScene = getCurrentScene();
+                backendCommunicator.fireEvent("controlsUpdated", {
+                    sceneId: currentScene.id,
+                    controls: allControls
+                });
             };
 
             service.addControlToGrid = function(control, gridSize) {
@@ -221,14 +236,7 @@
                     logger.info("Added control to grid!");
                     service.saveProject(service.getCurrentProject());
 
-                    if (control.position.length > 1) {
-                        backendCommunicator.fireEvent("controlUpdated", control.id);
-                    } else {
-                        let currentScene = getCurrentScene();
-                        backendCommunicator.fireEvent("controlAddedToGrid", {
-                            sceneId: currentScene.id, control
-                        });
-                    }
+                    backendCommunicator.fireEvent("controlUpdated", control.id);
 
                 } else {
                     ngToast.create(`Could not find enough space in the grid to place control (${controlDimensions.w}w x ${controlDimensions.h}h)`);
@@ -265,6 +273,11 @@
                         currentScene.controls.push(newControl);
 
                         service.saveProject(currentProject);
+
+                        backendCommunicator.fireEvent("controlAdded", {
+                            sceneId: currentScene.id, newControl
+                        });
+
                     }
                 }
             };
@@ -288,9 +301,9 @@
                     currentScene.controls = currentScene.controls.filter(c => c.id !== controlId);
                     service.saveProject(service.getCurrentProject());
 
-                    backendCommunicator.fireEvent("controlRemovedFromGrid", {
+                    backendCommunicator.fireEvent("controlRemoved", {
                         sceneId: currentScene.id,
-                        controlId: controlId
+                        controlIds: [controlId]
                     });
                 }
             };
