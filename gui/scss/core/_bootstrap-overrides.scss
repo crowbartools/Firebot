@@ -3,6 +3,18 @@
 */
 .modal-header {
     border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .close {
+        order: 2;
+        margin: 0;
+        font-size: 35px;
+        font-weight: 100;
+        text-shadow: none;
+        float: none;
+        margin-left: auto;
+    }
 }
 .modal-footer {
     border-top: none;

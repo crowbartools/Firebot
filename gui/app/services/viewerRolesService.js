@@ -27,6 +27,18 @@ const mixerRoleConstants = require("../../shared/mixer-roles");
                 return customRoles[id];
             };
 
+            service.saveCustomRole = function(role) {
+                if (!role) return;
+                customRoles[role.id] = role;
+                backendCommunicator.fireEvent("saveCustomRole", role);
+            };
+
+            service.deleteCustomRole = function(roleId) {
+                if (!roleId) return;
+                delete customRoles[roleId];
+                backendCommunicator.fireEvent("deleteCustomRole", roleId);
+            };
+
             const mixerRoles = mixerRoleConstants.getMixerRoles();
             service.getMixerRoles = function() {
                 return mixerRoles;

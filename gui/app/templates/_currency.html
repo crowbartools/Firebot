@@ -11,11 +11,11 @@
         <div ng-repeat="currency in getCurrencies() track by $index" ng-class="{'disabled': !currency.active}" class="fb-tile mint centered">
             <div class="edit-btn" ng-click="openAddOrEditCurrencyModal(currency)"></div>
             <div class="content row">
-            <div class="detail-wrapper nomargin">
-                <div class="detail" style="font-size: 1.6em;">
-                    {{currency.name}}
+                <div class="detail-wrapper nomargin">
+                    <div class="detail" style="font-size: 1.6em;">
+                        {{currency.name}}
+                    </div>
                 </div>
-            </div>
             </div>
         </div>
     </div>

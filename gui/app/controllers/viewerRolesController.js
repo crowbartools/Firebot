@@ -8,15 +8,11 @@
 
             $scope.viewerRolesService = viewerRolesService;
 
-            $scope.showAddOrEditCustomRoleModal = function(id) {
-
-                let role = null;
-                if (id) {
-                    role = viewerRolesService.getCustomRole(id);
-                }
+            $scope.showAddOrEditCustomRoleModal = function(role) {
 
                 utilityService.showModal({
                     component: "addOrEditCustomRoleModal",
+                    size: "sm",
                     resolveObj: {
                         role: () => role
                     },
@@ -24,17 +20,15 @@
                         let { action, role } = resp;
 
                         switch (action) {
-                        case "add":
-                            break;
-                        case "update":
+                        case "save":
+                            viewerRolesService.saveCustomRole(role);
                             break;
                         case "delete":
+                            viewerRolesService.deleteCustomRole(role.id);
                             break;
                         }
                     }
                 });
             };
-
-
         });
 }());
