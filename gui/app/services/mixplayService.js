@@ -145,7 +145,14 @@
             };
 
             service.hasSceneSelected = function() {
-                return selectedSceneId != null;
+                let currentProject = service.getCurrentProject();
+                if (currentProject != null) {
+                    if (currentProject.scenes.length > 0 &&
+                        currentProject.scenes.find(s => s.id === selectedSceneId)) {
+                        return true;
+                    }
+                }
+                return false;
             };
 
             function getGridDimensions(gridSize = "") {
@@ -179,6 +186,7 @@
             };
 
             service.removeControlsFromGrid = function(gridSize) {
+                if (!service.hasSceneSelected()) return;
                 let allControls = service.getControlsForCurrentScene();
                 allControls.forEach(c => {
                     if (gridSize == null) {
