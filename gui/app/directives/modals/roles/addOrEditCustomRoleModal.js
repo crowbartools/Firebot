@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button ng-if="!$ctrl.isNewEvent" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.delete()" uib-tooltip="Delete Role"><i class="fal fa-trash-alt"></i></button>
+                <button ng-if="!$ctrl.isNewRole" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.delete()" uib-tooltip="Delete Role"><i class="fal fa-trash-alt"></i></button>
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
