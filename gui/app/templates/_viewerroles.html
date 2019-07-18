@@ -1,6 +1,6 @@
 <h3 style="text-transform: uppercase;font-weight: 200;font-size: 19px">Custom Roles</h3>
 <div style="margin-bottom: 10px">
-    <button class="btn btn-primary" ng-click=""><i class="fas fa-plus-circle" style="margin-right:5px;"></i> Add Custom Role</button>
+    <button class="btn btn-primary" ng-click="showAddOrEditCustomRoleModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> Add Custom Role</button>
 </div>
 <div class="new-tile-grid" style="width: 100%">
     <div ng-repeat="role in viewerRolesService.getCustomRoles() track by $index" class="new-tile grapefruit centered">

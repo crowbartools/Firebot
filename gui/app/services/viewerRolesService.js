@@ -23,6 +23,10 @@ const mixerRoleConstants = require("../../shared/mixer-roles");
                 return Object.values(customRoles);
             };
 
+            service.getCustomRole = function(id) {
+                return customRoles[id];
+            };
+
             const mixerRoles = mixerRoleConstants.getMixerRoles();
             service.getMixerRoles = function() {
                 return mixerRoles;
