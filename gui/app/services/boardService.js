@@ -4,7 +4,7 @@
 
     const fs = require("fs");
     const _ = require("underscore")._;
-    const profileManager = require("../../lib/common/profile-manager");
+    const profileManager = require("../../backend/common/profile-manager");
 
     angular
         .module("firebotApp")

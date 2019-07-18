@@ -1,7 +1,7 @@
 "use strict";
 (function() {
     //This manages the chat window.
-    const profileManager = require("../../lib/common/profile-manager.js");
+    const profileManager = require("../../backend/common/profile-manager.js");
 
     const moment = require('moment');
 

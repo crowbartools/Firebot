@@ -2,7 +2,7 @@
 
 (function() {
     // This provides methods for notifications
-    const profileManager = require("../../lib/common/profile-manager.js");
+    const profileManager = require("../../backend/common/profile-manager.js");
 
     angular
         .module("firebotApp")

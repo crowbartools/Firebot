@@ -1,5 +1,5 @@
 "use strict";
-const profileManager = require("../../lib/common/profile-manager.js");
+const profileManager = require("../../backend/common/profile-manager.js");
 const uuidv1 = require("uuid/v1");
 
 (function() {

@@ -6,7 +6,7 @@
 
 const path = require("path");
 const url = require("url");
-const logger = require("./lib/logwrapper");
+const logger = require("./backend/logwrapper");
 logger.info("Starting Firebot...");
 
 const electron = require("electron");
@@ -14,26 +14,26 @@ const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
 const fs = require("fs");
 const windowStateKeeper = require('electron-window-state');
 const GhReleases = require("electron-gh-releases");
-const settings = require("./lib/common/settings-access").settings;
-const dataAccess = require("./lib/common/data-access.js");
-const profileManager = require("./lib/common/profile-manager.js");
-const backupManager = require("./lib/backupManager");
-const userDatabase = require("./lib/database/userDatabase");
-const connectionManager = require("./lib/common/connection-manager");
+const settings = require("./backend/common/settings-access").settings;
+const dataAccess = require("./backend/common/data-access.js");
+const profileManager = require("./backend/common/profile-manager.js");
+const backupManager = require("./backend/backupManager");
+const userDatabase = require("./backend/database/userDatabase");
+const connectionManager = require("./backend/common/connection-manager");
 const webServer = require("./server/httpServer");
-const authManager = require("./lib/common/perform-auth");
-const fontManager = require("./lib/fontManager");
+const authManager = require("./backend/common/perform-auth");
+const fontManager = require("./backend/fontManager");
 
-const builtInEffectLoader = require("./lib/effects/builtInEffectLoader");
-const systemCommandLoader = require("./lib/chat/commands/systemCommandLoader");
-const builtInEventSourceLoader = require("./lib/live-events/builtinEventSourceLoader");
-const integrationLoader = require("./lib/live-events/integrations/integrationLoader");
-const builtInVariableLoader = require("./lib/variables/builtin-variable-loader");
-const builtInEventFilterLoader = require("./lib/live-events/filters/builtin-filter-loader");
+const builtInEffectLoader = require("./backend/effects/builtInEffectLoader");
+const systemCommandLoader = require("./backend/chat/commands/systemCommandLoader");
+const builtInEventSourceLoader = require("./backend/live-events/builtinEventSourceLoader");
+const integrationLoader = require("./backend/live-events/integrations/integrationLoader");
+const builtInVariableLoader = require("./backend/variables/builtin-variable-loader");
+const builtInEventFilterLoader = require("./backend/live-events/filters/builtin-filter-loader");
 
-const Effect = require("./lib/common/EffectType");
+const Effect = require("./backend/common/EffectType");
 
-require("./lib/interactive/mixplay");
+require("./backend/interactive/mixplay");
 
 // uncaught exception - log the error
 process.on("uncaughtException", logger.error); //eslint-disable-line no-console
@@ -209,32 +209,32 @@ function createWindow() {
         }
     });
 
-    let hotkeyManager = require("./lib/hotkeys/hotkey-manager");
+    let hotkeyManager = require("./backend/hotkeys/hotkey-manager");
     hotkeyManager.refreshHotkeyCache();
 
     connectionManager.startOnlineCheckInterval();
 
-    const timerManager = require("./lib/timers/timer-manager");
+    const timerManager = require("./backend/timers/timer-manager");
     timerManager.startTimers();
 
-    const currencyManager = require("./lib/currency/currencyManager");
+    const currencyManager = require("./backend/currency/currencyManager");
     currencyManager.startTimer();
 
     // Connect to DBs.
     logger.info("Creating or connecting user database");
-    const userdb = require("./lib/database/userDatabase");
+    const userdb = require("./backend/database/userDatabase");
     userdb.connectUserDatabase();
 
     logger.info("Creating or connecting stats database");
-    const statsdb = require("./lib/database/statsDatabase");
+    const statsdb = require("./backend/database/statsDatabase");
     statsdb.connectStatsDatabase();
 
     logger.info("Creating or connecting quotes database");
-    const quotesdb = require("./lib/quotes/quotes-manager");
+    const quotesdb = require("./backend/quotes/quotes-manager");
     quotesdb.loadQuoteDatabase();
 
     //load patronage data
-    const patronageManager = require("./lib/patronageManager");
+    const patronageManager = require("./backend/patronageManager");
     patronageManager.loadPatronageData();
 }
 
@@ -482,7 +482,7 @@ function appOnReady() {
     app.on("ready", async function() {
         await createDefaultFoldersAndFiles();
 
-        mixerConnect = require("./lib/common/mixer-interactive.js");
+        mixerConnect = require("./backend/common/mixer-interactive.js");
 
         // load effects
         builtInEffectLoader.loadEffects();
@@ -508,18 +508,18 @@ function appOnReady() {
         builtInVariableLoader.loadReplaceVariables();
 
         //start extra life manager
-        //const extralifeManager = require('./lib/extralifeManager');
+        //const extralifeManager = require('./backend/extralifeManager');
         //extralifeManager.start();
 
         fontManager.generateAppFontCssFile();
 
-        const mixplayProjectManager = require("./lib/interactive/mixplay-project-manager");
+        const mixplayProjectManager = require("./backend/interactive/mixplay-project-manager");
         mixplayProjectManager.loadProjects();
 
-        const eventsAccess = require("./lib/live-events/events-access");
+        const eventsAccess = require("./backend/live-events/events-access");
         eventsAccess.loadEventsAndGroups();
 
-        const customRolesManager = require("./lib/roles/custom-roles-manager");
+        const customRolesManager = require("./backend/roles/custom-roles-manager");
         customRolesManager.loadCustomRoles();
 
         createWindow();
@@ -549,7 +549,7 @@ appOnReady();
 function windowClosed() {
     app.on("window-all-closed", () => {
     // Unregister all shortcuts.
-        let hotkeyManager = require("./lib/hotkeys/hotkey-manager");
+        let hotkeyManager = require("./backend/hotkeys/hotkey-manager");
         hotkeyManager.unregisterAllHotkeys();
 
         userDatabase.setAllUsersOffline().then(() => {

@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    const logger = require("../../lib/logwrapper");
+    const logger = require("../../backend/logwrapper");
 
     angular.module("firebotApp").factory("logger", function() {
         let service = {};

@@ -3,7 +3,7 @@
 (function(angular) {
 
     //This handles updates
-    const VersionCompare = require('../../lib/compare-versions');
+    const VersionCompare = require('../../backend/compare-versions');
     const UpdateType = VersionCompare.UpdateType;
 
     angular

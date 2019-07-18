@@ -2,7 +2,7 @@
 
 const express = require("express");
 const router = express.Router(); //eslint-disable-line new-cap
-const logger = require("../../../lib/logwrapper");
+const logger = require("../../../backend/logwrapper");
 
 router.use(function log(req, res, next) {
     // here we could do stuff for every request if we wanted

@@ -6,9 +6,9 @@
 
     const _ = require("underscore")._;
 
-    const EffectType = require("../../lib/common/EffectType");
+    const EffectType = require("../../backend/common/EffectType");
 
-    const dataAccess = require("../../lib/common/data-access.js");
+    const dataAccess = require("../../backend/common/data-access.js");
 
     const uuidv1 = require("uuid/v1");
 

@@ -4,8 +4,8 @@
 
     const fs = require("fs");
     const path = require("path");
-    const dataAccess = require("../../lib/common/data-access");
-    const profileManager = require("../../lib/common/profile-manager");
+    const dataAccess = require("../../backend/common/data-access");
+    const profileManager = require("../../backend/common/profile-manager");
     const moment = require("moment");
     const unzipper = require("unzipper");
     const ncp = require("ncp");

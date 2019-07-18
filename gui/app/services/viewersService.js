@@ -2,7 +2,7 @@
 (function() {
     //This handles viewer lists.
     const { ipcRenderer } = require("electron");
-    const profileManager = require("../../lib/common/profile-manager.js");
+    const profileManager = require("../../backend/common/profile-manager.js");
     const moment = require("moment");
 
     angular

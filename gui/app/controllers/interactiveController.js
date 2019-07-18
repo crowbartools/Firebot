@@ -1,7 +1,7 @@
 "use strict";
 (function($) {
     //This handles the Interactive tab
-    const EffectType = require("../../lib/common/EffectType.js")
+    const EffectType = require("../../backend/common/EffectType.js")
         .InteractiveEffectType;
 
     angular

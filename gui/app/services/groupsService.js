@@ -4,7 +4,7 @@
     //This handles groups
 
     const _ = require("underscore")._;
-    const profileManager = require("../../lib/common/profile-manager.js");
+    const profileManager = require("../../backend/common/profile-manager.js");
     const { ipcRenderer } = require("electron");
 
     angular

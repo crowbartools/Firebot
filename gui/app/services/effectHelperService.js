@@ -3,9 +3,9 @@
     // This provides helper methods for control effects
 
     const _ = require("underscore")._;
-    const profileManager = require("../../lib/common/profile-manager.js");
-    const EffectType = require("../../lib/common/EffectType.js");
-    const fontManager = require('../../lib/fontManager');
+    const profileManager = require("../../backend/common/profile-manager.js");
+    const EffectType = require("../../backend/common/EffectType.js");
+    const fontManager = require('../../backend/fontManager');
 
     angular
         .module("firebotApp")

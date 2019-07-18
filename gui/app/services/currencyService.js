@@ -2,7 +2,7 @@
 
 (function() {
     //This handles events
-    const profileManager = require("../../lib/common/profile-manager.js");
+    const profileManager = require("../../backend/common/profile-manager.js");
     const { ipcRenderer } = require("electron");
 
     angular.module("firebotApp").factory("currencyService", function(logger, utilityService) {

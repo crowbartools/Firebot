@@ -17,9 +17,10 @@ module.exports = function(grunt) {
 		'jsdoc' : {
             src: [
                 './main.js',
-                './lib',
+                './backend',
                 './gui',
-                './api',
+                './server',
+                './shared',
                 './resources'
             ],
             options: {

@@ -4,8 +4,8 @@
     // This handles logins and connections to mixer interactive
 
     const electronOauth2 = require("electron-oauth2");
-    const profileManager = require("../../lib/common/profile-manager.js");
-    const dataAccess = require("../../lib/common/data-access.js");
+    const profileManager = require("../../backend/common/profile-manager.js");
+    const dataAccess = require("../../backend/common/data-access.js");
     const { session } = require("electron").remote;
     const request = require("request");
 

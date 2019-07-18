@@ -2,10 +2,10 @@
 
 let express = require("express");
 let bodyParser = require("body-parser");
-const resourceTokenManager = require("../lib/resourceTokenManager");
-const { settings } = require("../lib/common/settings-access");
-const logger = require("../lib/logwrapper");
-const effectManager = require("../lib/effects/effectManager");
+const resourceTokenManager = require("../backend/resourceTokenManager");
+const { settings } = require("../backend/common/settings-access");
+const logger = require("../backend/logwrapper");
+const effectManager = require("../backend/effects/effectManager");
 const http = require("http");
 const WebSocket = require("ws");
 const { ipcMain } = require("electron");

@@ -3,7 +3,7 @@
     const electron = require("electron");
     const shell = electron.shell;
 
-    const profileManager = require("../../lib/common/profile-manager");
+    const profileManager = require("../../backend/common/profile-manager");
 
 
     agGrid.initialiseAgGridWithAngular1(angular); // eslint-disable-line no-undef

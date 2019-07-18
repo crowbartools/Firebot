@@ -3,7 +3,7 @@
 const { app } = require("electron");
 const JsonDB = require("node-json-db");
 const path = require("path");
-const dataAccess = require("./data-access.js");
+const dataAccess = require("./data-access.js.js");
 const logger = require("../logwrapper");
 const sanitizeFileName = require("sanitize-filename");
 

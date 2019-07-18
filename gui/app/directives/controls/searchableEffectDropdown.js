@@ -1,7 +1,7 @@
 "use strict";
 (function() {
     //This a wrapped dropdown element that automatically handles the particulars
-    const Effect = require("../../lib/common/EffectType.js");
+    const Effect = require("../../backend/common/EffectType.js");
 
     angular.module("firebotApp").component("searchableEffectDropdown", {
         bindings: {

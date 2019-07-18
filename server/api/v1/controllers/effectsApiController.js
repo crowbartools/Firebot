@@ -1,10 +1,10 @@
 "use strict";
 
-const mixerInteractive = require("../../../../lib/common/mixer-interactive.js");
-const Effects = require("../../../../lib/common/EffectType");
+const mixerInteractive = require("../../../../backend/common/mixer-interactive.js");
+const Effects = require("../../../../backend/common/EffectType");
 const { TriggerType } = Effects;
-const effectsBuilder = require("../../../../lib/common/handlers/custom-scripts/effectsObjectBuilder");
-const effectRunner = require("../../../../lib/common/effect-runner");
+const effectsBuilder = require("../../../../backend/common/handlers/custom-scripts/effectsObjectBuilder");
+const effectRunner = require("../../../../backend/common/effect-runner");
 
 exports.getEffects = function(req, res) {
     let response = Effects.getEffectDefinitions(req.query.trigger);

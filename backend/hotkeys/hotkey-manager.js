@@ -1,7 +1,7 @@
 "use strict";
 
 const { ipcMain, globalShortcut } = require("electron");
-const profileManager = require("../../lib/common/profile-manager.js");
+const profileManager = require("../../backend/common/profile-manager.js");
 const { TriggerType } = require("../common/EffectType");
 const effectRunner = require("../common/effect-runner.js");
 

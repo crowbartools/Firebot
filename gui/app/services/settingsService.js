@@ -2,8 +2,8 @@
 (function() {
     //This handles settings access for frontend
 
-    const dataAccess = require("../../lib/common/data-access.js");
-    const profileManager = require("../../lib/common/profile-manager.js");
+    const dataAccess = require("../../backend/common/data-access.js");
+    const profileManager = require("../../backend/common/profile-manager.js");
     const fs = require("fs");
     const { ipcRenderer } = require("electron");
 

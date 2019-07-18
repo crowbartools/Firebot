@@ -4,7 +4,7 @@ const electron = require("electron");
 const { ipcRenderer } = electron;
 const { remote } = electron;
 
-const logger = require("../../lib/logwrapper");
+const logger = require("../../backend/logwrapper");
 
 //from old Gobal.js
 const shell = require("electron").shell;
