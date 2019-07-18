@@ -2,7 +2,7 @@
 
 const electron = require("electron");
 const winston = require("winston");
-const dataAccess = require("./common/data-access.js.js");
+const dataAccess = require("./common/data-access.js");
 const config = winston.config;
 const app = electron.app || electron.remote.app;
 const Sentry = require("winston-raven-sentry");
