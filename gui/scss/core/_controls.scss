@@ -482,7 +482,8 @@ table.fb-table {
 }
 
 .sys-command-expanded {
-  background: $fb-table-row-bg;
+  border: 2px solid $fb-table-row-bg - 5%;
+  border-top: none;
   box-shadow: $sys-cmd-expanded-shadow;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
