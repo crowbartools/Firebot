@@ -16,7 +16,7 @@
 
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Button Text</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text" replace-variables disable-variable-menu="!$ctrl.updateMode" ng-trim="false">
                     </div>
 
                     <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
@@ -45,7 +45,7 @@
 
                     <div class="input-group settings-buttontext" style="margin-top: 15px;">
                         <span class="input-group-addon" id="basic-addon3">Tooltip</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.tooltip" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.tooltip" replace-variables disable-variable-menu="!$ctrl.updateMode" ng-trim="false">
                     </div>
                 
                     <div class="input-group settings-sparkcost">
@@ -69,7 +69,7 @@
 
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Label Text</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text" replace-variables disable-variable-menu="!$ctrl.updateMode" ng-trim="false">
                     </div>
 
                     <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
@@ -114,7 +114,7 @@
 
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Placeholder</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.placeholder" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.placeholder" replace-variables disable-variable-menu="!$ctrl.updateMode" ng-trim="false">
                     </div>
 
                     <label class="control-fb control--checkbox noselect"> Multiline
@@ -129,7 +129,7 @@
 
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Submit Button Text</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.submitText" placeholder="Submit" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.submitText" placeholder="Submit" replace-variables disable-variable-menu="!$ctrl.updateMode" ng-trim="false">
                     </div>
 
                     <div class="input-group settings-sparkcost">
