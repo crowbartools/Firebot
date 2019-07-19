@@ -26,7 +26,7 @@ const model = {
     },
     optionsTemplate: `
         <eos-container header="MixPlay Project">
-            <dropdown-select ng-show="hasProjects" uib-tooltip="{{getTooltip()}}" tooltip-append-to-body="true" options="projects" selected="effect.mixplayProject" on-update="onProjectUpdate()" is-disabled="disableProjectDropdown"></dropdown-select>
+            <dropdown-select ng-show="hasProjects" uib-tooltip="{{getTooltip()}}" tooltip-append-to-body="true" options="projects" selected="effect.mixplayProject" on-update="projectChanged()" is-disabled="disableProjectDropdown"></dropdown-select>
             <span ng-hide="hasProjects" class="muted">You currently don't have any MixPlay projects created. Create on in the Controls tab!</span>
             <div class="effect-info alert alert-info" ng-hide="disableProjectDropdown" style="margin-bottom:0;">
                 Remember the selected mixplay project must be connected when this effect is triggered for it to work.
