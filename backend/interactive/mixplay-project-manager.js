@@ -12,7 +12,6 @@ const MIXPLAY_FOLDER = profileManager.getPathInProfile("/mixplay/");
 let projects = {};
 
 function loadProjects() {
-    console.log("Attempting to load projects...");
     fs.readdir(MIXPLAY_FOLDER, (err, files) => {
         if (err) {
             logger.warn("Error loading mixplay projects.", err);
@@ -119,6 +118,19 @@ exports.getConnectedProject = function() {
     const connectedProjectId = exports.getConnectedProjectId();
 
     return getProjectById(connectedProjectId);
+};
+
+exports.getControlInProject = function(projectId, controlId) {
+    const project = getProjectById(projectId);
+    if (project != null && project.scenes != null) {
+        // maps all scenes to array with control arrays then flattens it to single array
+        const controls = [].concat.apply([], project.scenes
+            .filter(s => s.controls != null)
+            .map(s => s.controls));
+
+        return controls.find(c => c.id === controlId);
+    }
+    return null;
 };
 
 exports.getProjectById = getProjectById;

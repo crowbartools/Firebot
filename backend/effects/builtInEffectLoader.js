@@ -16,7 +16,7 @@ exports.loadEffects = () => {
     const showEvents = require("./builtin/showEvents");
     const controlEmulation = require("./builtin/controlEmulation");
     const showImage = require("./builtin/showImage");
-    const updateButton = require("./builtin/updateButton");
+    const updateControl = require("./builtin/updateControl");
     const toggleConnection = require("./builtin/toggleConnection");
     const showText = require("./builtin/showText");
     const delay = require("./builtin/delay");
@@ -42,7 +42,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(showEvents);
     effectManager.registerEffect(controlEmulation);
     effectManager.registerEffect(showImage);
-    effectManager.registerEffect(updateButton);
+    effectManager.registerEffect(updateControl);
     effectManager.registerEffect(toggleConnection);
     effectManager.registerEffect(showText);
     effectManager.registerEffect(delay);

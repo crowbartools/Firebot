@@ -24,13 +24,20 @@ let mixplayConnected = false;
 
 let defaultSceneId = "";
 
+let hiddenControls = {};
+
 function mapMixplayControl(firebotControl) {
     let mixplayControl = firebotControl.mixplay;
 
     mixplayControl.controlID = firebotControl.id;
     mixplayControl.kind = firebotControl.kind;
-    mixplayControl.position = firebotControl.position;
-    mixplayControl.disabled = !firebotControl.active;
+    if (firebotControl.position != null) {
+        mixplayControl.position = firebotControl.position;
+    }
+    if (firebotControl.active != null) {
+        mixplayControl.disabled = !firebotControl.active;
+    }
+
 
     return mixplayControl;
 }
@@ -101,6 +108,9 @@ function addControlHandlers(controls) {
 
 function connectToMixplay() {
     let currentProjectId = settings.getLastMixplayProjectId();
+
+    // clear our hidden controls cache, this is used in the update control effect
+    hiddenControls = {};
 
     if (!currentProjectId) {
         renderWindow.webContents.send('connection', "Offline");
@@ -266,7 +276,7 @@ function translateSceneIdForMixplay(sceneId) {
 
 ipcMain.on("controlUpdated", function(_, id) {
     if (!mixplayConnected) return;
-    let firebotControl = controlManager.getControlById(id);
+    let firebotControl = controlManager.getControlById(id, mixplayManager.getConnectedProjectId());
     if (firebotControl) {
         let mixplayControl = mixplayClient.state.getControl(id);
         if (mixplayControl) {
@@ -342,6 +352,11 @@ exports.mixplayIsConnected = function() {
     return mixplayConnected;
 };
 
+exports.getHiddenControls = () => hiddenControls;
+exports.markControlAsHidden = (controlId, hidden) => hiddenControls[controlId] = hidden;
+
+exports.mixplayClient = mixplayClient;
+exports.mapMixplayControl = mapMixplayControl;
 exports.moveViewerToScene = moveViewerToScene;
 exports.moveViewersToNewScene = moveViewersToNewScene;
 exports.updateCooldownForControls = updateCooldownForControls;

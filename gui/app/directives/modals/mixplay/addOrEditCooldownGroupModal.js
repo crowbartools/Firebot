@@ -95,7 +95,6 @@
                 $ctrl.availableControlData = mixplayService.getControlDataForCurrentProject()
                     .filter(cd => controlHelper.controlSettings[cd.controlKind].canCooldown);
 
-
             };
 
             $ctrl.delete = function() {

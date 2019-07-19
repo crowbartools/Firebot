@@ -15,9 +15,8 @@ function getConnectedProject() {
     return mixplayProjectManager.getProjectById(connectedProjectId);
 }
 
-function getControlById(controlId) {
-    let currentProjectId = settings.getLastMixplayProjectId();
-    let currentProject = mixplayProjectManager.getProjectById(currentProjectId);
+function getControlById(controlId, projectId) {
+    let currentProject = mixplayProjectManager.getProjectById(projectId);
     if (currentProject) {
         let scenes = currentProject.scenes;
         if (scenes) {

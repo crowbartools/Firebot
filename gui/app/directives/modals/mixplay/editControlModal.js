@@ -18,18 +18,12 @@
                             <input type="text" class="form-control" aria-describedby="control-name" ng-model="$ctrl.control.name">
                         </div>
 
-                    <div class="settings-title">
-                        <h4>Preview</h4>
-                    </div>
-                    <div style="display:flex; align-items: center;">
-                        <div style="width: {{$ctrl.controlPixelDimensions.width}}px; height: {{$ctrl.controlPixelDimensions.height}}px;">
-                            <control-tile control="$ctrl.control" class="control-tile-wrapper" preview-mode="true"></control-tile>
-                        </div>
-                    </div>
+                    <live-control-preview control="$ctrl.control"></live-control-preview>
+
                     <div class="settings-title" style="margin-top: 15px;">
                         <h3>MixPlay Settings</h3>
                     </div>
-                    <control-settings control="$ctrl.control"></control-settings>
+                    <control-settings control="$ctrl.control" kind="$ctrl.control.kind"></control-settings>
 
                 </div>
 
@@ -97,8 +91,6 @@
                     });
                 };
 
-                $ctrl.controlPixelDimensions = {width: 72, height: 48};
-
                 $ctrl.supportsEffects = false;
 
                 $ctrl.kindName = "";
@@ -115,19 +107,6 @@
                         let kind = $ctrl.control.kind;
                         if (kind) {
                             let controlSettings = controlHelper.controlSettings[kind];
-
-                            let gridSize = $ctrl.resolve.currentGridSize;
-                            let controlSize;
-                            if (gridSize && $ctrl.control.position) {
-                                controlSize = $ctrl.control.position.find(p => p.size === gridSize);
-                            }
-                            if (!controlSize) {
-                                controlSize = controlSettings.minSize;
-                            }
-                            $ctrl.controlPixelDimensions = {
-                                width: controlSize.width * 12,
-                                height: controlSize.height * 12
-                            };
 
                             $ctrl.supportsEffects = controlSettings.effects;
 

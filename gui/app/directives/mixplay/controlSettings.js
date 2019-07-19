@@ -5,22 +5,25 @@
     angular.module("firebotApp")
         .component("controlSettings", {
             bindings: {
-                control: "="
+                control: "=",
+                kind: "<",
+                updateMode: "<"
             },
             template: `
-            <div ng-switch="$ctrl.control.kind" style="padding-bottom: 10px;font-size: 15px;font-weight: 600;">
+            <div ng-switch="$ctrl.kind" style="padding-bottom: 10px;font-size: 15px;font-weight: 600;">
                 
                 <div ng-switch-when="button">
+
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Button Text</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text" replace-variables disable-variable-menu="!$ctrl.updateMode">
                     </div>
 
                     <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
 
                         <div class="input-group settings-buttontext">
                             <span class="input-group-addon" id="basic-addon3">Text Size</span>
-                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize">
+                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
                         </div>
 
                         <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
@@ -35,22 +38,22 @@
 
                         <div class="input-group settings-buttontext">
                             <span class="input-group-addon" id="basic-addon3">Background Image URL</span>
-                            <input type="url" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.backgroundImage">
+                            <input type="url" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.backgroundImage" replace-variables disable-variable-menu="!$ctrl.updateMode">
                         </div>
 
                     </eos-collapsable-panel>              
 
                     <div class="input-group settings-buttontext" style="margin-top: 15px;">
                         <span class="input-group-addon" id="basic-addon3">Tooltip</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.tooltip">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.tooltip" replace-variables disable-variable-menu="!$ctrl.updateMode">
                     </div>
                 
                     <div class="input-group settings-sparkcost">
                         <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
-                        <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cost">
+                        <input class="form-control" aria-describedby="basic-addon3" type="{{$ctrl.updateMode ? 'text' : 'number' }}" ng-model="$ctrl.control.mixplay.cost" replace-variables="number" disable-variable-menu="!$ctrl.updateMode">
                     </div>
                 
-                    <div class="input-group settings-cooldown">
+                    <div class="input-group settings-cooldown" ng-hide="$ctrl.updateMode">
                         <span class="input-group-addon" id="basic-addon3">Cooldown (sec)</span>
                         <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cooldown">
                     </div>
@@ -66,14 +69,14 @@
 
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Label Text</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text" replace-variables disable-variable-menu="!$ctrl.updateMode">
                     </div>
 
                     <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
 
                         <div class="input-group settings-buttontext">
                             <span class="input-group-addon" id="basic-addon3">Text Size</span>
-                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize">
+                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
                         </div>
 
                         <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
@@ -111,7 +114,7 @@
 
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Placeholder</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.placeholder">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.placeholder" replace-variables disable-variable-menu="!$ctrl.updateMode">
                     </div>
 
                     <label class="control-fb control--checkbox noselect"> Multiline
@@ -126,12 +129,17 @@
 
                     <div class="input-group settings-buttontext">
                         <span class="input-group-addon" id="basic-addon3">Submit Button Text</span>
-                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.submitText" placeholder="Submit">
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.submitText" placeholder="Submit" replace-variables disable-variable-menu="!$ctrl.updateMode">
                     </div>
 
                     <div class="input-group settings-sparkcost">
                         <span class="input-group-addon" id="basic-addon3">Spark Cost</span>
-                        <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cost">
+                        <input class="form-control" aria-describedby="basic-addon3" type="{{$ctrl.updateMode ? 'text' : 'number' }}" ng-model="$ctrl.control.mixplay.cost" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                    </div>
+
+                    <div class="input-group settings-cooldown" ng-hide="$ctrl.updateMode">
+                        <span class="input-group-addon" id="basic-addon3">Cooldown (sec)</span>
+                        <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cooldown">
                     </div>
 
                 </div>

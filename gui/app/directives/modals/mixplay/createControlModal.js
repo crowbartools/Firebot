@@ -94,13 +94,13 @@
                         display: "Joystick",
                         description: "Allows viewers to control your mouse.",
                         iconClass: "fa-gamepad"
-                    },
-                    {
+                    }
+                    /*{
                         kind: "screen",
                         display: "Mouse",
                         description: "Another mouse control. Tracks viewers cursor position over the stream area.",
                         iconClass: "fa-mouse-pointer"
-                    }
+                    }*/
                 ];
 
                 function validateControlName() {

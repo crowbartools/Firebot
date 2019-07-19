@@ -364,7 +364,8 @@
                                 sceneName: s.name,
                                 controlId: c.id,
                                 controlName: c.name,
-                                controlKind: c.kind
+                                controlKind: c.kind,
+                                control: c
                             };
                         })));
 

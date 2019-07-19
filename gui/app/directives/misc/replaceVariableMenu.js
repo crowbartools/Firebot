@@ -7,7 +7,8 @@
                 restrict: "A",
                 scope: {
                     modelValue: '=ngModel',
-                    replaceVariables: "@"
+                    replaceVariables: "@",
+                    disableVariableMenu: "<"
                 },
                 controller: function($scope, $element, listenerService, $timeout) {
 
@@ -62,7 +63,10 @@
 
                     let button = angular.element('<span style="width: 30px;height: 15px;background: #0b8dc6;position: absolute;bottom:0;right:0;border-radius:4px;font-size: 10px;text-align: center;margin: 0 7px 7px 0;cursor: pointer;user-select: none;" ng-click="toggleMenu()" class="clickable">$vars</span>');
                     $compile(button)(scope);
-                    button.insertAfter(element);
+
+                    if (!scope.disableVariableMenu) {
+                        button.insertAfter(element);
+                    }
 
                     let menu = angular.element(`
                         <div class="variable-menu" ng-show="showMenu">
