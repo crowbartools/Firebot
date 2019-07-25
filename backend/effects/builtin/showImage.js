@@ -208,7 +208,6 @@ const showImage = {
         event: {
             name: "image",
             onOverlayEvent: event => {
-                console.log("yay show image");
                 // Image Handling
                 // This will take the data that is sent to it from the GUI and render an image on the overlay.
                 let data = event;
@@ -243,7 +242,10 @@ const showImage = {
                 };
 
                 // ebiggz: 😘
-                let imageTag = `<img src="${filepathNew}" style="width: ${data.imageWidth}; height: ${data.imageHeight}">`;
+                let styles = data.imageWidth ? `width: ${data.imageWidth};` : '' +
+                            data.height ? `height: ${data.imageHeight};` : '';
+                let imageTag = `<img src="${filepathNew}" style="${styles}">`;
+
                 showElement(imageTag, positionData, animationData);
             }
         }

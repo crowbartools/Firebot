@@ -1,11 +1,10 @@
 .position-wrapper{
-	position:absolute;
 	width: 100vw;
 	height: 100vh;
-	top:0px;
-	left:0px;
 	display: flex;
 	flex-wrap: wrap;
+	flex-grow: 0;
+	flex-shrink: 0;
 	&.top-left{
 		align-content: flex-start;
 		justify-content: flex-start;
