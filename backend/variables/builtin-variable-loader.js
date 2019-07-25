@@ -13,6 +13,7 @@ exports.loadReplaceVariables = () => {
     const date = require("./builtin/date");
     const time = require("./builtin/time");
     const time24 = require("./builtin/time24");
+    const game = require("./builtin/game");
 
     const patronageEarned = require("./builtin/patronageEarned");
     const patronageNextMilestoneReward = require("./builtin/patronageNextMilestoneReward");
@@ -50,6 +51,7 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(date);
     replaceVariableManager.registerReplaceVariable(time);
     replaceVariableManager.registerReplaceVariable(time24);
+    replaceVariableManager.registerReplaceVariable(game);
 
     replaceVariableManager.registerReplaceVariable(patronageEarned);
     replaceVariableManager.registerReplaceVariable(patronageNextMilestoneReward);
