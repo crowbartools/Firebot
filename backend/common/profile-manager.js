@@ -69,14 +69,6 @@ function createNewProfile(profileId) {
         dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
     }
 
-    if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/hotkeys.json")) {
-        logger.info("Can't find the hotkeys file, creating the default one now...");
-        dataAccess.copyDefaultConfigToUserData(
-            "hotkeys.json",
-            "/profiles/" + profileId
-        );
-    }
-
     // Create the scripts folder if it doesn't exist
     if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/scripts")) {
         logger.info("Can't find the scripts folder, creating one now...");
