@@ -246,7 +246,7 @@ const showImage = {
                             data.height ? `height: ${data.imageHeight};` : '';
                 let imageTag = `<img src="${filepathNew}" style="${styles}">`;
 
-                showElement(imageTag, positionData, animationData);
+                showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef
             }
         }
     }
