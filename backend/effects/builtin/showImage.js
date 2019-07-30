@@ -208,24 +208,9 @@ const showImage = {
         event: {
             name: "image",
             onOverlayEvent: event => {
-                console.log("yay show image");
                 // Image Handling
                 // This will take the data that is sent to it from the GUI and render an image on the overlay.
                 let data = event;
-
-                // Image Packet...
-                // {"event":"image","filepath":filepath, "imageX":imageX, "imageY":imageY, "imageDuration":imageDuration};
-                let filepath = data.filepath;
-                let imagePosition = data.imagePosition;
-                let imageHeight = data.imageHeight;
-                let imageWidth = data.imageWidth;
-
-                let imageDuration = parseFloat(data.imageDuration) * 1000;
-
-                let customPosStyles = "";
-                if (imagePosition === "Custom") {
-                    customPosStyles = getStylesForCustomCoords(data.customCoords); //eslint-disable-line no-undef
-                }
 
                 let filepathNew;
                 if (data.imageType === "url") {
@@ -237,93 +222,31 @@ const showImage = {
                     }:7472/resource/${token}`;
                 }
 
-                // Get time in milliseconds to use as class name.
-                let d = new Date();
-                let divClass = d.getTime();
-                let imageFinal = "";
+                // NEW WAY EXAMPLE:
+                let positionData = {
+                    position: data.imagePosition,
+                    customCoords: data.customCoords
+                };
 
-                if (imageHeight === false && imageWidth === false) {
-                    // Both height and width fields left blank.
-                    imageFinal =
-            '<div class="' +
-            divClass +
-            '-image imageOverlay" position="' +
-            imagePosition +
-            '" style="display:block;' +
-            customPosStyles +
-            '"><img src="' +
-            filepathNew +
-            "?time=" +
-            divClass +
-            '"style="' +
-            customPosStyles +
-            '"></div>';
-                } else if (imageWidth === false) {
-                    // Width field left blank, but height provided.
-                    imageFinal =
-            '<div class="' +
-            divClass +
-            '-image imageOverlay" position="' +
-            imagePosition +
-            '" style="display:block;height:' +
-            imageHeight +
-            ";" +
-            customPosStyles +
-            '"><img src="' +
-            filepathNew +
-            "?time=" +
-            divClass +
-            '"style="max-width:100%; max-height:100%;height:' +
-            imageHeight +
-            ";" +
-            customPosStyles +
-            '"></div>';
-                } else if (imageHeight === false) {
-                    // Height field left blank, but width provided.
-                    imageFinal =
-            '<div class="' +
-            divClass +
-            '-image imageOverlay" style="width:100%;height:100%;position:relative;' +
-            customPosStyles +
-            '"><img src="' +
-            filepathNew +
-            "?time=" +
-            divClass +
-            '" style="max-width:100%; max-height:100%;width:' +
-            imageWidth +
-            ";" +
-            customPosStyles +
-            '"></div>';
-                } else {
-                    // Both height and width provided.
-                    imageFinal =
-            '<div class="' +
-            divClass +
-            '-image imageOverlay" position="' +
-            imagePosition +
-            '" style="display:block;height:' +
-            imageHeight +
-            "; width:" +
-            imageWidth +
-            ";" +
-            customPosStyles +
-            '"><img src="' +
-            filepathNew +
-            "?time=" +
-            divClass +
-            '" style="max-width:100%; max-height:100%;' +
-            customPosStyles +
-            '"></div>';
-                }
+                let animationData = {
+                    enterAnimation: data.enterAnimation,
+                    enterDuration: data.enterDuration,
+                    inbetweenAnimation: data.inbetweenAnimation,
+                    inbetweenDelay: data.inbetweenDelay,
+                    inbetweenDuration: data.inbetweenDuration,
+                    inbetweenRepeat: data.inbetweenRepeat,
+                    exitAnimation: data.exitAnimation,
+                    exitDuration: data.exitDuration,
+                    totalDuration: parseFloat(data.imageDuration) * 1000,
+                    resourceToken: data.resourceToken
+                };
 
-                $("#wrapper").append(imageFinal);
-                showTimedAnimatedElement( //eslint-disable-line no-undef
-                    divClass + "-image",
-                    data.enterAnimation,
-                    data.exitAnimation,
-                    imageDuration,
-                    data.resourceToken
-                );
+                // ebiggz: 😘
+                let styles = data.imageWidth ? `width: ${data.imageWidth};` : '' +
+                            data.height ? `height: ${data.imageHeight};` : '';
+                let imageTag = `<img src="${filepathNew}" style="${styles}">`;
+
+                showElement(imageTag, positionData, animationData);
             }
         }
     }

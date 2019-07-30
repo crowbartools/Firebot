@@ -77,7 +77,7 @@ function showTimedAnimatedElement(
 	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
 	inbetweenAnimation = inbetweenAnimation ? inbetweenAnimation : "none";
-	var id = `.${elementClass}`;
+	var id = `${elementClass}`;
 	$(id).animateCss(enterAnimation, enterDuration, null, null, (data) => {
 		
 		$(data.id).animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
@@ -103,6 +103,50 @@ function showTimedAnimatedElement(
 		inbetweenDelay: inbetweenDelay,
 		inbetweenRepeat: inbetweenRepeat
 	});
+}
+
+function showElement(
+	effectHTML,
+	positionData,
+	animationData
+){
+	let uniqueId = new Date().getTime();
+
+	// when using 'Custom' position, the user has defined exact top/left pixels
+	let styles = "";
+	if (positionData.position === "Custom") {
+		styles = getStylesForCustomCoords(positionData.customCoords);
+	}
+
+	//normalize position
+	let position = positionData.position ? 
+		positionData.position.replace(/\s/, "-").toLowerCase() : "middle";
+
+	// TODO: define css classes for all 9 positions, ie "Top Left", "Top Middle", etc
+	/* possible positions:
+		"Top Left", "Top Middle", "Top Right", "Middle Left", "Middle", "Middle Right", "Bottom Left", "Bottom Middle", "Bottom Right"
+	*/
+	let positionWrappedHtml = `
+		<div id="${uniqueId}" class="position-wrapper ${position}" style="${styles}">
+			${effectHTML}
+		</div>
+	`;
+
+	$('.wrapper').append(positionWrappedHtml);
+
+	showTimedAnimatedElement(
+		"#" + uniqueId, 
+		animationData.enterAnimation, 
+		animationData.enterDuration,
+		animationData.inbetweenAnimation,
+		animationData.inbetweenDelay,
+		animationData.inbetweenDuration, 
+		animationData.inbetweenRepeat,
+		animationData.exitAnimation, 
+		animationData.exitDuration, 
+		animationData.totalDuration, 
+		animationData.resourceToken
+	);
 }
 
 function getStylesForCustomCoords(customCoords) {

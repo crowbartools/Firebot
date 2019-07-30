@@ -1,60 +1,45 @@
-div[position="Top Left"],video[position="Top Left"],img[position="Top Left"],iframe[position="Top Left"]{
-	position:absolute;
-	top: 10px;
-	left: 10px;
-	margin: auto;
+.position-wrapper{
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-wrap: wrap;
+	flex-grow: 0;
+	flex-shrink: 0;
+	&.top-left{
+		align-content: flex-start;
+		justify-content: flex-start;
+	}
+	&.top-middle{
+		align-content: flex-start;
+		justify-content: center;
+	}
+	&.top-right{
+		align-content: flex-start;
+		justify-content: flex-end;
+	}
+	&.middle-left{
+		align-content: center;
+		justify-content: flex-start;
+	}
+	&.middle{
+		align-content: center;
+		justify-content: center;
+	}
+	&.middle-right{
+		align-content: center;
+		justify-content: flex-end;
+	}
+	&.bottom-left{
+		align-content: flex-end;
+		justify-content: flex-start;
+	}
+	&.bottom-middle{
+		align-content: flex-end;
+		justify-content: center;
+	}
+	&.bottom-right{
+		align-content: flex-end;
+		justify-content: flex-end;
+	}
 }
-div[position="Top Middle"],video[position="Top Middle"],img[position="Top Middle"],iframe[position="Top Middle"]{
-	position:absolute;
-	margin: auto;
-	top: 10px;
-	left: 0;
-	right: 0;
-}
-div[position="Top Right"],video[position="Top Right"],img[position="Top Right"],iframe[position="Top Right"]{
-	position:absolute;
-	top: 10px;
-	right: 10px;
-	margin: auto;
-}
-div[position="Middle Left"],video[position="Middle Left"],img[position="Middle Left"],iframe[position="Middle Left"]{
-	position:absolute;
-	margin: auto;
-	top: 0;
-	left: 10px;
-	bottom: 0;
-}
-div[position="Middle"],video[position="Middle"],img[position="Middle"],iframe[position="Middle"]{
-	position: absolute;
-	margin: auto;
-	top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-}
-div[position="Middle Right"],video[position="Middle Right"],img[position="Middle Right"],iframe[position="Middle Right"]{
-	position:absolute;
-	margin: auto;
-	top: 0;
-	right: 10px;
-	bottom: 0;
-}
-div[position="Bottom Left"],video[position="Bottom Left"],img[position="Bottom Left"],iframe[position="Bottom Left"]{
-	position:absolute;
-	bottom: 10px;
-	left: 10px;
-	margin: auto;
-}
-div[position="Bottom Middle"],video[position="Bottom Middle"],img[position="Bottom Middle"],iframe[position="Bottom Middle"]{
-	position:absolute;
-	margin: auto;
-	left: 0;
-	bottom: 10px;
-	right: 0;
-}
-div[position="Bottom Right"],video[position="Bottom Right"],img[position="Bottom Right"],iframe[position="Bottom Right"]{
-	position:absolute;
-	bottom: 10px;
-	right: 10px;
-	margin: auto;
-}
+

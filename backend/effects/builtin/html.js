@@ -88,9 +88,6 @@ const html = {
         if (effect.length == null) {
             errors.push("Please select a length to show the html in the overlay.");
         }
-        if (effect.removal == null) {
-            errors.push("Please enter the class of the HTML wrapper.");
-        }
         return errors;
     },
     /**
