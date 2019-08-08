@@ -28,7 +28,7 @@
                     </div>                    
                 </div>
 
-                <div style="display:flex;position:relative;"> 
+                <div style="display:flex;position:relative; margin-bottom: 45px;"> 
 
                     <div style="display: flex;align-items: center;font-size: 25px;width:25px;">
                         <!--<i class="fal fa-chevron-left clickable"></i>-->
@@ -56,7 +56,7 @@
                                     <span>{{ milestone.target | number}}</span>
                                     <span style="color:{{$ctrl.getBackgroundGradientA()}};width:16px;display: inline-block;padding-top: 0px;"><i ng-show="$ctrl.milestoneIsCompleted(milestone.id)" class="animated bounceIn far fa-check-circle" style="animation-delay: 0.{{ 9 - $index * 3}}s;"></i></span>
                                 </div>
-                                <div class="subtext">{{'$' + (milestone.reward / 100)}}</div>
+                                <div class="subtext">{{(milestone.bonus) + '% ember bonus'}}</div>
                             </span>
                         </div>
                     </div>
@@ -65,14 +65,7 @@
                         <!--<i class="fal fa-chevron-right clickable"></i>-->
                     </div>
 
-                </div>
-                <div style="display:flex;justify-content: center;margin-top:45px;text-align: center;">
-                    <div>
-                        <div class="muted" style="font-size:13px">Total Rewards Earned</div>
-                        <div style="font-size:25px">{{'$' + $ctrl.getTotalRewardsEarned()}} / {{'$' + $ctrl.getTotalRewardsInPeriod()}}</div> 
-                    </div>
-                </div>
-                
+                </div>                
             </div>
             `,
             bindings: {
