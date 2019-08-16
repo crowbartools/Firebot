@@ -44,7 +44,7 @@
         "grunt-electron-installer": "^2.1.0",
         "grunt-jsdoc": "^2.3.1",
         "husky": "^0.14.3",
-        "jsdoc": "^3.6.2",
+        "jsdoc": "^3.6.3",
         "node-sass": "^4.11.0"
     },
     "dependencies": {
@@ -83,7 +83,7 @@
         "kbm-robot": "https://github.com/Skriglitz/kbm-robot/tarball/master",
         "list.js": "^1.5.0",
         "m3u8stream": "^0.2.2",
-        "marked": "^0.6.2",
+        "marked": "^0.7.0",
         "mathjs": "^3.20.2",
         "moment": "^2.24.0",
         "ncp": "^2.0.0",

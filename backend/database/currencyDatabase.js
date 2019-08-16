@@ -95,6 +95,9 @@ function adjustCurrencyForUser(username, currencyId, value) {
             return resolve(false);
         }
 
+        // Trim username just in case we have extra spaces.
+        username = username.trim();
+
         // Okay, it passes... let's try to add it.
         userDatabase.getUserByUsername(username).then(user => {
             if (user !== false) {

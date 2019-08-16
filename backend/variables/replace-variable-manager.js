@@ -114,7 +114,7 @@ class ReplaceVariableManager extends EventEmitter {
                             err.rawText = value;
                             if (err instanceof ArgumentsError) {
                                 errors.push(err);
-                                logger.debug(`Found ariable error when validating`, err);
+                                logger.debug(`Found variable error when validating`, err);
                             } else if (err instanceof ExpressionError) {
                                 errors.push({
                                     dataField: err.dataField,

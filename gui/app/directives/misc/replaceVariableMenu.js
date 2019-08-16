@@ -47,7 +47,7 @@
 
                         let display = variable.usage ? variable.usage : variable.handle;
 
-                        let updatedModel = insertAt(currentModel, "$" + display + " ", insertIndex);
+                        let updatedModel = insertAt(currentModel, "$" + display, insertIndex);
 
                         $scope.modelValue = updatedModel;
                     };

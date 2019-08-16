@@ -79,10 +79,6 @@ const fileWriter = {
             let effect = event.effect;
 
             let data = await util.populateStringWithTriggerData(effect.variableData, event.trigger);
-
-            console.log("************************");
-            console.log(data);
-
             customVariableManager.addCustomVariable(effect.name, data, effect.ttl);
 
             resolve(true);
@@ -99,8 +95,7 @@ const fileWriter = {
         event: {
             name: "customVar",
             onOverlayEvent: event => {
-                console.log("yay file writer");
-                //need to implement this
+
             }
         }
     }
