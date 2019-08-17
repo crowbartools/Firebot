@@ -3,6 +3,7 @@
 const request = require("request");
 const Mixer = require('@mixer/client-node');
 const ws = require("ws");
+const promiseRetry = require('promise-retry');
 
 const { ipcMain } = require("electron");
 const commandHandler = require("../chat/commands/commandHandler");
@@ -201,61 +202,71 @@ function requestAsStreamer(method, route, body) {
 }
 
 function createClip(title, duration) {
-    return new Promise(async resolve => {
-        logger.info("Attempting to create clip...");
+    const options = {
+        retries: 3,
+        minTimeout: 5000,
+        maxTimeout: 5000
+    };
+    promiseRetry((retry, number) => {
+        return new Promise(async resolve => {
+            logger.log('Attempt #' + number + ' to create a clip.');
+            let clipResult = { success: false };
+            let streamerData = accountAccess.getAccounts().streamer;
+            if (!streamerData.partnered && !streamerData.canClip) {
+                logger.warn("An unapproved user type attempted to create a clip!");
+                clipResult.reason = "Not allowed to create clips!";
+                return resolve(clipResult);
+            }
 
-        let clipResult = { success: false };
+            let currentBroadcast = await getCurrentBroadcast();
+            if (currentBroadcast == null) {
+                clipResult.reason = "Not currently broadcasting";
+                return resolve(clipResult);
+            }
 
-        let streamerData = accountAccess.getAccounts().streamer;
+            // make sure duration is valid
+            if (isNaN(duration)) {
+                duration = 30;
+            } else if (duration < 15) {
+                duration = 15;
+            } else if (duration > 30) {
+                duration = 30;
+            }
 
-        if (!streamerData.partnered && !streamerData.canClip) {
-            logger.warn("An unapproved user type attempted to create a clip!");
-            clipResult.reason = "Not allowed to create clips!";
-            return resolve(clipResult);
-        }
+            let createClipRequest = {
+                broadcastId: currentBroadcast.id,
+                clipDurationInSeconds: duration
+            };
 
-        let currentBroadcast = await getCurrentBroadcast();
-        if (currentBroadcast == null) {
-            clipResult.reason = "Not currently broadcasting";
-            return resolve(clipResult);
-        }
+            if (title != null) {
+                createClipRequest.highlightTitle = title;
+            }
 
-        // make sure duration is valid
-        if (isNaN(duration)) {
-            duration = 30;
-        } else if (duration < 15) {
-            duration = 15;
-        } else if (duration > 300) {
-            duration = 300;
-        }
+            logger.info(`Creating clip with title '${title}' and duration of ${duration}s for broadcast Id ${currentBroadcast.id}`);
 
-        let createClipRequest = {
-            broadcastId: currentBroadcast.id,
-            clipDurationInSeconds: duration
-        };
+            let createClipResponse = await requestAsStreamer('POST', 'clips/create', createClipRequest);
 
-        if (title != null) {
-            createClipRequest.highlightTitle = title;
-        }
+            logger.debug("Create clip response:");
+            logger.debug(createClipResponse.statusCode);
+            logger.debug(createClipResponse.statusMessage);
+            logger.debug(createClipResponse.body);
 
-        logger.info(`Creating clip with title '${title}' and duration of ${duration}s for broadcast Id ${currentBroadcast.id}`);
+            if (createClipResponse.statusCode === 200) {
+                clipResult.success = true;
+                clipResult.highlightResponse = createClipResponse.body;
+            } else {
+                clipResult.reason = `Create clip call to Mixer failed (status code ${createClipResponse.statusCode}`;
+            }
 
-        let createClipResponse = await requestAsStreamer('POST', 'clips/create', createClipRequest);
+            // If we've hit our max number of retries, or we don't get any errors then we're done!
+            if (number === options.retries || clipResult.success !== false) {
+                return resolve(clipResult);
+            }
 
-        logger.debug("Create clip response:");
-        logger.debug(createClipResponse.statusCode);
-        logger.debug(createClipResponse.statusMessage);
-        logger.debug(createClipResponse.body);
-
-        if (createClipResponse.statusCode === 200) {
-            clipResult.success = true;
-            clipResult.highlightResponse = createClipResponse.body;
-        } else {
-            clipResult.reason = `Create clip call to Mixer failed (status code ${createClipResponse.statusCode}`;
-        }
-
-        resolve(clipResult);
-    });
+            // Else, we have errors and we're not at our max retries yet.
+            throw new Error('Clip failed on attempt #' + number);
+        }).catch(retry);
+    }, options);
 }
 
 // Creates the chat websocket

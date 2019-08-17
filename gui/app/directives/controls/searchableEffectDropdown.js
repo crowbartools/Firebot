@@ -52,9 +52,9 @@
                 );
                 }*/
 
-                /*if (!connectionService.accounts.streamer.partnered && !connectionService.accounts.streamer.canClip) {
+                if (!connectionService.accounts.streamer.partnered && !connectionService.accounts.streamer.canClip) {
                     ctrl.options = ctrl.options.filter(e => e.name !== Effect.EffectType.CREATE_CLIP);
-                }*/
+                }
 
                 //find the selected effect in the list
                 let selected = ctrl.options.filter(e => e.id === ctrl.selected);

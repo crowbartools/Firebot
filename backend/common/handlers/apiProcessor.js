@@ -2,9 +2,7 @@
 
 const request = require("request");
 const chat = require("../mixer-chat.js");
-const randomPuppy = require("random-puppy");
 const validator = require("validator");
-const requestImageSize = require("request-image-size");
 const mediaProcessor = require("./mediaProcessor");
 const settings = require("../settings-access").settings;
 const logger = require("../../logwrapper");
@@ -66,130 +64,6 @@ function randomAdvice(effect) {
                 "I couldnt connect to the advice API. It may be down."
             );
         }
-    });
-}
-
-function randomCat(effect) {
-    let chatter = effect.chatter;
-    randomPuppy("catpictures").then(url => {
-        imageCheck(url).then(
-            () => {
-                try {
-                    if (effect.show === "chat" || effect.show === "both") {
-                        // Send Chat
-                        logger.info("Random Cat: " + url);
-                        chat.broadcast(chatter, "Random Cat: " + url);
-                    }
-
-                    if (effect.show === "overlay" || effect.show === "both") {
-                        // Send image to overlay.
-                        let position = effect.position,
-                            data = {
-                                url: url,
-                                imageType: "url",
-                                imagePosition: position,
-                                imageHeight: effect.height,
-                                imageWidth: effect.width,
-                                imageDuration: effect.length,
-                                enterAnimation: effect.enterAnimation,
-                                exitAnimation: effect.exitAnimation,
-                                customCoords: effect.customCoords
-                            };
-
-                        // Get random location.
-                        if (position === "Random") {
-                            position = mediaProcessor.getRandomPresetLocation();
-                        }
-
-                        if (settings.useOverlayInstances()) {
-                            if (effect.overlayInstance != null) {
-                                if (
-                                    settings
-                                        .getOverlayInstances()
-                                        .includes(effect.overlayInstance)
-                                ) {
-                                    data.overlayInstance = effect.overlayInstance;
-                                }
-                            }
-                        }
-
-                        // Send to overlay.
-                        webServer.sendToOverlay("image", data);
-                    }
-                } catch (err) {
-                    renderWindow.webContents.send(
-                        "error",
-                        "There was an error sending a cat picture."
-                    );
-                }
-            },
-            error => {
-                logger.error(error);
-                randomCat(chatter);
-            }
-        );
-    });
-}
-
-function randomDog(effect) {
-    let chatter = effect.chatter;
-    randomPuppy("dogpictures").then(url => {
-        imageCheck(url).then(
-            () => {
-                try {
-                    if (effect.show === "chat" || effect.show === "both") {
-                        // Send Chat
-                        logger.info("Random Dog: " + url);
-                        chat.broadcast(chatter, "Random Dog: " + url);
-                    }
-
-                    if (effect.show === "overlay" || effect.show === "both") {
-                        // Send image to overlay.
-                        let position = effect.position,
-                            data = {
-                                url: url,
-                                imageType: "url",
-                                imagePosition: position,
-                                imageHeight: effect.height,
-                                imageWidth: effect.width,
-                                imageDuration: effect.length,
-                                enterAnimation: effect.enterAnimation,
-                                exitAnimation: effect.exitAnimation,
-                                customCoords: effect.customCoords
-                            };
-
-                        // Get random location.
-                        if (position === "Random") {
-                            position = mediaProcessor.getRandomPresetLocation();
-                        }
-
-                        if (settings.useOverlayInstances()) {
-                            if (effect.overlayInstance != null) {
-                                if (
-                                    settings
-                                        .getOverlayInstances()
-                                        .includes(effect.overlayInstance)
-                                ) {
-                                    data.overlayInstance = effect.overlayInstance;
-                                }
-                            }
-                        }
-
-                        // Send to overlay.
-                        webServer.sendToOverlay("image", data);
-                    }
-                } catch (err) {
-                    renderWindow.webContents.send(
-                        "error",
-                        "There was an error sending a dog picture."
-                    );
-                }
-            },
-            error => {
-                logger.error(error);
-                randomDog(chatter);
-            }
-        );
     });
 }
 
@@ -289,68 +163,6 @@ function randomPokemon(effect) {
                 "I couldnt hit the pokemon api. It may be down."
             );
         }
-    });
-}
-
-function randomAww(effect) {
-    let chatter = effect.chatter;
-    randomPuppy("aww").then(url => {
-        imageCheck(url).then(
-            () => {
-                try {
-                    if (effect.show === "chat" || effect.show === "both") {
-                        // Send Chat
-                        logger.info("Random Aww: " + url);
-                        chat.broadcast(chatter, "Random Aww: " + url);
-                    }
-
-                    if (effect.show === "overlay" || effect.show === "both") {
-                        // Send image to overlay.
-                        let position = effect.position,
-                            data = {
-                                url: url,
-                                imageType: "url",
-                                imagePosition: position,
-                                imageHeight: effect.height,
-                                imageWidth: effect.width,
-                                imageDuration: effect.length,
-                                enterAnimation: effect.enterAnimation,
-                                exitAnimation: effect.exitAnimation,
-                                customCoords: effect.customCoords
-                            };
-
-                        // Get random location.
-                        if (position === "Random") {
-                            position = mediaProcessor.getRandomPresetLocation();
-                        }
-
-                        if (settings.useOverlayInstances()) {
-                            if (effect.overlayInstance != null) {
-                                if (
-                                    settings
-                                        .getOverlayInstances()
-                                        .includes(effect.overlayInstance)
-                                ) {
-                                    data.overlayInstance = effect.overlayInstance;
-                                }
-                            }
-                        }
-
-                        // Send to overlay.
-                        webServer.sendToOverlay("image", data);
-                    }
-                } catch (err) {
-                    renderWindow.webContents.send(
-                        "error",
-                        "There was an error sending aww picture."
-                    );
-                }
-            },
-            error => {
-                logger.error(error);
-                randomAww(chatter);
-            }
-        );
     });
 }
 
