@@ -229,16 +229,10 @@ function apiProcessor(effect) {
     // Do something based on api type.
     if (apiType === "Advice") {
         randomAdvice(effect);
-    } else if (apiType === "Cat Picture") {
-        randomCat(effect);
     } else if (apiType === "Cat Fact") {
         randomCatFact(effect);
-    } else if (apiType === "Dog Picture") {
-        randomDog(effect);
     } else if (apiType === "Dog Fact") {
         randomDogFact(effect);
-    } else if (apiType === "Aww") {
-        randomAww(effect);
     } else if (apiType === "Pokemon") {
         randomPokemon(effect);
     } else if (apiType === "Number Trivia") {
