@@ -15,33 +15,6 @@ function toTitleCase(str) {
     });
 }
 
-// Imgur Broken Image Checker
-// This checks the imgur image to see if it is 161px wide.
-// This is a really weird way of doing it, but imgur is redirect hell and it's hard to get an accurate status code.
-// The timeout is there because without it this function seems to fail during spamming.
-function imageCheck(url) {
-    return new Promise((resolve, reject) => {
-        logger.info("Checking image...");
-        setTimeout(function() {
-            requestImageSize(url).then(
-                size => {
-                    if (size.width === 161) {
-                        logger.info("Size is 161, most likely broken image. Retrying");
-                        reject("retry");
-                    } else {
-                        logger.info("Image is good. Showing now.");
-                        resolve(true);
-                    }
-                },
-                err => {
-                    logger.error("Error checking image.", err);
-                    reject("retry");
-                }
-            );
-        }, 500);
-    });
-}
-
 function randomAdvice(effect) {
     let url = "http://api.adviceslip.com/advice",
         chatter = effect.chatter;
