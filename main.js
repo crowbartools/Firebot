@@ -391,81 +391,84 @@ async function createDefaultFoldersAndFiles() {
 
     activeProfiles.forEach(profileId => {
 
-        if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId)) {
-            logger.info("Can't find a profile folder for " + profileId + ", creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
-        }
+        if (profileId != null) {
+            if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId)) {
+                logger.info("Can't find a profile folder for " + profileId + ", creating one now...");
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
+            }
 
-        //always copy over overlay wrapper
-        dataAccess.copyResourceToUserData(null, "overlay.html", "");
+            //always copy over overlay wrapper
+            dataAccess.copyResourceToUserData(null, "overlay.html", "");
 
-        // Create the scripts folder if it doesn't exist
-        if (
-            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/scripts")
-        ) {
-            logger.info("Can't find the scripts folder, creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/scripts");
-        }
+            // Create the scripts folder if it doesn't exist
+            if (
+                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/scripts")
+            ) {
+                logger.info("Can't find the scripts folder, creating one now...");
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/scripts");
+            }
 
-        // Create the controls folder if it doesn't exist.
-        if (
-            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/controls")
-        ) {
-            logger.info("Can't find the controls folder, creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/controls");
-        }
+            // Create the controls folder if it doesn't exist.
+            if (
+                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/controls")
+            ) {
+                logger.info("Can't find the controls folder, creating one now...");
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/controls");
+            }
 
-        // Create the controls folder if it doesn't exist.
-        if (
-            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/mixplay")
-        ) {
-            logger.info("Can't find the mixplay folder, creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/mixplay");
-        }
+            // Create the controls folder if it doesn't exist.
+            if (
+                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/mixplay")
+            ) {
+                logger.info("Can't find the mixplay folder, creating one now...");
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/mixplay");
+            }
 
 
-        // Create the logs folder if it doesn't exist.
-        if (
-            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/logs")
-        ) {
-            logger.info("Can't find the logs folder, creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/logs");
-        }
+            // Create the logs folder if it doesn't exist.
+            if (
+                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/logs")
+            ) {
+                logger.info("Can't find the logs folder, creating one now...");
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/logs");
+            }
 
-        // Create the chat folder if it doesn't exist.
-        if (
-            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/chat")
-        ) {
-            logger.info("Can't find the chat folder, creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/chat");
-        }
+            // Create the chat folder if it doesn't exist.
+            if (
+                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/chat")
+            ) {
+                logger.info("Can't find the chat folder, creating one now...");
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/chat");
+            }
 
-        // Create the currency folder if it doesn't exist.
-        if (
-            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/currency")
-        ) {
-            logger.info("Can't find the currency folder, creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/currency");
-        }
+            // Create the currency folder if it doesn't exist.
+            if (
+                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/currency")
+            ) {
+                logger.info("Can't find the currency folder, creating one now...");
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/currency");
+            }
 
-        // Create the fonts folder if it doesn't exist.
-        if (
-            !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/fonts")
-        ) {
-            logger.info("Can't find the fonts folder, creating one now...");
-            dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/fonts");
-        }
+            // Create the fonts folder if it doesn't exist.
+            if (
+                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/fonts")
+            ) {
+                logger.info("Can't find the fonts folder, creating one now...");
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/fonts");
+            }
 
-        // Create the events folder if it doesn't exist.
-        if (
-            !dataAccess.userDataPathExistsSync(
-                "/profiles/" + profileId + "/events"
-            )
-        ) {
-            logger.info("Can't find the events folder, creating one now...");
-            dataAccess.makeDirInUserDataSync(
-                "/profiles/" + profileId + "/events"
-            );
+            // Create the events folder if it doesn't exist.
+            if (
+                !dataAccess.userDataPathExistsSync(
+                    "/profiles/" + profileId + "/events"
+                )
+            ) {
+                logger.info("Can't find the events folder, creating one now...");
+                dataAccess.makeDirInUserDataSync(
+                    "/profiles/" + profileId + "/events"
+                );
+            }
+
         }
     });
 

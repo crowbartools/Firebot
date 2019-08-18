@@ -106,7 +106,6 @@ function startBackup(manualActivation = false, callback) {
 
     // Add directory to package
     let folderPath = path.resolve(dataAccess.getPathInUserData("/profiles"));
-    console.log(folderPath);
     archive.directory(folderPath, "profiles");
 
     // finalize the archive (ie we are done appending files but streams have to finish yet)

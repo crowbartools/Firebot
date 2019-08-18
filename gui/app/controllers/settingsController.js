@@ -216,7 +216,7 @@
                             let destination = dataAccess.getPathInUserData("/profiles");
 
                             // Clear profiles directory
-                            empty(dataAccess.getPathInUserData("/profiles"), false, o => {
+                            empty(destination, false, o => {
                                 if (o.error) {
                                     logger.error(o.error);
                                     $scope.errorMessage =
@@ -237,22 +237,24 @@
 
                                         // Now that we copied over everything, we need to make sure our global settings active profiles is in sync.
                                         // Get all profiles by looking at folder names, change names to integers.
-                                        let profiles = fs.readdirSync(
-                                            dataAccess.getPathInUserData("/profiles")
-                                        );
-                                        profiles = profiles.map(function(x) {
-                                            return parseInt(x, 10);
-                                        });
+                                        let srcPath = dataAccess.getPathInUserData("/profiles");
+                                        let profiles = fs.readdirSync(srcPath).filter(file => fs.statSync(path.join(srcPath, file)).isDirectory());
+
                                         // Get the global settings file.
                                         let globalDb = dataAccess.getJsonDbInUserData(
                                             "/global-settings"
                                         );
                                         // Find highest number profile so we can set our profile counter.
-                                        let maxProfile = Math.max(...profiles);
+                                        let maxProfile = profiles.length;
+
                                         // Update our global settings file.
-                                        globalDb.push("/profiles/loggedInProfile", profiles[0]);
-                                        globalDb.push("/profiles/activeProfiles", profiles);
-                                        globalDb.push("/profiles/profileCounter", maxProfile);
+                                        if (profiles != null) {
+                                            globalDb.push("/profiles/loggedInProfile", profiles[0]);
+                                            globalDb.push("/profiles/activeProfiles", profiles);
+                                            globalDb.push("/profiles/profileCounter", maxProfile);
+                                        } else {
+                                            $scope.errorMessage = "The restore failed when trying to copy data.";
+                                        }
 
                                         // Reload the app
                                         reloadEverything();

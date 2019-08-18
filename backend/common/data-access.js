@@ -20,7 +20,7 @@ let getWorkingDirectoryPath = function() {
 // This stays the same after every update.
 const appDataPath = (electron.app || electron.remote.app).getPath("appData");
 
-const rootUserDataPath = appDataPath + path.sep + "firebot";
+const rootUserDataPath = appDataPath + path.sep + "Firebot";
 const userDataPath = rootUserDataPath + path.sep + "v5";
 
 const tmpDirectoryPath = path.join(rootUserDataPath, "tmp");
