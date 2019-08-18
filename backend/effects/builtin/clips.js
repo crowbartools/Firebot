@@ -34,14 +34,6 @@ const clip = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-        <eos-container header="Clip Duration">
-            <div class="input-group">
-                <span class="input-group-addon">Seconds</span>
-                <input ng-model="effect.clipDuration" type="text" class="form-control" type="number">
-            </div>
-            <p class="muted" style="padding-top: 5px">Clips can be between 15 seconds and 300 seconds (5 minutes). You can also use replace phrases such as <strong>$(arg1)</strong> .</p>
-        </eos-container>
-
         <eos-container header="Clip Title" pad-top="true">
             <p>The title for the new clip (Leave blank to default to current stream title).</p>
             <input ng-model="effect.clipTitle" type="text" class="form-control" placeholder="Enter text">

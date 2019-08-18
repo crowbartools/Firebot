@@ -3,7 +3,7 @@
 const request = require("request");
 const Mixer = require('@mixer/client-node');
 const ws = require("ws");
-const promiseRetry = require('promise-retry');
+const retry = require('retry-as-promised');
 
 const { ipcMain } = require("electron");
 const commandHandler = require("../chat/commands/commandHandler");
@@ -201,15 +201,11 @@ function requestAsStreamer(method, route, body) {
     });
 }
 
-function createClip(title, duration) {
-    const options = {
-        retries: 3,
-        minTimeout: 5000,
-        maxTimeout: 5000
-    };
-    promiseRetry((retry, number) => {
-        return new Promise(async resolve => {
-            logger.log('Attempt #' + number + ' to create a clip.');
+function createClip(title) {
+    return retry(function (options) {
+        // options.current, times callback has been called including this call
+        return new Promise(async (resolve, reject) => {
+            logger.log('Attempt #' + options.current + ' to create a clip.');
             let clipResult = { success: false };
             let streamerData = accountAccess.getAccounts().streamer;
             if (!streamerData.partnered && !streamerData.canClip) {
@@ -224,25 +220,16 @@ function createClip(title, duration) {
                 return resolve(clipResult);
             }
 
-            // make sure duration is valid
-            if (isNaN(duration)) {
-                duration = 30;
-            } else if (duration < 15) {
-                duration = 15;
-            } else if (duration > 30) {
-                duration = 30;
-            }
-
             let createClipRequest = {
                 broadcastId: currentBroadcast.id,
-                clipDurationInSeconds: duration
+                clipDurationInSeconds: 30
             };
 
             if (title != null) {
                 createClipRequest.highlightTitle = title;
             }
 
-            logger.info(`Creating clip with title '${title}' and duration of ${duration}s for broadcast Id ${currentBroadcast.id}`);
+            logger.info(`Clip Info: Title '${title}' || Duration ${createClipRequest.clipDurationInSeconds}s || Broadcast Id ${currentBroadcast.id}`);
 
             let createClipResponse = await requestAsStreamer('POST', 'clips/create', createClipRequest);
 
@@ -254,19 +241,24 @@ function createClip(title, duration) {
             if (createClipResponse.statusCode === 200) {
                 clipResult.success = true;
                 clipResult.highlightResponse = createClipResponse.body;
-            } else {
-                clipResult.reason = `Create clip call to Mixer failed (status code ${createClipResponse.statusCode}`;
             }
 
-            // If we've hit our max number of retries, or we don't get any errors then we're done!
-            if (number === options.retries || clipResult.success !== false) {
-                return resolve(clipResult);
+            // The first two times, we'll throw reject and retry the clip.
+            // The third time we're going to go ahead and resolve with error messages.
+            if (createClipResponse.success === false && options.current < 3) {
+                return reject(new Error("Clip failed, retrying..."));
+            } else if (createClipResponse.success === false) {
+                clipResult.reason = `Create clip call to Mixer failed several times (status code ${createClipResponse.statusCode}`;
             }
 
-            // Else, we have errors and we're not at our max retries yet.
-            throw new Error('Clip failed on attempt #' + number);
-        }).catch(retry);
-    }, options);
+            return resolve(clipResult);
+        });
+    }, {
+        max: 3, // maximum amount of tries
+        timeout: 5000, // throw if no response or error within millisecond timeout, default: undefined,
+        backoffBase: 1000, // Initial backoff duration in ms. Default: 100,
+        backoffExponent: 1.5 // Exponent to increase backoff each try. Default: 1.1
+    });
 }
 
 // Creates the chat websocket

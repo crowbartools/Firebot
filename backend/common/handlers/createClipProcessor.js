@@ -54,10 +54,7 @@ exports.createClip = async function(effect, trigger) {
     }
 
     title = await util.populateStringWithTriggerData(title, trigger);
-
-    let duration = await util.populateStringWithTriggerData(effect.clipDuration.toString(), trigger);
-
-    let clipResult = await Chat.createClip(title, duration);
+    let clipResult = await Chat.createClip(title);
 
     if (clipResult.success) {
         if (effect.postLink) {
