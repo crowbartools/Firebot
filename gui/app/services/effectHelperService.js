@@ -425,10 +425,6 @@
                     break;
                 case EffectList.CREATE_CLIP:
                     controller = ($scope) => {
-                        if ($scope.effect.clipDuration == null) {
-                            $scope.effect.clipDuration = 30;
-                        }
-
                         if ($scope.effect.postLink == null) {
                             $scope.effect.postLink = true;
                         }
@@ -440,15 +436,6 @@
                         if ($scope.effect.clipTitle == null) {
                             $scope.effect.clipTitle = "$(streamTitle) (Created by $(user))";
                         }
-
-                        $scope.onDurationChange = function() {
-                            if ($scope.effect.clipDuration > 300) {
-                                $scope.effect.clipDuration = 300;
-                            }
-                            if ($scope.effect.clipDuration < 15) {
-                                $scope.effect.clipDuration = 15;
-                            }
-                        };
                     };
                     break;
                 case EffectList.DICE:

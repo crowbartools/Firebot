@@ -74,9 +74,6 @@ const clip = {
    */
     optionsValidator: effect => {
         let errors = [];
-        if (effect.clipDuration == null) {
-            errors.push("Please input a clip duration.");
-        }
         return errors;
     },
     /**
