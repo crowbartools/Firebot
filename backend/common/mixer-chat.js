@@ -19,6 +19,7 @@ const userdb = require("../database/userDatabase");
 const apiAccess = require("../api-access");
 let linkHeaderParser = require('parse-link-header');
 const timerManager = require("../timers/timer-manager");
+const emotesManager = require("./emotes-manager");
 
 require('request-debug')(request, function(type, data) {
     logger.debug("Request debug: ", { type: type, data: JSON.stringify(data) });
@@ -283,6 +284,7 @@ function createChatSocket (chatter, userId, channelId, endpoints, authkey) {
                     .then((res) => {
                         if (res.authenticated === true) {
                             global.streamerChat = socket;
+
                             resolve("Streamer");
                         } else {
                             logger.error(chatter + ' did not authenticate successfully.');
@@ -298,6 +300,7 @@ function createChatSocket (chatter, userId, channelId, endpoints, authkey) {
                         if (res.authenticated === true) {
                             logger.info('Successfully authenticated the bot chat socket!');
                             global.botChat = socket;
+
                             resolve("Bot");
                         } else {
                             logger.error(chatter + ' did not authenticate successfully.');
@@ -1159,6 +1162,8 @@ function chatConnect() {
         } catch (err) {
             logger.info("No bot logged in. Skipping. (chat-connect)");
         }
+
+        emotesManager.updateEmotesCache();
 
         // Connect Kickoff
         streamerConnect(streamer)
