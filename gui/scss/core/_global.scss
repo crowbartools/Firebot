@@ -1701,6 +1701,7 @@ thead th{
 }
 
 .fb-transition {
+  position:absolute!important;
   .modal-dialog {
     transition: transform .2s ease-out 0s;
   }
