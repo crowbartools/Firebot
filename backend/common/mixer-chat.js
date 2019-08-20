@@ -202,8 +202,8 @@ function requestAsStreamer(method, route, body) {
     });
 }
 
-function createClip(title) {
-    return retry(function (options) {
+async function createClip(title) {
+    return retry(async function (options) {
         // options.current, times callback has been called including this call
         return new Promise(async (resolve, reject) => {
             logger.log('Attempt #' + options.current + ' to create a clip.');
