@@ -252,7 +252,7 @@ const model = {
 
             let defaultControl = mixplayManager.getControlInProject(connectedProject.id, effect.control.id);
 
-            let mixplayControl = mixplay.mixplayClient.state.getControl(effect.control.id);
+            let mixplayControl = mixplay.client.state.getControl(effect.control.id);
             if (!mixplayControl) return resolve(true);
 
             if (effect.propertyAction) {

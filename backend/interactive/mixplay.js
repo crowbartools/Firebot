@@ -92,7 +92,7 @@ function addControlHandlers(controls) {
 
             logger.debug(`Control event "${event}" for control "${inputData.controlID}" in scene "${sceneId}"`);
 
-            controlManager.handleInput(event, sceneId, inputData, participant);
+            controlManager.handleInput(event, sceneId, inputEvent, participant);
         });
     };
 
@@ -193,6 +193,7 @@ mixplayClient.on('error', err => {
     mixplayConnected = false;
     defaultSceneId = null;
 });
+
 
 async function getParticipantsForGroup(groupId) {
     const allParticipants = mixplayClient.state.getParticipants();
@@ -355,7 +356,7 @@ exports.mixplayIsConnected = function() {
 exports.getHiddenControls = () => hiddenControls;
 exports.markControlAsHidden = (controlId, hidden) => hiddenControls[controlId] = hidden;
 
-exports.mixplayClient = mixplayClient;
+exports.client = mixplayClient;
 exports.mapMixplayControl = mapMixplayControl;
 exports.moveViewerToScene = moveViewerToScene;
 exports.moveViewersToNewScene = moveViewersToNewScene;
