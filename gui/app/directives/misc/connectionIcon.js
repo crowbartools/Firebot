@@ -40,7 +40,7 @@
                 const ConnectionIcon = {
                     INTERACTIVE: "fa-gamepad",
                     CHAT: "fa-comment",
-                    CONSTELLATION: "fa-rocket",
+                    CONSTELLATION: "fa-star",
                     OVERLAY: "fa-tv-retro"
                 };
 
@@ -94,9 +94,9 @@
                         break;
                     case ConnectionType.CONSTELLATION:
                         if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
-                            ctrl.tooltip = "<b>Constellation:</b> Connected";
+                            ctrl.tooltip = "<b>Events:</b> Connected";
                         } else {
-                            ctrl.tooltip = "<b>Constellation:</b> Disconnected";
+                            ctrl.tooltip = "<b>Events:</b> Disconnected";
                         }
                         break;
                     case ConnectionType.OVERLAY:

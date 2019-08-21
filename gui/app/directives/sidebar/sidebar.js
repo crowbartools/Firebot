@@ -57,7 +57,7 @@
                                             <span style="width: 100%;display: flex;justify-content: space-between;margin-top: 5px;">
                                                 <connection-icon aria-label="Interactive connection icon" type="interactive"></connection-icon>
                                                 <connection-icon aria-label="Chat connection icon" type="chat"></connection-icon>
-                                                <connection-icon aria-label="Constellation connection icon" type="constellation"></connection-icon>
+                                                <connection-icon aria-label="Events connection icon" type="constellation"></connection-icon>
                                                 <connection-icon aria-label="Overlay connection icon" type="overlay"></connection-icon>
                                             </span>
                                         </div>

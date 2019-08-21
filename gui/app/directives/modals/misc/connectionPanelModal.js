@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="connection-tile">
-                            <span class="connection-title">Constellation <tooltip text="'Used for events, live viewer count on chat feed, Skills, etc'"></tooltip></span>
+                            <span class="connection-title">Events <tooltip text="'Used for events, live viewer count on chat feed, Skills, etc. (Aka Constellation)'"></tooltip></span>
                             <div class="connection-button" aria-label="Connect to constellation"
                                 ng-class="{'connected': $ctrl.conn.connectedToConstellation, 'connecting': $ctrl.conn.waitingForConstellationStatusChange}"
                                 ng-click="$ctrl.conn.toggleConnectionToConstellation()">
