@@ -1,8 +1,16 @@
 "use strict";
 
 const model = {
-    id: "firebot:permissions",
-    name: "Permissions"
+    definition: {
+        id: "firebot:permissions",
+        name: "Permissions",
+        triggers: []
+    },
+    optionsTemplate: "",
+    optionsController: () => {},
+    predicate: (triggerData) => {
+
+    }
 };
 
 module.exports = model;

@@ -39,8 +39,8 @@ class RestrictionsManager extends EventEmitter {
 
 const manager = new RestrictionsManager();
 
-/*ipcMain.on("getRestrictions", () => {
+ipcMain.on("getRestrictions", () => {
     logger.info("got 'get restrictions' request");
-});*/
+});
 
 module.exports = manager;
