@@ -50,7 +50,7 @@ exports.createClip = async function(effect, trigger) {
 
     let title = effect.clipTitle;
     if (title == null || title === "") {
-        title = "$(streamTitle)";
+        title = "$streamTitle (Created by $user)";
     }
 
     title = await util.populateStringWithTriggerData(title, trigger);

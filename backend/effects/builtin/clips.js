@@ -80,26 +80,10 @@ const clip = {
    * When the effect is triggered by something
    */
     onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             clipProcessor.createClip(event.effect, event.trigger);
             resolve(true);
         });
-    },
-    /**
-   * Code to run in the overlay
-   */
-    overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
-        event: {
-            name: "createClip",
-            onOverlayEvent: event => {
-                // The API Effect can sometimes show images in the overlay.
-                // As part of this we use the showImage event.
-            }
-        }
     }
 };
 
