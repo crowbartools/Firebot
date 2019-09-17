@@ -204,9 +204,7 @@ function requestAsStreamer(method, route, body) {
 
 async function createClip(title) {
     return retry(async function (options) {
-        // options.current, times callback has been called including this call
         return new Promise(async (resolve, reject) => {
-            logger.log('Attempt #' + options.current + ' to create a clip.');
             let clipResult = { success: false };
             let streamerData = accountAccess.getAccounts().streamer;
             if (!streamerData.partnered && !streamerData.canClip) {
@@ -230,34 +228,32 @@ async function createClip(title) {
                 createClipRequest.highlightTitle = title;
             }
 
-            logger.info(`Clip Info: Title '${title}' || Duration ${createClipRequest.clipDurationInSeconds}s || Broadcast Id ${currentBroadcast.id}`);
-
             let createClipResponse = await requestAsStreamer('POST', 'clips/create', createClipRequest);
 
-            logger.debug("Create clip response:");
             logger.debug(createClipResponse.statusCode);
             logger.debug(createClipResponse.statusMessage);
             logger.debug(createClipResponse.body);
 
             if (createClipResponse.statusCode === 200) {
+                logger.info(`Clip Info: Title '${title}' || Duration ${createClipRequest.clipDurationInSeconds}s || Broadcast Id ${currentBroadcast.id}`);
                 clipResult.success = true;
                 clipResult.highlightResponse = createClipResponse.body;
+                clipResult.reason = "Success!";
+                return resolve(clipResult);
             }
 
-            // The first two times, we'll throw reject and retry the clip.
-            // The third time we're going to go ahead and resolve with error messages.
-            if (createClipResponse.success === false && options.current < 3) {
-                return reject(new Error("Clip failed, retrying..."));
-            } else if (createClipResponse.success === false) {
-                clipResult.reason = `Create clip call to Mixer failed several times (status code ${createClipResponse.statusCode}`;
+            if (options.current === 3 && createClipResponse.statusCode !== 200) {
+                clipResult.success = false;
+                clipResult.reason = `Failed to create a clip after several tries. (Code: ${createClipResponse.statusCode})`;
+                return resolve(clipResult);
             }
 
-            return resolve(clipResult);
+            return reject();
         });
     }, {
-        max: 3, // maximum amount of tries
+        max: 4, // maximum amount of tries
         timeout: 5000, // throw if no response or error within millisecond timeout, default: undefined,
-        backoffBase: 1000, // Initial backoff duration in ms. Default: 100,
+        backoffBase: 500, // Initial backoff duration in ms. Default: 100,
         backoffExponent: 1.5 // Exponent to increase backoff each try. Default: 1.1
     });
 }
