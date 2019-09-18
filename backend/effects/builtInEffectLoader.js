@@ -29,6 +29,7 @@ exports.loadEffects = () => {
     const controlMouse = require('./builtin/controlMouse');
     const changeScene = require('./builtin/changeScene');
     const runCommand = require('./builtin/runCommand');
+    const customScript = require('./builtin/customScript');
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -56,4 +57,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(controlMouse);
     effectManager.registerEffect(changeScene);
     effectManager.registerEffect(runCommand);
+    effectManager.registerEffect(customScript);
 };

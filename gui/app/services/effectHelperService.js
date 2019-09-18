@@ -562,10 +562,8 @@
                         };
 
                         $scope.scriptHasParameters = function() {
-                            return (
-                                $scope.effect.parameters != null &&
-                  Object.keys($scope.effect.parameters).length > 0
-                            );
+                            return ($scope.effect.parameters != null &&
+                                Object.keys($scope.effect.parameters).length > 0);
                         };
 
                         if ($scope.effect.scriptName != null) {

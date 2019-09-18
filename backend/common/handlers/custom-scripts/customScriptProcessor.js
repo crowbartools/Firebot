@@ -13,9 +13,7 @@ const {
 const effectRunner = require('../../effect-runner.js');
 const accountAccess = require('../../account-access');
 const uuidv1 = require("uuid/v1");
-const {EffectType, TriggerType } = require('../../EffectType.js');
-
-
+const { TriggerType } = require('../../EffectType.js');
 
 function getUserRoles(participant) {
     return new Promise(resolve => {
@@ -34,212 +32,210 @@ function getUserRoles(participant) {
 }
 
 function scriptProcessor(effect, trigger) {
-    let scriptName = effect.scriptName,
-        parameters = effect.parameters,
-        control = trigger.metadata.control,
-        userCommand = trigger.metadata.userCommand,
-        participant = trigger.metadata.participant,
-        triggerType = trigger.type;
+    return new Promise(resolve => {
+        let scriptName = effect.scriptName,
+            parameters = effect.parameters,
+            control = trigger.metadata.control,
+            userCommand = trigger.metadata.userCommand,
+            participant = trigger.metadata.participant,
+            triggerType = trigger.type;
 
-    logger.debug("running scrpt: " + scriptName);
+        logger.debug("running scrpt: " + scriptName);
 
-    if (!settings.isCustomScriptsEnabled()) {
-        renderWindow.webContents.send(
-            "error",
-            "Something attempted to run a custom script but this feature is disabled!"
-        );
-        return;
-    }
-
-    let button = control;
-    let username = trigger.metadata.username;
-
-    let scriptsFolder = profileManager.getPathInProfile("/scripts");
-    let scriptFilePath = path.resolve(scriptsFolder, scriptName);
-    // Attempt to load the script
-    try {
-    // Make sure we first remove the cached version, incase there was any changes
-        if (settings.getClearCustomScriptCache()) {
-            delete require.cache[require.resolve(scriptFilePath)];
+        if (!settings.isCustomScriptsEnabled()) {
+            renderWindow.webContents.send("error", "Something attempted to run a custom script but this feature is disabled!");
+            return resolve();
         }
 
-        let customScript = require(scriptFilePath);
+        let button = control;
+        let username = trigger.metadata.username;
 
-        // Verify the script contains the "run" function
-        if (typeof customScript.run === "function") {
-            setTimeout(function() {
+        let scriptsFolder = profileManager.getPathInProfile("/scripts");
+        let scriptFilePath = path.resolve(scriptsFolder, scriptName);
+        // Attempt to load the script
+        try {
+            // Make sure we first remove the cached version, incase there was any changes
+            if (settings.getClearCustomScriptCache()) {
+                delete require.cache[require.resolve(scriptFilePath)];
+            }
 
-                let manifest = {
-                    name: "Unknown Script",
-                    version: "Unknown Version"
-                };
+            let customScript = require(scriptFilePath);
 
-                // set manifest values if they exist
-                if (customScript.getScriptManifest) {
-                    let scriptManifest = customScript.getScriptManifest();
-                    if (scriptManifest) {
-                        manifest.name = scriptManifest.name || manifest.name;
-                        manifest.version = scriptManifest.version || manifest.version;
+            // Verify the script contains the "run" function
+            if (typeof customScript.run === "function") {
+                setTimeout(function() {
+
+                    let manifest = {
+                        name: "Unknown Script",
+                        version: "Unknown Version"
+                    };
+
+                    // set manifest values if they exist
+                    if (customScript.getScriptManifest) {
+                        let scriptManifest = customScript.getScriptManifest();
+                        if (scriptManifest) {
+                            manifest.name = scriptManifest.name || manifest.name;
+                            manifest.version = scriptManifest.version || manifest.version;
+                        }
                     }
-                }
 
-                let streamerName = accountAccess.getAccounts().streamer.username || "Unknown Streamer";
-                let appVersion = app.getVersion();
+                    let streamerName = accountAccess.getAccounts().streamer.username || "Unknown Streamer";
+                    let appVersion = app.getVersion();
 
-                const request = require("request");
+                    const request = require("request");
 
-                let customRequest = request.defaults({
-                    headers: {
-                        'User-Agent': `Firebot/${appVersion};CustomScript/${manifest.name}/${manifest.version};User/${streamerName}`
-                    }
-                });
-
-                // safe guard: enforce our user-agent
-                customRequest.init = function init(options) {
-                    if (options != null && options.headers != null) {
-                        delete options.headers['User-Agent'];
-                    }
-                    customRequest.prototype.init.call(this, options);
-                };
-
-                // Build modules object
-                let modules = {
-                    request: customRequest,
-                    spawn: require('child_process').spawn,
-                    childProcess: require('child_process'),
-                    fs: require('fs'),
-                    path: require('path'),
-                    JsonDb: require('node-json-db'),
-                    moment: require('moment'),
-                    logger: logger,
-                    chat: chat,
-                    mixplay: require("../../../interactive/mixplay"),
-                    utils: require("../../../utility")
-                };
-
-                //simpify parameters
-                let simpleParams = {};
-                if (parameters != null) {
-                    Object.keys(parameters).forEach(k => {
-                        let param = parameters[k];
-                        if (param != null) {
-                            simpleParams[k] = param.value == null && param.value !== ""
-                                ? param.default
-                                : param.value;
+                    let customRequest = request.defaults({
+                        headers: {
+                            'User-Agent': `Firebot/${appVersion};CustomScript/${manifest.name}/${manifest.version};User/${streamerName}`
                         }
                     });
-                }
 
-                let runRequest = {
-                    modules: modules,
-                    button: button != null
-                        ? {
-                            name: button.controlId,
-                            meta: button.meta || {}
+                    // safe guard: enforce our user-agent
+                    customRequest.init = function init(options) {
+                        if (options != null && options.headers != null) {
+                            delete options.headers['User-Agent'];
                         }
-                        : null,
-                    command: userCommand != null
-                        ? {
-                            trigger: userCommand.cmd.value,
-                            args: userCommand.args.filter(a => a != null && a !== "")
-                        }
-                        : null,
-                    user: {
-                        name: username
-                    },
-                    firebot: {
-                        accounts: accountAccess.getAccounts(),
-                        settings: {
-                            webSocketPort: settings.getWebSocketPort(),
-                            webServerPort: settings.getWebServerPort()
-                        },
-                        currentInteractiveBoardId: settings.getLastBoardName(),
-                        version: app.getVersion()
-                    },
-                    parameters: simpleParams,
-                    trigger: trigger,
-                    triggerType: triggerType // only here for backwards compat
-                };
+                        customRequest.prototype.init.call(this, options);
+                    };
 
-                let response = getUserRoles(participant)
-                    .then(roles => {
-                        runRequest.user.roles = roles;
-                    })
-                    .then(() => {
-                        return customScript.run(runRequest);
-                    });
+                    // Build modules object
+                    let modules = {
+                        request: customRequest,
+                        spawn: require('child_process').spawn,
+                        childProcess: require('child_process'),
+                        fs: require('fs'),
+                        path: require('path'),
+                        JsonDb: require('node-json-db'),
+                        moment: require('moment'),
+                        logger: logger,
+                        chat: chat,
+                        mixplay: require("../../../interactive/mixplay"),
+                        utils: require("../../../utility")
+                    };
 
-                if (response) {
-                    // Add a check to verify the response is a Promise
-                    // If so, call the closure and process the response.
-                    // Otherwise, just do nothing.
-                    if (response instanceof Promise) {
-                        response.then(data => {
-
-                            if (data) {
-                                let responseObject = data;
-
-                                if (responseObject.success === true) {
-                                    if (typeof responseObject.callback !== "function") {
-                                        responseObject.callback = () => {};
-                                    }
-
-                                    let effects = responseObject.effects;
-
-
-                                    if (effects) {
-
-                                        //filter out effects that do not have v5 types assigned
-                                        effects = effects.filter(e => e.type != null);
-
-                                        //generate id's for effects that dont have them
-                                        effects = effects.map(e => {
-                                            if (e.id == null) {
-                                                e.id = uuidv1();
-                                            }
-                                            return e;
-                                        });
-                                    }
-
-                                    //Run effects if there are any
-                                    if (effects && effects.length > 0) {
-
-                                        let newTrigger = Object.assign({}, trigger);
-                                        newTrigger.type = TriggerType.CUSTOM_SCRIPT;
-
-                                        // Create request wrapper
-                                        let processEffectsRequest = {
-                                            trigger: newTrigger,
-                                            effects: {
-                                                list: effects,
-                                                id: uuidv1()
-                                            }
-                                        };
-
-                                        effectRunner
-                                            .processEffects(processEffectsRequest)
-                                            .then(() => {
-                                                responseObject.callback("effects");
-                                            });
-                                    }
-
-                                } else {
-                                    logger.error("Script failed. Sending error.");
-                                    logger.error(responseObject.errorMessage);
-                                    renderWindow.webContents.send("error", "Custom script failed with the message: " + responseObject.errorMessage);
-                                }
+                    //simpify parameters
+                    let simpleParams = {};
+                    if (parameters != null) {
+                        Object.keys(parameters).forEach(k => {
+                            let param = parameters[k];
+                            if (param != null) {
+                                simpleParams[k] = param.value == null && param.value !== ""
+                                    ? param.default
+                                    : param.value;
                             }
                         });
                     }
-                }
-            }, 1);
-        } else {
-            renderWindow.webContents.send("error", `Error running '${scriptName}', script does not contain a visible run fuction.`);
+
+                    let runRequest = {
+                        modules: modules,
+                        button: button != null
+                            ? {
+                                name: button.controlId,
+                                meta: button.meta || {}
+                            }
+                            : null,
+                        command: userCommand,
+                        user: {
+                            name: username
+                        },
+                        firebot: {
+                            accounts: accountAccess.getAccounts(),
+                            settings: {
+                                webServerPort: settings.getWebServerPort()
+                            },
+                            currentInteractiveBoardId: settings.getLastBoardName(),
+                            version: app.getVersion()
+                        },
+                        parameters: simpleParams,
+                        trigger: trigger,
+                        triggerType: triggerType // only here for backwards compat
+                    };
+
+                    let response = getUserRoles(participant)
+                        .then(roles => {
+                            runRequest.user.roles = roles;
+                        })
+                        .then(() => {
+                            return customScript.run(runRequest);
+                        });
+
+                    if (response) {
+                        // Add a check to verify the response is a Promise
+                        // If so, call the closure and process the response.
+                        // Otherwise, just do nothing.
+                        if (response instanceof Promise) {
+                            response.then(data => {
+
+                                if (data) {
+                                    let responseObject = data;
+
+                                    if (responseObject.success === true) {
+                                        if (typeof responseObject.callback !== "function") {
+                                            responseObject.callback = () => {};
+                                        }
+
+                                        let effects = responseObject.effects;
+
+                                        if (effects) {
+
+                                            //filter out effects that do not have v5 types assigned
+                                            effects = effects.filter(e => e.type != null);
+
+                                            //generate id's for effects that dont have them
+                                            effects = effects.map(e => {
+                                                if (e.id == null) {
+                                                    e.id = uuidv1();
+                                                }
+                                                return e;
+                                            });
+                                        }
+
+                                        //Run effects if there are any
+                                        if (effects && effects.length > 0) {
+
+                                            let newTrigger = Object.assign({}, trigger);
+                                            newTrigger.type = TriggerType.CUSTOM_SCRIPT;
+
+                                            // Create request wrapper
+                                            let processEffectsRequest = {
+                                                trigger: newTrigger,
+                                                effects: {
+                                                    list: effects,
+                                                    id: uuidv1()
+                                                }
+                                            };
+
+                                            effectRunner
+                                                .processEffects(processEffectsRequest)
+                                                .then(() => {
+                                                    responseObject.callback("effects");
+                                                    resolve();
+                                                });
+                                        }
+
+                                    } else {
+                                        logger.error("Script failed. Sending error.");
+                                        logger.error(responseObject.errorMessage);
+                                        renderWindow.webContents.send("error", "Custom script failed with the message: " + responseObject.errorMessage);
+                                        resolve();
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        resolve();
+                    }
+                }, 1);
+            } else {
+                renderWindow.webContents.send("error", `Error running '${scriptName}', script does not contain a visible run fuction.`);
+                resolve();
+            }
+        } catch (err) {
+            renderWindow.webContents.send("error", `Error loading the script '${scriptName}' \n\n ${err}`);
+            logger.error(err);
+            resolve();
         }
-    } catch (err) {
-        renderWindow.webContents.send("error", `Error loading the script '${scriptName}' \n\n ${err}`);
-        logger.error(err);
-    }
+    });
 }
 
 // Opens the custom scripts folder
