@@ -39,7 +39,7 @@ const fileWriter = {
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="script-type">{{effect.scriptName ? effect.scriptName : 'Pick one'}}</span> <span class="caret"></span>
                 </button>
-                <a ng-click="getNewScripts()" id="refreshScriptList" href="#" style="padding-left:5px;height:100%;"><i class="fa fa-refresh" id="refreshIcon" style="margin-top:10px;" aria-hidden="true"></i></a>
+                <a ng-click="getNewScripts()" id="refreshScriptList" href="#" style="padding-left:5px;height:100%;"><i class="far fa-sync" id="refreshIcon" style="margin-top:10px;" aria-hidden="true"></i></a>
                 <ul class="dropdown-menu script-dropdown">
                     <li ng-show="scriptArray.length == 0" class="muted">
                         <a href>No scripts found.</a>
@@ -51,7 +51,7 @@ const fileWriter = {
             </div>
         </eos-container>
 
-        <eos-container ng-show="effect.scriptName != null">
+        <eos-container ng-show="effect.scriptName != null" pad-top="true">
             <div ng-if="scriptManifest != null" style="padding-bottom:10px;"> 
                 <div class="script-name">{{scriptManifest.name ? scriptManifest.name : "Unnamed Script"}} <span class="script-version muted">{{scriptManifest.version ? scriptManifest.version : "Unknown"}}</span></div>
                 <div style="font-size: 13px;">by <span class="script-author">{{scriptManifest.author ? scriptManifest.author : "Unknown"}}</span><span ng-if="scriptManifest.website" class="script-website"> (<a ng-click="openScriptsWebsite()" class="clickable">{{scriptManifest.website}}</a>)</span><span></span></div>     
@@ -159,9 +159,7 @@ const fileWriter = {
 
         $scope.isLoadingParameters = true;
 
-        let scriptFolderPath = profileManager.getPathInProfile(
-            "/scripts"
-        );
+        let scriptFolderPath = profileManager.getPathInProfile("/scripts");
         // Grab files in folder when button effect shown.
         $scope.scriptArray = fs.readdirSync(scriptFolderPath);
 
