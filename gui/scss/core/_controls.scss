@@ -489,6 +489,37 @@ table.fb-table {
   border-bottom-right-radius: 5px;
 }
 
+.expandable-item { 
+    background: $fb-table-row-bg;
+    height: 45px;
+    border-radius: 5px;
+    box-shadow: $fb-table-shadow;
+    display: flex;
+    align-items: center;
+  
+    &:hover {
+      cursor: pointer;
+      background: $fb-table-row-bg - 5%;
+    }
+  
+    &.expanded {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      background: $fb-table-row-bg - 5%;
+      &:hover {
+        background: $fb-table-row-bg - 7%;
+      }
+    }
+  }
+
+  .expandable-item-expanded {
+    border: 2px solid $fb-table-row-bg - 5%;
+    border-top: none;
+    box-shadow: $sys-cmd-expanded-shadow;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
 .integration-row { 
   background: $integration-row-bg;
   height: 60px;

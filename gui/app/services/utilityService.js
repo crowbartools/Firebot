@@ -210,6 +210,24 @@
                 });
             };
 
+            service.openSelectModal = function(options, callback) {
+                service.showModal({
+                    component: "selectModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        options: () => options.options,
+                        label: () => options.label,
+                        selectPlaceholder: () => options.selectPlaceholder,
+                        saveText: () => options.saveText,
+                        validationText: () => options.validationText
+                    },
+                    closeCallback: async (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
+
             service.openViewerSearchModal = function(options, callback) {
                 service.showModal({
                     component: "viewerSearchModal",

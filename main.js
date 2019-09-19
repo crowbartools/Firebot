@@ -30,6 +30,7 @@ const builtInEventSourceLoader = require("./backend/live-events/builtinEventSour
 const integrationLoader = require("./backend/live-events/integrations/integrationLoader");
 const builtInVariableLoader = require("./backend/variables/builtin-variable-loader");
 const builtInEventFilterLoader = require("./backend/live-events/filters/builtin-filter-loader");
+const builtInRestrictionsLoader = require("./backend/restrictions/builtin-restrictions-loader");
 
 const Effect = require("./backend/common/EffectType");
 
@@ -509,6 +510,9 @@ function appOnReady() {
 
         //load variables
         builtInVariableLoader.loadReplaceVariables();
+
+        //load restrictions
+        builtInRestrictionsLoader.loadRestrictions();
 
         //start extra life manager
         //const extralifeManager = require('./backend/extralifeManager');

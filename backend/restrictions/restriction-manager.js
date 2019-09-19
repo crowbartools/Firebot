@@ -1,7 +1,7 @@
 "use strict";
 
 const { ipcMain } = require("electron");
-const logger = require("../../logwrapper");
+const logger = require("../logwrapper");
 const EventEmitter = require("events");
 
 class RestrictionsManager extends EventEmitter {
@@ -45,7 +45,7 @@ function mapRestrictionForFrontEnd(restriction) {
         optionsTemplate: restriction.optionsTemplate,
         optionsControllerRaw: restriction.optionsController ?
             restriction.optionsController.toString() : '() => {}',
-        optionsValueDisplay: restriction.optionsValueDisplay ?
+        optionsValueDisplayRaw: restriction.optionsValueDisplay ?
             restriction.optionsValueDisplay.toString() : "() => ''"
     };
 }

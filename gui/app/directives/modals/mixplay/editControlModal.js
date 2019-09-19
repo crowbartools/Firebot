@@ -49,6 +49,14 @@
 
                 </div>
 
+                <div>
+                    <restrictions-list 
+                        restrictions="$ctrl.control.restrictions"
+                        trigger="interactive" 
+                        trigger-meta="$ctrl.triggerMeta">
+                    </restrictions-section>
+                </div>
+
                 <div ng-if="$ctrl.supportsEffects" class="function-button-settings" style="margin-top: 15px;">
 
                     <effect-list header="What should this {{$ctrl.kindName}} do?" effects="$ctrl.control.effects" trigger="interactive" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
