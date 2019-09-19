@@ -37,8 +37,7 @@ function scriptProcessor(effect, trigger) {
             parameters = effect.parameters,
             control = trigger.metadata.control,
             userCommand = trigger.metadata.userCommand,
-            participant = trigger.metadata.participant,
-            triggerType = trigger.type;
+            participant = trigger.metadata.participant;
 
         logger.debug("running scrpt: " + scriptName);
 
@@ -47,7 +46,6 @@ function scriptProcessor(effect, trigger) {
             return resolve();
         }
 
-        let button = control;
         let username = trigger.metadata.username;
 
         let scriptsFolder = profileManager.getPathInProfile("/scripts");
@@ -128,12 +126,7 @@ function scriptProcessor(effect, trigger) {
 
                     let runRequest = {
                         modules: modules,
-                        button: button != null
-                            ? {
-                                name: button.controlId,
-                                meta: button.meta || {}
-                            }
-                            : null,
+                        control: control,
                         command: userCommand,
                         user: {
                             name: username
@@ -147,8 +140,7 @@ function scriptProcessor(effect, trigger) {
                             version: app.getVersion()
                         },
                         parameters: simpleParams,
-                        trigger: trigger,
-                        triggerType: triggerType // only here for backwards compat
+                        trigger: trigger
                     };
 
                     let response = getUserRoles(participant)
@@ -209,6 +201,10 @@ function scriptProcessor(effect, trigger) {
                                                 .processEffects(processEffectsRequest)
                                                 .then(() => {
                                                     responseObject.callback("effects");
+                                                    resolve();
+                                                })
+                                                .catch(err => {
+                                                    logger.error("Error running effects for script", err);
                                                     resolve();
                                                 });
                                         }
