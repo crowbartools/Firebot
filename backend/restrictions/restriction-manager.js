@@ -39,8 +39,21 @@ class RestrictionsManager extends EventEmitter {
 
 const manager = new RestrictionsManager();
 
-ipcMain.on("getRestrictions", () => {
+function mapRestrictionForFrontEnd(restriction) {
+    return {
+        definition: restriction.definition,
+        optionsTemplate: restriction.optionsTemplate,
+        optionsControllerRaw: restriction.optionsController ?
+            restriction.optionsController.toString() : '() => {}',
+        optionsValueDisplay: restriction.optionsValueDisplay ?
+            restriction.optionsValueDisplay.toString() : "() => ''"
+    };
+}
+
+ipcMain.on("getRestrictions", (event) => {
     logger.info("got 'get restrictions' request");
+
+    event.returnValue = manager.getAllRestrictions().map(r => mapRestrictionForFrontEnd(r));
 });
 
 module.exports = manager;

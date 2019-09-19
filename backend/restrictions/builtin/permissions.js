@@ -6,8 +6,11 @@ const model = {
         name: "Permissions",
         triggers: []
     },
-    optionsTemplate: "",
-    optionsController: () => {},
+    optionsTemplate: "<div></div>",
+    optionsController: (viewerRolesService) => {},
+    optionsValueDisplay: (model) => {
+        return "";
+    },
     predicate: (triggerData) => {
 
     }
