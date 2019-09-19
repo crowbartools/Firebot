@@ -136,7 +136,13 @@
                         message: [
                             {
                                 type: "text",
-                                data: message
+                                data: message,
+                                firebotSubsegments: [
+                                    {
+                                        type: "rawText",
+                                        text: message
+                                    }
+                                ]
                             }
                         ],
                         meta: {
