@@ -5,11 +5,14 @@ const mixplay = require("./mixplay");
 const effectManager = require("../effects/effectManager");
 const effectRunner = require("../common/effect-runner");
 const sparkExemptManager = require("./helpers/sparkExemptManager");
+const restrictionsManager = require("../restrictions/restriction-manager");
 const { TriggerType } = require("../common/EffectType");
 const { settings } = require('../common/settings-access');
 const userDatabase = require("../database/userDatabase.js");
 const cooldownManager = require("./cooldown-manager");
 const logger = require("../logwrapper");
+
+const mixerChat = require("../common/mixer-chat");
 
 function getConnectedProject() {
     const connectedProjectId = mixplayProjectManager.getConnectedProjectId();
@@ -57,6 +60,34 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
         return;
     }
 
+    console.log(participant);
+
+    let triggerData = {
+        type: TriggerType.INTERACTIVE,
+        metadata: {
+            username: participant.username,
+            userId: participant.userID,
+            userMixerRoles: participant.channelGroups,
+            participant: participant,
+            control: control,
+            inputData: inputData,
+            inputType: inputType
+        }
+    };
+
+    // Handle restrictions
+    if (control.restrictions) {
+        if (inputType !== "mouseup" && inputType !== "keyup") {
+            try {
+                await restrictionsManager.runRestrictionPredicates(triggerData, control.restrictions);
+            } catch (restrictionReason) {
+                logger.debug(`${participant.username} could not use control '${control.name}' because: ${restrictionReason}`);
+                mixerChat.smartSend("You cannot use this control because: " + restrictionReason, participant.username);
+                return;
+            }
+        }
+    }
+
     // Handle any cooldowns
     if (control.kind === "button" || control.kind === "textbox") {
         if (inputType !== "mouseup" && inputType !== "keyup") {
@@ -73,17 +104,7 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
 
         if (effectsForInputType.length > 0) {
             let processEffectsRequest = {
-                trigger: {
-                    type: TriggerType.INTERACTIVE,
-                    metadata: {
-                        username: participant.username,
-                        userId: participant.userID,
-                        participant: participant,
-                        control: control,
-                        inputData: inputData,
-                        inputType: inputType
-                    }
-                },
+                trigger: triggerData,
                 effects: control.effects
             };
 

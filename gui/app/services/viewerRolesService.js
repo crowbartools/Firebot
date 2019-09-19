@@ -44,6 +44,15 @@ const mixerRoleConstants = require("../../shared/mixer-roles");
                 return mixerRoles;
             };
 
+            service.getRoleById = function(id) {
+                let customRole = customRoles[id];
+                if (customRole != null) {
+                    return customRole;
+                }
+
+                return mixerRoles.find(r => r.id === id);
+            };
+
             return service;
         });
 }());

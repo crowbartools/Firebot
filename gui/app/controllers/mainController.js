@@ -88,6 +88,7 @@
         logger,
         chatMessagesService,
         groupsService,
+        viewerRolesService,
         connectionService,
         notificationService,
         $timeout,
@@ -100,8 +101,8 @@
         // Run loadLogin to update the UI on page load.
         connectionService.loadLogin();
 
-        //Attempt to load viewer groups into memory
-        groupsService.loadViewerGroups();
+        //load viewer roles
+        viewerRolesService.loadCustomRoles();
 
         //load commands
         commandsService.refreshCommands();

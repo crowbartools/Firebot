@@ -29,11 +29,34 @@ class RestrictionsManager extends EventEmitter {
     }
 
     getRestrictionById(restrictionId) {
-        return this._registeredRestrictions.find(r => r.id === restrictionId);
+        return this._registeredRestrictions.find(r => r.definition.id === restrictionId);
     }
 
     getAllRestrictions() {
         return this._registeredRestrictions;
+    }
+
+    runRestrictionPredicates(triggerData, restrictions) {
+        if (restrictions == null || restrictions.length < 1) {
+            return Promise.resolve();
+        }
+        let predicatePromises = [];
+        for (let restriction of restrictions) {
+            let restrictionDef = this.getRestrictionById(restriction.type);
+            if (restrictionDef && restrictionDef.predicate) {
+                predicatePromises.push(restrictionDef.predicate(triggerData, restriction));
+            }
+        }
+
+        return Promise.all(predicatePromises)
+            .then(() => {
+                for (let restriction of restrictions) {
+                    let restrictionDef = this.getRestrictionById(restriction.type);
+                    if (restrictionDef && restrictionDef.onSuccessful) {
+                        restrictionDef.onSuccessful(triggerData, restriction);
+                    }
+                }
+            });
     }
 }
 

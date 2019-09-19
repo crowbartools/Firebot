@@ -4,12 +4,7 @@
 
     angular
         .module("firebotApp")
-        .directive("effectOptions", function(
-            effectHelperService,
-            listenerService,
-            $sce,
-            $compile
-        ) {
+        .directive("effectOptions", function(effectHelperService, listenerService, $compile) {
             return {
                 restrict: "E",
                 scope: {
@@ -22,11 +17,6 @@
                 template: `<div><div id="child"></div></div>`,
                 link: function($scope, element) {
                     $scope.$watch("type", function() {
-                        //
-                        /* let templateUrlPath = effectHelperService.getTemplateFilePathForEffectType(
-                            $scope.type
-                        );
-                        $scope.templateUrl = templateUrlPath;*/
 
                         let effectDef = listenerService.fireEventSync(
                             "getEffectDefinition",
@@ -52,10 +42,6 @@
                     // and run it.
                     function findController() {
 
-                        /*if ($scope.triggerMeta) {
-                            $scope.triggerMeta.effectType = $scope.type;
-                        }*/
-
                         let effectDef = listenerService.fireEventSync(
                             "getEffectDefinition",
                             $scope.type
@@ -68,7 +54,7 @@
                             let effectController = eval(effectDef.optionsControllerRaw); // eslint-disable-line no-eval
 
                             if (effectController != null) {
-                            // Invoke the controller and inject any dependancies
+                                // Invoke the controller and inject any dependancies
                                 $injector.invoke(effectController, {}, { $scope: $scope });
                             }
                         }

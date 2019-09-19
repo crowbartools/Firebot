@@ -134,9 +134,7 @@ frontendCommunicator.on("deleteCustomRole", (roleId) => {
     deleteCustomRole(roleId);
 });
 
-
-
-
+exports.getAllCustomRolesForViewer = getAllCustomRolesForViewer;
 
 exports.loadCustomRoles = loadCustomRoles;
 
