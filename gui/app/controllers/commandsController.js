@@ -15,6 +15,23 @@
 
             $scope.commandsService = commandsService;
 
+            $scope.getPermisisonType = command => {
+
+                if (!command.restrictions ||
+                    command.restrictions.length < 1 ||
+                    !command.restrictions.some(r => r.type === "firebot:permissions")) {
+                    return "None";
+                }
+
+                let permissions = command.restrictions.find(r => r.type === "firebot:permissions");
+
+                if(permissions.mode === "roles") {
+                    return "Roles"
+                }
+                else if (permissions.mode === "s")
+
+            };
+
             $scope.getPermissionTooltip = command => {
                 let type = command.permission ? command.permission.type : "",
                     groups,
