@@ -20,9 +20,6 @@ const uptime = {
         cooldown: {
             user: 0,
             global: 0
-        },
-        permission: {
-            type: "none"
         }
     },
     /**

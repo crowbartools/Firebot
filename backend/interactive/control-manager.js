@@ -60,8 +60,6 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
         return;
     }
 
-    console.log(participant);
-
     let triggerData = {
         type: TriggerType.INTERACTIVE,
         metadata: {

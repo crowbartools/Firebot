@@ -16,35 +16,45 @@ const quotesManagement = {
             user: 0,
             global: 0
         },
-        permission: {
-            type: "none"
-        },
         subCommands: [
             {
                 arg: "add",
                 usage: "add [@username] [quote]",
                 description: "Adds a new quote.",
-                permission: {
-                    type: "group",
-                    groups: ["Channel Editors", "Streamer", "Moderators"]
-                }
+                restrictions: [
+                    {
+                        id: "sys-cmd-mods-only-perms",
+                        type: "firebot:permissions",
+                        mode: "roles",
+                        roleIds: [
+                            "Mod",
+                            "ChannelEditor",
+                            "Owner"
+                        ]
+                    }
+                ]
             },
             {
                 arg: "remove",
                 usage: "remove [quoteIdNumber]",
                 description: "Removes a quote using it's id number.",
-                permission: {
-                    type: "group",
-                    groups: ["Channel Editors", "Streamer", "Moderators"]
-                }
+                restrictions: [
+                    {
+                        id: "sys-cmd-mods-only-perms",
+                        type: "firebot:permissions",
+                        mode: "roles",
+                        roleIds: [
+                            "Mod",
+                            "ChannelEditor",
+                            "Owner"
+                        ]
+                    }
+                ]
             },
             {
                 arg: "list",
                 usage: "list",
-                description: "Gives a link that lists out all quotes.",
-                permission: {
-                    type: "none"
-                }
+                description: "Gives a link that lists out all quotes."
             }
         ]
     },

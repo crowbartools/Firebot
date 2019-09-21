@@ -9,16 +9,12 @@ const commandList = {
         name: "Command List",
         active: true,
         trigger: "!commands",
-        description:
-      "Whispers a list of all commands the user has permission to run.",
+        description: "Whispers a list of all commands the user has permission to run.",
         autoDeleteTrigger: false,
         scanWholeMessage: false,
         cooldown: {
             user: 0,
             global: 0
-        },
-        permission: {
-            type: "none"
         }
     },
     /**

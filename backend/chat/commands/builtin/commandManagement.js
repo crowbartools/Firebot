@@ -66,10 +66,17 @@ const commandManagement = {
             user: 0,
             global: 0
         },
-        permission: {
-            type: "group",
-            groups: ["Channel Editors", "Streamer"]
-        },
+        restrictions: [
+            {
+                id: "sys-cmd-mods-only-perms",
+                type: "firebot:permissions",
+                mode: "roles",
+                roleIds: [
+                    "ChannelEditor",
+                    "Owner"
+                ]
+            }
+        ],
         subCommands: [
             {
                 arg: "add",

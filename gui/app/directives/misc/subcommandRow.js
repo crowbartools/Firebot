@@ -79,10 +79,14 @@
             </div>
 
             <div>
-              <div class="muted" style="font-weight:bold; font-size: 12px;">PERMISSIONS</div>
-              <permission-options permission="$ctrl.subcommand.permission" hide-title="true"></permission-options>
+              <!--<div class="muted" style="font-weight:bold; font-size: 12px;">PERMISSIONS</div>-->
+              <div>
+                  <restrictions-list 
+                      restrictions="$ctrl.subcommand.restrictions"
+                      trigger="command">
+                  </restrictions-section>
+              </div>
             </div>
-
           </div>
         </div>
       </div>

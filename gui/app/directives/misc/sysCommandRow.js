@@ -18,7 +18,7 @@
                 <i class="far fa-user"></i> {{$ctrl.command.cooldown.user ? $ctrl.command.cooldown.user + "s" : "-" }}
             </span>
           </div>
-          <div style="width: 20%"><span style="text-transform: capitalize;">{{$ctrl.command.permission.type}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip($ctrl.command)"></tooltip></div>
+          <div style="width: 20%"><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType($ctrl.command)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip($ctrl.command)"></tooltip></div>
           <div style="width: 20%">
             <div style="min-width: 75px">
                 <span class="status-dot" ng-class="{'active': $ctrl.command.active, 'notactive': !$ctrl.command.active}"></span> {{$ctrl.command.active ? "Active" : "Disabled"}}
@@ -55,7 +55,7 @@
                   </div>
                   <div style="display: inline-block;">
                     <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> PERMISSIONS</span></div>
-                    <div><span style="text-transform: capitalize;">{{subCmd.permission.type}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd, true)"></tooltip></div>
+                    <div><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType(subCmd)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd)"></tooltip></div>
                   </div>
                 </div>                
               </div>
@@ -67,12 +67,12 @@
         </div>
       </div>
     `,
-        controller: function(utilityService, commandsService, listenerService) {
+        controller: function(utilityService, commandsService, listenerService, viewerRolesService) {
             let $ctrl = this;
 
             $ctrl.$onInit = function() {};
 
-            $ctrl.getPermissionTooltip = (command, isSub) => {
+            /*$ctrl.getPermissionTooltip = (command, isSub) => {
                 let type = command.permission ? command.permission.type : "";
                 let cmdType = isSub ? "subcommand" : "command";
                 switch (type) {
@@ -97,6 +97,46 @@
                         return `This ${cmdType} will use the permissions of the root command.`;
                     }
                     return `This ${cmdType} is available to everyone`;
+                }
+            };*/
+
+            $ctrl.getPermisisonType = command => {
+
+                let permissions = command.restrictions &&
+                  command.restrictions.find(r => r.type === "firebot:permissions");
+
+                if (permissions) {
+                    if (permissions.mode === "roles") {
+                        return "Roles";
+                    } else if (permissions.mode === "viewer") {
+                        return "Viewer";
+                    }
+                } else {
+                    return "None";
+                }
+            };
+
+            $ctrl.getPermissionTooltip = command => {
+
+                let permissions = command.restrictions &&
+                  command.restrictions.find(r => r.type === "firebot:permissions");
+
+                if (permissions) {
+                    if (permissions.mode === "roles") {
+                        let roleIds = permissions.roleIds;
+                        let output = "None selected";
+                        if (roleIds.length > 0) {
+                            output = roleIds
+                                .filter(id => viewerRolesService.getRoleById(id) != null)
+                                .map(id => viewerRolesService.getRoleById(id).name)
+                                .join(", ");
+                        }
+                        return `Roles (${output})`;
+                    } else if (permissions.mode === "viewer") {
+                        return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
+                    }
+                } else {
+                    return "This command is available to everyone";
                 }
             };
 

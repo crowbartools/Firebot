@@ -45,7 +45,13 @@
             </div>
         </div>
 
-        <permission-options permission="$ctrl.command.permission"></permission-options>
+        <div>
+            <restrictions-list 
+                restrictions="$ctrl.command.restrictions"
+                trigger="command" 
+                trigger-meta="$ctrl.triggerMeta">
+            </restrictions-section>
+        </div>
 
         <div class="other-settings" style="padding-bottom:1em">
             <div class="settings-title">

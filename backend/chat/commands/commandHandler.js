@@ -8,6 +8,8 @@ const mixerChat = require("../../common/mixer-chat");
 const util = require("../../utility");
 const moment = require("moment");
 const NodeCache = require("node-cache");
+const restrictionsManager = require("../../restrictions/restriction-manager");
+const { TriggerType } = require("../../common/EffectType");
 
 // commandaccess
 const commandManager = require("./CommandManager");
@@ -209,10 +211,8 @@ async function handleChatEvent(chatEvent, chatter) {
         commandSender = chatEvent.user_name; // Username of the person that sent the command.
 
     // If the chat came from a bot, ignore it.
-    if (
-        chatEvent.user_name === accountAccess.getAccounts().bot.username ||
-    (chatter === "bot" && !isWhisper)
-    ) {
+    if (chatEvent.user_name === accountAccess.getAccounts().bot.username ||
+        (chatter === "bot" && !isWhisper)) {
         return false;
     }
 
@@ -247,48 +247,43 @@ async function handleChatEvent(chatEvent, chatter) {
     let userCmd = buildUserCommand(command, rawMessage, commandSender);
 
     let triggeredSubcmd = null;
-    if (
-        !command.scanWholeMessage &&
-    userCmd.args.length > 0 &&
-    command.subCommands
-    ) {
+    if (!command.scanWholeMessage && userCmd.args.length > 0 && command.subCommands) {
         for (let subcmd of command.subCommands) {
-            if (
-                subcmd.active &&
-        subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()
-            ) {
+            if (subcmd.active && subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()) {
                 triggeredSubcmd = subcmd;
                 userCmd.triggeredArg = subcmd.arg;
             }
         }
     }
 
-    if (
-        command.autoDeleteTrigger ||
-    (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)
-    ) {
+    if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
         mixerChat.deleteChat(chatEvent.id);
     }
 
-    let permissions =
-    triggeredSubcmd && triggeredSubcmd.permission != null
-        ? triggeredSubcmd.permission
-        : command.permission;
+    let restrictions =
+        triggeredSubcmd && triggeredSubcmd.restrictions != null
+            ? triggeredSubcmd.restrictions
+            : command.restrictions;
 
-    // Check if the user has permission for base command
-    let userHasPermission = await permissionsManager.userHasPermission(
-        commandSender,
-        chatEvent.user_roles,
-        permissions
-    );
-
-    // check perms for sub commands
-    if (!userHasPermission) {
-        mixerChat.smartSend(
-            "You do not have permission to run this command.",
-            commandSender
-        );
-        return false;
+    // Handle restrictions
+    if (restrictions) {
+        let triggerData = {
+            type: TriggerType.COMMAND,
+            metadata: {
+                username: commandSender,
+                userMixerRoles: chatEvent.user_roles,
+                command: command,
+                userCommand: userCmd,
+                chatEvent: chatEvent
+            }
+        };
+        try {
+            await restrictionsManager.runRestrictionPredicates(triggerData, restrictions);
+        } catch (restrictionReason) {
+            logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${restrictionReason}`);
+            mixerChat.smartSend("You cannot use this command because: " + restrictionReason, commandSender);
+            return false;
+        }
     }
 
     // Check if the command is on cooldown
