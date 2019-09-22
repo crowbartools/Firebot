@@ -1,1 +1,8 @@
-[]
+[
+  {
+        "id": 69420,
+        "title": "Known Issue: Intermittently Can't Chat As Bot",
+        "message": "<div>We are actively looking into an issue that sometimes prevents the Bot account from being able to chat.<br>When this happens, the Streamer account is used to chat instead.<br>Falling back to the Streamer account is intended behavior while we investigate this issue.<br><br>We greatly appreciate your patience!</div>",
+        "icon": "alert"
+    }
+]
