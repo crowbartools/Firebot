@@ -36,7 +36,7 @@
     "license": "GPL-3.0",
     "devDependencies": {
         "electron": "1.7.10",
-        "electron-packager": "10.1.2",
+        "electron-packager": "^14.0.6",
         "electron-rebuild": "1.7.3",
         "grunt": "^1.0.1",
         "grunt-electron-installer": "^2.1.0",
