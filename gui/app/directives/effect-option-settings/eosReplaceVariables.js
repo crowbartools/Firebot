@@ -16,7 +16,7 @@
                             <li><b>$(uptime)</b> - How long the stream has been broadcasting</li>
                             <li><b>$(streamer)</b> - The name of the account signed in as the Streamer</li>
                             <li><b>$(bot)</b> - The name of the account signed in as the Bot</li>
-                            <li><b>$(costreamChannels)</b> - Comma seperated list of channel names you are currently costreaming with.</li>
+                            <li><b>$(costreamChannels)</b> - Comma separated list of channel names you are currently costreaming with.</li>
                             <li><b>$(game)</b> - The game you are currenly or last played</li>
                             <li><b>$(game[streamerName])</b> - The game the provided streamer last played. Can be used in conjuction with $(arg) or $(target), ie $(game[$(target)])</li>
                             <li><b>$(streamTitle)</b> - The current title of your stream.</li>
