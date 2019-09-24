@@ -260,8 +260,6 @@
                         settingsService,
                         instanceName
                     ) => {
-                        dataAccess.getPathInUserData("overlay.html");
-                        // $scope.overlayPath = `http://localhost:${settingsService.getWebServerPort()}/overlay`;
 
                         $scope.overlayPath = dataAccess.getPathInUserData("overlay.html");
 

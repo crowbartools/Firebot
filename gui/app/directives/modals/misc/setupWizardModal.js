@@ -10,8 +10,7 @@
         </div>
             <div class="modal-body" style="text-align:center">
 
-                <div ng-switch="$ctrl.getCurrentStep()" class="slide-frame"> 
-                    
+                <div ng-switch="$ctrl.getCurrentStep()" class="slide-frame">              
                 
                     <div ng-switch-when="0" class="wave">
                         <div class="welcome-wrapper">
@@ -30,11 +29,8 @@
                     <div ng-switch-when="1" class="wave">
                         <p>
                             Firebot supports two different Mixer accounts:</br></br>
-                            <b>Streamer</b> - the account you stream with.</br>
-                            <b>Bot</b> - a second account that can chat to your viewers.
-                        </p>
-                        <p>
-                            You will need to sign into at least your <b>Streamer</b> account to use Firebot's features.
+                            <b>Streamer</b> - the account you stream with <span class="muted">(Required)</span></br>
+                            <b>Bot</b> - a second account that can chat to your viewers  <span class="muted">(Optional)</span>
                         </p>
                         <div class="wizard-accounts-wrapper">
                             <div class="wizard-accounts-title">
@@ -95,6 +91,35 @@
 
 
                     <div ng-switch-when="2" class="wave">
+
+                        <p>The overlay is what allows Firebot to display images, videos, and more on your stream.</p>
+
+                        <p>To setup the overlay, simply copy the path below and add it to the URL field of a new <b>Browser/Webpage Source</b> in your broadcasting software of choice.</p>
+
+                        <div style="margin: 15px 0;display: flex;justify-content: center;">
+                            <div class="input-group" style="width:75%;">
+                                <input type="text" class="form-control" style="cursor:text;" ng-model="$ctrl.overlayPath" disabled>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="$ctrl.copyOverlayPath()">Copy</button>
+                                </span>
+                            </div>
+                            <p ng-if="$ctrl.overlayPathCopied" style="color: green;">
+                                Overlay path copied!
+                            </p>
+                        </div>
+
+                        <p class="muted" style="font-size:12px;">Note: Do not check "Local File" and make sure the browser source fills your canvas (ie 1920x1080, 1280x720, etc)</Make>
+
+                        <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
+                            <div class="connection-tile">
+                                <span class="connection-title">Overlay Status</span>
+                                <div class="overlay-button" ng-class="{ 'connected': $ctrl.getOverlayStatusId() == 1, 'warning': $ctrl.getOverlayStatusId() == 0,'disconnected': $ctrl.getOverlayStatusId() == -1  }">
+                                    <i class="fal fa-tv-retro"></i>
+                                </div>
+                                <div style="text-align: center; font-size: 11px;" class="muted">{{ $ctrl.overlayConnectionMessage()}}</div>
+                            </div>
+                        </div>
+
                     </div>
 
 
@@ -142,7 +167,8 @@
             close: "&",
             dismiss: "&"
         },
-        controller: function(connectionService) {
+        controller: function($rootScope, connectionService, connectionManager,
+            overlayUrlHelper) {
             let $ctrl = this;
 
             $ctrl.step = 0;
@@ -207,6 +233,10 @@
                 switch ($ctrl.step) {
                 case 1:
                     return connectionService.accounts.streamer.isLoggedIn;
+                case 2: {
+                    let overlayStatus = connectionManager.getOverlayStatus();
+                    return !overlayStatus.serverStarted || overlayStatus.clientsConnected;
+                }
                 }
                 return true;
             };
@@ -217,6 +247,7 @@
                 } else {
                     switch ($ctrl.step) {
                     case 1:
+                    case 2:
                         if (!$ctrl.canGoToNext() && !forceNext) return;
                         break;
                     }
@@ -228,6 +259,8 @@
                 switch ($ctrl.step) {
                 case 1:
                     return "Please sign into your Streamer account.";
+                case 2:
+                    return "Please add the overlay url to your broadcasting software.";
                 }
                 return "";
             };
@@ -235,6 +268,32 @@
             $ctrl.streamerAccount = connectionService.accounts.streamer;
             $ctrl.botAccount = connectionService.accounts.bot;
             $ctrl.loginOrLogout = connectionService.loginOrLogout;
+
+            $ctrl.overlayPath = overlayUrlHelper.getOverlayPath();
+            $ctrl.overlayPathCopied = false;
+            $ctrl.copyOverlayPath = function() {
+                $rootScope.copyTextToClipboard($ctrl.overlayPath);
+                $ctrl.overlayPathCopied = true;
+            };
+
+            let overlayStatusId = 0;
+            $ctrl.overlayConnectionMessage = function() {
+                let connectionStatus = connectionManager
+                    .getConnectionStatusForService("overlay");
+                if (connectionStatus === "connected") {
+                    overlayStatusId = 1;
+                    return "Connected";
+                } else if (connectionStatus === "warning") {
+                    overlayStatusId = 0;
+                    return "Ready, but nothing is connected at this time.";
+                }
+                overlayStatusId = -1;
+                return "Error starting web server. App restart required.";
+            };
+
+            $ctrl.getOverlayStatusId = function() {
+                return overlayStatusId;
+            };
 
             $ctrl.$onInit = function() {
                 // When the compontent is initialized

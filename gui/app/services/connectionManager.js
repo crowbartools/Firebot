@@ -326,6 +326,10 @@
                 return connectionStatus;
             };
 
+            service.getOverlayStatus = function() {
+                return overlayStatus;
+            };
+
             return service;
         });
 }(window.angular));
