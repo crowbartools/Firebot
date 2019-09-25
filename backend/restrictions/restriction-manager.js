@@ -13,17 +13,17 @@ class RestrictionsManager extends EventEmitter {
 
     registerRestriction(restriction) {
         let idConflict = this._registeredRestrictions.some(
-            r => r.id === restriction.id
+            r => r.definition.id === restriction.definition.id
         );
 
         if (idConflict) {
-            logger.warning(`Could not register restriction '${restriction.id}', a restriction with this id already exists.`);
+            logger.warn(`Could not register restriction '${restriction.definition.id}', a restriction with this id already exists.`);
             return;
         }
 
         this._registeredRestrictions.push(restriction);
 
-        logger.debug(`Registered Restriction ${restriction.id}`);
+        logger.debug(`Registered Restriction ${restriction.definition.id}`);
 
         this.emit("restrictionRegistered", restriction);
     }

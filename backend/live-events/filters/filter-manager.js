@@ -17,12 +17,12 @@ class FilterManager extends EventEmitter {
         );
 
         if (idConflict) {
-            logger.warning(`Could not register event filter '${filter.id}' a filter with this id already exists.`);
+            logger.warn(`Could not register event filter '${filter.id}' a filter with this id already exists.`);
             return;
         }
 
         if (filter.events == null || filter.events.length === 0) {
-            logger.warning(`Could not register event filter '${filter.id}' because no events are specified.`);
+            logger.warn(`Could not register event filter '${filter.id}' because no events are specified.`);
             return;
         }
 
@@ -74,7 +74,7 @@ class FilterManager extends EventEmitter {
                         }
                     } catch (err) {
                         // Tell front end an error happened
-                        logger.warning(`An error happened when attempting to process the filter ${filterSetting.type} for event ${eventData.eventSourceId}:${eventData.eventId}: "${err}"`);
+                        logger.warn(`An error happened when attempting to process the filter ${filterSetting.type} for event ${eventData.eventSourceId}:${eventData.eventId}: "${err}"`);
                     }
                 }
             }

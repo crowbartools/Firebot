@@ -7,7 +7,7 @@ const model = {
     definition: {
         id: "firebot:permissions",
         name: "Permissions",
-        description: "Restrict based on viewer name or roles.",
+        description: "Restrict based on viewer roles or username.",
         triggers: []
     },
     optionsTemplate: `

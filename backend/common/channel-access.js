@@ -106,6 +106,29 @@ exports.getMixerAccountDetailsByUsername = function(username) {
     });
 };
 
+exports.getChannelProgressionByUsername = async function(username) {
+
+    let idData = await exports.getIdsFromUsername(username);
+
+    if (idData == null) {
+        return null;
+    }
+
+    return exports.getChannelProgressionForUser(idData.userId);
+};
+
+
+exports.getChannelProgressionForUser = async function(userId) {
+    let streamerData = accountAccess.getAccounts().streamer;
+    try {
+        let chatProgression = await mixerApi
+            .get(`ascension/channels/${streamerData.channelId}/users/${userId}`, "v1", false, true);
+        return chatProgression && chatProgression.level;
+    } catch (err) {
+        return null;
+    }
+};
+
 function getContinuationToken(linkHeader) {
     let parsed = linkHeaderParser(linkHeader);
     if (parsed.next) {

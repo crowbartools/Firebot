@@ -297,7 +297,7 @@ ipcMain.on("controlsUpdated", function(_, data) {
     }).then(() => {
         logger.debug("Successfully updated controls.");
     }, (reason) => {
-        logger.warning("Failed to update controls:", reason);
+        logger.warn("Failed to update controls:", reason);
     });
 });
 
