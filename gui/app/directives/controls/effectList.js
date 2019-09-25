@@ -205,7 +205,6 @@
                             index++;
                         }
                         let copiedEffects = objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
-                        debugger;
                         ctrl.effectsData.list.splice(index, 0, ...copiedEffects);
                         ctrl.effectsUpdate();
                     }
