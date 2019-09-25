@@ -75,7 +75,7 @@
                 <h3>Settings</h3>
             </div>
             <div class="controls-fb-inline">
-                <label class="control-fb control--checkbox">Active Command
+                <label class="control-fb control--checkbox">Enabled
                     <input type="checkbox" ng-model="$ctrl.command.active" aria-label="..." checked>
                     <div class="control__indicator"></div>
                 </label>
@@ -89,8 +89,8 @@
                     <input type="checkbox" ng-model="$ctrl.command.allowInCostreams" aria-label="...">
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--checkbox">Skip Logging
-                    <input type="checkbox" ng-model="$ctrl.command.skipLog" aria-label="...">
+                <label class="control-fb control--checkbox">Hidden <tooltip text="'Hide this command from the !commands list'"></tooltip>
+                    <input type="checkbox" ng-model="$ctrl.command.hidden" aria-label="...">
                     <div class="control__indicator"></div>
                 </label>
             </div>

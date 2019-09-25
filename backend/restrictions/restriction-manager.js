@@ -36,6 +36,24 @@ class RestrictionsManager extends EventEmitter {
         return this._registeredRestrictions;
     }
 
+    checkPermissionsPredicateOnly(restrictions, username, mixerRoles) {
+        if (restrictions == null || restrictions.length < 1) {
+            return Promise.resolve(true);
+        }
+        let permissions = restrictions.find(r => r.type === "firebot:permissions");
+        if (permissions == null) {
+            return Promise.resolve(true);
+        }
+        let triggerData = {
+            metadata: {
+                username: username,
+                userMixerRoles: mixerRoles
+            }
+        };
+        return this.runRestrictionPredicates(triggerData, [permissions])
+            .then(() => true, () => false);
+    }
+
     runRestrictionPredicates(triggerData, restrictions) {
         if (restrictions == null || restrictions.length < 1) {
             return Promise.resolve();

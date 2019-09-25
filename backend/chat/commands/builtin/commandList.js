@@ -26,9 +26,9 @@ const commandList = {
             const Chat = require("../../../common/mixer-chat");
 
             let profileJSON = {
-                'username': event.chatEvent.user_name,
-                'userRoles': event.chatEvent.user_roles,
-                'profilePage': 'quotes'
+                username: event.chatEvent.user_name,
+                userRoles: event.chatEvent.user_roles,
+                profilePage: 'quotes'
             };
 
             let binId = await cloudSync.syncProfileData(profileJSON);

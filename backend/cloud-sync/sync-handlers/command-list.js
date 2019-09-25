@@ -2,6 +2,7 @@
 
 const commandManager = require("../../chat/commands/CommandManager");
 const permissionsManager = require("../../common/permissions-manager");
+const restrictionsManager = require("../../restrictions/restriction-manager");
 
 async function getCommandListForSync(username, userRoles) {
     let allCommands = commandManager.getAllActiveCommands();
@@ -10,14 +11,13 @@ async function getCommandListForSync(username, userRoles) {
     };
 
     for (let cmd of allCommands) {
+        if (!cmd.active || cmd.hidden) continue;
         if (username == null || userRoles == null) {
             commandData.allowedCmds.push(cmd);
         } else {
-            let userHasPermission = await permissionsManager.userHasPermission(
-                username,
-                userRoles,
-                cmd.permission
-            );
+
+            let userHasPermission = await restrictionsManager
+                .checkPermissionsPredicateOnly(cmd.restrictions, username, userRoles);
 
             if (userHasPermission && cmd.active !== false) {
                 commandData.allowedCmds.push(cmd);
