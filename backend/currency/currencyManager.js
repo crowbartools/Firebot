@@ -127,35 +127,39 @@ function createCurrencyCommandDefinition(currency) {
                     arg: "add",
                     usage: "add [@user] [amount]",
                     description: "Adds currency for a given user.",
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
-                            ]
-                        }
-                    ]
+                    restrictionData: {
+                        restrictions: [
+                            {
+                                id: "sys-cmd-mods-only-perms",
+                                type: "firebot:permissions",
+                                mode: "roles",
+                                roleIds: [
+                                    "Mod",
+                                    "ChannelEditor",
+                                    "Owner"
+                                ]
+                            }
+                        ]
+                    }
                 },
                 {
                     arg: "remove",
                     usage: "remove [@user] [amount]",
                     description: "Removes currency for a given user.",
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
-                            ]
-                        }
-                    ]
+                    restrictionData: {
+                        restrictions: [
+                            {
+                                id: "sys-cmd-mods-only-perms",
+                                type: "firebot:permissions",
+                                mode: "roles",
+                                roleIds: [
+                                    "Mod",
+                                    "ChannelEditor",
+                                    "Owner"
+                                ]
+                            }
+                        ]
+                    }
                 },
                 {
                     arg: "give",
@@ -166,35 +170,39 @@ function createCurrencyCommandDefinition(currency) {
                     arg: "giveall",
                     usage: "giveall [amount]",
                     description: "Gives currency to all online users.",
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
-                            ]
-                        }
-                    ]
+                    restrictionData: {
+                        restrictions: [
+                            {
+                                id: "sys-cmd-mods-only-perms",
+                                type: "firebot:permissions",
+                                mode: "roles",
+                                roleIds: [
+                                    "Mod",
+                                    "ChannelEditor",
+                                    "Owner"
+                                ]
+                            }
+                        ]
+                    }
                 },
                 {
                     arg: "removeall",
                     usage: "removeall [amount]",
                     description: "Removes currency from all online users.",
-                    restrictions: [
-                        {
-                            id: "sys-cmd-mods-only-perms",
-                            type: "firebot:permissions",
-                            mode: "roles",
-                            roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
-                            ]
-                        }
-                    ]
+                    restrictionData: {
+                        restrictions: [
+                            {
+                                id: "sys-cmd-mods-only-perms",
+                                type: "firebot:permissions",
+                                mode: "roles",
+                                roleIds: [
+                                    "Mod",
+                                    "ChannelEditor",
+                                    "Owner"
+                                ]
+                            }
+                        ]
+                    }
                 }
             ]
         },

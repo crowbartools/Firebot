@@ -21,35 +21,39 @@ const quotesManagement = {
                 arg: "add",
                 usage: "add [@username] [quote]",
                 description: "Adds a new quote.",
-                restrictions: [
-                    {
-                        id: "sys-cmd-mods-only-perms",
-                        type: "firebot:permissions",
-                        mode: "roles",
-                        roleIds: [
-                            "Mod",
-                            "ChannelEditor",
-                            "Owner"
-                        ]
-                    }
-                ]
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 arg: "remove",
                 usage: "remove [quoteIdNumber]",
                 description: "Removes a quote using it's id number.",
-                restrictions: [
-                    {
-                        id: "sys-cmd-mods-only-perms",
-                        type: "firebot:permissions",
-                        mode: "roles",
-                        roleIds: [
-                            "Mod",
-                            "ChannelEditor",
-                            "Owner"
-                        ]
-                    }
-                ]
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 arg: "list",

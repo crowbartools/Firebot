@@ -18,8 +18,8 @@
 
             $scope.getPermisisonType = command => {
 
-                let permissions = command.restrictions &&
-                    command.restrictions.find(r => r.type === "firebot:permissions");
+                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                    command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                 if (permissions) {
                     if (permissions.mode === "roles") {
@@ -34,8 +34,8 @@
 
             $scope.getPermissionTooltip = command => {
 
-                let permissions = command.restrictions &&
-                    command.restrictions.find(r => r.type === "firebot:permissions");
+                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                    command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
 
                 if (permissions) {
                     if (permissions.mode === "roles") {

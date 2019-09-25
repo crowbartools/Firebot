@@ -36,10 +36,12 @@ class RestrictionsManager extends EventEmitter {
         return this._registeredRestrictions;
     }
 
-    checkPermissionsPredicateOnly(restrictions, username, mixerRoles) {
-        if (restrictions == null || restrictions.length < 1) {
+    checkPermissionsPredicateOnly(restrictionData, username, mixerRoles) {
+        if (restrictionData == null || restrictionData.restrictions == null ||
+            restrictionData.restrictions.length < 1) {
             return Promise.resolve(true);
         }
+        let restrictions = restrictionData;
         let permissions = restrictions.find(r => r.type === "firebot:permissions");
         if (permissions == null) {
             return Promise.resolve(true);
@@ -54,10 +56,12 @@ class RestrictionsManager extends EventEmitter {
             .then(() => true, () => false);
     }
 
-    runRestrictionPredicates(triggerData, restrictions) {
-        if (restrictions == null || restrictions.length < 1) {
+    runRestrictionPredicates(triggerData, restrictionData) {
+        if (restrictionData == null || restrictionData.restrictions == null ||
+            restrictionData.restrictions.length < 1) {
             return Promise.resolve();
         }
+        let restrictions = restrictionData.restrictions;
         let predicatePromises = [];
         for (let restriction of restrictions) {
             let restrictionDef = this.getRestrictionById(restriction.type);

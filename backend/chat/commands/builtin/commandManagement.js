@@ -66,17 +66,19 @@ const commandManagement = {
             user: 0,
             global: 0
         },
-        restrictions: [
-            {
-                id: "sys-cmd-mods-only-perms",
-                type: "firebot:permissions",
-                mode: "roles",
-                roleIds: [
-                    "ChannelEditor",
-                    "Owner"
-                ]
-            }
-        ],
+        restrictionData: {
+            restrictions: [
+                {
+                    id: "sys-cmd-mods-only-perms",
+                    type: "firebot:permissions",
+                    mode: "roles",
+                    roleIds: [
+                        "ChannelEditor",
+                        "Owner"
+                    ]
+                }
+            ]
+        },
         subCommands: [
             {
                 arg: "add",
@@ -327,7 +329,7 @@ const commandManagement = {
                     });
                 }
 
-                command.restrictions = restrictions;
+                command.restrictionData = { restrictions: restrictions };
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
 

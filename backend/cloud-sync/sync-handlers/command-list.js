@@ -1,7 +1,6 @@
 "use strict";
 
 const commandManager = require("../../chat/commands/CommandManager");
-const permissionsManager = require("../../common/permissions-manager");
 const restrictionsManager = require("../../restrictions/restriction-manager");
 
 async function getCommandListForSync(username, userRoles) {
@@ -17,7 +16,7 @@ async function getCommandListForSync(username, userRoles) {
         } else {
 
             let userHasPermission = await restrictionsManager
-                .checkPermissionsPredicateOnly(cmd.restrictions, username, userRoles);
+                .checkPermissionsPredicateOnly(cmd.restrictionData, username, userRoles);
 
             if (userHasPermission && cmd.active !== false) {
                 commandData.allowedCmds.push(cmd);

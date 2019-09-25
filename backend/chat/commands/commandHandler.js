@@ -260,13 +260,14 @@ async function handleChatEvent(chatEvent, chatter) {
         mixerChat.deleteChat(chatEvent.id);
     }
 
-    let restrictions =
-        triggeredSubcmd && triggeredSubcmd.restrictions != null
-            ? triggeredSubcmd.restrictions
-            : command.restrictions;
+    let restrictionData =
+        triggeredSubcmd && triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
+            && triggeredSubcmd.restrictionData.restrictions.length > 0
+            ? triggeredSubcmd.restrictionData
+            : command.restrictionData;
 
     // Handle restrictions
-    if (restrictions) {
+    if (restrictionData) {
         let triggerData = {
             type: TriggerType.COMMAND,
             metadata: {
@@ -278,7 +279,7 @@ async function handleChatEvent(chatEvent, chatter) {
             }
         };
         try {
-            await restrictionsManager.runRestrictionPredicates(triggerData, restrictions);
+            await restrictionsManager.runRestrictionPredicates(triggerData, restrictionData);
         } catch (restrictionReason) {
             logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${restrictionReason}`);
             mixerChat.smartSend("You cannot use this command because: " + restrictionReason, commandSender);

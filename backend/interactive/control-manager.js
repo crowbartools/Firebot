@@ -74,10 +74,10 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
     };
 
     // Handle restrictions
-    if (control.restrictions) {
+    if (control.restrictionData) {
         if (inputType !== "mouseup" && inputType !== "keyup") {
             try {
-                await restrictionsManager.runRestrictionPredicates(triggerData, control.restrictions);
+                await restrictionsManager.runRestrictionPredicates(triggerData, control.restrictionData);
             } catch (restrictionReason) {
                 logger.debug(`${participant.username} could not use control '${control.name}' because: ${restrictionReason}`);
                 mixerChat.smartSend("You cannot use this control because: " + restrictionReason, participant.username);

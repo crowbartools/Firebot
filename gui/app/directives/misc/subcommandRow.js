@@ -21,7 +21,7 @@
             </span>
           </div>
 
-          <div style="width: 25%"><span style="text-transform: capitalize;">{{$ctrl.subcommand.permission.type}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip($ctrl.subcommand, true)"></tooltip></div>
+          <div style="width: 25%"><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType()}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip()"></tooltip></div>
 
           <div style="width: 25%">
             <div style="min-width: 75px">
@@ -82,7 +82,7 @@
               <!--<div class="muted" style="font-weight:bold; font-size: 12px;">PERMISSIONS</div>-->
               <div>
                   <restrictions-list 
-                      restrictions="$ctrl.subcommand.restrictions"
+                      restriction-data="$ctrl.subcommand.restrictionData"
                       trigger="command">
                   </restrictions-section>
               </div>
@@ -91,12 +91,54 @@
         </div>
       </div>
     `,
-        controller: function() {
+        controller: function(viewerRolesService) {
             let $ctrl = this;
 
             $ctrl.$onInit = function() {};
 
-            $ctrl.getPermissionTooltip = (command, isSub) => {
+            $ctrl.getPermisisonType = () => {
+                let command = $ctrl.subcommand;
+
+                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
+
+                if (permissions) {
+                    if (permissions.mode === "roles") {
+                        return "Roles";
+                    } else if (permissions.mode === "viewer") {
+                        return "Viewer";
+                    }
+                } else {
+                    return "Inherited";
+                }
+            };
+
+            $ctrl.getPermissionTooltip = () => {
+                let command = $ctrl.subcommand;
+                let permissions = command.restrictionData && command.restrictionData.restrictions &&
+                command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
+
+                if (permissions) {
+                    if (permissions.mode === "roles") {
+                        let roleIds = permissions.roleIds;
+                        let output = "None selected";
+                        if (roleIds.length > 0) {
+                            output = roleIds
+                                .filter(id => viewerRolesService.getRoleById(id) != null)
+                                .map(id => viewerRolesService.getRoleById(id).name)
+                                .join(", ");
+                        }
+                        return `Roles (${output})`;
+                    } else if (permissions.mode === "viewer") {
+                        return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
+                    }
+                } else {
+                    return "This subcommand will use the permissions of the root command.";
+                }
+            };
+
+
+            /*$ctrl.getPermissionTooltip = (command, isSub) => {
                 let type = command.permission ? command.permission.type : "";
                 let cmdType = isSub ? "subcommand" : "command";
 
@@ -122,7 +164,7 @@
                     }
                     return `This ${cmdType} is available to everyone`;
                 }
-            };
+            };*/
         }
     });
 }());

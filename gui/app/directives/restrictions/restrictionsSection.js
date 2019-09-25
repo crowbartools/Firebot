@@ -9,7 +9,7 @@
             bindings: {
                 trigger: "@",
                 triggerMeta: "<",
-                restrictions: "=",
+                restrictionData: "=",
                 modalId: "@"
             },
             template: `
@@ -17,7 +17,7 @@
                     <h3 style="margin-bottom: 5px;">Restrictions</h3>
                     <div class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">Permissons, currency costs, and more</div>
                     <div>
-                        <restriction-item ng-repeat="restriction in $ctrl.restrictions" 
+                        <restriction-item ng-repeat="restriction in $ctrl.restrictionData.restrictions" 
                             restriction="restriction" 
                             restriction-definition="$ctrl.getRestrictionDefinition(restriction.type)"
                             on-delete="$ctrl.deleteRestriction(restriction.id)">
@@ -51,20 +51,27 @@
                 function updateCanAddMoreRestrictions() {
                     $ctrl.canAddMoreRestrictions = restrictionDefinitions
                         .some(r => {
-                            return !$ctrl.restrictions.some(rs => rs.type === r.definition.id);
+                            return !$ctrl.restrictionData.restrictions.some(rs => rs.type === r.definition.id);
                         });
                 }
 
                 $ctrl.$onInit = function() {
-                    if ($ctrl.restrictions == null) {
-                        $ctrl.restrictions = [];
+                    if ($ctrl.restrictionData == null) {
+                        $ctrl.restrictionData = {
+                            restrictions: []
+                        };
+                    }
+
+                    if ($ctrl.restrictionData.restrictions == null) {
+                        $ctrl.restrictionData.restrictions = [];
                     }
 
                     updateCanAddMoreRestrictions();
                 };
 
                 $ctrl.deleteRestriction = function(restrictionId) {
-                    $ctrl.restrictions = $ctrl.restrictions.filter(r => r.id !== restrictionId);
+                    $ctrl.restrictionData.restrictions = $ctrl.restrictionData.restrictions
+                        .filter(r => r.id !== restrictionId);
 
                     updateCanAddMoreRestrictions();
                 };
@@ -77,7 +84,7 @@
 
                     let options = restrictionDefinitions
                         .filter(r => {
-                            return !$ctrl.restrictions.some(rs => rs.type === r.definition.id);
+                            return !$ctrl.restrictionData.restrictions.some(rs => rs.type === r.definition.id);
                         })
                         .map(r => {
                             return {
@@ -97,9 +104,10 @@
                         },
                         (selectedId) => {
                             // just in case, remove any other restrictions of the same type
-                            $ctrl.restrictions = $ctrl.restrictions.filter(r => r.type !== selectedId);
+                            $ctrl.restrictionData.restrictions = $ctrl.restrictionData.restrictions
+                                .filter(r => r.type !== selectedId);
 
-                            $ctrl.restrictions.push({
+                            $ctrl.restrictionData.restrictions.push({
                                 id: uuidv1(),
                                 type: selectedId
                             });

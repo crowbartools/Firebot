@@ -51,7 +51,7 @@
 
                 <div>
                     <restrictions-list 
-                        restrictions="$ctrl.control.restrictions"
+                        restriction-data="$ctrl.control.restrictionData"
                         trigger="interactive" 
                         trigger-meta="$ctrl.triggerMeta">
                     </restrictions-section>
