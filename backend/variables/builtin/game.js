@@ -8,10 +8,10 @@ const model = {
     definition: {
         handle: "game",
         usage: "game[username]",
-        description: "Gets the current game you last played, or the last game the given user was playing.",
+        description: "Gets the current game set for your channel or the given usernames channel",
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: async (trigger, username) => {
+    evaluator: async (_, username) => {
         if (username == null) {
             username = accountAccess.getAccounts().streamer.username;
         }
