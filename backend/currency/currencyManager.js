@@ -122,25 +122,40 @@ function createCurrencyCommandDefinition(currency) {
                 user: 0,
                 global: 0
             },
-            permission: {},
             subCommands: [
                 {
                     arg: "add",
                     usage: "add [@user] [amount]",
                     description: "Adds currency for a given user.",
-                    permission: {
-                        type: "group",
-                        groups: ["Moderators", "Channel Editors", "Streamer"]
-                    }
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
                 },
                 {
                     arg: "remove",
                     usage: "remove [@user] [amount]",
                     description: "Removes currency for a given user.",
-                    permission: {
-                        type: "group",
-                        groups: ["Moderators", "Channel Editors", "Streamer"]
-                    }
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
                 },
                 {
                     arg: "give",
@@ -151,19 +166,35 @@ function createCurrencyCommandDefinition(currency) {
                     arg: "giveall",
                     usage: "giveall [amount]",
                     description: "Gives currency to all online users.",
-                    permission: {
-                        type: "group",
-                        groups: ["Moderators", "Channel Editors", "Streamer"]
-                    }
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
                 },
                 {
                     arg: "removeall",
                     usage: "removeall [amount]",
                     description: "Removes currency from all online users.",
-                    permission: {
-                        type: "group",
-                        groups: ["Moderators", "Channel Editors", "Streamer"]
-                    }
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
                 }
             ]
         },

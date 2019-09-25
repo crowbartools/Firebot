@@ -1,5 +1,7 @@
 "use strict";
 
+const uuidv1 = require("uuid/v1");
+
 
 function seperateTriggerFromArgs(args) {
     let trigger, remainingData = "";
@@ -25,7 +27,7 @@ function seperateTriggerFromArgs(args) {
     };
 }
 
-function mapPermArgToGroups(permArg) {
+function mapPermArgToRoleIds(permArg) {
     if (permArg == null || permArg === "") return false;
 
     let normalizedPerm = permArg.toLowerCase().trim(),
@@ -36,15 +38,13 @@ function mapPermArgToGroups(permArg) {
     case "everyone":
         return null;
     case "sub":
-        groups.push("Subscribers");
+        groups.push("Subscriber");
     case "mod": // eslint-disable-line no-fallthrough
-        groups.push("Moderators");
-        groups.push("Channel Editors");
+        groups.push("Mod");
+        groups.push("ChannelEditor");
     case "streamer": // eslint-disable-line no-fallthrough
-        groups.push("Streamer");
+        groups.push("Owner");
         break;
-    default:
-        groups.push(permArg.trim());
     }
 
     return groups;
@@ -86,8 +86,7 @@ const commandManagement = {
             {
                 arg: "response",
                 usage: "response [!trigger or \"phrase\"] [message]",
-                description:
-          "Updates the response message for a command. Only works for commands that have 1 or less chat effects."
+                description: "Updates the response message for a command. Only works for commands that have 1 or less chat effects."
             },
             {
                 arg: "cooldown",
@@ -96,8 +95,7 @@ const commandManagement = {
             },
             {
                 arg: "restrict",
-                usage:
-          "restrict [!trigger or \"phrase\"] [All/Sub/Mod/Streamer/Custom Group]",
+                usage: "restrict [!trigger or \"phrase\"] [All/Sub/Mod/Streamer/Custom Group]",
                 description: "Update permissions for a command."
             },
             {
@@ -179,15 +177,16 @@ const commandManagement = {
                         user: 0,
                         global: 0
                     },
-                    permission: {
-                        type: "none"
-                    },
-                    effects: [
-                        {
-                            id: "firebot:chat",
-                            message: remainingData
-                        }
-                    ]
+                    effects: {
+                        id: uuidv1(),
+                        list: [
+                            {
+                                id: uuidv1(),
+                                type: "firebot:chat",
+                                message: remainingData
+                            }
+                        ]
+                    }
                 };
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
@@ -230,6 +229,7 @@ const commandManagement = {
                     chatEffect.message = remainingData;
                 } else {
                     let chatEffect = {
+                        id: uuidv1(),
                         type: "firebot:chat",
                         message: remainingData
                     };
@@ -289,7 +289,6 @@ const commandManagement = {
                 break;
             }
             case "restrict": {
-
                 if (args.length < 3 || remainingData === "") {
                     Chat.smartSend(
                         `Invalid command. Usage: ${event.command.trigger} ${usage}`,
@@ -307,11 +306,11 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let permObj = { type: "none" };
-                let groups = mapPermArgToGroups(remainingData);
+                let restrictions = [];
+                let roleIds = mapPermArgToRoleIds(remainingData);
 
 
-                if (groups === false) {
+                if (roleIds === false) {
                     Chat.smartSend(
                         `Please provide a valid group name: All, Sub, Mod, Streamer, or a custom group's name`,
                         event.userCommand.commandSender
@@ -319,20 +318,20 @@ const commandManagement = {
                     return resolve();
                 }
 
-                if (groups != null) {
-                    permObj = {
-                        type: "group",
-                        groups: groups
-                    };
+                if (roleIds != null) {
+                    restrictions.push({
+                        id: uuidv1(),
+                        type: "firebot:permissions",
+                        mode: "roles",
+                        roleIds: roleIds
+                    });
                 }
 
-                command.permission = permObj;
+                command.restrictions = restrictions;
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
 
-                Chat.smartSend(
-                    `Updated '${trigger}' restrictions to: ${remainingData}`
-                );
+                Chat.smartSend(`Updated '${trigger}' restrictions to: ${remainingData}`);
 
                 break;
             }
@@ -349,9 +348,7 @@ const commandManagement = {
 
                 commandManager.removeCustomCommandByTrigger(trigger);
 
-                Chat.smartSend(
-                    `Successfully removed command '${trigger}'.`
-                );
+                Chat.smartSend(`Successfully removed command '${trigger}'.`);
                 break;
             }
             default:
