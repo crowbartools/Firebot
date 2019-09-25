@@ -24,7 +24,7 @@ const model = {
     },
     optionsValueDisplay: (restriction) => {
         let level = restriction.minimumRank || 0;
-        return `Lvl ${level} or higher`;
+        return `Lvl ${level}+`;
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
