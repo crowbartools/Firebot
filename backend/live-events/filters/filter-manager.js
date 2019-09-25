@@ -50,24 +50,36 @@ class FilterManager extends EventEmitter {
         return filters;
     }
 
-    async runFilters(filterSettings, eventData) {
-        if (filterSettings != null) {
+    async runFilters(filterData, eventData) {
+        if (filterData != null) {
+            let filterSettings = filterData.filters;
+
+            let didPass = true;
             for (let filterSetting of filterSettings) {
-                const filter = this.getFilterById(filterSetting.id);
+                const filter = this.getFilterById(filterSetting.type);
                 if (filter) {
                     try {
-                        let passed = await filter.predicate(filterSetting, eventData);
+                        let successful = await filter.predicate(filterSetting, eventData);
 
-                        if (!passed) {
-                            return false;
+                        if (filterData.mode === "inclusive") {
+                            if (successful) {
+                                didPass = true;
+                                break;
+                            }
+                        } else {
+                            if (!successful) {
+                                didPass = false;
+                                break;
+                            }
                         }
                     } catch (err) {
                         // Tell front end an error happened
-                        logger.warning(`An error happened when attempting to process the filter ${filterSetting.id} for event ${eventData.eventSourceId}:${eventData.eventId}: "${err}"`);
-                        return false;
+                        logger.warning(`An error happened when attempting to process the filter ${filterSetting.type} for event ${eventData.eventSourceId}:${eventData.eventId}: "${err}"`);
                     }
                 }
             }
+
+            return didPass;
         }
         return true;
     }
@@ -84,7 +96,9 @@ ipcMain.on("getFiltersForEvent", (event, data) => {
             name: f.name,
             description: f.description,
             comparisonTypes: f.comparisonTypes,
-            valueType: f.valueType
+            valueType: f.valueType,
+            getPresetValues: f.presetValues ? f.presetValues.toString() : "() => {}",
+            getSelectedValueDisplay: f.getSelectedValueDisplay ? f.getSelectedValueDisplay.toString() : "filterSettings => filterSettings.value"
         };
     });
 });

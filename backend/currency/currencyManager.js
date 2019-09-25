@@ -199,8 +199,8 @@ function createCurrencyCommandDefinition(currency) {
             ]
         },
         /**
-           * When the command is triggered
-           */
+         * When the command is triggered
+         */
         onTriggerEvent: event => {
             return new Promise(async (resolve) => {
                 const Chat = require("../common/mixer-chat");

@@ -1,9 +1,10 @@
 "use strict";
+
 (function() {
     angular.module("firebotApp")
         .component("filterList", {
             bindings: {
-                filters: "=",
+                filterData: "=",
                 eventSourceId: "<",
                 eventId: "<",
                 update: "&",
@@ -12,14 +13,29 @@
             template: `
         <div>
           <h3 style="margin-bottom: 5px;">Filters</h3>
-          <div class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';" ng-if="$ctrl.hasFiltersAvailable()">Only trigger this event when:</div>
+          <div style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand'; color: #8A8B8D;" ng-if="$ctrl.hasFiltersAvailable()">
+            <span>Only trigger this event when</span>
+
+            <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
+                  <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getFilterModeDisplay()}}<span class="fb-arrow down ddtext"></span></div>
+                  <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
+
+                    <li ng-click="$ctrl.filterData.mode = 'exclusive'">
+                      <a style="padding-left: 10px;">all filters pass</a>
+                    </li>
+
+                    <li ng-click="$ctrl.filterData.mode = 'inclusive'">
+                      <a style="padding-left: 10px;">any filter passes</a>
+                    </li>
+                </ul>
+            </div>
+            <span>:</span>
+          </div>
           <div stlye="display:flex;">
-                <div ng-repeat="filter in $ctrl.filters track by $index"
+                <div ng-repeat="filter in $ctrl.filterData.filters track by $index"
                     class="filter-bar"
                     ng-click="$ctrl.openAddOrEditFilterModal($index)">
-                        <span>
-                            <b>{{$ctrl.getFilterName(filter.id)}}</b> {{filter.comparisonType}} <b>{{filter.value || '[No Value Set]'}}</b>
-                        </span>
+                        <filter-display filter="filter" filter-type="$ctrl.getFilterType(filter.type)"></filter-display>
                         <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeFilterAtIndex($index)" uib-tooltip="Remove filter" tooltip-append-to-body="true">
                             <i class="far fa-times"></i>
                         </span>
@@ -44,25 +60,38 @@
                     previousEventId = null;
 
                 function reloadFilters() {
-                    if ($ctrl.filters == null) {
-                        $ctrl.filters = [];
+                    if ($ctrl.filterData == null) {
+                        $ctrl.filterData = {
+                            mode: "exclusive",
+                            filters: []
+                        };
+                    }
+                    if ($ctrl.filterData.filters == null) {
+                        $ctrl.filterData.filters = [];
                     }
 
                     filterDefintions = backendCommunicator.fireEventSync("getFiltersForEvent", {
                         eventSourceId: $ctrl.eventSourceId,
                         eventId: $ctrl.eventId
+                    }).map(fd => {
+                        fd.getPresetValues = eval(fd.getPresetValues); // eslint-disable-line no-eval
+                        fd.getSelectedValueDisplay = eval(fd.getSelectedValueDisplay); // eslint-disable-line no-eval
+                        return fd;
                     });
 
                     if (previousEventSourceId !== $ctrl.eventSourceId || previousEventId !== $ctrl.eventId) {
-                        $ctrl.filters = $ctrl.filters.filter(f => filterDefintions.some(fd => fd.id === f.id));
+                        $ctrl.filterData.filters = $ctrl.filterData.filters.filter(f => filterDefintions.some(fd => fd.id === f.type));
                         previousEventSourceId = $ctrl.eventSourceId;
                         previousEventId = $ctrl.eventSourceId;
                     }
                 }
 
-                $ctrl.getFilterName = function(filterId) {
-                    let filter = filterDefintions.find(fd => fd.id === filterId);
-                    return filter ? filter.name : filterId;
+                $ctrl.getFilterModeDisplay = function() {
+                    return $ctrl.filterData.mode === "inclusive" ? "any filter passes" : "all filters pass";
+                };
+
+                $ctrl.getFilterType = function(typeId) {
+                    return filterDefintions.find(fd => fd.id === typeId);
                 };
 
                 $ctrl.$onInit = function() {
@@ -77,12 +106,8 @@
                     return filterDefintions.length > 0;
                 };
 
-                /*$ctrl.actionsUpdate = function() {
-                    $ctrl.update({ actions: $ctrl.actionsArray });
-                };*/
-
                 $ctrl.removeFilterAtIndex = function(index) {
-                    $ctrl.filters.splice(index, 1);
+                    $ctrl.filterData.filters.splice(index, 1);
                 };
 
                 $ctrl.openAddOrEditFilterModal = function(index) {
@@ -90,7 +115,7 @@
                         component: "addOrEditFilterModal",
                         windowClass: "fb-medium-modal",
                         resolveObj: {
-                            filter: () => $ctrl.filters[index],
+                            filter: () => $ctrl.filterData && $ctrl.filterData.filters[index],
                             availableFilters: () => filterDefintions,
                             index: () => index
                         },
@@ -99,10 +124,10 @@
 
                             switch (action) {
                             case "add":
-                                $ctrl.filters.push(resp.filter);
+                                $ctrl.filterData.filters.push(resp.filter);
                                 break;
                             case "update":
-                                $ctrl.filters[resp.index] = resp.filter;
+                                $ctrl.filterData.filters[resp.index] = resp.filter;
                                 break;
                             case "delete":
                                 $ctrl.removeFilterAtIndex(resp.index);

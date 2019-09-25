@@ -43,6 +43,51 @@ exports.getStreamerOnlineStatus = function() {
     });
 };
 
+exports.getViewersMixerRoles = function(username) {
+    return new Promise(async resolve => {
+        let idData = await exports.getIdsFromUsername(username);
+
+        if (idData == null) {
+            return resolve([]);
+        }
+
+        let chatUser = await exports.getChatUser(idData.userId);
+
+        if (chatUser == null) {
+            return resolve([]);
+        }
+
+        resolve(chatUser.userRoles);
+    });
+};
+
+exports.getChatUser = function(userId) {
+    return new Promise(async resolve => {
+        let streamerData = accountAccess.getAccounts().streamer;
+        try {
+            let chatUser = await mixerApi
+                .get(`chats/${streamerData.channelId}/users/${userId}`, "v1", false, true);
+            resolve(chatUser);
+        } catch (err) {
+            resolve(null);
+        }
+    });
+};
+
+exports.getIdsFromUsername = function(username) {
+    return new Promise(async resolve => {
+        try {
+            let ids = await mixerApi.get(`channels/${username}?fields=id,userId`, "v1", false, false);
+            resolve({
+                channelId: ids.id,
+                userId: ids.userId
+            });
+        } catch (err) {
+            resolve(null);
+        }
+    });
+};
+
 exports.getMixerAccountDetailsByUsername = function(username) {
     return new Promise(async resolve => {
 

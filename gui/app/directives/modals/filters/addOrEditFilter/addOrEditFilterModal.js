@@ -15,7 +15,7 @@
                 <div style="display: flex;flex-wrap: wrap;">
                     <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
                         <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
-                        {{$ctrl.getFilterName($ctrl.selectedFilter.id)}}<span class="caret"></span>
+                        {{$ctrl.getFilterName($ctrl.selectedFilter.type)}}<span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
                             <li role="menuitem" ng-repeat="filter in $ctrl.availableFilters" ng-click="$ctrl.selectFilter(filter.id)">
@@ -35,7 +35,25 @@
                         </ul>
                     </div>
 
-                    <input type="{{$ctrl.currentFilterDef.valueType}}" class="form-control" style="min-width: 100px;flex: 1 1 auto;width: auto;" ng-model="$ctrl.selectedFilter.value" placeholder="Value">
+                    <div ng-switch="$ctrl.currentFilterDef.valueType">
+                        <div ng-switch-when="preset">
+
+                            <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
+                                <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                                    {{$ctrl.getSelectedPresetValueDisplay()}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                                    <li role="menuitem" ng-repeat="preset in $ctrl.presetValues" ng-click="$ctrl.selectedFilter.value = preset.value">
+                                        <a href>{{preset.display}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div ng-switch-default>
+                            <input type="{{$ctrl.currentFilterDef.valueType}}" class="form-control" style="min-width: 100px;flex: 1 1 auto;width: auto;" ng-model="$ctrl.selectedFilter.value" placeholder="Value">
+                        </div>
+                    </div>         
                 </div>
 
             </div>
@@ -51,7 +69,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function() {
+        controller: function($injector) {
             let $ctrl = this;
 
             $ctrl.availableFilters = [];
@@ -60,13 +78,37 @@
 
             $ctrl.selectedFilter = {};
 
+            $ctrl.presetValues = [];
+            async function loadPresetValues() {
+                if ($ctrl.currentFilterDef && $ctrl.currentFilterDef.valueType === "preset") {
+                    let presetValues = await $injector.invoke($ctrl.currentFilterDef.getPresetValues, {}, {});
+                    if (presetValues != null && Array.isArray(presetValues)) {
+                        $ctrl.presetValues = presetValues;
+                    }
+                }
+            }
+
+            $ctrl.getSelectedPresetValueDisplay = function() {
+                if ($ctrl.presetValues.length > 0 && $ctrl.selectedFilter && $ctrl.selectedFilter.value) {
+
+                    let presetValue = $ctrl.presetValues.find(pv => pv.value === $ctrl.selectedFilter.value);
+
+                    if (presetValue) {
+                        return presetValue.display;
+                    }
+                }
+                return "Select one";
+            };
+
+
             $ctrl.selectFilter = function(filterId) {
-                $ctrl.selectedFilter.id = filterId;
+                $ctrl.selectedFilter.type = filterId;
                 $ctrl.selectedFilter.value = null;
 
                 $ctrl.currentFilterDef = $ctrl.availableFilters.find(f => f.id === filterId);
                 if ($ctrl.currentFilterDef) {
                     $ctrl.selectedFilter.comparisonType = $ctrl.currentFilterDef.comparisonTypes[0];
+                    loadPresetValues();
                 }
             };
 
@@ -81,17 +123,21 @@
                     $ctrl.availableFilters = $ctrl.resolve.availableFilters;
                 }
                 if ($ctrl.resolve.filter == null) {
+
                     $ctrl.isNewFilter = true;
+
                     if ($ctrl.availableFilters.length > 0) {
                         let firstFilterDef = $ctrl.availableFilters[0];
-                        $ctrl.selectedFilter.id = firstFilterDef.id;
+                        $ctrl.selectedFilter.type = firstFilterDef.id;
                         $ctrl.selectedFilter.comparisonType = firstFilterDef.comparisonTypes[0];
                         $ctrl.currentFilterDef = firstFilterDef;
+                        loadPresetValues();
                     }
 
                 } else {
                     $ctrl.selectedFilter = JSON.parse(JSON.stringify($ctrl.resolve.filter));
-                    $ctrl.currentFilterDef = $ctrl.availableFilters.find(f => f.id === $ctrl.selectedFilter.id);
+                    $ctrl.currentFilterDef = $ctrl.availableFilters.find(f => f.id === $ctrl.selectedFilter.type);
+                    loadPresetValues();
                 }
             };
 

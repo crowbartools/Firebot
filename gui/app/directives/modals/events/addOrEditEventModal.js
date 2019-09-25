@@ -14,11 +14,7 @@
             <h4 class="modal-title" id="editEventLabel">{{$ctrl.isNewEvent ? "Add Event" : "Edit Event"}}</h4>
         </div>
         <div class="modal-body">
-            <div class="general-event-settings">
-                <div class="settings-title">
-                    <h3>General Settings</h3>
-                </div>
-            
+            <div class="general-event-settings">        
                 <div class="effect-setting-container setting-padtop">
                     <div class="input-group settings-eventid">
                     <span class="input-group-addon" id="basic-addon3">Event Name</span>
@@ -47,7 +43,7 @@
             </div>
         
             <div ng-if="$ctrl.event.eventId != null">
-                <filter-list event-source-id="$ctrl.event.sourceId" event-id="$ctrl.event.eventId" filters="$ctrl.event.filters"></filter-list>
+                <filter-list event-source-id="$ctrl.event.sourceId" event-id="$ctrl.event.eventId" filter-data="$ctrl.event.filterData"></filter-list>
             </div>  
         </div>
         <div ng-if="$ctrl.event.eventId != null" class="effect-setting-container setting-padtop">
@@ -72,9 +68,7 @@
 
             $ctrl.event = {
                 name: "",
-                active: true,
-                filters: [],
-                effects: []
+                active: true
             };
 
             $ctrl.triggerMeta = {};

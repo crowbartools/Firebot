@@ -12,7 +12,6 @@ const model = {
     },
     optionsTemplate: `
         <div>
-
             <div class="mixplay-header" style="padding: 0 0 4px 0">
                 Mode
             </div>

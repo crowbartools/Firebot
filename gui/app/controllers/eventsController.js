@@ -124,6 +124,7 @@
                         case "add":
                             if (groupId === "mainevents") {
                                 eventsService.getMainEvents().push(event);
+                                eventsService.saveMainEvents();
                             } else {
                                 let group = eventsService.getEventGroup(groupId);
                                 group.events.push(event);

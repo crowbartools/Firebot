@@ -112,8 +112,8 @@ async function onEventTriggered(event, source, meta, isManual = false) {
 
     for (let eventSetting of eventSettings) {
 
-        if (eventSetting.filters && !isManual) {
-            let passed = await filterManager.runFilters(eventSetting.filters, {
+        if (eventSetting.filterData && !isManual) {
+            let passed = await filterManager.runFilters(eventSetting.filterData, {
                 eventSourceId: source.id,
                 eventId: event.id,
                 eventMeta: meta

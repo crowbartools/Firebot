@@ -111,7 +111,7 @@ function removeViewerToRole(roleId, username) {
 function getAllCustomRolesForViewer(username) {
     const roles = Object.values(customRoles);
     return roles
-        .filter(r => findIndexIgnoreCase(r.viewer, username) !== -1)
+        .filter(r => findIndexIgnoreCase(r.viewers, username) !== -1)
         .map(r => {
             return {
                 id: r.id,
