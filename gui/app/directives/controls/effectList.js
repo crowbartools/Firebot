@@ -85,7 +85,7 @@
                 
             </div>
             `,
-            controller: function(utilityService, effectHelperService) {
+            controller: function(utilityService, effectHelperService, objectCopyHelper) {
                 let ctrl = this;
 
                 ctrl.effectsData = {
@@ -160,6 +160,7 @@
 
                 ctrl.duplicateEffectAtIndex = function(index) {
                     let effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
+                    effect.id = uuidv1();
                     ctrl.effectsData.list.splice(index + 1, 0, effect);
                     ctrl.effectsUpdate();
                 };
@@ -169,12 +170,6 @@
                     stop: () => {
                         ctrl.effectsUpdate();
                     }
-                };
-
-                ctrl.duplicateEffectAtIndex = function(index) {
-                    let effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
-                    ctrl.effectsData.list.splice(index + 1, 0, effect);
-                    ctrl.effectsUpdate();
                 };
 
                 ctrl.removeEffectAtIndex = function(index) {
@@ -188,46 +183,40 @@
                 };
 
                 ctrl.hasCopiedEffects = function() {
-                    return utilityService.hasCopiedEffects(ctrl.trigger);
-                };
-
-                ctrl.hasMultipleCopiedEffects = function() {
-                    return (
-                        utilityService.hasCopiedEffects(ctrl.trigger) &&
-                        utilityService.getCopiedEffects(ctrl.trigger).length > 1
-                    );
+                    return objectCopyHelper.hasCopiedEffects();
                 };
 
                 ctrl.pasteEffects = function(append = false) {
-                    if (utilityService.hasCopiedEffects(ctrl.trigger)) {
+                    if (objectCopyHelper.hasCopiedEffects()) {
                         if (append) {
                             ctrl.effectsData.list = ctrl.effectsData.list.concat(
-                                utilityService.getCopiedEffects(ctrl.trigger)
+                                objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta)
                             );
                         } else {
-                            ctrl.effectsData.list = utilityService.getCopiedEffects(ctrl.trigger);
+                            ctrl.effectsData.list = objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
                         }
                         ctrl.effectsUpdate();
                     }
                 };
 
                 ctrl.pasteEffectsAtIndex = function(index, above) {
-                    if (utilityService.hasCopiedEffects(ctrl.trigger)) {
+                    if (objectCopyHelper.hasCopiedEffects()) {
                         if (!above) {
                             index++;
                         }
-                        let copiedEffects = utilityService.getCopiedEffects(ctrl.trigger);
+                        let copiedEffects = objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
+                        debugger;
                         ctrl.effectsData.list.splice(index, 0, ...copiedEffects);
                         ctrl.effectsUpdate();
                     }
                 };
 
                 ctrl.copyEffectAtIndex = function(index) {
-                    utilityService.copyEffects(ctrl.trigger, [ctrl.effectsData.list[index]]);
+                    objectCopyHelper.copyEffects([ctrl.effectsData.list[index]]);
                 };
 
                 ctrl.copyEffects = function() {
-                    utilityService.copyEffects(ctrl.trigger, ctrl.effectsData.list);
+                    objectCopyHelper.copyEffects(ctrl.effectsData.list);
                 };
 
                 ctrl.addEffect = function() {

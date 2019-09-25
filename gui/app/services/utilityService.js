@@ -575,7 +575,8 @@
                         effect,
                         index,
                         triggerType,
-                        triggerMeta
+                        triggerMeta,
+                        objectCopyHelper
                     ) => {
                         $scope.effect = JSON.parse(angular.toJson(effect));
                         $scope.triggerType = triggerType;
@@ -749,7 +750,7 @@
                         };
 
                         $scope.copy = function() {
-                            utilityService.copyEffects(triggerType, [$scope.effect]);
+                            objectCopyHelper.copyEffects([$scope.effect]);
                         };
 
                         $scope.getLabelButtonTextForLabel = function(labelModel) {
@@ -778,14 +779,14 @@
 
                         $scope.paste = function() {
                             if ($scope.hasCopiedEffect()) {
-                                $scope.effect = utilityService.getCopiedEffects(triggerType)[0];
+                                $scope.effect = objectCopyHelper.getCopiedEffects(triggerType, triggerMeta)[0];
                             }
                         };
 
                         $scope.hasCopiedEffect = function() {
                             return (
-                                utilityService.hasCopiedEffects(triggerType) &&
-                                utilityService.getCopiedEffects(triggerType).length < 2
+                                objectCopyHelper.hasCopiedEffects() &&
+                                objectCopyHelper.copiedEffectsCount() < 2
                             );
                         };
 
