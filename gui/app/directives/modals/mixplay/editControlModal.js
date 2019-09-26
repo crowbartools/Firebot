@@ -49,7 +49,7 @@
 
                 </div>
 
-                <div>
+                <div ng-if="$ctrl.supportsEffects">
                     <restrictions-list 
                         restriction-data="$ctrl.control.restrictionData"
                         trigger="interactive" 
