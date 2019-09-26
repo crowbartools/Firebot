@@ -38,8 +38,12 @@
 			
 			const HOST = params.get("host") || "localhost"
 			const PORT = params.get("port") || "7472";
-			const INSTANCE = params.get("instance") || "";
-			const QUERY_STRING = INSTANCE ? `?instance=${INSTANCE}` : '';
+			const INSTANCE = params.get("instance") || null;
+			let QUERY_STRING = INSTANCE ? `?instance=${INSTANCE}&` : '?';
+			const TEXT_BORDER_COLOR = params.get("borderColor");
+			if(TEXT_BORDER_COLOR) {
+				QUERY_STRING += `borderColor=${TEXT_BORDER_COLOR}`;
+			} 
 			const OVERLAY_URL = `http://${HOST}:${PORT}/overlay/${QUERY_STRING}`;
 			
 			const waitForOverlay = () => {

@@ -5,6 +5,7 @@ const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
 const logger = require("../../logwrapper");
 const util = require("../../utility");
+const mediaProcessor = require("../../common/handlers/mediaProcessor");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
@@ -39,9 +40,9 @@ const showText = {
    */
     optionsTemplate: `
   <eos-container header="Text">
-    <summernote ng-model="effect.text" config="editorOptions"></summernote>
-    
-    <eos-replace-variables></eos-replace-variables>
+    <div>
+        <summernote ng-model="effect.text" config="editorOptions"></summernote>
+    </div>
     </eos-container>
 
     <eos-container header="Dimensions" class="setting-padtop">
@@ -145,16 +146,22 @@ const showText = {
    * When the effect is triggered by something
    */
     onTriggerEvent: event => {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve) => {
 
             // What should this do when triggered.
             let effect = event.effect;
-            let trigger = event.trigger;
+
             //data transfer object
             let dto = {
                 text: effect.text,
+                inbetweenAnimation: effect.inbetweenAnimation,
+                inbetweenDelay: effect.inbetweenDelay,
+                inbetweenDuration: effect.inbetweenDuration,
+                inbetweenRepeat: effect.inbetweenRepeat,
                 enterAnimation: effect.enterAnimation,
+                enterDuration: effect.enterDuration,
                 exitAnimation: effect.exitAnimation,
+                exitDuration: effect.exitDuration,
                 customCoords: effect.customCoords,
                 position: effect.position,
                 duration: effect.duration,
@@ -162,9 +169,6 @@ const showText = {
                 width: effect.width,
                 overlayInstance: effect.overlayInstance
             };
-
-            logger.debug("Populating show text effect text with variables");
-            dto.text = await util.populateStringWithTriggerData(dto.text, trigger);
 
             let position = dto.position;
             if (position === "Random") {
@@ -183,9 +187,7 @@ const showText = {
 
             // Ensure defaults
             if (dto.duration <= 0) {
-                logger.debug(
-                    "Effect duration is less tha 0, resetting duration to 5 sec"
-                );
+                logger.debug("Effect duration is less than 0, resetting duration to 5 sec");
                 dto.duration = 5;
             }
 
@@ -219,40 +221,39 @@ const showText = {
         event: {
             name: "text",
             onOverlayEvent: event => {
-                console.log("yay show text");
+
+
+
                 let data = event;
-                let customPosStyles = "";
-                if (data.position === "Custom") {
-                    console.log("Getting styles for custom coords");
-                    customPosStyles = getStylesForCustomCoords(data.customCoords); //eslint-disable-line no-undef
-                }
 
-                // Get time in milliseconds to use as class name.
-                let d = new Date();
-                let divClass = d.getTime() + "-text";
+                let positionData = {
+                    position: data.position,
+                    customCoords: data.customCoords
+                };
 
-                let container = `
-          <div class="${divClass} text-container"
-            position="${data.position}"
-            style="height:${data.height}px;width:${
-    data.width
-}px;${customPosStyles}">
-              ${data.text}
-          </div>
-        `;
+                let animationData = {
+                    enterAnimation: data.enterAnimation,
+                    enterDuration: data.enterDuration,
+                    inbetweenAnimation: data.inbetweenAnimation,
+                    inbetweenDelay: data.inbetweenDelay,
+                    inbetweenDuration: data.inbetweenDuration,
+                    inbetweenRepeat: data.inbetweenRepeat,
+                    exitAnimation: data.exitAnimation,
+                    exitDuration: data.exitDuration,
+                    totalDuration: parseFloat(data.duration) * 1000
+                };
 
-                // Throw text on page.
-                $("#wrapper").append(container);
+                let params = new URL(location).searchParams;
+                let borderColor = params.get("borderColor");
+                let borderStyle = borderColor ? `border: 2px solid ${borderColor};` : "";
 
-                let exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeOut",
-                    enterAnimation = data.enterAnimation;
+                let textDiv = `
+                    <div class="text-container"
+                        style="height:${data.height}px;width:${data.width}px;${borderStyle}">
+                        ${data.text}
+                    </div>`;
 
-                showTimedAnimatedElement( //eslint-disable-line no-undef
-                    divClass,
-                    enterAnimation,
-                    exitAnimation,
-                    data.duration * 1000
-                );
+                showElement(textDiv, positionData, animationData); // eslint-disable-line no-undef
             }
         }
     }

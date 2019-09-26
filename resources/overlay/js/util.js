@@ -78,18 +78,18 @@ function showTimedAnimatedElement(
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
 	inbetweenAnimation = inbetweenAnimation ? inbetweenAnimation : "none";
 	var id = `${elementClass}`;
-	$(id).animateCss(enterAnimation, enterDuration, null, null, (data) => {
+	$(id).find(".inner-position").animateCss(enterAnimation, enterDuration, null, null, (data) => {
 		
-		$(data.id).animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
+		$(data.id).find(".inner-position").animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
 
 		setTimeout(function(){ 
 			if(data.inbetweenAnimation) {
-				$(data.id).css("animation-duration", "");
-				$(data.id).css("animation-delay", "");
-				$(data.id).css("animation-iteration-count", "");
-				$(this).removeClass('animated ' + data.inbetweenAnimation);
+				$(data.id).find(".inner-position").css("animation-duration", "");
+				$(data.id).find(".inner-position").css("animation-delay", "");
+				$(data.id).find(".inner-position").css("animation-iteration-count", "");
+				$(this).find(".inner-position").removeClass('animated ' + data.inbetweenAnimation);
 			}
-			$(data.id).animateCss(data.exitAnimation, data.exitDuration, null, null, (data1) => {
+			$(data.id).find(".inner-position").animateCss(data.exitAnimation, data.exitDuration, null, null, (data1) => {
 				$(data1.id).remove();
 			}, data);
 		}, (duration === 0 || duration != null) ? duration : 5000);
@@ -123,8 +123,10 @@ function showElement(
 		positionData.position.replace(/\s/, "-").toLowerCase() : "middle";
 
 	let positionWrappedHtml = `
-		<div id="${uniqueId}" class="position-wrapper ${position}" style="${styles}">
-			${effectHTML}
+		<div id="${uniqueId}" class="position-wrapper ${position}">
+			<div class="inner-position" style="${styles}">
+				${effectHTML}
+			</div>		
 		</div>
 	`;
 

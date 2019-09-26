@@ -6,6 +6,9 @@
 	flex-grow: 0;
 	flex-shrink: 0;
 	padding: 10px;
+	position: absolute;
+    top: 0;
+    left: 0;
 	&.top-left{
 		align-content: flex-start;
 		justify-content: flex-start;
@@ -42,5 +45,12 @@
 		align-content: flex-end;
 		justify-content: flex-end;
 	}
+	&.custom {
+		padding: 0;
+	}
+}
+
+.inner-position {
+	position: relative;
 }
 
