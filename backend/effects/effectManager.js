@@ -4,6 +4,7 @@ const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 let EventEmitter = require("events");
 const { EffectTrigger } = require("./models/effectModels");
+const frontendCommunicator = require("../common/frontend-communicator");
 
 class EffectManager extends EventEmitter {
     constructor() {
@@ -74,13 +75,13 @@ class EffectManager extends EventEmitter {
 
 const manager = new EffectManager();
 
-ipcMain.on("getAllEffectDefinitions", event => {
+frontendCommunicator.onAsync("getAllEffectDefinitions", async () => {
     logger.debug("got get all effects request");
     let mapped = manager._registeredEffects.map(manager.mapEffectForFrontEnd);
-    event.returnValue = mapped;
+    return mapped;
 });
 
-ipcMain.on("getEffectDefinitions", (event, triggerData) => {
+frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
     logger.debug("got get effects def request");
     let effects = manager._registeredEffects;
 
@@ -110,7 +111,7 @@ ipcMain.on("getEffectDefinitions", (event, triggerData) => {
             return true;
         });
 
-    event.returnValue = filteredEffectDefs;
+    return filteredEffectDefs;
 });
 
 ipcMain.on("getEffectDefinition", (event, effectId) => {

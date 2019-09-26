@@ -13,7 +13,8 @@
             $q,
             utilityService,
             listenerService,
-            logger
+            logger,
+            backendCommunicator
         ) {
             let service = {};
 
@@ -37,10 +38,10 @@
                 return def;
             };
 
-            service.getAllEffectDefinitions = function() {
-                let effectDefs = listenerService
-                    .fireEventSync("getAllEffectDefinitions")
-                    .map(e => e.definition);
+            service.getAllEffectDefinitions = async function() {
+                let effectDefs = (await backendCommunicator
+                    .fireEventAsync("getAllEffectDefinitions")
+                ).map(e => e.definition);
 
                 return effectDefs;
             };

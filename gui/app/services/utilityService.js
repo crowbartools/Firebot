@@ -23,32 +23,6 @@
         ) {
             let service = {};
 
-            let copiedEffectsCache = {};
-            service.copyEffects = function(type, effects) {
-                copiedEffectsCache = JSON.parse(angular.toJson(effects));
-            };
-
-            service.getCopiedEffects = function(trigger) {
-                let effects = JSON.parse(JSON.stringify(copiedEffectsCache));
-
-                if (!Array.isArray(effects)) {
-                    effects = Object.values(effects);
-                }
-
-                let compatibleEffects = [];
-                effects.forEach(e => {
-                    if (EffectType.effectCanBeTriggered(e.id, trigger)) {
-                        compatibleEffects.push(e);
-                    }
-                });
-
-                return compatibleEffects;
-            };
-
-            service.hasCopiedEffects = function(trigger) {
-                return service.getCopiedEffects(trigger).length > 0;
-            };
-
             let slidingModals = [];
             const shiftAmount = 125;
             service.addSlidingModal = function(promise) {
@@ -777,9 +751,9 @@
                                 });
                         };
 
-                        $scope.paste = function() {
+                        $scope.paste = async function() {
                             if ($scope.hasCopiedEffect()) {
-                                $scope.effect = objectCopyHelper.getCopiedEffects(triggerType, triggerMeta)[0];
+                                $scope.effect = await objectCopyHelper.getCopiedEffects(triggerType, triggerMeta)[0];
                             }
                         };
 

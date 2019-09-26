@@ -6,7 +6,7 @@
 
     angular
         .module("firebotApp")
-        .factory("objectCopyHelper", function(listenerService) {
+        .factory("objectCopyHelper", function(backendCommunicator) {
             let service = {};
 
             let copiedEffects = [];
@@ -23,12 +23,12 @@
                 copiedEffects = clonedEffects;
             };
 
-            service.getCopiedEffects = function(triggerType, triggerMeta) {
+            service.getCopiedEffects = async function(triggerType, triggerMeta) {
 
                 let effectDefs;
                 if (triggerType) {
-                    effectDefs = listenerService
-                        .fireEventSync("getEffectDefinitions", {
+                    effectDefs = await backendCommunicator
+                        .fireEventAsync("getEffectDefinitions", {
                             triggerType: triggerType,
                             triggerMeta: triggerMeta
                         });

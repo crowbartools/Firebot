@@ -109,12 +109,13 @@
                 }
 
                 // when the element is initialized
-                ctrl.$onInit = function() {
+                ctrl.$onInit = async function() {
                     createEffectsData();
-                    effectDefinitions = effectHelperService.getAllEffectDefinitions();
+                    effectDefinitions = await effectHelperService.getAllEffectDefinitions();
                 };
 
                 ctrl.getEffectNameById = id => {
+                    if (!effectDefinitions || effectDefinitions.length < 1) return "";
                     return effectDefinitions.find(e => e.id === id).name;
                 };
 
@@ -186,25 +187,25 @@
                     return objectCopyHelper.hasCopiedEffects();
                 };
 
-                ctrl.pasteEffects = function(append = false) {
+                ctrl.pasteEffects = async function(append = false) {
                     if (objectCopyHelper.hasCopiedEffects()) {
                         if (append) {
                             ctrl.effectsData.list = ctrl.effectsData.list.concat(
-                                objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta)
+                                await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta)
                             );
                         } else {
-                            ctrl.effectsData.list = objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
+                            ctrl.effectsData.list = await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
                         }
                         ctrl.effectsUpdate();
                     }
                 };
 
-                ctrl.pasteEffectsAtIndex = function(index, above) {
+                ctrl.pasteEffectsAtIndex = async function(index, above) {
                     if (objectCopyHelper.hasCopiedEffects()) {
                         if (!above) {
                             index++;
                         }
-                        let copiedEffects = objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
+                        let copiedEffects = await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
                         ctrl.effectsData.list.splice(index, 0, ...copiedEffects);
                         ctrl.effectsUpdate();
                     }

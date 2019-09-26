@@ -28,16 +28,23 @@
             $attrs,
             settingsService,
             listenerService,
-            connectionService
+            connectionService,
+            backendCommunicator
         ) {
             let ctrl = this;
 
-            function getSelected() {
-                let effectDefs = listenerService
-                    .fireEventSync("getEffectDefinitions", {
-                        triggerType: ctrl.trigger,
-                        triggerMeta: ctrl.triggerMeta
-                    });
+
+            let effectDefs;
+
+            async function getSelected() {
+
+                if (!effectDefs) {
+                    effectDefs = await backendCommunicator
+                        .fireEventAsync("getEffectDefinitions", {
+                            triggerType: ctrl.trigger,
+                            triggerMeta: ctrl.triggerMeta
+                        });
+                }
 
                 // grab the effect definitions for the given trigger
                 ctrl.options = effectDefs.sort((a, b) => {
@@ -45,12 +52,6 @@
                     let textB = b.name.toUpperCase();
                     return textA < textB ? -1 : textA > textB ? 1 : 0;
                 });
-
-                /*if (!settingsService.getCustomScriptsEnabled()) {
-                ctrl.options = ctrl.options.filter(
-                    e => e.name !== Effect.EffectType.CUSTOM_SCRIPT
-                );
-                }*/
 
                 if (!connectionService.accounts.streamer.partnered && !connectionService.accounts.streamer.canClip) {
                     ctrl.options = ctrl.options.filter(e => e.name !== Effect.EffectType.CREATE_CLIP);
