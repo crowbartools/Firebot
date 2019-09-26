@@ -35,7 +35,7 @@
                     </div>
                 </div>
 
-                <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Enter'">
+                <div class="input-group" style="width: 100%" ng-hide="$ctrl.limitTo == 'Exit'">
                     <div class="fb-control-detail" ng-hide="$ctrl.limitTo != null">INBETWEEN</div>
                     <select class="fb-select" ng-model="$ctrl.selected.inbetween" ng-change="$ctrl.inbetweenUpdate()" ng-options="inbetween.name for inbetween in $ctrl.animations.inbetween"></select>
                     <div ng-hide="$ctrl.effect.inbetweenAnimation === 'none'">

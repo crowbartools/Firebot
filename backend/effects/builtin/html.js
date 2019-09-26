@@ -36,8 +36,7 @@ const html = {
    */
     optionsTemplate: `
     <eos-container header="HTML">
-        <textarea ng-model="effect.html" class="form-control" id="html-effect-html-field" name="text" placeholder="Input your HTML" rows="5" cols="40"></textarea>
-        <eos-replace-variables></eos-replace-variables>
+        <textarea ng-model="effect.html" class="form-control" id="html-effect-html-field" name="text" placeholder="Input your HTML" rows="5" cols="40" replace-variables></textarea>
     </eos-container>
 
     <eos-container header="Show Duration" pad-top="true">
@@ -108,8 +107,8 @@ const html = {
                 html: HTML,
                 length: duration,
                 removal: removal,
-                enterAnimation: effect.enterAnimation,
-                exitAnimation: effect.exitAnimation
+                exitAnimation: effect.exitAnimation,
+                exitDuration: effect.exitDuration
             };
 
             if (settings.useOverlayInstances()) {
@@ -135,25 +134,37 @@ const html = {
         event: {
             name: "html",
             onOverlayEvent: event => {
-                console.log("yay html effect");
 
-                let HTML = event.html;
-                let length = parseFloat(event.length) * 1000;
-                let mainClass = event.removal;
+                let data = event;
 
-                let exitAnimation = event.exitAnimation
-                    ? event.exitAnimation
-                    : "fadeOut";
+                let element, _element;
 
-                // Throw HTML on page.
-                $("#wrapper").append(HTML);
+                element = _element = $(data.html);
 
-                // In X time remove it.
+                _element.hide();
+
+                $('#wrapper').append(_element);
+
+                _element.show();
+
                 setTimeout(function() {
-                    $("." + mainClass).animateCss(exitAnimation, function() {
-                        $("." + mainClass).remove();
-                    });
-                }, length);
+                    // If CSS class is provided, remove element(s) with provided CSS class.
+                    if (data.removal && data.removal.length > 0) {
+                        element = element.parent().find("." + data.removal);
+
+                        //If no elements found, remove original element.
+                        if (element.length > 0) {
+                            element.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
+                                element.remove();
+                            });
+                        }
+                    } else {
+                        element.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
+                            element.remove();
+                        });
+                    }
+
+                }, parseFloat(data.length || 10) * 1000); // Default Show Time: 10 Seconds
             }
         }
     }
