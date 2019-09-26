@@ -168,6 +168,10 @@ const showImage = {
                 imageHeight: effect.height ? effect.height + "px" : "auto",
                 imageWidth: effect.width ? effect.width + "px" : "auto",
                 imageDuration: effect.length,
+                inbetweenAnimation: effect.inbetweenAnimation,
+                inbetweenDelay: effect.inbetweenDelay,
+                inbetweenDuration: effect.inbetweenDuration,
+                inbetweenRepeat: effect.inbetweenRepeat,
                 enterAnimation: effect.enterAnimation,
                 exitAnimation: effect.exitAnimation,
                 customCoords: effect.customCoords

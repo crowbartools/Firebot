@@ -122,10 +122,6 @@ function showElement(
 	let position = positionData.position ? 
 		positionData.position.replace(/\s/, "-").toLowerCase() : "middle";
 
-	// TODO: define css classes for all 9 positions, ie "Top Left", "Top Middle", etc
-	/* possible positions:
-		"Top Left", "Top Middle", "Top Right", "Middle Left", "Middle", "Middle Right", "Bottom Left", "Bottom Middle", "Bottom Right"
-	*/
 	let positionWrappedHtml = `
 		<div id="${uniqueId}" class="position-wrapper ${position}" style="${styles}">
 			${effectHTML}
