@@ -311,8 +311,8 @@ const playVideo = {
             name: "video",
             onOverlayEvent: event => {
 
-                if (!startedVidCache) {
-                    startedVidCache = {};
+                if (!startedVidCache) { // eslint-disable-line no-undef
+                    startedVidCache = {}; // eslint-disable-line no-undef
                 }
 
                 function animateVideoExit(idString, animation, duration, inbetweenAnimation) {
@@ -404,11 +404,11 @@ const playVideo = {
                     let video = document.getElementById(videoPlayerId);
                     video.oncanplay = function() {
 
-                        if (startedVidCache[this.id]) {
+                        if (startedVidCache[this.id]) { // eslint-disable-line no-undef
                             return;
                         }
 
-                        startedVidCache[this.id] = true;
+                        startedVidCache[this.id] = true; // eslint-disable-line no-undef
 
                         try {
                             video.play();
@@ -427,13 +427,13 @@ const playVideo = {
                         // Remove div after X time.
                         if (videoDuration) {
                             setTimeout(function() {
-                                delete startedVidCache[this.id];
+                                delete startedVidCache[this.id]; // eslint-disable-line no-undef
                                 animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                             }, videoDuration);
                         } else {
 
                             video.onended = function(e) {
-                                delete startedVidCache[this.id];
+                                delete startedVidCache[this.id]; // eslint-disable-line no-undef
                                 animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                             };
                         }
@@ -446,7 +446,7 @@ const playVideo = {
                     let youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
 
                     let wrapperId = new Date().getTime();
-                    let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement);
+                    let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
                     $('.wrapper').append(wrappedHtml);
 
@@ -500,7 +500,7 @@ const playVideo = {
                         ytOptions.width = data.videoWidth;
                     }
 
-                    let player = new YT.Player(ytPlayerId, ytOptions);
+                    let player = new YT.Player(ytPlayerId, ytOptions); // eslint-disable-line no-undef
 
                     // Remove div after X time.
                     if (videoDuration) {
