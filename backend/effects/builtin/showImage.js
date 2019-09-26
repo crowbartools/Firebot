@@ -57,7 +57,7 @@ const showImage = {
             <file-chooser model="effect.file" options="{ filters: [ {name: 'Image', extensions: ['jpg', 'gif', 'png', 'jpeg']} ]}"></file-chooser>
         </div>
         <div ng-if="effect.imageType === 'url'">
-            <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url">
+            <input type="text" class="form-control" ng-model="effect.url" placeholder="Enter url" replace-variables>
         </div>
     </div>
     </div>
