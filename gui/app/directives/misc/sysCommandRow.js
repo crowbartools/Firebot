@@ -38,6 +38,7 @@
             </div>
             <p class="muted" ng-if="$ctrl.command.usage">{{$ctrl.command.trigger}} {{$ctrl.command.usage}}</p>
             <div style="padding-top: 5px;" ng-if="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0">
+
               <div class="muted" style="font-weight:bold; font-size: 12px;">SUBCOMMANDS</div>
               <div ng-repeat="subCmd in $ctrl.command.subCommands track by $index" style="padding-top: 5px; padding-bottom: 15px;">
                 <span style="font-weight: 600;">{{$ctrl.command.trigger}} {{subCmd.usage}}</span>  —  <span style="font-size: 13px;">{{subCmd.description}}</span>
@@ -55,7 +56,7 @@
                   </div>
                   <div style="display: inline-block;">
                     <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> PERMISSIONS</span></div>
-                    <div><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType(subCmd)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd)"></tooltip></div>
+                    <div><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType(subCmd, true)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd, true)"></tooltip></div>
                   </div>
                 </div>                
               </div>
@@ -100,7 +101,7 @@
                 }
             };*/
 
-            $ctrl.getPermisisonType = command => {
+            $ctrl.getPermisisonType = (command, isSub) => {
 
                 let permissions = command.restrictionData && command.restrictionData.restrictions &&
                   command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
@@ -112,11 +113,14 @@
                         return "Viewer";
                     }
                 } else {
+                    if (isSub) {
+                        return "Inherited";
+                    }
                     return "None";
                 }
             };
 
-            $ctrl.getPermissionTooltip = command => {
+            $ctrl.getPermissionTooltip = (command, isSub) => {
 
                 let permissions = command.restrictionData && command.restrictionData.restrictions &&
                   command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
@@ -136,6 +140,9 @@
                         return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
                     }
                 } else {
+                    if (isSub) {
+                        return "This subcommand will use the permissions of the root command.";
+                    }
                     return "This command is available to everyone";
                 }
             };
