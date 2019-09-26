@@ -105,14 +105,9 @@ function showTimedAnimatedElement(
 	});
 }
 
-function showElement(
-	effectHTML,
-	positionData,
-	animationData
-){
-	let uniqueId = new Date().getTime();
-
-	// when using 'Custom' position, the user has defined exact top/left pixels
+function getPositionWrappedHTML(uniqueId, positionData, html) {
+    
+    // when using 'Custom' position, the user has defined exact top/left pixels
 	let styles = "";
 	if (positionData.position === "Custom") {
 		styles = getStylesForCustomCoords(positionData.customCoords);
@@ -125,10 +120,22 @@ function showElement(
 	let positionWrappedHtml = `
 		<div id="${uniqueId}" class="position-wrapper ${position}">
 			<div class="inner-position" style="${styles}">
-				${effectHTML}
+				${html}
 			</div>		
 		</div>
-	`;
+    `;
+    
+    return positionWrappedHtml;
+}
+
+function showElement(
+	effectHTML,
+	positionData,
+	animationData
+){
+	let uniqueId = new Date().getTime();
+
+	let positionWrappedHtml = getPositionWrappedHTML(uniqueId, positionData, effectHTML);
 
 	$('.wrapper').append(positionWrappedHtml);
 

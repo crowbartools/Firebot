@@ -173,7 +173,9 @@ const showImage = {
                 inbetweenDuration: effect.inbetweenDuration,
                 inbetweenRepeat: effect.inbetweenRepeat,
                 enterAnimation: effect.enterAnimation,
+                enterDuration: effect.enterDuration,
                 exitAnimation: effect.exitAnimation,
+                exitDuration: effect.exitDuration,
                 customCoords: effect.customCoords
             };
 
@@ -246,8 +248,8 @@ const showImage = {
                 };
 
                 // ebiggz: 😘
-                let styles = data.imageWidth ? `width: ${data.imageWidth};` : '' +
-                            data.height ? `height: ${data.imageHeight};` : '';
+                let styles = (data.imageWidth ? `width: ${data.imageWidth};` : '') +
+                            (data.imageHeight ? `height: ${data.imageHeight};` : '');
                 let imageTag = `<img src="${filepathNew}" style="${styles}">`;
 
                 showElement(imageTag, positionData, animationData); // eslint-disable-line no-undef

@@ -46,7 +46,7 @@ const playVideo = {
                 </video>
             </div>
             <div ng-if="effect.videoType == 'YouTube Video' && !shouldShowVideoPlaceholder()">
-                <ng-youtube-embed 
+                <!--<ng-youtube-embed 
                     video="effect.youtube" 
                     color="white"
                     disablekb="true"
@@ -57,7 +57,7 @@ const playVideo = {
                     width="350px"
                     height="197.88px"
                     modestbranding="true">
-                </ng-youtube-embed>
+                </ng-youtube-embed>-->
             </div>
         </div>
         
@@ -270,7 +270,13 @@ const playVideo = {
                 videoVolume: effect.volume,
                 videoStarttime: effect.starttime,
                 enterAnimation: effect.enterAnimation,
+                enterDuration: effect.enterDuration,
                 exitAnimation: effect.exitAnimation,
+                exitDuration: effect.exitDuration,
+                inbetweenAnimation: effect.inbetweenAnimation,
+                inbetweenDelay: effect.inbetweenDelay,
+                inbetweenDuration: effect.inbetweenDuration,
+                inbetweenRepeat: effect.inbetweenRepeat,
                 customCoords: effect.customCoords,
                 loop: effect.loop === true
             };
@@ -304,10 +310,21 @@ const playVideo = {
         event: {
             name: "video",
             onOverlayEvent: event => {
-                console.log("yay video");
 
-                function animateVideoExit(idString, animation) {
-                    $(idString).animateCss(animation, () => {
+                if (!startedVidCache) {
+                    startedVidCache = {};
+                }
+
+                function animateVideoExit(idString, animation, duration, inbetweenAnimation) {
+
+                    if (inbetweenAnimation) {
+                        $(idString).find(".inner-position").css("animation-duration", "");
+                        $(idString).find(".inner-position").css("animation-delay", "");
+                        $(idString).find(".inner-position").css("animation-iteration-count", "");
+                        $(idString).find(".inner-position").removeClass('animated ' + inbetweenAnimation);
+                    }
+
+                    $(idString).find(".inner-position").animateCss(animation, duration, null, null, () => {
                         $(idString).remove();
                     });
                 }
@@ -318,278 +335,181 @@ const playVideo = {
                 //let firstScriptTag = document.getElementsByTagName("script")[0];
                 //firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-                // Video Handling
-                // This will take the data that is sent to it from the GUI and render a video on the overlay.
-                function showVideo(data) {
-                    // Video Packet...
-                    // {"event":"video","filepath":filepath, "videoX":videoX, "videoY":videoY, "videoDuration":videoDuration};
-                    let videoType = data.videoType;
-                    let filepath = data.filepath;
-                    let fileExt = filepath.split(".").pop();
-                    if (fileExt === "ogv") {
-                        fileExt = "ogg";
+                let data = event;
+
+                let videoType = data.videoType;
+                let filepath = data.filepath;
+                let fileExt = filepath.split('.').pop();
+                if (fileExt === "ogv") {
+                    fileExt = "ogg";
+                }
+                let youtubeId = data.youtubeId;
+                let videoPosition = data.videoPosition;
+                let videoHeight = data.videoHeight;
+                let videoWidth = data.videoWidth;
+                let videoDuration = data.videoDuration != null && data.videoDuration !== "" ? parseFloat(data.videoDuration) * 1000 : null;
+                let videoVolume = data.videoVolume;
+                let videoStarttime = data.videoStarttime || 0;
+                let loop = data.loop;
+
+                let token = encodeURIComponent(data.resourceToken);
+                let filepathNew = `http://${window.location.hostname}:7472/resource/${token}`;
+
+
+                // Get time in milliseconds to use as id
+                let time = new Date().getTime();
+                let videoPlayerId = `${time}-video`;
+
+                let enterAnimation = data.enterAnimation ? data.enterAnimation : "fadeIn";
+                let exitAnimation = data.exitAnimation ? data.exitAnimation : "fadeIn";
+                let enterDuration = data.enterDuration;
+                let exitDuration = data.exitDuration;
+
+                let inbetweenAnimation = data.inbetweenAnimation ? data.inbetweenAnimation : "none";
+                let inbetweenDuration = data.inbetweenDuration;
+                let inbetweenDelay = data.inbetweenDelay;
+                let inbetweenRepeat = data.inbetweenRepeat;
+
+                let positionData = {
+                    position: data.videoPosition,
+                    customCoords: data.customCoords
+                };
+
+                let sizeStyles = (data.videoWidth ? `width: ${data.videoWidth}px;` : '') +
+                            (data.videoHeight ? `height: ${data.videoHeight}px;` : '');
+
+                if (videoType === "Local Video") {
+
+                    const loopAttribute = loop ? 'loop' : '';
+
+                    let videoElement = `
+                        <video id="${videoPlayerId}" class="player" ${loopAttribute} style="display:none;${sizeStyles}">
+                            <source src="${filepathNew}" type="video/${fileExt}">
+                        </video>
+                    `;
+
+                    let wrapperId = new Date().getTime();
+                    let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, videoElement); // eslint-disable-line no-undef
+
+                    $('.wrapper').append(wrappedHtml);
+
+                    // Adjust volume
+                    if (isNaN(videoVolume)) {
+                        videoVolume = 5;
                     }
-                    let youtubeId = data.youtubeId;
-                    let videoPosition = data.videoPosition;
-                    let videoHeight = data.videoHeight;
-                    let videoWidth = data.videoWidth;
-                    let videoDuration = parseFloat(data.videoDuration) * 1000;
-                    let videoVolume = data.videoVolume;
-                    let videoStarttime = data.videoStarttime || 0;
-                    let loop = data.loop;
 
-                    let token = encodeURIComponent(data.resourceToken);
-                    let filepathNew = `http://${
-                        window.location.hostname
-                    }:7472/resource/${token}`;
+                    videoVolume = parseInt(videoVolume) / 10;
+                    $(`#${videoPlayerId}`).prop("volume", videoVolume);
 
-                    let customPosStyles = "";
-                    if (videoPosition === "Custom") {
-                        customPosStyles = getStylesForCustomCoords(data.customCoords); //eslint-disable-line no-undef
-                    }
+                    let video = document.getElementById(videoPlayerId);
+                    video.oncanplay = function() {
 
-                    // Get time in milliseconds to use as class name.
-                    let d = new Date();
-                    let divClass = d.getTime();
-                    let videoId = `.${divClass}-video`;
-
-                    let enterAnimation = data.enterAnimation
-                        ? data.enterAnimation
-                        : "fadeIn";
-                    let exitAnimation = data.exitAnimation
-                        ? data.exitAnimation
-                        : "fadeIn";
-
-                    let videoFinal;
-                    if (videoType === "Local Video") {
-                        const loopTag = loop ? "loop" : "";
-                        if (videoHeight === false && videoWidth === false) {
-                            // Both height and width fields left blank.
-                            videoFinal =
-                '<div class="' +
-                divClass +
-                '-video videoOverlay" position="' +
-                videoPosition +
-                '" style="' +
-                customPosStyles +
-                '"><video position="' +
-                videoPosition +
-                '" class="player" id="video-' +
-                divClass +
-                '" style="' +
-                customPosStyles +
-                '" ' +
-                loopTag +
-                '><source  src="' +
-                filepathNew +
-                "?time=" +
-                divClass +
-                '" type="video/' +
-                fileExt +
-                '" ></video></div>';
-                        } else if (videoWidth === false) {
-                            // Width field left blank, but height provided.
-                            // var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-                            videoFinal =
-                '<div class="' +
-                divClass +
-                '-video videoOverlay" position="' +
-                videoPosition +
-                '" style="' +
-                customPosStyles +
-                '"><video position="' +
-                videoPosition +
-                '" height="' +
-                videoHeight +
-                '" class="player" id="video-' +
-                divClass +
-                '" style="' +
-                customPosStyles +
-                '" ' +
-                loopTag +
-                '><source  src="' +
-                filepathNew +
-                "?time=" +
-                divClass +
-                '" type="video/' +
-                fileExt +
-                '" ></video></div>';
-                        } else if (videoHeight === false) {
-                            // Height field left blank, but width provided.
-                            // var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; width:'+ videoWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-                            videoFinal =
-                '<div class="' +
-                divClass +
-                '-video videoOverlay" position="' +
-                videoPosition +
-                '" style="' +
-                customPosStyles +
-                '"><video position="' +
-                videoPosition +
-                '" width="' +
-                videoWidth +
-                '" class="player" id="video-' +
-                divClass +
-                '" style="' +
-                customPosStyles +
-                '" ' +
-                loopTag +
-                '><source  src="' +
-                filepathNew +
-                "?time=" +
-                divClass +
-                '" type="video/' +
-                fileExt +
-                '" ></video></div>';
-                        } else {
-                            // Both height and width provided.
-                            // var videoFinal = '<div class="'+divClass+'-video videoOverlay" position="'+videoPosition+'" style="display:none; height:'+ videoHeight +'px; width:'+ imageWidth +'px;"><img src="'+filepathNew+'?time='+divClass+'" style="max-width:100%; max-height:100%;"></div>';
-                            videoFinal =
-                '<div class="' +
-                divClass +
-                '-video videoOverlay" position="' +
-                videoPosition +
-                '" style="height:' +
-                videoHeight +
-                "px; width: " +
-                videoWidth +
-                "px;" +
-                customPosStyles +
-                '"><video position="' +
-                videoPosition +
-                '" height="' +
-                videoHeight +
-                '" width="' +
-                videoWidth +
-                '" class="player" id="video-' +
-                divClass +
-                '" style="' +
-                customPosStyles +
-                '" ' +
-                loopTag +
-                '><source  src="' +
-                filepathNew +
-                "?time=" +
-                divClass +
-                '" type="video/' +
-                fileExt +
-                '" ></video></div>';
+                        if (startedVidCache[this.id]) {
+                            return;
                         }
 
-                        // Put the div on the page.
-                        $("#wrapper").append(videoFinal);
+                        startedVidCache[this.id] = true;
 
-                        // Adjust volume
-                        if (isNaN(videoVolume)) {
-                            videoVolume = 5;
-                        }
-
-                        videoVolume = parseInt(videoVolume) / 10;
-                        $(".player").prop("volume", videoVolume);
-
-                        let video = document.getElementById("video-" + divClass);
-
-                        video.oncanplay = function() {
-                            console.log("video " + divClass + " can play");
-
-                            $(videoId).animateCss(enterAnimation);
+                        try {
                             video.play();
-                            // Remove div after X time.
-                            if (videoDuration) {
-                                setTimeout(function() {
-                                    animateVideoExit(videoId, exitAnimation);
-                                }, videoDuration);
-                            } else {
-                                video.onended = function(e) {
-                                    animateVideoExit(videoId, exitAnimation);
-                                };
-                            }
-                        };
-                    } else {
-                        let time = d.getTime();
-                        let ytPlayerId = `yt-${time}`;
-
-                        let videoFinal =
-              '<div class="' +
-              divClass +
-              '-video videoOverlay"><div id="' +
-              ytPlayerId +
-              '" position="' +
-              videoPosition +
-              '" style="' +
-              customPosStyles +
-              '"></div></div>';
-
-                        // Throw div on page.
-                        $("#wrapper").append(videoFinal);
-
-                        // Add iframe.
-
-                        let playerVars = {
-                            autoplay: 1,
-                            controls: 0,
-                            start: videoStarttime,
-                            showinfo: 0,
-                            rel: 0,
-                            modestbranding: 1
-                        };
-
-                        if (loop) {
-                            playerVars["loop"] = 1;
-                            playerVars["playlist"] = youtubeId;
+                        } catch (err) {
+                            console.log(err);
                         }
+                        let videoEl = $(`#${videoPlayerId}`);
+                        videoEl.show();
 
-                        // Play video when the player is ready.
-                        function onPlayerReady(event) { //eslint-disable-line no-inner-declarations
-                            event.target.setVolume(parseInt(videoVolume) * 10);
-                            event.target.playVideo();
-                        }
-
-                        // Remove div when YouTube video has stopped.
-                        function onPlayerStateChange(event) { //eslint-disable-line no-inner-declarations
-                            if (event.data === 0 && !videoDuration) {
-                                animateVideoExit(videoId, exitAnimation);
-                            }
-                        }
-
-                        // Log Errors
-                        function onPlayerError(event) { //eslint-disable-line no-inner-declarations
-                            console.log(event);
-                        }
-
-                        let ytOptions = {
-                            videoId: youtubeId,
-                            playerVars: playerVars,
-                            events: {
-                                onReady: onPlayerReady,
-                                onError: onPlayerError,
-                                onStateChange: onPlayerStateChange
-                            }
-                        };
-                        if (videoHeight) {
-                            ytOptions.height = videoHeight;
-                        }
-                        if (videoWidth) {
-                            ytOptions.width = videoWidth;
-                        }
-                        let player = new YT.Player(ytPlayerId, ytOptions); //eslint-disable-line no-undef
-
-                        // Fade in video.
-                        $(videoId).animateCss(enterAnimation);
+                        $(`#${wrapperId}`).find(".inner-position")
+                            .animateCss(enterAnimation, enterDuration, null, null, () => {
+                                $(`#${wrapperId}`).find(".inner-position")
+                                    .animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay, inbetweenRepeat);
+                            });
 
                         // Remove div after X time.
                         if (videoDuration) {
-                            // console.log("Waiting for timer to remove div");
                             setTimeout(function() {
-                                animateVideoExit(videoId, exitAnimation);
+                                delete startedVidCache[this.id];
+                                animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                             }, videoDuration);
                         } else {
-                            // console.log("Waiting for video event to clear div");
-                        }
-                    }
-                }
 
-                showVideo(event);
+                            video.onended = function(e) {
+                                delete startedVidCache[this.id];
+                                animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                            };
+                        }
+                    };
+
+                } else {
+
+                    let ytPlayerId = `yt-${new Date().getTime()}`;
+
+                    let youtubeElement = `<div id="${ytPlayerId}" style="display:none;${sizeStyles}"></div>`;
+
+                    let wrapperId = new Date().getTime();
+                    let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement);
+
+                    $('.wrapper').append(wrappedHtml);
+
+                    // Add iframe.
+
+                    let playerVars = {
+                        'autoplay': 1,
+                        'controls': 0,
+                        'start': videoStarttime,
+                        'showinfo': 0,
+                        'rel': 0,
+                        'modestbranding': 1
+                    };
+
+                    if (loop) {
+                        playerVars['loop'] = 1;
+                        playerVars['playlist'] = youtubeId;
+                    }
+
+                    let ytOptions = {
+                        videoId: youtubeId,
+                        playerVars: playerVars,
+                        events: {
+                            onReady: (event) => {
+
+                                $(`#${wrapperId}`).find(".inner-position")
+                                    .animateCss(enterAnimation, enterDuration, null, null, () => {
+                                        $(`#${wrapperId}`).find(".inner-position")
+                                            .animateCss(inbetweenAnimation, inbetweenDuration, inbetweenDelay, inbetweenRepeat);
+                                    });
+
+                                event.target.setVolume(parseInt(videoVolume) * 10);
+                                event.target.playVideo();
+
+                                $(`#${ytPlayerId}`).show();
+                            },
+                            onError: (event) => {
+                                console.log(event);
+                            },
+                            onStateChange: (event) => {
+                                if (event.data === 0 && !videoDuration) {
+                                    animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                                }
+                            }
+                        }
+                    };
+                    if (data.videoHeight) {
+                        ytOptions.height = data.videoHeight;
+                    }
+                    if (data.videoWidth) {
+                        ytOptions.width = data.videoWidth;
+                    }
+
+                    let player = new YT.Player(ytPlayerId, ytOptions);
+
+                    // Remove div after X time.
+                    if (videoDuration) {
+                        setTimeout(function() {
+                            animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
+                        }, videoDuration);
+                    }
+
+                }
             }
         }
     }

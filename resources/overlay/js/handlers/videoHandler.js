@@ -152,7 +152,6 @@ function showVideo(data){
 		}
 		var player = new YT.Player(ytPlayerId, ytOptions);
 		
-
 		// Show and play video when the player is ready.
 		function onPlayerReady(event) {
 

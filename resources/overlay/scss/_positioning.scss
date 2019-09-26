@@ -54,3 +54,23 @@
 	position: relative;
 }
 
+
+
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.browser-source-force-render-spinner {
+    color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    animation: spin 2s linear infinite;
+}
