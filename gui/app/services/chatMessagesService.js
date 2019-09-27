@@ -484,6 +484,8 @@
                 } else if (data.skill) {
                     data.isSkill = true;
 
+                    console.log("IS SKILL!");
+
                     // Set the icon for the currency used.
                     if (data.skill.currency === "Sparks") {
                         data.currencyIcon = "fas fa-bolt";
@@ -530,8 +532,10 @@
             listenerService.registerListener(
                 { type: listenerService.ListenerType.NON_CHAT_SKILL },
                 (data) => {
-
+                    console.log("GOT HERE!!");
                     if (settingsService.getRealChatFeed()) {
+
+                        console.log("GOT HERE 2.0!!");
 
                         let queueEntry = parseChatEventObject(data);
 

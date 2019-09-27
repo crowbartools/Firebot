@@ -335,7 +335,6 @@ function createChatDataProcessing(chatter) {
             socket.on("ChatMessage", data => {
                 // Send to command router to see if we need to act on a command.
 
-
                 commandHandler.handleChatEvent(data, "streamer").catch(reason => {
                     logger.error("Could not check for command in chat message.", reason);
                 });
@@ -368,9 +367,9 @@ function createChatDataProcessing(chatter) {
 
                 //TODO: Skill events in V5
 
-                /*// Send chat event
-                let event = new LiveEvent(EventType.CHAT_MESSAGE, EventSourceType.CHAT, {username: data.user_name, data: data});
-                eventRouter.uncachedEvent(event);
+                // Send chat event
+                /*let event = new LiveEvent(EventType.CHAT_MESSAGE, EventSourceType.CHAT, {username: data.user_name, data: data});
+                eventRouter.uncachedEvent(event);*/
 
 
                 // send skill event if needed
@@ -381,7 +380,7 @@ function createChatDataProcessing(chatter) {
                     // we get more documentation
                     skill.isSticker = true;
 
-                    let skillEvent = new LiveEvent(EventType.SKILL, EventSourceType.CHAT, {
+                    /*let skillEvent = new LiveEvent(EventType.SKILL, EventSourceType.CHAT, {
                         username: data.user_name,
                         data: {
                             skill: skill
@@ -393,13 +392,13 @@ function createChatDataProcessing(chatter) {
                         data: {
                             skill: skill
                         }
-                    });
+                    });*/
 
                     renderWindow.webContents.send('eventlog', {type: "general", username: data.user_name, event: `sent the Sticker "${skill.skill_name}" Cost: ${skill.cost} ${skill.currency}`});
 
-                    eventRouter.uncachedEvent(skillEvent);
-                    eventRouter.uncachedEvent(stickerOnlyEvent);
-                }*/
+                    /*eventRouter.uncachedEvent(skillEvent);
+                    eventRouter.uncachedEvent(stickerOnlyEvent);*/
+                }
             });
 
             // User joined the channel
@@ -509,24 +508,25 @@ function createChatDataProcessing(chatter) {
 
             // Non Chat based (aka not Sticker) Skill
             // TODO Handle chat skill atribution event in v5
-            /*(socket.on('SkillAttribution', data => {
+            socket.on('SkillAttribution', data => {
                 logger.debug(data);
 
                 data.fbEvent = 'Skill';
                 data.skill.isSticker = false;
-                let event = new LiveEvent(EventType.SKILL, EventSourceType.CHAT, {
+
+                /*let event = new LiveEvent(EventType.SKILL, EventSourceType.CHAT, {
                     username: data['user_name'],
                     data: {
                         skill: data.skill
                     }
-                });
+                });*/
 
                 renderWindow.webContents.send('eventlog', {type: "general", username: data['user_name'], event: `used the Skill "${data.skill.skill_name}" Cost: ${data.skill.cost} ${data.skill.currency}`});
 
                 renderWindow.webContents.send('nonChatSkill', data);
 
-                eventRouter.uncachedEvent(event);
-            });*/
+                /*eventRouter.uncachedEvent(event);*/
+            });
 
             let reconnectChat = () => {
                 socket.close();
