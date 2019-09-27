@@ -138,6 +138,16 @@ const mixerEventSource = {
             manualMetadata: {
                 username: "Firebot"
             }
+        },
+        {
+            id: "skill",
+            name: "Skill Used",
+            description: "When viewer uses a Mixer Skill (Sticker, Effect, etc).",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot"
+            }
         }
     ]
 };

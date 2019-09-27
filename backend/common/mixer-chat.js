@@ -363,15 +363,6 @@ function createChatDataProcessing(chatter) {
                     }
                 }
 
-
-
-                //TODO: Skill events in V5
-
-                // Send chat event
-                /*let event = new LiveEvent(EventType.CHAT_MESSAGE, EventSourceType.CHAT, {username: data.user_name, data: data});
-                eventRouter.uncachedEvent(event);*/
-
-
                 // send skill event if needed
                 if (data.message && data.message.meta && data.message.meta["is_skill"]) {
                     let skill = data.message.meta.skill;
@@ -380,24 +371,18 @@ function createChatDataProcessing(chatter) {
                     // we get more documentation
                     skill.isSticker = true;
 
-                    /*let skillEvent = new LiveEvent(EventType.SKILL, EventSourceType.CHAT, {
+                    eventManager.triggerEvent("mixer", "skill", {
                         username: data.user_name,
                         data: {
                             skill: skill
                         }
                     });
 
-                    let stickerOnlyEvent = new LiveEvent(EventType.SKILL_STICKER, EventSourceType.CHAT, {
+                    renderWindow.webContents.send('eventlog', {
+                        type: "general",
                         username: data.user_name,
-                        data: {
-                            skill: skill
-                        }
-                    });*/
-
-                    renderWindow.webContents.send('eventlog', {type: "general", username: data.user_name, event: `sent the Sticker "${skill.skill_name}" Cost: ${skill.cost} ${skill.currency}`});
-
-                    /*eventRouter.uncachedEvent(skillEvent);
-                    eventRouter.uncachedEvent(stickerOnlyEvent);*/
+                        event: `sent the Sticker "${skill.skill_name}" Cost: ${skill.cost} ${skill.currency}`
+                    });
                 }
             });
 
@@ -509,23 +494,26 @@ function createChatDataProcessing(chatter) {
             // Non Chat based (aka not Sticker) Skill
             // TODO Handle chat skill atribution event in v5
             socket.on('SkillAttribution', data => {
+                logger.debug("SkillAtro Chat Skill event");
                 logger.debug(data);
 
                 data.fbEvent = 'Skill';
                 data.skill.isSticker = false;
 
-                /*let event = new LiveEvent(EventType.SKILL, EventSourceType.CHAT, {
-                    username: data['user_name'],
+                eventManager.triggerEvent("mixer", "skill", {
+                    username: data.user_name,
                     data: {
                         skill: data.skill
                     }
-                });*/
+                });
 
-                renderWindow.webContents.send('eventlog', {type: "general", username: data['user_name'], event: `used the Skill "${data.skill.skill_name}" Cost: ${data.skill.cost} ${data.skill.currency}`});
+                renderWindow.webContents.send('eventlog', {
+                    type: "general",
+                    username: data['user_name'],
+                    event: `used the Skill "${data.skill.skill_name}" Cost: ${data.skill.cost} ${data.skill.currency}`
+                });
 
                 renderWindow.webContents.send('nonChatSkill', data);
-
-                /*eventRouter.uncachedEvent(event);*/
             });
 
             let reconnectChat = () => {
