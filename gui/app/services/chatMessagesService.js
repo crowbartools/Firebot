@@ -484,8 +484,6 @@
                 } else if (data.skill) {
                     data.isSkill = true;
 
-                    console.log("IS SKILL!");
-
                     // Set the icon for the currency used.
                     if (data.skill.currency === "Sparks") {
                         data.currencyIcon = "fas fa-bolt";

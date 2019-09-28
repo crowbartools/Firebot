@@ -394,33 +394,6 @@ function uiChatMessage(data) {
                 }
 
                 segment.firebotSubsegments = firebotData;
-
-                /*
-                ALL OF THIS CODE, ONCE WORKING WITH REGEXES. SHOULD CREATE A MESSAGE SEGMENT THAT LOOKS LIKE THIS:
-                segment = {
-                    type: "text",
-                    text: "I love ditto so much!",
-                    firebotSubsegments: [
-                        {
-                            type: "rawText",
-                            text: "I love"
-                        },
-                        {
-                            type: "elixrEmote",
-                            url: "//crowbartools.com/user-content/emotes/global/ditto.gif",
-                            code: "ditto",
-                            maxSize: 30,
-                            animated: true
-                        },
-                        {
-                            type: "rawText",
-                            text: "so much!"
-                        }
-                    ]
-                }
-                This gets sent to the front end, front end will just need to loop through segment.firebotSubsegments via an "ng-repeat"
-                and create the correct html elements based on the subsegment.type (rawText vs elixrEmote)
-                */
             }
         });
 

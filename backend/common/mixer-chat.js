@@ -492,7 +492,6 @@ function createChatDataProcessing(chatter) {
             });
 
             // Non Chat based (aka not Sticker) Skill
-            // TODO Handle chat skill atribution event in v5
             socket.on('SkillAttribution', data => {
                 logger.debug("SkillAtro Chat Skill event");
                 logger.debug(data);
@@ -500,12 +499,18 @@ function createChatDataProcessing(chatter) {
                 data.fbEvent = 'Skill';
                 data.skill.isSticker = false;
 
-                eventManager.triggerEvent("mixer", "skill", {
-                    username: data.user_name,
-                    data: {
-                        skill: data.skill
-                    }
-                });
+                let isGif = data.skill.skill_id === 'ba35d561-411a-4b96-ab3c-6e9532a33027' ||
+                    data.skill.skill_name.toLowerCase().contains("gif");
+
+                // we trigger skill events for gifs via constellation instead because we have access to gif url there
+                if (!isGif) {
+                    eventManager.triggerEvent("mixer", "skill", {
+                        username: data.user_name,
+                        data: {
+                            skill: data.skill
+                        }
+                    });
+                }
 
                 renderWindow.webContents.send('eventlog', {
                     type: "general",
