@@ -104,6 +104,8 @@
                 $scope.$on("modal.closing", function() {
                     utilityService.removeSlidingModal();
                 });
+
+                updateTriggerId();
             };
 
             $ctrl.effectListUpdated = function(effects) {
