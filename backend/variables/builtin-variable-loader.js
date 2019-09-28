@@ -42,6 +42,13 @@ exports.loadReplaceVariables = () => {
     const controlActiveState = require("./builtin/controlActiveState");
     const textboxInput = require ("./builtin/textboxInput");
 
+    const skillName = require("./builtin/skill-name");
+    const skillCost = require("./builtin/skill-cost");
+    const skillCurrencyType = require("./builtin/skill-currency-type");
+    const skillStickerUrl = require("./builtin/skill-sticker-url");
+    const skillGifUrl = require("./builtin/skill-gif-url");
+
+
     // register them
     replaceVariableManager.registerReplaceVariable(user);
     replaceVariableManager.registerReplaceVariable(subMonths);
@@ -81,4 +88,10 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(controlActiveState);
 
     replaceVariableManager.registerReplaceVariable(textboxInput);
+
+    replaceVariableManager.registerReplaceVariable(skillName);
+    replaceVariableManager.registerReplaceVariable(skillCost);
+    replaceVariableManager.registerReplaceVariable(skillCurrencyType);
+    replaceVariableManager.registerReplaceVariable(skillStickerUrl);
+    replaceVariableManager.registerReplaceVariable(skillGifUrl);
 };
