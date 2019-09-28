@@ -258,11 +258,92 @@ async function createClip(title) {
     });
 }
 
+async function connectToChat(chatter, authkey, endpoint, channelId, userId) {
+    return retry(async function (options) {
+        return new Promise(async (resolve, reject) => {
+            logger.debug('-----------------------------------------');
+            logger.info(`Setting up chat socket for ${chatter}. Try number ${options.current}.`);
+            logger.debug(resolve);
+            logger.debug(reject);
+            let maxTries = 3;
+            let chatConnect = {
+                status: false,
+                reason: "",
+                endpoint: endpoint
+            };
+
+            // No auth key provided.
+            if (authkey == null) {
+                chatConnect.reason = "No auth key was provided when trying to connect to chat.";
+                return reject(chatConnect);
+            }
+
+            // No endpoints given. MIXER PLZ.
+            if (endpoint == null || endpoint.length === 0) {
+                chatConnect.reason = "No endpoint was provided when trying to connect to chat.";
+                return reject(chatConnect);
+            }
+
+            logger.debug(chatConnect);
+
+            // Connect
+            const socket = new Mixer.Socket(ws, endpoint).boot();
+
+            // Handle socket connection errors.
+            socket.on('error', function(error, chatConnect) {
+                logger.debug(error);
+                chatConnect.reason = 'Error from chat socket while trying to connect.';
+                logger.error('Error from chat socket while trying to connect.', error);
+                if (options.current === maxTries) {
+                    return resolve(chatConnect);
+                }
+                return reject();
+            });
+
+            // Okay, try to auth.
+            socket.auth(channelId, userId, authkey).then(res => {
+                if (res.authenticated === true) {
+                    logger.debug('chat authenticated');
+                    chatConnect.reason = 'Success';
+                    chatConnect.status = true;
+
+                    if (chatter === "Streamer") {
+                        global.streamerChat = socket;
+                    } else {
+                        global.botChat = socket;
+                    }
+
+                    return resolve(chatConnect);
+                }
+                logger.debug('chat auth failed');
+                chatConnect.reason = 'Did not authenticate successfully.';
+                logger.error('Chat Socket error.', res);
+            }).catch(err => {
+                logger.debug('chat auth failed 2');
+                logger.error("Error authenticating chat socket.", err);
+                chatConnect.reason = 'Did not authenticate successfully.';
+            });
+
+            if (options.current === maxTries) {
+                logger.debug('hit max tries, failing...');
+                return resolve(chatConnect);
+            }
+            logger.debug('failed chat connect, retrying...');
+            return reject(chatConnect);
+        });
+    }, {
+        max: 4, // maximum amount of tries
+        timeout: 5000, // throw if no response or error within millisecond timeout, default: undefined,
+        backoffBase: 500, // Initial backoff duration in ms. Default: 100,
+        backoffExponent: 1.2 // Exponent to increase backoff each try. Default: 1.1
+    });
+}
+
 // Creates the chat websocket
 // This sets up and auths with the chat websocket.
-function createChatSocket (chatter, userId, channelId, endpoints, authkey) {
-    logger.info(`Setting up chat socket for ${chatter}`);
-    return new Promise((resolve, reject) => {
+async function createChatSocket (chatter, userId, channelId, endpoints, authkey) {
+    logger.info(`Attempting to setup chat socket for ${chatter}.`);
+    return new Promise(async (resolve, reject) => {
         if (authkey != null) {
             // Connect
             const socket = new Mixer.Socket(ws, endpoints).boot();
@@ -272,47 +353,22 @@ function createChatSocket (chatter, userId, channelId, endpoints, authkey) {
             // With this the socket above seems to search for the next working connection point automatically.
             socket.on('error', error => {
                 logger.error(`error from chat ${chatter} socket`, error);
+                return;
             });
 
             // Confirm login.
-            if (chatter === "Streamer") {
-                socket.auth(channelId, userId, authkey)
-                    .then((res) => {
-                        if (res.authenticated === true) {
-                            global.streamerChat = socket;
-
-                            resolve("Streamer");
-                        } else {
-                            logger.error(chatter + ' did not authenticate successfully.');
-                            reject(res);
-                        }
-                    })
-                    .catch(err => {
-                        reject(err);
-                    });
-            } else if (chatter === "Bot") {
-                socket.auth(channelId, userId, authkey)
-                    .then((res) => {
-                        if (res.authenticated === true) {
-                            logger.info('Successfully authenticated the bot chat socket!');
-                            global.botChat = socket;
-
-                            resolve("Bot");
-                        } else {
-                            logger.error(chatter + ' did not authenticate successfully.');
-                            reject(res);
-                        }
-                    })
-                    .catch(err => {
-                        logger.error("Error authenticating bot for chat socket", err);
-                        reject(err);
-                    });
-            } else {
-                reject('Error creating chat socket for ' + chatter + '.');
+            if (chatter === "Streamer" || chatter === "Bot") {
+                let chatConnect = await connectToChat(chatter, authkey, endpoints, channelId, userId);
+                logger.debug(chatConnect);
+                if (chatConnect.status === true) {
+                    return resolve(chatter);
+                }
+                return reject('Tried to connect to ' + chatter + ' chat socket several times, but failed.');
             }
-        } else {
-            logger.info('No auth key provided to connect to chat for ' + chatter);
+
+            return reject('Error creating chat socket for ' + chatter + '.');
         }
+        logger.info('No auth key provided to connect to chat for ' + chatter);
     });
 }
 
