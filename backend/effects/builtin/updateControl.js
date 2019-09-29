@@ -134,9 +134,9 @@ const model = {
         // force to current project if we are in the context of interactive
         if ($scope.trigger === "interactive") {
             if ($scope.hasProjects) {
-                let projectId = mixplayService.getCurrentProjectId();
+                let projectId = mixplayService.getActiveMixplayProjectId();
                 if (projectId) {
-                    $scope.effect.mixplayProject = mixplayService.getCurrentProjectId();
+                    $scope.effect.mixplayProject = mixplayService.getActiveMixplayProjectId();
                     $scope.disableProjectDropdown = true;
                 }
             }

@@ -107,27 +107,37 @@ function addControlHandlers(controls) {
 }
 
 function connectToMixplay() {
-    let currentProjectId = settings.getLastMixplayProjectId();
+    let activeProjectId = settings.getActiveMixplayProjectId();
 
     // clear our hidden controls cache, this is used in the update control effect
     hiddenControls = {};
 
-    if (!currentProjectId) {
+    if (!activeProjectId || activeProjectId.length < 1) {
         renderWindow.webContents.send('connection', "Offline");
         mixplayManager.setConnectedProjectId(null);
         mixplayConnected = false;
         defaultSceneId = null;
+        renderWindow.webContents.send("error", "You currently have no active project selected. Please select one via the project dropdown in the Controls tab.");
         return;
     }
 
-    let currentProject = mixplayManager.getProjectById(currentProjectId);
+    let currentProject = mixplayManager.getProjectById(activeProjectId);
+
+    if (currentProject == null) {
+        renderWindow.webContents.send('connection', "Offline");
+        mixplayManager.setConnectedProjectId(null);
+        mixplayConnected = false;
+        defaultSceneId = null;
+        renderWindow.webContents.send("error", "The project set as active doesn't appear to exist anymore. Please set or create a new one in the Controls tab.");
+        return;
+    }
 
     let model = buildMixplayModalFromProject(currentProject);
 
     accountAccess.updateAccountCache();
     let accessToken = accountAccess.getAccounts().streamer.accessToken;
 
-    mixplayManager.setConnectedProjectId(currentProjectId);
+    mixplayManager.setConnectedProjectId(activeProjectId);
 
     // Connect
     mixplayClient.open({

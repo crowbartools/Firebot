@@ -64,7 +64,7 @@ const delay = {
    * The controller for the front end Options
    */
     optionsController: ($scope, mixplayService) => {
-        let currentProject = mixplayService.getCurrentProject();
+        let activeProject = mixplayService.getActiveProject();
 
         $scope.scenes = {};
 
@@ -80,11 +80,11 @@ const delay = {
         }
 
         function getScenes() {
-            if (currentProject) {
+            if (activeProject) {
 
-                $scope.hasScenes = currentProject.scenes && currentProject.scenes.length > 0;
+                $scope.hasScenes = activeProject.scenes && activeProject.scenes.length > 0;
 
-                for (let scene of currentProject.scenes) {
+                for (let scene of activeProject.scenes) {
                     $scope.scenes[scene.id] = scene.name;
                 }
 

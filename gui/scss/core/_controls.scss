@@ -456,6 +456,9 @@ table.fb-table {
   &.notactive {
     background: gray;
   }
+  &.hidden {
+    opacity: 0;
+  }
 }
 
 .sys-command-row { 

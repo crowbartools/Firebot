@@ -49,8 +49,6 @@
 
                 mixplayService.saveProject(mixplayService.getCurrentProject());
 
-                //getControlPositionForCurrentGrid
-
                 if (lastClickedControl) {
                     let currentControls = mixplayService.getControlsForCurrentScene();
                     let updatedControl = currentControls.find(c => c.id === lastClickedControl.id);
@@ -62,7 +60,6 @@
                             oldPosition.y !== newPosition.y ||
                             oldPosition.width !== newPosition.width ||
                             oldPosition.height !== newPosition.height) {
-                            console.log("CONTROL UPDATED!");
                             mixplayService.triggerControlUpdatedEvent(updatedControl.id);
                         }
                     }
@@ -131,6 +128,34 @@
                             }
                         });
                 }
+            };
+
+            $scope.renameCurrentProject = function() {
+
+                let currentProject = mixplayService.getCurrentProject();
+                if (currentProject == null) return;
+
+                utilityService.openGetInputModal(
+                    {
+                        model: currentProject.name,
+                        label: "Rename Project",
+                        saveText: "Save",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+                                if (value == null || value.trim().length < 1) {
+                                    resolve(false);
+                                } else {
+                                    resolve(true);
+                                }
+                            });
+                        },
+                        validationText: "Project name cannot be empty."
+
+                    },
+                    (newName) => {
+                        currentProject.name = newName;
+                        mixplayService.saveProject(currentProject);
+                    });
             };
 
             $scope.editControl = function(control) {

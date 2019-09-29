@@ -55,6 +55,20 @@ settings.setLastMixplayProjectId = function(id) {
     pushDataToFile("/mixplay/lastProjectId", id);
 };
 
+settings.getActiveMixplayProjectId = function() {
+    let projectId;
+    try {
+        projectId = getSettingsFile().getData("/mixplay/activeProjectId");
+    } catch (err) {
+        logger.warn(err);
+    }
+    return projectId;
+};
+
+settings.setActiveMixplayProjectId = function(id) {
+    pushDataToFile("/mixplay/activeProjectId", id);
+};
+
 settings.getLastBoardName = function() {
     let boardName = getDataFromFile("/interactive/lastBoardId");
     return boardName != null ? boardName : "";
