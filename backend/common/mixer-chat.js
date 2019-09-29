@@ -300,6 +300,17 @@ async function connectToChat(chatter, authkey, endpoint, channelId, userId) {
                 return reject();
             });
 
+            const connectionFailed = () => {
+                chatConnect.reason = 'Did not authenticate successfully.';
+                if (options.current === maxTries) {
+                    logger.debug('hit max tries, failing...');
+                    resolve(chatConnect);
+                } else {
+                    logger.debug('failed chat connect, retrying...');
+                    reject(chatConnect);
+                }
+            };
+
             // Okay, try to auth.
             socket.auth(channelId, userId, authkey).then(res => {
                 if (res.authenticated === true) {
@@ -315,21 +326,16 @@ async function connectToChat(chatter, authkey, endpoint, channelId, userId) {
 
                     return resolve(chatConnect);
                 }
+
                 logger.debug('chat auth failed');
-                chatConnect.reason = 'Did not authenticate successfully.';
                 logger.error('Chat Socket error.', res);
+                connectionFailed();
+
             }).catch(err => {
                 logger.debug('chat auth failed 2');
                 logger.error("Error authenticating chat socket.", err);
-                chatConnect.reason = 'Did not authenticate successfully.';
+                connectionFailed();
             });
-
-            if (options.current === maxTries) {
-                logger.debug('hit max tries, failing...');
-                return resolve(chatConnect);
-            }
-            logger.debug('failed chat connect, retrying...');
-            return reject(chatConnect);
         });
     }, {
         max: 4, // maximum amount of tries
