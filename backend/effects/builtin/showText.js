@@ -231,6 +231,10 @@ const showText = {
                 dto.position = "Middle";
             }
 
+            if (dto.justify == null) {
+                dto.justify = "center";
+            }
+
             webServer.sendToOverlay("text", dto);
             resolve(true);
         });
@@ -270,7 +274,7 @@ const showText = {
 
                 let styles = `height:${data.height}px;width:${data.width}px;`;
 
-                styles += `justify-content:${data.justify};`;
+                styles += `justify-content:${data.justify};text-align:${data.justify};`;
 
                 if (data.dontWrap) {
                     styles += "overflow: hidden; white-space: nowrap;";
