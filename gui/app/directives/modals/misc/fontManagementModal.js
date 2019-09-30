@@ -36,8 +36,7 @@
                 close: '&',
                 dismiss: '&'
             },
-            controller: function($scope, listenerService, logger) {
-                const fontManager = require('../../backend/fontManager');
+            controller: function($scope, listenerService, logger, fontManager) {
                 const fsExtra = require('fs-extra');
                 const path = require("path");
 

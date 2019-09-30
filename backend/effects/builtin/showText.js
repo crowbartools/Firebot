@@ -39,28 +39,52 @@ const showText = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-  <eos-container header="Text">
-    <div>
-        <summernote ng-model="effect.text" config="editorOptions"></summernote>
-    </div>
+    <eos-container header="Text">
+        <div>
+            <summernote ng-model="effect.text" config="editorOptions"></summernote>
+        </div>
     </eos-container>
 
-    <eos-container header="Dimensions" class="setting-padtop">
-    <p>This defines the size of the (invisible) box that the above text will be placed in.</p>
-    <div class="input-group">
-        <span class="input-group-addon">Width (in pixels)</span>
-        <input 
-            class="form-control" 
-            type="number"
-            min="1" max="10000"
-            ng-model="effect.width">
-        <span class="input-group-addon">Height (in pixels)</span>
-        <input 
-            class="form-control"
-            type="number"
-            min="1" max="10000"
-            ng-model="effect.height">
-    </div>
+    <eos-container header="Container Settings" class="setting-padtop">
+        <p>This defines the size of the (invisible) box that the above text will be placed in.</p>
+        <div class="input-group" style="margin-bottom: 10px;">
+            <span class="input-group-addon">Width (in pixels)</span>
+            <input 
+                class="form-control" 
+                type="number"
+                min="1" max="10000"
+                ng-model="effect.width">
+            <span class="input-group-addon">Height (in pixels)</span>
+            <input 
+                class="form-control"
+                type="number"
+                min="1" max="10000"
+                ng-model="effect.height">
+        </div>
+
+        <label class="control-fb control--checkbox"> Dont Wrap Text
+            <input type="checkbox" ng-model="effect.dontWrap" />
+            <div class="control__indicator"></div>
+        </label>
+
+        <label class="control-fb control--checkbox"> Show Debug Border <tooltip text="'Show a red border around the text box to make it easier to see its position.'"></tooltip>
+            <input type="checkbox" ng-model="effect.debugBorder" />
+            <div class="control__indicator"></div>
+        </label>
+
+        <p>Justification</p>
+        <label class="control-fb control--radio">Left
+            <input type="radio" ng-model="effect.justify" value="flex-start"/> 
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control-fb control--radio" >Center
+            <input type="radio" ng-model="effect.justify" value="center"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control-fb control--radio" >Right
+            <input type="radio" ng-model="effect.justify" value="flex-end"/>
+            <div class="control__indicator"></div>
+        </label>
     </eos-container>
 
     <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
@@ -87,7 +111,8 @@ const showText = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, utilityService) => {
+    optionsController: ($scope, fontManager, utilityService) => {
+
         if ($scope.effect.height == null || $scope.effect.height < 1) {
             $scope.effect.height = 200;
         }
@@ -96,36 +121,33 @@ const showText = {
             $scope.effect.width = 400;
         }
 
+        if ($scope.effect.justify == null) {
+            $scope.effect.justify = "center";
+        }
+
+        if ($scope.effect.dontWrap == null) {
+            $scope.effect.dontWrap = false;
+        }
+
         $scope.editorOptions = {
             height: 300,
             disableDragAndDrop: true,
             toolbar: [
-                ["style", ["bold", "italic", "underline", "clear"]],
-                ["fontname", ["fontname"]],
-                ["fontsize", ["fontsize"]],
-                ["color", ["color"]],
-                ["para", ["ul", "ol"]],
-                ["misc", ["undo", "redo", "codeview"]]
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol']],
+                ['misc', ['undo', 'redo', 'codeview']]
             ],
-            fontSizes: [
-                "8",
-                "9",
-                "10",
-                "11",
-                "12",
-                "14",
-                "18",
-                "24",
-                "36",
-                "48",
-                "64",
-                "82",
-                "150",
-                "200",
-                "250",
-                "300"
-            ]
+            fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36', '48', '64', '82', '88', '96', '110', '124', '136', '150', '200', '250', '300'],
+            fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana', 'Open Sans', 'Roboto'],
+            fontNamesIgnoreCheck: ['Open Sans', 'Roboto']
         };
+
+        let installedFontNames = fontManager.getInstalledFonts().map(f => f.name);
+        $scope.editorOptions.fontNames = $scope.editorOptions.fontNames.concat(installedFontNames);
+        $scope.editorOptions.fontNamesIgnoreCheck = $scope.editorOptions.fontNamesIgnoreCheck.concat(installedFontNames);
 
         $scope.showOverlayInfoModal = function(overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
@@ -167,6 +189,9 @@ const showText = {
                 duration: effect.duration,
                 height: effect.height,
                 width: effect.width,
+                justify: effect.justify,
+                dontWrap: effect.dontWrap,
+                debugBorder: effect.debugBorder,
                 overlayInstance: effect.overlayInstance
             };
 
@@ -222,8 +247,6 @@ const showText = {
             name: "text",
             onOverlayEvent: event => {
 
-
-
                 let data = event;
 
                 let positionData = {
@@ -244,12 +267,27 @@ const showText = {
                 };
 
                 let params = new URL(location).searchParams;
+
+                let styles = `height:${data.height}px;width:${data.width}px;`;
+
+                styles += `justify-content:${data.justify};`;
+
+                if (data.dontWrap) {
+                    styles += "overflow: hidden; white-space: nowrap;";
+                }
+
                 let borderColor = params.get("borderColor");
-                let borderStyle = borderColor ? `border: 2px solid ${borderColor};` : "";
+                if ((borderColor == null || borderColor.length > 1) && data.debugBorder) {
+                    borderColor = "red";
+                }
+
+                if (borderColor) {
+                    styles += `border: 2px solid ${borderColor};`;
+                }
 
                 let textDiv = `
                     <div class="text-container"
-                        style="height:${data.height}px;width:${data.width}px;${borderStyle}">
+                        style="${styles}">
                         ${data.text}
                     </div>`;
 
