@@ -6,28 +6,7 @@
 
         <!-- General Settings -->
         <uib-tab index="0" heading="General">
-          <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Setup Wizard</div>
-              <div class="setting-description">Want to run the setup wizard again? Click the button below.</div>
-              <button class="btn btn-default" ng-click="showSetupWizard(true)">Open Setup Wizard</button>
-            </div>
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Connection Sounds</div>
-              <div class="setting-description">Get audible alerts when Firebot connects or disconnects.</div>
-              <div class="dropdown options-sounds-dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-sounds">
-                  <li><a href ng-click="settings.setSoundsEnabled('On')">On</a></li>
-                  <li><a href ng-click="settings.setSoundsEnabled('Off')">Off</a></li>
-                </ul>
-              </div>         
-            </div>
-          </div>
-          <div class="row">
+          <div class="row"  style="margin-top: 15px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Theme</div>
               <div class="setting-description">Choose your color theme for Firebot!</div>
@@ -64,16 +43,41 @@
             </div>
           </div>
           <div class="row">
+
+                <div class="setting col-sm-6">
+                    <div class="setting-heading">Beta Notifications</div>
+                    <div class="setting-description">Firebot automatically updates to new stable versions. It does not automatically update to betas or major new releases however. Below you can choose if you want to be notified of new beta releases.</div>
+                    <div style="padding-top: 10px; padding-left: 10px;">
+                        <label class="control-fb control--checkbox"> Subscribe to beta notifications <i class="fal fa-question-circle" uib-tooltip="Get notified when a new beta is available. You will be able to review the change log and update from within the app, if you so desire." tooltip-append-to-body="true" ></i>
+                        <input type="checkbox" ng-click="settings.setNotifyOnBeta(!settings.notifyOnBeta())" ng-checked="settings.notifyOnBeta()" aria-label="..." >
+                        <div class="control__indicator"></div>
+                        </label>
+                    </div> 
+                </div>
+            
             <div class="setting col-sm-6">
-              <div class="setting-heading">Beta Notifications</div>
-              <div class="setting-description">Firebot automatically updates to new stable versions. It does not automatically update to betas or major new releases however. Below you can choose if you want to be notified of new beta releases.</div>
-              <div style="padding-top: 10px; padding-left: 10px;">
-                <label class="control-fb control--checkbox"> Subscribe to beta notifications <i class="fal fa-question-circle" uib-tooltip="Get notified when a new beta is available. You will be able to review the change log and update from within the app, if you so desire." tooltip-append-to-body="true" ></i>
-                  <input type="checkbox" ng-click="settings.setNotifyOnBeta(!settings.notifyOnBeta())" ng-checked="settings.notifyOnBeta()" aria-label="..." >
-                  <div class="control__indicator"></div>
-                </label>
-              </div> 
+              <div class="setting-heading">Connection Sounds</div>
+              <div class="setting-description">Get audible alerts when Firebot connects or disconnects.</div>
+              <div class="dropdown options-sounds-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-sounds">
+                  <li><a href ng-click="settings.setSoundsEnabled('On')">On</a></li>
+                  <li><a href ng-click="settings.setSoundsEnabled('Off')">Off</a></li>
+                </ul>
+              </div>         
             </div>
+          </div>
+          <div class="row">
+
+            <div class="setting col-sm-6">
+                <div class="setting-heading">Setup Wizard</div>
+                <div class="setting-description">Want to run the setup wizard again? Click the button below.</div>
+                <button class="btn btn-default" ng-click="showSetupWizard(true)">Open Setup Wizard</button>
+            </div>
+
             <div class="setting col-sm-6">              
               <div class="setting-heading">Root Folder Access</div>
               <div class="setting-description">Need easy access to Firebot's main folder where all settings and data are saved?</div>
@@ -83,22 +87,8 @@
         </uib-tab>
 
         <!-- Interactive Settings -->
-        <uib-tab index="1" heading="Interactive">
+        <uib-tab index="1" heading="MixPlay">
           <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Control Emulation</div>
-              <div class="setting-description">Firebot has two different control emulators built in. If one doesn't work for you, try the other one!</div>
-              <div class="dropdown options-emulation-dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.getEmulator()}}</span>
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-emulation">
-                  <li><a href ng-click="settings.setEmulator('Robotjs')">Robotjs</a></li>
-                  <li><a href ng-click="settings.setEmulator('KBMRobot')">KBMRobot</a></li>
-                </ul>
-              </div>
-            </div>
             <div class="setting col-sm-6">
               <div class="setting-heading">Spark Exemption</div>
                 <div class="setting-description">Enable or disable the spark exemption feature, which lets you specify users or groups who dont get charged sparks.</div>
@@ -152,8 +142,44 @@
                 <button class="btn btn-default" ng-click="showFontManagementModal()">Manage Fonts</button>
             </div>
           </div>
+
           <div class="row" style="margin-top: 15px">
-            
+
+            <div class="setting col-sm-6">
+                <div class="setting-heading">Overlay Instances</div>
+                <div class="setting-description">
+                  Enable or disable the ability to use multiple overlay instances in your broadcasting software. When on, you will be able to pick which instance you want a video or image effect to show in. This is useful if you use greenscreen footage that you need to chroma key but don't want to affect your other videos and images. 
+                </div>
+                <div class="dropdown options-customscript-dropdown"style="display: inline-block">
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{settings.useOverlayInstances() ? 'On' : 'Off'}}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                    <li><a href ng-click="settings.setUseOverlayInstances(true)">On</a></li>
+                    <li><a href ng-click="settings.setUseOverlayInstances(false)">Off</a></li>
+                  </ul>
+                </div>
+                <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
+            </div>
+
+            <div class="setting col-sm-6">
+                <div class="setting-heading">Overlay Web Socket Port</div>
+                <div class="setting-description">
+                  This is the port that the Firebot and the overlay webpage use to talk to each other. 
+                  You usually only need to change this if you are having a problem with the overlay. 
+                </div>
+                <div class="input-group" style="width: 50%; margin-bottom: 10px;">
+                  <input type="text" class="form-control" ng-model="currentPort" disabled>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="showChangePortModal()">Edit</button>
+                  </span>
+                </div>          
+                <div class="alert alert-warning">
+                    <b>Note</b>: If a new port is set, both Firebot and anything previewing the overlay (ie broadcasting software) will need to be restarted for the new port to take effect. You will also need to update your overlay URL.
+                </div>
+            </div>
+
           </div>
         </uib-tab>
 
@@ -259,25 +285,8 @@
             </div>
           </div>
           <div class="row" style="margin-top:15px;">
-            <div class="setting col-sm-6">
-                <div class="setting-heading">Overlay Instances</div>
-                <div class="setting-description">
-                  Enable or disable the ability to use multiple overlay instances in your broadcasting software. When on, you will be able to pick which instance you want a video or image effect to show in. This is useful if you use greenscreen footage that you need to chroma key but don't want to affect your other videos and images. 
-                </div>
-                <div class="dropdown options-customscript-dropdown"style="display: inline-block">
-                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span class="dropdown-text">{{settings.useOverlayInstances() ? 'On' : 'Off'}}</span>
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
-                    <li><a href ng-click="settings.setUseOverlayInstances(true)">On</a></li>
-                    <li><a href ng-click="settings.setUseOverlayInstances(false)">Off</a></li>
-                  </ul>
-                </div>
-                <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
-            </div>
-            <div class="setting col-sm-6">
-                
+
+            <div class="setting col-sm-6">         
                 <div class="setting-heading">Custom Script Effect</div>
                 <div class="setting-description">Firebot supports an effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
                 <div class="dropdown options-customscript-dropdown">
@@ -292,27 +301,25 @@
                 </div>
 
             </div>
+
+            <div class="setting col-sm-6">
+                <div class="setting-heading">Control Emulation</div>
+                <div class="setting-description">Firebot has two different control emulators built in. If one doesn't work for you, try the other one!</div>
+                <div class="dropdown options-emulation-dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{settings.getEmulator()}}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="options-emulation">
+                    <li><a href ng-click="settings.setEmulator('Robotjs')">Robotjs</a></li>
+                    <li><a href ng-click="settings.setEmulator('KBMRobot')">KBMRobot</a></li>
+                  </ul>
+                </div>
+            </div>
+
           </div>
           <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Web Socket Port</div>
-              <div class="setting-description">
-                This is the port that the Firebot and the overlay webpage use to talk to each other. 
-                You usually only need to change this if you are having a problem with the overlay. 
-              </div>
-              <div class="input-group" style="width: 50%; margin-bottom: 10px;">
-                <input type="text" class="form-control" ng-model="currentPort" disabled>
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="button" ng-click="showChangePortModal()">Edit</button>
-                </span>
-              </div>          
-              <div class="alert alert-danger">
-                  <b>Note</b>: If a new port is set, both Firebot and anything previewing the overlay (ie broadcasting software) will need to be restarted for the new port to take effect.
-              </div>
-              <div class="alert alert-warning">
-                <b>Warning</b>: This is NOT the port used in the overlay URL (7472). If you absolutely need to change that port, please reach out to us on Discord or Twitter.
-              </div>
-            </div>
+        
             <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
 
               <div class="setting-heading">Clear Custom Script Cache</div>
