@@ -134,16 +134,16 @@ const model = {
         // force to current project if we are in the context of interactive
         if ($scope.trigger === "interactive") {
             if ($scope.hasProjects) {
-                let projectId = mixplayService.getActiveMixplayProjectId();
+                let projectId = mixplayService.getCurrentProjectId();
                 if (projectId) {
-                    $scope.effect.mixplayProject = mixplayService.getActiveMixplayProjectId();
+                    $scope.effect.mixplayProject = mixplayService.getCurrentProjectId();
                     $scope.disableProjectDropdown = true;
                 }
             }
         }
 
         $scope.getTooltip = function() {
-            return $scope.disableProjectDropdown ? "You can only create cooldowns for the current project when adding to a control." : "";
+            return $scope.disableProjectDropdown ? "You can only update controls for current project when adding this effect to a control." : "";
         };
 
         function loadControls() {

@@ -126,9 +126,9 @@ const cooldown = {
         // force to current project if we are in the context of interactive
         if ($scope.trigger === "interactive") {
             if ($scope.hasProjects) {
-                let projectId = mixplayService.getActiveProject();
+                let projectId = mixplayService.getCurrentProjectId();
                 if (projectId) {
-                    $scope.effect.mixplayProject = mixplayService.getActiveMixplayProjectId();
+                    $scope.effect.mixplayProject = mixplayService.getCurrentProjectId();
                     $scope.disableProjectDropdown = true;
                 }
             }

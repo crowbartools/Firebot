@@ -5,6 +5,7 @@ const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
 const mixplay = require("../../interactive/mixplay");
+const mixplayManager = require("../../interactive/mixplay-project-manager");
 
 /**
  * The Delay effect
@@ -30,7 +31,16 @@ const delay = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-        <eos-container header="Operation">
+
+        <eos-container header="MixPlay Project" ng-hide="disableProjectDropdown">
+            <dropdown-select ng-show="hasProjects" uib-tooltip="{{getTooltip()}}" tooltip-append-to-body="true" options="projects" selected="effect.mixplayProject" on-update="projectChanged()" is-disabled="disableProjectDropdown"></dropdown-select>
+            <span ng-hide="hasProjects" class="muted">You currently don't have any MixPlay projects created. Create on in the Controls tab!</span>
+            <div class="effect-info alert alert-info" ng-hide="disableProjectDropdown" style="margin-bottom:0;">
+                Remember the selected mixplay project must be connected when this effect is triggered for it to work.
+            </div>
+        </eos-container>
+
+        <eos-container header="Operation" pad-top="!disableProjectDropdown" ng-show="effect.mixplayProject">
             <dropdown-select options="sceneActions" selected="effect.sceneAction"></dropdown-select>
         </eos-container>
 
@@ -64,7 +74,6 @@ const delay = {
    * The controller for the front end Options
    */
     optionsController: ($scope, mixplayService) => {
-        let activeProject = mixplayService.getActiveProject();
 
         $scope.scenes = {};
 
@@ -75,28 +84,69 @@ const delay = {
 
         $scope.hasScenes = false;
 
-        if (!$scope.effect.viewerType) {
-            $scope.effect.viewerType = "current";
-        }
-
         function getScenes() {
-            if (activeProject) {
+            let selectedProject = mixplayService.getProjectById($scope.effect.mixplayProject);
 
-                $scope.hasScenes = activeProject.scenes && activeProject.scenes.length > 0;
+            if (!selectedProject) {
+                $scope.scenes = {};
+                $scope.effect.newSceneId = undefined;
+                $scope.effect.currentSceneId = undefined;
+                return;
+            }
 
-                for (let scene of activeProject.scenes) {
-                    $scope.scenes[scene.id] = scene.name;
+            $scope.hasScenes = selectedProject.scenes && selectedProject.scenes.length > 0;
+
+            for (let scene of selectedProject.scenes) {
+                $scope.scenes[scene.id] = scene.name;
+            }
+
+            if ($scope.hasScenes) {
+                if (!$scope.effect.newSceneId) {
+                    $scope.effect.newSceneId = Object.keys($scope.scenes)[0];
                 }
-
-                if ($scope.hasScenes) {
-                    if (!$scope.effect.newSceneId) {
-                        $scope.effect.newSceneId = Object.keys($scope.scenes)[0];
-                    }
-                    if (!$scope.effect.currentSceneId) {
-                        $scope.effect.currentSceneId = Object.keys($scope.scenes)[0];
-                    }
+                if (!$scope.effect.currentSceneId) {
+                    $scope.effect.currentSceneId = Object.keys($scope.scenes)[0];
                 }
             }
+        }
+
+        $scope.hasProjects = false;
+        $scope.projects = {};
+        let projects = mixplayService.getProjects();
+        if (projects && projects.length > 0) {
+            $scope.hasProjects = true;
+            for (let project of projects) {
+                $scope.projects[project.id] = project.name;
+            }
+        }
+        if ($scope.effect.mixplayProject) {
+            if (!$scope.projects[$scope.effect.mixplayProject]) {
+                $scope.effect.mixplayProject = null;
+            }
+        }
+
+        // force to current project if we are in the context of interactive
+        if ($scope.trigger === "interactive") {
+            if ($scope.hasProjects) {
+                let projectId = mixplayService.getCurrentProjectId();
+                if (projectId) {
+                    $scope.effect.mixplayProject = projectId;
+                    $scope.disableProjectDropdown = true;
+                    getScenes();
+                }
+            }
+        }
+
+        $scope.getTooltip = function() {
+            return $scope.disableProjectDropdown ? "You can only use the current project when adding this effect to a control." : "";
+        };
+
+        $scope.projectChanged = function() {
+            getScenes();
+        };
+
+        if (!$scope.effect.viewerType) {
+            $scope.effect.viewerType = "current";
         }
 
         getScenes();
@@ -122,6 +172,15 @@ const delay = {
     onTriggerEvent: event => {
         return new Promise(resolve => {
             let effect = event.effect;
+
+            //mixplayProject
+
+            if (effect.mixplayProject == null) {
+                return resolve(true);
+            }
+
+            let connectedProject = mixplayManager.getConnectedProject();
+            if (!connectedProject || connectedProject.id !== effect.mixplayProject) return resolve(true);
 
             if (effect.sceneAction === 'single') {
                 let username = "";
