@@ -27,7 +27,6 @@
             service.setActiveMixplayProjectId = function(id) {
                 activeProjectId = id;
                 settingsService.setActiveMixplayProjectId(id);
-                //todo: trigger event for backend to update cache? - maybe not
             };
 
             service.projectIsActive = function(id) {
@@ -107,7 +106,7 @@
                 let newProject = backendCommunicator.fireEventSync("createNewProject", name);
                 projects.push(newProject);
                 currentProjectId = newProject.id;
-                if (activeProjectId === null) {
+                if (activeProjectId == null) {
                     service.setActiveMixplayProjectId(newProject.id);
                 }
             };
