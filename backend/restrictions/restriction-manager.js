@@ -41,7 +41,7 @@ class RestrictionsManager extends EventEmitter {
             restrictionData.restrictions.length < 1) {
             return Promise.resolve(true);
         }
-        let restrictions = restrictionData;
+        let restrictions = restrictionData.restrictions;
         let permissions = restrictions.find(r => r.type === "firebot:permissions");
         if (permissions == null) {
             return Promise.resolve(true);
