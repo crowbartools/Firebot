@@ -8,6 +8,7 @@ exports.loadReplaceVariables = () => {
     const subMonths = require("./builtin/subMonths");
     const arg = require("./builtin/arg");
     const target = require("./builtin/target");
+    const count = require("./builtin/count");
     const bot = require("./builtin/bot");
     const streamer = require("./builtin/streamer");
     const date = require("./builtin/date");
@@ -55,6 +56,7 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(subMonths);
     replaceVariableManager.registerReplaceVariable(arg);
     replaceVariableManager.registerReplaceVariable(target);
+    replaceVariableManager.registerReplaceVariable(count);
     replaceVariableManager.registerReplaceVariable(bot);
     replaceVariableManager.registerReplaceVariable(streamer);
     replaceVariableManager.registerReplaceVariable(date);
