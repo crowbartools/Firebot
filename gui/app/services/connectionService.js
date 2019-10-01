@@ -209,8 +209,8 @@
                             // Push all to db.
                             if (
                                 accessToken !== null &&
-                accessToken !== undefined &&
-                accessToken !== ""
+                                accessToken !== undefined &&
+                                accessToken !== ""
                             ) {
                                 dbAuth.push("./streamer/accessToken", accessToken);
                                 dbAuth.push("./streamer/refreshToken", refreshToken);
@@ -222,6 +222,8 @@
 
                                 // Set connecting to false and log the streamer out because we have oauth issues.
                                 service.waitingForChatStatusChange = false;
+                                service.waitingForStatusChange = false;
+                                service.waitingForConstellationStatusChange = false;
 
                                 utilityService.showErrorModal('There was an error authenticating your streamer account. Please try again. If it continues to fail, try relogging in.');
                                 return;
@@ -247,6 +249,9 @@
 
                                         // Set connecting to false and log the streamer out because we have oauth issues.
                                         service.waitingForChatStatusChange = false;
+                                        service.waitingForStatusChange = false;
+                                        service.waitingForConstellationStatusChange = false;
+
                                         service.disconnectFromInteractive();
 
                                         return;
@@ -268,6 +273,9 @@
 
                                     // Set connecting to false and log the streamer out because we have oauth issues.
                                     service.waitingForChatStatusChange = false;
+                                    service.waitingForStatusChange = false;
+                                    service.waitingForConstellationStatusChange = false;
+
                                     service.disconnectFromInteractive();
 
                                     return;
@@ -291,6 +299,9 @@
 
                             // Set connecting to false and log the streamer out because we have oauth issues.
                             service.waitingForChatStatusChange = false;
+                            service.waitingForStatusChange = false;
+                            service.waitingForConstellationStatusChange = false;
+
 
                             utilityService.showErrorModal('There was an error authenticating your streamer account. Please try again. If it continues to fail, try relogging in.');
                             return;
@@ -299,6 +310,9 @@
                 } catch (err) {
                     // The streamer isn't logged in... stop everything.
                     service.waitingForChatStatusChange = false;
+                    service.waitingForStatusChange = false;
+                    service.waitingForConstellationStatusChange = false;
+
                     service.isConnectingAll = false;
                     logger.warn("No streamer logged in. Skipping refresh token.");
                     utilityService.showErrorModal(
