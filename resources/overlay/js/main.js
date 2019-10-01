@@ -77,11 +77,11 @@ function loadFonts() {
 		fonts.forEach(font => {
 			let fontPath = `http://${window.location.hostname}:${OVERLAY_PORT}/api/v1/fonts/${font.name}`
 			fontStyleBlock +=
-`@font-face {
-	font-family: '${font.name}';
-	src: url('${fontPath}') format('${font.format}')
-}
-`;
+                `@font-face {
+                    font-family: '${font.name}';
+                    src: url('${fontPath}') format('${font.format}')
+                }
+                `;
 		});
 		fontStyleBlock += "</style>";
 

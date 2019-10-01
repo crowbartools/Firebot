@@ -143,7 +143,7 @@ const model = {
         }
 
         $scope.getTooltip = function() {
-            return $scope.disableProjectDropdown ? "You can only create cooldowns for the current project when adding to a control." : "";
+            return $scope.disableProjectDropdown ? "You can only update controls for current project when adding this effect to a control." : "";
         };
 
         function loadControls() {

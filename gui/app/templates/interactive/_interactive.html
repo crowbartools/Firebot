@@ -10,14 +10,24 @@
 
         <div class="fb-notab-dropdown" style="height: 100%;">
           <div class="text-dropdown" style="margin-left: 0px;" uib-dropdown uib-dropdown-toggle>
-            <div class="project-dropdown-text noselect pointer" uib-tooltip="Current MixPlay Project" tooltip-append-to-body="true">{{getSelectedProjectName()}}<span class="fb-arrow down"></span></div>
+            <div class="project-dropdown-text noselect pointer">
+              <span ng-show="mps.projectIsActive(mps.getCurrentProjectId())" class="status-dot active" style="margin-right: 5px;" uib-tooltip="This project is active (used when you connect to MixPlay)." tooltip-append-to-body="true"></span>
+              <span>{{getSelectedProjectName()}}</span>
+              <span class="fb-arrow down"></span>
+            </div>
             <ul class="dropdown-menu" uib-dropdown-menu>
               <li class="dropdown-header noselect">Projects</li>
-              <li ng-repeat="projectDef in mps.getProjects() track by projectDef.id">         
-                <a href ng-click="setCurrentProject(projectDef.id)">{{projectDef.name}}</a>
+              <li ng-repeat="projectDef in mps.getProjects() track by projectDef.id">       
+                <a href style="padding-left: 6px;" ng-click="setCurrentProject(projectDef.id)">
+                    <span style="width: 10px;margin-right:5px;display:inline-block">
+                      <span ng-show="mps.projectIsActive(projectDef.id)" class="status-dot active" uib-tooltip="This project is active (used when you connect to MixPlay)." tooltip-append-to-body="true"></span>
+                    </span>   
+                  <span>{{projectDef.name}}</span>
+                </a>
               </li>
               <li role="separator" class="divider"></li>
-              <li class="disabled"><a href >Rename "{{getSelectedProjectName()}}"</a></li>
+              <li ng-show="!mps.projectIsActive(mps.getCurrentProjectId())"><a href ng-click="mps.setActiveMixplayProjectId(mps.getCurrentProjectId())">Set "{{getSelectedProjectName()}}" as Active <tooltip text="'The active project is the project used when you connect to MixPlay.'"></tooltip></a></li>
+              <li><a href ng-click="renameCurrentProject()">Rename "{{getSelectedProjectName()}}"</a></li>
               <li><a href ng-click="deleteCurrentProject()">Delete "{{getSelectedProjectName()}}"</a></li>
               <li role="separator" class="divider"></li>
               <li><a href ng-click="showCreateMixplayModal()">Create New Project</a></li>

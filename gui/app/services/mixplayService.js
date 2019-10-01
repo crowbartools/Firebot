@@ -11,25 +11,46 @@
             let service = {};
 
             let projects = [];
-            let lastProjectId = settingsService.getLastMixplayProjectId();
+            let activeProjectId = settingsService.getActiveMixplayProjectId();
+            let currentProjectId = activeProjectId;
 
             let selectedSceneId;
-
 
             service.getProjectById = function(id) {
                 return projects.find(p => p.id === id);
             };
 
-            service.getCurrentProjectId = function() {
-                return lastProjectId;
+            service.getActiveMixplayProjectId = function() {
+                return activeProjectId;
             };
 
-            service.getCurrentProject = function() {
-                if (lastProjectId != null) {
-                    return service.getProjectById(lastProjectId);
+            service.setActiveMixplayProjectId = function(id) {
+                activeProjectId = id;
+                settingsService.setActiveMixplayProjectId(id);
+            };
+
+            service.projectIsActive = function(id) {
+                return id === activeProjectId;
+            };
+
+            service.getActiveProject = function() {
+                if (activeProjectId != null) {
+                    return service.getProjectById(activeProjectId);
                 }
                 return null;
             };
+
+            service.getCurrentProjectId = function() {
+                return currentProjectId;
+            };
+
+            service.getCurrentProject = function() {
+                if (currentProjectId != null) {
+                    return service.getProjectById(currentProjectId);
+                }
+                return null;
+            };
+
             function selectFirstScene() {
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {
@@ -39,9 +60,44 @@
                 }
             }
 
+            service.setCurrentProject = function(id) {
+                currentProjectId = id;
+                selectFirstScene();
+            };
+
+            service.hasCurrentProject = function() {
+                return currentProjectId != null;
+            };
+
+            service.deleteProject = function(id) {
+                backendCommunicator.fireEvent("deleteProject", id);
+                projects = projects.filter(p => p.id !== id);
+
+                let activeProjectId = settingsService.getActiveMixplayProjectId();
+                if (activeProjectId === id) {
+                    if (projects.length > 0) {
+                        service.setActiveMixplayProjectId(projects[0].id);
+                    } else {
+                        service.setActiveMixplayProjectId(null);
+                    }
+                }
+
+                if (currentProjectId === id) {
+                    if (projects.length > 0) {
+                        currentProjectId = projects[0].id;
+                        selectFirstScene();
+                    } else {
+                        currentProjectId = null;
+                    }
+                }
+            };
+
             function loadProjects() {
                 projects = backendCommunicator.fireEventSync("getAllProjects");
                 selectFirstScene();
+                if (projects.length > 0 && currentProjectId == null) {
+                    currentProjectId = projects[0].id;
+                }
             }
 
             loadProjects();
@@ -49,7 +105,10 @@
             service.createNewProject = function(name) {
                 let newProject = backendCommunicator.fireEventSync("createNewProject", name);
                 projects.push(newProject);
-                lastProjectId = newProject.id;
+                currentProjectId = newProject.id;
+                if (activeProjectId == null) {
+                    service.setActiveMixplayProjectId(newProject.id);
+                }
             };
 
             service.saveProject = function(project) {
@@ -62,6 +121,7 @@
             };
 
             service.triggerControlUpdatedEvent = function(controlId) {
+                if (currentProjectId !== activeProjectId) return;
                 backendCommunicator.fireEvent("controlUpdated", controlId);
             };
 
@@ -197,6 +257,7 @@
                 });
                 service.saveProject(service.getCurrentProject());
 
+                if (currentProjectId !== activeProjectId) return;
                 let currentScene = getCurrentScene();
                 backendCommunicator.fireEvent("controlsUpdated", {
                     sceneId: currentScene.id,
@@ -282,10 +343,11 @@
 
                         service.saveProject(currentProject);
 
+                        if (currentProjectId !== activeProjectId) return;
+
                         backendCommunicator.fireEvent("controlAdded", {
                             sceneId: currentScene.id, newControl
                         });
-
                     }
                 }
             };
@@ -309,7 +371,8 @@
                     currentScene.controls = currentScene.controls.filter(c => c.id !== controlId);
                     service.saveProject(service.getCurrentProject());
 
-                    backendCommunicator.fireEvent("controlRemoved", {
+                    if (currentProjectId !== activeProjectId) return;
+                    backendCommunicator.fireEvent("controlsRemoved", {
                         sceneId: currentScene.id,
                         controlIds: [controlId]
                     });
@@ -349,7 +412,7 @@
             };
 
             service.getControlDataForCurrentProject = function() {
-                return service.getControlDataForProject(lastProjectId);
+                return service.getControlDataForProject(currentProjectId);
             };
 
             service.getControlDataForProject = function(projectId) {
@@ -372,30 +435,6 @@
                     return controls;
                 }
                 return [];
-            };
-
-            service.setCurrentProject = function(id) {
-                lastProjectId = id;
-                settingsService.setLastMixplayProjectId(id);
-                selectFirstScene();
-            };
-
-            service.hasCurrentProject = function() {
-                return lastProjectId != null;
-            };
-
-            service.deleteProject = function(id) {
-                backendCommunicator.fireEvent("deleteProject", id);
-                projects = projects.filter(p => p.id !== id);
-
-                let lastProjectId = settingsService.getLastMixplayProjectId();
-                if (lastProjectId === id) {
-                    if (projects.length > 0) {
-                        service.setCurrentProject(projects[0].id);
-                    } else {
-                        service.setCurrentProject(null);
-                    }
-                }
             };
 
             service.getProjects = function() {

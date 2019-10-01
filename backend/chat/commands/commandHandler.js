@@ -316,12 +316,12 @@ async function handleChatEvent(chatEvent, chatter) {
     }
 
     // Throw chat alert if we have it active.
-    if (command.chatFeedAlert === true) {
+    /*if (command.chatFeedAlert === true) {
         renderWindow.webContents.send("chatUpdate", {
             fbEvent: "ChatAlert",
             message: commandSender + " used the " + command.trigger + " command."
         });
-    }
+    }*/
 
     //update the count for the command
     if (command.type === "custom") {

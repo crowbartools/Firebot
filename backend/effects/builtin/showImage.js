@@ -41,15 +41,16 @@ const showImage = {
     <div class="effect-specific-title"><h4>Image</h4></div>
     <div class="effect-setting-content">
         <div style="padding-bottom: 10px;width: 100%;">
-            <img ng-src="{{getImagePreviewSrc()}}" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
+            <img ng-show="showImage" ng-src="{{getImagePreviewSrc()}}" imageonload="imageLoaded" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
+            <img ng-hide="showImage" src="{{placeHolderUrl}}" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
         </div>
         <div class="controls-fb-inline" style="padding-bottom: 5px;">
             <label class="control-fb control--radio">Local file
-                <input type="radio" ng-model="effect.imageType" value="local"/> 
+                <input type="radio" ng-model="effect.imageType" value="local" ng-change="imageTypeUpdated()"/> 
                 <div class="control__indicator"></div>
             </label>
             <label class="control-fb control--radio">URL
-                <input type="radio" ng-model="effect.imageType" value="url"/>
+                <input type="radio" ng-model="effect.imageType" value="url" ng-change="imageTypeUpdated()"/>
                 <div class="control__indicator"></div>
             </label>
         </div>
@@ -118,6 +119,13 @@ const showImage = {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
 
+        $scope.placeHolderUrl = "../images/placeholders/image.png";
+
+        $scope.showImage = false;
+        $scope.imageLoaded = function(successful) {
+            $scope.showImage = successful;
+        };
+
         $scope.getImagePreviewSrc = function() {
             let path;
             if ($scope.effect.imageType === "local") {
@@ -126,11 +134,15 @@ const showImage = {
                 path = $scope.effect.url;
             }
 
-            if (path == null || path === "") {
-                path = "../images/placeholders/image.png";
-            }
-
             return path;
+        };
+
+        $scope.imageTypeUpdated = function() {
+            if ($scope.effect.imageType === "local") {
+                $scope.effect.url = undefined;
+            } else {
+                $scope.effect.file = undefined;
+            }
         };
     },
     /**
@@ -142,7 +154,7 @@ const showImage = {
         if (effect.imageType == null) {
             errors.push("Please select an image type.");
         }
-        if (effect.file == null && effect.file == null) {
+        if (effect.file == null && effect.url == null) {
             errors.push("Please select an image source, either file path or url.");
         }
         return errors;
