@@ -36,7 +36,7 @@ const model = {
             if (triggerData.type === "command") {
                 level = triggerData.metadata.chatEvent.user_ascension_level;
             } else {
-                let username = triggerData.username;
+                let username = triggerData.metadata.username;
 
                 let progressionData = await channelAccess.getChannelProgressionByUsername(username);
                 level = progressionData.level;
