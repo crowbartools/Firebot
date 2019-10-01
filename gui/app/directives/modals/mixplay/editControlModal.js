@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="controls-fb-inline">
-                        <label class="control-fb control--checkbox">Active
+                        <label class="control-fb control--checkbox">Enabled
                             <input type="checkbox" ng-model="$ctrl.control.active" aria-label="..." checked>
                             <div class="control__indicator"></div>
                         </label>
