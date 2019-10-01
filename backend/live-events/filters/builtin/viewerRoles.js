@@ -18,7 +18,8 @@ module.exports = {
         { eventSourceId: "mixer", eventId: "user-joined-chat" },
         { eventSourceId: "mixer", eventId: "user-left-chat" },
         { eventSourceId: "mixer", eventId: "messages-purged" },
-        { eventSourceId: "mixer", eventId: "user-banned" }
+        { eventSourceId: "mixer", eventId: "user-banned" },
+        { eventSourceId: "mixer", eventId: "skill" }
     ],
     comparisonTypes: ["include", "doesn't include"],
     valueType: "preset",
