@@ -103,9 +103,6 @@
                                     <button class="btn btn-default" type="button" ng-click="$ctrl.copyOverlayPath()">Copy</button>
                                 </span>
                             </div>
-                            <p ng-if="$ctrl.overlayPathCopied" style="color: green;">
-                                Overlay path copied!
-                            </p>
                         </div>
 
                         <p class="muted" style="font-size:12px;">Note: Do not check "Local File" and make sure the browser source fills your canvas (ie 1920x1080, 1280x720, etc)</Make>
@@ -168,7 +165,7 @@
             dismiss: "&"
         },
         controller: function($rootScope, connectionService, connectionManager,
-            overlayUrlHelper) {
+            overlayUrlHelper, ngToast) {
             let $ctrl = this;
 
             $ctrl.step = 0;
@@ -270,10 +267,14 @@
             $ctrl.loginOrLogout = connectionService.loginOrLogout;
 
             $ctrl.overlayPath = overlayUrlHelper.getOverlayPath();
-            $ctrl.overlayPathCopied = false;
+
             $ctrl.copyOverlayPath = function() {
                 $rootScope.copyTextToClipboard($ctrl.overlayPath);
-                $ctrl.overlayPathCopied = true;
+
+                ngToast.create({
+                    className: 'success',
+                    content: 'Overlay path copied!'
+                });
             };
 
             let overlayStatusId = 0;
