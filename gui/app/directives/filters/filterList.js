@@ -50,7 +50,7 @@
             <div ng-if="!$ctrl.hasFiltersAvailable()" class="muted">There are no filters available for this event type.</div>            
         </div>
             `,
-            controller: function(utilityService, backendCommunicator) {
+            controller: function($q, utilityService, backendCommunicator, $injector) {
                 let $ctrl = this;
 
                 // when the element is initialized
@@ -58,6 +58,51 @@
 
                 let previousEventSourceId = null,
                     previousEventId = null;
+
+                /*function validateValue(filter, filterType) {
+                    return new Promise(async resolve => {
+                        let stillValid = await $injector.invoke(filterType.valueIsStillValid, {}, {
+                            filterSettings: filter
+                        });
+                        resolve(stillValid);
+                    });
+                }*/
+
+                function validateFilterValues() {
+                    if ($ctrl.filterData && $ctrl.filterData.filters
+                            && $ctrl.filterData.filters.length > 0) {
+
+                        for (let i = 0; i < $ctrl.filterData.filters.length; i++) {
+                            let filter = $ctrl.filterData.filters[i];
+                            if (!filter || !filter.value) continue;
+
+                            let filterType = $ctrl.getFilterType(filter.type);
+                            if (!filterType) continue;
+
+                            let valid = $injector.invoke(filterType.valueIsStillValid, {}, {
+                                filterSettings: filter
+                            });
+
+                            if (!valid) {
+                                let updatedFilter = $ctrl.filterData.filters[i];
+                                updatedFilter.value = undefined;
+                                $ctrl.filterData.filters[i] = updatedFilter;
+                            }
+
+                            // doing it async doesnt appear to update the filterDisplay child component...
+                            // when we need async validation, we can revisit this.
+                            /*$q.when(validateValue(filter, filterType))
+                                .then(valid => {
+
+                                    if (!valid) {
+                                        let updatedFilter = $ctrl.filterData.filters[i];
+                                        updatedFilter.value = undefined;
+                                        $ctrl.filterData.filters[i] = updatedFilter;
+                                    }
+                                });*/
+                        }
+                    }
+                }
 
                 function reloadFilters() {
                     if ($ctrl.filterData == null) {
@@ -76,6 +121,7 @@
                     }).map(fd => {
                         fd.getPresetValues = eval(fd.getPresetValues); // eslint-disable-line no-eval
                         fd.getSelectedValueDisplay = eval(fd.getSelectedValueDisplay); // eslint-disable-line no-eval
+                        fd.valueIsStillValid = eval(fd.valueIsStillValid); // eslint-disable-line no-eval
                         return fd;
                     });
 
@@ -96,6 +142,7 @@
 
                 $ctrl.$onInit = function() {
                     reloadFilters();
+                    validateFilterValues();
                 };
 
                 $ctrl.$onChanges = function() {

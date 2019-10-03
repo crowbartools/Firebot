@@ -11,7 +11,7 @@
                     <b>{{$ctrl.getFilterName()}}</b> {{$ctrl.filter.comparisonType}} <b>{{$ctrl.filterValueDisplay}}</b>
                 </span>
             `,
-            controller: function($injector) {
+            controller: function($injector, $q) {
                 let $ctrl = this;
 
                 $ctrl.getFilterName = function() {
@@ -20,19 +20,32 @@
 
                 $ctrl.filterValueDisplay = "[Not Set]";
 
-                async function getFilterValueDisplay() {
-                    if (!$ctrl.filter || !$ctrl.filter.value) return;
-                    $ctrl.filterValueDisplay = await $injector.invoke($ctrl.filterType.getSelectedValueDisplay, {}, {
-                        filterSettings: $ctrl.filter
+                function getFilterValueDisplay() {
+                    return $q(async resolve => {
+                        if ($ctrl.filter == null || $ctrl.filter.value == null) {
+                            resolve("[Not Set]");
+                        } else {
+                            let value = await $injector.invoke($ctrl.filterType.getSelectedValueDisplay, {}, {
+                                filterSettings: $ctrl.filter
+                            });
+                            resolve(value);
+                        }
                     });
+
+
                 }
 
                 $ctrl.$onInit = function() {
-                    getFilterValueDisplay();
+                    getFilterValueDisplay().then(value => {
+                        $ctrl.filterValueDisplay = value;
+                    });
                 };
 
                 $ctrl.$onChanges = function() {
-                    getFilterValueDisplay();
+
+                    getFilterValueDisplay().then(value => {
+                        $ctrl.filterValueDisplay = value;
+                    });
                 };
             }
         });

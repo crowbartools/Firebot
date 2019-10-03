@@ -98,7 +98,8 @@ ipcMain.on("getFiltersForEvent", (event, data) => {
             comparisonTypes: f.comparisonTypes,
             valueType: f.valueType,
             getPresetValues: f.presetValues ? f.presetValues.toString() : "() => {}",
-            getSelectedValueDisplay: f.getSelectedValueDisplay ? f.getSelectedValueDisplay.toString() : "filterSettings => filterSettings.value"
+            getSelectedValueDisplay: f.getSelectedValueDisplay ? f.getSelectedValueDisplay.toString() : "filterSettings => filterSettings.value",
+            valueIsStillValid: f.valueIsStillValid ? f.valueIsStillValid.toString() : "() => true"
         };
     });
 });

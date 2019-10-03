@@ -281,9 +281,9 @@
                         let board = boards[0];
                         boardService.setSelectedBoard(board);
                         /**
-             * Note(ebiggz): This is a workaround to ensure boards load and update scope.
-             * I need to update boardService to use the $q service for Promises instead of regular Promises.
-             */
+                         * Note(ebiggz): This is a workaround to ensure boards load and update scope.
+                         * I need to update boardService to use the $q service for Promises instead of regular Promises.
+                         */
                         $q.resolve(true, () => {
                             $scope.hasBoardsLoaded = true;
                         });

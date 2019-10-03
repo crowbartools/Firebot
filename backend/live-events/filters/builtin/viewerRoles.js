@@ -36,6 +36,14 @@ module.exports = {
             resolve(allRoles);
         });
     },
+    valueIsStillValid: (filterSettings, viewerRolesService) => {
+        let allRoles = viewerRolesService.getCustomRoles()
+            .concat(viewerRolesService.getMixerRoles());
+
+        let role = allRoles.find(r => r.id === filterSettings.value);
+
+        return role != null && role.name != null;
+    },
     getSelectedValueDisplay: (filterSettings, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
             .concat(viewerRolesService.getMixerRoles());
