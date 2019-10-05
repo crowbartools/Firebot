@@ -3,6 +3,7 @@
 const mathjs = require('mathjs');
 const logger = require("../../logwrapper");
 const { OutputDataType } = require("../../../shared/variable-contants");
+const utils = require("../../utility");
 
 const model = {
     definition: {
@@ -11,19 +12,22 @@ const model = {
         description: "Evaluate a math equation",
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (_, exp) => {
+    evaluator: async (trigger, exp) => {
+
+        exp = await utils.populateStringWithTriggerData(exp, trigger);
+
         let evalulation;
         try {
             evalulation = mathjs.eval(exp);
         } catch (err) {
             logger.warn("error parsing math expression", err);
-            evalulation = "[MATH EVAL ERROR]";
+            evalulation = -1;
         }
         if (typeof evalulation === "object") {
             if (evalulation.entries.length > 0) {
                 evalulation = evalulation.entries[0];
             } else {
-                evalulation = "[MATH EVAL ERROR]";
+                evalulation = -1;
             }
         }
         return evalulation;

@@ -17,7 +17,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.control.mixplay.tooltip;
+        return trigger.metadata.control.tooltip;
     }
 };
 

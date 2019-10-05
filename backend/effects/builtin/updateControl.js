@@ -63,7 +63,7 @@ const model = {
                 <div class="settings-title" style="margin-top: 15px;">
                     <h3>MixPlay Settings</h3>
                 </div>
-                <control-settings control="effect.control" kind="controlKind" update-mode="true"></control-settings>
+                <control-settings control="effect.control" kind="controlKind" update-mode="true" trigger="{{trigger}}" trigger-meta="triggerMeta"></control-settings>
 
                 <div style="margin-top:5px;">
                     <label class="control-fb control--checkbox"> Edit Active Status
@@ -108,6 +108,12 @@ const model = {
         </eos-container>
     `,
     optionsController: ($scope, mixplayService) => {
+
+
+        console.log("SCOOOPEEEE");
+        console.log($scope.trigger);
+        console.log($scope.triggerMeta);
+        console.log($scope);
 
         if (!$scope.effect.control) {
             $scope.effect.control = {};

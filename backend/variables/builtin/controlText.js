@@ -19,7 +19,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.control.mixplay.text;
+        return trigger.metadata.control.text;
     }
 };
 

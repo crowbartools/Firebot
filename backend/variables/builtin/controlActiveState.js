@@ -17,7 +17,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.control.active;
+        return !trigger.metadata.control.disabled;
     }
 };
 

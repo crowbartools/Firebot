@@ -60,6 +60,8 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
         return;
     }
 
+    let mixplayControl = await mixplay.client.state.getControl(control.id);
+
     let triggerData = {
         type: TriggerType.INTERACTIVE,
         metadata: {
@@ -67,7 +69,7 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
             userId: participant.userID,
             userMixerRoles: participant.channelGroups,
             participant: participant,
-            control: control,
+            control: mixplayControl,
             inputData: inputData,
             inputType: inputType
         }

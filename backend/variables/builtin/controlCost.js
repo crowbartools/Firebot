@@ -19,7 +19,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.control && trigger.metadata.control.mixplay.cost;
+        return trigger.metadata.control && trigger.metadata.control.cost;
     }
 };
 

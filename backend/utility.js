@@ -127,10 +127,30 @@ function callUrl(url) {
     });
 }
 
+function getTriggerIdFromTriggerData(trigger) {
+
+    switch (trigger.type) {
+    case "interactive":
+        return trigger.metadata.control && trigger.metadata.control.kind;
+    case "event": {
+        let eventSource = trigger.metadata.eventSource,
+            event = trigger.metadata.event;
+        if (eventSource && event) {
+            return `${eventSource.id}:${event.id}`;
+        }
+    }
+    }
+
+    return undefined;
+}
+
+
 exports.populateStringWithTriggerData = async function(string = "", trigger) {
     if (trigger == null || string === "") return string;
 
-    return await replaceVariableManager.evaluateText(string, trigger, { type: trigger.type });
+    let triggerId = getTriggerIdFromTriggerData(trigger);
+
+    return await replaceVariableManager.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
 
     // build text replacement dictionary
     /*let replaceDict = {};

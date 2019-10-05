@@ -7,7 +7,9 @@
             bindings: {
                 control: "=",
                 kind: "<",
-                updateMode: "<"
+                updateMode: "<",
+                trigger: "@",
+                triggerMeta: "<"
             },
             template: `
             <div ng-switch="$ctrl.kind" style="padding-bottom: 10px;font-size: 15px;font-weight: 600;">
@@ -147,13 +149,17 @@
 
             </div>
             `,
-            controller: function() {
+            controller: function($scope) {
                 let $ctrl = this;
 
                 $ctrl.$onInit = function() {
                     if (!$ctrl.control.mixplay) {
                         $ctrl.control.mixplay = {};
                     }
+
+                    $scope.trigger = $ctrl.trigger;
+                    $scope.triggerMeta = $ctrl.triggerMeta;
+
                 };
             }
         });

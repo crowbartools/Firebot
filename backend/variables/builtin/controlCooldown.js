@@ -19,7 +19,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.control.mixplay.cooldown;
+        return trigger.metadata.control.cooldown;
     }
 };
 
