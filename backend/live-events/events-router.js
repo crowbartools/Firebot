@@ -38,21 +38,18 @@ function cacheNewEvent(sourceId, eventId, eventMetaKey = null) {
 }
 
 function runEventEffects(effects, event, source, meta, isManual = false) {
-    return new Promise(() => {
-    // Build the effect runner packet.
-        return effectRunner.processEffects({
-            trigger: {
-                type: isManual ? EffectTrigger.MANUAL : EffectTrigger.EVENT,
-                metadata: {
-                    username: meta.username,
-                    userId: meta.userId,
-                    event: { id: event.id, name: event.name },
-                    eventSource: { id: source.id, name: source.name },
-                    eventData: meta
-                }
-            },
-            effects: effects
-        });
+    return effectRunner.processEffects({
+        trigger: {
+            type: isManual ? EffectTrigger.MANUAL : EffectTrigger.EVENT,
+            metadata: {
+                username: meta.username,
+                userId: meta.userId,
+                event: { id: event.id, name: event.name },
+                eventSource: { id: source.id, name: source.name },
+                eventData: meta
+            }
+        },
+        effects: effects
     });
 }
 
@@ -63,7 +60,6 @@ let queueRunning = false;
 function runQueue() {
     return new Promise(resolve => {
         if (eventQueue.length === 0) {
-            queueRunning = false;
             return resolve();
         }
 
@@ -74,8 +70,8 @@ function runQueue() {
             source = nextEventPacket.source,
             meta = nextEventPacket.meta;
 
-        return runEventEffects(effects, event, source, meta).then(() => {
-            return runQueue();
+        runEventEffects(effects, event, source, meta).then(() => {
+            resolve(runQueue());
         });
     });
 }
@@ -85,7 +81,9 @@ function addEventToQueue(eventPacket) {
 
     if (!queueRunning) {
         queueRunning = true;
-        runQueue();
+        runQueue().then(() => {
+            queueRunning = false;
+        });
     }
 }
 
