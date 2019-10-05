@@ -63,6 +63,7 @@ let queueRunning = false;
 function runQueue() {
     return new Promise(resolve => {
         if (eventQueue.length === 0) {
+            queueRunning = false;
             return resolve();
         }
 
@@ -84,9 +85,7 @@ function addEventToQueue(eventPacket) {
 
     if (!queueRunning) {
         queueRunning = true;
-        runQueue().then(() => {
-            queueRunning = false;
-        });
+        runQueue();
     }
 }
 
