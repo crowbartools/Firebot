@@ -34,7 +34,7 @@ function cacheNewEvent(sourceId, eventId, eventMetaKey = null) {
     // Update the cache.
         userEventCache.set(key, true);
     }
-    return !eventCached;
+    return eventCached;
 }
 
 function runEventEffects(effects, event, source, meta, isManual = false) {
@@ -94,7 +94,7 @@ async function onEventTriggered(event, source, meta, isManual = false) {
 
     if (event.cached) {
         let cacheMetaKey;
-        if (event.cacheMetaKey && event.meta) {
+        if (event.cacheMetaKey && meta) {
             cacheMetaKey = meta[event.cacheMetaKey];
         }
         let previouslyCached = cacheNewEvent(source.id, event.id, cacheMetaKey);

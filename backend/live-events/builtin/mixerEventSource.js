@@ -37,6 +37,7 @@ const mixerEventSource = {
             description: "When someone hosts your channel.",
             cached: true,
             queued: true,
+            cacheMetaKey: "username",
             manualMetadata: {
                 username: "Firebot"
             }
@@ -47,6 +48,7 @@ const mixerEventSource = {
             description: "When someone follows your channel.",
             cached: true,
             queued: true,
+            cacheMetaKey: "username",
             manualMetadata: {
                 username: "Firebot",
                 userId: 0
