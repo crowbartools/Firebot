@@ -157,6 +157,12 @@ async function probeVariable(handlers, expression, cursor, options) {
                 }
 
                 // add the quoted argument's text to the arguments list
+                try {
+                    quoteText = await processExpression(handlers, quoteText, options); //eslint-disable-line no-use-before-define
+                } catch (err) {
+                    console.log("error parsing quoted arg", err);
+                }
+
                 varargs.push(quoteText);
 
                 // consume closing quote
@@ -177,7 +183,16 @@ async function probeVariable(handlers, expression, cursor, options) {
             } else if ((token = probeTextArg.exec(expression)) != null) {
 
                 // add the plain-text token to the args list
-                varargs.push(token[0].replace(/\$\$/g, "$"));
+
+                let argValue = token[0].replace(/\$\$/g, "$");
+
+                try {
+                    argValue = await processExpression(handlers, argValue, options); //eslint-disable-line no-use-before-define
+                } catch (err) {
+                    console.log("error parsing plain text arg", err);
+                }
+
+                varargs.push(argValue);
 
                 // consume the plain-text token's characters
                 expression = expression.slice(token[0].length);
