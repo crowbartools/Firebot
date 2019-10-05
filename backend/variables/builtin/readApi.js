@@ -1,11 +1,8 @@
 "use strict";
 
-const accountAccess = require("../../common/account-access");
-const mixerChat = require("../../common/mixer-chat");
 const { OutputDataType } = require("../../../shared/variable-contants");
 const request = require("request");
 const logger = require("../../logwrapper");
-const util = require("../../utility");
 
 function callUrl(url) {
     return new Promise((resolve, reject) => {
@@ -27,11 +24,9 @@ const model = {
         description: 'Calls the given url and inserts the response. If the response is JSON, you can traverse the object. IE $readApi["some/url", "object.path.here"]',
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
-    evaluator: async (trigger, url, responseJsonPath) => {
+    evaluator: async (_, url, responseJsonPath) => {
 
         try {
-
-            url = await util.populateStringWithTriggerData(url, trigger);
 
             let content = await callUrl(url);
 
