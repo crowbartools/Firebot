@@ -1,7 +1,5 @@
 "use strict";
 
-const accountAccess = require("../../common/account-access");
-const mixerChat = require("../../common/mixer-chat");
 const { OutputDataType } = require("../../../shared/variable-contants");
 const request = require("request");
 const logger = require("../../logwrapper");
@@ -29,6 +27,7 @@ const model = {
     evaluator: async (_, url, responseJsonPath) => {
 
         try {
+
             let content = await callUrl(url);
 
             if (responseJsonPath != null) {

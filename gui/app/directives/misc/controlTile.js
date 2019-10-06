@@ -11,7 +11,7 @@
                 <div style="width: 100%; height: 100%;">
                     <div ng-show="$ctrl.previewMode" ng-switch="$ctrl.control.kind" class="flex-center" style="width: 100%; height: 100%">
 
-                        <button-tile ng-switch-when="button" control="$ctrl.control" style="width:100%; height: 100%;"></button-tile>
+                        <button-tile ng-switch-when="button" control="$ctrl.control" style="width:100%; height: 100%; padding: 4px;"></button-tile>
 
                         <label-tile ng-switch-when="label" control="$ctrl.control" style="width:100%; height: 100%;"></label-tile>
 
