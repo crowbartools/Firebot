@@ -89,7 +89,7 @@ function addEventToQueue(eventPacket) {
 
 async function onEventTriggered(event, source, meta, isManual = false) {
 
-    if (event.cached) {
+    if (!isManual && event.cached) {
         let cacheMetaKey;
         if (event.cacheMetaKey && meta) {
             cacheMetaKey = meta[event.cacheMetaKey];
