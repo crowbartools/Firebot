@@ -118,149 +118,8 @@ const celebration = {
         },
         event: {
             name: "celebrate",
-            onOverlayEvent: event => {
-                console.log("yay celebration");
-                // fireworks
-                // Uses the create.js plugin.
-                function fireworks() {
-                    let Fireworks,
-                        GRAVITY,
-                        K,
-                        SPEED,
-                        ToRadian,
-                        canvas,
-                        context,
-                        ctx,
-                        fireBoss,
-                        repeat,
-                        stage;
-                    canvas = document.getElementById("fireworks");
-                    context = canvas.getContext("2d");
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                    stage = new createjs.Stage(canvas); //eslint-disable-line no-undef
-                    stage.autoClear = false;
-                    ctx = canvas.getContext("2d");
-                    ctx.fillStyle = "rgba(0, 0, 0, 0)";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    createjs.Ticker.setFPS(50); //eslint-disable-line no-undef
-                    createjs.Touch.enable(stage); //eslint-disable-line no-undef
-                    stage.update();
-                    GRAVITY = 1;
-                    K = 0.9;
-                    SPEED = 12;
+            onOverlayEvent: data => {
 
-                    ToRadian = function(degree) {
-                        return degree * Math.PI / 180.0;
-                    };
-
-                    Fireworks = (function() {
-                        function Fireworks(sx, sy, particles) {
-                            let circle, i, j, rad, ref, speed;
-                            this.sx = sx != null ? sx : 100;
-                            this.sy = sy != null ? sy : 100;
-                            this.particles = particles != null ? particles : 70;
-                            this.sky = new createjs.Container(); //eslint-disable-line no-undef
-                            this.r = 0;
-                            this.h = (Math.random() * 360) | 0;
-                            this.s = 100;
-                            this.l = 50;
-                            this.size = 3;
-                            for (
-                                i = j = 0, ref = this.particles;
-                                0 <= ref ? j < ref : j > ref;
-                                i = 0 <= ref ? ++j : --j
-                            ) {
-                                speed = Math.random() * 12 + 2;
-                                circle = new createjs.Shape(); //eslint-disable-line no-undef
-                                circle.graphics
-                                    .f(
-                                        "hsla(" + this.h + ", " + this.s + "%, " + this.l + "%, 1)"
-                                    )
-                                    .dc(0, 0, this.size);
-                                circle.snapToPixel = true;
-                                circle.compositeOperation = "lighter";
-                                rad = ToRadian((Math.random() * 360) | 0); //eslint-disable-line new-cap
-                                circle.set({
-                                    x: this.sx,
-                                    y: this.sy,
-                                    vx: Math.cos(rad) * speed,
-                                    vy: Math.sin(rad) * speed,
-                                    rad: rad
-                                });
-                                this.sky.addChild(circle);
-                            }
-                            stage.addChild(this.sky);
-                        }
-
-                        Fireworks.prototype.explode = function() {
-                            let circle, j, p, ref;
-                            if (this.sky) {
-                                ++this.h;
-                                for (
-                                    p = j = 0, ref = this.sky.getNumChildren();
-                                    0 <= ref ? j < ref : j > ref;
-                                    p = 0 <= ref ? ++j : --j
-                                ) {
-                                    circle = this.sky.getChildAt(p);
-                                    circle.vx = circle.vx * 0.95;
-                                    circle.vy = circle.vy * 0.95;
-                                    circle.x += circle.vx;
-                                    circle.y += circle.vy + GRAVITY;
-                                    this.l = Math.random() * 100;
-                                    this.size = this.size + 0.0015;
-                                    if (this.size > 0) {
-                                        circle.graphics
-                                            .c()
-                                            .f("hsla(" + this.h + ", 100%, " + this.l + "%, 1)")
-                                            .dc(0, 0, this.size);
-                                    }
-                                }
-                                if (this.sky.alpha > 0.1) {
-                                    this.sky.alpha -= K / 100;
-                                } else {
-                                    stage.removeChild(this.sky);
-                                    this.sky = null;
-                                }
-                            }
-                        };
-
-                        return Fireworks;
-                    }());
-
-                    fireBoss = [];
-
-                    setInterval(function() {
-                        let x, y;
-                        x = (Math.random() * canvas.width) | 0;
-                        y = (Math.random() * canvas.height) | 0;
-                        fireBoss.push(new Fireworks(x, y));
-                        return fireBoss.push(new Fireworks(x, y));
-                    }, 1300);
-
-                    repeat = function() {
-                        let fireworks, j, ref;
-                        for (
-                            fireworks = j = 0, ref = fireBoss.length;
-                            0 <= ref ? j < ref : j > ref;
-                            fireworks = 0 <= ref ? ++j : --j
-                        ) {
-                            if (fireBoss[fireworks].sky) {
-                                fireBoss[fireworks].explode();
-                            }
-                        }
-
-                        // Clear Stage
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                        // Update Stage
-                        stage.update();
-                    };
-
-                    createjs.Ticker.on("tick", repeat); //eslint-disable-line no-undef
-                } // End Fireworks
-
-                let data = event;
                 // Celebrate Packet
                 //{"event": "celebration", "celebrationType": celebrationType, "celebrationDuration":celebrationDuration};
                 let type = data.celebrationType;
@@ -271,25 +130,27 @@ const celebration = {
                 let divClass = d.getTime();
 
                 if (type === "Fireworks") {
-                    let canvas =
-            '<canvas id="fireworks" class="' +
-            divClass +
-            "-image celebration " +
-            type +
-            '" style="display:none;"></canvas>';
+                    let canvas = '<canvas id="fireworks" class="' + divClass + '-fireworks celebration ' + type + '" style="display:none;"></canvas>';
 
                     // Throw div on page and start up.
-                    $(".wrapper").append(canvas);
-                    $("." + divClass + "-image").fadeIn("fast");
-                    fireworks();
+                    $('.wrapper').append(canvas);
+                    $('.' + divClass + '-fireworks').fadeIn('fast');
 
-                    setTimeout(function() {
-                        $("." + divClass + "-image").fadeOut("fast", function() {
-                            $("." + divClass + "-image").remove();
+                    let stage = fireworks(); // eslint-disable-line no-undef
+
+                    setTimeout(function(stage) {
+
+                        stage.removeAllChildren();
+                        stage.removeAllEventListeners();
+                        stage.canvas = null;
+                        stage._eventListeners = null;
+
+                        $('.' + divClass + '-image').fadeOut('fast', function() {
+                            $('.' + divClass + '-image').remove();
                         });
-                    }, duration);
+                    }, duration, stage);
                 }
-            } //End event trigger
+            }
         }
     }
 };
