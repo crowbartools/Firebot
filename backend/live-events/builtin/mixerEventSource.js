@@ -13,7 +13,7 @@ const mixerEventSource = {
             name: "Subscribed",
             description: "When someone initially subscribes to your channel.",
             cached: false,
-            queued: true,
+            queued: false,
             manualMetadata: {
                 username: "Firebot",
                 totalMonths: 0
@@ -24,7 +24,7 @@ const mixerEventSource = {
             name: "Resubscribed",
             description: "When someone resubscribes to your channel.",
             cached: false,
-            queued: true,
+            queued: false,
             manualMetadata: {
                 username: "Firebot",
                 totalMonths: 6,
@@ -36,7 +36,7 @@ const mixerEventSource = {
             name: "Hosted",
             description: "When someone hosts your channel.",
             cached: true,
-            queued: true,
+            queued: false,
             cacheMetaKey: "username",
             manualMetadata: {
                 username: "Firebot"
@@ -47,7 +47,7 @@ const mixerEventSource = {
             name: "Followed",
             description: "When someone follows your channel.",
             cached: true,
-            queued: true,
+            queued: false,
             cacheMetaKey: "username",
             manualMetadata: {
                 username: "Firebot",
