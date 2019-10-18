@@ -500,7 +500,7 @@ function createChatDataProcessing(chatter) {
                 data.skill.isSticker = false;
 
                 let isGif = data.skill.skill_id === 'ba35d561-411a-4b96-ab3c-6e9532a33027' ||
-                    data.skill.skill_name.toLowerCase().contains("gif");
+                    data.skill.skill_name.toLowerCase().includes("gif");
 
                 // we trigger skill events for gifs via constellation instead because we have access to gif url there
                 if (!isGif) {
