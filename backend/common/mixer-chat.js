@@ -357,6 +357,11 @@ function createChatDataProcessing(chatter) {
                         data: data
                     });
 
+                    eventManager.triggerEvent("mixer", "viewer-arrived", {
+                        username: data.user_name,
+                        data: data
+                    });
+
                     if (data.user_name !== accountAccess.getAccounts().streamer.username &&
                         data.user_name !== accountAccess.getAccounts().bot.username) {
                         timerManager.incrementChatLineCounters();

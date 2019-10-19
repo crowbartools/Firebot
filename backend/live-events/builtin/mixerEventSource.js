@@ -65,6 +65,17 @@ const mixerEventSource = {
             }
         },
         {
+            id: "viewer-arrived",
+            name: "Viewer Arrived",
+            description: "When someone actively joins your stream. Triggers on first chat message (cached).",
+            cached: true,
+            queued: false,
+            cacheMetaKey: "username",
+            manualMetadata: {
+                username: "Firebot"
+            }
+        },
+        {
             id: "user-joined-chat",
             name: "User Joined Chat",
             description: "When someone joins your channel's chat",
