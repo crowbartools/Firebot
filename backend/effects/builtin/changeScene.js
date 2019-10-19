@@ -79,7 +79,8 @@ const delay = {
 
         $scope.sceneActions = {
             single: 'Move Single Viewer',
-            scene: 'Move All Viewers In Scene'
+            scene: 'Move Viewers In Scene',
+            all: 'Move All Viewers'
         };
 
         $scope.hasScenes = false;
@@ -192,8 +193,11 @@ const delay = {
 
                 mixplay.moveViewerToScene(username, effect.newSceneId);
 
-            } else {
+            } else if (effect.sceneAction === 'scene') {
                 mixplay.moveViewersToNewScene(effect.currentSceneId, effect.newSceneId);
+            } else {
+                //move all viewers
+                mixplay.moveAllViewersToScene(effect.newSceneId);
             }
             resolve();
         });

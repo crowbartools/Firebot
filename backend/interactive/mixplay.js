@@ -252,6 +252,30 @@ async function moveViewersToNewScene(currentSceneId, newSceneId) {
     });
 }
 
+function moveAllViewersToScene(newSceneId) {
+
+    let newGroupId = newSceneId;
+    if (newSceneId === defaultSceneId) {
+        newGroupId = "default";
+    }
+
+    let updatedParticipants = [];
+
+    const allParticipants = mixplayClient.state.getParticipants();
+    allParticipants.forEach(participant => {
+        if (participant.groupID !== newGroupId) {
+            participant.groupID = newGroupId;
+            updatedParticipants.push(participant);
+        }
+    });
+
+    if (updatedParticipants.length > 0) {
+        mixplayClient.updateParticipants({
+            participants: updatedParticipants
+        });
+    }
+}
+
 function updateCooldownForControls(controlIds, cooldown) {
     for (let controlId of controlIds) {
         try {
@@ -370,5 +394,6 @@ exports.client = mixplayClient;
 exports.mapMixplayControl = mapMixplayControl;
 exports.moveViewerToScene = moveViewerToScene;
 exports.moveViewersToNewScene = moveViewersToNewScene;
+exports.moveAllViewersToScene = moveAllViewersToScene;
 exports.updateCooldownForControls = updateCooldownForControls;
 
