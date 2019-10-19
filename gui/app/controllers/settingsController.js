@@ -174,22 +174,14 @@
                             return backup;
                         }
                     },
-                    controllerFunc: (
-                        $scope,
-                        $uibModalInstance,
-                        $timeout,
-                        backup,
-                        settingsService,
-                        listenerService
-                    ) => {
+                    controllerFunc: ($scope, $uibModalInstance, $timeout, backup, settingsService, listenerService) => {
                         $scope.restoreComplete = false;
                         $scope.errorMessage = "";
 
                         $timeout(() => {
                             if (!$scope.restoreComplete && !$scope.restoreHasError) {
                                 $scope.restoreHasError = true;
-                                $scope.errorMessage =
-                  "Restore is taking longer than normal. There may have been an error. You can close and try again or check your log files and contact us. We are happy to help!";
+                                $scope.errorMessage = "Restore is taking longer than normal. There may have been an error. You can close and try again or check your log files and contact us. We are happy to help!";
                             }
                         }, 30 * 1000);
 
@@ -206,55 +198,46 @@
                         function reloadEverything() {
                             settingsService.purgeSettingsCache();
 
-                            $scope.$applyAsync();
-
                             $scope.restoreComplete = true;
                         }
 
+                        function clearRestoreFolder() {
+                            return new Promise(resolve => {
+                                let restoreFolder = dataAccess.getPathInTmpDir("/restore");
+
+                                empty(restoreFolder, false, o => {
+                                    if (o.error) {
+                                        logger.error(o.error);
+                                    }
+                                    resolve();
+                                });
+                            });
+                        }
+
                         function copyFilesOver() {
-                            let source = dataAccess.getPathInTmpDir("/restore/profiles");
-                            let destination = dataAccess.getPathInUserData("/profiles");
+
+                            let source = dataAccess.getPathInTmpDir("/restore");
+                            let destination = dataAccess.getPathInUserData("/");
+                            let profilesFolder = dataAccess.getPathInUserData("/profiles");
 
                             // Clear profiles directory
-                            empty(destination, false, o => {
+                            empty(profilesFolder, false, o => {
+
                                 if (o.error) {
                                     logger.error(o.error);
-                                    $scope.errorMessage =
-                    "The restore failed when trying to copy data.";
+                                    $scope.errorMessage = "The restore failed when trying to copy data.";
                                     return;
                                 }
 
                                 // Load in backup.
                                 ncp(source, destination, function(err) {
                                     if (err) {
-                                        logger.error("Failed to copy 'user-settings'!");
+                                        logger.error("Failed to copy backup data!");
                                         logger.error(err);
                                         $scope.restoreHasError = true;
-                                        $scope.errorMessage =
-                      "The restore failed when trying to copy data.";
+                                        $scope.errorMessage = "The restore failed when trying to copy data.";
                                     } else {
-                                        logger.info('Copied "user-settings" to user data.');
-
-                                        // Now that we copied over everything, we need to make sure our global settings active profiles is in sync.
-                                        // Get all profiles by looking at folder names, change names to integers.
-                                        let srcPath = dataAccess.getPathInUserData("/profiles");
-                                        let profiles = fs.readdirSync(srcPath).filter(file => fs.statSync(path.join(srcPath, file)).isDirectory());
-
-                                        // Get the global settings file.
-                                        let globalDb = dataAccess.getJsonDbInUserData(
-                                            "/global-settings"
-                                        );
-                                        // Find highest number profile so we can set our profile counter.
-                                        let maxProfile = profiles.length;
-
-                                        // Update our global settings file.
-                                        if (profiles != null) {
-                                            globalDb.push("/profiles/loggedInProfile", profiles[0]);
-                                            globalDb.push("/profiles/activeProfiles", profiles);
-                                            globalDb.push("/profiles/profileCounter", maxProfile);
-                                        } else {
-                                            $scope.errorMessage = "The restore failed when trying to copy data.";
-                                        }
+                                        logger.info('Copied backup data');
 
                                         // Reload the app
                                         reloadEverything();
@@ -263,11 +246,11 @@
                             });
                         }
 
-                        function beginRestore() {
-                            let backupFolderPath =
-                path.resolve(
-                    dataAccess.getUserDataPath() + path.sep + "backups"
-                ) + path.sep;
+                        async function beginRestore() {
+
+                            await clearRestoreFolder();
+
+                            let backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
                             let backupName = backup.name + ".zip";
                             fs.createReadStream(backupFolderPath + backupName).pipe(
                                 unzipper
@@ -279,7 +262,7 @@
                             );
                         }
 
-                        $timeout(beginRestore, 2 * 1000);
+                        $timeout(beginRestore, 1000);
                     }
                 };
                 utilityService.showModal(downloadModalContext);

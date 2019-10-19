@@ -105,8 +105,13 @@ function startBackup(manualActivation = false, callback) {
     archive.pipe(output);
 
     // Add directory to package
-    let folderPath = path.resolve(dataAccess.getPathInUserData("/profiles"));
-    archive.directory(folderPath, "profiles");
+    let folderPath = path.resolve(dataAccess.getPathInUserData("/"));
+    //archive.directory(folderPath, "profiles");
+
+    archive.glob('**/*', {
+        ignore: ['backups/**', 'clips/**', 'logs/**', 'overlay.html'],
+        cwd: folderPath
+    });
 
     // finalize the archive (ie we are done appending files but streams have to finish yet)
     archive.finalize();
