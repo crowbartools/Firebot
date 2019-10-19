@@ -12,9 +12,7 @@ const model = {
         description: "Evaluate a math equation",
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (trigger, exp) => {
-
-        exp = await utils.populateStringWithTriggerData(exp, trigger);
+    evaluator: async (_, exp) => {
 
         let evalulation;
         try {

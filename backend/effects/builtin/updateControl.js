@@ -291,6 +291,10 @@ const model = {
                         mixplay.markControlAsHidden(effect.control.id, !shouldBeVisible);
                     }
 
+                    if (control.mixplay.cost && control.mixplay.cost > 0) {
+                        control.mixplay.cost = Math.round(control.mixplay.cost);
+                    }
+
                     mappedControl = mixplay.mapMixplayControl(control);
 
                 } else {
