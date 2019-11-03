@@ -81,12 +81,16 @@ function getQuote(quoteId) {
 function getRandomQuoteByWord(searchTerm) {
     return new Promise((resolve) => {
         db.find({ $where: function () {
-            return this.text.indexOf(searchTerm) !== -1;
+            let quoteText = this.text;
+            if (quoteText != null) {
+                return this.text.indexOf(searchTerm) !== -1;
+            }
+            return false;
         }}, function (err, docs) {
             if (err) {
+                logger.debug(err);
                 return resolve(null);
             }
-
             let doc = docs[Math.floor(Math.random() * docs.length)];
             return resolve(doc);
         });

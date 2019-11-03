@@ -59,6 +59,11 @@ const quotesManagement = {
                 arg: "list",
                 usage: "list",
                 description: "Gives a link that lists out all quotes."
+            },
+            {
+                arg: "search",
+                usage: "search [searchTerm]",
+                description: "Gives a random quote using the search term."
             }
         ]
     },
@@ -161,6 +166,20 @@ const quotesManagement = {
                     );
                 }
 
+                return resolve();
+            }
+            case "search": {
+                const quote = await quotesManager.getRandomQuoteByWord(args[1]);
+                if (quote != null) {
+                    let formattedQuote = getFormattedQuoteString(quote);
+                    Chat.smartSend(formattedQuote);
+                    logger.debug('We pulled a quote using an id: ' + formattedQuote);
+                } else {
+                    Chat.smartSend(
+                        `Sorry! We couldnt find a quote using those terms.`,
+                        event.userCommand.commandSender
+                    );
+                }
                 return resolve();
             }
             default: {
