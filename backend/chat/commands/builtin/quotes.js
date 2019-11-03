@@ -70,6 +70,7 @@ const quotesManagement = {
             const quotesManager = require("../../../quotes/quotes-manager");
             const logger = require("../../../logwrapper");
             const Chat = require("../../../common/mixer-chat");
+            const accountAccess = require("../../../common/account-access");
             const moment = require("moment");
 
             let args = event.userCommand.args;
@@ -101,11 +102,17 @@ const quotesManagement = {
                     Chat.smartSend(`Please provide some quote text!`, event.userCommand.commandSender);
                     return resolve();
                 }
+
+                // Get stream info so we can get the game name.
+                let streamerData = accountAccess.getAccounts().streamer;
+                let streamGameData = await Chat.requestAsStreamer("GET", "channels/" + streamerData.channelId + "?fields=type");
+                let streamGame = streamGameData['body']['type']['name'] != null ? streamGameData['body']['type']['name'] : "Unknown game";
+
                 let newQuote = {
                     text: args.slice(2, args.length).join(" "),
                     originator: args[1].replace("@", ""),
                     creator: event.userCommand.commandSender,
-                    game: "Unknown Game",
+                    game: streamGame,
                     createdAt: moment().toISOString()
                 };
                 let newQuoteId = await quotesManager.addQuote(newQuote);

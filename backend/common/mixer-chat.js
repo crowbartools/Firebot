@@ -1506,3 +1506,4 @@ exports.updateStreamTitle = updateStreamTitle;
 exports.updateStreamGame = updateStreamGame;
 exports.updateStreamAudience = updateStreamAudience;
 exports.createClip = createClip;
+exports.requestAsStreamer = requestAsStreamer;
