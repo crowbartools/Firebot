@@ -1,6 +1,5 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 
 // User Settings
@@ -55,6 +54,9 @@ function getActiveChatters() {
 
 function cycleActiveChatters() {
     logger.info("Starting Active Chatters Loop");
+
+    // Just in case
+    clearInterval(cycleActiveTimer);
 
     // We have permission to start up the loop now. Let's do this...
     cycleActiveTimer = setInterval(function() {
