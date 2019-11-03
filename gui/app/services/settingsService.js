@@ -481,6 +481,10 @@
                 return service.setWebServerPort(port);
             };
 
+            service.setInactiveTimer = function(inactiveTimer) {
+                console.log(inactiveTimer);
+            };
+
             service.showOverlayInfoModal = function(instanceName) {
                 utilityService.showOverlayInfoModal(instanceName);
             };

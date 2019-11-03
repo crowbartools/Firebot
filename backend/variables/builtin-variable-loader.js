@@ -29,6 +29,7 @@ exports.loadReplaceVariables = () => {
     const math = require("./builtin/math");
     const randomNumber = require("./builtin/randomNumber");
     const randomViewer = require("./builtin/randomViewer");
+    const randomActiveViewer = require('./builtin/randomActiveViewer');
     const quotes = require('./builtin/quote');
 
     const customVariable = require("./builtin/customVariable");
@@ -77,6 +78,7 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(math);
     replaceVariableManager.registerReplaceVariable(randomNumber);
     replaceVariableManager.registerReplaceVariable(randomViewer);
+    replaceVariableManager.registerReplaceVariable(randomActiveViewer);
     replaceVariableManager.registerReplaceVariable(quotes);
 
     replaceVariableManager.registerReplaceVariable(customVariable);

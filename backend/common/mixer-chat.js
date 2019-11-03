@@ -20,6 +20,7 @@ const apiAccess = require("../api-access");
 let linkHeaderParser = require('parse-link-header');
 const timerManager = require("../timers/timer-manager");
 const emotesManager = require("./emotes-manager");
+const activeChatter = require('../chat/active-chatters');
 
 require('request-debug')(request, function(type, data) {
     logger.debug("Request debug: ", { type: type, data: JSON.stringify(data) });
@@ -343,6 +344,9 @@ function createChatDataProcessing(chatter) {
 
                 // Increment Chat Messages in user DB.
                 userdb.incrementDbField(data.user_id, "chatMessages");
+
+                // Updates or adds user to our active chatter list.
+                activeChatter.addOrUpdateActiveChatter(data);
 
                 if (data.message.meta.whisper === true) {
                     if (data.user_name !== accountAccess.getAccounts().bot.username) {
@@ -968,6 +972,9 @@ function streamerConnect(streamer) {
                 //flush cmd cooldowns
                 commandHandler.flushCooldownCache();
 
+                // Start active chatters list.
+                activeChatter.cycleActiveChatters();
+
                 // Fire the chat connected event.
                 try {
                     console.log("triggering chat event");
@@ -992,7 +999,7 @@ function streamerConnect(streamer) {
                 renderWindow.webContents.send("chatConnection", "Offline");
 
                 // Log error for dev.
-                logger.error("error while finsing chat connection processes", error);
+                logger.error("error while finishing chat connection processes", error);
 
                 // Try to reconnect
                 chatConnected = false;
