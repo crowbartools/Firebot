@@ -42,9 +42,7 @@ function addQuote(quote) {
             return reject();
         }
 
-        //should we save to both? or just _id?
         quote._id = newQuoteId;
-        quote.id = newQuoteId;
 
         db.insert(quote, err => {
             if (err) {
