@@ -1,0 +1,27 @@
+name: "firebot v5 lint"
+
+on:
+  push:
+    branches:
+      - v5
+
+jobs:
+  test:
+    name: "Lint"
+    runs-on: "windows-latest"
+    steps:
+      # clone the repo v5 branch
+      - uses: "actions/checkout@v1"
+        with:
+          fetch-depth: 1
+          
+      # install nodejs and npm
+      - uses: "actions/setup-node@v1"
+        with:
+          node-version: "8.11.3"
+
+      # install project dependencies
+      - run: "npm install"
+
+      # run linter
+      - run: "npm run lint"
