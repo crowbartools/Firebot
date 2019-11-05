@@ -121,8 +121,10 @@ const quotesManagement = {
                     createdAt: moment().toISOString()
                 };
                 let newQuoteId = await quotesManager.addQuote(newQuote);
+                let newQuoteText = await quotesManager.getQuote(newQuoteId);
+                let formattedQuote = getFormattedQuoteString(newQuoteText);
                 Chat.smartSend(
-                    `Added Quote #${newQuoteId}!`
+                    `Added ${formattedQuote}`
                 );
                 logger.debug(`Quote #${newQuoteId} added!`);
                 return resolve();
