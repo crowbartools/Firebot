@@ -70,6 +70,20 @@
                 ipcRenderer.send("sparkExemptionToggled", value);
             };
 
+            $scope.setActiveChatUsers = (value) => {
+                value = value === true;
+                settingsService.setActiveChatUsers(value);
+                ipcRenderer.send("setActiveChatUsers", value);
+            };
+
+            $scope.setActiveChatUserTimeout = (value) => {
+                if (value == null) {
+                    value = "10";
+                }
+                settingsService.setActiveChatUserListTimeout(value);
+                ipcRenderer.send('setActiveChatUserTimeout', value);
+            };
+
             $scope.audioOutputDevices = [{
                 label: "System Default",
                 deviceId: "default"

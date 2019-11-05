@@ -1,15 +1,26 @@
 "use strict";
 
+const { ipcMain } = require("electron");
+const settings = require("../common/settings-access").settings;
 const logger = require("../logwrapper");
+const Chat = require("../common/mixer-chat");
 
-// User Settings
-let inactiveTimer = 10 * 60000; // 10 minutes default
+// Active user toggle
+let activeUserListStatus = settings.getActiveChatUserList() === false ? false : true;
+
+// User Timeout Settings
+let userInactiveTimeSetting = settings.getActiveChatUserListTimeout() != null ? settings.getActiveChatUserListTimeout() : 10;
+let inactiveTimer = userInactiveTimeSetting * 60000;
 
 // Timer and chatter list.
 let cycleActiveTimer = [];
 let activeChatters = [];
 
 function addOrUpdateActiveChatter(user) {
+    if (!activeUserListStatus) {
+        return;
+    }
+
     let date = new Date;
     let currentTime = date.getTime();
 
@@ -53,6 +64,11 @@ function getActiveChatters() {
 }
 
 function cycleActiveChatters() {
+    let chatConnected = Chat.getChatStatus();
+    if (!chatConnected) {
+        return;
+    }
+
     logger.info("Starting Active Chatters Loop");
 
     // Just in case
@@ -65,6 +81,29 @@ function cycleActiveChatters() {
 
     return;
 }
+
+ipcMain.on("setActiveChatUsers", function(event, value) {
+    logger.debug('Changing active chat user enabled to: ' + value);
+    if (value === false) {
+        logger.debug('Stopping active user timeout cycle.');
+        clearInterval(cycleActiveTimer);
+    }
+    activeUserListStatus = settings.getActiveChatUserList() === false ? false : true;
+});
+
+ipcMain.on("setActiveChatUserTimeout", function(event, value) {
+    logger.debug('Changing active chat user timeout to: ' + value);
+
+    // Make sure we have a valid value, then set it.
+    value = parseInt(inactiveTimer);
+    if (isNaN(value)) {
+        return 10;
+    }
+    inactiveTimer = value;
+
+    // Restart our timer with the new value.
+    cycleActiveChatters();
+});
 
 // Export Functions
 exports.getActiveChatters = getActiveChatters;

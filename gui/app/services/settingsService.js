@@ -368,6 +368,24 @@
                 pushDataToFile("/settings/sounds", enabled);
             };
 
+            service.getActiveChatUserList = function() {
+                let status = getDataFromFile("/settings/activeChatUsers/status");
+                return status != null ? status : "On";
+            };
+
+            service.setActiveChatUsers = function(status) {
+                pushDataToFile("/settings/activeChatUsers/status", status);
+            };
+
+            service.getActiveChatUserListTimeout = function() {
+                let inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
+                return inactiveTimer != null ? inactiveTimer : "10";
+            };
+
+            service.setActiveChatUserListTimeout = function(inactiveTimer) {
+                pushDataToFile("/settings/activeChatUsers/inactiveTimer", inactiveTimer);
+            };
+
             /*
             * 0 = off,
             * 1 = bugfix,

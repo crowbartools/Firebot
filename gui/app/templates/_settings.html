@@ -106,8 +106,57 @@
           </div>
         </uib-tab>
 
+        <!-- Interactive Settings -->
+        <uib-tab index="2" heading="Chat">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Active Chat Users List</div>
+                <div class="setting-description">
+                  Keep track of active users in the backend for use in variables and other things. Deactivating may slighly improve performance on larger channels.
+                </div>
+                <div class="dropdown options-activeChatUserList-dropdown"style="display: inline-block">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span class="dropdown-text">{{settings.getActiveChatUserList() ? 'On' : 'Off'}}</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-activeChatUserList">
+                      <li><a href ng-click="setActiveChatUsers(true)">On</a></li>
+                      <li><a href ng-click="setActiveChatUsers(false)">Off</a></li>
+                    </ul>
+                  </div>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Inactive User Time</div>
+                <div class="setting-description">
+                  The amount of time it takes for an active user to be marked as inactive after their last chat message. Doesn't have any affect unless active chat user list is on.
+                </div>
+                <div class="dropdown options-activeChatUserTimeout-dropdown"style="display: inline-block">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span class="dropdown-text">{{settings.getActiveChatUserListTimeout()}}</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-activeChatUserTimeout">
+                      <li><a href ng-click="setActiveChatUserTimeout('5')">5</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('10')">10</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('15')">15</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('20')">20</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('25')">25</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('30')">30</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('35')">35</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('40')">40</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('45')">45</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('50')">50</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('55')">55</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('60')">60</a></li>
+                    </ul>
+                    <span> minutes</span>
+                  </div>
+            </div>
+          </div>
+        </uib-tab>
+
         <!-- Database Settings -->
-        <uib-tab index="2" heading="Database">
+        <uib-tab index="3" heading="Database">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Viewer Database</div>
@@ -129,7 +178,7 @@
         </uib-tab>
 
         <!-- Overlay Settings -->
-        <uib-tab index="3" heading="Overlay">
+        <uib-tab index="4" heading="Overlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Overlay URL</div>
@@ -312,7 +361,6 @@
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="options-emulation">
                     <li><a href ng-click="settings.setEmulator('Robotjs')">Robotjs</a></li>
-                    <li><a href ng-click="settings.setEmulator('KBMRobot')">KBMRobot</a></li>
                   </ul>
                 </div>
             </div>
