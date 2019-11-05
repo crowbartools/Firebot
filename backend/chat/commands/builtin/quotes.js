@@ -134,7 +134,7 @@ const quotesManagement = {
                 if (!isNaN(quoteId)) {
                     await quotesManager.removeQuote(quoteId);
                     Chat.smartSend(`Quote ${quoteId} was removed.`);
-                    logger.debug('A quote was removed here.');
+                    logger.debug('A quote was removed: ' + quoteId);
                     return resolve();
                 }
 
