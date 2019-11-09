@@ -171,20 +171,36 @@ const quotesManagement = {
                 return resolve();
             }
             case "search": {
+
+                // strip first token("search") from input, and join the remaining using space as the delimiter
                 const searchTerm = args.slice(1).join(" ");
 
+                // attempt to get a random quote containing the text as an exact match
                 const quote = await quotesManager.getRandomQuoteContainingText(searchTerm);
+
+                // quote found
                 if (quote != null) {
+
+                    // format quote
                     let formattedQuote = getFormattedQuoteString(quote);
+
+                    // send to chat
                     Chat.smartSend(formattedQuote);
+
+                    // log (Maybe move this to the manager?)
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
 
+                // no matching quote found
                 } else {
+
+                    // send message to user
                     Chat.smartSend(
                         `Sorry! We couldnt find a quote using those terms.`,
                         event.userCommand.commandSender
                     );
                 }
+
+                // resolve promise
                 return resolve();
             }
             default: {
