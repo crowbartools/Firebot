@@ -171,11 +171,14 @@ const quotesManagement = {
                 return resolve();
             }
             case "search": {
-                const quote = await quotesManager.getRandomQuoteByWord(args[1]);
+                const searchTerm = args.slice(1).join(" ");
+
+                const quote = await quotesManager.getRandomQuoteContainingText(searchTerm);
                 if (quote != null) {
                     let formattedQuote = getFormattedQuoteString(quote);
                     Chat.smartSend(formattedQuote);
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
+
                 } else {
                     Chat.smartSend(
                         `Sorry! We couldnt find a quote using those terms.`,

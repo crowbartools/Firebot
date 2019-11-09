@@ -4,6 +4,8 @@ const Datastore = require("nedb");
 const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
 
+const regExpEscape = input => input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
+
 let db;
 
 function loadQuoteDatabase() {
@@ -95,6 +97,37 @@ function getRandomQuoteByWord(searchTerm) {
     });
 }
 
+// searches quotes list for entries containing the specified text and returns a random entry from the matched items
+// replacement for getRandomQuoteByWord
+function getRandomQuoteContainingText(text) {
+
+    // convert text query into a regex
+    const textPattern = new RegExp(`\\b${regExpEscape(text)}\\b`, 'i');
+
+    // return a promise that is resolved once the db returns a result
+    return new Promise(resolve => {
+        db.find(
+
+            // search the field 'text' using the text
+            {text:{ $regex: textPattern}},
+
+            // result handler
+            function (err, docs) {
+
+                // error or no docs: resolve to no result
+                if (err || !docs.length) {
+                    resolve(null);
+                }
+
+                // get a random doc from the list
+                let doc = docs[Math.floor(Math.random() * docs.length)];
+
+                // return the choosen doc
+                return resolve(doc);
+            });
+    });
+}
+
 function getRandomQuote() {
     return new Promise((resolve) => {
         db.count({}, function (err, count) {
@@ -141,5 +174,6 @@ exports.removeQuote = removeQuote;
 exports.getQuote = getQuote;
 exports.getRandomQuote = getRandomQuote;
 exports.getRandomQuoteByWord = getRandomQuoteByWord;
+exports.getRandomQuoteContainingText = getRandomQuoteContainingText;
 exports.loadQuoteDatabase = loadQuoteDatabase;
 exports.getAllQuotes = getAllQuotes;
