@@ -109,7 +109,7 @@ function getRandomQuoteContainingText(text) {
         db.find(
 
             // search the field 'text' using the text
-            {text:{ $regex: textPattern}},
+            {text: { $regex: textPattern}},
 
             // result handler
             function (err, docs) {
