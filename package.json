@@ -43,7 +43,7 @@
     },
     "dependencies": {
         "@mixer/client-node": "^3.0.0",
-        "angular": "^1.5.5",
+        "angular": "^1.7.9",
         "angular-animate": "^1.5.5",
         "angular-route": "^1.6.4",
         "angular-sanitize": "^1.6.6",
