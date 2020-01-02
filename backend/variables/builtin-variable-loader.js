@@ -17,6 +17,7 @@ exports.loadReplaceVariables = () => {
     const title = require("./builtin/streamTitle");
     const readApi = require("./builtin/readApi");
     const userAvatarUrl = require("./builtin/userAvatarUrl");
+    const readFile = require("./builtin/readFile");
 
     const patronageEarned = require("./builtin/patronageEarned");
     const patronageNextMilestoneReward = require("./builtin/patronageNextMilestoneReward");
@@ -66,6 +67,7 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(title);
     replaceVariableManager.registerReplaceVariable(readApi);
     replaceVariableManager.registerReplaceVariable(userAvatarUrl);
+    replaceVariableManager.registerReplaceVariable(readFile);
 
     replaceVariableManager.registerReplaceVariable(patronageEarned);
     replaceVariableManager.registerReplaceVariable(patronageNextMilestoneReward);
