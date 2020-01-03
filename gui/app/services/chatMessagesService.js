@@ -113,14 +113,16 @@
                         if (data.moderator) {
                             modName = data.moderator.user_name;
                         }
-                        message.eventInfo = `Timed out by ${modName}.`;
+                        message.eventInfo = `Purged by ${modName}.`;
 
                     }
                 });
 
-                service.chatAlertMessage(
-                    data.moderator.user_name + " timed out " + cachedUserName
-                );
+                if (data.moderator && cachedUserName) {
+                    service.chatAlertMessage(
+                        data.moderator.user_name + " purged " + cachedUserName
+                    );
+                }
             };
 
             // Chat Alert Message
@@ -240,24 +242,11 @@
             service.userUpdate = function(data) {
                 if (data == null || data.roles == null) return;
 
-                let roles = data.roles;
+                const banned = data.roles.includes("Banned");
 
-                // Check each role. If one is "banned" then we ban the person from interactive and show a chat alert.
-                Object.keys(roles).forEach(key => {
-                    let roleCheck = roles[key];
-                    if (roleCheck === "Banned") {
-                        // User got banned.
-                        // Check to see if they're on the banned list already or not before sending an alert.
-                        let bannedUsers = groupsService.getBannedGroup().users;
-                        if (bannedUsers.indexOf(data.username) === -1) {
-                            groupsService.addUserToBannedGroup(data.username);
-                            service.chatAlertMessage(
-                                data.username +
-                  " has been banned. Firebot has added them to the banned interactive user group automatically."
-                            );
-                        }
-                    }
-                });
+                if (banned) {
+                    service.chatAlertMessage(data.username + " has been banned.");
+                }
             };
 
             // Chat Update Handler

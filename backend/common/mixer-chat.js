@@ -460,7 +460,6 @@ function createChatDataProcessing(chatter) {
                 data.fbEvent = "PurgeMessage";
                 renderWindow.webContents.send("chatUpdate", data);
                 getUserInfo(data.user_id, user => {
-                    logger.info("username " + user.username);
                     //if purge has moderator, it was a timeout/purge
                     if (data.moderator !== undefined) {
                         eventManager.triggerEvent("mixer", "messages-purged", {
@@ -491,7 +490,11 @@ function createChatDataProcessing(chatter) {
             // Bans, subscribes, modding, etc...
             socket.on("UserUpdate", data => {
                 data.fbEvent = "UserUpdate";
-                renderWindow.webContents.send("chatUpdate", data);
+                getUserInfo(data.user, user => {
+                    data.username = user.username;
+                    renderWindow.webContents.send("chatUpdate", data);
+                });
+
             });
 
             // User Timeout - Probably won't happen
