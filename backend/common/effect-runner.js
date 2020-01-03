@@ -37,6 +37,8 @@ const findAndReplaceVariables = (data, trigger) => {
 
         for (let key of keys) {
 
+            if (key === "list") continue; // skip nested effect lists so we dont replace variables too early
+
             let value = data[key];
 
             if (value && typeof value === "string") {
