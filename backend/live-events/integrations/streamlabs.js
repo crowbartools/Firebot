@@ -7,7 +7,22 @@ const request = require("request");
 const integrationDefinition = {
     id: "streamlabs",
     name: "Streamlabs",
-    description: "Donation and Extra Life Donation events"
+    description: "Donation and Extra Life Donation events",
+    linkType: "auth",
+    authProviderDetails: {
+        id: "streamlabs",
+        name: "StreamLabs Account",
+        client: {
+            id: 'XtzRXbIUU9OZcU3siwNBXOSVFD8DGjYhkLmeUqYQ',
+            secret: "pJMm1ktVgtXkNEdhU5HIowQNCLxZyMLin0yu0q6b"
+        },
+        auth: {
+            tokenHost: 'https://streamlabs.com',
+            tokenPath: '/api/v1.0/token',
+            authorizePath: '/api/v1.0/authorize'
+        },
+        scopes: 'donations.read socket.token'
+    }
 };
 
 const EVENT_SOURCE_ID = "streamlabs";
@@ -74,19 +89,21 @@ class StreamlabsIntegration extends EventEmitter {
         this.connected = false;
         this._socket = null;
     }
-    init(linked, settings) {
+    init(linked, integrationData) {
         if (linked) {
             const eventManager = require("../EventManager");
             eventManager.registerEventSource(eventSourceDefinition);
         }
     }
-    connect(settings) {
+    connect(integrationData) {
+        let { settings, auth } = integrationData;
+
         console.log("attempting to connect sl...");
-        console.log(settings);
         if (settings == null) {
             this.emit("disconnected", integrationDefinition.id);
             return;
         }
+
         this._socket = io(
             `https://sockets.streamlabs.com?token=${settings.socketToken}`,
             {
@@ -94,9 +111,7 @@ class StreamlabsIntegration extends EventEmitter {
             }
         );
 
-        console.log("...connected");
         const eventManager = require("../EventManager");
-        console.log("1");
 
         this._socket.on("event", eventData => {
             console.log(eventData);
@@ -136,42 +151,29 @@ class StreamlabsIntegration extends EventEmitter {
 
         this.emit("disconnected", integrationDefinition.id);
     }
-    link() {
+    link(linkData) {
         return new Promise(async (resolve, reject) => {
-            console.log("getting SL tokens...");
-            let authResp;
-            try {
-                authResp = await authManager.issueAuthRequest(
-                    authData.settings,
-                    authData.scopes,
-                    "streamlabs"
-                );
-            } catch (error) {
-                console.log(error);
-                return reject(error);
-            }
 
-            let tokens = {
-                accessToken: authResp.access_token,
-                refreshToken: authResp.refresh_token
-            };
-
+            let { auth } = linkData;
             console.log("tokens:");
-            console.log(tokens);
+            console.log(auth);
 
+            console.log("getting SL socket token...");
+
+            let settings = {};
             try {
-                tokens.socketToken = await getStreamlabsSocketToken(tokens.accessToken);
+                settings.socketToken = await getStreamlabsSocketToken(auth['access_token']);
             } catch (error) {
                 console.log(error);
                 return reject(error);
             }
 
-            this.emit("settings-update", integrationDefinition.id, tokens);
+            this.emit("settings-update", integrationDefinition.id, settings);
 
             const eventManager = require("../EventManager");
             eventManager.registerEventSource(eventSourceDefinition);
 
-            resolve(tokens);
+            resolve(settings);
         });
     }
     unlink() {

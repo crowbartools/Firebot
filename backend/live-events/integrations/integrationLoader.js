@@ -9,5 +9,5 @@ exports.loadIntegrations = () => {
 
     // register them
     integrationManager.registerIntegration(streamlabs);
-    //integrationManager.registerIntegration(tipeeestream);
+    integrationManager.registerIntegration(tipeeestream);
 };

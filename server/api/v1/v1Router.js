@@ -12,9 +12,15 @@ router.use(function log(req, res, next) {
     next();
 });
 
+// Auth
+const auth = require("./controllers/authApiController");
+
+router.route("/auth").get(auth.getAuth);
+
+router.route("/auth/callback").get(auth.getAuthCallback);
+
 // Status
 const status = require("./controllers/statusApiController");
-
 router.route("/status").get(status.getStatus);
 
 // Effects
