@@ -9,7 +9,7 @@ triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "slootsMessage",
+        handle: "slootsGiftee",
         description: "The person who was gifted StreamLoots Chests.",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
