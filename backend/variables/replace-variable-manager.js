@@ -1,6 +1,5 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const Expression = require("./expression");
@@ -124,7 +123,7 @@ class ReplaceVariableManager extends EventEmitter {
                                     character: err.character,
                                     rawText: err.rawText
                                 });
-                                logger.debug(`Found ariable error when validating`, err);
+                                logger.debug(`Found variable error when validating`, err);
                             } else {
                                 logger.error(`Unknown error when validating variables for string: '${value}'`, err);
                             }

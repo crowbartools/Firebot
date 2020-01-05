@@ -32,6 +32,9 @@ exports.loadReplaceVariables = () => {
     const randomViewer = require("./builtin/randomViewer");
     const randomActiveViewer = require('./builtin/randomActiveViewer');
     const quotes = require('./builtin/quote');
+    const capitalize = require('./builtin/capitalize');
+    const uppercase = require('./builtin/uppercase');
+    const lowercase = require('./builtin/lowercase');
 
     const customVariable = require("./builtin/customVariable");
     const profilePageBytebinToken = require("./builtin/profilePageBytebinToken");
@@ -82,6 +85,9 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(randomViewer);
     replaceVariableManager.registerReplaceVariable(randomActiveViewer);
     replaceVariableManager.registerReplaceVariable(quotes);
+    replaceVariableManager.registerReplaceVariable(capitalize);
+    replaceVariableManager.registerReplaceVariable(uppercase);
+    replaceVariableManager.registerReplaceVariable(lowercase);
 
     replaceVariableManager.registerReplaceVariable(customVariable);
     replaceVariableManager.registerReplaceVariable(profilePageBytebinToken);
