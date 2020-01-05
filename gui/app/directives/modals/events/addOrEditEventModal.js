@@ -31,12 +31,12 @@
                 <filter-list event-source-id="$ctrl.event.sourceId" event-id="$ctrl.event.eventId" filter-data="$ctrl.event.filterData"></filter-list>
             </div>  
 
-            <div class="other-settings" style="padding-bottom:1em">
+            <div class="other-settings setting-padtop">
                 <div class="settings-title">
                     <h3>Settings</h3>
                 </div>
 
-                <div class="controls-fb-inline effect-setting-container setting-padtop">
+                <div class="controls-fb-inline effect-setting-container">
                     <label class="control-fb control--checkbox" ng-if="!$ctrl.isNewEvent">Enabled
                         <input type="checkbox" ng-model="$ctrl.event.active" aria-label="..." checked>
                         <div class="control__indicator"></div>
