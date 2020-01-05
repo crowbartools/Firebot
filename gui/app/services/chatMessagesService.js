@@ -523,15 +523,8 @@
                     if (settingsService.getRealChatFeed()) {
                         let queueEntry = parseChatEventObject(data);
 
-                        let existingIndex = service.chatQueue.findIndex(m => m.id === queueEntry.id);
+                        // Push new message to queue.
                         messageHoldingQueue.push(queueEntry);
-                        if (existingIndex > -1) {
-                            // this message already exists, update it (likely a catbot message being restored)
-                            service.chatQueue[existingIndex] = queueEntry;
-                        } else {
-                            // Push new message to queue.
-                            messageHoldingQueue.push(queueEntry);
-                        }
                     }
                 });
 
@@ -546,8 +539,14 @@
 
                         let queueEntry = parseChatEventObject(data);
 
-                        // Push new message to queue.
-                        messageHoldingQueue.push(queueEntry);
+                        let existingIndex = service.chatQueue.findIndex(m => m.id === queueEntry.id);
+                        if (existingIndex > -1) {
+                            // this message already exists, update it (likely a catbot message being restored)
+                            service.chatQueue[existingIndex] = queueEntry;
+                        } else {
+                            // Push new message to queue.
+                            messageHoldingQueue.push(queueEntry);
+                        }
                     }
                 }
             );
