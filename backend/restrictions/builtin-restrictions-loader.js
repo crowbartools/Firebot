@@ -6,8 +6,10 @@ exports.loadRestrictions = function() {
     const permissions = require("./builtin/permissions");
     const channelProgression = require("./builtin/channelProgression");
     const channelCurrency = require("./builtin/channelCurrency");
+    const activeChatUsers = require("./builtin/activeChatUsers");
 
     restrictionsManager.registerRestriction(permissions);
     restrictionsManager.registerRestriction(channelProgression);
     restrictionsManager.registerRestriction(channelCurrency);
+    restrictionsManager.registerRestriction(activeChatUsers);
 };
