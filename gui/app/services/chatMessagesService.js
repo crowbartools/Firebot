@@ -520,15 +520,18 @@
             listenerService.registerListener(
                 { type: listenerService.ListenerType.NON_CHAT_SKILL },
                 (data) => {
-                    console.log("GOT HERE!!");
                     if (settingsService.getRealChatFeed()) {
-
-                        console.log("GOT HERE 2.0!!");
-
                         let queueEntry = parseChatEventObject(data);
 
-                        // Push new message to queue.
+                        let existingIndex = service.chatQueue.findIndex(m => m.id === queueEntry.id);
                         messageHoldingQueue.push(queueEntry);
+                        if (existingIndex > -1) {
+                            // this message already exists, update it (likely a catbot message being restored)
+                            service.chatQueue[existingIndex] = queueEntry;
+                        } else {
+                            // Push new message to queue.
+                            messageHoldingQueue.push(queueEntry);
+                        }
                     }
                 });
 
