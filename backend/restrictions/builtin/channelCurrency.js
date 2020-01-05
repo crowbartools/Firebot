@@ -53,15 +53,19 @@ const model = {
             $scope.currencies.push(currencyData[k]);
         });
 
-        console.log($scope.currencies);
-
         // Do we have any currencies?
         $scope.hasCurrencies = $scope.currencies.length > 0;
     },
     optionsValueDisplay: (restriction) => {
-        let comparison = restriction.comparison.toLowerCase();
+        let comparison = restriction.comparison;
         let currency = restriction.selectedCurrency;
         let amount = restriction.amount;
+
+        if (comparison != null) {
+            comparison = comparison.toLowerCase();
+        } else {
+            return "";
+        }
 
         if (comparison === "less") {
             comparison = "less than";
