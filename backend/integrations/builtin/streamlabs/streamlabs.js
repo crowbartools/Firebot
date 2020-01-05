@@ -2,8 +2,10 @@
 const EventEmitter = require("events");
 const io = require("socket.io-client");
 const request = require("request");
+
 const slEventHandler = require("./events/streamlabs-event-handler");
 const slVariableLoader = require("./variables/streamlabs-variable-loader");
+const slEffectsLoader = require("./effects/streamlabs-effect-loader");
 
 const integrationDefinition = {
     id: "streamlabs",
@@ -54,6 +56,7 @@ class StreamlabsIntegration extends EventEmitter {
     init() {
         slEventHandler.registerEvents();
         slVariableLoader.registerVariables();
+        slEffectsLoader.registerEffects();
     }
     connect(integrationData) {
         let { settings } = integrationData;
