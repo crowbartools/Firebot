@@ -71,7 +71,7 @@
                 enableColResize: true,
                 suppressMenuHide: true,
                 defaultColDef: {
-                    editable: true
+                    editable: false
                 },
                 onGridReady: function(params) {
                     params.api.sizeColumnsToFit();
@@ -87,7 +87,7 @@
                 lastSeen: {
                     headerName: "Last Seen",
                     field: "lastSeen",
-                    editable: true,
+                    editable: false,
                     valueFormatter: function(params) {
                         return moment(params.data.lastSeen).format("MM/DD/YYYY");
                     },
@@ -98,7 +98,7 @@
                 minutesInChannel: {
                     headerName: "View Time (hours)",
                     field: "minutesInChannel",
-                    editable: true,
+                    editable: false,
                     valueParser: function(params) {
                         let newnum = Number(params.newValue) * 60;
                         return newnum;
@@ -111,7 +111,7 @@
                 joinDate: {
                     headerName: "Join Date",
                     field: "joinDate",
-                    editable: true,
+                    editable: false,
                     valueFormatter: function(params) {
                         return moment(params.data.joinDate).format("MM/DD/YYYY");
                     },
@@ -122,7 +122,7 @@
                 mixplayInteractions: {
                     headerName: "Mixplay Interactions",
                     field: "mixplayInteractions",
-                    editable: true,
+                    editable: false,
                     valueParser: function(params) {
                         // convert to number
                         return Number(params.newValue);
@@ -131,7 +131,7 @@
                 chatMessages: {
                     headerName: "Chat Messages",
                     field: "chatMessages",
-                    editable: true,
+                    editable: false,
                     valueParser: function(params) {
                         // convert to number
                         return Number(params.newValue);
@@ -182,7 +182,7 @@
                     service.fieldDefs["currency." + currency.id] = {
                         headerName: currency.name,
                         field: "currency." + currency.id,
-                        editable: true,
+                        editable: false,
                         valueParser: function(params) {
                             // convert to number
                             return Number(params.newValue);
