@@ -20,7 +20,9 @@ module.exports = {
         { eventSourceId: "mixer", eventId: "messages-purged" },
         { eventSourceId: "mixer", eventId: "user-banned" },
         { eventSourceId: "mixer", eventId: "skill" },
-        { eventSourceId: "mixer", eventId: "viewer-arrived" }
+        { eventSourceId: "mixer", eventId: "viewer-arrived" },
+        { eventSourceId: "streamloots", eventId: "purchase" },
+        { eventSourceId: "streamloots", eventId: "redemption" }
     ],
     comparisonTypes: ["include", "doesn't include"],
     valueType: "preset",

@@ -3,6 +3,7 @@ const EventEmitter = require("events");
 const EventSource = require("eventsource");
 const slootsEventHandler = require("./streamloots-event-handler");
 const slootsVariableLoader = require("./variables/streamloots-variable-loader");
+const slootsFilterLoader = require("./filters/streamloots-filter-loader");
 
 const integrationDefinition = {
     id: "streamloots",
@@ -20,6 +21,7 @@ class StreamLootsIntegration extends EventEmitter {
     init() {
         slootsEventHandler.registerEvents();
         slootsVariableLoader.registerVariables();
+        slootsFilterLoader.registerFilters();
     }
     connect(integrationData) {
         let { accountId } = integrationData;
