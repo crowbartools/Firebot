@@ -6,11 +6,7 @@
 
     const _ = require("underscore")._;
 
-    const EffectType = require("../../backend/common/EffectType");
-
     const dataAccess = require("../../backend/common/data-access.js");
-
-    const uuidv1 = require("uuid/v1");
 
     angular
         .module("firebotApp")
@@ -19,9 +15,24 @@
             $uibModal,
             listenerService,
             logger,
-            $timeout
+            $timeout,
+            backendCommunicator
         ) {
             let service = {};
+
+
+            backendCommunicator.on("requestIntegrationAccountId", (data) => {
+                service.openGetInputModal({
+                    model: null,
+                    label: `Enter ID for ${data.integrationName}`,
+                    saveText: "Save ID"
+                }, (model) => {
+                    backendCommunicator.fireEvent("enteredIntegrationAccountId", {
+                        integrationId: data.integrationId,
+                        accountId: model
+                    });
+                });
+            });
 
             let slidingModals = [];
             const shiftAmount = 125;

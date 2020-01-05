@@ -9,7 +9,7 @@
 
     angular
         .module("firebotApp")
-        .factory("backendCommunicator", function($rootScope, listenerService, logger, $q) {
+        .factory("backendCommunicator", function(logger, $q) {
 
             const uuidv1 = require("uuid/v1");
 
@@ -65,12 +65,10 @@
             };
 
             service.fireEventSync = function(type, data) {
-                console.log("firing sync event " + type);
                 return ipcRenderer.sendSync(type, data);
             };
 
             service.fireEvent = function(type, data) {
-                console.log("sending event " + type);
                 ipcRenderer.send(type, data);
             };
 

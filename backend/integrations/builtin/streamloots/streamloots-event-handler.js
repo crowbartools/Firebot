@@ -1,0 +1,75 @@
+"use strict";
+
+const eventManager = require("../../../live-events/EventManager");
+
+const EVENT_SOURCE_ID = "streamloots";
+const EventId = {
+    PURCHASE: "purchase",
+    REDEMPTION: "redemption"
+};
+
+const eventSourceDefinition = {
+    id: EVENT_SOURCE_ID,
+    name: "StreamLoots",
+    description: "Purchase/Redemption events from StreamLoots",
+    events: [
+        {
+            id: EventId.PURCHASE,
+            name: "Purchase",
+            description: "When someone purchases/gifts chests.",
+            cached: false
+        },
+        {
+            id: EventId.REDEMPTION,
+            name: "Redemption",
+            description: "When someone redeems a card.",
+            cached: false
+        }
+    ]
+};
+
+exports.registerEvents = () => {
+    eventManager.registerEventSource(eventSourceDefinition);
+};
+
+function getFieldValue(fieldName, fields) {
+    if (fields == null) return null;
+    let field = fields.find(f => f.name === fieldName);
+    return field ? field.value : null;
+}
+
+exports.processStreamLootsEvent = (eventData) => {
+    console.log(JSON.stringify(eventData));
+
+    let metadata = {
+        imageUrl: eventData.imageUrl,
+        soundUrl: eventData.soundUrl,
+        message: eventData.message
+    };
+
+    let streamlootsEventType = eventData.data.type;
+
+    let username = getFieldValue("username", eventData.data.fields);
+    metadata.username = username;
+
+    let eventId;
+    if (streamlootsEventType === "purchase") {
+        eventId = EventId.PURCHASE;
+
+        let quantity = getFieldValue("quantity", eventData.data.fields);
+        let giftee = getFieldValue("giftee", eventData.data.fields);
+
+        metadata.quantity = quantity;
+        metadata.giftee = giftee;
+
+    } else if (streamlootsEventType === "redemption") {
+        eventId = EventId.REDEMPTION;
+
+        metadata.cardName = eventData.data.cardName;
+
+        let cardRarity = getFieldValue("rarity", eventData.data.fields);
+        metadata.cardRarity = cardRarity;
+    }
+
+    eventManager.triggerEvent(EVENT_SOURCE_ID, eventId, metadata);
+};

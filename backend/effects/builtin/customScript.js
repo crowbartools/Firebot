@@ -30,7 +30,7 @@ const fileWriter = {
     optionsTemplate: `
         <eos-container>
             <div class="effect-info alert alert-info">
-                Place scripts in the <a id="scriptFolderBtn" href="#" ng-click="openScriptsFolder()" style="text-decoration:underline;color:#53afff;">scripts folder</a> of the Firebot user-settings directory, then refresh the dropdown.
+                Place scripts in the <a id="scriptFolderBtn" ng-click="openScriptsFolder()" style="text-decoration:underline;color:#53afff;cursor:pointer;">scripts folder</a> of the Firebot user-settings directory, then refresh the dropdown.
             </div>
         </eos-container>
 
@@ -39,7 +39,7 @@ const fileWriter = {
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="script-type">{{effect.scriptName ? effect.scriptName : 'Pick one'}}</span> <span class="caret"></span>
                 </button>
-                <a ng-click="getNewScripts()" id="refreshScriptList" href="#" style="padding-left:5px;height:100%;"><i class="far fa-sync" id="refreshIcon" style="margin-top:10px;" aria-hidden="true"></i></a>
+                <a ng-click="getNewScripts()" id="refreshScriptList" style="padding-left:5px;height:100%;cursor:pointer;"><i class="far fa-sync" id="refreshIcon" style="margin-top:10px;" aria-hidden="true"></i></a>
                 <ul class="dropdown-menu script-dropdown">
                     <li ng-show="scriptArray.length == 0" class="muted">
                         <a href>No scripts found.</a>

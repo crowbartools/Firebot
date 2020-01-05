@@ -21,13 +21,12 @@ const backupManager = require("./backend/backupManager");
 const userDatabase = require("./backend/database/userDatabase");
 const connectionManager = require("./backend/common/connection-manager");
 const webServer = require("./server/httpServer");
-const authManager = require("./backend/common/perform-auth");
 const fontManager = require("./backend/fontManager");
 
 const builtInEffectLoader = require("./backend/effects/builtInEffectLoader");
 const systemCommandLoader = require("./backend/chat/commands/systemCommandLoader");
 const builtInEventSourceLoader = require("./backend/live-events/builtinEventSourceLoader");
-const integrationLoader = require("./backend/live-events/integrations/integrationLoader");
+const integrationLoader = require("./backend/integrations/integrationLoader");
 const builtInVariableLoader = require("./backend/variables/builtin-variable-loader");
 const builtInEventFilterLoader = require("./backend/live-events/filters/builtin-filter-loader");
 const builtInRestrictionsLoader = require("./backend/restrictions/builtin-restrictions-loader");

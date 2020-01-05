@@ -1,11 +1,12 @@
 "use strict";
 const { ipcMain } = require("electron");
-const logger = require("../../logwrapper");
-const profileManager = require("../../common/profile-manager");
-const authManager = require("../../auth-manager");
+const logger = require("../logwrapper");
+const profileManager = require("../common/profile-manager");
+const authManager = require("../auth-manager");
 const EventEmitter = require("events");
 const { shell } = require('electron');
-const { settings } = require('../../common/settings-access');
+const { settings } = require('../common/settings-access');
+const frontEndCommunicator = require('../common/frontend-communicator');
 
 class IntegrationManager extends EventEmitter {
     constructor() {
@@ -15,7 +16,7 @@ class IntegrationManager extends EventEmitter {
     }
 
     registerIntegration(integration) {
-    // TODO: validate integration
+        // TODO: validate integration
 
         integration.definition.linked = false;
 
@@ -32,6 +33,7 @@ class IntegrationManager extends EventEmitter {
                 integration.definition.settings = integrationSettings.settings;
                 integration.definition.linked = integrationSettings.linked !== false;
                 integration.definition.auth = integrationSettings.auth;
+                integration.definition.accountId = integrationSettings.accountId;
             } else {
                 integration.definition.settings = {};
                 integration.definition.linked = false;
@@ -44,6 +46,7 @@ class IntegrationManager extends EventEmitter {
             integration.definition.linked,
             {
                 oauth: integration.definition.auth,
+                accountId: integration.definition.accountId,
                 settings: integration.definition.settings
             }
         );
@@ -107,44 +110,57 @@ class IntegrationManager extends EventEmitter {
         }
     }
 
+    saveIntegrationAccountId(integration, accountId) {
+        integration.definition.accountId = accountId;
+
+        try {
+            let integrationDb = profileManager.getJsonDbInProfile("/integrations");
+            integrationDb.push(`/${integration.definition.id}/accountId`, accountId);
+        } catch (error) {
+            logger.warn(error);
+            return;
+        }
+    }
+
     startIntegrationLink(integrationId) {
         let int = this.getIntegrationById(integrationId);
         if (int == null || int.definition.linked) return;
 
         if (int.definition.linkType === "auth") {
             shell.openExternal(`http://localhost:${settings.getWebServerPort()}/api/v1/auth?providerId=${int.definition.authProviderDetails.id}`);
+        } else if (int.definition.linkType === "id") {
+            frontEndCommunicator.send("requestIntegrationAccountId", {
+                integrationId: int.definition.id,
+                integrationName: int.definition.name
+            });
         } else {
             this.linkIntegration(int, null);
         }
     }
 
-    linkIntegration(int, linkData) {
+    async linkIntegration(int, linkData) {
 
-        int.integration
-            .link(linkData)
-            .then(() => {
-                console.log("SAVING SUCCESSFUL LINK");
-                try {
-                    let integrationDb = profileManager.getJsonDbInProfile(
-                        "/integrations"
-                    );
-                    integrationDb.push(`/${int.definition.id}/linked`, true);
-                    int.definition.linked = true;
-                } catch (error) {
-                    console.log(error);
-                    logger.warn(error);
-                }
+        try {
+            await int.integration.link(linkData);
+        } catch (err) {
+            logger.warn(err);
+        }
 
-                renderWindow.webContents.send("integrationsUpdated");
-            })
-            .catch(err => {
-                console.log(err);
-                logger.warn(err);
-            });
+        try {
+            let integrationDb = profileManager.getJsonDbInProfile(
+                "/integrations"
+            );
+            integrationDb.push(`/${int.definition.id}/linked`, true);
+            int.definition.linked = true;
+        } catch (error) {
+            console.log(error);
+            logger.warn(error);
+        }
+
+        renderWindow.webContents.send("integrationsUpdated");
     }
 
     unlinkIntegration(integrationId) {
-        console.log("UNLINKING " + integrationId);
         let int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked) return;
 
@@ -153,6 +169,8 @@ class IntegrationManager extends EventEmitter {
             integrationDb.delete(`/${integrationId}`);
             int.definition.settings = null;
             int.definition.linked = false;
+            int.definition.auth = null;
+            int.definition.accountId = null;
         } catch (error) {
             logger.warn(error);
         }
@@ -164,24 +182,27 @@ class IntegrationManager extends EventEmitter {
         let int = this.getIntegrationById(integrationId);
         if (int == null || !int.definition.linked) return;
 
-        let updatedToken;
+        let integrationData = {
+            settings: int.definition.settings
+        };
+
         if (int.definition.linkType === "auth") {
-            updatedToken = await authManager.refreshTokenIfExpired(int.definition.authProviderDetails.id,
+            const updatedToken = await authManager.refreshTokenIfExpired(int.definition.authProviderDetails.id,
                 int.definition.auth);
 
             if (updatedToken == null) {
-                //throw error
-                console.log("NULL UPDATED TOKEN!");
+                logger.warn("Could not refresh integration access token!");
                 return;
             }
 
             this.saveIntegrationAuth(int, updatedToken);
+
+            integrationData.auth = updatedToken;
+        } else if (int.definition.linkType === "id") {
+            integrationData.accountId = int.definition.accountId;
         }
 
-        int.integration.connect({
-            settings: int.definition.settings,
-            auth: updatedToken
-        });
+        int.integration.connect(integrationData);
     }
 
     disconnectIntegration(integrationId) {
@@ -194,6 +215,16 @@ class IntegrationManager extends EventEmitter {
 }
 
 const manager = new IntegrationManager();
+
+frontEndCommunicator.on("enteredIntegrationAccountId", async (idData) => {
+    const { integrationId, accountId } = idData;
+    const int = manager.getIntegrationById(integrationId);
+    if (int == null) return;
+
+    manager.saveIntegrationAccountId(int, accountId);
+
+    manager.linkIntegration(int, { accountId: accountId });
+});
 
 authManager.on("auth-success", (authData) => {
     let { providerId, tokenData } = authData;

@@ -1,7 +1,6 @@
 "use strict";
 const EventEmitter = require("events");
 const io = require("socket.io-client");
-const authManager = require("../../authManager");
 const request = require("request");
 
 const integrationDefinition = {
@@ -72,7 +71,7 @@ class TipeeeStreamIntegration extends EventEmitter {
     }
     init(linked, integrationData) {
         if (linked) {
-            const eventManager = require("../EventManager");
+            const eventManager = require("../../../live-events/EventManager");
             eventManager.registerEventSource(eventSourceDefinition);
         }
     }
@@ -91,7 +90,7 @@ class TipeeeStreamIntegration extends EventEmitter {
         });
 
         console.log("...connected");
-        const eventManager = require("../EventManager");
+        const eventManager = require("../../../live-events/EventManager");
 
         this._socket.on("new-event", data => {
             console.log(data);
@@ -136,7 +135,7 @@ class TipeeeStreamIntegration extends EventEmitter {
 
             this.emit("settings-update", integrationDefinition.id, settings);
 
-            const eventManager = require("../EventManager");
+            const eventManager = require("../../../live-events/EventManager");
             eventManager.registerEventSource(eventSourceDefinition);
 
             resolve(settings);
