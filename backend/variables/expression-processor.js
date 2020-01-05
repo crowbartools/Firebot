@@ -53,8 +53,8 @@ class ExpressionError extends Error {
 const trim = str => str.replace(/^\s+/, '');
 
 // probes
-const probeText = /^(?:[^$]+|(?:\$(?![a-z]{3})))/;
-const probeVar = /^\$([a-z]{3,})/i;
+const probeText = /^(?:[^$]+|(?:\$(?![a-zA-Z]{3})))/;
+const probeVar = /^\$([a-zA-Z]{3,})/i;
 const probeQuoteArg = /^(?:[^\\"]+|(?:\\([\s\S])))/;
 const probeTextArg = /^[^,\]]*/;
 

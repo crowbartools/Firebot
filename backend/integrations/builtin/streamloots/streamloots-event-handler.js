@@ -15,13 +15,13 @@ const eventSourceDefinition = {
     events: [
         {
             id: EventId.PURCHASE,
-            name: "Purchase",
+            name: "Chest Purchase",
             description: "When someone purchases/gifts chests.",
             cached: false
         },
         {
             id: EventId.REDEMPTION,
-            name: "Redemption",
+            name: "Card Redemption",
             description: "When someone redeems a card.",
             cached: false
         }
@@ -39,7 +39,6 @@ function getFieldValue(fieldName, fields) {
 }
 
 exports.processStreamLootsEvent = (eventData) => {
-    console.log(JSON.stringify(eventData));
 
     let metadata = {
         imageUrl: eventData.imageUrl,
@@ -65,10 +64,9 @@ exports.processStreamLootsEvent = (eventData) => {
     } else if (streamlootsEventType === "redemption") {
         eventId = EventId.REDEMPTION;
 
-        metadata.cardName = eventData.data.cardName;
-
         let cardRarity = getFieldValue("rarity", eventData.data.fields);
         metadata.cardRarity = cardRarity;
+        metadata.cardName = eventData.data.cardName;
     }
 
     eventManager.triggerEvent(EVENT_SOURCE_ID, eventId, metadata);

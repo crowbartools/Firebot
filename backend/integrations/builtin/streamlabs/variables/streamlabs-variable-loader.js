@@ -2,7 +2,6 @@
 
 const variableManager = require("../../../../variables/replace-variable-manager");
 
-
 exports.registerVariables = () => {
     const slDonationAmount = require("./sl-donation-amount");
     const slDonationAmountFormatted = require("./sl-donation-amount-formatted");
