@@ -18,7 +18,7 @@ const eventSourceDefinition = {
         {
             id: EventId.PURCHASE,
             name: "Chest Purchase",
-            description: "When someone purchases/gifts chests.",
+            description: "When someone purchases or gifts chests.",
             cached: false
         },
         {

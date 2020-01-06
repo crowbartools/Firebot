@@ -16,7 +16,7 @@ const eventSourceDefinition = {
         {
             id: EventId.DONATION,
             name: "Donation",
-            description: "When someone donates to you.",
+            description: "When someone donates to you via StreamLabs.",
             cached: false,
             queued: true
         },

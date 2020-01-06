@@ -37,7 +37,7 @@ const eventSourceDefinition = {
         {
             id: EventId.DONATION,
             name: "Donation",
-            description: "When someone donates to you.",
+            description: "When someone donates to you via TipeeeStream.",
             cached: false,
             queued: true
         }
