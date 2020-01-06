@@ -328,6 +328,24 @@
                 }
             ];
 
+            $scope.cooldownGroupsMenuOptions = [
+                {
+                    html: `<a href><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                    click: function ($itemScope) {
+                        let index = $itemScope.$index;
+                        $scope.showAddOrEditCooldownGroupModal(index);
+                    }
+                },
+                {
+                    html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                    click: function ($itemScope) {
+                        let index = $itemScope.$index;
+                        let cooldownGroup = $itemScope.cooldownGroup;
+                        $scope.showDeleteCooldownGroupModal(index, cooldownGroup.name);
+                    }
+                }
+            ];
+
             $scope.gridSizeChanged = function(size) {
                 gridHelper.currentGridSize = size;
                 updateGridSize();

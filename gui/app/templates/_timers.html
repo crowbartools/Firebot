@@ -16,7 +16,7 @@
         </tr> 
     </thead> 
     <tbody> 
-        <tr ng-repeat="timer in timerService.getTimers() | filter:timerSearch track by timer.id">
+        <tr ng-repeat="timer in timerService.getTimers() | filter:timerSearch track by timer.id"  context-menu="timerMenuOptions">
             <td style="padding-left: 15px;">{{timer.name}}</td>
             <td>
                 {{timer.interval + "s"}}                          

@@ -32,7 +32,7 @@
                     </tr> 
                 </thead> 
                 <tbody> 
-                    <tr ng-repeat="command in commandsService.getCustomCommands() | triggerSearch:commandSearch track by command.id">
+                    <tr ng-repeat="command in commandsService.getCustomCommands() | triggerSearch:commandSearch track by command.id" context-menu="commandMenuOptions">
                         <td style="text-align: center;">
                             <span style="color: #2aa1c0; font-size: 20px;" ng-click="manuallyTriggerCommand(command.id)">
                                 <i class="fas fa-play-circle clickable"></i>

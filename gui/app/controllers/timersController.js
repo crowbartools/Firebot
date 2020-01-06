@@ -5,12 +5,7 @@
         .controller("timersController", function(
             $scope,
             timerService,
-            updatesService,
             utilityService,
-            settingsService,
-            groupsService,
-            effectHelperService,
-            listenerService
         ) {
             // Cache commands on app load.
             timerService.refreshTimers();
@@ -52,12 +47,34 @@
                             break;
                         }
 
-                        console.log("saving timer", timer);
-
                         // Refresh timers
                         timerService.refreshTimers();
                     }
                 });
             };
+
+            $scope.timerMenuOptions = [
+                {
+                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                    click: function ($itemScope) {
+                        let timer = $itemScope.timer;
+                        $scope.openAddOrEditTimerModal(timer);
+                    }
+                },
+                {
+                    html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                    click: function ($itemScope) {
+                        let timer = $itemScope.timer;
+                        $scope.toggleTimerActiveState(timer);
+                    }
+                },
+                {
+                    html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                    click: function ($itemScope) {
+                        let timer = $itemScope.timer;
+                        $scope.deleteTimer(timer);
+                    }
+                }
+            ];
         });
 }());

@@ -100,5 +100,29 @@
                     }
                 });
             };
+
+            $scope.commandMenuOptions = [
+                {
+                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                    click: function ($itemScope) {
+                        let command = $itemScope.command;
+                        $scope.openAddOrEditCustomCommandModal(command);
+                    }
+                },
+                {
+                    html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                    click: function ($itemScope) {
+                        let command = $itemScope.command;
+                        $scope.toggleCustomCommandActiveState(command);
+                    }
+                },
+                {
+                    html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                    click: function ($itemScope) {
+                        let command = $itemScope.command;
+                        $scope.deleteCustomCommand(command);
+                    }
+                }
+            ];
         });
 }());

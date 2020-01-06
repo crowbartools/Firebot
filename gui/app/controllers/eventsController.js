@@ -213,6 +213,13 @@
                     }
                 },
                 {
+                    html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                    click: function ($itemScope) {
+                        let index = $itemScope.$index;
+                        $scope.toggleEventActiveStatus(index);
+                    }
+                },
+                {
                     html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
                     click: function ($itemScope) {
                         let index = $itemScope.$index;

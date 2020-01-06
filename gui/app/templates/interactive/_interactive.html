@@ -70,7 +70,7 @@
                 </tr> 
             </thead> 
             <tbody> 
-                <tr ng-repeat="cooldownGroup in getCooldownGroupsForSelectedProject() | filter:cooldownGroupSearch track by cooldownGroup.id">
+                <tr ng-repeat="cooldownGroup in getCooldownGroupsForSelectedProject() | filter:cooldownGroupSearch track by cooldownGroup.id" context-menu="cooldownGroupsMenuOptions">
                     <td style="text-align: center;"></td> 
                     <td>
                       {{cooldownGroup.name}}
@@ -101,11 +101,7 @@
                 </tr>
             </tbody>
         </table>
-
-
-
     </div>
-
 
     <div ng-show="activeMixPlayTab === 0" id="testDivFb" class="flex-row" style="height: 100%">
       <div class="editior-column">
