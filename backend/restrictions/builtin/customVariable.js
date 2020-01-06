@@ -1,12 +1,10 @@
 "use strict";
 
-const profileManager = require("../../common/profile-manager");
-
 const model = {
     definition: {
         id: "firebot:customvariable",
         name: "Custom Variable",
-        description: "Restrict based on a custom variable set with the custom variable effect.",
+        description: "Restrict based on a custom variable set with the Custom Variable effect.",
         triggers: []
     },
     optionsTemplate: `

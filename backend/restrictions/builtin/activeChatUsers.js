@@ -1,11 +1,9 @@
 "use strict";
 
-const profileManager = require("../../common/profile-manager");
-
 const model = {
     definition: {
         id: "firebot:activeChatUsers",
-        name: "Active Chatters",
+        name: "Active Chat Users",
         description: "Restricts to only active chat users.",
         triggers: []
     },
@@ -14,8 +12,8 @@ const model = {
             <div id="chatterRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
                 Active Chatter Restriction
             </div>
-            <div class="">
-                <p>This limits this action to only active chatters. People who haven't chatted, or those who have become "inactive" based on your user settings, will not be able to use the action.</p>
+            <div>
+                <p>This limits this control/command to only active chat users (someone who has chatted recently)</p>
             </div>
         </div>
     `,
@@ -23,7 +21,7 @@ const model = {
 
     },
     optionsValueDisplay: (restriction) => {
-        return "Active chatters only.";
+        return "Active chat users only.";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met

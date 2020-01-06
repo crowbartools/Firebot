@@ -1,7 +1,5 @@
 "use strict";
 
-const profileManager = require("../../common/profile-manager");
-
 const model = {
     definition: {
         id: "firebot:channelcurrency",
@@ -16,7 +14,7 @@ const model = {
                     Channel Currency
                 </div>
                 <div class="">
-                    <select class="fb-select" ng-model="restriction.selectedCurrency" ng-options="currency as currency.name for currency in currencies track by currency.id"></select>
+                    <select class="fb-select" ng-model="restriction.selectedCurrency" ng-options="currency.id as currency.name for currency in currencies"></select>
                 </div>
 
                 <div id="channelCurrencyOption" class="mixplay-header" style="padding: 0 0 4px 0">
@@ -24,7 +22,7 @@ const model = {
                 </div>
                 <div class="">
                     <select class="fb-select" ng-model="restriction.comparison">
-                        <option label="Less than (or equal to)" value="less" selected="selected">Less than (or equal to)</option>
+                        <option label="Less than (or equal to)" value="less">Less than (or equal to)</option>
                         <option label="Greater than (or equal to)" value="greater">Greater than (or equal to)</option>
                         <option label="Equal to" value="equal">Equal to</option>
                     </select>
@@ -42,23 +40,25 @@ const model = {
             </div>
         </div>
     `,
-    optionsController: ($scope) => {
-        // The currency settings.
-        let currencyDb = profileManager.getJsonDbInProfile("/currency/currency");
+    optionsController: ($scope, currencyService) => {
 
         // Get list of currencies
-        $scope.currencies = [];
-        let currencyData = currencyDb.getData("/");
-        Object.keys(currencyData).forEach(function(k) {
-            $scope.currencies.push(currencyData[k]);
-        });
+        $scope.currencies = currencyService.getCurrencies();
 
-        // Do we have any currencies?
         $scope.hasCurrencies = $scope.currencies.length > 0;
+
+        // set default values
+        if ($scope.currencies.length > 0 && $scope.restriction.selectedCurrency == null) {
+            $scope.restriction.selectedCurrency = $scope.currencies[0].id;
+        }
+
+        if ($scope.restriction.comparison == null) {
+            $scope.restriction.comparison = "less";
+        }
     },
-    optionsValueDisplay: (restriction) => {
+    optionsValueDisplay: (restriction, currencyService) => {
         let comparison = restriction.comparison;
-        let currency = restriction.selectedCurrency;
+        let currencyId = restriction.selectedCurrency;
         let amount = restriction.amount;
 
         if (comparison != null) {
@@ -75,7 +75,11 @@ const model = {
             comparison = "equal to";
         }
 
-        return currency.name + " is " + comparison + " " + amount;
+        let currency = currencyService.getCurrency(currencyId);
+
+        let currencyName = currency ? currency.name : "[None Selected]";
+
+        return currencyName + " is " + comparison + " " + amount;
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
@@ -85,7 +89,7 @@ const model = {
             let passed = false;
             let currencyDatabase = require("../../database/currencyDatabase");
             let username = triggerData.metadata.username;
-            let userCurrency = await currencyDatabase.getUserCurrencyAmount(username, restrictionData.selectedCurrency.id);
+            let userCurrency = await currencyDatabase.getUserCurrencyAmount(username, restrictionData.selectedCurrency);
 
             if (userCurrency !== false) {
                 let comparison = restrictionData.comparison;

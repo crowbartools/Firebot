@@ -14,25 +14,30 @@
         // This will get currency information.
         // Can pass option param to just get one currency, otherwise it gets all of them.
         service.getCurrencies = function(currencyId) {
+
             // If we have an optional param return settings for that currency.
             if (currencyId != null) {
                 try {
                     return currencyDb.getData("/" + currencyId);
                 } catch (err) {
                     logger.error(err);
-                    return;
+                    return [];
                 }
             }
 
-            // If no param, just return all currency data.
-            let currencies = [],
+            let currencyData;
+            try {
                 currencyData = currencyDb.getData("/");
+            } catch (err) {
+                logger.error(err);
+                return [];
+            }
 
-            Object.keys(currencyData).forEach(function(k) {
-                currencies.push(currencyData[k]);
-            });
+            return Object.values(currencyData);
+        };
 
-            return currencies;
+        service.getCurrency = (currencyId) => {
+            return service.getCurrencies().find(c => c.id === currencyId);
         };
 
         // Saved the currency modal.
