@@ -1,4 +1,5 @@
 "use strict";
+const logger = require("../../../logwrapper");
 const EventEmitter = require("events");
 const EventSource = require("eventsource");
 const slootsEventHandler = require("./streamloots-event-handler");
@@ -42,7 +43,7 @@ class StreamLootsIntegration extends EventEmitter {
         };
 
         this._eventSource.onerror = function(err) {
-            console.error("Streamloots eventsource failed:", err);
+            logger.error("Streamloots eventsource failed:", err);
             this.emit("disconnected", integrationDefinition.id);
             this.connected = false;
             return;

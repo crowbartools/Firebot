@@ -1,5 +1,7 @@
 "use strict";
 
+const logger = require("../../../logwrapper");
+
 const eventManager = require("../../../live-events/EventManager");
 
 const EVENT_SOURCE_ID = "streamloots";
@@ -39,6 +41,8 @@ function getFieldValue(fieldName, fields) {
 }
 
 exports.processStreamLootsEvent = (eventData) => {
+
+    logger.debug("Received StreamLoots event:", eventData);
 
     let metadata = {
         imageUrl: eventData.imageUrl,

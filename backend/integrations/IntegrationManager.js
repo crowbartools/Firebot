@@ -62,12 +62,14 @@ class IntegrationManager extends EventEmitter {
                 id: id,
                 connected: true
             });
+            logger.info(`Successfully connected to ${id}`);
         });
         integration.integration.on("disconnected", id => {
             renderWindow.webContents.send("integrationConnectionUpdate", {
                 id: id,
                 connected: false
             });
+            logger.info(`Disconnected from ${id}`);
         });
         integration.integration.on("settings-update", (id, settings) => {
             try {
@@ -202,6 +204,7 @@ class IntegrationManager extends EventEmitter {
             integrationData.accountId = int.definition.accountId;
         }
 
+        logger.info(`Attempting to connect to ${int.definition.name}...`);
         int.integration.connect(integrationData);
     }
 
