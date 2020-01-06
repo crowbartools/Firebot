@@ -2,10 +2,6 @@
 
 (function() {
     //This handles events
-    const _ = require("underscore")._;
-    const EventType = require("../../backend/live-events/EventType.js");
-    const profileManager = require("../../backend/common/profile-manager.js");
-    const { ipcRenderer } = require("electron");
     const uuidv1 = require("uuid/v1");
 
     angular.module("firebotApp").factory("eventsService", function(logger, backendCommunicator) {

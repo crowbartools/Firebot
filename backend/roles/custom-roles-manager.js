@@ -1,6 +1,5 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
@@ -71,7 +70,7 @@ function deleteCustomRole(roleId) {
         logger.debug(`Deleted role: ${roleId}`);
 
     } catch (err) {
-        logger.warn(`There was an error saving a role.`, err);
+        logger.warn(`There was an error deleting a role.`, err);
     }
 }
 

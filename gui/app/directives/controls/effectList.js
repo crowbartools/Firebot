@@ -27,6 +27,46 @@
                     
 
                     <div style="display:flex;align-items: center;">
+
+                        <div style="margin-right: 20px;display: flex;flex-direction: column;align-items: flex-end;">
+                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE<tooltip text="'Effect queues allow you to queue up effects so they don\\'t overlap each other. Particularly useful for events!'"></tooltip></div>
+                            <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
+                                <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getSelectedEffectQueueName()}}<span class="fb-arrow down ddtext"></span></div>
+                                <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
+
+                                    <li ng-click="$ctrl.effectsData.queue = null">
+                                        <a style="padding-left: 10px;">Unset <tooltip text="'Effects will always play immediately when triggered.'"></tooltip>
+                                        <span ng-show="$ctrl.effectsData.queue == null" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>
+                                        </a>   
+                                    </li>
+
+                                    <li ng-repeat="queue in $ctrl.eqs.getEffectQueues() track by queue.id" ng-click="$ctrl.toggleQueueSelection(queue.id)">
+                                        <a style="padding-left: 10px;">
+                                            <span>{{queue.name}}</span>
+                                            <span ng-show="$ctrl.effectsData.queue === queue.id" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>      
+                                        </a>
+                                    </li>
+
+                                    <li ng-show="$ctrl.eqs.getEffectQueues().length < 1">
+                                        <a style="padding-left: 10px;" class="muted">No queues created.</a>
+                                    </li>
+
+                                    <li role="separator" class="divider"></li>
+                                    <li ng-click="$ctrl.showAddEditEffectQueueModal()">
+                                        <a style="padding-left: 10px;">Create new queue</a>
+                                    </li>
+
+                                    <li ng-show="$ctrl.validQueueSelected()" ng-click="$ctrl.showAddEditEffectQueueModal($ctrl.effectsData.queue)">
+                                        <a style="padding-left: 10px;">Edit "{{$ctrl.getSelectedEffectQueueName()}}"</a>
+                                    </li>
+
+                                    <li ng-show="$ctrl.validQueueSelected()" ng-click="$ctrl.showDeleteEffectQueueModal($ctrl.effectsData.queue)">
+                                        <a style="padding-left: 10px;">Delete "{{$ctrl.getSelectedEffectQueueName()}}"</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
                         <div class="test-effects-btn clickable" uib-tooltip="Test Effects">
                             <i class="far fa-play-circle" style="cursor: pointer;" ng-click="$ctrl.testEffects()"></i>
                         </div>
@@ -85,7 +125,7 @@
                 
             </div>
             `,
-            controller: function(utilityService, effectHelperService, objectCopyHelper) {
+            controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService) {
                 let ctrl = this;
 
                 ctrl.effectsData = {
@@ -240,6 +280,49 @@
                         ctrl.effectsUpdate();
                     }, ctrl.triggerMeta);
                 };
+
+                //effect queue
+
+                ctrl.eqs = effectQueuesService;
+
+                ctrl.getSelectedEffectQueueName = () => {
+                    const unsetDisplay = "Not set";
+                    if (ctrl.effectsData.queue == null) return unsetDisplay;
+                    const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
+                    if (queue == null) return unsetDisplay;
+                    return queue.name;
+                };
+
+                ctrl.toggleQueueSelection = (queueId) => {
+                    if (ctrl.effectsData.queue !== queueId) {
+                        ctrl.effectsData.queue = queueId;
+                    } else {
+                        ctrl.effectsData.queue = null;
+                    }
+                };
+
+                ctrl.validQueueSelected = () => {
+                    if (ctrl.effectsData.queue == null) return false;
+                    const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
+                    return queue != null;
+                };
+
+                ctrl.showAddEditEffectQueueModal = (queueId) => {
+                    effectQueuesService.showAddEditEffectQueueModal(queueId)
+                        .then(id => {
+                            ctrl.effectsData.queue = id;
+                        });
+                };
+
+                ctrl.showDeleteEffectQueueModal = (queueId) => {
+                    effectQueuesService.showDeleteEffectQueueModal(queueId)
+                        .then(confirmed => {
+                            if (confirmed) {
+                                ctrl.effectsData.queue = undefined;
+                            }
+                        });
+                };
+
             }
         });
 }());

@@ -528,6 +528,9 @@ function appOnReady() {
         const customRolesManager = require("./backend/roles/custom-roles-manager");
         customRolesManager.loadCustomRoles();
 
+        const effectQueueManager = require("./backend/effects/queues/effect-queue-manager");
+        effectQueueManager.loadEffectQueues();
+
         createWindow();
 
         // These are defined globally for Custom Scripts.

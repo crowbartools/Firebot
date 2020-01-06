@@ -29,7 +29,7 @@
                         Type
                     </div>
                     <div ng-class="{'has-error': $ctrl.kindError}">
-                        <ui-select ng-model="$ctrl.kind" theme="bootstrap" class="control-type-list" on-select="$ctrl.selectOption($item, $model)">
+                        <ui-select ng-model="$ctrl.kind" theme="bootstrap" class="control-type-list">
                             <ui-select-match placeholder="Select control type">{{$select.selected.display}}</ui-select-match>
                             <ui-select-choices repeat="control.kind as control in $ctrl.controlKinds | filter: { display: $select.search }" style="position:relative;">
                                 <div class="flex-row-center">

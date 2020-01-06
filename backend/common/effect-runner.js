@@ -12,7 +12,8 @@ const accountAccess = require('./account-access');
 
 const replaceVariableManager = require("./../variables/replace-variable-manager");
 
-
+const effectQueueManager = require("../effects/queues/effect-queue-manager");
+const effectQueueRunner = require("../effects/queues/effect-queue-runner");
 
 function getTriggerIdFromTriggerData(trigger) {
 
@@ -173,6 +174,15 @@ function processEffects(processEffectsRequest) {
 
         runEffectsContext.effects = JSON.parse(JSON.stringify(runEffectsContext.effects));
 
+        if (processEffectsRequest.trigger.type !== EffectTrigger.MANUAL) {
+            const queueId = processEffectsRequest.effects.queue;
+            const queue = effectQueueManager.getEffectQueue(queueId);
+            if (queue != null) {
+                effectQueueRunner.addEffectsToQueue(queue, runEffectsContext);
+                return resolve();
+            }
+        }
+
         return resolve(runEffects(runEffectsContext));
     });
 }
@@ -229,3 +239,4 @@ ipcMain.on('runEffectsManually', function(event, effects) {
 });
 
 exports.processEffects = processEffects;
+exports.runEffects = runEffects;
