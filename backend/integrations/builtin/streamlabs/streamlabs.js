@@ -14,7 +14,7 @@ const integrationDefinition = {
     linkType: "auth",
     authProviderDetails: {
         id: "streamlabs",
-        name: "StreamLabs Account",
+        name: "StreamLabs",
         client: {
             id: 'XtzRXbIUU9OZcU3siwNBXOSVFD8DGjYhkLmeUqYQ',
             secret: "pJMm1ktVgtXkNEdhU5HIowQNCLxZyMLin0yu0q6b"

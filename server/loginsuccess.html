@@ -1,0 +1,58 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Login Successful!</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+
+  <style>
+    html {
+      height: 100%;
+    }
+    body {
+      background: #1E2023;
+      color: rgb(240, 240, 240);
+      font-family: 'Open Sans', sans-serif;
+      height: 100%;
+      margin: 0;
+    }
+    .centered {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+    .wrapper {
+      display:flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateY(-12%);
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="centered">
+    <div class="wrapper">
+      <img src="https://raw.githubusercontent.com/crowbartools/Firebot/master/gui/images/logo_transparent.png" style="width: 250px; height: 250px;">
+      <span style="font-size: 50px;font-weight: 100;"><strong id="providerName"></strong> login successful!</span>
+      <span style="margin-top:15px;font-size: 22px;">You can close this window and return to <strong>Firebot</strong>.</span>
+    </div>
+  </div>
+  <script>
+
+    const params = new URL(location).searchParams;
+
+    const provider = params.get("provider");
+    if(provider) {
+      document.getElementById("providerName").textContent = provider;
+    }
+
+  </script>
+</body>
+</html>

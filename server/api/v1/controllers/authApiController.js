@@ -40,7 +40,7 @@ exports.getAuthCallback = async (req, res) => {
 
         authManager.successfulAuth(provider.id, token.token);
 
-        return res.status(200).json("Success! You may now switch back to Firebot.");
+        return res.redirect(`/loginsuccess?provider=${encodeURIComponent(provider.details.name)}`);
     } catch (error) {
         logger.error('Access Token Error', error.message);
         return res.status(500).json('Authentication failed');

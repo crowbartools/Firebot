@@ -10,7 +10,7 @@ const integrationDefinition = {
     linkType: "auth",
     authProviderDetails: {
         id: "tipeeestream",
-        name: "TipeeeStream Account",
+        name: "TipeeeStream",
         client: {
             id: '9812_4ch93uuaqneogco4g8484kcs88cc8s0w8o0o0goo4skgsck0kk',
             secret: "2m1vzint5aw4cosgwgggcowsgwoggo8gk40k0ossoog8g4kg08"

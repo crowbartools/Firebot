@@ -1,7 +1,7 @@
 "use strict";
 
-let express = require("express");
-let bodyParser = require("body-parser");
+const express = require("express");
+const bodyParser = require("body-parser");
 const resourceTokenManager = require("../backend/resourceTokenManager");
 const { settings } = require("../backend/common/settings-access");
 const logger = require("../backend/logwrapper");
@@ -9,6 +9,7 @@ const effectManager = require("../backend/effects/effectManager");
 const http = require("http");
 const WebSocket = require("ws");
 const { ipcMain } = require("electron");
+const path = require('path');
 
 let server = null;
 let httpServer = null;
@@ -44,6 +45,10 @@ exports.start = function() {
     // get our router for the current v1 api methods
     let v1Router = require("./api/v1/v1Router");
     app.use("/api/v1", v1Router);
+
+    app.get('/loginsuccess', function(_, res) {
+        res.sendFile(path.join(__dirname + '/loginsuccess.html'));
+    });
 
     // set up route to serve overlay
     app.use("/overlay/", express.static("resources/overlay"));
