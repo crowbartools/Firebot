@@ -1,6 +1,9 @@
 "use strict";
 
+
 const { OutputDataType } = require("../../../shared/variable-contants");
+
+const util = require("../../utility");
 
 const model = {
     definition: {
@@ -10,7 +13,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, text) => {
-        return text.replace(/^\w/, c => c.toUpperCase());
+        return text ? util.capitalize(text) : "";
     }
 };
 

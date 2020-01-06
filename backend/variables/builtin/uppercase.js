@@ -10,7 +10,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, text) => {
-        return text.toUpperCase();
+        return text ? text.toUpperCase() : "";
     }
 };
 
