@@ -5,6 +5,7 @@
     //This handles updates
     const VersionCompare = require('../../backend/compare-versions');
     const UpdateType = VersionCompare.UpdateType;
+    const marked = require("marked");
 
     angular
         .module('firebotApp')

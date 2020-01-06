@@ -41,7 +41,6 @@ function getStreamlabsSocketToken(accessToken) {
 
             body = JSON.parse(body);
 
-            console.log(body.socket_token);
             res(body.socket_token);
         });
     });
@@ -93,7 +92,6 @@ class StreamlabsIntegration extends EventEmitter {
         try {
             settings.socketToken = await getStreamlabsSocketToken(auth['access_token']);
         } catch (error) {
-            console.log(error);
             return;
         }
 

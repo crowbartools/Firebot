@@ -6,7 +6,7 @@ const request = require("request");
 const integrationDefinition = {
     id: "tipeeestream",
     name: "TipeeeStream",
-    description: "Donation/tip events",
+    description: "Donation events",
     linkType: "auth",
     authProviderDetails: {
         id: "tipeeestream",
@@ -52,12 +52,11 @@ function getTipeeeAPIKey(accessToken) {
             qs: { access_token: accessToken } //eslint-disable-line camelcase
         };
 
-        request(options, function(error, response, body) {
+        request(options, function(error, _, body) {
             if (error) return rej(error);
 
             body = JSON.parse(body);
 
-            console.log(body.apiKey);
             res(body.apiKey);
         });
     });
@@ -69,15 +68,12 @@ class TipeeeStreamIntegration extends EventEmitter {
         this.connected = false;
         this._socket = null;
     }
-    init(linked, integrationData) {
-        if (linked) {
-            const eventManager = require("../../../live-events/EventManager");
-            eventManager.registerEventSource(eventSourceDefinition);
-        }
+    init() {
+        const eventManager = require("../../../live-events/EventManager");
+        eventManager.registerEventSource(eventSourceDefinition);
     }
     connect(integrationData) {
-        console.log("attempting to connect tipeee...");
-        let { settings, auth } = integrationData;
+        let { settings } = integrationData;
         if (settings == null) {
             this.emit("disconnected", integrationDefinition.id);
             return;
@@ -89,11 +85,9 @@ class TipeeeStreamIntegration extends EventEmitter {
             username: "Firebot"
         });
 
-        console.log("...connected");
         const eventManager = require("../../../live-events/EventManager");
 
         this._socket.on("new-event", data => {
-            console.log(data);
             let eventData = data.event;
             if (eventData === null) return;
             if (eventData.type === "donation") {
@@ -109,11 +103,8 @@ class TipeeeStreamIntegration extends EventEmitter {
 
         this.emit("connected", integrationDefinition.id);
         this.connected = true;
-
-        console.log("listening for events...");
     }
     disconnect() {
-        console.log("DISCONNECTED STREAMLABS");
         this._socket.close();
         this.connected = false;
 
@@ -121,7 +112,6 @@ class TipeeeStreamIntegration extends EventEmitter {
     }
     link(linkData) {
         return new Promise(async (resolve, reject) => {
-            console.log("getting Tipeee api key...");
 
             let { auth } = linkData;
 
@@ -129,14 +119,10 @@ class TipeeeStreamIntegration extends EventEmitter {
             try {
                 settings.apiKey = await getTipeeeAPIKey(auth['access_token']);
             } catch (error) {
-                console.log(error);
                 return reject(error);
             }
 
             this.emit("settings-update", integrationDefinition.id, settings);
-
-            const eventManager = require("../../../live-events/EventManager");
-            eventManager.registerEventSource(eventSourceDefinition);
 
             resolve(settings);
         });

@@ -133,7 +133,8 @@ class IntegrationManager extends EventEmitter {
         } else if (int.definition.linkType === "id") {
             frontEndCommunicator.send("requestIntegrationAccountId", {
                 integrationId: int.definition.id,
-                integrationName: int.definition.name
+                integrationName: int.definition.name,
+                steps: int.definition.idDetails && int.definition.idDetails.steps
             });
         } else {
             this.linkIntegration(int, null);
@@ -194,6 +195,14 @@ class IntegrationManager extends EventEmitter {
 
             if (updatedToken == null) {
                 logger.warn("Could not refresh integration access token!");
+
+                renderWindow.webContents.send("integrationConnectionUpdate", {
+                    id: integrationId,
+                    connected: false
+                });
+
+                logger.info(`Disconnected from ${int.definition.name}`);
+
                 return;
             }
 

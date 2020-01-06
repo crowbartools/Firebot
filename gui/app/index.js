@@ -12,7 +12,6 @@ const fs = require("fs");
 const request = require("request");
 const List = require("list.js");
 const compareVersions = require("compare-versions");
-const marked = require("marked");
 const path = require("path");
 
 require("angular");
@@ -144,3 +143,20 @@ ipcRenderer.on("logging", (event, data) => {
 logger.on("logging", (transport, level, msg, meta) => {
     printLogToBrowserConsole(transport, level, msg, meta);
 });
+
+const configureOpenRenderedLinksInDefaultBrowser = () => {
+    document.querySelector('body').addEventListener('click', event => {
+        if (event.target.tagName.toLowerCase() === 'a') {
+            const href = event.target.href;
+            if (href != null && href.length > 0 && href.toLowerCase().startsWith("http")) {
+                event.preventDefault();
+                shell.openExternal(href);
+            }
+        }
+    });
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+    configureOpenRenderedLinksInDefaultBrowser();
+});
+

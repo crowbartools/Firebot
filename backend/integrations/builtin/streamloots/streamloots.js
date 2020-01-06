@@ -9,8 +9,18 @@ const slootsFilterLoader = require("./filters/streamloots-filter-loader");
 const integrationDefinition = {
     id: "streamloots",
     name: "StreamLoots",
-    description: "Purchase/Redemption events",
-    linkType: "id"
+    description: "Chest purchase/Card redemption events",
+    linkType: "id",
+    idDetails: {
+        steps:
+`1. Log in to [StreamLoots](https://www.streamloots.com/).
+
+2. On your Dashboard, head to the **Alerts** section under **Page configuration**.
+
+3. In the **Configure your alerts** section, click on the grayed out box that says **Click here to show URL**.
+
+4. Copy the value at the **end** of your alerts URL, this is your StreamLoots ID. The format of the URL is: \`https://widgets.streamloots.com/alerts/<ID>\``
+    }
 };
 
 class StreamLootsIntegration extends EventEmitter {

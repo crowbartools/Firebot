@@ -22,10 +22,11 @@
 
 
             backendCommunicator.on("requestIntegrationAccountId", (data) => {
-                service.openGetInputModal({
-                    model: null,
-                    label: `Enter ID for ${data.integrationName}`,
-                    saveText: "Save ID"
+                service.openGetIdEntyModal({
+                    label: `Enter ${data.integrationName} ID`,
+                    saveText: "Save ID",
+                    inputPlaceholder: "Enter account ID...",
+                    steps: data.steps
                 }, (model) => {
                     backendCommunicator.fireEvent("enteredIntegrationAccountId", {
                         integrationId: data.integrationId,
@@ -33,6 +34,23 @@
                     });
                 });
             });
+
+            service.openGetIdEntyModal = function(options, callback) {
+                service.showModal({
+                    component: "idEntryModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        inputPlaceholder: () => options.inputPlaceholder,
+                        saveText: () => options.saveText,
+                        steps: () => options.steps
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
 
             let slidingModals = [];
             const shiftAmount = 125;
