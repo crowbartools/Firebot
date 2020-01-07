@@ -19,7 +19,7 @@ const quotesManagement = {
         subCommands: [
             {
                 arg: "add",
-                usage: "add [@username] [quote]",
+                usage: "add [@username] [quoteText]",
                 description: "Adds a new quote.",
                 restrictionData: {
                     restrictions: [
@@ -38,8 +38,8 @@ const quotesManagement = {
             },
             {
                 arg: "remove",
-                usage: "remove [quoteIdNumber]",
-                description: "Removes a quote using it's id number.",
+                usage: "remove [quoteId]",
+                description: "Removes a quote using it's id.",
                 restrictionData: {
                     restrictions: [
                         {
@@ -56,9 +56,28 @@ const quotesManagement = {
                 }
             },
             {
-                arg: "edit",
-                usage: "edit [quoteId] [newText]",
-                description: "Edit the given quote.",
+                arg: "edittext",
+                usage: "edittext [quoteId] [newText]",
+                description: "Edit the text given quote.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "edituser",
+                usage: "edituser [quoteId] [newUsername]",
+                description: "Edit the user of the given quote.",
                 restrictionData: {
                     restrictions: [
                         {
@@ -221,10 +240,10 @@ const quotesManagement = {
                 // resolve promise
                 return resolve();
             }
-            case "edit": {
+            case "edittext": {
                 if (args.length < 3) {
                     Chat.smartSend(
-                        `Invalid usage! ${event.userCommand.trigger} edit [quoteId] [newText]`,
+                        `Invalid usage! ${event.userCommand.trigger} edittext [quoteId] [newText]`,
                         event.userCommand.commandSender
                     );
                     return resolve();
@@ -264,7 +283,56 @@ const quotesManagement = {
 
                 let formattedQuote = getFormattedQuoteString(quote);
                 Chat.smartSend(
-                    `Editted ${formattedQuote}`
+                    `Edited ${formattedQuote}`
+                );
+
+                // resolve promise
+                return resolve();
+            }
+            case "edituser": {
+                if (args.length < 3) {
+                    Chat.smartSend(
+                        `Invalid usage! ${event.userCommand.trigger} edituser [quoteId] [newUsername]`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                let quoteId = parseInt(args[1]);
+                if (isNaN(quoteId)) {
+                    Chat.smartSend(
+                        `Invalid Quote Id!`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                const quote = await quotesManager.getQuote(quoteId);
+
+                if (quote == null) {
+                    Chat.smartSend(
+                        `Cannot find quote with id ${quoteId}`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                const newUser = args[2];
+                quote.originator = newUser;
+
+                try {
+                    await quotesManager.updateQuote(quote);
+                } catch (err) {
+                    Chat.smartSend(
+                        `Failed to update quote ${quoteId}!`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                let formattedQuote = getFormattedQuoteString(quote);
+                Chat.smartSend(
+                    `Edited ${formattedQuote}`
                 );
 
                 // resolve promise
