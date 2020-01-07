@@ -178,6 +178,7 @@ function processEffects(processEffectsRequest) {
             const queueId = processEffectsRequest.effects.queue;
             const queue = effectQueueManager.getEffectQueue(queueId);
             if (queue != null) {
+                logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
                 effectQueueRunner.addEffectsToQueue(queue, runEffectsContext);
                 return resolve();
             }
