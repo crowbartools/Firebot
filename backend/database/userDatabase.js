@@ -7,6 +7,7 @@ const { ipcMain } = require("electron");
 const { settings } = require("../common/settings-access.js");
 const currencyDatabase = require("./currencyDatabase");
 const mixerChat = require('../common/mixer-chat');
+const frontendCommunicator = require("../common/frontend-communicator");
 
 let db;
 let updateTimeInterval;
@@ -326,6 +327,17 @@ function clearOnlineMinutesInterval() {
     clearInterval(updateTimeInterval);
 }
 
+function getAllUsers() {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+        db.find({}, function(err, users) {
+            resolve(Object.values(users));
+        });
+    });
+}
+
 // This returns all rows from our DB for use in our UI.
 function getRowsForUI() {
     return new Promise(resolve => {
@@ -422,6 +434,13 @@ ipcMain.on("request-viewer-db", event => {
     getRowsForUI().then(rows => {
         event.sender.send("viewer-db-response", rows);
     });
+});
+
+frontendCommunicator.onAsync("getAllViewers", () => {
+    if (!isViewerDBOn()) {
+        return Promise.resolve([]);
+    }
+    return getAllUsers();
 });
 
 // Get change info from UI.

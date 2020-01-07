@@ -16,7 +16,9 @@
             ngToast,
             connectionService,
             utilityService,
-            settingsService
+            settingsService,
+            backendCommunicator,
+            $q
         ) {
             //This handles the Viewers tab
 
@@ -71,19 +73,33 @@
                 });
             };
 
+            $scope.viewers = [];
+            $scope.updateViewers = function() {
+                $q(resolve => {
+                    backendCommunicator.fireEventAsync("getAllViewers")
+                        .then(viewers => {
+                            resolve(viewers);
+                        });
+                }).then(viewers => {
+                    $scope.viewers = viewers;
+                });
+
+            };
+            $scope.updateViewers();
+
             // Receives table data from main process.
             ipcRenderer.on("viewer-db-response", function(event, rows) {
                 if (!viewersService.isViewerDbOn()) {
                     return;
                 }
 
-                $scope.gridOptions.api.setRowData(rows);
+                /*$scope.gridOptions.api.setRowData(rows);
 
                 $timeout(function() {
                     if ($scope.gridOptions.api) {
                         $scope.gridOptions.api.sizeColumnsToFit();
                     }
-                }, 500);
+                }, 500);*/
             });
 
             // Update table rows when first visiting the page.
