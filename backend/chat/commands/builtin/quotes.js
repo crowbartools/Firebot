@@ -153,7 +153,7 @@ const quotesManagement = {
 
                 let newQuote = {
                     text: args.slice(2, args.length).join(" "),
-                    originator: args[1].replace("@", ""),
+                    originator: args[1].replace(/@/g, ""),
                     creator: event.userCommand.commandSender,
                     game: streamGame,
                     createdAt: moment().toISOString()
@@ -317,7 +317,7 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                const newUser = args[2];
+                const newUser = args[2].replace(/@/g, "");
                 quote.originator = newUser;
 
                 try {
