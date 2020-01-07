@@ -156,11 +156,12 @@ class IntegrationManager extends EventEmitter {
             integrationDb.push(`/${int.definition.id}/linked`, true);
             int.definition.linked = true;
         } catch (error) {
-            console.log(error);
             logger.warn(error);
         }
 
         renderWindow.webContents.send("integrationsUpdated");
+
+        frontEndCommunicator.send("integrationLinked", int.definition.id);
     }
 
     unlinkIntegration(integrationId) {

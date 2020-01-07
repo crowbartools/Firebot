@@ -3,17 +3,13 @@
 (function() {
     // This handles logins and connections to mixer interactive
 
-    const electronOauth2 = require("electron-oauth2");
-    const profileManager = require("../../backend/common/profile-manager.js");
-    const dataAccess = require("../../backend/common/data-access.js");
-    const { session } = require("electron").remote;
-    const request = require("request");
-
     angular
         .module("firebotApp")
         .factory("integrationService", function(
             $rootScope,
+            settingsService,
             listenerService,
+            backendCommunicator,
             logger
         ) {
             let service = {};
@@ -120,8 +116,6 @@
             };
 
             service.linkIntegration = function(id) {
-                console.log("link service:");
-                console.log(id);
                 listenerService.fireEvent("linkIntegration", id);
             };
 
@@ -146,13 +140,20 @@
                 }
             );
 
+            backendCommunicator.on("integrationLinked", (intId) => {
+                let sidebarControlledServices = settingsService.getSidebarControlledServices();
+                let service = "integration." + intId;
+                if (!sidebarControlledServices.includes(service)) {
+                    sidebarControlledServices.push(service);
+                }
+                settingsService.setSidebarControlledServices(sidebarControlledServices);
+            });
+
             listenerService.registerListener(
                 {
                     type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
                 },
                 data => {
-                    console.log("got status change");
-                    console.log(data);
                     let integration = integrations.find(i => i.id === data.id);
                     if (integration != null) {
                         integration.connected = data.connected;
