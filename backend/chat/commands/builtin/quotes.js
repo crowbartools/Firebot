@@ -56,6 +56,25 @@ const quotesManagement = {
                 }
             },
             {
+                arg: "edit",
+                usage: "edit [quoteId] [newText]",
+                description: "Edit the given quote.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
                 arg: "list",
                 usage: "list",
                 description: "Gives a link that lists out all quotes."
@@ -193,12 +212,60 @@ const quotesManagement = {
                 // no matching quote found
                 } else {
 
-                    // send message to user
                     Chat.smartSend(
                         `Sorry! We couldnt find a quote using those terms.`,
                         event.userCommand.commandSender
                     );
                 }
+
+                // resolve promise
+                return resolve();
+            }
+            case "edit": {
+                if (args.length < 3) {
+                    Chat.smartSend(
+                        `Invalid usage! ${event.userCommand.trigger} edit [quoteId] [newText]`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                let quoteId = parseInt(args[1]);
+                if (isNaN(quoteId)) {
+                    Chat.smartSend(
+                        `Invalid Quote Id!`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                const quote = await quotesManager.getQuote(quoteId);
+
+                if (quote == null) {
+                    Chat.smartSend(
+                        `Cannot find quote with id ${quoteId}`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                const newText = args.slice(2).join(" ");
+                quote.text = newText;
+
+                try {
+                    await quotesManager.updateQuote(quote);
+                } catch (err) {
+                    Chat.smartSend(
+                        `Failed to update quote ${quoteId}!`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                let formattedQuote = getFormattedQuoteString(quote);
+                Chat.smartSend(
+                    `Editted ${formattedQuote}`
+                );
 
                 // resolve promise
                 return resolve();

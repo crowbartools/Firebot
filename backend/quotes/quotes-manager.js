@@ -56,6 +56,19 @@ function addQuote(quote) {
     });
 }
 
+function updateQuote(quote) {
+    return new Promise(async (resolve, reject) => {
+
+        db.update({ _id: quote._id }, quote, err => {
+            if (err) {
+                logger.error("QuoteDB: Error updating quote: ", err.message);
+                return reject();
+            }
+            resolve(quote);
+        });
+    });
+}
+
 function removeQuote(quoteId) {
     return new Promise(resolve => {
         db.remove({ _id: quoteId }, {}, function (err) {
@@ -171,6 +184,7 @@ function getAllQuotes() {
 
 exports.addQuote = addQuote;
 exports.removeQuote = removeQuote;
+exports.updateQuote = updateQuote;
 exports.getQuote = getQuote;
 exports.getRandomQuote = getRandomQuote;
 exports.getRandomQuoteByWord = getRandomQuoteByWord;
