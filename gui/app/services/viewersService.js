@@ -7,13 +7,31 @@
 
     angular
         .module("firebotApp")
-        .factory("viewersService", function(logger, settingsService) {
+        .factory("viewersService", function(logger, settingsService, backendCommunicator, $q) {
             let service = {};
 
             // Check to see if the DB is turned on or not.
             service.isViewerDbOn = function() {
                 return settingsService.getViewerDB();
             };
+
+            service.viewers = [];
+            let waitingForUpdate = false;
+            service.updateViewers = function() {
+                if (waitingForUpdate) return;
+                waitingForUpdate = true;
+                $q(resolve => {
+                    backendCommunicator.fireEventAsync("getAllViewers")
+                        .then(viewers => {
+                            resolve(viewers);
+                        });
+                }).then(viewers => {
+                    service.viewers = viewers;
+                    waitingForUpdate = false;
+                });
+            };
+
+            /** OLD VIEWER TABLE STUFF */
 
             // This will cancel editing. Pass true to this to return cell to original value if it was edited.
             function stopEditing(cancel = false) {
@@ -210,7 +228,7 @@
             });
 
             // Did user see warning alert about connecting to chat first?
-            service.sawWarningAlert = false;
+            service.sawWarningAlert = true;
             return service;
         });
 }());

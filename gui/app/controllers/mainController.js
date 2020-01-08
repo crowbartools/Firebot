@@ -5,6 +5,7 @@
 
     const profileManager = require("../../backend/common/profile-manager");
 
+    const moment = require("moment");
 
     agGrid.initialiseAgGridWithAngular1(angular); // eslint-disable-line no-undef
 
@@ -94,7 +95,8 @@
         $timeout,
         updatesService,
         commandsService,
-        integrationService
+        integrationService,
+        viewersService
     ) {
     // 'chatMessagesService' is included so its instantiated on app start
 
@@ -109,6 +111,8 @@
 
         //get integrations from backend
         integrationService.updateIntegrations();
+
+        viewersService.updateViewers();
 
         //start notification check
         $timeout(() => {
@@ -416,6 +420,12 @@
     app.filter('capitalize', function() {
         return function(input) {
             return (input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+        };
+    });
+
+    app.filter('prettyDate', function() {
+        return function(input) {
+            return (input) ? moment(input).format("MM/DD/YYYY") : '';
         };
     });
 

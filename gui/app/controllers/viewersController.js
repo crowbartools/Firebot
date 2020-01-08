@@ -73,19 +73,69 @@
                 });
             };
 
-            $scope.viewers = [];
-            $scope.updateViewers = function() {
-                $q(resolve => {
-                    backendCommunicator.fireEventAsync("getAllViewers")
-                        .then(viewers => {
-                            resolve(viewers);
-                        });
-                }).then(viewers => {
-                    $scope.viewers = viewers;
-                });
+            $scope.viewerSearch = "";
 
+            $scope.vs = viewersService;
+
+            $scope.getViewTimeDisplay = (minutesInChannel) => {
+                return minutesInChannel < 60 ? 'Less than an hour' : Math.round(minutesInChannel / 60);
             };
-            $scope.updateViewers();
+
+            $scope.headers = [
+                {
+                    name: "USERNAME",
+                    icon: "fa-user",
+                    dataField: "username"
+                },
+                {
+                    name: "JOIN DATE",
+                    icon: "fa-sign-in",
+                    dataField: "joinDate"
+                },
+                {
+                    name: "LAST SEEN",
+                    icon: "fa-eye",
+                    dataField: "lastSeen"
+                },
+                {
+                    name: "VIEW TIME (hours)",
+                    icon: "fa-tv",
+                    dataField: "minutesInChannel"
+                },
+                {
+                    name: "MIXPLAY INTERACTIONS",
+                    icon: "fa-gamepad",
+                    dataField: "mixplayInteractions"
+                },
+                {
+                    name: "CHAT MESSAGES",
+                    icon: "fa-comments",
+                    dataField: "chatMessages"
+                }
+            ];
+
+            $scope.order = {
+                field: 'username',
+                reverse: false
+            };
+
+            $scope.isOrderField = function(field) {
+                return field === $scope.order.field;
+            };
+
+            $scope.setOrderField = function(field) {
+                if ($scope.order.field !== field) {
+                    $scope.order.reverse = false;
+                    $scope.order.field = field;
+                } else {
+                    $scope.order.reverse = !$scope.order.reverse;
+                }
+            };
+
+            $scope.dynamicOrder = function(user) {
+                let order = user[$scope.order.field];
+                return order;
+            };
 
             // Receives table data from main process.
             ipcRenderer.on("viewer-db-response", function(event, rows) {

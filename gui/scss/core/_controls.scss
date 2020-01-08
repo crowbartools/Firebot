@@ -445,6 +445,71 @@ table.fb-table {
   }
 }
 
+table.fb-table-alt {
+  width: 100%;
+  border-collapse: separate; /* allow spacing between cell borders */
+  border-spacing: 0 0px; /* NOTE: syntax is <horizontal value> <vertical value> */
+  th {
+    opacity: 0.5;
+    user-select: none;
+    &:hover {
+      opacity: 0.7;
+      cursor: pointer;
+    }
+    &.selected {
+      opacity: 1;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  & td {
+    height: 45px;
+    background: $fb-table-row-bg;
+  }
+  & tbody tr {
+    //box-shadow: $fb-table-shadow;
+    &:nth-child(even) {
+      td {
+        background: $fb-table-row-bg - 5%;
+      }      
+    }
+  }
+  th:first-child, td:first-child {
+    padding-left: 15px;
+  }
+  & tbody:before {
+      content:"@";
+      display:block;
+      line-height:10px;
+      text-indent:-99999px;
+  }
+  & tr:first-child > :first-child {
+    border-top-left-radius: 5px;
+  }
+  & tr:first-child > :last-child {
+    border-top-right-radius: 5px;
+  }
+  & tr:last-child > :first-child {
+    border-bottom-left-radius: 5px;
+  }
+  & tr:last-child> :last-child {
+    border-bottom-right-radius: 5px;
+  }
+  & tr > :last-child {
+    padding-right: 15px;
+  }
+}
+
+.fb-table-row {
+  height: 45px;
+  background: $fb-table-row-bg;
+  border-radius: 5px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+}
+
 .status-dot {
   width: 10px;
   height: 10px;

@@ -8,14 +8,39 @@
             <div ag-grid="gridOptions" class="viewer-data-table ag-theme-balham" style="height: 500px; width: 100%;"></div>
         </div>-->
         <div>
-            <div style="display:flex;width:100%">
-                <div>Username</div>
-                <div>Join Date</div>
-                <div>Last Seen</div>
-                <div>View Time</div>
-                <div>MixPlay Interactions</div>
-                <div>Chat Messages</div>         
+            <div style="margin: 0 0 25px;display: flex;flex-direction: row;justify-content: space-between;">
+                <button ng-click="vs.updateViewers();" class="btn btn-default"><i class="far fa-sync"></i> Refresh</button>
+                <searchbar placeholder-text="Search viewers..." query="viewerSearch" style="flex-basis: 250px;"></searchbar>
             </div>
+            <table class="fb-table-alt" style="width:100%;">
+                <thead>
+                  <tr style="font-size: 11px;">
+                    <th ng-repeat="header in headers" ng-click="setOrderField(header.dataField)" ng-class="{'selected': isOrderField(header.dataField)}">
+                        <i class="fas" ng-class="header.icon"></i>
+                        <span style="margin: 0 2px;">{{header.name}}</span>
+                        <span style="display:inline-block; width: 11px;">
+                            <i ng-show="isOrderField(header.dataField)" class="fal" ng-class="{'fa-arrow-to-bottom': !order.reverse,'fa-arrow-to-top': order.reverse}"></i>
+                        </span>     
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="viewer in vs.viewers | filter:viewerSearch | orderBy:dynamicOrder:order.reverse | limitTo:25 as filtered track by viewer._id" class="viewer-row">
+                        <td>{{viewer.username}}</td>
+                        <td>{{viewer.joinDate | prettyDate}}</td>
+                        <td>{{viewer.lastSeen | prettyDate}}</td>
+                        <td>{{getViewTimeDisplay(viewer.minutesInChannel)}}</td>
+                        <td>{{viewer.mixplayInteractions}}</td>
+                        <td>{{viewer.chatMessages}}</td>
+                    </tr>
+                </tbody>
+              </table>
+              <div ng-show="vs.viewers.length < 1" class="fb-table-row">
+                  <span class="muted">No viewer data available yet!</span>
+              </div>
+              <div ng-hide="vs.viewers.length < 1" class="muted" style="margin-top: 10px;font-size: 11px;text-align: right;">
+                <span>Showing <strong>{{filtered.length}}</strong> of <strong>{{vs.viewers.length}}</strong> total viewer(s). Use column sorting and/or viewer search to filter.</span>
+              </div>
         </div>
     </div>
 </div>

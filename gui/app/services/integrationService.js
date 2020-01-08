@@ -157,7 +157,6 @@
                     let integration = integrations.find(i => i.id === data.id);
                     if (integration != null) {
                         integration.connected = data.connected;
-                        console.log(integration);
                     }
 
                     integrationsWaitingForConnectionUpdate = integrationsWaitingForConnectionUpdate.filter(
