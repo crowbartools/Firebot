@@ -8,50 +8,16 @@
 
     angular
         .module("firebotApp")
-        .controller("viewersController", function(
-            $scope,
-            $timeout,
-            $interval,
-            viewersService,
-            ngToast,
-            connectionService,
-            utilityService,
-            settingsService,
-            backendCommunicator,
-            $q
-        ) {
+        .controller("viewersController", function($scope, viewersService, currencyService) {
             //This handles the Viewers tab
 
-            let gridOptions = viewersService.gridOptions;
+            /*let gridOptions = viewersService.gridOptions;
             let columnsPreferences = settingsService.getViewerColumnPreferences();
             $scope.isViewerDbOn = viewersService.isViewerDbOn;
             gridOptions.columnDefs = viewersService.getColumnDefsforPrefs(
                 columnsPreferences
             );
             $scope.gridOptions = gridOptions;
-
-            // Send request to main process to get all of our rows.
-            function updateRowData() {
-                if (!viewersService.isViewerDbOn()) {
-                    return;
-                }
-
-                ipcRenderer.send("request-viewer-db");
-            }
-
-            // Refresh the viewer table on button click.
-            $scope.refreshViewerTable = function() {
-                if (!viewersService.isViewerDbOn()) {
-                    return;
-                }
-
-                updateRowData();
-
-                ngToast.create({
-                    className: "success",
-                    content: "Success!"
-                });
-            };
 
             // Open edit columns modal.
             $scope.openEditColumnsModal = function() {
@@ -71,7 +37,12 @@
                         updateRowData();
                     }
                 });
-            };
+            };*/
+
+            // Update table rows when first visiting the page.
+            if (viewersService.isViewerDbOn()) {
+                viewersService.updateViewers();
+            }
 
             $scope.viewerSearch = "";
 
@@ -114,6 +85,16 @@
                 }
             ];
 
+            $scope.currencies = currencyService.getCurrencies();
+
+            for (let currency of $scope.currencies) {
+                $scope.headers.push({
+                    name: currency.name.toUpperCase(),
+                    icon: "fa-money-bill",
+                    dataField: "currency." + currency.id
+                });
+            }
+
             $scope.order = {
                 field: 'username',
                 reverse: false
@@ -133,43 +114,15 @@
             };
 
             $scope.dynamicOrder = function(user) {
-                let order = user[$scope.order.field];
+                let order;
+                let field = $scope.order.field;
+                if (field.startsWith("currency.")) {
+                    let currencyId = field.replace("currency.", "");
+                    order = user.currency[currencyId];
+                } else {
+                    order = user[$scope.order.field];
+                }
                 return order;
             };
-
-            // Receives table data from main process.
-            ipcRenderer.on("viewer-db-response", function(event, rows) {
-                if (!viewersService.isViewerDbOn()) {
-                    return;
-                }
-
-                /*$scope.gridOptions.api.setRowData(rows);
-
-                $timeout(function() {
-                    if ($scope.gridOptions.api) {
-                        $scope.gridOptions.api.sizeColumnsToFit();
-                    }
-                }, 500);*/
-            });
-
-            // Update table rows when first visiting the page.
-            if (viewersService.isViewerDbOn()) {
-                updateRowData();
-            }
-
-            // show alert that you need to be connected to chat for stuff to work.
-            if (
-                !connectionService.connectedToChat &&
-        !viewersService.sawWarningAlert &&
-        viewersService.isViewerDbOn()
-            ) {
-                viewersService.sawWarningAlert = true;
-                ngToast.create({
-                    content:
-            "A chat connection is required for many systems here to work.",
-                    dismissButton: true,
-                    timeout: 3000
-                });
-            }
         });
 }());
