@@ -15,6 +15,7 @@
             <table class="fb-table-alt" style="width:100%;">
                 <thead>
                   <tr style="font-size: 11px;">
+                    <th style="width: 50px;"></th>
                     <th ng-repeat="header in headers" ng-click="setOrderField(header.dataField)" ng-class="{'selected': isOrderField(header.dataField)}">
                         <i class="fas" ng-class="header.icon"></i>
                         <span style="margin: 0 2px;">{{header.name}}</span>
@@ -26,6 +27,7 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="viewer in vs.viewers | filter:viewerSearch | orderBy:dynamicOrder:order.reverse | limitTo:25 as filtered track by viewer._id" class="viewer-row">
+                        <td><img ng-src="https://mixer.com/api/v1/users/{{viewer._id}}/avatar?w=50&h=50" style="width: 25px;height: 25px;border-radius: 25px;"/></td>
                         <td>{{viewer.username}}</td>
                         <td>{{viewer.joinDate | prettyDate}}</td>
                         <td>{{viewer.lastSeen | prettyDate}}</td>
