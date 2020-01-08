@@ -664,9 +664,10 @@ ipcMain.on("openRootFolder", () => {
     // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
     // of opening to the poarent folder with 'Firebot'folder selected.
     let rootFolder = path.resolve(
-        dataAccess.getUserDataPath() + path.sep + "user-settings"
+        profileManager.getPathInProfile("/")
     );
-    shell.showItemInFolder(rootFolder);
+    logger.debug("rootFolder: " + rootFolder);
+    shell.openItem(rootFolder);
 });
 
 // Get Import Folder Path
