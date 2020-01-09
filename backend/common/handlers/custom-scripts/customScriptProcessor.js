@@ -238,9 +238,9 @@ function scriptProcessor(effect, trigger) {
 ipcMain.on("openScriptsFolder", function() {
     // We include "fakescript.js" as a workaround to make it open into the 'scripts' folder instead
     // of opening to the firebot root folder with 'scripts' selected.
-    let scriptsFolder = profileManager.getPathInProfile("/scripts/fakescript.js");
+    let scriptsFolder = profileManager.getPathInProfile("/scripts");
 
-    shell.showItemInFolder(scriptsFolder);
+    shell.openItem(scriptsFolder);
 });
 
 exports.processScript = scriptProcessor;
