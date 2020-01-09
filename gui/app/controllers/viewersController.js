@@ -8,7 +8,7 @@
 
     angular
         .module("firebotApp")
-        .controller("viewersController", function($scope, viewersService, currencyService) {
+        .controller("viewersController", function($scope, viewersService, currencyService, utilityService) {
             //This handles the Viewers tab
 
             /*let gridOptions = viewersService.gridOptions;
@@ -38,6 +38,16 @@
                     }
                 });
             };*/
+
+            $scope.showUserDetailsModal = (userId) => {
+                utilityService.showModal({
+                    component: "viewerDetailsModal",
+                    backdrop: true,
+                    resolveObj: {
+                        userId: () => userId
+                    }
+                });
+            };
 
             // Update table rows when first visiting the page.
             if (viewersService.isViewerDbOn()) {

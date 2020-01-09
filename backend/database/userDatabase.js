@@ -8,6 +8,8 @@ const { settings } = require("../common/settings-access.js");
 const currencyDatabase = require("./currencyDatabase");
 const mixerChat = require('../common/mixer-chat');
 const frontendCommunicator = require("../common/frontend-communicator");
+const userAccess = require("../common/user-access");
+const channelAccess = require("../common/channel-access");
 
 let db;
 let updateTimeInterval;
@@ -57,14 +59,15 @@ function getUserByUsername(username) {
 
 //look up user object by id
 function getUserById(id) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!isViewerDBOn()) {
-            return resolve();
+            return resolve(null);
         }
 
         db.findOne({ _id: id }, (err, doc) => {
             if (err) {
-                reject(err.message);
+                logger.error(err);
+                resolve(null);
             }
             resolve(doc);
         });
@@ -426,6 +429,22 @@ function incrementDbField(userId, fieldName) {
 //////////////////
 // Event Listeners
 
+frontendCommunicator.onAsync("getAllViewers", () => {
+    if (!isViewerDBOn()) {
+        return Promise.resolve([]);
+    }
+    return getAllUsers();
+});
+
+frontendCommunicator.onAsync("getViewerDetails", (userId) => {
+    return userAccess.getUserDetails(userId);
+});
+
+frontendCommunicator.on("updateViewerRole", (data) => {
+    const { userId, role, addOrRemove } = data;
+    channelAccess.updateUserRole(userId, role, addOrRemove);
+});
+
 // Return db rows for the ui to use.
 ipcMain.on("request-viewer-db", event => {
     if (!isViewerDBOn()) {
@@ -436,12 +455,6 @@ ipcMain.on("request-viewer-db", event => {
     });
 });
 
-frontendCommunicator.onAsync("getAllViewers", () => {
-    if (!isViewerDBOn()) {
-        return Promise.resolve([]);
-    }
-    return getAllUsers();
-});
 
 // Get change info from UI.
 ipcMain.on("viewer-db-change", (event, data) => {
@@ -476,6 +489,7 @@ exports.setChatUserOffline = setChatUserOffline;
 exports.setAllUsersOffline = setAllUsersOffline;
 exports.getUserOnlineMinutes = getUserOnlineMinutes;
 exports.getUserByUsername = getUserByUsername;
+exports.getUserById = getUserById;
 exports.incrementDbField = incrementDbField;
 exports.getUserDb = getUserDb;
 exports.setChatUsersOnline = setChatUsersOnline;

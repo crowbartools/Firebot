@@ -61,16 +61,23 @@ exports.requestAsStreamer = function(method, route, body, apiVersion, resolveRes
     return promisifiedRequest(options, resolveResponse);
 };
 
-exports.get = function(route, apiVersion, resolveResponse = false, authAsStreamer = true) {
+exports.get = function(route, apiVersion = "v1", resolveResponse = false, authAsStreamer = true) {
 
     let options = buildRequestOptions("GET", route, null, apiVersion, authAsStreamer);
 
     return promisifiedRequest(options, resolveResponse);
 };
 
-exports.post = function(route, body, apiVersion, resolveResponse = false, authAsStreamer = true) {
+exports.post = function(route, body, apiVersion = "v1", resolveResponse = false, authAsStreamer = true) {
 
     let options = buildRequestOptions("POST", route, body, apiVersion, authAsStreamer);
+
+    return promisifiedRequest(options, resolveResponse);
+};
+
+exports.patch = function(route, body, apiVersion = "v1", resolveResponse = false, authAsStreamer = true) {
+
+    let options = buildRequestOptions("PATCH", route, body, apiVersion, authAsStreamer);
 
     return promisifiedRequest(options, resolveResponse);
 };

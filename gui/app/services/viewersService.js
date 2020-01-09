@@ -31,6 +31,10 @@
                 });
             };
 
+            service.updateViewerRole = (userId, role, addOrRemove) => {
+                backendCommunicator.fireEvent("updateViewerRole", { userId, role, addOrRemove });
+            };
+
             /** OLD VIEWER TABLE STUFF */
 
             // This will cancel editing. Pass true to this to return cell to original value if it was edited.

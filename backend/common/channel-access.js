@@ -1,5 +1,6 @@
 "use strict";
 
+const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const mixerApi = require("../api-access");
 let linkHeaderParser = require('parse-link-header');
@@ -177,4 +178,21 @@ exports.getCurrentViewerList = function(users, continuationToken = null, namesOn
             resolve(users);
         }
     });
+};
+
+exports.updateUserRole = async (userId, role, addOrRemove) => {
+
+    if (userId == null || (role !== "Mod" && role !== "Banned")) return;
+
+    let streamerData = accountAccess.getAccounts().streamer;
+
+    let body = {};
+    let key = addOrRemove ? "add" : "remove";
+    body[key] = [role];
+
+    try {
+        await mixerApi.patch(`channels/${streamerData.channelId}/users/${userId}`, body);
+    } catch (err) {
+        logger.error("Error while updating user roles", err);
+    }
 };

@@ -425,7 +425,7 @@
 
     app.filter('prettyDate', function() {
         return function(input) {
-            return (input) ? moment(input).format("MM/DD/YYYY") : '';
+            return (input) ? moment(input).format("MM/DD/YYYY") : 'Not saved';
         };
     });
 

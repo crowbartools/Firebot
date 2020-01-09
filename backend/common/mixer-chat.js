@@ -1369,10 +1369,10 @@ function changeUserRole(username, role, addOrRemove) {
                 let userId = response.userId,
                     options = {
                         url:
-              `https://mixer.com/api/v1/channels/` +
-              streamer["channelId"] +
-              "/users/" +
-              userId,
+                            `https://mixer.com/api/v1/channels/` +
+                            streamer["channelId"] +
+                            "/users/" +
+                            userId,
                         method: "PATCH",
                         headers: {
                             Authorization: "Bearer " + streamer["accessToken"],

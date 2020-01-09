@@ -468,11 +468,16 @@ table.fb-table-alt {
     background: $fb-table-row-bg;
   }
   & tbody tr {
-    //box-shadow: $fb-table-shadow;
     &:nth-child(even) {
       td {
         background: $fb-table-row-bg - 5%;
       }      
+    }
+    &.selectable:hover {
+      td {
+        cursor: pointer;
+        background: $fb-table-row-bg - 2%;
+      }  
     }
   }
   th:first-child, td:first-child {
