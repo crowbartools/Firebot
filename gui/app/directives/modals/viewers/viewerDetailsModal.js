@@ -8,7 +8,7 @@ const moment = require("moment");
         .component("viewerDetailsModal", {
             template: `
             <div class="modal-header">
-                <button type="button" class="close" style="font-size: 45px;font-weight: 100;position: absolute;top: 2px;right: 10px;" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
+                <button type="button" class="close" style="font-size: 45px;font-weight: 100;position: absolute;top: 2px;right: 10px;z-index: 100000;" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
             </div>
             <div class="modal-body">              
                 <div ng-show="$ctrl.loading">Loading...</div>
