@@ -131,8 +131,8 @@
                         },
                         (selectedId) => {
                             // just in case, remove any other restrictions of the same type
-                            $ctrl.restrictionData.restrictions = $ctrl.restrictionData.restrictions
-                                .filter(r => r.type !== selectedId);
+                            /*$ctrl.restrictionData.restrictions = $ctrl.restrictionData.restrictions
+                                .filter(r => r.type !== selectedId);*/
 
                             $ctrl.restrictionData.restrictions.push({
                                 id: uuidv1(),
