@@ -30,11 +30,11 @@ const moment = require("moment");
                     </div>
                     <div style="margin-top: 45px;">
                         <div class="viewer-detail-data">
-                            <div class="detail-data" ng-repeat="dataPoint in $ctrl.dataPoints">
+                            <div class="detail-data clickable" ng-repeat="dataPoint in $ctrl.dataPoints" ng-click="dataPoint.onClick()">
                                 <div class="data-title">
                                     <i class="far" ng-class="dataPoint.icon"></i> {{dataPoint.name}}
                                 </div>
-                                <div class="data-point">{{dataPoint.value}}</div>
+                                <div class="data-point">{{dataPoint.display}}<span class="edit-data-btn muted"><i class="fas fa-edit"></i></span></div>
                             </div>
                         </div>
                     </div>
@@ -47,7 +47,7 @@ const moment = require("moment");
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, backendCommunicator, viewersService, currencyService) {
+            controller: function($q, backendCommunicator, viewersService, currencyService, utilityService) {
                 let $ctrl = this;
 
                 $ctrl.loading = true;
@@ -277,53 +277,174 @@ const moment = require("moment");
                     $ctrl.actions = actions;
                 }
 
+                class ViewerDataPoint {
+                    constructor(name, icon, value, displayFunc, fieldName, valueType, beforeEditFunc, afterEditFunc) {
+                        this.name = name;
+                        this.icon = icon;
+                        this.value = value;
+                        this._displayFunc = displayFunc;
+                        this._fieldName = fieldName;
+                        this._valueType = valueType;
+                        this._beforeEditFunc = beforeEditFunc;
+                        this._afterEditFunc = afterEditFunc;
+                        this.display = this._displayFunc(this.value);
+                    }
+
+                    onClick() {
+                        let valueToEdit = this._beforeEditFunc(this.value);
+
+                        if (this._valueType === "text" || this._valueType === "number") {
+                            utilityService.openGetInputModal(
+                                {
+                                    model: valueToEdit,
+                                    label: "Edit " + this.name,
+                                    saveText: "Save",
+                                    inputPlaceholder: "Enter " + this.name.toLowerCase(),
+                                    validationFn: (value) => {
+                                        return new Promise(resolve => {
+                                            if (typeof value === 'string') {
+                                                if (value == null || value.trim().length < 1) {
+                                                    return resolve(false);
+                                                }
+                                            }
+                                            resolve(true);
+                                        });
+                                    },
+                                    validationText: "Must have a value."
+
+                                },
+                                (editedValue) => {
+                                    this.value = this._afterEditFunc(editedValue);
+                                    this.display = this._displayFunc(this.value);
+                                    this.saveValue();
+                                }
+                            );
+                        } else if (this._valueType === "date") {
+                            utilityService.openDateModal(
+                                {
+                                    model: valueToEdit,
+                                    label: "Edit " + this.name,
+                                    saveText: "Save",
+                                    inputPlaceholder: "Enter " + this.name.toLowerCase()
+                                },
+                                (editedValue) => {
+                                    this.value = this._afterEditFunc(editedValue);
+                                    this.display = this._displayFunc(this.value);
+                                    this.saveValue();
+                                }
+                            );
+                        }
+                    }
+
+                    saveValue() {
+                        backendCommunicator.fireEvent("updateViewerDataField", {
+                            userId: $ctrl.resolve.userId,
+                            field: this._fieldName,
+                            value: this.value
+                        });
+                    }
+                }
+
                 $ctrl.dataPoints = [];
                 function buildDataPoints() {
+                    /**
+                     * @type ViewerDataPoint[]
+                     */
                     let dataPoints = [];
 
                     let joinDate = $ctrl.viewerDetails.firebotData.joinDate;
-                    dataPoints.push({
-                        name: "JOIN DATE",
-                        icon: "fa-sign-in",
-                        value: joinDate ? moment(joinDate).format("MM/DD/YYYY") : "Not saved"
-                    });
+                    dataPoints.push(new ViewerDataPoint(
+                        "Join Date",
+                        "fa-sign-in",
+                        joinDate,
+                        value => {
+                            return value ? moment(value).format("MM/DD/YYYY") : "Not saved";
+                        },
+                        "joinDate",
+                        "date",
+                        value => {
+                            return value ? moment(value).toDate() : new Date();
+                        },
+                        value => {
+                            return moment(value).valueOf();
+                        }
+                    ));
 
                     let lastSeen = $ctrl.viewerDetails.firebotData.lastSeen;
-                    dataPoints.push({
-                        name: "LAST SEEN",
-                        icon: "fa-eye",
-                        value: lastSeen ? moment(lastSeen).format("MM/DD/YYYY") : "Not saved"
-                    });
+                    dataPoints.push(new ViewerDataPoint(
+                        "Last Seen",
+                        "fa-eye",
+                        lastSeen,
+                        value => {
+                            return value ? moment(value).format("MM/DD/YYYY") : "Not saved";
+                        },
+                        "lastSeen",
+                        "date",
+                        value => {
+                            return value ? moment(value).toDate() : new Date();
+                        },
+                        value => {
+                            return moment(value).valueOf();
+                        }
+                    ));
 
                     let minsInChannel = $ctrl.viewerDetails.firebotData.minutesInChannel || 0;
-                    dataPoints.push({
-                        name: "VIEW TIME(hours)",
-                        icon: "fa-tv",
-                        value: minsInChannel < 60 ? 'Less than an hour' : Math.round(minsInChannel / 60)
-                    });
+                    dataPoints.push(new ViewerDataPoint(
+                        "View Time",
+                        "fa-tv",
+                        minsInChannel,
+                        value => {
+                            return value < 60 ? 'Less than an hour' : Math.round(value / 60) + " hr(s)";
+                        },
+                        "minutesInChannel",
+                        "number",
+                        value => {
+                            return value ? Math.round(value / 60) : 0;
+                        },
+                        value => {
+                            let mins = value * 60;
+
+                            return mins;
+                        }
+                    ));
 
                     let mixplayInteractions = $ctrl.viewerDetails.firebotData.mixplayInteractions || 0;
-                    dataPoints.push({
-                        name: "MIXPLAY INTERACTIONS",
-                        icon: "fa-gamepad",
-                        value: mixplayInteractions
-                    });
+                    dataPoints.push(new ViewerDataPoint(
+                        "MixPlay Interactions",
+                        "fa-gamepad",
+                        mixplayInteractions,
+                        value => value,
+                        "mixplayInteractions",
+                        "number",
+                        value => value,
+                        value => value
+                    ));
 
                     let chatMessages = $ctrl.viewerDetails.firebotData.chatMessages || 0;
-                    dataPoints.push({
-                        name: "CHAT MESSAGES",
-                        icon: "fa-comments",
-                        value: chatMessages
-                    });
+                    dataPoints.push(new ViewerDataPoint(
+                        "Chat Messages",
+                        "fa-comments",
+                        chatMessages,
+                        value => value,
+                        "chatMessages",
+                        "number",
+                        value => value,
+                        value => value
+                    ));
 
                     let currencies = currencyService.getCurrencies();
 
                     for (let currency of currencies) {
-                        dataPoints.push({
-                            name: currency.name.toUpperCase(),
-                            icon: "fa-money-bill",
-                            value: $ctrl.viewerDetails.firebotData.currency[currency.id] || 0
-                        });
+                        dataPoints.push(new ViewerDataPoint(
+                            currency.name,
+                            "fa-money-bill",
+                            $ctrl.viewerDetails.firebotData.currency[currency.id] || 0,
+                            value => value,
+                            "currency." + currency.id,
+                            "number",
+                            value => value,
+                            value => value
+                        ));
                     }
 
                     $ctrl.dataPoints = dataPoints;

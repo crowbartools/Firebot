@@ -474,3 +474,24 @@
     cursor: default;
     user-select: none;
 }
+
+
+.glyphicon.glyphicon-chevron-left, .glyphicon.glyphicon-chevron-right {
+    vertical-align: -0%;
+    font-family: "Font Awesome 5 Pro";
+    font-weight: 900;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+.glyphicon-chevron-left:before {
+    content: "\f053";
+}
+
+.glyphicon-chevron-right:before {
+    content: "\f054";
+}

@@ -192,9 +192,6 @@
                 });
             };
 
-            /*
-            * open get input modal
-            */
             service.openGetInputModal = function(options, callback) {
                 service.showModal({
                     component: "inputModal",
@@ -206,6 +203,22 @@
                         saveText: () => options.saveText,
                         validationFn: () => options.validationFn,
                         validationText: () => options.validationText
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
+
+            service.openDateModal = function(options, callback) {
+                service.showModal({
+                    component: "dateModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        inputPlaceholder: () => options.inputPlaceholder,
+                        saveText: () => options.saveText
                     },
                     closeCallback: (resp) => {
                         callback(resp.model);

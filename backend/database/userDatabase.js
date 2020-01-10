@@ -445,6 +445,19 @@ frontendCommunicator.on("updateViewerRole", (data) => {
     channelAccess.updateUserRole(userId, role, addOrRemove);
 });
 
+frontendCommunicator.on("updateViewerDataField", (data) => {
+    const { userId, field, value } = data;
+
+    let updateObject = {};
+    updateObject[field] = value;
+
+    db.update({ _id: userId }, { $set: updateObject }, {}, function(err) {
+        if (err) {
+            logger.error("Error updating user.", err);
+        }
+    });
+});
+
 // Return db rows for the ui to use.
 ipcMain.on("request-viewer-db", event => {
     if (!isViewerDBOn()) {

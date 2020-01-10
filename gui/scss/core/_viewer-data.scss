@@ -37,9 +37,16 @@
         .data-title {
             font-size: 12px;
             opacity:0.7;
+            text-transform: uppercase;
         }
         .data-point {
             font-size:18px;
+            display: flex;
+            align-items: center;
+            .edit-data-btn {
+                margin-left: 4px;
+                font-size: 9px;
+            }
         }
     }
 }

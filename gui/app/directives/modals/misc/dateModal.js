@@ -5,17 +5,22 @@
 (function() {
     angular
         .module('firebotApp')
-        .component("inputModal", {
+        .component("dateModal", {
             template: `
             <div class="modal-header">
                 <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="addInteractiveBoardLabel">{{$ctrl.label}}</h4>
+                <h4 class="modal-title">{{$ctrl.label}}</h4>
             </div>
             <div class="modal-body">
                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
-                    <div style="width: 95%; position: relative;">
+                    <div style="width: 95%; position: relative;">        
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
-                            <input type="{{$ctrl.inputType}}" class="form-control" id="newPort" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}">
+                            <div class="input-group">
+                                <input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.model" is-open="$ctrl.datePickerOpen" datepicker-options="$ctrl.dateOptions" ng-required="true" show-button-bar="false" placeholder="{{$ctrl.inputPlaceholder}}" aria-describedby="helpBlock"/>
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" ng-click="$ctrl.datePickerOpen = true"><i class="fas fa-calendar"></i></button>
+                                </span>
+                            </div>
                             <span id="helpBlock" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</span>
                         </div>
                     </div>
@@ -39,18 +44,20 @@
                 $ctrl.label = "Enter Text";
                 $ctrl.inputPlaceholder = "Enter Text";
                 $ctrl.saveText = "Save";
-                $ctrl.validationFn = () => true;
-                $ctrl.validationText = "";
+                $ctrl.validationFn = (value) => value != null;
+                $ctrl.validationText = "Please provide a date.";
                 $ctrl.hasValidationError = false;
                 $ctrl.inputType = "text";
+
+                $ctrl.datePickerOpen = false;
+
+                $ctrl.dateOptions = {
+                    showWeeks: false
+                };
 
                 $ctrl.$onInit = function () {
                     if ($ctrl.resolve.model) {
                         $ctrl.model = $ctrl.resolve.model;
-                    }
-
-                    if (typeof $ctrl.model == 'number') {
-                        $ctrl.inputType = "number";
                     }
 
                     if ($ctrl.resolve.label) {
