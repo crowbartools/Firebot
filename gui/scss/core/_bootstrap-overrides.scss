@@ -496,3 +496,28 @@
 .glyphicon-chevron-right:before {
     content: "\f054";
 }
+
+/* pagination */
+.pagination > .disabled > a, .pagination > .disabled > a:focus, .pagination > .disabled > a:hover, .pagination > .disabled > span, .pagination > .disabled > span:focus, .pagination > .disabled > span:hover {
+    color: #b9b9b9;
+    background-color: #68696C;
+    border-color: #2F3136;
+}
+
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2F3136;
+}
+
+.pagination > li > a, .pagination > li > span {
+    color: #ffffff;
+    background-color: #68696C;
+    border: 1px solid #2F3136;
+}
+
+.pagination > li > a:focus, .pagination > li > a:hover, .pagination > li > span:focus, .pagination > li > span:hover {
+    color: white;
+    background-color: #888888;
+    border-color: #2F3136;
+}

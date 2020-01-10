@@ -1,10 +1,6 @@
 "use strict";
 
 (function() {
-    const { ipcRenderer } = require("electron");
-
-    // Info on ag-grid
-    //https://www.ag-grid.com/javascript-grid-data-update/
 
     angular
         .module("firebotApp")
@@ -31,6 +27,20 @@
                 viewersService.updateViewers();
             }
 
+            $scope.pagination = {
+                currentPage: 1,
+                pageSize: 10
+            };
+
+            $scope.getRangeMin = function() {
+                return 1 + $scope.pagination.pageSize * ($scope.pagination.currentPage - 1);
+            };
+
+            $scope.getRangeMax = function(filteredLength) {
+                let max = $scope.pagination.pageSize * $scope.pagination.currentPage;
+                return max <= filteredLength ? max : filteredLength;
+            };
+
             $scope.viewerSearch = "";
 
             $scope.vs = viewersService;
@@ -43,7 +53,10 @@
                 {
                     name: "USERNAME",
                     icon: "fa-user",
-                    dataField: "username"
+                    dataField: "username",
+                    styles: {
+                        'min-width': '125px'
+                    }
                 },
                 {
                     name: "JOIN DATE",

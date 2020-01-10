@@ -9,7 +9,7 @@
                 <thead>
                   <tr style="font-size: 11px;">
                     <th style="width: 50px;"></th>
-                    <th ng-repeat="header in headers" ng-click="setOrderField(header.dataField)" ng-class="{'selected': isOrderField(header.dataField)}">
+                    <th ng-repeat="header in headers" ng-click="setOrderField(header.dataField)" ng-class="{'selected': isOrderField(header.dataField)}" ng-style="header.styles">
                         <i class="fas" ng-class="header.icon"></i>
                         <span style="margin: 0 2px;">{{header.name}}</span>
                         <span style="display:inline-block; width: 11px;">
@@ -20,7 +20,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="viewer in vs.viewers | filter:viewerSearch | orderBy:dynamicOrder:order.reverse | limitTo:25 as filtered track by viewer._id" class="viewer-row selectable" 
+                    <tr ng-repeat="viewer in filtered = (vs.viewers | filter:viewerSearch | orderBy:dynamicOrder:order.reverse) | startFrom:(pagination.currentPage-1)*pagination.pageSize | limitTo:pagination.pageSize as visible track by viewer._id" class="viewer-row selectable" 
                         ng-click="showUserDetailsModal(viewer._id)">
                         <td><img ng-src="https://mixer.com/api/v1/users/{{viewer._id}}/avatar?w=50&h=50" style="width: 25px;height: 25px;border-radius: 25px;"/></td>
                         <td>{{viewer.username}}</td>
@@ -37,9 +37,19 @@
               <div ng-show="vs.viewers.length < 1" class="fb-table-row">
                   <span class="muted">No viewer data available yet!</span>
               </div>
-              <div ng-hide="vs.viewers.length < 1" class="muted" style="margin-top: 10px;font-size: 11px;text-align: right;">
-                <span>Showing <strong>{{filtered.length}}</strong> of <strong>{{vs.viewers.length}}</strong> total viewer(s). Use column sorting and/or viewer search to filter.</span>
-              </div>
+              <div style="display: grid;grid-template-columns: repeat(3, 1fr);">
+                <div></div>
+                <div>
+                    <div ng-show="filtered.length > pagination.pageSize" style="text-align: center;">
+                        <ul uib-pagination total-items="filtered.length" ng-model="pagination.currentPage" items-per-page="pagination.pageSize" class="pagination-sm" max-size="3" boundary-link-numbers="true" rotate="true" style="margin-top:10px;"></ul>
+                    </div>
+                </div>
+                <div>
+                    <div ng-hide="vs.viewers.length < 1" class="muted" style="margin-top: 10px;font-size: 11px;text-align: right;">
+                        <span>Showing <strong>{{getRangeMin()}}</strong> - <strong>{{getRangeMax(filtered.length)}}</strong> of <strong>{{vs.viewers.length}}</strong> total viewer(s)</span>
+                    </div>
+                </div>
+              </div>      
         </div>
     </div>
 </div>
