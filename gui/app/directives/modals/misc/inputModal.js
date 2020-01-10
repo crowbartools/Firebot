@@ -8,7 +8,7 @@
         .component("inputModal", {
             template: `
             <div class="modal-header">
-                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="addInteractiveBoardLabel">{{$ctrl.label}}</h4>
             </div>
             <div class="modal-body">
@@ -45,12 +45,15 @@
                 $ctrl.inputType = "text";
 
                 $ctrl.$onInit = function () {
-                    if ($ctrl.resolve.model) {
+                    if ($ctrl.resolve.model !== undefined && $ctrl.resolve.model !== null) {
                         $ctrl.model = $ctrl.resolve.model;
                     }
 
                     if (typeof $ctrl.model == 'number') {
                         $ctrl.inputType = "number";
+                        if ($ctrl.model == null || $ctrl.model === '') {
+                            $ctrl.model = 0;
+                        }
                     }
 
                     if ($ctrl.resolve.label) {

@@ -31,6 +31,22 @@
                 });
             };
 
+            service.updateViewer = function(userId) {
+                $q(resolve => {
+                    backendCommunicator.fireEventAsync("getViewerFirebotData", userId)
+                        .then(viewer => {
+                            resolve(viewer);
+                        });
+                }).then(viewer => {
+                    if (viewer) {
+                        let index = service.viewers.findIndex(v => v._id === viewer._id);
+                        if (index >= 0) {
+                            service.viewers[index] = viewer;
+                        }
+                    }
+                });
+            };
+
             service.updateViewerRole = (userId, role, addOrRemove) => {
                 backendCommunicator.fireEvent("updateViewerRole", { userId, role, addOrRemove });
             };

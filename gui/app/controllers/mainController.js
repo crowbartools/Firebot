@@ -429,5 +429,11 @@
         };
     });
 
+    app.filter('commify', function() {
+        return function(input) {
+            return input ? input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
+        };
+    });
+
 
 }(angular));

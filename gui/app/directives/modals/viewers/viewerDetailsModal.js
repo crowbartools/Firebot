@@ -7,9 +7,10 @@ const moment = require("moment");
         .module("firebotApp")
         .component("viewerDetailsModal", {
             template: `
-            <div class="modal-header"></div>
-            <div class="modal-body">
-                <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
+            <div class="modal-header">
+                <button type="button" class="close" style="font-size: 45px;font-weight: 100;position: absolute;top: 2px;right: 10px;" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">              
                 <div ng-show="$ctrl.loading">Loading...</div>
                 <div ng-if="!$ctrl.loading">
                     <img ng-src="https://mixer.com/api/v1/users/{{$ctrl.viewerDetails.mixerData.id}}/avatar" 
@@ -17,13 +18,18 @@ const moment = require("moment");
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
                             <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.mixerData.username}}</div>
-                            <div style="margin-left: 10px;font-size: 11px;background: #47aed2;border-radius: 16px;padding: 3px 10px;font-weight: bold;display: inline-block;height: max-content;">LVL {{$ctrl.viewerDetails.mixerData.level}}</div>
+                            <!--<div style="margin-left: 10px;font-size: 11px;background: #47aed2;border-radius: 16px;padding: 3px 10px;font-weight: bold;display: inline-block;height: max-content;">LVL {{$ctrl.viewerDetails.mixerData.level}}</div>-->
                         </div>
-                        <div style="display:flex;margin-top:5px;">
+                        <div style="display:flex;margin-top:7px;">
+                            <div style="margin-right: 15px;" uib-tooltip="Mixer Level"><strong>LVL</strong> {{$ctrl.viewerDetails.mixerData.level}}</div>
+                            <div style="margin-right: 15px;display: flex;align-items: center;" uib-tooltip="Sparks"><img aria-label="spark" class="spark-coin" style="height: 14px;vertical-align: text-top;margin-right:2px;" src="https://mixer.com/_static/img/design/ui/spark-coin/spark-coin.svg"> {{$ctrl.viewerDetails.mixerData.sparks | commify}}</div>
+                            <div style="margin-right: 15px;" uib-tooltip="Mixer Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.mixerData.createdAt)}}</div>
+                        </div>
+                        <div style="display:flex;margin-top:10px;">
                             <div ng-repeat="role in $ctrl.roles | orderBy : 'rank'" uib-tooltip="{{role.tooltip}}" ng-style="role.style" style="margin-right: 10px;font-size: 13px;text-transform: uppercase;font-weight: bold;font-family: "Roboto";">{{role.name}}</div>
                         </div>
-                        <div style="display:flex;margin-top:15px;">
-                            <div ng-repeat="action in $ctrl.actions" ng-click="action.onClick()" class="clickable" uib-tooltip="{{action.name}}" style="margin-right: 10px; display:flex; width: 30px; height:30px; align-items:center; justify-content: center; border-radius: 18px; border: 1px solid white;">            
+                        <div style="display:flex;margin-top:10px;">
+                            <div ng-repeat="action in $ctrl.actions" ng-click="action.onClick()" class="clickable" uib-tooltip="{{action.name}}" style="margin-right: 10px; display:flex; width: 30px; height:30px; align-items:center; justify-content: center; border-radius: 18px; border: 1.5px solid whitesmoke;">            
                                 <i ng-class="action.icon"></i>
                             </div>
                         </div>             
@@ -53,6 +59,10 @@ const moment = require("moment");
                 $ctrl.loading = true;
 
                 $ctrl.viewerDetails = {};
+
+                $ctrl.getAccountAge = function(date) {
+                    return moment(date).fromNow(true);
+                };
 
                 $ctrl.roles = [];
 
@@ -402,7 +412,7 @@ const moment = require("moment");
                             return value ? Math.round(value / 60) : 0;
                         },
                         value => {
-                            let mins = value * 60;
+                            let mins = parseInt(value) * 60;
 
                             return mins;
                         }
@@ -416,8 +426,12 @@ const moment = require("moment");
                         value => value,
                         "mixplayInteractions",
                         "number",
-                        value => value,
-                        value => value
+                        value => {
+                            return value ? parseInt(value) : 0;
+                        },
+                        value => {
+                            return value ? parseInt(value) : 0;
+                        }
                     ));
 
                     let chatMessages = $ctrl.viewerDetails.firebotData.chatMessages || 0;
@@ -428,8 +442,12 @@ const moment = require("moment");
                         value => value,
                         "chatMessages",
                         "number",
-                        value => value,
-                        value => value
+                        value => {
+                            return value ? parseInt(value) : 0;
+                        },
+                        value => {
+                            return value ? parseInt(value) : 0;
+                        }
                     ));
 
                     let currencies = currencyService.getCurrencies();
@@ -442,8 +460,12 @@ const moment = require("moment");
                             value => value,
                             "currency." + currency.id,
                             "number",
-                            value => value,
-                            value => value
+                            value => {
+                                return value ? parseInt(value) : 0;
+                            },
+                            value => {
+                                return value ? parseInt(value) : 0;
+                            }
                         ));
                     }
 

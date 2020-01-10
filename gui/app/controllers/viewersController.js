@@ -11,41 +11,18 @@
         .controller("viewersController", function($scope, viewersService, currencyService, utilityService) {
             //This handles the Viewers tab
 
-            /*let gridOptions = viewersService.gridOptions;
-            let columnsPreferences = settingsService.getViewerColumnPreferences();
-            $scope.isViewerDbOn = viewersService.isViewerDbOn;
-            gridOptions.columnDefs = viewersService.getColumnDefsforPrefs(
-                columnsPreferences
-            );
-            $scope.gridOptions = gridOptions;
-
-            // Open edit columns modal.
-            $scope.openEditColumnsModal = function() {
-                utilityService.showModal({
-                    component: "editColumnsModal",
-                    size: "sm",
-                    resolveObj: {
-                        columnPrefs: () => columnsPreferences
-                    },
-                    closeCallback: resp => {
-                        viewersService.setColumns(resp.preferences);
-                        columnsPreferences = resp.preferences;
-
-                        settingsService.setViewerColumnPreferences(resp.preferences);
-
-                        // Refresh Database here
-                        updateRowData();
-                    }
-                });
-            };*/
-
             $scope.showUserDetailsModal = (userId) => {
+                let closeFunc = () => {
+                    viewersService.updateViewer(userId);
+                };
                 utilityService.showModal({
                     component: "viewerDetailsModal",
                     backdrop: true,
                     resolveObj: {
                         userId: () => userId
-                    }
+                    },
+                    closeCallback: closeFunc,
+                    dismissCallback: closeFunc
                 });
             };
 

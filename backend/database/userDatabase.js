@@ -436,6 +436,10 @@ frontendCommunicator.onAsync("getAllViewers", () => {
     return getAllUsers();
 });
 
+frontendCommunicator.onAsync("getViewerFirebotData", (userId) => {
+    return getUserById(userId);
+});
+
 frontendCommunicator.onAsync("getViewerDetails", (userId) => {
     return userAccess.getUserDetails(userId);
 });
