@@ -112,7 +112,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject("You don't meet the currency requirements for this action.");
+                reject("You don't meet the currency requirements");
             }
         });
     },

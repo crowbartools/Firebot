@@ -118,7 +118,7 @@ const model = {
                 if (hasARole) {
                     resolve();
                 } else {
-                    reject("You do not have permission.");
+                    reject("You do not have permission");
                 }
 
             } else if (restrictionData.mode === "viewer") {
@@ -126,7 +126,7 @@ const model = {
                 if (username === restrictionData.username.toLowerCase()) {
                     resolve();
                 } else {
-                    reject("You do not have permission.");
+                    reject("You do not have permission");
                 }
             } else {
                 resolve();

@@ -281,8 +281,14 @@ async function handleChatEvent(chatEvent, chatter) {
         try {
             await restrictionsManager.runRestrictionPredicates(triggerData, restrictionData);
         } catch (restrictionReason) {
-            logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${restrictionReason}`);
-            mixerChat.smartSend("You cannot use this command because: " + restrictionReason, commandSender);
+            let reason;
+            if (Array.isArray(restrictionReason)) {
+                reason = restrictionReason.join(", ");
+            } else {
+                reason = restrictionReason;
+            }
+            logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
+            mixerChat.smartSend("You cannot use this command because: " + reason, commandSender);
             return false;
         }
     }

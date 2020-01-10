@@ -81,8 +81,14 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
             try {
                 await restrictionsManager.runRestrictionPredicates(triggerData, control.restrictionData);
             } catch (restrictionReason) {
-                logger.debug(`${participant.username} could not use control '${control.name}' because: ${restrictionReason}`);
-                mixerChat.smartSend("You cannot use this control because: " + restrictionReason, participant.username);
+                let reason;
+                if (Array.isArray(restrictionReason)) {
+                    reason = restrictionReason.join(", ");
+                } else {
+                    reason = restrictionReason;
+                }
+                logger.debug(`${participant.username} could not use control '${control.name}' because: ${reason}`);
+                mixerChat.smartSend("You cannot use this control because: " + reason, participant.username);
                 return;
             }
         }

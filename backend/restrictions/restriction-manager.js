@@ -3,6 +3,7 @@
 const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
+const util = require("../utility");
 
 class RestrictionsManager extends EventEmitter {
     constructor() {
@@ -42,36 +43,67 @@ class RestrictionsManager extends EventEmitter {
             return Promise.resolve(true);
         }
         let restrictions = restrictionData.restrictions;
-        let permissions = restrictions.find(r => r.type === "firebot:permissions");
+        let permissions = restrictions.filter(r => r.type === "firebot:permissions");
         if (permissions == null) {
             return Promise.resolve(true);
         }
+
+        let permRestrictionData = {
+            restrictions: permissions,
+            mode: restrictionData.mode
+        };
+
         let triggerData = {
             metadata: {
                 username: username,
                 userMixerRoles: mixerRoles
             }
         };
-        return this.runRestrictionPredicates(triggerData, [permissions])
+        return this.runRestrictionPredicates(triggerData, permRestrictionData)
             .then(() => true, () => false);
     }
 
-    runRestrictionPredicates(triggerData, restrictionData) {
+    async runRestrictionPredicates(triggerData, restrictionData) {
         if (restrictionData == null || restrictionData.restrictions == null ||
             restrictionData.restrictions.length < 1) {
             return Promise.resolve();
         }
         let restrictions = restrictionData.restrictions;
-        let predicatePromises = [];
-        for (let restriction of restrictions) {
-            let restrictionDef = this.getRestrictionById(restriction.type);
-            if (restrictionDef && restrictionDef.predicate) {
-                predicatePromises.push(restrictionDef.predicate(triggerData, restriction));
-            }
-        }
 
-        return Promise.all(predicatePromises)
-            .then(() => {
+        if (restrictionData.mode === "any") {
+            let reasons = [];
+            let restrictionPassed = false;
+            for (let restriction of restrictions) {
+                let restrictionDef = this.getRestrictionById(restriction.type);
+                if (restrictionDef && restrictionDef.predicate) {
+                    try {
+                        await restrictionDef.predicate(triggerData, restriction);
+                        restrictionPassed = true;
+                        restrictionDef.onSuccessful(triggerData, restriction);
+                        break;
+                    } catch (reason) {
+                        if (reason) {
+                            reasons.push(reason.toLowerCase());
+                        }
+                    }
+                }
+            }
+
+            if (!restrictionPassed) {
+                return Promise.reject(reasons.join(", or "));
+            }
+            return Promise.resolve();
+
+        } else if (restrictionData.mode !== "any") {
+            let predicatePromises = [];
+            for (let restriction of restrictions) {
+                let restrictionDef = this.getRestrictionById(restriction.type);
+                if (restrictionDef && restrictionDef.predicate) {
+                    predicatePromises.push(restrictionDef.predicate(triggerData, restriction));
+                }
+            }
+
+            return Promise.all(predicatePromises).then(() => {
                 for (let restriction of restrictions) {
                     let restrictionDef = this.getRestrictionById(restriction.type);
                     if (restrictionDef && restrictionDef.onSuccessful) {
@@ -79,6 +111,7 @@ class RestrictionsManager extends EventEmitter {
                     }
                 }
             });
+        }
     }
 }
 

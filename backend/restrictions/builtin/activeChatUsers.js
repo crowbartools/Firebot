@@ -42,7 +42,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject("You haven't sent a chat message recently.");
+                reject("You haven't sent a chat message recently");
             }
         });
     },

@@ -47,7 +47,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject("You don't meet the minimum channel progression rank.");
+                reject("You don't meet the minimum channel progression rank");
             }
         });
     },

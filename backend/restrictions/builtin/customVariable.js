@@ -54,7 +54,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject("A flag is not set to the correct value.");
+                reject("A flag is not set to the correct value");
             }
         });
     },

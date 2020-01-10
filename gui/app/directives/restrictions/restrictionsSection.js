@@ -14,8 +14,26 @@
             },
             template: `
                 <div style="margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 5px;">Restrictions</h3>
-                    <div class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">Permissons, currency costs, and more</div>
+                    <h3 style="margin-bottom: 5px;">Restrictions <span class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">(Permissions, currency costs, and more)</span></h3>
+                    
+                    <div style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand'; color: #8A8B8D;">
+                        <span>Only trigger when </span>
+
+                        <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
+                            <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getRestrictionModeDisplay()}}<span class="fb-arrow down ddtext"></span></div>
+                            <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
+
+                                <li ng-click="$ctrl.restrictionData.mode = 'all'">
+                                    <a style="padding-left: 10px;">all restrictions pass</a>
+                                </li>
+
+                                <li ng-click="$ctrl.restrictionData.mode = 'any'">
+                                    <a style="padding-left: 10px;">any restriction passes</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <span>:</span>
+                    </div>
                     <div>
                         <restriction-item ng-repeat="restriction in $ctrl.restrictionData.restrictions" 
                             restriction="restriction" 
@@ -47,19 +65,28 @@
                         };
                     });
 
+                $ctrl.getRestrictionModeDisplay = function() {
+                    return $ctrl.restrictionData.mode === "any" ? "any restriction passes" : "all restrictions pass";
+                };
+
                 $ctrl.canAddMoreRestrictions = true;
                 function updateCanAddMoreRestrictions() {
-                    $ctrl.canAddMoreRestrictions = restrictionDefinitions
+                    /*$ctrl.canAddMoreRestrictions = restrictionDefinitions
                         .some(r => {
                             return !$ctrl.restrictionData.restrictions.some(rs => rs.type === r.definition.id);
-                        });
+                        });*/
                 }
 
                 $ctrl.$onInit = function() {
                     if ($ctrl.restrictionData == null) {
                         $ctrl.restrictionData = {
-                            restrictions: []
+                            restrictions: [],
+                            mode: "all"
                         };
+                    }
+
+                    if ($ctrl.restrictionData.mode == null) {
+                        $ctrl.restrictionData.mode = "all";
                     }
 
                     if ($ctrl.restrictionData.restrictions == null) {
@@ -83,9 +110,9 @@
                 $ctrl.showAddRestrictionModal = function() {
 
                     let options = restrictionDefinitions
-                        .filter(r => {
+                        /*.filter(r => {
                             return !$ctrl.restrictionData.restrictions.some(rs => rs.type === r.definition.id);
-                        })
+                        })*/
                         .map(r => {
                             return {
                                 id: r.definition.id,
