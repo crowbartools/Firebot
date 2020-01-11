@@ -18,7 +18,7 @@ const model = {
         let eventData = trigger.metadata.eventData;
 
         if (eventData == null) {
-            return "10";
+            return 10;
         }
 
         return eventData.dononationAmount;
