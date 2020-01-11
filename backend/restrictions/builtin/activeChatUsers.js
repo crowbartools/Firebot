@@ -9,11 +9,8 @@ const model = {
     },
     optionsTemplate: `
         <div>
-            <div id="chatterRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
-                Active Chatter Restriction
-            </div>
             <div>
-                <p>This limits this control/command to only active chat users (someone who has chatted recently)</p>
+                <p>Limits to only active chat users (someone who has chatted recently)</p>
             </div>
         </div>
     `,
@@ -21,7 +18,7 @@ const model = {
 
     },
     optionsValueDisplay: (restriction) => {
-        return "Active chat users only.";
+        return "";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met

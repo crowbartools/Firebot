@@ -10,24 +10,18 @@ const model = {
     optionsTemplate: `
         <div>
             <div id="mixplayRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
-                Mixplay Interactions (# of interactions)
+                Minimum # of Interactions
             </div>
-            <div class="form-group">
-                <input class="fb-control fb-select" style="color:black; padding-left: .3em" type="number" placeholder="0" ng-model="restriction.interactions">
-            </div>
+            <input type="number" class="form-control" placeholder="0" ng-model="restriction.interactions">
         </div>
     `,
     optionsController: ($scope) => {
 
     },
     optionsValueDisplay: (restriction) => {
-        let interactions = restriction.interactions;
+        let interactions = restriction.interactions || 0;
 
-        if (interactions == null) {
-            return "";
-        }
-
-        return "Mixplay interactons: " + interactions + "+";
+        return interactions + "+";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met

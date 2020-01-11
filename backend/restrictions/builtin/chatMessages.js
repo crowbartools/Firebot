@@ -10,24 +10,18 @@ const model = {
     optionsTemplate: `
         <div>
             <div id="chatMessageRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
-                Chat Messages (# of messages)
+                Minimum # of Messages
             </div>
-            <div class="form-group">
-                <input class="fb-control fb-select" style="color:black; padding-left: .3em" type="number" placeholder="0" ng-model="restriction.messages">
-            </div>
+            <input type="number" class="form-control" placeholder="0" ng-model="restriction.messages">
         </div>
     `,
     optionsController: ($scope) => {
 
     },
     optionsValueDisplay: (restriction) => {
-        let messages = restriction.message;
+        let messages = restriction.messages || 0;
 
-        if (messages == null) {
-            return "";
-        }
-
-        return messages + "+ messages";
+        return messages + "+";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
