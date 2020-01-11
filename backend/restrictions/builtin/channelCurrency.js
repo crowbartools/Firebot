@@ -20,7 +20,7 @@ const model = {
                 <div id="channelCurrencyOption" class="mixplay-header" style="padding: 0 0 4px 0">
                     Comparison
                 </div>
-                <div class="">
+                <div>
                     <select class="fb-select" ng-model="restriction.comparison">
                         <option label="Less than (or equal to)" value="less">Less than (or equal to)</option>
                         <option label="Greater than (or equal to)" value="greater">Greater than (or equal to)</option>
@@ -32,7 +32,7 @@ const model = {
                     Amount
                 </div>
                 <div class="form-group">
-                    <input class="fb-control fb-select" style="color:black; padding-left: .3em" type="number" ng-model="restriction.amount">
+                    <input type="number" class="form-control" ng-model="restriction.amount" placeholder="Enter currency amount">
                 </div>
             </div>
             <div ng-show="!hasCurrencies">
@@ -107,7 +107,6 @@ const model = {
                     passed = true;
                 }
             }
-
 
             if (passed) {
                 resolve();

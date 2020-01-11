@@ -10,24 +10,18 @@ const model = {
     optionsTemplate: `
         <div>
             <div id="viewTimeRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
-                Minimum View Time (minutes)
+                View Time Minimum
             </div>
-            <div class="form-group">
-                <input class="fb-control fb-select" style="color:black; padding-left: .3em" type="number" placeholder="0" ng-model="restriction.time">
-            </div>
+            <input type="number" class="form-control" placeholder="Enter minutes" ng-model="restriction.time">
         </div>
     `,
     optionsController: ($scope) => {
 
     },
     optionsValueDisplay: (restriction) => {
-        let time = restriction.time;
+        let time = restriction.time || 0;
 
-        if (time == null) {
-            return "";
-        }
-
-        return time + "+ minutes";
+        return time + "+ min(s)";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met

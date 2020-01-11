@@ -12,15 +12,12 @@ const model = {
             <div id="customVariableName" class="mixplay-header" style="padding: 0 0 4px 0">
                 Custom Variable Name
             </div>
-            <div class="form-group">
-                <input class="fb-control fb-select" style="color:black; padding-left: .3em" type="text" ng-model="restriction.name">
-            </div>
+            <input type="text" class="form-control" placeholder="Enter name" ng-model="restriction.name">
+
             <div id="customVariableName" class="mixplay-header" style="padding: 0 0 4px 0">
                 Value
             </div>
-            <div class="form-group">
-                <input class="fb-control fb-select" style="color:black; padding-left: .3em" type="text" ng-model="restriction.value">
-            </div>
+            <input type="text" class="form-control" placeholder="Enter value" ng-model="restriction.value">
         </div>
     `,
     optionsController: ($scope) => {
