@@ -58,7 +58,7 @@ async function getAppIdFromSteamCache(requestedGame) {
 async function getSteamGameDetails(requestedGame) {
     return new Promise(async function(resolve, reject) {
         let appId = await getAppIdFromSteamCache(requestedGame);
-        if (appId === false) {
+        if (appId === false && appId != null) {
             logger.debug('Could not retrieve app id for steam search.');
             return resolve(false);
         }
@@ -67,7 +67,19 @@ async function getSteamGameDetails(requestedGame) {
         request(steamAPI, function(error, response, body) {
             if (!error && response.statusCode === 200) {
                 body = JSON.parse(body);
+
+                if (body[appId] == null) {
+                    logger.error("Unable to get body[appId] from steam api.");
+                    return resolve(false);
+                }
+
                 let foundGame = body[appId].data;
+
+                if (foundGame == null) {
+                    logger.error("Unable to get foundGame from steam api.");
+                    return resolve(false);
+                }
+
                 let gameDetails = {
                     name: foundGame.name,
                     price: "N/A",
@@ -78,16 +90,15 @@ async function getSteamGameDetails(requestedGame) {
 
                 // TODO: Sometimes these fields are included and sometimes not...
                 // TODO: What is the best way to check these?
-
-                if (foundGame.price_overview !== null) {
+                if (foundGame.price_overview != null && foundGame.price_overview.final_formatted != null) {
                     gameDetails.price = foundGame.price_overview.final_formatted;
                 }
 
-                if (foundGame.metacritic != null) {
+                if (foundGame.metacritic != null && foundGame.metacritic.score != null) {
                     gameDetails.score = foundGame.metacritic.score;
                 }
 
-                if (foundGame.release_date != null) {
+                if (foundGame.release_date != null && foundGame.release_date.date != null) {
                     gameDetails.releaseDate = foundGame.release_date.date;
                 }
 
