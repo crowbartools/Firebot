@@ -10,6 +10,7 @@ exports.loadRestrictions = function() {
     const customVariable = require('./builtin/customVariable');
     const viewTime = require('./builtin/viewTimeRestriction');
     const mixplayInteractions = require('./builtin/mixplayInteractions');
+    const chatMessages = require('./builtin/chatMessages');
 
     restrictionsManager.registerRestriction(permissions);
     restrictionsManager.registerRestriction(channelProgression);
@@ -18,4 +19,5 @@ exports.loadRestrictions = function() {
     restrictionsManager.registerRestriction(customVariable);
     restrictionsManager.registerRestriction(viewTime);
     restrictionsManager.registerRestriction(mixplayInteractions);
+    restrictionsManager.registerRestriction(chatMessages);
 };
