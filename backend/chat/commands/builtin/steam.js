@@ -30,7 +30,12 @@ const steam = {
             let gameName = args.join(" ");
             let gameDetails = await Steam.getSteamGameDetails(gameName);
 
-            Chat.smartSend(gameDetails.name + " (Price: " + gameDetails.price + " - Release: " + gameDetails.releaseDate + " - Metacritic: " + gameDetails.score + ") - " + gameDetails.url);
+            if (gameDetails !== false) {
+                Chat.smartSend(gameDetails.name + " (Price: " + gameDetails.price + " - Release: " + gameDetails.releaseDate + " - Metacritic: " + gameDetails.score + ") - " + gameDetails.url);
+                return resolve();
+            }
+
+            Chat.smartSend("Couldn't find a Steam game using that name!");
             return resolve();
         });
     }
