@@ -46,7 +46,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject("You have not used Mixplay enough on this channel!");
+                reject("You have not used Mixplay enough on this channel");
             }
         });
     },

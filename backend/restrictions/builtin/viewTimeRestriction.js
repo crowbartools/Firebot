@@ -27,7 +27,7 @@ const model = {
             return "";
         }
 
-        return "View time " + time + " minutes+";
+        return time + "+ minutes";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
@@ -46,7 +46,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject("You have not spent enough time in the channel to use this!");
+                reject("You have not spent enough time in the channel to use this");
             }
         });
     },

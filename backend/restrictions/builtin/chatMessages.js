@@ -27,7 +27,7 @@ const model = {
             return "";
         }
 
-        return "Chat messages sent " + messages + "+";
+        return messages + "+ messages";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
@@ -46,7 +46,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                reject("You have not sent enough chat messages in this channel!");
+                reject("You have not sent enough chat messages in this channel");
             }
         });
     },
