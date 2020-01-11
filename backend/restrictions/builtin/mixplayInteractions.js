@@ -2,18 +2,18 @@
 
 const model = {
     definition: {
-        id: "firebot:viewTime",
-        name: "View Time",
-        description: "Restricts to users who have been in the stream for X minutes.",
+        id: "firebot:mixplayInteractions",
+        name: "Mixplay Interactions",
+        description: "Restricts to users who have used mixplay a certain number of times.",
         triggers: []
     },
     optionsTemplate: `
         <div>
-            <div id="viewTimeRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
-                Minimum View Time (minutes)
+            <div id="mixplayRestriction" class="mixplay-header" style="padding: 0 0 4px 0">
+                Mixplay Interactions (# of interactions)
             </div>
             <div class="form-group">
-                <input class="fb-control fb-select" style="color:black; padding-left: .3em" type="number" placeholder="0" ng-model="restriction.time">
+                <input class="fb-control fb-select" style="color:black; padding-left: .3em" type="number" placeholder="0" ng-model="restriction.interactions">
             </div>
         </div>
     `,
@@ -21,13 +21,13 @@ const model = {
 
     },
     optionsValueDisplay: (restriction) => {
-        let time = restriction.time;
+        let interactions = restriction.interactions;
 
-        if (time == null) {
+        if (interactions == null) {
             return "";
         }
 
-        return "View time " + time + " minutes+";
+        return "Mixplay interactons: " + interactions + "+";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
@@ -37,16 +37,16 @@ const model = {
             let passed = false;
             const viewerDB = require('../../database/userDatabase');
             let viewer = await viewerDB.getUserByUsername(triggerData.metadata.username);
-            let viewtime = viewer.minutesInChannel;
+            let interactions = viewer.mixplayInteractions;
 
-            if (viewtime >= restrictionData.time) {
+            if (interactions >= restrictionData.interactions) {
                 passed = true;
             }
 
             if (passed) {
                 resolve();
             } else {
-                reject("You have not spent enough time in the channel to use this!");
+                reject("You have not used Mixplay enough on this channel!");
             }
         });
     },
