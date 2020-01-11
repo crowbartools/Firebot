@@ -25,13 +25,12 @@
             let ListenerType = listenerService.ListenerType;
 
             // Auth Options
-            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self";
+            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self channel:follow:self";
 
             let botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat";
 
-            // TODO: Client ID is current for "Firebot V5 Dev" oauth client so we can run v5 and v4 in tandem. Make sure to update this on release
             let authInfo = {
-                clientId: "c22379f1a0ea851c805005b1b0c97ffd940794d61a73b366",
+                clientId: "eb2f0f37d57de659852af2f409e95889c868d9caf128e396",
                 authorizationUrl: "https://mixer.com/oauth/authorize",
                 tokenUrl: "https://mixer.com/api/v1/oauth/token",
                 useBasicAuthorizationHeader: false,
@@ -87,6 +86,10 @@
                         'bearer': accessToken
                     }
                 }, function (err, res) {
+                    if (err) {
+                        logger.error(err);
+                        return;
+                    }
                     let data = JSON.parse(res.body);
 
                     let otherType = type.toLowerCase() === "bot" ? "streamer" : "bot";
@@ -159,18 +162,9 @@
                 $q.when(oauthProvider.getAccessToken({ scope: scopes })).then(
                     token => {
                         if (token.name != null && token.name === "ValidationError") {
-                            utilityService.showErrorModal(
-                                "There was an issue logging into Mixer. Error: " +
-                  token.details[0].message
-                            );
-                            logger.error(
-                                "There was an issue logging into Mixer. Error: " +
-                  token.details[0].message,
-                                token
-                            );
+                            utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
+                            logger.error("There was an issue logging into Mixer. Error: " + token.details[0].message, token);
                         } else {
-                            console.log("got tokens");
-                            console.log(token);
                             userInfo(type, token.access_token, token.refresh_token);
                         }
                     },
