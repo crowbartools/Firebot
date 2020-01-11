@@ -22,7 +22,7 @@
             service.hasReleaseData = false;
 
             service.updateIsAvailable = function() {
-                return service.hasCheckedForUpdates ? (service.updateData.updateIsAvailable || service.majorUpdate != null) : false;
+                return service.hasCheckedForUpdates ? ((service.updateData && service.updateData.updateIsAvailable) || service.majorUpdate != null) : false;
             };
 
             // Update Checker
