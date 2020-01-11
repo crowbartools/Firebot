@@ -22,7 +22,7 @@
             service.hasReleaseData = false;
 
             service.updateIsAvailable = function() {
-                return service.hasCheckedForUpdates ? service.updateData.updateIsAvailable : false;
+                return service.hasCheckedForUpdates ? (service.updateData.updateIsAvailable || service.majorUpdate != null) : false;
             };
 
             // Update Checker
@@ -55,11 +55,7 @@
 
                 return $q((resolve) => {
 
-                    let firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases/latest";
-
-                    if (settingsService.notifyOnBeta()) {
-                        firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases";
-                    }
+                    let firebotReleasesUrl = "https://api.github.com/repos/Firebottle/Firebot/releases";
 
                     $http.get(firebotReleasesUrl).then((response) => {
                         // Get app version
@@ -77,11 +73,13 @@
                             if (majorRelease == null && (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE)) {
                                 majorRelease = release;
 
-                                service.majorUpdate = {
-                                    gitName: release.name,
-                                    gitVersion: release.tag_name,
-                                    gitLink: release.html_url
-                                };
+                                if (settingsService.notifyOnBeta()) {
+                                    service.majorUpdate = {
+                                        gitName: release.name,
+                                        gitVersion: release.tag_name,
+                                        gitLink: release.html_url
+                                    };
+                                }
 
                             } else if (updateType === UpdateType.PRERELEASE ||
                                 updateType === UpdateType.OFFICIAL ||
@@ -132,15 +130,14 @@
                             };
 
                             service.updateData = updateObject;
-
-                            service.hasCheckedForUpdates = true;
-                            service.isCheckingForUpdates = false;
-
-                            resolve(updateObject);
-                        } else {
-                            resolve(false);
                         }
+
+                        service.hasCheckedForUpdates = true;
+                        service.isCheckingForUpdates = false;
+
+                        resolve();
                     }, (error) => {
+                        service.hasCheckedForUpdates = true;
                         service.isCheckingForUpdates = false;
                         logger.error(error);
                         resolve(false);
