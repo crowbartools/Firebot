@@ -215,13 +215,13 @@ function addCurrencyToNewUser(user) {
 function getUserCurrencyAmount(username, currencyId) {
     return new Promise((resolve, reject) => {
         if (!isViewerDBOn()) {
-            return resolve();
+            return resolve(0);
         }
         userDatabase.getUserByUsername(username).then(user => {
             if (!isNaN(user.currency[currencyId])) {
                 return resolve(user.currency[currencyId]);
             }
-            return resolve(false);
+            return resolve(0);
 
         });
     });

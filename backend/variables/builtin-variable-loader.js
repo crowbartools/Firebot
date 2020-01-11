@@ -60,6 +60,7 @@ exports.loadReplaceVariables = () => {
     const donationMessage = require("./builtin/donationMessage");
     const donationFrom = require("./builtin/donationFrom");
 
+    const currency = require("./builtin/currency");
 
     // register them
     replaceVariableManager.registerReplaceVariable(user);
@@ -118,4 +119,6 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(donationAmountFormatted);
     replaceVariableManager.registerReplaceVariable(donationMessage);
     replaceVariableManager.registerReplaceVariable(donationFrom);
+
+    replaceVariableManager.registerReplaceVariable(currency);
 };
