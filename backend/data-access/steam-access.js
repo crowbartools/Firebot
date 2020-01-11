@@ -6,19 +6,22 @@ const Fuse = require("fuse.js");
 
 let steamCache = [];
 
-async function cacheSteamLibrary() {
-    return new Promise(function(resolve, reject) {
-        logger.debug('Should we refresh the steam library cache?');
+function cacheSteamLibrary() {
+    return new Promise(resolve => {
+
         if (steamCache.length > 0) {
             logger.debug('Steam library is still cached. No need to pull again.');
-            return resolve(false);
+            return resolve(true);
         }
 
         logger.debug('Refreshing steam library cache.');
-        let steamAPI = "https://api.steampowered.com/ISteamApps/GetAppList/v0002/";
-        request(steamAPI, async function(error, response, body) {
+        let appListUrl = "https://api.steampowered.com/ISteamApps/GetAppList/v0002/";
+        request(appListUrl, function(error, response, body) {
             if (!error && response.statusCode === 200) {
-                steamCache = JSON.parse(body);
+                let parsedBody = JSON.parse(body);
+                if (parsedBody && parsedBody.applist && parsedBody.applist.apps) {
+                    steamCache = parsedBody.applist.apps;
+                }
                 return resolve(true);
             }
 
@@ -29,85 +32,86 @@ async function cacheSteamLibrary() {
 }
 
 async function getAppIdFromSteamCache(requestedGame) {
-    return new Promise(async function(resolve, reject) {
-        // Try to cache library if we don't have one yet.
-        if (steamCache.length === 0) {
-            let cached = await cacheSteamLibrary();
-            // If we get false, stop. This means something failed.
-            if (cached === false) {
-                return resolve(false);
+    // Try to cache library if we don't have one yet.
+    if (steamCache.length === 0) {
+        let cacheSuccess = await cacheSteamLibrary();
+        if (!cacheSuccess) {
+            return null;
+        }
+    }
+
+    // Now, let's search the app list and get the closest result.
+    let searchOptions = {
+        keys: ['name'],
+        id: 'appid'
+    };
+    let fuse = new Fuse(steamCache, searchOptions);
+
+    let search = fuse.search(requestedGame);
+    if (search.length > 0) {
+        return search[0];
+    }
+
+    return null;
+}
+
+function getSteamAppDetails(appId) {
+    return new Promise(resolve => {
+        const appDetailsUrl = `https://store.steampowered.com/api/appdetails?appids=${appId}`;
+
+        request(appDetailsUrl, function(error, response, body) {
+            if (!error && response.statusCode === 200 && body) {
+                let parsedBody = JSON.parse(body);
+                if (parsedBody) {
+                    let appData = parsedBody[appId];
+                    if (appData && appData.success && appData.data) {
+                        return resolve(appData.data);
+                    }
+                }
             }
-        }
-
-        // Now, let's search the app list and get the closest result.
-        let steamApps = steamCache["applist"]["apps"];
-        let searchOptions = {
-            keys: ['name'],
-            id: 'appid'
-        };
-        let fuse = new Fuse(steamApps, searchOptions);
-        let search = fuse.search(requestedGame);
-        if (search.length > 0) {
-            return resolve(search[0]);
-        }
-
-        return resolve(false);
+            resolve(null);
+        });
     });
 }
 
+
 async function getSteamGameDetails(requestedGame) {
-    return new Promise(async function(resolve, reject) {
+    return new Promise(async function(resolve) {
+
         let appId = await getAppIdFromSteamCache(requestedGame);
-        if (appId === false && appId != null) {
+        if (appId == null || appId === "") {
             logger.debug('Could not retrieve app id for steam search.');
-            return resolve(false);
+            return resolve(null);
         }
 
-        let steamAPI = "https://store.steampowered.com/api/appdetails?appids=" + appId;
-        request(steamAPI, function(error, response, body) {
-            if (!error && response.statusCode === 200) {
-                body = JSON.parse(body);
+        const foundGame = await getSteamAppDetails(appId);
 
-                if (body[appId] == null) {
-                    logger.error("Unable to get body[appId] from steam api.");
-                    return resolve(false);
-                }
+        if (foundGame == null) {
+            logger.error("Unable to get game from steam api.");
+            return resolve(null);
+        }
 
-                let foundGame = body[appId].data;
+        let gameDetails = {
+            name: foundGame.name || "Unknown Name",
+            price: null,
+            score: null,
+            releaseDate: null,
+            url: `https://store.steampowered.com/app/${appId}`
+        };
 
-                if (foundGame == null) {
-                    logger.error("Unable to get foundGame from steam api.");
-                    return resolve(false);
-                }
+        if (foundGame.price_overview) {
+            gameDetails.price = foundGame.price_overview.final_formatted;
+        }
 
-                let gameDetails = {
-                    name: foundGame.name,
-                    price: "N/A",
-                    score: "N/A",
-                    releaseDate: "N/A",
-                    url: "https://store.steampowered.com/app/" + appId
-                };
+        if (foundGame.metacritic) {
+            gameDetails.score = foundGame.metacritic.score;
+        }
 
-                // TODO: Sometimes these fields are included and sometimes not...
-                // TODO: What is the best way to check these?
-                if (foundGame.price_overview != null && foundGame.price_overview.final_formatted != null) {
-                    gameDetails.price = foundGame.price_overview.final_formatted;
-                }
+        if (foundGame.release_date) {
+            gameDetails.releaseDate = foundGame.release_date.date;
+        }
 
-                if (foundGame.metacritic != null && foundGame.metacritic.score != null) {
-                    gameDetails.score = foundGame.metacritic.score;
-                }
-
-                if (foundGame.release_date != null && foundGame.release_date.date != null) {
-                    gameDetails.releaseDate = foundGame.release_date.date;
-                }
-
-                return resolve(gameDetails);
-            }
-
-            logger.error("Unable to get steam library from steam API.");
-            return resolve(false);
-        });
+        return resolve(gameDetails);
     });
 }
 

@@ -23,6 +23,8 @@ const emotesManager = require("./emotes-manager");
 const activeChatter = require('../chat/active-chatters');
 
 require('request-debug')(request, function(type, data) {
+    //huge json response from steam, dont log this bad boi
+    if (data.body && data.body.applist) return;
     logger.debug("Request debug: ", { type: type, data: JSON.stringify(data) });
 });
 
