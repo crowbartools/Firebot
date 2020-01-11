@@ -13,11 +13,13 @@
             // factory/service object
             let service = {};
 
-            service.updateData = {};
+            service.updateData = null;
 
             service.isCheckingForUpdates = false;
 
             service.hasCheckedForUpdates = false;
+
+            service.hasReleaseData = false;
 
             service.updateIsAvailable = function() {
                 return service.hasCheckedForUpdates ? service.updateData.updateIsAvailable : false;
@@ -63,59 +65,81 @@
                         // Get app version
                         let currentVersion = require('electron').remote.app.getVersion();
 
+                        const releases = response.data;
+
+                        let latestRelease = null;
+                        let latestUpdateType = null;
+                        let majorRelease = null;
+                        for (let release of releases) {
+                            // Now lets look to see if there is a newer version.
+                            let updateType = VersionCompare.compareVersions(release.tag_name, currentVersion);
+
+                            if (majorRelease == null && (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE)) {
+                                majorRelease = release;
+
+                                service.majorUpdate = {
+                                    gitName: release.name,
+                                    gitVersion: release.tag_name,
+                                    gitLink: release.html_url
+                                };
+
+                            } else if (updateType === UpdateType.PRERELEASE ||
+                                updateType === UpdateType.OFFICIAL ||
+                                updateType === UpdateType.PATCH ||
+                                updateType === UpdateType.MINOR ||
+                                updateType === UpdateType.NONE) {
+                                latestRelease = release;
+                                latestUpdateType = updateType;
+                                break;
+                            }
+                        }
+
                         // Parse github api to get tag name.
-                        let gitNewest = {};
-                        if (response.data.length > 0) {
-                            gitNewest = response.data[0];
+                        let gitNewest = latestRelease;
+
+                        if (gitNewest != null) {
+                            let gitName = gitNewest.name;
+                            let gitDate = gitNewest.published_at;
+                            let gitLink = gitNewest.html_url;
+                            let gitNotes = marked(gitNewest.body);
+                            let gitZipDownloadUrl = gitNewest.assets[0].browser_download_url;
+
+                            // Now lets look to see if there is a newer version.
+
+                            let updateIsAvailable = false;
+                            if (latestUpdateType !== UpdateType.NONE) {
+                                let autoUpdateLevel = settingsService.getAutoUpdateLevel();
+
+                                // Check if we should auto update based on the users setting
+                                if (shouldAutoUpdate(autoUpdateLevel, latestUpdateType)) {
+                                    utilityService.showDownloadModal();
+                                    listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
+                                } else {
+                                    // Dont autoupdate, just notify the user
+                                    updateIsAvailable = true;
+                                }
+                            }
+
+                            // Build update object.
+                            let updateObject = {
+                                gitName: gitName,
+                                gitVersion: gitNewest.tag_name,
+                                gitDate: gitDate,
+                                gitLink: gitLink,
+                                gitNotes: $sce.trustAsHtml(gitNotes),
+                                gitZipDownloadUrl: gitZipDownloadUrl,
+                                updateIsAvailable: updateIsAvailable
+                            };
+
+                            service.updateData = updateObject;
+
+                            service.hasCheckedForUpdates = true;
+                            service.isCheckingForUpdates = false;
+
+                            resolve(updateObject);
                         } else {
-                            gitNewest = response.data;
+                            resolve(false);
                         }
-
-                        let gitName = gitNewest.name;
-                        let gitDate = gitNewest.published_at;
-                        let gitLink = gitNewest.html_url;
-                        let gitNotes = marked(gitNewest.body);
-                        let gitZipDownloadUrl = gitNewest.assets[0].browser_download_url;
-
-                        // Now lets look to see if there is a newer version.
-                        let updateType = VersionCompare.compareVersions(gitNewest.tag_name, currentVersion);
-
-                        let updateIsAvailable = false, updateIsMajorRelease = false;
-                        if (updateType !== UpdateType.NONE) {
-                            let autoUpdateLevel = settingsService.getAutoUpdateLevel();
-
-                            if (updateType === UpdateType.MAJOR || updateType === UpdateType.MAJOR_PRERELEASE) {
-                                updateIsMajorRelease = true;
-                            }
-
-                            // Check if we should auto update based on the users setting
-                            if (shouldAutoUpdate(autoUpdateLevel, updateType)) {
-                                utilityService.showDownloadModal();
-                                listenerService.fireEvent(listenerService.EventType.DOWNLOAD_UPDATE);
-                            } else {
-                                // Dont autoupdate, just notify the user
-                                updateIsAvailable = true;
-                            }
-                        }
-
-                        // Build update object.
-                        let updateObject = {
-                            gitName: gitName,
-                            gitVersion: gitNewest.tag_name,
-                            gitDate: gitDate,
-                            gitLink: gitLink,
-                            gitNotes: $sce.trustAsHtml(gitNotes),
-                            gitZipDownloadUrl: gitZipDownloadUrl,
-                            updateIsAvailable: updateIsAvailable,
-                            updateIsMajorPrelease: updateIsMajorRelease
-                        };
-
-                        service.updateData = updateObject;
-
-                        service.hasCheckedForUpdates = true;
-                        service.isCheckingForUpdates = false;
-
-                        resolve(updateObject);
                     }, (error) => {
                         service.isCheckingForUpdates = false;
                         logger.error(error);

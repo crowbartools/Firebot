@@ -615,7 +615,7 @@ function startAutoUpdater() {
 
         // Download Update
         let options = {
-            repo: "firebottle/firebot",
+            repo: "crowbartools/firebot",
             currentVersion: app.getVersion()
         };
 

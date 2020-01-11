@@ -10,8 +10,12 @@ module.exports = function(grunt) {
                 appDirectory: WORKING_DIR + '/dist/Firebot-win32-x64',
                 outputDirectory: WORKING_DIR + '/dist/installer64',
                 loadingGif: WORKING_DIR + '/gui/images/animated.gif',
-                iconUrl: 'https://crowbartools.com/projects/firebot/logo.ico',
-                setupIcon: WORKING_DIR + '/gui/images/logo.ico'
+                iconUrl: WORKING_DIR + '/gui/images/icon_transparent.ico',
+                setupIcon: WORKING_DIR + '/gui/images/icon_transparent.ico',
+                exe: "Firebot V5.exe",
+                title:" Firebot V5",
+                setupExe: "FirebotV5Setup.exe",
+                setupMsi: "FirebotV5Setup.msi"
             }
         },
 		'jsdoc' : {

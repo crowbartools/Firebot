@@ -18,6 +18,7 @@ const semverRegex = /^v?(\d+)(?:[.](\d+))?(?:[.](\d+))?(?:-([a-z]*)[\W]?([\d]*))
 
 let UpdateType = {
     NONE: "none",
+    PREVIOUS_VERSION: "previousversion", // 1.0.0 -> 1.1.0-beta,
     PRERELEASE: "prerelease", // 1.0.0 -> 1.1.0-beta
     OFFICIAL: "official", // 1.0.0-beta -> 1.0.0
     PATCH: "patch", // 1.0.0 -> 1.0.1
@@ -58,6 +59,11 @@ function compareVersions(newVersion, currentVersion) {
     let minorsAreEqual = pNewVersion.minor === pCurrentVersion.minor;
     let patchesAreEqual = pNewVersion.patch === pCurrentVersion.patch;
 
+    // check if previous version
+    if (pNewVersion.major < pCurrentVersion.major) {
+        return UpdateType.PREVIOUS_VERSION;
+    }
+
     // Check if the new version has a greater major version
     // x.0.0
     if (pNewVersion.major > pCurrentVersion.major) {
@@ -70,11 +76,7 @@ function compareVersions(newVersion, currentVersion) {
 
     // then check the patch(bugfix) version
     // 1.0.x
-    } else if (
-        majorsAreEqual &&
-    minorsAreEqual &&
-    pNewVersion.patch > pCurrentVersion.patch
-    ) {
+    } else if (majorsAreEqual && minorsAreEqual && pNewVersion.patch > pCurrentVersion.patch) {
         updateType = UpdateType.PATCH;
     }
 

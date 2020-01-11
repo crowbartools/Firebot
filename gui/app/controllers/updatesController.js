@@ -5,9 +5,12 @@
     angular
         .module("firebotApp")
         .controller("updatesController", function($scope, updatesService) {
+
             $scope.getUpdateData = function() {
                 return updatesService.updateData;
             };
+
+            $scope.us = updatesService;
 
             // Get update information if we havent alreday
             if (!updatesService.hasCheckedForUpdates) {
