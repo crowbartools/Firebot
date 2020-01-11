@@ -11,6 +11,7 @@ exports.loadCommands = () => {
     const mixerage = require("./builtin/mixerage");
     const quotesManagement = require('./builtin/quotes');
     const currencyManager = require('../../currency/currencyManager');
+    const steam = require("./builtin/steam");
 
     // register them
     commandManager.registerSystemCommand(commandList);
@@ -19,6 +20,7 @@ exports.loadCommands = () => {
     commandManager.registerSystemCommand(followage);
     commandManager.registerSystemCommand(mixerage);
     commandManager.registerSystemCommand(quotesManagement);
+    commandManager.registerSystemCommand(steam);
 
     currencyManager.createAllCurrencyCommands();
 };
