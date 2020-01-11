@@ -35,7 +35,7 @@
                         </ul>
                     </div>
 
-                    <div ng-switch="$ctrl.currentFilterDef.valueType">
+                    <div ng-switch="$ctrl.currentFilterDef.valueType" style="flex: 1 1 0;">
                         <div ng-switch-when="preset">
 
                             <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
@@ -51,7 +51,7 @@
 
                         </div>
                         <div ng-switch-default>
-                            <input type="{{$ctrl.currentFilterDef.valueType}}" class="form-control" style="min-width: 100px;flex: 1 1 auto;width: auto;" ng-model="$ctrl.selectedFilter.value" placeholder="Value">
+                            <input type="{{$ctrl.currentFilterDef.valueType}}" class="form-control" style="min-width: 100px;" ng-model="$ctrl.selectedFilter.value" placeholder="Value">
                         </div>
                     </div>         
                 </div>

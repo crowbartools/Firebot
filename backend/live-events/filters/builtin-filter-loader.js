@@ -15,6 +15,8 @@ exports.loadFilters = () => {
     const donationFrom = require("./builtin/donation-from");
     const donationAmount = require("./builtin/donation-amount");
 
+    const patronageEarned = require("./builtin/patronage-earned");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -25,4 +27,6 @@ exports.loadFilters = () => {
 
     filterManager.registerFilter(donationFrom);
     filterManager.registerFilter(donationAmount);
+
+    filterManager.registerFilter(patronageEarned);
 };

@@ -161,6 +161,16 @@ const mixerEventSource = {
             manualMetadata: {
                 username: "Firebot"
             }
+        },
+        {
+            id: "patronage-milestone",
+            name: "Spark Patronage Milestone",
+            description: "When the channel reaches a spark patronage milestone",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot"
+            }
         }
     ]
 };

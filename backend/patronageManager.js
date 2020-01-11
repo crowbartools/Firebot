@@ -5,8 +5,7 @@ const logger = require("./logwrapper");
 const request = require("request");
 const accountAccess = require("./common/account-access");
 
-const { LiveEvent, EventType, EventSourceType } = require('./live-events/EventType');
-const eventRouter = require('./live-events/events-router');
+const eventManager = require("./live-events/EventManager");
 
 const CLIENT_ID = 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9';
 
@@ -109,14 +108,12 @@ function setChannelPatronageData(channelData) {
 
                 logger.info("It appears we reached a new spark patronage milestone. Yay! Firing event.");
 
-                // fire firebot event
                 let streamerName = accountAccess.getAccounts().streamer.username;
-                let event = new LiveEvent(EventType.PATRONAGE_MILESTONE_REACHED, EventSourceType.CONSTELLATION, {
+                eventManager.triggerEvent("mixer", "patronage-milestone", {
                     username: streamerName,
-                    previousPatronageData: previousPatronageData
+                    previousPatronageData: previousPatronageData,
+                    newPatronageData: newPatronageData
                 });
-
-                eventRouter.uncachedEvent(event);
             }
         } else {
             //we are in a new period, get new period data

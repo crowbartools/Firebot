@@ -11,7 +11,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: () => {
-        return patronageManager.getPatronageData().channel.patronageEarned;
+        return patronageManager.getPatronageData().channel.patronageEarned || 0;
     }
 };
 
