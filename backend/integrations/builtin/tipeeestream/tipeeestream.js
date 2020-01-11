@@ -4,6 +4,8 @@ const io = require("socket.io-client");
 const request = require("request");
 const logger = require("../../../logwrapper");
 
+const tsEventHandler = require("./events/tipeeestream-event-handler");
+
 const integrationDefinition = {
     id: "tipeeestream",
     name: "TipeeeStream",
@@ -23,26 +25,6 @@ const integrationDefinition = {
         },
         scopes: ''
     }
-};
-
-const EVENT_SOURCE_ID = "tipeeestream";
-const EventId = {
-    DONATION: "donation"
-};
-
-const eventSourceDefinition = {
-    id: EVENT_SOURCE_ID,
-    name: "TipeeeStream",
-    description: "Donation/tip events from tipeeestream",
-    events: [
-        {
-            id: EventId.DONATION,
-            name: "Donation",
-            description: "When someone donates to you via TipeeeStream.",
-            cached: false,
-            queued: true
-        }
-    ]
 };
 
 function getTipeeeAPIKey(accessToken) {
@@ -89,8 +71,7 @@ class TipeeeStreamIntegration extends EventEmitter {
         this._socket = null;
     }
     init() {
-        const eventManager = require("../../../live-events/EventManager");
-        eventManager.registerEventSource(eventSourceDefinition);
+        tsEventHandler.registerEvents();
     }
     async connect(integrationData) {
         let { auth } = integrationData;
@@ -135,20 +116,9 @@ class TipeeeStreamIntegration extends EventEmitter {
             this.emit("disconnected", integrationDefinition.id);
         });
 
-        const eventManager = require("../../../live-events/EventManager");
-
         this._socket.on("new-event", data => {
             let eventData = data.event;
-            if (eventData === null) return;
-            if (eventData.type === "donation") {
-                let donoData = eventData.parameters;
-                eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
-                    formattedDonationAmmount: eventData.formattedAmount,
-                    dononationAmount: donoData.amount,
-                    donationMessage: donoData.formattedMessage,
-                    from: donoData.username
-                });
-            }
+            tsEventHandler.registerEvents(eventData);
         });
 
         this.emit("connected", integrationDefinition.id);

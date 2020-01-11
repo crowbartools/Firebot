@@ -55,6 +55,11 @@ exports.loadReplaceVariables = () => {
     const skillStickerUrl = require("./builtin/skill-sticker-url");
     const skillGifUrl = require("./builtin/skill-gif-url");
 
+    const donationAmount = require("./builtin/donationAmount");
+    const donationAmountFormatted = require("./builtin/donationAmountFormatted");
+    const donationMessage = require("./builtin/donationMessage");
+    const donationFrom = require("./builtin/donationFrom");
+
 
     // register them
     replaceVariableManager.registerReplaceVariable(user);
@@ -108,4 +113,9 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(skillCurrencyType);
     replaceVariableManager.registerReplaceVariable(skillStickerUrl);
     replaceVariableManager.registerReplaceVariable(skillGifUrl);
+
+    replaceVariableManager.registerReplaceVariable(donationAmount);
+    replaceVariableManager.registerReplaceVariable(donationAmountFormatted);
+    replaceVariableManager.registerReplaceVariable(donationMessage);
+    replaceVariableManager.registerReplaceVariable(donationFrom);
 };

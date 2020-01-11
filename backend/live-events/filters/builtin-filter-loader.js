@@ -12,6 +12,9 @@ exports.loadFilters = () => {
     const skillCurrencyTypeFilter = require("./builtin/skill-currency-type");
     const skillCost = require("./builtin/skill-cost");
 
+    const donationFrom = require("./builtin/donation-from");
+    const donationAmount = require("./builtin/donation-amount");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -20,4 +23,6 @@ exports.loadFilters = () => {
     filterManager.registerFilter(skillCurrencyTypeFilter);
     filterManager.registerFilter(skillCost);
 
+    filterManager.registerFilter(donationFrom);
+    filterManager.registerFilter(donationAmount);
 };
