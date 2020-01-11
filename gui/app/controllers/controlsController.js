@@ -12,7 +12,8 @@
             $timeout,
             settingsService,
             $http,
-            backendCommunicator
+            backendCommunicator,
+            objectCopyHelper
         ) {
 
             $scope.previewEnabled = settingsService.mixPlayPreviewModeEnabled();
@@ -177,6 +178,62 @@
                 });
             };
 
+            $scope.copyControl = function(control, duplicate) {
+                if (duplicate) {
+                    let copiedControl = objectCopyHelper.copyAndReplaceIds(control);
+                    control.position = [];
+                    mixplayService.saveControlForCurrentScene(copiedControl);
+                    mixplayService.triggerControlUpdatedEvent(copiedControl.id);
+                } else {
+                    objectCopyHelper.copyObject("mixplayControl", control);
+                }
+            };
+
+            $scope.pasteControl = function() {
+                let control = objectCopyHelper.getCopiedObject("mixplayControl");
+                if (control) {
+                    // verify no position overlap
+                    let controlsOnGrid = mixplayService.getAllControlPositionsForGridSize(gridHelper.currentGridSize);
+                    let positions = control.position;
+                    for (let i = 0; i < positions.length; i++) {
+                        let position = positions[i];
+                        let obstructed = gridHelper.isAreaObstructed(position.x, position.y, position.width, position.height, controlsOnGrid);
+                        if (obstructed) {
+                            control.position.splice(i, 1);
+                        }
+                    }
+
+                    mixplayService.saveControlForCurrentScene(control);
+                    mixplayService.triggerControlUpdatedEvent(control.id);
+                    $scope.updateControlPositions();
+                }
+            };
+
+            $scope.hasCopiedControl = function() {
+                return objectCopyHelper.hasObjectCopied("mixplayControl");
+            };
+
+            $scope.hasCopiedScene = function() {
+                return objectCopyHelper.hasObjectCopied("mixplayScene");
+            };
+
+            $scope.copyScene = function(scene, duplicate) {
+                if (duplicate) {
+                    let copiedScene = objectCopyHelper.copyAndReplaceIds(scene);
+                    mixplayService.addAdditionalSceneToCurrentProject(copiedScene);
+                    $scope.updateControlPositions();
+                } else {
+                    objectCopyHelper.copyObject("mixplayScene", scene);
+                }
+            };
+
+            $scope.pasteScene = function() {
+                let scene = objectCopyHelper.getCopiedObject("mixplayScene");
+                if (!scene) return;
+                mixplayService.addAdditionalSceneToCurrentProject(scene);
+                $scope.updateControlPositions();
+            };
+
             $scope.deleteScene = function(scene) {
                 if (scene != null) {
 
@@ -215,6 +272,21 @@
                 }
             };
 
+            $scope.deleteAllControls = function() {
+                utilityService
+                    .showConfirmationModal({
+                        title: "Delete All Controls",
+                        question: `Are you sure you want to delete all controls for this scene?`,
+                        confirmLabel: "Delete",
+                        confirmBtnType: "btn-danger"
+                    })
+                    .then(confirmed => {
+                        if (confirmed) {
+                            mixplayService.deleteAllControlsForCurrentScene();
+                            $scope.updateControlPositions();
+                        }
+                    });
+            };
 
             $scope.showCreateMixplayModal = function() {
 

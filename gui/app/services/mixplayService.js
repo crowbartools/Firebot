@@ -157,7 +157,14 @@
 
                     service.saveProject(currentProject);
                 }
+            };
 
+            service.addAdditionalSceneToCurrentProject = function(scene) {
+                let currentProject = service.getCurrentProject();
+                if (currentProject != null) {
+                    currentProject.scenes.push(scene);
+                    service.saveProject(currentProject);
+                }
             };
 
             service.deleteSceneFromCurrentProject = function(id) {
@@ -360,9 +367,11 @@
 
                 if (indexOfControl !== -1) {
                     currentScene.controls[indexOfControl] = control;
-
-                    service.saveProject(service.getCurrentProject());
+                } else {
+                    currentScene.controls.push(control);
                 }
+
+                service.saveProject(service.getCurrentProject());
             };
 
             service.deleteControlForCurrentScene = function(controlId) {
@@ -375,6 +384,24 @@
                     backendCommunicator.fireEvent("controlsRemoved", {
                         sceneId: currentScene.id,
                         controlIds: [controlId]
+                    });
+                }
+            };
+
+            service.deleteAllControlsForCurrentScene = function() {
+                let currentScene = getCurrentScene();
+                if (currentScene) {
+
+                    let deletedControlIds = currentScene.controls.map(c => c.id);
+
+                    currentScene.controls = [];
+
+                    service.saveProject(service.getCurrentProject());
+
+                    if (currentProjectId !== activeProjectId) return;
+                    backendCommunicator.fireEvent("controlsRemoved", {
+                        sceneId: currentScene.id,
+                        controlIds: deletedControlIds
                     });
                 }
             };

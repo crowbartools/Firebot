@@ -42,6 +42,39 @@
                     });
             };
 
+            let copiedObjectsCache = {};
+
+            service.copyAndReplaceIds = function(object) {
+                let copiedObject = JSON.parse(angular.toJson(object));
+                let keys = Object.keys(copiedObject);
+
+                for (let key of keys) {
+                    let value = copiedObject[key];
+
+                    if (key === "id") {
+                        copiedObject[key] = uuid();
+                    } else if (value && typeof value === "object") {
+                        copiedObject[key] = service.copyAndReplaceIds(value);
+                    }
+                }
+
+                return copiedObject;
+            };
+
+            service.copyObject = (key, object) => {
+                const copied = service.copyAndReplaceIds(object);
+                copiedObjectsCache[key] = object;
+                return copied;
+            };
+
+            service.hasObjectCopied = (key) => copiedObjectsCache[key] != null;
+
+            service.getCopiedObject = (key) => {
+                let object = copiedObjectsCache[key];
+                if (!object) return null;
+                return service.copyAndReplaceIds(object);
+            };
+
             return service;
         });
 }());

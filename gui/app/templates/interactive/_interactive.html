@@ -107,7 +107,20 @@
       <div class="editior-column">
         <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0">
             <span class="noselect">Scenes</span>
-            <div class="clickable" ng-click="showCreateSceneModal()"><i class="fas fa-plus-circle"></i></div>
+
+            <div class="flex-row-center">
+              <div class="clickable" ng-click="showCreateSceneModal()"><i class="fas fa-plus-circle"></i></div>
+
+              <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 10px;text-align: center;display: flex;align-items: center;justify-content: center;margin-left: 7px;">
+                <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
+                <ul class="dropdown-menu" uib-dropdown-menu>
+                    <li ng-class="{'disabled': !hasCopiedScene()}" ng-click="pasteScene()" ng-disabled="!hasCopiedScene()">
+                        <a href ><i class="far fa-paste" style="margin-right: 10px;"></i> Paste Scene</a>
+                    </li>
+                </ul>
+              </div>
+            </div>
+            
         </div>
 
         <div style="height: 100%; overflow-y: auto;">
@@ -127,8 +140,11 @@
                             <li ng-click="showRenameSceneModal(scene)">
                                 <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename scene</a>
                             </li>
-                            <li ng-click="" class="disabled">
+                            <li ng-click="copyScene(scene, true)">
                                 <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate scene</a>
+                            </li>
+                            <li ng-click="copyScene(scene, false)">
+                                <a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy scene</a>
                             </li>
                             <li ng-click="deleteScene(scene)">
                                 <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete scene</a>
@@ -144,7 +160,22 @@
       <div class="editior-column">
         <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0;">
           <span class="noselect">Controls</span>
-          <div class="clickable" ng-click="showCreateControlModal()" ng-show="mps.hasSceneSelected()"><i class="fas fa-plus-circle"></i></div>
+          <div class="flex-row-center">
+            <div class="clickable" ng-click="showCreateControlModal()" ng-show="mps.hasSceneSelected()"><i class="fas fa-plus-circle"></i></div>
+
+              <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 10px;text-align: center;display: flex;align-items: center;justify-content: center;margin-left: 7px;">
+                <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
+                <ul class="dropdown-menu" uib-dropdown-menu>
+                    <li ng-class="{'disabled': !hasCopiedControl()}" ng-click="pasteControl()" ng-disabled="!hasCopiedControl()">
+                        <a href ><i class="far fa-paste" style="margin-right: 10px;"></i> Paste control</a>
+                    </li>
+
+                    <li ng-click="deleteAllControls()">
+                        <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all controls</a>
+                    </li>
+                </ul>
+              </div>
+          </div>  
         </div>
 
         <div style="height: 100%; overflow-y: auto;">
@@ -169,10 +200,12 @@
                         <li ng-click="editControl(control)">
                             <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>
                         </li>
-                        <li ng-click="" class="disabled">
+                        <li ng-click="copyControl(control, true)">
                             <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate control</a>
                         </li>
-
+                        <li ng-click="copyControl(control)">
+                            <a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy control</a>
+                        </li>
                         <li ng-click="deleteControl(control)">
                             <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete control</a>
                         </li>

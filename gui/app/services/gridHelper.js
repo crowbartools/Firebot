@@ -76,6 +76,11 @@
                 return null;
             };
 
+            service.isAreaObstructed = function(startingX, startingY, areaWidth, areaHeight, currentTiles = []) {
+                let obstructions = buildObstructionsMap(currentTiles);
+                return areaIsObstructed(startingX, startingY, areaWidth, areaHeight, obstructions);
+            };
+
             service.GridSize = {
                 SMALL: "small",
                 MEDIUM: "medium",
