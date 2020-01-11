@@ -8,10 +8,12 @@ exports.loadRestrictions = function() {
     const channelCurrency = require("./builtin/channelCurrency");
     const activeChatUsers = require("./builtin/activeChatUsers");
     const customVariable = require('./builtin/customVariable');
+    const viewTime = require('./builtin/viewTimeRestriction');
 
     restrictionsManager.registerRestriction(permissions);
     restrictionsManager.registerRestriction(channelProgression);
     restrictionsManager.registerRestriction(channelCurrency);
     restrictionsManager.registerRestriction(activeChatUsers);
     restrictionsManager.registerRestriction(customVariable);
+    restrictionsManager.registerRestriction(viewTime);
 };
