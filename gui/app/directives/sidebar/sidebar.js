@@ -89,7 +89,6 @@
                         <span><b>MixPlay Status:</b></span>
                         </br>
                         <span>{{$ctrl.cs.connectedToInteractive ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
-                        <span ng-if="$ctrl.cs.connectedToInteractive"></br>{{'(' +  $ctrl.cs.connectedBoard + ')'}}</span>
                         </br></br>
                       </span>
                       <span>
