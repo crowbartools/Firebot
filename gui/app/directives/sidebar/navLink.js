@@ -37,7 +37,7 @@
 
             ctrl.getClass = function() {
                 let isSelected = sidebarManager.tabIsSelected(ctrl.page);
-                return `${isSelected ? "fas" : "fal"} ${ctrl.icon}`;
+                return `${isSelected ? "fad" : "fal"} ${ctrl.icon}`;
             };
         }
     });
