@@ -62,6 +62,8 @@ exports.loadReplaceVariables = () => {
 
     const currency = require("./builtin/currency");
 
+    const costreamChannels = require("./builtin/costream");
+
     // register them
     replaceVariableManager.registerReplaceVariable(user);
     replaceVariableManager.registerReplaceVariable(subMonths);
@@ -121,4 +123,6 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(donationFrom);
 
     replaceVariableManager.registerReplaceVariable(currency);
+
+    replaceVariableManager.registerReplaceVariable(costreamChannels);
 };
