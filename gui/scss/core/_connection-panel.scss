@@ -16,16 +16,17 @@
     }
     & .connection-button {
         cursor: pointer;
-        color: #ff2020;
+        color: gray;
         font-size: 40px;
-        &:hover {
-            color: #d81919;
-        }
+        min-height: 56.8px;
         &.connected {
             color: green;
         }
         &.connecting {
-            color: black;
+            color: $connection-tile-title;
+        }
+        &:hover {
+            opacity: 0.8;
         }
     }
 
@@ -70,7 +71,7 @@
             background: lightgreen;
         }
         &.disconnected {
-            background: #ff5f5f;
+            background: grey;
         }
         &.warning {
             background: gold;

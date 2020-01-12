@@ -15,12 +15,10 @@
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div class="connection-tile">
                             <span class="connection-title">MixPlay <tooltip text="'Used for interactive buttons and controls'"></tooltip></span>
-                            <div class="connection-button"
-                                ng-class="{'connected': $ctrl.conn.connectedToInteractive, 'connecting': $ctrl.conn.waitingForStatusChange}"
-                                ng-click="$ctrl.conn.toggleConnectionToInteractive()">
-                                <i class="fal"
-                                ng-class="$ctrl.conn.waitingForStatusChange ? 'fa-sync fa-spin' : 'fa-power-off'"></i>
-                            </div>
+                            <connection-button 
+                                connected="$ctrl.conn.connectedToInteractive" 
+                                connecting="$ctrl.conn.waitingForStatusChange"
+                                on-connection-click="$ctrl.conn.toggleConnectionToInteractive()"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have MixPlay be controlled by the sidebar connect button.'"></tooltip></div>
                                 <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
@@ -31,12 +29,10 @@
                         </div>
                         <div class="connection-tile">
                             <span class="connection-title">Chat <tooltip text="'Used for commands, chat effects, chat feed, sticker events, etc.'"></tooltip></span>
-                            <div class="connection-button"
-                                ng-class="{'connected': $ctrl.conn.connectedToChat, 'connecting': $ctrl.conn.waitingForChatStatusChange}"
-                                ng-click="$ctrl.conn.toggleConnectionToChat()">
-                                <i class="fal"
-                                ng-class="$ctrl.conn.waitingForChatStatusChange ? 'fa-sync fa-spin' : 'fa-power-off'"></i>
-                            </div>
+                            <connection-button 
+                                connected="$ctrl.conn.connectedToChat" 
+                                connecting="$ctrl.conn.waitingForChatStatusChange"
+                                on-connection-click="$ctrl.conn.toggleConnectionToChat()"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Chat be controlled by the sidebar connect button.'"></tooltip></div>
                                 <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
@@ -46,15 +42,13 @@
                             </div>
                         </div>
                         <div class="connection-tile">
-                            <span class="connection-title">Constellation <tooltip text="'Used for events, live viewer count on chat feed, Skills, etc'"></tooltip></span>
-                            <div class="connection-button"
-                                ng-class="{'connected': $ctrl.conn.connectedToConstellation, 'connecting': $ctrl.conn.waitingForConstellationStatusChange}"
-                                ng-click="$ctrl.conn.toggleConnectionToConstellation()">
-                                <i class="fal"
-                                ng-class="$ctrl.conn.waitingForConstellationStatusChange ? 'fa-sync fa-spin' : 'fa-power-off'"></i>
-                            </div>
+                            <span class="connection-title">Events <tooltip text="'Used for events, live viewer count on chat feed, Skills, etc'"></tooltip></span>
+                            <connection-button 
+                                connected="$ctrl.conn.connectedToConstellation" 
+                                connecting="$ctrl.conn.waitingForConstellationStatusChange"
+                                on-connection-click="$ctrl.conn.toggleConnectionToConstellation()"></connection-button>
                             <div class="sub-title">
-                                <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Constellation be controlled by the sidebar connect button.'"></tooltip></div>
+                                <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Events be controlled by the sidebar connect button.'"></tooltip></div>
                                 <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
                                     <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('constellation')" ng-click="$ctrl.toggledServiceIsChecked('constellation')">
                                     <div class="control__indicator"></div>                                             
@@ -85,12 +79,10 @@
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div class="connection-tile" style="margin-right: 10px;" ng-repeat="integration in $ctrl.is.getLinkedIntegrations()">
                             <span class="connection-title">{{integration.name}} <tooltip text="integration.description"></tooltip></span>
-                            <div class="connection-button"
-                                ng-class="{'connected': $ctrl.is.integrationIsConnected(integration.id), 'connecting': $ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id)}"
-                                ng-click="$ctrl.is.toggleConnectionForIntegration(integration.id)">
-                                <i class="fal"
-                                ng-class="$ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id) ? 'fa-sync fa-spin' : 'fa-power-off'"></i>
-                            </div>
+                            <connection-button 
+                                connected="$ctrl.is.integrationIsConnected(integration.id)" 
+                                connecting="$ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id)"
+                                on-connection-click="$ctrl.is.toggleConnectionForIntegration(integration.id)"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have ' + integration.name + ' be controlled by the sidebar connect button.'"></tooltip></div>
                                 <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 

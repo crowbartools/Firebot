@@ -48,9 +48,9 @@
                                     tooltip-placement="{{!$ctrl.sbm.navExpanded ? 'right-bottom' : 'top-left'}}"
                                     tooltip-append-to-body="true"
                                     ng-click="$ctrl.cm.toggleSidebarServices()">
-                                    <i class="fal" ng-class="$ctrl.cm.isWaitingForServicesStatusChange() ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
+                                    <i class="fad" ng-class="$ctrl.cm.isWaitingForServicesStatusChange() ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
                                 </div>
-                                <div>
+                                <div style="cursor:pointer;" ng-click="$ctrl.showConnectionPanelModal()">
                                     <div class="interactive-status-text">
                                         <div class="interative-status-title" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
                                             <span>Connections</span>
@@ -86,7 +86,7 @@
                 <script type="text/ng-template" id="connectTooltipTemplate.html">
                   <div ng-if="!$ctrl.sbm.navExpanded">
                     <span>
-                        <span><b>Interactive Status:</b></span>
+                        <span><b>MixPlay Status:</b></span>
                         </br>
                         <span>{{$ctrl.cs.connectedToInteractive ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
                         <span ng-if="$ctrl.cs.connectedToInteractive"></br>{{'(' +  $ctrl.cs.connectedBoard + ')'}}</span>
@@ -99,7 +99,7 @@
                         </br></br>
                       </span>
                       <span>
-                        <span><b>Constellation Status:</b></span>
+                        <span><b>Events Status:</b></span>
                         </br>
                         <span>{{$ctrl.cs.connectedToConstellation ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
                         </br></br>

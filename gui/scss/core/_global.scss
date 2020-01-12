@@ -299,11 +299,12 @@ body {
 
 .nav-header-title {
   color: $highlight-color;
-  font-size: 23px;
+  font-size: 28px;
   opacity: 1;
   transition: 0.3s;
   text-transform: capitalize;
   font-weight: 100;
+  font-family: Quicksand;
 }
 
 .nav-header-title.contracted {
