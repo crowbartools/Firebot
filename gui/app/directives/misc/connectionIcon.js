@@ -45,7 +45,7 @@
             const ConnectionIcon = {
                 INTERACTIVE: "fa-gamepad",
                 CHAT: "fa-comment",
-                CONSTELLATION: "fa-star",
+                CONSTELLATION: "fa-list",
                 OVERLAY: "fa-tv-retro",
                 INTEGRATIONS: "fa-globe"
             };
