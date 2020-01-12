@@ -76,7 +76,7 @@
 
             $ctrl.effectQueue = {
                 name: "",
-                mode: "auto"
+                mode: "interval"
             };
 
             $ctrl.$onInit = function() {
