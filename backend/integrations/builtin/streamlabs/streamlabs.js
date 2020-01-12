@@ -24,6 +24,7 @@ const integrationDefinition = {
             tokenPath: '/api/v1.0/token',
             authorizePath: '/api/v1.0/authorize'
         },
+        autoRefreshToken: false,
         scopes: 'donations.read socket.token'
     }
 };

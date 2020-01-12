@@ -191,25 +191,31 @@ class IntegrationManager extends EventEmitter {
         };
 
         if (int.definition.linkType === "auth") {
-            const updatedToken = await authManager.refreshTokenIfExpired(int.definition.authProviderDetails.id,
-                int.definition.auth);
 
-            if (updatedToken == null) {
-                logger.warn("Could not refresh integration access token!");
+            let authData = int.definition.auth;
+            if (int.definition.authProviderDetails && int.definition.authProviderDetails.autoRefreshToken) {
+                const updatedToken = await authManager.refreshTokenIfExpired(int.definition.authProviderDetails.id,
+                    int.definition.auth);
 
-                renderWindow.webContents.send("integrationConnectionUpdate", {
-                    id: integrationId,
-                    connected: false
-                });
+                if (updatedToken == null) {
+                    logger.warn("Could not refresh integration access token!");
 
-                logger.info(`Disconnected from ${int.definition.name}`);
+                    renderWindow.webContents.send("integrationConnectionUpdate", {
+                        id: integrationId,
+                        connected: false
+                    });
 
-                return;
+                    logger.info(`Disconnected from ${int.definition.name}`);
+
+                    return;
+                }
+
+                this.saveIntegrationAuth(int, updatedToken);
+
+                authData = updatedToken;
             }
 
-            this.saveIntegrationAuth(int, updatedToken);
-
-            integrationData.auth = updatedToken;
+            integrationData.auth = authData;
         } else if (int.definition.linkType === "id") {
             integrationData.accountId = int.definition.accountId;
         }

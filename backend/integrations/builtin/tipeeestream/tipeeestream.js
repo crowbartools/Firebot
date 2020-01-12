@@ -23,6 +23,7 @@ const integrationDefinition = {
             tokenPath: '/oauth/v2/token',
             authorizePath: '/oauth/v2/auth'
         },
+        autoRefreshToken: false,
         scopes: ''
     }
 };
@@ -74,13 +75,11 @@ class TipeeeStreamIntegration extends EventEmitter {
         tsEventHandler.registerEvents();
     }
     async connect(integrationData) {
-        let { auth } = integrationData;
+        let { settings } = integrationData;
 
-        let apiKey = null;
-        try {
-            apiKey = await getTipeeeAPIKey(auth['access_token']);
-        } catch (error) {
-            logger.error(error);
+        let apiKey = settings && settings.apiKey;
+
+        if (apiKey == null) {
             this.emit("disconnected", integrationDefinition.id);
             return;
         }
@@ -118,7 +117,7 @@ class TipeeeStreamIntegration extends EventEmitter {
 
         this._socket.on("new-event", data => {
             let eventData = data.event;
-            tsEventHandler.registerEvents(eventData);
+            tsEventHandler.processTipeeeStreamEvent(eventData);
         });
 
         this.emit("connected", integrationDefinition.id);

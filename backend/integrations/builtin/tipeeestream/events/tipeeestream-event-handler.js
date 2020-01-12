@@ -1,5 +1,5 @@
 "use strict";
-
+const logger = require('../../../../logwrapper');
 const eventManager = require("../../../../live-events/EventManager");
 
 const EVENT_SOURCE_ID = "tipeeestream";
@@ -27,6 +27,7 @@ exports.registerEvents = () => {
 };
 
 exports.processTipeeeStreamEvent = (eventData) => {
+    logger.debug("Tipeee event received", eventData);
     if (eventData === null) return;
     if (eventData.type === "donation") {
         let donoData = eventData.parameters;
