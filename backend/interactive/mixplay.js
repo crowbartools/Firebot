@@ -107,6 +107,17 @@ function addControlHandlers(controls) {
 }
 
 function connectToMixplay() {
+
+    if (!mixplayManager.hasProjects()) {
+        // no projects saved yet.
+        renderWindow.webContents.send('connection', "Offline");
+        mixplayManager.setConnectedProjectId(null);
+        mixplayConnected = false;
+        defaultSceneId = null;
+        renderWindow.webContents.send("error", "Unable to connect to MixPlay as there are no projects created yet. If you do not wish to connect to MixPlay at this time, you can uncheck 'Sidebar Controlled' for MixPlay in the Connections Panel (click the connections in the sidebar).");
+        return;
+    }
+
     let activeProjectId = settings.getActiveMixplayProjectId();
 
     // clear our hidden controls cache, this is used in the update control effect

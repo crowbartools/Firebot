@@ -141,5 +141,6 @@ exports.getControlInProject = function(projectId, controlId) {
     return null;
 };
 
+exports.hasProjects = () => projects != null && getProjects().length > 0;
 exports.getProjectById = getProjectById;
 exports.loadProjects = loadProjects;
