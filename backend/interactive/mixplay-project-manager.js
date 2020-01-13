@@ -6,6 +6,7 @@ const profileManager = require("../common/profile-manager");
 const fs = require("fs");
 const path = require("path");
 const settings = require("../common/settings-access").settings;
+const uuid = require("uuid/v1");
 
 const MIXPLAY_FOLDER = profileManager.getPathInProfile("/mixplay/");
 
@@ -65,12 +66,19 @@ function createNewProject(name) {
     let now = new Date();
     let id = now.getTime().toString();
 
+    let mainSceneId = uuid();
+    let mainScene = {
+        id: mainSceneId,
+        name: "Main",
+        controls: []
+    };
+
     let newProject = {
         id: id,
         name: name,
         createdAt: now,
-        defaultSceneId: null,
-        scenes: []
+        defaultSceneId: mainSceneId,
+        scenes: [mainScene]
     };
 
     saveProject(newProject);

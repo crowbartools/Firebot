@@ -109,6 +109,7 @@
                 if (activeProjectId == null) {
                     service.setActiveMixplayProjectId(newProject.id);
                 }
+                selectFirstScene();
             };
 
             service.saveProject = function(project) {
@@ -144,7 +145,6 @@
                     let newScene = {
                         id: newId,
                         name: sceneName,
-                        assignedGroups: [],
                         controls: []
                     };
 

@@ -1,8 +1,13 @@
 <!--Controls Tabs-->
 
 <div style="min-width: 500px;height: 100%">
-  <div ng-hide="mps.hasAtLeastOneProject()" style="padding: 20px;">
-    <button ng-click="showCreateMixplayModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> Create MixPlay Project</button>
+  <div ng-hide="mps.hasAtLeastOneProject()" style="padding: 20px;width: 100%;display: flex;height: 100%;justify-content: center;align-items: baseline;">
+    <div style="display:flex;flex-direction: column;justify-content: center;align-items: center;max-width: 400px;border-radius: 6px;padding: 20px;background: #222426;user-select: none;">
+        <div style="font-size: 50px;font-weight: 100;font-family: Quicksand;cursor: default;">MixPlay</div>
+        <i class="fad fa-gamepad" style="font-size: 133px;line-height: 0.7;margin: 14px 0px;"></i>
+        <p style="text-align: center;opacity: 0.9;font-weight: 200;margin-bottom: 20px;cursor: default;">Build controls that appear under your stream which allow your viewers to trigger effects, play sounds, send chat messages, and so much more.</p>
+        <button ng-click="showCreateMixplayModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> Create First MixPlay Project</button>
+    </div>
   </div>
   <div ng-show="mps.hasAtLeastOneProject()" style="height: 100%;display: flex;flex-direction: column;">
 
@@ -106,7 +111,7 @@
     <div ng-show="activeMixPlayTab === 0" id="testDivFb" class="flex-row" style="height: 100%">
       <div class="editior-column">
         <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0">
-            <span class="noselect">Scenes</span>
+            <span class="noselect">Scenes <tooltip text="'Scenes are collections of controls. You can have many scenes and you can set it up to allow viewers to switch between them.'"></tooltip></span>
 
             <div class="flex-row-center">
               <div class="clickable" ng-click="showCreateSceneModal()"><i class="fas fa-plus-circle"></i></div>
@@ -135,7 +140,7 @@
                         <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
                         <ul class="dropdown-menu" uib-dropdown-menu>
                             <li ng-class="{'disabled': mps.sceneIsDefaultForCurrentProject(scene.id)}">
-                                <a href ng-click="mps.setSceneInCurrentProjectAsDefault(scene.id)"><i class="far fa-home" style="margin-right: 10px;"></i> Set as default</a>
+                                <a href ng-click="mps.setSceneInCurrentProjectAsDefault(scene.id)"><i class="far fa-home" style="margin-right: 10px;"></i> Set as default <tooltip text="'The default scene is the first scene all viewers will see when initially loading into your channel.'"></tooltip></a>
                             </li>
                             <li ng-click="showRenameSceneModal(scene)">
                                 <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename scene</a>
@@ -159,7 +164,7 @@
         </div>
       <div class="editior-column">
         <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0;">
-          <span class="noselect">Controls</span>
+          <span class="noselect">Controls <tooltip text="'A control is a button/textfield/etc that a viewer can interact with to trigger effects in Firebot.'"></tooltip></span>
           <div class="flex-row-center">
             <div class="clickable" ng-click="showCreateControlModal()" ng-show="mps.hasSceneSelected()"><i class="fas fa-plus-circle"></i></div>
 
