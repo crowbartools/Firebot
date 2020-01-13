@@ -5,6 +5,9 @@ const profileManager = require("../common/profile-manager");
 const permissionsManager = require("../common/permissions-manager");
 const logger = require("../logwrapper");
 const { settings } = require("../common/settings-access.js");
+const channelAccess = require("../common/channel-access");
+const customRolesManager = require("../roles/custom-roles-manager");
+const mixerRolesManager = require("../../shared/mixer-roles");
 
 let currencyCache = {};
 
@@ -112,28 +115,39 @@ function adjustCurrencyForUser(username, currencyId, value) {
 
 // Add Currency to Usergroup
 // This will add an amount of currency to all online users in a usergroup.
-function addCurrencyToUserGroupOnlineUsers(roles = [], currencyId, value) {
-    return new Promise(resolve => {
+function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value) {
+    return new Promise(async resolve => {
         if (!isViewerDBOn()) {
             return resolve();
         }
 
         // Run our checks. Stop if we have a bad value, currency, or roles.
         value = parseInt(value);
-        if (roles === [] || currencyId === null || value === null || value === 0 || isNaN(value)) {
+        if (roleIds === [] || currencyId === null || value === null || value === 0 || isNaN(value)) {
             return resolve();
         }
 
-        // Map ui role names to actual role names.
-        roles = permissionsManager.mapRoleNames(roles);
+        let currentViewers = await channelAccess.getCurrentViewerList() || [];
+        const userIdsInRoles = currentViewers
+            .map(u => {
+                let mixerRoles = (u.user_roles || [])
+                    .filter(mr => mr !== "User")
+                    .map(mr => mixerRolesManager.mapMixerRole(mr));
+                let customRoles = customRolesManager.getAllCustomRolesForViewer(u.username);
+                u.allRoles = mixerRoles.concat(customRoles);
+                return u;
+            })
+            .filter(u => u.allRoles.some(r => roleIds.includes(r.id)))
+            .map(u => u.userId);
 
         // Log it.
-        logger.debug('Paying out ' + value + ' currency (' + currencyId + ') for online users in roles:');
-        logger.debug(roles);
+        logger.debug('Paying out ' + value + ' currency (' + currencyId + ') for online users:');
+        logger.debug("role ids", roleIds);
+        logger.debug("user ids", userIdsInRoles);
 
         // GIVE DEM BOBS.
         let db = userDatabase.getUserDb();
-        db.find({ online: true, roles: { $in: roles } }, async (err, docs) => {
+        db.find({ online: true, _id: { $in: userIdsInRoles } }, async (err, docs) => {
             for (let user of docs) {
                 if (user != null) {
                     await adjustCurrency(user, currencyId, value);

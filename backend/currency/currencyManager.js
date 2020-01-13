@@ -108,7 +108,7 @@ function createCurrencyCommandDefinition(currency) {
     const commandManagement = {
         definition: {
             id: "firebot:currency:" + currencyId,
-            name: currencyName + " Currency Command",
+            name: currencyName + " Management",
             active: true,
             trigger: "!" + cleanName,
             description: "Allows management of the \"" + currencyName + "\" currency",

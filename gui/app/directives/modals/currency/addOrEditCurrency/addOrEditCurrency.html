@@ -12,7 +12,7 @@
                 <h3>General Settings</h3>
             </div>
 
-            <label class="control-fb control--checkbox">Active Currency
+            <label ng-hide="$ctrl.isNewCurrency" class="control-fb control--checkbox">Active Currency
                 <input type="checkbox" ng-model="$ctrl.currency.active" aria-label="..." checked>
                 <div class="control__indicator"></div>
             </label>
@@ -66,25 +66,21 @@
                     <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.interval" placeholder="5">
                 </div>
 
-                <h4>Group Bonuses</h4>
-                <p>These bonuses are added on top of the base payout. A viewer will recieve a bonus for each group they are in.</p>
+                <h4>Role Bonuses</h4>
+                <p>These bonuses are added on top of the base payout. A viewer will receive a bonus for each role they are in.</p>
                 <div class="bonus-payout-groups">
-                    <div class="bonus-payout-group input-group" ng-repeat="group in $ctrl.viewerGroups">
-                        <span class="input-group-addon" id="basic-addon3">{{group}}</span>
-                        <input type="number" class="form-control" aria-describedby="basic-addon3" placeholder="0" ng-model="$ctrl.currency.bonus[group]">
+                    <div class="bonus-payout-group input-group" ng-repeat="role in $ctrl.viewerRoles">
+                        <span class="input-group-addon" id="basic-addon3">{{role.name}}</span>
+                        <input type="number" class="form-control" aria-describedby="basic-addon3" placeholder="0" ng-model="$ctrl.currency.bonus[role.id]">
                     </div>
                 </div>
-        
-                <!--<div class="effect-info alert alert-warning">
-                    Don't see the group you want? This is because you haven't made it active yet! Go back to your board and click the cog wheel at the top. Then add your viewer group to one of your scenes.
-                </div>-->
             </div>
     </div>
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyDeleteModal($ctrl.currency)">Delete Currency</button>
-    <button type="button" class="btn btn-warning pull-left" ng-show="!$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyPurgeModal($ctrl.currency)">Purge Currency</button>
+    <button type="button" class="btn btn-danger pull-left" ng-hide="$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyDeleteModal($ctrl.currency)">Delete Currency</button>
+    <button type="button" class="btn btn-warning pull-left" ng-hide="$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyPurgeModal($ctrl.currency)">Purge Currency</button>
     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save Changes</button>
 </div>

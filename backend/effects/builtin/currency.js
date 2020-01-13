@@ -80,7 +80,7 @@ const currency = {
                         <input type="radio" ng-model="effect.target" value="individual"/>
                         <div class="control__indicator"></div>
                     </label>
-                    <label class="control-fb control--radio">Group
+                    <label class="control-fb control--radio">Role
                         <input type="radio" ng-model="effect.target" value="group"/>
                         <div class="control__indicator"></div>
                     </label>
@@ -92,8 +92,16 @@ const currency = {
 
                 <div class="settings-permission" style="padding-bottom:1em">
                     <div class=" viewer-group-list" ng-if="effect.target === 'group'">
-                        <label ng-repeat="group in viewerGroups" class="control-fb control--checkbox">{{group}}
-                            <input type="checkbox" ng-click="toggleGroup(effect, group)" ng-checked="groupIsChecked(effect, group)"  aria-label="..." >
+                        <div ng-show="hasCustomRoles" style="margin-bottom: 10px;">
+                            <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Custom</div>
+                            <label ng-repeat="customRole in getCustomRoles()" class="control-fb control--checkbox">{{customRole.name}}
+                                <input type="checkbox" ng-click="toggleRole(customRole)" ng-checked="isRoleChecked(customRole)"  aria-label="..." >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Mixer</div>
+                        <label ng-repeat="mixerRole in getMixerRoles()" class="control-fb control--checkbox">{{mixerRole.name}}
+                            <input type="checkbox" ng-click="toggleRole(mixerRole)" ng-checked="isRoleChecked(mixerRole)"  aria-label="..." >
                             <div class="control__indicator"></div>
                         </label>
                     </div>
@@ -147,37 +155,34 @@ const currency = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, currencyService, groupsService) => {
+    optionsController: ($scope, currencyService, viewerRolesService) => {
+
+
+        if (!$scope.effect.roleIds) {
+            $scope.effect.roleIds = [];
+        }
+
         $scope.currencies = currencyService.getCurrencies();
-        $scope.mixerRoles = ["Moderators", "Subscribers", "Channel Editors", "Pro"];
 
         $scope.getCurrencyName = function(currencyId) {
             let currency = currencyService.getCurrencies(currencyId);
             return currency.name;
         };
 
-        // Set active viewer groups for command permissions.
-        $scope.viewerGroups = groupsService.getAllGroups();
+        $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
+        $scope.getCustomRoles = viewerRolesService.getCustomRoles;
+        $scope.getMixerRoles = viewerRolesService.getMixerRoles;
 
-        // This is run each time a group checkbox is clicked or unclicked.
-        // This will build an array of currently selected groups to be saved to JSON.
-        $scope.toggleGroup = function(effect, group) {
-            if (effect.groups == null) {
-                effect.groups = [];
-            }
-
-            if (effect.groups.includes(group)) {
-                effect.groups = effect.groups.filter(g => g !== group);
-            } else {
-                effect.groups.push(group);
-            }
+        $scope.isRoleChecked = function(role) {
+            return $scope.effect.roleIds.includes(role.id);
         };
 
-        // This checks if an item is in the command.permission array and returns true.
-        // This allows us to check boxes when loading up this button effect.
-        $scope.groupIsChecked = function(effect, group) {
-            if (effect.groups == null) return false;
-            return effect.groups.includes(group);
+        $scope.toggleRole = function(role) {
+            if ($scope.isRoleChecked(role)) {
+                $scope.effect.roleIds = $scope.effect.roleIds.filter(id => id !== role.id);
+            } else {
+                $scope.effect.roleIds.push(role.id);
+            }
         };
     },
     /**
@@ -202,18 +207,9 @@ const currency = {
             }
 
             // What should this do when triggered.
-            let userTarget = await util.populateStringWithTriggerData(
-                event.effect.userTarget,
-                event.trigger
-            );
+            let userTarget = event.effect.userTarget;
 
             let amount = event.effect.amount;
-            if (amount) {
-                amount = await util.populateStringWithTriggerData(
-                    amount,
-                    event.trigger
-                );
-            }
 
             if (isNaN(amount)) {
                 return reject("Amount not a number: " + amount);
@@ -246,7 +242,7 @@ const currency = {
             case "group":
                 // Give currency to group.
                 currencyDatabase.addCurrencyToUserGroupOnlineUsers(
-                    event.effect.groups,
+                    event.effect.roleIds,
                     event.effect.currency,
                     currency
                 );

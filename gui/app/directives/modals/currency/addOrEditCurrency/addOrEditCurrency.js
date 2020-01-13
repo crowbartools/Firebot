@@ -12,7 +12,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService, currencyService, groupsService, logger) {
+        controller: function($scope, utilityService, currencyService, viewerRolesService, logger) {
             const uuidv1 = require("uuid/v1");
             let $ctrl = this;
 
@@ -22,7 +22,7 @@
                 active: true,
                 payout: 5,
                 interval: 5,
-                limit: 10000,
+                limit: 0,
                 transfer: "Allow",
                 bonus: {}
             };
@@ -53,7 +53,7 @@
                 };
 
                 // Get the groups we want people to be able to give bonus currency to...
-                $ctrl.viewerGroups = groupsService.getDefaultGroups().filter(g => g !== "Streamer");
+                $ctrl.viewerRoles = viewerRolesService.getAllRoles().filter(r => r.id !== "Owner");
 
                 $scope.$on("modal.closing", function() {
                     utilityService.removeSlidingModal();
