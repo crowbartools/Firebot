@@ -400,11 +400,12 @@ the-grid [resize="bottom"] {
 .editior-column {
     width: 215px;
     height: 100%; 
-    background: linear-gradient(to right, #2b2d2e 0%, #292a2c 100%);
+    background: $editor-column-bg;
     display: flex;
     flex-direction: column;
     position:relative;
     overflow: hidden;
+    color: $editor-text-color;
 }
 
 .mixplay-header {
@@ -413,16 +414,17 @@ the-grid [resize="bottom"] {
     font-family: "Quicksand";
     padding: 11px;
     font-weight: 100;
+    color: $editor-text-color;
 }
 
 .scene-row {
     height: 35px;  
     cursor: pointer;
     &:hover {
-        background: #1f1f1f;
+        background: $editor-row-hover-bg;
     }
     &.selected {
-        background: #212223;
+        background: $editor-row-selected-bg;
     }
 }
 
@@ -451,15 +453,21 @@ the-grid [resize="bottom"] {
     font-size: 12px;
     color: gray;
     &.selected {
-        color: white;
+        color: $mixplay-grid-icon-selected-color;
     }
 }
 
 .grid-wrapper {
     display: inline-grid;
-    border: 3px solid #3A3B3E;
+    border: 3px solid $mixplay-grid-border-color;
     margin-right: 15px;
 }
+
+the-grid {
+    background-color: $mixplay-grid-bg-color !important;
+}
+  
+ 
 
 
 

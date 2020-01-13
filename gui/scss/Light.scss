@@ -26,6 +26,12 @@ $left-nav-link-text-selected-color: #383d3f;
 $nav-link-bg: #383d3f;
 $sidebar-bg: linear-gradient(135deg, #25292a 0%, #383d3f 98%);
 
+// editor column
+$editor-column-bg: linear-gradient(to right, #f1f1f1 0%, #ffffff 100%);
+$editor-text-color: black;
+$editor-row-hover-bg: #f3f3f3;
+$editor-row-selected-bg: #e7e7e7;
+
 // Tiles
 $tile-text-color: white;
 $tile-text-faded-color: whitesmoke;
@@ -126,6 +132,18 @@ $fb-tab-wrapper-border-color: #eaecec;
 $fb-tab-border-bottom-hover: #bfb7b7;
 $fb-tab-hightlight-color: #2aa1c0;
 $fb-unselected-text-color: grey;
+
+$fb-tab-notactive-text-color: #a09a9a;
+$fb-tab-hover-text-color: gray;
+$fb-tab-active-text-color:black;
+
+$fb-tab-divider-color: #a8a8a8;
+
+$project-dropdown-text-color: black;
+
+$mixplay-grid-bg-color: #ffffff;
+$mixplay-grid-border-color: #cacaca;
+$mixplay-grid-icon-selected-color: black;
 
 $fb-tab-title-color: black;
 

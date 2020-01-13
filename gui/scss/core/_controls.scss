@@ -653,3 +653,34 @@ table.fb-table-alt {
   background: $effect-list-bg-color;
   border-radius: 5px;
 }
+
+.info-box {
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 400px;
+  border-radius: 6px;
+  padding: 20px;
+  background: $dark-background-color;
+  user-select: none;
+  color: $left-nav-link-text-color;
+  .info-title {
+    font-size: 50px;
+    font-weight: 100;
+    font-family: Quicksand;
+    cursor: default;
+  }
+  & > i {
+    font-size: 133px;
+    line-height: 0.7;
+    margin: 14px 0px;
+  }
+  p {
+    text-align: center;
+    opacity: 0.9;
+    font-weight: 200;
+    margin-bottom: 20px;
+    cursor: default;
+  }
+}

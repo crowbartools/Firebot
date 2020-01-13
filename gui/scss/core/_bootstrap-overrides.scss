@@ -367,17 +367,25 @@
     align-items: center;
     .fb-tab {
         padding: 10px 15px;
-        color: #a09a9a;
+        color: $fb-tab-notactive-text-color;
         &:hover {
-            color: #ececec;
+            color: $fb-tab-hover-text-color;
             cursor: pointer;
         }
         &.active {
             &:hover{
-                color: #ffffff;
+                color: $fb-tab-active-text-color;
                 cursor: default;
             }
-            color: #ffffff;
+            color: $fb-tab-active-text-color;
+        }
+    }
+    .tab-divider {
+        height: 15px;
+        width: 2px;
+        background: $fb-tab-divider-color;
+        &:first-child {
+            width: 3px;
         }
     }
   }
@@ -462,7 +470,7 @@
         border-bottom: 3px solid transparent;
 
         &.project-dropdown-text {
-            color: #f9f9f9;
+            color: $project-dropdown-text-color;
             font-size: 14px;
             font-family: 'Quicksand';
             border: 0px;
