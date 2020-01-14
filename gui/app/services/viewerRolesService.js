@@ -27,6 +27,31 @@ const mixerRoleConstants = require("../../shared/mixer-roles");
                 return customRoles[id];
             };
 
+            service.addUserToRole = function(roleId, username) {
+                if (!roleId || !username) return;
+
+                let role = service.getCustomRole(roleId);
+                if (!role) return;
+
+                if (role.viewers.some(v => v.toLowerCase() === username.toLowerCase())) return;
+
+                role.viewers.push(username);
+                service.saveCustomRole(role);
+            };
+
+
+            service.removeUserFromRole = function(roleId, username) {
+                if (!roleId || !username) return;
+
+                let role = service.getCustomRole(roleId);
+                if (!role) return;
+
+                if (!role.viewers.some(v => v.toLowerCase() === username.toLowerCase())) return;
+
+                role.viewers = role.viewers.filter(v => v.toLowerCase() !== username.toLowerCase());
+                service.saveCustomRole(role);
+            };
+
             service.saveCustomRole = function(role) {
                 if (!role) return;
                 customRoles[role.id] = role;

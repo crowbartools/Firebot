@@ -196,3 +196,20 @@ exports.updateUserRole = async (userId, role, addOrRemove) => {
         logger.error("Error while updating user roles", err);
     }
 };
+
+exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) => {
+
+    let streamerUserId = accountAccess.getAccounts().streamer.userId;
+
+    try {
+        if (shouldFollow) {
+            await mixerApi.post(`channels/${channelIdToFollow}/follow`, {
+                user: streamerUserId
+            });
+        } else {
+            await mixerApi.delete(`channels/${channelIdToFollow}/follow?user=${streamerUserId}`);
+        }
+    } catch (err) {
+        logger.error("Error while following/unfollowing channel", err);
+    }
+};

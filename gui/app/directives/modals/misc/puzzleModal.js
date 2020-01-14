@@ -24,7 +24,7 @@
         controller: function($scope, slidingPuzzle) {
             let $ctrl = this;
 
-            $scope.puzzle = { src: '../images/logo.jpg', title: 'Firebottle', rows: 10, cols: 10 };
+            $scope.puzzle = { src: '../images/logo.png', title: 'Firebottle', rows: 10, cols: 10 };
 
             $ctrl.$onInit = function() {
                 // When the compontent is initialized

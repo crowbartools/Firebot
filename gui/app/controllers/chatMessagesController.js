@@ -15,7 +15,8 @@
             connectionService,
             listenerService,
             settingsService,
-            soundService
+            soundService,
+            utilityService
         ) {
             $scope.settings = settingsService;
 
@@ -165,11 +166,25 @@
                 return chatMessagesService.getChatViewerListSetting();
             };
 
+            $scope.showUserDetailsModal = (userId) => {
+                if (userId == null) return;
+                let closeFunc = () => {};
+                utilityService.showModal({
+                    component: "viewerDetailsModal",
+                    backdrop: true,
+                    resolveObj: {
+                        userId: () => userId
+                    },
+                    closeCallback: closeFunc,
+                    dismissCallback: closeFunc
+                });
+            };
+
             function focusMessageInput() {
                 angular.element("#chatMessageInput").trigger("focus");
             }
 
-            $scope.messageActionSelected = (action, userName, msgId) => {
+            $scope.messageActionSelected = (action, userName, userId, msgId) => {
                 switch (action.toLowerCase()) {
                 case "delete":
                     chatMessagesService.deleteMessage(msgId);
@@ -196,6 +211,10 @@
                     $scope.chatMessage = "@" + userName + " ";
                     focusMessageInput();
                     break;
+                case "details": {
+                    $scope.showUserDetailsModal(userId);
+                    break;
+                }
                 default:
                     return;
                 }

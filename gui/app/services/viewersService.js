@@ -51,6 +51,10 @@
                 backendCommunicator.fireEvent("updateViewerRole", { userId, role, addOrRemove });
             };
 
+            service.toggleFollowOnChannel = (channelIdToFollow, shouldFollow = true) => {
+                backendCommunicator.fireEvent("toggleFollowOnChannel", { channelIdToFollow, shouldFollow });
+            };
+
             /** OLD VIEWER TABLE STUFF */
 
             // This will cancel editing. Pass true to this to return cell to original value if it was edited.

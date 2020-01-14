@@ -44,6 +44,18 @@ const moment = require("moment");
                             </div>
                         </div>
                     </div>
+                    <div style="margin: 10px 10px 0;">
+                        <div class="muted" style="font-size:12px;font-weight: bold;margin-bottom:5px;">CUSTOM ROLES</div>
+                        <div class="role-bar" ng-repeat="customRole in $ctrl.customRoles track by customRole.id">
+                            <span>{{customRole.name}}</span>
+                            <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeUserFromRole(customRole.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                                <i class="far fa-times"></i>
+                            </span>
+                        </div>
+                        <div class="role-bar clickable" ng-if="$ctrl.hasCustomRolesAvailable" ng-click="$ctrl.openAddCustomRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
+                            <i class="far fa-plus"></i> 
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer"></div>
@@ -53,12 +65,14 @@ const moment = require("moment");
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, backendCommunicator, viewersService, currencyService, utilityService) {
+            controller: function($q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService) {
                 let $ctrl = this;
 
                 $ctrl.loading = true;
 
                 $ctrl.viewerDetails = {};
+
+                $ctrl.hasFirebotData = false;
 
                 $ctrl.getAccountAge = function(date) {
                     return moment(date).fromNow(true);
@@ -207,7 +221,6 @@ const moment = require("moment");
 
                 $ctrl.actions = [];
 
-
                 function buildActions() {
 
                     const relationshipData = $ctrl.viewerDetails.mixerData.relationship;
@@ -220,7 +233,7 @@ const moment = require("moment");
                      */
                     let actions = [];
 
-                    /*const streamerFollowsUser = $ctrl.viewerDetails.streamerFollowsUser;
+                    const streamerFollowsUser = $ctrl.viewerDetails.streamerFollowsUser;
                     actions.push(new ViewerAction(
                         "follow",
                         streamerFollowsUser,
@@ -231,10 +244,12 @@ const moment = require("moment");
                             return follows ? "fas fa-heart" : "fal fa-heart";
                         },
                         follows => {
-                            return !follows;
+                            let shouldFollow = !follows;
+                            viewersService.toggleFollowOnChannel($ctrl.viewerDetails.mixerData.channel.id, shouldFollow);
+                            return shouldFollow;
                         }
                     )
-                    );*/
+                    );
 
                     const isMod = channelRoles.includes("Mod");
                     actions.push(new ViewerAction(
@@ -362,6 +377,8 @@ const moment = require("moment");
                      */
                     let dataPoints = [];
 
+                    if (!$ctrl.hasFirebotData) return;
+
                     let joinDate = $ctrl.viewerDetails.firebotData.joinDate;
                     dataPoints.push(new ViewerDataPoint(
                         "Join Date",
@@ -472,6 +489,52 @@ const moment = require("moment");
                     $ctrl.dataPoints = dataPoints;
                 }
 
+                $ctrl.customRoles = [];
+                function loadCustomRoles() {
+                    let username = $ctrl.viewerDetails.mixerData.username;
+
+                    let viewerRoles = viewerRolesService.getCustomRoles();
+                    $ctrl.hasCustomRolesAvailable = viewerRoles
+                        .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
+                        .length > 0;
+
+                    $ctrl.customRoles = viewerRoles.filter(vr => vr.viewers.some(v => v.toLowerCase() === username.toLowerCase()));
+                }
+
+                $ctrl.openAddCustomRoleModal = () => {
+                    let username = $ctrl.viewerDetails.mixerData.username;
+                    let options = viewerRolesService.getCustomRoles()
+                        .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
+                        .map(r => {
+                            return {
+                                id: r.id,
+                                name: r.name
+                            };
+                        });
+                    utilityService.openSelectModal(
+                        {
+                            label: "Add Custom Role",
+                            options: options,
+                            saveText: "Add",
+                            validationText: "Please select a role."
+
+                        },
+                        (roleId) => {
+                            if (!roleId) return;
+
+                            let username = $ctrl.viewerDetails.mixerData.username;
+
+                            viewerRolesService.addUserToRole(roleId, username);
+                            loadCustomRoles();
+                        });
+                };
+
+                $ctrl.removeUserFromRole = (roleId) => {
+                    let username = $ctrl.viewerDetails.mixerData.username;
+                    viewerRolesService.removeUserFromRole(roleId, username);
+                    loadCustomRoles();
+                };
+
                 $ctrl.$onInit = function() {
                     const userId = $ctrl.resolve.userId;
 
@@ -482,9 +545,11 @@ const moment = require("moment");
                             });
                     }).then(viewerDetails => {
                         $ctrl.viewerDetails = viewerDetails;
+                        $ctrl.hasFirebotData = Object.keys($ctrl.viewerDetails.firebotData).length > 0;
                         loadRoles();
                         buildActions();
                         buildDataPoints();
+                        loadCustomRoles();
                         $ctrl.loading = false;
                     });
                 };

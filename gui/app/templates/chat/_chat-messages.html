@@ -10,7 +10,7 @@
             </span>
         </div>
         <div class="chat-users" style="height: 100%;">
-            <div class="chatUser" ng-attr-role="{{getUserRole(user)}}" ng-repeat="user in getChatUsers() track by user.username">
+            <div class="chatUser clickable" ng-click="showUserDetailsModal(user.id)" ng-attr-role="{{getUserRole(user)}}" ng-repeat="user in getChatUsers() track by user.id">
                     {{user.username}}
             </div>
         </div>       
@@ -34,7 +34,7 @@
                         </span>                 
                     </div>
                     <div style="padding-left: 10px">
-                        <div class="chat-username" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, msgId)">
+                        <div class="chat-username" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, userId, msgId)">
                             <b>{{message.user_name}}</b>
                             <span class="chatSubIcon" ng-if="isSubscriber(message)">
                                 <img ng-src="{{getSubIcon(message)}}">

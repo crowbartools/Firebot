@@ -19,7 +19,7 @@
                             <div class="flex-row-center">
                                 <div style="padding-left: 10px;">
                                     <div ng-bind-html="option.name | highlight: $select.search"></div>
-                                    <small class="muted">{{option.description}}</small>
+                                    <small class="muted" ng-show="option.description">{{option.description}}</small>
                                 </div>                 
                             </div>                  
                         </ui-select-choices>

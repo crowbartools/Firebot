@@ -449,6 +449,11 @@ frontendCommunicator.on("updateViewerRole", (data) => {
     channelAccess.updateUserRole(userId, role, addOrRemove);
 });
 
+frontendCommunicator.on("toggleFollowOnChannel", (data) => {
+    const { channelIdToFollow, shouldFollow } = data;
+    channelAccess.toggleFollowOnChannel(channelIdToFollow, shouldFollow);
+});
+
 frontendCommunicator.on("updateViewerDataField", (data) => {
     const { userId, field, value } = data;
 

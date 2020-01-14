@@ -24,7 +24,7 @@
             ) {
                 let vm = this;
 
-                let shouldOpen = $scope.message.id !== "System";
+                let shouldOpen = $scope.message.user_id !== "firebot-system-message";
 
                 let template = `
                         <div class="popover message-actions" role="{{vm.role}}">
@@ -58,6 +58,14 @@
 
                 function getActions() {
                     let actions = [];
+
+                    if (vm.message.user_id === "firebot-system-message") return actions;
+
+                    actions.push({
+                        name: "Details",
+                        icon: "fa-info-circle"
+                    });
+
                     actions.push({
                         name: "Delete",
                         icon: "fa-trash-alt"
@@ -73,11 +81,8 @@
                         icon: "fa-at"
                     });
 
-                    if (
-                        vm.message.user_name !==
-              connectionService.accounts.streamer.username &&
-            vm.message.user_name !== connectionService.accounts.bot.username
-                    ) {
+                    if (vm.message.user_name !== connectionService.accounts.streamer.username &&
+                        vm.message.user_name !== connectionService.accounts.bot.username) {
                         if (vm.message.user_roles.includes("Mod")) {
                             actions.push({
                                 name: "Unmod",
@@ -104,6 +109,24 @@
                 }
 
                 vm.actions = getActions();
+
+                function hidePopover() {
+                    if (vm.isVisible) {
+                        popover.css({ display: "none" });
+                        popover.remove();
+                        vm.isVisible = false;
+                    }
+                }
+
+                vm.actionClicked = actionName => {
+                    $scope.onActionSelected({
+                        actionName: actionName,
+                        userName: $scope.message.user_name,
+                        userId: $scope.message.user_id,
+                        msgId: $scope.message.id
+                    });
+                    hidePopover();
+                };
 
                 let lastPlacement;
                 function positionPopover() {
@@ -157,23 +180,6 @@
                     }
                 }
 
-                function hidePopover() {
-                    if (vm.isVisible) {
-                        popover.css({ display: "none" });
-                        popover.remove();
-                        vm.isVisible = false;
-                    }
-                }
-
-                vm.actionClicked = actionName => {
-                    $scope.onActionSelected({
-                        actionName: actionName,
-                        userName: $scope.message.user_name,
-                        msgId: $scope.message.id
-                    });
-                    hidePopover();
-                };
-
                 function togglePopover() {
                     if (!vm.isVisible) {
                         showPopover();
@@ -183,11 +189,7 @@
                 }
 
                 function documentClick(event) {
-                    if (
-                        vm.isVisible &&
-            !popover[0].contains(event.target) &&
-            !$element[0].contains(event.target)
-                    ) {
+                    if (vm.isVisible && !popover[0].contains(event.target) && !$element[0].contains(event.target)) {
                         hidePopover();
                     }
                 }

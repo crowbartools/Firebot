@@ -65,21 +65,25 @@
             // Full Chat User Refresh
             // This replaces chat users with a fresh list pulled from the backend in the chat processor file.
             service.chatUserRefresh = function(data) {
-                service.chatUsers = data.chatUsers;
+                let users = data.chatUsers.map(u => {
+                    u.id = u.userId;
+                    return u;
+                });
+                service.chatUsers = users;
             };
 
             // User joined the channel.
             service.chatUserJoined = function (data) {
-                if (!service.chatUsers.some(u => u.username === data.username)) {
+                if (!service.chatUsers.some(u => u.id === data.id)) {
                     service.chatUsers.push(data);
                 }
             };
 
             // User left the channel.
             service.chatUserLeft = function(data) {
-                let username = data.username,
+                let userId = data.id,
                     arr = service.chatUsers,
-                    userList = arr.filter(x => x.username !== username);
+                    userList = arr.filter(x => x.id !== userId);
 
                 service.chatUsers = userList;
             };
@@ -129,11 +133,12 @@
             service.chatAlertMessage = function(message) {
                 let data = {
                     id: "System" + Date.now(),
-                    user_name: "System", // eslint-disable-line
+                    user_name: "Alert", // eslint-disable-line
+                    user_id: "firebot-system-message", // eslint-disable-line
                     user_roles: [ // eslint-disable-line
                         "System"
                     ],
-                    user_avatar: "../images/logo.jpg", // eslint-disable-line
+                    user_avatar: "../images/logo.png", // eslint-disable-line
                     message: {
                         message: [
                             {

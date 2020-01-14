@@ -34,7 +34,7 @@ function promisifiedRequest(options, resolveResponse = false) {
     return new Promise((resolve, reject) => {
 
         request(options, function(err, res) {
-            if (res.statusCode === 200) {
+            if (res.statusCode >= 200 && res.statusCode <= 204) {
                 if (resolveResponse) {
                     resolve(res);
                 } else {
@@ -78,6 +78,13 @@ exports.post = function(route, body, apiVersion = "v1", resolveResponse = false,
 exports.patch = function(route, body, apiVersion = "v1", resolveResponse = false, authAsStreamer = true) {
 
     let options = buildRequestOptions("PATCH", route, body, apiVersion, authAsStreamer);
+
+    return promisifiedRequest(options, resolveResponse);
+};
+
+exports.delete = function(route, apiVersion = "v1", resolveResponse = false, authAsStreamer = true) {
+
+    let options = buildRequestOptions("DELETE", route, null, apiVersion, authAsStreamer);
 
     return promisifiedRequest(options, resolveResponse);
 };
