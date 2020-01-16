@@ -1,60 +1,84 @@
-<div style="display: flex; padding: .5em; width: 100%; justify-content: space-between; flex-wrap:wrap">
-  <div class="content-block" style="width: 100%; margin-bottom: .5em;">
-    <div class="content-block-header">
-      <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Activity Log</span>
-      <div class="searchbar-header-wrapper">
-        <input type="text" class="form-control" placeholder="Search logs" ng-model="eventLogSearch" style="padding-left: 27px;">
-        <span class="searchbar-icon"><i class="far fa-search"></i></span>
-      </div>
+<div style="min-width: 500px;">
+    <div class="fb-commands-tab-wrapper">
+        <ul class="nav nav-tabs fb-tabs">
+            <li role="presentation" ng-class="{'active' : activeTab === 0}" ng-click="activeTab = 0">
+                <a href>CHAT MODERATION</a>
+            </li>
+            <li role="presentation" ng-class="{'active' : activeTab === 1}" ng-click="activeTab = 1">
+                <a href>ACTIVITY LOGS</a>
+            </li>
+        </ul>
     </div>
-    <div class="content-block-body">
 
-      <uib-tabset active="activeLogTab">
-        <uib-tab index="0" heading="General">
-          <table class="table">
-            <thead>
-              <tr>
-                <th width="100">TIME</th>
-                <th>MESSAGE</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.generalEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.generalLog.currentPage-1)*pagination.generalLog.pageSize | limitTo:pagination.generalLog.pageSize track by $index">
-                <td>{{event.timestamp}}</td>
-                <td>{{event.username}} {{event.text}}</td>
-              </tr>       
-            </tbody>
-          </table>
-          <span ng-show="eventLogService.generalEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
-          <div ng-show="filteredEvents.length > pagination.generalLog.pageSize" style="text-align: center;">
-              <ul uib-pagination total-items="eventLogService.generalEvents.length" ng-model="pagination.generalLog.currentPage" items-per-page="pagination.generalLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
-          </div>
-        </uib-tab>
-        <uib-tab index="1" heading="Events">
-          <table class="table">
-            <thead>
-              <tr>
-                <th width="100">TIME</th>
-                <th>MESSAGE</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.alertEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.alertLog.currentPage-1)*pagination.alertLog.pageSize | limitTo:pagination.alertLog.pageSize track by $index">
-                <td>{{event.timestamp}}</td>
-                <td>{{event.username}} {{event.text}}</td>
-              </tr>       
-            </tbody>
-          </table>
-          <span ng-show="eventLogService.alertEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
-          <div ng-show="filteredEvents.length > pagination.alertLog.pageSize" style="text-align: center;">
-              <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.alertLog.currentPage" items-per-page="pagination.alertLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
-          </div>
-        </uib-tab>
-      </uib-tabset>
+    <div style="padding: 15px;">
+        <div ng-show="activeTab === 0">
+            <div class="content-block" style="width: 100%;">
+                <div class="content-block-body">
+                    
+                </div>
+            </div>
+        </div>
+        <div ng-show="activeTab === 1">
+
+            <div class="content-block" style="width: 100%; margin-bottom: .5em;">
+                <div class="content-block-header">
+                  <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Activity Log</span>
+                  <div class="searchbar-header-wrapper">
+                    <input type="text" class="form-control" placeholder="Search logs" ng-model="eventLogSearch" style="padding-left: 27px;">
+                    <span class="searchbar-icon"><i class="far fa-search"></i></span>
+                  </div>
+                </div>
+                <div class="content-block-body">
+                  <uib-tabset active="activeLogTab">
+                    <uib-tab index="0" heading="General">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th width="100">TIME</th>
+                            <th>MESSAGE</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.generalEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.generalLog.currentPage-1)*pagination.generalLog.pageSize | limitTo:pagination.generalLog.pageSize track by $index">
+                            <td>{{event.timestamp}}</td>
+                            <td>{{event.username}} {{event.text}}</td>
+                          </tr>       
+                        </tbody>
+                      </table>
+                      <span ng-show="eventLogService.generalEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
+                      <div ng-show="filteredEvents.length > pagination.generalLog.pageSize" style="text-align: center;">
+                          <ul uib-pagination total-items="eventLogService.generalEvents.length" ng-model="pagination.generalLog.currentPage" items-per-page="pagination.generalLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
+                      </div>
+                    </uib-tab>
+                    <uib-tab index="1" heading="Events">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th width="100">TIME</th>
+                            <th>MESSAGE</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.alertEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.alertLog.currentPage-1)*pagination.alertLog.pageSize | limitTo:pagination.alertLog.pageSize track by $index">
+                            <td>{{event.timestamp}}</td>
+                            <td>{{event.username}} {{event.text}}</td>
+                          </tr>       
+                        </tbody>
+                      </table>
+                      <span ng-show="eventLogService.alertEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
+                      <div ng-show="filteredEvents.length > pagination.alertLog.pageSize" style="text-align: center;">
+                          <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.alertLog.currentPage" items-per-page="pagination.alertLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
+                      </div>
+                    </uib-tab>
+                  </uib-tabset>
+                </div>
+              </div>
+
+        </div>
     </div>
-  </div>
 </div>
-<div style="display: flex; padding: .5em; width: 100%; justify-content: space-between; flex-wrap:wrap;">
+
+<!--<div style="display: flex; padding: .5em; width: 100%; justify-content: space-between; flex-wrap:wrap;">-->
   <!--<div class="mod-section-label" style="width: 100%;">
     <h2>Mixplay Moderation</h2>
   </div>-->
@@ -157,5 +181,5 @@
           </uib-tab>
         </uib-tabset>
       </div>
-    </div> -->
-</div>
+    </div> 
+</div>-->
