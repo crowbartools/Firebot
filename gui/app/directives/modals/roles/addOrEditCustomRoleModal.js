@@ -92,9 +92,10 @@
                     {
                         label: "Add Viewer",
                         saveText: "Add",
-                        validationFn: (value) => {
+                        validationFn: (user) => {
                             return new Promise(resolve => {
-                                if (findIndexIgnoreCase($ctrl.role.viewers, value) !== -1) {
+                                if (user == null) return resolve(false);
+                                if (findIndexIgnoreCase($ctrl.role.viewers, user.username) !== -1) {
                                     return resolve(false);
                                 }
                                 resolve(true);
@@ -102,8 +103,8 @@
                         },
                         validationText: "Viewer already has this role."
                     },
-                    (viewerName) => {
-                        $ctrl.role.viewers.push(viewerName);
+                    (user) => {
+                        $ctrl.role.viewers.push(user.username);
                     });
             };
 

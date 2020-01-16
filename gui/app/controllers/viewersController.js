@@ -22,6 +22,17 @@
                 });
             };
 
+            $scope.showViewerSearchModal = () => {
+                utilityService.openViewerSearchModal(
+                    {
+                        label: "Viewer Search",
+                        saveText: "Select"
+                    },
+                    (user) => {
+                        $scope.showUserDetailsModal(user.id);
+                    });
+            };
+
             // Update table rows when first visiting the page.
             if (viewersService.isViewerDbOn()) {
                 viewersService.updateViewers();

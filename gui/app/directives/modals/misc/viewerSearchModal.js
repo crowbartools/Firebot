@@ -17,10 +17,10 @@
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}" style="width: 100%; margin: 0 15px 0 0;">
                             
                             <ui-select ng-model="$ctrl.model" theme="bootstrap" spinner-enabled="true" on-select="$ctrl.viewerSelected()">
-                                <ui-select-match placeholder="Search for a viewer...">
+                                <ui-select-match placeholder="{{$ctrl.inputPlaceholder}}">
                                     <span>{{$select.selected.user.username}}</span>
                                 </ui-select-match>
-                                <ui-select-choices minimum-input-length="1" repeat="channel.user.username as channel in $ctrl.channels | filter: $select.search" refresh="$ctrl.searchForChannels($select.search)" refresh-delay="400" style="position:relative;">
+                                <ui-select-choices minimum-input-length="1" repeat="channel.user as channel in $ctrl.channels | filter: $select.search" refresh="$ctrl.searchForChannels($select.search)" refresh-delay="400" style="position:relative;">
                                     <div style="height: 35px; display:flex; flex-direction: row; align-items: center;">
                                         <img style="height: 30px; width: 30px; border-radius: 5px; margin-right:10px;" ng-src="{{channel.user.avatarUrl || $ctrl.defaultAvatar}}">
                                         <div style="font-weight: 100;font-size: 17px;">{{channel.user.username}}</div>
@@ -45,10 +45,10 @@
             controller: function($http, $scope, utilityService, focus) {
                 let $ctrl = this;
 
-                $ctrl.model = "";
+                $ctrl.model = null;
 
                 $ctrl.label = "Enter Text";
-                $ctrl.inputPlaceholder = "Enter Text";
+                $ctrl.inputPlaceholder = "Search Mixer for a viewer...";
                 $ctrl.saveText = "Save";
                 $ctrl.validationFn = () => true;
                 $ctrl.validationText = "";
@@ -75,15 +75,10 @@
                 };
 
                 $ctrl.viewerSelected = function() {
-                    console.log("FOCUSING");
                     focus("focusAddButton");
                 };
 
                 $ctrl.$onInit = function () {
-                    if ($ctrl.resolve.model) {
-                        $ctrl.model = $ctrl.resolve.model;
-                    }
-
                     if ($ctrl.resolve.label) {
                         $ctrl.label = $ctrl.resolve.label;
                     }
