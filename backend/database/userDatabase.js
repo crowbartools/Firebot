@@ -444,6 +444,11 @@ frontendCommunicator.onAsync("getViewerDetails", (userId) => {
     return userAccess.getUserDetails(userId);
 });
 
+frontendCommunicator.onAsync("updateUserHearts", (data) => {
+    const { userId, amount } = data;
+    return channelAccess.giveHeartsToUser(userId, amount);
+});
+
 frontendCommunicator.on("updateViewerRole", (data) => {
     const { userId, role, addOrRemove } = data;
     channelAccess.updateUserRole(userId, role, addOrRemove);

@@ -2,6 +2,7 @@
 
 const userDb = require("../database/userDatabase");
 const accountAccess = require("../common/account-access");
+const channelAccess = require("./channel-access");
 const mixerApi = require("../api-access");
 
 async function getUserDetails(userId) {
@@ -22,6 +23,11 @@ async function getUserDetails(userId) {
             .get(`channels/${mixerUserData.channel.id}/relationship?user=${streamerData.userId}`, "v1", false, true);
         if (streamerRelationshipData) {
             streamerFollowsUser = streamerRelationshipData.status && streamerRelationshipData.status.follows != null;
+        }
+
+        let channelLevel = await channelAccess.getChannelProgressionForUser(userId);
+        if (channelLevel) {
+            mixerUserData.channelLevel = channelLevel;
         }
     }
 

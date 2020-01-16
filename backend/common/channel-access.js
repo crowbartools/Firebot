@@ -130,6 +130,18 @@ exports.getChannelProgressionForUser = async function(userId) {
     }
 };
 
+exports.giveHeartsToUser = async (userId, amount) => {
+    let streamerData = accountAccess.getAccounts().streamer;
+    try {
+        await mixerApi.post(`ascension/channels/${streamerData.channelId}/users/${userId}/grant`, {
+            xp: amount
+        });
+        return exports.getChannelProgressionForUser(userId);
+    } catch (err) {
+        return null;
+    }
+};
+
 function getContinuationToken(linkHeader) {
     let parsed = linkHeaderParser(linkHeader);
     if (parsed.next) {

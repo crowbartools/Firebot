@@ -21,9 +21,10 @@ const moment = require("moment");
                             <!--<div style="margin-left: 10px;font-size: 11px;background: #47aed2;border-radius: 16px;padding: 3px 10px;font-weight: bold;display: inline-block;height: max-content;">LVL {{$ctrl.viewerDetails.mixerData.level}}</div>-->
                         </div>
                         <div style="display:flex;margin-top:7px;">
-                            <div style="margin-right: 15px;" uib-tooltip="Mixer Level"><strong>LVL</strong> {{$ctrl.viewerDetails.mixerData.level}}</div>
+                            <div style="margin-right: 15px;" uib-tooltip="Mixer Level"><strong>LVL</strong> {{$ctrl.viewerDetails.mixerData.level}}</div>                 
                             <div style="margin-right: 15px;display: flex;align-items: center;" uib-tooltip="Sparks"><img aria-label="spark" class="spark-coin" style="height: 14px;vertical-align: text-top;margin-right:2px;" src="https://mixer.com/_static/img/design/ui/spark-coin/spark-coin.svg"> {{$ctrl.viewerDetails.mixerData.sparks | commify}}</div>
-                            <div style="margin-right: 15px;" uib-tooltip="Mixer Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.mixerData.createdAt)}}</div>
+                            <div style="margin-right: 11px;" uib-tooltip="Mixer Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.mixerData.createdAt)}}</div>  
+                            <div ng-click="$ctrl.showGiveHeartsModal()" class="clickable" style="margin-right: 15px;display: flex;align-items: center;" uib-tooltip="Channel Level" ng-if="$ctrl.viewerDetails.mixerData.channelLevel != null"><img aria-label="spark" class="spark-coin" style="height: 19px;vertical-align: text-top;" ng-src="{{$ctrl.channelProgressionImgSrc}}">{{$ctrl.viewerDetails.mixerData.channelLevel.level}}<span class="muted" style="font-size: 6px;margin-left:3px"><i class="fas fa-edit"></i></span></div>                        
                         </div>
                         <div style="display:flex;margin-top:10px;">
                             <div ng-repeat="role in $ctrl.roles | orderBy : 'rank'" uib-tooltip="{{role.tooltip}}" ng-style="role.style" style="margin-right: 10px;font-size: 13px;text-transform: uppercase;font-weight: bold;font-family: "Roboto";">{{role.name}}</div>
@@ -76,6 +77,39 @@ const moment = require("moment");
 
                 $ctrl.getAccountAge = function(date) {
                     return moment(date).fromNow(true);
+                };
+
+                $ctrl.channelProgressionImgSrc = "";
+
+                function loadChannelProgressionData() {
+                    if ($ctrl.viewerDetails.mixerData.channelLevel) {
+                        $ctrl.channelProgressionImgSrc = $ctrl.viewerDetails.mixerData.channelLevel.assetsUrl.replace("{variant}", "large.gif");
+                    }
+                }
+
+                $ctrl.showGiveHeartsModal = () => {
+                    utilityService.openGetInputModal(
+                        {
+                            model: 0,
+                            label: "Give/Remove Hearts",
+                            saveText: "Save",
+                            inputPlaceholder: "Enter hearts..."
+                        },
+                        (hearts) => {
+                            if (hearts == null || isNaN(hearts)) return;
+
+                            $q(resolve => {
+                                backendCommunicator.fireEventAsync("updateUserHearts", {userId: $ctrl.resolve.userId, amount: hearts})
+                                    .then(channelLevel => {
+                                        resolve(channelLevel);
+                                    });
+                            }).then(channelLevel => {
+                                if (channelLevel == null) return;
+                                $ctrl.viewerDetails.mixerData.channelLevel = channelLevel;
+                                loadChannelProgressionData();
+                            });
+                        }
+                    );
                 };
 
                 $ctrl.roles = [];
@@ -550,6 +584,7 @@ const moment = require("moment");
                         buildActions();
                         buildDataPoints();
                         loadCustomRoles();
+                        loadChannelProgressionData();
                         $ctrl.loading = false;
                     });
                 };
