@@ -3,7 +3,6 @@
 const NodeCache = require("node-cache");
 const logger = require("../logwrapper");
 const { EffectTrigger } = require("../effects/models/effectModels");
-const effectRunner = require("../common/effect-runner.js");
 const filterManager = require("./filters/filter-manager");
 const eventsAccess = require("./events-access");
 
@@ -38,6 +37,7 @@ function cacheNewEvent(sourceId, eventId, eventMetaKey = null) {
 }
 
 function runEventEffects(effects, event, source, meta, isManual = false) {
+    const effectRunner = require("../common/effect-runner.js");
     return effectRunner.processEffects({
         trigger: {
             type: isManual ? EffectTrigger.MANUAL : EffectTrigger.EVENT,

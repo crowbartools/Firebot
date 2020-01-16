@@ -96,6 +96,16 @@ const mixerEventSource = {
             }
         },
         {
+            id: "user-joined-mixplay",
+            name: "User Joined MixPlay",
+            description: "When someone joins your channel's MixPlay session",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot"
+            }
+        },
+        {
             id: "poll-started",
             name: "Poll Started",
             description: "When a poll is started",

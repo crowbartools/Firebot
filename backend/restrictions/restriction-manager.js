@@ -3,7 +3,6 @@
 const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
-const util = require("../utility");
 
 class RestrictionsManager extends EventEmitter {
     constructor() {

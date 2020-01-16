@@ -10,6 +10,7 @@ const accountAccess = require('../common/account-access');
 const logger = require("../logwrapper");
 
 const mixplayManager = require('./mixplay-project-manager');
+const eventManager = require("../live-events/EventManager");
 
 const controlManager = require("./control-manager");
 
@@ -305,6 +306,9 @@ function updateCooldownForControls(controlIds, cooldown) {
 
 mixplayClient.state.on('participantJoin', async participant => {
     logger.debug(`${participant.username} (${participant.sessionID}) Joined`);
+    eventManager.triggerEvent("mixer", "user-joined-mixplay", {
+        username: participant.username
+    });
 });
 
 // checks if this sceneId is set as default and returns "default" if so,

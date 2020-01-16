@@ -5,7 +5,6 @@ const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const util = require("../utility");
 const eventsRouter = require("./events-router");
-const accountAccess = require("../common/account-access");
 
 class EventManager extends EventEmitter {
     constructor() {
@@ -67,6 +66,7 @@ class EventManager extends EventEmitter {
         if (isManual) {
             meta = event.manualMetadata || {};
             if (meta.username == null) {
+                const accountAccess = require("../common/account-access");
                 meta.username = accountAccess.getAccounts().streamer.username;
             }
         }

@@ -2,9 +2,6 @@
 const {ipcMain} = require('electron');
 const logger = require('../logwrapper');
 
-const mixplay = require("../interactive/mixplay");
-const Chat = require("./mixer-chat.js");
-
 const effectManager = require("../effects/effectManager");
 const { EffectDependency, EffectTrigger } = require("../effects/models/effectModels");
 
@@ -79,6 +76,9 @@ function validateEffectCanRun(effectId, triggerType) {
         logger.info(`${effectId} cannot be triggered by: ${triggerType}`);
         return false;
     }
+
+    const mixplay = require("../interactive/mixplay");
+    const Chat = require("./mixer-chat.js");
 
     // Validate Dependancies
     let mixplayStatus = mixplay.mixplayIsConnected();

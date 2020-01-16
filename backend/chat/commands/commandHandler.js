@@ -2,7 +2,6 @@
 
 const { ipcMain } = require("electron");
 const logger = require("../../logwrapper");
-const permissionsManager = require("../../common/permissions-manager");
 const accountAccess = require("../../common/account-access");
 const mixerChat = require("../../common/mixer-chat");
 const util = require("../../utility");
