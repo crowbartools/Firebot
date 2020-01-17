@@ -7,6 +7,8 @@ cache:
     - "node_modules"
 
 install:
+  - npm install -g grunt-cli node-gyp
+  - for /f "delims=" %P in ('npm prefix -g') do npm config set node_gyp "%P\node_modules\node-gyp\bin\node-gyp.js"
   - npm install
 
 script:
