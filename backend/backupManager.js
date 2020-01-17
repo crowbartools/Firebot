@@ -38,7 +38,7 @@ function cleanUpOldBackups(callback) {
 
             fileNames.forEach(f => {
                 logger.info("deleting old backup: " + f);
-                fs.unlink(backupFolderPath + f);
+                fs.unlink(backupFolderPath + f, () => {});
             });
 
             if (callback instanceof Function) {

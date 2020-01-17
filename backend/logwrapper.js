@@ -26,7 +26,7 @@ if (!fs.existsSync(LOG_FOLDER)) {
     fs.mkdirSync(LOG_FOLDER);
 }
 
-let sentryTransport = new Sentry({
+/*let sentryTransport = new Sentry({
     dsn:
     "https://c4ba7c4b47814f8e88886ca08414aad4:a960630da816494fbe756e61116812e8@sentry.io/285894",
     level: "error",
@@ -34,7 +34,7 @@ let sentryTransport = new Sentry({
     tags: {
         version: app.getVersion()
     }
-});
+});*/
 
 let rotateFileTransport = new (require("winston-daily-rotate-file"))({
     level: rotateFileLogLevel,
@@ -60,7 +60,7 @@ let consoleTransport = new winston.transports.Console({
 let logger = new winston.Logger({
     level: "silly",
     exitOnError: false,
-    transports: [consoleTransport, rotateFileTransport, sentryTransport]
+    transports: [consoleTransport, rotateFileTransport]
 });
 
 // Export

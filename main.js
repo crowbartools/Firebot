@@ -44,29 +44,19 @@ process.on("uncaughtException", logger.error); //eslint-disable-line no-console
  */
 let mainWindow;
 
-/** Interactive handler */
-let mixerConnect; //eslint-disable-line
+const gotTheLock = app.requestSingleInstanceLock();
 
-/**
- * This function makes sure we focus on the currently opened Firebot window should we try to open a new one.
- * @param {*} mainWindow
- */
-function mainFocus(mainWindow) {
-    let iShouldQuit = app.makeSingleInstance(function() {
+if (!gotTheLock) {
+    app.quit();
+} else {
+    app.on('second-instance', () => {
+        // Someone tried to run a second instance, we should focus our window.
         if (mainWindow) {
             if (mainWindow.isMinimized()) mainWindow.restore();
-            mainWindow.show();
             mainWindow.focus();
         }
-        return true;
     });
-    if (iShouldQuit) {
-        logger.warn("Attempted to start Firebot but another instance is already running. Quitting this instance.");
-        app.quit();
-        return;
-    }
 }
-mainFocus();
 
 /** Handle Squirrel events for windows machines */
 function squirrelEvents() {
@@ -156,7 +146,10 @@ function createWindow() {
         minWidth: 300,
         minHeight: 50,
         icon: path.join(__dirname, "./gui/images/logo_transparent_2.png"),
-        show: false
+        show: false,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
 
     // register listeners on the window, so we can update the state
@@ -485,8 +478,6 @@ function appOnReady() {
     app.on("ready", async function() {
         await createDefaultFoldersAndFiles();
 
-        mixerConnect = require("./backend/common/mixer-interactive.js");
-
         // load effects
         builtInEffectLoader.loadEffects();
 
@@ -673,7 +664,7 @@ ipcMain.on("openRootFolder", () => {
 // Get Import Folder Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.
 ipcMain.on("getImportFolderPath", (event, uniqueid) => {
-    let path = dialog.showOpenDialog({
+    let path = dialog.showOpenDialogSync({
         title: "Select 'user-settings' folder",
         buttonLabel: "Import 'user-settings'",
         properties: ["openDirectory"]
@@ -696,7 +687,7 @@ ipcMain.on("getBackupZipPath", (event, uniqueid) => {
         logger.warn("cannot check if backup folder exists", err);
     }
 
-    let zipPath = dialog.showOpenDialog({
+    let zipPath = dialog.showOpenDialogSync({
         title: "Select backup zp",
         buttonLabel: "Select Backup",
         defaultPath: backupsFolderExists ? backupsFolderPath : undefined,
@@ -751,7 +742,7 @@ ipcMain.on("getAnyFilePath", (event, data) => {
     let uuid = data.uuid,
         options = data.options || {};
 
-    let path = dialog.showOpenDialog({
+    let path = dialog.showOpenDialogSync({
         title: options.title ? options.title : undefined,
         buttonLabel: options.buttonLabel ? options.buttonLabel : undefined,
         properties: options.directoryOnly ? ["openDirectory"] : ["openFile"],

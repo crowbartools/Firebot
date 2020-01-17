@@ -10,7 +10,7 @@ const webServer = require("../../../server/httpServer");
 // Get Sound File Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.
 ipcMain.on("getSoundPath", function(event, uniqueid) {
-    let path = dialog.showOpenDialog({
+    let path = dialog.showOpenDialogSync({
         properties: ["openFile"],
         filters: [{ name: "Audio", extensions: ["mp3", "ogg", "wav", "flac"] }]
     });
@@ -20,7 +20,7 @@ ipcMain.on("getSoundPath", function(event, uniqueid) {
 // Get Video File Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.
 ipcMain.on("getVideoPath", function(event, uniqueid) {
-    let path = dialog.showOpenDialog({
+    let path = dialog.showOpenDialogSync({
         properties: ["openFile"],
         filters: [{ name: "Video", extensions: ["mp4", "webm", "ogv"] }]
     });
@@ -30,7 +30,7 @@ ipcMain.on("getVideoPath", function(event, uniqueid) {
 // Get Image File Path
 // This listens for an event from the render media.js file to open a dialog to get a filepath.
 ipcMain.on("getImagePath", function(event, uniqueid) {
-    let path = dialog.showOpenDialog({
+    let path = dialog.showOpenDialogSync({
         properties: ["openFile"],
         filters: [{ name: "Image", extensions: ["jpg", "gif", "png", "jpeg"] }]
     });
