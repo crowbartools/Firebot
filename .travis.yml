@@ -8,7 +8,7 @@ cache:
 
 install:
   - npm install -g grunt-cli node-gyp
-  - node-gyp-override.bat
+  - ./node-gyp-override.bat
   - npm install
 
 script:
