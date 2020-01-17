@@ -10,7 +10,7 @@ before_install:
   - npm install -g grunt-cli node-gyp@latest
   - npm list -g node-gyp
   - PREFIX="$(npm prefix -g)" && $(npm config set node_gyp "$PREFIX/node_modules/node-gyp/bin/node-gyp.js")
-  - ls "/home/travis/.nvm/versions/node/v12.14.1/bin/node-gyp/bin/"
+  - ls "/home/travis/.nvm/versions/node/v12.14.1/lib/node_modules/bin/"
 
 install:
   - npm install
