@@ -7,7 +7,7 @@ cache:
     - "node_modules"
 
 before_install:
-  - npm install -g grunt-cli node-gyp@latest windows-build-tools
+  - npm install -g grunt-cli node-gyp@latest
   - PREFIX="$(npm prefix -g)" && $(npm config set node_gyp "$PREFIX/lib/node_modules/node-gyp/bin/node-gyp.js")
 
 install:
