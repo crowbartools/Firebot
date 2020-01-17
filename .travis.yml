@@ -9,6 +9,7 @@ cache:
 install:
   - npm install -g grunt-cli node-gyp@latest
   - npm list -g node-gyp
+  - pwsh -Command npm config set node_gyp "`u{22}$(Join-Path $(npm prefix -g) -ChildPath 'node_modules/node-gyp/bin/node-gyp.js')`u{22}"
   - npm install
 
 script:
