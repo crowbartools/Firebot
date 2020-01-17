@@ -8,7 +8,6 @@ cache:
 
 install:
   - npm install -g grunt-cli node-gyp
-  - npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
   - npm install
 
 script:
