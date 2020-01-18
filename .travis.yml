@@ -6,9 +6,6 @@ python:
 node_js:
   - "12.14.1"
 
-before_install:
-  - python -v
-
 install:
   - npm install --no-save eslint
 
