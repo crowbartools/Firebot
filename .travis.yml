@@ -3,7 +3,7 @@ node_js:
   - "12.14.1"
 
 install:
-  - npm install eslint
+  - npm install --no-save eslint
 
 script:
   - npm run lint
