@@ -7,7 +7,7 @@ cache:
     - "node_modules"
 
 install:
-  - npm install
+  - npm install eslint
 
 script:
   - npm run lint
