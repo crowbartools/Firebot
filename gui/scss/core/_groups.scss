@@ -46,4 +46,7 @@
     border: 0.01em solid $light-background-border;
     box-shadow: 2px 2px 7px $light-background-box-shadow;
     padding:8px;
+    &.bg-inverted {
+        background: $light-background-color;
+    }
 }

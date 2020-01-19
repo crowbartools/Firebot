@@ -22,6 +22,8 @@ const timerManager = require("../timers/timer-manager");
 const emotesManager = require("./emotes-manager");
 const activeChatter = require('../chat/active-chatters');
 
+const chatModerationManager = require("../chat/moderation/chat-moderation-manager");
+
 require('request-debug')(request, function(type, data) {
     //huge json response from steam, dont log this bad boi
     if (data.body && data.body.applist) return;
@@ -336,8 +338,10 @@ function createChatDataProcessing(chatter) {
 
             // React to chat messages
             socket.on("ChatMessage", data => {
-                // Send to command router to see if we need to act on a command.
+                //Send to chat moderation service
+                chatModerationManager.moderateMessage(data);
 
+                // Send to command router to see if we need to act on a command.
                 commandHandler.handleChatEvent(data, "streamer").catch(reason => {
                     logger.error("Could not check for command in chat message.", reason);
                 });
@@ -1333,7 +1337,13 @@ function timeout(chatter, time) {
 // Delete Message
 // This deletes a chat message by id.
 function deleteChatMessage(id) {
-    global.streamerChat.call("deleteMessage", [id]);
+    global.streamerChat.call("deleteMessage", [id])
+        .then(() => {
+            logger.debug("Successfully deleted chat message");
+        })
+        .catch(err => {
+            logger.warn("Failed to delete chat message: ", err);
+        });
 }
 
 // Clear Messages

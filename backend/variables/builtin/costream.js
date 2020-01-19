@@ -29,7 +29,7 @@ const model = {
                 }
             }
         } catch (err) {
-            logger.warning("failed to get costream info: ", err);
+            logger.warn("failed to get costream info: ", err);
         }
         return "[No Costream Found]";
     }

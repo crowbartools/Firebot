@@ -522,6 +522,9 @@ function appOnReady() {
         const effectQueueManager = require("./backend/effects/queues/effect-queue-manager");
         effectQueueManager.loadEffectQueues();
 
+        const chatModerationManager = require("./backend/chat/moderation/chat-moderation-manager");
+        chatModerationManager.load();
+
         createWindow();
 
         // These are defined globally for Custom Scripts.
@@ -587,6 +590,8 @@ appOnActivate();
  */
 function onAppQuit() {
     app.on("quit", () => {
+        const chatModerationManager = require("./backend/chat/moderation/chat-moderation-manager");
+        chatModerationManager.stopService();
         deleteProfiles();
         renameProfile();
         logger.warn("THIS IS THE END OF THE SHUTDOWN PROCESS.");

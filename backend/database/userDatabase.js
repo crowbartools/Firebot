@@ -136,11 +136,11 @@ function calcUserOnlineMinutes(id) {
 
 // Recalculates online time for all users who are on line.
 function calcAllUsersOnlineMinutes() {
-    return Promise.all(
-        db.find({ online: true }, (err, docs) => {
-            docs.map(user => calcUserOnlineMinutes(user._id));
-        })
-    );
+    db.find({ online: true }, (err, docs) => {
+        if (!err) {
+            docs.forEach(user => calcUserOnlineMinutes(user._id));
+        }
+    });
 }
 
 //create a user from mixer user data

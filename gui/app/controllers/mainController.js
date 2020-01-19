@@ -96,7 +96,8 @@
         updatesService,
         commandsService,
         integrationService,
-        viewersService
+        viewersService,
+        chatModerationService
     ) {
     // 'chatMessagesService' is included so its instantiated on app start
 
@@ -113,6 +114,8 @@
         integrationService.updateIntegrations();
 
         viewersService.updateViewers();
+
+        chatModerationService.loadChatModerationData();
 
         //start notification check
         $timeout(() => {

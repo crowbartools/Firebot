@@ -29,7 +29,7 @@ class EffectQueue {
             if (this.mode === "interval") {
                 effectRunner.runEffects(runEffectsContext)
                     .catch(err => {
-                        logger.warning(`Error while processing effects for queue ${this.id}`, err);
+                        logger.warn(`Error while processing effects for queue ${this.id}`, err);
                     });
                 setTimeout(() => {
                     resolve(this.runQueue());
@@ -40,7 +40,7 @@ class EffectQueue {
                         resolve(this.runQueue());
                     })
                     .catch(err => {
-                        logger.warning(`Error while processing effects for queue ${this.id}`, err);
+                        logger.warn(`Error while processing effects for queue ${this.id}`, err);
                         resolve(this.runQueue());
                     });
             } else {

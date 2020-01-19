@@ -1,8 +1,8 @@
 "use strict";
-
-const moment = require("moment");
-
 (function() {
+
+    const moment = require("moment");
+
     angular
         .module("firebotApp")
         .component("viewerDetailsModal", {

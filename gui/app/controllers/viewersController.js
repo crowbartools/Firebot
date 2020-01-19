@@ -22,6 +22,10 @@
                 });
             };
 
+            $scope.viewerRowClicked = (data) => {
+                $scope.showUserDetailsModal(data._id);
+            };
+
             $scope.showViewerSearchModal = () => {
                 utilityService.openViewerSearchModal(
                     {
@@ -33,66 +37,70 @@
                     });
             };
 
+            $scope.vs = viewersService;
+
             // Update table rows when first visiting the page.
             if (viewersService.isViewerDbOn()) {
                 viewersService.updateViewers();
             }
 
-            $scope.pagination = {
-                currentPage: 1,
-                pageSize: 10
-            };
-
-            $scope.getRangeMin = function() {
-                return 1 + $scope.pagination.pageSize * ($scope.pagination.currentPage - 1);
-            };
-
-            $scope.getRangeMax = function(filteredLength) {
-                let max = $scope.pagination.pageSize * $scope.pagination.currentPage;
-                return max <= filteredLength ? max : filteredLength;
-            };
-
             $scope.viewerSearch = "";
 
-            $scope.vs = viewersService;
-
-            $scope.getViewTimeDisplay = (minutesInChannel) => {
-                return minutesInChannel < 60 ? 'Less than an hour' : Math.round(minutesInChannel / 60);
-            };
-
             $scope.headers = [
+                {
+                    headerStyles: {
+                        'width': '50px'
+                    },
+                    sortable: false,
+                    cellTemplate: `<img ng-src="https://mixer.com/api/v1/users/{{data._id}}/avatar?w=50&h=50" style="width: 25px;height: 25px;border-radius: 25px;"/>`,
+                    cellController: () => {}
+                },
                 {
                     name: "USERNAME",
                     icon: "fa-user",
                     dataField: "username",
-                    styles: {
+                    headerStyles: {
                         'min-width': '125px'
-                    }
+                    },
+                    sortable: true,
+                    cellTemplate: `{{data.username}}`,
+                    cellController: () => {}
                 },
                 {
                     name: "JOIN DATE",
                     icon: "fa-sign-in",
-                    dataField: "joinDate"
+                    dataField: "joinDate",
+                    sortable: true,
+                    cellTemplate: `{{data.joinDate | prettyDate}}`,
+                    cellController: () => {}
                 },
                 {
                     name: "LAST SEEN",
                     icon: "fa-eye",
-                    dataField: "lastSeen"
+                    dataField: "lastSeen",
+                    sortable: true,
+                    cellTemplate: `{{data.lastSeen | prettyDate}}`,
+                    cellController: () => {}
                 },
                 {
                     name: "VIEW TIME (hours)",
                     icon: "fa-tv",
-                    dataField: "minutesInChannel"
+                    dataField: "minutesInChannel",
+                    sortable: true,
+                    cellTemplate: `{{getViewTimeDisplay(data.minutesInChannel)}}`,
+                    cellController: ($scope) => {
+                        $scope.getViewTimeDisplay = (minutesInChannel) => {
+                            return minutesInChannel < 60 ? 'Less than an hour' : Math.round(minutesInChannel / 60);
+                        };
+                    }
                 },
                 {
                     name: "MIXPLAY INTERACTIONS",
                     icon: "fa-gamepad",
-                    dataField: "mixplayInteractions"
-                },
-                {
-                    name: "CHAT MESSAGES",
-                    icon: "fa-comments",
-                    dataField: "chatMessages"
+                    dataField: "mixplayInteractions",
+                    sortable: true,
+                    cellTemplate: `{{data.mixplayInteractions}}`,
+                    cellController: () => {}
                 }
             ];
 
@@ -102,38 +110,23 @@
                 $scope.headers.push({
                     name: currency.name.toUpperCase(),
                     icon: "fa-money-bill",
-                    dataField: "currency." + currency.id
+                    dataField: "currency." + currency.id,
+                    sortable: true,
+                    cellTemplate: `{{data.currency['${currency.id}']}}`,
+                    cellController: () => {}
                 });
             }
 
-            $scope.order = {
-                field: 'username',
-                reverse: false
-            };
-
-            $scope.isOrderField = function(field) {
-                return field === $scope.order.field;
-            };
-
-            $scope.setOrderField = function(field) {
-                if ($scope.order.field !== field) {
-                    $scope.order.reverse = false;
-                    $scope.order.field = field;
-                } else {
-                    $scope.order.reverse = !$scope.order.reverse;
-                }
-            };
-
-            $scope.dynamicOrder = function(user) {
-                let order;
-                let field = $scope.order.field;
-                if (field.startsWith("currency.")) {
-                    let currencyId = field.replace("currency.", "");
-                    order = user.currency[currencyId];
-                } else {
-                    order = user[$scope.order.field];
-                }
-                return order;
-            };
+            $scope.headers.push({
+                headerStyles: {
+                    'width': '15px'
+                },
+                cellStyles: {
+                    'width': '15px'
+                },
+                sortable: false,
+                cellTemplate: `<i class="fal fa-chevron-right"></i>`,
+                cellController: () => {}
+            });
         });
 }());

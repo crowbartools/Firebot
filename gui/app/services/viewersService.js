@@ -18,9 +18,9 @@
             service.viewers = [];
             let waitingForUpdate = false;
             service.updateViewers = function() {
-                if (waitingForUpdate) return;
+                if (waitingForUpdate) return Promise.resolve();
                 waitingForUpdate = true;
-                $q(resolve => {
+                return $q(resolve => {
                     backendCommunicator.fireEventAsync("getAllViewers")
                         .then(viewers => {
                             resolve(viewers);
@@ -32,7 +32,7 @@
             };
 
             service.updateViewer = function(userId) {
-                $q(resolve => {
+                return $q(resolve => {
                     backendCommunicator.fireEventAsync("getViewerFirebotData", userId)
                         .then(viewer => {
                             resolve(viewer);

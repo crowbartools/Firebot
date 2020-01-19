@@ -191,11 +191,14 @@ let getPathInProfile = function(filepath) {
     return path.join(profilePath, filepath);
 };
 
-let getJsonDbInProfile = function(filepath) {
+/**
+ * @returns JsonDB
+ */
+let getJsonDbInProfile = function(filepath, humanReadable = true) {
     let profilePath =
       dataAccess.getUserDataPath() + "/profiles/" + getLoggedInProfile(),
         jsonDbPath = path.join(profilePath, filepath);
-    return new JsonDB(jsonDbPath, true, true);
+    return new JsonDB(jsonDbPath, true, humanReadable);
 };
 
 let profileDataPathExistsSync = function(filePath) {

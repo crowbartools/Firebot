@@ -3,6 +3,7 @@
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
+const mixerRolesManager = require("../../shared/mixer-roles");
 
 let customRoles = {};
 
@@ -119,6 +120,15 @@ function getAllCustomRolesForViewer(username) {
         });
 }
 
+function userIsInRole(username, usersMixerRoles, roleIdsToCheck) {
+    let mappedMixerRoles = (usersMixerRoles || [])
+        .filter(mr => mr !== "User")
+        .map(mr => mixerRolesManager.mapMixerRole(mr));
+    let customRoles = getAllCustomRolesForViewer(username);
+    let allRoles = mappedMixerRoles.concat(customRoles);
+    return allRoles.some(r => roleIdsToCheck.includes(r.id));
+}
+
 frontendCommunicator.onAsync("getCustomRoles", () => {
     return new Promise(resolve => {
         resolve(customRoles);
@@ -136,6 +146,8 @@ frontendCommunicator.on("deleteCustomRole", (roleId) => {
 exports.getAllCustomRolesForViewer = getAllCustomRolesForViewer;
 
 exports.loadCustomRoles = loadCustomRoles;
+
+exports.userIsInRole = userIsInRole;
 
 
 
