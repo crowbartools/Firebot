@@ -33,12 +33,12 @@
             service.addBannedWords = (words) => {
 
                 let normalizedWords = words
-                    .filter(w => w != null && w.trim().length > 0)
-                    .map(w => w.toLowerCase());
+                    .filter(w => w != null && w.trim().length > 0 && w.trim().length < 360)
+                    .map(w => w.trim().toLowerCase());
 
                 let mapped = [...new Set(normalizedWords)].map(w => {
                     return {
-                        text: w.toLowerCase(),
+                        text: w,
                         createdAt: moment().valueOf()
                     };
                 });
