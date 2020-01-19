@@ -58,10 +58,10 @@
 
             service.removeBannedWordByText = (text) => {
                 let index = service.chatModerationData.bannedWords.findIndex(w => w.text === text);
-                if(index > -1) {
+                if (index > -1) {
                     service.removeBannedWordAtIndex(index);
                 }
-            }
+            };
 
             service.removeAllBannedWords = () => {
                 service.chatModerationData.bannedWords = [];
