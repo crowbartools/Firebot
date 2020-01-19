@@ -24,21 +24,42 @@
                 }
             };
 
-            $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
-            $scope.getCustomRoles = viewerRolesService.getCustomRoles;
-            $scope.getMixerRoles = viewerRolesService.getMixerRoles;
+            $scope.getExemptRoles = () => {
+                let allRoles = viewerRolesService.getMixerRoles().concat(viewerRolesService.getCustomRoles());
 
-            $scope.isRoleChecked = function(role) {
-                return chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.includes(role.id);
+                return allRoles.filter(r => chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.includes(r.id));
             };
 
-            $scope.toggleRole = function(role) {
-                if ($scope.isRoleChecked(role)) {
-                    chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles =
-                        chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.filter(id => id !== role.id);
-                } else {
-                    chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.push(role.id);
-                }
+            $scope.openAddExemptRoleModal = () => {
+                let allRoles = viewerRolesService.getMixerRoles().concat(viewerRolesService.getCustomRoles());
+
+                let options = allRoles
+                    .filter(r =>
+                        !chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.includes(r.id))
+                    .map(r => {
+                        return {
+                            id: r.id,
+                            name: r.name
+                        };
+                    });
+                utilityService.openSelectModal(
+                    {
+                        label: "Add Exempt Role",
+                        options: options,
+                        saveText: "Add",
+                        validationText: "Please select a role."
+
+                    },
+                    (roleId) => {
+                        if (!roleId) return;
+                        chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.push(roleId);
+                        chatModerationService.saveChatModerationSettings();
+                    });
+            };
+
+            $scope.removeExemptRole = (roleId) => {
+                chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles =
+                        chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.filter(id => id !== roleId);
                 chatModerationService.saveChatModerationSettings();
             };
 
