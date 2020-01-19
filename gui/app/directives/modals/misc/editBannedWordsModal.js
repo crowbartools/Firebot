@@ -16,13 +16,15 @@
             <div class="modal-body">
                 <p class="muted" style="margin-bottom:20px;">Messages containing any words or phrases listed here will be automatically deleted.</p>
                 <div style="margin: 0 0 25px;display: flex;flex-direction: row;justify-content: space-between;">
-                    <div class="btn-group" uib-dropdown>
-                        <button id="split-button" type="button" class="btn btn-primary" ng-click="$ctrl.addWord()"><i class="far fa-plus-circle"></i> Add Word</button>
-                        <button type="button" class="btn btn-primary" uib-dropdown-toggle>
+
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="add-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="dropdown-text"><i class="far fa-plus-circle"></i> Add Word(s)</span>
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu" style="min-width: 100%" uib-dropdown-menu role="menu" aria-labelledby="split-button">
-                            <li role="menuitem" ng-click="$ctrl.showImportModal()"><a href>Import from .txt file <tooltip text="'Import a list of words/phrases from a txt file'"></tooltip></a></li>
+                        <ul class="dropdown-menu" aria-labelledby="add-options">
+                            <li role="menuitem" ng-click="$ctrl.addWord()"><a href style="padding-left: 10px;"><i class="fad fa-plus-circle" style="margin-right: 5px;"></i> Add single word</a></li>
+                            <li role="menuitem" ng-click="$ctrl.showImportModal()"><a href style="padding-left: 10px;"><i class="fad fa-file-import" style="margin-right: 5px;"></i> Import from .txt file <tooltip text="'Import a list of words/phrases from a txt file'"></tooltip></a></li>
                         </ul>
                     </div>
 
@@ -35,7 +37,9 @@
                     headers="$ctrl.headers"
                     query="$ctrl.search"
                     clickable="false"
-                    starting-sort-field="text"
+                    starting-sort-field="createdAt"
+                    sort-initially-reversed="true"
+                    page-size="5"
                     no-data-message="No banned words or phrases have been saved.">
                 </sortable-table>
             </div>
@@ -104,7 +108,7 @@
                             model: "",
                             label: "Add Banned Word",
                             saveText: "Add",
-                            placeholderText: "Enter banned word/phrase",
+                            inputPlaceholder: "Enter banned word or phrase",
                             validationFn: (value) => {
                                 return new Promise(resolve => {
                                     if (value == null || value.trim().length < 1 || value.trim().length > 359) {

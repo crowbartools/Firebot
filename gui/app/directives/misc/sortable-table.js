@@ -11,7 +11,9 @@
                 onRowClick: "&",
                 trackByField: "@",
                 startingSortField: "@",
-                noDataMessage: "@"
+                sortInitiallyReversed: "<",
+                noDataMessage: "@",
+                pageSize: "<"
             },
             template: `
           <div>
@@ -39,7 +41,7 @@
             <div ng-show="$ctrl.tableDataSet.length < 1" class="fb-table-row">
                 <span class="muted">{{$ctrl.noDataMessage ? $ctrl.noDataMessage : "No data available yet"}}</span>
             </div>
-            <div style="display: grid;grid-template-columns: repeat(3, 1fr);">
+            <div style="display: grid;grid-template-columns: 1fr max-content 1fr;">
               <div></div>
               <div>
                   <div ng-show="filtered.length > $ctrl.pagination.pageSize" style="text-align: center;">
@@ -63,6 +65,14 @@
                     }
 
                     $ctrl.order.field = $ctrl.startingSortField || '0';
+
+                    if ($ctrl.sortInitiallyReversed !== undefined && $ctrl.sortInitiallyReversed !== null) {
+                        $ctrl.order.reverse = $ctrl.sortInitiallyReversed;
+                    }
+
+                    if ($ctrl.pageSize !== undefined && $ctrl.pageSize !== null) {
+                        $ctrl.pagination.pageSize = $ctrl.pageSize;
+                    }
                 };
 
                 $ctrl.pagination = {

@@ -15,7 +15,7 @@
                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
                     <div style="width: 95%; position: relative;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
-                            <input type="{{$ctrl.inputType}}" class="form-control" id="newPort" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}">
+                            <input type="{{$ctrl.inputType}}" class="form-control" id="inputField" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}">
                             <span id="helpBlock" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</span>
                         </div>
                     </div>
@@ -31,7 +31,7 @@
                 close: '&',
                 dismiss: '&'
             },
-            controller: function() {
+            controller: function($timeout) {
                 let $ctrl = this;
 
                 $ctrl.model = "";
@@ -75,6 +75,11 @@
                     if ($ctrl.resolve.validationText) {
                         $ctrl.validationText = $ctrl.resolve.validationText;
                     }
+
+                    $timeout(() => {
+                        angular.element("#inputField").trigger("focus");
+                    }, 50);
+
                 };
 
                 $ctrl.save = function() {
