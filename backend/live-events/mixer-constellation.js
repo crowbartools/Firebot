@@ -10,6 +10,7 @@ const connectionManager = require("../common/connection-manager");
 const logger = require("../logwrapper");
 const patronageManager = require("../patronageManager");
 const apiAccess = require("../api-access");
+const accountAccess = require("../common/account-access");
 Carina.WebSocket = ws;
 
 // This holds the constellation connection so we can stop it later.
@@ -26,12 +27,36 @@ function setLastSub(username) {
     global.lastSub = username;
 }
 
+// Constellation Disconnect
+// This will disconnect the current constellation connection and unsub from everything.
+function constellationDisconnect() {
+    logger.info("Disconnecting Constellation.");
+
+    // Close and clear all subscriptions.
+    if (ca != null) {
+        ca.close();
+        ca.subscriptions = {};
+    }
+
+    // Set to not connected.
+    constellationConnected = false;
+
+    // Set connection status to online
+    renderWindow.webContents.send("constellationConnection", "Offline");
+}
+
+
 // Constellation Connect
 // This will connect to constellation and subscribe to all constellation events we need.
 function constellationConnect() {
-    let dbAuth = profileManager.getJsonDbInProfile("/auth"),
-        streamer = dbAuth.getData("/streamer"),
-        channelId = streamer.channelId;
+
+    let streamer = accountAccess.getAccounts().streamer;
+    if (!streamer.loggedIn) {
+        constellationDisconnect();
+        return;
+    }
+
+    let channelId = streamer.channelId;
 
     logger.info("Connecting to Constellation.", channelId);
     ca = new Carina({ isBot: true }).open();
@@ -201,22 +226,6 @@ function constellationConnect() {
     // Set connection status to online
     logger.info("Constellation connected.");
     renderWindow.webContents.send("constellationConnection", "Online");
-}
-
-// Constellation Disconnect
-// This will disconnect the current constellation connection and unsub from everything.
-function constellationDisconnect() {
-    logger.info("Disconnecting Constellation.");
-
-    // Close and clear all subscriptions.
-    ca.close();
-    ca.subscriptions = {};
-
-    // Set to not connected.
-    constellationConnected = false;
-
-    // Set connection status to online
-    renderWindow.webContents.send("constellationConnection", "Offline");
 }
 
 // Constellation Status

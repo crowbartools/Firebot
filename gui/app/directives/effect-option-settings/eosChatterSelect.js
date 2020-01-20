@@ -26,7 +26,7 @@
             controller: function(connectionService) {
                 let ctrl = this;
 
-                ctrl.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
+                ctrl.botLoggedIn = connectionService.accounts.bot.loggedIn;
 
                 ctrl.$onInit = function() {
                 // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore

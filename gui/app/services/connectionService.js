@@ -3,329 +3,59 @@
 (function() {
     // This handles logins and connections to mixer interactive
 
-    const electronOauth2 = require("electron-oauth2");
-    const profileManager = require("../../backend/common/profile-manager.js");
     const dataAccess = require("../../backend/common/data-access.js");
-    const { session } = require("electron").remote;
 
     angular
         .module("firebotApp")
-        .factory("connectionService", function(
-            listenerService,
-            settingsService,
-            soundService,
-            utilityService,
-            $q,
-            $rootScope,
-            boardService,
-            logger
-        ) {
+        .factory("connectionService", function(listenerService, soundService, $rootScope, backendCommunicator,
+            logger, accountAccess, settingsService, utilityService) {
             let service = {};
 
-            let ListenerType = listenerService.ListenerType;
-
-            // Auth Options
-            let streamerScopes = "user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self channel:follow:self";
-
-            let botScopes = "chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat";
-
-            let authInfo = {
-                clientId: "eb2f0f37d57de659852af2f409e95889c868d9caf128e396",
-                authorizationUrl: "https://mixer.com/oauth/authorize",
-                tokenUrl: "https://mixer.com/api/v1/oauth/token",
-                useBasicAuthorizationHeader: false,
-                redirectUri: "https://crowbartools.com/projects/firebot/redirect.php"
+            backendCommunicator.on("accountUpdate", accounts => {
+                console.log("UPDATING ACCOUNTS", accounts);
+                service.accounts = accounts;
+            });
+            service.getAccounts = () => {
+                service.accounts = backendCommunicator.fireEventSync("getAccounts");
+                console.log("SET ACCOUNTS", service.accounts);
             };
-
-            let authWindowParams = {
-                alwaysOnTop: true,
-                autoHideMenuBar: true,
-                webPreferences: {
-                    sandbox: true
-                }
-            };
-
-            /**
-       * Login Stuff
-       */
+            service.getAccounts();
 
             let defaultPhotoUrl = "../images/placeholders/nologin.png";
 
-            function logout(type) {
-                let dbAuth = profileManager.getJsonDbInProfile("/auth");
+            /**
+             * Login Stuff
+             */
 
+            service.getAccountAvatar = function(type) {
+                if (type !== "streamer" && type !== "bot" && service.accounts[type] != null) return defaultPhotoUrl;
+                return service.accounts[type].avatar || defaultPhotoUrl;
+            };
+
+            // Login Kickoff
+            service.loginOrLogout = function(type) {
                 if (type === "streamer") {
-                    // Delete Info
-                    dbAuth.delete("/streamer");
-
-                    let streamerAccount = service.accounts.streamer;
-                    streamerAccount.username = "Broadcaster";
-                    streamerAccount.photoUrl = defaultPhotoUrl;
-                    streamerAccount.isLoggedIn = false;
-
-                } else {
-                    // Delete Info
-                    dbAuth.delete("/bot");
-
-                    let botAccount = service.accounts.bot;
-                    botAccount.username = "Bot";
-                    botAccount.photoUrl = defaultPhotoUrl;
-                    botAccount.isLoggedIn = false;
-                }
-            }
-
-            // User Info
-            // This function grabs info from the currently logged in user.
-            function userInfo(type, accessToken, refreshToken) {
-                let dbAuth = profileManager.getJsonDbInProfile("/auth");
-
-                // Request user info and save out everything to auth file.
-                request({
-                    url: 'https://mixer.com/api/v1/users/current',
-                    auth: {
-                        'bearer': accessToken
-                    }
-                }, function (err, res) {
-                    if (err) {
-                        logger.error(err);
-                        return;
-                    }
-                    let data = JSON.parse(res.body);
-
-                    let otherType = type.toLowerCase() === "bot" ? "streamer" : "bot";
-                    let otherLoggedIn = service.accounts[otherType].isLoggedIn;
-                    let otherUsername = service.accounts[otherType].username;
-
-                    if (otherLoggedIn && otherUsername === data.username) {
-                        utilityService.showErrorModal('You cannot sign into the same account for both Streamer and Bot. The bot account should be a seperate account. If you dont have a seperate account, simply dont use the Bot account feature, it is not required.');
+                    if (service.accounts.streamer.loggedIn) {
+                        service.logout(type);
                     } else {
-                        // Push all to db.
-                        dbAuth.push('./' + type + '/username', data.username);
-                        dbAuth.push('./' + type + '/userId', data.id);
-                        dbAuth.push('./' + type + '/channelId', data.channel.id);
-                        dbAuth.push('./' + type + '/avatar', data.avatarUrl);
-                        dbAuth.push('./' + type + '/accessToken', accessToken);
-                        dbAuth.push('./' + type + '/refreshToken', refreshToken);
-
-                        // Request channel info
-                        // We do this to get the sub icon to use in the chat window.
-                        request({
-                            url: 'https://mixer.com/api/v1/channels/' + data.username
-                        }, function (err, res) {
-                            let data = JSON.parse(res.body);
-
-                            // Push all to db.
-                            if (data.partnered === true) {
-                                dbAuth.push('./' + type + '/subBadge', data.badge.url);
-                            } else {
-                                dbAuth.push('./' + type + '/subBadge', false);
-                            }
-
-                            if (type === "streamer") {
-                                dbAuth.push('./' + type + '/partnered', data.partnered);
-                                service.accounts.streamer.partnered = data.partnered;
-                                let groups = data.user.groups;
-
-                                let canClip = groups.some(g =>
-                                    g.name === "Partner " ||
-                                    g.name === "VerifiedPartner" ||
-                                    g.name === "Staff" ||
-                                    g.name === "Founder");
-                                service.accounts.streamer.canClip = canClip;
-                                dbAuth.push('./' + type + '/canClip', canClip);
-                            }
-
-
-                        });
-
-
-                        // Style up the login page.
-                        $q.resolve(true, () => {
-                            service.loadLogin();
-                            $rootScope.showSpinner = false;
+                        shell.openExternal(`http://localhost:${settingsService.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent("mixer:streamer-account")}`);
+                    }
+                } else if (type === "bot") {
+                    if (service.accounts.bot.loggedIn) {
+                        service.logout(type);
+                    } else {
+                        utilityService.showModal({
+                            component: "botLoginModal",
+                            size: 'sm'
                         });
                     }
-                });
-            }
-
-            function login(type) {
-                $rootScope.showSpinner = true;
-
-                let scopes = type === "streamer" ? streamerScopes : botScopes;
-
-                // clear out any previous sessions
-                const ses = session.fromPartition(type);
-                ses.clearStorageData();
-
-                authWindowParams.webPreferences.partition = type;
-                const oauthProvider = electronOauth2(authInfo, authWindowParams);
-                $q.when(oauthProvider.getAccessToken({ scope: scopes })).then(
-                    token => {
-                        if (token.name != null && token.name === "ValidationError") {
-                            utilityService.showErrorModal("There was an issue logging into Mixer. Error: " + token.details[0].message);
-                            logger.error("There was an issue logging into Mixer. Error: " + token.details[0].message, token);
-                        } else {
-                            userInfo(type, token.access_token, token.refresh_token);
-                        }
-                    },
-                    err => {
-                        //error requesting access
-                        $rootScope.showSpinner = false;
-
-                        if (!err.message.startsWith("window was closed by user")) {
-                            logger.error("There was an error when attempting to log in: " + err.message, err);
-                            utilityService.showErrorModal(`There was an error when attempting to log in. Error: ${err.message}`);
-                        }
-                    });
-            }
-
-            // Refresh Token
-            // This will get a new access token for the streamer and bot account.
-            function refreshToken(connectionType) {
-                let dbAuth = profileManager.getJsonDbInProfile("/auth");
-
-                logger.info("Trying to get refresh tokens...");
-
-                // Refresh streamer token if the streamer is logged in.
-                try {
-                    let refresh = dbAuth.getData("./streamer/refreshToken");
-                    authWindowParams.webPreferences.partition = "refreshStreamer";
-                    let oauthProvider = electronOauth2(authInfo, authWindowParams);
-                    oauthProvider.refreshToken(refresh).then(
-                        token => {
-                            logger.info("Got refresh token!");
-
-                            // Success!
-                            let accessToken = token.access_token;
-                            let refreshToken = token.refresh_token;
-
-                            // Awesome, we got the auth token. Now to save it out for later.
-                            // Push all to db.
-                            if (
-                                accessToken !== null &&
-                                accessToken !== undefined &&
-                                accessToken !== ""
-                            ) {
-                                dbAuth.push("./streamer/accessToken", accessToken);
-                                dbAuth.push("./streamer/refreshToken", refreshToken);
-                            } else {
-                                logger.error(
-                                    "Something went wrong with streamer refresh token.",
-                                    token
-                                );
-
-                                // Set connecting to false and log the streamer out because we have oauth issues.
-                                service.waitingForChatStatusChange = false;
-                                service.waitingForStatusChange = false;
-                                service.waitingForConstellationStatusChange = false;
-
-                                utilityService.showErrorModal('There was an error authenticating your streamer account. Please try again. If it continues to fail, try relogging in.');
-                                return;
-                            }
-
-                            // Refresh bot token if the bot is logged in.
-                            try {
-                                let refresh = dbAuth.getData('./bot/refreshToken');
-                                oauthProvider.refreshToken(refresh).then(token => {
-
-                                    // Success!
-                                    let accessToken = token.access_token;
-                                    let refreshToken = token.refresh_token;
-
-                                    // Awesome, we got the auth token. Now to save it out for later.
-                                    // Push all to db.
-                                    if (accessToken !== null && accessToken !== undefined && accessToken !== "") {
-                                        dbAuth.push('./bot/accessToken', accessToken);
-                                        dbAuth.push('./bot/refreshToken', refreshToken);
-                                    } else {
-                                        logger.error('Something went wrong with bot refresh token.', token);
-                                        utilityService.showErrorModal('There was an error authenticating your bot account. Please try again. If it continues to fail, try relogging in.');
-
-                                        // Set connecting to false and log the streamer out because we have oauth issues.
-                                        service.waitingForChatStatusChange = false;
-                                        service.waitingForStatusChange = false;
-                                        service.waitingForConstellationStatusChange = false;
-
-                                        service.disconnectFromInteractive();
-
-                                        return;
-                                    }
-
-                                    // Okay, we have both streamer and bot tokens now. Start up the login process.
-                                    if (connectionType === "interactive") {
-                                        ipcRenderer.send('gotRefreshToken');
-                                    } else if (connectionType === "chat") {
-                                        ipcRenderer.send('gotChatRefreshToken');
-                                    } else if (connectionType === "constellation") {
-                                        ipcRenderer.send('gotConstellationRefreshToken');
-                                    }
-
-                                }, err => {
-                                    // There was an error getting the bot token.
-                                    logger.error(err);
-                                    utilityService.showErrorModal('There was an error authenticating your bot account. Please try again. If it continues to fail, try relogging in.');
-
-                                    // Set connecting to false and log the streamer out because we have oauth issues.
-                                    service.waitingForChatStatusChange = false;
-                                    service.waitingForStatusChange = false;
-                                    service.waitingForConstellationStatusChange = false;
-
-                                    service.disconnectFromInteractive();
-
-                                    return;
-                                });
-                            } catch (err) {
-                                logger.debug("No bot logged in. Skipping refresh token.");
-
-                                // We have the streamer token, but there is no bot logged in. So... start up the login process.
-                                if (connectionType === "interactive") {
-                                    ipcRenderer.send("gotRefreshToken");
-                                } else if (connectionType === "chat") {
-                                    ipcRenderer.send("gotChatRefreshToken");
-                                } else if (connectionType === "constellation") {
-                                    ipcRenderer.send("gotConstellationRefreshToken");
-                                }
-                            }
-                        },
-                        err => {
-                            //error getting streamer refresh token
-                            logger.error(err);
-
-                            // Set connecting to false and log the streamer out because we have oauth issues.
-                            service.waitingForChatStatusChange = false;
-                            service.waitingForStatusChange = false;
-                            service.waitingForConstellationStatusChange = false;
-
-
-                            utilityService.showErrorModal('There was an error authenticating your streamer account. Please try again. If it continues to fail, try relogging in.');
-                            return;
-                        }
-                    );
-                } catch (err) {
-                    // The streamer isn't logged in... stop everything.
-                    service.waitingForChatStatusChange = false;
-                    service.waitingForStatusChange = false;
-                    service.waitingForConstellationStatusChange = false;
-
-                    service.isConnectingAll = false;
-                    logger.warn("No streamer logged in. Skipping refresh token.");
-                    utilityService.showErrorModal(
-                        "You need to log into the app before trying to connect to Mixer."
-                    );
-                    return;
                 }
-            }
+            };
 
-            service.accounts = {
-                streamer: {
-                    username: "Streamer",
-                    photoUrl: defaultPhotoUrl,
-                    isLoggedIn: false
-                },
-                bot: {
-                    username: "Bot",
-                    photoUrl: defaultPhotoUrl,
-                    isLoggedIn: false
+            service.logout = (type) => {
+                if (type !== "streamer" && type !== "bot") return;
+                if (service.accounts[type].loggedIn) {
+                    accountAccess.logoutAccount(type);
                 }
             };
 
@@ -348,124 +78,58 @@
                 ipcRenderer.send("switchProfile", profileId);
             };
 
-            // Login Kickoff
-            service.loginOrLogout = function(type) {
-                if (
-                    (type === "streamer" && !service.accounts.streamer.isLoggedIn) ||
-          (type === "bot" && !service.accounts.bot.isLoggedIn)
-                ) {
-                    // We need to login
-                    login(type);
-                } else {
-                    // We need to logout
-                    logout(type);
-                }
-            };
-
-            // Load Login
-            // This function populates the accounnt fields which will in turn update the ui
-            service.loadLogin = function() {
-                let dbAuth = profileManager.getJsonDbInProfile("/auth");
-
-                let username, avatar;
-                // Get streamer info for logged in profile.
-                try {
-                    let streamer = dbAuth.getData("/streamer");
-
-                    if (streamer != null) {
-                        service.accounts.streamer.isLoggedIn = true;
-
-                        username = streamer.username;
-                        avatar = streamer.avatar;
-
-                        service.accounts.streamer.partnered = streamer.partnered === true;
-
-                        if (avatar != null) {
-                            service.accounts.streamer.photoUrl = avatar;
-                        }
-
-                        if (username != null) {
-                            service.accounts.streamer.username = username;
-                        }
-                    }
-                } catch (error) {
-                    logger.warn("No streamer logged into the app.");
-                }
-
-                // Get bot info for logged in profile.
-                try {
-                    let bot = dbAuth.getData("/bot");
-
-                    if (bot != null) {
-                        service.accounts.bot.isLoggedIn = true;
-
-                        username = bot.username;
-                        avatar = bot.avatar;
-
-                        if (avatar != null) {
-                            service.accounts.bot.photoUrl = avatar;
-                        }
-
-                        if (username != null) {
-                            service.accounts.bot.username = username;
-                        }
-                    }
-                } catch (error) {
-                    logger.warn("No bot logged into the app.");
-                }
-
+            service.profiles = [];
+            //load profiles
+            service.loadProfiles = () => {
                 // Get full list of active profiles.
+
+                let activeProfileIds;
                 try {
-                    let globalSettingDb = dataAccess.getJsonDbInUserData(
-                            "./global-settings"
-                        ),
-                        activeProfiles = globalSettingDb.getData(
-                            "./profiles/activeProfiles"
-                        ),
-                        profiles = [];
-
-                    // Loop through active profiles, get username and avatar for ui.
-                    Object.keys(activeProfiles).forEach(profile => {
-                        profile = activeProfiles[profile];
-                        let streamer = [],
-                            username = "User",
-                            avatar = defaultPhotoUrl;
-
-                        // Try to get streamer settings for this profile.
-                        // If it exists, overwrite defaults.
-                        try {
-                            let profileDb = dataAccess.getJsonDbInUserData(
-                                "./profiles/" + profile + "/auth"
-                            );
-                            streamer = profileDb.getData("/streamer");
-                            username = streamer.username;
-                            avatar = streamer.avatar;
-                        } catch (err) {
-                            logger.info(
-                                "Couldnt get streamer data for profile " +
-                  profile +
-                  " while updating the UI. Its possible this account hasnt logged in yet."
-                            );
-                        }
-
-                        // Push each profile to the profiles array.
-                        profiles.push({
-                            username: username,
-                            avatar: avatar,
-                            profileId: profile
-                        });
-                    });
-
-                    // Push to our service variable for easy ui access once finished.
-                    service.accounts.profiles = profiles;
+                    let globalSettingDb = dataAccess.getJsonDbInUserData("./global-settings");
+                    activeProfileIds = globalSettingDb.getData("./profiles/activeProfiles");
                 } catch (err) {
-                    logger.warn("Couldnt get active profiles for updating ui.");
+                    logger.warn("Couldnt load active profiles.");
+                    return;
                 }
+
+                if (activeProfileIds == null) return;
+
+                let profiles = [];
+                for (let profileId of activeProfileIds) {
+                    let profile = {
+                        username: "User",
+                        avatar: defaultPhotoUrl,
+                        profileId: profileId
+                    };
+
+                    // Try to get streamer settings for this profile.
+                    // If it exists, overwrite defaults.
+                    let streamer;
+                    try {
+                        let profileDb = dataAccess.getJsonDbInUserData("./profiles/" + profileId + "/auth");
+                        streamer = profileDb.getData("/streamer");
+                    } catch (err) {
+                        logger.info("Couldnt get streamer data for profile " + profileId + " while updating the UI. Its possible this account hasnt logged in yet.");
+                    }
+
+                    if (streamer) {
+                        if (streamer.username) {
+                            profile.username = streamer.username;
+                        }
+                        if (streamer.avatar) {
+                            profile.avatar = streamer.avatar;
+                        }
+                    }
+
+                    profiles.push(profile);
+                }
+
+                service.profiles = profiles;
             };
 
             /**
-       * Interactive Connection Stuff
-       */
+             * CONNECTION LISTENERS
+             */
 
             service.isConnectingAll = false;
 
@@ -488,21 +152,9 @@
                 // Let's connect! Get new tokens and connect.
                 if (service.waitingForStatusChange) return false;
 
-                /*if (!boardService.hasBoardsLoaded()) {
-                    utilityService.showInfoModal(
-                        "Interactive will not connect as you do not have any boards loaded. If you do not plan to use Interactive right now, you can disable it's use by the sidebar connection button via the Connection Panel."
-                    );
-                    return;
-                }*/
-
                 service.waitingForStatusChange = true;
 
-                let lastBoard = boardService.getBoardById(
-                    settingsService.getLastBoardId()
-                );
-
-                service.connectedBoard = lastBoard ? lastBoard.name : "";
-                refreshToken("interactive");
+                ipcRenderer.send('gotRefreshToken');
             };
 
             service.disconnectFromInteractive = function() {
@@ -510,6 +162,8 @@
                 service.waitingForStatusChange = true;
                 ipcRenderer.send("mixerInteractive", "disconnect");
             };
+
+            let ListenerType = listenerService.ListenerType;
 
             // Connection Monitor
             // Recieves event from main process that connection has been established or disconnected.
@@ -563,7 +217,7 @@
                 // Let's connect! Get new tokens and connect.
                 if (service.waitingForChatStatusChange) return;
                 service.waitingForChatStatusChange = true;
-                refreshToken("chat");
+                ipcRenderer.send('gotChatRefreshToken');
             };
 
             service.disconnectFromChat = function() {
@@ -624,7 +278,7 @@
                 // Let's connect! Get new tokens and connect.
                 if (service.waitingForConstellationStatusChange) return;
                 service.waitingForConstellationStatusChange = true;
-                refreshToken("constellation");
+                ipcRenderer.send('gotConstellationRefreshToken');
             };
 
             service.disconnectFromConstellation = function() {

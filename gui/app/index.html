@@ -100,6 +100,7 @@
     <script type="text/javascript" src="./services/overlayUrlHelper.js"></script>
     <script type="text/javascript" src="./services/objectCopyHelper.js"></script>
     <script type="text/javascript" src="./services/chatModerationService.js"></script>
+    <script type="text/javascript" src="./services/accountAccess.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
     <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
     <script type="text/javascript" src="./directives/effect-option-settings/eosContainer.js"></script>
@@ -189,6 +190,7 @@
     <script type="text/javascript" src="./directives/modals/misc/idEntryModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/editBannedWordsModal.js"></script>
     <script type="text/javascript" src="./directives/modals/misc/txtFileWordImportModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/botLoginModal.js"></script>
     <script type="text/javascript" src="./directives/modals/effect-queues/addOrEditEffectQueueModal.js"></script>
   </head>
   <body>
@@ -207,8 +209,8 @@
           <span style="width:100%" class="noselect">{{sbm.currentTabName}}</span>
           <notification-center></notification-center>
           <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
-            <img class="login-thumbnail noselect" ng-src="{{accounts.streamer.photoUrl}}">
-            <img class="login-thumbnail noselect" ng-src="{{accounts.bot.photoUrl}}">          
+            <img class="login-thumbnail noselect" ng-src="{{cs.getAccountAvatar('streamer')}}">
+            <img class="login-thumbnail noselect" ng-src="{{cs.getAccountAvatar('bot')}}">          
             <div class="fb-arrow down login-arrow"></div>
             <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
               <li>
@@ -221,7 +223,7 @@
               </li>
               <li class="divider"></li>
               <li class="dropdown-header">Profiles</li>
-              <li ng-repeat="profile in accounts.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
+              <li ng-repeat="profile in cs.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
                 <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}">
                     <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
                     <span class="accounts-info" style="text-transform: unset;">{{profile.profileId}}</span>
@@ -275,14 +277,14 @@
       <div class="modal-body">
             <div class="row" style="text-align: center;">
               <div class="col-sm-6 streamer-login top-padding">
-                <img class="login-pic" ng-src="{{accounts.streamer.photoUrl}}">
-                <h2>{{accounts.streamer.username}}</h2>
-                <button type="button" class="btn" ng-class="accounts.streamer.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{accounts.streamer.isLoggedIn ? "Logout" : "Login"}}</button>                
+                <img class="login-pic" ng-src="{{getAccountAvatar('streamer')}}">
+                <h2>{{cs.accounts.streamer.username}}</h2>
+                <button type="button" class="btn" ng-class="cs.accounts.streamer.loggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{cs.accounts.streamer.loggedIn ? "Logout" : "Login"}}</button>                
               </div>
               <div class="col-sm-6 bot-login top-padding">
-                <img class="login-pic" ng-src="{{accounts.bot.photoUrl}}">
-                <h2>{{accounts.bot.username}}</h2>
-                <button type="button" class="btn" ng-class="accounts.bot.isLoggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('bot')">{{accounts.bot.isLoggedIn ? "Logout" : "Login"}}</button>
+                <img class="login-pic" ng-src="{{getAccountAvatar('bot')}}">
+                <h2>{{cs.accounts.bot.username}}</h2>
+                <button type="button" class="btn" ng-class="cs.accounts.bot.loggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('bot')">{{cs.accounts.bot.loggedIn ? "Logout" : "Login"}}</button>
               </div>
             </div>
       </div>

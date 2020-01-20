@@ -40,46 +40,46 @@
                             <tbody>
                                 <tr style="border-top: 2px solid #ddd;">
                                         <td class="wizard-accounts-td text-left">
-                                            <b ng-show="$ctrl.streamerAccount.isLoggedIn" style="position: relative;">
-                                                <span ng-if="$ctrl.streamerAccount.isLoggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn"></i></span>
+                                            <b ng-show="$ctrl.cs.accounts.streamer.loggedIn" style="position: relative;">
+                                                <span ng-if="$ctrl.cs.accounts.streamer.loggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn"></i></span>
                                                 Streamer
                                             </b>
                                         </td>
                                         <td class="wizard-accounts-td" style="width: 50%; height: 50px;text-align: center;">
-                                            <div ng-show="$ctrl.streamerAccount.isLoggedIn" class="wizard-accounts-login-display">
-                                                <img class="login-thumbnail" ng-show="$ctrl.streamerAccount.isLoggedIn" ng-class="$ctrl.streamerAccount.isLoggedIn ? 'animated flipInX' : ''" style="height: 34px; width: 34px;" ng-src="{{$ctrl.streamerAccount.photoUrl}}">
+                                            <div ng-show="$ctrl.cs.accounts.streamer.loggedIn" class="wizard-accounts-login-display">
+                                                <img class="login-thumbnail" ng-show="$ctrl.cs.accounts.streamer.loggedIn" ng-class="$ctrl.cs.accounts.streamer.loggedIn ? 'animated flipInX' : ''" style="height: 34px; width: 34px;" ng-src="{{$ctrl.getAccountAvatar('streamer')}}">
                                                 <div class="animated fadeIn">
-                                                    {{$ctrl.streamerAccount.username}}
+                                                    {{$ctrl.cs.accounts.streamer.username}}
                                                 </div>
                                             </div>
-                                            <div ng-hide="$ctrl.streamerAccount.isLoggedIn">
+                                            <div ng-hide="$ctrl.cs.accounts.streamer.loggedIn">
                                                     <a class="clickable" ng-click="$ctrl.loginOrLogout('streamer')">+ Add <b>Streamer</b> Account</a><span style="color:red;">*</span>
                                             </div>
                                         </td>
                                         <td class="wizard-accounts-td text-right" class="animated fadeIn">
-                                            <a ng-show="$ctrl.streamerAccount.isLoggedIn" class="clickable" ng-click="$ctrl.loginOrLogout('streamer')">Logout</a>
+                                            <a ng-show="$ctrl.cs.accounts.streamer.loggedIn" class="clickable" ng-click="$ctrl.loginOrLogout('streamer')">Logout</a>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="wizard-accounts-td text-left">
-                                            <b ng-show="$ctrl.botAccount.isLoggedIn" style="position: relative;">
-                                                <span ng-if="$ctrl.botAccount.isLoggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn" style=""></i></span>
+                                            <b ng-show="$ctrl.cs.accounts.bot.loggedIn" style="position: relative;">
+                                                <span ng-if="$ctrl.cs.accounts.bot.loggedIn" class="wizard-account-checkmark"><i class="fas fa-check-circle animated bounceIn" style=""></i></span>
                                                 Bot
                                             </b>
                                         </td>
                                         <td class="wizard-accounts-td" style="width: 50%; height: 50px;text-align: center;">
-                                            <div ng-show="$ctrl.botAccount.isLoggedIn" class="wizard-accounts-login-display">
-                                                <img class="login-thumbnail" ng-show="$ctrl.botAccount.isLoggedIn" ng-class="$ctrl.botAccount.isLoggedIn ? 'animated flipInX' : ''" style="height: 34px; width: 34px;" ng-src="{{$ctrl.botAccount.photoUrl}}">
+                                            <div ng-show="$ctrl.cs.accounts.bot.loggedIn" class="wizard-accounts-login-display">
+                                                <img class="login-thumbnail" ng-show="$ctrl.cs.accounts.bot.loggedIn" ng-class="$ctrl.cs.accounts.bot.loggedIn ? 'animated flipInX' : ''" style="height: 34px; width: 34px;" ng-src="{{$ctrl.getAccountAvatar('bot')}}">
                                                 <div>
-                                                    {{$ctrl.botAccount.username}}
+                                                    {{$ctrl.cs.accounts.bot.username}}
                                                 </div>
                                             </div>
-                                            <div ng-hide="$ctrl.botAccount.isLoggedIn">
+                                            <div ng-hide="$ctrl.cs.accounts.bot.loggedIn">
                                                     <a class="clickable" ng-click="$ctrl.loginOrLogout('bot')">+ Add <b>Bot</b> Account</a> <span class="muted" style="font-size:11px">Optional</span>
                                             </div>
                                         </td>
                                         <td class="wizard-accounts-td text-right">
-                                            <a ng-show="$ctrl.botAccount.isLoggedIn" class="clickable" ng-click="$ctrl.loginOrLogout('bot')">Logout</a>
+                                            <a ng-show="$ctrl.cs.accounts.bot.loggedIn" class="clickable" ng-click="$ctrl.loginOrLogout('bot')">Logout</a>
                                         </td>
                                     </tr>
                             </tbody>
@@ -177,6 +177,8 @@
                 ""
             ];
 
+            $ctrl.getAccountAvatar = connectionService.getAccountAvatar;
+
             $ctrl.isFirstStep = function() {
                 return $ctrl.step === 0;
             };
@@ -229,7 +231,7 @@
             $ctrl.canGoToNext = function() {
                 switch ($ctrl.step) {
                 case 1:
-                    return connectionService.accounts.streamer.isLoggedIn;
+                    return connectionService.accounts.streamer.loggedIn;
                 case 2: {
                     let overlayStatus = connectionManager.getOverlayStatus();
                     return !overlayStatus.serverStarted || overlayStatus.clientsConnected;
@@ -262,8 +264,9 @@
                 return "";
             };
 
-            $ctrl.streamerAccount = connectionService.accounts.streamer;
-            $ctrl.botAccount = connectionService.accounts.bot;
+            $ctrl.cs = connectionService;
+            //$ctrl.cs.accounts.streamer = connectionService.accounts.streamer;
+            //$ctrl.cs.accounts.bot = connectionService.accounts.bot;
             $ctrl.loginOrLogout = connectionService.loginOrLogout;
 
             $ctrl.overlayPath = overlayUrlHelper.getOverlayPath();

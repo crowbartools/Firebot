@@ -478,6 +478,15 @@ function appOnReady() {
     app.on("ready", async function() {
         await createDefaultFoldersAndFiles();
 
+        //load mixer auth
+        require("./backend/auth/auth-manager");
+        const mixerAuth = require("./backend/auth/mixer-auth");
+        mixerAuth.registerMixerAuthProviders();
+
+        // load accounts
+        const accountAccess = require("./backend/common/account-access");
+        accountAccess.updateAccountCache();
+
         // load effects
         builtInEffectLoader.loadEffects();
 

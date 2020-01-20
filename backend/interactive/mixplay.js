@@ -107,15 +107,28 @@ function addControlHandlers(controls) {
     });
 }
 
+function triggerMixplayDisconnect(errorMessage) {
+    renderWindow.webContents.send('connection', "Offline");
+    mixplayManager.setConnectedProjectId(null);
+    mixplayConnected = false;
+    defaultSceneId = null;
+    if (errorMessage) {
+        renderWindow.webContents.send("error", errorMessage);
+    }
+}
+
 function connectToMixplay() {
+
+    accountAccess.ensureTokenRefreshed("streamer");
+    let streamer = accountAccess.getAccounts().streamer;
+    if (!streamer.loggedIn) {
+        triggerMixplayDisconnect("You must log into your streamer account before you can connect to MixPlay");
+        return;
+    }
 
     if (!mixplayManager.hasProjects()) {
         // no projects saved yet.
-        renderWindow.webContents.send('connection', "Offline");
-        mixplayManager.setConnectedProjectId(null);
-        mixplayConnected = false;
-        defaultSceneId = null;
-        renderWindow.webContents.send("error", "Unable to connect to MixPlay as there are no projects created yet. If you do not wish to connect to MixPlay at this time, you can uncheck 'Sidebar Controlled' for MixPlay in the Connections Panel (click the connections in the sidebar).");
+
         return;
     }
 
@@ -125,35 +138,24 @@ function connectToMixplay() {
     hiddenControls = {};
 
     if (!activeProjectId || activeProjectId.length < 1) {
-        renderWindow.webContents.send('connection', "Offline");
-        mixplayManager.setConnectedProjectId(null);
-        mixplayConnected = false;
-        defaultSceneId = null;
-        renderWindow.webContents.send("error", "You currently have no active project selected. Please select one via the project dropdown in the Controls tab.");
+        triggerMixplayDisconnect("You currently have no active project selected. Please select one via the project dropdown in the Controls tab.");
         return;
     }
 
     let currentProject = mixplayManager.getProjectById(activeProjectId);
 
     if (currentProject == null) {
-        renderWindow.webContents.send('connection', "Offline");
-        mixplayManager.setConnectedProjectId(null);
-        mixplayConnected = false;
-        defaultSceneId = null;
-        renderWindow.webContents.send("error", "The project set as active doesn't appear to exist anymore. Please set or create a new one in the Controls tab.");
+        triggerMixplayDisconnect("The project set as active doesn't appear to exist anymore. Please set or create a new one in the Controls tab.");
         return;
     }
 
     let model = buildMixplayModalFromProject(currentProject);
 
-    accountAccess.updateAccountCache();
-    let accessToken = accountAccess.getAccounts().streamer.accessToken;
-
     mixplayManager.setConnectedProjectId(activeProjectId);
 
     // Connect
     mixplayClient.open({
-        authToken: accessToken,
+        authToken: streamer.auth.access_token,
         versionId: FIREBOT_MIXPLAY_VERSION_ID,
         sharecode: FIREBOT_MIXPLAY_SHARECODE
     }).then(() => {
@@ -202,18 +204,14 @@ function connectToMixplay() {
             });
     }, reason => {
         logger.error("Failed to connect to MixPlay.", reason);
-        mixplayManager.setConnectedProjectId(null);
-        defaultSceneId = null;
+        triggerMixplayDisconnect("Failed to connect to MixPlay. Reason: " + reason);
     });
 }
 
 mixplayClient.on('error', err => {
     console.log("FAILED TO CONNECT", err);
 
-    renderWindow.webContents.send('connection', "Offline");
-    mixplayManager.setConnectedProjectId(null);
-    mixplayConnected = false;
-    defaultSceneId = null;
+    triggerMixplayDisconnect();
 });
 
 

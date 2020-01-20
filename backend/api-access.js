@@ -1,10 +1,14 @@
 
 "use strict";
-
+const logger = require("./logwrapper");
 const request = require("request");
 const accountAccess = require("./common/account-access");
 const CLIENT_ID = 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9';
 
+const HEADERS = {
+    'User-Agent': 'Firebot v5',
+    'Client-ID': CLIENT_ID
+};
 
 function buildRequestOptions(method, route, body, apiVersion = "v1", authAsStreamer = true) {
     if (apiVersion !== "v1") {
@@ -14,17 +18,17 @@ function buildRequestOptions(method, route, body, apiVersion = "v1", authAsStrea
     let options = {
         url: `https://mixer.com/api/${apiVersion}/${route}`,
         method: method,
-        headers: {
-            'User-Agent': 'Firebot v5',
-            'Client-ID': CLIENT_ID
-        },
+        headers: HEADERS,
         json: true,
         body: body
     };
 
     if (authAsStreamer) {
         let streamerData = accountAccess.getAccounts().streamer;
-        options.headers.Authorization = `Bearer ${streamerData.accessToken}`;
+        if (streamerData.loggedIn) {
+            options.headers.Authorization = `Bearer ${streamerData.auth.access_token}`;
+        }
+
     }
 
     return options;
@@ -87,4 +91,27 @@ exports.delete = function(route, apiVersion = "v1", resolveResponse = false, aut
     let options = buildRequestOptions("DELETE", route, null, apiVersion, authAsStreamer);
 
     return promisifiedRequest(options, resolveResponse);
+};
+
+exports.getUserCurrent = (accessToken) => {
+    return new Promise(resolve => {
+        request({
+            url: 'https://mixer.com/api/v1/users/current',
+            auth: {
+                'bearer': accessToken
+            },
+            headers: HEADERS,
+            json: true
+        }, function (err, response) {
+            if (err) {
+                logger.error(err);
+                return resolve(null);
+            }
+            if (response.statusCode >= 200 && response.statusCode <= 204) {
+                resolve(response.body);
+            } else {
+                resolve(null);
+            }
+        });
+    });
 };

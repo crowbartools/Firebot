@@ -7,7 +7,9 @@ const { ipcMain } = require("electron");
 let listeners = {};
 
 function send(eventName, data) {
-    renderWindow.webContents.send(eventName, data);
+    if (global.renderWindow != null) {
+        renderWindow.webContents.send(eventName, data);
+    }
 }
 
 function registerEventWithElectron(eventName) {

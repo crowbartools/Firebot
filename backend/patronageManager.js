@@ -19,13 +19,16 @@ function requestAsStreamer(method, route, body) {
             url: `https://mixer.com/api/${route}`,
             method: method,
             headers: {
-                'User-Agent': 'Firebot',
-                'Authorization': `Bearer ${streamerData.accessToken}`,
+                'User-Agent': 'Firebot v5',
                 'Client-ID': CLIENT_ID
             },
             json: true,
             body: body
         };
+
+        if (streamerData.loggedIn) {
+            options.headers['Authorization'] = `Bearer ${streamerData.auth.access_token}`;
+        }
 
         request(options, function(err, res) {
             if (res.statusCode === 200) {

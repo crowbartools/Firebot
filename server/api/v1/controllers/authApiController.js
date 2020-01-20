@@ -1,6 +1,6 @@
 "use strict";
 const logger = require('../../../../backend/logwrapper');
-const authManager = require('../../../../backend/auth-manager');
+const authManager = require('../../../../backend/auth/auth-manager');
 
 exports.getAuth = (req, res) => {
     const providerId = req.query.providerId;

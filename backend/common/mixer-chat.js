@@ -185,21 +185,20 @@ function getCurrentBroadcast() {
 
 function requestAsStreamer(method, route, body) {
     return new Promise(resolve => {
-        //updating account cache
-        accountAccess.updateAccountCache();
-
-        let streamerData = accountAccess.getAccounts().streamer;
-
         let options = {
             url: `https://mixer.com/api/v1/${route}`,
             method: method,
             headers: {
-                'User-Agent': 'MixerClient/0.13.0 (JavaScript; Node.js v6.5.0)',
-                'Authorization': `Bearer ${streamerData.accessToken}`
+                'User-Agent': 'MixerClient/0.13.0 (JavaScript; Node.js v6.5.0)'
             },
             json: true,
             body: body
         };
+
+        let streamerData = accountAccess.getAccounts().streamer;
+        if (streamerData.loggedIn) {
+            options.headers['Authorization'] = `Bearer ${streamerData.auth.access_token}`;
+        }
 
         request(options, function(err, res) {
             resolve(res);
@@ -806,14 +805,12 @@ exports.getGeneralChannelData = function(
 // This checks to see if the streamer is logged into the app, and if so it will connect them to chat.
 function streamerConnect(streamer) {
     return new Promise(resolve => {
-        let userInfo;
-
-        // Bot Login
+        // streamer Login
         streamerClient.use(
             new Mixer.OAuthProvider(streamerClient, {
                 clientId: options.cliendId,
                 tokens: {
-                    access: streamer.accessToken,
+                    access: streamer.auth.access_token,
                     expires: Date.now() + 365 * 24 * 60 * 60 * 1000
                 }
             })
@@ -827,8 +824,9 @@ function streamerConnect(streamer) {
         });
 
         // Request chat endpoints and connect.
+        let userInfo;
         streamerClient
-            .request("GET", `users/` + streamer["userId"])
+            .request("GET", `users/` + streamer.userId)
             .then(response => {
                 userInfo = response.body;
                 return new Mixer.ChatService(streamerClient).join(
@@ -836,7 +834,6 @@ function streamerConnect(streamer) {
                 );
             })
             .catch(error => {
-                console.log(error);
                 // Popup error.
                 renderWindow.webContents.send(
                     "error",
@@ -902,9 +899,6 @@ function streamerConnect(streamer) {
                 chatConnected = false;
                 reconnectService.reconnect("Chat", false, false);
                 return { then: function() {} };
-            })
-            .then(() => {
-                accountAccess.updateAccountCache();
             })
             .catch(error => {
                 // Popup error.
@@ -986,7 +980,6 @@ function streamerConnect(streamer) {
 
                 // Fire the chat connected event.
                 try {
-                    console.log("triggering chat event");
                     eventManager.triggerEvent("firebot", "chat-connected", {
                         username: "Firebot"
                     });
@@ -1020,30 +1013,31 @@ function streamerConnect(streamer) {
 
 // Bot Chat Connect
 // This checks to see if bot info is available, and if so it will connect them to chat.
-function botConnect(botter) {
+function botConnect(bot) {
     return new Promise((resolve) => {
-        if (botter !== [] && botter != null) {
-            let userInfo,
-                dbAuth = profileAccess.getJsonDbInProfile("/auth"),
-                streamer = dbAuth.getData("/streamer");
+        if (bot && bot.loggedIn) {
+
+
+            let streamerChannelId = accountAccess.getAccounts().streamer.channelId;
 
             // Bot Login
             botClient.use(
                 new Mixer.OAuthProvider(botClient, {
                     clientId: options.cliendId,
                     tokens: {
-                        access: botter.accessToken,
+                        access: bot.auth.access_token,
                         expires: Date.now() + 365 * 24 * 60 * 60 * 1000
                     }
                 })
             );
 
+            let userInfo;
             // Request chat endpoints and connect.
             botClient
-                .request("GET", `users/` + botter["userId"])
+                .request("GET", `users/${bot.userId}`)
                 .then(response => {
                     userInfo = response.body;
-                    return new Mixer.ChatService(botClient).join(streamer["channelId"]);
+                    return new Mixer.ChatService(botClient).join(streamerChannelId);
                 })
                 .catch(error => {
                     // Popup error.
@@ -1068,7 +1062,7 @@ function botConnect(botter) {
                     return createChatSocket(
                         "Bot",
                         userInfo.id,
-                        streamer["channelId"],
+                        streamerChannelId,
                         body.endpoints,
                         body.authkey
                     );
@@ -1149,40 +1143,40 @@ function reconnectIfConnected() {
 // Chat Connector
 // This function connects to mixer chat and monitors messages.
 function chatConnect() {
-    return new Promise((resolve, reject) => {
-        let dbAuth = profileAccess.getJsonDbInProfile("/auth"),
-            streamer = [],
-            botter = null;
+    return new Promise(async (resolve, reject) => {
 
-        // Get streamer data.
-        try {
-            streamer = dbAuth.getData("/streamer");
-        } catch (err) {
+        await accountAccess.ensureTokenRefreshed("streamer");
+        const streamer = accountAccess.getAccounts().streamer;
+
+        if (!streamer.loggedIn) {
             renderWindow.webContents.send(
                 "error",
-                "You need to sign into the app as a streamer to connect to chat."
+                "You need to log into your streamer account to be able to connect to chat."
             );
-            reject(err);
-            return;
+            return reject();
         }
 
-        // Get Bot Data
         try {
-            botter = dbAuth.getData("/bot");
+            await streamerConnect(streamer);
         } catch (err) {
-            logger.info("No bot logged in. Skipping. (chat-connect)");
+            logger.error("error while connecting streamer", err);
+            return reject();
         }
 
         emotesManager.updateEmotesCache();
 
-        // Connect Kickoff
-        streamerConnect(streamer)
-            .then(() => {
-                return botConnect(botter);
-            })
-            .catch(err => {
-                logger.error("error while connecting streamer/bot", err);
-            });
+        await accountAccess.ensureTokenRefreshed("bot");
+        const bot = accountAccess.getAccounts().bot;
+        if (bot.loggedIn) {
+            try {
+                await botConnect(bot);
+            } catch (err) {
+                logger.error("error while connecting bot", err);
+                return reject();
+            }
+        }
+
+        resolve();
     });
 }
 
@@ -1342,7 +1336,7 @@ function deleteChatMessage(id) {
             logger.debug("Successfully deleted chat message");
         })
         .catch(err => {
-            logger.warn("Failed to delete chat message: ", err);
+            logger.warn(err);
         });
 }
 

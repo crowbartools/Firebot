@@ -25,6 +25,19 @@ exports.getFollowDateForUser = function(username) {
     });
 };
 
+exports.getChannelSubBadge = async channelName => {
+    let badgeData = await mixerApi.get(
+        `channels/${channelName}?fields=online`,
+        "v1",
+        false,
+        false
+    );
+    if (!badgeData || !badgeData.badge) {
+        return null;
+    }
+    return badgeData.badge.url;
+};
+
 exports.getStreamerOnlineStatus = function() {
     return new Promise(async resolve => {
         let streamerData = accountAccess.getAccounts().streamer;

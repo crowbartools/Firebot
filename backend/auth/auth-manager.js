@@ -1,8 +1,8 @@
 "use strict";
 
 let EventEmitter = require("events");
-const logger = require("./logwrapper");
-const { settings } = require("./common/settings-access");
+const logger = require("../logwrapper");
+const { settings } = require("../common/settings-access");
 const simpleOauthModule = require('simple-oauth2');
 
 const HTTP_PORT = settings.getWebServerPort();
@@ -69,6 +69,19 @@ class AuthManager extends EventEmitter {
             }
         }
         return accessToken.token;
+    }
+
+    async revokeTokens(providerId, tokenData) {
+        const provider = this.getAuthProvider(providerId);
+        if (provider == null) return;
+
+        let accessToken = provider.oauthClient.accessToken.create(tokenData);
+        try {
+            // Revokes both tokens, refresh token is only revoked if the access_token is properly revoked
+            await accessToken.revokeAll();
+        } catch (error) {
+            logger.error('Error revoking token: ', error.message);
+        }
     }
 
     successfulAuth(providerId, tokenData) {

@@ -34,7 +34,7 @@
 
             $scope.currentViewers = 0;
 
-            $scope.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
+            $scope.botLoggedIn = connectionService.accounts.bot.loggedIn;
 
             // the number of messages to show visually, we have to make the number negative so angular knows to limit
             // from the end of the array instead of the front

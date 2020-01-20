@@ -99,10 +99,9 @@
         viewersService,
         chatModerationService
     ) {
-    // 'chatMessagesService' is included so its instantiated on app start
+        // 'chatMessagesService' is included so its instantiated on app start
 
-        // Run loadLogin to update the UI on page load.
-        connectionService.loadLogin();
+        connectionService.loadProfiles();
 
         //load viewer roles
         viewerRolesService.loadCustomRoles();
@@ -212,13 +211,14 @@
                 templateUrl: "manageLoginsModal.html",
                 // This is the controller to be used for the modal.
                 controllerFunc: ($scope, $uibModalInstance, connectionService) => {
-                    $scope.accounts = connectionService.accounts;
+                    $scope.cs = connectionService;
 
                     // Login Kickoff
                     $scope.loginOrLogout = function(type) {
                         connectionService.loginOrLogout(type);
                     };
 
+                    $scope.getAccountAvatar = connectionService.getAccountAvatar;
 
                     // When the user clicks "Save", we want to pass the id back to interactiveController
                     $scope.close = function() {
@@ -347,8 +347,9 @@
         /**
      * Initial App Load
      */
-
-        $scope.accounts = connectionService.accounts;
+        $scope.cs = connectionService;
+        //$scope.accounts = connectionService.accounts;
+        //$scope.profiles = connectionService.profiles;
 
         if (settingsService.hasJustUpdated()) {
             utilityService.showUpdatedModal();

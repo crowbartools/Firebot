@@ -39,9 +39,6 @@
 
             function loadBoardsAndLogins() {
                 boardService.loadAllBoards().then(() => {
-                    connectionService.loadLogin();
-                    groupsService.loadViewerGroups();
-
                     $scope.$applyAsync();
 
                     $rootScope.showSpinner = false;
@@ -135,7 +132,7 @@
             $scope.canGoToNext = function() {
                 switch ($scope.step) {
                 case 3:
-                    return connectionService.accounts.streamer.isLoggedIn;
+                    return connectionService.accounts.streamer.loggedIn;
                 case 5:
                     return $scope.hasBoardsLoaded;
                 }

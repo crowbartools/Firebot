@@ -2,7 +2,7 @@
 const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
-const authManager = require("../auth-manager");
+const authManager = require("../auth/auth-manager");
 const EventEmitter = require("events");
 const { shell } = require('electron');
 const { settings } = require('../common/settings-access');
@@ -129,7 +129,7 @@ class IntegrationManager extends EventEmitter {
         if (int == null || int.definition.linked) return;
 
         if (int.definition.linkType === "auth") {
-            shell.openExternal(`http://localhost:${settings.getWebServerPort()}/api/v1/auth?providerId=${int.definition.authProviderDetails.id}`);
+            shell.openExternal(`http://localhost:${settings.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent(int.definition.authProviderDetails.id)}`);
         } else if (int.definition.linkType === "id") {
             frontEndCommunicator.send("requestIntegrationAccountId", {
                 integrationId: int.definition.id,
