@@ -39,7 +39,7 @@ const toggleConnection = {
     </div>
 
     <eos-container header="Connections To Toggle">
-        <label class="control-fb control--checkbox"> Interactive
+        <label class="control-fb control--checkbox"> MixPlay
             <input type="checkbox" ng-checked="serviceIsChecked('interactive')" ng-click="toggleService('interactive')">
             <div class="control__indicator"></div>
         </label>
@@ -47,7 +47,7 @@ const toggleConnection = {
             <input type="checkbox" ng-checked="serviceIsChecked('chat')" ng-click="toggleService('chat')">
             <div class="control__indicator"></div>
         </label>
-        <label class="control-fb control--checkbox"> Constellation
+        <label class="control-fb control--checkbox"> Events
             <input type="checkbox" ng-checked="serviceIsChecked('constellation')" ng-click="toggleService('constellation')">
             <div class="control__indicator"></div>
         </label>
