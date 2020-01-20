@@ -31,19 +31,18 @@
             </div>
             <span>:</span>
           </div>
-          <div stlye="display:flex;">
-                <div ng-repeat="filter in $ctrl.filterData.filters track by $index"
-                    class="filter-bar"
-                    ng-click="$ctrl.openAddOrEditFilterModal($index)">
-                        <filter-display filter="filter" filter-type="$ctrl.getFilterType(filter.type)"></filter-display>
-                        <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeFilterAtIndex($index)" uib-tooltip="Remove filter" tooltip-append-to-body="true">
-                            <i class="far fa-times"></i>
-                        </span>
-                </div>
+          <div style="display:flex;">
+           
+            <button ng-repeat="filter in $ctrl.filterData.filters track by $index" class="filter-bar" ng-click="$ctrl.openAddOrEditFilterModal($index)">
+                <filter-display filter="filter" filter-type="$ctrl.getFilterType(filter.type)"></filter-display>
+                <a class="filter-remove-btn clickable" style="padding-left: 10px;" ng-click="$ctrl.removeFilterAtIndex($index)" uib-tooltip="Remove filter" tooltip-append-to-body="true">
+                    <i class="far fa-times"></i>
+                </a>
+            </button>
 
-                <div class="filter-bar clickable" ng-if="$ctrl.hasFiltersAvailable()" ng-click="$ctrl.openAddOrEditFilterModal()" uib-tooltip="Add new filter" tooltip-append-to-body="true">
-                    <i class="far fa-plus"></i> 
-                </div>
+            <button class="filter-bar" ng-show="$ctrl.hasFiltersAvailable()" ng-click="$ctrl.openAddOrEditFilterModal()" uib-tooltip="Add new filter" tooltip-append-to-body="true">
+                <i class="far fa-plus"></i> 
+            </button> 
 
           </div>
              

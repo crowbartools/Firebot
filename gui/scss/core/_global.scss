@@ -2,6 +2,10 @@
 // Helper Classes
 /////////////////
 
+:focus {
+  outline: lightblue auto 1px;
+}
+
 .muted {
   opacity: 0.5;
 }
@@ -1584,9 +1588,15 @@ thead th{
   margin-right: 4px;
   margin-bottom: 4px;
   justify-content: space-between;
-  &:hover{
-    background: rgb(51, 53, 58);
-    cursor: pointer;
+  cursor: pointer;
+  border: none;
+  &:hover, &:focus {
+    opacity: 0.8;  
+  }
+  .filter-remove-btn {
+    border: none;
+    color: white;
+    text-decoration: none;
   }
 }
 
