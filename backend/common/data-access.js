@@ -4,7 +4,6 @@ const electron = require("electron");
 const path = require("path");
 const fs = require("fs");
 const JsonDB = require("node-json-db");
-const logger = require("../logwrapper");
 
 // This is the path to folder the app is currently living in. IE: C:\Users\<user>\AppData\Local\Firebot\app-4.0.0\
 // This will change after every update.
@@ -74,6 +73,7 @@ function pathExists(path) {
                     // This folder doesn't exist. Resolve and create it.
                     resolve(false);
                 } else {
+                    const logger = require("../logwrapper");
                     // Some weird error happened other than the path missing.
                     logger.error(err);
                 }
@@ -86,6 +86,7 @@ function pathExists(path) {
 
 let createFirebotDataDir = function() {
     if (!pathExists(userDataPath)) {
+        const logger = require("../logwrapper");
         logger.info("Creating firebot-data folder...");
         fs.mkdirSync(userDataPath);
     }
@@ -108,9 +109,10 @@ let makeDirInUserData = async function(filePath) {
 let makeDirInUserDataSync = function(filePath) {
     try {
         let joinedPath = path.join(userDataPath, filePath);
-        fs.mkdir(joinedPath);
+        fs.mkdir(joinedPath, () => {});
         return true;
     } catch (err) {
+        const logger = require("../logwrapper");
         logger.error(`Error creating ${filePath}: ` + err);
         return false;
     }

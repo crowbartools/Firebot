@@ -31,7 +31,7 @@ function requestAsStreamer(method, route, body) {
         }
 
         request(options, function(err, res) {
-            if (res.statusCode === 200) {
+            if (!err && res.statusCode === 200) {
                 resolve(res.body);
             } else {
                 reject(err);

@@ -38,7 +38,7 @@ function promisifiedRequest(options, resolveResponse = false) {
     return new Promise((resolve, reject) => {
 
         request(options, function(err, res) {
-            if (res.statusCode >= 200 && res.statusCode <= 204) {
+            if (!err && res.statusCode >= 200 && res.statusCode <= 204) {
                 if (resolveResponse) {
                     resolve(res);
                 } else {
