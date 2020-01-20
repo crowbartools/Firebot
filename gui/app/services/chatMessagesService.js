@@ -7,7 +7,7 @@
 
     angular
         .module('firebotApp')
-        .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService, groupsService,
+        .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
             soundService, connectionService, $timeout, $interval) {
             let service = {};
 

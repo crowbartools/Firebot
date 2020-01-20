@@ -12,8 +12,6 @@ angular.module('firebotApp').
                 let animationNames = classNames.split(",");
                 animationNames = animationNames.map(a => a.trim());
 
-                console.log("ani names:", animationNames);
-
                 element.on(events, function() {
                     element.removeClass("animated");
                     animationNames.forEach(a => {

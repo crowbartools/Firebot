@@ -107,7 +107,7 @@
                           </tr>       
                         </tbody>
                       </table>
-                      <span ng-show="eventLogService.alertEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
+                      <span ng-show="eventLogService.alertEvents.length == 0" style="opacity: 0.5">There are no recent logs.</span>
                       <div ng-show="filteredEvents.length > pagination.alertLog.pageSize" style="text-align: center;">
                           <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.alertLog.currentPage" items-per-page="pagination.alertLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
                       </div>

@@ -45,7 +45,9 @@ function addControlHandlers(controls) {
     });
 }
 // Refresh Controls JSON Cache
-function refreshInteractiveCache(retry) {
+function refreshInteractiveCache() {
+    return;
+    /*
     // FB: I've set a weird retry thing here because I ran into a rare issue where upon saving settings the app tried to
     // save and get the same file at the same time which threw errors and caused the cache to get out
     // of sync.
@@ -91,7 +93,7 @@ function refreshInteractiveCache(retry) {
             "error while attempting to refresh interactive cache:",
             err.message
         );
-    }
+    }*/
 }
 
 // Refresh immediately for manually testing buttons before connecting.
@@ -780,9 +782,9 @@ ipcMain.on("gotRefreshToken", function() {
 
 // Refresh Interactive Cache
 // This refreshes the interactive cache for the backend with frontend changes are saved.
-ipcMain.on("refreshInteractiveCache", function() {
+/*ipcMain.on("refreshInteractiveCache", function() {
     refreshInteractiveCache();
-});
+});*/
 
 // Ban User Added in UI
 // This bans a user when they are added via the ui.

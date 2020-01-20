@@ -37,8 +37,6 @@ function refreshTimerCache(retry = 1) {
                 timerCache = Object.values(timerData);
             }
 
-            console.log(timerCache);
-
             logger.info("Updated Timer cache.");
         } else {
             renderWindow.webContents.send("error", "Could not sync up timer cache.");

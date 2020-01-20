@@ -12,12 +12,10 @@
             let service = {};
 
             backendCommunicator.on("accountUpdate", accounts => {
-                console.log("UPDATING ACCOUNTS", accounts);
                 service.accounts = accounts;
             });
             service.getAccounts = () => {
                 service.accounts = backendCommunicator.fireEventSync("getAccounts");
-                console.log("SET ACCOUNTS", service.accounts);
             };
             service.getAccounts();
 

@@ -13,8 +13,6 @@
         controller: function(
             $scope,
             hotkeyService,
-            commandsService,
-            boardService,
             utilityService
         ) {
             let $ctrl = this;

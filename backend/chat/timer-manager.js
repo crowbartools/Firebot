@@ -20,7 +20,6 @@ function clearIntervals(onlyClearWhenLiveTimers = false) {
         intervals = Object.values(timerIntervalCache);
     }
 
-    console.log("clearing: ", intervals);
     intervals.forEach(i => {
         clearInterval(i.intervalId);
         delete timerIntervalCache[i.timerId];

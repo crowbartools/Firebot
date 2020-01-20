@@ -204,12 +204,10 @@
         service.EventType = EventType;
 
         service.fireEvent = function(type, data) {
-            console.log("sending event " + type);
             ipcRenderer.send(type, data);
         };
 
         service.fireEventSync = function(type, data) {
-            console.log("firing sync event " + type);
             return ipcRenderer.sendSync(type, data);
         };
 

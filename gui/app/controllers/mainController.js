@@ -88,7 +88,6 @@
     app.run(function initializeApplication(
         logger,
         chatMessagesService,
-        groupsService,
         viewerRolesService,
         connectionService,
         notificationService,
@@ -132,14 +131,12 @@
         $scope,
         $rootScope,
         $timeout,
-        boardService,
         connectionService,
         connectionManager,
         utilityService,
         settingsService,
         updatesService,
         eventLogService,
-        websocketService,
         sidebarManager,
         logger
     ) {
