@@ -167,7 +167,7 @@ function createCurrencyCommandDefinition(currency) {
                     description: "Gives currency from one user to another user."
                 },
                 {
-                    arg: "giveall",
+                    arg: "addall",
                     usage: "giveall [amount]",
                     description: "Gives currency to all online users.",
                     restrictionData: {
@@ -371,7 +371,7 @@ function createCurrencyCommandDefinition(currency) {
 
                     break;
                 }
-                case "giveall": {
+                case "addall": {
                     let currencyAdjust = Math.abs(parseInt(args[1]));
                     if (isNaN(currencyAdjust)) {
                         Chat.smartSend(
