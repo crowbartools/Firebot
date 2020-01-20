@@ -55,11 +55,12 @@
                 let groupsDb = getCommandGroupsDb();
                 try {
                     commandGroups = groupsDb.getData("/groups");
-                } catch (err) {
-                    logger.warn("error getting cmd group data", err);
+                } catch (error) {
+                    if (error.name === 'DatabaseError') {
+                        logger.error("Failed to load command groups", error);
+                    }
                     return;
                 }
-
             };
 
             service.getSystemCommands = () => commandsCache.systemCommands;

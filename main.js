@@ -239,39 +239,48 @@ function createWindow() {
 async function deleteProfiles() {
     let globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
 
+    let deletedProfile, activeProfiles;
     try {
-        let deletedProfile = globalSettingsDb.getData("./profiles/deleteProfile"),
-            activeProfiles = globalSettingsDb.getData("./profiles/activeProfiles");
-
-        // Stop here if we have no deleted profile info.
-        if (deletedProfile != null) {
-            // Delete the profile.
-            logger.warn("Profile " + deletedProfile + " is marked for deletion. Removing it now.");
-            logger.warn(dataAccess.getPathInUserData("/profiles") + "\\" + deletedProfile);
-            dataAccess.deleteFolderRecursive(
-                dataAccess.getPathInUserData("/profiles") + "\\" + deletedProfile
-            );
-
-            // Remove it from active profiles.
-            let profilePosition = activeProfiles.indexOf(deletedProfile);
-            activeProfiles.splice(profilePosition, 1);
-            globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);
-
-            // Remove loggedInProfile setting and let restart process handle it.
-            if (activeProfiles.length > 0 && activeProfiles != null) {
-                // Switch to whatever the first profile is in our new active profiles list.
-                globalSettingsDb.push("./profiles/loggedInProfile", activeProfiles[0]);
-            } else {
-                // We have no more active profiles, delete the loggedInProfile setting.
-                globalSettingsDb.delete("./profiles/loggedInProfile");
-            }
-
-            // Reset the deleteProfile setting.
-            globalSettingsDb.delete("./profiles/deleteProfile");
-
-            // Let our logger know we successfully deleted a profile.
-            logger.warn("Successfully deleted profile: " + deletedProfile);
+        deletedProfile = globalSettingsDb.getData("./profiles/deleteProfile");
+        activeProfiles = globalSettingsDb.getData("./profiles/activeProfiles");
+    } catch (error) {
+        if (error.name === 'DatabaseError') {
+            logger.error("Error loading deleted and active profiles", error);
         }
+    }
+
+    // Stop here if we have no deleted profile info.
+    if (deletedProfile == null) return;
+
+    try {
+
+        // Delete the profile.
+        logger.warn("Profile " + deletedProfile + " is marked for deletion. Removing it now.");
+        logger.warn(dataAccess.getPathInUserData("/profiles") + "\\" + deletedProfile);
+        dataAccess.deleteFolderRecursive(
+            dataAccess.getPathInUserData("/profiles") + "\\" + deletedProfile
+        );
+
+        // Remove it from active profiles.
+        let profilePosition = activeProfiles.indexOf(deletedProfile);
+        activeProfiles.splice(profilePosition, 1);
+        globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);
+
+        // Remove loggedInProfile setting and let restart process handle it.
+        if (activeProfiles.length > 0 && activeProfiles != null) {
+            // Switch to whatever the first profile is in our new active profiles list.
+            globalSettingsDb.push("./profiles/loggedInProfile", activeProfiles[0]);
+        } else {
+            // We have no more active profiles, delete the loggedInProfile setting.
+            globalSettingsDb.delete("./profiles/loggedInProfile");
+        }
+
+        // Reset the deleteProfile setting.
+        globalSettingsDb.delete("./profiles/deleteProfile");
+
+        // Let our logger know we successfully deleted a profile.
+        logger.warn("Successfully deleted profile: " + deletedProfile);
+
     } catch (err) {
         logger.error("error while deleting profile: ", err);
         return;
