@@ -18,7 +18,7 @@
                     </div>
                     <div style="width: 100%; position: relative;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
-                            <input type="text" class="form-control" ng-model="$ctrl.name" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter name">
+                            <input type="text" id="nameField" class="form-control" ng-model="$ctrl.name" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter name">
                             <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">Please provide a name.</span>
                         </div>
                     </div>
@@ -61,11 +61,15 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function() {
+            controller: function($timeout) {
                 let $ctrl = this;
 
+                $timeout(() => {
+                    angular.element("#nameField").trigger("focus");
+                }, 50);
+
                 $ctrl.name = "";
-                $ctrl.kind = "";
+                $ctrl.kind = "button";
 
                 $ctrl.nameError = false;
                 $ctrl.kindError = false;
