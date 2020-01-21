@@ -320,6 +320,15 @@ function createChatSocket (chatter, userId, channelId, endpoints, authkey) {
     });
 }
 
+let pollActivelyRunning = false;
+
+function setPollActivelyRunning(duration = 0) {
+    pollActivelyRunning = true;
+    setTimeout(() => {
+        pollActivelyRunning = false;
+    }, duration);
+}
+
 // Sets up chat data processing
 // This sets up chat data processing after chat sockets are connected and created.
 function createChatDataProcessing(chatter) {
@@ -430,10 +439,19 @@ function createChatDataProcessing(chatter) {
                 data.fbEvent = "PollStart";
                 renderWindow.webContents.send("chatUpdate", data);
 
-                eventManager.triggerEvent("mixer", "poll-started", {
-                    username: data.author.user_name,
-                    data: data
-                });
+                if (!pollActivelyRunning) {
+                    setPollActivelyRunning(data.duration);
+                    eventManager.triggerEvent("mixer", "poll-started", {
+                        username: data.author.user_name,
+                        data: data
+                    });
+                } else {
+                    eventManager.triggerEvent("mixer", "poll-update", {
+                        username: data.author.user_name,
+                        data: data
+                    });
+                }
+
             });
 
             // Poll End

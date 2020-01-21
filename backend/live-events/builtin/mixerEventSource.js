@@ -116,6 +116,16 @@ const mixerEventSource = {
             }
         },
         {
+            id: "poll-update",
+            name: "Poll Update",
+            description: "When Firebot recieves an update to an active poll",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot"
+            }
+        },
+        {
             id: "poll-ended",
             name: "Poll Ended",
             description: "When a poll has ended",
