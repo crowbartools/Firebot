@@ -17,9 +17,9 @@ install:
 script:
   - npm run lint
 
-deploy:
-  skip_cleanup: true
-  provider: script
-  script: node deploy.js
-  on:
-    branch: v5
+# deploy:
+#  skip_cleanup: true
+#  provider: script
+#  script: node deploy.js
+#  on:
+#    branch: v5
