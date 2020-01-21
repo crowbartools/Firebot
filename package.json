@@ -1,10 +1,10 @@
 {
     "name": "firebotv5",
-    "version": "5.0.0-beta1",
+    "version": "5.0.0-beta2",
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
     "scripts": {
-        "start": "npm run compile:scss && electron . --js-flags=\"--harmony\"",
+        "start": "npm run compile:scss && electron . --dev --js-flags=\"--harmony\"",
         "start:noscss": "electron . --js-flags=\"--harmony\"",
         "compile:scss": "npm run compile:scssGui && npm run compile:scssOverlay",
         "compile:scssGui": "./node_modules/.bin/node-sass --recursive --output ./gui/css ./gui/scss",
