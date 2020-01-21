@@ -91,8 +91,7 @@ function compareVersions(newVersion, currentVersion) {
         // NOTE(ebiggz): Right now we just validate that both the old and new versions have prerelaseTags.
         // But if we ever decide to do alphas as well as betas, we will also want to order the old and new
         // prerelaseTags alphabetically and validate that so 'alpha3' isnt considered an update to 'beta2'.
-        if (updateType !== UpdateType.NONE ||
-        (pCurrentVersion.prerelaseTag !== "" &&
+        if (updateType !== UpdateType.NONE || (pCurrentVersion.prerelaseTag !== "" &&
             majorsAreEqual &&
             minorsAreEqual &&
             patchesAreEqual &&
@@ -108,12 +107,7 @@ function compareVersions(newVersion, currentVersion) {
 
     // If both versions are the same but the current version has a prelease tag and the new one doesn't,
     // we consider the new version an official release of the current.(IE 1.0.0-beta -> 1.0.0)
-    } else if (
-        majorsAreEqual &&
-    minorsAreEqual &&
-    patchesAreEqual &&
-    pCurrentVersion.prerelaseTag !== ""
-    ) {
+    } else if (majorsAreEqual && minorsAreEqual && patchesAreEqual && pCurrentVersion.prerelaseTag !== "") {
         updateType = UpdateType.OFFICIAL;
     }
 
