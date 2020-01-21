@@ -361,7 +361,10 @@ ipcMain.on("controlsRemoved", function(_, data) {
 ipcMain.on("controlAdded", function(_, data) {
     if (!mixplayConnected) return;
     let { sceneId } = data,
-        firebotControl = data.control;
+        firebotControl = data.newControl;
+
+    let mixplayControl = mixplayClient.state.getControl(firebotControl.id);
+    if (mixplayControl != null) return;
 
     let scene = mixplayClient.state.getScene(translateSceneIdForMixplay(sceneId));
     if (scene) {
