@@ -202,8 +202,8 @@ const controlEmulation = {
    * When the effect is triggered by something
    */
     onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            controlProcessor.press(event.trigger.metadata.inputEvent, event.effect);
+        return new Promise(resolve => {
+            controlProcessor.press(event.trigger.metadata.inputType, event.effect);
             resolve(true);
         });
     }
