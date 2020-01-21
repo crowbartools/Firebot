@@ -38,6 +38,11 @@ require("./backend/interactive/mixplay");
 // uncaught exception - log the error
 process.on("uncaughtException", logger.error); //eslint-disable-line no-console
 
+function isDev() {
+    console.log(process.argv);
+    return process.argv && process.argv.length >= 3 && process.argv[2] === '--dev';
+}
+
 /**
  * Keeps a global reference of the window object, if you don't, the window will
  * be closed automatically when the JavaScript object is garbage collected.
@@ -45,7 +50,6 @@ process.on("uncaughtException", logger.error); //eslint-disable-line no-console
 let mainWindow;
 
 const gotTheLock = app.requestSingleInstanceLock();
-
 if (!gotTheLock) {
     app.quit();
 } else {
@@ -151,6 +155,10 @@ function createWindow() {
             nodeIntegration: true
         }
     });
+
+    if (!isDev()) {
+        mainWindow.setMenuBarVisibility(false);
+    }
 
     // register listeners on the window, so we can update the state
     // automatically (the listeners will be removed when the window is closed)
