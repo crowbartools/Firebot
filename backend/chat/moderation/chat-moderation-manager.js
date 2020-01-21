@@ -5,27 +5,6 @@ const { Worker } = require("worker_threads");
 const chat = require("../../common/mixer-chat");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const rolesManager = require("../../roles/custom-roles-manager");
-const path = require("path");
-const callsites = require("callsites");
-
-function rebaseScriptPath(scriptPath, ignoreRegex) {
-    const parentCallSite = callsites().find((callsite) => {
-        const filename = callsite.getFileName();
-        return Boolean(filename && !filename.match(ignoreRegex) && !filename.match(/[\/\\]master[\/\\]implementation/)); // eslint-disable-line no-useless-escape
-    });
-
-    const callerPath = parentCallSite ? parentCallSite.getFileName() : null;
-    const rebasedScriptPath = callerPath ? path.join(path.dirname(callerPath), scriptPath) : scriptPath;
-
-    return rebasedScriptPath;
-}
-
-function resolveScriptPath(scriptPath) {
-
-    let workerFilePath = require.resolve(rebaseScriptPath(scriptPath, /[\/\\]worker_threads[\/\\]/)); // eslint-disable-line no-useless-escape
-
-    return workerFilePath;
-}
 
 let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
