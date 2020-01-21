@@ -5,7 +5,6 @@
     const fs = require("fs");
     const path = require("path");
     const dataAccess = require("../../backend/common/data-access");
-    const profileManager = require("../../backend/common/profile-manager");
     const moment = require("moment");
     const unzipper = require("unzipper");
     const ncp = require("ncp");
@@ -341,10 +340,7 @@
                     ) => {
                         $scope.backups = [];
 
-                        let backupFolderPath =
-              path.resolve(
-                  dataAccess.getUserDataPath() + path.sep + "backups"
-              ) + path.sep;
+                        let backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
 
                         $scope.loadingBackups = true;
                         $q
@@ -428,8 +424,7 @@
                             utilityService
                                 .showConfirmationModal({
                                     title: "Restore From Backup",
-                                    question:
-                    "Are you sure you'd like to restore from this backup?",
+                                    question: "Are you sure you'd like to restore from this backup?",
                                     confirmLabel: "Restore"
                                 })
                                 .then(confirmed => {
