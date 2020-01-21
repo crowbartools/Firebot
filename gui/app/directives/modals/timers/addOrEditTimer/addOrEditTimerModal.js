@@ -4,8 +4,7 @@
 
 (function() {
     angular.module("firebotApp").component("addOrEditTimerModal", {
-        templateUrl:
-      "./directives/modals/timers/addOrEditTimer/addOrEditTimerModal.html",
+        templateUrl: "./directives/modals/timers/addOrEditTimer/addOrEditTimerModal.html",
         bindings: {
             resolve: "<",
             close: "&",

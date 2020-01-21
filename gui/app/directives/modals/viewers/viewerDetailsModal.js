@@ -45,7 +45,7 @@
                             </div>
                         </div>
                     </div>
-                    <div style="margin: 10px 10px 0;">
+                    <div style="margin: 10px 10px 0;" ng-show="$ctrl.hasCustomRoles">
                         <div class="muted" style="font-size:12px;font-weight: bold;margin-bottom:5px;">CUSTOM ROLES</div>
                         <div class="role-bar" ng-repeat="customRole in $ctrl.customRoles track by customRole.id">
                             <span>{{customRole.name}}</span>
@@ -523,6 +523,7 @@
                     $ctrl.dataPoints = dataPoints;
                 }
 
+                $ctrl.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
                 $ctrl.customRoles = [];
                 function loadCustomRoles() {
                     let username = $ctrl.viewerDetails.mixerData.username;
@@ -531,7 +532,6 @@
                     $ctrl.hasCustomRolesAvailable = viewerRoles
                         .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
                         .length > 0;
-
                     $ctrl.customRoles = viewerRoles.filter(vr => vr.viewers.some(v => v.toLowerCase() === username.toLowerCase()));
                 }
 

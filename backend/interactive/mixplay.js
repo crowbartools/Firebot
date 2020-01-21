@@ -122,13 +122,13 @@ function connectToMixplay() {
     accountAccess.ensureTokenRefreshed("streamer");
     let streamer = accountAccess.getAccounts().streamer;
     if (!streamer.loggedIn) {
-        triggerMixplayDisconnect("You must log into your streamer account before you can connect to MixPlay");
+        triggerMixplayDisconnect("You must log into your streamer account before you can connect to MixPlay.");
         return;
     }
 
     if (!mixplayManager.hasProjects()) {
         // no projects saved yet.
-
+        triggerMixplayDisconnect("Unable to connect to MixPlay as there are no MixPlay projects created. If you do not plan to use MixPlay for now, you can disable it from being controlled from the sidebar by openning the Connection Panel (click Connections in bottom left)");
         return;
     }
 
