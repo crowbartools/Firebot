@@ -5,6 +5,7 @@ const { Worker } = require("worker_threads");
 const chat = require("../../common/mixer-chat");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const rolesManager = require("../../roles/custom-roles-manager");
+const path = require("path");
 
 let getChatModerationSettingsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/chat-moderation-settings");
 let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation/banned-words", false);
@@ -33,7 +34,8 @@ let moderationService = null;
 
 function startModerationService() {
     if (moderationService != null) return;
-    moderationService = new Worker("./backend/chat/moderation/moderation-service.js");
+
+    moderationService = new Worker(path.join(__dirname, "moderation-service.js"));
 
     moderationService.on("message", event => {
         if (event == null) return;
@@ -49,10 +51,10 @@ function startModerationService() {
     });
 
     moderationService.on("error", code => {
-        logger.warn(`Moderation worker failed with code: ${code}. Starting service again.`);
+        logger.warn(`Moderation worker failed with code: ${code}.`);
         moderationService.unref();
         moderationService = null;
-        startModerationService();
+        //startModerationService();
     });
 
     moderationService.on("exit", code => {
