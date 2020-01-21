@@ -12,11 +12,11 @@
                 <p>{{$ctrl.version}}</p>
 
                 <h5><b>Source</b></h5>
-                <p><a href ng-click="$root.openLinkExternally('https://github.com/Firebottle/Firebot')">GitHub</a></p>
+                <p><a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/Firebot')">GitHub</a></p>
 
                 <h5><b>Support</b></h5> 
                 <span>Experiencing a problem or have a suggestion?</span></br>
-                <p> Visit our <a href ng-click="$root.openLinkExternally('https://github.com/Firebottle/Firebot/issues')">Issues page</a> or come chat with us in the <i>#firebot</i> channels of our <a href ng-click="$root.openLinkExternally('https://discord.gg/tTmMbrG')">Discord server</a>.</p>
+                <p> Visit our <a href ng-click="$root.openLinkExternally('https://github.com/crowbartools/Firebot/issues')">Issues page</a> or come chat with us in the <i>#firebot</i> channels of our <a href ng-click="$root.openLinkExternally('https://discord.gg/tTmMbrG')">Discord server</a>.</p>
 
                 <h5><b>Team Crowbar</b></h5> 
                 <div>
