@@ -67,7 +67,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService) {
+        controller: function($scope, utilityService, ngToast) {
             let $ctrl = this;
 
             $ctrl.isNewEvent = true;
@@ -149,7 +149,10 @@
             };
 
             $ctrl.save = function() {
-                if ($ctrl.event.name == null || $ctrl.event.name === "") return;
+                if ($ctrl.event.name == null || $ctrl.event.name === "") {
+                    ngToast.create("Please enter an event name.");
+                    return;
+                }
 
                 if ($ctrl.isNewEvent) {
                     $ctrl.event.id = uuidv1();
