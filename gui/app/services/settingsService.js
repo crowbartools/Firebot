@@ -2,14 +2,12 @@
 (function() {
     //This handles settings access for frontend
 
-    const dataAccess = require("../../backend/common/data-access.js");
-    const profileManager = require("../../backend/common/profile-manager.js");
     const fs = require("fs");
     const { ipcRenderer } = require("electron");
 
     angular
         .module("firebotApp")
-        .factory("settingsService", function(utilityService, logger) {
+        .factory("settingsService", function(utilityService, logger, profileManager, dataAccess) {
             let service = {};
 
             let settingsCache = {};
@@ -607,12 +605,19 @@
             };
 
             service.debugModeEnabled = function() {
-                let enabled = getDataFromFile("/settings/debugMode");
+                let globalSettings = dataAccess.getJsonDbInUserData("/global-settings");
+                let enabled;
+                try {
+                    enabled = globalSettings.getData("/settings/debugMode");
+                } catch (err) {} //eslint-disable-line no-empty
                 return enabled != null ? enabled : false;
             };
 
             service.setDebugModeEnabled = function(enabled) {
-                pushDataToFile("/settings/debugMode", enabled === true);
+                let globalSettings = dataAccess.getJsonDbInUserData("/global-settings");
+                try {
+                    globalSettings.push("/settings/debugMode", enabled === true);
+                } catch (err) {} //eslint-disable-line no-empty
             };
 
             service.getViewerColumnPreferences = function() {

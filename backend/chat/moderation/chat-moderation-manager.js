@@ -72,6 +72,8 @@ function startModerationService() {
             words: getBannedWordsList()
         }
     );
+
+    logger.info("Finished setting up chat moderation worker.");
 }
 
 function stopService() {
@@ -194,6 +196,7 @@ function load() {
             logger.error("Error loading chat moderation data", error);
         }
     }
+    logger.info("Attempting to setup chat moderation worker...");
     startModerationService();
 }
 exports.load = load;
