@@ -126,6 +126,13 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
                 console.log("error when running effects: " + reason);
             });
 
+            if (control.chatFeedAlert === true) {
+                renderWindow.webContents.send("chatUpdate", {
+                    fbEvent: "ChatAlert",
+                    message: participant.username + " used the MixPlay control '" + control.name + "'."
+                });
+            }
+
             // Charge sparks for the button that was pressed.
             // Note this will fire even if the threshold hasnt passed. People pay to build up to the goal.
             if (inputEvent.transactionID) {
