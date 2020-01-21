@@ -34,7 +34,7 @@ function createNewProfile(profileId) {
         activeProfiles = [];
 
     if (profileId == null || profileId === "") {
-        profileId = "New Profile";
+        profileId = "Main";
     } else {
         profileId = sanitizeFileName(profileId);
     }
