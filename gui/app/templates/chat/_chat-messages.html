@@ -28,7 +28,7 @@
                     ng-attr-role="{{getRole(message)}}" 
                     ng-attr-messageId="{{getMessageId(message)}}" 
                     ng-repeat="message in getMessages() | limitTo:messageDisplayLimit track by message.id">
-                    <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)">
+                    <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, userId, msgId)">
                         <span>
                             <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
                         </span>                 
