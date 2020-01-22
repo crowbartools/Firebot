@@ -184,7 +184,7 @@
         </div>
 
         <div style="height: 100%; overflow-y: auto;">
-            <div ng-repeat="control in mps.getControlsForCurrentScene()" 
+            <div ng-repeat="control in mps.getControlsForCurrentScene() | orderBy:'+':true track by control.id" 
                 class="flex-row-center jspacebetween control-row" 
                 ng-mouseover="setHighlightedControl(control.id)" 
                 ng-mouseleave="clearHighlight()">
