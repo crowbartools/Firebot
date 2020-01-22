@@ -7,8 +7,6 @@ const mixerApi = require("../api-access");
 
 async function getUserDetails(userId) {
 
-    let firebotUserData = await userDb.getUserById(userId);
-
     let mixerUserData = await mixerApi.get(`users/${userId}`, "v1", false, false);
 
     let streamerFollowsUser = false;
@@ -30,6 +28,8 @@ async function getUserDetails(userId) {
             mixerUserData.channelLevel = channelLevel;
         }
     }
+
+    let firebotUserData = await userDb.getUserById(userId);
 
     const userDetails = {
         firebotData: firebotUserData || {},

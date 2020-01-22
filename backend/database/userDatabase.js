@@ -143,18 +143,26 @@ function calcAllUsersOnlineMinutes() {
     });
 }
 
-//create a user from mixer user data
-function createUserFromChat(data) {
-    return new Promise((resolve, reject) => {
+function removeUser(userId) {
+    if (userId == null) return;
+    db.remove({ _id: userId }, {}, function (err) {
+        if (err) {
+            logger.warn("Failed to remove user from DB", err);
+        }
+    });
+}
+
+function createNewUser(userId, username, channelRoles, isOnline = false) {
+    return new Promise(resolve => {
         if (!isViewerDBOn()) {
-            return resolve();
+            return resolve(null);
         }
 
-        let ins = {
-            username: data.username,
-            _id: data.id,
-            roles: data.roles,
-            online: true,
+        let user = {
+            username: username,
+            _id: userId,
+            roles: channelRoles,
+            online: isOnline,
             onlineAt: Date.now(),
             lastSeen: Date.now(),
             joinDate: Date.now(),
@@ -167,18 +175,23 @@ function createUserFromChat(data) {
 
         // THIS IS WHERE YOU ADD IN ANY DYNAMIC FIELDS THAT ALL USERS SHOULD HAVE.
         // Add in all of our currencies and set them to 0.
-        ins = currencyDatabase.addCurrencyToNewUser(ins);
+        user = currencyDatabase.addCurrencyToNewUser(user);
 
         // Insert our record into db.
-        db.insert(ins, err => {
+        db.insert(user, err => {
             if (err) {
-                logger.error("ViewerDB: Error adding user: ", err.message);
-                reject();
+                logger.error("ViewerDB: Error adding user", err);
+                resolve(null);
             } else {
-                resolve(ins);
+                resolve(user);
             }
         });
     });
+}
+
+//create a user from mixer user data
+async function createUserFromChat(data, isOnline = true) {
+    return await createNewUser(data.id, data.username, data.roles, isOnline);
 }
 
 //set a user online
@@ -211,7 +224,7 @@ function setChatUserOnline(data) {
             return resolve();
         }
         getUserById(data.id).then(
-            user => {
+            async user => {
                 if (user) {
                     logger.debug("ViewerDB: User exists in DB, setting online: ", data.username);
                     user.roles = data.roles; // Update user roles when they go online.
@@ -221,14 +234,14 @@ function setChatUserOnline(data) {
                         "ViewerDB: Adding Chat User to DB and setting online: ",
                         data.username
                     );
-                    createUserFromChat(data).then(
-                        user => resolve(user),
-                        err => reject(err)
-                    );
+                    await createUserFromChat(data, true);
+
+                    resolve();
                 }
             },
             err => {
-                reject(err);
+                logger.error("Unable to set user online.", err);
+                resolve();
             }
         );
     });
@@ -438,6 +451,14 @@ frontendCommunicator.onAsync("getAllViewers", () => {
 
 frontendCommunicator.onAsync("getViewerFirebotData", (userId) => {
     return getUserById(userId);
+});
+
+frontendCommunicator.onAsync("createViewerFirebotData", data => {
+    return createNewUser(data.id, data.username, data.roles);
+});
+
+frontendCommunicator.on("removeViewerFromDb", userId => {
+    removeUser(userId);
 });
 
 frontendCommunicator.onAsync("getViewerDetails", (userId) => {

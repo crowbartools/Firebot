@@ -35,8 +35,13 @@
                             </div>
                         </div>             
                     </div>
-                    <div style="margin-top: 45px;">
-                        <div class="viewer-detail-data">
+                    <div style="margin-top: 45px;margin-left: 10px;">
+                        <div style="display:flex;margin-bottom:5px;">
+                            <div style="font-size:13px;font-weight: bold;opacity:0.9;">FIREBOT DATA</div>
+                            <span ng-show="$ctrl.hasFirebotData" ng-click="$ctrl.removeViewer()" style="color:#f96f6f;margin-left: 10px;font-size:12px;" class="clickable" uib-tooltip="Remove this viewer's Firebot data"><i class="far fa-trash-alt"></i></span>
+                        </div>
+                        
+                        <div class="viewer-detail-data" ng-show="$ctrl.hasFirebotData" style="margin-top: 10px;margin-bottom: 30px;">
                             <div class="detail-data clickable" ng-repeat="dataPoint in $ctrl.dataPoints" ng-click="dataPoint.onClick()">
                                 <div class="data-title">
                                     <i class="far" ng-class="dataPoint.icon"></i> {{dataPoint.name}}
@@ -44,9 +49,13 @@
                                 <div class="data-point">{{dataPoint.display}}<span class="edit-data-btn muted"><i class="fas fa-edit"></i></span></div>
                             </div>
                         </div>
+                        <div ng-hide="$ctrl.hasFirebotData" style="padding: left: 15px;">
+                            <p class="muted">There is no Firebot data saved for this Mixer user.</p>
+                            <button type="button" class="btn btn-default" ng-click="$ctrl.saveUser()">Save User in Firebot</button>
+                        </div>
                     </div>
                     <div style="margin: 10px 10px 0;" ng-show="$ctrl.hasCustomRoles">
-                        <div class="muted" style="font-size:12px;font-weight: bold;margin-bottom:5px;">CUSTOM ROLES</div>
+                        <div style="font-size:13px;font-weight: bold;opacity:0.9;margin-bottom:5px;">CUSTOM ROLES</div>
                         <div class="role-bar" ng-repeat="customRole in $ctrl.customRoles track by customRole.id">
                             <span>{{customRole.name}}</span>
                             <span class="clickable" style="padding-left: 10px;" ng-click="$ctrl.removeUserFromRole(customRole.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
@@ -569,6 +578,48 @@
                     loadCustomRoles();
                 };
 
+                function init() {
+                    $ctrl.hasFirebotData = Object.keys($ctrl.viewerDetails.firebotData).length > 0;
+                    loadRoles();
+                    buildActions();
+                    buildDataPoints();
+                    loadCustomRoles();
+                    loadChannelProgressionData();
+                }
+
+                $ctrl.removeViewer = function() {
+                    if (!$ctrl.hasFirebotData) return;
+                    $ctrl.hasFirebotData = false;
+                    $ctrl.viewerDetails.firebotData = {};
+                    $ctrl.dataPoints = [];
+
+                    backendCommunicator.fireEvent("removeViewerFromDb", $ctrl.resolve.userId);
+                };
+
+                $ctrl.saveUser = function() {
+                    if ($ctrl.hasFirebotData) return;
+
+                    const relationshipData = $ctrl.viewerDetails.mixerData.relationship;
+                    const channelRoles = relationshipData ? relationshipData.roles : [];
+
+                    let createViewerRequest = {
+                        id: $ctrl.resolve.userId,
+                        username: $ctrl.viewerDetails.mixerData.username,
+                        roles: channelRoles
+                    };
+
+                    $q(resolve => {
+                        backendCommunicator.fireEventAsync("createViewerFirebotData", createViewerRequest)
+                            .then(viewerFirebotData => {
+                                resolve(viewerFirebotData);
+                            });
+                    }).then(viewerFirebotData => {
+                        $ctrl.viewerDetails.firebotData = viewerFirebotData || {};
+                        $ctrl.hasFirebotData = Object.keys($ctrl.viewerDetails.firebotData).length > 0;
+                        buildDataPoints();
+                    });
+                };
+
                 $ctrl.$onInit = function() {
                     const userId = $ctrl.resolve.userId;
 
@@ -579,12 +630,7 @@
                             });
                     }).then(viewerDetails => {
                         $ctrl.viewerDetails = viewerDetails;
-                        $ctrl.hasFirebotData = Object.keys($ctrl.viewerDetails.firebotData).length > 0;
-                        loadRoles();
-                        buildActions();
-                        buildDataPoints();
-                        loadCustomRoles();
-                        loadChannelProgressionData();
+                        init();
                         $ctrl.loading = false;
                     });
                 };

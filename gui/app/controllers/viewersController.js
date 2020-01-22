@@ -9,7 +9,7 @@
 
             $scope.showUserDetailsModal = (userId) => {
                 let closeFunc = () => {
-                    viewersService.updateViewer(userId);
+                    viewersService.updateViewers();
                 };
                 utilityService.showModal({
                     component: "viewerDetailsModal",
