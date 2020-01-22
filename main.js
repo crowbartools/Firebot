@@ -10,7 +10,7 @@ const logger = require("./backend/logwrapper");
 logger.info("Starting Firebot...");
 
 const electron = require("electron");
-const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
+const { app, BrowserWindow, ipcMain, shell, dialog, Menu, MenuItem } = electron;
 const fs = require("fs");
 const windowStateKeeper = require('electron-window-state');
 const GhReleases = require("electron-gh-releases");
@@ -140,7 +140,6 @@ function createWindow() {
         defaultHeight: 720
     });
 
-
     // Create the browser window.
     mainWindow = new BrowserWindow({
         x: mainWindowState.x,
@@ -156,9 +155,56 @@ function createWindow() {
         }
     });
 
-    if (!isDev()) {
-        mainWindow.setMenuBarVisibility(false);
-    }
+    const menuTemplate = [
+        {
+            label: 'Edit',
+            submenu: [
+                {
+                    role: 'cut'
+                },
+                {
+                    role: 'copy'
+                },
+                {
+                    role: 'paste'
+                }
+            ]
+        },
+
+        {
+            label: 'View',
+            submenu: [
+                {
+                    role: 'resetzoom'
+                },
+                {
+                    role: 'zoomin'
+                },
+                {
+                    role: 'zoomout'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'toggledevtools'
+                }
+            ]
+        },
+        {
+            label: 'Window',
+            submenu: [
+                {
+                    role: 'minimize'
+                },
+                {
+                    role: 'close'
+                }
+            ]
+        }
+    ];
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
 
     // register listeners on the window, so we can update the state
     // automatically (the listeners will be removed when the window is closed)
