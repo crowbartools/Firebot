@@ -11,8 +11,7 @@ const firebotEventSource = {
         {
             id: "mixplay-connected",
             name: "MixPlay Connected",
-            description:
-        "When Firebot connects to MixPlay and controls become available to use.",
+            description: "When Firebot connects to MixPlay and controls become available to use.",
             cached: false,
             manualMetadata: {
                 username: "Firebot"

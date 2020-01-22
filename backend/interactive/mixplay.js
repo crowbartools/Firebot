@@ -117,9 +117,10 @@ function triggerMixplayDisconnect(errorMessage) {
     }
 }
 
-function connectToMixplay() {
+async function connectToMixplay() {
 
     accountAccess.ensureTokenRefreshed("streamer");
+
     let streamer = accountAccess.getAccounts().streamer;
     if (!streamer.loggedIn) {
         triggerMixplayDisconnect("You must log into your streamer account before you can connect to MixPlay.");
@@ -134,82 +135,82 @@ function connectToMixplay() {
 
     let activeProjectId = settings.getActiveMixplayProjectId();
 
-    // clear our hidden controls cache, this is used in the update control effect
-    hiddenControls = {};
-
     if (!activeProjectId || activeProjectId.length < 1) {
         triggerMixplayDisconnect("You currently have no active project selected. Please select one via the project dropdown in the Controls tab.");
         return;
     }
 
     let currentProject = mixplayManager.getProjectById(activeProjectId);
-
     if (currentProject == null) {
         triggerMixplayDisconnect("The project set as active doesn't appear to exist anymore. Please set or create a new one in the Controls tab.");
         return;
     }
 
+    // clear our hidden controls cache, this is used in the update control effect
+    hiddenControls = {};
+
     let model = buildMixplayModalFromProject(currentProject);
 
     mixplayManager.setConnectedProjectId(activeProjectId);
 
-    // Connect
-    mixplayClient.open({
-        authToken: streamer.auth.access_token,
-        versionId: FIREBOT_MIXPLAY_VERSION_ID,
-        sharecode: FIREBOT_MIXPLAY_SHARECODE
-    }).then(() => {
+    try {
+        //connect to mixplay
+        await mixplayClient.open({
+            authToken: streamer.auth.access_token,
+            versionId: FIREBOT_MIXPLAY_VERSION_ID,
+            sharecode: FIREBOT_MIXPLAY_SHARECODE
+        });
 
-        mixplayClient.synchronizeState()
-            .then(() => {
+        await mixplayClient.synchronizeState();
 
-                const defaultScene = mixplayClient.state.getScene('default');
-                defaultScene.deleteAllControls();
+        //clear default scene to ensure we are starting from a clean slate
+        const defaultScene = mixplayClient.state.getScene('default');
+        await defaultScene.deleteAllControls();
 
-                return defaultScene.createControls(model.defaultScene.controls);
-            })
-            .then(() => {
-                let scenesArrayData = { scenes: model.otherScenes };
+        //create controls for default scene
+        await defaultScene.createControls(model.defaultScene.controls);
 
-                return mixplayClient.createScenes(scenesArrayData);
-            })
-            .then(() => {
-                return mixplayClient.synchronizeScenes();
-            })
-            .then(scenes => {
+        //build other scenes
+        let scenesArrayData = { scenes: model.otherScenes };
+        await mixplayClient.createScenes(scenesArrayData);
 
-                scenes.forEach(scene => {
-                    let controls = scene.getControls();
+        //add control handlers
+        let scenes = await mixplayClient.synchronizeScenes();
+        scenes.forEach(scene => {
+            let controls = scene.getControls();
 
-                    addControlHandlers(controls);
-                });
+            addControlHandlers(controls);
+        });
 
-            })
-            .then(() => {
-                let groups = [];
-                for (let scene of model.otherScenes) {
-                    groups.push({
-                        groupID: scene.sceneID,
-                        sceneID: scene.sceneID
-                    });
-                }
-                return mixplayClient.createGroups({ groups: groups });
-            })
-            .then(async () => {
-                mixplayClient.ready(true);
-                renderWindow.webContents.send('connection', "Online");
-                mixplayConnected = true;
-
-                defaultSceneId = currentProject.defaultSceneId;
+        //create groups for each scene
+        let groups = [];
+        for (let scene of model.otherScenes) {
+            groups.push({
+                groupID: scene.sceneID,
+                sceneID: scene.sceneID
             });
-    }, reason => {
-        logger.error("Failed to connect to MixPlay.", reason);
-        triggerMixplayDisconnect("Failed to connect to MixPlay. Reason: " + reason);
-    });
+        }
+        await mixplayClient.createGroups({ groups: groups });
+
+        //mark as successfully connected
+        mixplayClient.ready(true);
+        renderWindow.webContents.send('connection', "Online");
+        mixplayConnected = true;
+
+        defaultSceneId = currentProject.defaultSceneId;
+
+        eventManager.triggerEvent("firebot", "mixplay-connected", {
+            username: "Firebot"
+        });
+
+    } catch (error) {
+        logger.warn("Failed to connect to MixPlay", error);
+        triggerMixplayDisconnect("Failed to connect to MixPlay. Reason: " + error.message);
+    }
 }
 
 mixplayClient.on('error', err => {
-    console.log("FAILED TO CONNECT", err);
+    logger.warn("MixPlay error", err);
 
     triggerMixplayDisconnect();
 });
