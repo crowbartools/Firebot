@@ -34,7 +34,7 @@ exports.getAuthCallback = async (req, res) => {
     try {
         const result = await provider.oauthClient.authorizationCode.getToken(options);
 
-        logger.info(`Received token from provider id '${provider.id}'`, result);
+        logger.info(`Received token from provider id '${provider.id}'`);
 
         const token = provider.oauthClient.accessToken.create(result);
 
