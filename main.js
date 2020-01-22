@@ -203,8 +203,10 @@ function createWindow() {
             ]
         }
     ];
-    const menu = Menu.buildFromTemplate(menuTemplate);
-    Menu.setApplicationMenu(menu);
+    if (!isDev()) {
+        const menu = Menu.buildFromTemplate(menuTemplate);
+        Menu.setApplicationMenu(menu);
+    }
 
     // register listeners on the window, so we can update the state
     // automatically (the listeners will be removed when the window is closed)
