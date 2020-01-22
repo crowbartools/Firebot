@@ -12,7 +12,7 @@
                     kind: "button",
                     display: "Button",
                     description: "A simple button.",
-                    iconClass: "fa-bullseye"
+                    iconClass: "fa-bullseye-pointer"
                 },
                 {
                     kind: "label",
@@ -45,7 +45,7 @@
                     kind: "button",
                     name: "Button",
                     description: "A simple button.",
-                    iconClass: "fa-bullseye",
+                    iconClass: "fa-bullseye-pointer",
                     grid: true,
                     resizable: true,
                     hasSettings: true,
