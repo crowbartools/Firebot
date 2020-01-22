@@ -21,29 +21,42 @@
                         <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text" replace-variables disable-variable-menu="!$ctrl.updateMode" ng-trim="false">
                     </div>
 
-                    <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
+                    <div class="expandable-item smaller-item"
+                        style="justify-content: space-between;" 
+                        ng-init="hidePanel = true" 
+                        ng-click="hidePanel = !hidePanel" 
+                        ng-class="{'expanded': !hidePanel}">    
+                            <div style="flex-basis: 30%;padding-left: 15px;font-size: 14px;">Styling Options</div>
 
-                        <div class="input-group settings-buttontext">
-                            <span class="input-group-addon" id="basic-addon3">Text Size <tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
-                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                            <div style="display: flex; align-items: center;">
+                                <div style="width:30px;">
+                                    <i class="fas" ng-class="{'fa-chevron-right': hidePanel, 'fa-chevron-down': !hidePanel}"></i>
+                                </div>
+                            </div>
+                    </div>
+                    <div uib-collapse="hidePanel" class="expandable-item-expanded smaller-item">
+                        <div style="padding: 15px 20px 10px 20px;">
+                            <div class="input-group settings-buttontext">
+                                <span class="input-group-addon" id="basic-addon3">Text Size <tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
+                                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                            </div>
+
+                            <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
+
+                            <control-color-picker model="$ctrl.control.mixplay.accentColor" label="Accent Color"></control-color-picker>
+
+                            <control-color-picker model="$ctrl.control.mixplay.borderColor" label="Border Color"></control-color-picker>
+
+                            <control-color-picker model="$ctrl.control.mixplay.focusColor" label="Focus Color"></control-color-picker>
+
+                            <control-color-picker model="$ctrl.control.mixplay.backgroundColor" label="Background Color"></control-color-picker>
+
+                            <div class="input-group settings-buttontext">
+                                <span class="input-group-addon" id="basic-addon3">Background Image URL</span>
+                                <input type="url" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.backgroundImage" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                            </div>
                         </div>
-
-                        <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
-
-                        <control-color-picker model="$ctrl.control.mixplay.accentColor" label="Accent Color"></control-color-picker>
-
-                        <control-color-picker model="$ctrl.control.mixplay.borderColor" label="Border Color"></control-color-picker>
-
-                        <control-color-picker model="$ctrl.control.mixplay.focusColor" label="Focus Color"></control-color-picker>
-
-                        <control-color-picker model="$ctrl.control.mixplay.backgroundColor" label="Background Color"></control-color-picker>
-
-                        <div class="input-group settings-buttontext">
-                            <span class="input-group-addon" id="basic-addon3">Background Image URL</span>
-                            <input type="url" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.backgroundImage" replace-variables disable-variable-menu="!$ctrl.updateMode">
-                        </div>
-
-                    </eos-collapsable-panel>              
+                    </div>         
 
                     <div class="input-group settings-buttontext" style="margin-top: 15px;">
                         <span class="input-group-addon" id="basic-addon3">Tooltip</span>
@@ -74,31 +87,48 @@
                         <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.text" replace-variables disable-variable-menu="!$ctrl.updateMode" ng-trim="false">
                     </div>
 
-                    <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
 
-                        <div class="input-group settings-buttontext">
-                            <span class="input-group-addon" id="basic-addon3">Text Size <tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
-                            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                    <div class="expandable-item smaller-item"
+                        style="justify-content: space-between;" 
+                        ng-init="hidePanel = true" 
+                        ng-click="hidePanel = !hidePanel" 
+                        ng-class="{'expanded': !hidePanel}">    
+                            <div style="flex-basis: 30%;padding-left: 15px;font-size: 14px;">Styling Options</div>
+
+                            <div style="display: flex; align-items: center;">
+                                <div style="width:30px;">
+                                    <i class="fas" ng-class="{'fa-chevron-right': hidePanel, 'fa-chevron-down': !hidePanel}"></i>
+                                </div>
+                            </div>
+                    </div>
+                    <div uib-collapse="hidePanel" class="expandable-item-expanded smaller-item">
+                        <div style="padding: 15px 20px 10px 20px;">
+
+                            <div class="input-group settings-buttontext">
+                                <span class="input-group-addon" id="basic-addon3">Text Size <tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
+                                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                            </div>
+
+                            <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
+
+                            <label class="control-fb control--checkbox noselect"> Bold
+                                <input type="checkbox" ng-model="$ctrl.control.mixplay.bold" aria-label="...">
+                                <div class="control__indicator"></div>
+                            </label>
+
+                            <label class="control-fb control--checkbox noselect"> Italic
+                                <input type="checkbox" ng-model="$ctrl.control.mixplay.italic" aria-label="...">
+                                <div class="control__indicator"></div>
+                            </label>
+
+                            <label class="control-fb control--checkbox noselect"> Underline
+                                <input type="checkbox" ng-model="$ctrl.control.mixplay.underline" aria-label="...">
+                                <div class="control__indicator"></div>
+                            </label>
+
                         </div>
-
-                        <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
-
-                        <label class="control-fb control--checkbox noselect"> Bold
-                            <input type="checkbox" ng-model="$ctrl.control.mixplay.bold" aria-label="...">
-                            <div class="control__indicator"></div>
-                        </label>
-
-                        <label class="control-fb control--checkbox noselect"> Italic
-                            <input type="checkbox" ng-model="$ctrl.control.mixplay.italic" aria-label="...">
-                            <div class="control__indicator"></div>
-                        </label>
-
-                        <label class="control-fb control--checkbox noselect"> Underline
-                            <input type="checkbox" ng-model="$ctrl.control.mixplay.underline" aria-label="...">
-                            <div class="control__indicator"></div>
-                        </label>
-
-                    </eos-collapsable-panel>              
+                    </div>
+         
                 </div>
 
 

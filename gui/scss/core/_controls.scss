@@ -569,6 +569,11 @@ table.fb-table-alt {
     box-shadow: $fb-table-shadow;
     display: flex;
     align-items: center;
+
+    &.smaller-item {
+      height: 37px;
+      border-radius: 3px;
+    }
   
     &:hover {
       cursor: pointer;
@@ -591,6 +596,10 @@ table.fb-table-alt {
     box-shadow: $sys-cmd-expanded-shadow;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    &.smaller-item {
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
   }
 
 .integration-row { 
