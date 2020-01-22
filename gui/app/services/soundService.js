@@ -88,7 +88,6 @@
                 }
 
                 let volume = settingsService.getTaggedNotificationVolume() / 100 * 10;
-                logger.debug("noti volume: " + volume);
                 if (selectedSound.path != null && selectedSound.path !== "") {
                     service.playSound(selectedSound.path, volume);
                 }
@@ -96,6 +95,10 @@
 
 
             service.playSound = function(path, volume, outputDevice) {
+
+                if (outputDevice == null) {
+                    outputDevice = settingsService.getAudioOutputDevice();
+                }
 
                 $q.when(service.getHowlSound(path, volume, outputDevice))
                     .then(sound => {
@@ -189,6 +192,10 @@
                 () => {
                     service.stopAllSounds();
                 });
+
+            // After updating to latest electron (7.1.9), initial sounds have a noticable delay, almost as if theres a warm up time.
+            // This gets around that by playing a sound with no audio right at app start, to trigger audio library warm up
+            service.playSound("../sounds/secofsilence.mp3", 0.0);
 
             return service;
         });
