@@ -630,8 +630,6 @@ function windowClosed() {
         hotkeyManager.unregisterAllHotkeys();
 
         userDatabase.setAllUsersOffline().then(() => {
-            console.log("Finished setting users to online false...quiting");
-
             if (settings.backupOnExit()) {
                 backupManager.startBackup(false, app.quit);
 
