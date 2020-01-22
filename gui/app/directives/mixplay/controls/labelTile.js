@@ -17,7 +17,12 @@
                 $ctrl.getLabelStyle = function() {
                     let style = {};
                     if ($ctrl.control.mixplay) {
-                        if ($ctrl.control.mixplay.textSize) {
+
+                        let textSize = $ctrl.control.mixplay.textSize;
+                        if (textSize !== undefined && textSize !== null) {
+                            if (!isNaN(textSize)) {
+                                textSize += "px";
+                            }
                             style['font-size'] = $ctrl.control.mixplay.textSize;
                         }
                         if ($ctrl.control.mixplay.textColor) {

@@ -39,6 +39,13 @@ function mapMixplayControl(firebotControl) {
         mixplayControl.disabled = !firebotControl.active;
     }
 
+    //if text size is just a number, append "px"
+    if (mixplayControl.textSize !== null && mixplayControl.textSize !== undefined) {
+        if (!isNaN(mixplayControl.textSize)) {
+            mixplayControl.textSize += "px";
+        }
+    }
+
 
     return mixplayControl;
 }

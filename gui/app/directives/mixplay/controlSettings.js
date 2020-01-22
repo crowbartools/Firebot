@@ -24,7 +24,7 @@
                     <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
 
                         <div class="input-group settings-buttontext">
-                            <span class="input-group-addon" id="basic-addon3">Text Size</span>
+                            <span class="input-group-addon" id="basic-addon3">Text Size <tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
                             <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
                         </div>
 
@@ -77,7 +77,7 @@
                     <eos-collapsable-panel show-label="Show Styling Options" hide-label="Hide Styling Options" hide-info-box="true">
 
                         <div class="input-group settings-buttontext">
-                            <span class="input-group-addon" id="basic-addon3">Text Size</span>
+                            <span class="input-group-addon" id="basic-addon3">Text Size <tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
                             <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
                         </div>
 

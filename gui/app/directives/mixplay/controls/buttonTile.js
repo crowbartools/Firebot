@@ -21,9 +21,16 @@
 
                 $ctrl.getTextStyle = function() {
                     let style = {};
+
+                    let textSize = $ctrl.control.mixplay.textSize;
+                    if (textSize !== undefined && textSize !== null) {
+                        if (!isNaN(textSize)) {
+                            textSize += "px";
+                        }
+                    }
                     style = {
                         'color': $ctrl.control.mixplay.textColor,
-                        'font-size': $ctrl.control.mixplay.textSize
+                        'font-size': textSize
                     };
                     return style;
                 };
