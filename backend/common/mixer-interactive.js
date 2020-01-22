@@ -398,7 +398,7 @@ function startupModificationLoop(interactiveCache) {
 function mixerDisconnect() {
     logger.info('Disconnecting interactive.');
 
-    interactiveConnected = false;
+    /*interactiveConnected = false;
 
     mixerClient.close();
     mixerClient = new interactive.GameClient();
@@ -410,7 +410,7 @@ function mixerDisconnect() {
     Threshold.reset();
 
     // Send connection status to ui.
-    renderWindow.webContents.send('connection', "Offline");
+    renderWindow.webContents.send('connection', "Offline");*/
 }
 
 // mixer Connect
@@ -763,8 +763,8 @@ function bannedUserAdded(username) {
 // Controls Turning on and off interactive when connection button is pressed.
 ipcMain.on("mixerInteractive", function(event, status) {
     if (!(status === "connect" || status === "connected")) {
-    // Kill connection.
-        mixerDisconnect(event);
+        // Kill connection.
+        //mixerDisconnect(event);
     }
 });
 
