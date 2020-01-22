@@ -8,7 +8,7 @@ function hasBannedWord(input) {
     input = input.toLowerCase();
     return bannedWords
         .some(word => {
-            return input.includes(word);
+            return input.split(" ").includes(word);
         });
 }
 
