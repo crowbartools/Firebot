@@ -36,8 +36,7 @@ const clip = {
     optionsTemplate: `
         <eos-container header="Clip Title" pad-top="true">
             <p>The title for the new clip (Leave blank to default to current stream title).</p>
-            <input ng-model="effect.clipTitle" type="text" class="form-control" placeholder="Enter text">
-            <eos-replace-variables></eos-replace-variables>
+            <input ng-model="effect.clipTitle" type="text" class="form-control" placeholder="Enter text" replace-variables>
         </eos-container>
 
         <eos-container>
