@@ -12,50 +12,50 @@
                 "", // [0]
                 "", // [1]
                 "", // [2]
-                "CANCEL", // [3]
+                "", // [3] CANCEL
                 "", // [4]
                 "", // [5]
-                "HELP", // [6]
+                "", // [6] HELP
                 "", // [7]
-                "BACK_SPACE", // [8]
-                "TAB", // [9]
+                "", // [8] BACK_SPACE
+                "", // [9] TAB
                 "", // [10]
                 "", // [11]
-                "CLEAR", // [12]
+                "", // [12] CLEAR
                 "ENTER", // [13]
-                "ENTER_SPECIAL", // [14]
+                "", // [14] ENTER_SPECIAL
                 "", // [15]
-                "SHIFT", // [16]
-                "CONTROL", // [17]
-                "ALT", // [18]
-                "PAUSE", // [19]
-                "CAPS_LOCK", // [20]
-                "KANA", // [21]
-                "EISU", // [22]
-                "JUNJA", // [23]
-                "FINAL", // [24]
-                "HANJA", // [25]
+                "", // [16] SHIFT
+                "", // [17] CONTROL
+                "", // [18] ALT
+                "", // [19] PAUSE
+                "", // [20] CAPS_LOCK
+                "", // [21] KANA
+                "", // [22] EISU
+                "", // [23] JUNJA
+                "", // [24] FINAL
+                "", // [25] HANJA
                 "", // [26]
-                "ESCAPE", // [27]
-                "CONVERT", // [28]
-                "NONCONVERT", // [29]
-                "ACCEPT", // [30]
-                "MODECHANGE", // [31]
-                "SPACE", // [32]
-                "PAGE_UP", // [33]
-                "PAGE_DOWN", // [34]
-                "END", // [35]
-                "HOME", // [36]
-                "LEFT", // [37]
-                "UP", // [38]
-                "RIGHT", // [39]
-                "DOWN", // [40]
-                "SELECT", // [41]
-                "PRINT", // [42]
-                "EXECUTE", // [43]
-                "PRINTSCREEN", // [44]
-                "INSERT", // [45]
-                "DELETE", // [46]
+                "", // [27] ESCAPE
+                "", // [28] CONVERT
+                "", // [29] NONCONVERT
+                "", // [30] ACCEPT
+                "", // [31] MODECHANGE
+                "Space", // [32]
+                "", // [33] PAGE_UP
+                "", // [34] PAGE_DOWN
+                "", // [35] END
+                "", // [36] HOME
+                "Left", // [37]
+                "Up", // [38]
+                "Right", // [39]
+                "Down", // [40]
+                "", // [41] SELECT
+                "", // [42] PRINT
+                "", // [43] EXECUTE
+                "", // [44] PRINTSCREEN
+                "", // [45] INSERT
+                "", // [46] DELETE
                 "", // [47]
                 "0", // [48]
                 "1", // [49]
@@ -67,13 +67,13 @@
                 "7", // [55]
                 "8", // [56]
                 "9", // [57]
-                "COLON", // [58]
-                "SEMICOLON", // [59]
-                "LESS_THAN", // [60]
-                "EQUALS", // [61]
-                "GREATER_THAN", // [62]
-                "QUESTION_MARK", // [63]
-                "AT", // [64]
+                "", // [58] COLON
+                "", // [59] SEMICOLON
+                "", // [60] LESS_THAN
+                "", // [61] EQUALS
+                "", // [62] GREATER_THAN
+                "", // [63] QUESTION_MARK
+                "", // [64] AT
                 "A", // [65]
                 "B", // [66]
                 "C", // [67]
@@ -100,27 +100,27 @@
                 "X", // [88]
                 "Y", // [89]
                 "Z", // [90]
-                "OS_KEY", // [91] Windows Key (Windows) or Command Key (Mac)
+                "", // [91] OS_KEY Windows Key (Windows) or Command Key (Mac)
                 "", // [92]
-                "CONTEXT_MENU", // [93]
+                "", // [93] CONTEXT_MENU
                 "", // [94]
-                "SLEEP", // [95]
-                "NUMPAD0", // [96]
-                "NUMPAD1", // [97]
-                "NUMPAD2", // [98]
-                "NUMPAD3", // [99]
-                "NUMPAD4", // [100]
-                "NUMPAD5", // [101]
-                "NUMPAD6", // [102]
-                "NUMPAD7", // [103]
-                "NUMPAD8", // [104]
-                "NUMPAD9", // [105]
-                "MULTIPLY", // [106]
-                "ADD", // [107]
-                "SEPARATOR", // [108]
-                "SUBTRACT", // [109]
-                "DECIMAL", // [110]
-                "DIVIDE", // [111]
+                "", // [95] SLEEP
+                "Numpad 0", // [96]
+                "Numpad 1", // [97]
+                "Numpad 2", // [98]
+                "Numpad 3", // [99]
+                "Numpad 4", // [100]
+                "Numpad 5", // [101]
+                "Numpad 6", // [102]
+                "Numpad 7", // [103]
+                "Numpad 8", // [104]
+                "Numpad 9", // [105]
+                "", // [106] MULTIPLY
+                "", // [107] ADD
+                "", // [108] SEPARATOR
+                "", // [109] SUBTRACT
+                "", // [110] DECIMAL
+                "", // [111] DIVIDE
                 "F1", // [112]
                 "F2", // [113]
                 "F3", // [114]
@@ -307,10 +307,10 @@
                 ["", ""], // [34]
                 ["", ""], // [35]
                 ["", ""], // [36]
-                ["", ""], // [37]
-                ["", ""], // [38]
-                ["", ""], // [39]
-                ["", ""], // [40]
+                ["Left", ""], // [37]
+                ["Up", ""], // [38]
+                ["Right", ""], // [39]
+                ["Down", ""], // [40]
                 ["", ""], // [41]
                 ["", ""], // [42]
                 ["", ""], // [43]
@@ -540,7 +540,7 @@
                 let column = 0;
 
                 let keyMap = keyboardCharMap[keyCode];
-                if(!keyMap) return "";
+                if (!keyMap) return "";
 
                 return keyMap[column];
             };

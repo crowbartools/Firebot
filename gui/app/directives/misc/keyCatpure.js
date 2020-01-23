@@ -16,7 +16,7 @@
                     </span>
                     <button ng-click="$ctrl.startKeyCapture()" class="btn" ng-class="$ctrl.isCapturingKey ? 'btn-danger' : 'btn-default'">{{$ctrl.isCapturingKey ? 'Stop recording' : 'Record'}}</button>
 
-                    <span class="clickable" style="margin-left: 10px;" uib-tooltip="Clear current key" tooltip-append-to-body="true" ng-click="$ctrl.clearKey()" ng-show="$ctrl.keyDisplay != null && $ctrl.keyDisplay.length > 0"><i class="far fa-times-circle"></i></span>
+                    <span class="clickable" style="margin-left: 10px;" uib-tooltip="Clear current key" tooltip-append-to-body="true" ng-click="$ctrl.clearKey()" ng-show="!$ctrl.isCapturingKey && $ctrl.keyDisplay != null && $ctrl.keyDisplay.length > 0"><i class="far fa-times-circle"></i></span>
                 </div>
             `,
             controller: function(keyHelper, logger) {
@@ -32,7 +32,7 @@
 
                 $ctrl.$onInit = function() {
                     if ($ctrl.keyCode != null) {
-                        let keyName = keyHelper.getKeyboardKeyName(event.keyCode);
+                        let keyName = keyHelper.getKeyboardKeyName($ctrl.keyCode);
                         if (keyName != null && keyName.length > 0) {
                             $ctrl.keyDisplay = keyName;
                         } else {
@@ -55,14 +55,14 @@
 
                     event.stopPropagation();
                     event.stopImmediatePropagation();
-                    event.preventDefault();  
+                    event.preventDefault();
                 };
 
                 const clickListener = function() {
                     if ($ctrl.isCapturingKey) {
                         event.stopPropagation();
                         event.stopImmediatePropagation();
-                        event.preventDefault();        
+                        event.preventDefault();
                     }
                     $ctrl.stopKeyCapture();
                 };
