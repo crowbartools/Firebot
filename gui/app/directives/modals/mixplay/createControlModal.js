@@ -79,7 +79,7 @@
                         kind: "button",
                         display: "Button",
                         description: "A simple button.",
-                        iconClass: "fa-bullseye"
+                        iconClass: "fa-bullseye-pointer"
                     },
                     {
                         kind: "label",

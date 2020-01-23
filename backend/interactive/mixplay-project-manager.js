@@ -7,6 +7,8 @@ const fs = require("fs");
 const path = require("path");
 const settings = require("../common/settings-access").settings;
 const uuid = require("uuid/v1");
+const frontendCommunicator = require("../common/frontend-communicator");
+const devlabImporter = require("../import/devlab/devlab-importer");
 
 const MIXPLAY_FOLDER = profileManager.getPathInProfile("/mixplay/");
 
@@ -104,6 +106,24 @@ ipcMain.on("getAllProjects", event => {
 ipcMain.on("createNewProject", (event, projectName) => {
     logger.debug("got 'create project' request");
     event.returnValue = createNewProject(projectName);
+});
+
+frontendCommunicator.onAsync("createNewDevLabImportProject", async data => {
+    logger.debug("got 'createNewDevLabImportProject' request");
+
+    let { devLabId, projectName } = data;
+
+    let newProject;
+    try {
+        newProject = await devlabImporter.importDevLabProject(devLabId, projectName);
+    } catch (err) {
+        renderWindow.webContents.send("error", "Failed to import DevLab project: " + err.message);
+    }
+    if (newProject != null) {
+        saveProject(newProject);
+        settings.setLastMixplayProjectId(newProject.id);
+    }
+    return newProject;
 });
 
 ipcMain.on("deleteProject", (_, id) => {

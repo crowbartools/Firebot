@@ -112,6 +112,22 @@
                 selectFirstScene();
             };
 
+            service.createNewImportedDevLabProject = async function(devlabId, name) {
+                let newProject = await backendCommunicator.fireEventAsync("createNewDevLabImportProject", {
+                    devLabId: devlabId,
+                    projectName: name
+                });
+                if (newProject != null) {
+                    projects.push(newProject);
+                    currentProjectId = newProject.id;
+                    if (activeProjectId == null) {
+                        service.setActiveMixplayProjectId(newProject.id);
+                    }
+                    selectFirstScene();
+                }
+
+            };
+
             service.saveProject = function(project) {
                 if (project == null) return;
 

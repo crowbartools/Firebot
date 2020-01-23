@@ -290,7 +290,23 @@
 
             $scope.showCreateMixplayModal = function() {
 
-                utilityService.openGetInputModal(
+                utilityService.showModal({
+                    component: "createProjectModal",
+                    size: 'sm',
+                    resolveObj: {},
+                    closeCallback: async data => {
+
+                        let { name, importDevLab, devlabProjectId } = data;
+
+                        if (importDevLab) {
+                            await mixplayService.createNewImportedDevLabProject(devlabProjectId, name);
+                        } else {
+                            mixplayService.createNewProject(name);
+                        }
+                        $scope.updateControlPositions();
+                    }
+                });
+                /*utilityService.openGetInputModal(
                     {
                         model: "",
                         label: "New Project Name",
@@ -310,7 +326,7 @@
                     (name) => {
                         mixplayService.createNewProject(name);
                         $scope.updateControlPositions();
-                    });
+                    });*/
             };
 
             $scope.showCreateSceneModal = function() {
