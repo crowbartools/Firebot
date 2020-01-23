@@ -314,10 +314,17 @@ input:checked + .slider:before {
     cursor: pointer;
     user-select: none;
     font-weight: 900;
+    &.grayscale {
+      border: 2px solid #68696C;
+    }
   }
   button {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+    &.btn-default:focus {
+      color: white !important;
+      background-color: #68696C !important;
+    }
   }
   &.capturing {
     .hotkey-display {
