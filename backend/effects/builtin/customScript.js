@@ -86,7 +86,7 @@ const fileWriter = {
         const fs = require("fs");
         const path = require("path");
 
-        function loadParameters(scriptName) {
+        function loadParameters(scriptName, initialLoad = true) {
             logger.info("Attempting to load custom script parameters...");
             $scope.isLoadingParameters = true;
 
@@ -102,8 +102,13 @@ const fileWriter = {
                 //grab the manifest
                 if (typeof customScript.getScriptManifest === "function") {
                     $scope.scriptManifest = customScript.getScriptManifest();
+
                 } else {
                     $scope.scriptManifest = null;
+                }
+
+                if (!initialLoad && ($scope.scriptManifest == null || $scope.scriptManifest.firebotVersion !== "5")) {
+                    utilityService.showInfoModal("The selected script may not have been written for Firebot V5 and so might not function as expected. Please reach out to us on Discord or Twitter if you need assistance.");
                 }
 
                 let currentParameters = $scope.effect.parameters;
@@ -186,7 +191,7 @@ const fileWriter = {
             $scope.effect.scriptName = scriptName;
             $scope.effect.parameters = null;
             $scope.scriptManifest = null;
-            loadParameters(scriptName);
+            loadParameters(scriptName, false);
         };
 
         $scope.scriptHasParameters = function() {
