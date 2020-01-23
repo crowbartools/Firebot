@@ -24,10 +24,18 @@
         background-color: $light-background-color;
         position: sticky;
         bottom: 0;
-        border-top: 1px solid #24262A;
-        box-shadow: 0 -6px 9px -2px #0000004d;
+        &.is-stuck {
+            border-top: 1px solid #24262A;
+            margin-top: 10px;
+            box-shadow: 0 -6px 9px -2px #0000004d;
+        }
     }
 }
+
+.effect-footer-sentinel {
+    width: 100%;
+}
+
 .modal-content {
     border-radius: 3px;
     background-color: $light-background-color;

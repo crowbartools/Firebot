@@ -579,7 +579,7 @@
                     keyboard: false,
                     backdrop: "static",
                     windowClass: "effect-edit-modal",
-                    controllerFunc: (
+                    controllerFunc: function (
                         $scope,
                         $uibModalInstance,
                         ngToast,
@@ -592,8 +592,10 @@
                         index,
                         triggerType,
                         triggerMeta,
-                        objectCopyHelper
-                    ) => {
+                        objectCopyHelper,
+                        $timeout,
+                        $q
+                    ) {
                         $scope.effect = JSON.parse(angular.toJson(effect));
                         $scope.triggerType = triggerType;
                         $scope.triggerMeta = triggerMeta;
@@ -820,6 +822,27 @@
 
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss();
+                        };
+
+
+                        $scope.footerIsStuck = false;
+                        //scroll sentinel
+                        this.$onInit = function() {
+
+                            $timeout(() => {
+                                let observer = new IntersectionObserver(entries => {
+                                    let entry = entries[0];
+
+                                    $q.resolve(!entry.isIntersecting, (stuck) => {
+                                        $scope.footerIsStuck = stuck;
+                                    });
+                                });
+
+                                let sentinel = document.querySelector('.effect-footer-sentinel');
+                                if (sentinel != null) {
+                                    observer.observe(sentinel);
+                                }
+                            }, 100);
                         };
                     },
                     resolveObj: {

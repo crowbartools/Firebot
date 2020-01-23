@@ -530,7 +530,7 @@
               <effect-options effect="effect" type="effect.type" trigger="{{triggerType}}" ng-show="effect.type != null" trigger-meta="triggerMeta"><effect-options>
           </div>
       </div>
-      <div class="modal-footer sticky-footer">
+      <div class="modal-footer sticky-footer" ng-class="{'is-stuck': footerIsStuck }">
           <button class="btn btn-link" ng-click="dismiss()">Cancel</button>
 
           <button ng-if="openModals.length < 2" type="button" class="btn btn-primary" ng-click="save()" ng-disabled="effect.type === 'Nothing'">{{isAddMode ? "Add" : "Save"}}</button>
@@ -544,6 +544,7 @@
             </ul>
           </div>
       </div>
+      <div class="effect-footer-sentinel"></div>
     </script>
   </body>
 </html>
