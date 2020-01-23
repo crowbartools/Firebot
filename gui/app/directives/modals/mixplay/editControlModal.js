@@ -60,10 +60,11 @@
                 </div>
                     
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer sticky-footer" id="edit-control-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
+            <scroll-sentinel element-id="edit-control-footer"></scroll-sentinel>
             `,
             bindings: {
                 resolve: "<",

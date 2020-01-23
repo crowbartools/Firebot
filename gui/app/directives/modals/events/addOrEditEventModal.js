@@ -17,49 +17,51 @@
             <div class="general-event-settings">        
                 <div class="effect-setting-container setting-padtop">
                     <div class="input-group settings-eventid">
-                    <span class="input-group-addon" id="basic-addon3">Event Name</span>
-                    <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-not-empty event-id" aria-describedby="basic-addon3" ng-model="$ctrl.event.name">
+                        <span class="input-group-addon" id="basic-addon3">Event Name</span>
+                        <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-not-empty event-id" aria-describedby="basic-addon3" ng-model="$ctrl.event.name">
+                    </div>
+                </div>
+        
+                <div class="effect-setting-container setting-padtop">
+                    <h3>Trigger On</h3>
+                    <searchable-event-dropdown selected="{ eventId: $ctrl.event.eventId, sourceId: $ctrl.event.sourceId }" style="width:100%" update="$ctrl.eventChanged(event)"></searchable-event-dropdown>
+                </div>
+        
+                <div ng-if="$ctrl.event.eventId != null">
+                    <filter-list event-source-id="$ctrl.event.sourceId" event-id="$ctrl.event.eventId" filter-data="$ctrl.event.filterData"></filter-list>
+                </div>  
+
+                <div class="other-settings setting-padtop">
+                    <div class="settings-title">
+                        <h3>Settings</h3>
+                    </div>
+
+                    <div class="controls-fb-inline effect-setting-container">
+                        <label class="control-fb control--checkbox" ng-if="!$ctrl.isNewEvent">Enabled
+                            <input type="checkbox" ng-model="$ctrl.event.active" aria-label="..." checked>
+                            <div class="control__indicator"></div>
+                        </label>
+                        <label class="control-fb control--checkbox">Show Alert In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when this event happens.'"></tooltip>
+                            <input type="checkbox" ng-model="$ctrl.event.chatFeedAlert" aria-label="...">
+                            <div class="control__indicator"></div>
+                        </label>
+                        <label class="control-fb control--checkbox">Skip Logging
+                            <input type="checkbox" ng-model="$ctrl.event.skipLog" aria-label="...">
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
                 </div>
             </div>
-        
-            <div class="effect-setting-container setting-padtop">
-                <h3>Trigger On</h3>
-                <searchable-event-dropdown selected="{ eventId: $ctrl.event.eventId, sourceId: $ctrl.event.sourceId }" style="width:100%" update="$ctrl.eventChanged(event)"></searchable-event-dropdown>
-            </div>
-        
-            <div ng-if="$ctrl.event.eventId != null">
-                <filter-list event-source-id="$ctrl.event.sourceId" event-id="$ctrl.event.eventId" filter-data="$ctrl.event.filterData"></filter-list>
-            </div>  
-
-            <div class="other-settings setting-padtop">
-                <div class="settings-title">
-                    <h3>Settings</h3>
-                </div>
-
-                <div class="controls-fb-inline effect-setting-container">
-                    <label class="control-fb control--checkbox" ng-if="!$ctrl.isNewEvent">Enabled
-                        <input type="checkbox" ng-model="$ctrl.event.active" aria-label="..." checked>
-                        <div class="control__indicator"></div>
-                    </label>
-                    <label class="control-fb control--checkbox">Show Alert In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when this event happens.'"></tooltip>
-                        <input type="checkbox" ng-model="$ctrl.event.chatFeedAlert" aria-label="...">
-                        <div class="control__indicator"></div>
-                    </label>
-                    <label class="control-fb control--checkbox">Skip Logging
-                        <input type="checkbox" ng-model="$ctrl.event.skipLog" aria-label="...">
-                        <div class="control__indicator"></div>
-                    </label>
-                </div>
+            <div ng-if="$ctrl.event.eventId != null" class="effect-setting-container setting-padtop">
+                <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>      
             </div>
         </div>
-        <div ng-if="$ctrl.event.eventId != null" class="effect-setting-container setting-padtop">
-            <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>      
-        </div>
-        <div class="modal-footer">
+        <div class="modal-footer sticky-footer" id="edit-event-footer">
             <button ng-if="!$ctrl.isNewEvent" type="button" class="btn btn-danger delete-event-button pull-left" ng-click="$ctrl.delete()">Delete Event</button>
             <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
             <button type="button" class="btn btn-primary event-edit-save" ng-click="$ctrl.save()">{{isNewEvent ? "Add" : "Save"}}</button>
         </div>
+        <scroll-sentinel element-id="edit-event-footer"></scroll-sentinel>
         `,
         bindings: {
             resolve: "<",

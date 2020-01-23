@@ -825,7 +825,7 @@
                         };
 
 
-                        $scope.footerIsStuck = false;
+                        /*$scope.footerIsStuck = false;
                         //scroll sentinel
                         this.$onInit = function() {
 
@@ -843,7 +843,7 @@
                                     observer.observe(sentinel);
                                 }
                             }, 100);
-                        };
+                        };*/
                     },
                     resolveObj: {
                         effect: () => {

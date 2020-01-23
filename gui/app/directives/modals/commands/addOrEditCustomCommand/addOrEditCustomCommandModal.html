@@ -1,7 +1,9 @@
 <div class="modal-header">
-    <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
+    <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span
+            aria-hidden="true">&times;</span></button>
     <h4 class="modal-title">
-      <span ng-if="!$ctrl.isNewCommand">Edit Command - </span> {{$ctrl.isNewCommand ? 'Add New Command' : $ctrl.command.trigger }}
+        <span ng-if="!$ctrl.isNewCommand">Edit Command - </span>
+        {{$ctrl.isNewCommand ? 'Add New Command' : $ctrl.command.trigger }}
     </h4>
 </div>
 <div class="modal-body">
@@ -11,15 +13,19 @@
 
             <div class="input-group">
                 <span class="input-group-addon" id="basic-addon3">Trigger</span>
-                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.command.trigger" placeholder="!something or phrase">
+                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.command.trigger"
+                    placeholder="!something or phrase">
             </div>
 
             <div class="controls-fb-inline">
-                <label class="control-fb control--checkbox">Auto Delete Trigger <tooltip text="'Have Firebot automatically delete the message that triggers this command to keep chat cleaner.'"></tooltip>
+                <label class="control-fb control--checkbox">Auto Delete Trigger <tooltip
+                        text="'Have Firebot automatically delete the message that triggers this command to keep chat cleaner.'">
+                    </tooltip>
                     <input type="checkbox" ng-model="$ctrl.command.autoDeleteTrigger" aria-label="...">
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--checkbox">Scan Whole Message <tooltip text="'Scan the whole message for the trigger instead just the first word'"></tooltip>
+                <label class="control-fb control--checkbox">Scan Whole Message <tooltip
+                        text="'Scan the whole message for the trigger instead just the first word'"></tooltip>
                     <input type="checkbox" ng-model="$ctrl.command.scanWholeMessage" aria-label="...">
                     <div class="control__indicator"></div>
                 </label>
@@ -27,14 +33,19 @@
 
             <eos-collapsable-panel show-label="Advanced" hide-label="Hide Advanced">
                 <h4>RegEx Trigger</h4>
-                <p style="margin-bottom:10px";>For advanced users only! Enable this to make Firebot treat the trigger as a JavaScript flavored regular expression. This will allow you to define more complex patterns to match against.</p>
+                <p style="margin-bottom:10px" ;>For advanced users only! Enable this to make Firebot treat the trigger
+                    as a JavaScript flavored regular expression. This will allow you to define more complex patterns to
+                    match against.</p>
                 <label class="control-fb control--checkbox">Trigger Is A RegEx
                     <input type="checkbox" ng-model="$ctrl.command.triggerIsRegex" aria-label="...">
                     <div class="control__indicator"></div>
                 </label>
                 <div class="input-group" style="margin-top:5px;" ng-if="$ctrl.command.triggerIsRegex">
-                    <span class="input-group-addon" id="tooltip-desc">Description <tooltip text="'Here you can input whatever you want to remind yourself what the RegEx does. It will show up as a tooltip on the main command page.'"></tooltip></span>
-                    <input type="text" class="form-control" aria-describedby="tooltip-desc" ng-model="$ctrl.command.regexDescription" placeholder="This regex matches...">
+                    <span class="input-group-addon" id="tooltip-desc">Description <tooltip
+                            text="'Here you can input whatever you want to remind yourself what the RegEx does. It will show up as a tooltip on the main command page.'">
+                        </tooltip></span>
+                    <input type="text" class="form-control" aria-describedby="tooltip-desc"
+                        ng-model="$ctrl.command.regexDescription" placeholder="This regex matches...">
                 </div>
             </eos-collapsable-panel>
         </div>
@@ -45,20 +56,12 @@
             </div>
 
             <div class="input-group">
-            <span class="input-group-addon">Global</span>
-            <input 
-                class="form-control" 
-                type="number"
-                min="0"
-                placeholder="secs"
-                ng-model="$ctrl.command.cooldown.global">
-            <span class="input-group-addon">User</span>
-            <input 
-                class="form-control"
-                type="number"
-                min="0"
-                placeholder="secs"
-                ng-model="$ctrl.command.cooldown.user">
+                <span class="input-group-addon">Global</span>
+                <input class="form-control" type="number" min="0" placeholder="secs"
+                    ng-model="$ctrl.command.cooldown.global">
+                <span class="input-group-addon">User</span>
+                <input class="form-control" type="number" min="0" placeholder="secs"
+                    ng-model="$ctrl.command.cooldown.user">
             </div>
         </div>
 
@@ -68,56 +71,56 @@
             </div>
 
             <div class="input-group">
-            <span class="input-group-addon">Usage count</span>
-            <input 
-                class="form-control" 
-                type="number"
-                min="0"
-                placeholder="0"
-                ng-model="$ctrl.command.count"
-            >
-        </div>
-
-        <div>
-            <restrictions-list 
-                restriction-data="$ctrl.command.restrictionData"
-                trigger="command" 
-                trigger-meta="$ctrl.triggerMeta">
-            </restrictions-section>
-        </div>
-
-        <div class="other-settings" style="padding-bottom:1em">
-            <div class="settings-title">
-                <h3>Settings</h3>
+                <span class="input-group-addon">Usage count</span>
+                <input class="form-control" type="number" min="0" placeholder="0" ng-model="$ctrl.command.count">
             </div>
-            <div class="controls-fb-inline">
-                <label class="control-fb control--checkbox">Enabled
-                    <input type="checkbox" ng-model="$ctrl.command.active" aria-label="..." checked>
-                    <div class="control__indicator"></div>
-                </label>
-                <!--<label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone uses this command'"></tooltip>
+
+            <div>
+                <restrictions-list restriction-data="$ctrl.command.restrictionData" trigger="command"
+                    trigger-meta="$ctrl.triggerMeta">
+                    </restrictions-section>
+            </div>
+
+            <div class="other-settings" style="padding-bottom:1em">
+                <div class="settings-title">
+                    <h3>Settings</h3>
+                </div>
+                <div class="controls-fb-inline">
+                    <label class="control-fb control--checkbox">Enabled
+                        <input type="checkbox" ng-model="$ctrl.command.active" aria-label="..." checked>
+                        <div class="control__indicator"></div>
+                    </label>
+                    <!--<label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone uses this command'"></tooltip>
                     <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
                     <div class="control__indicator"></div>
                 </label>-->
-                <label class="control-fb control--checkbox">Allow in Costream Channels <tooltip text="'Allow this command to be used by anyone in a costream chat. If unchecked only viewers in your channel can use this command.'"></tooltip>
-                    <input type="checkbox" ng-model="$ctrl.command.allowInCostreams" aria-label="...">
-                    <div class="control__indicator"></div>
-                </label>
-                <label class="control-fb control--checkbox">Hidden <tooltip text="'Hide this command from the !commands list'"></tooltip>
-                    <input type="checkbox" ng-model="$ctrl.command.hidden" aria-label="...">
-                    <div class="control__indicator"></div>
-                </label>
+                    <label class="control-fb control--checkbox">Allow in Costream Channels <tooltip
+                            text="'Allow this command to be used by anyone in a costream chat. If unchecked only viewers in your channel can use this command.'">
+                        </tooltip>
+                        <input type="checkbox" ng-model="$ctrl.command.allowInCostreams" aria-label="...">
+                        <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox">Hidden <tooltip
+                            text="'Hide this command from the !commands list'"></tooltip>
+                        <input type="checkbox" ng-model="$ctrl.command.hidden" aria-label="...">
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
+                <div class="controls-fb-inline" style="margin-top: 10px"></div>
             </div>
-            <div class="controls-fb-inline" style="margin-top: 10px"></div>
         </div>
-    </div>
-    <div class="function-button-settings">
-        <effect-list header="What should this command do?" effects="$ctrl.command.effects" trigger="command" update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
+        <div class="function-button-settings">
+            <effect-list header="What should this command do?" effects="$ctrl.command.effects" trigger="command"
+                update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
+        </div>
     </div>
 </div>
 
-<div class="modal-footer">
-    <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewCommand" ng-click="$ctrl.delete()">Delete Command</button>
+<div class="modal-footer sticky-footer" id="edit-command-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewCommand"
+        ng-click="$ctrl.delete()">Delete Command</button>
     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary add-new-board-save" ng-click="$ctrl.save()">Save Changes</button>
 </div>
+
+<scroll-sentinel element-id="edit-command-footer"></scroll-sentinel>
