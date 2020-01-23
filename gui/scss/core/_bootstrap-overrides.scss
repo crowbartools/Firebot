@@ -19,6 +19,14 @@
 
 .modal-footer {
     border-top: none;
+
+    &.sticky-footer {
+        background-color: $light-background-color;
+        position: sticky;
+        bottom: 0;
+        border-top: 1px solid #24262A;
+        box-shadow: 0 -6px 9px -2px #0000004d;
+    }
 }
 .modal-content {
     border-radius: 3px;
