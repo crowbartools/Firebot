@@ -155,7 +155,6 @@ let copyResourceToUserData = function(
     let destination = getPathInUserData(
         path.join(userDataDestination, resourceName)
     );
-    console.log(source, destination);
     fs.writeFileSync(destination, fs.readFileSync(source));
 };
 
