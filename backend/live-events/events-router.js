@@ -13,16 +13,16 @@ const userEventCache = new NodeCache({ stdTTL: 43200, checkperiod: 600 });
 // Cache Event
 // This will cache the event so we don't fire it multiple times per session.
 // Any event that needs to only fire once should run through this before hitting the live event router.
-function cacheNewEvent(sourceId, eventId, eventMetaKey = null) {
+function cacheNewEvent(sourceId, eventId, eventSettingId, eventMetaKey = null) {
     /**
     Example of cache storage.
       {
-          "constellation:FOLLOWED:Firebottle": true,
-          "constellation:FOLLOWED:ebiggz": true
+          "constellation:FOLLOWED:9f7a8640-3e59-11ea-ae88-19476d11930a:Firebottle": true,
+          "constellation:FOLLOWED:9f7a8640-3e59-11ea-ae88-19476d11930a:ebiggz": true
       }
     **/
 
-    let key = `${sourceId}:${eventId}`;
+    let key = `${sourceId}:${eventId}:${eventSettingId}`;
     if (eventMetaKey != null) {
         key += `:${eventMetaKey}`;
     }
@@ -89,17 +89,6 @@ function addEventToQueue(eventPacket) {
 
 async function onEventTriggered(event, source, meta, isManual = false) {
 
-    if (!isManual && event.cached) {
-        let cacheMetaKey;
-        if (event.cacheMetaKey && meta) {
-            cacheMetaKey = meta[event.cacheMetaKey];
-        }
-        let previouslyCached = cacheNewEvent(source.id, event.id, cacheMetaKey);
-        if (previouslyCached) {
-            return;
-        }
-    }
-
     let effects = null,
         eventSettings;
 
@@ -108,6 +97,17 @@ async function onEventTriggered(event, source, meta, isManual = false) {
     );
 
     for (let eventSetting of eventSettings) {
+
+        if (!isManual && event.cached) {
+            let cacheMetaKey;
+            if (event.cacheMetaKey && meta) {
+                cacheMetaKey = meta[event.cacheMetaKey];
+            }
+            let previouslyCached = cacheNewEvent(source.id, event.id, eventSetting.id, cacheMetaKey);
+            if (previouslyCached) {
+                return;
+            }
+        }
 
         if (eventSetting.filterData && !isManual) {
             let passed = await filterManager.runFilters(eventSetting.filterData, {
