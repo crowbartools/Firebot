@@ -6,6 +6,10 @@ const api = require("../../api-access");
 const { DevLabImportError } = require("../../../shared/errors");
 
 function mapMixPlayControlToFirebot(mixPlayControl) {
+
+    // dont support screen/mouse controls at this time
+    if (mixPlayControl.kind === "screen") return null;
+
     let newId = uuid();
     let firebotControl = {
         id: newId,
@@ -61,7 +65,7 @@ async function importDevLabProject(devLabId, projectName) {
         let defaultScene = {
             id: defaultSceneId,
             name: "default",
-            controls: devlabDefaultScene.controls.map(mapMixPlayControlToFirebot)
+            controls: devlabDefaultScene.controls.map(mapMixPlayControlToFirebot).filter(c => c != null)
         };
         newProject.scenes.push(defaultScene);
         newProject.defaultSceneId = defaultSceneId;
@@ -74,7 +78,7 @@ async function importDevLabProject(devLabId, projectName) {
         let newScene = {
             id: newSceneId,
             name: devLabScene.sceneID,
-            controls: devLabScene.controls.map(mapMixPlayControlToFirebot)
+            controls: devLabScene.controls.map(mapMixPlayControlToFirebot).filter(c => c != null)
         };
         newProject.scenes.push(newScene);
     }
