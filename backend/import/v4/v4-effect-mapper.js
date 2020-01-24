@@ -10,8 +10,8 @@ const uuid = require("uuid/v1");
 const v4EffectTypeMap = {
     "API Button": "firebot:api",
     "Celebration": "firebot:celebration",
-    "Change Group": null, // v5 is fundementally different here, cant import
-    "Change Scene": null, // v5 is fundementally different here, cant import
+    "Change Group": null, // v5 is fundamentally different here, cant import
+    "Change Scene": null, // v5 is fundamentally different here, cant import
     "Chat": "firebot:chat",
     "Cooldown": null, // vastly different than v5 equivalent, extremely difficult to import correctly
     "Custom Script": "firebot:customscript",
@@ -40,18 +40,18 @@ const v4EffectTypeMap = {
 };
 
 const v4IncompatibilityReasonMap = {
-    "Change Group": "V5 handles groups/scenes fundementally different",
-    "Change Scene": "V5 handles groups/scenes fundementally different",
-    "Cooldown": "V5 handles control cooldowns fundementally different",
+    "Change Group": "V5 handles groups/scenes fundamentally different",
+    "Change Scene": "V5 handles groups/scenes fundamentally different",
+    "Cooldown": "V5 handles control cooldowns fundamentally different",
     "Run Command": "Impossible to import effect",
     "Show Event": "Effect is no longer supported",
     "Clear Effects": "Effect not available in V5 yet",
-    "Group List": "V5 handles groups/scenes fundementally different",
-    "Scene List": "V5 handles groups/scenes fundementally different",
+    "Group List": "V5 handles groups/scenes fundamentally different",
+    "Scene List": "V5 handles groups/scenes fundamentally different",
     "Command List": "Effect doesn't exist in V5 as this functionality now exists as a System Command",
-    "Change User Scene": "V5 handles groups/scenes fundementally different",
-    "Change Group Scene": "V5 handles groups/scenes fundementally different",
-    "Update Button": "V5 handles control updates fundementally different"
+    "Change User Scene": "V5 handles groups/scenes fundamentally different",
+    "Change Group Scene": "V5 handles groups/scenes fundamentally different",
+    "Update Button": "V5 handles control updates fundamentally different"
 };
 
 function mapV4Effect (v4Effect) {
