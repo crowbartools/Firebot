@@ -1,5 +1,12 @@
 "use strict";
+const electron = require("electron");
+const path = require("path");
 const fs = require("fs");
+const JsonDB = require("node-json-db");
+
+const appDataPath = electron.app.getPath("appData");
+const v4DataPath = path.join(appDataPath, "Firebot/firebot-data/user-settings");
+exports.v4DataPath = v4DataPath;
 
 exports.pathExists = (path) => {
     return new Promise(resolve => {
@@ -20,4 +27,29 @@ exports.pathExists = (path) => {
             }
         });
     });
+};
+
+/**
+ * @returns JsonDB
+ */
+exports.getJsonDbInV4Data = function(filePath) {
+    let jsonDbPath = path.join(v4DataPath, filePath);
+    return new JsonDB(jsonDbPath, false, true);
+};
+
+// error types
+class IncompatibilityError extends Error {
+    constructor(reason, ...params) {
+        super(reason, ...params);
+        // Maintains proper stack trace for where our error was thrown
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, IncompatibilityError);
+        }
+        this.name = 'IncompatibilityError';
+        this.reason = reason;
+    }
+}
+
+exports.errors = {
+    IncompatibilityError
 };
