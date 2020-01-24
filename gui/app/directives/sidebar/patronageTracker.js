@@ -102,8 +102,13 @@
 
                 $ctrl.getVesselImageUrl = () => {
                     if (patronageService.dataLoaded) {
+
                         let periodData = patronageService.patronageData.period;
                         let channelData = patronageService.patronageData.channel;
+
+                        if (periodData == null || channelData == null) {
+                            return defaultVesselImg;
+                        }
 
                         let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
 
@@ -122,6 +127,8 @@
                     if (patronageService.dataLoaded) {
                         let periodData = patronageService.patronageData.period;
                         let channelData = patronageService.patronageData.channel;
+
+                        if (periodData == null || channelData == null) return defaultVesselFilledImg;
 
                         let currentMilestoneGroupId = channelData.currentMilestoneGroupId;
                         if (periodData.milestoneGroups) {
@@ -187,7 +194,7 @@
                     if (patronageService.dataLoaded) {
                         amount = patronageService.patronageData.channel.patronageEarned;
                     }
-                    return addCommas(amount);
+                    return addCommas(amount || 0);
                 };
 
                 $ctrl.getEarnedPatronage = () => {
@@ -195,7 +202,7 @@
                     if (patronageService.dataLoaded) {
                         amount = patronageService.patronageData.channel.patronageEarned;
                     }
-                    return amount;
+                    return amount || 0;
                 };
 
                 $rootScope.$on("patronageUpdated", () => {

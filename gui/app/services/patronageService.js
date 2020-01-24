@@ -118,9 +118,11 @@
             function setData(patronageData) {
                 if (patronageData == null) return;
                 service.patronageData = patronageData;
-                if (service.patronageData.channel && service.patronageData.period) {
+                if (service.patronageData.channel != null && service.patronageData.period != null) {
                     service.dataLoaded = true;
                     service.recalucatePercentages();
+                } else {
+                    service.dataLoaded = false;
                 }
             }
 
@@ -131,12 +133,20 @@
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHANNEL_PATRONAGE_UPDATE},
-                (data) => {
-                    service.patronageData.channel = data;
+                (channelData) => {
+                    if (channelData == null) return;
+
+                    service.patronageData.channel = channelData;
+
                     if (!service.dataLoaded) {
                         let data = listenerService.fireEventSync("getPatronageData");
-                        service.patronageData.period = data.period;
-                        service.dataLoaded = true;
+
+                        if (data != null && data.period != null) {
+                            service.patronageData.period = data.period;
+
+                            service.dataLoaded = true;
+                        }
+
                     }
                     service.recalucatePercentages();
                     $rootScope.$broadcast("patronageUpdated");
