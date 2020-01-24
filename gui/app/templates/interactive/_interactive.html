@@ -198,10 +198,10 @@
 
             <div class="flex-row-center">
                 <div ng-if="getControlSettings(control.kind).grid" class="clickable" ng-click="addOrRemoveControlToGrid(control)" uib-tooltip="{{controlIsOnGrid(control) ? 'Remove from Grid' : 'Add to Grid'}}" tooltip-append-to-body="true"><i class="fa-th-large" ng-class="controlIsOnGrid(control) ? 'fas' : 'fal'"></i></div>
-                
+              
                 <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
                     <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
-                    <ul class="dropdown-menu" uib-dropdown-menu>
+                    <ul class="dropdown-menu" uib-dropdown-menu style="transform: translateY(-142px);">
                         <li ng-click="editControl(control)">
                             <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>
                         </li>
