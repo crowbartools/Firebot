@@ -25,16 +25,19 @@
                 </div>
 
                 <div style="margin-top: 15px;">
+                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        Options
+                    </div>
                     <div>
-                        <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity.0.9;"> Import controls from a DevLab project
+                        <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity.0.9;"> Import controls from a DevLab project <tooltip text="'Check if you want to import controls from Mixer\\'s DevLab (what Firebot v4 used).'"></tooltip>
                             <input type="checkbox" ng-model="$ctrl.importDevLab">
                             <div class="control__indicator"></div>
                         </label>
                     </div>
                     
-                    <div ng-show="$ctrl.importDevLab" style="margin-top:8px;"">
+                    <div ng-show="$ctrl.importDevLab" style="margin-top:10px;padding-left:10px;">
                         <div class="mixplay-header" style="padding: 0 0 4px 0">
-                            DevLab Project Code
+                            DevLab Project Code <tooltip text="'You can find a project\\'s code on the Code tab of the DevLab'"></tooltip>
                         </div>
                         <div style="width: 100%; position: relative;">
                             <div class="form-group" ng-class="{'has-error': $ctrl.codeError}">
@@ -43,6 +46,15 @@
                             </div>
                         </div>
                     </div>   
+                </div>
+
+                <div style="margin-top: 15px;" ng-show="$ctrl.hasActiveProject">
+                    <div>
+                        <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity.0.9;"> Set as active project <tooltip text="'Automatically set this new project as the active project (aka the project that is used when Firebot connects to MixPlay). You can always change this later.'"></tooltip>
+                            <input type="checkbox" ng-model="$ctrl.setAsActive">
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -55,7 +67,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($timeout) {
+            controller: function($timeout, mixplayService) {
                 let $ctrl = this;
 
                 $timeout(() => {
@@ -66,6 +78,8 @@
 
                 $ctrl.nameError = false;
                 $ctrl.codeError = false;
+
+                $ctrl.hasActiveProject = mixplayService.getActiveMixplayProjectId() != null;
 
                 function validateName() {
                     let name = $ctrl.name;
@@ -93,7 +107,8 @@
                         $value: {
                             name: $ctrl.name,
                             importDevLab: $ctrl.importDevLab === true,
-                            devlabProjectId: $ctrl.devlabCode
+                            devlabProjectId: $ctrl.devlabCode,
+                            setAsActive: $ctrl.setAsActive
                         }
                     });
                 };

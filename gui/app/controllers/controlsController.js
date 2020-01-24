@@ -296,37 +296,16 @@
                     resolveObj: {},
                     closeCallback: async data => {
 
-                        let { name, importDevLab, devlabProjectId } = data;
+                        let { name, importDevLab, devlabProjectId, setAsActive } = data;
 
                         if (importDevLab) {
-                            await mixplayService.createNewImportedDevLabProject(devlabProjectId, name);
+                            await mixplayService.createNewImportedDevLabProject(devlabProjectId, name, setAsActive);
                         } else {
-                            mixplayService.createNewProject(name);
+                            mixplayService.createNewProject(name, setAsActive);
                         }
                         $scope.updateControlPositions();
                     }
                 });
-                /*utilityService.openGetInputModal(
-                    {
-                        model: "",
-                        label: "New Project Name",
-                        saveText: "Create",
-                        validationFn: (value) => {
-                            return new Promise(resolve => {
-                                if (value == null || value.trim().length < 1) {
-                                    resolve(false);
-                                } else {
-                                    resolve(true);
-                                }
-                            });
-                        },
-                        validationText: "Project name cannot be empty."
-
-                    },
-                    (name) => {
-                        mixplayService.createNewProject(name);
-                        $scope.updateControlPositions();
-                    });*/
             };
 
             $scope.showCreateSceneModal = function() {

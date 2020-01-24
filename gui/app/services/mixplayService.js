@@ -102,17 +102,17 @@
 
             loadProjects();
 
-            service.createNewProject = function(name) {
+            service.createNewProject = function(name, setAsActive = false) {
                 let newProject = backendCommunicator.fireEventSync("createNewProject", name);
                 projects.push(newProject);
                 currentProjectId = newProject.id;
-                if (activeProjectId == null) {
+                if (activeProjectId == null || setAsActive) {
                     service.setActiveMixplayProjectId(newProject.id);
                 }
                 selectFirstScene();
             };
 
-            service.createNewImportedDevLabProject = async function(devlabId, name) {
+            service.createNewImportedDevLabProject = async function(devlabId, name, setAsActive = false) {
                 let newProject = await backendCommunicator.fireEventAsync("createNewDevLabImportProject", {
                     devLabId: devlabId,
                     projectName: name
@@ -120,7 +120,7 @@
                 if (newProject != null) {
                     projects.push(newProject);
                     currentProjectId = newProject.id;
-                    if (activeProjectId == null) {
+                    if (activeProjectId == null || setAsActive) {
                         service.setActiveMixplayProjectId(newProject.id);
                     }
                     selectFirstScene();
