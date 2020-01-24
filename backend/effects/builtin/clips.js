@@ -15,7 +15,7 @@ const clip = {
    */
     definition: {
         id: "firebot:clip",
-        name: "Clip Effect",
+        name: "Create Clip",
         description: "Creates a clip on Mixer.",
         tags: ["Fun", "Built in"],
         dependencies: [EffectDependency.CHAT, EffectDependency.CONSTELLATION],
