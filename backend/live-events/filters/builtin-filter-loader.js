@@ -17,6 +17,9 @@ exports.loadFilters = () => {
 
     const patronageEarned = require("./builtin/patronage-earned");
 
+    const viewerLevel = require("./builtin/viewer-level");
+    const viewerHearts = require("./builtin/viewer-total-hearts");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -29,4 +32,7 @@ exports.loadFilters = () => {
     filterManager.registerFilter(donationAmount);
 
     filterManager.registerFilter(patronageEarned);
+
+    filterManager.registerFilter(viewerLevel);
+    filterManager.registerFilter(viewerHearts);
 };

@@ -212,6 +212,35 @@ function constellationConnect() {
         patronageManager.setChannelPatronageData(data);
     });
 
+    // Subscription gifted
+    ca.subscribe(prefix + 'subscriptionGifted', data => {
+        eventManager.triggerEvent("mixer", "subscription-gifted", {
+            username: data.gifterUsername,
+            giftReceiverUser: data.giftReceiverUsername
+        });
+    });
+
+    ca.subscribe(`progression:${channelId}:levelup`, async data => {
+        if (data == null || data.userId == null || data.level == null) return;
+
+        let userData;
+        try {
+            userData = await apiAccess.get(`users/${data.userId}`);
+        } catch (err) {
+            logger.warn("Failed to get user data in progression level up event", err);
+            return;
+        }
+        let username = userData.username;
+
+        eventManager.triggerEvent("mixer", "progression-levelup", {
+            username: username,
+            rankBadgeUrl: data.level.assetsUrl.replace("{variant}", "large.gif"),
+            userLevel: data.level.level,
+            userTotalHearts: data.level.currentXp,
+            userNextLevelXp: data.level.nextLevelXp
+        });
+    });
+
     ca.on('error', data => {
         logger.error("error from constellation:", data);
 

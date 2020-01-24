@@ -64,6 +64,13 @@ exports.loadReplaceVariables = () => {
 
     const costreamChannels = require("./builtin/costream");
 
+    const giftReceiverUsername = require("./builtin/gift-receiver-user");
+
+    const userLevel = require("./builtin/user-level");
+    const userNextLevelHearts = require("./builtin/user-next-level-hearts");
+    const userTotalHearts = require("./builtin/user-total-hearts");
+    const userRankBadgeUrl = require("./builtin/user-rank-badge-url");
+
     // register them
     replaceVariableManager.registerReplaceVariable(user);
     replaceVariableManager.registerReplaceVariable(subMonths);
@@ -125,4 +132,11 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(currency);
 
     replaceVariableManager.registerReplaceVariable(costreamChannels);
+
+    replaceVariableManager.registerReplaceVariable(giftReceiverUsername);
+
+    replaceVariableManager.registerReplaceVariable(userLevel);
+    replaceVariableManager.registerReplaceVariable(userNextLevelHearts);
+    replaceVariableManager.registerReplaceVariable(userRankBadgeUrl);
+    replaceVariableManager.registerReplaceVariable(userTotalHearts);
 };

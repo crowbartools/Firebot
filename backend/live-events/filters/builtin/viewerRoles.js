@@ -15,6 +15,7 @@ module.exports = {
         { eventSourceId: "mixer", eventId: "resub" },
         { eventSourceId: "mixer", eventId: "hosted" },
         { eventSourceId: "mixer", eventId: "followed" },
+        { eventSourceId: "mixer", eventId: "user-joined-mixplay" },
         { eventSourceId: "mixer", eventId: "user-joined-chat" },
         { eventSourceId: "mixer", eventId: "user-left-chat" },
         { eventSourceId: "mixer", eventId: "messages-purged" },

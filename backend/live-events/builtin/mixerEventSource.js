@@ -191,6 +191,31 @@ const mixerEventSource = {
             manualMetadata: {
                 username: "Firebot"
             }
+        },
+        {
+            id: "subscription-gifted",
+            name: "Subscription Gifted",
+            description: "When someone gifts a subscription to someone else",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                giftReceiverUser: "Matt"
+            }
+        },
+        {
+            id: "progression-levelup",
+            name: "Progression Level Up",
+            description: "When a viewer levels up to a new rank in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                rankBadgeUrl: "https://static.mixer.com/img/design/ui/fan-progression/v1_badges/silver/large.gif",
+                userLevel: 2,
+                userTotalHearts: 120,
+                userNextLevelXp: 250
+            }
         }
     ]
 };
