@@ -244,14 +244,17 @@ async function probeVariable(handlers, expression, cursor, options) {
     // check trigger stuff
     if (handler.triggers) {
 
+        let typeDisplay = options.trigger.type ? options.trigger.type.toLowerCase() : "unknown trigger";
+
         let handleTrigger = handler.triggers[options.trigger.type];
         if (handleTrigger == null || handleTrigger === false) {
-            throw new ExpressionError('variable does not support this trigger type', cursor, varname);
+
+            throw new ExpressionError('variable does not support being triggered by: ' + typeDisplay, cursor, varname);
         }
 
         if (Array.isArray(handleTrigger)) {
             if (!handleTrigger.some(id => id === options.trigger.id)) {
-                throw new ExpressionError('variable does not support this trigger id', cursor, varname);
+                throw new ExpressionError('variable does not support this specific ' + typeDisplay, cursor, varname);
             }
         }
 
