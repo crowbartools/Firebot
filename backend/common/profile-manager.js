@@ -81,12 +81,6 @@ function createNewProfile(profileId) {
         dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/controls");
     }
 
-    // Create the logs folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/logs")) {
-        logger.info("Can't find the logs folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/logs");
-    }
-
     // Create the chat folder if it doesn't exist.
     if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/chat")) {
         logger.info("Can't find the chat folder, creating one now...");
