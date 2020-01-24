@@ -46,6 +46,11 @@
     font-size: 30px;
     word-wrap: break-word;
 }
+
+.modal:focus {
+    outline: none;
+}
+
 .btn {
     border-radius: 2px;
 }
