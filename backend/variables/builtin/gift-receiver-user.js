@@ -8,7 +8,7 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["subscription-gifted"];
+triggers[EffectTrigger.EVENT] = ["mixer:subscription-gifted"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
