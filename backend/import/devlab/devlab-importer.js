@@ -30,6 +30,50 @@ function mapMixPlayControlToFirebot(mixPlayControl) {
     return firebotControl;
 }
 
+function mapDevLabScenesToFirebotProject(devLabScenes, firebotProject) {
+
+    let devlabDefaultScene = devLabScenes.find(s => s.sceneID === "default");
+    if (devlabDefaultScene) {
+        let defaultSceneId = uuid();
+        let defaultScene = {
+            id: defaultSceneId,
+            name: "default",
+            controls: devlabDefaultScene.controls.map(mapMixPlayControlToFirebot).filter(c => c != null)
+        };
+        firebotProject.scenes.push(defaultScene);
+        firebotProject.defaultSceneId = defaultSceneId;
+
+        devLabScenes = devLabScenes.filter(s => s.sceneID !== "default");
+    }
+
+    for (let devLabScene of devLabScenes) {
+        let newSceneId = uuid();
+        let newScene = {
+            id: newSceneId,
+            name: devLabScene.sceneID,
+            controls: devLabScene.controls.map(mapMixPlayControlToFirebot).filter(c => c != null)
+        };
+        firebotProject.scenes.push(newScene);
+    }
+
+    //ensure we at least have one scene
+    if (firebotProject.scenes.length < 1) {
+        let mainScene = {
+            id: uuid(),
+            name: "Main",
+            controls: []
+        };
+        firebotProject.scenes.push(mainScene);
+    }
+
+    //ensure a default scene id is set
+    if (firebotProject.defaultSceneId == null) {
+        firebotProject.defaultSceneId = firebotProject.scenes[0].id;
+    }
+
+    return firebotProject;
+}
+
 async function importDevLabProject(devLabId, projectName) {
 
     let devlabProject;
@@ -59,30 +103,10 @@ async function importDevLabProject(devLabId, projectName) {
 
     let devLabScenes = devlabProject.controls.scenes;
 
-    let devlabDefaultScene = devLabScenes.find(s => s.sceneID === "default");
-    if (devlabDefaultScene) {
-        let defaultSceneId = uuid();
-        let defaultScene = {
-            id: defaultSceneId,
-            name: "default",
-            controls: devlabDefaultScene.controls.map(mapMixPlayControlToFirebot).filter(c => c != null)
-        };
-        newProject.scenes.push(defaultScene);
-        newProject.defaultSceneId = defaultSceneId;
+    mapDevLabScenesToFirebotProject(devLabScenes, newProject);
 
-        devLabScenes = devLabScenes.filter(s => s.sceneID !== "default");
-    }
-
-    for (let devLabScene of devLabScenes) {
-        let newSceneId = uuid();
-        let newScene = {
-            id: newSceneId,
-            name: devLabScene.sceneID,
-            controls: devLabScene.controls.map(mapMixPlayControlToFirebot).filter(c => c != null)
-        };
-        newProject.scenes.push(newScene);
-    }
     return newProject;
 }
 
 exports.importDevLabProject = importDevLabProject;
+exports.mapDevLabScenesToFirebotProject = mapDevLabScenesToFirebotProject;

@@ -29,6 +29,10 @@
         }
         loadAllEventData();
 
+        backendCommunicator.on("main-events-update", () => {
+            loadAllEventData();
+        });
+
 
         let selectedTab = "mainevents";
         service.setSelectedTab = function(groupId) {

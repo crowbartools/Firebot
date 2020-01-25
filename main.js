@@ -564,11 +564,6 @@ function appOnReady() {
         //load event filters
         builtInEventFilterLoader.loadFilters();
 
-        /*authManager.register({
-            platform: "mixer",
-            authURI: "https://mixer.com/oauth/authorize"
-        });*/
-
         //load integrations
         integrationLoader.loadIntegrations();
 
@@ -577,10 +572,6 @@ function appOnReady() {
 
         //load restrictions
         builtInRestrictionsLoader.loadRestrictions();
-
-        //start extra life manager
-        //const extralifeManager = require('./backend/extralifeManager');
-        //extralifeManager.start();
 
         fontManager.generateAppFontCssFile();
 
@@ -598,6 +589,9 @@ function appOnReady() {
 
         const chatModerationManager = require("./backend/chat/moderation/chat-moderation-manager");
         chatModerationManager.load();
+
+        //get importer in memory
+        require("./backend/import/v4/v4-importer");
 
         createWindow();
 

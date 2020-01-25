@@ -1,7 +1,9 @@
 "use strict";
 const { ipcMain } = require("electron");
+const moment = require("moment");
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
+const frontendCommunicator = require("../common/frontend-communicator");
 
 let getCommandsDb = () => profileManager.getJsonDbInProfile("/chat/commands");
 
@@ -80,6 +82,31 @@ function refreshCommandCache(retry = 1) {
     }
 }
 
+function saveNewCustomCommand(command) {
+    logger.debug("saving newcommand: " + command.trigger);
+    if (command.id == null || command.id === "") {
+        // generate id for new command
+        const uuidv1 = require("uuid/v1");
+        command.id = uuidv1();
+
+        command.createdBy = "Imported";
+        command.createdAt = moment().format();
+    } else {
+        command.lastEditBy = "Imported";
+        command.lastEditAt = moment().format();
+    }
+
+    if (command.count == null) {
+        command.count = 0;
+    }
+
+    let commandDb = getCommandsDb();
+
+    try {
+        commandDb.push("/customCommands/" + command.id, command);
+    } catch (err) {} //eslint-disable-line no-empty
+}
+
 refreshCommandCache();
 
 // Refresh Command Cache
@@ -88,10 +115,15 @@ ipcMain.on("refreshCommandCache", function() {
     refreshCommandCache();
 });
 
+exports.triggerUiRefresh = () => {
+    frontendCommunicator.send("custom-commands-updated");
+};
+
 exports.refreshCommandCache = refreshCommandCache;
 exports.getSystemCommandOverrides = () => commandsCache.systemCommandOverrides;
 exports.saveSystemCommandOverride = saveSystemCommandOverride;
 exports.removeSystemCommandOverride = removeSystemCommandOverride;
+exports.saveNewCustomCommand = saveNewCustomCommand;
 
 exports.getCustomCommands = () => commandsCache.customCommands;
 exports.getCustomCommand = id =>

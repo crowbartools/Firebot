@@ -9,7 +9,8 @@
         .factory("commandsService", function(
             logger,
             connectionService,
-            listenerService
+            listenerService,
+            backendCommunicator
         ) {
             let service = {};
 
@@ -62,6 +63,10 @@
                     return;
                 }
             };
+
+            backendCommunicator.on("custom-commands-updated", () => {
+                service.refreshCommands();
+            });
 
             service.getSystemCommands = () => commandsCache.systemCommands;
 
@@ -200,7 +205,6 @@
 
                     let currentIndex = commandsCache.customCommands.findIndex(c => c.trigger === data.command.trigger);
 
-                    console.log(commandsCache.customCommands);
                     if (currentIndex === -1) {
                         commandsCache.customCommands.push(data.command);
                     } else {

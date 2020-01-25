@@ -7,7 +7,7 @@ const uuidv1 = require("uuid/v1");
 
     angular
         .module("firebotApp")
-        .factory("hotkeyService", function($rootScope, utilityService, logger) {
+        .factory("hotkeyService", function($rootScope, utilityService, logger, backendCommunicator) {
             let service = {};
 
             /**
@@ -184,8 +184,8 @@ const uuidv1 = require("uuid/v1");
             };
 
             /**
-       * Hotkey Data Access
-       */
+             * Hotkey Data Access
+             */
 
             let userHotkeys = [];
 
@@ -200,6 +200,10 @@ const uuidv1 = require("uuid/v1");
                     logger.error(err);
                 }
             };
+
+            backendCommunicator.on("import-hotkeys-update", () => {
+                service.loadHotkeys();
+            });
 
             function saveHotkeysToFile() {
                 let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");

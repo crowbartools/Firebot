@@ -102,6 +102,13 @@
 
             loadProjects();
 
+            backendCommunicator.on("mixplay-projects-updated", () => {
+                loadProjects();
+                activeProjectId = settingsService.getActiveMixplayProjectId();
+                currentProjectId = activeProjectId;
+                selectFirstScene();
+            });
+
             service.createNewProject = function(name, setAsActive = false) {
                 let newProject = backendCommunicator.fireEventSync("createNewProject", name);
                 projects.push(newProject);

@@ -18,10 +18,7 @@
             $ctrl.command = {
                 active: true,
                 cooldown: {},
-                permission: {
-                    type: "none"
-                },
-                effects: []
+                effects: {}
             };
 
             $ctrl.$onInit = function() {

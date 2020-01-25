@@ -4,9 +4,11 @@ const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
 
+const frontendCommunicator = require("../common/frontend-communicator");
+
 const EVENTS_FOLDER = "/events/";
 
-let mainEvents = {};
+let mainEvents = [];
 let activeGroup = null;
 let groups = {};
 
@@ -90,13 +92,29 @@ function saveMainEvents(events) {
     }
 }
 
+function saveNewEventToMainEvents(event) {
+    if (event == null) return;
+
+    let eventsDb = getEventsDb();
+    try {
+        if (mainEvents == null) {
+            mainEvents = [];
+        }
+        mainEvents.push(event);
+        eventsDb.push("/mainEvents[]", event, true);
+        logger.debug(`Saved main events.`);
+    } catch (err) {
+        logger.warn(`Unable to save new event to main events.`, err);
+    }
+}
+
 function getActiveGroup() {
     let active = groups[activeGroup];
     return active ? active : {};
 }
 
 function getAllActiveEvents() {
-    let mainEventsArray = Object.values(mainEvents);
+    let mainEventsArray = Array.isArray(mainEvents) ? mainEvents : Object.values(mainEvents);
     let activeEventsArray = [];
     let activeGroup = getActiveGroup();
     if (activeGroup && activeGroup.events) {
@@ -109,7 +127,7 @@ function getAllActiveEvents() {
 ipcMain.on("getAllEventData", event => {
     logger.debug("got 'get all event data' request");
     event.returnValue = {
-        mainEvents: Object.values(mainEvents),
+        mainEvents: Array.isArray(mainEvents) ? mainEvents : Object.values(mainEvents),
         activeGroup,
         groups: Object.values(groups)
     };
@@ -137,5 +155,11 @@ ipcMain.on("eventUpdate", (_, data) => {
 
 });
 
+exports.triggerUiRefresh = () => {
+    frontendCommunicator.send("main-events-update");
+};
+
+
+exports.saveNewEventToMainEvents = saveNewEventToMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;

@@ -136,6 +136,19 @@ ipcMain.on("saveProject", (_, project) => {
     saveProject(project);
 });
 
+exports.saveNewProject = (project) => {
+    if (project != null) {
+        saveProject(project);
+        if (settings.getActiveMixplayProjectId() == null) {
+            settings.setActiveMixplayProjectId(project.id);
+        }
+    }
+};
+
+exports.triggerUiRefresh = () => {
+    frontendCommunicator.send("mixplay-projects-updated");
+};
+
 let connectedProjectId = null;
 exports.getConnectedProjectId = () => connectedProjectId;
 exports.setConnectedProjectId = (projectId) => {

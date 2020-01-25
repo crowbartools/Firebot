@@ -143,11 +143,17 @@ frontendCommunicator.on("deleteCustomRole", (roleId) => {
     deleteCustomRole(roleId);
 });
 
+exports.triggerUiRefresh = () => {
+    frontendCommunicator.send("custom-role-update");
+};
+
 exports.getAllCustomRolesForViewer = getAllCustomRolesForViewer;
 
 exports.loadCustomRoles = loadCustomRoles;
 
 exports.userIsInRole = userIsInRole;
+
+exports.saveCustomRole = saveCustomRole;
 
 
 

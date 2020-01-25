@@ -54,6 +54,24 @@ const v4IncompatibilityReasonMap = {
     "Update Button": "V5 handles control updates fundamentally different"
 };
 
+function updateReplaceVariables(effect) {
+    if (effect == null) return effect;
+
+    let keys = Object.keys(effect);
+
+    for (let key of keys) {
+        let value = effect[key];
+
+        if (value && typeof value === "string") {
+            effect[key] = value.replace(/\$\(user\)/, "$user");
+        } else if (value && typeof value === "object") {
+            effect[key] = updateReplaceVariables(value);
+        }
+    }
+
+    return effect;
+}
+
 function mapV4Effect (v4Effect) {
     if (v4Effect == null || v4Effect.type == null) {
         throw new IncompatibilityError("v4 effect isn't formatted properly.");
@@ -62,7 +80,8 @@ function mapV4Effect (v4Effect) {
 
     // Null signifies we dont support this v4 effect
     if (v5EffectTypeId == null) {
-        throw new IncompatibilityError(v4IncompatibilityReasonMap[v4Effect.type]);
+        let reason = v4IncompatibilityReasonMap[v4Effect.type] || "Unknown effect";
+        throw new IncompatibilityError(reason);
     }
 
     let v5Effect = v4Effect;
@@ -70,6 +89,11 @@ function mapV4Effect (v4Effect) {
     v5Effect.id = uuid();
 
     //do any per effect type tweaks here
+    if (v5Effect.type === "firebot:playsound") {
+        v5Effect.filepath = v5Effect.file;
+    }
+
+    v5Effect = updateReplaceVariables(v5Effect);
 
     return v5Effect;
 }

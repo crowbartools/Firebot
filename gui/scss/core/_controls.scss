@@ -712,3 +712,23 @@ table.fb-table-alt {
       opacity: 0.8;
   }
 }
+
+.incompat-warnings-wrapper {
+  height: 100px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background: #25262a;
+  border-radius: 5px;
+  text-align: left;
+  ul {
+    list-style-type: none;
+    padding-inline-start: 0;
+    li {
+      padding: 6px 20px;
+      opacity: 0.7;
+      &:nth-child(odd) {
+        background: #212225;
+      }
+    }
+  }
+}

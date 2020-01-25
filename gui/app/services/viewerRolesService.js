@@ -19,6 +19,10 @@ const mixerRoleConstants = require("../../shared/mixer-roles");
             };
             service.loadCustomRoles();
 
+            backendCommunicator.on("custom-role-update", () => {
+                service.loadCustomRoles();
+            });
+
             service.getCustomRoles = function() {
                 return Object.values(customRoles);
             };
