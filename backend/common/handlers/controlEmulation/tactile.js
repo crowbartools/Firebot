@@ -61,7 +61,7 @@ function buttonPresser(
     if (holding === "Yes") {
         keyHolding(key, oppositeKey, keyNum, modifiers);
     } else {
-        if (eventType === "mousedown") {
+        if (eventType === "mousedown" || eventType === "keydown") {
             keyTap(key, oppositeKey, modifiers);
         }
     }
