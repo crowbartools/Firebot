@@ -75,22 +75,10 @@ function createNewProfile(profileId) {
         dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/scripts");
     }
 
-    // Create the controls folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/controls")) {
-        logger.info("Can't find the controls folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/controls");
-    }
-
     // Create the chat folder if it doesn't exist.
     if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/chat")) {
         logger.info("Can't find the chat folder, creating one now...");
         dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/chat");
-    }
-
-    // Create the chat folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/live-events")) {
-        logger.info("Can't find the live-events folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/live-events");
     }
 
     // Push our new profile to settings.

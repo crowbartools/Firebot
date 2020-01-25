@@ -122,7 +122,7 @@ function cooldownRouter(mixerControls, mixerControl, firebot, control) {
                 } catch (err) {
                     logger.warn("Failed to get cooldown group data", err);
                     // This cooldown group was deleted. Fix this control.
-                    let dbSettings = profileManager.getJsonDbInProfile("/settings");
+                    /* let dbSettings = profileManager.getJsonDbInProfile("/settings");
                     let gameName = dbSettings.getData("/interactive/lastBoardId");
                     let dbControls = profileManager.getJsonDbInProfile(
                         "/controls/" + gameName
@@ -141,7 +141,7 @@ function cooldownRouter(mixerControls, mixerControl, firebot, control) {
                                 control.update({cooldown: cooldown * 1000});
                             }
                         }
-                    }
+                    }*/
 
                     // Button cooldown process complete.
                     resolve(true);

@@ -468,27 +468,10 @@ async function createDefaultFoldersAndFiles() {
 
             // Create the controls folder if it doesn't exist.
             if (
-                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/controls")
-            ) {
-                logger.info("Can't find the controls folder, creating one now...");
-                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/controls");
-            }
-
-            // Create the controls folder if it doesn't exist.
-            if (
                 !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/mixplay")
             ) {
                 logger.info("Can't find the mixplay folder, creating one now...");
                 dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/mixplay");
-            }
-
-
-            // Create the logs folder if it doesn't exist.
-            if (
-                !dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/logs")
-            ) {
-                logger.info("Can't find the logs folder, creating one now...");
-                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/logs");
             }
 
             // Create the chat folder if it doesn't exist.

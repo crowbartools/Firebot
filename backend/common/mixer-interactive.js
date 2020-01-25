@@ -416,7 +416,7 @@ function mixerDisconnect() {
 // mixer Connect
 // This connects to mixer interactive.
 function mixerConnect() {
-    let dbAuth = profileManager.getJsonDbInProfile("/auth");
+    /*let dbAuth = profileManager.getJsonDbInProfile("/auth");
 
     // Get current controls board and set vars.
     try {
@@ -534,7 +534,7 @@ function mixerConnect() {
         renderWindow.webContents.send('error', "You need to import an interactive board before trying to connect.");
         renderWindow.webContents.send('connection', "Offline");
         return {then: function() {} };
-    }
+    }*/
 }
 
 // Returns list of all scene names.

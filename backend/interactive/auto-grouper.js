@@ -12,7 +12,7 @@ const groupCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
 function loadActiveGroupsFromFile() {
     let activeGroups = [];
-    try {
+    /*try {
         // Get last board name.
         let dbSettings = profileManager.getJsonDbInProfile("/settings"),
             gameName = dbSettings.getData("/interactive/lastBoardId"),
@@ -39,7 +39,7 @@ function loadActiveGroupsFromFile() {
         }
     } catch (err) {
         logger.warn("Couldnt get active scenes from file", err);
-    }
+    }*/
 
     return activeGroups;
 }
