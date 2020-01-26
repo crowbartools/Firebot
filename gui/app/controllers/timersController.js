@@ -6,6 +6,7 @@
             $scope,
             timerService,
             utilityService,
+            objectCopyHelper
         ) {
             // Cache commands on app load.
             timerService.refreshTimers();
@@ -53,6 +54,13 @@
                 });
             };
 
+            $scope.duplicateTimer = timer => {
+                let copiedTimer = objectCopyHelper.copyObject("timer", timer);
+                copiedTimer.name += " copy";
+                timerService.saveTimer(copiedTimer);
+                timerService.refreshTimers();
+            };
+
             $scope.timerMenuOptions = [
                 {
                     html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
@@ -66,6 +74,13 @@
                     click: function ($itemScope) {
                         let timer = $itemScope.timer;
                         $scope.toggleTimerActiveState(timer);
+                    }
+                },
+                {
+                    html: `<a href><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
+                    click: function ($itemScope) {
+                        let timer = $itemScope.timer;
+                        $scope.duplicateTimer(timer);
                     }
                 },
                 {
