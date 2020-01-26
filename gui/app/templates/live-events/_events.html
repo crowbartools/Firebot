@@ -13,7 +13,17 @@
             </div>
             <div class="flex-row-center jspacebetween">
               <span class="status-dot active" style="margin-right: 15px;" uib-tooltip="Main events are always active." tooltip-append-to-body="true"></span>
-              <i class="fal fa-angle-right" style="font-size: 25px; padding-right:12px;"></i>
+              <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
+                    <span class="noselect pointer" ><i class="fal fa-ellipsis-v"></i></span>
+                    <ul class="dropdown-menu" uib-dropdown-menu>
+                        <li ng-click="copyEvents('mainevents')">
+                            <a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy events</a>
+                        </li>
+                        <li ng-class="{'disabled': !hasCopiedEvents()}" ng-click="pasteEvents('mainevents')" ng-disabled="!hasCopiedEvents()">
+                            <a href ><i class="far fa-paste" style="margin-right: 10px;"></i> Paste event(s)</a>
+                        </li>              
+                    </ul>
+                </div>
             </div>
           </div>
 
@@ -46,8 +56,18 @@
                                 <li ng-hide="es.groupIsActive(group.id)" ng-click="es.setActiveEventGroup(group.id)">
                                     <a href ><i class="far fa-star" style="margin-right: 10px;"></i> Set as active group</a>
                                 </li>
+                                <li ng-click="es.duplicateEventGroup(group)">
+                                    <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate group</a>
+                                </li>
                                 <li ng-click="showDeleteGroupModal(group)">
                                     <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete group</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li ng-click="copyEvents(group.id)">
+                                    <a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy events</a>
+                                </li>      
+                                <li ng-class="{'disabled': !hasCopiedEvents()}" ng-click="pasteEvents(group.id)" ng-disabled="!hasCopiedEvents()">
+                                    <a href ><i class="far fa-paste" style="margin-right: 10px;"></i> Paste event(s)</a>
                                 </li>
                             </ul>
                         </div>
@@ -108,6 +128,9 @@
                                       </li>
                                       <li ng-show="selectedGroupIsActive()">
                                           <a href ng-click="toggleEventActiveStatus($index)">{{event.active ? 'Disable' : 'Enable'}}</a>
+                                      </li>
+                                      <li>
+                                        <a href ng-click="duplicateEvent($index)">Duplicate</a>
                                       </li>
                                       <li>
                                           <a href ng-click="showDeleteEventModal($index, event.name ? event.name : 'Unnamed')" style="color:red">Delete</a>

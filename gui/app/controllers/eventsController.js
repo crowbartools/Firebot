@@ -4,7 +4,7 @@
     // This handles the Events tab
     angular
         .module("firebotApp")
-        .controller("eventsController", function($scope, eventsService, utilityService, listenerService) {
+        .controller("eventsController", function($scope, eventsService, utilityService, listenerService, objectCopyHelper) {
 
             $scope.es = eventsService;
 
@@ -194,6 +194,80 @@
                     event.active = !event.active;
                     eventsService.saveGroup(group);
                 }
+            };
+
+            $scope.duplicateEvent = function(index) {
+                let groupId = eventsService.getSelectedTab();
+                if (groupId === "mainevents") {
+                    let event = eventsService.getMainEvents()[index];
+
+                    let copiedEvent = objectCopyHelper.copyObject("events", [event])[0];
+                    copiedEvent.name += " copy";
+
+                    eventsService.getMainEvents().push(copiedEvent);
+                    eventsService.saveMainEvents();
+                } else {
+                    let group = eventsService.getEventGroup(groupId);
+                    let event = group.events[index];
+
+                    let copiedEvent = objectCopyHelper.copyObject("events", [event])[0];
+
+                    copiedEvent.name += " copy";
+
+                    group.events.push(copiedEvent);
+                    eventsService.saveGroup(group);
+                }
+            };
+
+            $scope.copyEvent = function(index) {
+                let groupId = eventsService.getSelectedTab();
+                if (groupId === "mainevents") {
+                    let event = eventsService.getMainEvents()[index];
+                    objectCopyHelper.copyObject("events", [event]);
+                } else {
+                    let group = eventsService.getEventGroup(groupId);
+                    let event = group.events[index];
+                    objectCopyHelper.copyObject("events", [event]);
+                }
+            };
+
+            $scope.hasCopiedEvents = function() {
+                return objectCopyHelper.hasObjectCopied("events");
+            };
+
+            $scope.copyEvents = function(groupId) {
+                if (groupId === "mainevents") {
+                    let events = eventsService.getMainEvents();
+                    objectCopyHelper.copyObject("events", events);
+                } else {
+                    let group = eventsService.getEventGroup(groupId);
+                    objectCopyHelper.copyObject("events", group.events);
+                }
+            };
+
+            $scope.pasteEvents = function(groupId) {
+                if (!$scope.hasCopiedEvents()) return;
+                if (groupId === "mainevents") {
+                    let copiedEvents = objectCopyHelper.getCopiedObject("events");
+
+                    for (let copiedEvent of copiedEvents) {
+                        eventsService.getMainEvents().push(copiedEvent);
+                    }
+
+                    eventsService.saveMainEvents();
+
+                } else {
+                    let group = eventsService.getEventGroup(groupId);
+                    let copiedEvents = objectCopyHelper.getCopiedObject("events");
+
+                    for (let copiedEvent of copiedEvents) {
+                        group.events.push(copiedEvent);
+
+                    }
+                    eventsService.saveGroup(group);
+                }
+
+                eventsService.setSelectedTab(groupId);
             };
 
             $scope.selectedGroupIsActive = function() {

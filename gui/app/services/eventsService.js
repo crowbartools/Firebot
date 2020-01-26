@@ -4,7 +4,7 @@
     //This handles events
     const uuidv1 = require("uuid/v1");
 
-    angular.module("firebotApp").factory("eventsService", function(logger, backendCommunicator) {
+    angular.module("firebotApp").factory("eventsService", function(logger, backendCommunicator, objectCopyHelper) {
         let service = {};
 
         let mainEvents = [],
@@ -81,6 +81,17 @@
             if (groups.length === 1) {
                 service.setActiveEventGroup(newId);
             }
+        };
+
+        service.duplicateEventGroup = function(group) {
+
+            let duplicatedGroup = objectCopyHelper.copyObject("eventgroup", group);
+
+            duplicatedGroup.name += " copy";
+
+            service.saveGroup(duplicatedGroup);
+
+            service.setSelectedTab(duplicatedGroup.id);
         };
 
         service.saveGroup = function(group) {
