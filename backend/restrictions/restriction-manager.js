@@ -69,7 +69,7 @@ class RestrictionsManager extends EventEmitter {
         }
         let restrictions = restrictionData.restrictions;
 
-        if (restrictionData.mode === "any") {
+        if (restrictionData.mode === "any" || restrictionData.mode === "none") {
             let reasons = [];
             let restrictionPassed = false;
             for (let restriction of restrictions) {
@@ -78,7 +78,9 @@ class RestrictionsManager extends EventEmitter {
                     try {
                         await restrictionDef.predicate(triggerData, restriction);
                         restrictionPassed = true;
-                        restrictionDef.onSuccessful(triggerData, restriction);
+                        if (restrictionData.mode !== "none") {
+                            restrictionDef.onSuccessful(triggerData, restriction);
+                        }
                         break;
                     } catch (reason) {
                         if (reason) {
@@ -88,12 +90,20 @@ class RestrictionsManager extends EventEmitter {
                 }
             }
 
+            if (restrictionData.mode === "none") {
+                if (restrictionPassed) {
+                    return Promise.reject(`You don't meet the requirements.`);
+                }
+                return Promise.resolve();
+            }
+
+            //restrictionData.mode === "any"
             if (!restrictionPassed) {
                 return Promise.reject(reasons.join(", or "));
             }
             return Promise.resolve();
 
-        } else if (restrictionData.mode !== "any") {
+        } else if (restrictionData.mode !== "any" && restrictionData.mode !== "none") {
             let predicatePromises = [];
             for (let restriction of restrictions) {
                 let restrictionDef = this.getRestrictionById(restriction.type);

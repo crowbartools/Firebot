@@ -30,6 +30,10 @@
                                 <li ng-click="$ctrl.restrictionData.mode = 'any'">
                                     <a style="padding-left: 10px;">any restriction passes</a>
                                 </li>
+
+                                <li ng-click="$ctrl.restrictionData.mode = 'none'">
+                                    <a style="padding-left: 10px;">no restrictions pass</a>
+                                </li>
                             </ul>
                         </div>
                         <span>:</span>
@@ -66,7 +70,13 @@
                     });
 
                 $ctrl.getRestrictionModeDisplay = function() {
-                    return $ctrl.restrictionData.mode === "any" ? "any restriction passes" : "all restrictions pass";
+                    if ($ctrl.restrictionData.mode === "any") {
+                        return "any restriction passes";
+                    }
+                    if ($ctrl.restrictionData.mode === "none") {
+                        return "no restrictions pass";
+                    }
+                    return "all restrictions pass";
                 };
 
                 $ctrl.canAddMoreRestrictions = true;
