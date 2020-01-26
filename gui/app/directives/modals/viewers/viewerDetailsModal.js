@@ -261,7 +261,7 @@
 
                         utilityService
                             .showConfirmationModal({
-                                title: `${this.name} ${$ctrl.viewerDetails.mixerData.username}`,
+                                title: this.name,
                                 question: `Are you sure you want to ${this.name.toLowerCase()} ${$ctrl.viewerDetails.mixerData.username}?`,
                                 confirmLabel: this.name,
                                 confirmBtnType: this._confirmBtnType
@@ -604,11 +604,24 @@
 
                 $ctrl.removeViewer = function() {
                     if (!$ctrl.hasFirebotData) return;
-                    $ctrl.hasFirebotData = false;
-                    $ctrl.viewerDetails.firebotData = {};
-                    $ctrl.dataPoints = [];
 
-                    backendCommunicator.fireEvent("removeViewerFromDb", $ctrl.resolve.userId);
+                    utilityService
+                        .showConfirmationModal({
+                            title: `Remove Viewer Data`,
+                            question: `Are you sure you want remove ${$ctrl.viewerDetails.mixerData.username}'s data from Firebot?`,
+                            confirmLabel: "Remove",
+                            confirmBtnType: "btn-danger"
+                        })
+                        .then(confirmed => {
+                            if (confirmed) {
+
+                                $ctrl.hasFirebotData = false;
+                                $ctrl.viewerDetails.firebotData = {};
+                                $ctrl.dataPoints = [];
+
+                                backendCommunicator.fireEvent("removeViewerFromDb", $ctrl.resolve.userId);
+                            }
+                        });
                 };
 
                 $ctrl.saveUser = function() {
