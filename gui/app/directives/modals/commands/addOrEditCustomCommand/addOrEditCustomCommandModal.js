@@ -12,7 +12,7 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService, commandsService) {
+        controller: function($scope, utilityService, commandsService, ngToast) {
             let $ctrl = this;
 
             $ctrl.command = {
@@ -56,12 +56,15 @@
             };
 
             $ctrl.save = function() {
-                if ($ctrl.command.trigger == null || $ctrl.command.trigger === "")
+                if ($ctrl.command.trigger == null || $ctrl.command.trigger === "") {
+                    ngToast.create("Please provide a trigger.");
                     return;
-                if (
-                    commandsService.triggerExists($ctrl.command.trigger, $ctrl.command.id)
-                )
+                }
+                if (commandsService.triggerExists($ctrl.command.trigger, $ctrl.command.id)) {
+                    ngToast.create("A custom command with this trigger already exists.");
                     return;
+                }
+
 
                 let action = $ctrl.isNewCommand ? "add" : "update";
                 $ctrl.close({
