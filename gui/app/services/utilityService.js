@@ -607,7 +607,7 @@
                         );
 
                         $scope.effectTypeChanged = function(effectType) {
-                            if ($scope.effect && $scope.effect.type === effectType.type) return;
+                            if ($scope.effect && $scope.effect.type === effectType.id) return;
 
                             let currentId = $scope.effect.id;
                             $scope.effect = {
