@@ -581,7 +581,7 @@ function appOnReady() {
         // These are defined globally for Custom Scripts.
         // We will probably wnat to handle these differently but we shouldn't
         // change anything until we are ready as changing this will break most scripts
-        global.EffectType = Effect.EffectType;
+        global.EffectType = Effect.EffectTypeV5Map;
         global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
 
         backupManager.onceADayBackUpCheck();

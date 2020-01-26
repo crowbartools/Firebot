@@ -23,6 +23,7 @@ const Dependency = {
 const effectDefinitions = [
     {
         id: "API_BUTTON",
+        v5Id: "firebot:api",
         name: "API Button",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.CHAT],
@@ -30,6 +31,7 @@ const effectDefinitions = [
     },
     {
         id: "CELEBRATION",
+        v5Id: "firebot:celebration",
         name: "Celebration",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.OVERLAY],
@@ -37,6 +39,7 @@ const effectDefinitions = [
     },
     {
         id: "CHANGE_GROUP",
+        v5Id: null,
         name: "Change Group",
         triggers: [
             Trigger.INTERACTIVE,
@@ -50,6 +53,7 @@ const effectDefinitions = [
     },
     {
         id: "CHANGE_SCENE",
+        v5Id: null,
         name: "Change Scene",
         triggers: [
             Trigger.INTERACTIVE,
@@ -63,6 +67,7 @@ const effectDefinitions = [
     },
     {
         id: "CHAT",
+        v5Id: "firebot:chat",
         name: "Chat",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.CHAT],
@@ -70,6 +75,7 @@ const effectDefinitions = [
     },
     {
         id: "COOLDOWN",
+        v5Id: null,
         name: "Cooldown",
         triggers: [
             Trigger.INTERACTIVE,
@@ -85,6 +91,7 @@ const effectDefinitions = [
     },
     {
         id: "CUSTOM_SCRIPT",
+        v5Id: "firebot:customscript",
         name: "Custom Script",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -92,6 +99,7 @@ const effectDefinitions = [
     },
     {
         id: "RUN_COMMAND",
+        v5Id: null,
         name: "Run Command",
         triggers: [
             Trigger.CUSTOM_SCRIPT,
@@ -104,6 +112,7 @@ const effectDefinitions = [
     },
     {
         id: "DELAY",
+        v5Id: "firebot:delay",
         name: "Delay",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -111,6 +120,7 @@ const effectDefinitions = [
     },
     {
         id: "DICE",
+        v5Id: "firebot:dice",
         name: "Dice",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.CHAT],
@@ -118,6 +128,7 @@ const effectDefinitions = [
     },
     {
         id: "GAME_CONTROL",
+        v5Id: "firebot:controlemulation",
         name: "Game Control",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -125,6 +136,7 @@ const effectDefinitions = [
     },
     {
         id: "HTML",
+        v5Id: "firebot:html",
         name: "HTML",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.OVERLAY],
@@ -132,6 +144,7 @@ const effectDefinitions = [
     },
     {
         id: "SHOW_EVENTS",
+        v5Id: null,
         name: "Show Event",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.OVERLAY],
@@ -139,6 +152,7 @@ const effectDefinitions = [
     },
     {
         id: "PLAY_SOUND",
+        v5Id: "firebot:playsound",
         name: "Play Sound",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -146,6 +160,7 @@ const effectDefinitions = [
     },
     {
         id: "RANDOM_EFFECT",
+        v5Id: "firebot:randomeffect",
         name: "Random Effect",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -153,6 +168,7 @@ const effectDefinitions = [
     },
     {
         id: "EFFECT_GROUP",
+        v5Id: "firebot:run-effect-list",
         name: "Effect Group",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -161,6 +177,7 @@ const effectDefinitions = [
     },
     {
         id: "SHOW_IMAGE",
+        v5Id: "firebot:showImage",
         name: "Show Image",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.OVERLAY],
@@ -168,6 +185,7 @@ const effectDefinitions = [
     },
     {
         id: "CREATE_CLIP",
+        v5Id: "firebot:clip",
         name: "Create Clip",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -175,6 +193,7 @@ const effectDefinitions = [
     },
     {
         id: "SHOW_VIDEO",
+        v5Id: "firebot:playvideo",
         name: "Show Video",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.OVERLAY],
@@ -182,6 +201,7 @@ const effectDefinitions = [
     },
     {
         id: "CLEAR_EFFECTS",
+        v5Id: null,
         name: "Clear Effects",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -189,6 +209,7 @@ const effectDefinitions = [
     },
     {
         id: "TEXT_TO_FILE",
+        v5Id: "firebot:filewriter",
         name: "Write Text To File",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -196,6 +217,7 @@ const effectDefinitions = [
     },
     {
         id: "GROUP_LIST",
+        v5Id: null,
         name: "Group List",
         triggers: [Trigger.COMMAND],
         dependencies: [Dependency.CHAT, Dependency.INTERACTIVE],
@@ -203,6 +225,7 @@ const effectDefinitions = [
     },
     {
         id: "SCENE_LIST",
+        v5Id: null,
         name: "Scene List",
         triggers: [Trigger.COMMAND],
         dependencies: [Dependency.INTERACTIVE, Dependency.CHAT],
@@ -210,6 +233,7 @@ const effectDefinitions = [
     },
     {
         id: "COMMAND_LIST",
+        v5Id: null,
         name: "Command List",
         triggers: [Trigger.COMMAND],
         dependencies: [Dependency.CHAT],
@@ -217,6 +241,7 @@ const effectDefinitions = [
     },
     {
         id: "CHANGE_USER_SCENE",
+        v5Id: null,
         name: "Change User Scene",
         triggers: [
             Trigger.COMMAND,
@@ -229,6 +254,7 @@ const effectDefinitions = [
     },
     {
         id: "CHANGE_GROUP_SCENE",
+        v5Id: null,
         name: "Change Group Scene",
         triggers: [
             Trigger.COMMAND,
@@ -242,6 +268,7 @@ const effectDefinitions = [
     },
     {
         id: "UPDATE_BUTTON",
+        v5Id: null,
         name: "Update Button",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.INTERACTIVE],
@@ -249,6 +276,7 @@ const effectDefinitions = [
     },
     {
         id: "TOGGLE_CONNECTION",
+        v5Id: "firebot:toggleconnection",
         name: "Toggle Connection",
         triggers: ALL_TRIGGERS,
         dependencies: [],
@@ -256,6 +284,7 @@ const effectDefinitions = [
     },
     {
         id: "SHOW_TEXT",
+        v5Id: "firebot:showtext",
         name: "Show Text",
         triggers: ALL_TRIGGERS,
         dependencies: [Dependency.OVERLAY],
@@ -288,11 +317,11 @@ function getEffects(triggerType, triggerMeta) {
     return filteredEffects;
 }
 
-function generateEffectObjects(triggerType, triggerMeta) {
+function generateEffectObjects(triggerType, triggerMeta, useV5Ids = false) {
     let effectsObject = {};
     let filteredEffects = getEffects(triggerType, triggerMeta);
     filteredEffects.forEach(e => {
-        effectsObject[e.id] = e.name;
+        effectsObject[e.id] = useV5Ids ? e.v5Id : e.name;
     });
     return effectsObject;
 }
@@ -336,6 +365,7 @@ let EffectType = generateEffectObjects();
 exports.DependencyType = Dependency;
 exports.TriggerType = Trigger;
 exports.EffectType = EffectType;
+exports.EffectTypeV5Map = generateEffectObjects(null, null, true);
 
 //export helper functions
 exports.getEffectDefinitions = getEffects;

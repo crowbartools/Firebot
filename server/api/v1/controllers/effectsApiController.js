@@ -67,7 +67,7 @@ exports.getEffectDependencies = function(req, res) {
 };
 
 exports.runEffects = function(req, res) {
-    if (mixerInteractive.getInteractiveStatus() === false) {
+    /*if (mixerInteractive.getInteractiveStatus() === false) {
         res
             .status(500)
             .send({ status: "error", message: "Interactive is not connected." });
@@ -95,5 +95,5 @@ exports.runEffects = function(req, res) {
         res.status(200).send({ status: "success" });
     } else {
         res.status(500).send({ status: "error", message: "No effects provided." });
-    }
+    }*/
 };

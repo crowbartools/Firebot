@@ -168,10 +168,11 @@ function scriptProcessor(effect, trigger) {
 
                                         let effects = responseObject.effects;
 
-                                        if (effects) {
+                                        let effectsObject;
+                                        if (effects && Array.isArray(effects)) {
 
                                             //filter out effects that do not have v5 types assigned
-                                            effects = effects.filter(e => e.type != null);
+                                            effects = effects.filter(e => e.type != null && e.type !== "");
 
                                             //generate id's for effects that dont have them
                                             effects = effects.map(e => {
@@ -180,10 +181,18 @@ function scriptProcessor(effect, trigger) {
                                                 }
                                                 return e;
                                             });
+
+                                            effectsObject = {
+                                                list: effects,
+                                                id: uuidv1()
+                                            };
+
+                                        } else if (effects != null) {
+                                            effectsObject = effects;
                                         }
 
                                         //Run effects if there are any
-                                        if (effects && effects.length > 0) {
+                                        if (effectsObject && effectsObject.list.length > 0) {
 
                                             let newTrigger = Object.assign({}, trigger);
                                             newTrigger.type = TriggerType.CUSTOM_SCRIPT;
@@ -191,10 +200,7 @@ function scriptProcessor(effect, trigger) {
                                             // Create request wrapper
                                             let processEffectsRequest = {
                                                 trigger: newTrigger,
-                                                effects: {
-                                                    list: effects,
-                                                    id: uuidv1()
-                                                }
+                                                effects: effectsObject
                                             };
 
                                             effectRunner
