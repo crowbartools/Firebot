@@ -51,7 +51,7 @@
                     let textA = a.name.toUpperCase();
                     let textB = b.name.toUpperCase();
                     return textA < textB ? -1 : textA > textB ? 1 : 0;
-                });
+                }).filter(e => !e.hidden);
 
                 //find the selected effect in the list
                 let selected = ctrl.options.filter(e => e.id === ctrl.selected);
