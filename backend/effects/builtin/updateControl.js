@@ -109,12 +109,6 @@ const model = {
     `,
     optionsController: ($scope, mixplayService) => {
 
-
-        console.log("SCOOOPEEEE");
-        console.log($scope.trigger);
-        console.log($scope.triggerMeta);
-        console.log($scope);
-
         if (!$scope.effect.control) {
             $scope.effect.control = {};
         }
