@@ -163,7 +163,8 @@ const randomEffect = {
                 trigger: event.trigger,
                 effects: {
                     id: effectList.id,
-                    list: [chosenEffect]
+                    list: [chosenEffect],
+                    queue: effectList.queue
                 }
             };
 
