@@ -276,7 +276,7 @@
             $scope.notificationVolume = settingsService.getTaggedNotificationVolume();
 
             $scope.volumeUpdated = function() {
-                logger.debug("updating noti volume: " + $scope.notificationVolume);
+                logger.debug("Updating noti volume: " + $scope.notificationVolume);
                 settingsService.setTaggedNotificationVolume($scope.notificationVolume);
             };
 

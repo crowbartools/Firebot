@@ -463,8 +463,8 @@
 
                     let isTagged =
                         data.message.message.some(s => s.type === "tag" &&
-                            (s.username.toLowerCase() === streamerName ||
-                            s.username.toLowerCase() === botName));
+                            (s.username.toLowerCase() === streamerName.toLowerCase() ||
+                            s.username.toLowerCase() === botName.toLowerCase()));
 
                     if (isTagged) {
                         data.tagged = true;
