@@ -91,7 +91,8 @@ function buildMixplayModalFromProject(project) {
 // Helper function factory to bind events
 function addControlHandlers(controls) {
     const addHandler = (control, event) => {
-        control.on(event, (inputEvent, participant) => {
+
+        const controlListener = (inputEvent, participant) => {
 
             const inputData = inputEvent.input;
             const controlId = inputData.controlID;
@@ -101,7 +102,13 @@ function addControlHandlers(controls) {
             logger.debug(`Control event "${event}" for control "${inputData.controlID}" in scene "${sceneId}"`);
 
             controlManager.handleInput(event, sceneId, inputEvent, participant);
-        });
+        };
+
+        //remove previous listener just in case one exists
+        control.off(event, controlListener);
+
+        //register new listener
+        control.on(event, controlListener);
     };
 
     controls.forEach(control => {
@@ -119,6 +126,9 @@ function triggerMixplayDisconnect(errorMessage) {
     mixplayManager.setConnectedProjectId(null);
     mixplayConnected = false;
     defaultSceneId = null;
+    if (mixplayClient) {
+        mixplayClient.close();
+    }
     if (errorMessage) {
         renderWindow.webContents.send("error", errorMessage);
     }
@@ -126,7 +136,7 @@ function triggerMixplayDisconnect(errorMessage) {
 
 async function connectToMixplay() {
 
-    accountAccess.ensureTokenRefreshed("streamer");
+    await accountAccess.ensureTokenRefreshed("streamer");
 
     let streamer = accountAccess.getAccounts().streamer;
     if (!streamer.loggedIn) {
@@ -212,7 +222,7 @@ async function connectToMixplay() {
 
     } catch (error) {
         logger.warn("Failed to connect to MixPlay", error);
-        triggerMixplayDisconnect("Failed to connect to MixPlay. Reason: " + error.message);
+        triggerMixplayDisconnect("Failed to connect to MixPlay.");
     }
 }
 
