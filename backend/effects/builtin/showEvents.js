@@ -20,6 +20,7 @@ const showEvents = {
         name: "Show Events",
         description: "Show events in the overlay.",
         tags: ["Built in"],
+        hidden: true, // Deprecated
         dependencies: [EffectDependency.OVERLAY],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],
