@@ -592,6 +592,9 @@ function appOnReady() {
         // Set users in user db to offline if for some reason they are still set to online. (app crash or something)
         userDatabase.setAllUsersOffline();
 
+        //ensure token is refreshed
+        await accountAccess.ensureTokenRefreshed("streamer");
+
         return true;
     });
 }
