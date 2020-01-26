@@ -30,6 +30,7 @@ exports.loadEffects = () => {
     const changeScene = require('./builtin/changeScene');
     const runCommand = require('./builtin/runCommand');
     const customScript = require('./builtin/customScript');
+    const clearEffects = require('./builtin/clearEffects');
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -58,4 +59,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(changeScene);
     effectManager.registerEffect(runCommand);
     effectManager.registerEffect(customScript);
+    effectManager.registerEffect(clearEffects);
 };

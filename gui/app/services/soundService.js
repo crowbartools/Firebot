@@ -8,13 +8,7 @@
 
     angular
         .module("firebotApp")
-        .factory("soundService", function(
-            logger,
-            settingsService,
-            listenerService,
-            $q,
-            websocketService
-        ) {
+        .factory("soundService", function(logger, settingsService, listenerService, $q, websocketService, backendCommunicator) {
             let service = {};
 
             // Connection Sounds
@@ -69,6 +63,14 @@
                 {
                     name: "Doorbell",
                     path: "../sounds/alerts/doorbell.wav"
+                },
+                {
+                    name: "Hey",
+                    path: "../sounds/alerts/hey.mp3"
+                },
+                {
+                    name: "Hello There",
+                    path: "../sounds/alerts/hellothere.mp3"
                 },
                 {
                     name: "Custom",
@@ -187,13 +189,11 @@
                 Howler.unload();
             };
 
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CLEAR_EFFECTS },
-                () => {
-                    service.stopAllSounds();
-                });
+            backendCommunicator.on("stop-all-sounds", () => {
+                service.stopAllSounds();
+            });
 
-            // After updating to latest electron (7.1.9), initial sounds have a noticable delay, almost as if theres a warm up time.
+            // Note(ebiggz): After updating to latest electron (7.1.9), initial sounds have a noticable delay, almost as if theres a warm up time.
             // This gets around that by playing a sound with no audio right at app start, to trigger audio library warm up
             service.playSound("../sounds/secofsilence.mp3", 0.0);
 
