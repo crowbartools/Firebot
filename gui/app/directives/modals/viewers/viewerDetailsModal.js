@@ -242,12 +242,13 @@
                 }
 
                 class ViewerAction {
-                    constructor(id, value, nameFunc, iconFunc, actionfunc) {
+                    constructor(id, value, nameFunc, iconFunc, actionfunc, confirmBtnType = 'btn-primary') {
                         this.id = id;
                         this.toggleValue = value;
                         this._nameFunc = nameFunc;
                         this._iconFunc = iconFunc;
                         this._actionFunc = actionfunc;
+                        this._confirmBtnType = confirmBtnType;
                         this.updateNameAndIcon();
                     }
 
@@ -257,8 +258,21 @@
                     }
 
                     onClick() {
-                        this.toggleValue = this._actionFunc(this.toggleValue);
-                        this.updateNameAndIcon();
+
+                        utilityService
+                            .showConfirmationModal({
+                                title: `${this.name} ${$ctrl.viewerDetails.mixerData.username}`,
+                                question: `Are you sure you want to ${this.name.toLowerCase()} ${$ctrl.viewerDetails.mixerData.username}?`,
+                                confirmLabel: this.name,
+                                confirmBtnType: this._confirmBtnType
+                            })
+                            .then(confirmed => {
+                                if (confirmed) {
+                                    this.toggleValue = this._actionFunc(this.toggleValue);
+                                    this.updateNameAndIcon();
+                                }
+                            });
+
                     }
                 }
 
@@ -338,7 +352,8 @@
                                 $ctrl.roles = $ctrl.roles.filter(r => r.name !== "Banned");
                             }
                             return newBanned;
-                        }
+                        },
+                        "btn-danger"
                     )
                     );
 
