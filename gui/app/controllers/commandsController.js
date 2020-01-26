@@ -7,7 +7,8 @@
             commandsService,
             utilityService,
             listenerService,
-            viewerRolesService
+            viewerRolesService,
+            objectCopyHelper
         ) {
             // Cache commands on app load.
             commandsService.refreshCommands();
@@ -72,6 +73,17 @@
 
             $scope.deleteCustomCommand = command => {
                 commandsService.deleteCustomCommand(command);
+                commandsService.refreshCommands();
+            };
+
+            $scope.duplicateCustomCommand = command => {
+                let copiedCommand = objectCopyHelper.copyObject("command", command);
+
+                while (commandsService.triggerExists(copiedCommand.trigger)) {
+                    copiedCommand.trigger += "copy";
+                }
+
+                commandsService.saveCustomCommand(copiedCommand);
                 commandsService.refreshCommands();
             };
 
