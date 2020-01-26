@@ -3,6 +3,7 @@
 const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
+const mediaProcessor = require("../../common/handlers/mediaProcessor");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
@@ -255,7 +256,7 @@ const playVideo = {
             // What should this do when triggered.
             let position = effect.position;
             if (position === "Random") {
-                position = getRandomPresetLocation(); //eslint-disable-line no-undef
+                position = mediaProcessor.randomLocation();
             }
 
             // Send data back to media.js in the gui.
