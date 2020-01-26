@@ -127,16 +127,7 @@ async function onEventTriggered(event, source, meta, isManual = false) {
             continue;
         }
 
-        if (event.queued && !isManual) {
-            addEventToQueue({
-                effects: effects,
-                event: event,
-                source: source,
-                meta: meta
-            });
-        } else {
-            runEventEffects(effects, event, source, meta, isManual);
-        }
+        runEventEffects(effects, event, source, meta, isManual);
 
         // send to ui log
         if (!eventSetting.skipLog) {
@@ -159,3 +150,4 @@ async function onEventTriggered(event, source, meta, isManual = false) {
 
 // Export Functions
 exports.onEventTriggered = onEventTriggered;
+exports.runEventEffects = runEventEffects;

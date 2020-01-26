@@ -5,6 +5,7 @@ const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const util = require("../utility");
 const eventsRouter = require("./events-router");
+const eventsAccess = require("./events-access");
 
 class EventManager extends EventEmitter {
     constructor() {
@@ -89,8 +90,24 @@ ipcMain.on("getAllEvents", event => {
 
 // Manually Activate an Event for Testing
 // This will manually trigger an event for testing purposes.
-ipcMain.on("triggerManualEvent", function(event, data) {
-    manager.triggerEvent(data.sourceId, data.eventId, null, true);
+ipcMain.on("triggerManualEvent", function(_, data) {
+
+    let { sourceId, eventId, eventSettingsId } = data;
+
+    let source = manager.getEventSourceById(sourceId);
+    let event = manager.getEventById(sourceId, eventId);
+    if (event == null) return;
+
+    let meta = event.manualMetadata || {};
+    if (meta.username == null) {
+        const accountAccess = require("../common/account-access");
+        meta.username = accountAccess.getAccounts().streamer.username;
+    }
+
+    let eventSettings = eventsAccess.getAllActiveEvents().find(e => e.id === eventSettingsId);
+    if (eventSettings == null) return;
+
+    eventsRouter.runEventEffects(eventSettings.effects, event, source, meta, true);
 });
 
 module.exports = manager;

@@ -334,7 +334,8 @@
             $scope.fireEventManually = function(event) {
                 ipcRenderer.send("triggerManualEvent", {
                     eventId: event.eventId,
-                    sourceId: event.sourceId
+                    sourceId: event.sourceId,
+                    eventSettingsId: event.id
                 });
             };
         });
