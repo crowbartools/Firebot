@@ -31,6 +31,39 @@ function getUserRoles(participant) {
     });
 }
 
+//v4 effect types are keys, supported v5 types are values
+const v4EffectTypeMap = {
+    "API Button": "firebot:api",
+    "Celebration": "firebot:celebration",
+    "Change Group": null,
+    "Change Scene": null,
+    "Chat": "firebot:chat",
+    "Cooldown": null,
+    "Custom Script": "firebot:customscript",
+    "Run Command": null,
+    "Delay": "firebot:delay",
+    "Dice": "firebot:dice",
+    "Game Control": "firebot:controlemulation",
+    "HTML": "firebot:html",
+    "Show Event": null,
+    "Play Sound": "firebot:playsound",
+    "Random Effect": "firebot:randomeffect",
+    "Effect Group": "firebot:run-effect-list",
+    "Show Image": "firebot:showImage",
+    "Create Clip": "firebot:clip",
+    "Show Video": "firebot:playvideo",
+    "Clear Effects": null,
+    "Write Text To File": "firebot:filewriter",
+    "Group List": null,
+    "Scene List": null,
+    "Command List": null,
+    "Change User Scene": null,
+    "Change Group Scene": null,
+    "Update Button": null,
+    "Toggle Connection": "firebot:toggleconnection",
+    "Show Text": "firebot:showtext"
+};
+
 function scriptProcessor(effect, trigger) {
     return new Promise(resolve => {
         let scriptName = effect.scriptName,
@@ -173,6 +206,13 @@ function scriptProcessor(effect, trigger) {
 
                                             //filter out effects that do not have v5 types assigned
                                             effects = effects.filter(e => e.type != null && e.type !== "");
+                                            effects = effects.map(e => {
+                                                let mappedType = v4EffectTypeMap(e.type);
+                                                if (mappedType != null) {
+                                                    e.type = mappedType;
+                                                }
+                                                return e;
+                                            });
 
                                             //generate id's for effects that dont have them
                                             effects = effects.map(e => {
