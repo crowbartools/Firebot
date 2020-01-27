@@ -72,7 +72,7 @@ function updateReplaceVariables(effect) {
     return effect;
 }
 
-function mapV4Effect (v4Effect) {
+function mapV4Effect (v4Effect, triggerData, incompatibilityWarnings) {
     if (v4Effect == null || v4Effect.type == null) {
         throw new IncompatibilityError("v4 effect isn't formatted properly.");
     }
@@ -91,6 +91,15 @@ function mapV4Effect (v4Effect) {
     //do any per effect type tweaks here
     if (v5Effect.type === "firebot:playsound") {
         v5Effect.filepath = v5Effect.file;
+    }
+
+    if (v5Effect.type === "firebot:randomeffect" || v5Effect.type === "firebot:run-effect-list") {
+
+        let mapResult = exports.mapV4EffectList(v5Effect.effectList, triggerData);
+
+        mapResult.incompatibilityWarnings.forEach(iw => incompatibilityWarnings.push(iw));
+
+        v5Effect.effectList = mapResult.effects;
     }
 
     v5Effect = updateReplaceVariables(v5Effect);
@@ -114,7 +123,7 @@ exports.mapV4EffectList = (v4EffectList, triggerData) => {
     for (let v4Effect of v4Effects) {
         if (v4Effect == null || v4Effect.type == null) continue;
         try {
-            let mappedV5Effect = mapV4Effect(v4Effect);
+            let mappedV5Effect = mapV4Effect(v4Effect, triggerData, incompatibilityWarnings);
             if (mappedV5Effect) {
                 v5EffectObj.list.push(mappedV5Effect);
             }
