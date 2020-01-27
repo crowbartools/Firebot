@@ -138,11 +138,7 @@ function updateStreamGame(gameQuery) {
 
                 logger.silly(gameList);
 
-                if (
-                    gameList != null &&
-          Array.isArray(gameList) &&
-          gameList.length > 0
-                ) {
+                if (gameList != null && Array.isArray(gameList) && gameList.length > 0) {
                     let firstGame = gameList[0];
 
                     request.patch(
@@ -1347,13 +1343,15 @@ function timeout(chatter, time) {
 // Delete Message
 // This deletes a chat message by id.
 function deleteChatMessage(id) {
-    global.streamerChat.call("deleteMessage", [id])
-        .then(() => {
-            logger.debug("Successfully deleted chat message");
-        })
-        .catch(err => {
-            logger.warn(err);
-        });
+    if (global.streamerChat != null) {
+        global.streamerChat.call("deleteMessage", [id])
+            .then(() => {
+                logger.debug("Successfully deleted chat message");
+            })
+            .catch(err => {
+                logger.warn("Failed to delete chat message, Mixer response: ", err);
+            });
+    }
 }
 
 // Clear Messages
