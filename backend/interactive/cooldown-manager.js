@@ -70,6 +70,8 @@ function getCooldownGroupsContainingControl(control) {
 }
 
 function cooldownControls(controlIds, cooldownDuration, neverOverride) {
+    if (controlIds == null) return;
+
     const cooldown = parseInt(cooldownDuration);
 
     const controlsToCooldown = [];

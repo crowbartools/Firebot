@@ -167,7 +167,7 @@ const cooldown = {
             const effect = event.effect;
 
             if (effect.controlIds && effect.controlIds.length > 0) {
-                cooldownManager.cooldownControls(effect.controlId, effect.duration, effect.neverOverride);
+                cooldownManager.cooldownControls(effect.controlIds, effect.duration, effect.neverOverride);
             }
 
             resolve(true);
