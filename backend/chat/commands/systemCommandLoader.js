@@ -12,6 +12,7 @@ exports.loadCommands = () => {
     const quotesManagement = require('./builtin/quotes');
     const currencyManager = require('../../currency/currencyManager');
     const steam = require("./builtin/steam");
+    const customRoleManagement = require("./builtin/custom-role-management");
 
     // register them
     commandManager.registerSystemCommand(commandList);
@@ -21,6 +22,7 @@ exports.loadCommands = () => {
     commandManager.registerSystemCommand(mixerage);
     commandManager.registerSystemCommand(quotesManagement);
     commandManager.registerSystemCommand(steam);
+    commandManager.registerSystemCommand(customRoleManagement);
 
     currencyManager.createAllCurrencyCommands();
 };

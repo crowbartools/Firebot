@@ -25,7 +25,6 @@ function loadCustomRoles() {
         }
 
         logger.debug(`Loaded roles data.`);
-
     } catch (err) {
         logger.warn(`There was an error reading roles data file.`, err);
     }
@@ -142,6 +141,16 @@ frontendCommunicator.on("deleteCustomRole", (roleId) => {
 exports.triggerUiRefresh = () => {
     frontendCommunicator.send("custom-role-update");
 };
+
+exports.getRoleByName = name => {
+    const roles = Object.values(customRoles);
+    let roleIndex = findIndexIgnoreCase(roles.map(r => r.name), name);
+    if (roleIndex < 0) {
+        return null;
+    }
+    return roles[roleIndex];
+};
+exports.getCustomRoles = () => Object.values(customRoles);
 
 exports.getAllCustomRolesForViewer = getAllCustomRolesForViewer;
 

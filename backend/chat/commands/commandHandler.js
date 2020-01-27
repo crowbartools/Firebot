@@ -270,6 +270,17 @@ async function handleChatEvent(chatEvent, chatter) {
         mixerChat.deleteChat(chatEvent.id);
     }
 
+    // check if command meets min args requirement
+    let minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs : command.minArgs;
+    if (minArgs != null && userCmd.args.length < minArgs) {
+        let usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
+        mixerChat.smartSend(
+            `Invalid command. Usage: ${command.trigger} ${usage || ""}`,
+            commandSender
+        );
+        return false;
+    }
+
     let restrictionData =
         triggeredSubcmd && triggeredSubcmd.restrictionData && triggeredSubcmd.restrictionData.restrictions
             && triggeredSubcmd.restrictionData.restrictions.length > 0
