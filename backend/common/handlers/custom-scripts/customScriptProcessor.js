@@ -213,6 +213,8 @@ function scriptProcessor(effect, trigger) {
                                                     logger.error("Error running effects for script", err);
                                                     resolve();
                                                 });
+                                        } else {
+                                            resolve();
                                         }
 
                                     } else {
