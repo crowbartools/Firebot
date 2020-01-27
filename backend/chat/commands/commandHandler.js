@@ -271,8 +271,8 @@ async function handleChatEvent(chatEvent, chatter) {
     }
 
     // check if command meets min args requirement
-    let minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs : command.minArgs;
-    if (minArgs != null && userCmd.args.length < minArgs) {
+    let minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
+    if (userCmd.args.length < minArgs) {
         let usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
         mixerChat.smartSend(
             `Invalid command. Usage: ${command.trigger} ${usage || ""}`,

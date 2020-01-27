@@ -56,7 +56,7 @@ const model = {
 
         let { commandSender, args, triggeredArg } = event.userCommand;
 
-        if (args.length < 0) {
+        if (args.length < 1) {
             mixerChat.smartSend("Incorrect command usage!", commandSender);
             return;
         }
@@ -104,7 +104,10 @@ const model = {
                     mixerChat.smartSend(`Available custom roles: ${roleNames.join(", ")}`, commandSender);
                 }
             }
+            break;
         }
+        default:
+            mixerChat.smartSend("Incorrect command usage!", commandSender);
         }
     }
 };
