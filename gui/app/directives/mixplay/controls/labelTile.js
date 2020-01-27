@@ -23,7 +23,7 @@
                             if (!isNaN(textSize)) {
                                 textSize += "px";
                             }
-                            style['font-size'] = $ctrl.control.mixplay.textSize;
+                            style['font-size'] = textSize;
                         }
                         if ($ctrl.control.mixplay.textColor) {
                             style['color'] = $ctrl.control.mixplay.textColor;
