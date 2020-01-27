@@ -43,7 +43,6 @@ function buildCommandRegexStr(trigger, scanWholeMessage) {
 }
 
 function checkForCommand(rawMessage) {
-    console.log("checking for cmds...");
     if (rawMessage == null || rawMessage.length < 1) return null;
     let normalziedRawMessage = rawMessage.toLowerCase();
 
@@ -126,6 +125,7 @@ function cooldownCommand(command, triggeredSubcmd, username) {
         cooldown = triggeredSubcmd.cooldown;
     }
     if (cooldown == null) return 0;
+    logger.debug("Triggering cooldown for command");
 
     let globalCacheKey = `${command.id}${
         triggeredSubcmd ? `:${triggeredSubcmd.arg}` : ""
@@ -187,9 +187,10 @@ function fireCommand(
         commandSender = accountAccess.getAccounts().streamer.username;
     }
 
-    logger.info("checking command type... " + command.type);
+    logger.info("Checking command type... " + command.type);
 
     if (command.type === "system") {
+        logger.info("Executing system command");
         //get system command from manager
         let cmdDef = commandManager.getSystemCommandById(command.id);
 
@@ -200,45 +201,54 @@ function fireCommand(
             chatEvent: chatEvent
         });
     } else if (command.type === "custom") {
-        logger.info("executing custom command");
+        logger.info("Executing custom command effects");
         customCommandExecutor.execute(command, userCmd, chatEvent, isManual);
     }
 }
 
 async function handleChatEvent(chatEvent, chatter) {
+
+    logger.debug("Checking for command in message...");
+
     let isWhisper = chatEvent.message.meta.whisper === true,
         commandSender = chatEvent.user_name; // Username of the person that sent the command.
 
     // If the chat came from a bot, ignore it.
-    if (chatEvent.user_name === accountAccess.getAccounts().bot.username ||
-        (chatter === "bot" && !isWhisper)) {
+    if ((chatEvent.user_name === accountAccess.getAccounts().bot.username || chatter === "bot") && !isWhisper) {
+        logger.debug("Message came from bot and wasnt a whisper, ignoring...");
         return false;
     }
 
     // Check to see if handled message array contains the id of this message already.
     // If it does, that means that one of the logged in accounts has already handled the message.
     if (handledMessageIds.includes(chatEvent.id)) {
-    // We can remove the handled id now, to keep the array small.
+        // We can remove the handled id now, to keep the array small.
         handledMessageIds = handledMessageIds.filter(id => id !== chatEvent.id);
         return false;
     }
     // throw the message id into the array. This prevents both the bot and the streamer accounts from replying
     handledMessageIds.push(chatEvent.id);
 
+    logger.debug("Combining message segments...");
     let rawMessage = "";
     chatEvent.message.message.forEach(m => {
         rawMessage += m.text;
     });
 
     // search for and return command if found
+    logger.debug("Searching for command...");
     let command = checkForCommand(rawMessage);
 
     // command wasnt found
-    if (command == null) return false;
+    if (command == null) {
+        logger.debug("No command found.");
+        return false;
+    }
 
     //check if command originated from a costream channel
     let streamerChannelId = accountAccess.getAccounts().streamer.channelId;
     if (chatEvent.channel !== streamerChannelId && !command.allowInCostreams) {
+        logger.debug("Chat originated in another stream and allowInCostreams is not enabled. Ignoring.");
         return false;
     }
 
@@ -256,6 +266,7 @@ async function handleChatEvent(chatEvent, chatter) {
     }
 
     if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
+        logger.debug("Auto delete trigger is on, attempting to delete chat message");
         mixerChat.deleteChat(chatEvent.id);
     }
 
@@ -267,6 +278,7 @@ async function handleChatEvent(chatEvent, chatter) {
 
     // Handle restrictions
     if (restrictionData) {
+        logger.debug("Command has restrictions...checking them.");
         let triggerData = {
             type: TriggerType.COMMAND,
             metadata: {
@@ -279,6 +291,7 @@ async function handleChatEvent(chatEvent, chatter) {
         };
         try {
             await restrictionsManager.runRestrictionPredicates(triggerData, restrictionData);
+            logger.debug("Restrictions passed!");
         } catch (restrictionReason) {
             let reason;
             if (Array.isArray(restrictionReason)) {
@@ -292,6 +305,7 @@ async function handleChatEvent(chatEvent, chatter) {
         }
     }
 
+    logger.debug("Checking cooldowns for command...");
     // Check if the command is on cooldown
     let remainingCooldown = getRemainingCooldown(
         command,
@@ -300,6 +314,7 @@ async function handleChatEvent(chatEvent, chatter) {
     );
 
     if (remainingCooldown > 0) {
+        logger.debug("Command is still on cooldown, alerting viewer...");
         mixerChat.smartSend(
             "This command is still on cooldown for: " +
         util.secondsForHumans(remainingCooldown),
@@ -313,6 +328,7 @@ async function handleChatEvent(chatEvent, chatter) {
 
     // Log the action in Firebot's log.
     if (command.skipLog !== true) {
+        logger.debug("Sending activity log for command to front end.");
         renderWindow.webContents.send("eventlog", {
             type: "general",
             username: commandSender,
@@ -330,6 +346,7 @@ async function handleChatEvent(chatEvent, chatter) {
 
     //update the count for the command
     if (command.type === "custom") {
+        logger.debug("Updating command count.");
         updateCommandCount(command);
     }
 
