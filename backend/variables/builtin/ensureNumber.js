@@ -12,15 +12,13 @@ const model = {
     evaluator: (_, input, defaultNumber) => {
 
         // cast input as number, and if its finite return the recast input
-        input = Number(input);
-        if (isFinite(input)) {
-            return input;
+        if (input != null && input.length > 0 && !isNaN(input)) {
+            return Number(input);
         }
 
         // cast defaultNumber as number and if finite return it
-        defaultNumber = Number(defaultNumber);
-        if (isFinite(defaultNumber)) {
-            return defaultNumber;
+        if (defaultNumber != null && defaultNumber.length > 0 && !isNaN(defaultNumber)) {
+            return Number(defaultNumber);
         }
 
         // Defaults to 0
