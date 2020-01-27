@@ -39,13 +39,7 @@ const delay = {
         <eos-container header="Duration">
             <div class="input-group">
                 <span class="input-group-addon" id="delay-length-effect-type">Seconds</span>
-                <input ng-model="effect.delay" type="text" class="form-control" aria-describedby="delay-length-effect-type" type="number">
-            </div>
-        </eos-container>
-
-        <eos-container>
-            <div class="effect-info alert alert-info">
-                Note: Delays dont wait for the previous effect to finish so take that into account, if required. For example, if your first effect plays a sound thats 10 seconds long and you want a 10 second delay after that sound, make the delay last 20 seconds.
+                <input ng-model="effect.delay" type="text" class="form-control" aria-describedby="delay-length-effect-type" type="text" replace-variables="number">
             </div>
         </eos-container>
     `,
