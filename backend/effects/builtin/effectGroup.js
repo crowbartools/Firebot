@@ -50,13 +50,11 @@ const effectGroup = {
    * The controller for the front end Options
    */
     optionsController: $scope => {
-        if ($scope.effect.effectList == null) {
-            $scope.effect.effectList = [];
-        }
 
         $scope.effectListUpdated = function(effects) {
             $scope.effect.effectList = effects;
         };
+
     },
     /**
    * When the effect is saved
@@ -71,6 +69,10 @@ const effectGroup = {
     onTriggerEvent: event => {
         return new Promise((resolve, reject) => {
             let effectList = event.effect.effectList;
+
+            if (!effectList || !effectList.list) {
+                return resolve(true);
+            }
 
             let processEffectsRequest = {
                 trigger: event.trigger,

@@ -67,9 +67,6 @@ const randomEffect = {
    * The controller for the front end Options
    */
     optionsController: $scope => {
-        if ($scope.effect.effectList == null) {
-            $scope.effect.effectList = [];
-        }
 
         $scope.effectListUpdated = function(effects) {
             $scope.effect.effectList = effects;

@@ -140,12 +140,11 @@
                     }
                     if (ctrl.effectsData.list == null) {
                         ctrl.effectsData.list = [];
-                        ctrl.effectsUpdate();
                     }
                     if (ctrl.effectsData.id == null) {
                         ctrl.effectsData.id = uuidv1();
-                        ctrl.effectsUpdate();
                     }
+                    ctrl.effectsUpdate();
                 }
 
                 // when the element is initialized
