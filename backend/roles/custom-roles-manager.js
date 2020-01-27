@@ -12,16 +12,6 @@ function getCustomRolesDb() {
     return profileManager.getJsonDbInProfile(ROLES_FOLDER + "customroles");
 }
 
-/*
-{
-    "roleId": {
-        name: "Some Role",
-        id: "roleId",
-        viewers: []
-    }
-}
-*/
-
 function loadCustomRoles() {
     logger.debug(`Attempting to load roles data...`);
 
@@ -85,6 +75,7 @@ const findIndexIgnoreCase = (array, element) => {
 };
 
 function addViewerToRole(roleId, username) {
+    if (username == null || username.length < 1) return;
     let role = customRoles[roleId];
     if (role) {
         if (findIndexIgnoreCase(role.viewers, username) !== -1) return;
@@ -92,10 +83,13 @@ function addViewerToRole(roleId, username) {
         role.viewers.push(username);
 
         saveCustomRole(role);
+
+        exports.triggerUiRefresh();
     }
 }
 
-function removeViewerToRole(roleId, username) {
+function removeViewerFromRole(roleId, username) {
+    if (username == null || username.length < 1) return;
     let role = customRoles[roleId];
     if (role) {
         const index = findIndexIgnoreCase(role.viewers, username);
@@ -105,6 +99,8 @@ function removeViewerToRole(roleId, username) {
         role.viewers.splice(index, 1);
 
         saveCustomRole(role);
+
+        exports.triggerUiRefresh();
     }
 }
 
@@ -154,6 +150,10 @@ exports.loadCustomRoles = loadCustomRoles;
 exports.userIsInRole = userIsInRole;
 
 exports.saveCustomRole = saveCustomRole;
+
+exports.addViewerToRole = addViewerToRole;
+
+exports.removeViewerFromRole = removeViewerFromRole;
 
 
 

@@ -32,6 +32,7 @@ exports.loadEffects = () => {
     const customScript = require('./builtin/customScript');
     const clearEffects = require('./builtin/clearEffects');
     const sequentialEffect = require("./builtin/sequentialEffect");
+    const updateRole = require("./builtin/update-role");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -62,4 +63,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(customScript);
     effectManager.registerEffect(clearEffects);
     effectManager.registerEffect(sequentialEffect);
+    effectManager.registerEffect(updateRole);
 };
