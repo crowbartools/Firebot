@@ -71,6 +71,10 @@ exports.loadReplaceVariables = () => {
     const userTotalHearts = require("./builtin/user-total-hearts");
     const userRankBadgeUrl = require("./builtin/user-rank-badge-url");
 
+    const viewTime = require("./builtin/viewTime");
+    const mixplayInteractions = require("./builtin/mixplayInteractions");
+    const chatMessages = require("./builtin/chatMessages");
+
     // register them
     replaceVariableManager.registerReplaceVariable(user);
     replaceVariableManager.registerReplaceVariable(subMonths);
@@ -139,4 +143,8 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(userNextLevelHearts);
     replaceVariableManager.registerReplaceVariable(userRankBadgeUrl);
     replaceVariableManager.registerReplaceVariable(userTotalHearts);
+
+    replaceVariableManager.registerReplaceVariable(viewTime);
+    replaceVariableManager.registerReplaceVariable(mixplayInteractions);
+    replaceVariableManager.registerReplaceVariable(chatMessages);
 };

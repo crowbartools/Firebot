@@ -479,12 +479,12 @@
                         "fa-tv",
                         minsInChannel,
                         value => {
-                            return value < 60 ? 'Less than an hour' : Math.round(value / 60) + " hr(s)";
+                            return value < 60 ? 'Less than an hour' : parseInt(value / 60) + " hr(s)";
                         },
                         "minutesInChannel",
                         "number",
                         value => {
-                            return value ? Math.round(value / 60) : 0;
+                            return value ? parseInt(value / 60) : 0;
                         },
                         value => {
                             let mins = parseInt(value) * 60;

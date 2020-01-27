@@ -484,7 +484,7 @@
                                 $scope.errorMessage =
                   "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
                             }
-                        }, 90 * 1000);
+                        }, 180 * 1000);
 
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss("cancel");
