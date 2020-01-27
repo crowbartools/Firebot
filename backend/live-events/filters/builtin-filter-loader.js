@@ -20,6 +20,9 @@ exports.loadFilters = () => {
     const viewerLevel = require("./builtin/viewer-level");
     const viewerHearts = require("./builtin/viewer-total-hearts");
 
+    const previousViewTime = require("./builtin/previous-view-time");
+    const newViewTime = require("./builtin/new-view-time");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -35,4 +38,7 @@ exports.loadFilters = () => {
 
     filterManager.registerFilter(viewerLevel);
     filterManager.registerFilter(viewerHearts);
+
+    filterManager.registerFilter(previousViewTime);
+    filterManager.registerFilter(newViewTime);
 };

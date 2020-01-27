@@ -25,6 +25,16 @@ const firebotEventSource = {
             manualMetadata: {
                 username: "Firebot"
             }
+        },
+        {
+            id: "view-time-update",
+            name: "View Time Update",
+            description: "When a viewer's view time updates automatically.",
+            cached: false,
+            manualMetadata: {
+                previousViewTime: 1,
+                newViewTime: 2
+            }
         }
     ]
 };

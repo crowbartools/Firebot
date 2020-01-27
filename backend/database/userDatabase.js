@@ -10,6 +10,7 @@ const mixerChat = require('../common/mixer-chat');
 const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
 const channelAccess = require("../common/channel-access");
+const eventManager = require("../live-events/EventManager");
 
 let db;
 let updateTimeInterval;
@@ -111,22 +112,38 @@ function getUserOnlineMinutes(username) {
     });
 }
 
+function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
+    if (user == null) return;
+    let previousHours = previousTotalMinutes > 0 ? parseInt(previousTotalMinutes / 60) : 0;
+    let newHours = newTotalMinutes > 0 ? parseInt(newTotalMinutes / 60) : 0;
+    if (newHours < 1) return;
+    if (newHours !== previousHours) {
+        eventManager.triggerEvent("firebot", "view-time-update", {
+            username: user.username,
+            previousViewTime: previousHours,
+            newViewTime: newHours
+        });
+    }
+}
+
 function calcUserOnlineMinutes(id) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         if (!isViewerDBOn()) {
             return resolve();
         }
         getUserById(id).then(user => {
             if (user.online) {
                 let dt = Date.now() - user.lastSeen > 60000 ? user.lastSeen : Date.now();
-                let totalMinutes = user.minutesInChannel + Math.round((dt - user.onlineAt) / 60000);
-                db.update({ _id: id }, { $set: { minutesInChannel: totalMinutes } }, {}, function (err, numReplaced) {
+                let previousTotalMinutes = user.minutesInChannel;
+                let newTotalMinutes = previousTotalMinutes + Math.round((dt - user.onlineAt) / 60000);
+                db.update({ _id: id }, { $set: { minutesInChannel: newTotalMinutes } }, {}, function (err, numReplaced) {
                     if (err) {
                         logger.debug('ViewerDB: Couldnt update users online minutes because of an error. UserId: ' + id);
                         logger.debug(err);
-                    }
-                    if (numReplaced === 0) {
+                    } else if (numReplaced === 0) {
                         logger.debug('ViewerDB: Couldnt update users online minutes. UserId: ' + id);
+                    } else {
+                        userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes);
                     }
                 });
             }
