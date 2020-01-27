@@ -1,21 +1,23 @@
 "use strict";
 
 const fs = require("fs");
-const util = require("../../utility");
+const logger = require("../../logwrapper");
 
-exports.run = function(effect, trigger) {
+exports.run = function(effect) {
     return new Promise(async resolve => {
         if (effect == null || effect.text == null || effect.filepath == null)
             return;
 
-        let text = await util.populateStringWithTriggerData(effect.text, trigger);
+        let text = effect.text.replace(/\\n/g, "\n").trim();
 
-        text = text.replace(/\\n/g, "\n");
-
-        if (effect.writeMode === "append") {
-            fs.appendFileSync(effect.filepath, text + "\n", "utf8");
-        } else {
-            fs.writeFileSync(effect.filepath, text, "utf8");
+        try {
+            if (effect.writeMode === "append") {
+                fs.appendFileSync(effect.filepath, text + "\n", "utf8");
+            } else {
+                fs.writeFileSync(effect.filepath, text, "utf8");
+            }
+        } catch (err) {
+            logger.warn("Failed to write to file", err);
         }
 
         resolve();

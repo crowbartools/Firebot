@@ -77,27 +77,11 @@ const fileWriter = {
    * When the effect is triggered by something
    */
     onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             // What should this do when triggered.
             fileWriterProcessor.run(event.effect, event.trigger);
             resolve(true);
         });
-    },
-    /**
-   * Code to run in the overlay
-   */
-    overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
-        event: {
-            name: "filewriter",
-            onOverlayEvent: event => {
-                console.log("yay file writer");
-                //need to implement this
-            }
-        }
     }
 };
 
