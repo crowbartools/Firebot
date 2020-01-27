@@ -7,6 +7,7 @@ const CommandManager = require("../chat/commands/CommandManager");
 const mixerChat = require('../common/mixer-chat');
 const moment = require("moment");
 const connectionManager = require("../common/connection-manager");
+const util = require("../utility");
 
 let currencyInterval = null;
 
@@ -222,7 +223,7 @@ function createCurrencyCommandDefinition(currency) {
                     currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId).then(function(amount) {
                         if (!isNaN(amount)) {
                             Chat.smartSend(
-                                event.userCommand.commandSender + '\'s ' + currencyName + ' total is ' + amount + '.'
+                                event.userCommand.commandSender + '\'s ' + currencyName + ' total is ' + util.commafy(amount) + '.'
                             );
                         } else {
                             logger.log('Error while trying to show currency amount to user via chat command.');
@@ -241,7 +242,7 @@ function createCurrencyCommandDefinition(currency) {
                     currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust).then(function(status) {
                         if (status) {
                             Chat.smartSend(
-                                'Added ' + currencyAdjust + ' ' + currencyName + ' to ' + username + '.',
+                                'Added ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.',
                                 event.userCommand.commandSender
                             );
                         } else {
@@ -265,7 +266,7 @@ function createCurrencyCommandDefinition(currency) {
                     currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust).then(function(status) {
                         if (status) {
                             Chat.smartSend(
-                                'Removed ' + currencyAdjust + ' ' + currencyName + ' from ' + username + '.',
+                                'Removed ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' from ' + username + '.',
                                 event.userCommand.commandSender
                             );
                         } else {
@@ -342,7 +343,7 @@ function createCurrencyCommandDefinition(currency) {
                                 currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg).then(function(status) {
                                     if (status) {
                                         Chat.smartSend(
-                                            'Gave ' + currencyAdjust + ' ' + currencyName + ' to ' + username + '.',
+                                            'Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.',
                                             event.userCommand.commandSender
                                         );
                                         return true;
@@ -382,7 +383,7 @@ function createCurrencyCommandDefinition(currency) {
                     }
                     currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust);
                     Chat.smartSend(
-                        `Added ` + currencyAdjust + ` ` + currencyName + ` to everyone! :hype-bot`
+                        `Added ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` to everyone! :hype-bot`
                     );
 
 
@@ -399,7 +400,7 @@ function createCurrencyCommandDefinition(currency) {
                     }
                     currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust);
                     Chat.smartSend(
-                        `Removed ` + currencyAdjust + ` ` + currencyName + ` from everyone! :bork-bot`
+                        `Removed ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` from everyone! :bork-bot`
                     );
 
 

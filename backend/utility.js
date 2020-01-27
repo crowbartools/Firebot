@@ -214,6 +214,10 @@ exports.getDateDiffString = function(date1, date2) {
 exports.capitalize = ([first, ...rest]) =>
     first.toUpperCase() + rest.join("").toLowerCase();
 
+exports.commafy = (number) => {
+    return number == null ? number : number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 /**
  * Shuffles an array.
  *
