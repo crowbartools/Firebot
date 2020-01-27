@@ -77,14 +77,13 @@ function getUserInfo(userID, callback) {
 
 function updateStreamTitle(title) {
     logger.info("updating channel title to: " + title);
-    let dbAuth = profileAccess.getJsonDbInProfile("/auth");
-    let streamer = dbAuth.getData("/streamer");
+    let streamer = accountAccess.getAccounts().streamer;
 
     request.patch(
-        "https://mixer.com/api/v1/channels/" + streamer["channelId"],
+        "https://mixer.com/api/v1/channels/" + streamer.channelId,
         {
             auth: {
-                bearer: streamer["accessToken"]
+                bearer: streamer.auth.access_token
             },
             body: {
                 name: title
@@ -101,14 +100,13 @@ function updateStreamTitle(title) {
 
 function updateStreamAudience(audienceType) {
     logger.info("updating channel aud to: " + audienceType);
-    let dbAuth = profileAccess.getJsonDbInProfile("/auth");
-    let streamer = dbAuth.getData("/streamer");
+    let streamer = accountAccess.getAccounts().streamer;
 
     request.patch(
-        "https://mixer.com/api/v1/channels/" + streamer["channelId"],
+        "https://mixer.com/api/v1/channels/" + streamer.channelId,
         {
             auth: {
-                bearer: streamer["accessToken"]
+                bearer: streamer.auth.access_token
             },
             body: {
                 audience: audienceType
@@ -125,8 +123,8 @@ function updateStreamAudience(audienceType) {
 
 function updateStreamGame(gameQuery) {
     logger.info("updating channel game to: " + gameQuery);
-    let dbAuth = profileAccess.getJsonDbInProfile("/auth");
-    let streamer = dbAuth.getData("/streamer");
+
+    let streamer = accountAccess.getAccounts().streamer;
 
     streamerClient
         .request("GET", "types", {
@@ -148,10 +146,10 @@ function updateStreamGame(gameQuery) {
                     let firstGame = gameList[0];
 
                     request.patch(
-                        "https://mixer.com/api/v1/channels/" + streamer["channelId"],
+                        "https://mixer.com/api/v1/channels/" + streamer.channelId,
                         {
                             auth: {
-                                bearer: streamer["accessToken"]
+                                bearer: streamer.auth.access_token
                             },
                             body: {
                                 typeId: firstGame.id
@@ -1380,8 +1378,8 @@ function chatPurge(username) {
 // This will change a user's role.
 function changeUserRole(username, role, addOrRemove) {
     if (role === "Mod" || role === "Banned") {
-        let dbAuth = profileAccess.getJsonDbInProfile("/auth");
-        let streamer = dbAuth.getData("/streamer");
+
+        let streamer = accountAccess.getAccounts().streamer;
 
         // Request User Info and return response.
         streamerClient
@@ -1394,12 +1392,12 @@ function changeUserRole(username, role, addOrRemove) {
                     options = {
                         url:
                             `https://mixer.com/api/v1/channels/` +
-                            streamer["channelId"] +
+                            streamer.channelId +
                             "/users/" +
                             userId,
                         method: "PATCH",
                         headers: {
-                            Authorization: "Bearer " + streamer["accessToken"],
+                            Authorization: "Bearer " + streamer.auth.access_token,
                             "User-Agent": "MixerClient/0.13.0 (JavaScript; Node.js v6.5.0)"
                         },
                         json: true,
