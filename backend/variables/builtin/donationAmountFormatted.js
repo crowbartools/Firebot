@@ -8,9 +8,7 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["streamlabs:donation"];
-triggers[EffectTrigger.EVENT] = ["streamlabs:eldonation"];
-triggers[EffectTrigger.EVENT] = ["tipeeestream:donation"];
+triggers[EffectTrigger.EVENT] = ["streamlabs:donation", "streamlabs:eldonation", "tipeeestream:donation"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
