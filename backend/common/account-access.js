@@ -133,11 +133,18 @@ async function ensureTokenRefreshed(accountType) {
     const accountProviderId = accountType === "streamer" ? "mixer:streamer-account" : "mixer:bot-account";
     let updatedToken = await authManager.refreshTokenIfExpired(accountProviderId, account.auth);
 
-    if (oldToken.access_token !== updatedToken.access_token) {
+    if (updatedToken == null) {
+        return false;
+    }
+
+    if (updatedToken != null && oldToken.access_token !== updatedToken.access_token) {
         logger.debug("Mixer account token updated, saving.");
         cache[accountType].auth = updatedToken;
         saveAccountDataToFile(accountType);
+        return true;
     }
+
+    return true;
 }
 
 function removeAccount(accountType) {

@@ -1157,7 +1157,6 @@ function reconnectIfConnected() {
 function chatConnect() {
     return new Promise(async (resolve, reject) => {
 
-        await accountAccess.ensureTokenRefreshed("streamer");
         const streamer = accountAccess.getAccounts().streamer;
 
         if (!streamer.loggedIn) {
@@ -1165,6 +1164,12 @@ function chatConnect() {
                 "error",
                 "You need to log into your streamer account to be able to connect to chat."
             );
+            return reject();
+        }
+
+        let tokenSuccess = await accountAccess.ensureTokenRefreshed("streamer");
+        if (!tokenSuccess) {
+            renderWindow.webContents.send("error", "There was an issue refreshing your streamer account auth token. Please try again. If the issue persists, try re-logging into your account.");
             return reject();
         }
 

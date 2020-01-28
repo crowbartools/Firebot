@@ -136,7 +136,11 @@ function triggerMixplayDisconnect(errorMessage) {
 
 async function connectToMixplay() {
 
-    await accountAccess.ensureTokenRefreshed("streamer");
+    let tokenSuccess = await accountAccess.ensureTokenRefreshed("streamer");
+    if (!tokenSuccess) {
+        triggerMixplayDisconnect("There was an issue refreshing your streamer account auth token. Please try again. If the issue persists, try re-logging into your account.");
+        return;
+    }
 
     let streamer = accountAccess.getAccounts().streamer;
     if (!streamer.loggedIn) {
