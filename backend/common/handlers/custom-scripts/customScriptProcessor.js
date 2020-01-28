@@ -207,7 +207,7 @@ function scriptProcessor(effect, trigger) {
                                             //filter out effects that do not have v5 types assigned
                                             effects = effects.filter(e => e.type != null && e.type !== "");
                                             effects = effects.map(e => {
-                                                let mappedType = v4EffectTypeMap(e.type);
+                                                let mappedType = v4EffectTypeMap[e.type];
                                                 if (mappedType != null) {
                                                     e.type = mappedType;
                                                 }
