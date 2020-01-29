@@ -1,11 +1,10 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
 const effectRunner = require("../../common/effect-runner");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 /**
  * The Random Effect effect

@@ -8,7 +8,8 @@
                 scope: {
                     modelValue: '=ngModel',
                     replaceVariables: "@",
-                    disableVariableMenu: "<"
+                    disableVariableMenu: "<",
+                    menuPosition: "@"
                 },
                 controller: function($scope, $element, listenerService, $timeout) {
 
@@ -68,8 +69,12 @@
                         button.insertAfter(element);
                     }
 
+                    if (scope.menuPosition == null) {
+                        scope.menuPosition = "above";
+                    }
+
                     let menu = angular.element(`
-                        <div class="variable-menu" ng-show="showMenu">
+                        <div class="variable-menu" ng-show="showMenu" ng-class="menuPosition">
                             <div style="padding:10px;border-bottom: 1px solid #48474a;">
                                 <div style="position: relative;">
                                     <input id="variable-search" type="text" class="form-control" placeholder="Search variables..." ng-model="variableSearchText" style="padding-left: 27px;">

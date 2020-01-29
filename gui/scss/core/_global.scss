@@ -49,6 +49,9 @@
   top: -307px; 
   z-index: 3000; 
   border-radius: 4px;
+  &.below {
+    top: 36px;
+  }
 }
 
 
