@@ -70,4 +70,15 @@ canvas{
     justify-content: center;
 	align-items: center;
 	color: black;
+	div{
+		p {
+			line-height: 1;
+		}
+		p:first-child {
+			margin-block-start: 0 !important;
+		}
+		p:last-child {
+			margin-block-end: 0 !important;
+		}
+	}	
 }

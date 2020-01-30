@@ -85,6 +85,20 @@ const showText = {
             <input type="radio" ng-model="effect.justify" value="flex-end"/>
             <div class="control__indicator"></div>
         </label>
+
+        <p>Align</p>
+        <label class="control-fb control--radio">Top
+            <input type="radio" ng-model="effect.align" value="flex-start"/> 
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control-fb control--radio" >Center
+            <input type="radio" ng-model="effect.align" value="center"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control-fb control--radio" >Bottom
+            <input type="radio" ng-model="effect.align" value="flex-end"/>
+            <div class="control__indicator"></div>
+        </label>
     </eos-container>
 
     <eos-overlay-position effect="effect" class="setting-padtop"></eos-overlay-position>
@@ -123,6 +137,10 @@ const showText = {
 
         if ($scope.effect.justify == null) {
             $scope.effect.justify = "center";
+        }
+
+        if ($scope.effect.align == null) {
+            $scope.effect.align = "center";
         }
 
         if ($scope.effect.dontWrap == null) {
@@ -190,6 +208,7 @@ const showText = {
                 height: effect.height,
                 width: effect.width,
                 justify: effect.justify,
+                align: effect.align,
                 dontWrap: effect.dontWrap,
                 debugBorder: effect.debugBorder,
                 overlayInstance: effect.overlayInstance
@@ -235,6 +254,10 @@ const showText = {
                 dto.justify = "center";
             }
 
+            if (dto.align == null) {
+                dto.align = "center";
+            }
+
             webServer.sendToOverlay("text", dto);
             resolve(true);
         });
@@ -272,12 +295,22 @@ const showText = {
 
                 let params = new URL(location).searchParams;
 
+                let textAlign = data.justify;
+                if (data.justify === "flex-start") {
+                    textAlign = "left";
+                } else if (data.justify === "flex-end") {
+                    textAlign = "right";
+                }
+
                 let styles = `height:${data.height}px;width:${data.width}px;`;
 
-                styles += `justify-content:${data.justify};text-align:${data.justify};`;
+                styles += `justify-content:${data.justify};text-align:${textAlign};align-items:${data.align};`;
 
+                let innerStyles = "width: 100%;";
                 if (data.dontWrap) {
-                    styles += "overflow: hidden; white-space: nowrap;";
+                    innerStyles += "overflow: hidden; white-space: nowrap;";
+                } else {
+                    innerStyles += "white-space:normal;word-wrap: break-word;";
                 }
 
                 let borderColor = params.get("borderColor");
@@ -292,7 +325,7 @@ const showText = {
                 let textDiv = `
                     <div class="text-container"
                         style="${styles}">
-                        ${data.text}
+                        <div style="${innerStyles}">${data.text}</div>
                     </div>`;
 
                 showElement(textDiv, positionData, animationData); // eslint-disable-line no-undef
