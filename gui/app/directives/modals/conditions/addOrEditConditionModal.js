@@ -100,8 +100,7 @@
                 $ctrl.rightSidePresetValues = [];
                 $ctrl.leftSidePresetValues = [];
                 async function loadPresetValues() {
-                    debugger;
-                    if ($ctrl.currentConditionDef && $ctrl.currentConditionDef.rightSideValueType === "preset") {         
+                    if ($ctrl.currentConditionDef && $ctrl.currentConditionDef.rightSideValueType === "preset") {
                         let rightSidePresetValues = await $injector.invoke($ctrl.currentConditionDef.getRightSidePresetValues, {}, {});
                         if (rightSidePresetValues != null && Array.isArray(rightSidePresetValues)) {
                             $ctrl.rightSidePresetValues = rightSidePresetValues;
