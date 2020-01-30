@@ -46,6 +46,10 @@ function mapMixplayControl(firebotControl) {
         }
     }
 
+    if (mixplayControl.backgroundImage != null) {
+        mixplayControl.backgroundImage = mixplayControl.backgroundImage.trim();
+    }
+
 
     return mixplayControl;
 }

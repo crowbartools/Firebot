@@ -53,7 +53,7 @@
 
                             <div class="input-group settings-buttontext">
                                 <span class="input-group-addon" id="basic-addon3">Background Image URL</span>
-                                <input type="url" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.backgroundImage" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.backgroundImage" replace-variables disable-variable-menu="!$ctrl.updateMode">
                             </div>
                         </div>
                     </div>         
