@@ -7,7 +7,7 @@
     angular.module("firebotApp").component("addOrEditCustomRoleModal", {
         template: `
             <div class="modal-header">
-                <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="editGroupLabel">{{$ctrl.isNewRole ? "Add Custom Role" : "Edit Custom Role"}}</h4>
             </div>
             <div class="modal-body">
