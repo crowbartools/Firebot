@@ -13,27 +13,27 @@
             },
             template: `
             <div>
-                <h3 style="margin-bottom: 5px;text-transform: uppercase;font-weight: bold;">{{$ctrl.header}}</h3>
-                <div style="padding-left: 15px;">
-                    <div style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand'; color: #8A8B8D;" ng-if="$ctrl.hasConditionsAvailable()">
+                <h3 ng-if="$ctrl.header != '' && $ctrl.header != null" style="margin-bottom: 5px;text-transform: uppercase;font-weight: bold;">{{$ctrl.header}}</h3>
+                <div>
+                    <div style="padding-bottom: 4px;padding-left: 2px;font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;" ng-if="$ctrl.hasConditionsAvailable()">
                         <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
-                            <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getConditionModeDisplay()}}<span class="fb-arrow down ddtext"></span></div>
+                            <div class="noselect pointer ddtext" style="font-size: 15px;">{{$ctrl.getConditionModeDisplay()}}<span class="fb-arrow down ddtext"></span></div>
                             <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
                                 <li ng-click="$ctrl.conditionData.mode = 'exclusive'">
-                                    <a style="padding-left: 10px;">all</a>
+                                    <a style="padding-left: 10px;">All</a>
                                 </li>
 
                                 <li ng-click="$ctrl.conditionData.mode = 'inclusive'">
-                                    <a style="padding-left: 10px;">any</a>
+                                    <a style="padding-left: 10px;">Any</a>
                                 </li>
                             </ul>
                         </div>
                         <span> of the following conditions pass:</span>
                     </div>
-                    <div style="display:flex;">           
+                    <div style="display:flex;flex-wrap: wrap;">           
                         <button ng-repeat="condition in $ctrl.conditionData.conditions track by $index" class="filter-bar" ng-click="$ctrl.openAddOrEditConditionModal($index)">
                             <condition-display condition="condition" condition-type="$ctrl.getConditionType(condition.type)"></condition-display>
-                            <a class="filter-remove-btn clickable" style="padding-left: 10px;" ng-click="$ctrl.removeConditionAtIndex($index)" uib-tooltip="Remove condition" tooltip-append-to-body="true">
+                            <a class="filter-remove-btn clickable" style="padding-left: 10px;" ng-click="$event.stopPropagation();$ctrl.removeConditionAtIndex($index)" uib-tooltip="Remove condition" tooltip-append-to-body="true">
                                 <i class="far fa-times"></i>
                             </a>
                         </button>
@@ -77,6 +77,19 @@
                     }
                 }
 
+                function getConditionTypes(triggerData) {
+                    return backendCommunicator
+                        .fireEventSync("getConditionTypes", triggerData)
+                        .map(ct => {
+                            ct.getRightSidePresetValues = eval(ct.getRightSidePresetValues); // eslint-disable-line no-eval
+                            ct.getLeftSidePresetValues = eval(ct.getLeftSidePresetValues); // eslint-disable-line no-eval
+                            ct.getRightSideValueDisplay = eval(ct.getRightSideValueDisplay); // eslint-disable-line no-eval
+                            ct.getLeftSideValueDisplay = eval(ct.getLeftSideValueDisplay); // eslint-disable-line no-eval
+                            ct.valueIsStillValid = eval(ct.valueIsStillValid); // eslint-disable-line no-eval
+                            return ct;
+                        });
+                }
+
                 function reloadConditions() {
                     if ($ctrl.conditionData == null) {
                         $ctrl.conditionData = {
@@ -89,25 +102,13 @@
                     }
 
                     /*
-                        ,{
-                            type: $ctrl.trigger,
-                            id: $ctrl.triggerMeta && $ctrl.triggerMeta.triggerId
-                        }
+                        ,
                     */
-                    conditionDefintions = backendCommunicator
-                        .fireEventSync("getConditionTypes")
-                        .map(ct => {
-                            ct.getRightSidePresetValues = eval(ct.getRightSidePresetValues); // eslint-disable-line no-eval
-                            ct.getLeftSidePresetValues = eval(ct.getLeftSidePresetValues); // eslint-disable-line no-eval
-                            ct.getRightSideValueDisplay = eval(ct.getRightSideValueDisplay); // eslint-disable-line no-eval
-                            ct.getLeftSideValueDisplay = eval(ct.getLeftSideValueDisplay); // eslint-disable-line no-eval
-                            ct.valueIsStillValid = eval(ct.valueIsStillValid); // eslint-disable-line no-eval
-                            return ct;
-                        });
+                    conditionDefintions = getConditionTypes();
                 }
 
                 $ctrl.getConditionModeDisplay = function() {
-                    return $ctrl.conditionData.mode === "inclusive" ? "any" : "all";
+                    return $ctrl.conditionData.mode === "inclusive" ? "Any" : "All";
                 };
 
                 $ctrl.getConditionType = function(typeId) {
@@ -115,9 +116,6 @@
                 };
 
                 $ctrl.$onInit = function() {
-                    if ($ctrl.header == null) {
-                        $ctrl.header = "If";
-                    }
                     reloadConditions();
                     validateConditionValues();
                 };
@@ -135,12 +133,16 @@
                 };
 
                 $ctrl.openAddOrEditConditionModal = function(index) {
+                    let availableConditions = getConditionTypes({
+                        type: $ctrl.trigger,
+                        id: $ctrl.triggerMeta && $ctrl.triggerMeta.triggerId
+                    });
                     utilityService.showModal({
                         component: "addOrEditConditionModal",
                         windowClass: "fb-medium-modal",
                         resolveObj: {
                             condition: () => $ctrl.conditionData && $ctrl.conditionData.conditions[index],
-                            availableConditions: () => conditionDefintions,
+                            availableConditions: () => availableConditions,
                             index: () => index
                         },
                         closeCallback: resp => {

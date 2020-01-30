@@ -32,47 +32,67 @@ const model = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container>
+
             <div ng-repeat="ifCondition in effect.ifs" style="margin-bottom: 15px;">
-                <condition-list header="{{$index === 0 ? 'If' : 'Else If'}}" condition-data="ifCondition.conditionData" trigger="trigger" trigger-meta="triggerMeta"></condition-list>
-                <div style="padding-left: 15px;">
-                    <div style="font-size: 13px;font-family: 'Quicksand'; color: #8A8B8D;margin-bottom:3px;">Then run the following effects:</div>
+                <condition-section header="{{$index === 0 ? 'If' : 'Else If'}}" label="ifCondition.label" initially-open="$index === 0 && openFirst">
+                    <condition-list condition-data="ifCondition.conditionData" trigger="trigger" trigger-meta="triggerMeta"></condition-list>
+                    <div style="font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;margin-bottom:3px;">Then run the following effects:</div>
                     <effect-list effects="ifCondition.effectData" 
                         trigger="{{trigger}}" 
                         update="effectListUpdated(effects, $index)"
-                        header="Effects"
-                        modalId="{{modalId}}"></effect-list>  
-                </div>
-                
+                        modalId="{{modalId}}"></effect-list> 
+                        
+                    <div style="margin-top: 10px">
+                        <button class="btn btn-danger" ng-click="deleteClauseAtIndex($index)"><i class="far fa-trash"></i></button>
+                    </div>
+                </condition-section>          
             </div>
-            <button class="btn btn-default" ng-click="addIf()">Add '{{effect.ifs.length === 0 ? 'If' : 'Else If'}}'</button>
+
+            <button class="btn btn-link" ng-click="addIf()"><i class="fal fa-plus-circle"></i> Add <strong>{{effect.ifs.length === 0 ? 'If' : 'Else If'}}</strong> Clause</button>
+
             <div style="margin-top: 15px;">
-                <h3 style="margin-bottom: 5px;text-transform: uppercase;font-weight: bold;">OTHERWISE</h3>
-                <div style="padding-left: 15px;">
-                    <div style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand'; color: #8A8B8D;">
-                        <span>if none of the above conditions pass, run the following effects:</span>
+
+                <condition-section header="Otherwise" label="effect.otherwiseLabel">
+                    <div style="padding-bottom: 10px;padding-left: 2px;font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;">
+                        <span>If none of the above conditions pass, run the following effects:</span>
                     </div>
                     <effect-list effects="effect.otherwiseEffectData" 
                         trigger="{{trigger}}" 
                         update="otherwiseEffectListUpdated(effects)"
-                        header="Effects"
                         modalId="{{modalId}}"></effect-list> 
-                </div>
+                </condition-section>
+                
             </div>
         </eos-container>
     `,
-    optionsController: ($scope, backendCommunicator) => {
+    optionsController: ($scope, utilityService) => {
 
+        $scope.openFirst = false;
         if ($scope.effect.ifs == null) {
             $scope.effect.ifs = [{
                 conditionData: null,
                 effectData: null
             }];
+            $scope.openFirst = true;
         }
 
         $scope.addIf = () => {
             $scope.effect.ifs.push({
                 conditionData: null,
                 effectData: null
+            });
+        };
+
+        $scope.deleteClauseAtIndex = $index => {
+            utilityService.showConfirmationModal({
+                title: "Remove Clause",
+                question: `Are you sure you want to remove this ${$index === 0 ? 'IF' : 'IF ELSE'} clause?`,
+                confirmLabel: "Remove",
+                confirmBtnType: "btn-danger"
+            }).then(confirmed => {
+                if (confirmed) {
+                    $scope.effect.ifs.splice($index, 1);
+                }
             });
         };
 

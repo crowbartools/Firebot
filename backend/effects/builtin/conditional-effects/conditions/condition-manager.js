@@ -128,8 +128,8 @@ frontendCommunicator.on("getConditionTypes", (trigger) => {
             comparisonTypes: c.comparisonTypes,
             rightSideValueType: c.rightSideValueType,
             leftSideValueType: c.leftSideValueType ? c.leftSideValueType : "none",
-            getRightSidePresetValues: c.rightSidePresetValues ? c.rightSidePresetValues.toString() : "() => {}",
-            getLeftSidePresetValues: c.leftSidePresetValues ? c.leftSidePresetValues.toString() : "() => {}",
+            getRightSidePresetValues: c.getRightSidePresetValues ? c.getRightSidePresetValues.toString() : "() => {}",
+            getLeftSidePresetValues: c.getLeftSidePresetValues ? c.getLeftSidePresetValues.toString() : "() => {}",
             getRightSideValueDisplay: c.getRightSideValueDisplay ? c.getRightSideValueDisplay.toString() : "condition => condition.rightSideValue",
             getLeftSideValueDisplay: c.getLeftSideValueDisplay ? c.getLeftSideValueDisplay.toString() : "condition => condition.leftSideValue",
             valueIsStillValid: c.valueIsStillValid ? c.valueIsStillValid.toString() : "() => true"

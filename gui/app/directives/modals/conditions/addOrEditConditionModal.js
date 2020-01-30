@@ -39,7 +39,7 @@
                             </div>
                         </div>
                         <div ng-switch-default>
-                            <input type="{{$ctrl.currentConditionDef.leftSideValueType}}" class="form-control" style="min-width: 210px;" ng-model="$ctrl.selectedCondition.leftSideValue" placeholder="Value" menu-position="below" replace-variables>
+                            <input type="{{$ctrl.currentConditionDef.leftSideValueType}}" class="form-control" style="min-width: 210px;" ng-model="$ctrl.selectedCondition.leftSideValue" placeholder="Value" menu-position="below" replace-variables disable-variable-menu="$ctrl.currentConditionDef.leftSideValueType !== 'text'">
                         </div>
                     </div>
 
@@ -70,7 +70,7 @@
 
                         </div>
                         <div ng-switch-default>
-                            <input type="{{$ctrl.currentConditionDef.rightSideValueType}}" class="form-control" style="min-width: 100px;" ng-model="$ctrl.selectedCondition.rightSideValue" placeholder="Value" menu-position="below" replace-variables>
+                            <input type="{{$ctrl.currentConditionDef.rightSideValueType}}" class="form-control" style="min-width: 100px;" ng-model="$ctrl.selectedCondition.rightSideValue" placeholder="Value" menu-position="below" replace-variables disable-variable-menu="$ctrl.currentConditionDef.rightSideValueType !== 'text'">
                         </div>
                     </div>         
                 </div>
@@ -100,7 +100,8 @@
                 $ctrl.rightSidePresetValues = [];
                 $ctrl.leftSidePresetValues = [];
                 async function loadPresetValues() {
-                    if ($ctrl.currentConditionDef && $ctrl.currentConditionDef.rightSideValueType === "preset") {
+                    debugger;
+                    if ($ctrl.currentConditionDef && $ctrl.currentConditionDef.rightSideValueType === "preset") {         
                         let rightSidePresetValues = await $injector.invoke($ctrl.currentConditionDef.getRightSidePresetValues, {}, {});
                         if (rightSidePresetValues != null && Array.isArray(rightSidePresetValues)) {
                             $ctrl.rightSidePresetValues = rightSidePresetValues;
@@ -116,9 +117,9 @@
                 }
 
                 $ctrl.getSelectedRightSidePresetValueDisplay = function() {
-                    if ($ctrl.rightSidePresetValues.length > 0 && $ctrl.selectedCondition && $ctrl.selectedCondition.value) {
+                    if ($ctrl.rightSidePresetValues.length > 0 && $ctrl.selectedCondition && $ctrl.selectedCondition.rightSideValue) {
 
-                        let presetValue = $ctrl.rightSidePresetValues.find(pv => pv.value === $ctrl.selectedCondition.value);
+                        let presetValue = $ctrl.rightSidePresetValues.find(pv => pv.value === $ctrl.selectedCondition.rightSideValue);
 
                         if (presetValue) {
                             return presetValue.display;
@@ -128,9 +129,9 @@
                 };
 
                 $ctrl.getSelectedLeftSidePresetValueDisplay = function() {
-                    if ($ctrl.leftSidePresetValues.length > 0 && $ctrl.selectedCondition && $ctrl.selectedCondition.value) {
+                    if ($ctrl.leftSidePresetValues.length > 0 && $ctrl.selectedCondition && $ctrl.selectedCondition.leftSideValue) {
 
-                        let presetValue = $ctrl.leftSidePresetValues.find(pv => pv.value === $ctrl.selectedCondition.value);
+                        let presetValue = $ctrl.leftSidePresetValues.find(pv => pv.value === $ctrl.selectedCondition.leftSideValue);
 
                         if (presetValue) {
                             return presetValue.display;

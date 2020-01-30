@@ -7,8 +7,8 @@
                 conditionType: "<"
             },
             template: `
-                <span>
-                    <b>{{$ctrl.getConditionName()}}</b> {{$ctrl.condition.comparisonType}} <b>{{$ctrl.rightSideValueDisplay}}</b>
+                <span style="display: flex;justify-content: space-between;align-items: center;">
+                    <b class="condition-side" style="margin-right:5px">{{$ctrl.getConditionName()}}</b> {{$ctrl.condition.comparisonType}} <b class="condition-side" style="margin-left:5px">{{$ctrl.rightSideValueDisplay}}</b>
                 </span>
             `,
             controller: function($injector, $q) {

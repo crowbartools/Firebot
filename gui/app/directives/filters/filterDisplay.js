@@ -7,8 +7,8 @@
                 filterType: "<"
             },
             template: `
-                <span>
-                    <b>{{$ctrl.getFilterName()}}</b> {{$ctrl.filter.comparisonType}} <b>{{$ctrl.filterValueDisplay}}</b>
+                <span style="display: flex;justify-content: space-between;align-items: center;">
+                    <b class="condition-side" style="margin-right:5px">{{$ctrl.getFilterName()}}</b> {{$ctrl.filter.comparisonType}} <b class="condition-side" style="margin-left:5px">{{$ctrl.filterValueDisplay}}</b>
                 </span>
             `,
             controller: function($injector, $q) {

@@ -4,7 +4,7 @@ module.exports = {
     id: "firebot:custom",
     name: "Custom",
     description: "Condition based on custom values (useful with $variables)",
-    comparisonTypes: ["is", "is not", "contains", "matches regex", "is less than", "is greater than"],
+    comparisonTypes: ["is", "is not", "is less than", "is greater than", "contains", "matches regex"],
     leftSideValueType: "text",
     rightSideValueType: "text",
     predicate: (conditionSettings, trigger) => {
