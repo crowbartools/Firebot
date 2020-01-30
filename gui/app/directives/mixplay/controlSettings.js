@@ -73,6 +73,11 @@
                         <input class="form-control" aria-describedby="basic-addon3" type="number" ng-model="$ctrl.control.mixplay.cooldown">
                     </div>
 
+                    <div class="input-group settings-progress">
+                        <span class="input-group-addon" id="basic-addon3">Progress Bar (%)</span>
+                        <input class="form-control" aria-describedby="basic-addon3" type="{{$ctrl.updateMode ? 'text' : 'number' }}" ng-model="$ctrl.control.mixplay.progress" replace-variables="number" disable-variable-menu="!$ctrl.updateMode">
+                    </div>
+
                     <div class="input-group settings-cooldown">
                         <div style="margin-bottom: 3px;font-size: 14px;font-weight: 400;">Keyboard Control <tooltip text="'Allow viewers to trigger this button with a keyboard press.'"></tooltip></div>
                         <key-capture key-code="$ctrl.control.mixplay.keyCode"></key-capture>

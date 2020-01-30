@@ -50,6 +50,14 @@ function mapMixplayControl(firebotControl) {
         mixplayControl.backgroundImage = mixplayControl.backgroundImage.trim();
     }
 
+    if (mixplayControl.progress != null) {
+        let progress = mixplayControl.progress.toString().replace("%", "").trim();
+        if (isNaN(progress)) {
+            mixplayControl.progress = undefined;
+        } else {
+            mixplayControl.progress = Number(progress) / 100;
+        }
+    }
 
     return mixplayControl;
 }
