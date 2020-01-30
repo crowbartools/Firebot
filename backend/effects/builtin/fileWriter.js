@@ -17,7 +17,7 @@ const fileWriter = {
    */
     definition: {
         id: "firebot:filewriter",
-        name: "Write to file",
+        name: "Write To File",
         description: "Write some text to a file.",
         tags: ["Built in"],
         dependencies: [],
@@ -36,15 +36,15 @@ const fileWriter = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-  <eos-container header="File">
-        <file-chooser model="effect.filepath" options="{ filters: [ {name:'Text',extensions:['txt']} ]}"></file-chooser>
+        <eos-container header="File">
+            <file-chooser model="effect.filepath" options="{ filters: [ {name:'Text',extensions:['txt']} ]}"></file-chooser>
         </eos-container>
 
         <eos-container header="Text" pad-top="true">
-        <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
+            <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
         </eos-container>
 
-        <eos-container header="Write Mode">
+        <eos-container header="Write Mode" pad-top="true">
         <div class="controls-fb-inline" style="padding-bottom: 5px;">
             <label class="control-fb control--radio">Replace
                 <input type="radio" ng-model="effect.writeMode" value="replace"/> 
@@ -61,15 +61,19 @@ const fileWriter = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, listenerService) => {},
+    optionsController: ($scope) => {
+        if ($scope.effect.writeMode == null) {
+            $scope.effect.writeMode = "replace";
+        }
+    },
     /**
    * When the effect is triggered by something
    * Used to validate fields in the option template.
    */
     optionsValidator: effect => {
         let errors = [];
-        if (effect.text == null) {
-            errors.push("Please enter some text to put into the file.");
+        if (effect.filepath == null || effect.filepath === "") {
+            errors.push("Please select a text file to write to.");
         }
         return errors;
     },

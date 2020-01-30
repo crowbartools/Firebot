@@ -5,10 +5,11 @@ const logger = require("../../logwrapper");
 
 exports.run = function(effect) {
     return new Promise(async resolve => {
-        if (effect == null || effect.text == null || effect.filepath == null)
+        if (effect == null || effect.filepath == null)
             return;
 
-        let text = effect.text.replace(/\\n/g, "\n").trim();
+        let text = effect.text || "";
+        text = text.replace(/\\n/g, "\n").trim();
 
         try {
             if (effect.writeMode === "append") {
