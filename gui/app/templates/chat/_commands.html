@@ -1,68 +1,109 @@
-<!-- Commands Board -->
-<div class="content-block">
-  <div class="content-block-header">
-    <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Chat Commands</span>
-    <span class="clickable board-settings-icon" ng-click="showCommandSettingsModal()">
-        <i class="fas fa-cog"></i>
-    </span>
-  </div>
-  <div class="content-block-body">
-    <div class="page-content" style="min-height: 600px;">
-        <div class="chat-commands-wrapper">
-            <div class="scene-tools-wrapper">
-                <span class="scenes-title">
+<div style="min-width: 500px;">
+    <div class="fb-commands-tab-wrapper">
+        <ul class="nav nav-tabs fb-tabs">
+            <li role="presentation" ng-class="{'active' : activeCmdTab === 0}" ng-click="activeCmdTab = 0">
+                <a href>CUSTOM COMMANDS</a>
+            </li>
+            <li role="presentation" ng-class="{'active' : activeCmdTab === 1}" ng-click="activeCmdTab = 1">
+                <a href>SYSTEM COMMANDS</a>
+            </li>
+        </ul>
+    </div>
 
-                </span>
-                <div class="scene-tools">
-                    <div class="commandTools" style="margin-right: 15px">
-                        <button ng-click="showAddCommandModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Command</button>
-                    </div>
-                    <div class="btn-group" style="margin-right: 15px">
-                    <label class="btn btn-default" ng-model="buttonViewModeCommands" uib-btn-radio="'grid'" ng-click="saveCurrentButtonViewMode('commands')" uib-tooltip="Button View: Grid" tooltip-append-to-body="true"><i class="fas fa-th"></i></label>
-                    <label class="btn btn-default" ng-model="buttonViewModeCommands" uib-btn-radio="'list'" ng-click="saveCurrentButtonViewMode('commands')" uib-tooltip="Button View: List" tooltip-append-to-body="true"><i class="fas fa-list"></i></label>
-                    </div>
-                    <div class="searchbar-wrapper">
-                        <input type="text" class="form-control" placeholder="Search commands" ng-model="commandSearch" style="padding-left: 27px;">
-                        <span class="searchbar-icon"><i class="far fa-search"></i></span>
-                    </div>
-                </div>
+    <div style="padding: 15px;">
+        <div ng-show="activeCmdTab === 0">
+            <div style="margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
+                <button ng-click="openAddOrEditCustomCommandModal()" class="btn btn-primary hvr-icon-grow"><i class="fas fa-plus-circle hvr-icon" style="margin-right:5px;"></i> New Custom Command</button>
+                <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandSearch" style="flex-basis: 250px;"></searchbar>
             </div>
-            <uib-tabset active="activeSceneTab">
-                <!--Create a tab for each control type -->
-                <uib-tab index="$index" ng-repeat="commandType in getCommandTypes() | orderBy:'toString()'" heading="{{commandType}}">
-                    <div class="tab-pane interactive-button-holder active">
-                    <!--Create buttons in each scene -->
-                    <!--Grid View-->
-                    <div ng-show="buttonViewModeCommands == 'grid'" ng-class="{'interactive-control-tile': command}" ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch">
-                        <a class="control-edit-btn clickable" ng-click="showAddCommandModal(command)">EDIT</a>
-                        <div class="button-name noselect">{{command.commandID}}</div>
-                        <div class="button-trigger noselect">{{command.trigger}}</div>
-                    </div>
-                    <!--List View-->
-                    <table ng-show="buttonViewModeCommands == 'list'" class="table table-hover">
-                        <thead style="text-transform: uppercase;color: #4a4a4a;">
-                            <tr>
-                                <th style="width:23%;">ID</th>
-                                <th style="width:23%;">Trigger</th>
-                                <th style="width:23%;">Cooldown</th>
-                                <th style="width:23%;">Permissions</th>
-                                <th style="width:8%;"></th>
-                            </tr>
-                        </thead>
-                        <tbody style="font-size: 16px;">
-                            <tr ng-repeat="command in getAllCommandsForType(commandType) | filter:commandSearch" ng-class="{'command-list': command}">
-                                <td>{{command.commandID}}</td>
-                                <td>{{command.trigger}}</td>
-                                <td><i class="fa fa-clock-o button-title-spark" aria-hidden="true"></i> {{command.cooldown ? command.cooldown : "0"}}</td>
-                                <td><span ng-repeat="role in getCommandRoles(command)">{{role}}{{$last ? '' : ', '}}</span></td>
-                                <td><a class="clickable" ng-click="showAddCommandModal(command)"><i class="fas fa-pencil" style="font-size: 11px"></i> Edit</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    </div>
-                </uib-tab>
-            </uib-tabset>
-        </div><!-- End Chat Command Wrapper-->
-    </div><!-- End Page Content-->
-  </div><!-- End content body block-->
-</div><!-- End content block-->
+            <div ng-if="commandsService.getCustomCommands().length === 0" class="noselect muted" style="padding-left: 13px">
+                <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No custom commands saved. You should make one! :) </span>
+            </div>
+            <table ng-show="commandsService.getCustomCommands().length > 0" class="fb-table">
+                <thead>
+                    <tr style="font-size: 11px;">
+                        <th style="width:5%"></th> 
+                        <th class="muted"><i class="fas fa-exclamation"></i> TRIGGER</th> 
+                        <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th> 
+                        <th class="muted"><i class="fas fa-lock-alt"></i> PERMISSIONS</th>
+                        <th class="muted"><i class="fas fa-hashtag"></i> COUNT</th> 
+                        <th></th> 
+                        <th></th> 
+                    </tr> 
+                </thead> 
+                <tbody> 
+                    <tr ng-repeat="command in commandsService.getCustomCommands() | triggerSearch:commandSearch track by command.id" context-menu="commandMenuOptions">
+                        <td style="text-align: center;">
+                            <span style="color: #2aa1c0; font-size: 20px;" ng-click="manuallyTriggerCommand(command.id)">
+                                <i class="fas fa-play-circle clickable"></i>
+                            </span>
+                        </td> 
+                        <td class="command-trigger-cell">
+                            <span class="trigger" uib-tooltip="{{command.trigger}}" tooltip-popup-delay="500" tooltip-append-to-body="true">{{command.trigger}}</span> <tooltip ng-if="command.triggerIsRegex" text="'Description: ' + command.regexDescription"></tooltip>
+                            <span class="muted" style="margin-left: 5px; font-size: 11px;" ng-show="command.allowInCostreams" uib-tooltip="Allowed in costreams" tooltip-append-to-body="true">
+                                <i class="fas fa-users"></i>
+                            </span>
+                            <span class="muted" style="margin-left: 5px; font-size: 11px;" ng-show="command.hidden" uib-tooltip="Hidden from !commands list" tooltip-append-to-body="true">
+                                <i class="fas fa-eye-slash"></i>
+                            </span>
+                        </td>
+                        <td>
+                            <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
+                                <i class="far fa-globe-americas"></i> {{command.cooldown.global ? command.cooldown.global + "s" : "-" }}
+                            </span>
+                            <span uib-tooltip="User cooldown">
+                                <i class="far fa-user"></i> {{command.cooldown.user ? command.cooldown.user + "s" : "-" }}
+                            </span>                           
+                        </td>
+                        <td>
+                            <span style="text-transform: capitalize;">{{getPermisisonType(command)}}</span> <tooltip type="info" text="getPermissionTooltip(command)"></tooltip>
+                        </td>
+                        <td>
+                            {{command.count}}
+                        </td>
+                        <td>
+                            <div style="min-width: 75px;display: flex;align-items: center;justify-content: center;">
+                                <span class="status-dot" style="margin-right: 5px;" ng-class="{'active': command.active, 'notactive': !command.active}"></span>{{command.active ? "Enabled" : "Disabled"}}
+                            </div>                            
+                        </td>  
+                        <td>
+                            <div style="text-align: right;">
+                                <div uib-dropdown uib-dropdown-toggle class="pull-right">
+                                    <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
+                                    <ul class="dropdown-menu" uib-dropdown-menu>
+                                        <li>
+                                            <a href ng-click="openAddOrEditCustomCommandModal(command)">Edit</a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="toggleCustomCommandActiveState(command)">{{command.active ? 'Disable' : 'Enable'}}</a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="duplicateCustomCommand(command)">Duplicate</a>
+                                        </li>
+                                        <li>
+                                            <a href ng-click="deleteCustomCommand(command)" style="color:red">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>                       
+                        </td> 
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div ng-show="activeCmdTab === 1">
+            <div style="margin: 15px 0;display: flex;flex-direction: row;justify-content: flex-end;">
+                <searchbar placeholder-text="Search system commands" query="sysCommandSearch" style="flex-basis: 250px;"></searchbar>
+            </div>
+            <div style="display:flex;font-size: 11px; font-weight: bold; padding-bottom: 10px;">
+                <div class="muted" style="flex-basis: 25%;padding-left: 20px;"><i class="fas fa-tag"></i> NAME</div>
+                <div class="muted" style="width: 20%"><i class="fas fa-exclamation"></i> TRIGGER</div>
+                <div class="muted" style="width: 20%"><i class="fas fa-clock"></i> COOLDOWNS</div>
+                <div class="muted" style="width: 20%"><i class="fas fa-lock-alt"></i> PERMISSIONS</div>
+                <div class="muted" style="width: 20%"></div>
+                <div class="muted" style="flex-basis:30px; flex-shrink: 0;padding-right: 20px;"></div>
+            </div>
+            <sys-command-row ng-repeat="sysCommand in commandsService.getSystemCommands() | orderBy:'name' | triggerSearch:sysCommandSearch track by sysCommand.id" command="sysCommand"></sys-command-row>
+        </div>
+    </div>
+</div>

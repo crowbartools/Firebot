@@ -1,6 +1,5 @@
-'use strict';
+"use strict";
 (function() {
-
     //This adds the <eos-chatter-select> element
 
     angular
@@ -8,10 +7,11 @@
         .component("eosChatterSelect", {
             bindings: {
                 title: "@",
-                effect: '='
+                effect: '=',
+                padTop: "<"
             },
             template: `
-                <eos-container header="{{$ctrl.title}}">
+                <eos-container header="{{$ctrl.title}}" pad-top="$ctrl.padTop">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="chat-effect-type">{{$ctrl.effect.chatter}}</span> <span class="caret"></span>
@@ -26,10 +26,10 @@
             controller: function(connectionService) {
                 let ctrl = this;
 
-                ctrl.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
+                ctrl.botLoggedIn = connectionService.accounts.bot.loggedIn;
 
                 ctrl.$onInit = function() {
-                    // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore
+                // Reset overlay instance to default (or null) if the saved instance doesnt exist anymore
                     if (ctrl.effect.chatter == null) {
                         if (ctrl.botLoggedIn) {
                             ctrl.effect.chatter = "Bot";

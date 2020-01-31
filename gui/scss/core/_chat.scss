@@ -4,6 +4,18 @@
 }
 
 /* Chat - second pass*/
+.fifty {
+    max-height: 50px;
+    max-width: 50px;
+}
+.thirty {
+    max-height: 30px;
+    max-width: 30px;
+}
+.twentyfour {
+    max-height: 24px;
+    max-width: 24px;
+}
 
 .chat-tab-content {
     padding: 15px;
@@ -144,7 +156,6 @@
     &.isCompact {
         .chatContent {
             display: inline;
-            margin-left: 5px;
             font-weight: 100;
         }
         .chat-timestamp {
@@ -348,7 +359,7 @@
 .settings-popover {
     width: 350px;
     max-width: 400px;
-    height: 450px;
+    height: 485px;
 }
 
 .settings-btn-wrapper {  
@@ -382,10 +393,24 @@
 
 .chatter-dropdown {
     height: 100%;
+    width: 100px;
     display: flex;
     justify-content: center;
     border-right: 2px solid rgba(170,164,164,0.43);
     align-items: center;
+    &:hover {
+        background: rgba(128, 128, 128, 0.267);
+        cursor: pointer;
+    }
+}
+
+.chatfeed-send-btn {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    border-left: 2px solid rgba(170,164,164,0.43);
+    align-items: center;
+    padding: 0px 15px;
     &:hover {
         background: rgba(128, 128, 128, 0.267);
         cursor: pointer;
@@ -519,3 +544,15 @@
     }
 }
 
+
+.chat-content-wrap{
+    .chatSticker{
+        text-align:center;
+        padding: 5px 10px;
+        background-color: $sticker-bg-color;
+        border-radius: 18px;
+        line-height:24px;
+        color: lightgray;
+        width:150px;
+    }
+}

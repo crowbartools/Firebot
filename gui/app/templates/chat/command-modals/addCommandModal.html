@@ -2,7 +2,7 @@
 <div class="modal-header">
     <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" id="editControlsLabel">
-           <span ng-if="!isNewCommand">Edit Command - </span> {{isNewCommand ? 'Add New Command' : command.commandID }}
+           <span ng-if="!isNewCommand">Edit Command - </span> {{isNewCommand ? 'Add New Command' : command.trigger }}
         <span class="edit-title-controlid"></span>
     </h4>
 </div>
@@ -12,19 +12,14 @@
             <h3>General Settings</h3>
         </div>
 
-        <div class="input-group settings-commandid">
-            <span class="input-group-addon" id="basic-addon3">Command Id</span>
-            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="command.commandID">
-        </div>
-
         <div class="input-group settings-trigger">
             <span class="input-group-addon" id="basic-addon3">Trigger</span>
-            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="command.trigger">
+            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="command.trigger" placeholder="!something">
         </div>
 
         <div class="input-group settings-cooldown">
-            <span class="input-group-addon" id="basic-addon3">Cooldown(sec)</span>
-            <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="command.cooldown">
+            <span class="input-group-addon" id="basic-addon3">Global Cooldown</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon3" type="number" ng-model="command.cooldown" placeholder="Secs">
         </div>
 
         <div class="settings-restrict" style="padding-bottom:1em">

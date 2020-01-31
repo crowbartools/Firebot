@@ -1,0 +1,91 @@
+"use strict";
+
+const mixerRoleConstants = require("../../shared/mixer-roles");
+
+(function() {
+
+    angular
+        .module("firebotApp")
+        .factory("viewerRolesService", function(logger, backendCommunicator) {
+            let service = {};
+
+            let customRoles = {};
+
+            service.loadCustomRoles = async function() {
+                let roles = await backendCommunicator.fireEventAsync("getCustomRoles");
+                if (roles != null) {
+                    customRoles = roles;
+                }
+            };
+            service.loadCustomRoles();
+
+            backendCommunicator.on("custom-role-update", () => {
+                service.loadCustomRoles();
+            });
+
+            service.getCustomRoles = function() {
+                return Object.values(customRoles);
+            };
+
+            service.getCustomRole = function(id) {
+                return customRoles[id];
+            };
+
+            service.addUserToRole = function(roleId, username) {
+                if (!roleId || !username) return;
+
+                let role = service.getCustomRole(roleId);
+                if (!role) return;
+
+                if (role.viewers.some(v => v.toLowerCase() === username.toLowerCase())) return;
+
+                role.viewers.push(username);
+                service.saveCustomRole(role);
+            };
+
+
+            service.removeUserFromRole = function(roleId, username) {
+                if (!roleId || !username) return;
+
+                let role = service.getCustomRole(roleId);
+                if (!role) return;
+
+                if (!role.viewers.some(v => v.toLowerCase() === username.toLowerCase())) return;
+
+                role.viewers = role.viewers.filter(v => v.toLowerCase() !== username.toLowerCase());
+                service.saveCustomRole(role);
+            };
+
+            service.saveCustomRole = function(role) {
+                if (!role) return;
+                customRoles[role.id] = role;
+                backendCommunicator.fireEvent("saveCustomRole", role);
+            };
+
+            service.deleteCustomRole = function(roleId) {
+                if (!roleId) return;
+                delete customRoles[roleId];
+                backendCommunicator.fireEvent("deleteCustomRole", roleId);
+            };
+
+            const mixerRoles = mixerRoleConstants.getMixerRoles();
+            service.getMixerRoles = function() {
+                return mixerRoles;
+            };
+
+            service.getAllRoles = () => {
+                return service.getMixerRoles().concat(service.getCustomRoles());
+            };
+
+            service.getRoleById = function(id) {
+                let customRole = customRoles[id];
+                if (customRole != null) {
+                    return customRole;
+                }
+
+                return mixerRoles.find(r => r.id === id);
+            };
+
+            return service;
+        });
+}());

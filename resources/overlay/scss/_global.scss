@@ -4,8 +4,7 @@ html, body{
 	padding:0px;
 	height:100vh;
 	width:100vw;
-	overflow-x:hidden;
-	overflow-y:hidden;
+	overflow: hidden !important;
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 .wrapper{
@@ -14,6 +13,7 @@ html, body{
 	color:white;
 	height:100vh;
 	width:100vw;
+	overflow: hidden !important;
 }
 canvas{
 	position:absolute;
@@ -21,6 +21,7 @@ canvas{
 	left:0px;
 	height:100vh;
 	width:100vw;
+	overflow: hidden !important;
 }
 .notification{
 	position:absolute;
@@ -69,4 +70,15 @@ canvas{
     justify-content: center;
 	align-items: center;
 	color: black;
+	div{
+		p {
+			line-height: 1;
+		}
+		p:first-child {
+			margin-block-start: 0 !important;
+		}
+		p:last-child {
+			margin-block-end: 0 !important;
+		}
+	}	
 }

@@ -1,6 +1,6 @@
 .connection-tile {
-    width: 150px;
-    height: 175px;
+    width: 125px;
+    height: 150px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,22 +11,30 @@
     & .connection-title {
         color: $connection-tile-title;
         opacity: 0.7;
-        font-size: 20px;
+        font-size: 15px;
         font-weight: 100;
     }
     & .connection-button {
         cursor: pointer;
-        color: #ff2020;
-        font-size: 50px;
-        &:hover {
-            color: #d81919;
-        }
+        color: gray;
+        font-size: 40px;
+        min-height: 56.8px;
         &.connected {
             color: green;
         }
         &.connecting {
-            color: black;
+            color: $connection-tile-title;
         }
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+
+    & .sub-title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 11px;
     }
 
     & .overlay-button {
@@ -63,7 +71,7 @@
             background: lightgreen;
         }
         &.disconnected {
-            background: #ff5f5f;
+            background: grey;
         }
         &.warning {
             background: gold;

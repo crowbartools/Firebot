@@ -3,10 +3,39 @@
 */
 .modal-header {
     border-bottom: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .close {
+        order: 2;
+        margin: 0;
+        font-size: 35px;
+        font-weight: 100;
+        text-shadow: none;
+        float: none;
+        margin-left: auto;
+    }
 }
+
 .modal-footer {
     border-top: none;
+
+    &.sticky-footer {
+        background-color: $light-background-color;
+        position: sticky;
+        bottom: 0;
+        &.is-stuck {
+            border-top: 1px solid #24262A;
+            margin-top: 10px;
+            box-shadow: 0 -6px 9px -2px #0000004d;
+        }
+    }
 }
+
+.effect-footer-sentinel, .fb-scroll-sentinel {
+    width: 100%;
+}
+
 .modal-content {
     border-radius: 3px;
     background-color: $light-background-color;
@@ -15,7 +44,13 @@
 .modal-title {
     font-weight: 100;
     font-size: 30px;
+    word-wrap: break-word;
 }
+
+.modal:focus {
+    outline: none;
+}
+
 .btn {
     border-radius: 2px;
 }
@@ -35,6 +70,57 @@
 
 .well {
     margin-bottom: 0px;
+}
+
+
+
+/* sub menus */
+.dropdown-submenu {
+	position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+	top: 0;
+	left: 100%;
+	margin-top: -6px;
+	margin-left: -1px;
+	//-webkit-border-radius: 0 6px 6px 6px;
+	//-moz-border-radius: 0 6px 6px 6px;
+	//border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+	display: block;
+}
+
+.dropdown-submenu>a:after {
+	display: block;
+	content: " ";
+	float: right;
+	width: 0;
+	height: 0;
+	border-color: transparent;
+	border-style: solid;
+	border-width: 5px 0 5px 5px;
+	border-left-color: #cccccc;
+	margin-top: 5px;
+	margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+	border-left-color: #ffffff;
+}
+
+.dropdown-submenu.pull-left {
+	float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+	left: -100%;
+	margin-left: 10px;
+	//-webkit-border-radius: 6px 0 6px 6px;
+	//-moz-border-radius: 6px 0 6px 6px;
+	//border-radius: 6px 0 6px 6px;
 }
 
 
@@ -152,8 +238,34 @@
     }
 }
 
+.popover.bottom > .arrow {
+    border-bottom-color: transparent;
+    &:after {
+        border-bottom-color: $dropdown-menu-border;
+    }
+}
+
+.popover.right > .arrow {
+    border-right-color: transparent;
+    &:after {
+        border-right-color: $dropdown-menu-border;
+    }
+}
+
+.popover.left > .arrow {
+    border-left-color: transparent;
+    &:after {
+        border-left-color: $dropdown-menu-border;
+    }
+}
+
 .popover-content {
-    padding: 0;
+    padding: 2px;
+    word-wrap: break-word;
+}
+
+.tooltip-inner {
+    word-wrap: break-word;
 }
 
 .dropdown-menu {
@@ -194,6 +306,11 @@
     max-height: 332px;
 }
 
+.control-type-list.ui-select-bootstrap .ui-select-choices-row > span {
+    padding: 5px 0px;
+    white-space: unset;
+}
+
 
 // Form Control
 .input-group-addon {
@@ -214,6 +331,15 @@
     &:focus {
         box-shadow: none;
     }
+}
+
+.input-group .form-control {
+    z-index: 0; 
+    float: none;
+}
+
+.input-group .form-control:focus {
+    z-index: 0;
 }
 
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
@@ -243,4 +369,184 @@
     color: $alert-danger-text-color;
     background-color: $alert-danger-bg;
     border-color: transparent;
+}
+
+// This is for pages that use tabbed navigation. IE: Commands
+.fb-commands-tab-wrapper {
+    height: 55px;
+    background: $fb-tab-wrapper-bg;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-bottom: 1px solid $fb-tab-wrapper-border-color;
+  }
+
+  .fb-center-tabs {
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    .fb-tab {
+        padding: 10px 15px;
+        color: $fb-tab-notactive-text-color;
+        &:hover {
+            color: $fb-tab-hover-text-color;
+            cursor: pointer;
+        }
+        &.active {
+            &:hover{
+                color: $fb-tab-active-text-color;
+                cursor: default;
+            }
+            color: $fb-tab-active-text-color;
+        }
+    }
+    .tab-divider {
+        height: 15px;
+        width: 2px;
+        background: $fb-tab-divider-color;
+        &:first-child {
+            width: 3px;
+        }
+    }
+  }
+  
+  .fb-tabs {
+    margin: 0 10px;
+    border-bottom: 0px solid #eaecec;
+    font-weight: 600;
+    font-size: 12px;
+    & > li.active > a, & > li.active > a:focus, & > li.active > a:hover {
+      color: $fb-tab-hightlight-color;
+      background-color: transparent;
+      border: 1px solid transparent;
+      border-bottom: 3px solid $fb-tab-hightlight-color;
+      &.nounderline {
+        border-bottom: 0;
+        border: 0;
+      }
+    }
+    & > li > a:hover {
+      border-color: transparent;
+      border-bottom: 3px solid $fb-tab-border-bottom-hover;
+      color:  $fb-tab-border-bottom-hover;
+      &.nounderline {
+        border-bottom: 0;
+        border: 0;
+      }
+    }
+    & > li > a {
+        margin-right: 2px;
+        line-height: 1.42857143;
+        border: 1px solid transparent;
+        border-radius: 4px 4px 0 0;
+        color: $fb-unselected-text-color;
+    }
+  }
+
+.command-trigger-cell {
+    max-width: 135px;
+    min-width: 135px;
+    & .trigger {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 240px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+// This is for pages that do NOT use tabbed navigation. IE: Live Events
+.fb-notab-header-wrapper{
+    height: 55px;
+    background: $fb-tab-wrapper-bg;
+    display: flex;
+    align-items: flex-end;
+    flex-shrink: 0;
+    border-bottom: 1px solid $fb-tab-wrapper-border-color;
+
+    .fb-notab-title{
+        margin: 0 10px;
+        padding:10px 15px;
+        border-bottom: 0px solid #eaecec;
+        font-weight: 600;
+        font-size: 12px;
+        color: $fb-tab-title-color;
+        background-color: transparent;
+        border: 1px solid transparent;
+        text-transform: uppercase;
+    }
+
+    .fb-notab-dropdown .noselect{
+        margin: 0 10px;
+        padding:10px 15px;
+        border-bottom: 0px solid #eaecec;
+        font-weight: 600;
+        font-size: 12px;
+        color: gray;
+        background-color: transparent;
+        border: 1px solid transparent;
+        text-transform: uppercase;
+        border-bottom: 3px solid transparent;
+
+        &.project-dropdown-text {
+            color: $project-dropdown-text-color;
+            font-size: 14px;
+            font-family: 'Quicksand';
+            border: 0px;
+            border-bottom: 0px;
+        }
+    }
+}
+
+.modal-title {
+    cursor: default;
+    user-select: none;
+}
+
+
+.glyphicon.glyphicon-chevron-left, .glyphicon.glyphicon-chevron-right {
+    vertical-align: -0%;
+    font-family: "Font Awesome 5 Pro";
+    font-weight: 900;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+
+.glyphicon-chevron-left:before {
+    content: "\f053";
+}
+
+.glyphicon-chevron-right:before {
+    content: "\f054";
+}
+
+/* pagination */
+.pagination > .disabled > a, .pagination > .disabled > a:focus, .pagination > .disabled > a:hover, .pagination > .disabled > span, .pagination > .disabled > span:focus, .pagination > .disabled > span:hover {
+    color: #b9b9b9;
+    background-color: #68696C;
+    border-color: #2F3136;
+}
+
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2F3136;
+}
+
+.pagination > li > a, .pagination > li > span {
+    color: #ffffff;
+    background-color: #68696C;
+    border: 1px solid #2F3136;
+}
+
+.pagination > li > a:focus, .pagination > li > a:hover, .pagination > li > span:focus, .pagination > li > span:hover {
+    color: white;
+    background-color: #888888;
+    border-color: #2F3136;
 }

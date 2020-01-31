@@ -1,22 +1,25 @@
-'use strict';
+"use strict";
 
 (function() {
-
-    const WebSocket = require('ws');
+    const WebSocket = require("ws");
     const WebSocketServer = WebSocket.Server;
 
     // This provides methods for sending stuff to the websocket
 
     angular
-        .module('firebotApp')
-        .factory('websocketService', function (logger, listenerService, settingsService, $timeout, $interval, $rootScope) {
+        .module("firebotApp")
+        .factory("websocketService", function(
+            logger,
+            listenerService,
+            settingsService,
+            $timeout,
+            $interval,
+            $rootScope
+        ) {
             let service = {};
 
             // Setup the WebSocketServer with the saved port.
             let port = settingsService.getWebSocketPort();
-            const wss = new WebSocketServer({
-                port: port
-            });
 
             function showEvents(data) {
                 let showEventsPosition = data.showEventsPosition;
@@ -45,7 +48,10 @@
                 if (showEventsColor === "" || showEventsColor == null) {
                     showEventsColor = "#ffffff";
                 }
-                if (showEventsBackgroundColor === "" || showEventsBackgroundColor == null) {
+                if (
+                    showEventsBackgroundColor === "" ||
+          showEventsBackgroundColor == null
+                ) {
                     showEventsBackgroundColor = "transparent";
                 }
                 if (showEventsFontSize === "" || showEventsFontSize == null) {
@@ -54,29 +60,27 @@
 
                 // Compile data and send to overlay.
                 let broadCastData = {
-                    "event": "showEvents",
-                    "showEventsType": showEventsType,
-                    "resourceToken": data.resourceToken,
-                    "showEventsText": data.showEventsText,
-                    "showEventsAlignment": showEventsAlignment,
-                    "showEventsColor": showEventsColor,
-                    "showEventsBackgroundColor": showEventsBackgroundColor,
-                    "showEventsFontSize": showEventsFontSize,
-                    "showEventsPosition": showEventsPosition,
-                    "showEventsHeight": showEventsHeight,
-                    "showEventsWidth": showEventsWidth,
-                    "showEventsDuration": showEventsDuration,
-                    "enterAnimation": data.enterAnimation,
-                    "exitAnimation": data.exitAnimation,
-                    "customCoords": data.customCoords
+                    event: "showEvents",
+                    showEventsType: showEventsType,
+                    resourceToken: data.resourceToken,
+                    showEventsText: data.showEventsText,
+                    showEventsAlignment: showEventsAlignment,
+                    showEventsColor: showEventsColor,
+                    showEventsBackgroundColor: showEventsBackgroundColor,
+                    showEventsFontSize: showEventsFontSize,
+                    showEventsPosition: showEventsPosition,
+                    showEventsHeight: showEventsHeight,
+                    showEventsWidth: showEventsWidth,
+                    showEventsDuration: showEventsDuration,
+                    enterAnimation: data.enterAnimation,
+                    exitAnimation: data.exitAnimation,
+                    customCoords: data.customCoords
                 };
 
                 service.broadcast(broadCastData);
             }
 
             function showImage(data) {
-                logger.debug("Showing image... ");
-
                 let filepath = data.filepath;
                 let imagePosition = data.imagePosition;
                 let imageHeight = data.imageHeight;
@@ -99,19 +103,23 @@
 
                 // Compile data and send to overlay.
                 let broadCastData = {
-                    "event": "image",
-                    "filepath": filepath,
-                    "url": data.url,
-                    "imageType": data.imageType,
-                    "resourceToken": data.resourceToken,
-                    "imagePosition": imagePosition,
-                    "imageHeight": imageHeight,
-                    "imageWidth": imageWidth,
-                    "imageDuration": imageDuration,
-                    "enterAnimation": data.enterAnimation,
-                    "exitAnimation": data.exitAnimation,
-                    "overlayInstance": data.overlayInstance,
-                    "customCoords": data.customCoords
+                    event: "image",
+                    filepath: filepath,
+                    url: data.url,
+                    imageType: data.imageType,
+                    resourceToken: data.resourceToken,
+                    imagePosition: imagePosition,
+                    imageHeight: imageHeight,
+                    imageWidth: imageWidth,
+                    imageDuration: imageDuration,
+                    enterAnimation: data.enterAnimation,
+                    exitAnimation: data.exitAnimation,
+                    overlayInstance: data.overlayInstance,
+                    customCoords: data.customCoords,
+                    inbetweenAnimation: data.inbetweenAnimation,
+                    inbetweenDelay: data.inbetweenDelay,
+                    inbetweenDuration: data.inbetweenDuration,
+                    inbetweenRepeat: data.inbetweenRepeat
                 };
 
                 service.broadcast(broadCastData);
@@ -138,28 +146,36 @@
                 if (videoWidth === "" || videoWidth == null) {
                     videoWidth = false;
                 }
-                if (videoDuration === null || videoDuration === undefined || isNaN(videoDuration)) {
+                if (
+                    videoDuration === null ||
+                    videoDuration === undefined ||
+                    isNaN(videoDuration)
+                ) {
                     videoDuration = 5;
                 }
 
                 // Compile data and send to overlay.
                 let broadcastdata = {
-                    "event": "video",
-                    "videoType": videoType,
-                    "filepath": filepath,
-                    "resourceToken": data.resourceToken,
-                    "youtubeId": youtubeId,
-                    "videoPosition": videoPosition,
-                    "videoHeight": videoHeight,
-                    "videoWidth": videoWidth,
-                    "videoDuration": videoDuration,
-                    "videoVolume": videoVolume,
-                    "videoStarttime": videoStarttime,
-                    "enterAnimation": data.enterAnimation,
-                    "exitAnimation": data.exitAnimation,
-                    "overlayInstance": data.overlayInstance,
-                    "customCoords": data.customCoords,
-                    "loop": data.loop
+                    event: "video",
+                    videoType: videoType,
+                    filepath: filepath,
+                    resourceToken: data.resourceToken,
+                    youtubeId: youtubeId,
+                    videoPosition: videoPosition,
+                    videoHeight: videoHeight,
+                    videoWidth: videoWidth,
+                    videoDuration: videoDuration,
+                    videoVolume: videoVolume,
+                    videoStarttime: videoStarttime,
+                    enterAnimation: data.enterAnimation,
+                    exitAnimation: data.exitAnimation,
+                    overlayInstance: data.overlayInstance,
+                    customCoords: data.customCoords,
+                    loop: data.loop,
+                    inbetweenAnimation: data.inbetweenAnimation,
+                    inbetweenDelay: data.inbetweenDelay,
+                    inbetweenDuration: data.inbetweenDuration,
+                    inbetweenRepeat: data.inbetweenRepeat
                 };
 
                 service.broadcast(broadcastdata);
@@ -169,7 +185,9 @@
             // This function takes info given from the main process and then sends a request to the overlay to render it.
             function showText(data) {
                 data.event = "text";
-                logger.debug("Recieved show text effect from backend, sending to overlay");
+                logger.debug(
+                    "Recieved show text effect from backend, sending to overlay"
+                );
                 service.broadcast(data);
             }
 
@@ -184,79 +202,85 @@
             // Websocket Server
             // This allows for the guiBroadcast call to send out data via websocket.
             service.broadcast = function(data) {
-                data = JSON.stringify(data);
-                wss.clients.forEach(function each(client) {
-                    if (client.readyState === 1) {
-                        client.send(data, (err) => {
-                            if (err) {
-                                logger.error(err);
-                            }
-                        });
-                    }
-                });
+                /*data = JSON.stringify(data);
+        wss.clients.forEach(function each(client) {
+          if (client.readyState === 1) {
+            client.send(data, err => {
+              if (err) {
+                logger.error(err);
+              }
+            });
+          }
+        });*/
             };
 
             service.hasClientsConnected = false;
 
-            wss.on('connection', function connection() {
-                service.hasClientsConnected = true;
-                $timeout(() => {
-                    $rootScope.$broadcast("connection:update", { type: "overlay", status: "connected" });
-                });
-            });
+            /*wss.on("connection", function connection() {
+        service.hasClientsConnected = true;
+        $timeout(() => {
+          $rootScope.$broadcast("connection:update", {
+            type: "overlay",
+            status: "connected"
+          });
+        });
+      });
 
-            $interval(() => {
-                let prevValue = service.hasClientsConnected === true;
-                let hasConnectedClients = wss.clients.size > 0;
-                if (hasConnectedClients !== prevValue) {
-                    service.hasClientsConnected = hasConnectedClients;
-                    let status = service.hasClientsConnected ? "connected" : "warning";
-                    $rootScope.$broadcast("connection:update", { type: "overlay", status: status });
-                }
-            }, 1500);
+      $interval(() => {
+        let prevValue = service.hasClientsConnected === true;
+        let hasConnectedClients = wss.clients.size > 0;
+        if (hasConnectedClients !== prevValue) {
+          service.hasClientsConnected = hasConnectedClients;
+          let status = service.hasClientsConnected ? "connected" : "warning";
+          $rootScope.$broadcast("connection:update", {
+            type: "overlay",
+            status: status
+          });
+        }
+      }, 1500);*/
 
             // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_EVENTS },
-                (data) => {
+                data => {
                     showEvents(data);
-                });
+                }
+            );
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_VIDEO },
-                (data) => {
+                data => {
                     showVideo(data);
-                });
+                }
+            );
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_IMAGE },
-                (data) => {
+                data => {
                     showImage(data);
-                });
-
-            /*listenerService.registerListener(
-                { type: listenerService.ListenerType.API_BUTTON },
-                (data) => {
-                    showImage(data);
-                });*/
+                }
+            );
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_HTML },
-                (data) => {
+                data => {
                     showHtml(data);
-                });
+                }
+            );
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.SHOW_TEXT },
-                (data) => {
+                data => {
                     showText(data);
-                });
+                }
+            );
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CELEBREATE },
-                (data) => {
+                data => {
                     service.broadcast(data);
-                });
+                }
+            );
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CLEAR_EFFECTS },

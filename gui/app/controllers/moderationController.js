@@ -1,25 +1,19 @@
-'use strict';
+"use strict";
 (function() {
-
     //This handles the Moderation tab
 
-    angular
-        .module('firebotApp')
-        .controller('moderationController', function($scope, eventLogService, groupsService, utilityService) {
+    const fs = require("fs");
 
-            groupsService.loadViewerGroups();
+    angular
+        .module("firebotApp")
+        .controller("moderationController", function($scope, eventLogService, chatModerationService, utilityService,
+            viewerRolesService) {
+
+            $scope.activeTab = 0;
 
             $scope.eventLogService = eventLogService;
 
             $scope.pagination = {
-                bannedList: {
-                    currentPage: 1,
-                    pageSize: 5
-                },
-                exemptList: {
-                    currentPage: 1,
-                    pageSize: 5
-                },
                 generalLog: {
                     currentPage: 1,
                     pageSize: 5
@@ -30,42 +24,59 @@
                 }
             };
 
-            // Banned Group Functions
-            $scope.bannedGroup = groupsService.getBannedGroup();
+            $scope.getExemptRoles = () => {
+                let allRoles = viewerRolesService.getMixerRoles().concat(viewerRolesService.getCustomRoles());
 
-            $scope.addUserToBannedGroup = function() {
-                groupsService.addUserToBannedGroup($scope.newUser);
-                $scope.newUser = "";
+                return allRoles.filter(r => chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.includes(r.id));
             };
 
-            $scope.removeUserFromBannedGroupAtIndex = function(index) {
-                let mappedIndex = index + (($scope.pagination.bannedList.currentPage - 1) * $scope.pagination.bannedList.pageSize);
-                groupsService.removeUserFromBannedGroupAtIndex(mappedIndex);
+            $scope.openAddExemptRoleModal = () => {
+                let allRoles = viewerRolesService.getMixerRoles().concat(viewerRolesService.getCustomRoles());
+
+                let options = allRoles
+                    .filter(r =>
+                        !chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.includes(r.id))
+                    .map(r => {
+                        return {
+                            id: r.id,
+                            name: r.name
+                        };
+                    });
+                utilityService.openSelectModal(
+                    {
+                        label: "Add Exempt Role",
+                        options: options,
+                        saveText: "Add",
+                        validationText: "Please select a role."
+
+                    },
+                    (roleId) => {
+                        if (!roleId) return;
+                        chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.push(roleId);
+                        chatModerationService.saveChatModerationSettings();
+                    });
             };
 
-            // Exempt Group Functions
-            $scope.exemptGroup = groupsService.getExemptGroup();
-
-            $scope.allViewerGroups = groupsService.getDefaultAndCustomViewerGroupsForSparkExempt();
-
-            $scope.newExemptUser = "";
-            $scope.addUserToExemptGroup = function() {
-                groupsService.addUserToExemptGroup($scope.newExemptUser);
-                $scope.newExemptUser = "";
+            $scope.removeExemptRole = (roleId) => {
+                chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles =
+                        chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.filter(id => id !== roleId);
+                chatModerationService.saveChatModerationSettings();
             };
 
-            $scope.removeUserFromExemptGroupAtIndex = function(index) {
-                let mappedIndex = index + (($scope.pagination.exemptList.currentPage - 1) * $scope.pagination.exemptList.pageSize);
-                groupsService.removeUserFromExemptGroupAtIndex(mappedIndex);
+            $scope.cms = chatModerationService;
+
+            $scope.toggleBannedWordsFeature = () => {
+                chatModerationService.chatModerationData.settings.bannedWordList.enabled =
+                    !chatModerationService.chatModerationData.settings.bannedWordList.enabled;
+                chatModerationService.saveChatModerationSettings();
             };
 
-            $scope.updateCheckedArrayWithElement = function(array, element) {
-                // Update array
-                $scope.exemptGroup.groups = utilityService.getNewArrayWithToggledElement(array, element);
-                groupsService.updateExemptViewerGroups($scope.exemptGroup.groups);
+            $scope.showEditBannedWordsModal = () => {
+                utilityService.showModal({
+                    component: "editBannedWordsModal",
+                    backdrop: true,
+                    resolveObj: {}
+                });
             };
-
-            $scope.arrayContainsElement = utilityService.arrayContainsElement;
-
         });
 }());

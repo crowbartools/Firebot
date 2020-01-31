@@ -1,14 +1,13 @@
-'use strict';
+"use strict";
 
 (function() {
-
     //This handles groups
 
-    const _ = require('underscore')._;
+    const _ = require("underscore")._;
 
     angular
-        .module('firebotApp')
-        .factory('eventLogService', function ($interval, listenerService) {
+        .module("firebotApp")
+        .factory("eventLogService", function($interval, listenerService) {
             let service = {};
 
             // General Events - Interactive info, command info, etc...
@@ -21,10 +20,10 @@
             function getTimeStamp(date) {
                 let now = date;
                 let time = [now.getHours(), now.getMinutes(), now.getSeconds()];
-                let suffix = (time[0] < 12) ? "AM" : "PM";
+                let suffix = time[0] < 12 ? "AM" : "PM";
 
                 // Convert hour from military time
-                time[0] = (time[0] < 12) ? time[0] : time[0] - 12;
+                time[0] = time[0] < 12 ? time[0] : time[0] - 12;
 
                 // If hour is 0, set it to 12
                 time[0] = time[0] || 12;
@@ -66,22 +65,22 @@
                         text: text
                     });
                 }
-
             }
 
             // Watches for an event from main process
             listenerService.registerListener(
                 { type: listenerService.ListenerType.EVENT_LOG },
-                (data) => {
+                data => {
                     addEvent(data);
-                });
+                }
+            );
 
             function logCleaner() {
                 let now = new Date();
                 let nowMilliseconds = now.getTime();
-                let maxAge = 120000;
+                let maxAge = 240000;
 
-                service.generalEvents = _.reject(service.generalEvents, (event) => {
+                service.generalEvents = _.reject(service.generalEvents, event => {
                     let age = event.milliseconds + maxAge;
                     return age < nowMilliseconds;
                 });

@@ -1,17 +1,11 @@
-<p>All effects in the below list will be treated as one effect. This is useful when used in a Random Effect. You can optionally give it a label to help identify what this effect does in the root effect list.</p>
+<eos-container>
+        <p>All effects in the below list will be treated as one effect. This is mostly useful when used in a Random Effect.</p>
 
-<eos-container header="Effect Label">
-        <div class="input-group">
-                <span class="input-group-addon">Label</span>
-                <input ng-model="effect.effectLabel" type="text" class="form-control" type="text">
-        </div>
+        <effect-list effects="effect.effectList" 
+                trigger="{{trigger}}" 
+                update="effectListUpdated(effects)"
+                header-classes="h4"
+                modalId="{{modalId}}"
+                is-array="true"></effect-list>
 </eos-container>
 
-<effect-list effects="effect.effectList" 
-        trigger="{{trigger}}" 
-        update="effectListUpdated(effects)"
-        header="Effects"
-        header-classes="h4"
-        effect-container-classes="effect-setting-content" 
-        modalId="{{modalId}}"
-        is-array="true"></effect-list>

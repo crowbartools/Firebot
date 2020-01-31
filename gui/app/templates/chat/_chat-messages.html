@@ -10,7 +10,7 @@
             </span>
         </div>
         <div class="chat-users" style="height: 100%;">
-            <div class="chatUser" ng-attr-role="{{getUserRole(user)}}" ng-repeat="user in getChatUsers() track by user.username">
+            <div class="chatUser clickable" ng-click="showUserDetailsModal(user.id)" ng-attr-role="{{getUserRole(user)}}" ng-repeat="user in getChatUsers() track by user.id">
                     {{user.username}}
             </div>
         </div>       
@@ -28,13 +28,13 @@
                     ng-attr-role="{{getRole(message)}}" 
                     ng-attr-messageId="{{getMessageId(message)}}" 
                     ng-repeat="message in getMessages() | limitTo:messageDisplayLimit track by message.id">
-                    <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)">
+                    <div class="chat-user-avatar-wrapper" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, userId, msgId)">
                         <span>
                             <img class="chat-user-avatar" ng-src="{{message.user_avatar}}">
                         </span>                 
                     </div>
                     <div style="padding-left: 10px">
-                        <div class="chat-username" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, msgId)">
+                        <div class="chat-username" message-actions message="message" role="getRole(message)" on-action-selected="messageActionSelected(actionName, userName, userId, msgId)">
                             <b>{{message.user_name}}</b>
                             <span class="chatSubIcon" ng-if="isSubscriber(message)">
                                 <img ng-src="{{getSubIcon(message)}}">
@@ -44,18 +44,47 @@
                             </span>
                         </div>
                         <div class="chatContent" style="font-size: 1.17em;">
-                            <span ng-repeat="segment in message.message.message">
+                            <span ng-if="!message.isSkill" ng-repeat="segment in message.message.message" class="chat-content-wrap">
                                 <span ng-if="segment.type === 'text'">
-                                    {{segment.data}}
+                                    <span ng-repeat="subSegment in segment.firebotSubsegments">
+                                        <span ng-if="subSegment.type === 'rawText'">
+                                                {{subSegment.text}}
+                                        </span>
+                                        <span ng-if="subSegment.type === 'elixrEmote'">
+                                                <span><img class="chat-elixr-emote" ng-src="https:{{subSegment.url}}" title="{{subSegment.code}}" ng-class="{ 'fifty': subSegment.maxSize == 50, 'thirty': subSegment.maxSize == 30, 'twentyfour': subSegment.maxSize == 24 }"></span>
+                                        </span>
+                                    </span>
                                 </span>
+
                                 <span ng-if="segment.type === 'emoticon'" class="chatEmoticon" ng-style="segment.emoticonStyles"></span>
+                                
+                                <div ng-if="showStickers && segment.type === 'image'" class="chatSticker">
+                                    <span class="chatStickerImage"><img ng-src="{{segment.url}}?width=64&height=64" ng-style="segment.stickerStyles"></span>
+                                    <span class="chatStickerCost">{{message.message.meta.skill.cost}} <i ng-class="segment.currencyIcon"></i> </span>
+                                </div>
+                                
+                                <span ng-if="!showStickers && segment.type === 'image'">
+                                    <span style="font-style: italic;opacity: 0.85;">sent the Sticker <strong>{{segment.text}}</strong> | <i ng-class="segment.currencyIcon" style="font-size: 12px;"></i> {{message.message.meta.skill.cost}}</span>
+                                </span>
+                                
                                 <span ng-if="segment.type === 'link'">
                                     <a class="chat-link" ng-click="openLinkExternally(segment.url)">{{segment.url}}</a>
                                 </span>
+                                
                                 <span ng-if="segment.type === 'tag'">
                                     {{segment.text}}
                                 </span>
                             </span>
+                            <span ng-if="message.isSkill" class="chat-content-wrap">
+                                <span style="font-style: italic;">
+                                    <span style="opacity: 0.85;">used <strong>{{message.skill.skill_name}}</strong></span>
+                                    <img style="display:inline-block;width:20px;height:20px;vertical-align: middle;" ng-src="{{message.skill.icon_url}}?width=20&height=20">
+                                    <span style="opacity: 0.85;">| <i ng-class="message.currencyIcon" style="font-size: 12px;"></i> {{message.skill.cost}}</span>
+                                </span>
+                            </span>
+                            <div ng-if="showGifs && message.isSkill && skillHasGif(message.skill)">
+                                <img style="padding-top: 10px;width: 200px;object-fit: scale-down;" ng-src="{{getSkillGifUrl(message.skill)}}">
+                            </div>
                         </div>
                         <div ng-if="isWhisper(message)" class="whisperData">
                             {{getWhisperData(message)}}
@@ -72,7 +101,7 @@
             <div class="text-input">
                 <div class="dropup">
                     <span class="dropdown-toggle chatter-dropdown" data-toggle="dropdown" uib-tooltip="Chat as" tooltip-placement="left" tooltip-append-to-body="true">
-                        <span style="margin-left: 10px;">{{chatSender}}</span>
+                        <span style="margin-left: 10px;width: 100%;text-align: center;">{{chatSender}}</span>
                         <div class="fb-arrow down" style="margin-left: 10px;margin-right: 10px;margin-bottom: 3px;"></div>
                     </span>
                     <ul class="dropdown-menu">
@@ -92,6 +121,10 @@
                     ng-keyup="onMessageFieldKeypress($event)"
                     ng-disabled="!chatFeedIsEnabled()"                    
                     uib-typeahead="command for command in commands | filter:$viewValue | limitTo:8">
+
+                <div class="chatfeed-send-btn" ng-click="submitChat()">
+                    <span>Send</span>
+                </div>
             </div>
             <div class="settings-btn-wrapper">
                 <span class="settings-btn" 
@@ -140,7 +173,7 @@
                 </span>
             </div>
             <div style="padding-top: 10px;">
-                <div style="font-weight: 900;">Notification Sound</div>
+                <div style="font-weight: 900;">Tag Notification Sound</div>
                 <span class="btn-group" uib-dropdown style="margin-bottom: 5px;">
                     <button type="button" class="btn btn-primary" uib-dropdown-toggle>
                         {{$parent.selectedNotificationSound.name}} <span class="caret"></span>
@@ -193,6 +226,24 @@
                         ng-checked="hideDeletedMessages" 
                         ng-click="toggleHideDeletedMessages()"/>
                     <label class="tgl-btn" for="cb10"></label>
+                </span>
+            </div>
+            <div style="display: flex;align-items: center;justify-content: space-between;">
+                <span style="font-weight: 900;">Show GIFs <tooltip text="'Show Inline GIFs sent by Viewers'"></tooltip></span> 
+                <span>
+                    <input class="tgl tgl-light" id="cb11" type="checkbox"
+                        ng-checked="showGifs" 
+                        ng-click="toggleShowGifs()"/>
+                    <label class="tgl-btn" for="cb11"></label>
+                </span>
+            </div>
+            <div style="display: flex;align-items: center;justify-content: space-between;">
+                <span style="font-weight: 900;">Show Stickers <tooltip text="'Show Stickers from Viewers'"></tooltip></span> 
+                <span>
+                    <input class="tgl tgl-light" id="cb12" type="checkbox"
+                        ng-checked="showStickers" 
+                        ng-click="toggleShowStickers()"/>
+                    <label class="tgl-btn" for="cb12"></label>
                 </span>
             </div>
         </div>               

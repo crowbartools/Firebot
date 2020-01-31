@@ -1,57 +1,112 @@
-'use strict';
+"use strict";
 (function() {
 
+    const uuidv1 = require("uuid/v1");
 
     angular
         .module('firebotApp')
         .component("effectList", {
             bindings: {
                 trigger: "@",
+                triggerMeta: "<",
                 effects: "<",
-                isArray: "<",
                 update: '&',
                 modalId: "@",
                 header: "@",
                 headerClasses: "@",
-                effectContainerClasses: "@"
+                effectContainerClasses: "@",
+                hideNumbers: "<"
             },
             template: `
-            <div>
-                <div class="flex-row-center jspacebetween" style="margin-bottom:10px;">
-                    <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;">{{$ctrl.header}}</h3>
+            <div class="effect-list">
+                <div class="flex-row-center jspacebetween effect-list-header">
+                    <div style="display:flex; align-items: center;">
+                        <h3 class="{{$ctrl.headerClasses}}" style="display:inline;margin:0;font-weight: 100;">EFFECTS</h3>
+                        <span style="font-size: 11px; margin-left: 2px;"><tooltip text="$ctrl.header" ng-if="$ctrl.header"></tooltip></span>
+                    </div>
                     
-                    <div uib-dropdown uib-dropdown-toggle>
-                        <span class="noselect pointer effects-actions-btn"><i class="fal fa-ellipsis-h"></i></span>
-                        <ul class="dropdown-menu" uib-dropdown-menu>
-                            <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
-                                <a href ng-click="$ctrl.copyEffects()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects</a>
-                            </li>
-                            <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
-                                <a href ng-click="$ctrl.pasteEffects(true)"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects</a>
-                            </li>
-                            <li ng-class="{'disabled': !$ctrl.effectsArray.length > 0}" ng-click="!$ctrl.effectsArray > 0 ? $event.stopPropagation() : null">
-                                <a href ng-click="$ctrl.removeAllEffects()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
-                            </li>
-                        </ul>
+
+                    <div style="display:flex;align-items: center;">
+
+                        <div style="margin-right: 20px;display: flex;flex-direction: column;align-items: flex-end;">
+                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE<tooltip text="'Effect queues allow you to queue up effects so they don\\'t overlap each other. Particularly useful for events!'"></tooltip></div>
+                            <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
+                                <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getSelectedEffectQueueName()}}<span class="fb-arrow down ddtext"></span></div>
+                                <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
+
+                                    <li ng-click="$ctrl.effectsData.queue = null">
+                                        <a style="padding-left: 10px;">Unset <tooltip text="'Effects will always play immediately when triggered.'"></tooltip>
+                                        <span ng-show="$ctrl.effectsData.queue == null" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>
+                                        </a>   
+                                    </li>
+
+                                    <li ng-repeat="queue in $ctrl.eqs.getEffectQueues() track by queue.id" ng-click="$ctrl.toggleQueueSelection(queue.id)">
+                                        <a style="padding-left: 10px;">
+                                            <span>{{queue.name}}</span>
+                                            <span ng-show="$ctrl.effectsData.queue === queue.id" style="color:green;display: inline-block;"><i class="fas fa-check"></i></span>      
+                                        </a>
+                                    </li>
+
+                                    <li ng-show="$ctrl.eqs.getEffectQueues().length < 1">
+                                        <a style="padding-left: 10px;" class="muted">No queues created.</a>
+                                    </li>
+
+                                    <li role="separator" class="divider"></li>
+                                    <li ng-click="$ctrl.showAddEditEffectQueueModal()">
+                                        <a style="padding-left: 10px;">Create new queue</a>
+                                    </li>
+
+                                    <li ng-show="$ctrl.validQueueSelected()" ng-click="$ctrl.showAddEditEffectQueueModal($ctrl.effectsData.queue)">
+                                        <a style="padding-left: 10px;">Edit "{{$ctrl.getSelectedEffectQueueName()}}"</a>
+                                    </li>
+
+                                    <li ng-show="$ctrl.validQueueSelected()" ng-click="$ctrl.showDeleteEffectQueueModal($ctrl.effectsData.queue)">
+                                        <a style="padding-left: 10px;">Delete "{{$ctrl.getSelectedEffectQueueName()}}"</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="test-effects-btn clickable" uib-tooltip="Test Effects">
+                            <i class="far fa-play-circle" style="cursor: pointer;" ng-click="$ctrl.testEffects()"></i>
+                        </div>
+                        
+                        <div uib-dropdown uib-dropdown-toggle>
+                            <span class="noselect pointer effects-actions-btn"><i class="fal fa-ellipsis-v"></i></span>
+                            <ul class="dropdown-menu" uib-dropdown-menu>
+                                <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
+                                    <a href ng-click="$ctrl.copyEffects()"><i class="far fa-copy" style="margin-right: 10px;"></i> Copy all effects</a>
+                                </li>
+                                <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null">
+                                    <a href ng-click="$ctrl.pasteEffects(true)"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects</a>
+                                </li>
+                                <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
+                                    <a href ng-click="$ctrl.removeAllEffects()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="{{$ctrl.effectContainerClasses}}">
-                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsArray">
-                        <div ng-repeat="effect in $ctrl.effectsArray track by $index">
+                <div class="{{$ctrl.effectContainerClasses}}" style="margin-left: 15px;margin-right: 15px;padding-bottom: 15px;">
+                    <div ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.effectsData.list">
+                        <div ng-repeat="effect in $ctrl.effectsData.list track by $index">
                             <div class="effect-bar clickable-dark"
                                 ng-click="$ctrl.openEditEffectModal(effect, $index, $ctrl.trigger)"
                                 ng-mouseenter="hovering = true"
                                 ng-mouseleave="hovering = false">
                                     <span style="display: inline-block;text-overflow: ellipsis;overflow: hidden;line-height: 20px;white-space: nowrap;padding-right: 10px;">
-                                        <span class="muted">{{$index + 1}}. </span>
-                                        {{effect.type}}
+                                        <span class="muted" ng-hide="$ctrl.hideNumbers === true">{{$index + 1}}. </span>
+                                        {{$ctrl.getEffectNameById(effect.type)}}
                                         <span ng-if="effect.effectLabel" class="muted"> ({{effect.effectLabel}})</span>
                                     </span>
                                     <span class="flex-row-center ">
-                                        <i class="dragHandle fal fa-bars" ng-class="{'hiddenHandle': !hovering}" aria-hidden="true" style="margin-right:15px" ng-click="$event.stopPropagation()"></i>
-                                        <div class="clickable" style="margin-right:15px; font-size: 20px; width: 15px; text-align: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
+                                        <span class="dragHandle" style="height: 38px; width: 15px; align-items: center; justify-content: center; display: flex" ng-class="{'hiddenHandle': !hovering}" ng-click="$event.stopPropagation()">
+                                            <i class="fal fa-bars" aria-hidden="true"></i>
+                                        </span> 
+                                        <div class="clickable" style="font-size: 20px;height: 38px;width: 35px;text-align: center;display: flex;align-items: center;justify-content: center;" uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" ng-click="$event.stopPropagation()">
                                             <span class="noselect pointer"> <i class="fal fa-ellipsis-v"></i> </span>
                                             <ul class="dropdown-menu" uib-dropdown-menu>
+                                                <li><a href ng-click="$ctrl.editLabelForEffectAtIndex($index)"><i class="fal fa-tag" style="margin-right: 10px;" aria-hidden="true"></i>  {{$ctrl.getLabelButtonTextForLabel(effect.effectLabel)}}</a></li>
                                                 <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
                                                 <li><a href ng-click="$ctrl.copyEffectAtIndex($index)"><i class="fal fa-copy" style="margin-right: 10px;" aria-hidden="true"></i>  Copy</a></li>
                                                 <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null"><a href ng-click="$ctrl.pasteEffectsAtIndex($index, false)"><i class="fal fa-paste" style="margin-right: 10px;" aria-hidden="true"></i>  Paste After</a></li>
@@ -63,149 +118,210 @@
                         </div>
                     </div>
             
-                    <div class="add-more-functionality">
-                        <button type="button" class="btn btn-link" ng-click="$ctrl.addEffect()">
-                            + Add Effect
-                        </button>
+                    <div class="add-more-functionality" style="margin-top: 16px;margin-left: 12px;">
+                        <a class="clickable" ng-click="$ctrl.addEffect()"> <i class="far fa-plus-circle"></i> New Effect</a>
                     </div>
                 </div>
                 
             </div>
             `,
-            controller: function(utilityService) {
+            controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService) {
                 let ctrl = this;
 
-                ctrl.effectsArray = [];
-                function createEffectsArray() {
-                    if (ctrl.effects == null) {
-                        if (ctrl.isArray) {
-                            ctrl.effects = [];
-                        } else {
-                            ctrl.effects = {};
-                        }
-                    }
+                ctrl.effectsData = {
+                    list: []
+                };
 
-                    if (ctrl.isArray) {
-                        ctrl.effectsArray = ctrl.effects;
-                    } else {
-                        ctrl.effectsArray = Object.keys(ctrl.effects).map(k => ctrl.effects[k]);
-                    }
-                }
+                let effectDefinitions = [];
 
-                function getEffectsObject() {
-                    let obj;
-                    if (ctrl.isArray) {
-                        obj = ctrl.effectsArray;
-                    } else {
-                        let effects = {};
-                        let count = 1;
-                        ctrl.effectsArray.forEach(e => {
-                            effects[count.toString()] = e;
-                            count++;
-                        });
-                        obj = effects;
+                function createEffectsData() {
+                    if (ctrl.effects != null && !Array.isArray(ctrl.effects)) {
+                        ctrl.effectsData = ctrl.effects;
                     }
-                    return obj;
+                    if (ctrl.effectsData.list == null) {
+                        ctrl.effectsData.list = [];
+                    }
+                    if (ctrl.effectsData.id == null) {
+                        ctrl.effectsData.id = uuidv1();
+                    }
+                    ctrl.effectsUpdate();
                 }
 
                 // when the element is initialized
-                ctrl.$onInit = function() {
-                    createEffectsArray();
+                ctrl.$onInit = async function() {
+                    createEffectsData();
+                    effectDefinitions = await effectHelperService.getAllEffectDefinitions();
                 };
 
-                ctrl.$onChanges = function () {
-                    createEffectsArray();
+                ctrl.getEffectNameById = id => {
+                    if (!effectDefinitions || effectDefinitions.length < 1) return "";
+                    return effectDefinitions.find(e => e.id === id).name;
+                };
+
+                ctrl.$onChanges = function() {
+                    createEffectsData();
                 };
 
                 ctrl.effectsUpdate = function() {
-                    ctrl.update({effects: getEffectsObject()});
+                    ctrl.update({ effects: ctrl.effectsData });
                 };
 
                 ctrl.effectTypeChanged = function(effectType, index) {
-                    ctrl.effectsArray[index].type = effectType.name;
+                    ctrl.effectsData.list[index].type = effectType.id;
+                };
+                ctrl.testEffects = function() {
+                    ipcRenderer.send('runEffectsManually', ctrl.effectsData);
+                };
+
+                ctrl.getLabelButtonTextForLabel = function(labelModel) {
+                    if (labelModel == null || labelModel.length === 0) {
+                        return "Add Label";
+                    }
+                    return "Edit Label";
+                };
+
+                ctrl.editLabelForEffectAtIndex = function(index) {
+                    let effect = ctrl.effectsData.list[index];
+                    let label = effect.effectLabel;
+                    utilityService.openGetInputModal(
+                        {
+                            model: label,
+                            label: ctrl.getLabelButtonTextForLabel(label),
+                            saveText: "Save Label"
+                        },
+                        (newLabel) => {
+                            if (newLabel == null || newLabel.length === 0) {
+                                effect.effectLabel = null;
+                            } else {
+                                effect.effectLabel = newLabel;
+                            }
+                        });
+                };
+
+                ctrl.duplicateEffectAtIndex = function(index) {
+                    let effect = JSON.parse(angular.toJson(ctrl.effectsData.list[index]));
+                    effect.id = uuidv1();
+                    ctrl.effectsData.list.splice(index + 1, 0, effect);
+                    ctrl.effectsUpdate();
                 };
 
                 ctrl.sortableOptions = {
-                    handle: '.dragHandle',
+                    handle: ".dragHandle",
                     stop: () => {
                         ctrl.effectsUpdate();
                     }
                 };
 
-                ctrl.duplicateEffectAtIndex = function(index) {
-                    let effect = JSON.parse(angular.toJson(ctrl.effectsArray[index]));
-                    ctrl.effectsArray.splice(index + 1, 0, effect);
-                    ctrl.effectsUpdate();
-                };
-
                 ctrl.removeEffectAtIndex = function(index) {
-                    ctrl.effectsArray.splice(index, 1);
+                    ctrl.effectsData.list.splice(index, 1);
                     ctrl.effectsUpdate();
                 };
 
                 ctrl.removeAllEffects = function() {
-                    ctrl.effectsArray = [];
+                    ctrl.effectsData.list = [];
                     ctrl.effectsUpdate();
                 };
 
                 ctrl.hasCopiedEffects = function() {
-                    return utilityService.hasCopiedEffects(ctrl.trigger);
+                    return objectCopyHelper.hasCopiedEffects();
                 };
 
-                ctrl.hasMultipleCopiedEffects = function() {
-                    return utilityService.hasCopiedEffects(ctrl.trigger) &&
-                    utilityService.getCopiedEffects(ctrl.trigger).length > 1;
-                };
-
-                ctrl.pasteEffects = function(append = false) {
-                    if (utilityService.hasCopiedEffects(ctrl.trigger)) {
+                ctrl.pasteEffects = async function(append = false) {
+                    if (objectCopyHelper.hasCopiedEffects()) {
                         if (append) {
-                            ctrl.effectsArray = ctrl.effectsArray.concat(utilityService.getCopiedEffects(ctrl.trigger));
+                            ctrl.effectsData.list = ctrl.effectsData.list.concat(
+                                await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta)
+                            );
                         } else {
-                            ctrl.effectsArray = utilityService.getCopiedEffects(ctrl.trigger);
+                            ctrl.effectsData.list = await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
                         }
                         ctrl.effectsUpdate();
                     }
                 };
 
-                ctrl.pasteEffectsAtIndex = function(index, above) {
-                    if (utilityService.hasCopiedEffects(ctrl.trigger)) {
+                ctrl.pasteEffectsAtIndex = async function(index, above) {
+                    if (objectCopyHelper.hasCopiedEffects()) {
                         if (!above) {
                             index++;
                         }
-                        let copiedEffects = utilityService.getCopiedEffects(ctrl.trigger);
-                        ctrl.effectsArray.splice(index, 0, ...copiedEffects);
+                        let copiedEffects = await objectCopyHelper.getCopiedEffects(ctrl.trigger, ctrl.triggerMeta);
+                        ctrl.effectsData.list.splice(index, 0, ...copiedEffects);
                         ctrl.effectsUpdate();
                     }
                 };
 
                 ctrl.copyEffectAtIndex = function(index) {
-                    utilityService.copyEffects(ctrl.trigger, [ctrl.effectsArray[index]]);
+                    objectCopyHelper.copyEffects([ctrl.effectsData.list[index]]);
                 };
 
                 ctrl.copyEffects = function() {
-                    utilityService.copyEffects(ctrl.trigger, ctrl.effectsArray);
+                    objectCopyHelper.copyEffects(ctrl.effectsData.list);
                 };
 
                 ctrl.addEffect = function() {
-
-                    let newEffect = { type: "Nothing" };
+                    let newEffect = {
+                        id: uuidv1(),
+                        type: "Nothing"
+                    };
 
                     ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
                 };
 
                 ctrl.openEditEffectModal = function(effect, index, trigger) {
-                    utilityService.showEditEffectModal(effect, index, trigger, (response) => {
-                        if (response.action === 'add') {
-                            ctrl.effectsArray.push(response.effect);
-                        } else if (response.action === 'update') {
-                            ctrl.effectsArray[response.index] = response.effect;
-                        } else if (response.action === 'delete') {
+                    utilityService.showEditEffectModal(effect, index, trigger, response => {
+                        if (response.action === "add") {
+                            ctrl.effectsData.list.push(response.effect);
+                        } else if (response.action === "update") {
+                            ctrl.effectsData.list[response.index] = response.effect;
+                        } else if (response.action === "delete") {
                             ctrl.removeEffectAtIndex(response.index);
                         }
                         ctrl.effectsUpdate();
-                    });
+                    }, ctrl.triggerMeta);
                 };
+
+                //effect queue
+
+                ctrl.eqs = effectQueuesService;
+
+                ctrl.getSelectedEffectQueueName = () => {
+                    const unsetDisplay = "Not set";
+                    if (ctrl.effectsData.queue == null) return unsetDisplay;
+                    const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
+                    if (queue == null) return unsetDisplay;
+                    return queue.name;
+                };
+
+                ctrl.toggleQueueSelection = (queueId) => {
+                    if (ctrl.effectsData.queue !== queueId) {
+                        ctrl.effectsData.queue = queueId;
+                    } else {
+                        ctrl.effectsData.queue = null;
+                    }
+                };
+
+                ctrl.validQueueSelected = () => {
+                    if (ctrl.effectsData.queue == null) return false;
+                    const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
+                    return queue != null;
+                };
+
+                ctrl.showAddEditEffectQueueModal = (queueId) => {
+                    effectQueuesService.showAddEditEffectQueueModal(queueId)
+                        .then(id => {
+                            ctrl.effectsData.queue = id;
+                        });
+                };
+
+                ctrl.showDeleteEffectQueueModal = (queueId) => {
+                    effectQueuesService.showDeleteEffectQueueModal(queueId)
+                        .then(confirmed => {
+                            if (confirmed) {
+                                ctrl.effectsData.queue = undefined;
+                            }
+                        });
+                };
+
             }
         });
 }());

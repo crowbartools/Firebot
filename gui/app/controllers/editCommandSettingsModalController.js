@@ -1,13 +1,16 @@
-'use strict';
+"use strict";
 (function($) {
-
     // This handles the Groups tab
 
     angular
-        .module('firebotApp')
-        .controller('editCommandSettingsModalController', function($scope, $uibModalInstance, utilityService, commandsService) {
-
-        // Gets timed group cache
+        .module("firebotApp")
+        .controller("editCommandSettingsModalController", function(
+            $scope,
+            $uibModalInstance,
+            utilityService,
+            commandsService
+        ) {
+            // Gets timed group cache
             $scope.getTimedGroupSettings = function() {
                 return commandsService.getTimedGroupSettings();
             };
@@ -27,10 +30,16 @@
             */
             $scope.showAddOrEditTimedGroupModal = function(timedGroup) {
                 let editTimedGroupDefaultsModalContext = {
-                    templateUrl: "./templates/chat/command-modals/addOrEditTimedGroupModal.html",
+                    templateUrl:
+            "./templates/chat/command-modals/addOrEditTimedGroupModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $uibModalInstance, commandsService, utilityService, timedGroup) => {
-
+                    controllerFunc: (
+                        $scope,
+                        $uibModalInstance,
+                        commandsService,
+                        utilityService,
+                        timedGroup
+                    ) => {
                         $scope.timedGroup = {};
                         $scope.isNewGroup = true;
 
@@ -40,21 +49,33 @@
                             $scope.isNewGroup = false;
                         } else {
                             // This is a new group, so default active to true.
-                            $scope.timedGroup = {active: true};
+                            $scope.timedGroup = { active: true };
                         }
 
                         // Get all of the commands to list out in the modal.
                         $scope.allCommandIds = [];
+                        let commandTriggers = {};
+
                         let allCommands = commandsService.getAllCommandsForType('Active');
                         for (let commandItem in allCommands) {
                             if (allCommands.hasOwnProperty(commandItem)) {
-                                $scope.allCommandIds.push(allCommands[commandItem].commandID);
+                                let command = allCommands[commandItem];
+                                commandTriggers[command.commandID] = command.trigger;
+                                $scope.allCommandIds.push(command.commandID);
                             }
                         }
 
 
+                        $scope.getTriggerFromId = (id) => {
+                            return commandTriggers[id];
+                        };
+
+
                         $scope.updateCheckedArrayWithElement = function(array, element) {
-                            $scope.timedGroup.commands = utilityService.getNewArrayWithToggledElement(array, element);
+                            $scope.timedGroup.commands = utilityService.getNewArrayWithToggledElement(
+                                array,
+                                element
+                            );
                         };
 
                         // This checks to see if a command should be checked or not.
@@ -64,8 +85,14 @@
 
                         // This saves the content in the modal.
                         $scope.save = function() {
-                            if ($scope.timedGroup.groupName != null && $scope.timedGroup.groupName !== "") {
-                                $uibModalInstance.close({ shouldDelete: false, newTimedGroup: $scope.timedGroup });
+                            if (
+                                $scope.timedGroup.groupName != null &&
+                $scope.timedGroup.groupName !== ""
+                            ) {
+                                $uibModalInstance.close({
+                                    shouldDelete: false,
+                                    newTimedGroup: $scope.timedGroup
+                                });
                             }
                         };
 
@@ -79,7 +106,7 @@
                             $uibModalInstance.dismiss();
                         };
                     },
-                    closeCallback: (response) => {
+                    closeCallback: response => {
                         let previousName = "";
                         if (timedGroup != null) {
                             previousName = timedGroup.groupName;
@@ -89,7 +116,10 @@
                         if (response.shouldDelete) {
                             commandsService.deleteTimedGroup(previousName, timedGroup);
                         } else {
-                            commandsService.saveTimedGroup(previousName, response.newTimedGroup);
+                            commandsService.saveTimedGroup(
+                                previousName,
+                                response.newTimedGroup
+                            );
                         }
 
                         // Refresh commands
@@ -101,12 +131,10 @@
                                 return null;
                             }
                             return $.extend(true, {}, timedGroup);
-
                         }
                     }
                 };
                 utilityService.showModal(editTimedGroupDefaultsModalContext);
             };
-
         });
 }(window.jQuery));

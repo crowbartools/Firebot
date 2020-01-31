@@ -1,161 +1,121 @@
-<div style="display: flex; width: 100%; justify-content: space-between; flex-wrap:wrap">
-  <div class="content-block" style="width: 49%">
-    <div class="content-block-header">
-      <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Event Log</span>
-      <div class="searchbar-header-wrapper">
-        <input type="text" class="form-control" placeholder="Search events" ng-model="eventLogSearch" style="padding-left: 27px;">
-        <span class="searchbar-icon"><i class="far fa-search"></i></span>
-      </div>
+<div style="min-width: 500px;">
+    <div class="fb-commands-tab-wrapper">
+        <ul class="nav nav-tabs fb-tabs">
+            <li role="presentation" ng-class="{'active' : activeTab === 0}" ng-click="activeTab = 0">
+                <a href>CHAT MODERATION</a>
+            </li>
+            <li role="presentation" ng-class="{'active' : activeTab === 1}" ng-click="activeTab = 1">
+                <a href>ACTIVITY LOGS</a>
+            </li>
+        </ul>
     </div>
-    <div class="content-block-body">
 
-      <uib-tabset active="activeLogTab">
-        <uib-tab index="0" heading="General">
-          <table class="table">
-            <thead>
-              <tr>
-                <th width="100">TIME</th>
-                <th>EVENT</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.generalEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.generalLog.currentPage-1)*pagination.generalLog.pageSize | limitTo:pagination.generalLog.pageSize track by $index">
-                <td>{{event.timestamp}}</td>
-                <td>{{event.username}} {{event.text}}</td>
-              </tr>       
-            </tbody>
-          </table>
-          <span ng-show="eventLogService.generalEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
-          <div ng-show="filteredEvents.length > pagination.generalLog.pageSize" style="text-align: center;">
-              <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.generalLog.currentPage" items-per-page="pagination.generalLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
-          </div>
-        </uib-tab>
-        <uib-tab index="1" heading="Events">
-          <table class="table">
-            <thead>
-              <tr>
-                <th width="100">TIME</th>
-                <th>EVENT</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.alertEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.alertLog.currentPage-1)*pagination.alertLog.pageSize | limitTo:pagination.alertLog.pageSize track by $index">
-                <td>{{event.timestamp}}</td>
-                <td>{{event.username}} {{event.text}}</td>
-              </tr>       
-            </tbody>
-          </table>
-          <span ng-show="eventLogService.alertEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
-          <div ng-show="filteredEvents.length > pagination.alertLog.pageSize" style="text-align: center;">
-              <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.alertLog.currentPage" items-per-page="pagination.alertLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
-          </div>
-        </uib-tab>
-      </uib-tabset>
+    <div style="padding: 15px;">
+        <div ng-show="activeTab === 0">
+
+            <div class="content-block" style="width: 50%;">
+                <div class="content-block-body">
+                  <div style="display: flex;align-items: center;">
+                    <div style="font-weight: 600;font-size: 20px;margin-right: 15px;" ng-class="{ muted: !cms.chatModerationData.settings.bannedWordList.enabled }">Banned Word List</div>
+                    <toggle-button toggle-model="cms.chatModerationData.settings.bannedWordList.enabled" 
+                      on-toggle="toggleBannedWordsFeature()"></toggle-button>
+                  </div> 
+                  <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
+                    <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
+                        Words
+                    </div>
+                    <button ng-click="showEditBannedWordsModal()" class="btn btn-default">Edit Word List</button>
+                    <div style="margin-top:15px;">
+                      <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
+                          Exempt Roles
+                      </div>
+
+                      <div class="role-bar" ng-repeat="role in getExemptRoles() track by role.id">
+                          <span>{{role.name}}</span>
+                          <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole(role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                              <i class="far fa-times"></i>
+                          </span>
+                      </div>
+                      <div class="role-bar clickable" ng-click="openAddExemptRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
+                          <i class="far fa-plus"></i> 
+                      </div>
+                      
+                      <!--<div class="viewer-group-list bg-inverted">
+                          <div ng-show="hasCustomRoles" style="margin-bottom: 10px;">
+                              <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Custom</div>
+                              <label ng-repeat="customRole in getCustomRoles()" class="control-fb control--checkbox">{{customRole.name}}
+                                  <input type="checkbox" ng-click="toggleRole(customRole)" ng-checked="isRoleChecked(customRole)"  aria-label="..." >
+                                  <div class="control__indicator"></div>
+                              </label>
+                          </div>
+                          <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Mixer</div>
+                          <label ng-repeat="mixerRole in getMixerRoles()" class="control-fb control--checkbox">{{mixerRole.name}}
+                              <input type="checkbox" ng-click="toggleRole(mixerRole)" ng-checked="isRoleChecked(mixerRole)"  aria-label="..." >
+                              <div class="control__indicator"></div>
+                          </label>
+                      </div>-->
+                    </div>
+                  </div>         
+                </div>
+            </div>
+            
+        </div>
+        <div ng-show="activeTab === 1">
+
+            <div class="content-block" style="width: 100%; margin-bottom: .5em;">
+                <div class="content-block-header">
+                  <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Activity Log</span>
+                  <div class="searchbar-header-wrapper">
+                    <input type="text" class="form-control" placeholder="Search logs" ng-model="eventLogSearch" style="padding-left: 27px;">
+                    <span class="searchbar-icon"><i class="far fa-search"></i></span>
+                  </div>
+                </div>
+                <div class="content-block-body">
+                  <uib-tabset active="activeLogTab">
+                    <uib-tab index="0" heading="General">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th width="100">TIME</th>
+                            <th>MESSAGE</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.generalEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.generalLog.currentPage-1)*pagination.generalLog.pageSize | limitTo:pagination.generalLog.pageSize track by $index">
+                            <td>{{event.timestamp}}</td>
+                            <td>{{event.username}} {{event.text}}</td>
+                          </tr>       
+                        </tbody>
+                      </table>
+                      <span ng-show="eventLogService.generalEvents.length == 0" style="opacity: 0.5">There are no recent events.</span>
+                      <div ng-show="filteredEvents.length > pagination.generalLog.pageSize" style="text-align: center;">
+                          <ul uib-pagination total-items="eventLogService.generalEvents.length" ng-model="pagination.generalLog.currentPage" items-per-page="pagination.generalLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
+                      </div>
+                    </uib-tab>
+                    <uib-tab index="1" heading="Events">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th width="100">TIME</th>
+                            <th>MESSAGE</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="repeatList" ng-repeat="event in filteredEvents = (eventLogService.alertEvents | filter:eventLogSearch) | orderBy:'-milliseconds' | startFrom:(pagination.alertLog.currentPage-1)*pagination.alertLog.pageSize | limitTo:pagination.alertLog.pageSize track by $index">
+                            <td>{{event.timestamp}}</td>
+                            <td>{{event.username}} {{event.text}}</td>
+                          </tr>       
+                        </tbody>
+                      </table>
+                      <span ng-show="eventLogService.alertEvents.length == 0" style="opacity: 0.5">There are no recent logs.</span>
+                      <div ng-show="filteredEvents.length > pagination.alertLog.pageSize" style="text-align: center;">
+                          <ul uib-pagination total-items="filteredEvents.length" ng-model="pagination.alertLog.currentPage" items-per-page="pagination.alertLog.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
+                      </div>
+                    </uib-tab>
+                  </uib-tabset>
+                </div>
+              </div>
+
+        </div>
     </div>
-  </div>
-  <div class="content-block" style="width: 49%">
-    <div class="content-block-header">
-      <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Banned Users</span>
-      <div class="searchbar-header-wrapper">
-        <input type="text" class="form-control" placeholder="Search users" ng-model="bannedSearch" style="padding-left: 27px;">
-        <span class="searchbar-icon"><i class="far fa-search"></i></span>
-      </div>
-    </div>
-    <div class="content-block-body">      
-      <table class="table">
-       <thead>
-         <tr>
-           <th>USERNAME</th>
-           <th></th>
-         </tr>
-       </thead>
-       <tbody>
-         <tr class="repeatList" ng-repeat="user in userList = (bannedGroup.users | filter:bannedSearch) | startFrom:(pagination.bannedList.currentPage-1)*pagination.bannedList.pageSize | limitTo:pagination.bannedList.pageSize track by $index">
-           <td>{{user}}</td>
-           <td>
-             <span class="delete-button pull-right" ng-click="removeUserFromBannedGroupAtIndex($index)">
-               <i class="far fa-trash-alt"></i>
-             </span>
-           </td>
-         </tr>
-       </tbody>
-     </table>
-     <div ng-show="bannedGroup.users.length == 0" style="opacity: 0.5;padding-bottom:20px;">There are no banned users.</div>
-     <div ng-show="bannedGroup.users.length > pagination.bannedList.pageSize" style="text-align: center;">
-        <ul uib-pagination total-items="userList.length" ng-model="pagination.bannedList.currentPage" items-per-page="pagination.bannedList.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
-     </div>
-     <div style="display: flex;justify-content: center;">
-       <div class="input-group" style="width: 50%;">
-         <input type="text" class="form-control" placeholder="Ban new user" ng-model="newUser" ng-keyup="$event.keyCode == 13 ? addUserToBannedGroup() : null">
-         <span class="input-group-btn">
-           <button class="btn btn-danger" type="button" ng-click="addUserToBannedGroup()">Ban</button>
-         </span>
-      </div>
-     </div>
-    </div>
-  </div>
-  <div class="content-block" style="width: 49%; margin-top:2%">
-    <div class="content-block-header">
-      <span style="padding-left: 15px;font-weight: 600;font-size: 15px;">Spark Exemptions</span>
-      <div class="searchbar-header-wrapper" ng-if="activeExemptTab == '0'">
-        <input type="text" class="form-control" placeholder="Search users" ng-model="exemptSearch" style="padding-left: 27px;">
-        <span class="searchbar-icon"><i class="far fa-search"></i></span>
-      </div>
-    </div>
-    <div class="content-block-body">
-      
-      <uib-tabset active="activeExemptTab">
-        <uib-tab index="0" heading="Users">
-          <table class="table">
-           <thead>
-             <tr>
-               <th>USERNAME</th>
-               <th></th>
-             </tr>
-           </thead>
-           <tbody>
-             <tr class="repeatList" ng-repeat="user in userList = (exemptGroup.users | filter:exemptSearch) | startFrom:(pagination.exemptList.currentPage-1)*pagination.exemptList.pageSize | limitTo:pagination.exemptList.pageSize track by $index">
-               <td>{{user}}</td>
-               <td>
-                 <span class="delete-button pull-right" ng-click="removeUserFromExemptGroupAtIndex($index)">
-                   <i class="far fa-trash-alt"></i>
-                 </span>
-               </td>
-             </tr>
-           </tbody>
-         </table>
-         <div ng-show="exemptGroup.users.length == 0" style="opacity: 0.5;padding-bottom:20px;">There are no exempt users.</div>
-         <div ng-show="exemptGroup.users.length > pagination.exemptList.pageSize" style="text-align: center;">
-            <ul uib-pagination total-items="userList.length" ng-model="pagination.exemptList.currentPage" items-per-page="pagination.exemptList.pageSize" class="pagination-sm" max-size="5" boundary-link-numbers="true" rotate="true"></ul>
-         </div>
-         <div style="display: flex;justify-content: center;">
-           <div class="input-group" style="width: 50%;">
-             <input type="text" class="form-control" placeholder="Exempt new user" ng-model="$parent.$parent.newExemptUser" ng-keyup="$event.keyCode == 13 ? $parent.$parent.addUserToExemptGroup() : null">
-             <span class="input-group-btn">
-               <button class="btn btn-danger" type="button" ng-click="$parent.$parent.addUserToExemptGroup()">Exempt</button>
-             </span>
-          </div>
-         </div>
-        </uib-tab>
-        
-        <uib-tab index="1" heading="Groups">
-          <div style="margin-top:15px; margin-left: 15px;">
-            <label class="control-fb control--checkbox">Default
-              <input type="checkbox" ng-click="updateCheckedArrayWithElement(exemptGroup.groups, 'default')" ng-checked="arrayContainsElement(exemptGroup.groups, 'default')">
-              <div class="control__indicator"></div>
-            </label>
-            <label ng-repeat="groupName in allViewerGroups | orderBy:'toString()'" class="control-fb control--checkbox">{{groupName}}
-              <input type="checkbox" ng-click="updateCheckedArrayWithElement(exemptGroup.groups, groupName)" ng-checked="arrayContainsElement(exemptGroup.groups, groupName)">
-              <div class="control__indicator"></div>
-            </label>            
-          </div>      
-        </uib-tab>
-      </uib-tabset>
-      
-      
-        
-      
-    </div>
-  </div>
 </div>
-

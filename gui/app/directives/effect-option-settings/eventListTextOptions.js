@@ -1,14 +1,11 @@
-'use strict';
+"use strict";
 (function() {
-
-    angular
-        .module('firebotApp')
-        .component("eventListTextOptions", {
-            bindings: {
-                model: '=',
-                isGlobal: "<"
-            },
-            template: `
+    angular.module("firebotApp").component("eventListTextOptions", {
+        bindings: {
+            model: "=",
+            isGlobal: "<"
+        },
+        template: `
                 <div>
                     <eos-container header="Text Settings" ng-hide="$ctrl.isGlobal">
                         <label class="control-fb control--radio">Use Presets <span class="muted"><br />Presets are editable in Settings > Overlay or by clicking <a href ng-click="$event.stopPropagation();$ctrl.openPresetModal();">here</a>. </span>
@@ -107,21 +104,21 @@
                     
                 </div>
                 `,
-            controller: function(utilityService) {
-                let ctrl = this;
+        controller: function(utilityService) {
+            let ctrl = this;
 
-                ctrl.openPresetModal = function() {
-                    utilityService.showOverlayEventsModal();
-                };
+            ctrl.openPresetModal = function() {
+                utilityService.showOverlayEventsModal();
+            };
 
-                ctrl.$onInit = function() {
-                    if (ctrl.model.text == null) {
-                        ctrl.model.text = "$(user) pressed $(text)!";
-                    }
-                    if (ctrl.model.override == null) {
-                        ctrl.model.override = false;
-                    }
-                };
-            }
-        });
+            ctrl.$onInit = function() {
+                if (ctrl.model.text == null) {
+                    ctrl.model.text = "$(user) pressed $(text)!";
+                }
+                if (ctrl.model.override == null) {
+                    ctrl.model.override = false;
+                }
+            };
+        }
+    });
 }());

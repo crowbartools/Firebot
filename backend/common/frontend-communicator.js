@@ -1,0 +1,60 @@
+"use strict";
+
+const uuidv1 = require("uuid/v1");
+
+const { ipcMain } = require("electron");
+
+let listeners = {};
+
+function send(eventName, data) {
+    if (global.renderWindow != null) {
+        renderWindow.webContents.send(eventName, data);
+    }
+}
+
+function registerEventWithElectron(eventName) {
+    return (function(name) {
+        ipcMain.on(name, function(event, data) {
+            let eventListeners = listeners[name];
+            for (let listener of eventListeners) {
+                if (listener.async) {
+                    listener.callback(data).then(returnValue => {
+                        send(`${name}:reply`, returnValue);
+                    });
+                } else {
+                    let returnValue = listener.callback(data);
+                    event.returnValue = returnValue;
+                }
+            }
+        });
+    }(eventName));
+}
+
+function on(eventName, callback, async = false) {
+    let id = uuidv1(),
+        event = {
+            id: id,
+            callback: callback,
+            async: async
+        };
+
+    if (listeners.hasOwnProperty(eventName)) {
+        listeners[eventName].push(event);
+    } else {
+        listeners[eventName] = [event];
+        registerEventWithElectron(eventName);
+    }
+
+    return id;
+}
+
+function onAsync(eventName, callback) {
+    return on(eventName, callback, true);
+}
+
+exports.send = send;
+exports.onAsync = onAsync;
+exports.on = function(eventName, callback) {
+    return on(eventName, callback, false);
+};
+

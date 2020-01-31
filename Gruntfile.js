@@ -1,20 +1,44 @@
 module.exports = function(grunt) {
 
+    const WORKING_DIR = process.cwd();
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         'create-windows-installer': {
             x64: {
-                appDirectory: 'G:/GitHub/Firebot/dist/Firebot-win32-x64',
-                outputDirectory: 'G:/GitHub/Firebot/dist/installer64',
-                loadingGif: 'G:/GitHub/Firebot/gui/images/animated.gif',
-                iconUrl: 'https://crowbartools.com/projects/firebot/logo.ico',
-                setupIcon: 'G:/GitHub/Firebot/gui/images/logo.ico'
+                appDirectory: WORKING_DIR + '/dist/Firebot-win32-x64',
+                outputDirectory: WORKING_DIR + '/dist/installer64',
+                loadingGif: WORKING_DIR + '/gui/images/animated.gif',
+                iconUrl: WORKING_DIR + '/gui/images/icon_transparent.ico',
+                setupIcon: WORKING_DIR + '/gui/images/icon_transparent.ico',
+                exe: "Firebot V5.exe",
+                title:" Firebot V5",
+                setupExe: "FirebotV5Setup.exe",
+                setupMsi: "FirebotV5Setup.msi"
             }
-        }
+        },
+		'jsdoc' : {
+            src: [
+                './main.js',
+                './backend',
+                './gui',
+                './server',
+                './shared',
+                './resources'
+            ],
+            options: {
+                destination: 'doc',
+                verbose: true,
+                recurse: true
+            }
+		}
     });
 
     // Load installer builder.
     grunt.loadNpmTasks('grunt-electron-installer');
+	
+	// Generate our docs
+	grunt.loadNpmTasks('grunt-jsdoc');
 
 };

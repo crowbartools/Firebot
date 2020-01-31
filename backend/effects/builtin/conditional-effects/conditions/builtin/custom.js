@@ -1,0 +1,40 @@
+"use strict";
+
+module.exports = {
+    id: "firebot:custom",
+    name: "Custom",
+    description: "Condition based on custom values (useful with $variables)",
+    comparisonTypes: ["is", "is not", "is less than", "is greater than", "contains", "matches regex"],
+    leftSideValueType: "text",
+    rightSideValueType: "text",
+    predicate: (conditionSettings, trigger) => {
+
+        let { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
+
+        if (!isNaN(leftSideValue)) {
+            leftSideValue = Number(leftSideValue);
+        }
+        if (!isNaN(rightSideValue)) {
+            rightSideValue = Number(rightSideValue);
+        }
+
+        switch (comparisonType) {
+        case "is":
+            return leftSideValue == rightSideValue; //eslint-disable-line eqeqeq
+        case "is not":
+            return leftSideValue != rightSideValue; //eslint-disable-line eqeqeq
+        case "is less than":
+            return leftSideValue < rightSideValue; //eslint-disable-line eqeqeq
+        case "is greater than":
+            return leftSideValue > rightSideValue; //eslint-disable-line eqeqeq
+        case "contains":
+            return leftSideValue.toString().includes(rightSideValue);
+        case "matches regex": {
+            let regex = new RegExp(rightSideValue, "gi");
+            return regex.test(leftSideValue);
+        }
+        default:
+            return false;
+        }
+    }
+};

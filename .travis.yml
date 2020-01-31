@@ -1,13 +1,25 @@
-language: node_js
-node_js:
-    - "7"
+sudo: required
 
-cache:
-  directories:
-    - "node_modules"
+language: node_js
+
+python:
+  - "2.7"
+
+node_js:
+  - "12.14.1"
+  
+before_install:
+  - sudo apt-get install libxtst-dev
 
 install:
-  - npm install
+  - npm install --no-save eslint
 
 script:
-    - npm run lint
+  - npm run lint
+
+# deploy:
+#  skip_cleanup: true
+#  provider: script
+#  script: node deploy.js
+#  on:
+#    branch: v5

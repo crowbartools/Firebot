@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 (function() {
 
     // const moment = require('moment'); // Not in use anymore. Leaving it like this just incase we revert.
@@ -6,17 +6,27 @@
     //This handles the Settings tab
 
     angular
-        .module('firebotApp')
-        .controller('chatMessagesController', function(logger, $rootScope, $scope, chatMessagesService, connectionService,
-            listenerService, settingsService, soundService) {
-
+        .module("firebotApp")
+        .controller("chatMessagesController", function(
+            logger,
+            $rootScope,
+            $scope,
+            chatMessagesService,
+            connectionService,
+            listenerService,
+            settingsService,
+            soundService,
+            utilityService
+        ) {
             $scope.settings = settingsService;
 
             $scope.compactDisplay = settingsService.isChatCompactMode();
             $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();
             $scope.hideDeletedMessages = settingsService.chatHideDeletedMessages();
+            $scope.showGifs = settingsService.chatShowGifs();
+            $scope.showStickers = settingsService.chatShowStickers();
 
-            $scope.chatMessage = '';
+            $scope.chatMessage = "";
             $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
 
@@ -24,7 +34,7 @@
 
             $scope.currentViewers = 0;
 
-            $scope.botLoggedIn = connectionService.accounts.bot.isLoggedIn;
+            $scope.botLoggedIn = connectionService.accounts.bot.loggedIn;
 
             // the number of messages to show visually, we have to make the number negative so angular knows to limit
             // from the end of the array instead of the front
@@ -45,13 +55,23 @@
                 settingsService.setChatHideDeletedMessages($scope.hideDeletedMessages);
             };
 
+            $scope.toggleShowGifs = function() {
+                $scope.showGifs = !$scope.showGifs;
+                settingsService.setChatShowGifs($scope.showGifs);
+            };
+
+            $scope.toggleShowStickers = function() {
+                $scope.showStickers = !$scope.showStickers;
+                settingsService.setChatShowStickers($scope.showStickers);
+            };
+
             // Gets all chat messages from chat message service.
             $scope.getMessages = function() {
                 return chatMessagesService.chatQueue;
             };
 
             // Gets all chat users we have from the message service.
-            $scope.getChatUsers = function () {
+            $scope.getChatUsers = function() {
                 return chatMessagesService.getChatUsers();
             };
 
@@ -71,6 +91,14 @@
                     return true;
                 }
                 return false;
+            };
+
+            $scope.skillHasGif = function(skill) {
+                return chatMessagesService.skillHasGifUrl(skill.execution_id);
+            };
+
+            $scope.getSkillGifUrl = function(skill) {
+                return chatMessagesService.getGifUrlForSkill(skill.execution_id);
             };
 
             // Returns first role in set of roles which should be their primary.
@@ -103,7 +131,7 @@
 
             $scope.getWhisperData = function(data) {
                 let target = data.target;
-                return 'Whispered to ' + target + '.';
+                return "Whispered to " + target + ".";
             };
 
             $scope.getTimeStamp = function(message) {
@@ -119,10 +147,12 @@
             $scope.chatFeedIsEnabled = function() {
                 // if chat feed is disabled in settings
                 if (!chatMessagesService.getChatFeed()) {
-                    $scope.disabledMessage = "The chat feed is currently disabled. Click the gear in the bottom right corner to enable.";
+                    $scope.disabledMessage =
+            "The chat feed is currently disabled. Click the gear in the bottom right corner to enable.";
                     return false;
                 } else if (!connectionService.connectedToChat) {
-                    $scope.disabledMessage = "The chat feed will enable once a connection to Chat has been made.";
+                    $scope.disabledMessage =
+            "The chat feed will enable once a connection to Chat has been made.";
                     return false;
                 }
                 return true;
@@ -136,11 +166,25 @@
                 return chatMessagesService.getChatViewerListSetting();
             };
 
+            $scope.showUserDetailsModal = (userId) => {
+                if (userId == null) return;
+                let closeFunc = () => {};
+                utilityService.showModal({
+                    component: "viewerDetailsModal",
+                    backdrop: true,
+                    resolveObj: {
+                        userId: () => userId
+                    },
+                    closeCallback: closeFunc,
+                    dismissCallback: closeFunc
+                });
+            };
+
             function focusMessageInput() {
-                angular.element('#chatMessageInput').trigger('focus');
+                angular.element("#chatMessageInput").trigger("focus");
             }
 
-            $scope.messageActionSelected = (action, userName, msgId) => {
+            $scope.messageActionSelected = (action, userName, userId, msgId) => {
                 switch (action.toLowerCase()) {
                 case "delete":
                     chatMessagesService.deleteMessage(msgId);
@@ -163,6 +207,14 @@
                     $scope.chatMessage = "/w @" + userName + " ";
                     focusMessageInput();
                     break;
+                case "mention":
+                    $scope.chatMessage = "@" + userName + " ";
+                    focusMessageInput();
+                    break;
+                case "details": {
+                    $scope.showUserDetailsModal(userId);
+                    break;
+                }
                 default:
                     return;
                 }
@@ -172,10 +224,13 @@
             let chatHistory = [];
             let currrentHistoryIndex = -1;
             $scope.submitChat = function() {
+                if ($scope.chatMessage == null || $scope.chatMessage.length < 1) {
+                    return;
+                }
                 chatMessagesService.submitChat($scope.chatSender, $scope.chatMessage);
                 chatHistory.unshift($scope.chatMessage);
                 currrentHistoryIndex = -1;
-                $scope.chatMessage = '';
+                $scope.chatMessage = "";
             };
 
             $scope.onMessageFieldUpdate = () => {
@@ -184,21 +239,30 @@
 
             $scope.onMessageFieldKeypress = $event => {
                 let keyCode = $event.which || $event.keyCode;
-                if (keyCode === 38) { //up arrow
-                    if ($scope.chatMessage.length < 1 || $scope.chatMessage === chatHistory[currrentHistoryIndex]) {
+                if (keyCode === 38) {
+                    //up arrow
+                    if (
+                        $scope.chatMessage.length < 1 ||
+            $scope.chatMessage === chatHistory[currrentHistoryIndex]
+                    ) {
                         if (currrentHistoryIndex + 1 < chatHistory.length) {
                             currrentHistoryIndex++;
                             $scope.chatMessage = chatHistory[currrentHistoryIndex];
                         }
                     }
-                } else if (keyCode === 40) { //down arrow
-                    if ($scope.chatMessage.length > 0 || $scope.chatMessage === chatHistory[currrentHistoryIndex]) {
+                } else if (keyCode === 40) {
+                    //down arrow
+                    if (
+                        $scope.chatMessage.length > 0 ||
+            $scope.chatMessage === chatHistory[currrentHistoryIndex]
+                    ) {
                         if (currrentHistoryIndex - 1 >= 0) {
                             currrentHistoryIndex--;
                             $scope.chatMessage = chatHistory[currrentHistoryIndex];
                         }
                     }
-                } else if (keyCode === 13) { // enter
+                } else if (keyCode === 13) {
+                    // enter
                     $scope.submitChat();
                 }
             };
@@ -212,7 +276,7 @@
             $scope.notificationVolume = settingsService.getTaggedNotificationVolume();
 
             $scope.volumeUpdated = function() {
-                logger.debug('updating noti volume: ' + $scope.notificationVolume);
+                logger.debug("Updating noti volume: " + $scope.notificationVolume);
                 settingsService.setTaggedNotificationVolume($scope.notificationVolume);
             };
 
@@ -236,20 +300,19 @@
             };
 
             $scope.saveSelectedNotification = function() {
-
                 let sound = $scope.selectedNotificationSound;
 
                 settingsService.setTaggedNotificationSound({
                     name: sound.name,
-                    path: sound.name === 'Custom' ? sound.path : undefined
+                    path: sound.name === "Custom" ? sound.path : undefined
                 });
             };
 
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CURRENT_VIEWERS_UPDATE },
-                (data) => {
+                data => {
                     $scope.currentViewers = data.viewersCurrent;
-                });
-
+                }
+            );
         });
 }());

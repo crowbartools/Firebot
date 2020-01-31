@@ -1,0 +1,214 @@
+"use strict";
+
+const logger = require("../logwrapper");
+const EventEmitter = require("events");
+const Expression = require("./expression");
+const { ArgumentsError, ExpressionError } = require("./expression-processor");
+
+const frontendCommunicator = require("../common/frontend-communicator");
+
+
+class ReplaceVariableManager extends EventEmitter {
+    constructor() {
+        super();
+        this._registeredReplaceVariables = [];
+    }
+
+    registerReplaceVariable(variable) {
+        // TODO: validate variable obj
+
+        if (this._registeredReplaceVariables.some(v => v.definition.handle === variable.definition.handle)) {
+            throw new TypeError("A variable with this handle already exists.");
+        }
+
+        this._registeredReplaceVariables.push(variable);
+
+        //register handlers with expression system
+        Expression.use(
+            {
+                handle: variable.definition.handle,
+                argsCheck: variable.argsCheck,
+                evaluate: variable.evaluator,
+                triggers: variable.definition.triggers
+            }
+        );
+
+        logger.debug(`Registered replace variable ${variable.definition.handle}`);
+
+        this.emit("replaceVariableRegistered", variable);
+    }
+
+    getReplaceVariables () {
+        return this._registeredReplaceVariables;
+    }
+
+    evaluateText(input, metadata, trigger) {
+        return Expression.evaluate({
+            expression: input,
+            metadata: metadata,
+            trigger: trigger
+        });
+    }
+
+    findAndReplaceVariables(data, trigger) {
+        return new Promise(async resolve => {
+            let keys = Object.keys(data);
+
+            for (let key of keys) {
+
+                let value = data[key];
+
+                if (value && typeof value === "string") {
+                    if (value.includes("$")) {
+                        let replacedValue = value;
+                        let triggerId = this.getTriggerIdFromTriggerData(trigger);
+                        try {
+                            replacedValue = await Expression.evaluate({
+                                expression: value,
+                                metadata: trigger,
+                                trigger: {
+                                    type: trigger.type,
+                                    id: triggerId
+                                }
+                            });
+                        } catch (err) {
+                            logger.warn(`Unable to parse variables for value: '${value}'`, err);
+                        }
+                        data[key] = replacedValue;
+                    }
+                } else if (value && typeof value === "object") {
+                    // recurse
+                    await this.findAndReplaceVariables(value, trigger);
+                }
+            }
+
+            resolve();
+        });
+    }
+
+    findAndValidateVariables(data, trigger, errors) {
+        return new Promise(async resolve => {
+
+            if (errors == null) {
+                errors = [];
+            }
+
+            let keys = Object.keys(data);
+            for (let key of keys) {
+
+                let value = data[key];
+
+                if (value && typeof value === "string") {
+                    if (value.includes("$")) {
+                        try {
+                            await Expression.validate({
+                                expression: value,
+                                trigger: {
+                                    type: trigger && trigger.type,
+                                    id: trigger && trigger.id
+                                }
+                            });
+                        } catch (err) {
+                            err.dataField = key;
+                            err.rawText = value;
+                            if (err instanceof ArgumentsError) {
+                                errors.push(err);
+                                logger.debug(`Found variable error when validating`, err);
+                            } else if (err instanceof ExpressionError) {
+                                errors.push({
+                                    dataField: err.dataField,
+                                    message: err.message,
+                                    position: err.position,
+                                    varname: err.varname,
+                                    character: err.character,
+                                    rawText: err.rawText
+                                });
+                                logger.debug(`Found variable error when validating`, err);
+                            } else {
+                                logger.error(`Unknown error when validating variables for string: '${value}'`, err);
+                            }
+                        }
+                    }
+                } else if (value && typeof value === "object") {
+                    // recurse
+                    await this.findAndValidateVariables(value, trigger, errors);
+                }
+            }
+
+            resolve(errors);
+        });
+    }
+
+    getTriggerIdFromTriggerData(trigger) {
+
+        switch (trigger.type) {
+        case "interactive":
+            return trigger.metadata.control && trigger.metadata.control.kind;
+        case "event": {
+            let eventSource = trigger.metadata.eventSource,
+                event = trigger.metadata.event;
+            if (eventSource && event) {
+                return `${eventSource.id}:${event.id}`;
+            }
+        }
+        }
+
+        return undefined;
+    }
+}
+
+const manager = new ReplaceVariableManager();
+
+frontendCommunicator.on("getReplaceVariableDefinitions", (trigger) => {
+    logger.info("got 'get all vars' request");
+    if (trigger != null) {
+
+        let variables = manager.getReplaceVariables()
+            .map(v => v.definition)
+            .filter(v => {
+
+                if (trigger.dataOutput === "number") {
+                    if (v.possibleDataOutput == null || !v.possibleDataOutput.includes("number")) {
+                        return false;
+                    }
+                }
+
+                if (v.triggers == null) {
+                    return true;
+                }
+
+                let variableTrigger = v.triggers[trigger.type];
+                if (variableTrigger === true) {
+                    return true;
+                }
+
+                if (Array.isArray(variableTrigger)) {
+                    if (variableTrigger.some(id => id === trigger.id)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            });
+        return variables;
+    }
+    return manager.getReplaceVariables().map(v => v.definition);
+});
+
+frontendCommunicator.onAsync("validateVariables", (eventData) => {
+    logger.info("got 'validateVariables' request");
+    return new Promise(async resolve => {
+        let { data, trigger } = eventData;
+
+        let errors = [];
+        try {
+            errors = await manager.findAndValidateVariables(data, trigger);
+        } catch (err) {
+            logger.error("Unable to validate variables.", err);
+        }
+
+        resolve(errors);
+    });
+});
+
+module.exports = manager;

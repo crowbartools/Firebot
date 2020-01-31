@@ -1,15 +1,16 @@
-'use strict';
+"use strict";
 (function() {
-
     //This handles the Updates tab
 
     angular
-        .module('firebotApp')
-        .controller('updatesController', function($scope, updatesService) {
+        .module("firebotApp")
+        .controller("updatesController", function($scope, updatesService) {
 
             $scope.getUpdateData = function() {
                 return updatesService.updateData;
             };
+
+            $scope.us = updatesService;
 
             // Get update information if we havent alreday
             if (!updatesService.hasCheckedForUpdates) {
@@ -19,6 +20,5 @@
             $scope.downloadAndInstallUpdate = function() {
                 updatesService.downloadAndInstallUpdate();
             };
-
         });
 }());

@@ -1,0 +1,86 @@
+<div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">
+      <span ng-if="!$ctrl.isNewCurrency">Edit Currency - </span> {{$ctrl.isNewCurrency ? 'Add New Currency' : $ctrl.currency.name }}
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="general-button-settings">
+
+        <div style="padding-bottom:1em">
+            <div class="settings-title">
+                <h3>General Settings</h3>
+            </div>
+
+            <label ng-hide="$ctrl.isNewCurrency" class="control-fb control--checkbox">Active Currency
+                <input type="checkbox" ng-model="$ctrl.currency.active" aria-label="..." checked>
+                <div class="control__indicator"></div>
+            </label>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon3">Name</span>
+                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.name" placeholder="Coins">
+            </div>         
+
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon3">Currency Limit</span>
+                <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.limit" placeholder="1000">
+            </div>
+            
+            <div class="dropdown options-sounds-dropdown">
+                <h4>Transfers</h4>
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{$ctrl.currency.transfer}}</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-sounds">
+                    <li><a href ng-click="$ctrl.setTransferEnabled('Allow')">Allow</a></li>
+                    <li><a href ng-click="$ctrl.setTransferEnabled('Disallow')">Disallow</a></li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <div class="settings-title">
+                    <h3>Payout Settings</h3>
+                </div>
+
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon3">Base Payout</span>
+                    <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.payout" placeholder="10">
+                </div>
+                <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
+                    <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px; flex-shrink: 0">Offline Payout 
+                        <tooltip text="'The offline payout amount replaces the base payout amount when the stream is offline.'"></tooltip>
+                        <input type="checkbox" ng-init="offline = ($ctrl.currency.offline != null && $ctrl.currency.offline !== '')" ng-model="offline" ng-click="$ctrl.currency.offline = ''">
+                        <div class="control__indicator"></div>
+                    </label>
+                    <div ng-show="offline">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="currency-offline-effect-type">Amount</span>
+                            <input ng-model="$ctrl.currency.offline" type="number" class="form-control" id="currency-offline-setting" aria-describedby="chat-text-effect-type" placeholder="5">
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon3">Payout Interval (Mins)</span>
+                    <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.currency.interval" placeholder="5">
+                </div>
+
+                <h4>Role Bonuses</h4>
+                <p>These bonuses are added on top of the base payout. A viewer will receive a bonus for each role they are in.</p>
+                <div class="bonus-payout-groups">
+                    <div class="bonus-payout-group input-group" ng-repeat="role in $ctrl.viewerRoles">
+                        <span class="input-group-addon" id="basic-addon3">{{role.name}}</span>
+                        <input type="number" class="form-control" aria-describedby="basic-addon3" placeholder="0" ng-model="$ctrl.currency.bonus[role.id]">
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-hide="$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyDeleteModal($ctrl.currency)">Delete Currency</button>
+    <button type="button" class="btn btn-warning pull-left" ng-hide="$ctrl.isNewCurrency" ng-click="$ctrl.showCurrencyPurgeModal($ctrl.currency)">Purge Currency</button>
+    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save Changes</button>
+</div>

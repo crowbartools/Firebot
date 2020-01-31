@@ -1,0 +1,54 @@
+
+
+.ag-theme-material{
+    background-color: transparent!important;
+    .ag-paging-panel{
+        border-top: 0px !important;
+    }
+}
+
+.ag-header-row{
+    width:100%!important;
+}
+
+.ag-body{
+    .ag-body-container{
+        width:100%!important;
+        box-shadow: 1px 1px 5px #dedede!important;
+        background-color:white!important;
+        .eLabel{
+            font-size:11px;
+            color: #25292a;
+            opacity: 0.5;
+        }
+    }
+}
+
+.viewer-detail-data {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 10px;
+    grid-row-gap: 30px;
+    .detail-data {
+        display: flex;
+        flex-direction: column;
+        //align-items: center;
+        //margin-bottom: 30px;
+        .data-title {
+            font-size: 12px;
+            opacity:0.7;
+            text-transform: uppercase;
+        }
+        .data-point {
+            font-size:18px;
+            display: flex;
+            align-items: center;
+            .edit-data-btn {
+                margin-left: 4px;
+                font-size: 9px;
+            }
+        }
+    }
+}
+
+

@@ -6,28 +6,7 @@
 
         <!-- General Settings -->
         <uib-tab index="0" heading="General">
-          <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Setup Wizard</div>
-              <div class="setting-description">Want to run the setup wizard again? Click the button below.</div>
-              <button class="btn btn-default" ng-click="showSetupWizard(true)">Open Setup Wizard</button>
-            </div>
-            <div class="setting col-sm-6">
-              <div class="setting-heading">App Sounds</div>
-              <div class="setting-description">Let Firebot play sounds for various app functions. For example, you will get a warning when Firebot connects or disconnects.</div>
-              <div class="dropdown options-sounds-dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="options-sounds">
-                  <li><a href ng-click="settings.setSoundsEnabled('On')">On</a></li>
-                  <li><a href ng-click="settings.setSoundsEnabled('Off')">Off</a></li>
-                </ul>
-              </div>         
-            </div>
-          </div>
-          <div class="row">
+          <div class="row"  style="margin-top: 15px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Theme</div>
               <div class="setting-description">Choose your color theme for Firebot!</div>
@@ -38,7 +17,8 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="options-sounds">
                   <li><a href ng-click="settings.setTheme('Light')">Light</a></li>
-                  <li><a href ng-click="settings.setTheme('Dark')">Dark</a></li>
+                  <li><a href ng-click="settings.setTheme('Midnight')">Midnight</a></li>
+                  <li><a href ng-click="settings.setTheme('Obsidian')">Obsidian</a></li>
                 </ul>
               </div>
             </div>
@@ -63,16 +43,41 @@
             </div>
           </div>
           <div class="row">
+
+                <div class="setting col-sm-6">
+                    <div class="setting-heading">Beta Notifications</div>
+                    <div class="setting-description">Firebot automatically updates to new stable versions. It does not automatically update to betas or major new releases however. Below you can choose if you want to be notified of new beta releases.</div>
+                    <div style="padding-top: 10px; padding-left: 10px;">
+                        <label class="control-fb control--checkbox"> Subscribe to beta notifications <i class="fal fa-question-circle" uib-tooltip="Get notified when a new beta is available. You will be able to review the change log and update from within the app, if you so desire." tooltip-append-to-body="true" ></i>
+                        <input type="checkbox" ng-click="settings.setNotifyOnBeta(!settings.notifyOnBeta())" ng-checked="settings.notifyOnBeta()" aria-label="..." >
+                        <div class="control__indicator"></div>
+                        </label>
+                    </div> 
+                </div>
+            
             <div class="setting col-sm-6">
-              <div class="setting-heading">Beta Notifications</div>
-              <div class="setting-description">Firebot automatically updates to new stable versions. It does not automatically update to betas or major new releases however. Below you can choose if you want to be notified of new beta releases.</div>
-              <div style="padding-top: 10px; padding-left: 10px;">
-                <label class="control-fb control--checkbox"> Subscribe to beta notifications <i class="fal fa-question-circle" uib-tooltip="Get notified when a new beta is available. You will be able to review the change log and update from within the app, if you so desire." tooltip-append-to-body="true" ></i>
-                  <input type="checkbox" ng-click="settings.setNotifyOnBeta(!settings.notifyOnBeta())" ng-checked="settings.notifyOnBeta()" aria-label="..." >
-                  <div class="control__indicator"></div>
-                </label>
-              </div> 
+              <div class="setting-heading">Connection Sounds</div>
+              <div class="setting-description">Get audible alerts when Firebot connects or disconnects.</div>
+              <div class="dropdown options-sounds-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-sounds" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.soundsEnabled()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-sounds">
+                  <li><a href ng-click="settings.setSoundsEnabled('On')">On</a></li>
+                  <li><a href ng-click="settings.setSoundsEnabled('Off')">Off</a></li>
+                </ul>
+              </div>         
             </div>
+          </div>
+          <div class="row">
+
+            <div class="setting col-sm-6">
+                <div class="setting-heading">Setup Wizard</div>
+                <div class="setting-description">Want to run the setup wizard again? Click the button below.</div>
+                <button class="btn btn-default" ng-click="showSetupWizard(true)">Open Setup Wizard</button>
+            </div>
+
             <div class="setting col-sm-6">              
               <div class="setting-heading">Root Folder Access</div>
               <div class="setting-description">Need easy access to Firebot's main folder where all settings and data are saved?</div>
@@ -82,19 +87,88 @@
         </uib-tab>
 
         <!-- Interactive Settings -->
-        <uib-tab index="1" heading="Interactive">
+        <!--<uib-tab index="1" heading="MixPlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Control Emulation</div>
-              <div class="setting-description">Firebot has two different control emulators built in. If one doesn't work for you, try the other one!</div>
+              <div class="setting-heading">Spark Exemption</div>
+                <div class="setting-description">Enable or disable the spark exemption feature, which lets you specify users or groups who dont get charged sparks.</div>
+                <div class="dropdown options-customscript-dropdown"style="display: inline-block">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span class="dropdown-text">{{settings.sparkExemptionEnabled() ? 'On' : 'Off'}}</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                      <li><a href ng-click="setSparkExemption(true)">On</a></li>
+                      <li><a href ng-click="setSparkExemption(false)">Off</a></li>
+                    </ul>
+                  </div>
+            </div>
+          </div>
+        </uib-tab>-->
+
+        <!-- Chat Settings -->
+        <uib-tab index="2" heading="Chat">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Active Chat Users List</div>
+                <div class="setting-description">
+                  Keep track of active users in the backend for use in variables and other things. Deactivating may slightly improve performance on larger channels.
+                </div>
+                <div class="dropdown options-activeChatUserList-dropdown"style="display: inline-block">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span class="dropdown-text">{{settings.getActiveChatUserList() ? 'On' : 'Off'}}</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-activeChatUserList">
+                      <li><a href ng-click="setActiveChatUsers(true)">On</a></li>
+                      <li><a href ng-click="setActiveChatUsers(false)">Off</a></li>
+                    </ul>
+                  </div>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Inactive User Time</div>
+                <div class="setting-description">
+                  The amount of time it takes for an active user to be marked as inactive after their last chat message. Doesn't have any affect unless active chat user list is on.
+                </div>
+                <div class="dropdown options-activeChatUserTimeout-dropdown"style="display: inline-block">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span class="dropdown-text">{{settings.getActiveChatUserListTimeout()}}</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-activeChatUserTimeout">
+                      <li><a href ng-click="setActiveChatUserTimeout('5')">5</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('10')">10</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('15')">15</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('20')">20</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('25')">25</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('30')">30</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('35')">35</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('40')">40</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('45')">45</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('50')">50</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('55')">55</a></li>
+                      <li><a href ng-click="setActiveChatUserTimeout('60')">60</a></li>
+                    </ul>
+                    <span> minutes</span>
+                  </div>
+            </div>
+          </div>
+        </uib-tab>
+
+        <!-- Database Settings -->
+        <uib-tab index="3" heading="Database">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Viewer Database</div>
+              <div class="setting-description">Turn on/off the viewer tracking database. This could improve performance in some cases.</div>
               <div class="dropdown options-emulation-dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  <span class="dropdown-text">{{settings.getEmulator()}}</span>
+                  <span class="dropdown-text">{{settings.getViewerDB() ? "On" : "Off"}}</span>
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="options-emulation">
-                  <li><a href ng-click="settings.setEmulator('Robotjs')">Robotjs</a></li>
-                  <li><a href ng-click="settings.setEmulator('KBMRobot')">KBMRobot</a></li>
+                  <li><a href ng-click="settings.setViewerDB(true)">On</a></li>
+                  <li><a href ng-click="settings.setViewerDB(false)">Off</a></li>
                 </ul>
               </div>
             </div>
@@ -104,23 +178,77 @@
         </uib-tab>
 
         <!-- Overlay Settings -->
-        <uib-tab index="3" heading="Overlay">
+        <uib-tab index="4" heading="Overlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Filepath</div>
+              <div class="setting-heading">Overlay URL</div>
               <div class="setting-description">Click the button below to get quick access to the Firebot overlay path.</div>
               <button class="btn btn-default" ng-click="settings.showOverlayInfoModal()">Get Overlay Path</button>
             </div>
             <div class="setting col-sm-6">
-              <div class="setting-heading">Event List Settings</div>
-              <div class="setting-description">The Event List is a widget on the overlay that can display various text via the "Show Event" effect that you can add to buttons and commands. Click the button below to edit the style, position, & size of the Event List as well as the global text presets.</div>
-              <button class="btn btn-default" ng-click="settings.showOverlayEventsModal()">Edit Settings</button>
+                <div class="setting-heading">Font Management</div>
+                <div class="setting-description">Manage fonts for use with the Show Text effect in the overlay. Any changes to fonts will require a restart to Firebot and then refreshing the overlay.</div>
+                <button class="btn btn-default" ng-click="showFontManagementModal()">Manage Fonts</button>
             </div>
+          </div>
+
+          <div class="row" style="margin-top: 15px">
+
+            <div class="setting col-sm-6">
+                <div class="setting-heading">Overlay Instances</div>
+                <div class="setting-description">
+                  Enable or disable the ability to use multiple overlay instances in your broadcasting software. When on, you will be able to pick which instance you want a video or image effect to show in. This is useful if you use greenscreen footage that you need to chroma key but don't want to affect your other videos and images. 
+                </div>
+                <div class="dropdown options-customscript-dropdown"style="display: inline-block">
+                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{settings.useOverlayInstances() ? 'On' : 'Off'}}</span>
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                    <li><a href ng-click="settings.setUseOverlayInstances(true)">On</a></li>
+                    <li><a href ng-click="settings.setUseOverlayInstances(false)">Off</a></li>
+                  </ul>
+                </div>
+                <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
+            </div>
+
+            <div class="setting col-sm-6">
+                <!--<div class="setting-heading">Overlay Web Socket Port</div>
+                <div class="setting-description">
+                  This is the port that the Firebot and the overlay webpage use to talk to each other. 
+                  You usually only need to change this if you are having a problem with the overlay. 
+                </div>
+                <div class="input-group" style="width: 50%; margin-bottom: 10px;">
+                  <input type="text" class="form-control" ng-model="currentPort" disabled>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="showChangePortModal()">Edit</button>
+                  </span>
+                </div>          
+                <div class="alert alert-warning">
+                    <b>Note</b>: If a new port is set, both Firebot and anything previewing the overlay (ie broadcasting software) will need to be restarted for the new port to take effect. You will also need to update your overlay URL.
+                </div>-->
+            </div>
+
           </div>
         </uib-tab>
 
+         <!-- Integration Settings -->
+        <uib-tab index="5" heading="Integrations">
+          <div class="row" style="margin-top: 30px">
+            <div class="integration-row" ng-repeat="integration in integrations.getIntegrations()">
+              <div>
+                <span><b>{{integration.name}}</b></span>
+                <span class="muted" style="font-size: 13px;padding-left:10px;">{{integration.description}}</span>
+              </div>
+              <div>
+                  <button class="btn btn-default" ng-click="integrations.toggleLinkforIntegration(integration.id)">{{integrations.integrationIsLinked(integration.id) ? 'Unlink' : 'Link'}}</button>
+              </div>
+            </div>
+          </div>
+        </uib-tab>
+        
         <!-- Clip Settings -->
-        <uib-tab index="2" heading="Clips" ng-show="canClip">
+        <uib-tab index="6" heading="Clips" ng-show="canClip">
             <div class="row" style="margin-top: 15px">
               <div class="setting col-sm-6">
                 <div class="setting-heading">Clip Download Folder</div>
@@ -136,7 +264,7 @@
           </uib-tab>
         
         <!-- Backup Settings -->
-        <uib-tab index="4" heading="Backup">
+        <uib-tab index="7" heading="Backup">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">              
                 <div class="setting-heading">Backup Options</div>
@@ -186,11 +314,8 @@
         </uib-tab>
         
         <!-- Advanced Settings -->
-        <uib-tab index="5" heading="Advanced">
+        <uib-tab index="8" heading="Advanced">
           <div class="row" style="margin-top: 15px">
-            <div class="alert alert-warning">
-                Most users won't need to change settings in this tab. Only change them if you understand what you are doing.
-            </div>
             <div class="setting col-sm-6">
                 <div class="setting-heading">Debug Mode</div>
                 <div class="setting-description">
@@ -198,8 +323,17 @@
                 </div>
                 <button class="btn btn-default" ng-click="settings.setDebugModeEnabled(!settings.debugModeEnabled())">{{settings.debugModeEnabled() ? 'Disable Debug Mode' : 'Enable Debug Mode' }} </button>        
             </div>
-            <div class="setting col-sm-6">
 
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Logs Folder</div>
+              <div class="setting-description">When troubleshooting issues, we may ask for log files from you.</div>
+              <button class="btn btn-default" ng-click="openLogsFolder()">Open Logs Folder</button>
+            </div>
+
+          </div>
+          <div class="row" style="margin-top:15px;">
+
+            <div class="setting col-sm-6">         
                 <div class="setting-heading">Custom Script Effect</div>
                 <div class="setting-description">Firebot supports an effect that can run custom scripts. You must opt in to use this feature as it is potentially dangerous. Please only run scripts from sources you trust. Want to write a custom script? Learn how <a ng-click="openLinkExternally('https://github.com/Firebottle/Firebot/wiki/Writing-Custom-Scripts')">here</a>.</div>
                 <div class="dropdown options-customscript-dropdown">
@@ -214,27 +348,36 @@
                 </div>
 
             </div>
-          </div>
-          <div class="row" style="margin-top:15px;">
+
             <div class="setting col-sm-6">
-                <div class="setting-heading">Overlay Instances</div>
-                <div class="setting-description">
-                  Enable or disable the ability to use multiple overlay instances in your broadcasting software. When on, you will be able to pick which instance you want a video or image effect to show in. This is useful if you use greenscreen footage that you need to chroma key but don't want to affect your other videos and images. 
-                </div>
-                <div class="dropdown options-customscript-dropdown"style="display: inline-block">
-                  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span class="dropdown-text">{{settings.useOverlayInstances() ? 'On' : 'Off'}}</span>
+
+              <div class="setting-heading">Dev Tools</div>
+              <div class="setting-description">
+                Click the button below to open the developer console. Only use if you know what you are doing. <strong>Never paste code from other people in the console.</strong></b>
+              </div>
+              <button class="btn btn-default" ng-click="openDevTools()">Open Dev Tools</button>
+
+            </div>
+
+            <!--<div class="setting col-sm-6">
+                <div class="setting-heading">Control Emulation</div>
+                <div class="setting-description">Firebot has two different control emulators built in. If one doesn't work for you, try the other one!</div>
+                <div class="dropdown options-emulation-dropdown">
+                  <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="dropdown-text">{{settings.getEmulator()}}</span>
                     <span class="caret"></span>
                   </button>
-                  <ul class="dropdown-menu" aria-labelledby="options-customscript">
-                    <li><a href ng-click="settings.setUseOverlayInstances(true)">On</a></li>
-                    <li><a href ng-click="settings.setUseOverlayInstances(false)">Off</a></li>
+                  <ul class="dropdown-menu" aria-labelledby="options-emulation">
+                    <li><a href ng-click="settings.setEmulator('Robotjs')">Robotjs</a></li>
                   </ul>
                 </div>
-                <span style="padding-left:10px" ng-if="settings.useOverlayInstances()"><a href ng-click="showEditOverlayInstancesModal()">Edit Instances</a></span>
-            </div>
+            </div>-->
+
+          </div>
+          <div class="row" style="margin-top: 15px">
+        
             <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
-                
+
               <div class="setting-heading">Clear Custom Script Cache</div>
               <div class="setting-description">
                 Whether or not you want the cached version of a custom script to be cleared on every button press. 
@@ -251,27 +394,6 @@
                 </ul>
               </div>
 
-            </div>
-          </div>
-          <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-              <div class="setting-heading">Overlay Web Socket Port</div>
-              <div class="setting-description">
-                This is the port that the Firebot and the overlay webpage use to talk to each other. 
-                You usually only need to change this if you are having a problem with the overlay. 
-              </div>
-              <div class="input-group" style="width: 50%; margin-bottom: 10px;">
-                <input type="text" class="form-control" ng-model="currentPort" disabled>
-                <span class="input-group-btn">
-                  <button class="btn btn-default" type="button" ng-click="showChangePortModal()">Edit</button>
-                </span>
-              </div>          
-              <div class="alert alert-danger">
-                  <b>Note</b>: If a new port is set, both Firebot and anything previewing the overlay (ie broadcasting software) will need to be restarted for the new port to take effect.
-              </div>
-              <div class="alert alert-warning">
-                <b>Warning</b>: This is NOT the port used in the overlay URL (7473). If you absolutely need to change that port, please reach out to us on Discord or Twitter.
-              </div>
             </div>
           </div>
         </uib-tab>

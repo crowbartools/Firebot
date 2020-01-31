@@ -1,0 +1,43 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Firebot Overlay</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="css/main.css" rel='stylesheet' type='text/css'>
+
+        <% for(let cssDep of dependancies.css) { %>
+            <link rel="stylesheet" type="text/css" href="<%-cssDep%>">
+        <% } %>
+
+    </head>
+    
+    <body>
+
+        <!-- This spinner is a hack to force OBS to always render the page while videos are playing -->
+        <div class="browser-source-force-render-spinner"></div>
+
+        <div class="wrapper" id="wrapper"></div>
+    </body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    
+    <script src="js/reconnecting-websocket.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/plugins/create.js"></script>
+    <script src="js/fireworks.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <% for(let jsDep of dependancies.js) { %>
+        <script src="<%-jsDep%>"></script>
+    <% } %>
+
+    <script>
+        <% for(let event of events) {%>
+            firebotOverlay.on('<%-event.name%>', <%-event.onOverlayEvent%>);
+        <% } %>
+    </script>
+</html> 

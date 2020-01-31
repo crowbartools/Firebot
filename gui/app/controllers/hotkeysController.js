@@ -1,12 +1,14 @@
-'use strict';
+"use strict";
 (function() {
-
     //This handles the Hotkeys tab
 
     angular
-        .module('firebotApp')
-        .controller('hotkeysController', function($scope, hotkeyService, utilityService) {
-
+        .module("firebotApp")
+        .controller("hotkeysController", function(
+            $scope,
+            hotkeyService,
+            utilityService
+        ) {
             $scope.getHotkeys = function() {
                 return hotkeyService.getHotkeys();
             };
@@ -21,7 +23,7 @@
                     resolveObj: {
                         hotkey: () => hotkey
                     },
-                    closeCallback: (resp) => {
+                    closeCallback: resp => {
                         let action = resp.action,
                             hotkey = resp.hotkey;
 
@@ -36,7 +38,6 @@
                             hotkeyService.deleteHotkey(hotkey);
                             break;
                         }
-
                     }
                 });
             };

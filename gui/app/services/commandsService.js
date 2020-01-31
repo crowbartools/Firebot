@@ -1,162 +1,238 @@
-'use strict';
+"use strict";
 (function() {
-
     //This manages command data
-
-    const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require("../../backend/common/profile-manager.js");
+    const moment = require("moment");
 
     angular
-        .module('firebotApp')
-        .factory('commandsService', function (logger) {
+        .module("firebotApp")
+        .factory("commandsService", function(
+            logger,
+            connectionService,
+            listenerService,
+            backendCommunicator
+        ) {
             let service = {};
 
+            let getCommandsDb = () =>
+                profileManager.getJsonDbInProfile("/chat/commands");
+
+            let getCommandGroupsDb = () =>
+                profileManager.getJsonDbInProfile("/chat/command-groups");
+
             // in memory commands storage
-            let commandsCache = {};
-            let timedGroupsCache = {};
+            let commandsCache = {
+                systemCommands: [],
+                customCommands: []
+            };
+
+            let commandGroups = [];
 
             // Refresh commands cache
             service.refreshCommands = function() {
-                let commandsDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
-                commandsCache = commandsDb.getData('/');
+                let commandsDb = getCommandsDb();
 
+                let cmdData;
                 try {
-                    timedGroupsCache = commandsDb.getData('/timedGroups');
+                    cmdData = commandsDb.getData("/");
                 } catch (err) {
-                    timedGroupsCache = {};
+                    logger.warn("error getting command data", err);
+                    return;
                 }
 
-                // Refresh the interactive control cache.
-                ipcRenderer.send('refreshCommandCache');
-
-            };
-
-            // Get an array of command types. Filters out timed groups list.
-            service.getCommandTypes = function() {
-                let commandTypes = [];
-                if (commandsCache != null) {
-                    commandTypes = Object.keys(commandsCache).filter(key => {
-                        return key !== 'timedGroups';
-                    });
+                if (cmdData.customCommands) {
+                    logger.debug("loading custom commands: " + cmdData.customCommands);
+                    commandsCache.customCommands = Object.values(cmdData.customCommands);
                 }
-                return commandTypes;
-            };
 
-            // Return all commands for a specific command type.
-            service.getAllCommandsForType = function(commandType) {
-                let commandArray = [];
-                if (commandsCache != null) {
-                    let commands = commandsCache[commandType];
-                    for (let command in commands) {
-                        if (commands.hasOwnProperty(command)) {
-                            commandArray.push(commands[command]);
-                        }
+                commandsCache.systemCommands = listenerService.fireEventSync(
+                    "getAllSystemCommandDefinitions"
+                );
+
+                // Refresh the command cache.
+                ipcRenderer.send("refreshCommandCache");
+
+                //load cmd groups
+                let groupsDb = getCommandGroupsDb();
+                try {
+                    commandGroups = groupsDb.getData("/groups");
+                } catch (error) {
+                    if (error.name === 'DatabaseError') {
+                        logger.error("Failed to load command groups", error);
                     }
+                    return;
                 }
-                return commandArray;
             };
 
-            service.getAllCommands = function() {
-                let commands = [];
-                Object.values(commandsCache).forEach(t => {
-                    commands = commands.concat(Object.values(t));
-                });
-                return commands;
-            };
+            backendCommunicator.on("custom-commands-updated", () => {
+                service.refreshCommands();
+            });
 
-            service.getCommandRoles = function(command) {
-                let commandRoles = command.permissions;
-                let final = [];
-                if (commandRoles != null) {
-                    if (commandRoles instanceof Array) {
-                        final = commandRoles;
-                    } else {
-                        final.push(commandRoles);
-                    }
+            service.getSystemCommands = () => commandsCache.systemCommands;
+
+            service.getCustomCommands = () => commandsCache.customCommands;
+
+            service.saveCustomCommand = function(command, user = null) {
+                logger.debug("saving command: " + command.trigger);
+                if (command.id == null || command.id === "") {
+                    // generate id for new command
+                    const uuidv1 = require("uuid/v1");
+                    command.id = uuidv1();
+
+                    command.createdBy = user
+                        ? user
+                        : connectionService.accounts.streamer.username;
+                    command.createdAt = moment().format();
+                } else {
+                    command.lastEditBy = user
+                        ? user
+                        : connectionService.accounts.streamer.username;
+                    command.lastEditAt = moment().format();
                 }
-                return final;
-            };
 
-            // Saves out a command
-            service.saveCommand = function(command) {
-                let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
+                if (command.count == null) {
+                    command.count = 0;
+                }
+
+                let commandDb = getCommandsDb();
 
                 // Note(ebiggz): Angular sometimes adds properties to objects for the purposes of two way bindings
                 // and other magical things. Angular has a .toJson() convienence method that coverts an object to a json string
                 // while removing internal angular properties. We then convert this string back to an object with
                 // JSON.parse. It's kinda hacky, but it's an easy way to ensure we arn't accidentally saving anything extra.
-                let cleanedCommands = JSON.parse(angular.toJson(command));
+                let cleanedCommand = JSON.parse(angular.toJson(command));
 
-                // If the command is active, throw it into the active group. Otherwise put it in the inactive group.
-                if (command.active === true) {
-                    logger.info('Saving ' + command.commandID + ' to active');
-                    try {
-                        commandDb.delete("/Inactive/" + command.commandID);
-                    } catch (err) {} //eslint-disable-line no-empty
-                    commandDb.push("/Active/" + command.commandID, cleanedCommands);
-                } else {
-                    logger.info('Saving ' + command.commandID + ' to inactive');
-                    try {
-                        commandDb.delete("/Active/" + command.commandID);
-                    } catch (err) {} //eslint-disable-line no-empty
-                    commandDb.push("/Inactive/" + command.commandID, cleanedCommands);
-                }
+                try {
+                    commandDb.push("/customCommands/" + command.id, cleanedCommand);
+                } catch (err) {} //eslint-disable-line no-empty
+            };
+
+            service.saveSystemCommandOverride = function(command) {
+                listenerService.fireEvent(
+                    "saveSystemCommandOverride",
+                    JSON.parse(angular.toJson(command))
+                );
+
+                let index = commandsCache.systemCommands.findIndex(
+                    c => c.id === command.id
+                );
+
+                commandsCache.systemCommands[index] = command;
+            };
+
+            service.triggerExists = function(trigger, id = null) {
+                if (trigger == null) return false;
+
+                trigger = trigger.toLowerCase();
+
+                let foundDuplicateCustomCmdTrigger = commandsCache.customCommands.some(
+                    command =>
+                        command.id !== id && command.trigger.toLowerCase() === trigger
+                );
+
+                let foundDuplicateSystemCmdTrigger = commandsCache.systemCommands.some(
+                    command => command.active && command.trigger.toLowerCase() === trigger
+                );
+
+                return foundDuplicateCustomCmdTrigger || foundDuplicateSystemCmdTrigger;
             };
 
             // Deletes a command.
-            service.deleteCommand = function(command) {
-                let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
-                let cleanedCommands = JSON.parse(angular.toJson(command));
+            service.deleteCustomCommand = function(command) {
+                let commandDb = getCommandsDb();
 
-                if (cleanedCommands.active === true) {
-                    commandDb.delete('./Active/' + cleanedCommands.commandID);
-                } else {
-                    commandDb.delete('./Inactive/' + cleanedCommands.commandID);
-                }
-            };
+                if (command == null || command.id == null || command.id === "") return;
 
-            ///////////////
-            // Timed Groups
-            ///////////////
-
-            // Gets the cached timed groups
-            service.getTimedGroupSettings = function() {
-                return timedGroupsCache;
-            };
-
-            // Save Timed Group
-            service.saveTimedGroup = function(previousGroupName, timedGroup) {
-                let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
                 try {
-                    commandDb.push('./timedGroups/' + timedGroup.groupName, timedGroup);
+                    commandDb.delete("/customCommands/" + command.id);
                 } catch (err) {
-                    logger.error(err);
+                    logger.warn("error when deleting command", err);
+                } //eslint-disable-line no-empty
+            };
+
+            function saveCommandGroups() {
+                getCommandGroupsDb.push("/groups", commandGroups, true);
+            }
+
+            service.addCommandGroup = function(groupName) {
+                if (commandGroups.includes(groupName) ||
+                    groupName == null ||
+                    groupName === "" ||
+                    groupName.toLowerCase() === "all") {
+                    return;
                 }
 
-                // Check to see if we are renaming a group and need to remove the old one.
-                if (previousGroupName !== timedGroup.groupName && previousGroupName != null && previousGroupName !== "") {
-                    try {
-                        commandDb.delete('./timedGroups/' + previousGroupName);
-                    } catch (err) {
-                        logger.error(err);
+                commandGroups.push(groupName);
+
+                saveCommandGroups();
+            };
+
+            service.removeCommandGroup = function(groupName) {
+                if (!commandGroups.includes(groupName)) {
+                    return;
+                }
+
+                commandGroups = commandGroups.filter(g => g !== groupName);
+
+                saveCommandGroups();
+            };
+
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.SYS_CMDS_UPDATED
+                },
+                () => {
+                    service.refreshCommands();
+                }
+            );
+
+            ipcRenderer.on("commandCountUpdate", function(event, data) {
+                let command = service
+                    .getCustomCommands()
+                    .find(c => c.id === data.commandId);
+                if (command != null) {
+                    command.count = data.count;
+                    service.saveCustomCommand(command);
+                }
+            });
+
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.SAVE_CUSTOM_COMMAND
+                },
+                (data) => {
+                    service.saveCustomCommand(data.command, data.user);
+
+                    let currentIndex = commandsCache.customCommands.findIndex(c => c.trigger === data.command.trigger);
+
+                    if (currentIndex === -1) {
+                        commandsCache.customCommands.push(data.command);
+                    } else {
+                        commandsCache.customCommands[currentIndex] = data.command;
                     }
-                }
-            };
 
-            // Delete timed Group
-            service.deleteTimedGroup = function(previousGroupName, timedGroup) {
-                let commandDb = dataAccess.getJsonDbInUserData("/user-settings/chat/commands");
-                try {
-                    commandDb.delete('./timedGroups/' + previousGroupName);
-                } catch (err) {
-                    logger.error(err);
+                    // Refresh the backend command cache.
+                    ipcRenderer.send("refreshCommandCache");
                 }
+            );
 
-                try {
-                    commandDb.delete('./timedGroups/' + timedGroup.groupName);
-                } catch (err) {
-                    logger.error(err);
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.REMOVE_CUSTOM_COMMAND
+                },
+                (data) => {
+
+                    let command = commandsCache.customCommands.find(c => c.trigger === data.trigger);
+
+                    service.deleteCustomCommand(command);
+
+                    commandsCache.customCommands = commandsCache.customCommands.filter(c => c.id !== command.id);
+
+                    // Refresh the backend command cache.
+                    ipcRenderer.send("refreshCommandCache");
                 }
-            };
+            );
+
 
             return service;
         });

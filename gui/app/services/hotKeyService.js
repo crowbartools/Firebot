@@ -1,53 +1,47 @@
-'use strict';
-
-const dataAccess = require('../../lib/common/data-access.js');
+"use strict";
+const profileManager = require("../../backend/common/profile-manager.js");
+const uuidv1 = require("uuid/v1");
 
 (function() {
-
     // This provides methods for handling hotkeys
 
     angular
-        .module('firebotApp')
-        .factory('hotkeyService', function ($rootScope, utilityService, logger) {
+        .module("firebotApp")
+        .factory("hotkeyService", function($rootScope, utilityService, logger, backendCommunicator) {
             let service = {};
 
             /**
-             * Hotkey Capturing
-             */
+       * Hotkey Capturing
+       */
             service.isCapturingHotkey = false;
 
             // keys not accepted by Electron for global shortcuts
-            const prohibitedKeys = [
-                'CapsLock',
-                'NumLock',
-                'ScrollLock',
-                'Pause'
-            ];
+            const prohibitedKeys = ["CapsLock", "NumLock", "ScrollLock", "Pause"];
 
             // this maps keys to codes accepted in Electron's Accelerator strings, used for global shortcuts
             function mapKeyToAcceleratorCode(key) {
                 switch (key) {
-                case 'ArrowUp':
-                case 'ArrowDown':
-                case 'ArrowLeft':
-                case 'ArrowRight':
-                    return key.replace('Arrow', '');
-                case 'AudioVolumeMute':
-                case 'AudioVolumeDown':
-                case 'AudioVolumeUp':
-                    return key.replace('Audio', '');
-                case '+':
+                case "ArrowUp":
+                case "ArrowDown":
+                case "ArrowLeft":
+                case "ArrowRight":
+                    return key.replace("Arrow", "");
+                case "AudioVolumeMute":
+                case "AudioVolumeDown":
+                case "AudioVolumeUp":
+                    return key.replace("Audio", "");
+                case "+":
                     return "Plus";
-                case ' ':
+                case " ":
                     return "Space";
-                case 'MediaTrackPrevious':
+                case "MediaTrackPrevious":
                     return "MediaPreviousTrack";
-                case 'MediaTrackNext':
+                case "MediaTrackNext":
                     return "MediaNextTrack";
-                case 'Meta':
-                    return 'Super';
-                case 'Control':
-                    return 'CmdOrCtrl';
+                case "Meta":
+                    return "Super";
+                case "Control":
+                    return "CmdOrCtrl";
                 default:
                     if (key.length === 1) {
                         return key.toUpperCase();
@@ -58,10 +52,10 @@ const dataAccess = require('../../lib/common/data-access.js');
 
             function getDisplayNameFromKeyCode(keyCode) {
                 switch (keyCode) {
-                case 'CmdOrCtrl':
-                    return 'Ctrl';
-                case 'Super':
-                    return 'Windows';
+                case "CmdOrCtrl":
+                    return "Ctrl";
+                case "Super":
+                    return "Windows";
                 default:
                     return keyCode;
                 }
@@ -69,10 +63,10 @@ const dataAccess = require('../../lib/common/data-access.js');
 
             function keyCodeIsModifier(keyCode) {
                 switch (keyCode) {
-                case 'CmdOrCtrl':
-                case 'Super':
-                case 'Alt':
-                case 'Shift':
+                case "CmdOrCtrl":
+                case "Super":
+                case "Alt":
+                case "Shift":
                     return true;
                 default:
                     return false;
@@ -90,7 +84,9 @@ const dataAccess = require('../../lib/common/data-access.js');
             const keyDownListener = function(event) {
                 if (!service.isCapturingHotkey) return;
 
-                let alreadyPressed = cachedKeys.some(k => k.rawKey.toUpperCase() === event.key.toUpperCase());
+                let alreadyPressed = cachedKeys.some(
+                    k => k.rawKey.toUpperCase() === event.key.toUpperCase()
+                );
 
                 //skip if repeat of keys already inputted and no keys have been released
                 if (alreadyPressed && releasedKeyCodes.length === 0) return;
@@ -100,8 +96,12 @@ const dataAccess = require('../../lib/common/data-access.js');
                 //clear out any keys that have since been released
                 releasedKeyCodes.forEach(k => {
                     let normalizedK = k.toUpperCase();
-                    if (cachedKeys.some(key => key.rawKey.toUpperCase() === normalizedK)) {
-                        cachedKeys = cachedKeys.filter(key => key.rawKey.toUpperCase() !== normalizedK);
+                    if (
+                        cachedKeys.some(key => key.rawKey.toUpperCase() === normalizedK)
+                    ) {
+                        cachedKeys = cachedKeys.filter(
+                            key => key.rawKey.toUpperCase() !== normalizedK
+                        );
                     }
                 });
                 releasedKeyCodes = [];
@@ -118,7 +118,9 @@ const dataAccess = require('../../lib/common/data-access.js');
                         rawKey: event.key
                     });
 
-                    $rootScope.$broadcast("hotkey:capture:update", { hotkey: getAcceleratorCodeFromKeys(cachedKeys) });
+                    $rootScope.$broadcast("hotkey:capture:update", {
+                        hotkey: getAcceleratorCodeFromKeys(cachedKeys)
+                    });
                 }
             };
 
@@ -138,23 +140,25 @@ const dataAccess = require('../../lib/common/data-access.js');
 
             service.startHotkeyCapture = function(callback) {
                 if (service.isCapturingHotkey) {
-                    throw new Error("Attempted to start a hotkey capture when capturing is already in progress.");
+                    throw new Error(
+                        "Attempted to start a hotkey capture when capturing is already in progress."
+                    );
                 }
 
                 stopCallback = callback;
 
                 service.isCapturingHotkey = true;
                 logger.info("Starting hotkey capture...");
-                window.addEventListener('keydown', keyDownListener, true);
-                window.addEventListener('keyup', keyUpListener, true);
-                window.addEventListener('click', clickListener, true);
+                window.addEventListener("keydown", keyDownListener, true);
+                window.addEventListener("keyup", keyUpListener, true);
+                window.addEventListener("click", clickListener, true);
             };
 
             service.stopHotkeyCapture = function() {
                 if (service.isCapturingHotkey) {
                     logger.info("Stopping hotkey recording");
-                    window.removeEventListener('keydown', keyDownListener, true);
-                    window.removeEventListener('keyup', keyUpListener, true);
+                    window.removeEventListener("keydown", keyDownListener, true);
+                    window.removeEventListener("keyup", keyUpListener, true);
                     service.isCapturingHotkey = false;
 
                     if (typeof stopCallback === "function") {
@@ -162,7 +166,7 @@ const dataAccess = require('../../lib/common/data-access.js');
                     }
                     cachedKeys = [];
                 }
-                window.removeEventListener('click', clickListener, true);
+                window.removeEventListener("click", clickListener, true);
             };
 
             service.getCurrentlyPressedHotkey = function() {
@@ -186,9 +190,9 @@ const dataAccess = require('../../lib/common/data-access.js');
             let userHotkeys = [];
 
             service.loadHotkeys = function() {
-                let hotkeyDb = dataAccess.getJsonDbInUserData("/user-settings/hotkeys");
+                let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
                 try {
-                    let hotkeyData = hotkeyDb.getData('/');
+                    let hotkeyData = hotkeyDb.getData("/");
                     if (hotkeyData != null && hotkeyData.length > 0) {
                         userHotkeys = hotkeyData || [];
                     }
@@ -197,8 +201,12 @@ const dataAccess = require('../../lib/common/data-access.js');
                 }
             };
 
+            backendCommunicator.on("import-hotkeys-update", () => {
+                service.loadHotkeys();
+            });
+
             function saveHotkeysToFile() {
-                let hotkeyDb = dataAccess.getJsonDbInUserData("/user-settings/hotkeys");
+                let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
                 try {
                     hotkeyDb.push("/", userHotkeys);
                 } catch (err) {
@@ -206,11 +214,11 @@ const dataAccess = require('../../lib/common/data-access.js');
                 }
 
                 // Refresh the backend hotkeycache
-                ipcRenderer.send('refreshHotkeyCache');
+                ipcRenderer.send("refreshHotkeyCache");
             }
 
             service.saveHotkey = function(hotkey) {
-                hotkey.uuid = utilityService.generateUuid();
+                hotkey.id = uuidv1();
 
                 userHotkeys.push(hotkey);
 
@@ -218,8 +226,7 @@ const dataAccess = require('../../lib/common/data-access.js');
             };
 
             service.updateHotkey = function(hotkey) {
-
-                let index = userHotkeys.findIndex(k => k.uuid === hotkey.uuid);
+                let index = userHotkeys.findIndex(k => k.id === hotkey.id);
 
                 userHotkeys[index] = hotkey;
 
@@ -227,14 +234,15 @@ const dataAccess = require('../../lib/common/data-access.js');
             };
 
             service.deleteHotkey = function(hotkey) {
-
-                userHotkeys = userHotkeys.filter(k => k.uuid !== hotkey.uuid);
+                userHotkeys = userHotkeys.filter(k => k.id !== hotkey.id);
 
                 saveHotkeysToFile();
             };
 
             service.hotkeyCodeExists = function(hotkeyId, hotkeyCode) {
-                return userHotkeys.some(k => k.code === hotkeyCode && k.uuid !== hotkeyId);
+                return userHotkeys.some(
+                    k => k.code === hotkeyCode && k.id !== hotkeyId
+                );
             };
 
             service.getHotkeys = function() {
@@ -245,4 +253,4 @@ const dataAccess = require('../../lib/common/data-access.js');
 
             return service;
         });
-}(window.angular));
+}());

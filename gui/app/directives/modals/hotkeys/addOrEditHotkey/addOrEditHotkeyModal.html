@@ -34,43 +34,10 @@
             <dropdown-select options="['F13', 'F14', 'F15', 'F16', 'F17', 'F18', 'F19', 'F20', 'F21', 'F22', 'F23', 'F24']" ng-init="$ctrl.virtualBtn = 'F13'" selected="$ctrl.virtualBtn"></dropdown-select>
             <button class="btn btn-link" ng-click="$ctrl.onAddVirtualButtonToHotkey()" style="color: #092965;">Add To Hotkey</button>
         </eos-collapsable-panel>
-        
-        <h3 style="margin-top:20px;">Action</h3>
-        <dropdown-select options="['Run Button', 'Run Command', 'Run Effects']" selected="$ctrl.hotkey.action.type"></dropdown-select>
 
-        <div style="margin-top:20px;" ng-if="$ctrl.hotkey.action.type === 'Run Effects'">
-            <effect-list header="Effect List" effects="$ctrl.hotkey.action.metadata.effects" trigger="hotkey" update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
+        <div style="margin-top:20px;">
+            <effect-list header="What should this hotkey do?" effects="$ctrl.hotkey.effects" trigger="hotkey" update="$ctrl.effectListUpdated(effects)"></effect-list>
         </div>
-
-        <div style="margin-top:20px;" ng-show="$ctrl.hotkey.action.type === 'Run Command'">
-            <h3>Command To Run</h3>
-            <ui-select ng-model="$ctrl.hotkey.action.metadata.command" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
-                <ui-select-choices repeat="command in $ctrl.commands | filter: { trigger: $select.search }" style="position:relative;">
-                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
-                    <small class="muted">Id: {{command.id}}</small>
-                </ui-select-choices>
-            </ui-select>
-        </div>
-        
-        <div style="margin-top:20px;" ng-show="$ctrl.hotkey.action.type === 'Run Button'">
-            <h3>Button To Run</h3>
-            <ui-select ng-model="$ctrl.hotkey.action.metadata.button" theme="bootstrap">
-                <ui-select-match placeholder="Select or search for a button... ">{{$select.selected.text}}</ui-select-match>
-                <ui-select-choices repeat="button in $ctrl.buttons | filter: { text: $select.search }" style="position:relative;">
-                    <div ng-bind-html="button.text | highlight: $select.search"></div>
-                    <small class="muted"><b>Id:</b> {{button.id}} | <b>Scene:</b> {{button.scene}} | <b>Board:</b> {{button.board.name}}</small>
-                </ui-select-choices>
-            </ui-select>
-            
-            <div class="effect-info alert alert-warning">
-                Hotkeys that trigger a button only work if the button is in the currently active board. 
-                <br><br>
-                Also keep in mind certain effects on buttons (like Change Group) won't work with hoykeys as there is no viewer associated with the button "press".
-            </div>
-                  
-        </div>
-  
     </div>
 </div>
 

@@ -1,0 +1,24 @@
+"use strict";
+
+const { EffectTrigger } = require("../../../../effects/models/effectModels");
+const { OutputDataType } = require("../../../../../shared/variable-contants");
+
+let triggers = {};
+triggers[EffectTrigger.EVENT] = ["streamloots:redemption"];
+triggers[EffectTrigger.MANUAL] = true;
+
+const model = {
+    definition: {
+        handle: "slootsCardName",
+        description: "The name of a StreamLoots Card.",
+        triggers: triggers,
+        possibleDataOutput: [OutputDataType.TEXT]
+    },
+    evaluator: (trigger) => {
+        let cardName = trigger.metadata.eventData && trigger.metadata.eventData.cardName;
+
+        return cardName || "";
+    }
+};
+
+module.exports = model;

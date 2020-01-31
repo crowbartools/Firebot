@@ -1,15 +1,12 @@
-'use strict';
+"use strict";
 
 (function() {
-
     // This provides methods for notifications
-
-    const dataAccess = require('../../lib/common/data-access.js');
+    const profileManager = require("../../backend/common/profile-manager.js");
 
     angular
-        .module('firebotApp')
-        .factory('notificationService', function ($http, $interval, logger) {
-
+        .module("firebotApp")
+        .factory("notificationService", function($http, $interval, logger) {
             let service = {};
             let notifications = [];
 
@@ -26,7 +23,7 @@
             };
             /* Helpers */
             function getNotificationsFile() {
-                return dataAccess.getJsonDbInUserData("/user-settings/notifications");
+                return profileManager.getJsonDbInProfile("/notifications");
             }
 
             function deleteDataFromFile(path) {
@@ -88,7 +85,10 @@
 
             function uuid() {
                 return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                    (
+                        c ^
+            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+                    ).toString(16)
                 );
             }
 
@@ -97,56 +97,80 @@
             }
 
             function loadExternalNotifications() {
-                $http.get("https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json")
-                    .then((response) => {
+                $http
+                    .get(
+                        "https://raw.githubusercontent.com/Firebottle/Firebot/master/resources/notifications.json"
+                    )
+                    .then(response => {
                         let externalNotifications = response.data;
 
                         let knownExtNotis = getKnownExternalNotifications();
 
                         let newKnownExtNotis = [];
 
-                        if (externalNotifications != null) {
-                            externalNotifications.forEach((n) => {
-
+                        externalNotifications.forEach(
+                            n => {
                                 newKnownExtNotis.push(n.id);
 
                                 if (!knownExtNotis.includes(n.id)) {
-
                                     n.type = NotificationType.EXTERNAL;
                                     n.externalId = n.id;
                                     n.id = undefined;
 
                                     service.addNotification(n, true);
-
                                 }
-                            }, (err) => {
+                            },
+                            err => {
                                 logger.error(err);
-                            });
+                            }
+                        );
 
-                            setKnownExternalNotifications(newKnownExtNotis);
-                        }
+                        setKnownExternalNotifications(newKnownExtNotis);
                     });
             }
 
-            function mixerStatusNotification() {
-                // This will check the mixer status page every once in awhile to see if there is it is having issues.
-                $http.get("https://00qbcbkrqn0y.statuspage.io/api/v2/status.json")
-                    .then((response) => {
-                        let data = response.data,
-                            statusIndicator = data.status.indicator,
-                            statusText = data.status.description,
-                            notification = {
-                                "id": "MixerStatus",
-                                "title": "Mixer Issue",
-                                "message": "Mixer is reporting:<br>" + statusText + ". <br><br> This could cause issues with Firebot. Please be patient as they address the issues.",
-                                "icon": "alert"
-                            };
+            service.mixerReportingIssues = false;
+            service.mixerStatus = {
+                description: "Unknown",
+                unresolvedIncidents: []
+            };
 
-                        if (statusIndicator !== "none") {
-                            service.addNotification(notification, false);
+
+            service.getStatusIcon = () => {
+                if (service.mixerReportingIssues) {
+                    return "fa-exclamation-triangle";
+                }
+                return "fa-check-circle";
+            };
+
+            function checkMixerStatus() {
+                $http.get("https://status.mixer.com/index.json")
+                    .then((response) => {
+
+                        let data = response.data;
+
+                        if (data === null) return;
+
+                        service.mixerStatus.description = data.status.description;
+
+                        if (data.status.indicator !== "none") {
+                            service.mixerReportingIssues = true;
                         } else {
-                            service.deleteNotification(notification);
+                            service.mixerReportingIssues = false;
                         }
+
+                        let incidents = data.incidents;
+                        if (incidents != null && data.incidents.length > 0) {
+                            service.mixerStatus.unresolvedIncidents =
+                                incidents
+                                    .filter(i => i.status !== "resolved")
+                                    .map(i => {
+                                        i.hasUpdates = i.incident_updates != null && i.incident_updates.length > 0;
+                                        return i;
+                                    });
+                        }
+                    }, (reason) => {
+                        logger.info("Failed to get mixer status: " + reason);
                     });
             }
 
@@ -157,8 +181,12 @@
                 return notifications;
             };
 
+            service.notificationsContainsId = function(id) {
+                return notifications.some(n => n.id === id);
+            };
+
             service.getUnreadCount = function() {
-                return notifications.filter((n) => !n.read).length;
+                return notifications.filter(n => !n.read).length;
             };
 
             service.markNotificationAsRead = function(notification) {
@@ -173,7 +201,6 @@
             };
 
             service.deleteNotification = function(notification) {
-
                 if (notification.saved) {
                     let index = getIndexOfUuid(notification.uuid);
                     if (index != null) {
@@ -184,13 +211,20 @@
                 notifications = notifications.filter(n => n.uuid !== notification.uuid);
             };
 
-            service.addNotification = function(notification, permenantlySave = false) {
+            service.addNotification = function(
+                notification,
+                permenantlySave = false
+            ) {
                 notification.uuid = uuid();
                 notification.timestamp = new Date();
                 notification.read = false;
 
-                notification.type = notification.type ? notification.type : NotificationType.INTERNAL;
-                notification.icon = notification.icon ? notification.icon : NotificationIconType.INFO;
+                notification.type = notification.type
+                    ? notification.type
+                    : NotificationType.INTERNAL;
+                notification.icon = notification.icon
+                    ? notification.icon
+                    : NotificationIconType.INFO;
 
                 if (permenantlySave) {
                     notification.saved = true;
@@ -204,7 +238,7 @@
                 notifications = [];
                 loadSavedNotifications();
                 loadExternalNotifications();
-                mixerStatusNotification();
+                checkMixerStatus();
             };
 
             let externalIntervalCheck = null;
@@ -216,7 +250,7 @@
 
                 externalIntervalCheck = $interval(() => {
                     loadExternalNotifications();
-                    mixerStatusNotification();
+                    checkMixerStatus();
                 }, 5 * 60000);
             };
 

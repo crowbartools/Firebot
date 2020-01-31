@@ -1,43 +1,58 @@
 /* eslint no-unused-vars: 0*/
-'use strict';
-const electron = require('electron');
-const {ipcRenderer} = electron;
-const {remote} = electron;
+"use strict";
+const electron = require("electron");
+const { ipcRenderer } = electron;
+const { remote } = electron;
 
-const logger = require('../../lib/logwrapper');
+const logger = require("../../backend/logwrapper");
 
 //from old Gobal.js
-const shell = require('electron').shell;
-const fs = require('fs');
-const request = require('request');
-const List = require('list.js');
-const compareVersions = require('compare-versions');
-const marked = require('marked');
-const path = require('path');
+const shell = require("electron").shell;
+const fs = require("fs");
+const request = require("request");
+const List = require("list.js");
+const compareVersions = require("compare-versions");
+const path = require("path");
 
-require('angular');
-require('angular-animate');  
-require('angular-route');
-require('angular-sanitize');
-require('angular-ui-bootstrap');
-require('angularjs-slider');
-require('ui-select');
-require('angular-ui-sortable');
-require('../../node_modules/angular-summernote/dist/angular-summernote');
+require("angular");
+require("angular-animate");
+require("angular-route");
+require("angular-sanitize");
+require("angular-ui-bootstrap");
+require("angularjs-slider");
+require("ui-select");
+require("angular-ui-sortable");
+require('ng-youtube-embed');
+require("ng-toast");
+require("../../node_modules/angular-summernote/dist/angular-summernote");
+require("angular-translate");
+require("../../node_modules/angular-translate-loader-url/angular-translate-loader-url");
+require("../../node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files");
+require('countup.js-angular1');
+require("angular-pageslide-directive");
+require("angular-bootstrap-contextmenu");
+require("../../node_modules/tinycolor2/dist/tinycolor-min");
+require("angularjs-color-picker");
 
 function boot() {
-    angular.bootstrap(document, ['firebotApp'], {
+    angular.bootstrap(document, ["firebotApp"], {
         strictDi: false
     });
 }
 
-document.addEventListener('DOMContentLoaded', boot);
+document.addEventListener("DOMContentLoaded", boot);
 
 // Catch browser window (renderer) errors and log them via Winston
 window.onerror = function(error, url, line) {
-    logger.error("(Renderer) " + error, { url: url, line: line });
+    let message = `(Renderer) ${error}`;
+    if (url) {
+        message += ` [url=${url}]`;
+    }
+    if (line) {
+        message += ` [line=${line}]`;
+    }
+    logger.error(message, error);
 };
-
 
 // pointless fancy firebot at the top of the log
 function printRow(colorOne, colorTwo, ...args) {
@@ -58,7 +73,9 @@ function printRow(colorOne, colorTwo, ...args) {
     console.log(msg, ...styles); // eslint-disable-line no-console
 }
 
-const letterColor = "#EBB11F", spaceColor = "transparent", ruleColor = "darkgray";
+const letterColor = "#EBB11F",
+    spaceColor = "transparent",
+    ruleColor = "darkgray";
 /* eslint-disable no-multi-spaces */
 console.log("%cWELCOME TO", "color:gray;font-weight:900;font-size:18px;"); // eslint-disable-line no-console
 printRow(ruleColor, spaceColor,   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
@@ -97,10 +114,14 @@ function getLogLevelColor(level) {
 // Prints all logs from the "console" transport into the Browser Console
 /* eslint-disable no-console */
 function printLogToBrowserConsole(transport, level, msg, meta) {
-    if (transport != null && transport.name === 'console') {
-        if (msg != null && msg.trim() !== '(Renderer)') {
+    if (transport != null && transport.name === "console") {
+        if (msg != null && msg.trim() !== "(Renderer)") {
             // Only print if the msg isnt 'empty' aka has more than just the prefix
-            console.log("%c" + level.toUpperCase() + "%c " + msg, `color:${getLogLevelColor(level)}`, "color:black");
+            console.log(
+                "%c" + level.toUpperCase() + "%c " + msg,
+                `color:${getLogLevelColor(level)}`,
+                "color:black"
+            );
         }
         if (meta && Object.keys(meta).length > 0) {
             console.log(meta);
@@ -110,7 +131,7 @@ function printLogToBrowserConsole(transport, level, msg, meta) {
 /* eslint-enable no-console */
 
 // Back end log feed
-ipcRenderer.on('logging', (event, data) => {
+ipcRenderer.on("logging", (event, data) => {
     let transport = data.transport,
         level = data.level,
         msg = data.msg,
@@ -119,6 +140,23 @@ ipcRenderer.on('logging', (event, data) => {
 });
 
 // front end log feed
-logger.on('logging', (transport, level, msg, meta) => {
+logger.on("logging", (transport, level, msg, meta) => {
     printLogToBrowserConsole(transport, level, msg, meta);
 });
+
+const configureOpenRenderedLinksInDefaultBrowser = () => {
+    document.querySelector('body').addEventListener('click', event => {
+        if (event.target.tagName.toLowerCase() === 'a') {
+            const href = event.target.href;
+            if (href != null && href.length > 0 && href.toLowerCase().startsWith("http")) {
+                event.preventDefault();
+                shell.openExternal(href);
+            }
+        }
+    });
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+    configureOpenRenderedLinksInDefaultBrowser();
+});
+

@@ -4,12 +4,9 @@ module.exports = {
     "extends": "eslint:recommended",
 
     "parserOptions": {
-        "ecmaVersion": 8,
-        "ecmaFeatures": {
-            "experimentalObjectRestSpread": true
-        }
+        "ecmaVersion": 9
     },
-    
+
     "env": {
       "node": true,
       "browser": true,
@@ -18,13 +15,14 @@ module.exports = {
 
     // Project specific globals
     "globals": {
-        "renderWindow": true
+        "renderWindow": true,
+        "$": true
     },
 
     "rules":{
 
         // Deviations from https://eslint.org/docs/rules/#possible-errors
-        //"no-console": 0, // Enable the use of console
+        "no-console": 0, // Enable the use of console
 
         // Deviations from < https://eslint.org/docs/rules/#best-practices >
         "eqeqeq": [2, "smart"],     // No coersion unless comparing against null
@@ -72,6 +70,10 @@ module.exports = {
         // Deviation from < https://eslint.org/docs/rules/#ecmascript-6 >
         "arrow-spacing": 2,                               // Spaces required around fat-arrow function's "=>"
         "no-confusing-arrow": 2,                          // Don't use arrows functions in conditions
-        "no-var": 1                                      // Warning; Use let/const instead of var
+        "no-var": 1,                                      // Warning; Use let/const instead of var
+
+        // Other deviations
+        "no-warning-comments": ["warn", {"terms": ["todo", "to do", "fix", "fixme", "fix me", "need"], "location": "start"}], // warn about todo comments
+        "no-unused-vars": ["warn"]
     }
 }

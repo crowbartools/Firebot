@@ -1,30 +1,32 @@
-'use strict';
-
+"use strict";
 
 (function() {
-
     angular
-        .module('firebotApp')
-        .factory('sidebarManager', function ($timeout, $rootScope) {
+        .module("firebotApp")
+        .factory("sidebarManager", function($timeout, $rootScope) {
             let service = {};
 
             service.navExpanded = true;
 
             service.toggleNav = function() {
                 service.navExpanded = !service.navExpanded;
+                $rootScope.$broadcast("navToggled");
             };
 
             service.currentTab = "buttons";
+            service.currentTabName = "Controls";
 
-            service.setTab = function(tabId) {
+            service.setTab = function(tabId, name) {
                 service.currentTab = tabId.toLowerCase();
 
+                service.currentTabName = name ? name : tabId;
+
                 //hack that somewhat helps with the autoupdate slider styling issues on first load
-                $timeout(function () {
-                    $rootScope.$broadcast('rzSliderForceRender');
+                $timeout(function() {
+                    $rootScope.$broadcast("rzSliderForceRender");
                 });
-                $timeout(function () {
-                    $rootScope.$broadcast('rzSliderForceRender');
+                $timeout(function() {
+                    $rootScope.$broadcast("rzSliderForceRender");
                 }, 50);
             };
 
@@ -33,61 +35,91 @@
             };
 
             service.currentTabIsFullScreen = function() {
-                return service.currentTab.toLowerCase() === 'chat feed';
+                return (
+                    service.currentTab.toLowerCase() === "chat feed" ||
+                    service.currentTab.toLowerCase() === "commands" ||
+                    service.currentTab.toLowerCase() === "events" ||
+                    service.currentTab.toLowerCase() === "moderation" ||
+                    service.currentTab.toLowerCase() === "buttons"
+                );
+            };
+
+            service.currentTabShouldntScroll = function() {
+                return (
+                    service.currentTab.toLowerCase() === "chat feed" ||
+                    service.currentTab.toLowerCase() === "buttons"
+                );
             };
 
             return service;
         });
 
-
     // routes for tabs
-    angular
-        .module('firebotApp').config(['$routeProvider', '$locationProvider', function($routeProvider) {
+    angular.module("firebotApp").config([
+        "$routeProvider",
+        "$locationProvider",
+        function($routeProvider) {
             $routeProvider
 
-                .when('/', {
-                    templateUrl: './templates/interactive/_interactive.html',
-                    controller: 'interactiveController'
+                .when("/", {
+                    templateUrl: "./templates/interactive/_interactive.html",
+                    controller: "controlsController"
                 })
 
-                .when('/viewer-groups', {
-                    templateUrl: './templates/_viewergroups.html',
-                    controller: 'groupsController'
+                .when("/viewer-roles", {
+                    templateUrl: "./templates/_viewerroles.html",
+                    controller: "viewerRolesController"
                 })
 
-                .when('/commands', {
-                    templateUrl: './templates/chat/_commands.html',
-                    controller: 'commandsController'
+                .when("/commands", {
+                    templateUrl: "./templates/chat/_commands.html",
+                    controller: "commandsController"
                 })
 
-                .when('/chat-feed', {
-                    templateUrl: './templates/chat/_chat-messages.html',
-                    controller: 'chatMessagesController'
+                .when("/chat-feed", {
+                    templateUrl: "./templates/chat/_chat-messages.html",
+                    controller: "chatMessagesController"
                 })
 
-                .when('/moderation', {
-                    templateUrl: './templates/_moderation.html',
-                    controller: 'moderationController'
+                .when("/moderation", {
+                    templateUrl: "./templates/_moderation.html",
+                    controller: "moderationController"
                 })
 
-                .when('/settings', {
-                    templateUrl: './templates/_settings.html',
-                    controller: 'settingsController'
+                .when("/settings", {
+                    templateUrl: "./templates/_settings.html",
+                    controller: "settingsController"
                 })
 
-                .when('/updates', {
-                    templateUrl: './templates/_updates.html',
-                    controller: 'updatesController'
+                .when("/updates", {
+                    templateUrl: "./templates/_updates.html",
+                    controller: "updatesController"
                 })
 
-                .when('/events', {
-                    templateUrl: './templates/live-events/_events.html',
-                    controller: 'eventsController'
+                .when("/events", {
+                    templateUrl: "./templates/live-events/_events.html",
+                    controller: "eventsController"
                 })
 
-                .when('/hotkeys', {
-                    templateUrl: './templates/_hotkeys.html',
-                    controller: 'hotkeysController'
+                .when("/hotkeys", {
+                    templateUrl: "./templates/_hotkeys.html",
+                    controller: "hotkeysController"
+                })
+
+                .when("/currency", {
+                    templateUrl: "./templates/_currency.html",
+                    controller: "currencyController"
+                })
+
+                .when("/timers", {
+                    templateUrl: "./templates/_timers.html",
+                    controller: "timersController"
+                })
+
+                .when("/viewers", {
+                    templateUrl: "./templates/viewers/_viewers.html",
+                    controller: "viewersController"
                 });
-        }]);
+        }
+    ]);
 }(window.angular));

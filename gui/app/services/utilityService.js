@@ -1,48 +1,59 @@
-'use strict';
+"use strict";
 (function() {
-
     // This contains utility functions
     // Just inject "utilityService" into any controller that you want access to these
-    const electron = require('electron');
+    const electron = require("electron");
 
-    const _ = require('underscore')._;
+    const _ = require("underscore")._;
 
-    const EffectType = require('../../lib/common/EffectType');
+    const dataAccess = require("../../backend/common/data-access.js");
 
     angular
-        .module('firebotApp')
-        .factory('utilityService', function($rootScope, $uibModal, listenerService, logger) {
+        .module("firebotApp")
+        .factory("utilityService", function(
+            $rootScope,
+            $uibModal,
+            listenerService,
+            logger,
+            $timeout,
+            backendCommunicator
+        ) {
             let service = {};
 
-            let copiedEffectsCache = {};
-            service.copyEffects = function(type, effects) {
-                copiedEffectsCache = JSON.parse(angular.toJson(effects));
-            };
 
-            service.getCopiedEffects = function(trigger) {
-                let effects = JSON.parse(JSON.stringify(copiedEffectsCache));
+            backendCommunicator.on("requestIntegrationAccountId", (data) => {
+                service.openGetIdEntyModal({
+                    label: `Enter ${data.integrationName} ID`,
+                    saveText: "Save ID",
+                    inputPlaceholder: "Enter account ID...",
+                    steps: data.steps
+                }, (model) => {
+                    backendCommunicator.fireEvent("enteredIntegrationAccountId", {
+                        integrationId: data.integrationId,
+                        accountId: model
+                    });
+                });
+            });
 
-                if (!Array.isArray(effects)) {
-                    effects = Object.values(effects);
-                }
-
-                let compatibleEffects = [];
-                effects.forEach(e => {
-                    if (EffectType.effectCanBeTriggered(e.type, trigger)) {
-                        compatibleEffects.push(e);
+            service.openGetIdEntyModal = function(options, callback) {
+                service.showModal({
+                    component: "idEntryModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        inputPlaceholder: () => options.inputPlaceholder,
+                        saveText: () => options.saveText,
+                        steps: () => options.steps
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
                     }
                 });
-
-                return compatibleEffects;
-            };
-
-            service.hasCopiedEffects = function(trigger) {
-
-                return service.getCopiedEffects(trigger).length > 0;
             };
 
             let slidingModals = [];
-            const shiftAmount = 75;
+            const shiftAmount = 125;
             service.addSlidingModal = function(promise) {
                 // update previous values
                 slidingModals.forEach(em => {
@@ -51,7 +62,7 @@
                     em.element.css("transform", `translate(-${newAmount}px, 0)`);
                 });
 
-                promise.then((data) => {
+                promise.then(data => {
                     data.transform = 0;
                     slidingModals.push(data);
                 });
@@ -101,16 +112,17 @@
 
             service.getSlidingModalNamesAndIds = function() {
                 return slidingModals.map(sm => {
-                    return {name: sm.name, id: sm.id};
+                    return { name: sm.name, id: sm.id };
                 });
             };
 
             service.updateNameForSlidingModal = function(newName, modalId) {
-                slidingModals.filter(m => m.id === modalId).forEach(m => m.name = newName);
+                slidingModals
+                    .filter(m => m.id === modalId)
+                    .forEach(m => (m.name = newName));
             };
 
             service.showModal = function(showModalContext) {
-
                 // We dont want to do anything if there's no context
                 if (showModalContext == null) {
                     logger.warn("showModal() was called but no context was provided!");
@@ -124,6 +136,7 @@
                 let resolveObj = showModalContext.resolveObj || {};
                 let closeCallback = showModalContext.closeCallback;
                 let dismissCallback = showModalContext.dismissCallback;
+                let windowClass = showModalContext.windowClass ? showModalContext.windowClass : "";
 
                 let modalId = "modal" + _.uniqueId().toString();
                 resolveObj.modalId = () => {
@@ -131,13 +144,14 @@
                 };
 
                 let modal = {
-                    ariaLabelledBy: 'modal-title',
-                    ariaDescribedBy: 'modal-body',
+                    ariaLabelledBy: "modal-title",
+                    ariaDescribedBy: "modal-body",
                     resolve: resolveObj,
                     size: showModalContext.size,
-                    keyboard: showModalContext.keyboard,
-                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : true,
-                    windowClass: showModalContext.windowClass + " " + modalId
+                    keyboard: showModalContext.keyboard ? showModalContext.keyboard : true,
+                    backdrop: showModalContext.backdrop ? showModalContext.backdrop : 'static',
+                    windowClass: windowClass + " " + modalId + " animated fadeIn fastest fb-transition draggablemodal",
+                    animation: true
                 };
 
                 if (component != null && component.length !== 0) {
@@ -158,6 +172,10 @@
                     dismissCallback = () => {};
                 }
 
+                modalInstance.rendered.then(() => {
+                    $("." + modalId).removeClass("animated fadeIn fastest");
+                });
+
                 // Handle when the modal is exited
                 modalInstance.result.then(closeCallback, dismissCallback);
             };
@@ -166,15 +184,82 @@
              * FIRST TIME USE MODAL
              */
             service.showSetupWizard = function(allowExit = false) {
-                let firstTimeUseModalContext = {
-                    templateUrl: "./templates/misc-modals/firstTimeUseModal.html",
-                    // This is the controller to be used for the modal.
-                    controllerFunc: "firstTimeUseModalController",
+                service.showModal({
+                    component: "setupWizardModal",
                     keyboard: allowExit ? true : false,
-                    backdrop: allowExit ? undefined : 'static',
+                    backdrop: allowExit ? true : "static",
                     closeCallback: () => {}
-                };
-                service.showModal(firstTimeUseModalContext);
+                });
+            };
+
+            service.openGetInputModal = function(options, callback) {
+                service.showModal({
+                    component: "inputModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        inputPlaceholder: () => options.inputPlaceholder,
+                        saveText: () => options.saveText,
+                        validationFn: () => options.validationFn,
+                        validationText: () => options.validationText
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
+
+            service.openDateModal = function(options, callback) {
+                service.showModal({
+                    component: "dateModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        inputPlaceholder: () => options.inputPlaceholder,
+                        saveText: () => options.saveText
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
+
+            service.openSelectModal = function(options, callback) {
+                service.showModal({
+                    component: "selectModal",
+                    size: "sm",
+                    resolveObj: {
+                        model: () => options.model,
+                        options: () => options.options,
+                        label: () => options.label,
+                        selectPlaceholder: () => options.selectPlaceholder,
+                        saveText: () => options.saveText,
+                        validationText: () => options.validationText
+                    },
+                    closeCallback: async (resp) => {
+                        callback(resp.model);
+                    }
+                });
+            };
+
+            service.openViewerSearchModal = function(options, callback) {
+                service.showModal({
+                    component: "viewerSearchModal",
+                    size: "sm",
+                    backdrop: true,
+                    resolveObj: {
+                        model: () => options.model,
+                        label: () => options.label,
+                        saveText: () => options.saveText,
+                        validationFn: () => options.validationFn,
+                        validationText: () => options.validationText
+                    },
+                    closeCallback: (resp) => {
+                        callback(resp.model);
+                    }
+                });
             };
 
             /*
@@ -184,14 +269,39 @@
                 let overlayInfoModalContext = {
                     templateUrl: "overlayInfoModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $rootScope, $uibModalInstance, settingsService, instanceName) => {
+                    controllerFunc: (
+                        $scope,
+                        $rootScope,
+                        $uibModalInstance,
+                        settingsService,
+                        instanceName
+                    ) => {
 
-                        $scope.overlayPath = `http://localhost:${settingsService.getWebServerPort()}/overlay`;
+                        $scope.overlayPath = dataAccess.getPathInUserData("overlay.html");
+
+                        let port = settingsService.getWebServerPort();
+
+                        let params = {};
+                        if (port !== 7472 && !isNaN(port)) {
+                            params["port"] = settingsService.getWebServerPort();
+                        }
 
                         if (instanceName != null && instanceName !== "") {
                             $scope.showingInstance = true;
-                            $scope.overlayPath = $scope.overlayPath + "?instance=" + encodeURIComponent(instanceName);
+                            params["instance"] = encodeURIComponent(instanceName);
                         }
+
+                        let paramCount = 0;
+                        Object.entries(params).forEach(p => {
+                            let key = p[0],
+                                value = p[1];
+
+                            let prefix = paramCount === 0 ? "?" : "&";
+
+                            $scope.overlayPath += `${prefix}${key}=${value}`;
+
+                            paramCount++;
+                        });
 
                         $scope.usingOverlayInstances = settingsService.useOverlayInstances();
 
@@ -203,7 +313,7 @@
                         };
 
                         $scope.dismiss = function() {
-                            $uibModalInstance.dismiss('cancel');
+                            $uibModalInstance.dismiss("cancel");
                         };
                     },
                     resolveObj: {
@@ -222,8 +332,12 @@
                 let overlayEventsModalContext = {
                     templateUrl: "overlayEventsModal.html",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $rootScope, $uibModalInstance, settingsService) => {
-
+                    controllerFunc: (
+                        $scope,
+                        $rootScope,
+                        $uibModalInstance,
+                        settingsService
+                    ) => {
                         $scope.textSettings = settingsService.getOverlayEventsSettings();
 
                         $scope.save = function() {
@@ -232,7 +346,7 @@
                         };
 
                         $scope.dismiss = function() {
-                            $uibModalInstance.dismiss('cancel');
+                            $uibModalInstance.dismiss("cancel");
                         };
                     }
                 };
@@ -247,13 +361,12 @@
                     templateUrl: "updatedModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance) => {
-
                         let appVersion = electron.remote.app.getVersion();
 
                         $scope.appVersion = `v${appVersion}`;
 
                         $scope.dismiss = function() {
-                            $uibModalInstance.dismiss('cancel');
+                            $uibModalInstance.dismiss("cancel");
                         };
                     },
                     size: "sm"
@@ -279,7 +392,6 @@
                     templateUrl: "errorModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance, message) => {
-
                         $scope.message = message;
 
                         $scope.close = function() {
@@ -287,7 +399,7 @@
                         };
 
                         $scope.dismiss = function() {
-                            $uibModalInstance.dismiss('cancel');
+                            $uibModalInstance.dismiss("cancel");
                         };
                     },
                     resolveObj: {
@@ -307,6 +419,17 @@
                 logger.warn(errorMessage);
             };
 
+            service.showErrorDetailModal = function(title, details, modalSize = "sm") {
+                service.showModal({
+                    component: "errorDetailModal",
+                    size: modalSize,
+                    resolveObj: {
+                        title: () => title,
+                        details: () => details
+                    }
+                });
+            };
+
             /*
              * DOWNLOAD MODAL
              */
@@ -314,11 +437,15 @@
                 let downloadModalContext = {
                     templateUrl: "downloadModal.html",
                     keyboard: false,
-                    backdrop: 'static',
-                    size: 'sm',
+                    backdrop: "static",
+                    size: "sm",
                     // This is the controller to be used for the modal.
-                    controllerFunc: ($scope, $uibModalInstance, $timeout, listenerService) => {
-
+                    controllerFunc: (
+                        $scope,
+                        $uibModalInstance,
+                        $timeout,
+                        listenerService
+                    ) => {
                         $scope.downloadHasError = false;
                         $scope.errorMessage = "";
 
@@ -329,7 +456,7 @@
                             type: listenerService.ListenerType.UPDATE_ERROR,
                             runOnce: true
                         };
-                        listenerService.registerListener(registerRequest, (errorMessage) => {
+                        listenerService.registerListener(registerRequest, errorMessage => {
                             // the autoupdater had an error
                             $scope.downloadHasError = true;
                             $scope.errorMessage = errorMessage;
@@ -340,10 +467,13 @@
                             type: listenerService.ListenerType.UPDATE_DOWNLOADED,
                             runOnce: true
                         };
-                        listenerService.registerListener(updateDownloadedListenerRequest, () => {
-                            // the autoupdater has downloaded the update and restart shortly
-                            $scope.downloadComplete = true;
-                        });
+                        listenerService.registerListener(
+                            updateDownloadedListenerRequest,
+                            () => {
+                                // the autoupdater has downloaded the update and restart shortly
+                                $scope.downloadComplete = true;
+                            }
+                        );
 
                         // Start timer for if the download seems to take longer than normal,
                         // we want to allow user to close modal.
@@ -351,12 +481,13 @@
                         $timeout(() => {
                             if (!$scope.downloadComplete) {
                                 $scope.downloadHasError = true;
-                                $scope.errorMessage = "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
+                                $scope.errorMessage =
+                  "Download is taking longer than normal. There may have been an error. You can keep waiting or close this and try again later.";
                             }
-                        }, 90 * 1000);
+                        }, 180 * 1000);
 
                         $scope.dismiss = function() {
-                            $uibModalInstance.dismiss('cancel');
+                            $uibModalInstance.dismiss("cancel");
                         };
                     }
                 };
@@ -392,7 +523,6 @@
                     return array.indexOf(element) !== -1;
                 }
                 return false;
-
             };
 
             /*
@@ -411,7 +541,6 @@
                     templateUrl: "infoModal.html",
                     // This is the controller to be used for the modal.
                     controllerFunc: ($scope, $uibModalInstance, message) => {
-
                         $scope.message = message;
 
                         $scope.close = function() {
@@ -438,49 +567,199 @@
             /*
             * EDIT EFFECT MODAL
             */
-            service.showEditEffectModal = function (effect, index, triggerType, closeCallback) {
+            service.showEditEffectModal = function(
+                effect,
+                index,
+                triggerType,
+                closeCallback,
+                triggerMeta
+            ) {
                 let showEditEffectContext = {
                     templateUrl: "editEffectModal.html",
                     keyboard: false,
-                    backdrop: 'static',
-                    controllerFunc: ($scope, $uibModalInstance, utilityService, modalId, effect, index, triggerType) => {
-
+                    backdrop: "static",
+                    windowClass: "effect-edit-modal",
+                    controllerFunc: function (
+                        $scope,
+                        $uibModalInstance,
+                        ngToast,
+                        utilityService,
+                        effectHelperService,
+                        backendCommunicator,
+                        logger,
+                        modalId,
+                        effect,
+                        index,
+                        triggerType,
+                        triggerMeta,
+                        objectCopyHelper,
+                        $timeout,
+                        $q
+                    ) {
                         $scope.effect = JSON.parse(angular.toJson(effect));
                         $scope.triggerType = triggerType;
+                        $scope.triggerMeta = triggerMeta;
                         $scope.modalId = modalId;
 
                         $scope.isAddMode = index == null;
+                        $scope.effectDefinition = effectHelperService.getEffectDefinition(
+                            $scope.effect.type
+                        );
 
                         $scope.effectTypeChanged = function(effectType) {
-                            $scope.effect.type = effectType.name;
-                            utilityService.updateNameForSlidingModal(effectType.name, modalId);
+                            if ($scope.effect && $scope.effect.type === effectType.id) return;
+
+                            let currentId = $scope.effect.id;
+                            $scope.effect = {
+                                id: currentId,
+                                type: effectType.id
+                            };
+
+                            $scope.effectDefinition = effectHelperService.getEffectDefinition(
+                                $scope.effect.type
+                            );
+                            utilityService.updateNameForSlidingModal(
+                                $scope.effectDefinition.definition.name,
+                                modalId
+                            );
                         };
 
                         $scope.openModals = utilityService.getSlidingModalNamesAndIds();
                         $scope.closeToModal = utilityService.closeToModalId;
 
-                        utilityService.addSlidingModal($uibModalInstance.rendered.then(() => {
-                            let modalElement = $("." + modalId).children();
-                            return {
-                                element: modalElement,
-                                name: effect.type,
-                                id: modalId,
-                                instance: $uibModalInstance,
-                                onSaveAll: () => {
-                                    $scope.save();
-                                }
-                            };
-                        }));
+                        utilityService.addSlidingModal(
+                            $uibModalInstance.rendered.then(() => {
+                                let modalElement = $("." + modalId).children();
+                                return {
+                                    element: modalElement,
+                                    name:
+                                    $scope.effectDefinition.definition != null
+                                        ? $scope.effectDefinition.definition.name
+                                        : "Nothing",
+                                    id: modalId,
+                                    instance: $uibModalInstance,
+                                    onSaveAll: () => {
+                                        $scope.save();
+                                    }
+                                };
+                            })
+                        );
 
-                        $scope.$on('modal.closing', function() {
+                        $scope.$on("modal.closing", function() {
                             utilityService.removeSlidingModal();
                         });
 
-                        $scope.saveAll = function() {
+                        async function validateEffect() {
+
+                            if ($scope.effect.type === "Nothing") {
+                                ngToast.create("Please select an effect type!");
+                                return false;
+                            }
+
+                            // validate options
+                            let errors = $scope.effectDefinition.optionsValidator(
+                                $scope.effect
+                            );
+
+                            if (errors != null && errors.length > 0) {
+                                for (let error of errors) {
+                                    ngToast.create(error);
+                                }
+                                return false;
+                            }
+
+                            const { triggerType, triggerMeta } = $scope;
+                            try {
+                                let variableErrors = await backendCommunicator.fireEventAsync("validateVariables", {
+                                    data: $scope.effect,
+                                    trigger: {
+                                        type: triggerType,
+                                        id: triggerMeta && triggerMeta.triggerId
+                                    }
+                                });
+
+                                if (variableErrors && variableErrors.length > 0) {
+                                    const firstError = variableErrors[0];
+
+                                    let errorDetails = [];
+
+                                    if (firstError.varname) {
+                                        errorDetails.push({
+                                            title: "Variable",
+                                            message: "$" + firstError.varname
+                                        });
+                                    }
+
+                                    if (firstError.message) {
+                                        errorDetails.push({
+                                            title: "Error",
+                                            message: service.capitalize(firstError.message)
+                                        });
+                                    }
+
+                                    if (firstError.index > -1) {
+                                        errorDetails.push({
+                                            title: "Argument Index",
+                                            message: firstError.index
+                                        });
+                                    }
+
+                                    if (firstError.character) {
+                                        errorDetails.push({
+                                            title: "Character",
+                                            message: "\"" + firstError.character + "\""
+                                        });
+                                    }
+
+                                    if (firstError.position) {
+                                        errorDetails.push({
+                                            title: "Character Position",
+                                            message: firstError.position
+                                        });
+                                    }
+
+                                    if (firstError.rawText) {
+                                        errorDetails.push({
+                                            title: "Raw Text",
+                                            message: "\"" + firstError.rawText + "\""
+                                        });
+                                    }
+
+                                    if (firstError.dataField) {
+                                        errorDetails.push({
+                                            title: "UI Field",
+                                            message: firstError.dataField
+                                        });
+                                    }
+
+                                    service.showErrorDetailModal("Replace Variable Error", errorDetails);
+                                    return false;
+                                }
+                            } catch (err) {
+                                logger.warn("Error while validating variables.", err);
+                            }
+
+                            // validate varialbes
+                            return true;
+                        }
+
+
+                        $scope.saveAll = async function() {
+                            let valid = await validateEffect();
+                            if (!valid) return;
                             utilityService.saveAllSlidingModals();
                         };
 
-                        $scope.save = function() {
+
+                        $scope.save = async function() {
+
+                            let valid = await validateEffect();
+
+                            if (!valid) return;
+
+                            // clear any toasts
+                            ngToast.dismiss();
+
                             $uibModalInstance.close({
                                 action: $scope.isAddMode ? "add" : "update",
                                 effect: $scope.effect,
@@ -489,18 +768,48 @@
                         };
 
                         $scope.copy = function() {
-                            utilityService.copyEffects(triggerType, [$scope.effect]);
+                            objectCopyHelper.copyEffects([$scope.effect]);
                         };
 
-                        $scope.paste = function() {
+                        $scope.getLabelButtonTextForLabel = function(labelModel) {
+                            if (labelModel == null || labelModel.length === 0) {
+                                return "Add Label";
+                            }
+                            return "Edit Label";
+                        };
+
+                        $scope.editLabel = () => {
+                            let label = $scope.effect.effectLabel;
+                            utilityService.openGetInputModal(
+                                {
+                                    model: label,
+                                    label: $scope.getLabelButtonTextForLabel(label),
+                                    saveText: "Save Label"
+                                },
+                                (newLabel) => {
+                                    if (newLabel == null || newLabel.length === 0) {
+                                        $scope.effect.effectLabel = null;
+                                    } else {
+                                        $scope.effect.effectLabel = newLabel;
+                                    }
+                                });
+                        };
+
+                        $scope.paste = async function() {
                             if ($scope.hasCopiedEffect()) {
-                                $scope.effect = utilityService.getCopiedEffects(triggerType)[0];
+                                $scope.effect = await objectCopyHelper.getCopiedEffects(triggerType, triggerMeta)[0];
                             }
                         };
 
                         $scope.hasCopiedEffect = function() {
-                            return utilityService.hasCopiedEffects(triggerType) &&
-                            utilityService.getCopiedEffects(triggerType).length < 2;
+                            return (
+                                objectCopyHelper.hasCopiedEffects() &&
+                                objectCopyHelper.copiedEffectsCount() < 2
+                            );
+                        };
+
+                        $scope.runEffect = function() {
+                            ipcRenderer.send('runEffectsManually', { list: [$scope.effect] });
                         };
 
                         $scope.delete = function() {
@@ -514,6 +823,27 @@
                         $scope.dismiss = function() {
                             $uibModalInstance.dismiss();
                         };
+
+
+                        /*$scope.footerIsStuck = false;
+                        //scroll sentinel
+                        this.$onInit = function() {
+
+                            $timeout(() => {
+                                let observer = new IntersectionObserver(entries => {
+                                    let entry = entries[0];
+
+                                    $q.resolve(!entry.isIntersecting, (stuck) => {
+                                        $scope.footerIsStuck = stuck;
+                                    });
+                                });
+
+                                let sentinel = document.querySelector('.effect-footer-sentinel');
+                                if (sentinel != null) {
+                                    observer.observe(sentinel);
+                                }
+                            }, 100);
+                        };*/
                     },
                     resolveObj: {
                         effect: () => {
@@ -521,6 +851,9 @@
                         },
                         triggerType: () => {
                             return triggerType;
+                        },
+                        triggerMeta: () => {
+                            return triggerMeta;
                         },
                         index: () => {
                             return index;
@@ -534,7 +867,6 @@
 
             service.showConfirmationModal = function(confirmModalRequest) {
                 return new Promise(resolve => {
-
                     let deleteBoardModalContext = {
                         templateUrl: "./templates/misc-modals/confirmationModal.html",
                         resolveObj: {
@@ -554,8 +886,15 @@
                                 return confirmModalRequest.confirmBtnType;
                             }
                         },
-                        controllerFunc: ($scope, $uibModalInstance, title, question, cancelLabel, confirmLabel, confirmBtnType) => {
-
+                        controllerFunc: (
+                            $scope,
+                            $uibModalInstance,
+                            title,
+                            question,
+                            cancelLabel,
+                            confirmLabel,
+                            confirmBtnType
+                        ) => {
                             $scope.title = title;
                             $scope.question = question;
                             $scope.cancelLabel = cancelLabel;
@@ -570,9 +909,10 @@
 
                             $scope.dismiss = function() {
                                 $uibModalInstance.close();
+                                resolve(false);
                             };
 
-                            $scope.$on('modal.closing', function() {
+                            $scope.$on("modal.closing", function() {
                                 resolve($scope.confirmed);
                             });
                         },
@@ -583,30 +923,59 @@
             };
 
             // Watches for an event from main process
-            listenerService.registerListener({
-                type: listenerService.ListenerType.INFO
-            },
-            (infoMessage) => {
-                service.showInfoModal(infoMessage);
-            });
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.INFO
+                },
+                infoMessage => {
+                    service.showInfoModal(infoMessage);
+                }
+            );
 
             // Watches for an event from main process
-            listenerService.registerListener({
-                type: listenerService.ListenerType.ERROR
-            },
-            (errorMessage) => {
-                service.showErrorModal(errorMessage);
-            });
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.ERROR
+                },
+                errorMessage => {
+                    service.showErrorModal(errorMessage);
+                }
+            );
 
             service.capitalize = function([first, ...rest]) {
-                return first.toUpperCase() + rest.join('').toLowerCase();
+                return first.toUpperCase() + rest.join("").toLowerCase();
             };
 
             service.generateUuid = function() {
                 // RFC4122 version 4 compliant
                 return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                    (
+                        c ^
+            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+                    ).toString(16)
                 );
+            };
+
+            service.debounce = function(func, wait, immediate = false) {
+                let timeout;
+
+                return function executedFunction() {
+                    let context = this;
+                    let args = arguments;
+
+                    let later = function() {
+                        timeout = null;
+                        if (!immediate) func.apply(context, args);
+                    };
+
+                    let callNow = immediate && !timeout;
+
+                    $timeout.cancel(timeout);
+
+                    timeout = $timeout(later, wait);
+
+                    if (callNow) func.apply(context, args);
+                };
             };
 
             return service;

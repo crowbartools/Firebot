@@ -1,39 +1,71 @@
-'use strict';
-
+"use strict";
 
 (function() {
-
     // Provides utility methods for connecting to mixer services
 
     angular
-        .module('firebotApp')
-        .factory('connectionManager', function (connectionService, listenerService, settingsService, websocketService,
-            soundService, boardService, utilityService) {
-
+        .module("firebotApp")
+        .factory("connectionManager", function(
+            connectionService,
+            listenerService,
+            settingsService,
+            soundService,
+            integrationService,
+            logger
+        ) {
             let service = {};
+
+            let overlayStatus = listenerService.fireEventSync("getOverlayStatus");
+
+            function delay(time) {
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve();
+                    }, time || 100);
+                });
+            }
+
+            // Connection Monitor for Overlay
+            // Recieves event from main process that connection has been established or disconnected.
+            listenerService.registerListener(
+                {
+                    type: listenerService.ListenerType.OVERLAY_CONNECTION_STATUS
+                },
+                overlayStatusData => {
+                    overlayStatus = overlayStatusData;
+                }
+            );
 
             // listen for toggle service requests from the backend
             listenerService.registerListener(
                 { type: listenerService.ListenerType.TOGGLE_SERVICES_REQUEST },
-                (services) => {
+                services => {
                     if (service.isWaitingForServicesStatusChange()) return;
                     let shouldConnect = service.connectedServiceCount(services) === 0;
                     service.toggleConnectionForServices(services, shouldConnect);
-                });
+                }
+            );
 
             service.isWaitingForServicesStatusChange = function() {
-                return (connectionService.waitingForStatusChange || connectionService.waitingForChatStatusChange ||
-                    connectionService.waitingForConstellationStatusChange || connectionService.isConnectingAll);
+                return (
+                    connectionService.waitingForStatusChange ||
+                    connectionService.waitingForChatStatusChange ||
+                    connectionService.waitingForConstellationStatusChange ||
+                    connectionService.isConnectingAll
+                );
             };
 
             service.setConnectionToChat = function(shouldConnect) {
                 return new Promise(resolve => {
                     listenerService.registerListener(
-                        { type: listenerService.ListenerType.CHAT_CONNECTION_STATUS,
-                            runOnce: true },
-                        (isChatConnected) => {
+                        {
+                            type: listenerService.ListenerType.CHAT_CONNECTION_STATUS,
+                            runOnce: true
+                        },
+                        isChatConnected => {
                             resolve(isChatConnected);
-                        });
+                        }
+                    );
 
                     if (shouldConnect) {
                         connectionService.connectToChat();
@@ -46,11 +78,15 @@
             service.setConnectionToConstellation = function(shouldConnect) {
                 return new Promise(resolve => {
                     listenerService.registerListener(
-                        { type: listenerService.ListenerType.CONSTELLATION_CONNECTION_STATUS,
-                            runOnce: true },
-                        (isConstellationConnected) => {
+                        {
+                            type:
+                listenerService.ListenerType.CONSTELLATION_CONNECTION_STATUS,
+                            runOnce: true
+                        },
+                        isConstellationConnected => {
                             resolve(isConstellationConnected);
-                        });
+                        }
+                    );
 
                     if (shouldConnect) {
                         connectionService.connectToConstellation();
@@ -63,25 +99,21 @@
             service.setConnectionToInteractive = function(shouldConnect) {
                 return new Promise(resolve => {
 
-                    if (!boardService.hasBoardsLoaded()) {
-                        utilityService.showInfoModal("Interactive will not connect as you do not have any boards loaded. If you do not plan to use Interactive right now, you can disable it's use by the sidebar connection button via the Connection Panel.");
-                        resolve(false);
-                        return;
-                    }
-
                     listenerService.registerListener(
-                        { type: listenerService.ListenerType.CONNECTION_STATUS,
-                            runOnce: true },
-                        (isInteractiveConnected) => {
+                        {
+                            type: listenerService.ListenerType.CONNECTION_STATUS,
+                            runOnce: true
+                        },
+                        isInteractiveConnected => {
                             resolve(isInteractiveConnected);
-                        });
+                        }
+                    );
 
                     if (shouldConnect) {
                         connectionService.connectToInteractive();
                     } else {
                         connectionService.disconnectFromInteractive();
                     }
-
                 });
             };
 
@@ -92,23 +124,30 @@
 
                 let count = 0;
 
-                services.forEach((s) => {
+                services.forEach(s => {
                     switch (s) {
-                    case 'interactive':
+                    case "interactive":
                         if (connectionService.connectedToInteractive) {
                             count++;
                         }
                         break;
-                    case 'chat':
+                    case "chat":
                         if (connectionService.connectedToChat) {
                             count++;
                         }
                         break;
-                    case 'constellation':
+                    case "constellation":
                         if (connectionService.connectedToConstellation) {
                             count++;
                         }
                         break;
+                    default:
+                        if (s.startsWith("integration.")) {
+                            let intId = s.replace("integration.", "");
+                            if (integrationService.integrationIsConnected(intId)) {
+                                count++;
+                            }
+                        }
                     }
                 });
 
@@ -119,18 +158,17 @@
                 let services = settingsService.getSidebarControlledServices();
                 let connectedCount = service.connectedServiceCount();
 
-                return (connectedCount > 0 && services.length > connectedCount);
+                return connectedCount > 0 && services.length > connectedCount;
             };
 
             service.allServicesConnected = function() {
                 let services = settingsService.getSidebarControlledServices();
                 let connectedCount = service.connectedServiceCount();
 
-                return (services.length === connectedCount);
+                return services.length === connectedCount;
             };
 
-            service.toggleSidebarServices = function () {
-
+            service.toggleSidebarServices = function() {
                 let services = settingsService.getSidebarControlledServices();
 
                 // we only want to connect if none of the connections are currently connected
@@ -140,39 +178,70 @@
                 service.toggleConnectionForServices(services, shouldConnect);
             };
 
-            service.toggleConnectionForServices = async function(services, shouldConnect = false) {
-
+            service.toggleConnectionForServices = async function(
+                services,
+                shouldConnect = false
+            ) {
                 if (service.isWaitingForServicesStatusChange()) return;
 
                 // Clear all reconnect timeouts if any are running.
-                ipcRenderer.send('clearReconnect', "All");
+                ipcRenderer.send("clearReconnect", "All");
 
                 connectionService.isConnectingAll = true;
+
+                soundService.resetPopCounter();
 
                 for (let i = 0; i < services.length; i++) {
                     let s = services[i];
                     switch (s) {
-                    case 'interactive':
+                    case "interactive":
                         if (shouldConnect) {
-                            await service.setConnectionToInteractive(true);
+                            let didConnect = await service.setConnectionToInteractive(true);
+                            if (didConnect) {
+                                soundService.popSound();
+                                await delay(250);
+                            }
                         } else if (connectionService.connectedToInteractive) {
                             await service.setConnectionToInteractive(false);
                         }
                         break;
-                    case 'chat':
+                    case "chat":
                         if (shouldConnect) {
-                            await service.setConnectionToChat(true);
+                            let didConnect = await service.setConnectionToChat(true);
+                            if (didConnect) {
+                                soundService.popSound();
+                                await delay(100);
+                            }
                         } else if (connectionService.connectedToChat) {
                             await service.setConnectionToChat(false);
                         }
                         break;
-                    case 'constellation':
+                    case "constellation":
                         if (shouldConnect) {
-                            await service.setConnectionToConstellation(true);
+                            let didConnect = await service.setConnectionToConstellation(true);
+                            if (didConnect) {
+                                soundService.popSound();
+                                await delay(50);
+                            }
                         } else if (connectionService.connectedToConstellation) {
                             await service.setConnectionToConstellation(false);
                         }
                         break;
+                    default:
+                        if (s.startsWith("integration.")) {
+                            let intId = s.replace("integration.", "");
+                            logger.info("Connecting to " + intId);
+                            if (integrationService.integrationIsLinked(intId)) {
+                                if (shouldConnect) {
+                                    let didConnect = await integrationService.setConnectionForIntegration(intId, true);
+                                    if (didConnect) {
+                                        soundService.popSound();
+                                    }
+                                } else if (integrationService.integrationIsConnected(intId)) {
+                                    await integrationService.setConnectionForIntegration(intId, false);
+                                }
+                            }
+                        }
                     }
                 }
                 connectionService.isConnectingAll = false;
@@ -205,15 +274,49 @@
                         connectionStatus = "disconnected";
                     }
                     break;
-                case "overlay":
-                    if (websocketService.hasClientsConnected) {
+                case "overlay": {
+                    if (!overlayStatus.serverStarted) {
+                        connectionStatus = "disconnected";
+                    } else if (overlayStatus.clientsConnected) {
+                        connectionStatus = "connected";
+                    } else {
+                        connectionStatus = "warning";
+                    }
+
+                    break;
+                }
+                case "integrations": {
+                    let sidebarControlledIntegrations = settingsService
+                        .getSidebarControlledServices()
+                        .filter(s => s.startsWith("integration."))
+                        .map(s => s.replace("integration.", ""));
+
+                    let connectedCount = 0;
+                    sidebarControlledIntegrations.forEach(i => {
+                        if (integrationService.integrationIsConnected(i)) {
+                            connectedCount++;
+                        }
+                    });
+
+                    if (connectedCount === 0) {
+                        connectionStatus = "disconnected";
+                    } else if (
+                        connectedCount === sidebarControlledIntegrations.length
+                    ) {
                         connectionStatus = "connected";
                     } else {
                         connectionStatus = "warning";
                     }
                     break;
                 }
+                default:
+                    connectionStatus = "disconnected";
+                }
                 return connectionStatus;
+            };
+
+            service.getOverlayStatus = function() {
+                return overlayStatus;
             };
 
             return service;

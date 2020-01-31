@@ -8,7 +8,6 @@ pids
 logs
 *.log
 
-
 # OS Ignores: Windows
 Thumbs.db
 ehthumbs.db
@@ -21,7 +20,6 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.lnk
-
 
 # OS Ignores: iOS/Mac
 .DS_Store
@@ -42,13 +40,11 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-
 # OS Ignores: Linux
 .fuse_hidden*
 .directory
 .Trash-*
 .nfs*
-
 
 # Node-specific ignores
 npm-debug.log*
@@ -69,7 +65,6 @@ typings/
 .yarn-integrity
 .env
 
-
 # Repo Specific
 dist
 user-settings
@@ -80,3 +75,9 @@ scripts
 .env
 resources/overlay/js/port.js
 eslint.log.htm
+doc/
+*.iws
+
+# Editors
+.idea/
+.vs/
