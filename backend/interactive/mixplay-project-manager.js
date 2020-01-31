@@ -161,6 +161,22 @@ exports.getConnectedProject = function() {
     return getProjectById(connectedProjectId);
 };
 
+exports.getControlByNameAndScene = (controlName, sceneName) => {
+    if (sceneName == null || controlName == null) return null;
+
+    const connectedProject = exports.getConnectedProject();
+
+    if (connectedProject == null || connectedProject.scenes == null) return null;
+
+    let scene = connectedProject.scenes.find(s => s.name.toLowerCase() === sceneName);
+
+    if (scene == null) return null;
+
+    let control = scene.controls.find(c => c.name.toLowerCase() === controlName.toLowerCase());
+
+    return control;
+};
+
 exports.getControlInProject = function(projectId, controlId) {
     const project = getProjectById(projectId);
     if (project != null && project.scenes != null) {
