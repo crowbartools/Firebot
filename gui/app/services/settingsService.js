@@ -7,10 +7,14 @@
 
     angular
         .module("firebotApp")
-        .factory("settingsService", function(utilityService, logger, profileManager, dataAccess) {
+        .factory("settingsService", function(utilityService, logger, profileManager, dataAccess, backendCommunicator) {
             let service = {};
 
             let settingsCache = {};
+
+            backendCommunicator.on("flush-settings-cache", () => {
+                settingsCache = {};
+            });
 
             function getSettingsFile() {
                 return profileManager.getJsonDbInProfile("/settings");

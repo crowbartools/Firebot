@@ -41,7 +41,7 @@
                                         IMPORT SETTINGS
                                     </div>
                                     <div style="text-align:left !important;display:flex; justify-content: center;">
-                                        <div>
+                                        <div style="transform: translateX(40px);">
                                             <div style="margin-bottom: 3px">
                                                 <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> MixPlay Projects
                                                     <input type="checkbox" ng-model="$ctrl.importSettings.mixplay">
@@ -69,6 +69,12 @@
                                             <div style="margin-bottom: 3px">
                                                 <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Hotkeys
                                                     <input type="checkbox" ng-model="$ctrl.importSettings.hotkeys">
+                                                    <div class="control__indicator"></div>
+                                                </label>
+                                            </div>
+                                            <div style="margin-bottom: 3px">
+                                                <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Extras <span class="muted">(Scripts/Fonts/Overlay Instances)</span>
+                                                    <input type="checkbox" ng-model="$ctrl.importSettings.misc">
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </div>
@@ -357,16 +363,15 @@
                     $ctrl.v4DataDetected = detected;
                 });
 
-            $ctrl.importSettings = {
-                mixplay: false
-            };
+            $ctrl.importSettings = {};
 
             $ctrl.canStartImport = () => {
                 return $ctrl.importSettings.mixplay ||
                 $ctrl.importSettings.commands ||
                 $ctrl.importSettings.events ||
                 $ctrl.importSettings.viewerGroups ||
-                $ctrl.importSettings.hotkeys;
+                $ctrl.importSettings.hotkeys ||
+                $ctrl.importSettings.misc;
             };
 
             $ctrl.startImport = () => {

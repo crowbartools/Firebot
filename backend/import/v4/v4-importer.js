@@ -11,6 +11,9 @@ const commandsImporter = require("./areas/v4-commands-importer");
 const eventsImporter = require("./areas/v4-events-importer");
 const viewerGroupsImporter = require("./areas/v4-viewergroups-importer");
 const hotkeysImporter = require("./areas/v4-hotkeys-importer");
+const scriptsImporter = require("./areas/v4-scripts-importer");
+const fontsImporter = require("./areas/v4-fonts-importer");
+const overlayInstancesImporter = require("./areas/v4-overlay-instances-importer");
 
 const v4DataPath = importHelpers.v4DataPath;
 
@@ -105,6 +108,36 @@ async function importV4Data(settings) {
         let hotkeysResult = await hotkeysImporter.run();
 
         incompatibilityWarnings = incompatibilityWarnings.concat(hotkeysResult.incompatibilityWarnings);
+    }
+
+    if (settings.misc) {
+        logger.info("Importing v4 misc data...");
+
+        frontendCommunicator.send("v4-import-update", { importing: "Extras (Custom Scripts)" });
+
+        await wait(2000);
+
+        let scriptsResult = await scriptsImporter.run();
+
+        incompatibilityWarnings = incompatibilityWarnings.concat(scriptsResult.incompatibilityWarnings);
+
+
+        frontendCommunicator.send("v4-import-update", { importing: "Extras (Fonts)" });
+
+        await wait(2000);
+
+        let fontsResult = await fontsImporter.run();
+
+        incompatibilityWarnings = incompatibilityWarnings.concat(fontsResult.incompatibilityWarnings);
+
+
+        frontendCommunicator.send("v4-import-update", { importing: "Extras (Overlay Instances)" });
+
+        await wait(2000);
+
+        let overlayInstancesResult = await overlayInstancesImporter.run();
+
+        incompatibilityWarnings = incompatibilityWarnings.concat(overlayInstancesResult.incompatibilityWarnings);
     }
 
     logger.info("V4 import completed!");

@@ -111,9 +111,17 @@ settings.useOverlayInstances = function() {
     return oi != null ? oi : false;
 };
 
+settings.setUseOverlayInstances = function(oi) {
+    pushDataToFile("/settings/useOverlayInstances", oi === true);
+};
+
 settings.getOverlayInstances = function() {
     let ois = getDataFromFile("/settings/overlayInstances");
     return ois != null ? ois : [];
+};
+
+settings.setOverlayInstances = function(ois) {
+    pushDataToFile("/settings/overlayInstances", ois);
 };
 
 settings.backupKeepAll = function() {
