@@ -22,7 +22,8 @@
             integrationService,
             connectionService,
             logger,
-            $http
+            $http,
+            backendCommunicator
         ) {
             $scope.settings = settingsService;
 
@@ -42,6 +43,10 @@
 
             $scope.openRootFolder = function() {
                 listenerService.fireEvent(listenerService.EventType.OPEN_ROOT);
+            };
+
+            $scope.openLogsFolder = function() {
+                backendCommunicator.fireEvent("openLogsFolder");
             };
 
             $scope.startBackup = function() {

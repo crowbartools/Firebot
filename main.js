@@ -714,7 +714,16 @@ ipcMain.on("openRootFolder", () => {
     let rootFolder = path.resolve(
         profileManager.getPathInProfile("/")
     );
-    logger.debug("rootFolder: " + rootFolder);
+    shell.openItem(rootFolder);
+});
+
+// Opens the firebot root folder
+ipcMain.on("openLogsFolder", () => {
+    // We include "fakefile.txt" as a workaround to make it open into the 'root' folder instead
+    // of opening to the poarent folder with 'Firebot'folder selected.
+    let rootFolder = path.resolve(
+        dataAccess.getPathInUserData("/logs/")
+    );
     shell.openItem(rootFolder);
 });
 
