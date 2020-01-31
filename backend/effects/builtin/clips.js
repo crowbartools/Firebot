@@ -6,6 +6,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const accountAccess = require("../../common/account-access");
+
 /**
  * The Clip effect
  */
@@ -17,6 +19,7 @@ const clip = {
         id: "firebot:clip",
         name: "Create Clip",
         description: "Creates a clip on Mixer.",
+        hidden: !accountAccess.getAccounts().streamer.loggedIn || !accountAccess.getAccounts().streamer.partnered,
         tags: ["Fun", "Built in"],
         dependencies: [EffectDependency.CHAT, EffectDependency.CONSTELLATION],
         triggers: effectModels.buildEffectTriggersObject(
