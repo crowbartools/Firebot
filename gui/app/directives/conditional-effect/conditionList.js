@@ -143,6 +143,8 @@
                         resolveObj: {
                             condition: () => $ctrl.conditionData && $ctrl.conditionData.conditions[index],
                             availableConditions: () => availableConditions,
+                            trigger: () => $ctrl.trigger,
+                            triggerMeta: () => $ctrl.triggerMeta,
                             index: () => index
                         },
                         closeCallback: resp => {

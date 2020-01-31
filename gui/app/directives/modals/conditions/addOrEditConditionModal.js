@@ -88,7 +88,7 @@
                 dismiss: "&",
                 modalInstance: "<"
             },
-            controller: function($injector) {
+            controller: function($injector, $scope) {
                 let $ctrl = this;
 
                 $ctrl.availableConditions = [];
@@ -157,6 +157,9 @@
                 };
 
                 $ctrl.$onInit = function() {
+
+                    $scope.trigger = $ctrl.resolve.trigger;
+                    $scope.triggerMeta = $ctrl.resolve.triggerMeta;
 
                     if ($ctrl.resolve.availableConditions) {
                         $ctrl.availableConditions = $ctrl.resolve.availableConditions;

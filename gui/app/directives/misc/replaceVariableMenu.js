@@ -13,16 +13,27 @@
                 },
                 controller: function($scope, $element, listenerService, $timeout) {
 
-                    const { trigger, triggerMeta } = $scope.$parent;
+
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
                     $scope.showMenu = false;
 
-                    $scope.variables = listenerService.fireEventSync("getReplaceVariableDefinitions", {
-                        type: trigger,
-                        id: triggerMeta && triggerMeta.triggerId,
-                        dataOutput: $scope.replaceVariables
+                    $scope.variables = [];
+
+                    function getVariables() {
+                        const { trigger, triggerMeta } = $scope.$parent;
+
+                        $scope.variables = listenerService.fireEventSync("getReplaceVariableDefinitions", {
+                            type: trigger,
+                            id: triggerMeta && triggerMeta.triggerId,
+                            dataOutput: $scope.replaceVariables
+                        });
+                    }
+                    getVariables();
+
+                    $scope.$parent.$watch('trigger', function() {
+                        getVariables();
                     });
 
                     $scope.toggleMenu = () => {
