@@ -33,4 +33,23 @@ function sync(jsonData) {
     });
 }
 
+function getData(shareCode) {
+    return new Promise(resolve => {
+        request.get({
+            url: `https://bytebin.lucko.me/${shareCode}`,
+            headers: {
+                'User-Agent': 'Firebot V5 - https://crowbartools.com'
+            },
+            json: true
+        }, function(err, httpResponse, body) {
+            if (!err && httpResponse.statusCode === 200) {
+                resolve(body);
+            } else {
+                resolve(null);
+            }
+        });
+    });
+}
+
 exports.sync = sync;
+exports.getData = getData;

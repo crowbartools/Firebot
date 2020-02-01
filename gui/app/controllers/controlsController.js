@@ -13,7 +13,8 @@
             settingsService,
             $http,
             backendCommunicator,
-            objectCopyHelper
+            objectCopyHelper,
+            ngToast
         ) {
 
             $scope.previewEnabled = settingsService.mixPlayPreviewModeEnabled();
@@ -296,16 +297,40 @@
                     resolveObj: {},
                     closeCallback: async data => {
 
-                        let { name, importDevLab, devlabProjectId, setAsActive } = data;
+                        let { name, shouldImport, importType, devlabProjectId, shareCode, setAsActive } = data;
 
-                        if (importDevLab) {
-                            await mixplayService.createNewImportedDevLabProject(devlabProjectId, name, setAsActive);
+                        if (shouldImport) {
+                            if (importType === "devlab") {
+                                await mixplayService.createNewImportedDevLabProject(devlabProjectId, name, setAsActive);
+                            } else if (importType === "sharecode") {
+                                await mixplayService.createNewShareCodeProject(shareCode, name, setAsActive);
+                            }
                         } else {
                             mixplayService.createNewProject(name, setAsActive);
                         }
                         $scope.updateControlPositions();
                     }
                 });
+            };
+
+            $scope.shareCurrentMixPlayProject = async () => {
+                let projectId = mixplayService.getCurrentProjectId();
+                if (projectId == null) return;
+
+                let shareCode = await backendCommunicator.fireEventAsync("getMixPlayProjectShareCode", projectId);
+                if (shareCode == null) {
+                    ngToast.create("Unable to share MixPlay project.");
+                } else {
+                    utilityService.showModal({
+                        component: "copyShareCodeModal",
+                        size: 'sm',
+                        resolveObj: {
+                            shareCode: () => shareCode,
+                            title: () => "MixPlay Share Code",
+                            message: () => "Share the below code so others can import this MixPlay Project."
+                        }
+                    });
+                }
             };
 
             $scope.showCreateSceneModal = function() {

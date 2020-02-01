@@ -2,15 +2,15 @@
 
 (function() {
     angular.module("firebotApp")
-        .component("effectShareCodeModal", {
+        .component("copyShareCodeModal", {
             template: `
                 <div class="modal-header" style="text-align:center;">
-                    <h4 class="modal-title">Effects Share Code</h4>
+                    <h4 class="modal-title">{{$ctrl.resolve.title}}</h4>
                     <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div style="text-align:center;">
-                        <p class="muted">Share the below code so others can import these effects. Note: code only valid for <strong>1 hour</strong>.</p>
+                        <p class="muted">{{$ctrl.resolve.message}} Note: Code only valid for <strong>1 hour</strong>.</p>
                         <div class="input-group">
                             <input type="text" class="form-control" style="cursor:text;" ng-model="$ctrl.shareCode" disabled>
                             <span class="input-group-btn">
@@ -40,7 +40,7 @@
 
                     ngToast.create({
                         className: 'success',
-                        content: 'Effect share code copied!'
+                        content: 'Share code copied!'
                     });
                 };
             }

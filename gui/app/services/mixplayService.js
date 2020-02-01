@@ -132,7 +132,21 @@
                     }
                     selectFirstScene();
                 }
+            };
 
+            service.createNewShareCodeProject = async function(shareCode, name, setAsActive = false) {
+                let newProject = await backendCommunicator.fireEventAsync("createNewShareCodeImportProject", {
+                    shareCode: shareCode,
+                    projectName: name
+                });
+                if (newProject != null) {
+                    projects.push(newProject);
+                    currentProjectId = newProject.id;
+                    if (activeProjectId == null || setAsActive) {
+                        service.setActiveMixplayProjectId(newProject.id);
+                    }
+                    selectFirstScene();
+                }
             };
 
             service.saveProject = function(project) {

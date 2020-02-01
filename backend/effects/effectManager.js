@@ -72,33 +72,33 @@ class EffectManager extends EventEmitter {
 
         return effectTriggerData.events && effectTriggerData.events.includes(inputEvent);
     }
+
+    clearFilePaths(effects) {
+        if (effects == null) return effects;
+
+        let keys = Object.keys(effects);
+
+        for (let key of keys) {
+            let value = effects[key];
+
+            if (key != null && key.toLowerCase() === "filepath" || key.toLowerCase() === "file") {
+                effects[key] = undefined;
+            } else if (value && typeof value === "object") {
+                effects[key] = this.clearFilePaths(value);
+            }
+        }
+
+        return effects;
+    }
 }
 
 const manager = new EffectManager();
 
 
-function clearFilePaths(effects) {
-    if (effects == null) return effects;
-
-    let keys = Object.keys(effects);
-
-    for (let key of keys) {
-        let value = effects[key];
-
-        if (key != null && key.toLowerCase() === "filepath" || key.toLowerCase() === "file") {
-            effects[key] = undefined;
-        } else if (value && typeof value === "object") {
-            effects[key] = clearFilePaths(value);
-        }
-    }
-
-    return effects;
-}
-
 frontendCommunicator.onAsync("getEffectsShareCode", async (effectList) => {
     logger.debug("got get effects share code request");
 
-    effectList = clearFilePaths(effectList);
+    effectList = manager.clearFilePaths(effectList);
 
     //return share code
     return await cloudSync.sync({ effects: effectList });

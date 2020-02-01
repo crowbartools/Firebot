@@ -32,10 +32,12 @@
               </li>
               <li role="separator" class="divider"></li>
               <li ng-show="!mps.projectIsActive(mps.getCurrentProjectId())"><a href ng-click="mps.setActiveMixplayProjectId(mps.getCurrentProjectId())">Set "{{getSelectedProjectName()}}" as Active <tooltip text="'The active project is the project used when you connect to MixPlay.'"></tooltip></a></li>
-              <li><a href ng-click="renameCurrentProject()">Rename "{{getSelectedProjectName()}}"</a></li>
-              <li><a href ng-click="deleteCurrentProject()">Delete "{{getSelectedProjectName()}}"</a></li>
+              <li><a href ng-click="renameCurrentProject()"><i class="fal fa-edit"></i> Rename "{{getSelectedProjectName()}}"</a></li>
+              <li><a href ng-click="deleteCurrentProject()"><i class="fal fa-trash-alt" style="margin-right: 4px;"></i>  Delete "{{getSelectedProjectName()}}"</a></li>
               <li role="separator" class="divider"></li>
-              <li><a href ng-click="showCreateMixplayModal()">Create New Project</a></li>
+              <li><a href ng-click="shareCurrentMixPlayProject()"><i class="far fa-share-alt-square" style="margin-right: 5px;"></i>  Share "{{getSelectedProjectName()}}"</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href ng-click="showCreateMixplayModal()"><i class="fas fa-plus-circle"></i> Create New Project</a></li>
             </ul>
           </div>
         </div>

@@ -161,10 +161,12 @@
                         ngToast.create("Unable to share effects.");
                     } else {
                         utilityService.showModal({
-                            component: "effectShareCodeModal",
+                            component: "copyShareCodeModal",
                             size: 'sm',
                             resolveObj: {
-                                shareCode: () => shareCode
+                                shareCode: () => shareCode,
+                                title: () => "Effects Share Code",
+                                message: () => "Share the below code so others can import these effects."
                             }
                         });
                     }
