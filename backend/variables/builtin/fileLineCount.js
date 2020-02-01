@@ -2,8 +2,6 @@
 
 const fs = require("fs");
 
-const util = require("../../utility");
-
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 const logger = require("../../logwrapper");
