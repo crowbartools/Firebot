@@ -15,7 +15,7 @@ class EventManager extends EventEmitter {
     }
 
     registerEventSource(eventSource) {
-    // TODO: validate eventSource
+        // TODO: validate eventSource
 
         let idConflict = this._registeredEventSources.some(
             es => es.id === eventSource.id
