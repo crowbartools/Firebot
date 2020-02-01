@@ -14,8 +14,8 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, filePath) => {
+        if (filePath === null || !filePath.endsWith(".txt")) return 0;
 
-        if (filePath === null || !filePath.endsWith(".txt")) return "[File Path Error]";
         try {
             let contents = fs.readFileSync(filePath, "utf8");
             let lines = contents.split('\n');
