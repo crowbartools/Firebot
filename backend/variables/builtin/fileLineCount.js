@@ -15,7 +15,7 @@ const model = {
         description: "Count the number of lines in a text file.",
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, filePath, randomLine) => {
+    evaluator: (_, filePath) => {
 
         if (filePath === null || !filePath.endsWith(".txt")) return "[File Path Error]";
         try {
