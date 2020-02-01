@@ -1,12 +1,9 @@
 "use strict";
-
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const fileWriterProcessor = require("../../common/handlers/fileWriterProcessor");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 /**
  * The File Writer effect
