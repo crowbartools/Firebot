@@ -11,7 +11,7 @@ const model = {
         handle: "fileLineCount",
         usage: "fileLineCount[\"path/to/file.txt\"]",
         description: "Count the number of lines in a text file.",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, filePath) => {
 
@@ -27,7 +27,7 @@ const model = {
             return filteredLines.length;
         } catch (err) {
             logger.error("error counting lines in file", err);
-            return "[File Line Count Error]";
+            return 0;
         }
     }
 };
