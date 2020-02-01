@@ -3,8 +3,8 @@
 const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const mixerApi = require("../api-access");
+const NodeCache = require("node-cache");
 let linkHeaderParser = require('parse-link-header');
-
 
 exports.getFollowDateForUser = function(username) {
     return new Promise(async resolve => {
@@ -57,8 +57,16 @@ exports.getStreamerOnlineStatus = function() {
     });
 };
 
+const viewerRoleCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
+
 exports.getViewersMixerRoles = function(username) {
     return new Promise(async resolve => {
+
+        let cachedRoles = viewerRoleCache.get(username);
+        if (cachedRoles != null) {
+            return resolve(cachedRoles);
+        }
+
         let idData = await exports.getIdsFromUsername(username);
 
         if (idData == null) {
@@ -70,6 +78,10 @@ exports.getViewersMixerRoles = function(username) {
         if (chatUser == null) {
             return resolve([]);
         }
+
+        let userRoles = chatUser.userRoles || [];
+
+        viewerRoleCache.set(username, userRoles);
 
         resolve(chatUser.userRoles);
     });
