@@ -14,7 +14,10 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, filePath) => {
-        if (filePath === null || !filePath.endsWith(".txt")) return 0;
+        if (filePath === null || !filePath.endsWith(".txt")) {
+            logger.error("Couldn't read file (" + filePath + ") to count the lines in it.");
+            return 0;
+        }
 
         try {
             let contents = fs.readFileSync(filePath, "utf8");
