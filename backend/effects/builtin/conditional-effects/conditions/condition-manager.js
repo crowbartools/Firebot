@@ -43,7 +43,7 @@ class ConditionManager extends EventEmitter {
         if (conditionData != null) {
             let conditions = conditionData.conditions;
 
-            let didPass = true;
+            let didPass = conditionData.mode !== "inclusive";
             for (let condition of conditions) {
                 const conditionType = this.getConditionTypeById(condition.type);
                 if (conditionType) {
