@@ -21,13 +21,11 @@ const model = {
 
         try {
             let contents = fs.readFileSync(filePath, "utf8");
-            let lines = contents.split('\n');
-            let filteredLines = lines.filter(function (line) {
-                if (line != null && line.trim() !== "") {
-                    return line;
-                }
-            });
-            return filteredLines.length;
+            let lines = contents
+                .split('\n')
+                .filter(l => l != null && l.trim() !== "");
+
+            return lines.length;
         } catch (err) {
             logger.error("error counting lines in file", err);
             return 0;

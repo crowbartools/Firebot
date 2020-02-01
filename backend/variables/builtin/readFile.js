@@ -22,24 +22,29 @@ const model = {
             let contents = fs.readFileSync(filePath, "utf8");
             let filteredLines = [];
 
-            if (randomLine === "true" || !isNaN(randomLine)) {
+            let shouldReadRandomLine = randomLine === true || randomLine === "true";
+            if (shouldReadRandomLine || !isNaN(randomLine)) {
                 let lines = contents.replace(/\r\n/g, "\n").split("\n");
-                filteredLines = lines.filter(function (line) {
-                    if (line != null && line.trim() !== "") {
-                        return line;
-                    }
-                });
+                filteredLines = lines.filter(l => l != null && l.trim() !== "");
             }
 
             // Get line at random.
-            if (randomLine === "true") {
+            if (shouldReadRandomLine) {
                 let randIndex = util.getRandomInt(0, filteredLines.length - 1);
-                return filteredLines[randIndex];
+                let selectedLine = filteredLines[randIndex];
+                if (selectedLine != null) {
+                    return selectedLine;
+                }
+                return "";
             }
 
             if (!isNaN(randomLine)) {
                 randomLine = randomLine - 1;
-                return filteredLines[randomLine];
+                let selectedLine = filteredLines[randomLine];
+                if (selectedLine != null) {
+                    return filteredLines[randomLine];
+                }
+                return "";
             }
 
             return contents;

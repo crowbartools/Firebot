@@ -58,8 +58,13 @@ const fileWriter = {
             </div>
         </eos-container>
 
-        <eos-container header="Text or Line Number(s)" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'append' || effect.writeMode === 'delete'">
+        <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'append'">
             <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
+        </eos-container>
+        
+        <eos-container header="Line Number(s)" pad-top="true" ng-if="effect.writeMode === 'delete'">
+            <p class="muted">Enter a line number or list of line numbers (separated by commas) to delete.</p>
+            <input ng-model="effect.lineNumbers" type="text" class="form-control" id="chat-line-numbers-setting" placeholder="Enter line number(s)" replace-variables="number">
         </eos-container>
     `,
     /**
