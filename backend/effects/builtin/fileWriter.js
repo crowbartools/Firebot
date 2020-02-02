@@ -39,19 +39,19 @@ const fileWriter = {
 
         <eos-container header="Write Mode" pad-top="true">
             <div class="controls-fb-inline" style="padding-bottom: 5px;">
-                <label class="control-fb control--radio">Replace
+                <label class="control-fb control--radio">Replace   <tooltip text="'Replaces existing text with new text in the file.'"></tooltip>
                     <input type="radio" ng-model="effect.writeMode" value="replace"/> 
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio">Append
+                <label class="control-fb control--radio">Append <tooltip text="'Appends a new line with the given text to the file.'"></tooltip>
                     <input type="radio" ng-model="effect.writeMode" value="append"/>
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio">Delete Line
+                <label class="control-fb control--radio">Delete Line <tooltip text="'Deletes a specific line in the file.'"></tooltip>
                     <input type="radio" ng-model="effect.writeMode" value="delete"/>
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio">Delete All
+                <label class="control-fb control--radio">Clear File <tooltip text="'Clears all text from the file.'"></tooltip>
                     <input type="radio" ng-model="effect.writeMode" value="delete-all"/>
                     <div class="control__indicator"></div>
                 </label>
@@ -84,6 +84,9 @@ const fileWriter = {
         let errors = [];
         if (effect.filepath == null || effect.filepath === "") {
             errors.push("Please select a text file to write to.");
+        }
+        if (effect.writeMode === 'delete' && (effect.lineNumbers == null || effect.lineNumbers === "")) {
+            errors.push("Please set the line number to be deleted.");
         }
         return errors;
     },
