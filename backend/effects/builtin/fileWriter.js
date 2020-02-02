@@ -1,12 +1,9 @@
 "use strict";
-
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const fileWriterProcessor = require("../../common/handlers/fileWriterProcessor");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 /**
  * The File Writer effect
@@ -18,7 +15,7 @@ const fileWriter = {
     definition: {
         id: "firebot:filewriter",
         name: "Write To File",
-        description: "Write some text to a file.",
+        description: "Write or delete some text in a file.",
         tags: ["Built in"],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
@@ -40,22 +37,35 @@ const fileWriter = {
             <file-chooser model="effect.filepath" options="{ filters: [ {name:'Text',extensions:['txt']} ]}"></file-chooser>
         </eos-container>
 
-        <eos-container header="Text" pad-top="true">
-            <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
+        <eos-container header="Write Mode" pad-top="true">
+            <div class="controls-fb-inline" style="padding-bottom: 5px;">
+                <label class="control-fb control--radio">Replace
+                    <input type="radio" ng-model="effect.writeMode" value="replace"/> 
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--radio">Append
+                    <input type="radio" ng-model="effect.writeMode" value="append"/>
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--radio">Delete Line
+                    <input type="radio" ng-model="effect.writeMode" value="delete"/>
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--radio">Delete All
+                    <input type="radio" ng-model="effect.writeMode" value="delete-all"/>
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
         </eos-container>
 
-        <eos-container header="Write Mode" pad-top="true">
-        <div class="controls-fb-inline" style="padding-bottom: 5px;">
-            <label class="control-fb control--radio">Replace
-                <input type="radio" ng-model="effect.writeMode" value="replace"/> 
-                <div class="control__indicator"></div>
-            </label>
-            <label class="control-fb control--radio">Append
-                <input type="radio" ng-model="effect.writeMode" value="append"/>
-                <div class="control__indicator"></div>
-            </label>
-        </div>
-    </eos-container>
+        <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'append'">
+            <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
+        </eos-container>
+        
+        <eos-container header="Line Number(s)" pad-top="true" ng-if="effect.writeMode === 'delete'">
+            <p class="muted">Enter a line number or list of line numbers (separated by commas) to delete.</p>
+            <input ng-model="effect.lineNumbers" type="text" class="form-control" id="chat-line-numbers-setting" placeholder="Enter line number(s)" replace-variables="number">
+        </eos-container>
     `,
     /**
    * The controller for the front end Options
