@@ -59,7 +59,7 @@ const showImage = {
             </label>
         </div>
         <div ng-if="effect.imageType === 'folderRandom'" style="display: flex;flex-direction: row;align-items: center;">
-            <input type="text" class="form-control" ng-model="effect.folder" placeholder="Enter full folder path">
+            <file-chooser model="effect.folder" options="{ directoryOnly: true, filters: [], title: 'Select Image Folder'}"></file-chooser>
         </div>
         <div ng-if="effect.imageType === 'local'" style="display: flex;flex-direction: row;align-items: center;">
             <file-chooser model="effect.file" options="{ filters: [ {name: 'Image', extensions: ['jpg', 'gif', 'png', 'jpeg']} ]}"></file-chooser>
@@ -232,8 +232,7 @@ const showImage = {
                         return (/\.(gif|jpg|jpeg|png)$/i).test(img);
                     }),
                     chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)],
-                    trimFolderPath = effect.folder.replace(/\/+$/, ""),
-                    fullFilePath = trimFolderPath + '/' + chosenFile,
+                    fullFilePath = effect.folder + '/' + chosenFile,
                     resourceToken = resourceTokenManager.storeResourcePath(
                         fullFilePath,
                         effect.length
