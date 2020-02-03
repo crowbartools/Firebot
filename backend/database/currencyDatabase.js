@@ -241,6 +241,30 @@ function getUserCurrencyAmount(username, currencyId) {
     });
 }
 
+function getTopCurrencyHolders(currencyId, count) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+
+        let db = userDatabase.getUserDb();
+
+        const sortObj = {};
+        sortObj[`currency.${currencyId}`] = -1;
+
+        const projectionObj = { username: 1};
+        projectionObj[`currency.${currencyId}`] = 1;
+
+        db.find({}).sort(sortObj).limit(count).projection(projectionObj).exec(function (err, docs) {
+            if (err) {
+                logger.error("Error getting top currency holders: ", err);
+                return resolve([]);
+            }
+            return resolve(docs || []);
+        });
+    });
+}
+
 // Purge Currency
 // This will set all users to 0 for a specific currency.
 function purgeCurrencyById(currencyId) {
@@ -343,3 +367,4 @@ exports.refreshCurrencyCache = refreshCurrencyCache;
 exports.getCurrencies = getCurrencies;
 exports.addCurrencyToUserGroupOnlineUsers = addCurrencyToUserGroupOnlineUsers;
 exports.isViewerDBOn = isViewerDBOn;
+exports.getTopCurrencyHolders = getTopCurrencyHolders;
