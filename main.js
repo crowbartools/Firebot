@@ -10,7 +10,7 @@ const logger = require("./backend/logwrapper");
 logger.info("Starting Firebot...");
 
 const electron = require("electron");
-const { app, BrowserWindow, ipcMain, shell, dialog, Menu, MenuItem } = electron;
+const { app, BrowserWindow, ipcMain, shell, dialog, Menu } = electron;
 const fs = require("fs");
 const windowStateKeeper = require('electron-window-state');
 const GhReleases = require("electron-gh-releases");
@@ -575,6 +575,8 @@ function appOnReady() {
 
         //get importer in memory
         require("./backend/import/v4/v4-importer");
+
+        require("./backend/common/common-listeners");
 
         createWindow();
 
