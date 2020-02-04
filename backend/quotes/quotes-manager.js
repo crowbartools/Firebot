@@ -3,6 +3,7 @@
 const Datastore = require("nedb");
 const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
+const frontendCommunicator = require("../common/frontend-communicator");
 
 const regExpEscape = input => input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
 
@@ -51,12 +52,13 @@ function addQuote(quote) {
                 logger.error("QuoteDB: Error adding quote: ", err.message);
                 return reject();
             }
+            frontendCommunicator.send("quotes-update");
             resolve(newQuoteId);
         });
     });
 }
 
-function updateQuote(quote) {
+function updateQuote(quote, dontSendUiUpdateEvent = false) {
     return new Promise(async (resolve, reject) => {
 
         db.update({ _id: quote._id }, quote, err => {
@@ -64,16 +66,22 @@ function updateQuote(quote) {
                 logger.error("QuoteDB: Error updating quote: ", err.message);
                 return reject();
             }
+            if (!dontSendUiUpdateEvent) {
+                frontendCommunicator.send("quotes-update");
+            }
             resolve(quote);
         });
     });
 }
 
-function removeQuote(quoteId) {
+function removeQuote(quoteId, dontSendUiUpdateEvent = false) {
     return new Promise(resolve => {
         db.remove({ _id: quoteId }, {}, function (err) {
             if (err) {
                 logger.warn("Error while removing quote", err);
+            }
+            if (!dontSendUiUpdateEvent) {
+                frontendCommunicator.send("quotes-update");
             }
             resolve();
         });
@@ -167,7 +175,7 @@ function getRandomQuote() {
 }
 
 function getAllQuotes() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         db.find({
             $where: function () {
                 //filter out our auto inc id field
@@ -181,6 +189,23 @@ function getAllQuotes() {
         });
     });
 }
+
+frontendCommunicator.on("add-quote", quote => {
+    addQuote(quote).catch(() => {});
+});
+
+frontendCommunicator.on("update-quote", quote => {
+    updateQuote(quote, true).catch(() => {});
+});
+
+frontendCommunicator.on("delete-quote", quoteId => {
+    removeQuote(quoteId, true).catch(() => {});
+});
+
+frontendCommunicator.onAsync("get-all-quotes", async () => {
+    let quotes = await getAllQuotes();
+    return quotes || [];
+});
 
 exports.addQuote = addQuote;
 exports.removeQuote = removeQuote;

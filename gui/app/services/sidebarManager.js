@@ -119,6 +119,11 @@
                 .when("/viewers", {
                     templateUrl: "./templates/viewers/_viewers.html",
                     controller: "viewersController"
+                })
+
+                .when("/quotes", {
+                    templateUrl: "./templates/_quotes.html",
+                    controller: "quotesController"
                 });
         }
     ]);

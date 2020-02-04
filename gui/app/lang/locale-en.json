@@ -27,7 +27,8 @@
             "VIEWERS": "Viewers",
             "SETTINGS": "Settings",
             "UPDATES": "Updates",
-            "CURRENCY": "Currency"
+            "CURRENCY": "Currency",
+            "QUOTES": "Quotes"
         },
         "CONNECTIONS": {
             "CONNECTIONS": "Connections",
