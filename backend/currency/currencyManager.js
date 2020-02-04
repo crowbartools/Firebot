@@ -169,8 +169,8 @@ function createCurrencyCommandDefinition(currency) {
                 },
                 {
                     arg: "addall",
-                    usage: "giveall [amount]",
-                    description: "Gives currency to all online users.",
+                    usage: "addall [amount]",
+                    description: "Adds currency to all online users.",
                     restrictionData: {
                         restrictions: [
                             {
