@@ -130,10 +130,14 @@ const randomEffect = {
                 if (cacheEntry.queue.length === 0) {
                     // We need to make a new queue
                     let newShuffle = [];
-                    do {
+                    if (newEffectIds.length < 2) {
                         newShuffle = util.shuffleArray(newEffectIds);
-                    } while (cacheEntry.lastEffectId && newShuffle[0] === cacheEntry.lastEffectId);
-                    cacheEntry.queue = newShuffle;
+                    } else {
+                        do {
+                            newShuffle = util.shuffleArray(newEffectIds);
+                        } while (cacheEntry.lastEffectId && newShuffle[0] === cacheEntry.lastEffectId);
+                        cacheEntry.queue = newShuffle;
+                    }
                 }
 
                 // gets the next effect from beginning of queue and removes it
