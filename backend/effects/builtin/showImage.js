@@ -4,10 +4,12 @@ const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
-const fs = require('fs');
+const fsExtra = require('fs-extra');
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
+const logger = require("../../logwrapper");
+const path = require("path");
 
 /**
  * The Show Image effect
@@ -177,7 +179,7 @@ const showImage = {
    * When the effect is triggered by something
    */
     onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async resolve => {
             // What should this do when triggered.
             let effect = event.effect;
 
@@ -227,16 +229,24 @@ const showImage = {
             }
 
             if (effect.imageType === "folderRandom") {
-                let files = fs.readdirSync(effect.folder),
-                    filteredFiles = files.filter(function (img) {
-                        return (/\.(gif|jpg|jpeg|png)$/i).test(img);
-                    }),
-                    chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)],
-                    fullFilePath = effect.folder + '/' + chosenFile,
-                    resourceToken = resourceTokenManager.storeResourcePath(
-                        fullFilePath,
-                        effect.length
-                    );
+
+                let files = [];
+                try {
+                    files = await fsExtra.readdir(effect.folder);
+                } catch (err) {
+                    logger.warn("Unable to read image folder", err);
+                }
+
+                let filteredFiles = files.filter(i => (/\.(gif|jpg|jpeg|png)$/i).test(i));
+
+                let chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
+
+                let fullFilePath = path.join(effect.folder, chosenFile);
+
+                let resourceToken = resourceTokenManager.storeResourcePath(
+                    fullFilePath,
+                    effect.length
+                );
 
                 data.resourceToken = resourceToken;
             }
