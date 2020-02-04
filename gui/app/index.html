@@ -406,20 +406,35 @@
 
           <p>Make sure the browser source fills your canvas, ie 1920x1080 or 1280x720.</p>
         </div>
-        <div style="width:75%; margin-bottom:25px;">
-          <div class="input-group">
-            <input type="text" class="form-control" style="cursor:text;" ng-model="overlayPath" disabled>
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button" ng-click="copy()">Copy</button>
-            </span>
+
+        <div style="display: flex;width: 100%;margin: 15px 0;">
+          <div style="margin-right: 5px;">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="broadcast-software-types" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="dropdown-text">{{selectedBroadcastingSoftware}}</span>
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="options-sounds">
+                <li ng-repeat="bcs in broadcastingSoftwares"><a href ng-click="updateSelectedBroadcastingSoftware(bcs)">{{bcs}}</a></li>
+              </ul>
+            </div> 
           </div>
-          <p ng-if="pathCopied" style="color: green;">
-            Overlay path copied!
-          </p>
+
+          <div style="width:100%;">
+            <div class="input-group">
+              <input type="text" class="form-control" style="cursor:text;" ng-model="overlayPath" disabled>
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="button" ng-click="copy()">Copy</button>
+              </span>
+            </div>
+            <p ng-if="pathCopied" style="color: green;">
+              Overlay path copied!
+            </p>
+          </div>
         </div>
+
       </div>
       <div class="modal-footer" style="text-align:center;">
-        <button class="btn btn-primary" ng-click="dismiss()">Okay</button>
       </div>
     </script>
 
