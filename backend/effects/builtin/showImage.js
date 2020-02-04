@@ -40,7 +40,7 @@ const showImage = {
   <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>Image</h4></div>
     <div class="effect-setting-content">
-        <div style="padding-bottom: 10px;width: 100%;">
+        <div style="padding-bottom: 10px;width: 100%;" ng-hide="effect.imageType === 'folderRandom'">
             <img ng-show="showImage" ng-src="{{getImagePreviewSrc()}}" imageonload="imageLoaded" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
             <img ng-hide="showImage" src="{{placeHolderUrl}}" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
         </div>
