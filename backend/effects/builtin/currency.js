@@ -236,7 +236,8 @@ const currency = {
                 // Give currency to all online.
                 currencyDatabase.addCurrencyToOnlineUsers(
                     event.effect.currency,
-                    currency
+                    currency,
+                    true
                 );
                 break;
             case "group":
@@ -244,7 +245,8 @@ const currency = {
                 currencyDatabase.addCurrencyToUserGroupOnlineUsers(
                     event.effect.roleIds,
                     event.effect.currency,
-                    currency
+                    currency,
+                    true
                 );
                 break;
             default:

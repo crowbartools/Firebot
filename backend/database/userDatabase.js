@@ -11,6 +11,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
 const channelAccess = require("../common/channel-access");
 const eventManager = require("../live-events/EventManager");
+const accountAccess = require("../common/account-access");
 
 let db;
 let updateTimeInterval;
@@ -44,7 +45,7 @@ function setLastSeenDateTime() {
 
 //look up user object by name
 function getUserByUsername(username) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         if (!isViewerDBOn()) {
             return resolve();
         }
@@ -132,7 +133,7 @@ function calcUserOnlineMinutes(id) {
             return resolve();
         }
         getUserById(id).then(user => {
-            if (user.online) {
+            if (user.online && !user.disableAutoStatAccrual) {
                 let dt = Date.now() - user.lastSeen > 60000 ? user.lastSeen : Date.now();
                 let previousTotalMinutes = user.minutesInChannel;
                 let newTotalMinutes = previousTotalMinutes + Math.round((dt - user.onlineAt) / 60000);
@@ -175,6 +176,11 @@ function createNewUser(userId, username, channelRoles, isOnline = false) {
             return resolve(null);
         }
 
+        let streamerUserId = accountAccess.getAccounts().streamer.userId;
+        let botUserId = accountAccess.getAccounts().bot.userId;
+
+        let disableAutoStatAccrual = userId === streamerUserId || userId === botUserId;
+
         let user = {
             username: username,
             _id: userId,
@@ -186,6 +192,7 @@ function createNewUser(userId, username, channelRoles, isOnline = false) {
             minutesInChannel: 0,
             mixplayInteractions: 0,
             chatMessages: 0,
+            disableAutoStatAccrual: disableAutoStatAccrual,
             currency: {},
             ranks: {}
         };
@@ -438,16 +445,15 @@ function updateDbCell(changePacket) {
     });
 }
 
-// Add Interactive Interaction to user.
 function incrementDbField(userId, fieldName) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         if (!isViewerDBOn()) {
             return resolve();
         }
 
         let updateDoc = {};
         updateDoc[fieldName] = 1;
-        db.update({ _id: userId }, { $inc: updateDoc }, {}, function(err) {
+        db.update({ _id: userId, disableAutoStatAccrual: { $ne: true } }, { $inc: updateDoc }, {}, function(err) {
             if (err) {
                 logger.error(err);
             }

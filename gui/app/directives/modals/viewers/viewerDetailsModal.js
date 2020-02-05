@@ -41,7 +41,7 @@
                             <span ng-show="$ctrl.hasFirebotData" ng-click="$ctrl.removeViewer()" style="color:#f96f6f;margin-left: 10px;font-size:12px;" class="clickable" uib-tooltip="Remove this viewer's Firebot data"><i class="far fa-trash-alt"></i></span>
                         </div>
                         
-                        <div class="viewer-detail-data" ng-show="$ctrl.hasFirebotData" style="margin-top: 10px;margin-bottom: 30px;">
+                        <div class="viewer-detail-data" ng-show="$ctrl.hasFirebotData" style="margin-top: 10px;">
                             <div class="detail-data clickable" ng-repeat="dataPoint in $ctrl.dataPoints" ng-click="dataPoint.onClick()">
                                 <div class="data-title">
                                     <i class="far" ng-class="dataPoint.icon"></i> {{dataPoint.name}}
@@ -49,6 +49,14 @@
                                 <div class="data-point">{{dataPoint.display}}<span class="edit-data-btn muted"><i class="fas fa-edit"></i></span></div>
                             </div>
                         </div>
+
+                        <div ng-show="$ctrl.hasFirebotData" style="margin-top:20px; margin-bottom: 30px;">
+                            <label class="control-fb control--checkbox"> Disable Automatic Stat Accrual <tooltip text="'Prevent this user from getting currency payouts, view time hours, and other stats automatically incremented. You will still be able to manually edit these values.'"></tooltip>
+                                <input type="checkbox" ng-model="$ctrl.viewerDetails.firebotData.disableAutoStatAccrual" ng-change="$ctrl.disableAutoStatAccuralChange()">
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+
                         <div ng-hide="$ctrl.hasFirebotData" style="padding: left: 15px;">
                             <p class="muted">There is no Firebot data saved for this Mixer user.</p>
                             <button type="button" class="btn btn-default" ng-click="$ctrl.saveUser()">Save User in Firebot</button>
@@ -359,6 +367,14 @@
 
                     $ctrl.actions = actions;
                 }
+
+                $ctrl.disableAutoStatAccuralChange = () => {
+                    backendCommunicator.fireEvent("updateViewerDataField", {
+                        userId: $ctrl.resolve.userId,
+                        field: "disableAutoStatAccrual",
+                        value: $ctrl.viewerDetails.firebotData.disableAutoStatAccrual
+                    });
+                };
 
                 class ViewerDataPoint {
                     constructor(name, icon, value, displayFunc, fieldName, valueType, beforeEditFunc, afterEditFunc) {

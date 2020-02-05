@@ -115,7 +115,7 @@ function adjustCurrencyForUser(username, currencyId, value) {
 
 // Add Currency to Usergroup
 // This will add an amount of currency to all online users in a usergroup.
-function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value) {
+function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, ignoreDisable = false) {
     return new Promise(async resolve => {
         if (!isViewerDBOn()) {
             return resolve();
@@ -149,7 +149,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value) {
         let db = userDatabase.getUserDb();
         db.find({ online: true, _id: { $in: userIdsInRoles } }, async (err, docs) => {
             for (let user of docs) {
-                if (user != null) {
+                if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
                     await adjustCurrency(user, currencyId, value);
                 }
             }
@@ -161,7 +161,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value) {
 
 // Add Currency to all Online Users
 // This will add an amount of currency to all users who are currently seen as online.
-function addCurrencyToOnlineUsers(currencyId, value) {
+function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false) {
     return new Promise((resolve, reject) => {
         if (!isViewerDBOn()) {
             return reject();
@@ -182,7 +182,7 @@ function addCurrencyToOnlineUsers(currencyId, value) {
 
             // Do the loop!
             for (let user of docs) {
-                if (user != null) {
+                if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
                     adjustCurrency(user, currencyId, value);
                 }
             }
