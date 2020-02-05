@@ -229,7 +229,7 @@
               <li class="divider"></li>
               <li class="dropdown-header">Profiles</li>
               <li ng-repeat="profile in cs.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
-                <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}">
+                <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}" aria-label="Profile Switcher">
                     <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
                     <span class="accounts-info" style="text-transform: unset;">{{profile.profileId}}</span>
                 </a>

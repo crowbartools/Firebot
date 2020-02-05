@@ -8,7 +8,7 @@
                 <div class="nav-header">
                     <img class="nav-header-icon" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" src="../images/logo_transparent.png">
                     <span class="nav-header-title" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">Firebot</span>
-                    <span class="nav-expand-button" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" ng-click="$ctrl.sbm.toggleNav()">
+                    <span class="nav-expand-button" ng-class="{'contracted': !$ctrl.sbm.navExpanded}" ng-click="$ctrl.sbm.toggleNav()" aria-label="{{$ctrl.sbm.navExpanded ? 'Contract Sidebar' : 'Expand Sidebar'}}">
                         <i class="fal" ng-class="$ctrl.sbm.navExpanded ? 'fa-angle-left' : 'fa-angle-right'"></i>
                     </span>
                 </div>
@@ -50,7 +50,7 @@
                                     tooltip-append-to-body="true"
                                     ng-click="$ctrl.cm.toggleSidebarServices()"
                                     tabindex="0"
-                                    aria-label="Toggle Connections">
+                                    aria-label="{{ $ctrl.cm.allServicesConnected() ? 'Disconnect Services' : 'Connect Services' }}">
                                     <i class="fad" ng-class="$ctrl.cm.isWaitingForServicesStatusChange() ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
                                 </div>
                                 <div style="cursor:pointer;" ng-click="$ctrl.showConnectionPanelModal()">
