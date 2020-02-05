@@ -33,6 +33,7 @@ exports.loadReplaceVariables = () => {
     const randomViewer = require("./builtin/randomViewer");
     const randomActiveViewer = require('./builtin/randomActiveViewer');
     const numActiveViewers = require('./builtin/numActiveViewers');
+    const numViewers = require('./builtin/numViewers');
     const quotes = require('./builtin/quote');
     const capitalize = require('./builtin/capitalize');
     const uppercase = require('./builtin/uppercase');
@@ -108,6 +109,7 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(randomViewer);
     replaceVariableManager.registerReplaceVariable(randomActiveViewer);
     replaceVariableManager.registerReplaceVariable(numActiveViewers);
+    replaceVariableManager.registerReplaceVariable(numViewers);
     replaceVariableManager.registerReplaceVariable(quotes);
     replaceVariableManager.registerReplaceVariable(capitalize);
     replaceVariableManager.registerReplaceVariable(uppercase);
