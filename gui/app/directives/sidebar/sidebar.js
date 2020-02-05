@@ -48,7 +48,9 @@
                                     uib-tooltip-template="'connectTooltipTemplate.html'" 
                                     tooltip-placement="{{!$ctrl.sbm.navExpanded ? 'right-bottom' : 'top-left'}}"
                                     tooltip-append-to-body="true"
-                                    ng-click="$ctrl.cm.toggleSidebarServices()">
+                                    ng-click="$ctrl.cm.toggleSidebarServices()"
+                                    tabindex="0"
+                                    aria-label="Toggle Connections">
                                     <i class="fad" ng-class="$ctrl.cm.isWaitingForServicesStatusChange() ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
                                 </div>
                                 <div style="cursor:pointer;" ng-click="$ctrl.showConnectionPanelModal()">

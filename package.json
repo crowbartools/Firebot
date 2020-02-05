@@ -1,6 +1,6 @@
 {
     "name": "firebotv5",
-    "version": "5.1.0",
+    "version": "5.2.0",
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
     "scripts": {
@@ -53,6 +53,7 @@
         "ag-grid": "^17.1.1",
         "angular": "^1.7.9",
         "angular-animate": "^1.7.8",
+        "angular-aria": "^1.7.9",
         "angular-bootstrap-contextmenu": "^1.2.1",
         "angular-pageslide-directive": "^2.2.0",
         "angular-route": "^1.7.8",

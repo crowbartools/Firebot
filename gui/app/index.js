@@ -15,6 +15,7 @@ const compareVersions = require("compare-versions");
 const path = require("path");
 
 require("angular");
+require("angular-aria");
 require("angular-animate");
 require("angular-route");
 require("angular-sanitize");
