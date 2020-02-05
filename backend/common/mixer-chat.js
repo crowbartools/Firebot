@@ -656,8 +656,7 @@ function chatDisconnect() {
 // Get current viewers
 function getCurrentViewers() {
     logger.info("Attempting to get current viewer count");
-    let dbAuth = profileAccess.getJsonDbInProfile("/auth"),
-        streamer = dbAuth.getData("/streamer");
+    let streamer = accountAccess.getAccounts().streamer;
 
     return streamerClient
         .request("GET", "channels/" + streamer.channelId, {

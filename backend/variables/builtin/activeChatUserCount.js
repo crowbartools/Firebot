@@ -6,9 +6,9 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
-        handle: "numActiveViewers",
+        handle: "activeChatUserCount",
         description: "Get the number of active viewers in chat.",
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async () => {
         logger.debug("Getting number of active viewers in chat.");

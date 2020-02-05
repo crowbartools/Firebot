@@ -6,20 +6,16 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
-        handle: "numViewers",
-        description: "Get the number viewers in chat.",
-        possibleDataOutput: [OutputDataType.TEXT]
+        handle: "currentViewerCount",
+        description: "Get the number of people viewing you stream.",
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async () => {
         logger.debug("Getting number of viewers in chat for variable.");
 
-        let viewers = MixerChat.getCurrentViewers();
+        let viewersCount = await MixerChat.getCurrentViewers();
 
-        if (viewers && viewers.length > 0) {
-            return viewers.length;
-        }
-
-        return 0;
+        return viewersCount;
     }
 };
 
