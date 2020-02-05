@@ -356,6 +356,8 @@ function createChatDataProcessing(chatter) {
                 // Updates or adds user to our active chatter list.
                 activeChatter.addOrUpdateActiveChatter(data);
 
+                let chatFromStreamerChannel = accountAccess.getAccounts().streamer.channelId === data.channel;
+
                 if (data.message.meta.whisper === true) {
                     if (data.user_name !== accountAccess.getAccounts().bot.username) {
                         // Send to UI to show in chat window.
@@ -366,12 +368,14 @@ function createChatDataProcessing(chatter) {
 
                     eventManager.triggerEvent("mixer", "chat-message", {
                         username: data.user_name,
-                        data: data
+                        data: data,
+                        originatedInStreamerChannel: chatFromStreamerChannel
                     });
 
                     eventManager.triggerEvent("mixer", "viewer-arrived", {
                         username: data.user_name,
-                        data: data
+                        data: data,
+                        originatedInStreamerChannel: chatFromStreamerChannel
                     });
 
                     if (data.user_name !== accountAccess.getAccounts().streamer.username &&
@@ -392,14 +396,17 @@ function createChatDataProcessing(chatter) {
                         username: data.user_name,
                         data: {
                             skill: skill
-                        }
+                        },
+                        originatedInStreamerChannel: chatFromStreamerChannel
                     });
 
-                    renderWindow.webContents.send('eventlog', {
-                        type: "general",
-                        username: data.user_name,
-                        event: `sent the Sticker "${skill.skill_name}" Cost: ${skill.cost} ${skill.currency}`
-                    });
+                    if (chatFromStreamerChannel) {
+                        renderWindow.webContents.send('eventlog', {
+                            type: "general",
+                            username: data.user_name,
+                            event: `sent the Sticker "${skill.skill_name}" Cost: ${skill.cost} ${skill.currency}`
+                        });
+                    }
                 }
             });
 
