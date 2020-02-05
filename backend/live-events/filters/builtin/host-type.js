@@ -5,7 +5,7 @@ const { ComparisonType } = require("../../../../shared/filter-constants");
 module.exports = {
     id: "firebot:host-type",
     name: "Host Type",
-    description: "Filter by whether a host is an autohost or a regular manual host.",
+    description: "Filter by whether a host is an autohost (Mixer native) or a regular manual host.",
     events: [
         { eventSourceId: "mixer", eventId: "hosted" }
     ],
