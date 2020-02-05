@@ -25,6 +25,8 @@ exports.loadFilters = () => {
 
     const resubShared = require("./builtin/resub-shared");
 
+    const hostType = require("./builtin/host-type");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -45,4 +47,6 @@ exports.loadFilters = () => {
     filterManager.registerFilter(newViewTime);
 
     filterManager.registerFilter(resubShared);
+
+    filterManager.registerFilter(hostType);
 };

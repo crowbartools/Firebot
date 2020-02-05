@@ -122,7 +122,8 @@ function constellationConnect() {
     // This is a channel host.
     ca.subscribe(prefix + "hosted", data => {
         eventManager.triggerEvent("mixer", "hosted", {
-            username: data["hoster"].token
+            username: data["hoster"].token,
+            auto: data.auto
         });
     });
 
