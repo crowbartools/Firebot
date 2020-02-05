@@ -22,7 +22,7 @@ function mapCommands(v4Commands, activeStatus = true, incompatibilityWarnings) {
                 global: v4Command.cooldown && !isNaN(v4Command.cooldown) ? parseInt(v4Command.cooldown) : 0,
                 user: 0
             },
-            trigger: v4Command.trigger,
+            trigger: v4Command.trigger || "!unknowntrigger",
             effects: {}
         };
 
