@@ -39,7 +39,7 @@
                             </div>
                         </div>
                         <div ng-switch-default>
-                            <input type="{{$ctrl.currentConditionDef.leftSideValueType}}" class="form-control" style="min-width: 210px;" ng-model="$ctrl.selectedCondition.leftSideValue" placeholder="Value" menu-position="below" replace-variables disable-variable-menu="$ctrl.currentConditionDef.leftSideValueType !== 'text'">
+                            <input type="{{$ctrl.currentConditionDef.leftSideValueType}}" class="form-control" style="min-width: 310px;" ng-model="$ctrl.selectedCondition.leftSideValue" placeholder="Value" menu-position="below" replace-variables disable-variable-menu="$ctrl.currentConditionDef.leftSideValueType !== 'text'">
                         </div>
                     </div>
 

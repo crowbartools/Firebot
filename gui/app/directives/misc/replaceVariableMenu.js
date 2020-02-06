@@ -9,11 +9,10 @@
                     modelValue: '=ngModel',
                     replaceVariables: "@",
                     disableVariableMenu: "<",
+                    onVariableInsert: "&?",
                     menuPosition: "@"
                 },
                 controller: function($scope, $element, listenerService, $timeout) {
-
-
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -53,15 +52,20 @@
                     };
 
                     $scope.addVariable = (variable) => {
-                        let insertIndex = $element.prop("selectionStart");
+                        if ($scope.onVariableInsert != null) {
+                            $scope.onVariableInsert({ variable: variable});
+                            $scope.toggleMenu();
+                        } else {
+                            let insertIndex = $element.prop("selectionStart");
 
-                        let currentModel = $scope.modelValue ? $scope.modelValue : "";
+                            let currentModel = $scope.modelValue ? $scope.modelValue : "";
 
-                        let display = variable.usage ? variable.usage : variable.handle;
+                            let display = variable.usage ? variable.usage : variable.handle;
 
-                        let updatedModel = insertAt(currentModel, "$" + display, insertIndex);
+                            let updatedModel = insertAt(currentModel, "$" + display, insertIndex);
 
-                        $scope.modelValue = updatedModel;
+                            $scope.modelValue = updatedModel;
+                        }
                     };
 
                 },
@@ -73,7 +77,7 @@
                     let compiled = $compile(wrapper)(scope);
                     element.wrap(compiled);
 
-                    let button = angular.element('<span style="width: 30px;height: 15px;background: #0b8dc6;position: absolute;bottom:0;right:0;border-radius:4px;font-size: 10px;text-align: center;margin: 0 7px 7px 0;cursor: pointer;user-select: none;" ng-click="toggleMenu()" class="clickable">$vars</span>');
+                    let button = angular.element('<span class="variables-btn" ng-click="toggleMenu()">$vars</span>');
                     $compile(button)(scope);
 
                     if (!scope.disableVariableMenu) {

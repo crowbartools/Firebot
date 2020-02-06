@@ -40,8 +40,8 @@ const showText = {
    */
     optionsTemplate: `
     <eos-container header="Text">
-        <div>
-            <summernote ng-model="effect.text" config="editorOptions"></summernote>
+        <div replace-variables on-variable-insert="onVariableInsert(variable)" menu-position="bottom">
+            <summernote on-editor-ready="editorReady(editor)" ng-model="effect.text" config="editorOptions" editor="editor" editable="editable"></summernote>
         </div>
     </eos-container>
 
@@ -125,7 +125,7 @@ const showText = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, fontManager, utilityService) => {
+    optionsController: ($scope, fontManager, utilityService, $timeout) => {
 
         if ($scope.effect.height == null || $scope.effect.height < 1) {
             $scope.effect.height = 200;
@@ -146,6 +146,21 @@ const showText = {
         if ($scope.effect.dontWrap == null) {
             $scope.effect.dontWrap = false;
         }
+
+        $scope.editorReady = (editor) => {
+            $scope.editor = editor;
+        };
+
+        $scope.onVariableInsert = (variable) => {
+            if ($scope.editor == null) return;
+            $scope.editor.summernote('restoreRange');
+            $scope.editor.summernote("focus");
+            $timeout(() => {
+                let display = variable.usage ? variable.usage : variable.handle;
+                $scope.editor.summernote("insertText", "$" + display);
+            }, 100);
+
+        };
 
         $scope.editorOptions = {
             height: 300,
