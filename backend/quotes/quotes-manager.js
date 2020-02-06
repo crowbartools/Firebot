@@ -7,6 +7,9 @@ const frontendCommunicator = require("../common/frontend-communicator");
 
 const regExpEscape = input => input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
 
+/**
+ * @type Datastore
+ */
 let db;
 
 function loadQuoteDatabase() {
@@ -226,6 +229,8 @@ function updateQuoteId(quote, newId) {
 }
 
 async function recalculateQuoteIds() {
+    if (db == null) return;
+
     let quotes = await getAllQuotes();
     if (quotes == null) return;
 
@@ -236,6 +241,8 @@ async function recalculateQuoteIds() {
     }
 
     await setQuoteIdIncrementer(idCounter - 1);
+
+    db.persistence.compactDatafile();
 
     frontendCommunicator.send("quotes-update");
 }
