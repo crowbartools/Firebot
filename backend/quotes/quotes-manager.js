@@ -36,6 +36,22 @@ function getNextQuoteId() {
     });
 }
 
+function setQuoteIdIncrementer(number) {
+    return new Promise(resolve => {
+        db.update(
+            { _id: '__autoid__' },
+            { $set: { seq: number } },
+            { upsert: true, returnUpdatedDocs: true },
+            function (err, _, autoid) {
+                if (err) {
+                    resolve(null);
+                }
+                resolve(autoid.seq);
+            }
+        );
+    });
+}
+
 function addQuote(quote) {
     return new Promise(async (resolve, reject) => {
 
@@ -73,6 +89,7 @@ function updateQuote(quote, dontSendUiUpdateEvent = false) {
         });
     });
 }
+
 
 function removeQuote(quoteId, dontSendUiUpdateEvent = false) {
     return new Promise(resolve => {
@@ -190,6 +207,40 @@ function getAllQuotes() {
     });
 }
 
+function updateQuoteId(quote, newId) {
+    return new Promise(async resolve => {
+
+        if (quote._id === newId) return resolve(true);
+
+        await removeQuote(quote._id, true);
+
+        quote._id = newId;
+        db.insert(quote, err => {
+            if (err) {
+                logger.error("QuoteDB: Error adding quote: ", err.message);
+                return resolve(false);
+            }
+            resolve(true);
+        });
+    });
+}
+
+async function recalculateQuoteIds() {
+    let quotes = await getAllQuotes();
+    if (quotes == null) return;
+
+    let idCounter = 1;
+    for (let quote of quotes) {
+        await updateQuoteId(quote, idCounter);
+        idCounter++;
+    }
+
+    await setQuoteIdIncrementer(idCounter - 1);
+
+    frontendCommunicator.send("quotes-update");
+}
+
+
 frontendCommunicator.on("add-quote", quote => {
     addQuote(quote).catch(() => {});
 });
@@ -205,6 +256,10 @@ frontendCommunicator.on("delete-quote", quoteId => {
 frontendCommunicator.onAsync("get-all-quotes", async () => {
     let quotes = await getAllQuotes();
     return quotes || [];
+});
+
+frontendCommunicator.on("recalc-quote-ids", () => {
+    recalculateQuoteIds();
 });
 
 exports.addQuote = addQuote;

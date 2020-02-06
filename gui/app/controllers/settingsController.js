@@ -68,6 +68,21 @@
                 remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
             };
 
+            $scope.recalculateQuoteIds = () => {
+                utilityService
+                    .showConfirmationModal({
+                        title: "Recalculate Quote IDs",
+                        question: `Are you sure you want to recalculate your quote IDs?`,
+                        confirmLabel: "Recalculate",
+                        confirmBtnType: "btn-danger"
+                    })
+                    .then(confirmed => {
+                        if (confirmed) {
+                            backendCommunicator.fireEvent("recalc-quote-ids");
+                        }
+                    });
+            };
+
             $scope.setSparkExemption = (value) => {
                 value = value === true;
                 settingsService.setSparkExemptionEnabled(value);
