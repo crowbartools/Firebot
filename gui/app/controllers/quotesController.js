@@ -47,7 +47,12 @@
                     name: "ID",
                     icon: "fa-id-badge",
                     dataField: "_id",
-                    headerStyles: {},
+                    headerStyles: {
+                        'padding-right': '3px'
+                    },
+                    cellStyles: {
+                        'padding-right': '3px'
+                    },
                     sortable: true,
                     cellTemplate: `{{data._id}}`,
                     cellController: () => {}
@@ -57,11 +62,12 @@
                     icon: "fa-quote-right",
                     dataField: "text",
                     headerStyles: {
-                        'width': '65%'
+                        'width': '65%',
+                        'padding': '0px 3px'
                     },
                     cellStyles: {
                         'width': '65%',
-                        'padding': '5px 10px 5px 0'
+                        'padding': '5px 3px'
                     },
                     sortable: true,
                     cellTemplate: `{{data.text}}`,
@@ -71,7 +77,12 @@
                     name: "AUTHOR",
                     icon: "fa-user",
                     dataField: "originator",
-                    headerStyles: {},
+                    headerStyles: {
+                        'padding': '0px 3px'
+                    },
+                    cellStyles: {
+                        'padding': '0px 3px'
+                    },
                     sortable: true,
                     cellTemplate: `{{data.originator}}`,
                     cellController: () => {}
@@ -81,6 +92,12 @@
                     icon: "fa-calendar",
                     dataField: "createdAt",
                     sortable: true,
+                    headerStyles: {
+                        'padding': '0px 3px'
+                    },
+                    cellStyles: {
+                        'padding': '0px 3px'
+                    },
                     cellTemplate: `{{data.createdAt | prettyDate}}`,
                     cellController: () => {}
                 },
@@ -90,20 +107,24 @@
                     dataField: "game",
                     sortable: true,
                     headerStyles: {
-                        'width': '175px'
+                        'width': '175px',
+                        'padding': '0px 3px'
                     },
                     cellStyles: {
-                        'width': '175px'
+                        'width': '175px',
+                        'padding': '0px 3px'
                     },
                     cellTemplate: `<div style="width:175px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{data.game || "Unknown Game"}}</div>`,
                     cellController: () => {}
                 },
                 {
                     headerStyles: {
-                        'width': '15px'
+                        'width': '15px',
+                        'padding-left': '3px'
                     },
                     cellStyles: {
-                        'width': '15px'
+                        'width': '15px',
+                        'padding-left': '3px'
                     },
                     sortable: false,
                     cellTemplate: `<i class="fal fa-chevron-right"></i>`,
