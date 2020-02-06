@@ -116,11 +116,11 @@
     </div>
 </div>
 
-<div class="modal-footer sticky-footer" id="edit-command-footer">
+<div class="modal-footer sticky-footer edit-command-footer">
     <button type="button" class="btn btn-danger pull-left" ng-show="!$ctrl.isNewCommand"
         ng-click="$ctrl.delete()">Delete Command</button>
     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
     <button type="button" class="btn btn-primary add-new-board-save" ng-click="$ctrl.save()">Save Changes</button>
 </div>
 
-<scroll-sentinel element-id="edit-command-footer"></scroll-sentinel>
+<scroll-sentinel element-class="edit-command-footer"></scroll-sentinel>

@@ -1,10 +1,11 @@
-#events-header {
+.events-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 20px; 
     width: 100%;
     background: $light-background-color;
+    margin-top: 10px;
 }
 
 

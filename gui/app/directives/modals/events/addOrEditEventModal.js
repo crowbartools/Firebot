@@ -56,12 +56,12 @@
                 <effect-list header="What should this event do?" effects="$ctrl.event.effects" trigger="event" trigger-meta="$ctrl.triggerMeta" update="$ctrl.effectListUpdated(effects)" modalId="{{modalId}}" is-array="true"></effect-list>      
             </div>
         </div>
-        <div class="modal-footer sticky-footer" id="edit-event-footer">
+        <div class="modal-footer sticky-footer edit-event-footer">
             <button ng-if="!$ctrl.isNewEvent" type="button" class="btn btn-danger delete-event-button pull-left" ng-click="$ctrl.delete()">Delete Event</button>
             <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
             <button type="button" class="btn btn-primary event-edit-save" ng-click="$ctrl.save()">{{isNewEvent ? "Add" : "Save"}}</button>
         </div>
-        <scroll-sentinel element-id="edit-event-footer"></scroll-sentinel>
+        <scroll-sentinel element-class="edit-event-footer"></scroll-sentinel>
         `,
         bindings: {
             resolve: "<",

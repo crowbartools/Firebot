@@ -78,9 +78,9 @@
 
         <div style="width: 100%;overflow-y: scroll;">
 
-            <scroll-sentinel element-id="events-header"></scroll-sentinel>
+            <scroll-sentinel element-class="events-header"></scroll-sentinel>
 
-            <div id="events-header" class="sticky-top">
+            <div class="sticky-top events-header">
                 <button ng-click="showAddOrEditEventModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Event</button>
                 <searchbar ng-hide="getSelectedEvents().length < 1" placeholder-text="Search Events" query="eventSearch" style="flex-basis: 250px;"></searchbar>
             </div>
