@@ -1,3 +1,13 @@
+#events-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px; 
+    width: 100%;
+    background: $light-background-color;
+}
+
+
 .live-events{
     .play-button {
         font-size: 45px;

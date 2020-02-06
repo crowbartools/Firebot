@@ -55,6 +55,31 @@
 }
 
 
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 99999999;
+
+  &.is-stuck {
+      border-bottom: 1px solid #24262A;
+      //margin-bottom: 10px;
+      box-shadow: 0 5px 11px 0px #0000004d;
+  }
+}
+
+.sticky-bottom {
+  position: sticky;
+  bottom: 0;
+  z-index: 99999999;
+
+  &.is-stuck {
+      border-top: 1px solid #24262A;
+      //margin-bottom: 10px;
+      box-shadow: 0 -6px 9px -2px #0000004d;
+  }
+}
+
+
 ///
 
 /////////////////////////////////

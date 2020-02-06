@@ -47,7 +47,8 @@
             service.currentTabShouldntScroll = function() {
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
-                    service.currentTab.toLowerCase() === "buttons"
+                    service.currentTab.toLowerCase() === "buttons" ||
+                    service.currentTab.toLowerCase() === "events"
                 );
             };
 
