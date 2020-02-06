@@ -43,6 +43,7 @@ exports.loadReplaceVariables = () => {
     const profilePageBytebinToken = require("./builtin/profilePageBytebinToken");
 
     const commandTrigger = require("./builtin/commandTrigger");
+    const chatMessage = require('./builtin/chatMessage');
 
     const controlText = require("./builtin/controlText");
     const controlProgress = require("./builtin/controlProgress");
@@ -119,6 +120,7 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(profilePageBytebinToken);
 
     replaceVariableManager.registerReplaceVariable(commandTrigger);
+    replaceVariableManager.registerReplaceVariable(chatMessage);
 
     replaceVariableManager.registerReplaceVariable(controlText);
     replaceVariableManager.registerReplaceVariable(controlProgress);
