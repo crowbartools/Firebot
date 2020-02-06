@@ -5,6 +5,8 @@ const logger = require("../../../logwrapper");
 const importHelpers = require("../import-helpers");
 const fse = require("fs-extra");
 const profileManager = require("../../../common/profile-manager");
+const { settings } = require("../../../common/settings-access");
+const frontendCommunicator = require("../../../common/frontend-communicator");
 
 const v4ScriptsPath = path.join(importHelpers.v4DataPath, "/scripts");
 const v5ScriptsPath = profileManager.getPathInProfile("/scripts");
@@ -32,6 +34,23 @@ exports.run = async () => {
             incompatibilityWarnings.push("Unable to import V4 Scripts as an error occured.");
             logger.warn("Unable to copy v4 scripts.", err);
         }
+
+        let v4SettingsDb = importHelpers.getJsonDbInV4Data("/settings.json");
+
+        let allV4Settings;
+        try {
+            allV4Settings = v4SettingsDb.getData("/");
+        } catch (err) {
+            logger.warn("Failed to read v4 settings file.", err);
+        }
+
+        if (allV4Settings != null) {
+            let runCustomScripts = allV4Settings.settings.runCustomScripts === true;
+            settings.setCustomScriptsEnabled(runCustomScripts);
+
+            frontendCommunicator.send("flush-settings-cache");
+        }
+
     }
 
     return {
