@@ -104,6 +104,8 @@
                 $ctrl.codeError = false;
                 $ctrl.shareCodeError = false;
 
+                $ctrl.setAsActive = true;
+
                 $ctrl.importType = 'devlab';
 
                 $ctrl.hasActiveProject = mixplayService.getActiveMixplayProjectId() != null;
@@ -112,20 +114,6 @@
                     let name = $ctrl.name;
                     return name != null && name.length > 0;
                 }
-
-                /*function getSharedMixplayProject(code) {
-                    return new Promise(resolve => {
-                        $http.get(`https://bytebin.lucko.me/${code}`)
-                            .then(resp => {
-                                if (resp.status === 200) {
-                                    return resolve(resp.data ? resp.data.mixplayProject : null);
-                                }
-                                return resolve(null);
-                            }, () => {
-                                return resolve(null);
-                            });
-                    });
-                }*/
 
                 function getSharedMixplayProject(code) {
                     return $http.get(`https://bytebin.lucko.me/${code}`)
