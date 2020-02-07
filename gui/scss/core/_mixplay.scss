@@ -470,6 +470,17 @@ the-grid [resize="bottom"] {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 122px;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.mixplay-row-sort-handle {
+    cursor: move !important;
 }
 
 .grid-icon {

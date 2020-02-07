@@ -130,11 +130,11 @@
             
         </div>
 
-        <div style="height: 100%; overflow-y: auto;">
-            <div ng-repeat="scene in getScenesForSelectedProject()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="setSelectedScene(scene.id)">
+        <div style="height: 100%; overflow-y: auto;" ui-sortable="sortableOptions" ng-model="currentScenes">
+            <div ng-repeat="scene in currentScenes" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': mps.sceneIsSelected(scene.id)}"  ng-click="setSelectedScene(scene.id)">
                 <div class="flex-row-center" style="height:100%;">
                   <div class="selected-scene-icon" ng-class="{'transparent': !mps.sceneIsSelected(scene.id)}"></div>
-                  <div class="row-text noselect">{{scene.name}}</div>
+                  <div class="row-text noselect mixplay-row-sort-handle">{{scene.name}}</div>
                   <div ng-show="mps.sceneIsDefaultForCurrentProject(scene.id)" uib-tooltip="Default Scene" append-tooltip-to-body="true"><i class="far fa-home muted" style="margin-left: 5px; font-size: 10px;vertical-align: middle;"></i></div>
                 </div>
                 <div>
@@ -185,17 +185,17 @@
           </div>  
         </div>
 
-        <div style="height: 100%; overflow-y: auto;">
-            <div ng-repeat="control in mps.getControlsForCurrentScene() | orderBy:'+':true track by control.id" 
+        <div style="height: 100%; overflow-y: auto;" ui-sortable="sortableOptions" ng-model="currentControls">
+            <div ng-repeat="control in currentControls track by control.id" 
                 class="flex-row-center jspacebetween control-row" 
                 ng-mouseover="setHighlightedControl(control.id)" 
                 ng-mouseleave="clearHighlight()">
 
-            <div class="flex-row-center" style="height:100%;margin-left: 5px;" ng-click="toggle()">
+            <div class="flex-row-center mixplay-row-sort-handle" style="height:100%;margin-left: 5px;">
                 <div style="width: 28px;height: 100%;font-size:12px;flex-shrink: 0;" class="flex-center">
                     <i class="far" ng-class="getControlIconForKind(control.kind)" uib-tooltip="{{getControlSettings(control.kind).name}}" tooltip-append-to-body="true"></i>
                 </div>
-                <div class="row-text noselect">{{control.name}}</div>
+                <div class="row-text">{{control.name}}</div>
             </div>
 
             <div class="flex-row-center">

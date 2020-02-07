@@ -17,6 +17,14 @@
             ngToast
         ) {
 
+
+            $scope.sortableOptions = {
+                handle: ".row-text",
+                stop: () => {
+                    mixplayService.saveCurrentProject();
+                }
+            };
+
             $scope.previewEnabled = settingsService.mixPlayPreviewModeEnabled();
 
             $scope.togglePreviewMode = function() {
@@ -76,9 +84,12 @@
                 return "No project selected";
             };
 
+            $scope.currentScenes = [];
+
             $scope.setCurrentProject = function(projectId) {
                 mixplayService.setCurrentProject(projectId);
                 $scope.updateControlPositions();
+                $scope.currentScenes = $scope.getScenesForSelectedProject();
             };
 
             $scope.getScenesForSelectedProject = function() {
@@ -88,6 +99,8 @@
                 }
                 return [];
             };
+
+            $scope.currentScenes = $scope.getScenesForSelectedProject();
 
             $scope.disableControlTransitions = true;
 
@@ -380,8 +393,11 @@
 
             $scope.controlPositions = $scope.getAllControlPositionsForGridSize(gridHelper.currentGridSize);
 
+            $scope.currentControls = mixplayService.getControlsForCurrentScene();
+
             $scope.updateControlPositions = function() {
                 $scope.controlPositions = $scope.getAllControlPositionsForGridSize(gridHelper.currentGridSize);
+                $scope.currentControls = mixplayService.getControlsForCurrentScene();
             };
 
             function updateGridSize() {

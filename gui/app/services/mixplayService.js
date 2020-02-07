@@ -158,6 +158,10 @@
                 backendCommunicator.fireEvent("saveProject", cleanedProject);
             };
 
+            service.saveCurrentProject = () => {
+                service.saveProject(service.getCurrentProject());
+            };
+
             service.triggerControlUpdatedEvent = function(controlId) {
                 if (currentProjectId !== activeProjectId) return;
                 backendCommunicator.fireEvent("controlUpdated", controlId);
@@ -208,10 +212,10 @@
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {
 
-                    let sceneToDelete = currentProject.scenes.find(s => s.id === id);
+                    let sceneIndexToDelete = currentProject.scenes.findIndex(s => s.id === id);
 
-                    if (sceneToDelete) {
-                        currentProject.scenes = currentProject.scenes.filter(s => s.id !== id);
+                    if (sceneIndexToDelete > -1) {
+                        currentProject.scenes.splice(sceneIndexToDelete, 1);
 
                         if (currentProject.defaultSceneId === id) {
                             if (currentProject.scenes.length > 0) {
@@ -229,9 +233,8 @@
                             }
                         }
 
+                        service.saveProject(currentProject);
                     }
-
-                    service.saveProject(currentProject);
                 }
             };
 
@@ -388,7 +391,7 @@
                             newControl.mixplay.text = controlName;
                         }
 
-                        currentScene.controls.push(newControl);
+                        currentScene.controls.unshift(newControl);
 
                         service.saveProject(currentProject);
 
@@ -419,7 +422,13 @@
             service.deleteControlForCurrentScene = function(controlId) {
                 let currentScene = getCurrentScene();
                 if (currentScene) {
-                    currentScene.controls = currentScene.controls.filter(c => c.id !== controlId);
+
+                    let controlIndex = currentScene.controls.findIndex(c => c.id === controlId);
+
+                    if (controlIndex < 0) return;
+
+                    currentScene.controls.splice(controlIndex, 1);
+
                     service.saveProject(service.getCurrentProject());
 
                     if (currentProjectId !== activeProjectId) return;
