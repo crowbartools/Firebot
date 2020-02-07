@@ -38,7 +38,7 @@ const fileWriter = {
     optionsTemplate: `
         <eos-container header="Variable Name">
             <p>You'll use this name to reference this elsewhere via the $customVariable replace phrase.</p>
-            <input ng-model="effect.name" type="text" class="form-control" id="chat-text-setting" placeholder="Enter name">
+            <input ng-model="effect.name" type="text" class="form-control" id="chat-text-setting" placeholder="Enter name" replace-variables>
         </eos-container>
 
         <eos-container header="Variable Data" pad-top="true">
