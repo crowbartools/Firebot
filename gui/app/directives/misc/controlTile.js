@@ -25,11 +25,23 @@
                     </div>
                     <div ng-hide="$ctrl.previewMode" class="default-control">
                         <span class="control-name">{{$ctrl.control.name}}</span>
+                        <span class="control-dimensions">{{$ctrl.getDimensionDisplay()}}</span>
                     </div>
                 </div>
             `,
-            controller: function() {
+            controller: function(gridHelper) {
                 let $ctrl = this;
+
+
+                $ctrl.getDimensionDisplay = () => {
+                    if ($ctrl.control.position) {
+                        let positionForGrid = $ctrl.control.position.find(p => p.size === gridHelper.currentGridSize);
+                        if (positionForGrid) {
+                            return `${positionForGrid.width} x ${positionForGrid.height}`;
+                        }
+                    }
+                    return "";
+                };
 
             }
         });

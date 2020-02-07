@@ -36,6 +36,20 @@
     }
 }
 
+.control-dimensions {
+    font-size: 12px;
+    opacity: 0;
+    position:absolute; 
+    bottom:0;
+    right:3px;
+    transition: opacity 500ms;
+}
+.control:hover {
+    .control-dimensions {
+        opacity: 0.6;
+    }
+}
+
 .mixer-label-container {
     z-index: 1;
     user-select: none;
