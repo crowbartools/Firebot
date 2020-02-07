@@ -24,12 +24,15 @@
                         </div>             
                     </div>
                     <div ng-hide="$ctrl.previewMode" class="default-control">
-                        <span class="control-name">{{$ctrl.control.name}}</span>
+                        <span class="control-name">
+                            <span class="control-kind"><i class="fas" ng-class="$ctrl.controlKindData.iconClass"></i> {{$ctrl.controlKindData.display}}</span>
+                            <span>{{$ctrl.control.name}}</span>
+                        </span>
                         <span class="control-dimensions">{{$ctrl.getDimensionDisplay()}}</span>
                     </div>
                 </div>
             `,
-            controller: function(gridHelper) {
+            controller: function(gridHelper, controlHelper) {
                 let $ctrl = this;
 
 
@@ -41,6 +44,17 @@
                         }
                     }
                     return "";
+                };
+
+                $ctrl.controlKindData = {
+                    display: "",
+                    iconClass: ""
+                };
+
+                $ctrl.$onInit = () => {
+                    let controlKindData = controlHelper.getControlKindData($ctrl.control.kind);
+                    if (controlKindData == null) return;
+                    $ctrl.controlKindData = controlKindData;
                 };
 
             }

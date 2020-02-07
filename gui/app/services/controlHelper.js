@@ -140,6 +140,10 @@
                 }*/
             };
 
+            service.getControlKindData = (controlKind) => {
+                return service.controlKinds.find(ck => ck.kind === controlKind);
+            };
+
             service.controlSupportsCooldowns = function(kind) {
                 if (!kind) return false;
 

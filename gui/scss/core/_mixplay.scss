@@ -33,6 +33,15 @@
     .control-name {
         word-break: break-word;
         text-align: center;
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .control-kind {
+            opacity: 0.5;
+            font-size: 8px;
+            text-transform: uppercase;
+        }
     }
 }
 
@@ -42,7 +51,7 @@
     position:absolute; 
     bottom:0;
     right:3px;
-    transition: opacity 500ms;
+    transition: opacity 250ms;
 }
 .control:hover {
     .control-dimensions {
