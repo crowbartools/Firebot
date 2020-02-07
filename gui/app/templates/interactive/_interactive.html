@@ -308,7 +308,7 @@
                                 min-height="{{getControlSettings(control.control.kind).minSize.height}}" 
                                 max-height="{{getControlSettings(control.control.kind).maxSize.height}}" 
                                 bind-polymer
-                                context-menu="controlMenuOptions" ng-mousedown="controlMousedown(control.control)">
+                                context-menu="controlMenuOptions(control.control)" ng-mousedown="controlMousedown(control.control)">
                                     <control-tile control="control.control" class="control-tile-wrapper" preview-mode="previewEnabled"></control-tile>
                                     <span ng-show="getControlSettings(control.control.kind).resizable" ng-mousedown="controlMousedown(control.control)">
                                         <span resize="left" class="resize" ><span class="resize-ball"></span></span>
