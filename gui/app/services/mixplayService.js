@@ -312,7 +312,7 @@
                 });
             };
 
-            service.addControlToGrid = function(control, gridSize) {
+            service.addControlToGrid = function(control, gridSize, skipSaving = false) {
                 let controlAlreadyOnGrid = control.position.some(p => p.size === gridSize);
                 if (controlAlreadyOnGrid) return;
 
@@ -350,12 +350,14 @@
                     control.position.push(newPosition);
 
                     logger.info("Added control to grid!");
-                    service.saveProject(service.getCurrentProject());
 
-                    backendCommunicator.fireEvent("controlUpdated", control.id);
+                    if (!skipSaving) {
+                        service.saveProject(service.getCurrentProject());
+                        backendCommunicator.fireEvent("controlUpdated", control.id);
+                    }
 
                 } else {
-                    ngToast.create(`Could not find enough space in the grid to place control (${controlDimensions.w}w x ${controlDimensions.h}h)`);
+                    ngToast.create(`Could not find enough space in the ${gridSize} grid to place control (${controlDimensions.w}w x ${controlDimensions.h}h)`);
                 }
             };
 
@@ -372,7 +374,7 @@
                 }
             };
 
-            service.createControlForCurrentScene = function(controlName, controlKind = "button") {
+            service.createControlForCurrentScene = async function(controlName, controlKind = "button", addToGrids = false) {
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {
                     let currentScene = currentProject.scenes.find(s => s.id === selectedSceneId);
@@ -395,11 +397,19 @@
 
                         service.saveProject(currentProject);
 
-                        if (currentProjectId !== activeProjectId) return;
+                        if (currentProjectId === activeProjectId) {
+                            await backendCommunicator.fireEventAsync("controlAdded", {
+                                sceneId: currentScene.id, newControl
+                            });
+                        }
 
-                        backendCommunicator.fireEvent("controlAdded", {
-                            sceneId: currentScene.id, newControl
-                        });
+                        if (addToGrids) {
+                            for (let gridSize of Object.keys(gridHelper.GridSizes)) {
+                                service.addControlToGrid(newControl, gridSize, true);
+                            }
+                            service.saveProject(currentProject);
+                            backendCommunicator.fireEvent("controlUpdated", newControl.id);
+                        }
                     }
                 }
             };

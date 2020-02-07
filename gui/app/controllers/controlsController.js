@@ -14,7 +14,8 @@
             $http,
             backendCommunicator,
             objectCopyHelper,
-            ngToast
+            ngToast,
+            $q
         ) {
 
 
@@ -587,11 +588,15 @@
                     component: "createControlModal",
                     size: 'sm',
                     resolveObj: {},
-                    closeCallback: control => {
-                        let name = control.name,
-                            kind = control.kind;
+                    closeCallback: response => {
+                        let name = response.name,
+                            kind = response.kind,
+                            addToGrids = response.addToGrids;
 
-                        mixplayService.createControlForCurrentScene(name, kind);
+                        $q.when(mixplayService.createControlForCurrentScene(name, kind, addToGrids))
+                            .then(() => {
+                                $scope.updateControlPositions();
+                            });
                     }
                 });
             };

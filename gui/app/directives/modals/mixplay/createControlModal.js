@@ -47,8 +47,18 @@
                         </ui-select>
                         <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">Please select a control type.</div>
                     </div>
-                    
-                    
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        Options
+                    </div>
+                    <div>
+                        <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity.0.9;"> Add to grids <tooltip text="'Immediately add this control to all grid sizes (if there is room)'"></tooltip>
+                            <input type="checkbox" ng-model="$ctrl.addToGrids">
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -70,6 +80,8 @@
 
                 $ctrl.name = "";
                 $ctrl.kind = "button";
+
+                $ctrl.addToGrids = true;
 
                 $ctrl.nameError = false;
                 $ctrl.kindError = false;
@@ -138,7 +150,8 @@
                     $ctrl.close({
                         $value: {
                             name: $ctrl.name,
-                            kind: $ctrl.kind
+                            kind: $ctrl.kind,
+                            addToGrids: $ctrl.addToGrids
                         }
                     });
 
