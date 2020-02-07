@@ -46,16 +46,19 @@
 }
 
 .control-dimensions {
-    font-size: 12px;
+    font-size: 10px;
     opacity: 0;
-    position:absolute; 
-    bottom:0;
-    right:3px;
-    transition: opacity 250ms;
+    background: #1C2030;
+    padding: 0px 1px;
+    z-index: 999999;
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    transition: opacity 200ms;
 }
 .control:hover {
     .control-dimensions {
-        opacity: 0.6;
+        opacity: 0.8;
     }
 }
 
