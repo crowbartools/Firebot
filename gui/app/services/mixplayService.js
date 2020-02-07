@@ -383,6 +383,11 @@
                             mixplay: {},
                             active: true
                         };
+
+                        if (controlKind === "button" || controlKind === "label") {
+                            newControl.mixplay.text = controlName;
+                        }
+
                         currentScene.controls.push(newControl);
 
                         service.saveProject(currentProject);
