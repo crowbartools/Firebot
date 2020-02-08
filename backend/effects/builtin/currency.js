@@ -1,13 +1,12 @@
 "use strict";
 
 const currencyDatabase = require("../../database/currencyDatabase");
-const util = require("../../utility");
 const chatProcessor = require("../../common/handlers/chatProcessor");
 const logger = require("../../logwrapper");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 /**
  * The Currency effect
@@ -271,8 +270,8 @@ const currency = {
         },
         event: {
             name: "currency",
-            onOverlayEvent: event => {
-                console.log("yay currency");
+            onOverlayEvent: () => {
+
             } //End event trigger
         }
     }
