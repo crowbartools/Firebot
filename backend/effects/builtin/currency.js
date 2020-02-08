@@ -1,13 +1,12 @@
 "use strict";
 
 const currencyDatabase = require("../../database/currencyDatabase");
-const util = require("../../utility");
 const chatProcessor = require("../../common/handlers/chatProcessor");
 const logger = require("../../logwrapper");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 /**
  * The Currency effect
@@ -226,7 +225,7 @@ const currency = {
             switch (event.effect.target) {
             case "individual":
                 // Give currency to one person.
-                currencyDatabase.adjustCurrencyForUser(
+                await currencyDatabase.adjustCurrencyForUser(
                     userTarget,
                     event.effect.currency,
                     currency
@@ -234,7 +233,7 @@ const currency = {
                 break;
             case "allOnline":
                 // Give currency to all online.
-                currencyDatabase.addCurrencyToOnlineUsers(
+                await currencyDatabase.addCurrencyToOnlineUsers(
                     event.effect.currency,
                     currency,
                     true
@@ -242,7 +241,7 @@ const currency = {
                 break;
             case "group":
                 // Give currency to group.
-                currencyDatabase.addCurrencyToUserGroupOnlineUsers(
+                await currencyDatabase.addCurrencyToUserGroupOnlineUsers(
                     event.effect.roleIds,
                     event.effect.currency,
                     currency,
@@ -271,8 +270,8 @@ const currency = {
         },
         event: {
             name: "currency",
-            onOverlayEvent: event => {
-                console.log("yay currency");
+            onOverlayEvent: () => {
+
             } //End event trigger
         }
     }

@@ -2,7 +2,6 @@
 const { ipcMain } = require("electron");
 const userDatabase = require("./userDatabase");
 const profileManager = require("../common/profile-manager");
-const permissionsManager = require("../common/permissions-manager");
 const logger = require("../logwrapper");
 const { settings } = require("../common/settings-access.js");
 const channelAccess = require("../common/channel-access");
@@ -71,13 +70,12 @@ function adjustCurrency(user, currencyId, value) {
 
         // Update the DB with our new currency value.
         db.update({ _id: user._id }, { $set: updateDoc }, {}, function(
-            err,
-            numReplaced
+            err
         ) {
             if (err) {
                 logger.error("Currency: Error adding currency to user.", err);
             }
-            resolve();
+            return resolve();
         });
     });
 }
@@ -85,7 +83,7 @@ function adjustCurrency(user, currencyId, value) {
 // Adjust currency for user.
 // This adjust currency when given a username. Can be given negative values to remove currency.
 function adjustCurrencyForUser(username, currencyId, value) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!isViewerDBOn()) {
             return resolve(false);
         }
@@ -104,11 +102,11 @@ function adjustCurrencyForUser(username, currencyId, value) {
         // Okay, it passes... let's try to add it.
         userDatabase.getUserByUsername(username).then(user => {
             if (user !== false) {
-                adjustCurrency(user, currencyId, value);
-                return resolve(true);
+                adjustCurrency(user, currencyId, value).then(() => {
+                    return resolve(true);
+                });
             }
             return resolve(false);
-
         });
     });
 }
@@ -201,8 +199,7 @@ function addCurrencyToAllUsers(currencyId, value) {
     let updateDoc = {};
     updateDoc[`currency.${currencyId}`] = value;
     db.update({}, { $set: updateDoc }, { multi: true }, function(
-        err,
-        numReplaced
+        err
     ) {
         if (err) {
             logger.error("Error adding currency to all users", err);
@@ -227,7 +224,7 @@ function addCurrencyToNewUser(user) {
 // Get User Currency Amount
 // This will retrieve the amount of currency that a user has.
 function getUserCurrencyAmount(username, currencyId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!isViewerDBOn()) {
             return resolve(0);
         }
@@ -275,8 +272,7 @@ function purgeCurrencyById(currencyId) {
     let updateDoc = {};
     updateDoc[`currency.${currencyId}`] = 0;
     db.update({}, { $set: updateDoc }, { multi: true }, function(
-        err,
-        numReplaced
+        err
     ) {
         if (err) {
             logger.error("Error purging currency to all users", err);
@@ -296,8 +292,7 @@ function deleteCurrencyById(currencyId) {
             let user = docs[i];
             delete user.currency[currencyId];
             db.update({ _id: user._id }, { $set: user }, {}, function(
-                err,
-                numReplaced
+                err
             ) {
                 if (err) {
                     logger.error("Error purging currency to all users", err);
@@ -319,7 +314,7 @@ function deleteCurrencyById(currencyId) {
 // Refresh Currency Cache
 // This gets a message from front end when a currency needs to be created.
 // This is also triggered in the currencyManager.
-ipcMain.on("refreshCurrencyCache", event => {
+ipcMain.on("refreshCurrencyCache", () => {
     if (!isViewerDBOn()) {
         return;
     }
