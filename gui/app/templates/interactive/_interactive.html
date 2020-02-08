@@ -166,7 +166,13 @@
         </div>
       <div class="editior-column">
         <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0;">
-          <span class="noselect">Controls <tooltip text="'A control is a button/textfield/etc that a viewer can interact with to trigger effects in Firebot.'"></tooltip></span>
+          <span class="noselect" style="display: flex;align-items: center;justify-content: center;">
+            <span>Controls</span>
+            <tooltip style="margin: 0 5px;" text="'A control is a button/textfield/etc that a viewer can interact with to trigger effects in Firebot.'"></tooltip> 
+            <span class="control-search-toggle clickable-dark" ng-click="toggleSearchCollapse();" uib-tooltip="Toggle Control Search" tooltip-append-to-body="true">
+              <i class="fas fa-search" ng-class="{ 'fa-search-plus': searchCollapse, 'fa-search-minus': !searchCollapse }"></i>
+            </span>       
+          </span>
           <div class="flex-row-center">
             <div class="clickable" ng-click="showCreateControlModal()" ng-show="mps.hasSceneSelected()"><i class="fas fa-plus-circle"></i></div>
 
@@ -185,43 +191,47 @@
           </div>  
         </div>
 
-        <div style="height: 100%; overflow-y: auto;" ui-sortable="sortableOptions" ng-model="currentControls">
-            <div ng-repeat="control in currentControls track by control.id" 
+        <div style="height: 100%;">
+
+          <input id="control-search" ng-model="controlSearch" type="text" class="form-control control-search" placeholder="Search controls" ng-hide="searchCollapse" style="height: 40px;" disable-animate />
+
+          <div style="height: 100%; overflow-y: auto;" ui-sortable="sortableOptions" ng-model="currentControls">
+            <div ng-repeat="control in currentControls | filter:{name:controlSearch} track by control.id" 
                 class="flex-row-center jspacebetween control-row" 
                 ng-mouseover="setHighlightedControl(control.id)" 
                 ng-mouseleave="clearHighlight()">
 
-            <div class="flex-row-center mixplay-row-sort-handle" style="height:100%;margin-left: 5px;">
-                <div style="width: 28px;height: 100%;font-size:12px;flex-shrink: 0;" class="flex-center">
-                    <i class="far" ng-class="getControlIconForKind(control.kind)" uib-tooltip="{{getControlSettings(control.kind).name}}" tooltip-append-to-body="true"></i>
+                <div class="flex-row-center mixplay-row-sort-handle" style="height:100%;margin-left: 5px;">
+                    <div style="width: 28px;height: 100%;font-size:12px;flex-shrink: 0;" class="flex-center">
+                        <i class="far" ng-class="getControlIconForKind(control.kind)" uib-tooltip="{{getControlSettings(control.kind).name}}" tooltip-append-to-body="true"></i>
+                    </div>
+                    <div class="row-text">{{control.name}}</div>
                 </div>
-                <div class="row-text">{{control.name}}</div>
-            </div>
 
-            <div class="flex-row-center">
-                <div ng-if="getControlSettings(control.kind).grid" class="clickable" ng-click="addOrRemoveControlToGrid(control)" uib-tooltip="{{controlIsOnGrid(control) ? 'Remove from Grid' : 'Add to Grid'}}" tooltip-append-to-body="true"><i class="fa-th-large" ng-class="controlIsOnGrid(control) ? 'fas' : 'fal'"></i></div>
-              
-                <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
-                    <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
-                    <ul class="dropdown-menu" uib-dropdown-menu style="transform: translateY(-142px);">
-                        <li ng-click="editControl(control)">
-                            <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>
-                        </li>
-                        <li ng-click="copyControl(control, true)">
-                            <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate control</a>
-                        </li>
-                        <li ng-click="copyControl(control)">
-                            <a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy control</a>
-                        </li>
-                        <li ng-click="deleteControl(control)">
-                            <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete control</a>
-                        </li>
-                    </ul>
-                </div>
+                <div class="flex-row-center">
+                  <div ng-if="getControlSettings(control.kind).grid" class="clickable" ng-click="addOrRemoveControlToGrid(control)" uib-tooltip="{{controlIsOnGrid(control) ? 'Remove from Grid' : 'Add to Grid'}}" tooltip-append-to-body="true"><i class="fa-th-large" ng-class="controlIsOnGrid(control) ? 'fas' : 'fal'"></i></div>
+                
+                  <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
+                      <span class="noselect pointer"><i class="fal fa-ellipsis-v"></i></span>
+                      <ul class="dropdown-menu" uib-dropdown-menu style="transform: translateY(-142px);">
+                          <li ng-click="editControl(control)">
+                              <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>
+                          </li>
+                          <li ng-click="copyControl(control, true)">
+                              <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate control</a>
+                          </li>
+                          <li ng-click="copyControl(control)">
+                              <a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy control</a>
+                          </li>
+                          <li ng-click="deleteControl(control)">
+                              <a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete control</a>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
             </div>
-          </div>
-        </div>
-        
+          </div>        
+        </div>      
       </div>
 
       <div style="display:flex; height: 100%;flex-grow: 3;width: 0px;flex-direction:column;">

@@ -62,6 +62,26 @@
     }
 }
 
+.control-search-wrapper {
+    height: 43px; 
+    background: #1E2023;
+    padding: 0 3px;
+}
+
+.control-search-toggle {
+    font-size: 13px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+}
+
+.control-search {
+    border-radius: 0;
+    margin-bottom: 5px;
+}
+
 .mixer-label-container {
     z-index: 1;
     user-select: none;

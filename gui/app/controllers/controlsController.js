@@ -18,6 +18,19 @@
             $q
         ) {
 
+            $scope.searchCollapse = true;
+            $scope.controlSearch = "";
+            $scope.toggleSearchCollapse = () => {
+                $scope.searchCollapse = !$scope.searchCollapse;
+                $scope.controlSearch = "";
+                setTimeout(() => {
+                    if (!$scope.searchCollapse) {
+                        angular.element(`#control-search`).focus();
+                    } else {
+                        angular.element(`#control-search`).blur();
+                    }
+                }, 100);
+            };
 
             $scope.sortableOptions = {
                 handle: ".row-text",
