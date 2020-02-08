@@ -215,12 +215,8 @@ const currency = {
                 return reject("Amount not a number: " + amount);
             }
 
-
             // If "Remove" make number negative, otherwise just use number.
-            let currency =
-        event.effect.action === "Remove"
-            ? -Math.abs(amount)
-            : Math.abs(amount);
+            let currency = event.effect.action === "Remove" ? -Math.abs(amount) : Math.abs(amount);
 
             // PEOPLE GONNA GET PAID
             switch (event.effect.target) {
@@ -230,7 +226,12 @@ const currency = {
                     userTarget,
                     event.effect.currency,
                     currency
-                );
+                ).then(() => {
+                    if (event.effect.sendChat) {
+                        chatProcessor.send(event.effect, event.trigger);
+                    }
+                    resolve(true);
+                });
                 break;
             case "allOnline":
                 // Give currency to all online.
@@ -238,7 +239,12 @@ const currency = {
                     event.effect.currency,
                     currency,
                     true
-                );
+                ).then(() => {
+                    if (event.effect.sendChat) {
+                        chatProcessor.send(event.effect, event.trigger);
+                    }
+                    resolve(true);
+                });
                 break;
             case "group":
                 // Give currency to group.
@@ -247,15 +253,15 @@ const currency = {
                     event.effect.currency,
                     currency,
                     true
-                );
+                ).then(() => {
+                    if (event.effect.sendChat) {
+                        chatProcessor.send(event.effect, event.trigger);
+                    }
+                    resolve(true);
+                });
                 break;
             default:
                 logger.error("Invalid target passed to currency effect. currency.js");
-            }
-
-            // Send chat if we have it.
-            if (event.effect.sendChat) {
-                chatProcessor.send(event.effect, event.trigger);
             }
 
             resolve(true);

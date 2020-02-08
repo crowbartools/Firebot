@@ -77,7 +77,7 @@ function adjustCurrency(user, currencyId, value) {
             if (err) {
                 logger.error("Currency: Error adding currency to user.", err);
             }
-            resolve();
+            return resolve();
         });
     });
 }
@@ -104,11 +104,11 @@ function adjustCurrencyForUser(username, currencyId, value) {
         // Okay, it passes... let's try to add it.
         userDatabase.getUserByUsername(username).then(user => {
             if (user !== false) {
-                adjustCurrency(user, currencyId, value);
-                return resolve(true);
+                adjustCurrency(user, currencyId, value).then(() => {
+                    return resolve(true);
+                });
             }
             return resolve(false);
-
         });
     });
 }
