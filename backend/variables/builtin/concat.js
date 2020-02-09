@@ -1,6 +1,6 @@
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contents");
+const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {

@@ -7,12 +7,7 @@ const {
 
 const { OutputDataType } = require("../../../shared/variable-contants");
 
-const { ArgumentsError } = require("../expression-processor");
-
-
-/**
- * The $subMonths variable
- */
+const { ExpressionArgumentsError } = require("../expression-errors");
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -69,12 +64,12 @@ const model = {
 
         // index needs to either be "all" or a number
         if (String(index).toLowerCase() !== "all" && isNaN(index)) {
-            throw new ArgumentsError("First argument needs to be either 'all' or a number.", 0);
+            throw new ExpressionArgumentsError("First argument needs to be either 'all' or a number.", 0);
         }
 
         // upperIndex needs to either be null, "last", or a number
         if (upperIndex != null && String(upperIndex).toLowerCase() !== "last" && isNaN(upperIndex)) {
-            throw new ArgumentsError("Second argument needs to be either 'last' or a number.", 1);
+            throw new ExpressionArgumentsError("Second argument needs to be either 'last' or a number.", 1);
         }
 
         return true;

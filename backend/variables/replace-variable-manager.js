@@ -15,8 +15,6 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     registerReplaceVariable(variable) {
-        // TODO: validate variable obj
-
         if (this._registeredReplaceVariables.some(v => v.definition.handle === variable.definition.handle)) {
             throw new TypeError("A variable with this handle already exists.");
         }
@@ -28,7 +26,7 @@ class ReplaceVariableManager extends EventEmitter {
             {
                 handle: variable.definition.handle,
                 argsCheck: variable.argsCheck,
-                evaluate: variable.evaluator,
+                evaluator: variable.evaluator,
                 triggers: variable.definition.triggers
             }
         );
