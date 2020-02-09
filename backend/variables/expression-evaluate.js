@@ -245,12 +245,10 @@ module.exports = async function evaluate(handlers, options) {
         throw new ExpressionError('expression must be a string');
     }
 
-    /*
     // validate options.trigger
     if (options.trigger == null) {
         throw new ExpressionArgumentsError('No trigger defined in options');
     }
-    */
 
     let expression = options.expression,
         cursor = 0,
