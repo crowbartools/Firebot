@@ -3,7 +3,7 @@
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const Expression = require("./expression");
-const { ArgumentsError, ExpressionError } = require("./expression-processor");
+const { ExpressionArgumentsError, ExpressionError } = require("./expression-errors");
 
 const frontendCommunicator = require("../common/frontend-communicator");
 
@@ -111,7 +111,7 @@ class ReplaceVariableManager extends EventEmitter {
                         } catch (err) {
                             err.dataField = key;
                             err.rawText = value;
-                            if (err instanceof ArgumentsError) {
+                            if (err instanceof ExpressionArgumentsError) {
                                 errors.push(err);
                                 logger.debug(`Found variable error when validating`, err);
                             } else if (err instanceof ExpressionError) {

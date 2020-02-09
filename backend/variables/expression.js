@@ -1,6 +1,6 @@
 'use strict';
 
-const evaluate = require('./expression-evaluate.mjs');
+const evaluate = require('./expression-evaluate.js');
 
 const globalHandlers = [];
 const defaultArgsCheck = () => {};
