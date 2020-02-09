@@ -154,6 +154,7 @@
                             if (confirmed) {
                                 mixplayService.deleteProject(currentProject.id);
                                 $scope.updateControlPositions();
+                                $scope.currentScenes = $scope.getScenesForSelectedProject();
                             }
                         });
                 }
@@ -338,6 +339,7 @@
                         } else {
                             mixplayService.createNewProject(name, setAsActive);
                         }
+                        $scope.currentScenes = $scope.getScenesForSelectedProject();
                         $scope.updateControlPositions();
                     }
                 });
