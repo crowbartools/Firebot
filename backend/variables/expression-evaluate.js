@@ -11,7 +11,7 @@ const {
 const probeText = /^((?:[^"$\\]|(?:\\["$\\])|(?:\\(?!["$\\])))+)/;
 const probeArg = /^\s*((?:[^"$\\,\] ]|(?:\\[\\"\]$])|(?:\\(?![\\"\]$]))|(?: +(?=$|[^ \],])))+)/;
 const probeQuote = /^"((?:[^\\"]|\\[\\"]|\\(?!\\"))+)"/;
-const probeVar = /^\s*\$([a-z][a-z\d]+)/;
+const probeVar = /^\s*\$([a-z][a-z\d]+)/i;
 
 function text(expression, cursor = 0, isArg = false) {
     let token, result;
