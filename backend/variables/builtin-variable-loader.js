@@ -38,6 +38,7 @@ exports.loadReplaceVariables = () => {
     const capitalize = require('./builtin/capitalize');
     const uppercase = require('./builtin/uppercase');
     const lowercase = require('./builtin/lowercase');
+    const concat = require('./builtin/concat');
 
     const customVariable = require("./builtin/customVariable");
     const profilePageBytebinToken = require("./builtin/profilePageBytebinToken");
@@ -115,6 +116,7 @@ exports.loadReplaceVariables = () => {
     replaceVariableManager.registerReplaceVariable(capitalize);
     replaceVariableManager.registerReplaceVariable(uppercase);
     replaceVariableManager.registerReplaceVariable(lowercase);
+    replaceVariableManager.registerReplaceVariable(concat);
 
     replaceVariableManager.registerReplaceVariable(customVariable);
     replaceVariableManager.registerReplaceVariable(profilePageBytebinToken);
