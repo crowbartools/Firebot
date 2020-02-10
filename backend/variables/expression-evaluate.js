@@ -41,7 +41,7 @@ function text(expression, cursor = 0, isArg = false) {
         }
 
         // Quoted text probe
-        if (expression[0] === '"') {
+        if (isArg && expression[0] === '"') {
 
             // Probe for quoted text
             token = probeQuote.exec(expression);
