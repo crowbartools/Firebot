@@ -64,6 +64,9 @@ const currency = {
                     <li ng-click="effect.action = 'Remove'">
                         <a href>Remove</a>
                     </li>
+                    <li ng-click="effect.action = 'Set'">
+                        <a href>Set</a>
+                    </li>
                 </ul>
             </div>
         </eos-container>
@@ -215,7 +218,7 @@ const currency = {
 
             // What should this do when triggered.
             let userTarget = event.effect.userTarget;
-
+            let adjustType = event.effect.action;
             let amount = event.effect.amount;
 
             if (isNaN(amount)) {
@@ -224,10 +227,7 @@ const currency = {
 
 
             // If "Remove" make number negative, otherwise just use number.
-            let currency =
-        event.effect.action === "Remove"
-            ? -Math.abs(amount)
-            : Math.abs(amount);
+            let currency = event.effect.action === "Remove" ? -Math.abs(amount) : Math.abs(amount);
 
             // PEOPLE GONNA GET PAID
             switch (event.effect.target) {
@@ -236,7 +236,8 @@ const currency = {
                 await currencyDatabase.adjustCurrencyForUser(
                     userTarget,
                     event.effect.currency,
-                    currency
+                    currency,
+                    adjustType
                 );
                 break;
             case "allOnline":
@@ -244,7 +245,8 @@ const currency = {
                 await currencyDatabase.addCurrencyToOnlineUsers(
                     event.effect.currency,
                     currency,
-                    true
+                    true,
+                    adjustType
                 );
                 break;
             case "group":
@@ -253,7 +255,8 @@ const currency = {
                     event.effect.roleIds,
                     event.effect.currency,
                     currency,
-                    true
+                    true,
+                    adjustType
                 );
                 break;
             default:
