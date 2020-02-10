@@ -50,7 +50,9 @@ function getUserByUsername(username) {
             return resolve();
         }
 
-        db.findOne({ username: username }, (err, doc) => {
+        let searchTerm = new RegExp(username, 'gi');
+
+        db.findOne({ username: { $regex: searchTerm } }, (err, doc) => {
             if (err) {
                 return resolve(false);
             }
