@@ -142,17 +142,8 @@ function runEffects(runEffectsContext) {
                 continue;
             }
 
-
             // run all strings through replace variable system
             logger.debug("Looking and handling replace variables...");
-
-            // NOTE(ebiggz, v5.3.4): This is a quick patch to fix the variable system breaking these effects if a variable is present.
-            // We can remove this block once the variable system is properly fixed
-            if (effect.type === "firebot:showtext" && effect.text != null && effect.text.includes("$")) {
-                effect.text = effect.text.replace(/"/g, "\\\"");
-            } else if (effect.type === "firebot:html" && effect.html != null && effect.html.includes("$")) {
-                effect.html = effect.html.replace(/"/g, "\\\"");
-            }
 
             await findAndReplaceVariables(effect, trigger);
 
