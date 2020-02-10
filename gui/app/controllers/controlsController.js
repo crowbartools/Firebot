@@ -460,7 +460,15 @@
                 let controlsOnGrid = mixplayService.getAllControlPositionsForGridSize(gridHelper.currentGridSize)
                     .filter(p => !(p.x === position.x && p.y === position.y));
 
-                let obstructed = gridHelper.isAreaObstructed(position.x, position.y, copiedDimensions.width, copiedDimensions.height, controlsOnGrid);
+                let gridDimensions = gridHelper.GridSizes[gridHelper.currentGridSize];
+
+                let obstructed = false;
+                if (position.x + copiedDimensions.width > gridDimensions.width || position.y + copiedDimensions.height > gridDimensions.height) {
+                    obstructed = true;
+                }
+                if (gridHelper.isAreaObstructed(position.x, position.y, copiedDimensions.width, copiedDimensions.height, controlsOnGrid)) {
+                    obstructed = true;
+                }
 
                 if (obstructed) {
                     ngToast.create("Unable to apply copied dimensions as theres not enough space either to the right of or below the control.");
