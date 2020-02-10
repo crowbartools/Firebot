@@ -25,18 +25,10 @@ const model = {
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            let passed = false;
             let activeChatter = require('../../../backend/chat/active-chatters');
-            let activeChatList = activeChatter.getActiveChatters();
             let username = triggerData.metadata.username;
 
-            let newActiveUserArray = activeChatList.filter(chatter => chatter.username === username);
-
-            if (newActiveUserArray.length > 0) {
-                passed = true;
-            }
-
-            if (passed) {
+            if (activeChatter.isUsernameActiveChatter(username)) {
                 resolve();
             } else {
                 reject("You haven't sent a chat message recently");

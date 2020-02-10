@@ -16,6 +16,14 @@ let inactiveTimer = userInactiveTimeSetting * 60000;
 let cycleActiveTimer = [];
 let activeChatters = [];
 
+function isUsernameActiveChatter(username) {
+    let existingUserIndex = activeChatters.findIndex((obj => obj.username === username));
+    if (existingUserIndex !== -1) {
+        return true;
+    }
+    return false;
+}
+
 function addOrUpdateActiveChatter(user) {
     if (!activeUserListStatus) {
         return;
@@ -109,3 +117,4 @@ ipcMain.on("setActiveChatUserTimeout", function(event, value) {
 exports.getActiveChatters = getActiveChatters;
 exports.addOrUpdateActiveChatter = addOrUpdateActiveChatter;
 exports.cycleActiveChatters = cycleActiveChatters;
+exports.isUsernameActiveChatter = isUsernameActiveChatter;

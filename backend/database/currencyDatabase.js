@@ -7,6 +7,7 @@ const { settings } = require("../common/settings-access.js");
 const channelAccess = require("../common/channel-access");
 const customRolesManager = require("../roles/custom-roles-manager");
 const mixerRolesManager = require("../../shared/mixer-roles");
+const firebotRolesManager = require("../roles/firebot-roles-manager");
 
 let currencyCache = {};
 
@@ -132,7 +133,8 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
                     .filter(mr => mr !== "User")
                     .map(mr => mixerRolesManager.mapMixerRole(mr));
                 let customRoles = customRolesManager.getAllCustomRolesForViewer(u.username);
-                u.allRoles = mixerRoles.concat(customRoles);
+                let firebotRoles = firebotRolesManager.getAllFirebotRolesForViewer(u.username);
+                u.allRoles = mixerRoles.concat(customRoles).concat(firebotRoles);
                 return u;
             })
             .filter(u => u.allRoles.some(r => roleIds.includes(r.id)))

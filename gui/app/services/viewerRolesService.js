@@ -1,6 +1,7 @@
 "use strict";
 
 const mixerRoleConstants = require("../../shared/mixer-roles");
+const firebotRoleConstants = require("../../shared/firebot-roles");
 
 (function() {
 
@@ -68,13 +69,18 @@ const mixerRoleConstants = require("../../shared/mixer-roles");
                 backendCommunicator.fireEvent("deleteCustomRole", roleId);
             };
 
+            const firebotRoles = firebotRoleConstants.getFirebotRoles();
+            service.getFirebotRoles = function() {
+                return firebotRoles;
+            };
+
             const mixerRoles = mixerRoleConstants.getMixerRoles();
             service.getMixerRoles = function() {
                 return mixerRoles;
             };
 
             service.getAllRoles = () => {
-                return service.getMixerRoles().concat(service.getCustomRoles());
+                return service.getMixerRoles().concat(service.getFirebotRoles()).concat(service.getCustomRoles());
             };
 
             service.getRoleById = function(id) {
