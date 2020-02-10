@@ -5,6 +5,8 @@ const logger = require("../../logwrapper");
 const { OutputDataType } = require("../../../shared/variable-contants");
 const utils = require("../../utility");
 
+
+
 const model = {
     definition: {
         handle: "math",
@@ -12,7 +14,10 @@ const model = {
         description: "Evaluate a math equation",
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: async (_, exp) => {
+    evaluator: async (trigger, exp) => {
+
+        // TODO(ebiggz, v5.3.2): remove this after a few versions to give users time to not needing to quote arguments to get validation to work
+        exp = await utils.populateStringWithTriggerData(exp, trigger);
 
         let evalulation;
         try {
