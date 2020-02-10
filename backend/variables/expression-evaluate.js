@@ -203,7 +203,7 @@ async function variable(handlers, expression, options, cursor = 0) {
         }
 
         if (Array.isArray(trigger)) {
-            if (trigger.some(id => id === options.trigger.id)) {
+            if (!trigger.some(id => id === options.trigger.id)) {
                 throw new ExpressionVariableError(`${varname} does not support this specific trigger type: ${display}`, cursor, varname);
             }
         }
