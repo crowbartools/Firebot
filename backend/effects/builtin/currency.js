@@ -98,6 +98,13 @@ const currency = {
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
+                        <div style="margin-bottom: 10px;">
+                            <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Firebot</div>
+                            <label ng-repeat="firebotRole in getFirebotRoles()" class="control-fb control--checkbox">{{firebotRole.name}}
+                                <input type="checkbox" ng-click="toggleRole(firebotRole)" ng-checked="isRoleChecked(firebotRole)"  aria-label="..." >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
                         <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Mixer</div>
                         <label ng-repeat="mixerRole in getMixerRoles()" class="control-fb control--checkbox">{{mixerRole.name}}
                             <input type="checkbox" ng-click="toggleRole(mixerRole)" ng-checked="isRoleChecked(mixerRole)"  aria-label="..." >
@@ -170,6 +177,7 @@ const currency = {
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
+        $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
         $scope.getMixerRoles = viewerRolesService.getMixerRoles;
 
         $scope.isRoleChecked = function(role) {
