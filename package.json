@@ -1,6 +1,6 @@
 {
     "name": "firebotv5",
-    "version": "5.3.4",
+    "version": "5.4.0",
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
     "scripts": {
