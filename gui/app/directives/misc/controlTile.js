@@ -15,6 +15,8 @@
 
                         <label-tile ng-switch-when="label" control="$ctrl.control" style="width:100%; height: 100%;"></label-tile>
 
+                        <image-tile ng-switch-when="image" control="$ctrl.control" style="width:100%; height: 100%;"></image-tile>
+
                         <joystick-tile ng-switch-when="joystick" control="$ctrl.control" style="width:100%; height: 100%;position: relative;"></joystick-tile>
 
                         <textbox-tile ng-switch-when="textbox" control="$ctrl.control" style="width:100%; height: 100%;"></textbox-tile>
@@ -37,6 +39,7 @@
 
 
                 $ctrl.getDimensionDisplay = () => {
+                    if ($ctrl.control == null) return "";
                     if ($ctrl.control.position) {
                         let positionForGrid = $ctrl.control.position.find(p => p.size === gridHelper.currentGridSize);
                         if (positionForGrid) {
@@ -52,6 +55,7 @@
                 };
 
                 $ctrl.$onInit = () => {
+                    if ($ctrl.control == null) return;
                     let controlKindData = controlHelper.getControlKindData($ctrl.control.kind);
                     if (controlKindData == null) return;
                     $ctrl.controlKindData = controlKindData;

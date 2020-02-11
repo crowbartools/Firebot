@@ -71,7 +71,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($timeout) {
+            controller: function($timeout, controlHelper) {
                 let $ctrl = this;
 
                 $timeout(() => {
@@ -86,38 +86,7 @@
                 $ctrl.nameError = false;
                 $ctrl.kindError = false;
 
-                $ctrl.controlKinds = [
-                    {
-                        kind: "button",
-                        display: "Button",
-                        description: "A simple button.",
-                        iconClass: "fa-bullseye-pointer"
-                    },
-                    {
-                        kind: "label",
-                        display: "Label",
-                        description: "Just some text that can't be interacted with.",
-                        iconClass: "fa-tag"
-                    },
-                    {
-                        kind: "textbox",
-                        display: "Textbox",
-                        description: "A way for viewers to input text.",
-                        iconClass: "fa-font"
-                    },
-                    {
-                        kind: "joystick",
-                        display: "Joystick",
-                        description: "Allows viewers to control your mouse.",
-                        iconClass: "fa-gamepad"
-                    }
-                    /*{
-                        kind: "screen",
-                        display: "Mouse",
-                        description: "Another mouse control. Tracks viewers cursor position over the stream area.",
-                        iconClass: "fa-mouse-pointer"
-                    }*/
-                ];
+                $ctrl.controlKinds = controlHelper.controlKinds;
 
                 function validateControlName() {
                     let name = $ctrl.name;
