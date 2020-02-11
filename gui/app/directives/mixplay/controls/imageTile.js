@@ -23,7 +23,7 @@
                     }
 
                     style = {
-                        'border': $ctrl.control.mixplay.border != null && $ctrl.control.mixplay.border !== "" ? $ctrl.control.mixplay.border : null,
+                        'border': $ctrl.control.mixplay.borderColor && `2px solid ${$ctrl.control.mixplay.borderColor}`,
                         "border-radius": borderRadius
                     };
 

@@ -120,6 +120,8 @@
                                 <span class="input-group-addon" id="basic-addon3">Border Radius<tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
                                 <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.borderRadius" replace-variables disable-variable-menu="!$ctrl.updateMode" placeholder="40px">
                             </div>
+
+                            <control-color-picker model="$ctrl.control.mixplay.borderColor" label="Border Color"></control-color-picker>
                         </div>
                     </div>  
 
