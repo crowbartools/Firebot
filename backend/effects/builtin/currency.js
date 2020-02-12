@@ -64,6 +64,9 @@ const currency = {
                     <li ng-click="effect.action = 'Remove'">
                         <a href>Remove</a>
                     </li>
+                    <li ng-click="effect.action = 'Set'">
+                        <a href>Set</a>
+                    </li>
                 </ul>
             </div>
         </eos-container>
@@ -95,6 +98,13 @@ const currency = {
                             <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Custom</div>
                             <label ng-repeat="customRole in getCustomRoles()" class="control-fb control--checkbox">{{customRole.name}}
                                 <input type="checkbox" ng-click="toggleRole(customRole)" ng-checked="isRoleChecked(customRole)"  aria-label="..." >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Firebot</div>
+                            <label ng-repeat="firebotRole in getFirebotRoles()" class="control-fb control--checkbox">{{firebotRole.name}}
+                                <input type="checkbox" ng-click="toggleRole(firebotRole)" ng-checked="isRoleChecked(firebotRole)"  aria-label="..." >
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
@@ -170,6 +180,7 @@ const currency = {
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
+        $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
         $scope.getMixerRoles = viewerRolesService.getMixerRoles;
 
         $scope.isRoleChecked = function(role) {
@@ -207,7 +218,7 @@ const currency = {
 
             // What should this do when triggered.
             let userTarget = event.effect.userTarget;
-
+            let adjustType = event.effect.action;
             let amount = event.effect.amount;
 
             if (isNaN(amount)) {
@@ -216,10 +227,7 @@ const currency = {
 
 
             // If "Remove" make number negative, otherwise just use number.
-            let currency =
-        event.effect.action === "Remove"
-            ? -Math.abs(amount)
-            : Math.abs(amount);
+            let currency = event.effect.action === "Remove" ? -Math.abs(amount) : Math.abs(amount);
 
             // PEOPLE GONNA GET PAID
             switch (event.effect.target) {
@@ -228,7 +236,8 @@ const currency = {
                 await currencyDatabase.adjustCurrencyForUser(
                     userTarget,
                     event.effect.currency,
-                    currency
+                    currency,
+                    adjustType
                 );
                 break;
             case "allOnline":
@@ -236,7 +245,8 @@ const currency = {
                 await currencyDatabase.addCurrencyToOnlineUsers(
                     event.effect.currency,
                     currency,
-                    true
+                    true,
+                    adjustType
                 );
                 break;
             case "group":
@@ -245,7 +255,8 @@ const currency = {
                     event.effect.roleIds,
                     event.effect.currency,
                     currency,
-                    true
+                    true,
+                    adjustType
                 );
                 break;
             default:

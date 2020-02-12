@@ -7,6 +7,7 @@ const { settings } = require("../common/settings-access.js");
 const channelAccess = require("../common/channel-access");
 const customRolesManager = require("../roles/custom-roles-manager");
 const mixerRolesManager = require("../../shared/mixer-roles");
+const firebotRolesManager = require("../roles/firebot-roles-manager");
 
 let currencyCache = {};
 
@@ -34,7 +35,7 @@ function getCurrencies() {
 
 // Adjust Currency
 // This adjust currency for a user. Can be given negative values. Provide it with the database record for a user.
-function adjustCurrency(user, currencyId, value) {
+function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
             return resolve();
@@ -42,18 +43,31 @@ function adjustCurrency(user, currencyId, value) {
 
         // Dont do anything if value is not a number or is 0.
         value = parseInt(value);
-        if (isNaN(value) || value === 0) {
-            return resolve();
-        }
+        adjustType = adjustType.toLowerCase();
+        let newUserValue = value;
 
-        // Okay, move on and finish everything.
-        logger.debug(
-            "Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId
-        );
+        switch (adjustType) {
+        case "set":
+            if (isNaN(value)) {
+                return resolve();
+            }
+            logger.debug(
+                "Currency: Setting " + user.username + " currency " + currencyId + " to: " + value + "."
+            );
+            newUserValue = value;
+            break;
+        default:
+            if (isNaN(value) || value === 0) {
+                return resolve();
+            }
+            logger.debug(
+                "Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId
+            );
+            newUserValue = (user.currency[currencyId] += parseInt(value));
+        }
 
         let db = userDatabase.getUserDb();
         let updateDoc = {};
-        let newUserValue = (user.currency[currencyId] += parseInt(value));
         let currencyLimit = isNaN(parseInt(currencyCache[currencyId].limit))
             ? 0
             : currencyCache[currencyId].limit;
@@ -73,7 +87,7 @@ function adjustCurrency(user, currencyId, value) {
             err
         ) {
             if (err) {
-                logger.error("Currency: Error adding currency to user.", err);
+                logger.error("Currency: Error setting currency on user.", err);
             }
             return resolve();
         });
@@ -82,7 +96,7 @@ function adjustCurrency(user, currencyId, value) {
 
 // Adjust currency for user.
 // This adjust currency when given a username. Can be given negative values to remove currency.
-function adjustCurrencyForUser(username, currencyId, value) {
+function adjustCurrencyForUser(username, currencyId, value, adjustType = "adjust") {
     return new Promise((resolve) => {
         if (!isViewerDBOn()) {
             return resolve(false);
@@ -102,7 +116,7 @@ function adjustCurrencyForUser(username, currencyId, value) {
         // Okay, it passes... let's try to add it.
         userDatabase.getUserByUsername(username).then(user => {
             if (user !== false) {
-                adjustCurrency(user, currencyId, value).then(() => {
+                adjustCurrency(user, currencyId, value, adjustType).then(() => {
                     return resolve(true);
                 });
             }
@@ -113,7 +127,7 @@ function adjustCurrencyForUser(username, currencyId, value) {
 
 // Add Currency to Usergroup
 // This will add an amount of currency to all online users in a usergroup.
-function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, ignoreDisable = false) {
+function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, ignoreDisable = false, adjustType = "adjust") {
     return new Promise(async resolve => {
         if (!isViewerDBOn()) {
             return resolve();
@@ -132,7 +146,8 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
                     .filter(mr => mr !== "User")
                     .map(mr => mixerRolesManager.mapMixerRole(mr));
                 let customRoles = customRolesManager.getAllCustomRolesForViewer(u.username);
-                u.allRoles = mixerRoles.concat(customRoles);
+                let firebotRoles = firebotRolesManager.getAllFirebotRolesForViewer(u.username);
+                u.allRoles = mixerRoles.concat(customRoles).concat(firebotRoles);
                 return u;
             })
             .filter(u => u.allRoles.some(r => roleIds.includes(r.id)))
@@ -148,7 +163,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
         db.find({ online: true, _id: { $in: userIdsInRoles } }, async (err, docs) => {
             for (let user of docs) {
                 if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
-                    await adjustCurrency(user, currencyId, value);
+                    await adjustCurrency(user, currencyId, value, adjustType);
                 }
             }
 
@@ -159,7 +174,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
 
 // Add Currency to all Online Users
 // This will add an amount of currency to all users who are currently seen as online.
-function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false) {
+function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adjustType = "adjust") {
     return new Promise((resolve, reject) => {
         if (!isViewerDBOn()) {
             return reject();
@@ -181,7 +196,7 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false) {
             // Do the loop!
             for (let user of docs) {
                 if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
-                    adjustCurrency(user, currencyId, value);
+                    adjustCurrency(user, currencyId, value, adjustType);
                 }
             }
             return resolve();
