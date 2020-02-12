@@ -277,36 +277,54 @@
                         instanceName
                     ) => {
 
-                        $scope.overlayPath = dataAccess.getPathInUserData("overlay.html");
-
-                        let port = settingsService.getWebServerPort();
-
-                        let params = {};
-                        if (port !== 7472 && !isNaN(port)) {
-                            params["port"] = settingsService.getWebServerPort();
-                        }
-
-                        if (instanceName != null && instanceName !== "") {
-                            $scope.showingInstance = true;
-                            params["instance"] = encodeURIComponent(instanceName);
-                        }
-
-                        let paramCount = 0;
-                        Object.entries(params).forEach(p => {
-                            let key = p[0],
-                                value = p[1];
-
-                            let prefix = paramCount === 0 ? "?" : "&";
-
-                            $scope.overlayPath += `${prefix}${key}=${value}`;
-
-                            paramCount++;
-                        });
-
                         $scope.usingOverlayInstances = settingsService.useOverlayInstances();
 
-                        $scope.pathCopied = false;
+                        $scope.broadcastingSoftwares = ["OBS/SLOBS", "XSplit"];
 
+                        $scope.selectedBroadcastingSoftware = "OBS/SLOBS";
+
+                        $scope.updateSelectedBroadcastingSoftware = (type) => {
+                            $scope.selectedBroadcastingSoftware = type;
+                            $scope.buildOverlayPath();
+                        };
+
+                        $scope.overlayPath = "";
+                        $scope.buildOverlayPath = () => {
+                            let overlayPath = dataAccess.getPathInUserData("overlay.html");
+
+                            let port = settingsService.getWebServerPort();
+
+                            let params = {};
+                            if (port !== 7472 && !isNaN(port)) {
+                                params["port"] = settingsService.getWebServerPort();
+                            }
+
+                            if (instanceName != null && instanceName !== "") {
+                                $scope.showingInstance = true;
+                                params["instance"] = encodeURIComponent(instanceName);
+                            }
+
+                            let paramCount = 0;
+                            Object.entries(params).forEach(p => {
+                                let key = p[0],
+                                    value = p[1];
+
+                                let prefix = paramCount === 0 ? "?" : "&";
+
+                                overlayPath += `${prefix}${key}=${value}`;
+
+                                paramCount++;
+                            });
+
+                            if ($scope.selectedBroadcastingSoftware === "XSplit") {
+                                overlayPath = "file:///" + overlayPath;
+                            }
+
+                            $scope.overlayPath = overlayPath;
+                        };
+                        $scope.buildOverlayPath();
+
+                        $scope.pathCopied = false;
                         $scope.copy = function() {
                             $rootScope.copyTextToClipboard($scope.overlayPath);
                             $scope.pathCopied = true;

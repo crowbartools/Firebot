@@ -76,73 +76,81 @@
             </div>        
         </div>
 
+        <div style="width: 100%;overflow-y: scroll;">
 
-        <div style="padding: 20px; width: 100%;">
-          <div style="display: flex;flex-direction: row;justify-content: space-between;">
-              <button ng-click="showAddOrEditEventModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Event</button>
-              <searchbar ng-hide="getSelectedEvents().length < 1" placeholder-text="Search Events" query="eventSearch" style="flex-basis: 250px;"></searchbar>
-          </div>
-          <div ng-if="getSelectedEvents().length < 1" class="noselect muted" style="margin: 13px 0 0 13px;">
-            <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No events saved. You should make one! :)</span>
-          </div>
+            <scroll-sentinel element-class="events-header"></scroll-sentinel>
 
-          <table class="fb-table" style="margin-top:20px;" ng-hide="getSelectedEvents().length < 1">
-              <thead>
-                  <tr style="font-size: 11px;">
-                      <th style="width:5%"></th> 
-                      <th class="muted"><i class="fas fa-tag"></i> NAME</th> 
-                      <th class="muted"><i class="fas fa-exclamation-square"></i> TYPE</th> 
-                      <th class="muted"><i class="fas fa-magic"></i> EFFECTS</th>
-                      <th style="width:210px;"></th> 
-                      <th></th> 
-                  </tr> 
-              </thead> 
-              <tbody> 
-                  <tr ng-repeat="event in getSelectedEvents() | orderBy: 'type' | filter:eventSearch track by event.id" context-menu="eventMenuOptions">
-                      <td style="text-align: center;">
-                          <span style="color: #2aa1c0; font-size: 20px;" ng-click="fireEventManually(event)">
-                              <i class="fas fa-play-circle clickable"></i>
-                          </span>
-                      </td> 
-                      <td>
-                        {{event.name ? event.name : "Unnamed"}}
-                      </td>
-                      <td>
-                        {{event.eventId && event.sourceId ? friendlyEventTypeName(event.sourceId, event.eventId) : "No Type"}}                
-                      </td>
-                      <td>
-                        {{getEventEffectsCount(event)}}
-                      </td>
-                      <td>
-                          <div>
-                              <span class="status-dot" ng-class="{'active': getEventActiveStatus(event.active), 'notactive': !getEventActiveStatus(event.active)}"></span> {{getEventActiveStatusDisplay(event.active)}}
-                          </div>                            
-                      </td>  
-                      <td>
-                          <div style="text-align: right;">
-                              <div uib-dropdown uib-dropdown-toggle class="pull-right">
-                                  <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
-                                  <ul class="dropdown-menu" uib-dropdown-menu>
-                                      <li>
-                                          <a href ng-click="showAddOrEditEventModal($index)">Edit</a>
-                                      </li>
-                                      <li ng-show="selectedGroupIsActive()">
-                                          <a href ng-click="toggleEventActiveStatus($index)">{{event.active ? 'Disable' : 'Enable'}}</a>
-                                      </li>
-                                      <li>
-                                        <a href ng-click="duplicateEvent($index)">Duplicate</a>
-                                      </li>
-                                      <li>
-                                          <a href ng-click="showDeleteEventModal($index, event.name ? event.name : 'Unnamed')" style="color:red">Delete</a>
-                                      </li>
-                                  </ul>
-                              </div>
-                          </div>                       
-                      </td> 
-                  </tr>
-              </tbody>
-          </table>
+            <div class="sticky-top events-header">
+                <button ng-click="showAddOrEditEventModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Event</button>
+                <searchbar ng-hide="getSelectedEvents().length < 1" placeholder-text="Search Events" query="eventSearch" style="flex-basis: 250px;"></searchbar>
+            </div>
+
+            <div style="padding: 0 20px 20px 20px;">
+                
+                <div ng-if="getSelectedEvents().length < 1" class="noselect muted" style="margin: 13px 0 0 13px;">
+                  <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No events saved. You should make one! :)</span>
+                </div>
+      
+                <table class="fb-table" ng-hide="getSelectedEvents().length < 1">
+                    <thead>
+                        <tr style="font-size: 11px;">
+                            <th style="width:5%"></th> 
+                            <th class="muted"><i class="fas fa-tag"></i> NAME</th> 
+                            <th class="muted"><i class="fas fa-exclamation-square"></i> TYPE</th> 
+                            <th class="muted"><i class="fas fa-magic"></i> EFFECTS</th>
+                            <th style="width:210px;"></th> 
+                            <th></th> 
+                        </tr> 
+                    </thead> 
+                    <tbody> 
+                        <tr ng-repeat="event in getSelectedEvents() | orderBy: 'type' | filter:eventSearch track by event.id" context-menu="eventMenuOptions">
+                            <td style="text-align: center;">
+                                <span style="color: #2aa1c0; font-size: 20px;" ng-click="fireEventManually(event)">
+                                    <i class="fas fa-play-circle clickable"></i>
+                                </span>
+                            </td> 
+                            <td>
+                              {{event.name ? event.name : "Unnamed"}}
+                            </td>
+                            <td>
+                              {{event.eventId && event.sourceId ? friendlyEventTypeName(event.sourceId, event.eventId) : "No Type"}}                
+                            </td>
+                            <td>
+                              {{getEventEffectsCount(event)}}
+                            </td>
+                            <td>
+                                <div>
+                                    <span class="status-dot" ng-class="{'active': getEventActiveStatus(event.active), 'notactive': !getEventActiveStatus(event.active)}"></span> {{getEventActiveStatusDisplay(event.active)}}
+                                </div>                            
+                            </td>  
+                            <td>
+                                <div style="text-align: right;">
+                                    <div uib-dropdown uib-dropdown-toggle class="pull-right">
+                                        <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
+                                        <ul class="dropdown-menu" uib-dropdown-menu>
+                                            <li>
+                                                <a href ng-click="showAddOrEditEventModal($index)">Edit</a>
+                                            </li>
+                                            <li ng-show="selectedGroupIsActive()">
+                                                <a href ng-click="toggleEventActiveStatus($index)">{{event.active ? 'Disable' : 'Enable'}}</a>
+                                            </li>
+                                            <li>
+                                              <a href ng-click="duplicateEvent($index)">Duplicate</a>
+                                            </li>
+                                            <li>
+                                                <a href ng-click="showDeleteEventModal($index, event.name ? event.name : 'Unnamed')" style="color:red">Delete</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>                       
+                            </td> 
+                        </tr>
+                    </tbody>
+                </table>
+              </div>
+
         </div>
+        
 
 
     </div>

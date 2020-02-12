@@ -23,6 +23,10 @@ exports.loadFilters = () => {
     const previousViewTime = require("./builtin/previous-view-time");
     const newViewTime = require("./builtin/new-view-time");
 
+    const resubShared = require("./builtin/resub-shared");
+
+    const hostType = require("./builtin/host-type");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -41,4 +45,8 @@ exports.loadFilters = () => {
 
     filterManager.registerFilter(previousViewTime);
     filterManager.registerFilter(newViewTime);
+
+    filterManager.registerFilter(resubShared);
+
+    filterManager.registerFilter(hostType);
 };

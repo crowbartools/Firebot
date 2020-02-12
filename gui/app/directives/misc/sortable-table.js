@@ -21,11 +21,13 @@
               <thead>
                 <tr style="font-size: 11px;">
                   <th ng-repeat="header in $ctrl.headers track by $index" ng-click="header.sortable && $ctrl.setOrderField(header.dataField)" ng-class="{'selected': $ctrl.isOrderField(header.dataField)}" ng-style="header.headerStyles">
-                      <i ng-show="header.icon" class="fas" ng-class="header.icon"></i>
-                      <span ng-show="header.name" style="margin: 0 2px;">{{header.name}}</span>
-                      <span ng-if="header.sortable" style="display:inline-block; width: 11px;">
-                          <i ng-show="$ctrl.isOrderField(header.dataField)" class="fal" ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"></i>
-                      </span>     
+                    <div style="display:flex;">
+                        <span style="display:inline-block;"><i ng-show="header.icon" class="fas" ng-class="header.icon"></i></span>
+                        <span ng-show="header.name" style="margin: 0 5px;display:inline-block;">{{header.name}}</span>
+                        <span ng-if="header.sortable" style="display:inline-block; width: 11px;">
+                            <i ng-show="$ctrl.isOrderField(header.dataField)" class="fal" ng-class="{'fa-arrow-to-bottom': !$ctrl.order.reverse,'fa-arrow-to-top': $ctrl.order.reverse}"></i>
+                        </span>
+                    </div>     
                   </th>
                 </tr>
               </thead>

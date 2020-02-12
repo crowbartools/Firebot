@@ -123,15 +123,15 @@
             service.triggerExists = function(trigger, id = null) {
                 if (trigger == null) return false;
 
-                trigger = trigger.toLowerCase();
+                trigger = trigger != null ? trigger.toLowerCase() : "";
 
                 let foundDuplicateCustomCmdTrigger = commandsCache.customCommands.some(
                     command =>
-                        command.id !== id && command.trigger.toLowerCase() === trigger
+                        command.id !== id && command.trigger && command.trigger.toLowerCase() === trigger
                 );
 
                 let foundDuplicateSystemCmdTrigger = commandsCache.systemCommands.some(
-                    command => command.active && command.trigger.toLowerCase() === trigger
+                    command => command.active && command.trigger && command.trigger.toLowerCase() === trigger
                 );
 
                 return foundDuplicateCustomCmdTrigger || foundDuplicateSystemCmdTrigger;

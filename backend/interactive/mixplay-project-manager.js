@@ -9,6 +9,8 @@ const settings = require("../common/settings-access").settings;
 const uuid = require("uuid/v1");
 const frontendCommunicator = require("../common/frontend-communicator");
 const devlabImporter = require("../import/devlab/devlab-importer");
+const cloudSync = require("../cloud-sync/cloud-sync");
+const effectManager = require("../effects/effectManager");
 
 const MIXPLAY_FOLDER = profileManager.getPathInProfile("/mixplay/");
 
@@ -124,6 +126,51 @@ frontendCommunicator.onAsync("createNewDevLabImportProject", async data => {
         settings.setLastMixplayProjectId(newProject.id);
     }
     return newProject;
+});
+
+frontendCommunicator.onAsync("createNewShareCodeImportProject", async data => {
+    logger.debug("got 'createNewShareCodeImportProject' request");
+
+    let { shareCode, projectName } = data;
+
+    let newProject;
+    try {
+        let projectData = await cloudSync.getData(shareCode);
+        if (projectData != null && projectData.mixplayProject != null) {
+            newProject = projectData.mixplayProject;
+            newProject.name = projectName;
+
+            let now = new Date();
+            let newProjectId = now.getTime().toString();
+            newProject.id = newProjectId;
+        }
+    } catch (err) {
+        renderWindow.webContents.send("error", "Failed to import share code project: " + err.message);
+    }
+    if (newProject != null) {
+        saveProject(newProject);
+        settings.setLastMixplayProjectId(newProject.id);
+    }
+    return newProject;
+});
+
+frontendCommunicator.onAsync("getMixPlayProjectShareCode", async id => {
+    let project = getProjectById(id);
+    if (!project) return null;
+
+    let projectCopy = JSON.parse(JSON.stringify(project));
+
+    if (projectCopy.scenes) {
+        projectCopy.scenes
+            .forEach(s => s.controls
+                .forEach(c => {
+                    if (c.effects != null && c.effects.list != null) {
+                        c.effects.list = effectManager.clearFilePaths(c.effects.list);
+                    }
+                    return c;
+                }));
+    }
+    return await cloudSync.sync({ mixplayProject: projectCopy });
 });
 
 ipcMain.on("deleteProject", (_, id) => {

@@ -54,7 +54,7 @@ class FilterManager extends EventEmitter {
         if (filterData != null) {
             let filterSettings = filterData.filters;
 
-            let didPass = true;
+            let didPass = filterData.mode !== "inclusive";
             for (let filterSetting of filterSettings) {
                 const filter = this.getFilterById(filterSetting.type);
                 if (filter) {

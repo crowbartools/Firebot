@@ -13,7 +13,6 @@ const mixerEventSource = {
             name: "Subscribed",
             description: "When someone initially subscribes to your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "Firebot",
                 totalMonths: 0
@@ -24,11 +23,10 @@ const mixerEventSource = {
             name: "Resubscribed",
             description: "When someone resubscribes to your channel.",
             cached: false,
-            queued: false,
             manualMetadata: {
                 username: "Firebot",
                 totalMonths: 6,
-                shared: false
+                shared: true
             }
         },
         {

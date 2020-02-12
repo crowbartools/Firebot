@@ -5,6 +5,7 @@ const logger = require("../logwrapper");
 let EventEmitter = require("events");
 const { EffectTrigger } = require("./models/effectModels");
 const frontendCommunicator = require("../common/frontend-communicator");
+const cloudSync = require("../cloud-sync/cloud-sync");
 
 class EffectManager extends EventEmitter {
     constructor() {
@@ -71,9 +72,37 @@ class EffectManager extends EventEmitter {
 
         return effectTriggerData.events && effectTriggerData.events.includes(inputEvent);
     }
+
+    clearFilePaths(effects) {
+        if (effects == null) return effects;
+
+        let keys = Object.keys(effects);
+
+        for (let key of keys) {
+            let value = effects[key];
+
+            if (key != null && key.toLowerCase() === "filepath" || key.toLowerCase() === "file") {
+                effects[key] = undefined;
+            } else if (value && typeof value === "object") {
+                effects[key] = this.clearFilePaths(value);
+            }
+        }
+
+        return effects;
+    }
 }
 
 const manager = new EffectManager();
+
+
+frontendCommunicator.onAsync("getEffectsShareCode", async (effectList) => {
+    logger.debug("got get effects share code request");
+
+    effectList = manager.clearFilePaths(effectList);
+
+    //return share code
+    return await cloudSync.sync({ effects: effectList });
+});
 
 frontendCommunicator.onAsync("getAllEffectDefinitions", async () => {
     logger.debug("got get all effects request");

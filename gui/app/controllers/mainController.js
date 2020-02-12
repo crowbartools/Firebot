@@ -28,7 +28,8 @@
         'countUpModule',
         'pageslide-directive',
         'ui.bootstrap.contextMenu',
-        'color.picker'
+        'color.picker',
+        'ngAria'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {

@@ -25,7 +25,7 @@ const integrationDefinition = {
             authorizePath: '/api/v1.0/authorize'
         },
         autoRefreshToken: false,
-        scopes: 'donations.read socket.token'
+        scopes: 'donations.read socket.token wheel.write credits.write'
     }
 };
 

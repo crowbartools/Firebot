@@ -3,7 +3,7 @@
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
 const Expression = require("./expression");
-const { ArgumentsError, ExpressionError } = require("./expression-processor");
+const { ExpressionArgumentsError, ExpressionError } = require("./expression-errors");
 
 const frontendCommunicator = require("../common/frontend-communicator");
 
@@ -15,8 +15,6 @@ class ReplaceVariableManager extends EventEmitter {
     }
 
     registerReplaceVariable(variable) {
-        // TODO: validate variable obj
-
         if (this._registeredReplaceVariables.some(v => v.definition.handle === variable.definition.handle)) {
             throw new TypeError("A variable with this handle already exists.");
         }
@@ -28,7 +26,7 @@ class ReplaceVariableManager extends EventEmitter {
             {
                 handle: variable.definition.handle,
                 argsCheck: variable.argsCheck,
-                evaluate: variable.evaluator,
+                evaluator: variable.evaluator,
                 triggers: variable.definition.triggers
             }
         );
@@ -111,7 +109,7 @@ class ReplaceVariableManager extends EventEmitter {
                         } catch (err) {
                             err.dataField = key;
                             err.rawText = value;
-                            if (err instanceof ArgumentsError) {
+                            if (err instanceof ExpressionArgumentsError) {
                                 errors.push(err);
                                 logger.debug(`Found variable error when validating`, err);
                             } else if (err instanceof ExpressionError) {

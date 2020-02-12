@@ -47,7 +47,9 @@
             service.currentTabShouldntScroll = function() {
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
-                    service.currentTab.toLowerCase() === "buttons"
+                    service.currentTab.toLowerCase() === "buttons" ||
+                    service.currentTab.toLowerCase() === "events" ||
+                    service.currentTab.toLowerCase() === "commands"
                 );
             };
 
@@ -119,6 +121,11 @@
                 .when("/viewers", {
                     templateUrl: "./templates/viewers/_viewers.html",
                     controller: "viewersController"
+                })
+
+                .when("/quotes", {
+                    templateUrl: "./templates/_quotes.html",
+                    controller: "quotesController"
                 });
         }
     ]);

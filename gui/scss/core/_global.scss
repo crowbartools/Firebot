@@ -3,7 +3,7 @@
 /////////////////
 
 :focus {
-  outline: lightblue auto 1px;
+  outline: none;
 }
 
 .muted {
@@ -52,6 +52,66 @@
   &.below {
     top: 36px;
   }
+  &.bottom {
+    bottom: 36px;
+    top: unset;
+  }
+}
+
+.variables-btn {
+  width: 30px;
+  height: 15px;
+  background: #0b8dc6;
+  position: absolute;
+  bottom:0;
+  right:0;
+  border-radius:4px;
+  font-size: 10px;
+  text-align: center;
+  margin: 0 7px 7px 0;
+  cursor: pointer;
+  user-select: none;
+  opacity: 1;
+  &:hover {
+    animation: delayed-hide 500ms;
+    animation-delay: 500ms;
+    animation-fill-mode: forwards;
+    opacity: 0.5;
+  }
+}
+
+@keyframes delayed-hide {
+  from {opacity: 0.5}
+  to {opacity: 0.05}
+}
+
+
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 99999999;
+
+  &.is-stuck {
+      border-bottom: 1px solid #24262A;
+      //margin-bottom: 10px;
+      box-shadow: 0 5px 11px 0px #0000004d;
+  }
+}
+
+.sticky-bottom {
+  position: sticky;
+  bottom: 0;
+  z-index: 99999999;
+
+  &.is-stuck {
+      border-top: 1px solid #24262A;
+      //margin-bottom: 10px;
+      box-shadow: 0 -6px 9px -2px #0000004d;
+  }
+}
+
+.light-bg {
+  background: $light-background-color;
 }
 
 

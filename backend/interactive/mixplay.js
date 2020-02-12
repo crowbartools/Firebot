@@ -8,6 +8,7 @@ const FIREBOT_MIXPLAY_SHARECODE = "moo33cku";
 const { settings } = require('../common/settings-access');
 const accountAccess = require('../common/account-access');
 const logger = require("../logwrapper");
+const frontendCommunicator = require("../common/frontend-communicator");
 
 const mixplayManager = require('./mixplay-project-manager');
 const eventManager = require("../live-events/EventManager");
@@ -346,7 +347,7 @@ mixplayClient.state.on('participantJoin', async participant => {
 // checks if this sceneId is set as default and returns "default" if so,
 // otherwise it returns the original scene id
 function translateSceneIdForMixplay(sceneId) {
-    let currentProjectId = settings.getLastMixplayProjectId();
+    let currentProjectId = settings.getActiveMixplayProjectId();
     let currentProject = mixplayManager.getProjectById(currentProjectId);
     if (currentProject) {
         if (sceneId === currentProject.defaultSceneId) {
@@ -392,18 +393,21 @@ ipcMain.on("controlsRemoved", function(_, data) {
     }
 });
 
-ipcMain.on("controlAdded", function(_, data) {
-    if (!mixplayConnected) return;
-    let { sceneId } = data,
-        firebotControl = data.newControl;
+frontendCommunicator.onAsync("controlAdded", async data => {
+    if (!mixplayConnected) return true;
+
+    let { sceneId } = data;
+    let firebotControl = data.newControl;
 
     let mixplayControl = mixplayClient.state.getControl(firebotControl.id);
-    if (mixplayControl != null) return;
+    if (mixplayControl != null) return true;
 
-    let scene = mixplayClient.state.getScene(translateSceneIdForMixplay(sceneId));
+    let translatedSceneId = translateSceneIdForMixplay(sceneId);
+    let scene = mixplayClient.state.getScene(translatedSceneId);
     if (scene) {
-        scene.createControl(mapMixplayControl(firebotControl));
+        await scene.createControl(mapMixplayControl(firebotControl));
     }
+    return true;
 });
 
 // Auth Process

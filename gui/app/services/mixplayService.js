@@ -132,7 +132,21 @@
                     }
                     selectFirstScene();
                 }
+            };
 
+            service.createNewShareCodeProject = async function(shareCode, name, setAsActive = false) {
+                let newProject = await backendCommunicator.fireEventAsync("createNewShareCodeImportProject", {
+                    shareCode: shareCode,
+                    projectName: name
+                });
+                if (newProject != null) {
+                    projects.push(newProject);
+                    currentProjectId = newProject.id;
+                    if (activeProjectId == null || setAsActive) {
+                        service.setActiveMixplayProjectId(newProject.id);
+                    }
+                    selectFirstScene();
+                }
             };
 
             service.saveProject = function(project) {
@@ -142,6 +156,10 @@
                 let cleanedProject = JSON.parse(angular.toJson(project));
 
                 backendCommunicator.fireEvent("saveProject", cleanedProject);
+            };
+
+            service.saveCurrentProject = () => {
+                service.saveProject(service.getCurrentProject());
             };
 
             service.triggerControlUpdatedEvent = function(controlId) {
@@ -194,10 +212,10 @@
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {
 
-                    let sceneToDelete = currentProject.scenes.find(s => s.id === id);
+                    let sceneIndexToDelete = currentProject.scenes.findIndex(s => s.id === id);
 
-                    if (sceneToDelete) {
-                        currentProject.scenes = currentProject.scenes.filter(s => s.id !== id);
+                    if (sceneIndexToDelete > -1) {
+                        currentProject.scenes.splice(sceneIndexToDelete, 1);
 
                         if (currentProject.defaultSceneId === id) {
                             if (currentProject.scenes.length > 0) {
@@ -215,9 +233,8 @@
                             }
                         }
 
+                        service.saveProject(currentProject);
                     }
-
-                    service.saveProject(currentProject);
                 }
             };
 
@@ -295,7 +312,7 @@
                 });
             };
 
-            service.addControlToGrid = function(control, gridSize) {
+            service.addControlToGrid = function(control, gridSize, skipSaving = false) {
                 let controlAlreadyOnGrid = control.position.some(p => p.size === gridSize);
                 if (controlAlreadyOnGrid) return;
 
@@ -333,12 +350,14 @@
                     control.position.push(newPosition);
 
                     logger.info("Added control to grid!");
-                    service.saveProject(service.getCurrentProject());
 
-                    backendCommunicator.fireEvent("controlUpdated", control.id);
+                    if (!skipSaving) {
+                        service.saveProject(service.getCurrentProject());
+                        backendCommunicator.fireEvent("controlUpdated", control.id);
+                    }
 
                 } else {
-                    ngToast.create(`Could not find enough space in the grid to place control (${controlDimensions.w}w x ${controlDimensions.h}h)`);
+                    ngToast.create(`Could not find enough space in the ${gridSize} grid to place control (${controlDimensions.w}w x ${controlDimensions.h}h)`);
                 }
             };
 
@@ -355,7 +374,7 @@
                 }
             };
 
-            service.createControlForCurrentScene = function(controlName, controlKind = "button") {
+            service.createControlForCurrentScene = async function(controlName, controlKind = "button", addToGrids = false) {
                 let currentProject = service.getCurrentProject();
                 if (currentProject != null) {
                     let currentScene = currentProject.scenes.find(s => s.id === selectedSceneId);
@@ -369,15 +388,28 @@
                             mixplay: {},
                             active: true
                         };
-                        currentScene.controls.push(newControl);
+
+                        if (controlKind === "button" || controlKind === "label") {
+                            newControl.mixplay.text = controlName;
+                        }
+
+                        currentScene.controls.unshift(newControl);
 
                         service.saveProject(currentProject);
 
-                        if (currentProjectId !== activeProjectId) return;
+                        if (currentProjectId === activeProjectId) {
+                            await backendCommunicator.fireEventAsync("controlAdded", {
+                                sceneId: currentScene.id, newControl
+                            });
+                        }
 
-                        backendCommunicator.fireEvent("controlAdded", {
-                            sceneId: currentScene.id, newControl
-                        });
+                        if (addToGrids) {
+                            for (let gridSize of Object.keys(gridHelper.GridSizes)) {
+                                service.addControlToGrid(newControl, gridSize, true);
+                            }
+                            service.saveProject(currentProject);
+                            backendCommunicator.fireEvent("controlUpdated", newControl.id);
+                        }
                     }
                 }
             };
@@ -400,7 +432,13 @@
             service.deleteControlForCurrentScene = function(controlId) {
                 let currentScene = getCurrentScene();
                 if (currentScene) {
-                    currentScene.controls = currentScene.controls.filter(c => c.id !== controlId);
+
+                    let controlIndex = currentScene.controls.findIndex(c => c.id === controlId);
+
+                    if (controlIndex < 0) return;
+
+                    currentScene.controls.splice(controlIndex, 1);
+
                     service.saveProject(service.getCurrentProject());
 
                     if (currentProjectId !== activeProjectId) return;

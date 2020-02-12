@@ -82,27 +82,29 @@ function constellationConnect() {
     // Resub Shared (Cached Event)
     // This is a resub event in which the user manually triggered the celebration.
     ca.subscribe(prefix + "resubShared", data => {
-        eventManager.triggerEvent("mixer", "resubscribed", {
+
+        eventManager.triggerEvent("mixer", "resub", {
             shared: true,
             username: data["user"].username,
             userId: data["user"].id,
             totalMonths: data.totalMonths
         });
 
-        setLastSub(data.user.username);
+        // setLastSub(data.user.username);
     });
 
     // Resub (Cached Event)
     // This is a resub event in which the users payment went through, but they might not be in the channel.
     ca.subscribe(prefix + "resubscribed", data => {
-        eventManager.triggerEvent("mixer", "resubscribed", {
+
+        eventManager.triggerEvent("mixer", "resub", {
             shared: false,
             username: data["user"].username,
             userId: data["user"].id,
             totalMonths: data.totalMonths
         });
 
-        setLastSub(data.user.username);
+        //setLastSub(data.user.username);
     });
 
     // Sub (Cached Event)
@@ -113,14 +115,15 @@ function constellationConnect() {
             userId: data["user"].id,
             totalMonths: 0
         });
-        setLastSub(data.user.username);
+        //setLastSub(data.user.username);
     });
 
     // Host (Cached Event)
     // This is a channel host.
     ca.subscribe(prefix + "hosted", data => {
         eventManager.triggerEvent("mixer", "hosted", {
-            username: data["hoster"].token
+            username: data["hoster"].token,
+            auto: data.auto
         });
     });
 

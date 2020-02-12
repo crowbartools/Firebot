@@ -106,6 +106,14 @@ settings.setClearCustomScriptCache = function(clear) {
     pushDataToFile("/settings/clearCustomScriptCache", clear === true);
 };
 
+settings.getCustomScriptsEnabled = function() {
+    return getDataFromFile("/settings/runCustomScripts") === true;
+};
+
+settings.setCustomScriptsEnabled = function(enabled) {
+    pushDataToFile("/settings/runCustomScripts", enabled === true);
+};
+
 settings.useOverlayInstances = function() {
     let oi = getDataFromFile("/settings/useOverlayInstances");
     return oi != null ? oi : false;

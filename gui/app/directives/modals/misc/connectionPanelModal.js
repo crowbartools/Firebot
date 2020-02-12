@@ -18,6 +18,7 @@
                             <connection-button 
                                 connected="$ctrl.conn.connectedToInteractive" 
                                 connecting="$ctrl.conn.waitingForStatusChange"
+                                connection-name="MixPlay"
                                 on-connection-click="$ctrl.conn.toggleConnectionToInteractive()"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have MixPlay be controlled by the sidebar connect button.'"></tooltip></div>
@@ -32,6 +33,7 @@
                             <connection-button 
                                 connected="$ctrl.conn.connectedToChat" 
                                 connecting="$ctrl.conn.waitingForChatStatusChange"
+                                connection-name="Chat"
                                 on-connection-click="$ctrl.conn.toggleConnectionToChat()"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Chat be controlled by the sidebar connect button.'"></tooltip></div>
@@ -46,6 +48,7 @@
                             <connection-button 
                                 connected="$ctrl.conn.connectedToConstellation" 
                                 connecting="$ctrl.conn.waitingForConstellationStatusChange"
+                                connection-name="Events"
                                 on-connection-click="$ctrl.conn.toggleConnectionToConstellation()"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Events be controlled by the sidebar connect button.'"></tooltip></div>
@@ -82,6 +85,7 @@
                             <connection-button 
                                 connected="$ctrl.is.integrationIsConnected(integration.id)" 
                                 connecting="$ctrl.is.integrationIsWaitingForConnectionUpdate(integration.id)"
+                                connection-name="{{integration.name}}"
                                 on-connection-click="$ctrl.is.toggleConnectionForIntegration(integration.id)"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have ' + integration.name + ' be controlled by the sidebar connect button.'"></tooltip></div>

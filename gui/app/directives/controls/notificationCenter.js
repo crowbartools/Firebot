@@ -8,7 +8,7 @@
             bindings: {},
             template: `
        <div class="notifications-wrapper">
-          <div uib-popover-template="$ctrl.templateUrl" popover-placement="bottom-right" popover-trigger="'outsideClick'" popover-append-to-body="true" popover-class="notification-popover">
+          <div aria-label="Notification Center" uib-popover-template="$ctrl.templateUrl" popover-placement="bottom-right" popover-trigger="'outsideClick'" popover-append-to-body="true" popover-class="notification-popover">
             <i class="far fa-bell clickable noti-bell-icon" style="cursor:pointer;"></i>
           </div>
           <div ng-if="$ctrl.unreadCount() > 0 || $ctrl.notiService.mixerReportingIssues" class="notification-badge noselect animated bounceIn" ng-class="{ 'mixer-issue': $ctrl.notiService.mixerReportingIssues }">{{getBadgeText()}}</div>
@@ -20,7 +20,7 @@
             <span>Mixer Status</span>
         </div>
         <div class="noti-preview-wrapper">
-            <div class="notification-card" ng-click="$ctrl.openStatusModal()">
+            <div class="notification-card" ng-click="$ctrl.openStatusModal()" aria-label="Mixer Status">
                 <span class="noti-unread-indicator read"></span>
                 <span class="mixer-status-icon" ng-class="{ unhealthy: $ctrl.notiService.mixerReportingIssues }">
                     <i class="fal" ng-class="$ctrl.notiService.getStatusIcon()"></i>
@@ -40,7 +40,7 @@
             <span>Notifications</span>
           </div>
           <div class="noti-preview-wrapper">
-            <div ng-repeat="notification in $ctrl.getNotifications() | orderBy: 'created_at':true track by $index" class="notification-card" ng-click="$ctrl.openNotification(notification)">
+            <div ng-repeat="notification in $ctrl.getNotifications() | orderBy: 'created_at':true track by $index" class="notification-card" ng-click="$ctrl.openNotification(notification)" aria-label="Notification: {{notification.title}}">
               <span class="noti-unread-indicator" ng-class="{'read': notification.read}"></span>
               <span class="noti-icon">
                 <i class="fal" ng-class="getIconClass(notification.icon)"></i>

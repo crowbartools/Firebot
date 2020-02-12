@@ -89,6 +89,43 @@
                     </div>-->
                 </div>
 
+                <div ng-switch-when="image">
+
+                    <div class="input-group settings-buttontext">
+                        <span class="input-group-addon" id="basic-addon3">Image URL</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.imageUrl" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                    </div>
+
+                    <div class="input-group settings-buttontext" style="margin-top: 15px;">
+                        <span class="input-group-addon" id="basic-addon3">Tooltip</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.tooltip" replace-variables disable-variable-menu="!$ctrl.updateMode" ng-trim="false">
+                    </div>
+
+                    <div class="expandable-item smaller-item"
+                        style="justify-content: space-between;" 
+                        ng-init="hidePanel = true" 
+                        ng-click="hidePanel = !hidePanel" 
+                        ng-class="{'expanded': !hidePanel}">    
+                            <div style="flex-basis: 30%;padding-left: 15px;font-size: 14px;">Styling Options</div>
+
+                            <div style="display: flex; align-items: center;">
+                                <div style="width:30px;">
+                                    <i class="fas" ng-class="{'fa-chevron-right': hidePanel, 'fa-chevron-down': !hidePanel}"></i>
+                                </div>
+                            </div>
+                    </div>
+                    <div uib-collapse="hidePanel" class="expandable-item-expanded smaller-item">
+                        <div style="padding: 15px 20px 10px 20px;">
+                            <div class="input-group settings-buttontext">
+                                <span class="input-group-addon" id="basic-addon3">Border Radius<tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
+                                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.borderRadius" replace-variables disable-variable-menu="!$ctrl.updateMode" placeholder="40px">
+                            </div>
+
+                            <control-color-picker model="$ctrl.control.mixplay.borderColor" label="Border Color"></control-color-picker>
+                        </div>
+                    </div>  
+
+                </div>
 
                 <div ng-switch-when="label">
 

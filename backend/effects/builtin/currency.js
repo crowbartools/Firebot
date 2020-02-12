@@ -1,13 +1,12 @@
 "use strict";
 
 const currencyDatabase = require("../../database/currencyDatabase");
-const util = require("../../utility");
 const chatProcessor = require("../../common/handlers/chatProcessor");
 const logger = require("../../logwrapper");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 /**
  * The Currency effect
@@ -65,6 +64,9 @@ const currency = {
                     <li ng-click="effect.action = 'Remove'">
                         <a href>Remove</a>
                     </li>
+                    <li ng-click="effect.action = 'Set'">
+                        <a href>Set</a>
+                    </li>
                 </ul>
             </div>
         </eos-container>
@@ -96,6 +98,13 @@ const currency = {
                             <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Custom</div>
                             <label ng-repeat="customRole in getCustomRoles()" class="control-fb control--checkbox">{{customRole.name}}
                                 <input type="checkbox" ng-click="toggleRole(customRole)" ng-checked="isRoleChecked(customRole)"  aria-label="..." >
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Firebot</div>
+                            <label ng-repeat="firebotRole in getFirebotRoles()" class="control-fb control--checkbox">{{firebotRole.name}}
+                                <input type="checkbox" ng-click="toggleRole(firebotRole)" ng-checked="isRoleChecked(firebotRole)"  aria-label="..." >
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
@@ -171,6 +180,7 @@ const currency = {
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
+        $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
         $scope.getMixerRoles = viewerRolesService.getMixerRoles;
 
         $scope.isRoleChecked = function(role) {
@@ -208,7 +218,7 @@ const currency = {
 
             // What should this do when triggered.
             let userTarget = event.effect.userTarget;
-
+            let adjustType = event.effect.action;
             let amount = event.effect.amount;
 
             if (isNaN(amount)) {
@@ -217,34 +227,36 @@ const currency = {
 
 
             // If "Remove" make number negative, otherwise just use number.
-            let currency =
-        event.effect.action === "Remove"
-            ? -Math.abs(amount)
-            : Math.abs(amount);
+            let currency = event.effect.action === "Remove" ? -Math.abs(amount) : Math.abs(amount);
 
             // PEOPLE GONNA GET PAID
             switch (event.effect.target) {
             case "individual":
                 // Give currency to one person.
-                currencyDatabase.adjustCurrencyForUser(
+                await currencyDatabase.adjustCurrencyForUser(
                     userTarget,
                     event.effect.currency,
-                    currency
+                    currency,
+                    adjustType
                 );
                 break;
             case "allOnline":
                 // Give currency to all online.
-                currencyDatabase.addCurrencyToOnlineUsers(
+                await currencyDatabase.addCurrencyToOnlineUsers(
                     event.effect.currency,
-                    currency
+                    currency,
+                    true,
+                    adjustType
                 );
                 break;
             case "group":
                 // Give currency to group.
-                currencyDatabase.addCurrencyToUserGroupOnlineUsers(
+                await currencyDatabase.addCurrencyToUserGroupOnlineUsers(
                     event.effect.roleIds,
                     event.effect.currency,
-                    currency
+                    currency,
+                    true,
+                    adjustType
                 );
                 break;
             default:
@@ -269,8 +281,8 @@ const currency = {
         },
         event: {
             name: "currency",
-            onOverlayEvent: event => {
-                console.log("yay currency");
+            onOverlayEvent: () => {
+
             } //End event trigger
         }
     }

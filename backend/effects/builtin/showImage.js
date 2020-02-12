@@ -4,10 +4,12 @@ const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
-
+const fsExtra = require('fs-extra');
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
+const logger = require("../../logwrapper");
+const path = require("path");
 
 /**
  * The Show Image effect
@@ -40,7 +42,7 @@ const showImage = {
   <div class="effect-setting-container">
     <div class="effect-specific-title"><h4>Image</h4></div>
     <div class="effect-setting-content">
-        <div style="padding-bottom: 10px;width: 100%;">
+        <div style="padding-bottom: 10px;width: 100%;" ng-hide="effect.imageType === 'folderRandom'">
             <img ng-show="showImage" ng-src="{{getImagePreviewSrc()}}" imageonload="imageLoaded" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
             <img ng-hide="showImage" src="{{placeHolderUrl}}" style="height: 100px;width: 175px;object-fit: scale-down;background: #d7d7d7">
         </div>
@@ -53,6 +55,13 @@ const showImage = {
                 <input type="radio" ng-model="effect.imageType" value="url" ng-change="imageTypeUpdated()"/>
                 <div class="control__indicator"></div>
             </label>
+            <label class="control-fb control--radio">Random from folder
+                <input type="radio" ng-model="effect.imageType" value="folderRandom" ng-change="imageTypeUpdated()"/>
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+        <div ng-if="effect.imageType === 'folderRandom'" style="display: flex;flex-direction: row;align-items: center;">
+            <file-chooser model="effect.folder" options="{ directoryOnly: true, filters: [], title: 'Select Image Folder'}"></file-chooser>
         </div>
         <div ng-if="effect.imageType === 'local'" style="display: flex;flex-direction: row;align-items: center;">
             <file-chooser model="effect.file" options="{ filters: [ {name: 'Image', extensions: ['jpg', 'gif', 'png', 'jpeg']} ]}"></file-chooser>
@@ -130,8 +139,10 @@ const showImage = {
             let path;
             if ($scope.effect.imageType === "local") {
                 path = $scope.effect.file;
-            } else {
+            } else if ($scope.effect.imageType === "url") {
                 path = $scope.effect.url;
+            } else {
+                path = $scope.effect.folder;
             }
 
             return path;
@@ -140,7 +151,12 @@ const showImage = {
         $scope.imageTypeUpdated = function() {
             if ($scope.effect.imageType === "local") {
                 $scope.effect.url = undefined;
+                $scope.effect.folder = undefined;
+            } else if ($scope.effect.imageType === "url") {
+                $scope.effect.file = undefined;
+                $scope.effect.folder = undefined;
             } else {
+                $scope.effect.url = undefined;
                 $scope.effect.file = undefined;
             }
         };
@@ -154,8 +170,8 @@ const showImage = {
         if (effect.imageType == null) {
             errors.push("Please select an image type.");
         }
-        if (effect.file == null && effect.url == null) {
-            errors.push("Please select an image source, either file path or url.");
+        if (effect.file == null && effect.url == null && effect.folder == null) {
+            errors.push("Please select an image source, either file path, url, or folder.");
         }
         return errors;
     },
@@ -163,7 +179,7 @@ const showImage = {
    * When the effect is triggered by something
    */
     onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async resolve => {
             // What should this do when triggered.
             let effect = event.effect;
 
@@ -175,6 +191,7 @@ const showImage = {
             let data = {
                 filepath: effect.file,
                 url: effect.url,
+                folder: effect.folder,
                 imageType: effect.imageType,
                 imagePosition: position,
                 imageHeight: effect.height ? effect.height + "px" : "auto",
@@ -208,6 +225,29 @@ const showImage = {
                     effect.file,
                     effect.length
                 );
+                data.resourceToken = resourceToken;
+            }
+
+            if (effect.imageType === "folderRandom") {
+
+                let files = [];
+                try {
+                    files = await fsExtra.readdir(effect.folder);
+                } catch (err) {
+                    logger.warn("Unable to read image folder", err);
+                }
+
+                let filteredFiles = files.filter(i => (/\.(gif|jpg|jpeg|png)$/i).test(i));
+
+                let chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
+
+                let fullFilePath = path.join(effect.folder, chosenFile);
+
+                let resourceToken = resourceTokenManager.storeResourcePath(
+                    fullFilePath,
+                    effect.length
+                );
+
                 data.resourceToken = resourceToken;
             }
 

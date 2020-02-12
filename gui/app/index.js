@@ -15,6 +15,7 @@ const compareVersions = require("compare-versions");
 const path = require("path");
 
 require("angular");
+require("angular-aria");
 require("angular-animate");
 require("angular-route");
 require("angular-sanitize");
@@ -24,7 +25,7 @@ require("ui-select");
 require("angular-ui-sortable");
 require('ng-youtube-embed');
 require("ng-toast");
-require("../../node_modules/angular-summernote/dist/angular-summernote");
+require("../js/plugins/angular-summernote");
 require("angular-translate");
 require("../../node_modules/angular-translate-loader-url/angular-translate-loader-url");
 require("../../node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files");

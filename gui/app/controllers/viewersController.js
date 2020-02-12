@@ -101,6 +101,14 @@
                     sortable: true,
                     cellTemplate: `{{data.mixplayInteractions}}`,
                     cellController: () => {}
+                },
+                {
+                    name: "CHAT MESSAGES",
+                    icon: "fa-comments",
+                    dataField: "chatMessages",
+                    sortable: true,
+                    cellTemplate: `{{data.chatMessages}}`,
+                    cellController: () => {}
                 }
             ];
 

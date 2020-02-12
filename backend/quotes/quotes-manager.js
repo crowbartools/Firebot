@@ -3,9 +3,13 @@
 const Datastore = require("nedb");
 const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
+const frontendCommunicator = require("../common/frontend-communicator");
 
 const regExpEscape = input => input.replace(/[$^|.*+?(){}\\[\]]/g, '\\$&');
 
+/**
+ * @type Datastore
+ */
 let db;
 
 function loadQuoteDatabase() {
@@ -35,6 +39,22 @@ function getNextQuoteId() {
     });
 }
 
+function setQuoteIdIncrementer(number) {
+    return new Promise(resolve => {
+        db.update(
+            { _id: '__autoid__' },
+            { $set: { seq: number } },
+            { upsert: true, returnUpdatedDocs: true },
+            function (err, _, autoid) {
+                if (err) {
+                    resolve(null);
+                }
+                resolve(autoid.seq);
+            }
+        );
+    });
+}
+
 function addQuote(quote) {
     return new Promise(async (resolve, reject) => {
 
@@ -51,12 +71,13 @@ function addQuote(quote) {
                 logger.error("QuoteDB: Error adding quote: ", err.message);
                 return reject();
             }
+            frontendCommunicator.send("quotes-update");
             resolve(newQuoteId);
         });
     });
 }
 
-function updateQuote(quote) {
+function updateQuote(quote, dontSendUiUpdateEvent = false) {
     return new Promise(async (resolve, reject) => {
 
         db.update({ _id: quote._id }, quote, err => {
@@ -64,16 +85,23 @@ function updateQuote(quote) {
                 logger.error("QuoteDB: Error updating quote: ", err.message);
                 return reject();
             }
+            if (!dontSendUiUpdateEvent) {
+                frontendCommunicator.send("quotes-update");
+            }
             resolve(quote);
         });
     });
 }
 
-function removeQuote(quoteId) {
+
+function removeQuote(quoteId, dontSendUiUpdateEvent = false) {
     return new Promise(resolve => {
         db.remove({ _id: quoteId }, {}, function (err) {
             if (err) {
                 logger.warn("Error while removing quote", err);
+            }
+            if (!dontSendUiUpdateEvent) {
+                frontendCommunicator.send("quotes-update");
             }
             resolve();
         });
@@ -167,7 +195,7 @@ function getRandomQuote() {
 }
 
 function getAllQuotes() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         db.find({
             $where: function () {
                 //filter out our auto inc id field
@@ -181,6 +209,65 @@ function getAllQuotes() {
         });
     });
 }
+
+function updateQuoteId(quote, newId) {
+    return new Promise(async resolve => {
+
+        if (quote._id === newId) return resolve(true);
+
+        await removeQuote(quote._id, true);
+
+        quote._id = newId;
+        db.insert(quote, err => {
+            if (err) {
+                logger.error("QuoteDB: Error adding quote: ", err.message);
+                return resolve(false);
+            }
+            resolve(true);
+        });
+    });
+}
+
+async function recalculateQuoteIds() {
+    if (db == null) return;
+
+    let quotes = await getAllQuotes();
+    if (quotes == null) return;
+
+    let idCounter = 1;
+    for (let quote of quotes) {
+        await updateQuoteId(quote, idCounter);
+        idCounter++;
+    }
+
+    await setQuoteIdIncrementer(idCounter - 1);
+
+    db.persistence.compactDatafile();
+
+    frontendCommunicator.send("quotes-update");
+}
+
+
+frontendCommunicator.on("add-quote", quote => {
+    addQuote(quote).catch(() => {});
+});
+
+frontendCommunicator.on("update-quote", quote => {
+    updateQuote(quote, true).catch(() => {});
+});
+
+frontendCommunicator.on("delete-quote", quoteId => {
+    removeQuote(quoteId, true).catch(() => {});
+});
+
+frontendCommunicator.onAsync("get-all-quotes", async () => {
+    let quotes = await getAllQuotes();
+    return quotes || [];
+});
+
+frontendCommunicator.on("recalc-quote-ids", () => {
+    recalculateQuoteIds();
+});
 
 exports.addQuote = addQuote;
 exports.removeQuote = removeQuote;

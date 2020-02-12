@@ -142,9 +142,9 @@ function runEffects(runEffectsContext) {
                 continue;
             }
 
-
             // run all strings through replace variable system
             logger.debug("Looking and handling replace variables...");
+
             await findAndReplaceVariables(effect, trigger);
 
             try {

@@ -47,8 +47,18 @@
                         </ui-select>
                         <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">Please select a control type.</div>
                     </div>
-                    
-                    
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        Options
+                    </div>
+                    <div>
+                        <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity.0.9;"> Add to grids <tooltip text="'Immediately add this control to all grid sizes (if there is room)'"></tooltip>
+                            <input type="checkbox" ng-model="$ctrl.addToGrids">
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -61,7 +71,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($timeout) {
+            controller: function($timeout, controlHelper) {
                 let $ctrl = this;
 
                 $timeout(() => {
@@ -71,41 +81,12 @@
                 $ctrl.name = "";
                 $ctrl.kind = "button";
 
+                $ctrl.addToGrids = true;
+
                 $ctrl.nameError = false;
                 $ctrl.kindError = false;
 
-                $ctrl.controlKinds = [
-                    {
-                        kind: "button",
-                        display: "Button",
-                        description: "A simple button.",
-                        iconClass: "fa-bullseye-pointer"
-                    },
-                    {
-                        kind: "label",
-                        display: "Label",
-                        description: "Just some text that can't be interacted with.",
-                        iconClass: "fa-tag"
-                    },
-                    {
-                        kind: "textbox",
-                        display: "Textbox",
-                        description: "A way for viewers to input text.",
-                        iconClass: "fa-font"
-                    },
-                    {
-                        kind: "joystick",
-                        display: "Joystick",
-                        description: "Allows viewers to control your mouse.",
-                        iconClass: "fa-gamepad"
-                    }
-                    /*{
-                        kind: "screen",
-                        display: "Mouse",
-                        description: "Another mouse control. Tracks viewers cursor position over the stream area.",
-                        iconClass: "fa-mouse-pointer"
-                    }*/
-                ];
+                $ctrl.controlKinds = controlHelper.controlKinds;
 
                 function validateControlName() {
                     let name = $ctrl.name;
@@ -138,7 +119,8 @@
                     $ctrl.close({
                         $value: {
                             name: $ctrl.name,
-                            kind: $ctrl.kind
+                            kind: $ctrl.kind,
+                            addToGrids: $ctrl.addToGrids
                         }
                     });
 

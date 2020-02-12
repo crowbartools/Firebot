@@ -61,7 +61,11 @@ const effect = {
 
             const accessToken = streamlabs.auth && streamlabs.auth["access_token"];
             if (accessToken) {
-                request.post(`https://streamlabs.com/api/v1.0/wheel/spin?access_token=${encodeURIComponent(accessToken)}`);
+                request.post(`https://streamlabs.com/api/v1.0/wheel/spin`, {
+                    json: {
+                        "access_token": accessToken
+                    }
+                });
             }
 
             resolve(true);

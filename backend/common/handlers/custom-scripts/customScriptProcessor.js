@@ -235,7 +235,7 @@ function scriptProcessor(effect, trigger) {
                                         if (effectsObject && effectsObject.list.length > 0) {
 
                                             let newTrigger = Object.assign({}, trigger);
-                                            newTrigger.type = TriggerType.CUSTOM_SCRIPT;
+                                            //newTrigger.type = TriggerType.CUSTOM_SCRIPT;
 
                                             // Create request wrapper
                                             let processEffectsRequest = {

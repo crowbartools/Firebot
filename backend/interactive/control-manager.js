@@ -106,12 +106,17 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
     }
 
     if (control.effects && control.effects.list) {
-        let effectsForInputType = control.effects.list.filter(e => effectManager.effectSupportsInputType(e.type, inputType));
+        let effectsForInputType = control.effects.list
+            .filter(e => effectManager.effectSupportsInputType(e.type, inputType));
 
         if (effectsForInputType.length > 0) {
             let processEffectsRequest = {
                 trigger: triggerData,
-                effects: control.effects
+                effects: {
+                    id: control.effects.id,
+                    queue: control.effects.queue,
+                    list: effectsForInputType
+                }
             };
 
             // Increment Total Interactions for User in UserDB.

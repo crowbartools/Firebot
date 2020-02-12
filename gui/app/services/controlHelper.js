@@ -21,6 +21,12 @@
                     iconClass: "fa-tag"
                 },
                 {
+                    kind: "image",
+                    display: "Image",
+                    description: "An image that can't be interacted with.",
+                    iconClass: "fa-image"
+                },
+                {
                     kind: "textbox",
                     display: "Textbox",
                     description: "A way for viewers to input text.",
@@ -31,13 +37,13 @@
                     display: "Joystick",
                     description: "Allows viewers to control your mouse.",
                     iconClass: "fa-gamepad"
-                },
-                {
+                }
+                /*{
                     kind: "screen",
                     display: "Mouse",
                     description: "Another mouse control. Tracks viewers cursor position over the stream area.",
                     iconClass: "fa-mouse-pointer"
-                }
+                }*/
             ];
 
             service.controlSettings = {
@@ -74,6 +80,25 @@
                     maxSize: {
                         width: 20,
                         height: 15
+                    },
+                    effects: false,
+                    hasSettings: true,
+                    canCooldown: false
+                },
+                image: {
+                    kind: "image",
+                    name: "Image",
+                    description: "Just some text that can't be interacted with.",
+                    iconClass: "fa-image",
+                    grid: true,
+                    resizable: true,
+                    minSize: {
+                        width: 4,
+                        height: 4
+                    },
+                    maxSize: {
+                        width: 20,
+                        height: 20
                     },
                     effects: false,
                     hasSettings: true,
@@ -138,6 +163,10 @@
                     hasSettings: false,
                     canCooldown: false
                 }*/
+            };
+
+            service.getControlKindData = (controlKind) => {
+                return service.controlKinds.find(ck => ck.kind === controlKind);
             };
 
             service.controlSupportsCooldowns = function(kind) {

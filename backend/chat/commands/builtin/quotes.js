@@ -120,7 +120,7 @@ const quotesManagement = {
 
             const getFormattedQuoteString = (quote) => {
                 let prettyDate = moment(quote.createdAt).format("MM/DD/YYYY");
-                return `Quote #${quote._id}: "${quote.text}" - @${quote.originator} [${quote.game}] [${prettyDate}]`;
+                return `Quote ${quote._id}: "${quote.text}" - @${quote.originator} [${quote.game}] [${prettyDate}]`;
             };
 
             if (args.length === 0) {

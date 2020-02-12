@@ -13,8 +13,31 @@
             settingsService,
             $http,
             backendCommunicator,
-            objectCopyHelper
+            objectCopyHelper,
+            ngToast,
+            $q
         ) {
+
+            $scope.searchCollapse = true;
+            $scope.controlSearch = "";
+            $scope.toggleSearchCollapse = () => {
+                $scope.searchCollapse = !$scope.searchCollapse;
+                $scope.controlSearch = "";
+                setTimeout(() => {
+                    if (!$scope.searchCollapse) {
+                        angular.element(`#control-search`).focus();
+                    } else {
+                        angular.element(`#control-search`).blur();
+                    }
+                }, 100);
+            };
+
+            $scope.sortableOptions = {
+                handle: ".row-text",
+                stop: () => {
+                    mixplayService.saveCurrentProject();
+                }
+            };
 
             $scope.previewEnabled = settingsService.mixPlayPreviewModeEnabled();
 
@@ -75,9 +98,12 @@
                 return "No project selected";
             };
 
+            $scope.currentScenes = [];
+
             $scope.setCurrentProject = function(projectId) {
                 mixplayService.setCurrentProject(projectId);
                 $scope.updateControlPositions();
+                $scope.currentScenes = $scope.getScenesForSelectedProject();
             };
 
             $scope.getScenesForSelectedProject = function() {
@@ -87,6 +113,8 @@
                 }
                 return [];
             };
+
+            $scope.currentScenes = $scope.getScenesForSelectedProject();
 
             $scope.disableControlTransitions = true;
 
@@ -126,6 +154,7 @@
                             if (confirmed) {
                                 mixplayService.deleteProject(currentProject.id);
                                 $scope.updateControlPositions();
+                                $scope.currentScenes = $scope.getScenesForSelectedProject();
                             }
                         });
                 }
@@ -193,10 +222,13 @@
                 let control = objectCopyHelper.getCopiedObject("mixplayControl");
                 if (control) {
                     // verify no position overlap
-                    let controlsOnGrid = mixplayService.getAllControlPositionsForGridSize(gridHelper.currentGridSize);
+
                     let positions = control.position;
                     for (let i = 0; i < positions.length; i++) {
                         let position = positions[i];
+
+                        let controlsOnGrid = mixplayService.getAllControlPositionsForGridSize(position.size);
+
                         let obstructed = gridHelper.isAreaObstructed(position.x, position.y, position.width, position.height, controlsOnGrid);
                         if (obstructed) {
                             control.position.splice(i, 1);
@@ -296,16 +328,41 @@
                     resolveObj: {},
                     closeCallback: async data => {
 
-                        let { name, importDevLab, devlabProjectId, setAsActive } = data;
+                        let { name, shouldImport, importType, devlabProjectId, shareCode, setAsActive } = data;
 
-                        if (importDevLab) {
-                            await mixplayService.createNewImportedDevLabProject(devlabProjectId, name, setAsActive);
+                        if (shouldImport) {
+                            if (importType === "devlab") {
+                                await mixplayService.createNewImportedDevLabProject(devlabProjectId, name, setAsActive);
+                            } else if (importType === "sharecode") {
+                                await mixplayService.createNewShareCodeProject(shareCode, name, setAsActive);
+                            }
                         } else {
                             mixplayService.createNewProject(name, setAsActive);
                         }
+                        $scope.currentScenes = $scope.getScenesForSelectedProject();
                         $scope.updateControlPositions();
                     }
                 });
+            };
+
+            $scope.shareCurrentMixPlayProject = async () => {
+                let projectId = mixplayService.getCurrentProjectId();
+                if (projectId == null) return;
+
+                let shareCode = await backendCommunicator.fireEventAsync("getMixPlayProjectShareCode", projectId);
+                if (shareCode == null) {
+                    ngToast.create("Unable to share MixPlay project.");
+                } else {
+                    utilityService.showModal({
+                        component: "copyShareCodeModal",
+                        size: 'sm',
+                        resolveObj: {
+                            shareCode: () => shareCode,
+                            title: () => "MixPlay Share Code",
+                            message: () => "Share the below code so others can import this MixPlay Project."
+                        }
+                    });
+                }
             };
 
             $scope.showCreateSceneModal = function() {
@@ -355,8 +412,11 @@
 
             $scope.controlPositions = $scope.getAllControlPositionsForGridSize(gridHelper.currentGridSize);
 
+            $scope.currentControls = mixplayService.getControlsForCurrentScene();
+
             $scope.updateControlPositions = function() {
                 $scope.controlPositions = $scope.getAllControlPositionsForGridSize(gridHelper.currentGridSize);
+                $scope.currentControls = mixplayService.getControlsForCurrentScene();
             };
 
             function updateGridSize() {
@@ -368,32 +428,214 @@
 
             updateGridSize();
 
-            $scope.controlMenuOptions = [
-                {
-                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>`,
-                    click: function ($itemScope) {
-                        let control = $itemScope.control.control;
-                        $scope.editControl(control);
-                    }
-                },
-                {
-                    html: `<a href><i class="fas fa-th-large" style="margin-right: 10px;"></i> Remove From Grid</a>`,
-                    click: function ($itemScope) {
-                        let controlId = $itemScope.control.control.id;
-                        let control = mixplayService.getControlsForCurrentScene().find(c => c.id === controlId);
-                        if (control) {
-                            $scope.removeControlFromGrid(control);
+            let copiedDimensions = {};
+
+            let hasCopiedDimensionsForControlKind = (kind) => {
+                return copiedDimensions[kind] != null;
+            };
+
+            let setCopiedDimensionsForControlKind = (control) => {
+                if (control == null || control.kind == null) return;
+                let position = control.position && control.position.find(p => p.size === gridHelper.currentGridSize);
+                if (!position) return;
+                return copiedDimensions[control.kind] = { width: position.width, height: position.height };
+            };
+
+            let getCopiedDimensionsForControlKind = (kind) => {
+                return copiedDimensions[kind];
+            };
+
+            let applyCopiedDimensionsToControl = (control) => {
+
+                if (control == null || control.kind == null) return;
+
+                let copiedDimensions = getCopiedDimensionsForControlKind(control.kind);
+
+                if (copiedDimensions == null) return;
+
+                // verify no position overlap
+                let position = control.position && control.position.find(p => p.size === gridHelper.currentGridSize);
+                if (!position) return;
+
+                let controlsOnGrid = mixplayService.getAllControlPositionsForGridSize(gridHelper.currentGridSize)
+                    .filter(p => !(p.x === position.x && p.y === position.y));
+
+                let gridDimensions = gridHelper.GridSizes[gridHelper.currentGridSize];
+
+                let obstructed = false;
+                if (position.x + copiedDimensions.width > gridDimensions.width || position.y + copiedDimensions.height > gridDimensions.height) {
+                    obstructed = true;
+                }
+                if (gridHelper.isAreaObstructed(position.x, position.y, copiedDimensions.width, copiedDimensions.height, controlsOnGrid)) {
+                    obstructed = true;
+                }
+
+                if (obstructed) {
+                    ngToast.create("Unable to apply copied dimensions as theres not enough space either to the right of or below the control.");
+                    return;
+                }
+
+                position.width = copiedDimensions.width;
+                position.height = copiedDimensions.height;
+
+                mixplayService.saveControlForCurrentScene(control);
+                mixplayService.triggerControlUpdatedEvent(control.id);
+                $scope.updateControlPositions();
+            };
+
+            let copiedStylings = {};
+
+            let hasCopiedStylingsForControlKind = (kind) => {
+                return copiedStylings[kind] != null;
+            };
+
+            let setCopiedStylingsForControlKind = (control) => {
+                if (control == null || control.kind == null) return;
+
+                let stylings = {};
+                if (control.kind === "button") {
+                    stylings.textSize = control.mixplay.textSize;
+                    stylings.textColor = control.mixplay.textColor;
+                    stylings.accentColor = control.mixplay.accentColor;
+                    stylings.borderColor = control.mixplay.borderColor;
+                    stylings.focusColor = control.mixplay.focusColor;
+                    stylings.backgroundColor = control.mixplay.backgroundColor;
+                    stylings.backgroundImage = control.mixplay.backgroundImage;
+                }
+
+                if (control.kind === "label") {
+                    stylings.textSize = control.mixplay.textSize;
+                    stylings.textColor = control.mixplay.textColor;
+                    stylings.bold = control.mixplay.bold;
+                    stylings.italic = control.mixplay.italic;
+                    stylings.underline = control.mixplay.underline;
+                }
+
+                return copiedStylings[control.kind] = stylings;
+            };
+
+            let getCopiedStylingsForControlKind = (kind) => {
+                return copiedStylings[kind];
+            };
+
+            let applyCopiedStylingsToControl = (control) => {
+
+                let copiedStylings = getCopiedStylingsForControlKind(control.kind);
+
+                if (copiedStylings == null) return;
+
+                if (control.kind === "button") {
+                    control.mixplay.textSize = copiedStylings.textSize;
+                    control.mixplay.textColor = copiedStylings.textColor;
+                    control.mixplay.accentColor = copiedStylings.accentColor;
+                    control.mixplay.borderColor = copiedStylings.borderColor;
+                    control.mixplay.focusColor = copiedStylings.focusColor;
+                    control.mixplay.backgroundColor = copiedStylings.backgroundColor;
+                    control.mixplay.backgroundImage = copiedStylings.backgroundImage;
+                }
+
+                if (control.kind === "label") {
+                    control.mixplay.textSize = copiedStylings.textSize;
+                    control.mixplay.textColor = copiedStylings.textColor;
+                    control.mixplay.bold = copiedStylings.bold;
+                    control.mixplay.italic = copiedStylings.italic;
+                    control.mixplay.underline = copiedStylings.underline;
+                }
+
+                mixplayService.saveControlForCurrentScene(control);
+                mixplayService.triggerControlUpdatedEvent(control.id);
+            };
+
+            $scope.controlMenuOptions = (control) => {
+                let menuOptions = [
+                    {
+                        html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit control</a>`,
+                        click: function ($itemScope) {
+                            let control = $itemScope.control.control;
+                            $scope.editControl(control);
+                        }
+                    },
+                    {
+                        html: `<a href><i class="fas fa-th-large" style="margin-right: 10px;"></i> Remove From Grid</a>`,
+                        click: function ($itemScope) {
+                            let controlId = $itemScope.control.control.id;
+                            let control = mixplayService.getControlsForCurrentScene().find(c => c.id === controlId);
+                            if (control) {
+                                $scope.removeControlFromGrid(control);
+                            }
+                        }
+                    },
+                    {
+                        html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete Control</a>`,
+                        click: function ($itemScope) {
+                            let control = $itemScope.control.control;
+                            $scope.deleteControl(control);
                         }
                     }
-                },
-                {
-                    html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete Control</a>`,
-                    click: function ($itemScope) {
-                        let control = $itemScope.control.control;
-                        $scope.deleteControl(control);
-                    }
+                ];
+
+                let resizable = $scope.getControlSettings(control.kind).resizable;
+
+                if (resizable) {
+                    menuOptions.push({
+                        html: `<a href style="display: flex; justify-content: space-between;align-items: center;">
+                                    <span><i class="far fa-arrows-h" style="margin-right: 10px;"></i> Dimensions</span>
+                                    <i class="far fa-chevron-right"></i>
+                               </a>`,
+                        children: [
+                            {
+                                html: `<a href><i class="far fa-plus-square" style="margin-right: 10px;"></i> Apply Copied</a>`,
+                                click: function ($itemScope) {
+                                    let control = $itemScope.control.control;
+                                    if (hasCopiedDimensionsForControlKind(control.kind)) {
+                                        applyCopiedDimensionsToControl(control);
+                                    }
+                                },
+                                enabled: hasCopiedDimensionsForControlKind(control.kind)
+                            },
+                            {
+                                html: `<a href><i class="far fa-copy" style="margin-right: 10px;"></i> Copy Current</a>`,
+                                click: function ($itemScope) {
+                                    let control = $itemScope.control.control;
+                                    setCopiedDimensionsForControlKind(control);
+                                }
+                            }
+                        ],
+                        hasTopDivider: true
+                    });
                 }
-            ];
+
+                if ((control.kind === "button" || control.kind === "label") && $scope.previewEnabled) {
+                    menuOptions.push({
+                        html: `<a href style="display: flex; justify-content: space-between;align-items: center;">
+                                    <span><i class="fas fa-paint-brush" style="margin-right: 10px;"></i> Stylings</span>
+                                    <i class="far fa-chevron-right"></i>
+                               </a>`,
+                        children: [
+                            {
+                                html: `<a href><i class="far fa-plus-square" style="margin-right: 10px;"></i> Apply Copied</a>`,
+                                click: function ($itemScope) {
+                                    let control = $itemScope.control.control;
+                                    if (hasCopiedStylingsForControlKind(control.kind)) {
+                                        applyCopiedStylingsToControl(control);
+                                    }
+                                },
+                                enabled: hasCopiedStylingsForControlKind(control.kind)
+                            },
+                            {
+                                html: `<a href><i class="far fa-copy" style="margin-right: 10px;"></i> Copy Current</a>`,
+                                click: function ($itemScope) {
+                                    let control = $itemScope.control.control;
+                                    setCopiedStylingsForControlKind(control);
+                                }
+                            }
+                        ]
+                    });
+                }
+
+
+                return menuOptions;
+            };
 
             $scope.cooldownGroupsMenuOptions = [
                 {
@@ -425,8 +667,17 @@
             };
 
             $scope.removeControlFromGrid = function(control) {
-                mixplayService.removeControlFromGrid(control, gridHelper.currentGridSize);
-                $scope.updateControlPositions();
+                utilityService.showConfirmationModal({
+                    title: "Remove From Grid",
+                    question: `Are you sure you want to remove this control from the ${gridHelper.currentGridSize} grid? (This won't delete the control)`,
+                    confirmLabel: "Remove",
+                    confirmBtnType: "btn-danger"
+                }).then(confirmed => {
+                    if (confirmed) {
+                        mixplayService.removeControlFromGrid(control, gridHelper.currentGridSize);
+                        $scope.updateControlPositions();
+                    }
+                });
             };
 
             $scope.removeControlsFromGrid = function(gridSize) {
@@ -436,7 +687,7 @@
 
                 utilityService.showConfirmationModal({
                     title: "Remove From Grid",
-                    question: `Are you sure you want to remove all controls in scene "${currentSceneName}" from ${gridName}?`,
+                    question: `Are you sure you want to remove all controls in scene "${currentSceneName}" from ${gridName}? (This won't delete the controls)`,
                     confirmLabel: "Remove",
                     confirmBtnType: "btn-danger"
                 }).then(confirmed => {
@@ -546,11 +797,15 @@
                     component: "createControlModal",
                     size: 'sm',
                     resolveObj: {},
-                    closeCallback: control => {
-                        let name = control.name,
-                            kind = control.kind;
+                    closeCallback: response => {
+                        let name = response.name,
+                            kind = response.kind,
+                            addToGrids = response.addToGrids;
 
-                        mixplayService.createControlForCurrentScene(name, kind);
+                        $q.when(mixplayService.createControlForCurrentScene(name, kind, addToGrids))
+                            .then(() => {
+                                $scope.updateControlPositions();
+                            });
                     }
                 });
             };

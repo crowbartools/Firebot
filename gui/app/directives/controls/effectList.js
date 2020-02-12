@@ -83,6 +83,13 @@
                                 <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
                                     <a href ng-click="$ctrl.removeAllEffects()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
                                 </li>
+                                <li class="divider"></li>
+                                <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
+                                    <a href ng-click="$ctrl.shareEffects();"><i class="far fa-share-alt" style="margin-right: 10px;"></i> Share effects</a>
+                                </li>
+                                <li>
+                                    <a href ng-click="$ctrl.importSharedEffects();"><i class="far fa-cloud-download-alt" style="margin-right: 5px;"></i> Import shared effects</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -125,7 +132,8 @@
                 
             </div>
             `,
-            controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService) {
+            controller: function(utilityService, effectHelperService, objectCopyHelper, effectQueuesService,
+                backendCommunicator, ngToast, $http) {
                 let ctrl = this;
 
                 ctrl.effectsData = {
@@ -146,6 +154,68 @@
                     }
                     ctrl.effectsUpdate();
                 }
+
+                ctrl.shareEffects = async () => {
+                    let shareCode = await backendCommunicator.fireEventAsync("getEffectsShareCode", ctrl.effectsData.list);
+                    if (shareCode == null) {
+                        ngToast.create("Unable to share effects.");
+                    } else {
+                        utilityService.showModal({
+                            component: "copyShareCodeModal",
+                            size: 'sm',
+                            resolveObj: {
+                                shareCode: () => shareCode,
+                                title: () => "Effects Share Code",
+                                message: () => "Share the below code so others can import these effects."
+                            }
+                        });
+                    }
+                };
+
+                function getSharedEffects(code) {
+                    return $http.get(`https://bytebin.lucko.me/${code}`)
+                        .then(resp => {
+                            if (resp.status === 200) {
+                                return resp.data;
+                            }
+                            return null;
+                        }, () => {
+                            return null;
+                        });
+                }
+
+                ctrl.importSharedEffects = () => {
+                    utilityService.openGetInputModal(
+                        {
+                            model: "",
+                            label: "Enter Effects Share Code",
+                            saveText: "Add",
+                            inputPlaceholder: "Enter code",
+                            validationFn: (shareCode) => {
+                                return new Promise(async resolve => {
+                                    if (shareCode == null || shareCode.trim().length < 1) {
+                                        resolve(false);
+                                    }
+
+                                    let effectsData = await getSharedEffects(shareCode);
+
+                                    if (effectsData == null || effectsData.effects == null) {
+                                        resolve(false);
+                                    } else {
+                                        resolve(true);
+                                    }
+                                });
+                            },
+                            validationText: "Not a valid effects share code."
+
+                        },
+                        async (shareCode) => {
+                            let effectsData = await getSharedEffects(shareCode);
+                            if (effectsData.effects != null) {
+                                ctrl.effectsData.list = ctrl.effectsData.list.concat(effectsData.effects);
+                            }
+                        });
+                };
 
                 // when the element is initialized
                 ctrl.$onInit = async function() {

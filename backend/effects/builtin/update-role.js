@@ -122,8 +122,8 @@ const delay = {
                 customRolesManager.addViewerToRole(effect.addRoleId, username);
             }
 
-            if (effect.removeFrom) {
-                customRolesManager.removeViewerFromRole(effect.addRoleId, username);
+            if (effect.removeRoleId) {
+                customRolesManager.removeViewerFromRole(effect.removeRoleId, username);
             }
 
             resolve();

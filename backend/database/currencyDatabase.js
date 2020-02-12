@@ -2,12 +2,12 @@
 const { ipcMain } = require("electron");
 const userDatabase = require("./userDatabase");
 const profileManager = require("../common/profile-manager");
-const permissionsManager = require("../common/permissions-manager");
 const logger = require("../logwrapper");
 const { settings } = require("../common/settings-access.js");
 const channelAccess = require("../common/channel-access");
 const customRolesManager = require("../roles/custom-roles-manager");
 const mixerRolesManager = require("../../shared/mixer-roles");
+const firebotRolesManager = require("../roles/firebot-roles-manager");
 
 let currencyCache = {};
 
@@ -35,7 +35,7 @@ function getCurrencies() {
 
 // Adjust Currency
 // This adjust currency for a user. Can be given negative values. Provide it with the database record for a user.
-function adjustCurrency(user, currencyId, value) {
+function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
             return resolve();
@@ -43,18 +43,31 @@ function adjustCurrency(user, currencyId, value) {
 
         // Dont do anything if value is not a number or is 0.
         value = parseInt(value);
-        if (isNaN(value) || value === 0) {
-            return resolve();
-        }
+        adjustType = adjustType.toLowerCase();
+        let newUserValue = value;
 
-        // Okay, move on and finish everything.
-        logger.debug(
-            "Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId
-        );
+        switch (adjustType) {
+        case "set":
+            if (isNaN(value)) {
+                return resolve();
+            }
+            logger.debug(
+                "Currency: Setting " + user.username + " currency " + currencyId + " to: " + value + "."
+            );
+            newUserValue = value;
+            break;
+        default:
+            if (isNaN(value) || value === 0) {
+                return resolve();
+            }
+            logger.debug(
+                "Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId
+            );
+            newUserValue = (user.currency[currencyId] += parseInt(value));
+        }
 
         let db = userDatabase.getUserDb();
         let updateDoc = {};
-        let newUserValue = (user.currency[currencyId] += parseInt(value));
         let currencyLimit = isNaN(parseInt(currencyCache[currencyId].limit))
             ? 0
             : currencyCache[currencyId].limit;
@@ -71,21 +84,20 @@ function adjustCurrency(user, currencyId, value) {
 
         // Update the DB with our new currency value.
         db.update({ _id: user._id }, { $set: updateDoc }, {}, function(
-            err,
-            numReplaced
+            err
         ) {
             if (err) {
-                logger.error("Currency: Error adding currency to user.", err);
+                logger.error("Currency: Error setting currency on user.", err);
             }
-            resolve();
+            return resolve();
         });
     });
 }
 
 // Adjust currency for user.
 // This adjust currency when given a username. Can be given negative values to remove currency.
-function adjustCurrencyForUser(username, currencyId, value) {
-    return new Promise((resolve, reject) => {
+function adjustCurrencyForUser(username, currencyId, value, adjustType = "adjust") {
+    return new Promise((resolve) => {
         if (!isViewerDBOn()) {
             return resolve(false);
         }
@@ -104,18 +116,18 @@ function adjustCurrencyForUser(username, currencyId, value) {
         // Okay, it passes... let's try to add it.
         userDatabase.getUserByUsername(username).then(user => {
             if (user !== false) {
-                adjustCurrency(user, currencyId, value);
-                return resolve(true);
+                adjustCurrency(user, currencyId, value, adjustType).then(() => {
+                    return resolve(true);
+                });
             }
             return resolve(false);
-
         });
     });
 }
 
 // Add Currency to Usergroup
 // This will add an amount of currency to all online users in a usergroup.
-function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value) {
+function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, ignoreDisable = false, adjustType = "adjust") {
     return new Promise(async resolve => {
         if (!isViewerDBOn()) {
             return resolve();
@@ -134,7 +146,8 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value) {
                     .filter(mr => mr !== "User")
                     .map(mr => mixerRolesManager.mapMixerRole(mr));
                 let customRoles = customRolesManager.getAllCustomRolesForViewer(u.username);
-                u.allRoles = mixerRoles.concat(customRoles);
+                let firebotRoles = firebotRolesManager.getAllFirebotRolesForViewer(u.username);
+                u.allRoles = mixerRoles.concat(customRoles).concat(firebotRoles);
                 return u;
             })
             .filter(u => u.allRoles.some(r => roleIds.includes(r.id)))
@@ -149,8 +162,8 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value) {
         let db = userDatabase.getUserDb();
         db.find({ online: true, _id: { $in: userIdsInRoles } }, async (err, docs) => {
             for (let user of docs) {
-                if (user != null) {
-                    await adjustCurrency(user, currencyId, value);
+                if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
+                    await adjustCurrency(user, currencyId, value, adjustType);
                 }
             }
 
@@ -161,7 +174,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value) {
 
 // Add Currency to all Online Users
 // This will add an amount of currency to all users who are currently seen as online.
-function addCurrencyToOnlineUsers(currencyId, value) {
+function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adjustType = "adjust") {
     return new Promise((resolve, reject) => {
         if (!isViewerDBOn()) {
             return reject();
@@ -182,8 +195,8 @@ function addCurrencyToOnlineUsers(currencyId, value) {
 
             // Do the loop!
             for (let user of docs) {
-                if (user != null) {
-                    adjustCurrency(user, currencyId, value);
+                if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
+                    adjustCurrency(user, currencyId, value, adjustType);
                 }
             }
             return resolve();
@@ -201,8 +214,7 @@ function addCurrencyToAllUsers(currencyId, value) {
     let updateDoc = {};
     updateDoc[`currency.${currencyId}`] = value;
     db.update({}, { $set: updateDoc }, { multi: true }, function(
-        err,
-        numReplaced
+        err
     ) {
         if (err) {
             logger.error("Error adding currency to all users", err);
@@ -227,7 +239,7 @@ function addCurrencyToNewUser(user) {
 // Get User Currency Amount
 // This will retrieve the amount of currency that a user has.
 function getUserCurrencyAmount(username, currencyId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!isViewerDBOn()) {
             return resolve(0);
         }
@@ -237,6 +249,30 @@ function getUserCurrencyAmount(username, currencyId) {
             }
             return resolve(0);
 
+        });
+    });
+}
+
+function getTopCurrencyHolders(currencyId, count) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+
+        let db = userDatabase.getUserDb();
+
+        const sortObj = {};
+        sortObj[`currency.${currencyId}`] = -1;
+
+        const projectionObj = { username: 1};
+        projectionObj[`currency.${currencyId}`] = 1;
+
+        db.find({}).sort(sortObj).limit(count).projection(projectionObj).exec(function (err, docs) {
+            if (err) {
+                logger.error("Error getting top currency holders: ", err);
+                return resolve([]);
+            }
+            return resolve(docs || []);
         });
     });
 }
@@ -251,8 +287,7 @@ function purgeCurrencyById(currencyId) {
     let updateDoc = {};
     updateDoc[`currency.${currencyId}`] = 0;
     db.update({}, { $set: updateDoc }, { multi: true }, function(
-        err,
-        numReplaced
+        err
     ) {
         if (err) {
             logger.error("Error purging currency to all users", err);
@@ -272,8 +307,7 @@ function deleteCurrencyById(currencyId) {
             let user = docs[i];
             delete user.currency[currencyId];
             db.update({ _id: user._id }, { $set: user }, {}, function(
-                err,
-                numReplaced
+                err
             ) {
                 if (err) {
                     logger.error("Error purging currency to all users", err);
@@ -295,7 +329,7 @@ function deleteCurrencyById(currencyId) {
 // Refresh Currency Cache
 // This gets a message from front end when a currency needs to be created.
 // This is also triggered in the currencyManager.
-ipcMain.on("refreshCurrencyCache", event => {
+ipcMain.on("refreshCurrencyCache", () => {
     if (!isViewerDBOn()) {
         return;
     }
@@ -343,3 +377,4 @@ exports.refreshCurrencyCache = refreshCurrencyCache;
 exports.getCurrencies = getCurrencies;
 exports.addCurrencyToUserGroupOnlineUsers = addCurrencyToUserGroupOnlineUsers;
 exports.isViewerDBOn = isViewerDBOn;
+exports.getTopCurrencyHolders = getTopCurrencyHolders;

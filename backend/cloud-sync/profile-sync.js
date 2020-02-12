@@ -21,7 +21,7 @@ async function syncProfileData(profileSyncData) {
 
     let binId = await cloudSync.sync(completeSyncJSON);
 
-    if (binId !== false) {
+    if (binId != null) {
         return binId;
     }
 

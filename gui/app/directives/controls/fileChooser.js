@@ -17,7 +17,7 @@
                 <span ng-if="$ctrl.model != null && $ctrl.model !== ''" class="clickable" style="margin-left: 10px" ng-click="$ctrl.model = null"><i class="fal fa-times-circle"></i></span>
             </div>
             `,
-            controller: function($scope, $element, $attrs, listenerService) {
+            controller: function($q, backendCommunicator) {
                 let ctrl = this;
 
                 ctrl.isFile = true;
@@ -32,20 +32,18 @@
                     ctrl.onUpdate({filepath: ''});
                 };
 
-                ctrl.openFileExporer = function() {
-                    let registerRequest = {
-                        type: listenerService.ListenerType.ANY_FILE,
-                        runOnce: true,
-                        publishEvent: true,
-                        data: {
+                ctrl.openFileExporer = () => {
+
+                    $q
+                        .when(backendCommunicator.fireEventAsync("open-file-browser", {
                             options: ctrl.options,
                             currentPath: ctrl.model && ctrl.model !== "" ? ctrl.model : undefined
-                        }
-                    };
-                    listenerService.registerListener(registerRequest, (filepath) => {
-                        ctrl.model = filepath;
-                        ctrl.onUpdate({filepath: filepath});
-                    });
+                        }))
+                        .then(response => {
+                            if (response.path == null) return;
+                            ctrl.model = response.path;
+                            ctrl.onUpdate({filepath: response.path});
+                        });
                 };
             }
         });

@@ -353,7 +353,7 @@
 
               <div class="setting-heading">Dev Tools</div>
               <div class="setting-description">
-                Click the button below to open the developer console. Only use if you know what you are doing. <strong>Never paste code from other people in the console.</strong></b>
+                Click the button below to open the developer console. Only use if you know what you are doing. <strong>Never paste code from other people in the console.</strong>
               </div>
               <button class="btn btn-default" ng-click="openDevTools()">Open Dev Tools</button>
 
@@ -394,6 +394,15 @@
                 </ul>
               </div>
 
+            </div>
+
+            <div class="setting col-sm-6">
+
+              <div class="setting-heading">Recalculate Quote IDs</div>
+              <div class="setting-description">
+                Quote IDs in Firebot are static, even if a quote before another is deleted. If you would like to recalculate your quote IDs so that there isn't any skipped quote numbers, you can use this option. <strong>We recommend that you make a backup first, just in case.</strong>
+              </div>
+              <button class="btn btn-default" ng-click="recalculateQuoteIds()">Recalculate Quote IDs</button>
             </div>
           </div>
         </uib-tab>
