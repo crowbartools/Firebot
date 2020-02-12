@@ -8,7 +8,7 @@ const {
 } = require('./expression-errors.js');
 
 // Define probeing regexes
-const probeText = /^((?:[^"$\\]|(?:\\["$\\])|(?:\\(?!["$\\])))+)/;
+const probeText = /^((?:[^$\\]|(?:\\[$\\])|(?:\\(?![$\\])))+)/;
 const probeArg = /^\s*((?:[^"$\\,\] ]|(?:\\[\\"\]$])|(?:\\(?![\\"\]$]))|(?: +(?=$|[^ \],])))+)/;
 const probeQuote = /^"((?:[^\\"]|\\[\\"]|\\(?!\\"))+)"/;
 const probeVar = /^\s*\$([a-z][a-z\d]+)/i;
