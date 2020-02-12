@@ -341,11 +341,7 @@ function updateCooldownForControls(controlIds, cooldown) {
 async function updateParticipantWithData(userId, data) {
     if (!mixplayConnected) return;
 
-    let queryResult = await mixplayClient.getParticipantsByMixerId({
-        userIDs: [userId]
-    });
-
-    let participant = queryResult.users[userId];
+    let participant = mixplayClient.state.getParticipantByUserID(userId);
 
     if (participant == null) return;
 
@@ -353,7 +349,7 @@ async function updateParticipantWithData(userId, data) {
     newParticipant.sessionID = participant.sessionID;
 
     await mixplayClient.updateParticipants({
-        participants: [participant]
+        participants: [newParticipant]
     });
 }
 

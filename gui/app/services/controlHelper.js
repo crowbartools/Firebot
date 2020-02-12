@@ -27,6 +27,12 @@
                     iconClass: "fa-image"
                 },
                 {
+                    kind: "viewerStat",
+                    display: "Viewer Stat",
+                    description: "A special label that displays the viewer's given stat. Unique to each viewer.",
+                    iconClass: "fa-chart-bar"
+                },
+                {
                     kind: "textbox",
                     display: "Textbox",
                     description: "A way for viewers to input text.",
@@ -71,6 +77,25 @@
                     name: "Label",
                     description: "Just some text that can't be interacted with.",
                     iconClass: "fa-tag",
+                    grid: true,
+                    resizable: true,
+                    minSize: {
+                        width: 6,
+                        height: 4
+                    },
+                    maxSize: {
+                        width: 20,
+                        height: 15
+                    },
+                    effects: false,
+                    hasSettings: true,
+                    canCooldown: false
+                },
+                viewerStat: {
+                    kind: "viewerStat",
+                    name: "Viewer Stat",
+                    description: "A special label that displays the viewer's given stat. Unique to each viewer.",
+                    iconClass: "fa-chart-bar",
                     grid: true,
                     resizable: true,
                     minSize: {

@@ -175,7 +175,63 @@
 
                         </div>
                     </div>
-         
+                </div>
+
+                <div ng-switch-when="viewerStat">
+
+                    <div class="input-group">
+                        <div style="margin-bottom: 3px;font-size: 14px;font-weight: 400;">Stat Type <tooltip text="'Which stat to display to the viewer. This display is unique to each viewer so they will always see their own stat value.'"></tooltip></div>
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="options-themes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="dropdown-text">{{$ctrl.getSelectedStatType()}}</span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="stat in $ctrl.statTypes"><a href ng-click="$ctrl.control.mixplay.statDataField = stat.field">{{stat.name}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="expandable-item smaller-item"
+                        style="justify-content: space-between;" 
+                        ng-init="hidePanel = true" 
+                        ng-click="hidePanel = !hidePanel" 
+                        ng-class="{'expanded': !hidePanel}">    
+                            <div style="flex-basis: 30%;padding-left: 15px;font-size: 14px;">Styling Options</div>
+
+                            <div style="display: flex; align-items: center;">
+                                <div style="width:30px;">
+                                    <i class="fas" ng-class="{'fa-chevron-right': hidePanel, 'fa-chevron-down': !hidePanel}"></i>
+                                </div>
+                            </div>
+                    </div>
+                    <div uib-collapse="hidePanel" class="expandable-item-expanded smaller-item">
+                        <div style="padding: 15px 20px 10px 20px;">
+
+                            <div class="input-group settings-buttontext">
+                                <span class="input-group-addon" id="basic-addon3">Text Size <tooltip text="'Supports any CSS size unit. If only a number is provided, \\'px\\' is assumed.'"></tooltip></span>
+                                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.control.mixplay.textSize" replace-variables disable-variable-menu="!$ctrl.updateMode">
+                            </div>
+
+                            <control-color-picker model="$ctrl.control.mixplay.textColor" label="Text Color"></control-color-picker>
+
+                            <label class="control-fb control--checkbox noselect"> Bold
+                                <input type="checkbox" ng-model="$ctrl.control.mixplay.bold" aria-label="...">
+                                <div class="control__indicator"></div>
+                            </label>
+
+                            <label class="control-fb control--checkbox noselect"> Italic
+                                <input type="checkbox" ng-model="$ctrl.control.mixplay.italic" aria-label="...">
+                                <div class="control__indicator"></div>
+                            </label>
+
+                            <label class="control-fb control--checkbox noselect"> Underline
+                                <input type="checkbox" ng-model="$ctrl.control.mixplay.underline" aria-label="...">
+                                <div class="control__indicator"></div>
+                            </label>
+
+                        </div>
+                    </div>
                 </div>
 
 
@@ -226,7 +282,7 @@
 
             </div>
             `,
-            controller: function($scope) {
+            controller: function($scope, currencyService) {
                 let $ctrl = this;
 
                 $ctrl.$onInit = function() {
@@ -237,6 +293,44 @@
                     $scope.trigger = $ctrl.trigger;
                     $scope.triggerMeta = $ctrl.triggerMeta;
 
+
+                    if ($ctrl.kind === "viewerStat") {
+
+                        if ($ctrl.control.mixplay.statDataField == null) {
+                            $ctrl.control.mixplay.statDataField = "viewTime";
+                        }
+
+                        $ctrl.statTypes = [
+                            {
+                                name: "View Time",
+                                field: "viewTime"
+                            },
+                            {
+                                name: "MixPlay Interactions",
+                                field: "mixplayInteractions"
+                            },
+                            {
+                                name: "Chat Messages",
+                                field: "chatMessages"
+                            }
+                        ];
+                    }
+
+                    let currencies = currencyService.getCurrencies();
+                    for (let currency of currencies) {
+                        $ctrl.statTypes.push({
+                            name: `${currency.name} (Currency)`,
+                            field: `currency:${currency.id}`
+                        });
+                    }
+                };
+
+                $ctrl.getSelectedStatType = () => {
+                    let stat = $ctrl.statTypes.find(st => st.field === $ctrl.control.mixplay.statDataField);
+                    if (stat) {
+                        return stat.name;
+                    }
+                    return "Unknown Stat";
                 };
             }
         });

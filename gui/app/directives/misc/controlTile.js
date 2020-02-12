@@ -17,6 +17,8 @@
 
                         <image-tile ng-switch-when="image" control="$ctrl.control" style="width:100%; height: 100%;"></image-tile>
 
+                        <viewer-stat-tile ng-switch-when="viewerStat" control="$ctrl.control" style="width:100%; height: 100%;"></viewer-stat-tile>
+
                         <joystick-tile ng-switch-when="joystick" control="$ctrl.control" style="width:100%; height: 100%;position: relative;"></joystick-tile>
 
                         <textbox-tile ng-switch-when="textbox" control="$ctrl.control" style="width:100%; height: 100%;"></textbox-tile>
