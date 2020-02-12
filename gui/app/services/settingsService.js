@@ -646,6 +646,33 @@
                 pushDataToFile('/settings/extraLifeId', id);
             };
 
+            service.getDefaultTtsVoiceId = function() {
+                let id = getDataFromFile('/settings/defaultTtsVoiceId');
+                return id;
+            };
+
+            service.setDefaultTtsVoiceId = function(id) {
+                pushDataToFile('/settings/defaultTtsVoiceId', id);
+            };
+
+            service.getTtsVoiceVolume = function() {
+                let volume = getDataFromFile('/settings/ttsVoiceVolume');
+                return volume !== undefined ? volume : 0.5;
+            };
+
+            service.setTtsVoiceVolume = function(volume) {
+                pushDataToFile('/settings/ttsVoiceVolume', volume);
+            };
+
+            service.getTtsVoiceRate = function() {
+                let rate = getDataFromFile('/settings/ttsVoiceRate');
+                return rate !== undefined ? rate : 1;
+            };
+
+            service.setTtsVoiceRate = function(rate) {
+                pushDataToFile('/settings/ttsVoiceRate', rate);
+            };
+
             return service;
         });
 }());

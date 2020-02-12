@@ -23,7 +23,9 @@
             connectionService,
             logger,
             $http,
-            backendCommunicator
+            backendCommunicator,
+            ttsService,
+            accountAccess
         ) {
             $scope.settings = settingsService;
 
@@ -31,6 +33,64 @@
                 || connectionService.accounts.streamer.canClip;
 
             $scope.clipsFolder = settingsService.getClipDownloadFolder();
+
+            $scope.getSelectedVoiceName = () => {
+                let selectedVoiceId = settingsService.getDefaultTtsVoiceId();
+                let voice = ttsService.getVoiceById(selectedVoiceId);
+                return voice ? voice.name : "Unknown Voice";
+            };
+
+            $scope.ttsVoices = ttsService.getVoices();
+
+            $scope.ttsVolumeSlider = {
+                value: settingsService.getTtsVoiceVolume(),
+                options: {
+                    floor: 0,
+                    ceil: 1,
+                    step: 0.1,
+                    precision: 1,
+                    translate: function(value) {
+                        return Math.floor(value * 10);
+                    },
+                    onChange: (_, value) => {
+                        settingsService.setTtsVoiceVolume(value);
+                    }
+                }
+            };
+
+            $scope.ttsRateSlider = {
+                value: settingsService.getTtsVoiceRate(),
+                options: {
+                    floor: 0.1,
+                    ceil: 10,
+                    step: 0.1,
+                    precision: 1,
+                    onChange: (_, value) => {
+                        settingsService.setTtsVoiceRate(value);
+                    }
+                }
+            };
+
+            let streamerName = accountAccess.accounts.streamer.username;
+
+            const testTTSMessages = [
+                "I hope you are having a nice day.",
+                "It sure is nice to be able to talk.",
+                "I think you are awesome.",
+                "When do you go to the dentist? Tooth hurty. Ha ha.",
+                "This is a test message. Beep boop.",
+                `I'm sorry, ${streamerName}. I'm afraid I can't do that.`
+            ];
+
+            $scope.testTTS = () => {
+                ttsService.readText(testTTSMessages[Math.floor(Math.random() * testTTSMessages.length)], "default");
+            };
+
+            $scope.refreshSliders = function() {
+                $timeout(function() {
+                    $scope.$broadcast('rzSliderForceRender');
+                });
+            };
 
             // $scope.showSetupWizard = utilityService.showSetupWizard;
             $scope.showSetupWizard = () => {

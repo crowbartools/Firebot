@@ -97,7 +97,9 @@
         commandsService,
         integrationService,
         viewersService,
-        chatModerationService
+        chatModerationService,
+        ttsService,
+        settingsService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -126,6 +128,12 @@
         if (!updatesService.hasCheckedForUpdates) {
             updatesService.checkForUpdate();
         }
+
+        ttsService.obtainVoices().then(() => {
+            if (settingsService.getDefaultTtsVoiceId() == null) {
+                settingsService.setDefaultTtsVoiceId(ttsService.getOsDefaultVoiceId());
+            }
+        });
     });
 
     app.controller("MainController", function(

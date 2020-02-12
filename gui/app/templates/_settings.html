@@ -246,9 +246,51 @@
             </div>
           </div>
         </uib-tab>
+
+        <uib-tab index="6" heading="TTS" select="refreshSliders()">
+          <div class="row" style="margin-top: 30px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Default TTS Voice</div>
+              <div class="setting-description">The default voice to use for the Text-To-Speech effect.</div>
+              <div class="dropdown options-themes-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-themes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{getSelectedVoiceName()}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li ng-repeat="voice in ttsVoices"><a href ng-click="settings.setDefaultTtsVoiceId(voice.id)">{{voice.name}}</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Test TTS</div>
+              <div class="setting-description">Test the current TTS settings.</div>
+              <button class="btn btn-default" ng-click="testTTS()">Speak Test Message</button>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 30px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">TTS Voice Volume</div>
+              <div class="volume-slider-wrapper">
+                  <i class="fal fa-volume-down volume-low"></i>
+                  <rzslider rz-slider-model="ttsVolumeSlider.value" rz-slider-options="ttsVolumeSlider.options"></rzslider>
+                  <i class="fal fa-volume-up volume-high"></i>
+              </div>
+            </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">TTS Voice Rate</div>
+              <div class="setting-description">The rate at which the TTS speaks: 1 is normal. 0.5 is half as fast. 2 is 2x as fast, etc.</div>
+              <div class="volume-slider-wrapper">
+                  <i class="fal fa-volume-down volume-low"></i>
+                  <rzslider rz-slider-model="ttsRateSlider.value" rz-slider-options="ttsRateSlider.options"></rzslider>
+                  <i class="fal fa-volume-up volume-high"></i>
+              </div>
+            </div>
+          </div>
+        </uib-tab>
         
         <!-- Clip Settings -->
-        <uib-tab index="6" heading="Clips" ng-show="canClip">
+        <uib-tab index="7" heading="Clips" ng-show="canClip">
             <div class="row" style="margin-top: 15px">
               <div class="setting col-sm-6">
                 <div class="setting-heading">Clip Download Folder</div>
@@ -264,7 +306,7 @@
           </uib-tab>
         
         <!-- Backup Settings -->
-        <uib-tab index="7" heading="Backup">
+        <uib-tab index="8" heading="Backup">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">              
                 <div class="setting-heading">Backup Options</div>
@@ -314,7 +356,7 @@
         </uib-tab>
         
         <!-- Advanced Settings -->
-        <uib-tab index="8" heading="Advanced">
+        <uib-tab index="9" heading="Advanced">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
                 <div class="setting-heading">Debug Mode</div>

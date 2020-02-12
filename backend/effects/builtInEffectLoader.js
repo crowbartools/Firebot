@@ -35,6 +35,7 @@ exports.loadEffects = () => {
     const updateRole = require("./builtin/update-role");
     const conditionalEffects = require("./builtin/conditional-effects/conditional-effects");
     const loopEffects = require("./builtin/loopEffects");
+    const textToSpeech = require("./builtin/text-to-speech");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -68,4 +69,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(updateRole);
     effectManager.registerEffect(conditionalEffects);
     effectManager.registerEffect(loopEffects);
+    effectManager.registerEffect(textToSpeech);
 };
