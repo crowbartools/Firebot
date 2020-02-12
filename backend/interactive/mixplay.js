@@ -9,6 +9,7 @@ const { settings } = require('../common/settings-access');
 const accountAccess = require('../common/account-access');
 const logger = require("../logwrapper");
 const frontendCommunicator = require("../common/frontend-communicator");
+const userDatabase = require("../database/userDatabase");
 
 const mixplayManager = require('./mixplay-project-manager');
 const eventManager = require("../live-events/EventManager");
@@ -339,9 +340,25 @@ function updateCooldownForControls(controlIds, cooldown) {
 
 mixplayClient.state.on('participantJoin', async participant => {
     logger.debug(`${participant.username} (${participant.sessionID}) Joined`);
-    eventManager.triggerEvent("mixer", "user-joined-mixplay", {
-        username: participant.username
-    });
+
+    if (!participant.anonymous) {
+        let firebotUser = await userDatabase.getUserById(participant.userID);
+
+        if (firebotUser != null) {
+            let hours = firebotUser.minutesInChannel < 60 ? 0 : Math.floor(firebotUser.minutesInChannel / 60);
+            participant.viewTime = `${hours} hrs`;
+        } else {
+            participant.viewTime = `0 hrs`;
+        }
+
+        await mixplayClient.updateParticipants({
+            participants: [participant]
+        });
+
+        eventManager.triggerEvent("mixer", "user-joined-mixplay", {
+            username: participant.username
+        });
+    }
 });
 
 // checks if this sceneId is set as default and returns "default" if so,
