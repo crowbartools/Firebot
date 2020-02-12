@@ -7,12 +7,16 @@ const { ipcMain } = require("electron");
 const { settings } = require("../common/settings-access.js");
 const currencyDatabase = require("./currencyDatabase");
 const mixerChat = require('../common/mixer-chat');
+const mixplay = require("../interactive/mixplay");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
 const channelAccess = require("../common/channel-access");
 const eventManager = require("../live-events/EventManager");
 const accountAccess = require("../common/account-access");
 
+/**
+ * @type Datastore
+ */
 let db;
 let updateTimeInterval;
 let dbCompactionInterval = 30000;
@@ -121,6 +125,11 @@ function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
     let newHours = newTotalMinutes > 0 ? parseInt(newTotalMinutes / 60) : 0;
     if (newHours < 1) return;
     if (newHours !== previousHours) {
+
+        mixplay.updateParticipantWithData(user._id, {
+            viewTime: `${newHours} hrs`
+        });
+
         eventManager.triggerEvent("firebot", "view-time-update", {
             username: user.username,
             previousViewTime: previousHours,
@@ -455,9 +464,15 @@ function incrementDbField(userId, fieldName) {
 
         let updateDoc = {};
         updateDoc[fieldName] = 1;
-        db.update({ _id: userId, disableAutoStatAccrual: { $ne: true } }, { $inc: updateDoc }, {}, function(err) {
+        db.update({ _id: userId, disableAutoStatAccrual: { $ne: true } }, { $inc: updateDoc }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) {
             if (err) {
                 logger.error(err);
+            } else {
+                if (updatedDoc != null) {
+                    let updateObj = {};
+                    updateObj[fieldName] = updatedDoc[fieldName];
+                    mixplay.updateParticipantWithData(userId, updateObj);
+                }
             }
             resolve();
         });

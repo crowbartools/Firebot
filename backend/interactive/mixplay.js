@@ -338,6 +338,25 @@ function updateCooldownForControls(controlIds, cooldown) {
     }
 }
 
+async function updateParticipantWithData(userId, data) {
+    if (!mixplayConnected) return;
+
+    let queryResult = await mixplayClient.getParticipantsByMixerId({
+        userIDs: [userId]
+    });
+
+    let participant = queryResult.users[userId];
+
+    if (participant == null) return;
+
+    let newParticipant = data;
+    newParticipant.sessionID = participant.sessionID;
+
+    await mixplayClient.updateParticipants({
+        participants: [participant]
+    });
+}
+
 mixplayClient.state.on('participantJoin', async participant => {
     logger.debug(`${participant.username} (${participant.sessionID}) Joined`);
 
@@ -347,6 +366,16 @@ mixplayClient.state.on('participantJoin', async participant => {
         if (firebotUser != null) {
             let hours = firebotUser.minutesInChannel < 60 ? 0 : Math.floor(firebotUser.minutesInChannel / 60);
             participant.viewTime = `${hours} hrs`;
+
+            participant.mixplayInteractions = firebotUser.mixplayInteractions;
+            participant.chatMessages = firebotUser.chatMessages;
+
+            if (firebotUser.currency) {
+                let currencyIds = Object.keys(firebotUser.currency);
+                for (let currencyId of currencyIds) {
+                    participant[`currency:${currencyId}`] = firebotUser.currency[currencyId];
+                }
+            }
         } else {
             participant.viewTime = `0 hrs`;
         }
@@ -467,4 +496,5 @@ exports.moveViewerToScene = moveViewerToScene;
 exports.moveViewersToNewScene = moveViewersToNewScene;
 exports.moveAllViewersToScene = moveAllViewersToScene;
 exports.updateCooldownForControls = updateCooldownForControls;
+exports.updateParticipantWithData = updateParticipantWithData;
 

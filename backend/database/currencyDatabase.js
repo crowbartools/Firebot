@@ -8,6 +8,7 @@ const channelAccess = require("../common/channel-access");
 const customRolesManager = require("../roles/custom-roles-manager");
 const mixerRolesManager = require("../../shared/mixer-roles");
 const firebotRolesManager = require("../roles/firebot-roles-manager");
+const mixplay = require("../interactive/mixplay");
 
 let currencyCache = {};
 
@@ -42,35 +43,28 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
         }
 
         // Dont do anything if value is not a number or is 0.
+
+        if (isNaN(value) || parseInt(value) === 0) {
+            return resolve();
+        }
+
         value = parseInt(value);
         adjustType = adjustType.toLowerCase();
         let newUserValue = value;
 
         switch (adjustType) {
         case "set":
-            if (isNaN(value)) {
-                return resolve();
-            }
-            logger.debug(
-                "Currency: Setting " + user.username + " currency " + currencyId + " to: " + value + "."
-            );
+            logger.debug("Currency: Setting " + user.username + " currency " + currencyId + " to: " + value + ".");
             newUserValue = value;
             break;
         default:
-            if (isNaN(value) || value === 0) {
-                return resolve();
-            }
-            logger.debug(
-                "Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId
-            );
+            logger.debug("Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId);
             newUserValue = (user.currency[currencyId] += parseInt(value));
         }
 
         let db = userDatabase.getUserDb();
         let updateDoc = {};
-        let currencyLimit = isNaN(parseInt(currencyCache[currencyId].limit))
-            ? 0
-            : currencyCache[currencyId].limit;
+        let currencyLimit = isNaN(currencyCache[currencyId].limit) ? 0 : currencyCache[currencyId].limit;
 
         // If new value would put them over the currency limit set by the user...
         // Just set them at currency limit. Otherwise add currency to what they have now.
@@ -83,11 +77,13 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
         }
 
         // Update the DB with our new currency value.
-        db.update({ _id: user._id }, { $set: updateDoc }, {}, function(
-            err
-        ) {
+        db.update({ _id: user._id }, { $set: updateDoc }, {}, function(err) {
             if (err) {
                 logger.error("Currency: Error setting currency on user.", err);
+            } else {
+                let updateObj = {};
+                updateObj[`currency:${currencyId}`] = newUserValue;
+                mixplay.updateParticipantWithData(user._id, updateObj);
             }
             return resolve();
         });
