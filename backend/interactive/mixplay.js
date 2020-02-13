@@ -339,10 +339,12 @@ function updateCooldownForControls(controlIds, cooldown) {
     }
 }
 
-async function updateParticipantWithData(userId, data) {
+async function updateParticipantWithData(userId, data, participant = null) {
     if (!mixplayConnected) return;
 
-    let participant = mixplayClient.state.getParticipantByUserID(userId);
+    if (participant == null) {
+        participant = mixplayClient.state.getParticipantByUserID(userId);
+    }
 
     if (participant == null) return;
 
@@ -354,32 +356,34 @@ async function updateParticipantWithData(userId, data) {
     });
 }
 
+async function updateParticipantWithUserData(firebotUser, participant = null) {
+    let updateObj = {};
+
+    let hours = firebotUser.minutesInChannel < 60 ? 0 : Math.floor(firebotUser.minutesInChannel / 60);
+    updateObj.viewTime = `${util.commafy(hours)} hrs`;
+
+    updateObj.mixplayInteractions = util.commafy(firebotUser.mixplayInteractions);
+    updateObj.chatMessages = util.commafy(firebotUser.chatMessages);
+
+    if (firebotUser.currency) {
+        let currencyIds = Object.keys(firebotUser.currency);
+        for (let currencyId of currencyIds) {
+            updateObj[`currency:${currencyId}`] = util.commafy(firebotUser.currency[currencyId]);
+        }
+    }
+
+    await updateParticipantWithData(firebotUser._id, updateObj, participant);
+}
+
 mixplayClient.state.on('participantJoin', async participant => {
     logger.debug(`${participant.username} (${participant.sessionID}) Joined`);
 
     if (!participant.anonymous) {
+
         let firebotUser = await userDatabase.getUserById(participant.userID);
-
         if (firebotUser != null) {
-            let hours = firebotUser.minutesInChannel < 60 ? 0 : Math.floor(firebotUser.minutesInChannel / 60);
-            participant.viewTime = `${util.commafy(hours)} hrs`;
-
-            participant.mixplayInteractions = util.commafy(firebotUser.mixplayInteractions);
-            participant.chatMessages = util.commafy(firebotUser.chatMessages);
-
-            if (firebotUser.currency) {
-                let currencyIds = Object.keys(firebotUser.currency);
-                for (let currencyId of currencyIds) {
-                    participant[`currency:${currencyId}`] = util.commafy(firebotUser.currency[currencyId]);
-                }
-            }
-        } else {
-            participant.viewTime = `0 hrs`;
+            await updateParticipantWithUserData(firebotUser, participant);
         }
-
-        await mixplayClient.updateParticipants({
-            participants: [participant]
-        });
 
         eventManager.triggerEvent("mixer", "user-joined-mixplay", {
             username: participant.username
@@ -494,4 +498,5 @@ exports.moveViewersToNewScene = moveViewersToNewScene;
 exports.moveAllViewersToScene = moveAllViewersToScene;
 exports.updateCooldownForControls = updateCooldownForControls;
 exports.updateParticipantWithData = updateParticipantWithData;
+exports.updateParticipantWithUserData = updateParticipantWithUserData;
 

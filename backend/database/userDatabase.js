@@ -527,9 +527,13 @@ frontendCommunicator.on("updateViewerDataField", (data) => {
     let updateObject = {};
     updateObject[field] = value;
 
-    db.update({ _id: userId }, { $set: updateObject }, {}, function(err) {
+    db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) {
         if (err) {
             logger.error("Error updating user.", err);
+        } else {
+            if (updatedDoc != null) {
+                mixplay.updateParticipantWithUserData(updatedDoc);
+            }
         }
     });
 });
