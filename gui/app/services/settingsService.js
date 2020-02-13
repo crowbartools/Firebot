@@ -673,6 +673,16 @@
                 pushDataToFile('/settings/ttsVoiceRate', rate);
             };
 
+
+            service.getWhileLoopEnabled = function() {
+                let enabled = getDataFromFile('/settings/whileLoopEnabled');
+                return enabled !== undefined ? enabled : false;
+            };
+
+            service.setWhileLoopEnabled = function(enabled) {
+                pushDataToFile('/settings/whileLoopEnabled', enabled === true);
+            };
+
             return service;
         });
 }());

@@ -245,4 +245,13 @@ settings.setExtraLifeParticipantId = function(id) {
     pushDataToFile('/settings/extraLifeId', id);
 };
 
+settings.getWhileLoopEnabled = function() {
+    let enabled = getDataFromFile('/settings/whileLoopEnabled');
+    return enabled !== undefined ? enabled : false;
+};
+
+settings.setWhileLoopEnabled = function(enabled) {
+    pushDataToFile('/settings/whileLoopEnabled', enabled === true);
+};
+
 exports.settings = settings;

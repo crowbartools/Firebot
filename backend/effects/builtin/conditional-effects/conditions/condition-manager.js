@@ -40,8 +40,8 @@ class ConditionManager extends EventEmitter {
     }
 
     async runConditions(conditionData, triggerData) {
-        if (conditionData != null) {
-            let conditions = conditionData.conditions;
+        if (conditionData != null && conditionData.conditions != null) {
+            let conditions = JSON.parse(JSON.stringify(conditionData.conditions));
 
             let didPass = conditionData.mode !== "inclusive";
             for (let condition of conditions) {

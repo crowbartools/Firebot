@@ -5,6 +5,7 @@
         .component("conditionList", {
             bindings: {
                 header: "@",
+                prefix: "@",
                 conditionData: "=",
                 trigger: "<",
                 triggerMeta: "<",
@@ -16,15 +17,16 @@
                 <h3 ng-if="$ctrl.header != '' && $ctrl.header != null" style="margin-bottom: 5px;text-transform: uppercase;font-weight: bold;">{{$ctrl.header}}</h3>
                 <div>
                     <div style="padding-bottom: 4px;padding-left: 2px;font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;" ng-if="$ctrl.hasConditionsAvailable()">
+                        <span>{{$ctrl.prefix || "If"}} </span>
                         <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
                             <div class="noselect pointer ddtext" style="font-size: 15px;">{{$ctrl.getConditionModeDisplay()}}<span class="fb-arrow down ddtext"></span></div>
                             <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
                                 <li ng-click="$ctrl.conditionData.mode = 'exclusive'">
-                                    <a style="padding-left: 10px;">All</a>
+                                    <a style="padding-left: 10px;">all</a>
                                 </li>
 
                                 <li ng-click="$ctrl.conditionData.mode = 'inclusive'">
-                                    <a style="padding-left: 10px;">Any</a>
+                                    <a style="padding-left: 10px;">any</a>
                                 </li>
                             </ul>
                         </div>
@@ -108,7 +110,7 @@
                 }
 
                 $ctrl.getConditionModeDisplay = function() {
-                    return $ctrl.conditionData.mode === "inclusive" ? "Any" : "All";
+                    return $ctrl.conditionData.mode === "inclusive" ? "any" : "all";
                 };
 
                 $ctrl.getConditionType = function(typeId) {

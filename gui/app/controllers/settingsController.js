@@ -149,6 +149,27 @@
                 ipcRenderer.send("sparkExemptionToggled", value);
             };
 
+            $scope.toggleWhileLoops = () => {
+                let whileLoopsEnabled = settingsService.getWhileLoopEnabled();
+
+                if (whileLoopsEnabled) {
+                    settingsService.setWhileLoopEnabled(false);
+                } else {
+                    utilityService
+                        .showConfirmationModal({
+                            title: "Enable While Loops",
+                            question: "By enabling this feature, you understand that using While Loops incorrectly can potentially cause performance issues or even freeze Firebot.",
+                            confirmLabel: "I understand, enable.",
+                            confirmBtnType: "btn-primary"
+                        })
+                        .then(confirmed => {
+                            if (confirmed) {
+                                settingsService.setWhileLoopEnabled(true);
+                            }
+                        });
+                }
+            };
+
             $scope.setActiveChatUsers = (value) => {
                 value = value === true;
                 settingsService.setActiveChatUsers(value);
