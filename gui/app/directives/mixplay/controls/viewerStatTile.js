@@ -7,19 +7,33 @@
                 control: "<"
             },
             template: `
-                <div class="mixer-label-container">
+                <div class="mixer-label-container" ng-style="$ctrl.getContainerStyle()">
                     <div ng-style="$ctrl.getLabelStyle()">{{$ctrl.getExampleStatDisplay()}}</div>
                 </div>                        
             `,
             controller: function() {
                 let $ctrl = this;
 
-
                 $ctrl.getExampleStatDisplay = () => {
                     if ($ctrl.control.mixplay.statDataField === "viewTime") {
                         return "25 hrs";
                     }
                     return "200";
+                };
+
+                $ctrl.getContainerStyle = () => {
+                    let style = {
+                        "justify-content": "center"
+                    };
+                    if ($ctrl.control.mixplay) {
+                        let justification = $ctrl.control.mixplay.justification;
+                        if (justification === "left") {
+                            style["justify-content"] = "flex-start";
+                        } else if (justification === "right") {
+                            style["justify-content"] = "flex-end";
+                        }
+                    }
+                    return style;
                 };
 
                 $ctrl.getLabelStyle = function() {

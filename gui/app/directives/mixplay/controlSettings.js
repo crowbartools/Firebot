@@ -173,6 +173,23 @@
                                 <div class="control__indicator"></div>
                             </label>
 
+                            <div class="input-group">
+                                <div style="margin-bottom: 3px;font-size: 14px;font-weight: 400;">Justification <tooltip text="'Text justification within the container.'"></tooltip></div>
+                                <div class="controls-fb-inline">
+                                    <label class="control-fb control--radio">Left
+                                        <input type="radio" ng-model="$ctrl.control.mixplay.justification" value="left"/>
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                    <label class="control-fb control--radio">Center
+                                        <input type="radio" ng-model="$ctrl.control.mixplay.justification" value="center"/>
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                    <label class="control-fb control--radio">Right
+                                        <input type="radio" ng-model="$ctrl.control.mixplay.justification" value="right"/>
+                                        <div class="control__indicator"></div>
+                                    </label>             
+                                </div>        
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -229,6 +246,24 @@
                                 <input type="checkbox" ng-model="$ctrl.control.mixplay.underline" aria-label="...">
                                 <div class="control__indicator"></div>
                             </label>
+
+                            <div class="input-group">
+                                <div style="margin-bottom: 3px;font-size: 14px;font-weight: 400;">Justification <tooltip text="'Text justification within the container.'"></tooltip></div>
+                                <div class="controls-fb-inline">
+                                    <label class="control-fb control--radio">Left
+                                        <input type="radio" ng-model="$ctrl.control.mixplay.justification" value="left"/>
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                    <label class="control-fb control--radio">Center
+                                        <input type="radio" ng-model="$ctrl.control.mixplay.justification" value="center"/>
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                    <label class="control-fb control--radio">Right
+                                        <input type="radio" ng-model="$ctrl.control.mixplay.justification" value="right"/>
+                                        <div class="control__indicator"></div>
+                                    </label>             
+                                </div>        
+                            </div>
 
                         </div>
                     </div>
@@ -293,6 +328,10 @@
                     $scope.trigger = $ctrl.trigger;
                     $scope.triggerMeta = $ctrl.triggerMeta;
 
+
+                    if (($ctrl.kind === "label" || $ctrl.kind === "viewerStat") && $ctrl.control.mixplay.justification == null) {
+                        $ctrl.control.mixplay.justification = "center";
+                    }
 
                     if ($ctrl.kind === "viewerStat") {
 
