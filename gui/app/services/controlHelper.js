@@ -94,13 +94,13 @@
                 viewerStat: {
                     kind: "viewerStat",
                     name: "Viewer Stat",
-                    description: "A special label that displays the viewer's given stat. Unique to each viewer.",
+                    description: "A special label that displays the given viewer stat. Unique to each viewer.",
                     iconClass: "fa-chart-bar",
                     grid: true,
                     resizable: true,
                     minSize: {
-                        width: 6,
-                        height: 4
+                        width: 3,
+                        height: 2
                     },
                     maxSize: {
                         width: 20,
