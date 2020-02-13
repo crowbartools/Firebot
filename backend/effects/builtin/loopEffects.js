@@ -83,7 +83,7 @@ const model = {
             if ($scope.effect.loopMode === "count") {
                 $scope.effect.loopCount = 5;
             } else {
-                $scope.effect.loopCount = 500;
+                $scope.effect.loopCount = 25;
             }
         };
 
