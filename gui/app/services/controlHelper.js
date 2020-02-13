@@ -80,12 +80,12 @@
                     grid: true,
                     resizable: true,
                     minSize: {
-                        width: 6,
-                        height: 4
+                        width: 3,
+                        height: 2
                     },
                     maxSize: {
-                        width: 20,
-                        height: 15
+                        width: 25,
+                        height: 20
                     },
                     effects: false,
                     hasSettings: true,
@@ -103,8 +103,8 @@
                         height: 2
                     },
                     maxSize: {
-                        width: 20,
-                        height: 15
+                        width: 25,
+                        height: 20
                     },
                     effects: false,
                     hasSettings: true,
