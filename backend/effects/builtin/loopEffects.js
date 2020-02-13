@@ -12,9 +12,7 @@ const { settings } = require("../../common/settings-access");
 
 const conditionManager = require("./conditional-effects/conditions/condition-manager");
 
-function wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
 const model = {
     definition: {
@@ -166,7 +164,7 @@ const model = {
 
                     if (conditionsPass) {
                         await runEffects();
-                        await wait(25);
+                        await wait(1);
                     } else {
                         break;
                     }
