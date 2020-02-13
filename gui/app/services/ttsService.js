@@ -57,7 +57,7 @@
             };
 
             service.getOsDefaultVoiceId = () => {
-                let voices = .getVoices();
+                let voices = speechSynthesis.getVoices();
 
                 let defaultVoice = voices.find(v => v.default === true);
 
