@@ -57,7 +57,7 @@
             };
 
             service.getOsDefaultVoiceId = () => {
-                let voices = speechSynthesis.getVoices();
+                let voices = .getVoices();
 
                 let defaultVoice = voices.find(v => v.default === true);
 
@@ -88,6 +88,10 @@
             backendCommunicator.on("read-tts", (data) => {
                 let { text, voiceId } = data;
                 service.readText(text, voiceId);
+            });
+
+            backendCommunicator.on("stop-all-sounds", () => {
+                speechSynthesis.cancel();
             });
 
             return service;
