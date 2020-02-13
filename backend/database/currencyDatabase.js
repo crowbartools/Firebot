@@ -43,7 +43,6 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
         }
 
         // Dont do anything if value is not a number or is 0.
-
         if (isNaN(value) || parseInt(value) === 0) {
             return resolve();
         }
@@ -93,31 +92,31 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
 // Adjust currency for user.
 // This adjust currency when given a username. Can be given negative values to remove currency.
 function adjustCurrencyForUser(username, currencyId, value, adjustType = "adjust") {
-    return new Promise((resolve) => {
+    return new Promise(async resolve => {
         if (!isViewerDBOn()) {
             return resolve(false);
         }
-
-        // Try to make value an integer.
-        value = parseInt(value);
 
         // Validate inputs.
         if (username === null || currencyId === null || value === null || isNaN(value)) {
             return resolve(false);
         }
 
+        // Try to make value an integer.
+        value = parseInt(value);
+
         // Trim username just in case we have extra spaces.
         username = username.trim();
 
         // Okay, it passes... let's try to add it.
-        userDatabase.getUserByUsername(username).then(user => {
-            if (user !== false) {
-                adjustCurrency(user, currencyId, value, adjustType).then(() => {
-                    return resolve(true);
-                });
-            }
-            return resolve(false);
-        });
+        let user = await userDatabase.getUserByUsername(username);
+
+        if (user !== false) {
+            await adjustCurrency(user, currencyId, value, adjustType);
+            return resolve(true);
+        }
+
+        return resolve(false);
     });
 }
 
