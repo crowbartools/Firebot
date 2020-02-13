@@ -196,10 +196,22 @@
 }
 
 .chat-username {
-    display:inline-block;
-    font-weight:bold;
-    font-size:1.11em;
+    display: flex;
+    font-weight: bold;
+    font-size: 1.11em;
     cursor: pointer;
+    align-items: center;
+}
+
+.chatProgressionRank {
+    margin-left: 6px;
+    padding: 2px 3px;
+    border-radius: 2px;
+    font-size: 10px;
+    line-height: 1;
+    padding-left: 14px;
+    color: #2F3136;
+    transform: translateY(1px);
 }
 
 .chat-user-avatar-wrapper {

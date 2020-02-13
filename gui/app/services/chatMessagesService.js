@@ -8,7 +8,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, connectionService, $timeout, $interval) {
+            soundService, connectionService, $timeout, $interval, $http) {
             let service = {};
 
             // Chat Message Queue
@@ -387,6 +387,15 @@
                     );
                 }
             };
+
+            service.levels = [];
+            $http.get("https://mixer.com/api/v1/ascension/levels")
+                .then(response => {
+                    if (response.status === 200 && response.data && response.data.levels) {
+                        service.levels = response.data.levels;
+                    }
+                }, () => {});
+
 
             // This submits a chat message to mixer.
             service.submitChat = function(sender, message) {

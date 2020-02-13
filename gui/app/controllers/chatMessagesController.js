@@ -139,6 +139,13 @@
                 return message.timestamp;
             };
 
+            $scope.getUserRankStyle = (rank) => {
+                let level = chatMessagesService.levels[rank + 1];
+                return level ? {
+                    background: `url(${level.assetsUrl.replace("{variant}", "cutout.png")}) 2px center / 10px no-repeat, ${level.color}`
+                } : { background: "gray" };
+            };
+
             // This tells us if the chat feed is on or not.
             $scope.getChatFeed = function() {
                 return chatMessagesService.getChatFeed();
