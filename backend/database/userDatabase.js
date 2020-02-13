@@ -13,6 +13,7 @@ const userAccess = require("../common/user-access");
 const channelAccess = require("../common/channel-access");
 const eventManager = require("../live-events/EventManager");
 const accountAccess = require("../common/account-access");
+const util = require("../utility");
 
 /**
  * @type Datastore
@@ -127,7 +128,7 @@ function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
     if (newHours !== previousHours) {
 
         mixplay.updateParticipantWithData(user._id, {
-            viewTime: `${newHours} hrs`
+            viewTime: `${util.commafy(newHours)} hrs`
         });
 
         eventManager.triggerEvent("firebot", "view-time-update", {
@@ -470,7 +471,7 @@ function incrementDbField(userId, fieldName) {
             } else {
                 if (updatedDoc != null) {
                     let updateObj = {};
-                    updateObj[fieldName] = updatedDoc[fieldName];
+                    updateObj[fieldName] = util.commafy(updatedDoc[fieldName]);
                     mixplay.updateParticipantWithData(userId, updateObj);
                 }
             }

@@ -8,6 +8,7 @@ const channelAccess = require("../common/channel-access");
 const customRolesManager = require("../roles/custom-roles-manager");
 const mixerRolesManager = require("../../shared/mixer-roles");
 const firebotRolesManager = require("../roles/firebot-roles-manager");
+const util = require("../utility");
 const mixplay = require("../interactive/mixplay");
 
 let currencyCache = {};
@@ -81,7 +82,7 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
                 logger.error("Currency: Error setting currency on user.", err);
             } else {
                 let updateObj = {};
-                updateObj[`currency:${currencyId}`] = newUserValue;
+                updateObj[`currency:${currencyId}`] = util.commafy(newUserValue);
                 mixplay.updateParticipantWithData(user._id, updateObj);
             }
             return resolve();

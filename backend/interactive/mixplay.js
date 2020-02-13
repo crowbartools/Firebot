@@ -8,6 +8,7 @@ const FIREBOT_MIXPLAY_SHARECODE = "moo33cku";
 const { settings } = require('../common/settings-access');
 const accountAccess = require('../common/account-access');
 const logger = require("../logwrapper");
+const util = require("../utility");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userDatabase = require("../database/userDatabase");
 
@@ -361,15 +362,15 @@ mixplayClient.state.on('participantJoin', async participant => {
 
         if (firebotUser != null) {
             let hours = firebotUser.minutesInChannel < 60 ? 0 : Math.floor(firebotUser.minutesInChannel / 60);
-            participant.viewTime = `${hours} hrs`;
+            participant.viewTime = `${util.commafy(hours)} hrs`;
 
-            participant.mixplayInteractions = firebotUser.mixplayInteractions;
-            participant.chatMessages = firebotUser.chatMessages;
+            participant.mixplayInteractions = util.commafy(firebotUser.mixplayInteractions);
+            participant.chatMessages = util.commafy(firebotUser.chatMessages);
 
             if (firebotUser.currency) {
                 let currencyIds = Object.keys(firebotUser.currency);
                 for (let currencyId of currencyIds) {
-                    participant[`currency:${currencyId}`] = firebotUser.currency[currencyId];
+                    participant[`currency:${currencyId}`] = util.commafy(firebotUser.currency[currencyId]);
                 }
             }
         } else {
