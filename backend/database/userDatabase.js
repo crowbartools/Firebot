@@ -205,6 +205,7 @@ function createNewUser(userId, username, channelRoles, isOnline = false) {
             mixplayInteractions: 0,
             chatMessages: 0,
             disableAutoStatAccrual: disableAutoStatAccrual,
+            disableActiveUserList: false,
             currency: {},
             ranks: {}
         };
