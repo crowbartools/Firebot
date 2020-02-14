@@ -25,18 +25,17 @@ function isUsernameActiveChatter(username) {
     return false;
 }
 
-function addOrUpdateActiveChatter(user) {
+async function addOrUpdateActiveChatter(user) {
     if (!activeUserListStatus) {
         return;
     }
 
     // Stop early if user shouldn't be in active chatter list.
-    userDatabase.getUserByUsername(user.user_name).then(userDB => {
-        if (userDB.disableActiveUserList) {
-            logger.debug(userDB.username + " is set to not join the active viewer list.");
-            return;
-        }
-    });
+    let userDB = await userDatabase.getUserByUsername(user.user_name);
+    if (userDB.disableActiveUserList) {
+        logger.debug(userDB.username + " is set to not join the active viewer list.");
+        return;
+    }
 
     // User should be okay, add them!
     let date = new Date;

@@ -59,7 +59,7 @@
 
                         <div ng-show="$ctrl.hasFirebotData" style="margin-top:20px; margin-bottom: 30px;">
                             <label class="control-fb control--checkbox"> Don't allow on active user lists <tooltip text="'Prevent the user from showing up in active user lists, such as the $randomActiveViewer variable."></tooltip>
-                                <input type="checkbox" ng-model="$ctrl.viewerDetails.firebotData.disableActiveUserList" ng-change="$ctrl.disableActiveUserList()">
+                                <input type="checkbox" ng-model="$ctrl.viewerDetails.firebotData.disableActiveUserList" ng-change="$ctrl.disableActiveUserListChange()">
                                 <div class="control__indicator"></div>
                             </label>
                         </div>
@@ -383,7 +383,7 @@
                     });
                 };
 
-                $ctrl.disableActiveUserList = () => {
+                $ctrl.disableActiveUserListChange = () => {
                     backendCommunicator.fireEvent("updateViewerDataField", {
                         userId: $ctrl.resolve.userId,
                         field: "disableActiveUserList",
