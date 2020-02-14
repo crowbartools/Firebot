@@ -140,7 +140,7 @@
             };
 
             $scope.getUserRankStyle = (rank) => {
-                let level = chatMessagesService.levels[rank + 1];
+                let level = chatMessagesService.levels[`${rank}`];
                 return level ? {
                     background: `url(${level.assetsUrl.replace("{variant}", "cutout.png")}) 2px center / 10px no-repeat, ${level.color}`
                 } : { background: "gray" };

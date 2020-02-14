@@ -388,11 +388,13 @@
                 }
             };
 
-            service.levels = [];
+            service.levels = {};
             $http.get("https://mixer.com/api/v1/ascension/levels")
                 .then(response => {
                     if (response.status === 200 && response.data && response.data.levels) {
-                        service.levels = response.data.levels;
+                        for (let level of response.data.levels) {
+                            service.levels[`${level.level}`] = level;
+                        }
                     }
                 }, () => {});
 
