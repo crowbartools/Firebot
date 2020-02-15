@@ -35,43 +35,51 @@ const cooldown = {
         </eos-container>
 
         <div ng-show="effect.mixplayProject">
-            <eos-container header="Controls To Cooldown" pad-top="true">
-                <div style="display:flex; justify-content: space-between; align-items: center;">
-                    <div class="searchbar-wrapper">
-                        <input type="text" class="form-control" placeholder="Search controls..." ng-model="controlSearch" style="padding-left: 27px;">
-                        <span class="searchbar-icon"><i class="far fa-search"></i></span>
+            <eos-container header="What do you want to cooldown?" pad-top="true">
+                <dropdown-select options="{button: 'Button(s)', group: 'Cooldown Group'}" tooltip-append-to-body="true" selected="effect.cooldownTarget"></dropdown-select>
+            </eos-container>
+        </div>
+
+        <div ng-show="effect.cooldownTarget != null">
+            <eos-container header="Cooldown Type" pad-top="true" ng-show="effect.mixplayProject && effect.cooldownTarget != null">
+                <dropdown-select options="cooldownTypes" tooltip-append-to-body="true" selected="effect.cooldownType"></dropdown-select>
+            </eos-container>
+        </div>
+
+        <div ng-show="effect.cooldownType != null && effect.cooldownType !== 'clearAll'">
+            <div ng-show="effect.cooldownTarget === 'button' && effect.cooldownType != null">
+                <eos-container header="Controls To Cooldown" pad-top="true">
+                    <div style="display:flex; justify-content: space-between; align-items: center;">
+                        <div class="searchbar-wrapper">
+                            <input type="text" class="form-control" placeholder="Search controls..." ng-model="controlSearch" style="padding-left: 27px;">
+                            <span class="searchbar-icon"><i class="far fa-search"></i></span>
+                        </div>
+                        <div class="cooldown-group-button-reset">
+                            <button class="btn btn-default" ng-click="unselectAllControls()">Uncheck all</button>
+                        </div>
                     </div>
-                    <div class="cooldown-group-button-reset">
-                        <button class="btn btn-default" ng-click="unselectAllControls()">Uncheck all</button>
+                    <div class="cooldown-group-buttons">
+                        <div ng-repeat="controlData in availableControlData | filter:controlSearch track by controlData.controlId" class="cooldown-list-btn-wrapper">
+                            <label class="control-fb control--checkbox" style="margin-bottom: 0">{{controlData.controlName}} <span class="muted" style="font-size:12px;">(Scene: <b>{{controlData.sceneName}}</b>)</span>
+                                <input type="checkbox" ng-click="toggleControlSelected(controlData.controlId)" ng-checked="controlIsSelected(controlData.controlId)"/>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="cooldown-group-buttons">
-                    <div ng-repeat="controlData in availableControlData | filter:controlSearch track by controlData.controlId" class="cooldown-list-btn-wrapper">
-                        <label class="control-fb control--checkbox" style="margin-bottom: 0">{{controlData.controlName}} <span class="muted" style="font-size:12px;">(Scene: <b>{{controlData.sceneName}}</b>)</span>
-                            <input type="checkbox" ng-click="toggleControlSelected(controlData.controlId)" ng-checked="controlIsSelected(controlData.controlId)"/>
+                </eos-container>
+            </div>
+
+            <eos-container header="Cooldown Duration" pad-top="true" ng-show="effect.cooldownType != null">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="cooldown-amount-effect-type">Seconds</span>
+                        <input ng-model="effect.duration" type="text" class="form-control" id="cooldown-amount-setting" aria-describedby="cooldown-amount-effect-type" replace-variables>
+                    </div>
+                    <div style="padding-top: 10px;">
+                        <label class="control-fb control--checkbox"> Never Override Current Cooldown <tooltip text="'If unchecked, current cooldowns will only be overridden if this new cooldown is longer.'"></tooltip>
+                            <input type="checkbox" ng-model="effect.neverOverride">
                             <div class="control__indicator"></div>
                         </label>
                     </div>
-                </div>
-            </eos-container>
-
-            <eos-container header="Cooldown Duration" pad-top="true">
-                <div class="input-group">
-                    <span class="input-group-addon" id="cooldown-amount-effect-type">Seconds</span>
-                    <input ng-model="effect.duration" type="text" class="form-control" id="cooldown-amount-setting" aria-describedby="cooldown-amount-effect-type" replace-variables>
-                </div>
-                <div style="padding-top: 10px;">
-                    <label class="control-fb control--checkbox"> Never Override Current Cooldown <tooltip text="'If unchecked, current cooldowns will only be overridden if this new cooldown is longer.'"></tooltip>
-                        <input type="checkbox" ng-model="effect.neverOverride">
-                        <div class="control__indicator"></div>
-                    </label>
-                </div>
-            </eos-container>
-
-            <eos-container>
-                <div class="effect-info alert alert-info">
-                    If you want to cool down a lot of buttons at the same time, try Cooldown Groups located in the Controls tab.
-                </div>
             </eos-container>
         </div>
     `,
@@ -117,6 +125,15 @@ const cooldown = {
                 $scope.effect.mixplayProject = null;
             }
         }
+
+        $scope.cooldownTypes = {
+            setIfLonger: "Set if new cooldown is longer",
+            setIfShorter: "Set if new cooldown is shorter",
+            addCooldown: "Add on to current cooldown",
+            subtractCooldown: "Subtract from current cooldown",
+            override: "Override current cooldown",
+            clearAll: "Clear all cooldowns"
+        };
 
         $scope.getTooltip = function() {
             return $scope.disableProjectDropdown ? "You can only create cooldowns for the current project when adding to a control." : "";
