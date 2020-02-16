@@ -120,6 +120,17 @@ const cooldown = {
             $scope.effect.groupIds = [];
         }
 
+        // Cooldown revamp bridge
+        if (!$scope.effect.cooldownTarget) {
+            $scope.effect.cooldownTarget = 'button';
+        }
+        if (!$scope.effect.cooldownType) {
+            $scope.effect.cooldownType = 'update';
+        }
+        if (!$scope.effect.updateType) {
+            $scope.effect.updateType = 'longer';
+        }
+
         $scope.cooldownTypes = {
             update: "Update",
             add: "Add",
