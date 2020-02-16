@@ -231,7 +231,7 @@ const cooldown = {
             errors.push("Please input a cooldown time.");
         }
 
-        if (effect.updateType == null) {
+        if (effect.cooldownType === "update" && effect.updateType == null) {
             errors.push("Please select an update type.");
         }
 

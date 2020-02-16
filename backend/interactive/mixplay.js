@@ -323,20 +323,26 @@ function moveAllViewersToScene(newSceneId) {
     }
 }
 
-function updateCooldownForControls(controlIds, cooldown) {
+async function updateCooldownForControls(controlIds, cooldown) {
+    let promises = [];
+
     for (let controlId of controlIds) {
         try {
             let control = mixplayClient.state.getControl(controlId);
             if (control) {
-                control.update({
-                    cooldown: cooldown
-                });
+                promises.push(
+                    control.update({
+                        cooldown: cooldown
+                    })
+                );
             }
         } catch (err) {
             // something weird happened
             logger.debug("Error when cooling down control", err);
         }
     }
+
+    return Promise.all(promises);
 }
 
 async function updateParticipantWithData(userId, data, participant = null) {

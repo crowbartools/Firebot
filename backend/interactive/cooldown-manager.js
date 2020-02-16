@@ -22,7 +22,12 @@ function cooldownIsExpired(controlId) {
 // Get Remaining Cooldown
 // Returns the amount of time remaining for a control id.
 function getRemainingCooldownTime(controlId) {
-    return cooldownCache.getTtl(controlId) || 0;
+    let currentTtl = cooldownCache.getTtl(controlId) || 0;
+    let diff = moment(currentTtl).diff(moment());
+    if (diff < 0) {
+        return 0;
+    }
+    return diff;
 }
 
 // Cooldown Checker
@@ -93,7 +98,7 @@ function getControlIdsForCooldownGroups(groupIds) {
     return controlIds;
 }
 
-function cooldownControls(controlIds, cooldownDuration, neverOverride) {
+async function cooldownControls(controlIds, cooldownDuration, neverOverride) {
     if (controlIds == null) return;
 
     const cooldown = parseInt(cooldownDuration);
@@ -108,11 +113,11 @@ function cooldownControls(controlIds, cooldownDuration, neverOverride) {
         }
     }
 
-    mixplay.updateCooldownForControls(controlsToCooldown, cooldown * 1000);
+    await mixplay.updateCooldownForControls(controlsToCooldown, cooldown * 1000);
 }
 
 // Cooldown handler
-function handleControlCooldown(control) {
+async function handleControlCooldown(control) {
     if (!control) return false;
 
     const cooldownGroupsContainingControl = getCooldownGroupsContainingControl(control);
@@ -134,21 +139,24 @@ function handleControlCooldown(control) {
         cooldownGroupsContainingControl.sort((a, b) => b.duration - a.duration);
         for (const cooldownGroup of cooldownGroupsContainingControl) {
             logger.info(`Triggering cooldown group "${cooldownGroup.name}"`);
-            cooldownControls(cooldownGroup.controlIds, cooldownGroup.duration);
+            await cooldownControls(cooldownGroup.controlIds, cooldownGroup.duration);
         }
     }
 
     if (control.mixplay.cooldown) {
         // cooldown single control with saved cooldown
-        cooldownControls([control.id], control.mixplay.cooldown);
+        await cooldownControls([control.id], control.mixplay.cooldown);
     }
 
     return false;
 }
 
-function advancedUpdate(updateData) {
-    console.log(updateData);
+async function advancedUpdate(updateData) {
     if (updateData == null) {
+        return;
+    }
+
+    if (updateData.duration == null) {
         return;
     }
 
@@ -161,7 +169,7 @@ function advancedUpdate(updateData) {
     }
 
     if (updateData.type === "always") {
-        mixplay.updateCooldownForControls(controlIds, duration * 1000);
+        await mixplay.updateCooldownForControls(controlIds, duration * 1000);
         for (let controlId of controlIds) {
             updateCooldownForControlId(controlId, duration);
         }
@@ -169,19 +177,21 @@ function advancedUpdate(updateData) {
 
     if (updateData.type === "longer") {
         // Default type of cooldown, use standard process.
-        cooldownControls(controlIds, duration);
+        await cooldownControls(controlIds, duration);
     }
 
     if (updateData.type === "shorter") {
         let shorterControlIds = [];
         for (let controlId of controlIds) {
-            let cooldownCheck = checkCooldown(controlId, duration);
-            if (!cooldownCheck) {
+            let remainingCooldown = getRemainingCooldownTime(controlId);
+            let newCooldown = moment().add(duration, "seconds").diff(moment());
+
+            if (newCooldown < remainingCooldown) {
                 shorterControlIds.push(controlId);
             }
         }
 
-        mixplay.updateCooldownForControls(controlIds, duration * 1000);
+        await mixplay.updateCooldownForControls(shorterControlIds, duration * 1000);
 
         for (let controlId of shorterControlIds) {
             updateCooldownForControlId(controlId, duration);
@@ -189,8 +199,8 @@ function advancedUpdate(updateData) {
     }
 }
 
-function mathUpdate(updateData) {
-    const duration = parseInt(updateData.duration);
+async function mathUpdate(updateData) {
+    const duration = parseInt(updateData.duration) * 1000;
     let controlIds = [];
     if (updateData.target === "group") {
         controlIds = getControlIdsForCooldownGroups(updateData.ids);
@@ -198,18 +208,24 @@ function mathUpdate(updateData) {
         controlIds = updateData.ids;
     }
 
-    if (updateData.type === "add") {
-        for (let controlId of controlIds) {
-            let remainingCooldown = getRemainingCooldownTime(controlId);
-            // TODO: What does TTL pass back to us? milliseconds? a timestamp?
-        }
-    }
+    for (let controlId of controlIds) {
+        let remainingCooldown = getRemainingCooldownTime(controlId);
+        let newCooldown;
 
-    if (updateData.type === "subtract") {
-        // TODO: Add this stuff
+        if (updateData.type === "add") {
+            newCooldown = remainingCooldown + duration;
+        } else {
+            newCooldown = remainingCooldown - duration;
+        }
+
+        await mixplay.updateCooldownForControls(controlIds, newCooldown);
+        for (let controlId of controlIds) {
+            updateCooldownForControlId(controlId, newCooldown / 1000);
+        }
     }
 }
 
 exports.getRemainingCooldownTime = getRemainingCooldownTime;
 exports.handleControlCooldown = handleControlCooldown;
 exports.advancedUpdate = advancedUpdate;
+exports.mathUpdate = mathUpdate;
