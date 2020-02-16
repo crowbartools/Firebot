@@ -245,6 +245,17 @@ const cooldown = {
             const effect = event.effect;
             let cooldownIds = [];
 
+            // Cooldown revamp bridge
+            if (effect.cooldownTarget == null) {
+                effect.cooldownTarget = 'button';
+            }
+            if (effect.cooldownType == null) {
+                effect.cooldownType = 'update';
+            }
+            if (effect.updateType == null) {
+                effect.updateType = 'longer';
+            }
+
             if (effect.cooldownTarget === 'group') {
                 cooldownIds = effect.groupIds;
             } else {
@@ -252,7 +263,6 @@ const cooldown = {
             }
 
             if (effect.cooldownType === 'update') {
-                // Update cooldowns
                 cooldownManager.advancedUpdate({
                     target: effect.cooldownTarget,
                     ids: cooldownIds,
@@ -263,7 +273,6 @@ const cooldown = {
             }
 
             if (effect.cooldownType === 'add' || effect.cooldownType === 'subtract') {
-                // Math cooldowns
                 cooldownManager.mathUpdate({
                     target: effect.cooldownTarget,
                     ids: cooldownIds,
