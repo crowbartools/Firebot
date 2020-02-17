@@ -67,7 +67,7 @@
             color:$usercolor;
         }
     }
-    &[role="Pro"]{
+    &[role="Pro"], &[role="Partner"], &[role="VerifiedPartner"]{
         color: $procolor;
         .chatUserAvatar img {
             border: 1px solid $procolor;
