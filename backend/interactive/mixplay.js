@@ -388,18 +388,9 @@ mixplayClient.state.on('participantJoin', async participant => {
             await updateParticipantWithUserData(firebotUser, participant);
         }
 
-        activeMixplayUsers.addOrUpdateActiveUser(participant.username);
-
         eventManager.triggerEvent("mixer", "user-joined-mixplay", {
             username: participant.username
         });
-    }
-});
-
-mixplayClient.state.on('participantLeave', async participant => {
-    logger.debug(`${participant.username} (${participant.sessionID}) Left`);
-    if (!participant.anonymous) {
-        activeMixplayUsers.removeLeavingUser(participant.username);
     }
 });
 
