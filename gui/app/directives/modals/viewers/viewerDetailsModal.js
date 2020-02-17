@@ -57,6 +57,13 @@
                             </label>
                         </div>
 
+                        <div ng-show="$ctrl.hasFirebotData" style="margin-top:20px; margin-bottom: 30px;">
+                            <label class="control-fb control--checkbox"> Don't allow on active user lists <tooltip text="'Prevent the user from showing up in active user lists, such as the $randomActiveViewer variable."></tooltip>
+                                <input type="checkbox" ng-model="$ctrl.viewerDetails.firebotData.disableActiveUserList" ng-change="$ctrl.disableActiveUserListChange()">
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+
                         <div ng-hide="$ctrl.hasFirebotData" style="padding: left: 15px;">
                             <p class="muted">There is no Firebot data saved for this Mixer user.</p>
                             <button type="button" class="btn btn-default" ng-click="$ctrl.saveUser()">Save User in Firebot</button>
@@ -373,6 +380,14 @@
                         userId: $ctrl.resolve.userId,
                         field: "disableAutoStatAccrual",
                         value: $ctrl.viewerDetails.firebotData.disableAutoStatAccrual
+                    });
+                };
+
+                $ctrl.disableActiveUserListChange = () => {
+                    backendCommunicator.fireEvent("updateViewerDataField", {
+                        userId: $ctrl.resolve.userId,
+                        field: "disableActiveUserList",
+                        value: $ctrl.viewerDetails.firebotData.disableActiveUserList
                     });
                 };
 
