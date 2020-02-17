@@ -31,7 +31,7 @@ async function addOrUpdateActiveUser(user) {
     }
 
     // Stop early if user shouldn't be in active chatter list.
-    let userDB = await userDatabase.getUserByUsername(user.user_name);
+    let userDB = await userDatabase.getUserByUsername(user.username);
     if (userDB.disableActiveUserList) {
         logger.debug(userDB.username + " is set to not join the active mixplay user list.");
         return;
@@ -45,16 +45,16 @@ async function addOrUpdateActiveUser(user) {
 
     // If user exists, update their time and stop.
     if (existingUserIndex !== -1) {
-        logger.debug(user.user_name + " is still active in mixplay. Updating their time.");
+        logger.debug(user.username + " is still active in mixplay. Updating their time.");
         activeMixplayUsers[existingUserIndex].time = currentTime;
         return;
     }
 
     // Else, we're going to push the new user to the active array.
-    logger.debug(user.user_name + " has become active on mixplay. Adding them to active mixplay list.");
+    logger.debug(user.username + " has become active on mixplay. Adding them to active mixplay list.");
     user = {
-        userId: user.user_id,
-        username: user.user_name,
+        userId: user.userID,
+        username: user.username,
         time: currentTime
     };
     activeMixplayUsers.push(user);

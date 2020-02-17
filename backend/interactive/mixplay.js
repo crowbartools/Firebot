@@ -119,7 +119,7 @@ function addControlHandlers(controls) {
 
             controlManager.handleInput(event, sceneId, inputEvent, participant);
 
-            activeMixplayUsers.addOrUpdateActiveUser(participant.username);
+            activeMixplayUsers.addOrUpdateActiveUser(participant);
         };
 
         //remove previous listener just in case one exists
@@ -394,6 +394,23 @@ mixplayClient.state.on('participantJoin', async participant => {
     }
 });
 
+async function getCurrentUsers() {
+    let participantMap = mixplayClient.state.getParticipants();
+    let participants = Array.from(participantMap);
+    let participantNames = [];
+
+    for (let user in participants) {
+        if (user != null) {
+            user = participants[user][1];
+            if (user.anonymous !== true) {
+                participantNames.push(user);
+            }
+        }
+    }
+
+    return participantNames;
+}
+
 // checks if this sceneId is set as default and returns "default" if so,
 // otherwise it returns the original scene id
 function translateSceneIdForMixplay(sceneId) {
@@ -502,4 +519,5 @@ exports.moveAllViewersToScene = moveAllViewersToScene;
 exports.updateCooldownForControls = updateCooldownForControls;
 exports.updateParticipantWithData = updateParticipantWithData;
 exports.updateParticipantWithUserData = updateParticipantWithUserData;
+exports.getCurrentUsers = getCurrentUsers;
 
