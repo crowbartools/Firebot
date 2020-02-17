@@ -2,7 +2,7 @@
 
 const logger = require("../logwrapper");
 const firebotRoles = require("../../shared/firebot-roles");
-const activeChatters = require("../chat/active-chatters");
+const activeChatters = require("./role-managers/active-chatters");
 
 function userIsInFirebotRole(role, username) {
     switch (role.id) {

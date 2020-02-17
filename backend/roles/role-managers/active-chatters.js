@@ -1,10 +1,10 @@
 "use strict";
 
 const { ipcMain } = require("electron");
-const settings = require("../common/settings-access").settings;
-const logger = require("../logwrapper");
-const userDatabase = require("../database/userDatabase");
-const Chat = require("../common/mixer-chat");
+const settings = require("../../common/settings-access").settings;
+const logger = require("../../logwrapper");
+const userDatabase = require("../../database/userDatabase");
+const Chat = require("../../common/mixer-chat");
 
 // Active user toggle
 let activeUserListStatus = settings.getActiveChatUserList() === false ? false : true;

@@ -1,7 +1,7 @@
 "use strict";
 const util = require("../../utility");
 const logger = require("../../logwrapper");
-const activeViewerHandler = require('../../chat/active-chatters');
+const activeViewerHandler = require('../../roles/role-managers/active-chatters');
 
 const { OutputDataType } = require("../../../shared/variable-contants");
 

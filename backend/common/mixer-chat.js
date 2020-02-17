@@ -20,7 +20,7 @@ const apiAccess = require("../api-access");
 let linkHeaderParser = require('parse-link-header');
 const timerManager = require("../timers/timer-manager");
 const emotesManager = require("./emotes-manager");
-const activeChatter = require('../chat/active-chatters');
+const activeChatter = require('../roles/role-managers/active-chatters');
 
 const chatModerationManager = require("../chat/moderation/chat-moderation-manager");
 

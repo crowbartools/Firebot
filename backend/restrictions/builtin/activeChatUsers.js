@@ -25,7 +25,7 @@ const model = {
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            let activeChatter = require('../../../backend/chat/active-chatters');
+            let activeChatter = require('../../../backend/roles/role-managers/active-chatters');
             let username = triggerData.metadata.username;
 
             if (activeChatter.isUsernameActiveChatter(username)) {
