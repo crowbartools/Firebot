@@ -119,7 +119,9 @@ function addControlHandlers(controls) {
 
             controlManager.handleInput(event, sceneId, inputEvent, participant);
 
-            activeMixplayUsers.addOrUpdateActiveUser(participant);
+            if (participant.anonymous !== true) {
+                activeMixplayUsers.addOrUpdateActiveUser(participant);
+            }
         };
 
         //remove previous listener just in case one exists
