@@ -11,6 +11,7 @@ const logger = require("../logwrapper");
 const util = require("../utility");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userDatabase = require("../database/userDatabase");
+const activeMixplayUsers = require('../roles/role-managers/active-mixplay-users');
 
 const mixplayManager = require('./mixplay-project-manager');
 const eventManager = require("../live-events/EventManager");
@@ -117,6 +118,8 @@ function addControlHandlers(controls) {
             logger.debug(`Control event "${event}" for control "${inputData.controlID}" in scene "${sceneId}"`);
 
             controlManager.handleInput(event, sceneId, inputEvent, participant);
+
+            activeMixplayUsers.addOrUpdateActiveUser(participant.username);
         };
 
         //remove previous listener just in case one exists
@@ -385,9 +388,18 @@ mixplayClient.state.on('participantJoin', async participant => {
             await updateParticipantWithUserData(firebotUser, participant);
         }
 
+        activeMixplayUsers.addOrUpdateActiveUser(participant.username);
+
         eventManager.triggerEvent("mixer", "user-joined-mixplay", {
             username: participant.username
         });
+    }
+});
+
+mixplayClient.state.on('participantLeave', async participant => {
+    logger.debug(`${participant.username} (${participant.sessionID}) Left`);
+    if (!participant.anonymous) {
+        activeMixplayUsers.removeLeavingUser(participant.username);
     }
 });
 

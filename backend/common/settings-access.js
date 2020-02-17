@@ -184,6 +184,16 @@ settings.getActiveChatUserListTimeout = function() {
     return inactiveTimer != null ? parseInt(inactiveTimer) : 10;
 };
 
+settings.getActiveMixplayUserList = function() {
+    let status = getDataFromFile("/settings/activeMixplayUsers/status");
+    return status != null ? status : "On";
+};
+
+settings.getActiveMixplayUserListTimeout = function() {
+    let inactiveTimer = getDataFromFile("/settings/activeMixplayUsers/inactiveTimer");
+    return inactiveTimer != null ? parseInt(inactiveTimer) : 10;
+};
+
 settings.sparkExemptionEnabled = function() {
     let enabled = getDataFromFile('/settings/sparkExemptionEnabled');
     return enabled != null ? enabled : false;

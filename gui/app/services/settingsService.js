@@ -320,6 +320,24 @@
                 pushDataToFile("/settings/activeChatUsers/inactiveTimer", inactiveTimer);
             };
 
+            service.getActiveMixplayUserList = function() {
+                let status = getDataFromFile("/settings/activeMixplayUsers/status");
+                return status != null ? status : "On";
+            };
+
+            service.setActiveMixplayUsers = function(status) {
+                pushDataToFile("/settings/activeMixplayUsers/status", status);
+            };
+
+            service.getActiveMixplayUserListTimeout = function() {
+                let inactiveTimer = getDataFromFile("/settings/activeMixplayUsers/inactiveTimer");
+                return inactiveTimer != null ? inactiveTimer : "10";
+            };
+
+            service.setActiveMixplayUserListTimeout = function(inactiveTimer) {
+                pushDataToFile("/settings/activeMixplayUsers/inactiveTimer", inactiveTimer);
+            };
+
             /*
             * 0 = off,
             * 1 = bugfix,
