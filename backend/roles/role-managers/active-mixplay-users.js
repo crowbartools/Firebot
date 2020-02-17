@@ -7,10 +7,10 @@ const userDatabase = require("../../database/userDatabase");
 const Mixplay = require("../../interactive/mixplay");
 
 // Active user toggle
-let activeUserListStatus = settings.getActiveMixplayUserList() === false ? false : true;
+let activeUserListStatus = settings.getActiveMixplayUserListEnabled();
 
 // User Timeout Settings
-let userInactiveTimeSetting = settings.getActiveMixplayUserListTimeout() != null ? settings.getActiveMixplayUserListTimeout() : 10;
+let userInactiveTimeSetting = settings.getActiveMixplayUserListTimeout();
 let inactiveTimer = userInactiveTimeSetting * 60000;
 
 // Timer and chatter list.
@@ -18,11 +18,7 @@ let cycleActiveTimer = [];
 let activeMixplayUsers = [];
 
 function isUsernameActiveUser(username) {
-    let existingUserIndex = activeMixplayUsers.findIndex((obj => obj.username === username));
-    if (existingUserIndex !== -1) {
-        return true;
-    }
-    return false;
+    return activeMixplayUsers.some(u => u.username === username);
 }
 
 async function addOrUpdateActiveUser(user) {
@@ -41,7 +37,7 @@ async function addOrUpdateActiveUser(user) {
     let date = new Date;
     let currentTime = date.getTime();
 
-    let existingUserIndex = activeMixplayUsers.findIndex((obj => obj.userId === user.user_id));
+    let existingUserIndex = activeMixplayUsers.findIndex(obj => obj.userId === user.userID);
 
     // If user exists, update their time and stop.
     if (existingUserIndex !== -1) {
@@ -74,18 +70,8 @@ function removeLeavingUser(username) {
 
 function clearInactiveUsers() {
     logger.debug("Clearing inactive people from active mixplay users list.");
-    let date = new Date;
-    let currentTime = date.getTime();
-    let expiredTime = currentTime - inactiveTimer;
-    for (let userIndex in activeMixplayUsers) {
-        if (activeMixplayUsers[userIndex] != null) {
-            let user = activeMixplayUsers[userIndex];
-            if (user.time <= expiredTime) {
-                logger.debug(user.username + " has gone inactive on mixplay. Removing them from active mixplay list.");
-                activeMixplayUsers.splice(userIndex, 1);
-            }
-        }
-    }
+    let expiredTime = new Date().getTime() - inactiveTimer;
+    activeMixplayUsers = activeMixplayUsers.filter(u => u != null && u.time >= expiredTime);
 }
 
 function getActiveMixplayUsers() {
@@ -117,7 +103,7 @@ ipcMain.on("setActiveMixplayUsers", function(event, value) {
         logger.debug('Stopping active mixplay user timeout cycle.');
         clearInterval(cycleActiveTimer);
     }
-    activeUserListStatus = settings.getActiveMixplayUserList() === false ? false : true;
+    activeUserListStatus = settings.getActiveMixplayUserListEnabled() ? true : false;
 });
 
 ipcMain.on("setActiveMixplayUserTimeout", function(event, value) {

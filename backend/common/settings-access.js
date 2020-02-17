@@ -174,9 +174,9 @@ settings.setMaxBackupCount = function(maxBackupCount) {
     pushDataToFile("/settings/maxBackupCount", maxBackupCount);
 };
 
-settings.getActiveChatUserList = function() {
-    let status = getDataFromFile("/settings/activeChatUsers/status");
-    return status != null ? status : "On";
+settings.getActiveChatUserListEnabled = function() {
+    let enabled = getDataFromFile("/settings/activeChatUsers/status");
+    return enabled != null ? enabled : true;
 };
 
 settings.getActiveChatUserListTimeout = function() {
@@ -184,9 +184,9 @@ settings.getActiveChatUserListTimeout = function() {
     return inactiveTimer != null ? parseInt(inactiveTimer) : 10;
 };
 
-settings.getActiveMixplayUserList = function() {
-    let status = getDataFromFile("/settings/activeMixplayUsers/status");
-    return status != null ? status : "On";
+settings.getActiveMixplayUserListEnabled = function() {
+    let enabled = getDataFromFile("/settings/activeMixplayUsers/status");
+    return enabled !== undefined ? enabled : true;
 };
 
 settings.getActiveMixplayUserListTimeout = function() {

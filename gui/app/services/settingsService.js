@@ -302,9 +302,9 @@
                 pushDataToFile("/settings/sounds", enabled);
             };
 
-            service.getActiveChatUserList = function() {
+            service.getActiveChatUserListEnabled = function() {
                 let status = getDataFromFile("/settings/activeChatUsers/status");
-                return status != null ? status : "On";
+                return status != null ? status : true;
             };
 
             service.setActiveChatUsers = function(status) {
@@ -320,9 +320,9 @@
                 pushDataToFile("/settings/activeChatUsers/inactiveTimer", inactiveTimer);
             };
 
-            service.getActiveMixplayUserList = function() {
+            service.getActiveMixplayUserListEnabled = function() {
                 let status = getDataFromFile("/settings/activeMixplayUsers/status");
-                return status != null ? status : "On";
+                return status != null ? status : true;
             };
 
             service.setActiveMixplayUsers = function(status) {

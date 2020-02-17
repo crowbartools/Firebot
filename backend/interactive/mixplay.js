@@ -118,10 +118,6 @@ function addControlHandlers(controls) {
             logger.debug(`Control event "${event}" for control "${inputData.controlID}" in scene "${sceneId}"`);
 
             controlManager.handleInput(event, sceneId, inputEvent, participant);
-
-            if (participant.anonymous !== true) {
-                activeMixplayUsers.addOrUpdateActiveUser(participant);
-            }
         };
 
         //remove previous listener just in case one exists
@@ -243,6 +239,8 @@ async function connectToMixplay() {
         eventManager.triggerEvent("firebot", "mixplay-connected", {
             username: "Firebot"
         });
+
+        activeMixplayUsers.cycleActiveMixplayUsers();
 
     } catch (error) {
         logger.warn("Failed to connect to MixPlay", error);
@@ -396,21 +394,12 @@ mixplayClient.state.on('participantJoin', async participant => {
     }
 });
 
-async function getCurrentUsers() {
-    let participantMap = mixplayClient.state.getParticipants();
-    let participants = Array.from(participantMap);
-    let participantNames = [];
+function getConnectedUsernames() {
+    let participants = [...mixplayClient.state.getParticipants().values()];
 
-    for (let user in participants) {
-        if (user != null) {
-            user = participants[user][1];
-            if (user.anonymous !== true) {
-                participantNames.push(user);
-            }
-        }
-    }
-
-    return participantNames;
+    return participants
+        .filter(p => p != null && !p.anonymous)
+        .map(p => p.username);
 }
 
 // checks if this sceneId is set as default and returns "default" if so,
@@ -521,5 +510,5 @@ exports.moveAllViewersToScene = moveAllViewersToScene;
 exports.updateCooldownForControls = updateCooldownForControls;
 exports.updateParticipantWithData = updateParticipantWithData;
 exports.updateParticipantWithUserData = updateParticipantWithUserData;
-exports.getCurrentUsers = getCurrentUsers;
+exports.getConnectedUsernames = getConnectedUsernames;
 

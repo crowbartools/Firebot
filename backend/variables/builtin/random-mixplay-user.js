@@ -14,11 +14,11 @@ const model = {
     evaluator: async () => {
         logger.debug("Getting random mixplay user...");
 
-        let currentUsers = await mixplay.getCurrentUsers();
+        let currentUsers = mixplay.getConnectedUsernames();
 
         if (currentUsers && currentUsers.length > 0) {
             let randIndex = util.getRandomInt(0, currentUsers.length - 1);
-            return currentUsers[randIndex].username;
+            return currentUsers[randIndex];
         }
 
         return "[Unable to get random mixplay user]";

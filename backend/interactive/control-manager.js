@@ -1,6 +1,7 @@
 "use strict";
 const mixplayProjectManager = require("./mixplay-project-manager");
 const mixplay = require("./mixplay");
+const activeMixplayUsers = require('../roles/role-managers/active-mixplay-users');
 
 const effectManager = require("../effects/effectManager");
 const effectRunner = require("../common/effect-runner");
@@ -119,12 +120,14 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
                 }
             };
 
-            // Increment Total Interactions for User in UserDB.
-            if (inputType === "mousedown") {
+            if (inputType === "mousedown" && !participant.anonymous) {
+                // Increment Total Interactions for User in UserDB.
                 userDatabase.incrementDbField(
                     participant.userID,
                     "mixplayInteractions"
                 );
+
+                activeMixplayUsers.addOrUpdateActiveUser(participant);
             }
 
             effectRunner.processEffects(processEffectsRequest).catch(reason => {
