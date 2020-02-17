@@ -97,7 +97,7 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
     // Handle any cooldowns
     if (control.kind === "button" || control.kind === "textbox") {
         if (inputType !== "mouseup" && inputType !== "keyup") {
-            const alreadyOnCooldown = cooldownManager.handleControlCooldown(control);
+            const alreadyOnCooldown = await cooldownManager.handleControlCooldown(control);
             if (alreadyOnCooldown) {
                 logger.info("Control " + control.id + " is still on cooldown. Ignoring press.");
                 return;
