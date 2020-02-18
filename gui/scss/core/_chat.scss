@@ -278,7 +278,7 @@
             border-color: $usercolor;
         }
     }
-    &[role="Pro"]{
+    &[role="Pro"], &[role="Partner"], &[role="VerifiedPartner"]{
         .user-name{
             color: $procolor;
         }
@@ -447,7 +447,7 @@
         &[role="User"]{
             color: $usercolor;
         }
-        &[role="Pro"]{
+        &[role="Pro"], &[role="Partner"], &[role="VerifiedPartner"]{
             color: $procolor;
         }
         &[role="Mod"], &[role="ChannelEditor"]{
