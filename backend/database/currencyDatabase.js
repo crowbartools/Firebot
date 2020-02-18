@@ -68,13 +68,17 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
 
         // If new value would put them over the currency limit set by the user...
         // Just set them at currency limit. Otherwise add currency to what they have now.
+
+        let valueToSet = newUserValue;
         if (newUserValue > currencyLimit && currencyLimit !== 0) {
-            updateDoc[`currency.${currencyId}`] = currencyLimit;
+            valueToSet = currencyLimit;
         } else if (newUserValue < 0) {
-            updateDoc[`currency.${currencyId}`] = 0;
+            valueToSet = 0;
         } else {
-            updateDoc[`currency.${currencyId}`] = newUserValue;
+            valueToSet = newUserValue;
         }
+
+        updateDoc[`currency.${currencyId}`] = valueToSet;
 
         // Update the DB with our new currency value.
         db.update({ _id: user._id }, { $set: updateDoc }, {}, function(err) {
@@ -82,7 +86,7 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
                 logger.error("Currency: Error setting currency on user.", err);
             } else {
                 let updateObj = {};
-                updateObj[`currency:${currencyId}`] = util.commafy(newUserValue);
+                updateObj[`currency:${currencyId}`] = util.commafy(valueToSet);
                 mixplay.updateParticipantWithData(user._id, updateObj);
             }
             return resolve();
