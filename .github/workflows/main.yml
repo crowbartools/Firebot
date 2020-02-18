@@ -3,6 +3,7 @@ name: "firebot v5 lint"
 on:
   push:
     branches:
+      - master
       - v5
 
 jobs:
