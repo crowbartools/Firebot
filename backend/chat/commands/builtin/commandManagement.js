@@ -217,7 +217,7 @@ const commandManagement = {
                     return resolve();
                 }
 
-                let chatEffectsCount = command.effects ? command.effects.list.filter(e => e.id === "firebot:chat").length : 0;
+                let chatEffectsCount = command.effects ? command.effects.list.filter(e => e.type === "firebot:chat").length : 0;
 
                 if (chatEffectsCount > 1) {
                     Chat.smartSend(
@@ -227,7 +227,7 @@ const commandManagement = {
                     return resolve();
                 }
                 if (chatEffectsCount === 1) {
-                    let chatEffect = command.effects.list.find(e => e.id === "firebot:chat");
+                    let chatEffect = command.effects.list.find(e => e.type === "firebot:chat");
                     chatEffect.message = remainingData;
                 } else {
                     let chatEffect = {
