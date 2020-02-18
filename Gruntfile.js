@@ -15,7 +15,7 @@ module.exports = function(grunt) {
                 exe: "Firebot V5.exe",
                 title:" Firebot V5",
                 setupExe: "FirebotV5Setup.exe",
-                setupMsi: "FirebotV5Setup.msi"
+                noMsi: true
             }
         },
 		'jsdoc' : {
