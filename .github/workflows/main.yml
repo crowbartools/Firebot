@@ -18,10 +18,7 @@ jobs:
       # install nodejs and npm
       - uses: "actions/setup-node@v1"
         with:
-          node-version: "8.11.3"
-
-      # install project dependencies
-      - run: "npm install"
+          node-version: "12.14.1"
 
       # run linter
       - run: "npm run lint"
