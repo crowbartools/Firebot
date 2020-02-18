@@ -102,11 +102,11 @@ ipcMain.on("setActiveChatUserTimeout", function(event, value) {
     logger.debug('Changing active chat user timeout to: ' + value);
 
     // Make sure we have a valid value, then set it.
-    value = parseInt(inactiveTimer);
     if (isNaN(value)) {
-        return 10;
+        inactiveTimer = 10;
+    } else {
+        inactiveTimer = parseInt(value);
     }
-    inactiveTimer = value;
 
     // Restart our timer with the new value.
     cycleActiveChatters();
