@@ -184,6 +184,20 @@
                 ipcRenderer.send('setActiveChatUserTimeout', value);
             };
 
+            $scope.setActiveMixplayUsers = (value) => {
+                value = value === true;
+                settingsService.setActiveMixplayUsers(value);
+                ipcRenderer.send("setActiveMixplayUsers", value);
+            };
+
+            $scope.setActiveMixplayUserTimeout = (value) => {
+                if (value == null) {
+                    value = "10";
+                }
+                settingsService.setActiveMixplayUserListTimeout(value);
+                ipcRenderer.send('setActiveMixplayUserTimeout', value);
+            };
+
             $scope.audioOutputDevices = [{
                 label: "System Default",
                 deviceId: "default"

@@ -87,24 +87,53 @@
         </uib-tab>
 
         <!-- Interactive Settings -->
-        <!--<uib-tab index="1" heading="MixPlay">
+        <uib-tab index="1" heading="MixPlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Spark Exemption</div>
-                <div class="setting-description">Enable or disable the spark exemption feature, which lets you specify users or groups who dont get charged sparks.</div>
-                <div class="dropdown options-customscript-dropdown"style="display: inline-block">
+              <div class="setting-heading">Active Mixplay Users List</div>
+                <div class="setting-description">
+                  Keep track of active users in the backend for use in variables and other things. Deactivating may slightly improve performance on larger channels.
+                </div>
+                <div class="dropdown options-activeMixplayUserList-dropdown"style="display: inline-block">
                     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      <span class="dropdown-text">{{settings.sparkExemptionEnabled() ? 'On' : 'Off'}}</span>
+                      <span class="dropdown-text">{{settings.getActiveMixplayUserListEnabled() ? 'On' : 'Off'}}</span>
                       <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="options-customscript">
-                      <li><a href ng-click="setSparkExemption(true)">On</a></li>
-                      <li><a href ng-click="setSparkExemption(false)">Off</a></li>
+                    <ul class="dropdown-menu" aria-labelledby="options-activeMixplayUserList">
+                      <li><a href ng-click="setActiveMixplayUsers(true)">On</a></li>
+                      <li><a href ng-click="setActiveMixplayUsers(false)">Off</a></li>
                     </ul>
                   </div>
             </div>
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Inactive User Time</div>
+                <div class="setting-description">
+                  The amount of time it takes for an active user to be marked as inactive after their last mixplay interaction. Doesn't have any affect unless active mixplay user list is on.
+                </div>
+                <div class="dropdown options-activeMixplayUserTimeout-dropdown"style="display: inline-block">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <span class="dropdown-text">{{settings.getActiveMixplayUserListTimeout()}}</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="options-activeMixplayUserTimeout">
+                      <li><a href ng-click="setActiveMixplayUserTimeout('5')">5</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('10')">10</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('15')">15</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('20')">20</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('25')">25</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('30')">30</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('35')">35</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('40')">40</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('45')">45</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('50')">50</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('55')">55</a></li>
+                      <li><a href ng-click="setActiveMixplayUserTimeout('60')">60</a></li>
+                    </ul>
+                    <span> minutes</span>
+                  </div>
+            </div>
           </div>
-        </uib-tab>-->
+        </uib-tab>
 
         <!-- Chat Settings -->
         <uib-tab index="2" heading="Chat">
@@ -116,7 +145,7 @@
                 </div>
                 <div class="dropdown options-activeChatUserList-dropdown"style="display: inline-block">
                     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      <span class="dropdown-text">{{settings.getActiveChatUserList() ? 'On' : 'Off'}}</span>
+                      <span class="dropdown-text">{{settings.getActiveChatUserListEnabled() ? 'On' : 'Off'}}</span>
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="options-activeChatUserList">

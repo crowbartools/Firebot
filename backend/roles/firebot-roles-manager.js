@@ -2,12 +2,16 @@
 
 const logger = require("../logwrapper");
 const firebotRoles = require("../../shared/firebot-roles");
-const activeChatters = require("../chat/active-chatters");
+
+const ActiveChatters = require("./role-managers/active-chatters");
+const ActiveMixplayUsers = require('./role-managers/active-mixplay-users');
 
 function userIsInFirebotRole(role, username) {
     switch (role.id) {
     case "ActiveChatters":
-        return activeChatters.isUsernameActiveChatter(username);
+        return ActiveChatters.isUsernameActiveChatter(username);
+    case "ActiveMixplayUsers":
+        return ActiveMixplayUsers.isUsernameActiveUser(username);
     default:
         return false;
     }

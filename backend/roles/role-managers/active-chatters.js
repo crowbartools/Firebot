@@ -1,16 +1,16 @@
 "use strict";
 
 const { ipcMain } = require("electron");
-const settings = require("../common/settings-access").settings;
-const logger = require("../logwrapper");
-const userDatabase = require("../database/userDatabase");
-const Chat = require("../common/mixer-chat");
+const settings = require("../../common/settings-access").settings;
+const logger = require("../../logwrapper");
+const userDatabase = require("../../database/userDatabase");
+const Chat = require("../../common/mixer-chat");
 
 // Active user toggle
-let activeUserListStatus = settings.getActiveChatUserList() === false ? false : true;
+let activeUserListStatus = settings.getActiveChatUserListEnabled();
 
 // User Timeout Settings
-let userInactiveTimeSetting = settings.getActiveChatUserListTimeout() != null ? settings.getActiveChatUserListTimeout() : 10;
+let userInactiveTimeSetting = settings.getActiveChatUserListTimeout();
 let inactiveTimer = userInactiveTimeSetting * 60000;
 
 // Timer and chatter list.
@@ -41,7 +41,7 @@ async function addOrUpdateActiveChatter(user) {
     let date = new Date;
     let currentTime = date.getTime();
 
-    let existingUserIndex = activeChatters.findIndex((obj => obj.userId === user.user_id));
+    let existingUserIndex = activeChatters.findIndex(obj => obj.userId === user.user_id);
 
     // If user exists, update their time and stop.
     if (existingUserIndex !== -1) {
@@ -62,18 +62,8 @@ async function addOrUpdateActiveChatter(user) {
 
 function clearInactiveChatters() {
     logger.debug("Clearing inactive people from active chatters list.");
-    let date = new Date;
-    let currentTime = date.getTime();
-    let expiredTime = currentTime - inactiveTimer;
-    for (let userIndex in activeChatters) {
-        if (activeChatters[userIndex] != null) {
-            let user = activeChatters[userIndex];
-            if (user.time <= expiredTime) {
-                logger.debug(user.username + " has gone inactive in chat. Removing them from active chatter list.");
-                activeChatters.splice(userIndex, 1);
-            }
-        }
-    }
+    let expiredTime = new Date().getTime() - inactiveTimer;
+    activeChatters = activeChatters.filter(u => u != null && u.time >= expiredTime);
 }
 
 function getActiveChatters() {
@@ -105,18 +95,18 @@ ipcMain.on("setActiveChatUsers", function(event, value) {
         logger.debug('Stopping active user timeout cycle.');
         clearInterval(cycleActiveTimer);
     }
-    activeUserListStatus = settings.getActiveChatUserList() === false ? false : true;
+    activeUserListStatus = settings.getActiveChatUserListEnabled() ? true : false;
 });
 
 ipcMain.on("setActiveChatUserTimeout", function(event, value) {
     logger.debug('Changing active chat user timeout to: ' + value);
 
     // Make sure we have a valid value, then set it.
-    value = parseInt(inactiveTimer);
     if (isNaN(value)) {
-        return 10;
+        inactiveTimer = 10;
+    } else {
+        inactiveTimer = parseInt(value);
     }
-    inactiveTimer = value;
 
     // Restart our timer with the new value.
     cycleActiveChatters();

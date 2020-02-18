@@ -1,20 +1,20 @@
 "use strict";
 const util = require("../../utility");
 const logger = require("../../logwrapper");
-const activeViewerHandler = require('../../roles/role-managers/active-chatters');
+const activeViewerHandler = require('../../roles/role-managers/active-mixplay-users');
 
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
-        handle: "randomActiveViewer",
-        description: "Get a random active viewer in chat.",
+        handle: "randomActiveMixplayUser",
+        description: "Get a random active mixplay user.",
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async () => {
-        logger.debug("Getting random active viewer...");
+        logger.debug("Getting random active mixplay user...");
 
-        let activeViewers = activeViewerHandler.getActiveChatters();
+        let activeViewers = activeViewerHandler.getActiveMixplayUsers();
 
         if (activeViewers && activeViewers.length > 0) {
             let randIndex = util.getRandomInt(0, activeViewers.length - 1);

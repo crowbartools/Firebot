@@ -11,6 +11,7 @@ const logger = require("../logwrapper");
 const util = require("../utility");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userDatabase = require("../database/userDatabase");
+const activeMixplayUsers = require('../roles/role-managers/active-mixplay-users');
 
 const mixplayManager = require('./mixplay-project-manager');
 const eventManager = require("../live-events/EventManager");
@@ -239,6 +240,8 @@ async function connectToMixplay() {
             username: "Firebot"
         });
 
+        activeMixplayUsers.cycleActiveMixplayUsers();
+
     } catch (error) {
         logger.warn("Failed to connect to MixPlay", error);
         triggerMixplayDisconnect("Failed to connect to MixPlay.");
@@ -397,6 +400,14 @@ mixplayClient.state.on('participantJoin', async participant => {
     }
 });
 
+function getConnectedUsernames() {
+    let participants = [...mixplayClient.state.getParticipants().values()];
+
+    return participants
+        .filter(p => p != null && !p.anonymous)
+        .map(p => p.username);
+}
+
 // checks if this sceneId is set as default and returns "default" if so,
 // otherwise it returns the original scene id
 function translateSceneIdForMixplay(sceneId) {
@@ -505,4 +516,5 @@ exports.moveAllViewersToScene = moveAllViewersToScene;
 exports.updateCooldownForControls = updateCooldownForControls;
 exports.updateParticipantWithData = updateParticipantWithData;
 exports.updateParticipantWithUserData = updateParticipantWithUserData;
+exports.getConnectedUsernames = getConnectedUsernames;
 
