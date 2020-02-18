@@ -20,5 +20,8 @@ jobs:
         with:
           node-version: "12.14.1"
 
+      # install eslint
+      - run: "npm install eslint@5.16.0"
+        
       # run linter
       - run: "npm run lint"
