@@ -82,12 +82,12 @@ module.exports = function (grunt) {
             }
         } else if (area === 'win64') {
             fs.removeSync(path.join(__dirname, `../dist/pack/Firebot-win32-x64/`));
-            fs.removeSync(path.join(__dirname, `../dist/install/win32/`));
+            fs.removeSync(path.join(__dirname, `../dist/install/win64/`));
 
         // Empties platform-specific directories
         } else if (area === 'linux64') {
             fs.removeSync(path.join(__dirname, `../dist/pack/Firebot-linux-x64/`));
-            fs.removeSync(path.join(__dirname, `../dist/install/linux/`));
+            fs.removeSync(path.join(__dirname, `../dist/install/linux64/`));
 
         } else {
             grunt.fail.fatal(new Error('unknown cleanup property'), 1);
