@@ -32,15 +32,18 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('pack', function () {
-        let platform = grunt.config.get('platform');
-        grunt.task.run([
-            'shell:eslint',
-            'cleanup:scss',
-            `cleanup:${platform}`,
-            'scss',
-            `shell:pack${platform}`,
-            `copy:${platform}`
-        ]);
+    grunt.registerTask('pack', function (scope) {
+        scope = scope || grunt.config.get('platform') || 'win32';
+
+        if (scope === 'win64' || scope === 'linux64') {
+            grunt.task.run([
+                'shell:eslint',
+                'cleanup:scss',
+                `cleanup:${scope}`,
+                'scss',
+                `shell:pack${scope}`,
+                `copy:${scope}`
+            ]);
+        }
     });
 };
