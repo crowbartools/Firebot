@@ -22,18 +22,18 @@ module.exports = function (grunt) {
         xcopy: {
             win64: {
                 files: [
-                    {expand: true, dest: 'dist/pack/win64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/win64/', src: ['resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/win64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/win64/', src: ['resources/ffmpeg/**']}
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay.html']},
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/kbm-java/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64', src: ['resources/ffmpeg/**']}
                 ]
             },
             linux64: {
                 files: [
-                    {expand: true, dest: 'dist/pack/linux64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
-                    {expand: true, dest: 'dist/pack/linux64/', src: ['resources/overlay.html']},
-                    {expand: true, dest: 'dist/pack/linux64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/linux64/', src: ['resources/ffmpeg/**']}
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay.html']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/kbm-java/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/ffmpeg/**']}
                 ]
             }
         }

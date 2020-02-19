@@ -55,9 +55,11 @@ module.exports = function (grunt) {
         } else if (area === 'pack') {
             if (scope == null || scope === '') {
                 fs.removeSync(path.join(__dirname, '../dist/pack/'));
+            } else if (scope === 'win64') {
+                fs.removeSync(path.join(__dirname, `../dist/pack/Firebot-win32-x64/`));
 
-            } else if (scope === 'win64' || scope === 'linux64') {
-                fs.removeSync(path.join(__dirname, `../dist/pack/${scope}/`));
+            } else if (scope === 'linux64') {
+                fs.removeSync(path.join(__dirname, `../dist/pack/Firebot-linux-x64/`));
 
             } else {
                 grunt.fail.fatal(new Error('unknown pack to clean'), 1);
@@ -74,11 +76,14 @@ module.exports = function (grunt) {
             } else {
                 grunt.fail.fatal(new Error('Invalid install to clean'), 1);
             }
+        } else if (area === 'win64') {
+            fs.removeSync(path.join(__dirname, `../dist/pack/Firebot-win32-x64/`));
+            fs.removeSync(path.join(__dirname, `../dist/install/win32/`));
 
         // Empties platform-specific directories
-        } else if (area === 'win64' || area === 'linux64') {
-            fs.removeSync(path.join(__dirname, `../dist/pack/${area}/`));
-            fs.removeSync(path.join(__dirname, `../dist/install/${area}/`));
+        } else if (area === 'linux64') {
+            fs.removeSync(path.join(__dirname, `../dist/pack/Firebot-linux-x64/`));
+            fs.removeSync(path.join(__dirname, `../dist/install/linux/`));
 
         } else {
             grunt.fail.fatal(new Error('unknown cleanup property'), 1);

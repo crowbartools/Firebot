@@ -2,6 +2,7 @@
 module.exports = function (grunt) {
     let base = [
         'electron-packager . Firebot',
+        '--out=./dist/pack/',
         '--arch=x64',
         '--electronVersion=7.1.9',
         '--js-flags="--harmony"',
@@ -23,10 +24,10 @@ module.exports = function (grunt) {
     grunt.config.merge({
         shell: {
             packwin64: {
-                command: `${base} --platform=win32 --out=./dist/pack/win64/`
+                command: `${base} --platform=win32`
             },
             packlinux64: {
-                command: `${base} --platform=linux --out=./dist/pack/linux64/`
+                command: `${base} --platform=linux`
             }
         }
     });
