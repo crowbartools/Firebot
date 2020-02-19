@@ -6,9 +6,9 @@
     "scripts": {
         "start": "npm run compile:scss && electron . --dev --js-flags=\"--harmony\"",
         "start:noscss": "electron . --js-flags=\"--harmony\"",
-        "compile:scss": "npm run compile:scssGui && npm run compile:scssOverlay",
-        "compile:scssGui": "./node_modules/.bin/node-sass --recursive --output ./gui/css ./gui/scss",
-        "compile:scssOverlay": "./node_modules/.bin/node-sass --recursive --output ./resources/overlay/css ./resources/overlay/scss",
+        "compile:scss": "grunt scss",
+        "compile:scssGui": "grunt scss:gui",
+        "compile:scssOverlay": "grunt scss:overlay",
         "lint": "./node_modules/.bin/eslint --quiet .",
         "lint:local": "./node_modules/.bin/eslint . --output-file=eslint.log.htm --format=html --fix",
         "lint:fix": "./node_modules/.bin/eslint . --fix",
@@ -42,9 +42,8 @@
         "eslint": "^5.16.0",
         "grunt": "^1.0.4",
         "grunt-electron-installer": "^2.1.0",
-        "grunt-jsdoc": "^2.3.1",
+        "grunt-sass": "^3.1.0",
         "husky": "^0.14.3",
-        "jsdoc": "^3.6.3",
         "node-sass": "^4.13.1"
     },
     "dependencies": {

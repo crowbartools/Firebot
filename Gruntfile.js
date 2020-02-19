@@ -17,28 +17,11 @@ module.exports = function(grunt) {
                 setupExe: "FirebotV5Setup.exe",
                 noMsi: true
             }
-        },
-		'jsdoc' : {
-            src: [
-                './main.js',
-                './backend',
-                './gui',
-                './server',
-                './shared',
-                './resources'
-            ],
-            options: {
-                destination: 'doc',
-                verbose: true,
-                recurse: true
-            }
-		}
+        }
     });
 
     // Load installer builder.
     grunt.loadNpmTasks('grunt-electron-installer');
-	
-	// Generate our docs
-	grunt.loadNpmTasks('grunt-jsdoc');
 
+    require('./grunt/sass.js')(grunt);
 };
