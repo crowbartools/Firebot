@@ -44,6 +44,25 @@ module.exports = function (grunt) {
         } else if (scope === 'linux64') {
             grunt.task.run('pack:linux64', 'compress:linux64');
 
+        } else if (scope === 'all') {
+            grunt.task.run([
+                'shell:eslint', // lint repo
+
+                'cleanup:scss', // delete compiled css
+                'cleanup:win64', // delete win64 pack & installer
+                'cleanup:linux64', // delete linux pack & tarball
+
+                'scss', // build css
+
+                'shell:packwin64', // pack for win64
+                'xcopy:win64', // copy resources
+                'create-windows-installer:win64', // make installer
+
+                'shell:packlinux64', // pack for linux
+                'xcopy:linux64', // copy resources
+                'compress:linux64' // make tarball
+            ]);
+
         } else {
             grunt.task.fatal(new Error('invalid platform'), 1);
         }

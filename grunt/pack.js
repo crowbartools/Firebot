@@ -8,24 +8,25 @@ module.exports = function (grunt) {
         '--asar.unpack="moderation-service.js"',
         '--prune',
         '--overwrite',
-        '--version-string.ProductName="Firebot V5"',
-        '--executable-name="Firebot V5"',
+        '--version-string.ProductName="Firebot v5"',
+        '--executable-name="Firebot v5"',
         '--icon="./gui/images/icon_transparent.ico"',
         '--ignore=/.github',
         '--ignore=/.vscode',
         '--ignore=/grunt',
         '--ignore=/resources',
         '--ignore=/doc',
-        '--ignore=/profiles'
+        '--ignore=/profiles',
+        '--ignore=/dist/install'
     ].join(' ');
 
     grunt.config.merge({
         shell: {
             packwin64: {
-                command: `npx electron-packager . Firebot --platform=win32 ${flags}`
+                command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=win32 ${flags}`
             },
             packlinux64: {
-                command: `npx electron-packager . Firebot --platform=linux ${flags}`
+                command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=linux ${flags}`
             }
         }
     });
