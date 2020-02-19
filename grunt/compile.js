@@ -49,15 +49,14 @@ module.exports = function (grunt) {
                 'shell:eslint', // lint repo
 
                 'cleanup:scss', // delete compiled css
-                'cleanup:win64', // delete win64 pack & installer
-                'cleanup:linux64', // delete linux pack & tarball
-
                 'scss', // build css
 
+                'cleanup:win64', // delete win64 pack & installer
                 'shell:packwin64', // pack for win64
                 'xcopy:win64', // copy resources
                 'create-windows-installer:win64', // make installer
 
+                'cleanup:linux64', // delete linux pack & tarball
                 'shell:packlinux64', // pack for linux
                 'xcopy:linux64', // copy resources
                 'compress:linux64' // make tarball
