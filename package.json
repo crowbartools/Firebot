@@ -4,12 +4,8 @@
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
     "scripts": {
-        "start": "npm run compile:scss && electron . --dev --js-flags=\"--harmony\"",
+        "start": "grunt scss && electron . --dev --js-flags=\"--harmony\"",
         "start:noscss": "electron . --js-flags=\"--harmony\"",
-
-        "compile:scss": "grunt scss",
-        "compile:scssGui": "grunt scss:gui",
-        "compile:scssOverlay": "grunt scss:overlay",
 
         "lint": "./node_modules/.bin/eslint --quiet .",
         "lint:local": "./node_modules/.bin/eslint . --output-file=eslint.log.htm --format=html --fix",
@@ -18,8 +14,8 @@
         "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
         "pack:win": "electron-packager . Firebot --out=./dist --platform=win32 --arch=x64 --electronVersion=7.1.9 --js-flags=\"--harmony\" --asar.unpack=\"moderation-service.js\" --prune --overwrite --version-string.ProductName=\"Firebot V5\" --executable-name=\"Firebot V5\" --icon=./gui/images/icon_transparent.ico --ignore=/profiles --ignore=/grunt --ignore=/resources --ignore=/doc --ignore=/.vscode  && xcopy /s /i resources\\overlay .\\dist\\Firebot-win32-x64\\resources\\overlay && xcopy /s /i resources\\kbm-java .\\dist\\Firebot-win32-x64\\resources\\kbm-java && xcopy /s /i resources\\overlay.html .\\dist\\Firebot-win32-x64\\resources\\overlay.html && xcopy /s /i /Y resources\\ffmpeg .\\dist\\Firebot-win32-x64\\resources\\ffmpeg",
         "pack:mac": "electron-packager . Firebot --out=./dist --platform=darwin --arch=x64 --electronVersion=7.1.9 --js-flags=\"--harmony\" --asar --prune --overwrite --version-string.ProductName=\"Firebot V5\" --executable-name=\"Firebot V5\" --icon=./gui/images/icon_transparent.ico --ignore=/profiles --ignore=/resources --ignore=/doc --ignore=/.vscode && mkdir -p ./dist/Firebot-darwin-x64/resources/overlay && cp -a ./resources/overlay/. ./dist/Firebot-darwin-x64/resources/overlay/ && mkdir -p ./dist/Firebot-darwin-x64/resources/kbm-java && cp -a ./resources/kbm-java/. ./dist/Firebot-darwin-x64/resources/kbm-java/",
-
-        "build": "npm run compile:scss && npm run pack:win",
+        
+        "build": "grunt scss && npm run pack:win",
 
         "package": "echo Compiling SCSS to CSS && grunt scss && echo Building Electron package && npm run pack:win && echo Packing the installer && grunt create-windows-installer && echo Installer package ready!",
         "setup": "npm install && npm rebuild && npm run rebuild"
