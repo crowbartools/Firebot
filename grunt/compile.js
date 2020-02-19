@@ -19,7 +19,7 @@ module.exports = function (grunt) {
         compress: {
             linux64: {
                 options: {
-                    archieve: path.join(__dirname, '../dist/install/linux64/Firebot-linux-x64.tar.gz'),
+                    archive: path.join(__dirname, '../dist/install/linux64/Firebot-linux-x64.tar.gz'),
                     mode: 'tgz'
                 },
                 files: [{expand: true, dest: '/', src: ['**'], cmd: path.join(__dirname, '../dist/pack/Firebot-linux-x64')}]
