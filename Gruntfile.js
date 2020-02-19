@@ -36,4 +36,5 @@ module.exports = function(grunt) {
     require('./grunt/sass.js')(grunt);
     require('./grunt/lint.js')(grunt);
     require('./grunt/copy.js')(grunt);
+    require('./grunt/pack.js')(grunt);
 };
