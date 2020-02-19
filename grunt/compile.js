@@ -37,7 +37,7 @@ module.exports = function (grunt) {
             grunt.task.run('pack', 'create-windows-installer:win64');
 
         } else if (scope === 'linux64') {
-            grunt.task.run('pack:linux64', 'compress:linux');
+            grunt.task.run('pack:linux64', 'compress:linux64');
 
         } else {
             grunt.task.fatal(new Error('invalid platform'), 1);
