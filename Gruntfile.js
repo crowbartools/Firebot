@@ -20,8 +20,12 @@ module.exports = function(grunt) {
         }
     });
 
+    // Register shell executor
+    grunt.loadNpmTasks('grunt-shell');
+
     // Load installer builder.
     grunt.loadNpmTasks('grunt-electron-installer');
 
     require('./grunt/sass.js')(grunt);
+    require('./grunt/lint.js')(grunt);
 };
