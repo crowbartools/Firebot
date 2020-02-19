@@ -2,6 +2,9 @@
 
 const path = require('path');
 module.exports = function (grunt) {
+
+    console.log(
+
     grunt.config.merge({
         'create-windows-installer': {
             win64: {
@@ -22,7 +25,7 @@ module.exports = function (grunt) {
                     archive: path.join(__dirname, '../dist/install/linux64/Firebot-linux-x64.tar.gz'),
                     mode: 'tgz'
                 },
-                files: [{expand: true, dest: '/', src: [path.join(__dirname, '../dist/pack/Firebot-linux-x64/') + '**']}]
+                files: [{expand: true, dest: '/', cwd: path.join(__dirname, '..dist/pack/Firebot-linux-64'), src: ['**']}]
             }
         }
     });
