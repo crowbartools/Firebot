@@ -33,6 +33,7 @@
         "eslint": "^5.16.0",
         "eslint-plugin-angular": "^4.0.1",
         "grunt": "^1.0.4",
+        "grunt-contrib-copy": "^1.0.0",
         "grunt-electron-installer": "^2.1.0",
         "grunt-sass": "^3.1.0",
         "grunt-shell": "^3.0.1",

@@ -1,6 +1,5 @@
 module.exports = function(grunt) {
 
-
     const PLATFORM = grunt.option('platform') || 'win64';
     if (PLATFORM !== 'win64' && PLATFORM !== 'linux64') {
         grunt.fail.fatal(new Error('Unknown Platform'), 1);
@@ -36,4 +35,5 @@ module.exports = function(grunt) {
     require('./grunt/cleanup.js')(grunt);
     require('./grunt/sass.js')(grunt);
     require('./grunt/lint.js')(grunt);
+    require('./grunt/copy.js')(grunt);
 };
