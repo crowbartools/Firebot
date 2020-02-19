@@ -6,14 +6,9 @@
     "scripts": {
         "start": "grunt scss && electron . --dev --js-flags=\"--harmony\"",
         "start:noscss": "electron . --js-flags=\"--harmony\"",
-        "lint": "grunt lint",
-        "lint:fix": "grunt lint:fix",
-        "lint:local": "grunt lint:local",
         "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
-        "pack:win": "grunt pack --platform=win64",
-        "pack:linux": "grunt pack --platform=linux64",
-        "build": "grunt scss && npm run pack:win",
-        "package": "echo Compiling SCSS to CSS && grunt scss && echo Building Electron package && npm run pack:win && echo Packing the installer && grunt create-windows-installer && echo Installer package ready!",
+        "pack": "grunt pack:win64",
+        "compile": "grunt compile:win64",
         "setup": "npm install && npm rebuild && npm run rebuild"
     },
     "repository": "https://github.com/Firebottle/Firebot",
