@@ -10,18 +10,17 @@ jobs:
     name: "Lint"
     runs-on: "windows-latest"
     steps:
-      # clone the repo v5 branch
-      - uses: "actions/checkout@master"
-        with:
-          fetch-depth: 1
+
+      # clone the repo's master branch
+      - uses: "actions/checkout@v2"
           
       # install nodejs and npm
       - uses: "actions/setup-node@v1"
         with:
           node-version: "10.x"
 
-      # install project dependencies
+      # install eslint
       - run: "npm install -g eslint@^5.16.0"
 
-      # run linter
-      - run: "npx eslint . --quiet"
+      # run eslint
+      - run: "eslint . --quiet"
