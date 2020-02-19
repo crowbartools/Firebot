@@ -15,6 +15,16 @@ grunt copy:all
 'use strict';
 const fs = require('fs-extra');
 const path = require('path');
+
+function remFiles(scope) {
+    let dir = path.join(__dirname, `../dist/pack/Firebot-${scope === 'linux64' ? 'linux' : 'win32'}-x64/resources/`);
+
+    fs.remove(path.join(dir, './overlay/'));
+    fs.remove(path.join(dir, './overlay.html'));
+    fs.remove(path.join(dir, './kbm-java/'));
+    fs.remove(path.join(dir, './ffmpeg/'));
+}
+
 module.exports = function (grunt) {
     let platform = grunt.config.get('platform');
 
@@ -25,7 +35,7 @@ module.exports = function (grunt) {
                     {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
                     {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay.html']},
                     {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/kbm-java/**']},
-                    {expand: true, dest: 'dist/pack/Firebot-win32-x64', src: ['resources/ffmpeg/**']}
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/ffmpeg/**']}
                 ]
             },
             linux64: {
@@ -44,16 +54,16 @@ module.exports = function (grunt) {
 
     grunt.registerTask('copy', function (scope) {
         if (scope == null || scope === '') {
-            fs.removeSync(path.join(__dirname, `../dist/pack/${platform}/resources`));
+            remFiles(platform);
             grunt.task.run(`xcopy:${platform}`);
 
         } else if (scope === 'win64' || scope === 'linux64') {
-            fs.removeSync(path.join(__dirname, `../dist/pack/${scope}/resources`));
+            remFiles(scope);
             grunt.task.run(`xcopy:${scope}`);
 
         } else if (scope === 'all') {
-            fs.removeSync(path.join(__dirname, `../dist/pack/win64/resources`));
-            fs.removeSync(path.join(__dirname, `../dist/pack/linux64/resources`));
+            remFiles('win64');
+            remFiles('linux64');
             grunt.task.run('xcopy:win64', 'xcopy:linux64');
 
         } else {

@@ -43,10 +43,13 @@ module.exports = function (grunt) {
             if (scope == null || scope === '') {
                 fs.removeSync(path.join(__dirname, '../gui/css'));
                 fs.removeSync(path.join(__dirname, '../resources/overlay/css'));
+
             } else if (scope === 'gui') {
                 fs.removeSync(path.join(__dirname, '../gui/css'));
+
             } else if (scope === 'overlay') {
                 fs.removeSync(path.join(__dirname, '../resources/overlay/css'));
+
             } else {
                 grunt.fail.fatal(new Error('unknown scss directory to clean'), 1);
             }
@@ -55,6 +58,7 @@ module.exports = function (grunt) {
         } else if (area === 'pack') {
             if (scope == null || scope === '') {
                 fs.removeSync(path.join(__dirname, '../dist/pack/'));
+
             } else if (scope === 'win64') {
                 fs.removeSync(path.join(__dirname, `../dist/pack/Firebot-win32-x64/`));
 

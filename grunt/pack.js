@@ -39,8 +39,8 @@ module.exports = function (grunt) {
             'cleanup:scss',
             `cleanup:${platform}`,
             'scss',
-            `copy:${platform}`,
-            `shell:pack${platform}`
+            `shell:pack${platform}`,
+            `copy:${platform}`
         ]);
     });
 };
