@@ -39,7 +39,7 @@ jobs:
       # Prebuild checks
 
       - name: 'Check: working from master branch'
-        if: github.ref != /refs/heads/master
+        if: github.ref != '/refs/heads/master'
         run: exit 0
 
       - name: Read package.json
