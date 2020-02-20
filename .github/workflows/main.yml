@@ -36,6 +36,9 @@ jobs:
     needs: test
     # if: github.ref == 'refs/head/master'
     steps:
+      - name: Checkout branch that caused the job to run
+        uses: 'actions/checkout@v2'
+
       - name: 'Read package.json'
         id: package
         uses: gregoranders/nodejs-project-info@v0.0.1
