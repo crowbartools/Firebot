@@ -1,4 +1,4 @@
-name: Firebot Testing
+name: Test and Pack for Windows
 
 on:
   push:
@@ -8,18 +8,24 @@ on:
 
 jobs:
   test:
-    name: Lint and SCSS tests
+    name: Test and Pack
     runs-on: 'windows-latest'
     steps:
+
+      # Testing setup
+      
       - name: Checkout branch that caused the job to run
         uses: 'actions/checkout@v2'
+
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           
       - name: Setup Nodejs
         uses: 'actions/setup-node@v1'
         with:
           node-version: "10.x"
 
-      - name: Install dependencies
+      - name: Install Testing Dependencies
         run: npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
 
       - name: Run Linter
@@ -30,128 +36,46 @@ jobs:
           node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
           node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
-  prebuild:
-    name: Checks if build proceedure should occur
-    runs-on: 'ubuntu-latest'
-    needs: test
-    # if: github.ref == 'refs/head/master'
-    steps:
-      - name: Checkout branch that caused the job to run
-        uses: 'actions/checkout@v2'
+      # Prebuild checks
 
-      - name: Fetch tags
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: 'Check: working from master branch'
+        if: github.ref != /refs/heads/master
+        run: exit 0
 
-      - name: 'Read package.json'
+      - name: Read package.json
         id: package
         uses: gregoranders/nodejs-project-info@v0.0.1
 
-      - name: Check if package has gittag
-        id: gettag
+      - name: Check: package version has corrosponding git tag
         run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
 
-      - if: failure()
-        id: draftversion
-        run: echo ::set-output tag::v${{ steps.package.outputs.version }}
+      - name: 'Package version has corrosponding git tag'
+        if: success()
+        run: exit 0
 
-  winbuild:
-    name: Build Windows installer
-    runs-on: "windows-latest"
-    needs: prebuild
-    if: jobs.prebuild.steps.draftversion.outputs.tag !== null # Only run job if package version is not tagged
-    steps:
-      - name: Checkout master branch
-        uses: 'actions/checkout@v2'
+      # Prep Build Enviornment
 
       - name: Setup Python
         uses: 'actions/setup-python@v1'
         with:
           python-version: '2.7'
-          
-      - name: Setup Nodejs
-        uses: 'actions/setup-node@v1'
-        with:
-          node-version: '10.x'
 
       - name: Setup Windows Build Tools
         run: npm install --global --production windows-build-tools@4.0.0
-      
+
       - name: Prep for node-gyp
         run: npm config set msvs_version 2015
-      
-      - name: Install grunt-cli and node-gyp
-        run: npm install --global --production grunt-cli node-gyp
 
-      - name: Install dependencies
+      - name: Install node-gyp
+        run: npm install --global --production node-gyp
+
+      - name: Install Dependencies
         run: npm install
+
+      # Build from Windows x64
 
       - name: Rebuild RobotJs for Electron 7.1.9
         run: 'node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell'
 
       - name: Build Windows Installer
         run: grunt compile:win64
-
-      - name: Store Installer
-        uses: 'actions/upload-artifact@v1'
-        with:
-          name: 'win-installer'
-          path: '/dist/install/win64/'
-
-  linuxbuild:
-    name: Build Linux Tarball
-    runs-on: "ubuntu-latest"
-    needs: prebuild
-    if: jobs.prebuild.steps.draftversion.outputs.tag !== null # Only run job if package version is not tagged
-    steps:
-      - name: Checkout master branch
-        uses: 'actions/checkout@v2'
-
-      - name: Setup Python
-        uses: 'actions/setup-python@v1'
-        with:
-          python-version: '2.7'
-          
-      - name: Setup Nodejs
-        uses: 'actions/setup-node@v1'
-        with:
-          node-version: '10.x'
-
-      - name: Setup for node-gyp/robotjs
-        run: |
-          apt install libx11-dev
-          apt install libxtst-dev
-          apt install libpng-dev
-          
-      - name: Install grunt-cli and node-gyp
-        run: npm install --global --production grunt-cli node-gyp
-
-      - name: Rebuild RobotJs for Electron 7.1.9
-        run: 'node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell'
-
-      - name: Create Linux Tarball
-        run: grunt compile:linux64
-
-      - name: Store tarball
-        uses: 'actions/upload-artifact@v1'
-        with:
-          name: 'win-installer'
-          path: '/dist/install/win64/'
-
-
-  draftrelease:
-    name: Draft Release
-    runs-on: "ubuntu-latest"
-    needs: [winbuild, linuxbuild] # Only run job if building completes
-    if: github.ref == 'refs/heads/master' # Only run job on master branch
-    steps:
-      - name: Get Windows Installer
-        uses: 'actions/download-artifact@v1'
-        with:
-          name: 'win-installer'
-
-      - name: Get Linux Bundle
-        uses: 'actions/download-artifact@v1'
-        with:
-          name: 'linux-bundle'
-
-      # TODO: leaving off until we know builds are working
