@@ -49,7 +49,7 @@ jobs:
       # Prep Build Enviornment
 
       - name: Setup Python
-        if: github.ref == '/refs/heads/master' && failure()'
+        if: github.ref == '/refs/heads/master' && failure()
         uses: 'actions/setup-python@v1'
         with:
           python-version: '2.7'
