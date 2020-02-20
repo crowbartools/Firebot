@@ -24,12 +24,14 @@ jobs:
         with:
           node-version: "10.x"
 
-      # Setup node-gyp
-      - name: Setup windows build tools
-        run: |
-          npm install --global --production windows-build-tools@4.0.0
-          npm config set msvs_version 2015
-          npm install --global --production node-gyp
+      - name: Setup Windows Build Tools
+        run: npm install --global --production windows-build-tools@4.0.0
+      
+      - name: Prep for node-gyp
+        run: npm config set msvs_version 2015
+      
+      - name: Install node-gyp
+        run: npm install --global --production node-gyp
 
       - name: Install dependencies
         run: npm install
