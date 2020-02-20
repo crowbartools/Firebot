@@ -29,7 +29,6 @@ jobs:
         run: |
           npm install --global --production windows-build-tools@4.0.0
           npm config set msvs_version 2015
-          set path=%path%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
           npm install --global --production node-gyp
 
       - name: Install dependencies
