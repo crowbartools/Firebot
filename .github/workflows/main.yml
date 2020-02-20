@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - master
+      - v5
 
 jobs:
   test:
-    name: "Lint and test SCSS"
+    name: "Lint and test scss"
     runs-on: "windows-latest"
     steps:
 
@@ -43,3 +44,23 @@ jobs:
         run: |
           npx node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
           npx node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
+
+
+
+  # Only runs if 'test' job passes and we're on the master branch
+  winbuild:
+    name: "Build Windows installer"
+    runs-on: "windows-latest"
+    needs: test
+    if: github.ref == 'refs/heads/master'
+
+
+
+  # Only run if 'test' job passes and we're on the master branch
+  linuxbuild:
+    name: "Build Linux Tarball"
+    runs-on: "ubuntu-latest"
+    needs: test
+    if: github.ref == 'refs/heads/master'
+
+    
