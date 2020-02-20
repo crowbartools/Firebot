@@ -1,4 +1,4 @@
-name: "firebot v5 lint"
+name: "Firebot Testing"
 
 on:
   push:
@@ -7,20 +7,38 @@ on:
 
 jobs:
   test:
-    name: "Lint"
+    name: "Lint and test SCSS"
     runs-on: "windows-latest"
     steps:
 
-      # clone the repo's master branch
+      # clone master branch
       - uses: "actions/checkout@v2"
+      
+      # install python
+      - uses: "actions/setup-python@v1"
+        with:
+          python-version: "2.7"
           
       # install nodejs and npm
       - uses: "actions/setup-node@v1"
         with:
           node-version: "10.x"
 
-      # install eslint
-      - run: "npm install -g eslint@^5.16.0"
+      # Setup node-gyp
+      - name: Setup windows build tools
+        run: |
+          npm install --global --production windows-build-tools@4.0.0
+          npm config set msvs_version 2015
+          set path=%path%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
+          npm install --global --production node-gyp
 
-      # run eslint
-      - run: "eslint . --quiet"
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Linter
+        run: npx eslint . --quiet
+      
+      - name: Compile scss into css
+        run: |
+          npx node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
+          npx node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
