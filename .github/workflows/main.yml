@@ -46,7 +46,7 @@ jobs:
         id: package
         uses: gregoranders/nodejs-project-info@v0.0.1
 
-      - name: Check: package version has corrosponding git tag
+      - name: 'Check: package version has corrosponding git tag'
         run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
 
       - name: 'Package version has corrosponding git tag'
