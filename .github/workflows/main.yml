@@ -34,7 +34,7 @@ jobs:
     name: Checks if build proceedure should occur
     runs-on: 'ubuntu-latest'
     needs: test
-    if: github.ref == 'refs/head/master'
+    # if: github.ref == 'refs/head/master'
     steps:
       - name: 'Read package.json'
         id: package
