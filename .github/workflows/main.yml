@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: 'Read package.json'
         id: package
-        uses: gregoranders/nodejs-project-info
+        uses: gregoranders/nodejs-project-info@v0.0.1
 
       - name: Check if package has gittag
         id: gettag
