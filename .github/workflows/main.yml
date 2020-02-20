@@ -58,7 +58,7 @@ jobs:
     name: Build Windows installer
     runs-on: "windows-latest"
     needs: prebuild
-    if: job.prebuild.steps.draftversion.outputs.tag !== null # Only run job if package version is not tagged
+    if: jobs.prebuild.steps.draftversion.outputs.tag !== null # Only run job if package version is not tagged
     steps:
       - name: Checkout master branch
         uses: 'actions/checkout@v2'
@@ -101,7 +101,7 @@ jobs:
     name: Build Linux Tarball
     runs-on: "ubuntu-latest"
     needs: prebuild
-    if: job.prebuild.steps.draftversion.outputs.tag !== null # Only run job if package version is not tagged
+    if: jobs.prebuild.steps.draftversion.outputs.tag !== null # Only run job if package version is not tagged
     steps:
       - name: Checkout master branch
         uses: 'actions/checkout@v2'
