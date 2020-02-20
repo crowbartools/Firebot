@@ -54,13 +54,11 @@ jobs:
         id: draftversion
         run: echo ::set-output tag::v${{ steps.package.outputs.version }}
 
-      - run: echo ${{ steps.draftversion.outputs.tag }}
-
   winbuild:
     name: Build Windows installer
     runs-on: "windows-latest"
-    needs: test # Only run job if test completes successfully
-    if: github.ref == 'refs/heads/master' # Only run job on master branch
+    needs: prebuild
+    if: job.prebuild.steps.draftversion.outputs.tag !== null # Only run job if package version is not tagged
     steps:
       - name: Checkout master branch
         uses: 'actions/checkout@v2'
@@ -102,8 +100,8 @@ jobs:
   linuxbuild:
     name: Build Linux Tarball
     runs-on: "ubuntu-latest"
-    needs: test # Only run job if test completes successfully
-    if: github.ref == 'refs/heads/master' # Only run job on master branch
+    needs: prebuild
+    if: job.prebuild.steps.draftversion.outputs.tag !== null # Only run job if package version is not tagged
     steps:
       - name: Checkout master branch
         uses: 'actions/checkout@v2'
@@ -117,8 +115,27 @@ jobs:
         uses: 'actions/setup-node@v1'
         with:
           node-version: '10.x'
+
+      - name: Setup for node-gyp/robotjs
+        run: |
+          apt install libx11-dev
+          apt install libxtst-dev
+          apt install libpng-dev
           
-      # TODO: waiting on info to continue setting up linux build job
+      - name: Install grunt-cli and node-gyp
+        run: npm install --global --production grunt-cli node-gyp
+
+      - name: Rebuild RobotJs for Electron 7.1.9
+        run: 'node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell'
+
+      - name: Create Linux Tarball
+        run: grunt compile:linux64
+
+      - name: Store tarball
+        uses: 'actions/upload-artifact@v1'
+        with:
+          name: 'win-installer'
+          path: '/dist/install/win64/'
 
 
   draftrelease:
