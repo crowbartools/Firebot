@@ -46,13 +46,11 @@ jobs:
           npx node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
 
-
-  # Only runs if 'test' job passes and we're on the master branch
   winbuild:
     name: "Build Windows installer"
     runs-on: "windows-latest"
-    needs: test
-    if: github.ref == 'refs/heads/master'
+    needs: test # Only run job if test completes successfully
+    if: github.ref == 'refs/heads/master' # Only run job on master branch
     steps:
       # clone master branch
       - uses: "actions/checkout@v2"
@@ -84,14 +82,18 @@ jobs:
       - name: Build Windows Installer
         run: npx grunt compile win64
 
+      - name: Store Installer
+        uses: "actions/upload-artifact@v1"
+          with:
+            name: 'win-installer'
+            path: '/dist/install/win64/'
 
 
-  # Only run if 'test' job passes and we're on the master branch
   linuxbuild:
     name: "Build Linux Tarball"
     runs-on: "ubuntu-latest"
-    needs: test
-    if: github.ref == 'refs/heads/master'
+    needs: test # Only run job if test completes successfully
+    if: github.ref == 'refs/heads/master' # Only run job on master branch
     steps:
       # clone master branch
       - uses: "actions/checkout@v2"
@@ -105,3 +107,20 @@ jobs:
       - uses: "actions/setup-node@v1"
         with:
           node-version: "10.x"
+
+
+  draftrelease:
+    name: "Draft Release"
+    runs-on: "ubuntu-latest"
+    need: [winbuild, linuxbuild] # Only run job if building completes
+    if: github.ref == 'refs/heads/master' # Only run job on master branch
+    steps:
+      - name: "Get Windows Installer"
+        uses: "actions/download-artifact@v1"
+          with:
+            name: 'win-installer'
+
+      - name: Get Linux Bundle
+        uses: "actions/download-artifact@v1"
+          with:
+            name: 'linux-bundle'
