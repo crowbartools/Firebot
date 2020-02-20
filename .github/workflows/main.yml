@@ -23,12 +23,12 @@ jobs:
         run: npm install --global --production eslint node-sass
 
       - name: Run Linter
-        run: npx eslint . --quiet
+        run: eslint . --quiet
       
       - name: Compile scss into css
         run: |
-          npx --no-install node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
-          npx --no-install node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
+          node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
+          node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
   winbuild:
     name: Build Windows installer
