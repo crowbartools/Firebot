@@ -11,17 +11,16 @@ jobs:
     name: "Lint and test scss"
     runs-on: "windows-latest"
     steps:
-
-      # clone master branch
-      - uses: "actions/checkout@v2"
+      - name: Checkout branch that caused the job to run
+        uses: "actions/checkout@v2"
       
-      # install python
-      - uses: "actions/setup-python@v1"
+      - name: Setup Python
+        uses: "actions/setup-python@v1"
         with:
           python-version: "2.7"
           
-      # install nodejs and npm
-      - uses: "actions/setup-node@v1"
+      - name: Setup Nodejs
+        uses: "actions/setup-node@v1"
         with:
           node-version: "10.x"
 
@@ -45,23 +44,22 @@ jobs:
           npx node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
           npx node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
-
   winbuild:
     name: "Build Windows installer"
     runs-on: "windows-latest"
     needs: test # Only run job if test completes successfully
     if: github.ref == 'refs/heads/master' # Only run job on master branch
     steps:
-      # clone master branch
-      - uses: "actions/checkout@v2"
-      
-      # install python
-      - uses: "actions/setup-python@v1"
+      - name: Checkout master branch
+        uses: "actions/checkout@v2"
+
+      - name: Setup Python
+        uses: "actions/setup-python@v1"
         with:
           python-version: "2.7"
           
-      # install nodejs and npm
-      - uses: "actions/setup-node@v1"
+      - name: Setup Nodejs
+        uses: "actions/setup-node@v1"
         with:
           node-version: "10.x"
 
@@ -71,16 +69,14 @@ jobs:
       - name: Prep for node-gyp
         run: npm config set msvs_version 2015
       
-      - name: Install node-gyp
-        run: npm install --global --production node-gyp
+      - name: Install grunt-cli and node-gyp
+        run: npm install --global --production grunt-cli node-gyp
 
       - name: Install dependencies
-        run: |
-          npm install --global --production grunt-cli
-          npm install
+        run: npm install
 
       - name: Build Windows Installer
-        run: npx grunt compile win64
+        run: grunt compile:win64
 
       - name: Store Installer
         uses: "actions/upload-artifact@v1"
@@ -95,16 +91,16 @@ jobs:
     needs: test # Only run job if test completes successfully
     if: github.ref == 'refs/heads/master' # Only run job on master branch
     steps:
-      # clone master branch
-      - uses: "actions/checkout@v2"
-      
-      # install python
-      - uses: "actions/setup-python@v1"
+      - name: Checkout master branch
+        uses: "actions/checkout@v2"
+
+      - name: Setup Python
+        uses: "actions/setup-python@v1"
         with:
           python-version: "2.7"
           
-      # install nodejs and npm
-      - uses: "actions/setup-node@v1"
+      - name: Setup Nodejs
+        uses: "actions/setup-node@v1"
         with:
           node-version: "10.x"
 
