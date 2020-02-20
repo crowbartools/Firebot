@@ -31,8 +31,9 @@ jobs:
           node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
   prebuild:
-    needs: test
     name: Checks if build proceedure should occur
+    runs-on: 'ubuntu-latest'
+    needs: test
     if: github.ref === 'refs/head/master'
     steps:
       - name: 'Read package.json'
