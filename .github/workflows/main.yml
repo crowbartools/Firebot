@@ -91,6 +91,8 @@ jobs:
         uses: 'actions/setup-node@v1'
         with:
           node-version: '10.x'
+          
+      # TODO: waiting on info to continue setting up linux build job
 
 
   draftrelease:
@@ -109,4 +111,4 @@ jobs:
         with:
           name: 'linux-bundle'
 
-      # More to do; leaving off until we know builds are working
+      # TODO: leaving off until we know builds are working
