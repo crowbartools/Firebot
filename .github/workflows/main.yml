@@ -13,36 +13,22 @@ jobs:
     steps:
       - name: Checkout branch that caused the job to run
         uses: 'actions/checkout@v2'
-      
-      - name: Setup Python
-        uses: 'actions/setup-python@v1'
-        with:
-          python-version: "2.7"
           
       - name: Setup Nodejs
         uses: 'actions/setup-node@v1'
         with:
           node-version: "10.x"
 
-      - name: Setup Windows Build Tools
-        run: npm install --global --production windows-build-tools@4.0.0
-      
-      - name: Prep for node-gyp
-        run: npm config set msvs_version 2015
-      
-      - name: Install node-gyp
-        run: npm install --global --production node-gyp
-
       - name: Install dependencies
-        run: npm install
+        run: npm install --global --production eslint node-sass
 
       - name: Run Linter
         run: npx eslint . --quiet
       
       - name: Compile scss into css
         run: |
-          npx node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
-          npx node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
+          npx --no-install node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
+          npx --no-install node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
   winbuild:
     name: Build Windows installer
@@ -56,12 +42,12 @@ jobs:
       - name: Setup Python
         uses: 'actions/setup-python@v1'
         with:
-          python-version: "2.7"
+          python-version: '2.7'
           
       - name: Setup Nodejs
         uses: 'actions/setup-node@v1'
         with:
-          node-version: "10.x"
+          node-version: '10.x'
 
       - name: Setup Windows Build Tools
         run: npm install --global --production windows-build-tools@4.0.0
@@ -87,7 +73,6 @@ jobs:
           name: 'win-installer'
           path: '/dist/install/win64/'
 
-
   linuxbuild:
     name: Build Linux Tarball
     runs-on: "ubuntu-latest"
@@ -100,12 +85,12 @@ jobs:
       - name: Setup Python
         uses: 'actions/setup-python@v1'
         with:
-          python-version: "2.7"
+          python-version: '2.7'
           
       - name: Setup Nodejs
         uses: 'actions/setup-node@v1'
         with:
-          node-version: "10.x"
+          node-version: '10.x'
 
 
   draftrelease:
@@ -123,3 +108,5 @@ jobs:
         uses: 'actions/download-artifact@v1'
         with:
           name: 'linux-bundle'
+
+      # More to do; leaving off until we know builds are working
