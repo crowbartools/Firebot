@@ -80,9 +80,9 @@ jobs:
 
       - name: Store Installer
         uses: "actions/upload-artifact@v1"
-          with:
-            name: 'win-installer'
-            path: '/dist/install/win64/'
+        with:
+          name: 'win-installer'
+          path: '/dist/install/win64/'
 
 
   linuxbuild:
@@ -113,10 +113,10 @@ jobs:
     steps:
       - name: "Get Windows Installer"
         uses: "actions/download-artifact@v1"
-          with:
-            name: 'win-installer'
+        with:
+          name: 'win-installer'
 
       - name: Get Linux Bundle
         uses: "actions/download-artifact@v1"
-          with:
-            name: 'linux-bundle'
+        with:
+          name: 'linux-bundle'
