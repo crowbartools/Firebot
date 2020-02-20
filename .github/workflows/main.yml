@@ -30,6 +30,25 @@ jobs:
           node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
           node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
+  prebuild:
+    needs: test
+    name: Checks if build proceedure should occur
+    if: github.ref === 'refs/head/master'
+    steps:
+      - name: 'Read package.json'
+        id: package
+        uses: gregoranders/nodejs-project-info
+
+      - name: Check if package has gittag
+        id: gettag
+        run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
+
+      - if: failure()
+        id: drafttag
+        run: echo ::set-output tag::(v${{ steps.package.outputs.version }})
+
+      - run: echo ${{ steps.drafttag.outputs.drafttag }}
+
   winbuild:
     name: Build Windows installer
     runs-on: "windows-latest"
