@@ -108,7 +108,7 @@ jobs:
   draftrelease:
     name: "Draft Release"
     runs-on: "ubuntu-latest"
-    need: [winbuild, linuxbuild] # Only run job if building completes
+    needs: [winbuild, linuxbuild] # Only run job if building completes
     if: github.ref == 'refs/heads/master' # Only run job on master branch
     steps:
       - name: "Get Windows Installer"
