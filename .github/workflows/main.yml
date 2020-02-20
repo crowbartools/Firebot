@@ -39,6 +39,9 @@ jobs:
       - name: Checkout branch that caused the job to run
         uses: 'actions/checkout@v2'
 
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
       - name: 'Read package.json'
         id: package
         uses: gregoranders/nodejs-project-info@v0.0.1
@@ -48,10 +51,10 @@ jobs:
         run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
 
       - if: failure()
-        id: drafttag
-        run: echo ::set-output tag::(v${{ steps.package.outputs.version }})
+        id: draftversion
+        run: echo ::set-output tag::v${{ steps.package.outputs.version }}
 
-      - run: echo ${{ steps.drafttag.outputs.drafttag }}
+      - run: echo ${{ steps.draftversion.outputs.tag }}
 
   winbuild:
     name: Build Windows installer
