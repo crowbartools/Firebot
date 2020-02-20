@@ -1,4 +1,4 @@
-name: "Firebot Testing"
+name: Firebot Testing
 
 on:
   push:
@@ -8,19 +8,19 @@ on:
 
 jobs:
   test:
-    name: "Lint and test scss"
-    runs-on: "windows-latest"
+    name: Lint and SCSS tests
+    runs-on: 'windows-latest'
     steps:
       - name: Checkout branch that caused the job to run
-        uses: "actions/checkout@v2"
+        uses: 'actions/checkout@v2'
       
       - name: Setup Python
-        uses: "actions/setup-python@v1"
+        uses: 'actions/setup-python@v1'
         with:
           python-version: "2.7"
           
       - name: Setup Nodejs
-        uses: "actions/setup-node@v1"
+        uses: 'actions/setup-node@v1'
         with:
           node-version: "10.x"
 
@@ -45,21 +45,21 @@ jobs:
           npx node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
   winbuild:
-    name: "Build Windows installer"
+    name: Build Windows installer
     runs-on: "windows-latest"
     needs: test # Only run job if test completes successfully
     if: github.ref == 'refs/heads/master' # Only run job on master branch
     steps:
       - name: Checkout master branch
-        uses: "actions/checkout@v2"
+        uses: 'actions/checkout@v2'
 
       - name: Setup Python
-        uses: "actions/setup-python@v1"
+        uses: 'actions/setup-python@v1'
         with:
           python-version: "2.7"
           
       - name: Setup Nodejs
-        uses: "actions/setup-node@v1"
+        uses: 'actions/setup-node@v1'
         with:
           node-version: "10.x"
 
@@ -75,48 +75,51 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Rebuild RobotJs for Electron 7.1.9
+        run: 'node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell'
+
       - name: Build Windows Installer
         run: grunt compile:win64
 
       - name: Store Installer
-        uses: "actions/upload-artifact@v1"
+        uses: 'actions/upload-artifact@v1'
         with:
           name: 'win-installer'
           path: '/dist/install/win64/'
 
 
   linuxbuild:
-    name: "Build Linux Tarball"
+    name: Build Linux Tarball
     runs-on: "ubuntu-latest"
     needs: test # Only run job if test completes successfully
     if: github.ref == 'refs/heads/master' # Only run job on master branch
     steps:
       - name: Checkout master branch
-        uses: "actions/checkout@v2"
+        uses: 'actions/checkout@v2'
 
       - name: Setup Python
-        uses: "actions/setup-python@v1"
+        uses: 'actions/setup-python@v1'
         with:
           python-version: "2.7"
           
       - name: Setup Nodejs
-        uses: "actions/setup-node@v1"
+        uses: 'actions/setup-node@v1'
         with:
           node-version: "10.x"
 
 
   draftrelease:
-    name: "Draft Release"
+    name: Draft Release
     runs-on: "ubuntu-latest"
     needs: [winbuild, linuxbuild] # Only run job if building completes
     if: github.ref == 'refs/heads/master' # Only run job on master branch
     steps:
-      - name: "Get Windows Installer"
-        uses: "actions/download-artifact@v1"
+      - name: Get Windows Installer
+        uses: 'actions/download-artifact@v1'
         with:
           name: 'win-installer'
 
       - name: Get Linux Bundle
-        uses: "actions/download-artifact@v1"
+        uses: 'actions/download-artifact@v1'
         with:
           name: 'linux-bundle'
