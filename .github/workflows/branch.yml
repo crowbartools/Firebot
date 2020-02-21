@@ -194,7 +194,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft.outputs.upload_url }}
           asset_path: './bundles/windows/FirebotV5Setup.exe'
-          asset_name: 'FirebotV5Setpup.exe',
+          asset_name: 'FirebotV5Setpup.exe'
           asset_content_type: application/octet-stream
 
       - name: Upload Win RELEASES file
@@ -205,7 +205,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft.outputs.upload_url }}
           asset_path: './bundles/windows/RELEASES'
-          asset_name: 'RELEASES',
+          asset_name: 'RELEASES'
           asset_content_type: application/octet-stream
 
       - name: Upload Win NUPKG file
@@ -227,5 +227,5 @@ jobs:
         with:
           upload_url: ${{ steps.draft.outputs.upload_url }}
           asset_path: './bundles/linux/firebot.tar.gz'
-          asset_name: 'firebot-linux-x64-v${{ steps.package.outputs.version }}.tar.gz',
+          asset_name: 'firebot-linux-x64-v${{ steps.package.outputs.version }}.tar.gz'
           asset_content_type: application/octet-stream
