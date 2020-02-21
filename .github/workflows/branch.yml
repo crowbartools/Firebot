@@ -1,0 +1,231 @@
+name: Test and Build
+
+on:
+  push:
+    branches: '*'
+
+  pull_request:
+    types: [opened, edited]
+    branches: '*'
+
+jobs:
+  test:
+    name: Lint and Test Scss
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Setup Nodejs
+        uses: 'actions/setup-node@v1'
+        with:
+          node-version: "10.x"
+
+      - name: Checkout branch that caused the job to run
+        uses: 'actions/checkout@v2'
+
+      - name: Install Testing Dependencies
+        run: npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
+
+      - name: Lint
+        run: eslint . --quiet
+      
+      - name: Compile GUI Scss
+        run: node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
+
+      - name: Compile Overlay Scss
+        run: node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
+
+  buildwin:
+    name: Compile Windows Bundle
+    needs: test
+    runs-on: 'windows-latest'
+    if: github.ref === 'refs/heads/master' && github.event_name == 'push'
+    steps:
+
+      - name: Checkout branch that caused the job to run
+        uses: 'actions/checkout@v2'
+
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - name: Read package.json
+        id: package
+        uses: gregoranders/nodejs-project-info@v0.0.1
+
+      - name: 'Check: package version has corrosponding git tag'
+        id: tagged
+        run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
+
+      - name: Setup Python
+        if: failure()
+        uses: 'actions/setup-python@v1'
+        with:
+          python-version: '2.7'
+
+      - name: Setup Nodejs
+        if: steps.tagged.status == 'failure'
+        uses: 'actions/setup-node@v1'
+        with:
+          node-version: "10.x"
+
+      - name: Prep for node-gyp
+        if: steps.tagged.status == 'failure'
+        run: npm config set msvs_version 2015
+
+      - name: Install Global Dependencies
+        if: steps.tagged.status == 'failure'
+        run: npm install --global --production grunt-cli windows-build-tools@4.0.0 node-gyp
+
+      - name: Install App Dependencies
+        if: steps.tagged.status == 'failure'
+        run: npm install
+
+      - name: Rebuild RobotJs for Electron 7.1.9
+        if: steps.tagged.status == 'failure'
+        run: 'node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell'
+
+      - name: Pack
+        if: steps.tagged.status == 'failure'
+        run: grunt shell:packwin64
+
+      - name: Copy Resources
+        if: steps.tagged.status == 'failure'
+        run: grunt xcopy:win64
+
+      - name: Create Installer
+        if: steps.tagged.status == 'failure'
+        run: grunt shell:create-windows-installer:64
+
+      - name: Store Installer
+        if: steps.tagged.status == 'failure'
+        uses: actions/upload-artifact@v1
+          with:
+            name: windows-bundle
+            path: './dist/install/win64/'
+
+  buildlinux:
+    name: Compile Linux Bundle
+    needs: test
+    runs-on: 'ubuntu-latest'
+    if: github.ref === 'refs/heads/master' && github.event_name == 'push'
+    steps:
+      - name: Checkout branch that caused the job to run
+        uses: 'actions/checkout@v2'
+
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - name: Read package.json
+        id: package
+        uses: gregoranders/nodejs-project-info@v0.0.1
+
+      - name: 'Check: package version has corrosponding git tag'
+        id: tagged
+        run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
+
+      - name: Create Bundle
+        if: failure()
+        shell: bash
+        run: |
+          apt install libx11-dev libxtst-dev libpng-dev
+          npm install --global --production grunt-cli node-gyp
+          npm install
+          node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell
+          grunt shell:packlinux64
+          grunt xcopy:linux64
+          grunt compress:linux64
+
+      - name: Store Tarball
+        if: steps.tagged.status == 'failure'
+        uses: actions/upload-artifact@v1
+          with:
+            name: linux-bundle
+            path: './dist/install/linux64/'
+
+  draftrelease:
+    name: Draft Release
+    needs: [buildwin, buildlinux]
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Checkout branch that caused the job to run
+        uses: 'actions/checkout@v2'
+
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - name: Read package.json
+        id: package
+        uses: gregoranders/nodejs-project-info@v0.0.1
+
+      - name: 'Check: package version has corrosponding git tag'
+        id: tagged
+        run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
+
+      - name: Get Windows Bundle
+        if: failure()
+        uses: actions/download-artifact@v1
+          with:
+            name: windows-bundle
+            path: './bundles/windows/'
+
+      - name: Get Linux Bundle
+        if: steps.tagged.status == 'failure'
+        uses: actions/download-artifact@v1
+          with:
+            name: linux-bundle
+            path: './bundles/linux/'
+
+      - name: Draft Release
+        if: steps.tagged.status == 'failure'
+        id: draft
+        uses: 'actions/create-release@v1'
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: v${{ steps.package.outputs.version }}
+            release_name: Release v${{ steps.package.outputs.version }}
+            body: "## v${{ steps.package.outputs.version }} Update Notes  \n\n## Not using V5 yet and curious about what else it has to offer? \n\nTake a look at the [initial V5 release notes](https://github.com/crowbartools/Firebot/releases/tag/v5.0.0).\n\n## Download the *.exe* to get V5!"
+            draft: true
+            prerelease: false
+
+      - name: Upload Win EXE file
+        if: steps.tagged.status == 'failure'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './bundles/windows/FirebotV5Setup.exe'
+          asset_name: 'FirebotV5Setpup.exe',
+          asset_content_type: application/octet-stream
+
+      - name: Upload Win RELEASES file
+        if: steps.tagged.status == 'failure'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './bundles/windows/RELEASES'
+          asset_name: 'RELEASES',
+          asset_content_type: application/octet-stream
+
+      - name: Upload Win NUPKG file
+        if: steps.tagged.status == 'failure'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './bundles/windows/firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
+          asset_name: 'firebotv5-${{ steps.package.outputs.version }}-full.nupkg',
+          asset_content_type: application/octet-stream
+
+      - name: Upload Linux TarBall
+        if: steps.tagged.status == 'failure'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './bundles/linux/firebot.tar.gz'
+          asset_name: 'firebot-linux-x64-v${{ steps.package.outputs.version }}.tar.gz',
+          asset_content_type: application/octet-stream
