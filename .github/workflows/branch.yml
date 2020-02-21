@@ -97,9 +97,9 @@ jobs:
       - name: Store Installer
         if: steps.tagged.status == 'failure'
         uses: actions/upload-artifact@v1
-          with:
-            name: windows-bundle
-            path: './dist/install/win64/'
+        with:
+          name: windows-bundle
+          path: './dist/install/win64/'
 
   buildlinux:
     name: Compile Linux Bundle
@@ -136,9 +136,9 @@ jobs:
       - name: Store Tarball
         if: steps.tagged.status == 'failure'
         uses: actions/upload-artifact@v1
-          with:
-            name: linux-bundle
-            path: './dist/install/linux64/'
+        with:
+          name: linux-bundle
+          path: './dist/install/linux64/'
 
   draftrelease:
     name: Draft Release
@@ -162,16 +162,16 @@ jobs:
       - name: Get Windows Bundle
         if: failure()
         uses: actions/download-artifact@v1
-          with:
-            name: windows-bundle
-            path: './bundles/windows/'
+        with:
+          name: windows-bundle
+          path: './bundles/windows/'
 
       - name: Get Linux Bundle
         if: steps.tagged.status == 'failure'
         uses: actions/download-artifact@v1
-          with:
-            name: linux-bundle
-            path: './bundles/linux/'
+        with:
+          name: linux-bundle
+          path: './bundles/linux/'
 
       - name: Draft Release
         if: steps.tagged.status == 'failure'
