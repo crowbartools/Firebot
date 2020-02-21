@@ -21,17 +21,11 @@ jobs:
       - name: Checkout branch that caused the job to run
         uses: 'actions/checkout@v2'
 
-      - name: Install Testing Dependencies
-        run: npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
-
-      - name: Lint
-        run: eslint . --quiet
-      
-      - name: Compile GUI Scss
-        run: node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
-
-      - name: Compile Overlay Scss
-        run: node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
+      - run: |
+          npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
+          eslint . --quiet
+          node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
+          node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
 
   buildwin:
     name: Compile Windows Bundle
@@ -82,6 +76,10 @@ jobs:
         if: steps.tagged.status == 'failure'
         run: 'node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell'
 
+      - name: Compile SCSS to css
+        if: steps.tagged.status == 'failure'
+        run: grunt scss
+
       - name: Pack
         if: steps.tagged.status == 'failure'
         run: grunt shell:packwin64
@@ -129,6 +127,7 @@ jobs:
           npm install --global --production grunt-cli node-gyp
           npm install
           node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell
+          grunt scss
           grunt shell:packlinux64
           grunt xcopy:linux64
           grunt compress:linux64
