@@ -37,7 +37,7 @@ jobs:
     name: Compile Windows Bundle
     needs: test
     runs-on: 'windows-latest'
-    if: github.ref === 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
 
       - name: Checkout branch that caused the job to run
@@ -105,7 +105,7 @@ jobs:
     name: Compile Linux Bundle
     needs: test
     runs-on: 'ubuntu-latest'
-    if: github.ref === 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
       - name: Checkout branch that caused the job to run
         uses: 'actions/checkout@v2'
