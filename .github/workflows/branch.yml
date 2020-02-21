@@ -216,7 +216,7 @@ jobs:
         with:
           upload_url: ${{ steps.draft.outputs.upload_url }}
           asset_path: './bundles/windows/firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
-          asset_name: 'firebotv5-${{ steps.package.outputs.version }}-full.nupkg',
+          asset_name: 'firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
           asset_content_type: application/octet-stream
 
       - name: Upload Linux TarBall
