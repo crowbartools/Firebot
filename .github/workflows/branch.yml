@@ -177,14 +177,14 @@ jobs:
         if: steps.tagged.status == 'failure'
         id: draft
         uses: 'actions/create-release@v1'
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            tag_name: v${{ steps.package.outputs.version }}
-            release_name: Release v${{ steps.package.outputs.version }}
-            body: "## v${{ steps.package.outputs.version }} Update Notes  \n\n## Not using V5 yet and curious about what else it has to offer? \n\nTake a look at the [initial V5 release notes](https://github.com/crowbartools/Firebot/releases/tag/v5.0.0).\n\n## Download the *.exe* to get V5!"
-            draft: true
-            prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.package.outputs.version }}
+          release_name: Release v${{ steps.package.outputs.version }}
+          body: "## v${{ steps.package.outputs.version }} Update Notes  \n\n## Not using V5 yet and curious about what else it has to offer? \n\nTake a look at the [initial V5 release notes](https://github.com/crowbartools/Firebot/releases/tag/v5.0.0).\n\n## Download the *.exe* to get V5!"
+          draft: true
+          prerelease: false
 
       - name: Upload Win EXE file
         if: steps.tagged.status == 'failure'
