@@ -21,7 +21,8 @@ jobs:
       - name: Checkout branch that caused the job to run
         uses: 'actions/checkout@v2'
 
-      - run: |
+      - name: Run Tests
+        run: |
           npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
           eslint . --quiet
           node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
