@@ -76,7 +76,7 @@ jobs:
           grunt create-windows-installer:win64
 
       - name: Store Installer
-        if: steps.tagged.status == 1
+        if: steps.tagged.outputs.tagged == 1
         uses: actions/upload-artifact@v1
         with:
           name: windows-bundle
