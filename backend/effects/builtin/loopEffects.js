@@ -60,6 +60,7 @@ const model = {
 
             <effect-list effects="effect.effectList" 
                 trigger="{{trigger}}" 
+                trigger-meta="triggerMeta"
                 update="effectListUpdated(effects)"
                 modalId="{{modalId}}"></effect-list> 
         </eos-container>

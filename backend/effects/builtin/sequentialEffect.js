@@ -42,7 +42,8 @@ const model = {
 
     <eos-container pad-top="true">
         <effect-list effects="effect.effectList" 
-            trigger="{{trigger}}" 
+            trigger="{{trigger}}"
+            trigger-meta="triggerMeta"
             update="effectListUpdated(effects)"
             header="Effects"
             modalId="{{modalId}}"></effect-list>
