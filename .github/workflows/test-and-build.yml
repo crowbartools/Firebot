@@ -57,42 +57,23 @@ jobs:
           python-version: '2.7'
 
       - name: Setup Nodejs
-        if: steps.tagged.status == 'failure'
+        if: steps.tagged.outputs.tagged == 1
         uses: 'actions/setup-node@v1'
         with:
           node-version: "10.x"
 
-      - name: Prep for node-gyp
-        if: steps.tagged.status == 'failure'
-        run: npm config set msvs_version 2015
-
-      - name: Install Global Dependencies
-        if: steps.tagged.status == 'failure'
-        run: npm install --global --production grunt-cli windows-build-tools@4.0.0 node-gyp
-
-      - name: Install App Dependencies
-        if: steps.tagged.status == 'failure'
-        run: npm install
-
-      - name: Rebuild RobotJs for Electron 7.1.9
-        if: steps.tagged.status == 'failure'
-        run: 'node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell'
-
-      - name: Compile SCSS to css
-        if: steps.tagged.status == 'failure'
-        run: grunt scss
-
-      - name: Pack
-        if: steps.tagged.status == 'failure'
-        run: grunt shell:packwin64
-
-      - name: Copy Resources
-        if: steps.tagged.status == 'failure'
-        run: grunt xcopy:win64
-
-      - name: Create Installer
-        if: steps.tagged.status == 'failure'
-        run: grunt shell:create-windows-installer:64
+      - name: Make Windows Installer
+        if: steps.tagged.outputs.tagged == 1
+        shell: bash
+        run: |
+          npm config set msvs_version 2015
+          npm install --global --production grunt-cli windows-build-tools@4.0.0 node-gyp
+          npm install
+          node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell
+          grunt scss
+          grunt shell:packwin64
+          grunt xcopy:win64
+          grunt shell:create-windows-installer:64
 
       - name: Store Installer
         if: steps.tagged.status == 'failure'
@@ -105,7 +86,7 @@ jobs:
     name: Compile Linux Bundle
     needs: test
     runs-on: 'ubuntu-latest'
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/v5' && github.event_name == 'push'
     steps:
       - name: Checkout branch that caused the job to run
         uses: 'actions/checkout@v2'
@@ -119,10 +100,11 @@ jobs:
 
       - name: 'Check: package version has corrosponding git tag'
         id: tagged
-        run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
+        shell: bash
+        run: git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.package.outputs.version }}" && echo "::set-output name=tagged::0" || echo "::set-output name=tagged::1"
 
       - name: Create Bundle
-        if: failure()
+        if: steps.tagged.outputs.tagged == 1
         shell: bash
         run: |
           apt install libx11-dev libxtst-dev libpng-dev
@@ -158,24 +140,25 @@ jobs:
 
       - name: 'Check: package version has corrosponding git tag'
         id: tagged
-        run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
+        shell: bash
+        run: git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.package.outputs.version }}" && echo "::set-output name=tagged::0" || echo "::set-output name=tagged::1"
 
       - name: Get Windows Bundle
-        if: failure()
+        if: steps.tagged.outputs.tagged == 1
         uses: actions/download-artifact@v1
         with:
           name: windows-bundle
           path: './bundles/windows/'
 
       - name: Get Linux Bundle
-        if: steps.tagged.status == 'failure'
+        if: steps.tagged.outputs.tagged == 1
         uses: actions/download-artifact@v1
         with:
           name: linux-bundle
           path: './bundles/linux/'
 
       - name: Draft Release
-        if: steps.tagged.status == 'failure'
+        if: steps.tagged.outputs.tagged == 1
         id: draft
         uses: 'actions/create-release@v1'
         env:
@@ -188,7 +171,7 @@ jobs:
           prerelease: false
 
       - name: Upload Win EXE file
-        if: steps.tagged.status == 'failure'
+        if: steps.tagged.outputs.tagged == 1
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -199,7 +182,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Win RELEASES file
-        if: steps.tagged.status == 'failure'
+        if: steps.tagged.outputs.tagged == 1
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -210,7 +193,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Win NUPKG file
-        if: steps.tagged.status == 'failure'
+        if: steps.tagged.outputs.tagged == 1
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -221,7 +204,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Linux TarBall
-        if: steps.tagged.status == 'failure'
+        if: steps.tagged.outputs.tagged == 1
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
