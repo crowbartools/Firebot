@@ -21,9 +21,14 @@ jobs:
       - name: Checkout branch that caused the job to run
         uses: 'actions/checkout@v2'
 
-      - name: Run Tests
-        run: |
-          npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
-          eslint . --quiet
-          node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
-          node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
+      - name: Run Test Dependencies
+        run: npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
+
+      - name: Run Linter
+        run: eslint . --quiet
+
+      - name: Compile GUI CSS
+        run: node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
+
+      - name: Compile Overlay CSS
+        run: node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
