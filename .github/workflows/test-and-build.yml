@@ -109,13 +109,6 @@ jobs:
           name: windows-bundle
           path: './bundles/windows/'
 
-      - name: Get Linux Bundle
-        if: steps.tagged.outputs.tagged == 1
-        uses: actions/download-artifact@v1
-        with:
-          name: linux-bundle
-          path: './bundles/linux/'
-
       - name: Draft Release
         if: steps.tagged.outputs.tagged == 1
         id: draft
@@ -160,15 +153,4 @@ jobs:
           upload_url: ${{ steps.draft.outputs.upload_url }}
           asset_path: './bundles/windows/firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
           asset_name: 'firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
-          asset_content_type: application/octet-stream
-
-      - name: Upload Linux TarBall
-        if: steps.tagged.outputs.tagged == 1
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.draft.outputs.upload_url }}
-          asset_path: './bundles/linux/firebot.tar.gz'
-          asset_name: 'firebot-linux-x64-v${{ steps.package.outputs.version }}.tar.gz'
           asset_content_type: application/octet-stream
