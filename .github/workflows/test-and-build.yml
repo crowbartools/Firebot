@@ -73,7 +73,7 @@ jobs:
           grunt scss
           grunt shell:packwin64
           grunt xcopy:win64
-          grunt shell:create-windows-installer:x64
+          grunt create-windows-installer:win64
 
       - name: Store Installer
         if: steps.tagged.status == 'failure'
