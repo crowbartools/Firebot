@@ -32,7 +32,7 @@ jobs:
     name: Compile Windows Bundle
     needs: test
     runs-on: 'windows-latest'
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/v5' && github.event_name == 'push'
     steps:
 
       - name: Checkout branch that caused the job to run
@@ -47,10 +47,11 @@ jobs:
 
       - name: 'Check: package version has corrosponding git tag'
         id: tagged
-        run: git show-ref --tags --verify -- "refs/tags/v${{ steps.package.outputs.version }}"
+        shell: bash
+        run: 'echo ::set-output name=tagged::((git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.package.outputs.version }}" && echo 0) || echo 1)'
 
       - name: Setup Python
-        if: failure()
+        if: steps.tagged.outputs.tagged == 1
         uses: 'actions/setup-python@v1'
         with:
           python-version: '2.7'
