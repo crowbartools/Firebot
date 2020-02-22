@@ -1,4 +1,4 @@
-name: Build and Create Release Draft
+name: Build Status
 
 # Only runs after PRs have been merged into master
 on:
