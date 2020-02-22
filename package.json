@@ -39,7 +39,6 @@
     "dependencies": {
         "@mixer/client-node": "^3.5.0",
         "@mixer/interactive-node": "^2.9.0",
-        "ag-grid": "^17.1.1",
         "angular": "^1.7.9",
         "angular-animate": "^1.7.8",
         "angular-aria": "^1.7.9",
@@ -85,7 +84,6 @@
         "node-cache": "^4.2.1",
         "node-json-db": "^0.7.3",
         "parse-link-header": "^1.0.1",
-        "redditor": "^1.1.1",
         "request": "^2.85.0",
         "request-debug": "^0.2.0",
         "retry-as-promised": "^3.2.0",
