@@ -69,7 +69,8 @@ const fileWriter = {
                     <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters" 
                     name="parameterName" 
                     metadata="parameterMetadata" 
-                    trigger="{{trigger}}" 
+                    trigger="{{trigger}}"
+                    trigger-meta="triggerMeta" 
                     modalId="{{modalId}}"></script-parameter-option>
                 </div>
             </div>

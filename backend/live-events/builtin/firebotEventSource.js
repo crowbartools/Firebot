@@ -35,6 +35,12 @@ const firebotEventSource = {
                 previousViewTime: 1,
                 newViewTime: 2
             }
+        },
+        {
+            id: "firebot-started",
+            name: "Firebot Started",
+            description: "When Firebot has started running.",
+            cached: false
         }
     ]
 };

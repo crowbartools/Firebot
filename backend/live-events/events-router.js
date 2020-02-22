@@ -92,6 +92,10 @@ async function onEventTriggered(event, source, meta, isManual = false) {
     let effects = null,
         eventSettings;
 
+    if (meta == null) {
+        meta = {};
+    }
+
     eventSettings = eventsAccess.getAllActiveEvents().filter(
         es => es.sourceId === source.id && es.eventId === event.id
     );

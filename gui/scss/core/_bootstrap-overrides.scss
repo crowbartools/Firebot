@@ -24,6 +24,7 @@
         background-color: $light-background-color;
         position: sticky;
         bottom: 0;
+        z-index: 999;
         &.is-stuck {
             border-top: 1px solid #24262A;
             margin-top: 10px;

@@ -38,7 +38,8 @@ const model = {
                     <condition-list condition-data="ifCondition.conditionData" trigger="trigger" trigger-meta="triggerMeta"></condition-list>
                     <div style="font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;margin-bottom:3px;">Then run the following effects:</div>
                     <effect-list effects="ifCondition.effectData" 
-                        trigger="{{trigger}}" 
+                        trigger="{{trigger}}"
+                        trigger-meta="triggerMeta" 
                         update="effectListUpdated(effects, $index)"
                         modalId="{{modalId}}"></effect-list> 
                         
@@ -58,6 +59,7 @@ const model = {
                     </div>
                     <effect-list effects="effect.otherwiseEffectData" 
                         trigger="{{trigger}}" 
+                        trigger-meta="triggerMeta" 
                         update="otherwiseEffectListUpdated(effects)"
                         modalId="{{modalId}}"></effect-list> 
                 </condition-section>
