@@ -1,0 +1,94 @@
+name: Build and Create Release Draft
+
+# Only runs after PRs have been merged into master
+on:
+  push:
+    branches: 'master'
+
+jobs:
+  compile:
+    name: Compile Installer
+    runs-on: windows-latest
+    steps:
+      - name: Checkout master branch
+        uses: 'actions/checkout@v2'
+
+      - name: Read package.json
+        id: package
+        uses: gregoranders/nodejs-project-info@v0.0.1
+
+      - name: 'Check: package version has corrosponding git tag'
+        id: tagged
+        shell: bash
+        run: git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.package.outputs.version }}" && echo "::set-output name=tagged::0" || echo "::set-output name=tagged::1"
+
+      - name: Setup Python
+        if: steps.tagged.outputs.tagged == 1
+        uses: 'actions/setup-python@v1'
+        with:
+          python-version: '2.7'
+
+      - name: Setup Nodejs
+        if: steps.tagged.outputs.tagged == 1
+        uses: 'actions/setup-node@v1'
+        with:
+          node-version: '10.x'
+
+      - name: Make Windows Installer
+        if: steps.tagged.outputs.tagged == 1
+        shell: bash
+        run: |
+          npm config set msvs_version 2015
+          npm install --global --production grunt-cli windows-build-tools@4.0.0 node-gyp
+          npm install
+          node-gyp rebuild --silent --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell
+          grunt scss
+          grunt shell:packwin64
+          grunt xcopy:win64
+          grunt create-windows-installer:win64
+
+      - name: Draft Release
+        if: steps.tagged.outputs.tagged == 1
+        id: draft
+        uses: 'actions/create-release@v1'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.package.outputs.version }}
+          release_name: Release v${{ steps.package.outputs.version }}
+          body: "## v${{ steps.package.outputs.version }} Update Notes\nedit this  \n\n## Not using V5 yet and curious about what else it has to offer? \nTake a look at the [initial V5 release notes](https://github.com/crowbartools/Firebot/releases/tag/v5.0.0).\n\n## Download the *.exe* to get V5!"
+          draft: true
+          prerelease: false
+
+      - name: Upload Win EXE file
+        if: steps.tagged.outputs.tagged == 1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './dist/install/win64/FirebotV5Setup.exe'
+          asset_name: 'FirebotV5Setup.exe'
+          asset_content_type: application/octet-stream
+
+      - name: Upload Win RELEASES file
+        if: steps.tagged.outputs.tagged == 1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './dist/install/win64/RELEASES'
+          asset_name: 'RELEASES'
+          asset_content_type: application/octet-stream
+
+      - name: Upload Win NUPKG file
+        if: steps.tagged.outputs.tagged == 1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft.outputs.upload_url }}
+          asset_path: './dist/install/win64/firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
+          asset_name: 'firebotv5-${{ steps.package.outputs.version }}-full.nupkg'
+          asset_content_type: application/octet-stream
