@@ -91,6 +91,12 @@ const commandManagement = {
                 description: "Updates the response message for a command. Only works for commands that have 1 or less chat effects."
             },
             {
+                arg: "setcount",
+                usage: "setcount [!trigger or \"phrase\"] count#",
+                description: "Updates the commands usage count.",
+                minArgs: 3
+            },
+            {
                 arg: "cooldown",
                 usage: "cooldown [!trigger or \"phrase\"] [globalCooldownSecs] [userCooldownSecs]",
                 description: "Change the cooldown for a command."
@@ -242,6 +248,40 @@ const commandManagement = {
 
                 Chat.smartSend(
                     `Updated '${trigger}' with response: ${remainingData}`
+                );
+
+                break;
+            }
+            case "setcount": {
+                let countArg = remainingData.trim();
+                if (countArg === "" || isNaN(countArg)) {
+                    Chat.smartSend(
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                let command = activeCustomCommands.find(c => c.trigger === trigger);
+                if (command === null) {
+                    Chat.smartSend(
+                        `Could not find a command with the trigger '${trigger}', please try agian.`,
+                        event.userCommand.commandSender
+                    );
+                    return resolve();
+                }
+
+                let newCount = parseInt(countArg);
+                if (newCount < 0) {
+                    newCount = 0;
+                }
+
+                command.count = parseInt(newCount);
+
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+
+                Chat.smartSend(
+                    `Updated useage count for '${trigger}' to: ${newCount}`
                 );
 
                 break;
