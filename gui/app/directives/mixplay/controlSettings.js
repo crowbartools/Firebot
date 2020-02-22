@@ -353,14 +353,14 @@
                                 field: "chatMessages"
                             }
                         ];
-                    }
 
-                    let currencies = currencyService.getCurrencies();
-                    for (let currency of currencies) {
-                        $ctrl.statTypes.push({
-                            name: `${currency.name} (Currency)`,
-                            field: `currency:${currency.id}`
-                        });
+                        let currencies = currencyService.getCurrencies();
+                        for (let currency of currencies) {
+                            $ctrl.statTypes.push({
+                                name: `${currency.name} (Currency)`,
+                                field: `currency:${currency.id}`
+                            });
+                        }
                     }
                 };
 
