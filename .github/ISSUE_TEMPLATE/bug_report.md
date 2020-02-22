@@ -1,16 +1,14 @@
 ---
 name: Bug report
 about: Create a bug report to help us improve
-title: "[BUG] "
+title: "[Bug] "
 labels: bug
 assignees: ebiggz, LastMageTV
 
 ---
 
-## Bug Report
-
 **Describe the bug**
-A clear and concise description of what the bug is.
+Enter aclear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -19,7 +17,7 @@ Steps to reproduce the behavior:
 3. Scroll down to '...'
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+Enter a clear and concise description of what you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.

@@ -1,11 +1,11 @@
 ---
-name: Help Request
+name: Help request
 about: Request help with an issue you are having.
-title: "[Support]"
+title: "[Support] "
 labels: Support
 assignees: brumoen, ebiggz, LastMageTV
 
 ---
 
 **Help Request**
-Clear and concise explanation of the issue you are having or the thing you would like help with.
+Enter a clear and concise explanation of the issue you are having or the thing you would like help with.
