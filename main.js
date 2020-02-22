@@ -222,12 +222,14 @@ function createWindow() {
         })
     );
 
-
-
     // wait for the main window's content to load, then show it
     mainWindow.webContents.on("did-finish-load", () => {
         mainWindow.show();
-        //mainWindow.webContents.openDevTools();
+
+        const eventManager = require("./backend/live-events/EventManager");
+        eventManager.triggerEvent("firebot", "firebot-started", {
+            username: "Firebot"
+        });
     });
 
     // Emitted when the window is closed.
