@@ -1,0 +1,29 @@
+name: Test Code Updates
+
+# No need to run on master branch
+on:
+  push:
+    branches: '!master'
+  pull_request:
+    types: [opened, edited]
+    branches: '!master'
+
+jobs:
+  test:
+    name: Lint and Test Scss
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Setup Nodejs
+        uses: 'actions/setup-node@v1'
+        with:
+          node-version: "10.x"
+
+      - name: Checkout branch that caused the job to run
+        uses: 'actions/checkout@v2'
+
+      - name: Run Tests
+        run: |
+          npm install --global --production eslint@^5.16.0 node-sass@^4.13.1
+          eslint . --quiet
+          node-sass --quiet --source-map=false ./gui/scss/ --output=./gui/css
+          node-sass --quiet --source-map=false ./resources/overlay/scss/ --output=./resources/overlay/css/
