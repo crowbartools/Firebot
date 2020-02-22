@@ -39,8 +39,8 @@ jobs:
         shell: bash
         run: |
           npm config set msvs_version 2015
-          npm install --global --production grunt-cli windows-build-tools@4.0.0 node-gyp
-          npm install
+          npm install --quiet --global --production grunt-cli windows-build-tools@4.0.0 node-gyp
+          npm install --quiet
           node-gyp rebuild --silent --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell
           grunt scss
           grunt shell:packwin64
