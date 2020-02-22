@@ -10,7 +10,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, ...args) => {
-        let min = Math.min(args);
+        let min = Math.min(...args);
 
         if (isNaN(min)) {
             return 0;
