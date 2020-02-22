@@ -3,10 +3,10 @@ name: Test Code Updates
 # No need to run on master branch
 on:
   push:
-    branches: '!master'
+    branches: ['*', '!master']
   pull_request:
     types: [opened, edited]
-    branches: '!master'
+    branches: ['*', '!master']
 
 jobs:
   test:
