@@ -1,3 +1,10 @@
+/*
+grunt pack
+    Removes the /dist/pack/ directory
+    Runs electron packager for the current platform
+    Copies Resources into /dist/pack/{platform}/resources/
+*/
+
 'use strict';
 module.exports = function (grunt) {
     let flags = [
@@ -25,24 +32,12 @@ module.exports = function (grunt) {
             packwin64: {
                 command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=win32 ${flags}`
             },
-            packlinux64: {
+            packlinux: {
                 command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=linux ${flags}`
             }
         }
     });
 
-    grunt.registerTask('pack', function (scope) {
-        scope = scope || grunt.config.get('platform') || 'win64';
-
-        if (scope === 'win64' || scope === 'linux64') {
-            grunt.task.run([
-                'shell:eslint',
-                'cleanup:scss',
-                `cleanup:${scope}`,
-                'scss',
-                `shell:pack${scope}`,
-                `copy:${scope}`
-            ]);
-        }
-    });
+    let platform = grunt.config.get('platform');
+    grunt.registerTask('pack', ['cleanup:pack', `shell:pack${platform}`, 'copy']);
 };
