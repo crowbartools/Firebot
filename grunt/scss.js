@@ -1,26 +1,16 @@
 /*
-Registers sass/scss related functionality for grunt:
-
 grunt scss
-    Compiles both the gui and overlay dirs' scss into css
-
-grunt scss:gui
-    Compiles the gui dir's scss into css
-
-grunt scss:overlay
-    Compiles the overlay dir's scss into css
+    Removes previously compiled css
+    Compiles gui and overlay dirs' scss into css
 */
 
 'use strict';
-
-const sass = require('node-sass');
-
 module.exports = function (grunt) {
     grunt.config.merge({
         sass: {
             options: {
                 sourceMap: false,
-                implementation: sass
+                implementation: require('node-sass')
             },
             gui: {
                 files: [{
@@ -44,19 +34,5 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-sass');
-
-    grunt.registerTask('scss', function (targ) {
-        if (targ == null) {
-            grunt.task.run('sass');
-
-        } else if (targ === 'gui') {
-            grunt.task.run('sass:gui');
-
-        } else if (targ === 'overlay') {
-            grunt.task.run('sass:overlay');
-
-        } else {
-            grunt.fail.fatal(new Error('Unknown sass target'), 1);
-        }
-    });
+    grunt.registerTask('scss', ['cleanup:css', 'sass']);
 };
