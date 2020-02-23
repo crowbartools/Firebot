@@ -2,13 +2,11 @@
 
 const { ipcMain } = require("electron");
 const chat = require("../mixer-chat.js");
-const util = require("../../utility");
 const profileManager = require("../profile-manager");
-const request = require("request");
 const logger = require("../../logwrapper");
-const userDb = require("../../database/userDatabase");
 const replaceVariableManager = require("../../variables/replace-variable-manager");
 const emotesManager = require("../emotes-manager");
+const accountAccess = require("../account-access");
 
 // This will parse the message string and build an array of Arg numbers the user wants to use.
 function parseArg(str) {
@@ -31,63 +29,51 @@ function parseArg(str) {
 // This builds out a fake chat packet to inject into the ui chat message queue.
 // This is used to display OUTGOING whispers which normally we dont get events for.
 function injectWhisper(chatter, target, message) {
-    let dbAuth = profileManager.getJsonDbInProfile("/auth"),
-        streamerJson = [],
-        botJson = [],
-        data = {
-            channel: 0,
-            id: 0,
-            user_name: 'Streamer', // eslint-disable-line
-            user_id: 0, // eslint-disable-line
-            user_roles: ['Owner', 'Mod', 'User'], // eslint-disable-line
-            user_level: 0, // eslint-disable-line
-            user_avatar: 'url', // eslint-disable-line
-            target: target,
-            message: {
-                message: [
-                    {
-                        type: "text",
-                        data: message
-                    }
-                ],
-                meta: {
-                    whisper: true
+    let data = {
+        channel: 0,
+        id: 0,
+        user_name: 'Streamer', // eslint-disable-line
+        user_id: 0, // eslint-disable-line
+        user_roles: ['Owner', 'Mod', 'User'], // eslint-disable-line
+        user_level: 0, // eslint-disable-line
+        user_avatar: 'url', // eslint-disable-line
+        target: target,
+        message: {
+            message: [
+                {
+                    type: "text",
+                    data: message,
+                    firebotSubsegments: [
+                        {
+                            type: "rawText",
+                            text: message
+                        }
+                    ]
                 }
-            },
-            messageHTML: message
-        };
+            ],
+            meta: {
+                whisper: true
+            }
+        },
+        messageHTML: message
+    };
 
-    try {
-        streamerJson = dbAuth.getData("/streamer");
-    } catch (err) {
-        // Stop here because the streamer isn't logged in.
-        logger.warn(err);
-        return;
-    }
-
-    try {
-        botJson = dbAuth.getData("/bot");
-    } catch (err) {
-        logger.warn(err);
-        if (chatter === "Bot") {
-            // If we cant pull bot info, and somehow they sent the message as a bot... stop here.
-            return;
-        }
-    }
+    let streamer = accountAccess.getAccounts().streamer;
+    let bot = accountAccess.getAccounts().bot;
 
     // Fill out non-chatter specific info.
-    data.channel = streamerJson.channelId;
+    data.channel = streamer.channelId;
     data.id = Date.now();
 
     // Fill out variables based on chatter.
     if (chatter === "Streamer") {
-        data.user_name = streamerJson.username; // eslint-disable-line
+        data.user_name = streamer.username; // eslint-disable-line
         data.user_roles = ['Owner']; // eslint-disable-line
-        data.user_avatar = streamerJson.avatar; // eslint-disable-line
+        data.user_avatar = streamer.avatar; // eslint-disable-line
     } else if (chatter === "Bot") {
-        data.user_name = botJson.username; // eslint-disable-line
+        data.user_name = bot.username; // eslint-disable-line
         data.user_roles = ['Mod']; // eslint-disable-line
-        data.user_avatar = botJson.avatar; // eslint-disable-line
+        data.user_avatar = bot.avatar; // eslint-disable-line
     }
 
     // Send to ui
