@@ -2,7 +2,8 @@
 
 An all-in-one desktop bot for Mixer featuring support for MixPlay, Chat Commands, Events, Timers, Currencies, Third Party Integrations, and so much more. Visit Firebot's [website](https://crowbartools.com/tools/firebot/) for more info.
 
-![Build Status](https://github.com/crowbartools/Firebot/workflows/Test%20Code%20Updates/badge.svg?branch=master)
+![Build Status](https://github.com/crowbartools/Firebot/workflows/Build%20Status/badge.svg?branch=master)
+![Build Status](https://github.com/crowbartools/Firebot/workflows/Build%20Tests/badge.svg?branch=v5)
 [![Total Downloads](https://img.shields.io/github/downloads/crowbartools/firebot/total.svg)](https://crowbartools.com/tools/firebot/)
 [![Version](https://img.shields.io/github/release/crowbartools/firebot.svg)](https://github.com/crowbartools/Firebot/releases)
 [![Discord](https://img.shields.io/discord/372817064034959370.svg?label=Discord+(chat))](https://discord.gg/DegW792)

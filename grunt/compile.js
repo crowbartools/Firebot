@@ -10,7 +10,7 @@ module.exports = function (grunt) {
         'create-windows-installer': {
             win64: {
                 appDirectory: path.join(__dirname, '../dist/pack/Firebot-win32-x64/'),
-                outputDirectory: path.join(__dirname, '../dist/install/win64/'),
+                outputDirectory: path.join(__dirname, '../dist/install/Windows/'),
                 loadingGif: path.join(__dirname, '../gui/images/animated.gif'),
                 iconUrl: path.join(__dirname, '../gui/images/icon_transparent.ico'),
                 setupIcon: path.join(__dirname, '../gui/images/icon_transparent.ico'),
@@ -23,7 +23,7 @@ module.exports = function (grunt) {
         compress: {
             linux: {
                 options: {
-                    archive: path.join(__dirname, '../dist/install/linux64/Firebot-linux-x64.tar.gz'),
+                    archive: path.join(__dirname, '../dist/install/Linux/Firebot-linux-x64.tar.gz'),
                     mode: 'tgz'
                 },
                 files: [{
