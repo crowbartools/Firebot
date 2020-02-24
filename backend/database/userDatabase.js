@@ -19,7 +19,8 @@ const util = require("../utility");
  * @type Datastore
  */
 let db;
-let updateTimeInterval;
+let updateTimeIntervalId;
+let updateLastSeenIntervalId;
 let dbCompactionInterval = 30000;
 
 function getUserDb() {
@@ -45,7 +46,6 @@ function setLastSeenDateTime() {
             logger.debug(`ViewerDB: Setting last seen date for ${num} users`);
         }
     });
-    setTimeout(setLastSeenDateTime, 60000);
 }
 
 //look up user object by name
@@ -140,14 +140,25 @@ function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
 }
 
 function calcUserOnlineMinutes(user) {
+    if (!isViewerDBOn() || !user.online || user.disableAutoStatAccrual) {
+        return Promise.resolve();
+    }
     return new Promise(resolve => {
-        if (!isViewerDBOn() || !user.online || user.disableAutoStatAccrual) {
-            return resolve();
-        }
-        let dt = (Date.now() - user.lastSeen) > 60000 ? user.lastSeen : Date.now();
+
+        let now = Date.now();
+
+        // lastSeen is updated every minute by "setLastSeenDateTime".
+        // If lastSeen was less than a minute ago, we just use the current time, otherwise we use the lastSeen time.
+        let lastSeen = (user.lastSeen && (now - user.lastSeen) > 60000) ? user.lastSeen : now;
+
+        let minsSinceOnline = Math.round((lastSeen - user.onlineAt) / 60000);
+
+        // calculate users new minutes total
+        // since this method is run every 15 minutes, we dont want to add anymore than 15 new minutes.
         let previousTotalMinutes = user.minutesInChannel;
-        let minsSinceOnline = Math.round((dt - user.onlineAt) / 60000);
-        let newTotalMinutes = previousTotalMinutes + (minsSinceOnline < 15 ? minsSinceOnline : 15);
+        let additionalMinutes = minsSinceOnline < 15 ? minsSinceOnline : 15;
+        let newTotalMinutes = previousTotalMinutes + additionalMinutes;
+
         db.update({ _id: user._id }, { $set: { minutesInChannel: newTotalMinutes } }, {}, function (err, numReplaced) {
             if (err) {
                 logger.debug('ViewerDB: Couldnt update users online minutes because of an error. UserId: ' + user._id);
@@ -369,14 +380,13 @@ function connectUserDatabase() {
     setAllUsersOffline();
     setLastSeenDateTime();
 
+    // update online users lastSeen prop every minute
+    updateLastSeenIntervalId = setInterval(setLastSeenDateTime, 60000);
+
     // Update online user minutes every X seconds.
-    updateTimeInterval = setInterval(calcAllUsersOnlineMinutes, 900000);
+    updateTimeIntervalId = setInterval(calcAllUsersOnlineMinutes, 900000);
 }
 
-// Clears the interval that updates everyones viewtime.
-function clearOnlineMinutesInterval() {
-    clearInterval(updateTimeInterval);
-}
 
 function getAllUsers() {
     return new Promise(resolve => {
@@ -571,7 +581,9 @@ ipcMain.on("viewerDbDisconnect", (event, data) => {
     db = null;
 
     // Clear the online time calc interval.
-    clearOnlineMinutesInterval();
+    clearInterval(updateTimeIntervalId);
+    clearInterval(updateLastSeenIntervalId);
+
     logger.debug("Disconnecting from user database.");
 });
 
