@@ -106,6 +106,13 @@ jobs:
           name: 'Linux'
           path: ./bundles/
 
+      - name: Get Commit Messages
+        id: messages
+        if: steps.tagged.outputs.tagged == 1
+        uses: 'SReject/pr-commit-messages@v1.0.1'
+        with:
+          sha: ${{ github.sha }}
+
       - name: Draft Release
         if: steps.tagged.outputs.tagged == 1
         id: draft
@@ -115,7 +122,7 @@ jobs:
         with:
           tag_name: v${{ steps.package.outputs.version }}
           release_name: Release v${{ steps.package.outputs.version }}
-          body: "## v${{ steps.package.outputs.version }} Update Notes\nedit this  \n\n## Not using V5 yet and curious about what else it has to offer? \nTake a look at the [initial V5 release notes](https://github.com/crowbartools/Firebot/releases/tag/v5.0.0).\n\n## Download the *.exe* to get V5!"
+          body: "## v${{ steps.package.outputs.version }} Update Notes\n${{ steps.messages.outputs.messages }}  \n\n## Not using V5 yet and curious about what else it has to offer? \nTake a look at the [initial V5 release notes](https://github.com/crowbartools/Firebot/releases/tag/v5.0.0).\n\n## Download the *.exe* to get V5!"
           draft: true
           prerelease: false
 
