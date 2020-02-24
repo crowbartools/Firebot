@@ -146,23 +146,28 @@ function calcUserOnlineMinutes(user) {
     if (!isViewerDBOn() || !user.online || user.disableAutoStatAccrual) {
         return Promise.resolve();
     }
+
+    const now = Date.now();
+
+    // user.lastSeen is updated every minute by "setLastSeenDateTime".
+    // If user.lastSeen was over a minute ago, we use user.lastSeen, otherwise we just use the current time.
+    const lastSeen = (user.lastSeen && (now - user.lastSeen) > 60000) ? user.lastSeen : now;
+
+    // Calculate the minutes to add to the user's total
+    // Since this method is on a 15 min interval, we don't want to add anymore than 15 new minutes.
+    const additionalMinutes = Math.min(Math.round((lastSeen - user.onlineAt) / 60000), 15);
+
+    // No new minutes to add; return early to avoid hit to DB
+    if (additionalMinutes < 1) {
+        return Promise.resolve();
+    }
+
+    // Calculate users new minutes total.
+    const previousTotalMinutes = user.minutesInChannel;
+    const newTotalMinutes = previousTotalMinutes + additionalMinutes;
+
     return new Promise(resolve => {
-
-        let now = Date.now();
-
-        // user.lastSeen is updated every minute by "setLastSeenDateTime".
-        // If lastSeen was over a minute ago, we use the users lastSeen time, otherwise we just use the current time.
-        let lastSeen = (user.lastSeen && (now - user.lastSeen) > 60000) ? user.lastSeen : now;
-
-        let minsSinceOnline = Math.round((lastSeen - user.onlineAt) / 60000);
-
-        // Calculate users new minutes total.
-        // Since this method is on a 15 min interval, we don't want to add anymore than 15 new minutes.
-        let previousTotalMinutes = user.minutesInChannel;
-        let additionalMinutes = Math.min(minsSinceOnline, 15);
-        let newTotalMinutes = previousTotalMinutes + additionalMinutes;
-
-        db.update({ _id: user._id }, { $set: { minutesInChannel: newTotalMinutes } }, {}, function (err, numReplaced) {
+        db.update({ _id: user._id }, { $set: { minutesInChannel: newTotalMinutes } }, {}, (err, numReplaced) => {
             if (err) {
                 logger.debug('ViewerDB: Couldnt update users online minutes because of an error. UserId: ' + user._id);
                 logger.debug(err);
