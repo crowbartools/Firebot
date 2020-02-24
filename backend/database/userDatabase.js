@@ -381,7 +381,6 @@ function connectUserDatabase() {
 
     logger.info("ViewerDB: User Database Loaded: ", path);
     setAllUsersOffline();
-    setLastSeenDateTime();
 
     // update online users lastSeen prop every minute
     updateLastSeenIntervalId = setInterval(setLastSeenDateTime, 60000);
