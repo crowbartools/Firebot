@@ -158,6 +158,7 @@ function calcUserOnlineMinutes(user) {
                 } else {
                     userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes);
                 }
+                resolve();
             });
         }
     });
