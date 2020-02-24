@@ -81,7 +81,7 @@
                                     <a href ng-click="$ctrl.pasteEffects(true)"><i class="far fa-paste" style="margin-right: 10px;"></i> Paste effects</a>
                                 </li>
                                 <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
-                                    <a href ng-click="$ctrl.removeAllEffects()" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
+                                    <a href ng-click="$ctrl.removeAllEffects()" style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete all effects</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li ng-class="{'disabled': !$ctrl.effectsData.list.length > 0}" ng-click="!$ctrl.effectsData.list > 0 ? $event.stopPropagation() : null">
@@ -117,7 +117,7 @@
                                                 <li><a href ng-click="$ctrl.duplicateEffectAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
                                                 <li><a href ng-click="$ctrl.copyEffectAtIndex($index)"><i class="fal fa-copy" style="margin-right: 10px;" aria-hidden="true"></i>  Copy</a></li>
                                                 <li ng-class="{'disabled': !$ctrl.hasCopiedEffects()}" ng-click="!$ctrl.hasCopiedEffects() ? $event.stopPropagation() : null"><a href ng-click="$ctrl.pasteEffectsAtIndex($index, false)"><i class="fal fa-paste" style="margin-right: 10px;" aria-hidden="true"></i>  Paste After</a></li>
-                                                <li><a href ng-click="$ctrl.removeEffectAtIndex($index)" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
+                                                <li><a href ng-click="$ctrl.removeEffectAtIndex($index)" style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
                                             </ul>
                                         </div>
                                     </span> 

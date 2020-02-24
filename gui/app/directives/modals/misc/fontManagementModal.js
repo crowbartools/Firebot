@@ -23,7 +23,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="color: red;" ng-if="$ctrl.installError">{{$ctrl.installError}}</div>
+                <div style="color: #fb7373;" ng-if="$ctrl.installError">{{$ctrl.installError}}</div>
                 <div style="color: green;text-align: center;padding-top: 5px;" ng-if="$ctrl.installSuccessful">Font successfully installed! Please <strong>restart Firebot</strong> and <strong>refresh the overlay</strong> to put changes into effect.</div>
             </div>
             <div class="modal-footer">

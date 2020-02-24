@@ -27,7 +27,7 @@
                                   <ul class="dropdown-menu" uib-dropdown-menu>
                                       <li><a href ng-click="$ctrl.openAddOrEditActionModal($index)"><i class="fal fa-edit" style="margin-right: 10px;" aria-hidden="true"></i>  Edit</a></li>
                                       <li><a href ng-click="$ctrl.duplicateActionAtIndex($index)"><i class="fal fa-clone" style="margin-right: 10px;" aria-hidden="true"></i>  Duplicate</a></li>
-                                      <li><a href ng-click="$ctrl.removeActionAtIndex($index)" style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
+                                      <li><a href ng-click="$ctrl.removeActionAtIndex($index)" style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i>  Delete</a></li>
                                   </ul>
                               </div>
                           </span> 

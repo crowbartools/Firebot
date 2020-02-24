@@ -84,7 +84,7 @@
                     }
                 },
                 {
-                    html: `<a href style="color:red"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                    html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
                     click: function ($itemScope) {
                         let timer = $itemScope.timer;
                         $scope.deleteTimer(timer);
