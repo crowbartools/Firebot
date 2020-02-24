@@ -27,6 +27,9 @@ exports.loadFilters = () => {
 
     const hostType = require("./builtin/host-type");
 
+    const messageType = require("./builtin/message-type");
+    const message = require("./builtin/message");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -49,4 +52,7 @@ exports.loadFilters = () => {
     filterManager.registerFilter(resubShared);
 
     filterManager.registerFilter(hostType);
+
+    filterManager.registerFilter(messageType);
+    filterManager.registerFilter(message);
 };

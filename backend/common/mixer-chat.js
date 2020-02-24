@@ -358,6 +358,12 @@ function createChatDataProcessing(chatter) {
 
                 let chatFromStreamerChannel = accountAccess.getAccounts().streamer.channelId === data.channel;
 
+                eventManager.triggerEvent("mixer", "chat-message", {
+                    username: data.user_name,
+                    data: data,
+                    originatedInStreamerChannel: chatFromStreamerChannel
+                });
+
                 if (data.message.meta.whisper === true) {
                     if (data.user_name !== accountAccess.getAccounts().bot.username) {
                         // Send to UI to show in chat window.
@@ -365,12 +371,6 @@ function createChatDataProcessing(chatter) {
                     }
                 } else {
                     chatProcessor.uiChatMessage(data);
-
-                    eventManager.triggerEvent("mixer", "chat-message", {
-                        username: data.user_name,
-                        data: data,
-                        originatedInStreamerChannel: chatFromStreamerChannel
-                    });
 
                     eventManager.triggerEvent("mixer", "viewer-arrived", {
                         username: data.user_name,

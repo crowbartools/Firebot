@@ -74,6 +74,7 @@ exports.loadReplaceVariables = () => {
         'textbox-input',
         'time',
         'top-currency',
+        'top-view-time',
         'user-avatar-url',
         'user-level',
         'user-next-level-hearts',
