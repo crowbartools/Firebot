@@ -19,7 +19,8 @@ const util = require("../utility");
  * @type Datastore
  */
 let db;
-let updateTimeInterval;
+let updateTimeIntervalId;
+let updateLastSeenIntervalId;
 let dbCompactionInterval = 30000;
 
 function getUserDb() {
@@ -45,7 +46,6 @@ function setLastSeenDateTime() {
             logger.debug(`ViewerDB: Setting last seen date for ${num} users`);
         }
     });
-    setTimeout(setLastSeenDateTime, 60000);
 }
 
 //look up user object by name
@@ -103,6 +103,31 @@ function searchUsers(usernameFragment) {
     });
 }
 
+function getTopViewTimeUsers(count) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+
+        const sortObj = {
+            minutesInChannel: -1
+        };
+
+        const projectionObj = {
+            username: 1,
+            minutesInChannel: 1
+        };
+
+        db.find({}).sort(sortObj).limit(count).projection(projectionObj).exec(function (err, docs) {
+            if (err) {
+                logger.error("Error getting top view time users: ", err);
+                return resolve([]);
+            }
+            return resolve(docs || []);
+        });
+    });
+}
+
 //calculate the amount of time a user has spent in chat
 function getUserOnlineMinutes(username) {
     return new Promise((resolve, reject) => {
@@ -120,6 +145,9 @@ function getUserOnlineMinutes(username) {
     });
 }
 
+/**
+ * Triggers a View Time Update event and updates MixPlay participant if view time hours has increased
+ */
 function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
     if (user == null) return;
     let previousHours = previousTotalMinutes > 0 ? parseInt(previousTotalMinutes / 60) : 0;
@@ -139,36 +167,50 @@ function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
     }
 }
 
-function calcUserOnlineMinutes(id) {
+function calcUserOnlineMinutes(user) {
+    if (!isViewerDBOn() || !user.online || user.disableAutoStatAccrual) {
+        return Promise.resolve();
+    }
+
+    const now = Date.now();
+
+    // user.lastSeen is updated every minute by "setLastSeenDateTime".
+    // If user.lastSeen was over a minute ago, we use user.lastSeen, otherwise we just use the current time.
+    const lastSeen = (user.lastSeen && (now - user.lastSeen) > 60000) ? user.lastSeen : now;
+
+    // Calculate the minutes to add to the user's total
+    // Since this method is on a 15 min interval, we don't want to add anymore than 15 new minutes.
+    const additionalMinutes = Math.min(Math.round((lastSeen - user.onlineAt) / 60000), 15);
+
+    // No new minutes to add; return early to avoid hit to DB
+    if (additionalMinutes < 1) {
+        return Promise.resolve();
+    }
+
+    // Calculate users new minutes total.
+    const previousTotalMinutes = user.minutesInChannel;
+    const newTotalMinutes = previousTotalMinutes + additionalMinutes;
+
     return new Promise(resolve => {
-        if (!isViewerDBOn()) {
-            return resolve();
-        }
-        getUserById(id).then(user => {
-            if (user.online && !user.disableAutoStatAccrual) {
-                let dt = Date.now() - user.lastSeen > 60000 ? user.lastSeen : Date.now();
-                let previousTotalMinutes = user.minutesInChannel;
-                let newTotalMinutes = previousTotalMinutes + Math.round((dt - user.onlineAt) / 60000);
-                db.update({ _id: id }, { $set: { minutesInChannel: newTotalMinutes } }, {}, function (err, numReplaced) {
-                    if (err) {
-                        logger.debug('ViewerDB: Couldnt update users online minutes because of an error. UserId: ' + id);
-                        logger.debug(err);
-                    } else if (numReplaced === 0) {
-                        logger.debug('ViewerDB: Couldnt update users online minutes. UserId: ' + id);
-                    } else {
-                        userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes);
-                    }
-                });
+        db.update({ _id: user._id }, { $set: { minutesInChannel: newTotalMinutes } }, {}, (err, numReplaced) => {
+            if (err) {
+                logger.debug('ViewerDB: Couldnt update users online minutes because of an error. UserId: ' + user._id);
+                logger.debug(err);
+            } else if (numReplaced === 0) {
+                logger.debug('ViewerDB: Couldnt update users online minutes. UserId: ' + user._id);
+            } else {
+                userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes);
             }
+            resolve();
         });
     });
 }
 
-// Recalculates online time for all users who are on line.
+// Recalculates online time for all users who are online.
 function calcAllUsersOnlineMinutes() {
     db.find({ online: true }, (err, docs) => {
         if (!err) {
-            docs.forEach(user => calcUserOnlineMinutes(user._id));
+            docs.forEach(user => calcUserOnlineMinutes(user));
         }
     });
 }
@@ -369,16 +411,14 @@ function connectUserDatabase() {
 
     logger.info("ViewerDB: User Database Loaded: ", path);
     setAllUsersOffline();
-    setLastSeenDateTime();
 
-    // Update online user minutes every X seconds.
-    updateTimeInterval = setInterval(calcAllUsersOnlineMinutes, 900000);
+    // update online users lastSeen prop every minute
+    updateLastSeenIntervalId = setInterval(setLastSeenDateTime, 60000);
+
+    // Update online user minutes every 15 minutes.
+    updateTimeIntervalId = setInterval(calcAllUsersOnlineMinutes, 900000);
 }
 
-// Clears the interval that updates everyones viewtime.
-function clearOnlineMinutesInterval() {
-    clearInterval(updateTimeInterval);
-}
 
 function getAllUsers() {
     return new Promise(resolve => {
@@ -573,7 +613,9 @@ ipcMain.on("viewerDbDisconnect", (event, data) => {
     db = null;
 
     // Clear the online time calc interval.
-    clearOnlineMinutesInterval();
+    clearInterval(updateTimeIntervalId);
+    clearInterval(updateLastSeenIntervalId);
+
     logger.debug("Disconnecting from user database.");
 });
 
@@ -587,3 +629,4 @@ exports.getUserById = getUserById;
 exports.incrementDbField = incrementDbField;
 exports.getUserDb = getUserDb;
 exports.setChatUsersOnline = setChatUsersOnline;
+exports.getTopViewTimeUsers = getTopViewTimeUsers;

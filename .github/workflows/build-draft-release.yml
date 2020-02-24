@@ -17,6 +17,9 @@ jobs:
       - name: Checkout master branch
         uses: 'actions/checkout@v2'
 
+      - name: Fetch tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
       - name: Read package.json
         id: package
         uses: gregoranders/nodejs-project-info@v0.0.1
