@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html ng-controller="MainController" ng-cloak>
+<html ng-controller="MainController">
   <head>
-    <title>{{appTitle}}</title>
+    <title ng-bind="appTitle">Firebot</title>
     <link rel="icon" href="../../favicon.ico">
     
     <meta charset="utf-8">
@@ -18,7 +18,7 @@
     <link rel="stylesheet" type="text/css" href="http://csshake.surge.sh/csshake.min.css">
     
     <!-- Custom styles for this template -->
-    <link ng-href="../css/{{appTheme()}}.css" rel="stylesheet">
+    <link ng-href="../css/{{appTheme()}}.css" href="../css/Obsidian.css" rel="stylesheet">
 
     <link rel="stylesheet" href="../../node_modules/ng-toast/dist/ngToast.min.css">
 
@@ -201,7 +201,7 @@
     <script type="text/javascript" src="./directives/modals/effect-queues/addOrEditEffectQueueModal.js"></script>
     <script type="text/javascript" src="./directives/modals/quotes/addOrEditQuoteModal.js"></script>
   </head>
-  <body>
+  <body ng-cloak>
     <toast></toast>
     
     <div class='loader-wrapper' ng-if="showSpinner">

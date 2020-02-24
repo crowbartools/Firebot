@@ -75,11 +75,6 @@
                                     <span><i class="fal fa-external-link-alt"></i></span>
                                 </div>
                             </div>
-                
-                            <div class="about-link" 
-                                ng-class="{'contracted': !$ctrl.sbm.navExpanded}"
-                                ng-click="$ctrl.showAboutFirebotModal()">About
-                            </div>
                         </div>
 
                     </div>
@@ -145,14 +140,6 @@
                 utilityService.showModal({
                     component: "connectionPanelModal",
                     windowClass: "connection-panel-modal",
-                    backdrop: true
-                });
-            };
-
-            ctrl.showAboutFirebotModal = function() {
-                utilityService.showModal({
-                    component: "aboutModal",
-                    size: "sm",
                     backdrop: true
                 });
             };

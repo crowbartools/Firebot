@@ -155,6 +155,7 @@ function createWindow() {
         }
     });
 
+    const frontendCommunicator = require("./backend/common/frontend-communicator");
     const menuTemplate = [
         {
             label: 'Edit',
@@ -201,12 +202,22 @@ function createWindow() {
                     role: 'close'
                 }
             ]
+        },
+        {
+            role: 'Help',
+            submenu: [
+                {
+                    label: 'About',
+                    click: () => {
+                        frontendCommunicator.send("open-about-modal");
+                    }
+                }
+            ]
         }
     ];
-    if (!isDev()) {
-        const menu = Menu.buildFromTemplate(menuTemplate);
-        Menu.setApplicationMenu(menu);
-    }
+
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
 
     // register listeners on the window, so we can update the state
     // automatically (the listeners will be removed when the window is closed)

@@ -136,27 +136,15 @@
         });
     });
 
-    app.controller("MainController", function(
-        $scope,
-        $rootScope,
-        $timeout,
-        connectionService,
-        connectionManager,
-        utilityService,
-        settingsService,
-        updatesService,
-        eventLogService,
-        sidebarManager,
-        logger
-    ) {
+    app.controller("MainController", function($scope, $rootScope, $timeout, connectionService, utilityService,
+        settingsService, sidebarManager, logger, backendCommunicator) {
         $rootScope.showSpinner = true;
 
         $scope.sbm = sidebarManager;
 
         /**
-     * rootScope functions. This means they are accessable in all scopes in the front end
-     * This is probably bad form, so putting functions in rootScope shouldnt be abused too much
-     */
+         * rootScope functions. This means they are accessable in all scopes in the front end
+         */
         $rootScope.pasteClipboard = function(elementId, shouldUnfocus) {
             angular.element(`#${elementId}`).focus();
             document.execCommand("paste");
@@ -210,8 +198,8 @@
         };
 
         /*
-      * MANAGE LOGINS MODAL
-      */
+        * MANAGE LOGINS MODAL
+        */
         $scope.showManageLoginsModal = function() {
             let showManageLoginsModal = {
                 templateUrl: "manageLoginsModal.html",
@@ -331,7 +319,6 @@
 
         // Switch Profiles
         $scope.switchProfiles = function(profileId) {
-
             if (profileId !== $scope.currentProfileId) {
                 utilityService
                     .showConfirmationModal({
@@ -351,8 +338,8 @@
         $scope.currentProfileId = profileManager.getLoggedInProfile();
 
         /**
-     * Initial App Load
-     */
+         * Initial App Load
+         */
         $scope.cs = connectionService;
         //$scope.accounts = connectionService.accounts;
         //$scope.profiles = connectionService.profiles;
@@ -366,12 +353,12 @@
         }
 
         /**
-     * Connection stuff
-     */
+         * Connection stuff
+         */
 
         // Get app version and change titlebar.
         let appVersion = electron.remote.app.getVersion();
-        $scope.appTitle = "Firebot | v" + appVersion + " | @FirebotApp";
+        $scope.appTitle = `Firebot v${appVersion}`;
 
         $scope.customFontCssPath = profileManager.getPathInProfile("/fonts/fonts.css");
 
@@ -387,12 +374,20 @@
 
         $rootScope.showSpinner = false;
 
+        backendCommunicator.on("open-about-modal", () => {
+            utilityService.showModal({
+                component: "aboutModal",
+                size: "sm",
+                backdrop: true
+            });
+        });
+
         //show puzzle
-    /*utilityService.showModal({
-        component: "puzzleModal",
-        keyboard: false,
-        backdrop: "static"
-    });*/
+        /*utilityService.showModal({
+            component: "puzzleModal",
+            keyboard: false,
+            backdrop: "static"
+        });*/
     });
 
     // This adds a filter that we can use for ng-repeat, useful when we want to paginate something
