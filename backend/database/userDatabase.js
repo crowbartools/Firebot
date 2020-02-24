@@ -120,6 +120,9 @@ function getUserOnlineMinutes(username) {
     });
 }
 
+/**
+ * Triggers a View Time Update event and updates MixPlay participant if view time hours has increased
+ */
 function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
     if (user == null) return;
     let previousHours = previousTotalMinutes > 0 ? parseInt(previousTotalMinutes / 60) : 0;
@@ -147,16 +150,16 @@ function calcUserOnlineMinutes(user) {
 
         let now = Date.now();
 
-        // lastSeen is updated every minute by "setLastSeenDateTime".
-        // If lastSeen was less than a minute ago, we just use the current time, otherwise we use the lastSeen time.
+        // user.lastSeen is updated every minute by "setLastSeenDateTime".
+        // If lastSeen was over a minute ago, we use the users lastSeen time, otherwise we just use the current time.
         let lastSeen = (user.lastSeen && (now - user.lastSeen) > 60000) ? user.lastSeen : now;
 
         let minsSinceOnline = Math.round((lastSeen - user.onlineAt) / 60000);
 
-        // calculate users new minutes total
-        // since this method is run every 15 minutes, we dont want to add anymore than 15 new minutes.
+        // Calculate users new minutes total.
+        // Since this method is on a 15 min interval, we don't want to add anymore than 15 new minutes.
         let previousTotalMinutes = user.minutesInChannel;
-        let additionalMinutes = minsSinceOnline < 15 ? minsSinceOnline : 15;
+        let additionalMinutes = Math.min(minsSinceOnline, 15);
         let newTotalMinutes = previousTotalMinutes + additionalMinutes;
 
         db.update({ _id: user._id }, { $set: { minutesInChannel: newTotalMinutes } }, {}, function (err, numReplaced) {
@@ -383,7 +386,7 @@ function connectUserDatabase() {
     // update online users lastSeen prop every minute
     updateLastSeenIntervalId = setInterval(setLastSeenDateTime, 60000);
 
-    // Update online user minutes every X seconds.
+    // Update online user minutes every 15 minutes.
     updateTimeIntervalId = setInterval(calcAllUsersOnlineMinutes, 900000);
 }
 
