@@ -103,6 +103,31 @@ function searchUsers(usernameFragment) {
     });
 }
 
+function getTopViewTimeUsers(count) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+
+        const sortObj = {
+            minutesInChannel: -1
+        };
+
+        const projectionObj = {
+            username: 1,
+            minutesInChannel: 1
+        };
+
+        db.find({}).sort(sortObj).limit(count).projection(projectionObj).exec(function (err, docs) {
+            if (err) {
+                logger.error("Error getting top view time users: ", err);
+                return resolve([]);
+            }
+            return resolve(docs || []);
+        });
+    });
+}
+
 //calculate the amount of time a user has spent in chat
 function getUserOnlineMinutes(username) {
     return new Promise((resolve, reject) => {
@@ -604,3 +629,4 @@ exports.getUserById = getUserById;
 exports.incrementDbField = incrementDbField;
 exports.getUserDb = getUserDb;
 exports.setChatUsersOnline = setChatUsersOnline;
+exports.getTopViewTimeUsers = getTopViewTimeUsers;
