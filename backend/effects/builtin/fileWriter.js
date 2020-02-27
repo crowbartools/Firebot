@@ -40,7 +40,7 @@ const fileWriter = {
         <eos-container header="Write Mode" pad-top="true">
             <div class="controls-fb" style="padding-bottom: 5px;">
                 <label class="control-fb control--radio">Replace   <tooltip text="'Replaces existing text with new text in the file.'"></tooltip>
-                    <input type="radio" ng-model="effect.writeMode" value="replace"/> 
+                    <input type="radio" ng-model="effect.writeMode" value="replace"/>
                     <div class="control__indicator"></div>
                 </label>
                 <label class="control-fb control--radio">Append <tooltip text="'Appends a new line with the given text to the file.'"></tooltip>
@@ -68,7 +68,7 @@ const fileWriter = {
         <eos-container header="Delete Line Options" pad-top="true" ng-if="effect.writeMode === 'delete'">
             <div class="controls-fb" style="padding-bottom: 5px;">
                 <label class="control-fb control--radio">Delete by line(s) <tooltip text="'Deletes line(s) at the specificed number(s)'"></tooltip>
-                    <input type="radio" ng-model="effect.deleteLineMode" value="lines"/> 
+                    <input type="radio" ng-model="effect.deleteLineMode" value="lines"/>
                     <div class="control__indicator"></div>
                 </label>
                 <label class="control-fb control--radio">Delete by text <tooltip text="'Deletes lines that equal the given text'"></tooltip>
@@ -81,7 +81,7 @@ const fileWriter = {
         <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'append' || (effect.writeMode === 'delete' && effect.deleteLineMode === 'text')">
             <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
         </eos-container>
-        
+
         <eos-container header="Line Number(s)" pad-top="true" ng-if="effect.writeMode === 'delete' && effect.deleteLineMode === 'lines'">
             <p class="muted">Enter a line number or list of line numbers (separated by commas) to delete.</p>
             <input ng-model="effect.lineNumbers" type="text" class="form-control" id="chat-line-numbers-setting" placeholder="Enter line number(s)" replace-variables="number">
@@ -120,12 +120,9 @@ const fileWriter = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
-            // What should this do when triggered.
-            fileWriterProcessor.run(event.effect, event.trigger);
-            resolve(true);
-        });
+    onTriggerEvent: async event => {
+        await fileWriterProcessor.run(event.effect, event.trigger);
+        return true;
     }
 };
 
