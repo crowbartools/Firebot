@@ -210,14 +210,7 @@ async function handleChatEvent(chatEvent, chatter) {
 
     logger.debug("Checking for command in message...");
 
-    let isWhisper = chatEvent.message.meta.whisper === true,
-        commandSender = chatEvent.user_name; // Username of the person that sent the command.
-
-    // If the chat came from a bot, ignore it.
-    if ((chatEvent.user_name === accountAccess.getAccounts().bot.username || chatter === "bot") && !isWhisper) {
-        logger.debug("Message came from bot and wasnt a whisper, ignoring...");
-        return false;
-    }
+    let commandSender = chatEvent.user_name; // Username of the person that sent the command.
 
     // Check to see if handled message array contains the id of this message already.
     // If it does, that means that one of the logged in accounts has already handled the message.
@@ -241,7 +234,13 @@ async function handleChatEvent(chatEvent, chatter) {
 
     // command wasnt found
     if (command == null) {
-        logger.debug("No command found.");
+        return false;
+    }
+
+    // check if chat came from the bot and if we should ignore it.
+    if ((chatEvent.user_name === accountAccess.getAccounts().bot.username || chatter === "bot")
+        && command.ignoreBot !== false) {
+        logger.debug("Message came from bot and this command is set to ignore it");
         return false;
     }
 

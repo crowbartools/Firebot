@@ -28,6 +28,10 @@
                     $ctrl.command = JSON.parse(JSON.stringify($ctrl.resolve.command));
                 }
 
+                if ($ctrl.command.ignoreBot === undefined) {
+                    $ctrl.command.ignoreBot = true;
+                }
+
                 let modalId = $ctrl.resolve.modalId;
                 utilityService.addSlidingModal(
                     $ctrl.modalInstance.rendered.then(() => {
