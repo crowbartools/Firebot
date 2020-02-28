@@ -1,7 +1,7 @@
 name: Issue Project Automation
 on: [issues]
 jobs:
-  'Add Issue To Projects':
+  add-issue-to-projects:
     runs-on: ubuntu-latest
     steps:
     - name: Add issue to Work Status project
