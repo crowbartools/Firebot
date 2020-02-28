@@ -1,0 +1,20 @@
+name: Issue Project Automation
+on: [issues]
+jobs:
+  'Add Issue To Projects':
+    runs-on: ubuntu-latest
+    steps:
+    - name: Add issue to Work Status project
+      uses: takanabe/github-actions-automate-projects@v0.0.1
+      if: github.event_name == 'issues' && github.event.action == 'opened'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_PROJECT_URL: https://github.com/crowbartools/Firebot/projects/11
+        GITHUB_PROJECT_COLUMN_NAME: To do
+    - name: Add issue to Priority project
+      uses: takanabe/github-actions-automate-projects@v0.0.1
+      if: github.event_name == 'issues' && github.event.action == 'opened'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_PROJECT_URL: https://github.com/crowbartools/Firebot/projects/12
+        GITHUB_PROJECT_COLUMN_NAME: Needs triage
