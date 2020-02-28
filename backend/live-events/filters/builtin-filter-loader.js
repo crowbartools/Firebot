@@ -29,6 +29,7 @@ exports.loadFilters = () => {
 
     const messageType = require("./builtin/message-type");
     const message = require("./builtin/message");
+    const messageOrigin = require("./builtin/message-origin");
 
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
@@ -55,4 +56,5 @@ exports.loadFilters = () => {
 
     filterManager.registerFilter(messageType);
     filterManager.registerFilter(message);
+    filterManager.registerFilter(messageOrigin);
 };
