@@ -130,6 +130,14 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
                     switch (triggerType) {
                     case EffectTrigger.INTERACTIVE:
                         return effectTriggerData.controls.includes(triggerMeta.triggerId);
+                    case EffectTrigger.EVENT:
+                        if (effectTriggerData === true) {
+                            return true;
+                        }
+                        if (Array.isArray(effectTriggerData)) {
+                            return effectTriggerData.includes(triggerMeta.triggerId);
+                        }
+                        return true;
                     default:
                         return true;
                     }
