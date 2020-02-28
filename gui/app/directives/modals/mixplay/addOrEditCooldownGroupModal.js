@@ -140,7 +140,6 @@
                 $ctrl.close({
                     $value: {
                         cooldownGroup: $ctrl.cooldownGroup,
-                        index: $ctrl.resolve.index,
                         action: $ctrl.isNewGroup ? "add" : "update"
                     }
                 });

@@ -641,16 +641,15 @@
                 {
                     html: `<a href><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                     click: function ($itemScope) {
-                        let index = $itemScope.$index;
-                        $scope.showAddOrEditCooldownGroupModal(index);
+                        let cooldownGroup = $itemScope.cooldownGroup;
+                        $scope.showAddOrEditCooldownGroupModal(cooldownGroup);
                     }
                 },
                 {
                     html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
                     click: function ($itemScope) {
-                        let index = $itemScope.$index;
                         let cooldownGroup = $itemScope.cooldownGroup;
-                        $scope.showDeleteCooldownGroupModal(index, cooldownGroup.name);
+                        $scope.showDeleteCooldownGroupModal(cooldownGroup);
                     }
                 }
             ];
@@ -823,22 +822,15 @@
                 return [];
             };
 
-            $scope.showAddOrEditCooldownGroupModal = function(index) {
-
-                let cooldownGroup = null;
-                if (index !== null && index !== undefined) {
-                    let cooldownGroups = $scope.getCooldownGroupsForSelectedProject();
-                    cooldownGroup = cooldownGroups[index];
-                }
+            $scope.showAddOrEditCooldownGroupModal = function(cooldownGroup) {
 
                 utilityService.showModal({
                     component: "addOrEditCooldownGroupModal",
                     resolveObj: {
-                        index: () => index,
                         cooldownGroup: () => cooldownGroup
                     },
                     closeCallback: resp => {
-                        let { action, index, cooldownGroup } = resp;
+                        let { action, cooldownGroup } = resp;
 
                         let cooldownGroups = $scope.getCooldownGroupsForSelectedProject();
 
@@ -846,30 +838,41 @@
                         case "add":
                             cooldownGroups.push(cooldownGroup);
                             break;
-                        case "update":
-                            cooldownGroups[index] = cooldownGroup;
+                        case "update": {
+                            let cooldownIndex = cooldownGroups.findIndex(cg => cg.id === cooldownGroup.id);
+                            if (cooldownIndex > -1) {
+                                cooldownGroups[cooldownIndex] = cooldownGroup;
+                            }
                             break;
-                        case "delete":
-                            cooldownGroups.splice(index, 1);
+                        }
+                        case "delete": {
+                            let cooldownIndex = cooldownGroups.findIndex(cg => cg.id === cooldownGroup.id);
+                            if (cooldownIndex > -1) {
+                                cooldownGroups.splice(cooldownIndex, 1);
+                            }
                             break;
+                        }
                         }
                         mixplayService.saveCooldownGroupsForCurrentProject(cooldownGroups);
                     }
                 });
 
-                $scope.showDeleteCooldownGroupModal = function(index, name) {
+                $scope.showDeleteCooldownGroupModal = function(cooldownGroup) {
                     utilityService
                         .showConfirmationModal({
                             title: "Delete Cooldown Group",
-                            question: `Are you sure you want to delete the cooldown group '${name}'?`,
+                            question: `Are you sure you want to delete the cooldown group '${cooldownGroup.name}'?`,
                             confirmLabel: "Delete",
                             confirmBtnType: "btn-danger"
                         })
                         .then(confirmed => {
                             if (confirmed) {
                                 let cooldownGroups = $scope.getCooldownGroupsForSelectedProject();
-                                cooldownGroups.splice(index, 1);
-                                mixplayService.saveCooldownGroupsForCurrentProject(cooldownGroups);
+                                let cooldownIndex = cooldownGroups.findIndex(cg => cg.id === cooldownGroup.id);
+                                if (cooldownIndex > -1) {
+                                    cooldownGroups.splice(cooldownIndex, 1);
+                                    mixplayService.saveCooldownGroupsForCurrentProject(cooldownGroups);
+                                }
                             }
                         });
                 };
