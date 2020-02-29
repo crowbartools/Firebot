@@ -9,7 +9,7 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 const model = {
     definition: {
         handle: "randomActiveViewer",
-        usage: "randomActiveViewer[roleName]",
+        usage: "randomActiveViewer",
         description: "Get a random active chatter. Optionally include a custom role name to get an active user in that role.",
         possibleDataOutput: [OutputDataType.TEXT]
     },
