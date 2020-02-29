@@ -344,7 +344,7 @@ function createChatDataProcessing(chatter) {
                 chatModerationManager.moderateMessage(data);
 
                 // Send to command router to see if we need to act on a command.
-                commandHandler.handleChatEvent(data, "streamer").catch(reason => {
+                commandHandler.handleChatEvent(data).catch(reason => {
                     logger.error("Could not check for command in chat message.", reason);
                 });
 
@@ -590,15 +590,11 @@ function createChatDataProcessing(chatter) {
             resolve(true);
         } else if (chatter === "Bot") {
             socket = global.botChat;
-
-            // React to chat messages
             socket.on("ChatMessage", data => {
-                commandHandler.handleChatEvent(data, "bot");
-
-                if (data.message.meta.whisper === true) {
-                    if (
-                        data.user_name !== accountAccess.getAccounts().streamer.username
-                    ) {
+                // if someone whispers the bot account, we want to act on that
+                if (data.message.meta.whisper) {
+                    commandHandler.handleChatEvent(data);
+                    if (data.user_name !== accountAccess.getAccounts().streamer.username) {
                         // Send to UI to show in chat window.
                         chatProcessor.uiChatMessage(data);
                     }

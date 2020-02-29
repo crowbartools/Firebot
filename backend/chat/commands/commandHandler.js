@@ -206,7 +206,7 @@ function fireCommand(
     }
 }
 
-async function handleChatEvent(chatEvent, chatter) {
+async function handleChatEvent(chatEvent) {
 
     logger.debug("Checking for command in message...");
 
@@ -238,8 +238,7 @@ async function handleChatEvent(chatEvent, chatter) {
     }
 
     // check if chat came from the bot and if we should ignore it.
-    if ((chatEvent.user_name === accountAccess.getAccounts().bot.username || chatter === "bot")
-        && command.ignoreBot !== false) {
+    if (chatEvent.user_name === accountAccess.getAccounts().bot.username && command.ignoreBot !== false) {
         logger.debug("Message came from bot and this command is set to ignore it");
         return false;
     }
