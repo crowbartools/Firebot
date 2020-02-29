@@ -96,11 +96,10 @@ function squirrelEvents() {
             return;
 
         case "--squirrel-uninstall": {
-        // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
+            // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
 
             //attempt to delete the user-settings folder
-            let rimraf = require("rimraf");
-            rimraf.sync(dataAccess.getPathInUserData("/user-settings"));
+            fs.removeSync(dataAccess.getPathInUserData("/user-settings"));
 
             // Remove shortcuts
             cp = require("child_process");
