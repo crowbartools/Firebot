@@ -48,7 +48,7 @@ module.exports = {
 
         let username = trigger.metadata.username;
         if (username == null || username === "") {
-            return resolve(false);
+            return false;
         }
 
         let mixerUserRoles = await channelAccess.getViewersMixerRoles(username);
