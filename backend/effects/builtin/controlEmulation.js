@@ -201,11 +201,9 @@ const controlEmulation = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
-            controlProcessor.press(event.trigger.metadata.inputType, event.effect);
-            resolve(true);
-        });
+    onTriggerEvent: async event => {
+        controlProcessor.press(event.trigger.metadata.inputType, event.effect);
+        return true;
     }
 };
 

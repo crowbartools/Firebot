@@ -20,32 +20,29 @@ const commandList = {
     /**
    * When the command is triggered
    */
-    onTriggerEvent: event => {
-        return new Promise(async (resolve) => {
-            const cloudSync = require('../../../cloud-sync/profile-sync.js');
-            const Chat = require("../../../common/mixer-chat");
+    onTriggerEvent: async event => {
+        const cloudSync = require('../../../cloud-sync/profile-sync.js');
+        const Chat = require("../../../common/mixer-chat");
 
-            let profileJSON = {
-                username: event.chatEvent.user_name,
-                userRoles: event.chatEvent.user_roles,
-                profilePage: 'quotes'
-            };
+        let profileJSON = {
+            username: event.chatEvent.user_name,
+            userRoles: event.chatEvent.user_roles,
+            profilePage: 'quotes'
+        };
 
-            let binId = await cloudSync.syncProfileData(profileJSON);
+        let binId = await cloudSync.syncProfileData(profileJSON);
 
-            if (binId == null) {
-                Chat.smartSend(
-                    "There are no commands that you are allowed to run.",
-                    event.userCommand.commandSender
-                );
-            } else {
-                Chat.smartSend(
-                    `Here a list of the commands you can use. https://crowbartools.com/tools/firebot/profile?id=${binId}`,
-                    event.userCommand.commandSender
-                );
-            }
-            resolve();
-        });
+        if (binId == null) {
+            Chat.smartSend(
+                "There are no commands that you are allowed to run.",
+                event.userCommand.commandSender
+            );
+        } else {
+            Chat.smartSend(
+                `Here a list of the commands you can use. https://crowbartools.com/tools/firebot/profile?id=${binId}`,
+                event.userCommand.commandSender
+            );
+        }
     }
 };
 

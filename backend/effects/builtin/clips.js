@@ -49,7 +49,7 @@ const clip = {
                     <div class="control__indicator"></div>
                 </label>
             </div>
-            
+
             <div style="padding-top:15px">
                 <label class="control-fb control--checkbox"> Download clip <tooltip text="'You can change which folder clips save to in the Settings tab.'"></tooltip>
                     <input type="checkbox" ng-model="effect.download">
@@ -81,11 +81,9 @@ const clip = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
-            clipProcessor.createClip(event.effect, event.trigger);
-            resolve(true);
-        });
+    onTriggerEvent: async event => {
+        clipProcessor.createClip(event.effect, event.trigger);
+        return true;
     }
 };
 

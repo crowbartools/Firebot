@@ -754,69 +754,61 @@ function getCurrentViewerListV2(users, continuationToken = null, namesOnly = fal
     });
 }
 
-exports.getUserAvatarUrl = function(channelNameOrId) {
-    return new Promise(async resolve => {
-        if (channelNameOrId == null) {
-            channelNameOrId = accountAccess.getAccounts().streamer.channelId;
-        }
+exports.getUserAvatarUrl = async channelNameOrId => {
+    if (channelNameOrId == null) {
+        channelNameOrId = accountAccess.getAccounts().streamer.channelId;
+    }
 
-        let data = await streamerClient.request('GET', 'channels/' + channelNameOrId);
+    let data = await streamerClient.request('GET', 'channels/' + channelNameOrId);
 
-        resolve(data.body.user.avatarUrl);
-    });
+    return data.body.user.avatarUrl;
 };
 
 // Gets general channel data, defaults to streamer data
-exports.getGeneralChannelData = function(
-    channelNameOrId,
-    getBroadcastData = true
-) {
-    return new Promise(async resolve => {
-        if (channelNameOrId == null) {
-            let dbAuth = profileAccess.getJsonDbInProfile("/auth"),
-                streamer = dbAuth.getData("/streamer");
-            channelNameOrId = streamer.channelId;
-        }
+exports.getGeneralChannelData = async (channelNameOrId, getBroadcastData = true) => {
+    if (channelNameOrId == null) {
+        let dbAuth = profileAccess.getJsonDbInProfile("/auth"),
+            streamer = dbAuth.getData("/streamer");
+        channelNameOrId = streamer.channelId;
+    }
 
-        let generalDeets = {};
+    let generalDeets = {};
+    try {
+        let data = await streamerClient.request(
+            "GET",
+            "channels/" + channelNameOrId,
+            {
+                qs: {
+                    fields: "online,name,type,id,userId,token,viewersCurrent"
+                }
+            }
+        );
+        generalDeets = data.body;
+
+    } catch (err) {
+        logger.error("error while getting channel deets", err);
+        return null;
+    }
+
+    if (getBroadcastData && generalDeets.online === true) {
         try {
-            let data = await streamerClient.request(
+            let broadcastData = await streamerClient.request(
                 "GET",
-                "channels/" + channelNameOrId,
+                `channels/${generalDeets.id}/broadcast`,
                 {
                     qs: {
-                        fields: "online,name,type,id,userId,token,viewersCurrent"
+                        fields: "startedAt"
                     }
                 }
             );
-            generalDeets = data.body;
+
+            generalDeets.startedAt = broadcastData.body.startedAt;
         } catch (err) {
-            logger.error("error while getting channel deets", err);
-
-            resolve(null);
-            return;
+            logger.error("error while getting broadcast deets", err);
         }
+    }
 
-        if (getBroadcastData && generalDeets.online === true) {
-            try {
-                let broadcastData = await streamerClient.request(
-                    "GET",
-                    `channels/${generalDeets.id}/broadcast`,
-                    {
-                        qs: {
-                            fields: "startedAt"
-                        }
-                    }
-                );
-
-                generalDeets.startedAt = broadcastData.body.startedAt;
-            } catch (err) {
-                logger.error("error while getting broadcast deets", err);
-            }
-        }
-
-        resolve(generalDeets);
-    });
+    return generalDeets;
 };
 
 // Streamer Chat Connect

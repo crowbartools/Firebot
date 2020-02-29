@@ -50,7 +50,7 @@ const chat = {
                     <input ng-model="effect.whisper" type="text" class="form-control" id="chat-whisper-setting" aria-describedby="chat-text-effect-type" placeholder="Username" replace-variables>
                 </div>
             </div>
-        </div>   
+        </div>
     </eos-container>
 
     `,
@@ -71,11 +71,9 @@ const chat = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve) => {
-            chatProcessor.send(event.effect, event.trigger);
-            resolve(true);
-        });
+    onTriggerEvent: async event => {
+        chatProcessor.send(event.effect, event.trigger);
+        return true;
     },
     /**
    * Code to run in the overlay

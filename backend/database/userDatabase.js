@@ -454,25 +454,23 @@ function getRowsForUI() {
 
 // This takes user input from frontend and sanitizes it for the backend.
 // SANITIZE MY BACKEND EBIGGZ
-function sanitizeDbInput(changePacket) {
-    return new Promise((resolve, reject) => {
-        if (!isViewerDBOn()) {
-            return resolve();
-        }
-        switch (changePacket.field) {
-        case "lastSeen":
-        case "joinDate":
-            changePacket.value = moment(changePacket.value).valueOf();
-            break;
-        case "minutesInChannel":
-        case "mixPlayInteractions":
-        case "chatMessages":
-            changePacket.value = parseInt(changePacket.value);
-            break;
-        default:
-        }
-        resolve(changePacket);
-    });
+async function sanitizeDbInput(changePacket) {
+    if (!isViewerDBOn()) {
+        return;
+    }
+    switch (changePacket.field) {
+    case "lastSeen":
+    case "joinDate":
+        changePacket.value = moment(changePacket.value).valueOf();
+        break;
+    case "minutesInChannel":
+    case "mixPlayInteractions":
+    case "chatMessages":
+        changePacket.value = parseInt(changePacket.value);
+        break;
+    default:
+    }
+    return changePacket;
 }
 
 // This will update a cell in the DB with new information.

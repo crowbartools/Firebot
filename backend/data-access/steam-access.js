@@ -76,43 +76,41 @@ function getSteamAppDetails(appId) {
 
 
 async function getSteamGameDetails(requestedGame) {
-    return new Promise(async function(resolve) {
 
-        let appId = await getAppIdFromSteamCache(requestedGame);
-        if (appId == null || appId === "") {
-            logger.debug('Could not retrieve app id for steam search.');
-            return resolve(null);
-        }
+    let appId = await getAppIdFromSteamCache(requestedGame);
+    if (appId == null || appId === "") {
+        logger.debug('Could not retrieve app id for steam search.');
+        return null;
+    }
 
-        const foundGame = await getSteamAppDetails(appId);
+    const foundGame = await getSteamAppDetails(appId);
 
-        if (foundGame == null) {
-            logger.error("Unable to get game from steam api.");
-            return resolve(null);
-        }
+    if (foundGame == null) {
+        logger.error("Unable to get game from steam api.");
+        return null;
+    }
 
-        let gameDetails = {
-            name: foundGame.name || "Unknown Name",
-            price: null,
-            score: null,
-            releaseDate: null,
-            url: `https://store.steampowered.com/app/${appId}`
-        };
+    let gameDetails = {
+        name: foundGame.name || "Unknown Name",
+        price: null,
+        score: null,
+        releaseDate: null,
+        url: `https://store.steampowered.com/app/${appId}`
+    };
 
-        if (foundGame.price_overview) {
-            gameDetails.price = foundGame.price_overview.final_formatted;
-        }
+    if (foundGame.price_overview) {
+        gameDetails.price = foundGame.price_overview.final_formatted;
+    }
 
-        if (foundGame.metacritic) {
-            gameDetails.score = foundGame.metacritic.score;
-        }
+    if (foundGame.metacritic) {
+        gameDetails.score = foundGame.metacritic.score;
+    }
 
-        if (foundGame.release_date) {
-            gameDetails.releaseDate = foundGame.release_date.date;
-        }
+    if (foundGame.release_date) {
+        gameDetails.releaseDate = foundGame.release_date.date;
+    }
 
-        return resolve(gameDetails);
-    });
+    return gameDetails;
 }
 
 exports.cacheSteamLibrary = cacheSteamLibrary;

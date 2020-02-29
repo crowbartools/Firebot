@@ -40,7 +40,7 @@ const playSound = {
         <div style="margin-bottom: 10px">
             <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
         </div>
-        
+
         <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
     </eos-container>
 
@@ -54,7 +54,7 @@ const playSound = {
 
     <eos-audio-output-device effect="effect" pad-top="true"></eos-audio-output-device>
 
-    <eos-overlay-instance ng-if="effect.audioOutputDevice && effect.audioOutputDevice.deviceId === 'overlay'" 
+    <eos-overlay-instance ng-if="effect.audioOutputDevice && effect.audioOutputDevice.deviceId === 'overlay'"
         effect="effect" pad-top="true"></eos-overlay-instance>
     `,
     /**
@@ -79,38 +79,33 @@ const playSound = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            let effect = event.effect;
-            let data = {
-                filepath: effect.filepath,
-                volume: effect.volume
-            };
+    onTriggerEvent: async event => {
+        let effect = event.effect;
+        let data = {
+            filepath: effect.filepath,
+            volume: effect.volume
+        };
 
-            let selectedOutputDevice = effect.audioOutputDevice;
-            if (
-                selectedOutputDevice == null ||
-        selectedOutputDevice.label === "App Default"
-            ) {
-                selectedOutputDevice = settings.getAudioOutputDevice();
-            }
-            data.audioOutputDevice = selectedOutputDevice;
+        let selectedOutputDevice = effect.audioOutputDevice;
+        if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
+            selectedOutputDevice = settings.getAudioOutputDevice();
+        }
+        data.audioOutputDevice = selectedOutputDevice;
 
-            if (selectedOutputDevice.deviceId === "overlay") {
-                let resourceToken = resourceTokenManager.storeResourcePath(
-                    effect.filepath,
-                    30
-                );
-                data.resourceToken = resourceToken;
+        if (selectedOutputDevice.deviceId === "overlay") {
+            let resourceToken = resourceTokenManager.storeResourcePath(
+                effect.filepath,
+                30
+            );
+            data.resourceToken = resourceToken;
 
-                // send event to the overlay
-                webServer.sendToOverlay("sound", data);
-            } else {
-                // Send data back to media.js in the gui.
-                renderWindow.webContents.send("playsound", data);
-            }
-            resolve(true);
-        });
+            // send event to the overlay
+            webServer.sendToOverlay("sound", data);
+        } else {
+            // Send data back to media.js in the gui.
+            renderWindow.webContents.send("playsound", data);
+        }
+        return true;
     },
     /**
    * Code to run in the overlay

@@ -92,36 +92,34 @@ const html = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            // What should this do when triggered.
-            let effect = event.effect;
+    onTriggerEvent: async event => {
+        // What should this do when triggered.
+        let effect = event.effect;
 
-            // They have an image loaded up for this one.
-            let HTML = effect.html;
-            let duration = effect.length;
-            let removal = effect.removal;
+        // They have an image loaded up for this one.
+        let HTML = effect.html;
+        let duration = effect.length;
+        let removal = effect.removal;
 
-            // Send data back to media.js in the gui.
-            let data = {
-                html: HTML,
-                length: duration,
-                removal: removal,
-                exitAnimation: effect.exitAnimation,
-                exitDuration: effect.exitDuration
-            };
+        // Send data back to media.js in the gui.
+        let data = {
+            html: HTML,
+            length: duration,
+            removal: removal,
+            exitAnimation: effect.exitAnimation,
+            exitDuration: effect.exitDuration
+        };
 
-            if (settings.useOverlayInstances()) {
-                if (effect.overlayInstance != null) {
-                    if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
-                        data.overlayInstance = effect.overlayInstance;
-                    }
+        if (settings.useOverlayInstances()) {
+            if (effect.overlayInstance != null) {
+                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                    data.overlayInstance = effect.overlayInstance;
                 }
             }
+        }
 
-            webServer.sendToOverlay("html", data);
-            resolve(true);
-        });
+        webServer.sendToOverlay("html", data);
+        return true;
     },
     /**
    * Code to run in the overlay

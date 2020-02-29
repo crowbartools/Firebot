@@ -6,23 +6,21 @@ const mixerApi = require("../api-access");
 const NodeCache = require("node-cache");
 let linkHeaderParser = require('parse-link-header');
 
-exports.getFollowDateForUser = function(username) {
-    return new Promise(async resolve => {
-        let streamerData = accountAccess.getAccounts().streamer;
+exports.getFollowDateForUser = async username => {
+    let streamerData = accountAccess.getAccounts().streamer;
 
-        let followerData = await mixerApi.get(
-            `channels/${streamerData.channelId}/follow?where=username:eq:${username}`,
-            "v1",
-            false,
-            false
-        );
+    let followerData = await mixerApi.get(
+        `channels/${streamerData.channelId}/follow?where=username:eq:${username}`,
+        "v1",
+        false,
+        false
+    );
 
-        if (followerData == null || followerData.length < 1) {
-            return resolve(null);
-        }
+    if (followerData == null || followerData.length < 1) {
+        return null;
+    }
 
-        resolve(new Date(followerData[0].followed.createdAt));
-    });
+    return new Date(followerData[0].followed.createdAt);
 };
 
 exports.getChannelSubBadge = async channelName => {
@@ -38,98 +36,87 @@ exports.getChannelSubBadge = async channelName => {
     return badgeData.badge.url;
 };
 
-exports.getStreamerOnlineStatus = function() {
-    return new Promise(async resolve => {
-        let streamerData = accountAccess.getAccounts().streamer;
+exports.getStreamerOnlineStatus = async () => {
+    let streamerData = accountAccess.getAccounts().streamer;
 
-        let onlineData = await mixerApi.get(
-            `channels/${streamerData.channelId}?fields=online`,
-            "v1",
-            false,
-            true
-        );
+    let onlineData = await mixerApi.get(
+        `channels/${streamerData.channelId}?fields=online`,
+        "v1",
+        false,
+        true
+    );
 
-        if (onlineData == null) {
-            return resolve(false);
-        }
+    if (onlineData == null) {
+        return false;
+    }
 
-        resolve(onlineData.online === true);
-    });
+    return onlineData.online === true;
 };
 
 const viewerRoleCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
-exports.getViewersMixerRoles = function(username) {
-    return new Promise(async resolve => {
+exports.getViewersMixerRoles = async username => {
 
-        let cachedRoles = viewerRoleCache.get(username);
-        if (cachedRoles != null) {
-            return resolve(cachedRoles);
-        }
+    let cachedRoles = viewerRoleCache.get(username);
+    if (cachedRoles != null) {
+        return cachedRoles;
+    }
 
-        let idData = await exports.getIdsFromUsername(username);
+    let idData = await exports.getIdsFromUsername(username);
 
-        if (idData == null) {
-            return resolve([]);
-        }
+    if (idData == null) {
+        return [];
+    }
 
-        let chatUser = await exports.getChatUser(idData.userId);
+    let chatUser = await exports.getChatUser(idData.userId);
 
-        if (chatUser == null) {
-            return resolve([]);
-        }
+    if (chatUser == null) {
+        return [];
+    }
 
-        let userRoles = chatUser.userRoles || [];
+    let userRoles = chatUser.userRoles || [];
 
-        viewerRoleCache.set(username, userRoles);
+    viewerRoleCache.set(username, userRoles);
 
-        resolve(chatUser.userRoles);
-    });
+    return chatUser.userRoles;
 };
 
-exports.getChatUser = function(userId) {
-    return new Promise(async resolve => {
-        let streamerData = accountAccess.getAccounts().streamer;
-        try {
-            let chatUser = await mixerApi
-                .get(`chats/${streamerData.channelId}/users/${userId}`, "v1", false, true);
-            resolve(chatUser);
-        } catch (err) {
-            resolve(null);
-        }
-    });
+exports.getChatUser = async userId => {
+    let streamerData = accountAccess.getAccounts().streamer;
+    try {
+        return await mixerApi.get(`chats/${streamerData.channelId}/users/${userId}`, "v1", false, true);
+    } catch (err) {
+        return null;
+    }
 };
 
-exports.getIdsFromUsername = function(username) {
-    return new Promise(async resolve => {
-        try {
-            let ids = await mixerApi.get(`channels/${username}?fields=id,userId`, "v1", false, false);
-            resolve({
-                channelId: ids.id,
-                userId: ids.userId
-            });
-        } catch (err) {
-            resolve(null);
-        }
-    });
+exports.getIdsFromUsername = async username => {
+    try {
+        let ids = await mixerApi.get(`channels/${username}?fields=id,userId`, "v1", false, false);
+        return {
+            channelId: ids.id,
+            userId: ids.userId
+        };
+
+    } catch (err) {
+        return null;
+    }
 };
 
-exports.getMixerAccountDetailsByUsername = function(username) {
-    return new Promise(async resolve => {
+exports.getMixerAccountDetailsByUsername = async username => {
 
-        let userData = await mixerApi.get(
-            `channels/${username}`,
-            "v1",
-            false,
-            false
-        );
+    let userData = await mixerApi.get(
+        `channels/${username}`,
+        "v1",
+        false,
+        false
+    );
 
-        if (userData == null) {
-            return resolve(null);
-        }
+    if (userData == null) {
+        return null;
+    }
 
-        resolve(userData);
-    });
+    return userData;
 };
 
 exports.getChannelProgressionByUsername = async function(username) {

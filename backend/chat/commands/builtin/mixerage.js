@@ -25,32 +25,30 @@ const uptime = {
     /**
    * When the command is triggered
    */
-    onTriggerEvent: event => {
-        return new Promise(async (resolve, reject) => {
-            let commandSender = event.userCommand.commandSender;
+    onTriggerEvent: async event => {
+        let commandSender = event.userCommand.commandSender;
 
-            let userDetails = await channelAccess.getMixerAccountDetailsByUsername(
-                commandSender
+        let userDetails = await channelAccess.getMixerAccountDetailsByUsername(
+            commandSender
+        );
+
+        if (userDetails === null) {
+            Chat.smartSend(`${commandSender} not found.`);
+        } else {
+            let joinedMixerDateMoment = moment(userDetails.createdAt),
+                nowMoment = moment();
+
+            let joinedMixerString = util.getDateDiffString(
+                joinedMixerDateMoment,
+                nowMoment
             );
 
-            if (userDetails === null) {
-                Chat.smartSend(`${commandSender} not found.`);
-            } else {
-                let joinedMixerDateMoment = moment(userDetails.createdAt),
-                    nowMoment = moment();
-
-                let joinedMixerString = util.getDateDiffString(
-                    joinedMixerDateMoment,
-                    nowMoment
-                );
-
-                Chat.smartSend(
-                    `${commandSender} joined Mixer ${joinedMixerString} ago on ${joinedMixerDateMoment.format(
-                        "DD MMMM YYYY HH:mm"
-                    )} UTC`
-                );
-            }
-        });
+            Chat.smartSend(
+                `${commandSender} joined Mixer ${joinedMixerString} ago on ${joinedMixerDateMoment.format(
+                    "DD MMMM YYYY HH:mm"
+                )} UTC`
+            );
+        }
     }
 };
 

@@ -29,39 +29,35 @@ function getTriggerIdFromTriggerData(trigger) {
     return undefined;
 }
 
-const findAndReplaceVariables = (data, trigger) => {
-    return new Promise(async resolve => {
-        let keys = Object.keys(data);
+const findAndReplaceVariables = async (data, trigger) => {
+    let keys = Object.keys(data);
 
-        for (let key of keys) {
+    for (let key of keys) {
 
-            // skip nested effect lists and conditions so we dont replace variables too early
-            if (key === "list" || key === "leftSideValue" || key === "rightSideValue") continue;
+        // skip nested effect lists and conditions so we dont replace variables too early
+        if (key === "list" || key === "leftSideValue" || key === "rightSideValue") continue;
 
-            let value = data[key];
+        let value = data[key];
 
-            if (value && typeof value === "string") {
-                if (value.includes("$")) {
-                    let replacedValue = value;
-                    let triggerId = getTriggerIdFromTriggerData(trigger);
-                    try {
-                        replacedValue = await replaceVariableManager.evaluateText(value, trigger, {
-                            type: trigger.type,
-                            id: triggerId
-                        });
-                    } catch (err) {
-                        logger.warn(`Unable to parse variables for value: '${value}'`, err);
-                    }
-                    data[key] = replacedValue;
+        if (value && typeof value === "string") {
+            if (value.includes("$")) {
+                let replacedValue = value;
+                let triggerId = getTriggerIdFromTriggerData(trigger);
+                try {
+                    replacedValue = await replaceVariableManager.evaluateText(value, trigger, {
+                        type: trigger.type,
+                        id: triggerId
+                    });
+                } catch (err) {
+                    logger.warn(`Unable to parse variables for value: '${value}'`, err);
                 }
-            } else if (value && typeof value === "object") {
-                // recurse
-                await findAndReplaceVariables(value, trigger);
+                data[key] = replacedValue;
             }
+        } else if (value && typeof value === "object") {
+            // recurse
+            await findAndReplaceVariables(value, trigger);
         }
-
-        resolve();
-    });
+    }
 };
 
 // Connection Dependency Checker
@@ -110,83 +106,75 @@ function validateEffectCanRun(effectId, triggerType) {
     return validDeps;
 }
 
-function triggerEffect(effect, trigger) {
-    return new Promise((resolve) => {
+async function triggerEffect(effect, trigger) {
     // For each effect, send it off to the appropriate handler.
-        logger.debug(`Running ${effect.type}(${effect.id}) effect...`);
+    logger.debug(`Running ${effect.type}(${effect.id}) effect...`);
 
-        let effectDef = effectManager.getEffectById(effect.type);
+    let effectDef = effectManager.getEffectById(effect.type);
 
-        resolve(effectDef.onTriggerEvent({ effect: effect, trigger: trigger }));
-    });
+    return effectDef.onTriggerEvent({ effect: effect, trigger: trigger });
 }
 
-function runEffects(runEffectsContext) {
-    return new Promise(async resolve => {
-        let trigger = runEffectsContext.trigger,
-            effects = runEffectsContext.effects.list;
+async function runEffects(runEffectsContext) {
+    let trigger = runEffectsContext.trigger,
+        effects = runEffectsContext.effects.list;
 
-        for (const effect of effects) {
-            // Check this effect for dependencies before running.
-            // If all dependencies are not fulfilled, we will skip this effect.
+    for (const effect of effects) {
+        // Check this effect for dependencies before running.
+        // If all dependencies are not fulfilled, we will skip this effect.
 
-            if (!validateEffectCanRun(effect.type, trigger.type)) {
-                logger.info(`Skipping ${effect.type}(${effect.id}). Dependencies not met or trigger not supported.`);
+        if (!validateEffectCanRun(effect.type, trigger.type)) {
+            logger.info(`Skipping ${effect.type}(${effect.id}). Dependencies not met or trigger not supported.`);
 
-                renderWindow.webContents.send("eventlog", {
-                    type: "general",
-                    username: "System:",
-                    event: `Skipped over ${
-                        effect.id
-                    } due to dependencies or unsupported trigger.`
-                });
-                continue;
-            }
-
-            // run all strings through replace variable system
-            logger.debug("Looking and handling replace variables...");
-
-            await findAndReplaceVariables(effect, trigger);
-
-            try {
-                let response = await triggerEffect(effect, trigger);
-                if (response && response.success === false) {
-                    logger.error(`An effect of type ${effect.type} and id ${effect.id} failed to run.`, response.reason);
-                }
-            } catch (err) {
-                logger.error(`There was an error running effect of type ${effect.type} with id ${effect.id}`, err);
-            }
+            renderWindow.webContents.send("eventlog", {
+                type: "general",
+                username: "System:",
+                event: `Skipped over ${
+                    effect.id
+                } due to dependencies or unsupported trigger.`
+            });
+            continue;
         }
 
-        resolve();
-    });
+        // run all strings through replace variable system
+        logger.debug("Looking and handling replace variables...");
+
+        await findAndReplaceVariables(effect, trigger);
+
+        try {
+            let response = await triggerEffect(effect, trigger);
+            if (response && response.success === false) {
+                logger.error(`An effect of type ${effect.type} and id ${effect.id} failed to run.`, response.reason);
+            }
+        } catch (err) {
+            logger.error(`There was an error running effect of type ${effect.type} with id ${effect.id}`, err);
+        }
+    }
 }
 
-function processEffects(processEffectsRequest) {
-    return new Promise(resolve => {
-        let username = "";
-        if (processEffectsRequest.participant) {
-            username = processEffectsRequest.participant.username;
+async function processEffects(processEffectsRequest) {
+    let username = "";
+    if (processEffectsRequest.participant) {
+        username = processEffectsRequest.participant.username;
+    }
+
+    // Add some values to our wrapper
+    let runEffectsContext = processEffectsRequest;
+    runEffectsContext["username"] = username;
+
+    runEffectsContext.effects = JSON.parse(JSON.stringify(runEffectsContext.effects));
+
+    if (processEffectsRequest.trigger.type !== EffectTrigger.MANUAL) {
+        const queueId = processEffectsRequest.effects.queue;
+        const queue = effectQueueManager.getEffectQueue(queueId);
+        if (queue != null) {
+            logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
+            effectQueueRunner.addEffectsToQueue(queue, runEffectsContext);
+            return;
         }
+    }
 
-        // Add some values to our wrapper
-        let runEffectsContext = processEffectsRequest;
-        runEffectsContext["username"] = username;
-
-        runEffectsContext.effects = JSON.parse(JSON.stringify(runEffectsContext.effects));
-
-        if (processEffectsRequest.trigger.type !== EffectTrigger.MANUAL) {
-            const queueId = processEffectsRequest.effects.queue;
-            const queue = effectQueueManager.getEffectQueue(queueId);
-            if (queue != null) {
-                logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
-                effectQueueRunner.addEffectsToQueue(queue, runEffectsContext);
-                return resolve();
-            }
-        }
-
-        return resolve(runEffects(runEffectsContext));
-    });
+    return runEffects(runEffectsContext);
 }
 
 function runEffectsManually(effects) {

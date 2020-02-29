@@ -61,17 +61,15 @@ const controlMouse = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            let controlKind = event.trigger.metadata.control.kind;
-            let inputData = event.trigger.metadata.inputData;
+    onTriggerEvent: async event => {
+        let controlKind = event.trigger.metadata.control.kind;
+        let inputData = event.trigger.metadata.inputData;
 
-            if (controlKind === "joystick" && inputData.event === "move") {
-                joystick.go(inputData);
-            }
+        if (controlKind === "joystick" && inputData.event === "move") {
+            joystick.go(inputData);
+        }
 
-            resolve(true);
-        });
+        return true;
     },
     /**
    * Code to run in the overlay

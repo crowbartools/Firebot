@@ -47,8 +47,8 @@ const playVideo = {
                 </video>
             </div>
             <div ng-if="effect.videoType == 'YouTube Video' && !shouldShowVideoPlaceholder()">
-                <!--<ng-youtube-embed 
-                    video="effect.youtube" 
+                <!--<ng-youtube-embed
+                    video="effect.youtube"
                     color="white"
                     disablekb="true"
                     fs="false"
@@ -61,7 +61,7 @@ const playVideo = {
                 </ng-youtube-embed>-->
             </div>
         </div>
-        
+
         <div class="btn-group" style="margin-bottom: 10px;">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="change-scene-type-effect-type">{{effect.videoType ? effect.videoType : "Pick one"}}</span> <span class="caret"></span>
@@ -81,10 +81,10 @@ const playVideo = {
         </div>
         <div ng-show="effect.videoType == 'YouTube Video'" class="input-group">
             <span class="input-group-addon">YouTube ID</span>
-            <input 
-                type="text" 
-                class="form-control" 
-                aria-describeby="video-youtube-setting-type" 
+            <input
+                type="text"
+                class="form-control"
+                aria-describeby="video-youtube-setting-type"
                 type="text"
                 ng-model="effect.youtube"
                 placeholder="Ex: AAYrZ69XA8c">
@@ -97,10 +97,10 @@ const playVideo = {
             <eos-container header="Start Time Position" pad-top="true">
                 <div class="input-group">
                     <span class="input-group-addon">Start time location</span>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        aria-describeby="video-youtube-time-setting" 
+                    <input
+                        type="text"
+                        class="form-control"
+                        aria-describeby="video-youtube-time-setting"
                         type="text"
                         ng-model="effect.starttime"
                         placeholder="Ex: 12">
@@ -111,10 +111,10 @@ const playVideo = {
         <eos-container header="Duration" pad-top="true">
             <div class="input-group">
                 <span class="input-group-addon">Seconds</span>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    aria-describedby="video-length-effect-type" 
+                <input
+                    type="text"
+                    class="form-control"
+                    aria-describedby="video-length-effect-type"
                     type="number"
                     ng-model="effect.length">
             </div>
@@ -131,7 +131,7 @@ const playVideo = {
                 <i class="fal fa-volume-up volume-high"></i>
             </div>
         </eos-container>
-        
+
         <eos-overlay-position effect="effect" pad-top="true"></eos-overlay-position>
 
         <eos-container header="Size" pad-top="true">
@@ -141,18 +141,18 @@ const playVideo = {
             </label>
             <div class="input-group">
                 <span class="input-group-addon">Width (in pixels)</span>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    aria-describeby="video-width-setting-type" 
+                <input
+                    type="text"
+                    class="form-control"
+                    aria-describeby="video-width-setting-type"
                     type="number"
                     ng-change="calculateSize('Width', effect.width)"
                     ng-model="effect.width">
                 <span class="input-group-addon">Height (in pixels)</span>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    aria-describeby="video-height-setting-type" 
+                <input
+                    type="text"
+                    class="form-control"
+                    aria-describeby="video-height-setting-type"
                     type="number"
                     ng-change="calculateSize('Height', effect.height)"
                     ng-model="effect.height">
@@ -172,7 +172,7 @@ const playVideo = {
                 <br>
                 <strong>NOTE</strong>: Streamlabs OBS does not support mp4 videos in their browser source. If you have mp4 videos that you want to display in SLOBS, you will need to convert them to the <strong>.webm</strong> format.
             </div>
-        </eos-container>  
+        </eos-container>
     </div>
     `,
     /**
@@ -250,55 +250,53 @@ const playVideo = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            let effect = event.effect;
-            // What should this do when triggered.
-            let position = effect.position;
-            if (position === "Random") {
-                position = mediaProcessor.randomLocation();
-            }
+    onTriggerEvent: async event => {
+        let effect = event.effect;
+        // What should this do when triggered.
+        let position = effect.position;
+        if (position === "Random") {
+            position = mediaProcessor.randomLocation();
+        }
 
-            // Send data back to media.js in the gui.
-            let data = {
-                videoType: effect.videoType,
-                filepath: effect.file,
-                youtubeId: effect.youtube,
-                videoPosition: position,
-                videoHeight: effect.height,
-                videoWidth: effect.width,
-                videoDuration: effect.length,
-                videoVolume: effect.volume,
-                videoStarttime: effect.starttime,
-                enterAnimation: effect.enterAnimation,
-                enterDuration: effect.enterDuration,
-                exitAnimation: effect.exitAnimation,
-                exitDuration: effect.exitDuration,
-                inbetweenAnimation: effect.inbetweenAnimation,
-                inbetweenDelay: effect.inbetweenDelay,
-                inbetweenDuration: effect.inbetweenDuration,
-                inbetweenRepeat: effect.inbetweenRepeat,
-                customCoords: effect.customCoords,
-                loop: effect.loop === true
-            };
+        // Send data back to media.js in the gui.
+        let data = {
+            videoType: effect.videoType,
+            filepath: effect.file,
+            youtubeId: effect.youtube,
+            videoPosition: position,
+            videoHeight: effect.height,
+            videoWidth: effect.width,
+            videoDuration: effect.length,
+            videoVolume: effect.volume,
+            videoStarttime: effect.starttime,
+            enterAnimation: effect.enterAnimation,
+            enterDuration: effect.enterDuration,
+            exitAnimation: effect.exitAnimation,
+            exitDuration: effect.exitDuration,
+            inbetweenAnimation: effect.inbetweenAnimation,
+            inbetweenDelay: effect.inbetweenDelay,
+            inbetweenDuration: effect.inbetweenDuration,
+            inbetweenRepeat: effect.inbetweenRepeat,
+            customCoords: effect.customCoords,
+            loop: effect.loop === true
+        };
 
-            if (settings.useOverlayInstances()) {
-                if (effect.overlayInstance != null) {
-                    if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
-                        data.overlayInstance = effect.overlayInstance;
-                    }
+        if (settings.useOverlayInstances()) {
+            if (effect.overlayInstance != null) {
+                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                    data.overlayInstance = effect.overlayInstance;
                 }
             }
+        }
 
-            let resourceToken = resourceTokenManager.storeResourcePath(
-                effect.file,
-                effect.length
-            );
-            data.resourceToken = resourceToken;
+        let resourceToken = resourceTokenManager.storeResourcePath(
+            effect.file,
+            effect.length
+        );
+        data.resourceToken = resourceToken;
 
-            webServer.sendToOverlay("video", data);
-            resolve(true);
-        });
+        webServer.sendToOverlay("video", data);
+        return true;
     },
     /**
    * Code to run in the overlay

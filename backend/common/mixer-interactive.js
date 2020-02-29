@@ -333,10 +333,8 @@ function changeScenes(groupID, sceneID) {
 
 // Return Control by ID
 // This will have the mixer client search all scenes for the id.
-function returnButtonById(buttonID) {
-    return new Promise(resolve =>
-        resolve(mixerClient.state.getControl(buttonID))
-    );
+async function returnButtonById(buttonID) {
+    return mixerClient.state.getControl(buttonID);
 }
 
 // Get connection status
@@ -579,10 +577,8 @@ function getGroups() {
 
 // Return Control by Scene
 // This finds a button in a scene and returns it.
-function returnButton(buttonID, sceneID) {
-    return new Promise(resolve => {
-        resolve(mixerClient.state.getScene(sceneID).getControl(buttonID));
-    });
+async function returnButton(buttonID, sceneID) {
+    return mixerClient.state.getScene(sceneID).getControl(buttonID);
 }
 
 // Progress Updates

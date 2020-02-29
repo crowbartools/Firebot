@@ -87,26 +87,24 @@ const celebration = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            // What should this do when triggered.
-            let effect = event.effect;
+    onTriggerEvent: async event => {
+        // What should this do when triggered.
+        let effect = event.effect;
 
-            // Get report info
-            let celebrationType = effect.celebration;
-            let celebrationDuration = effect.length;
+        // Get report info
+        let celebrationType = effect.celebration;
+        let celebrationDuration = effect.length;
 
-            // Send data to renderer.
-            let data = {
-                event: "celebration",
-                celebrationType: celebrationType,
-                celebrationDuration: celebrationDuration
-            };
+        // Send data to renderer.
+        let data = {
+            event: "celebration",
+            celebrationType: celebrationType,
+            celebrationDuration: celebrationDuration
+        };
 
-            // Send to overlay.
-            webServer.sendToOverlay("celebrate", data);
-            resolve(true);
-        });
+        // Send to overlay.
+        webServer.sendToOverlay("celebrate", data);
+        return true;
     },
     /**
    * Code to run in the overlay

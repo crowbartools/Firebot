@@ -52,10 +52,10 @@ const api = {
         </eos-container>
 
         <div ng-if="effect.api != null && effect.api !== 'Pick one'">
-            <eos-container  header="Display Location" pad-top="true"> 
+            <eos-container  header="Display Location" pad-top="true">
                 <div class="controls-fb-inline" style="padding-bottom: 5px;">
                     <label class="control-fb control--radio">Chat
-                        <input type="radio" ng-model="effect.show" value="chat"/> 
+                        <input type="radio" ng-model="effect.show" value="chat"/>
                         <div class="control__indicator"></div>
                     </label>
                     <label class="control-fb control--radio" ng-if="effect.imageAvailable">Overlay
@@ -82,18 +82,18 @@ const api = {
             <eos-container header="Dimensions" pad-top="true">
                 <div class="input-group">
                     <span class="input-group-addon">Width</span>
-                    <input 
-                    type="number" 
-                    class="form-control" 
-                    aria-describeby="image-width-setting-type" 
+                    <input
+                    type="number"
+                    class="form-control"
+                    aria-describeby="image-width-setting-type"
                     type="number"
                     ng-model="effect.width"
                     placeholder="px">
                     <span class="input-group-addon">Height</span>
-                    <input 
-                    type="number" 
-                    class="form-control" 
-                    aria-describeby="image-height-setting-type" 
+                    <input
+                    type="number"
+                    class="form-control"
+                    aria-describeby="image-height-setting-type"
                     type="number"
                     ng-model="effect.height"
                     placeholder="px">
@@ -103,16 +103,16 @@ const api = {
             <eos-container header="Duration" pad-top="true">
                 <div class="input-group">
                     <span class="input-group-addon">Seconds</span>
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    aria-describedby="image-length-effect-type" 
+                    <input
+                    type="text"
+                    class="form-control"
+                    aria-describedby="image-length-effect-type"
                     type="number"
                     ng-model="effect.length">
                 </div>
             </eos-container>
 
-            <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance> 
+            <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance>
         </div>
 
         <eos-container>
@@ -158,11 +158,9 @@ const api = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            apiProcessor.go(event.effect);
-            resolve(true);
-        });
+    onTriggerEvent: async event => {
+        apiProcessor.go(event.effect);
+        return true;
     },
     /**
    * Code to run in the overlay

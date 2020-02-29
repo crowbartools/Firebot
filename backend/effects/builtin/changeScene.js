@@ -47,16 +47,16 @@ const delay = {
         <eos-container header="Viewer" pad-top="true" ng-show="effect.sceneAction === 'single'">
             <div style="padding: 0 10px 0 0;">
                 <label class="control-fb control--radio">Associated viewer <tooltip text="'The viewer who pressed this button/ran the command/etc.'"></tooltip>
-                    <input type="radio" ng-model="effect.viewerType" value="current"/> 
+                    <input type="radio" ng-model="effect.viewerType" value="current"/>
                     <div class="control__indicator"></div>
                 </label>
                 <label class="control-fb control--radio" style="margin-bottom: 10px;">Custom viewer
                     <input type="radio" ng-model="effect.viewerType" value="custom"/>
                     <div class="control__indicator"></div>
-                </label>                
+                </label>
                 <div ng-show="effect.viewerType === 'custom'" style="padding-left: 30px;">
-                    <input class="form-control" type="text" ng-model="effect.customViewer" placeholder="Username" replace-variables></input> 
-                </div>               
+                    <input class="form-control" type="text" ng-model="effect.customViewer" placeholder="Username" replace-variables></input>
+                </div>
             </div>
         </eos-container>
 
@@ -170,37 +170,37 @@ const delay = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
-            let effect = event.effect;
+    onTriggerEvent: async event => {
+        let effect = event.effect;
 
-            //mixplayProject
+        //mixplayProject
 
-            if (effect.mixplayProject == null) {
-                return resolve(true);
-            }
+        if (effect.mixplayProject == null) {
+            return true;
+        }
 
-            let connectedProject = mixplayManager.getConnectedProject();
-            if (!connectedProject || connectedProject.id !== effect.mixplayProject) return resolve(true);
+        let connectedProject = mixplayManager.getConnectedProject();
+        if (!connectedProject || connectedProject.id !== effect.mixplayProject) {
+            return true;
+        }
 
-            if (effect.sceneAction === 'single') {
-                let username = "";
-                if (effect.viewerType === "current") {
-                    username = event.trigger.metadata.username;
-                } else {
-                    username = effect.customViewer ? effect.customViewer.trim() : "";
-                }
-
-                mixplay.moveViewerToScene(username, effect.newSceneId);
-
-            } else if (effect.sceneAction === 'scene') {
-                mixplay.moveViewersToNewScene(effect.currentSceneId, effect.newSceneId);
+        if (effect.sceneAction === 'single') {
+            let username = "";
+            if (effect.viewerType === "current") {
+                username = event.trigger.metadata.username;
             } else {
-                //move all viewers
-                mixplay.moveAllViewersToScene(effect.newSceneId);
+                username = effect.customViewer ? effect.customViewer.trim() : "";
             }
-            resolve();
-        });
+
+            mixplay.moveViewerToScene(username, effect.newSceneId);
+
+        } else if (effect.sceneAction === 'scene') {
+            mixplay.moveViewersToNewScene(effect.currentSceneId, effect.newSceneId);
+
+        //move all viewers
+        } else {
+            mixplay.moveAllViewersToScene(effect.newSceneId);
+        }
     }
 };
 

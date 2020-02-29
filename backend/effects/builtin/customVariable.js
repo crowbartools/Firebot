@@ -73,16 +73,14 @@ const fileWriter = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(async (resolve) => {
-            // What should this do when triggered.
-            let effect = event.effect;
+    onTriggerEvent: async event => {
+        // What should this do when triggered.
+        let effect = event.effect;
 
-            let data = await util.populateStringWithTriggerData(effect.variableData, event.trigger);
-            customVariableManager.addCustomVariable(effect.name, data, effect.ttl);
+        let data = await util.populateStringWithTriggerData(effect.variableData, event.trigger);
+        customVariableManager.addCustomVariable(effect.name, data, effect.ttl);
 
-            resolve(true);
-        });
+        return true;
     },
     /**
    * Code to run in the overlay

@@ -251,50 +251,45 @@ const cooldown = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve) => {
-            const effect = event.effect;
-            let cooldownIds = [];
+    onTriggerEvent: async event => {
+        const effect = event.effect;
+        let cooldownIds = [];
 
-            // Cooldown revamp bridge
-            if (effect.cooldownTarget == null) {
-                effect.cooldownTarget = 'button';
-            }
-            if (effect.cooldownType == null) {
-                effect.cooldownType = 'update';
-            }
-            if (effect.updateType == null) {
-                effect.updateType = 'longer';
-            }
+        // Cooldown revamp bridge
+        if (effect.cooldownTarget == null) {
+            effect.cooldownTarget = 'button';
+        }
+        if (effect.cooldownType == null) {
+            effect.cooldownType = 'update';
+        }
+        if (effect.updateType == null) {
+            effect.updateType = 'longer';
+        }
 
-            if (effect.cooldownTarget === 'group') {
-                cooldownIds = effect.groupIds;
-            } else {
-                cooldownIds = effect.controlIds;
-            }
+        if (effect.cooldownTarget === 'group') {
+            cooldownIds = effect.groupIds;
+        } else {
+            cooldownIds = effect.controlIds;
+        }
 
-            if (effect.cooldownType === 'update') {
-                cooldownManager.advancedUpdate({
-                    target: effect.cooldownTarget,
-                    ids: cooldownIds,
-                    type: effect.updateType,
-                    duration: effect.duration
-                });
-                resolve(true);
-            }
+        if (effect.cooldownType === 'update') {
+            cooldownManager.advancedUpdate({
+                target: effect.cooldownTarget,
+                ids: cooldownIds,
+                type: effect.updateType,
+                duration: effect.duration
+            });
 
-            if (effect.cooldownType === 'add' || effect.cooldownType === 'subtract') {
-                cooldownManager.mathUpdate({
-                    target: effect.cooldownTarget,
-                    ids: cooldownIds,
-                    type: effect.cooldownType,
-                    duration: effect.duration
-                });
-                resolve(true);
-            }
+        } else if (effect.cooldownType === 'add' || effect.cooldownType === 'subtract') {
+            cooldownManager.mathUpdate({
+                target: effect.cooldownTarget,
+                ids: cooldownIds,
+                type: effect.cooldownType,
+                duration: effect.duration
+            });
+        }
 
-            resolve(true);
-        });
+        return true;
     }
 };
 

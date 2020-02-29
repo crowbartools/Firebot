@@ -164,26 +164,23 @@ exports.populateStringWithTriggerData = async function(string = "", trigger) {
     return await replaceVariableManager.evaluateText(string, trigger, { type: trigger.type, id: triggerId });
 };
 
-exports.getUptime = () => {
-    return new Promise(async resolve => {
-        let uptimeString = "[API ERROR]";
+exports.getUptime = async () => {
+    let uptimeString = "[API ERROR]";
 
-        let channelDeets = await Chat.getGeneralChannelData();
-        if (channelDeets != null) {
-            if (channelDeets.online) {
-                let startAt = channelDeets.startedAt;
+    let channelDeets = await Chat.getGeneralChannelData();
+    if (channelDeets != null) {
+        if (channelDeets.online) {
+            let startAt = channelDeets.startedAt,
+                duration = moment.duration(moment().diff(moment(startAt))),
+                seconds = duration.asSeconds();
 
-                let duration = moment.duration(moment().diff(moment(startAt))),
-                    seconds = duration.asSeconds();
-
-                uptimeString = getUptimeString(seconds);
-            } else {
-                uptimeString = "Not currently broadcasting";
-            }
+            uptimeString = getUptimeString(seconds);
+        } else {
+            uptimeString = "Not currently broadcasting";
         }
+    }
 
-        resolve(uptimeString);
-    });
+    return uptimeString;
 };
 
 exports.getDateDiffString = function(date1, date2) {

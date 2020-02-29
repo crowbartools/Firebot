@@ -63,7 +63,7 @@ const dice = {
     <eos-container header="Display Mode" pad-top="true">
         <div style="padding-left: 10px;">
             <label class="control-fb control--radio">Just the sum <span class="muted"><br />Ex: 'ebiggz rolled a 7 on 2d6.'</span>
-                <input type="radio" ng-model="effect.resultType" value="sum"/> 
+                <input type="radio" ng-model="effect.resultType" value="sum"/>
                 <div class="control__indicator"></div>
             </label>
             <label class="control-fb control--radio" >Include each roll <span class="muted"><br />Ex: 'ebiggz rolled a 7 (4, 3) on 2d6.'</span>
@@ -97,12 +97,10 @@ const dice = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            // What should this do when triggered.
-            diceProcessor.send(event.effect, event.trigger);
-            resolve(true);
-        });
+    onTriggerEvent: async event => {
+        // What should this do when triggered.
+        diceProcessor.send(event.effect, event.trigger);
+        return true;
     },
     /**
    * Code to run in the overlay

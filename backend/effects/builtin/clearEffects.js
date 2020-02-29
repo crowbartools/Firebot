@@ -63,7 +63,7 @@ const delay = {
                         <li role="menuitem" ng-repeat="queue in effectQueues" ng-click="effect.queueId = queue.id"><a href>{{queue.name}}</a></li>
                     </ul>
                 </div>
-            </div> 
+            </div>
         </eos-container>
     `,
     /**
@@ -108,31 +108,29 @@ const delay = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
-            const effect = event.effect;
+    onTriggerEvent: async event => {
+        const effect = event.effect;
 
-            if (effect.queues) {
-                if (effect.queueId === "all") {
-                    effectQueueRunner.clearAllQueues();
-                } else {
-                    if (effect.queueId) {
-                        effectQueueRunner.removeQueue(effect.queueId);
-                    }
+        if (effect.queues) {
+            if (effect.queueId === "all") {
+                effectQueueRunner.clearAllQueues();
+            } else {
+                if (effect.queueId) {
+                    effectQueueRunner.removeQueue(effect.queueId);
                 }
             }
+        }
 
-            if (effect.sounds) {
-                frontendCommunicator.send("stop-all-sounds");
-            }
+        if (effect.sounds) {
+            frontendCommunicator.send("stop-all-sounds");
+        }
 
-            if (effect.overlay) {
-                // trigger overlay refresh to clear any current effects
-                webServer.sendToOverlay("OVERLAY:REFRESH");
-            }
+        if (effect.overlay) {
+            // trigger overlay refresh to clear any current effects
+            webServer.sendToOverlay("OVERLAY:REFRESH");
+        }
 
-            resolve(true);
-        });
+        return true;
     }
 };
 

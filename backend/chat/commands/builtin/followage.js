@@ -25,30 +25,28 @@ const followage = {
     /**
    * When the command is triggered
    */
-    onTriggerEvent: event => {
-        return new Promise(async (resolve, reject) => {
-            let commandSender = event.userCommand.commandSender;
+    onTriggerEvent: async event => {
+        let commandSender = event.userCommand.commandSender;
 
-            let followDate = await channelAccess.getFollowDateForUser(commandSender);
+        let followDate = await channelAccess.getFollowDateForUser(commandSender);
 
-            if (followDate === null) {
-                Chat.smartSend(`${commandSender} is not following the channel.`);
-            } else {
-                let followDateMoment = moment(followDate),
-                    nowMoment = moment();
+        if (followDate === null) {
+            Chat.smartSend(`${commandSender} is not following the channel.`);
+        } else {
+            let followDateMoment = moment(followDate),
+                nowMoment = moment();
 
-                let followAgeString = util.getDateDiffString(
-                    followDateMoment,
-                    nowMoment
-                );
+            let followAgeString = util.getDateDiffString(
+                followDateMoment,
+                nowMoment
+            );
 
-                Chat.smartSend(
-                    `${commandSender} followed ${followAgeString} ago on ${followDateMoment.format(
-                        "DD MMMM YYYY HH:mm"
-                    )} UTC`
-                );
-            }
-        });
+            Chat.smartSend(
+                `${commandSender} followed ${followAgeString} ago on ${followDateMoment.format(
+                    "DD MMMM YYYY HH:mm"
+                )} UTC`
+            );
+        }
     }
 };
 

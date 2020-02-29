@@ -23,12 +23,9 @@ const model = {
     /**
    * When the command is triggered
    */
-    onTriggerEvent: event => {
-        return new Promise(async (resolve, reject) => {
-            let uptimeString = await util.getUptime();
-
-            Chat.smartSend(`Broadcasting time: ${uptimeString}`);
-        });
+    onTriggerEvent: async () => {
+        let uptimeString = await util.getUptime();
+        Chat.smartSend(`Broadcasting time: ${uptimeString}`);
     }
 };
 
