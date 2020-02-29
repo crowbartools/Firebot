@@ -86,13 +86,11 @@ const toggleConnection = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            // What should this do when triggered.
-            let effect = event.effect;
-            renderWindow.webContents.send("toggleServicesRequest", effect.services);
-            resolve(true);
-        });
+    onTriggerEvent: async event => {
+        // What should this do when triggered.
+        let effect = event.effect;
+        renderWindow.webContents.send("toggleServicesRequest", effect.services);
+        return true;
     }
 };
 

@@ -86,11 +86,7 @@ function getEffectQueue(queueId) {
     return effectQueues[queueId];
 }
 
-frontendCommunicator.onAsync("getEffectQueues", () => {
-    return new Promise(resolve => {
-        resolve(effectQueues);
-    });
-});
+frontendCommunicator.onAsync("getEffectQueues", async () => effectQueues);
 
 frontendCommunicator.on("saveEffectQueue", (queue) => {
     saveEffectQueue(queue);

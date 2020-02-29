@@ -4,7 +4,7 @@ const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
-const fsExtra = require('fs-extra');
+const fs = require('fs-extra');
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
@@ -48,7 +48,7 @@ const showImage = {
         </div>
         <div class="controls-fb-inline" style="padding-bottom: 5px;">
             <label class="control-fb control--radio">Local file
-                <input type="radio" ng-model="effect.imageType" value="local" ng-change="imageTypeUpdated()"/> 
+                <input type="radio" ng-model="effect.imageType" value="local" ng-change="imageTypeUpdated()"/>
                 <div class="control__indicator"></div>
             </label>
             <label class="control-fb control--radio">URL
@@ -78,18 +78,18 @@ const showImage = {
     <div class="effect-setting-content">
         <div class="input-group">
             <span class="input-group-addon">Width</span>
-            <input 
-                type="number" 
-                class="form-control" 
-                aria-describeby="image-width-setting-type" 
+            <input
+                type="number"
+                class="form-control"
+                aria-describeby="image-width-setting-type"
                 type="number"
                 ng-model="effect.width"
                 placeholder="px">
             <span class="input-group-addon">Height</span>
-            <input 
-                type="number" 
-                class="form-control" 
-                aria-describeby="image-height-setting-type" 
+            <input
+                type="number"
+                class="form-control"
+                aria-describeby="image-height-setting-type"
                 type="number"
                 ng-model="effect.height"
                 placeholder="px">
@@ -101,10 +101,10 @@ const showImage = {
     <div class="effect-setting-content">
         <div class="input-group">
             <span class="input-group-addon">Seconds</span>
-            <input 
-                type="text" 
-                class="form-control" 
-                aria-describedby="image-length-effect-type" 
+            <input
+                type="text"
+                class="form-control"
+                aria-describedby="image-length-effect-type"
                 type="number"
                 ng-model="effect.length">
         </div>
@@ -178,82 +178,80 @@ const showImage = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(async resolve => {
-            // What should this do when triggered.
-            let effect = event.effect;
+    onTriggerEvent: async event => {
+        // What should this do when triggered.
+        let effect = event.effect;
 
-            let position = effect.position;
-            if (position === "Random") {
-                position = mediaProcessor.randomLocation();
-            }
+        let position = effect.position;
+        if (position === "Random") {
+            position = mediaProcessor.randomLocation();
+        }
 
-            let data = {
-                filepath: effect.file,
-                url: effect.url,
-                folder: effect.folder,
-                imageType: effect.imageType,
-                imagePosition: position,
-                imageHeight: effect.height ? effect.height + "px" : "auto",
-                imageWidth: effect.width ? effect.width + "px" : "auto",
-                imageDuration: effect.length,
-                inbetweenAnimation: effect.inbetweenAnimation,
-                inbetweenDelay: effect.inbetweenDelay,
-                inbetweenDuration: effect.inbetweenDuration,
-                inbetweenRepeat: effect.inbetweenRepeat,
-                enterAnimation: effect.enterAnimation,
-                enterDuration: effect.enterDuration,
-                exitAnimation: effect.exitAnimation,
-                exitDuration: effect.exitDuration,
-                customCoords: effect.customCoords
-            };
+        let data = {
+            filepath: effect.file,
+            url: effect.url,
+            folder: effect.folder,
+            imageType: effect.imageType,
+            imagePosition: position,
+            imageHeight: effect.height ? effect.height + "px" : "auto",
+            imageWidth: effect.width ? effect.width + "px" : "auto",
+            imageDuration: effect.length,
+            inbetweenAnimation: effect.inbetweenAnimation,
+            inbetweenDelay: effect.inbetweenDelay,
+            inbetweenDuration: effect.inbetweenDuration,
+            inbetweenRepeat: effect.inbetweenRepeat,
+            enterAnimation: effect.enterAnimation,
+            enterDuration: effect.enterDuration,
+            exitAnimation: effect.exitAnimation,
+            exitDuration: effect.exitDuration,
+            customCoords: effect.customCoords
+        };
 
-            if (settings.useOverlayInstances()) {
-                if (effect.overlayInstance != null) {
-                    if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
-                        data.overlayInstance = effect.overlayInstance;
-                    }
+        if (settings.useOverlayInstances()) {
+            if (effect.overlayInstance != null) {
+                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                    data.overlayInstance = effect.overlayInstance;
                 }
             }
+        }
 
-            if (effect.imageType == null) {
-                effect.imageType = "local";
+        if (effect.imageType == null) {
+            effect.imageType = "local";
+        }
+
+        if (effect.imageType === "local") {
+            let resourceToken = resourceTokenManager.storeResourcePath(
+                effect.file,
+                effect.length
+            );
+            data.resourceToken = resourceToken;
+        }
+
+        if (effect.imageType === "folderRandom") {
+
+            let files = [];
+            try {
+                files = await fs.readdir(effect.folder);
+            } catch (err) {
+                logger.warn("Unable to read image folder", err);
             }
 
-            if (effect.imageType === "local") {
-                let resourceToken = resourceTokenManager.storeResourcePath(
-                    effect.file,
-                    effect.length
-                );
-                data.resourceToken = resourceToken;
-            }
+            let filteredFiles = files.filter(i => (/\.(gif|jpg|jpeg|png)$/i).test(i));
 
-            if (effect.imageType === "folderRandom") {
+            let chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
-                let files = [];
-                try {
-                    files = await fsExtra.readdir(effect.folder);
-                } catch (err) {
-                    logger.warn("Unable to read image folder", err);
-                }
+            let fullFilePath = path.join(effect.folder, chosenFile);
 
-                let filteredFiles = files.filter(i => (/\.(gif|jpg|jpeg|png)$/i).test(i));
+            let resourceToken = resourceTokenManager.storeResourcePath(
+                fullFilePath,
+                effect.length
+            );
 
-                let chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
+            data.resourceToken = resourceToken;
+        }
 
-                let fullFilePath = path.join(effect.folder, chosenFile);
-
-                let resourceToken = resourceTokenManager.storeResourcePath(
-                    fullFilePath,
-                    effect.length
-                );
-
-                data.resourceToken = resourceToken;
-            }
-
-            webServer.sendToOverlay("image", data);
-            resolve(true);
-        });
+        webServer.sendToOverlay("image", data);
+        return true;
     },
     /**
    * Code to run in the overlay

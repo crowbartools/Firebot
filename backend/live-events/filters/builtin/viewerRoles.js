@@ -28,21 +28,16 @@ module.exports = {
     ],
     comparisonTypes: ["include", "doesn't include"],
     valueType: "preset",
-    presetValues: (viewerRolesService) => {
-        return new Promise(resolve => {
-            let allRoles = viewerRolesService.getCustomRoles()
-                .concat(viewerRolesService.getMixerRoles())
-                .map(r => {
-                    return {
-                        value: r.id,
-                        display: r.name
-                    };
-                });
-            resolve(allRoles);
-        });
+    presetValues: async viewerRolesService => {
+        return viewerRolesService
+            .getCustomRoles()
+            .concat(viewerRolesService.getMixerRoles())
+            .map(r => ({value: r.id, display: r.name}));
+
     },
     valueIsStillValid: (filterSettings, viewerRolesService) => {
-        let allRoles = viewerRolesService.getCustomRoles()
+        let allRoles = viewerRolesService
+            .getCustomRoles()
             .concat(viewerRolesService.getMixerRoles());
 
         let role = allRoles.find(r => r.id === filterSettings.value);
@@ -61,39 +56,37 @@ module.exports = {
 
         return filterSettings.value;
     },
-    predicate: (filterSettings, eventData) => {
-        return new Promise(async resolve => {
+    predicate: async (filterSettings, eventData) => {
 
-            let { comparisonType, value } = filterSettings;
-            let { eventMeta } = eventData;
+        let { comparisonType, value } = filterSettings;
+        let { eventMeta } = eventData;
 
-            let username = eventMeta.username;
-            if (username == null || username === "") {
-                return resolve(false);
-            }
+        let username = eventMeta.username;
+        if (username == null || username === "") {
+            return false;
+        }
 
-            let mixerUserRoles = eventMeta.data && (eventMeta.data.user_roles || eventMeta.data.userRoles);
-            if (mixerUserRoles == null) {
-                mixerUserRoles = await channelAccess.getViewersMixerRoles(username);
-            }
+        let mixerUserRoles = eventMeta.data && (eventMeta.data.user_roles || eventMeta.data.userRoles);
+        if (mixerUserRoles == null) {
+            mixerUserRoles = await channelAccess.getViewersMixerRoles(username);
+        }
 
-            let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-            let userMixerRoles = (mixerUserRoles || [])
-                .filter(mr => mr !== "User")
-                .map(mr => mixerRolesManager.mapMixerRole(mr));
+        let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+        let userMixerRoles = (mixerUserRoles || [])
+            .filter(mr => mr !== "User")
+            .map(mr => mixerRolesManager.mapMixerRole(mr));
 
-            let allRoles = userCustomRoles.concat(userMixerRoles);
+        let allRoles = userCustomRoles.concat(userMixerRoles);
 
-            let hasRole = allRoles.some(r => r.id === value);
+        let hasRole = allRoles.some(r => r.id === value);
 
-            switch (comparisonType) {
-            case "include":
-                return resolve(hasRole);
-            case "doesn't include":
-                return resolve(!hasRole);
-            default:
-                return resolve(false);
-            }
-        });
+        switch (comparisonType) {
+        case "include":
+            return hasRole;
+        case "doesn't include":
+            return !hasRole;
+        default:
+            return false;
+        }
     }
 };

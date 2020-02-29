@@ -146,11 +146,9 @@ class TipeeeStreamIntegration extends EventEmitter {
             resolve(settings);
         });
     }
-    unlink() {
-        return new Promise((resolve) => {
-            this._socket.close();
-            resolve();
-        });
+    async unlink() {
+        this._socket.close();
+        return;
     }
 }
 

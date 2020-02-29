@@ -124,11 +124,7 @@ function userIsInRole(username, usersMixerRoles, roleIdsToCheck) {
     return allRoles.some(r => roleIdsToCheck.includes(r.id));
 }
 
-frontendCommunicator.onAsync("getCustomRoles", () => {
-    return new Promise(resolve => {
-        resolve(customRoles);
-    });
-});
+frontendCommunicator.onAsync("getCustomRoles", async () => customRoles);
 
 frontendCommunicator.on("saveCustomRole", (role) => {
     saveCustomRole(role);

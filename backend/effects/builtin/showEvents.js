@@ -67,76 +67,74 @@ const showEvents = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            // What should this do when triggered.
-            let effect = event.effect;
-            let trigger = event.trigger;
+    onTriggerEvent: async event => {
+        // What should this do when triggered.
+        let effect = event.effect;
+        let trigger = event.trigger;
 
-            // Take global settings and effect settings and combine them into one packet.
-            let combinedEffect = {},
-                globalEffect = settings.getEventSettings();
+        // Take global settings and effect settings and combine them into one packet.
+        let combinedEffect = {},
+            globalEffect = settings.getEventSettings();
 
-            Object.keys(globalEffect).forEach(
-                key => (combinedEffect[key] = globalEffect[key])
-            );
-            Object.keys(effect).forEach(key => (combinedEffect[key] = effect[key]));
+        Object.keys(globalEffect).forEach(
+            key => (combinedEffect[key] = globalEffect[key])
+        );
+        Object.keys(effect).forEach(key => (combinedEffect[key] = effect[key]));
 
-            effect = combinedEffect;
+        effect = combinedEffect;
 
-            // Let's start processing.
-            let control = trigger.metadata.control,
-                username = trigger.metadata.username,
-                controlText = control.text,
-                controlCost = control.cost,
-                controlCooldown = control.cooldown,
-                text = effect.text,
-                position = effect.position,
-                data = {};
+        // Let's start processing.
+        let control = trigger.metadata.control,
+            username = trigger.metadata.username,
+            controlText = control.text,
+            controlCost = control.cost,
+            controlCooldown = control.cooldown,
+            text = effect.text,
+            position = effect.position,
+            data = {};
 
 
-            // Replace 'user' varibles
-            if (text !== null && text !== undefined) {
-                text = text.replace("$(user)", username);
-                text = text.replace("$(text)", controlText);
-                text = text.replace("$(cost)", controlCost);
-                text = text.replace("$(cooldown)", controlCooldown);
-            }
+        // Replace 'user' varibles
+        if (text !== null && text !== undefined) {
+            text = text.replace("$(user)", username);
+            text = text.replace("$(text)", controlText);
+            text = text.replace("$(cost)", controlCost);
+            text = text.replace("$(cooldown)", controlCooldown);
+        }
 
-            // Send data back to media.js in the gui.
-            data = {
-                showEventsText: text,
-                showEventsType: effect.textType,
-                showEventsColor: effect.color,
-                showEventsBackgroundColor: effect.backgroundColor,
-                showEventsFontSize: effect.size,
-                showEventsPosition: position,
-                showEventsAlignment: effect.textAlignment,
-                showEventsHeight: effect.height,
-                showEventsWidth: effect.width,
-                showEventsDuration: effect.length,
-                enterAnimation: effect.enterAnimation,
-                exitAnimation: effect.exitAnimation,
-                customCoords: effect.customCoords
-            };
+        // Send data back to media.js in the gui.
+        data = {
+            showEventsText: text,
+            showEventsType: effect.textType,
+            showEventsColor: effect.color,
+            showEventsBackgroundColor: effect.backgroundColor,
+            showEventsFontSize: effect.size,
+            showEventsPosition: position,
+            showEventsAlignment: effect.textAlignment,
+            showEventsHeight: effect.height,
+            showEventsWidth: effect.width,
+            showEventsDuration: effect.length,
+            enterAnimation: effect.enterAnimation,
+            exitAnimation: effect.exitAnimation,
+            customCoords: effect.customCoords
+        };
 
-            if (settings.useOverlayInstances()) {
-                if (effect.overlayInstance != null) {
-                    if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
-                        data.overlayInstance = effect.overlayInstance;
-                    }
+        if (settings.useOverlayInstances()) {
+            if (effect.overlayInstance != null) {
+                if (settings.getOverlayInstances().includes(effect.overlayInstance)) {
+                    data.overlayInstance = effect.overlayInstance;
                 }
             }
+        }
 
-            let resourceToken = resourceTokenManager.storeResourcePath(
-                effect.file,
-                effect.length
-            );
-            data.resourceToken = resourceToken;
+        let resourceToken = resourceTokenManager.storeResourcePath(
+            effect.file,
+            effect.length
+        );
+        data.resourceToken = resourceToken;
 
-            webServer.sendToOverlay("showevents", data);
-            resolve(true);
-        });
+        webServer.sendToOverlay("showevents", data);
+        return true;
     },
     /**
    * Code to run in the overlay

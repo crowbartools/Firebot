@@ -11,15 +11,13 @@ module.exports = {
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT],
     valueType: "preset",
-    presetValues: () => {
-        return new Promise(resolve => {
-            resolve([
-                {
-                    value: "whisper",
-                    display: "Whisper"
-                }
-            ]);
-        });
+    presetValues: async () => {
+        return [
+            {
+                value: "whisper",
+                display: "Whisper"
+            }
+        ];
     },
     getSelectedValueDisplay: (filterSettings) => {
 

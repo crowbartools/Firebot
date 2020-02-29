@@ -31,7 +31,7 @@ const model = {
     <eos-container header="Output Location" pad-top="true" ng-if="effect.reddit !== null && effect.reddit !== 'Pick one'">
         <div class="controls-fb-inline" style="padding-bottom: 5px;">
             <label class="control-fb control--radio">Chat
-                <input type="radio" ng-model="effect.show" value="chat"/> 
+                <input type="radio" ng-model="effect.show" value="chat"/>
                 <div class="control__indicator"></div>
             </label>
             <label class="control-fb control--radio">Overlay
@@ -57,18 +57,18 @@ const model = {
             <div class="effect-setting-content">
                 <div class="input-group">
                     <span class="input-group-addon">Width</span>
-                    <input 
-                    type="number" 
-                    class="form-control" 
-                    aria-describeby="image-width-setting-type" 
+                    <input
+                    type="number"
+                    class="form-control"
+                    aria-describeby="image-width-setting-type"
                     type="number"
                     ng-model="effect.width"
                     placeholder="px">
                     <span class="input-group-addon">Height</span>
-                    <input 
-                    type="number" 
-                    class="form-control" 
-                    aria-describeby="image-height-setting-type" 
+                    <input
+                    type="number"
+                    class="form-control"
+                    aria-describeby="image-height-setting-type"
                     type="number"
                     ng-model="effect.height"
                     placeholder="px">
@@ -80,16 +80,16 @@ const model = {
             <div class="effect-setting-content">
                 <div class="input-group">
                     <span class="input-group-addon">Seconds</span>
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    aria-describedby="image-length-effect-type" 
+                    <input
+                    type="text"
+                    class="form-control"
+                    aria-describedby="image-length-effect-type"
                     type="number"
                     ng-model="effect.length">
                 </div>
             </div>
         </div>
-        <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>   
+        <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>
     </div>
 
     <eos-container pad-top="true">
@@ -97,7 +97,7 @@ const model = {
         Warning: This effect pulls random images from subreddits. Highly moderated subreddits are fairly safe, but there is always the chance of naughty pictures. Just a warning!
         </div>
     </eos-container>
-    
+
     `,
     optionsController: ($scope) => {
 
@@ -117,11 +117,9 @@ const model = {
         }
         return errors;
     },
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
-            redditProcessor.go(event.effect);
-            resolve(true);
-        });
+    onTriggerEvent: async event => {
+        redditProcessor.go(event.effect);
+        return true;
     }
 };
 

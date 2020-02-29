@@ -11,27 +11,25 @@ module.exports = {
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT],
     valueType: "preset",
-    presetValues: () => {
-        return new Promise(resolve => {
-            resolve([
-                {
-                    value: "common",
-                    display: "Common"
-                },
-                {
-                    value: "rare",
-                    display: "Rare"
-                },
-                {
-                    value: "epic",
-                    display: "Epic"
-                },
-                {
-                    value: "legendary",
-                    display: "Legendary"
-                }
-            ]);
-        });
+    presetValues: async () => {
+        return [
+            {
+                value: "common",
+                display: "Common"
+            },
+            {
+                value: "rare",
+                display: "Rare"
+            },
+            {
+                value: "epic",
+                display: "Epic"
+            },
+            {
+                value: "legendary",
+                display: "Legendary"
+            }
+        ];
     },
     getSelectedValueDisplay: (filterSettings) => {
 

@@ -48,93 +48,87 @@ class ReplaceVariableManager extends EventEmitter {
         });
     }
 
-    findAndReplaceVariables(data, trigger) {
-        return new Promise(async resolve => {
-            let keys = Object.keys(data);
+    async findAndReplaceVariables(data, trigger) {
+        let keys = Object.keys(data);
 
-            for (let key of keys) {
+        for (let key of keys) {
 
-                let value = data[key];
+            let value = data[key];
 
-                if (value && typeof value === "string") {
-                    if (value.includes("$")) {
-                        let replacedValue = value;
-                        let triggerId = this.getTriggerIdFromTriggerData(trigger);
-                        try {
-                            replacedValue = await Expression.evaluate({
-                                expression: value,
-                                metadata: trigger,
-                                trigger: {
-                                    type: trigger.type,
-                                    id: triggerId
-                                }
-                            });
-                        } catch (err) {
-                            logger.warn(`Unable to parse variables for value: '${value}'`, err);
-                        }
-                        data[key] = replacedValue;
+            if (value && typeof value === "string") {
+                if (value.includes("$")) {
+                    let replacedValue = value;
+                    let triggerId = this.getTriggerIdFromTriggerData(trigger);
+                    try {
+                        replacedValue = await Expression.evaluate({
+                            expression: value,
+                            metadata: trigger,
+                            trigger: {
+                                type: trigger.type,
+                                id: triggerId
+                            }
+                        });
+                    } catch (err) {
+                        logger.warn(`Unable to parse variables for value: '${value}'`, err);
                     }
-                } else if (value && typeof value === "object") {
-                    // recurse
-                    await this.findAndReplaceVariables(value, trigger);
+                    data[key] = replacedValue;
                 }
+            } else if (value && typeof value === "object") {
+                // recurse
+                await this.findAndReplaceVariables(value, trigger);
             }
-
-            resolve();
-        });
+        }
     }
 
-    findAndValidateVariables(data, trigger, errors) {
-        return new Promise(async resolve => {
+    async findAndValidateVariables(data, trigger, errors) {
 
-            if (errors == null) {
-                errors = [];
-            }
+        if (errors == null) {
+            errors = [];
+        }
 
-            let keys = Object.keys(data);
-            for (let key of keys) {
+        let keys = Object.keys(data);
+        for (let key of keys) {
 
-                let value = data[key];
+            let value = data[key];
 
-                if (value && typeof value === "string") {
-                    if (value.includes("$")) {
-                        try {
-                            await Expression.validate({
-                                expression: value,
-                                trigger: {
-                                    type: trigger && trigger.type,
-                                    id: trigger && trigger.id
-                                }
-                            });
-                        } catch (err) {
-                            err.dataField = key;
-                            err.rawText = value;
-                            if (err instanceof ExpressionArgumentsError) {
-                                errors.push(err);
-                                logger.debug(`Found variable error when validating`, err);
-                            } else if (err instanceof ExpressionError) {
-                                errors.push({
-                                    dataField: err.dataField,
-                                    message: err.message,
-                                    position: err.position,
-                                    varname: err.varname,
-                                    character: err.character,
-                                    rawText: err.rawText
-                                });
-                                logger.debug(`Found variable error when validating`, err);
-                            } else {
-                                logger.error(`Unknown error when validating variables for string: '${value}'`, err);
+            if (value && typeof value === "string") {
+                if (value.includes("$")) {
+                    try {
+                        await Expression.validate({
+                            expression: value,
+                            trigger: {
+                                type: trigger && trigger.type,
+                                id: trigger && trigger.id
                             }
+                        });
+                    } catch (err) {
+                        err.dataField = key;
+                        err.rawText = value;
+                        if (err instanceof ExpressionArgumentsError) {
+                            errors.push(err);
+                            logger.debug(`Found variable error when validating`, err);
+                        } else if (err instanceof ExpressionError) {
+                            errors.push({
+                                dataField: err.dataField,
+                                message: err.message,
+                                position: err.position,
+                                varname: err.varname,
+                                character: err.character,
+                                rawText: err.rawText
+                            });
+                            logger.debug(`Found variable error when validating`, err);
+                        } else {
+                            logger.error(`Unknown error when validating variables for string: '${value}'`, err);
                         }
                     }
-                } else if (value && typeof value === "object") {
-                    // recurse
-                    await this.findAndValidateVariables(value, trigger, errors);
                 }
+            } else if (value && typeof value === "object") {
+                // recurse
+                await this.findAndValidateVariables(value, trigger, errors);
             }
+        }
 
-            resolve(errors);
-        });
+        return errors;
     }
 
     getTriggerIdFromTriggerData(trigger) {
@@ -193,20 +187,18 @@ frontendCommunicator.on("getReplaceVariableDefinitions", (trigger) => {
     return manager.getReplaceVariables().map(v => v.definition);
 });
 
-frontendCommunicator.onAsync("validateVariables", (eventData) => {
+frontendCommunicator.onAsync("validateVariables", async eventData => {
     logger.info("got 'validateVariables' request");
-    return new Promise(async resolve => {
-        let { data, trigger } = eventData;
+    let { data, trigger } = eventData;
 
-        let errors = [];
-        try {
-            errors = await manager.findAndValidateVariables(data, trigger);
-        } catch (err) {
-            logger.error("Unable to validate variables.", err);
-        }
+    let errors = [];
+    try {
+        errors = await manager.findAndValidateVariables(data, trigger);
+    } catch (err) {
+        logger.error("Unable to validate variables.", err);
+    }
 
-        resolve(errors);
-    });
+    return errors;
 });
 
 module.exports = manager;

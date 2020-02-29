@@ -78,17 +78,15 @@ const delay = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            let effect = event.effect;
+    onTriggerEvent: async event => {
+        let effect = event.effect;
 
-            frontendCommunicator.send("read-tts", {
-                text: effect.text,
-                voiceId: effect.voiceId
-            });
-
-            resolve(true);
+        frontendCommunicator.send("read-tts", {
+            text: effect.text,
+            voiceId: effect.voiceId
         });
+
+        return true;
     }
 };
 

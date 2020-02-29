@@ -32,16 +32,16 @@ const delay = {
         <eos-container header="Viewer">
             <div style="padding: 0 10px 0 0;">
                 <label class="control-fb control--radio">Associated viewer <tooltip text="'The viewer who pressed this button/ran the command/etc.'"></tooltip>
-                    <input type="radio" ng-model="effect.viewerType" value="current"/> 
+                    <input type="radio" ng-model="effect.viewerType" value="current"/>
                     <div class="control__indicator"></div>
                 </label>
                 <label class="control-fb control--radio" style="margin-bottom: 10px;">Custom viewer
                     <input type="radio" ng-model="effect.viewerType" value="custom"/>
                     <div class="control__indicator"></div>
-                </label>                
+                </label>
                 <div ng-show="effect.viewerType === 'custom'" style="padding-left: 30px;">
-                    <input class="form-control" type="text" ng-model="effect.customViewer" placeholder="Username" replace-variables></input> 
-                </div>               
+                    <input class="form-control" type="text" ng-model="effect.customViewer" placeholder="Username" replace-variables></input>
+                </div>
             </div>
         </eos-container>
 
@@ -60,9 +60,9 @@ const delay = {
                             <li role="menuitem" ng-repeat="role in roles" ng-click="effect.addRoleId = role.id"><a href>{{role.name}}</a></li>
                         </ul>
                     </div>
-                </div>         
+                </div>
             </div>
-            
+
             <div style="margin-top:5px;">
                 <label class="control-fb control--checkbox"> Remove from role</tooltip>
                     <input type="checkbox" ng-init="shouldRemoveRole = (effect.removeRoleId != null && effect.removeRoleId !== '')" ng-model="shouldRemoveRole" ng-click="effect.removeRoleId = undefined">
@@ -77,7 +77,7 @@ const delay = {
                             <li role="menuitem" ng-repeat="role in roles" ng-click="effect.removeRoleId = role.id"><a href>{{role.name}}</a></li>
                         </ul>
                     </div>
-                </div>         
+                </div>
             </div>
         </eos-container>
     `,
@@ -107,27 +107,24 @@ const delay = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(resolve => {
-            let effect = event.effect;
+    onTriggerEvent: async event => {
+        let effect = event.effect;
 
-            let username = "";
-            if (effect.viewerType === "current") {
-                username = event.trigger.metadata.username;
-            } else {
-                username = effect.customViewer ? effect.customViewer.trim() : "";
-            }
+        let username = "";
+        if (effect.viewerType === "current") {
+            username = event.trigger.metadata.username;
+        } else {
+            username = effect.customViewer ? effect.customViewer.trim() : "";
+        }
 
-            if (effect.addRoleId) {
-                customRolesManager.addViewerToRole(effect.addRoleId, username);
-            }
+        if (effect.addRoleId) {
+            customRolesManager.addViewerToRole(effect.addRoleId, username);
+        }
 
-            if (effect.removeRoleId) {
-                customRolesManager.removeViewerFromRole(effect.removeRoleId, username);
-            }
-
-            resolve();
-        });
+        if (effect.removeRoleId) {
+            customRolesManager.removeViewerFromRole(effect.removeRoleId, username);
+        }
+        return true;
     }
 };
 

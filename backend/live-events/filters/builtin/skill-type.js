@@ -11,19 +11,17 @@ module.exports = {
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT],
     valueType: "preset",
-    presetValues: () => {
-        return new Promise(resolve => {
-            resolve([
-                {
-                    value: "sticker",
-                    display: "a Sticker"
-                },
-                {
-                    value: "gif",
-                    display: "a GIF"
-                }
-            ]);
-        });
+    presetValues: async () => {
+        return [
+            {
+                value: "sticker",
+                display: "a Sticker"
+            },
+            {
+                value: "gif",
+                display: "a GIF"
+            }
+        ];
     },
     getSelectedValueDisplay: (filterSettings) => {
 

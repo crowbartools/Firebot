@@ -49,13 +49,13 @@ const showText = {
         <p>This defines the size of the (invisible) box that the above text will be placed in.</p>
         <div class="input-group" style="margin-bottom: 10px;">
             <span class="input-group-addon">Width (in pixels)</span>
-            <input 
-                class="form-control" 
+            <input
+                class="form-control"
                 type="number"
                 min="1" max="10000"
                 ng-model="effect.width">
             <span class="input-group-addon">Height (in pixels)</span>
-            <input 
+            <input
                 class="form-control"
                 type="number"
                 min="1" max="10000"
@@ -74,7 +74,7 @@ const showText = {
 
         <p>Justification</p>
         <label class="control-fb control--radio">Left
-            <input type="radio" ng-model="effect.justify" value="flex-start"/> 
+            <input type="radio" ng-model="effect.justify" value="flex-start"/>
             <div class="control__indicator"></div>
         </label>
         <label class="control-fb control--radio" >Center
@@ -88,7 +88,7 @@ const showText = {
 
         <p>Align</p>
         <label class="control-fb control--radio">Top
-            <input type="radio" ng-model="effect.align" value="flex-start"/> 
+            <input type="radio" ng-model="effect.align" value="flex-start"/>
             <div class="control__indicator"></div>
         </label>
         <label class="control-fb control--radio" >Center
@@ -200,82 +200,80 @@ const showText = {
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: event => {
-        return new Promise(async (resolve) => {
+    onTriggerEvent: async event => {
 
-            // What should this do when triggered.
-            let effect = event.effect;
+        // What should this do when triggered.
+        let effect = event.effect;
 
-            //data transfer object
-            let dto = {
-                text: effect.text,
-                inbetweenAnimation: effect.inbetweenAnimation,
-                inbetweenDelay: effect.inbetweenDelay,
-                inbetweenDuration: effect.inbetweenDuration,
-                inbetweenRepeat: effect.inbetweenRepeat,
-                enterAnimation: effect.enterAnimation,
-                enterDuration: effect.enterDuration,
-                exitAnimation: effect.exitAnimation,
-                exitDuration: effect.exitDuration,
-                customCoords: effect.customCoords,
-                position: effect.position,
-                duration: effect.duration,
-                height: effect.height,
-                width: effect.width,
-                justify: effect.justify,
-                align: effect.align,
-                dontWrap: effect.dontWrap,
-                debugBorder: effect.debugBorder,
-                overlayInstance: effect.overlayInstance
-            };
+        //data transfer object
+        let dto = {
+            text: effect.text,
+            inbetweenAnimation: effect.inbetweenAnimation,
+            inbetweenDelay: effect.inbetweenDelay,
+            inbetweenDuration: effect.inbetweenDuration,
+            inbetweenRepeat: effect.inbetweenRepeat,
+            enterAnimation: effect.enterAnimation,
+            enterDuration: effect.enterDuration,
+            exitAnimation: effect.exitAnimation,
+            exitDuration: effect.exitDuration,
+            customCoords: effect.customCoords,
+            position: effect.position,
+            duration: effect.duration,
+            height: effect.height,
+            width: effect.width,
+            justify: effect.justify,
+            align: effect.align,
+            dontWrap: effect.dontWrap,
+            debugBorder: effect.debugBorder,
+            overlayInstance: effect.overlayInstance
+        };
 
-            let position = dto.position;
-            if (position === "Random") {
-                logger.debug("Getting random preset location");
-                dto.position = getRandomPresetLocation(); //eslint-disable-line no-undef
-            }
+        let position = dto.position;
+        if (position === "Random") {
+            logger.debug("Getting random preset location");
+            dto.position = getRandomPresetLocation(); //eslint-disable-line no-undef
+        }
 
-            if (settings.useOverlayInstances()) {
-                if (dto.overlayInstance != null) {
-                    //reset overlay if it doesnt exist
-                    if (!settings.getOverlayInstances().includes(dto.overlayInstance)) {
-                        dto.overlayInstance = null;
-                    }
+        if (settings.useOverlayInstances()) {
+            if (dto.overlayInstance != null) {
+                //reset overlay if it doesnt exist
+                if (!settings.getOverlayInstances().includes(dto.overlayInstance)) {
+                    dto.overlayInstance = null;
                 }
             }
+        }
 
-            // Ensure defaults
-            if (dto.duration <= 0) {
-                logger.debug("Effect duration is less than 0, resetting duration to 5 sec");
-                dto.duration = 5;
-            }
+        // Ensure defaults
+        if (dto.duration <= 0) {
+            logger.debug("Effect duration is less than 0, resetting duration to 5 sec");
+            dto.duration = 5;
+        }
 
-            if (dto.height == null || dto.height < 1) {
-                logger.debug("Setting default height");
-                dto.height = 200;
-            }
+        if (dto.height == null || dto.height < 1) {
+            logger.debug("Setting default height");
+            dto.height = 200;
+        }
 
-            if (dto.width == null || dto.width < 1) {
-                logger.debug("Setting default width");
-                dto.width = 400;
-            }
+        if (dto.width == null || dto.width < 1) {
+            logger.debug("Setting default width");
+            dto.width = 400;
+        }
 
-            if (dto.position === "" || dto.position == null) {
-                logger.debug("Setting default overlay position");
-                dto.position = "Middle";
-            }
+        if (dto.position === "" || dto.position == null) {
+            logger.debug("Setting default overlay position");
+            dto.position = "Middle";
+        }
 
-            if (dto.justify == null) {
-                dto.justify = "center";
-            }
+        if (dto.justify == null) {
+            dto.justify = "center";
+        }
 
-            if (dto.align == null) {
-                dto.align = "center";
-            }
+        if (dto.align == null) {
+            dto.align = "center";
+        }
 
-            webServer.sendToOverlay("text", dto);
-            resolve(true);
-        });
+        webServer.sendToOverlay("text", dto);
+        return true;
     },
     /**
    * Code to run in the overlay

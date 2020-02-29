@@ -12,18 +12,15 @@ module.exports = {
     comparisonTypes: ["include", "doesn't include"],
     leftSideValueType: "none",
     rightSideValueType: "preset",
-    getRightSidePresetValues: (viewerRolesService) => {
-        return new Promise(resolve => {
-            let allRoles = viewerRolesService.getCustomRoles()
-                .concat(viewerRolesService.getMixerRoles())
-                .map(r => {
-                    return {
-                        value: r.id,
-                        display: r.name
-                    };
-                });
-            resolve(allRoles);
-        });
+    getRightSidePresetValues: async viewerRolesService => {
+        return viewerRolesService.getCustomRoles()
+            .concat(viewerRolesService.getMixerRoles())
+            .map(r => {
+                return {
+                    value: r.id,
+                    display: r.name
+                };
+            });
     },
     valueIsStillValid: (condition, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
@@ -45,35 +42,33 @@ module.exports = {
 
         return condition.rightSideValue;
     },
-    predicate: (conditionSettings, trigger) => {
-        return new Promise(async resolve => {
+    predicate: async (conditionSettings, trigger) => {
 
-            let { comparisonType, rightSideValue } = conditionSettings;
+        let { comparisonType, rightSideValue } = conditionSettings;
 
-            let username = trigger.metadata.username;
-            if (username == null || username === "") {
-                return resolve(false);
-            }
+        let username = trigger.metadata.username;
+        if (username == null || username === "") {
+            return resolve(false);
+        }
 
-            let mixerUserRoles = await channelAccess.getViewersMixerRoles(username);
+        let mixerUserRoles = await channelAccess.getViewersMixerRoles(username);
 
-            let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-            let userMixerRoles = (mixerUserRoles || [])
-                .filter(mr => mr !== "User")
-                .map(mr => mixerRolesManager.mapMixerRole(mr));
+        let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+        let userMixerRoles = (mixerUserRoles || [])
+            .filter(mr => mr !== "User")
+            .map(mr => mixerRolesManager.mapMixerRole(mr));
 
-            let allRoles = userCustomRoles.concat(userMixerRoles);
+        let allRoles = userCustomRoles.concat(userMixerRoles);
 
-            let hasRole = allRoles.some(r => r.id === rightSideValue);
+        let hasRole = allRoles.some(r => r.id === rightSideValue);
 
-            switch (comparisonType) {
-            case "include":
-                return resolve(hasRole);
-            case "doesn't include":
-                return resolve(!hasRole);
-            default:
-                return resolve(false);
-            }
-        });
+        switch (comparisonType) {
+        case "include":
+            return hasRole;
+        case "doesn't include":
+            return !hasRole;
+        default:
+            return false;
+        }
     }
 };

@@ -11,19 +11,17 @@ module.exports = {
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT],
     valueType: "preset",
-    presetValues: () => {
-        return new Promise(resolve => {
-            resolve([
-                {
-                    value: "embers",
-                    display: "Embers"
-                },
-                {
-                    value: "sparks",
-                    display: "Sparks"
-                }
-            ]);
-        });
+    presetValues: async () => {
+        return [
+            {
+                value: "embers",
+                display: "Embers"
+            },
+            {
+                value: "sparks",
+                display: "Sparks"
+            }
+        ];
     },
     getSelectedValueDisplay: (filterSettings) => {
 
