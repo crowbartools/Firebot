@@ -17,21 +17,6 @@ function userIsInFirebotRole(role, username) {
     }
 }
 
-function getFirebotRoleByName(roleName) {
-    switch (roleName) {
-    case "Active Chatters":
-    case "ActiveChatters":
-    case "activeChatters":
-        return ActiveChatters.getActiveChatters();
-    case "Active Mixplay Users":
-    case "ActiveMixPlayUsers":
-    case "activeMixPlayUsers":
-        return ActiveMixplayUsers.getActiveMixplayUsers();
-    default:
-        return null;
-    }
-}
-
 function getAllFirebotRolesForViewer(username) {
     const roles = firebotRoles.getFirebotRoles();
     return roles
@@ -45,7 +30,6 @@ function getAllFirebotRolesForViewer(username) {
 }
 
 exports.getAllFirebotRolesForViewer = getAllFirebotRolesForViewer;
-exports.getFirebotRoleByName = getFirebotRoleByName;
 
 
 
