@@ -2,12 +2,11 @@
 (function() {
     //This handles the Settings tab
 
-    const fs = require("fs");
+    const fs = require("fs-extra");
     const path = require("path");
     const dataAccess = require("../../backend/common/data-access");
     const moment = require("moment");
     const unzipper = require("unzipper");
-    const ncp = require("ncp");
     const empty = require("empty-folder");
 
     angular
@@ -358,7 +357,7 @@
                                 }
 
                                 // Load in backup.
-                                ncp(source, destination, function(err) {
+                                fs.move(source, destination, function(err) {
                                     if (err) {
                                         logger.error("Failed to copy backup data!");
                                         logger.error(err);

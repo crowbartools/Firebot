@@ -76,7 +76,6 @@
         "marked": "^0.7.0",
         "mathjs": "^3.20.2",
         "moment": "^2.24.0",
-        "ncp": "^2.0.0",
         "nedb": "^1.8.0",
         "nedb-promisfied": "^1.0.2",
         "ng-toast": "^2.0.0",
