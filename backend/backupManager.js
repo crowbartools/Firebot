@@ -4,7 +4,7 @@ const settings = require("./common/settings-access").settings;
 const dataAccess = require("./common/data-access.js");
 const profileManager = require("./common/profile-manager.js");
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs-extra");
 const { app } = require("electron");
 const logger = require("./logwrapper");
 

@@ -2,7 +2,7 @@
 
 const electron = require("electron");
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs-extra");
 const JsonDB = require("node-json-db");
 
 // This is the path to folder the app is currently living in. IE: C:\Users\<user>\AppData\Local\Firebot\app-4.0.0\

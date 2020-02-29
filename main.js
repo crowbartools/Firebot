@@ -11,7 +11,7 @@ logger.info("Starting Firebot...");
 
 const electron = require("electron");
 const { app, BrowserWindow, ipcMain, shell, dialog, Menu } = electron;
-const fs = require("fs");
+const fs = require("fs-extra");
 const windowStateKeeper = require('electron-window-state');
 const GhReleases = require("electron-gh-releases");
 const settings = require("./backend/common/settings-access").settings;
@@ -760,7 +760,7 @@ ipcMain.on("getBackupZipPath", (event, uniqueid) => {
         dataAccess.getUserDataPath() + path.sep + "backups" + path.sep
     );
 
-    let fs = require("fs");
+    let fs = require("fs-extra");
     let backupsFolderExists = false;
     try {
         backupsFolderExists = fs.existsSync(backupsFolderPath);

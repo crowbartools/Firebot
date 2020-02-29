@@ -1,6 +1,6 @@
 "use strict";
 
-const fs = require("fs");
+const fs = require("fs-extra");
 const logger = require("../../logwrapper");
 
 function removeLines(filepath, lines = []) {

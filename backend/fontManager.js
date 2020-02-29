@@ -1,7 +1,7 @@
 "use strict";
 
 const profileManager = require("./common/profile-manager");
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 const logger = require("./logwrapper");
 

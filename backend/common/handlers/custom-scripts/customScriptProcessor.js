@@ -134,7 +134,7 @@ function scriptProcessor(effect, trigger) {
                         request: customRequest,
                         spawn: require('child_process').spawn,
                         childProcess: require('child_process'),
-                        fs: require('fs'),
+                        fs: require('fs-extra'),
                         path: require('path'),
                         JsonDb: require('node-json-db'),
                         moment: require('moment'),

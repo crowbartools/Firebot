@@ -1,4 +1,6 @@
 "use strict";
+const fs = require("fs-extra");
+const path = require("path");
 
 const logger = require("../../logwrapper");
 
@@ -52,9 +54,9 @@ const fileWriter = {
         </eos-container>
 
         <eos-container ng-show="effect.scriptName != null" pad-top="true">
-            <div ng-if="scriptManifest != null" style="padding-bottom:10px;"> 
+            <div ng-if="scriptManifest != null" style="padding-bottom:10px;">
                 <div class="script-name">{{scriptManifest.name ? scriptManifest.name : "Unnamed Script"}} <span class="script-version muted">{{scriptManifest.version ? scriptManifest.version : "Unknown"}}</span></div>
-                <div style="font-size: 13px;">by <span class="script-author">{{scriptManifest.author ? scriptManifest.author : "Unknown"}}</span><span ng-if="scriptManifest.website" class="script-website"> (<a ng-click="openScriptsWebsite()" class="clickable">{{scriptManifest.website}}</a>)</span><span></span></div>     
+                <div style="font-size: 13px;">by <span class="script-author">{{scriptManifest.author ? scriptManifest.author : "Unknown"}}</span><span ng-if="scriptManifest.website" class="script-website"> (<a ng-click="openScriptsWebsite()" class="clickable">{{scriptManifest.website}}</a>)</span><span></span></div>
                 <div class="script-description">{{scriptManifest.description}}</div>
             </div>
         </eos-container>
@@ -66,11 +68,11 @@ const fileWriter = {
             <div ng-hide="isLoadingParameters">
                 <span ng-hide="scriptHasParameters()" class="muted">Script has no options.</span>
                 <div ng-show="scriptHasParameters()">
-                    <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters" 
-                    name="parameterName" 
-                    metadata="parameterMetadata" 
+                    <script-parameter-option ng-repeat="(parameterName, parameterMetadata) in effect.parameters"
+                    name="parameterName"
+                    metadata="parameterMetadata"
                     trigger="{{trigger}}"
-                    trigger-meta="triggerMeta" 
+                    trigger-meta="triggerMeta"
                     modalId="{{modalId}}"></script-parameter-option>
                 </div>
             </div>
@@ -83,9 +85,6 @@ const fileWriter = {
         </eos-container>
     `,
     optionsController: ($rootScope, $scope, $q, logger, utilityService, backendCommunicator, profileManager) => {
-
-        const fs = require("fs");
-        const path = require("path");
 
         function loadParameters(scriptName, initialLoad = true) {
             logger.info("Attempting to load custom script parameters...");

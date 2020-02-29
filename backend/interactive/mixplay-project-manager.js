@@ -3,7 +3,7 @@
 const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 const settings = require("../common/settings-access").settings;
 const uuid = require("uuid/v1");

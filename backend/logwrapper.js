@@ -6,7 +6,7 @@ const dataAccess = require("./common/data-access.js");
 const app = electron.app || electron.remote.app;
 //const config = winston.config;
 //const Sentry = require("winston-raven-sentry");
-const fs = require("fs");
+const fs = require("fs-extra");
 
 const LOG_FOLDER = dataAccess.getPathInUserData("/logs");
 

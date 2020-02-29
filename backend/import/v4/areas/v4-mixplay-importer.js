@@ -1,5 +1,5 @@
 "use strict";
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 const uuid = require("uuid/v1");
 const logger = require("../../../logwrapper");
