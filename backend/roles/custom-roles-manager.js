@@ -87,6 +87,17 @@ function addViewerToRole(roleId, username) {
     }
 }
 
+function removeAllViewersFromRole(roleId) {
+    let role = customRoles[roleId];
+    if (role) {
+        role.viewers = [];
+
+        saveCustomRole(role);
+
+        exports.triggerUiRefresh();
+    }
+}
+
 function removeViewerFromRole(roleId, username) {
     if (username == null || username.length < 1) return;
     let role = customRoles[roleId];
@@ -160,6 +171,7 @@ exports.addViewerToRole = addViewerToRole;
 
 exports.removeViewerFromRole = removeViewerFromRole;
 
+exports.removeAllViewersFromRole = removeAllViewersFromRole;
 
 
 
