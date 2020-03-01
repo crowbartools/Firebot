@@ -223,7 +223,7 @@ async function mathUpdate(updateData) {
             newCooldown = remainingCooldown - duration;
         }
 
-        await mixplay.updateCooldownForControls(controlIds, newCooldown);
+        await mixplay.updateCooldownForControls([controlId], newCooldown);
         updateCooldownForControlId(controlId, newCooldown / 1000);
     }
 }
