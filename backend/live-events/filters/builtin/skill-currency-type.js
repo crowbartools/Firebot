@@ -11,7 +11,7 @@ module.exports = {
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT],
     valueType: "preset",
-    presetValues: async () => {
+    presetValues: () => {
         return [
             {
                 value: "embers",

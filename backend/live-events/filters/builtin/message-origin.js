@@ -9,7 +9,7 @@ module.exports = {
     ],
     comparisonTypes: ["is from"],
     valueType: "preset",
-    presetValues: async () => {
+    presetValues: () => {
         return [
             {
                 value: "own",

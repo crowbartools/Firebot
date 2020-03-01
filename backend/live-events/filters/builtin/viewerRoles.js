@@ -28,7 +28,7 @@ module.exports = {
     ],
     comparisonTypes: ["include", "doesn't include"],
     valueType: "preset",
-    presetValues: async viewerRolesService => {
+    presetValues: viewerRolesService => {
         return viewerRolesService
             .getCustomRoles()
             .concat(viewerRolesService.getMixerRoles())
