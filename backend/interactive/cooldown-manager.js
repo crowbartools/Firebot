@@ -23,6 +23,11 @@ function cooldownIsExpired(controlId) {
 // Returns the amount of time remaining for a control id.
 function getRemainingCooldownTime(controlId) {
     let currentTtl = cooldownCache.getTtl(controlId) || 0;
+
+    if (currentTtl === 0) {
+        return 0;
+    }
+
     let diff = moment(currentTtl).diff(moment());
     if (diff < 0) {
         return 0;
@@ -218,10 +223,8 @@ async function mathUpdate(updateData) {
             newCooldown = remainingCooldown - duration;
         }
 
-        await mixplay.updateCooldownForControls(controlIds, newCooldown);
-        for (let controlId of controlIds) {
-            updateCooldownForControlId(controlId, newCooldown / 1000);
-        }
+        await mixplay.updateCooldownForControls([controlId], newCooldown);
+        updateCooldownForControlId(controlId, newCooldown / 1000);
     }
 }
 
