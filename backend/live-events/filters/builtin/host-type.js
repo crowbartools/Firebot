@@ -11,7 +11,7 @@ module.exports = {
     ],
     comparisonTypes: [ComparisonType.IS],
     valueType: "preset",
-    presetValues: async () => {
+    presetValues: () => {
         return [
             {
                 value: "auto",
