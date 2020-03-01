@@ -12,7 +12,7 @@ module.exports = {
     comparisonTypes: ["include", "doesn't include"],
     leftSideValueType: "none",
     rightSideValueType: "preset",
-    getRightSidePresetValues: async viewerRolesService => {
+    getRightSidePresetValues: viewerRolesService => {
         return viewerRolesService.getCustomRoles()
             .concat(viewerRolesService.getMixerRoles())
             .map(r => {
