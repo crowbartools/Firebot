@@ -86,41 +86,45 @@ const model = {
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            let passed = false;
             let currencyDatabase = require("../../database/currencyDatabase");
             let username = triggerData.metadata.username;
             let userCurrency = await currencyDatabase.getUserCurrencyAmount(username, restrictionData.selectedCurrency);
 
-            if (userCurrency !== false) {
-                let comparison = restrictionData.comparison;
-                let currencyAmount = restrictionData.amount;
+            let comparison = restrictionData.comparison;
+            let currencyAmount = restrictionData.amount;
 
-                if (comparison === "less" && userCurrency <= currencyAmount) {
-                    passed = true;
-                }
+            let passed = false;
+            if (comparison === "less" && userCurrency <= currencyAmount) {
+                passed = true;
+            }
 
-                if (comparison === "greater" && userCurrency >= currencyAmount) {
-                    passed = true;
-                }
+            if (comparison === "greater" && userCurrency >= currencyAmount) {
+                passed = true;
+            }
 
-                if (comparison === "equal" && userCurrency === currencyAmount) {
-                    passed = true;
-                }
+            if (comparison === "equal" && userCurrency === currencyAmount) {
+                passed = true;
             }
 
             if (passed) {
                 resolve();
             } else {
-                reject("You don't meet the currency requirements");
+                let currency = currencyDatabase.getCurrencyById(restrictionData.selectedCurrency);
+                let currencyName = currency ? currency.name.toLowerCase() : "Unknown currency";
+                let amountText = "";
+                if (comparison !== "equal") {
+                    amountText = `${comparison} than ${currencyAmount}`;
+                } else {
+                    amountText = `${currencyAmount}`;
+                }
+                reject(`you need ${amountText} ${currencyName}`);
             }
         });
     },
     /*
         called after all restrictions in a list are met. Do logic such as deducting currency here.
     */
-    onSuccessful: (triggerData, restrictionData) => {
-
-    }
+    onSuccessful: (triggerData, restrictionData) => {}
 
 };
 

@@ -35,6 +35,11 @@ function getCurrencies() {
     return currencyCache;
 }
 
+function getCurrencyById(currencyId) {
+    let currencies = Object.values(currencyCache);
+    return currencies.find(c => c.id === currencyId);
+}
+
 // Adjust Currency
 // This adjust currency for a user. Can be given negative values. Provide it with the database record for a user.
 function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
@@ -373,6 +378,7 @@ exports.purgeCurrencyById = purgeCurrencyById;
 exports.addCurrencyToNewUser = addCurrencyToNewUser;
 exports.refreshCurrencyCache = refreshCurrencyCache;
 exports.getCurrencies = getCurrencies;
+exports.getCurrencyById = getCurrencyById;
 exports.addCurrencyToUserGroupOnlineUsers = addCurrencyToUserGroupOnlineUsers;
 exports.isViewerDBOn = isViewerDBOn;
 exports.getTopCurrencyHolders = getTopCurrencyHolders;
