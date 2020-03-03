@@ -2,6 +2,7 @@
 
 const channelAccess = require("../../../../../common/channel-access");
 
+const firebotRolesManager = require("../../../../../roles/firebot-roles-manager");
 const customRolesManager = require("../../../../../roles/custom-roles-manager");
 const mixerRolesManager = require("../../../../../../shared/mixer-roles");
 
@@ -10,11 +11,12 @@ module.exports = {
     name: "Viewer's Roles",
     description: "Condition based on a given viewer role",
     comparisonTypes: ["include", "doesn't include"],
-    leftSideValueType: "none",
+    leftSideValueType: "text",
     rightSideValueType: "preset",
     getRightSidePresetValues: viewerRolesService => {
         return viewerRolesService.getCustomRoles()
             .concat(viewerRolesService.getMixerRoles())
+            .concat(viewerRolesService.getFirebotRoles())
             .map(r => {
                 return {
                     value: r.id,
@@ -24,7 +26,8 @@ module.exports = {
     },
     valueIsStillValid: (condition, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getMixerRoles());
+            .concat(viewerRolesService.getMixerRoles())
+            .concat(viewerRolesService.getFirebotRoles());
 
         let role = allRoles.find(r => r.id === condition.rightSideValue);
 
@@ -32,7 +35,8 @@ module.exports = {
     },
     getRightSideValueDisplay: (condition, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getMixerRoles());
+            .concat(viewerRolesService.getMixerRoles())
+            .concat(viewerRolesService.getFirebotRoles());
 
         let role = allRoles.find(r => r.id === condition.rightSideValue);
 
@@ -44,21 +48,21 @@ module.exports = {
     },
     predicate: async (conditionSettings, trigger) => {
 
-        let { comparisonType, rightSideValue } = conditionSettings;
+        let { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
+        let username = leftSideValue;
 
-        let username = trigger.metadata.username;
         if (username == null || username === "") {
-            return false;
+            username = trigger.metadata.username;
         }
 
         let mixerUserRoles = await channelAccess.getViewersMixerRoles(username);
-
+        let firebotUserRoles = firebotRolesManager.getAllFirebotRolesForViewer(username) || [];
         let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
         let userMixerRoles = (mixerUserRoles || [])
             .filter(mr => mr !== "User")
             .map(mr => mixerRolesManager.mapMixerRole(mr));
 
-        let allRoles = userCustomRoles.concat(userMixerRoles);
+        let allRoles = userCustomRoles.concat(firebotUserRoles).concat(userMixerRoles);
 
         let hasRole = allRoles.some(r => r.id === rightSideValue);
 
