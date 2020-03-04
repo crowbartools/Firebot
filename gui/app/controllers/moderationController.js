@@ -7,11 +7,13 @@
     angular
         .module("firebotApp")
         .controller("moderationController", function($scope, eventLogService, chatModerationService, utilityService,
-            viewerRolesService) {
+            viewerRolesService, settingsService) {
 
             $scope.activeTab = 0;
 
             $scope.eventLogService = eventLogService;
+
+            $scope.settingsService = settingsService;
 
             $scope.pagination = {
                 generalLog: {

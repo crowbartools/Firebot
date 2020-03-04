@@ -45,6 +45,15 @@ function constellationDisconnect() {
     renderWindow.webContents.send("constellationConnection", "Offline");
 }
 
+const followTimeouts = {};
+
+function cancelPreviousFollowTimeout(followUser) {
+    if (!followUser) return;
+    if (followTimeouts[followUser.id]) {
+        clearTimeout(followTimeouts[followUser.id]);
+        followTimeouts[followUser.id] = null;
+    }
+}
 
 // Constellation Connect
 // This will connect to constellation and subscribe to all constellation events we need.
@@ -130,15 +139,23 @@ function constellationConnect() {
     // Follow (Cached Event)
     // This is a follow event. Filters out unfollows.
     ca.subscribe(prefix + "followed", data => {
-    // Filter out the unfollows.
-        if (data.following === false) {
+        if (data == null || data.user == null) return;
+
+        let { user, following } = data;
+
+        cancelPreviousFollowTimeout();
+        // stop processing if it was an unfollow
+        if (!following) {
             return;
         }
 
-        eventManager.triggerEvent("mixer", "followed", {
-            username: data["user"].username,
-            userId: data["user"].id
-        });
+        followTimeouts[user.id] = setTimeout(followUser => {
+            eventManager.triggerEvent("mixer", "followed", {
+                username: followUser.username,
+                userId: followUser.id
+            });
+            cancelPreviousFollowTimeout();
+        }, 2 * 1000, user);
     });
 
     // Skill

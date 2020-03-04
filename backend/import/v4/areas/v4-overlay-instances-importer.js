@@ -35,7 +35,7 @@ exports.run = async () => {
             let overlayInstances = allV4Settings.settings.overlayInstances || [];
             settings.setOverlayInstances(overlayInstances);
 
-            frontendCommunicator.send("flush-settings-cache");
+            settings.flushSettingsCache();
         }
     }
 

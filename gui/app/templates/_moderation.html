@@ -5,6 +5,9 @@
                 <a href>CHAT MODERATION</a>
             </li>
             <li role="presentation" ng-class="{'active' : activeTab === 1}" ng-click="activeTab = 1">
+              <a href>GENERAL MODERATION</a>
+          </li>
+            <li role="presentation" ng-class="{'active' : activeTab === 2}" ng-click="activeTab = 2">
                 <a href>ACTIVITY LOGS</a>
             </li>
         </ul>
@@ -38,22 +41,7 @@
                       </div>
                       <div class="role-bar clickable" ng-click="openAddExemptRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
                           <i class="far fa-plus"></i> 
-                      </div>
-                      
-                      <!--<div class="viewer-group-list bg-inverted">
-                          <div ng-show="hasCustomRoles" style="margin-bottom: 10px;">
-                              <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Custom</div>
-                              <label ng-repeat="customRole in getCustomRoles()" class="control-fb control--checkbox">{{customRole.name}}
-                                  <input type="checkbox" ng-click="toggleRole(customRole)" ng-checked="isRoleChecked(customRole)"  aria-label="..." >
-                                  <div class="control__indicator"></div>
-                              </label>
-                          </div>
-                          <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Mixer</div>
-                          <label ng-repeat="mixerRole in getMixerRoles()" class="control-fb control--checkbox">{{mixerRole.name}}
-                              <input type="checkbox" ng-click="toggleRole(mixerRole)" ng-checked="isRoleChecked(mixerRole)"  aria-label="..." >
-                              <div class="control__indicator"></div>
-                          </label>
-                      </div>-->
+                      </div>    
                     </div>
                   </div>         
                 </div>
@@ -61,6 +49,19 @@
             
         </div>
         <div ng-show="activeTab === 1">
+
+          <div class="content-block" style="width: 50%;">
+            <div class="content-block-body">
+              <div style="display: flex;align-items: center;">
+                <div style="font-weight: 600;font-size: 20px;margin-right: 15px;" ng-class="{ muted: !settingsService.getGuardAgainstUnfollowUnhost() }">Guard against rapid unfollows/unhosts</div>
+                <toggle-button toggle-model="settingsService.getGuardAgainstUnfollowUnhost()" 
+                  on-toggle="settingsService.setGuardAgainstUnfollowUnhost(!settingsService.getGuardAgainstUnfollowUnhost())"></toggle-button>
+              </div>        
+            </div>
+          </div>
+
+        </div>
+        <div ng-show="activeTab === 2">
 
             <div class="content-block" style="width: 100%; margin-bottom: .5em;">
                 <div class="content-block-header">
