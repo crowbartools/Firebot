@@ -51,12 +51,14 @@
         <div ng-show="activeTab === 1">
 
           <div class="content-block" style="width: 50%;">
-            <div class="content-block-body">
-              <div style="display: flex;align-items: center;">
-                <div style="font-weight: 600;font-size: 20px;margin-right: 15px;" ng-class="{ muted: !settingsService.getGuardAgainstUnfollowUnhost() }">Guard against rapid unfollows/unhosts</div>
-                <toggle-button toggle-model="settingsService.getGuardAgainstUnfollowUnhost()" 
-                  on-toggle="settingsService.setGuardAgainstUnfollowUnhost(!settingsService.getGuardAgainstUnfollowUnhost())"></toggle-button>
-              </div>        
+            <div class="content-block-body" style="margin: 5px 15px;">
+              <div style="display: flex;align-items: center;justify-content: space-between;">
+                  <div style="font-weight: 600;font-size: 20px;" ng-class="{ muted: !settingsService.getGuardAgainstUnfollowUnhost() }">Guard against rapid unfollows/unhosts <tooltip text="'When enabled, if a user unfollows/unhosts within 2.5 seconds of following/hosting, the follow/host event is not triggered.'"></tooltip></div>
+                  <div style="width: 150px; flex-shrink: 0;text-align: right;">
+                      <toggle-button toggle-model="settingsService.getGuardAgainstUnfollowUnhost()" 
+                      on-toggle="settingsService.setGuardAgainstUnfollowUnhost(!settingsService.getGuardAgainstUnfollowUnhost())" font-size="40"></toggle-button>
+                  </div> 
+              </div>      
             </div>
           </div>
 

@@ -50,6 +50,11 @@ function getDataFromFile(path, forceCacheUpdate = false) {
     return settingsCache[path];
 }
 
+settings.getGuardAgainstUnfollowUnhost = function() {
+    let enabled = getDataFromFile('/settings/moderation/guardAgainstUnfollowUnhost');
+    return enabled != null ? enabled : false;
+};
+
 settings.getEventSettings = function() {
     return getDataFromFile("/settings/eventSettings");
 };

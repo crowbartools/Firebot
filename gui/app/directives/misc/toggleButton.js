@@ -4,15 +4,37 @@
     angular.module("firebotApp")
         .component("toggleButton", {
             bindings: {
-                toggleModel: "<",
-                onToggle: "&"
+                toggleModel: "=",
+                autoUpdateValue: "<",
+                onToggle: "&",
+                fontSize: "<?"
             },
             template: `
-            <div class="toggle-button"
-                ng-class="{'toggled-on': $ctrl.toggleModel}"
-                ng-click="$ctrl.onToggle()">
-                    <i class="fad" ng-class="{'fa-toggle-on': $ctrl.toggleModel, 'fa-toggle-off': !$ctrl.toggleModel}"></i>
-            </div>
-            `
+                <div class="toggle-button"
+                    ng-class="{'toggled-on': $ctrl.toggleModel}"
+                    ng-click="$ctrl.toggle()"
+                    ng-style="$ctrl.getCustomStyles()">
+                        <i class="fad" ng-class="{'fa-toggle-on': $ctrl.toggleModel, 'fa-toggle-off': !$ctrl.toggleModel}"></i>
+                </div>
+            `,
+            controller: function ($timeout) {
+                const $ctrl = this;
+
+                $ctrl.toggle = () => {
+                    if ($ctrl.autoUpdateValue === true) {
+                        $ctrl.toggleModel = !$ctrl.toggleModel;
+                    }
+                    $timeout(() => {
+                        $ctrl.onToggle();
+                    }, 1);
+                };
+
+                $ctrl.getCustomStyles = () => {
+                    if ($ctrl.fontSize) {
+                        return { "font-size": `${$ctrl.fontSize}px`};
+                    }
+                    return {};
+                };
+            }
         });
 }());

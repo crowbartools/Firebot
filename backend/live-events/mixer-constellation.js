@@ -3,7 +3,6 @@
 const { ipcMain } = require("electron");
 const Carina = require("carina").Carina;
 const ws = require("ws");
-const profileManager = require("../common/profile-manager.js");
 const eventManager = require("../live-events/EventManager");
 const reconnectService = require("../common/reconnect.js");
 const connectionManager = require("../common/connection-manager");
@@ -11,6 +10,7 @@ const logger = require("../logwrapper");
 const patronageManager = require("../patronageManager");
 const apiAccess = require("../api-access");
 const accountAccess = require("../common/account-access");
+const { settings } = require("../common/settings-access");
 Carina.WebSocket = ws;
 
 // This holds the constellation connection so we can stop it later.
@@ -46,12 +46,21 @@ function constellationDisconnect() {
 }
 
 const followTimeouts = {};
+const hostTimeouts = {};
 
 function cancelPreviousFollowTimeout(followUser) {
     if (!followUser) return;
     if (followTimeouts[followUser.id]) {
         clearTimeout(followTimeouts[followUser.id]);
         followTimeouts[followUser.id] = null;
+    }
+}
+
+function cancelPreviousHostTimeout(userId) {
+    if (!userId) return;
+    if (hostTimeouts[userId]) {
+        clearTimeout(hostTimeouts[userId]);
+        hostTimeouts[userId] = null;
     }
 }
 
@@ -130,10 +139,35 @@ function constellationConnect() {
     // Host (Cached Event)
     // This is a channel host.
     ca.subscribe(prefix + "hosted", data => {
-        eventManager.triggerEvent("mixer", "hosted", {
-            username: data["hoster"].token,
-            auto: data.auto
-        });
+        if (data == null) return;
+        let { hoster, hosterId, auto } = data;
+
+        cancelPreviousHostTimeout(hosterId);
+
+        if (settings.getGuardAgainstUnfollowUnhost()) {
+            hostTimeouts[hosterId] = setTimeout((hostUser, hostUserId, isAuto) => {
+                eventManager.triggerEvent("mixer", "hosted", {
+                    username: hostUser.token,
+                    auto: isAuto
+                });
+                cancelPreviousHostTimeout(hostUserId);
+            }, 2500, hoster, hosterId, auto);
+        } else {
+            eventManager.triggerEvent("mixer", "hosted", {
+                username: hoster.token,
+                auto: auto
+            });
+        }
+    });
+
+    ca.subscribe(prefix + "unhosted", data => {
+        if (data == null) return;
+
+        let { hosterId } = data;
+
+        if (settings.getGuardAgainstUnfollowUnhost()) {
+            cancelPreviousHostTimeout(hosterId);
+        }
     });
 
     // Follow (Cached Event)
@@ -143,19 +177,27 @@ function constellationConnect() {
 
         let { user, following } = data;
 
-        cancelPreviousFollowTimeout();
+        cancelPreviousFollowTimeout(user);
+
         // stop processing if it was an unfollow
         if (!following) {
             return;
         }
 
-        followTimeouts[user.id] = setTimeout(followUser => {
+        if (settings.getGuardAgainstUnfollowUnhost()) {
+            followTimeouts[user.id] = setTimeout(followUser => {
+                eventManager.triggerEvent("mixer", "followed", {
+                    username: followUser.username,
+                    userId: followUser.id
+                });
+                cancelPreviousFollowTimeout(user);
+            }, 2500, user);
+        } else {
             eventManager.triggerEvent("mixer", "followed", {
-                username: followUser.username,
-                userId: followUser.id
+                username: user.username,
+                userId: user.id
             });
-            cancelPreviousFollowTimeout();
-        }, 2 * 1000, user);
+        }
     });
 
     // Skill
