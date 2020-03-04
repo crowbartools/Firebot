@@ -127,10 +127,12 @@ const model = {
                 };
 
                 try {
-                    await effectRunner.processEffects(processEffectsRequest);
+                    const result = await effectRunner.processEffects(processEffectsRequest);
+                    return result;
                 } catch (err) {
                     logger.warn("failed to run effects in loop effects effect", err);
                 }
+                return null;
             };
 
             if (effect.loopMode === 'count' || effect.loopMode == null) {
@@ -143,7 +145,18 @@ const model = {
                 }
 
                 for (let i = 0; i < loopCount; i++) {
-                    await runEffects();
+                    const result = await runEffects();
+                    if (result != null && result.success === true) {
+                        if (result.stopEffectExecution) {
+                            return resolve({
+                                success: true,
+                                execution: {
+                                    stop: true,
+                                    bubbleStop: true
+                                }
+                            });
+                        }
+                    }
                 }
 
             } else if (effect.loopMode === 'conditional') {
@@ -164,7 +177,18 @@ const model = {
                     let conditionsPass = await conditionManager.runConditions(effect.conditionData, trigger);
 
                     if (conditionsPass) {
-                        await runEffects();
+                        const result = await runEffects();
+                        if (result != null && result.success === true) {
+                            if (result.stopEffectExecution) {
+                                return resolve({
+                                    success: true,
+                                    execution: {
+                                        stop: true,
+                                        bubbleStop: true
+                                    }
+                                });
+                            }
+                        }
                         await wait(1);
                     } else {
                         break;

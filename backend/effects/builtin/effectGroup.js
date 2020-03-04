@@ -79,9 +79,21 @@ const effectGroup = {
                 effects: effectList
             };
 
-            effectRunner.processEffects(processEffectsRequest).then(() => {
-                resolve(true);
-            });
+            effectRunner.processEffects(processEffectsRequest)
+                .then(result => {
+                    if (result != null && result.success === true) {
+                        if (result.stopEffectExecution) {
+                            return resolve({
+                                success: true,
+                                execution: {
+                                    stop: true,
+                                    bubbleStop: true
+                                }
+                            });
+                        }
+                    }
+                    resolve(true);
+                });
         });
     }
 };

@@ -208,14 +208,14 @@ const fileWriter = {
         return errors;
     },
     onTriggerEvent: event => {
-        return new Promise(async (resolve) => {
+        return new Promise(resolve => {
 
             logger.debug("Processing script...");
 
             customScriptProcessor
                 .processScript(event.effect, event.trigger)
-                .then(() => {
-                    resolve(true);
+                .then(result => {
+                    resolve(result !== undefined ? result : true);
                 })
                 .catch(err => {
                     renderWindow.webContents.send('error', "Oops! There was an error processing the custom script. Error: " + err);

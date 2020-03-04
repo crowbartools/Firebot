@@ -245,9 +245,20 @@ function scriptProcessor(effect, trigger) {
 
                                             effectRunner
                                                 .processEffects(processEffectsRequest)
-                                                .then(() => {
+                                                .then(result => {
                                                     responseObject.callback("effects");
-                                                    resolve();
+                                                    if (result != null && result.success === true) {
+                                                        if (result.stopEffectExecution) {
+                                                            return resolve({
+                                                                success: true,
+                                                                execution: {
+                                                                    stop: true,
+                                                                    bubbleStop: true
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                    resolve(true);
                                                 })
                                                 .catch(err => {
                                                     logger.error("Error running effects for script", err);
