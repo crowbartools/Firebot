@@ -78,7 +78,6 @@ function stopTimer() {
 // Start up our currency timers at the next full minute mark.
 // Then we'll check all of our currencies each minute to see if any need to be applied.
 function startTimer() {
-    stopTimer();
     let currentTime = moment();
     let nextMinute = moment()
         .endOf("minute")
@@ -88,6 +87,7 @@ function startTimer() {
     logger.debug(`Currency timer will start in ${diff} seconds`);
 
     setTimeout(() => {
+        stopTimer();
         logger.debug("Starting currency timer.");
         //start timer, fire interval every minute.
         currencyInterval = setInterval(() => {
