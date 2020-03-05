@@ -4,12 +4,15 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const model = {
     definition: {
         id: "firebot:stop-effect-execution",
         name: "Stop Effect Exectution",
         description: "Stop the execution of the current effect list.",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-stop-circle",
+        categories: [EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

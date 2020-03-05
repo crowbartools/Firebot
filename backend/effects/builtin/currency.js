@@ -8,6 +8,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Currency effect
  */
@@ -17,9 +19,10 @@ const currency = {
    */
     definition: {
         id: "firebot:currency",
-        name: "Currency",
-        description: "Manage your currency systems.",
-        tags: ["Fun", "Built in"],
+        name: "Update Currency",
+        description: "Update a viewers currency.",
+        icon: "fad fa-money-bill",
+        categories: [EffectCategory.COMMON, EffectCategory.FUN],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

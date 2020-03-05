@@ -422,6 +422,17 @@
         };
     });
 
+    // This adds a filter that we can use for searching varaibles
+    app.filter("effectCategoryFilter", function() {
+        return function(effects, category) {
+            if (effects == null || category == null) return effects;
+            return effects
+                .filter(v =>
+                    v.categories && v.categories.includes(category)
+                );
+        };
+    });
+
     app.filter('capitalize', function() {
         return function(input) {
             return (input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';

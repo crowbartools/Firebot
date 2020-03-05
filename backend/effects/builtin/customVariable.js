@@ -6,12 +6,15 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const fileWriter = {
     definition: {
         id: "firebot:customvariable",
         name: "Custom Variable",
         description: "Save data to a custom variable that you can then use elsewhere.",
-        tags: ["Built in"],
+        icon: "fad fa-value-absolute",
+        categories: [EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

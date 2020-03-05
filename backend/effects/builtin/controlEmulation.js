@@ -8,6 +8,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Control Emulation effect
  */
@@ -18,8 +20,9 @@ const controlEmulation = {
     definition: {
         id: "firebot:controlemulation",
         name: "Control Emulation",
-        description: "Emulation various types of controls.",
-        tags: ["Fun", "Built in"],
+        description: "Emulate keyboard keys or mouse clicks",
+        icon: "fad fa-keyboard",
+        categories: [EffectCategory.ADVANCED, EffectCategory.FUN],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

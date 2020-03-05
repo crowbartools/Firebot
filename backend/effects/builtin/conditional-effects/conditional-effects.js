@@ -5,23 +5,20 @@ const { ControlKind, InputEvent } = require('../../../interactive/constants/Mixp
 const effectModels = require("../../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../../shared/effect-constants');
+
 const effectRunner = require("../../../common/effect-runner");
 const conditionManager = require("./conditions/condition-manager");
 const builtinConditionTypeLoader = require("./conditions/builtin-condition-loader");
 builtinConditionTypeLoader.registerConditionTypes();
 
-/**
- * The custom var effect
- */
 const model = {
-    /**
-   * The definition of the Effect
-   */
     definition: {
         id: "firebot:conditional-effects",
         name: "Conditional Effects",
         description: "Conditionally run effects",
-        tags: ["Built in"],
+        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
+        icon: "fad fa-question-circle",
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

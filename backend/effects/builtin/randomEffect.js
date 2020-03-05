@@ -8,6 +8,7 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
 
 const randomQueuesCache = {};
 
@@ -22,7 +23,8 @@ const randomEffect = {
         id: "firebot:randomeffect",
         name: "Run Random Effect",
         description: "Run a random effect from a list of effects",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-random",
+        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

@@ -6,6 +6,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Random Effect effect
  */
@@ -17,8 +19,9 @@ const effectGroup = {
         id: "firebot:run-effect-list",
         name: "Run Effect List",
         description:
-            "Run a given list of effects (Useful in Random Effects)",
-        tags: ["Logic control", "Built in"],
+            "Run a specified list of effects",
+        icon: "fad fa-list",
+        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

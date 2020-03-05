@@ -4,12 +4,15 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const model = {
     definition: {
         id: "firebot:delay",
         name: "Delay",
         description: "Pause between effects",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-stopwatch",
+        categories: [EffectCategory.COMMON, EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

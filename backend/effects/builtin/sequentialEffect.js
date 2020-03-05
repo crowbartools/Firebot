@@ -6,6 +6,7 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
 
 const sequentialQueuesCache = {};
 
@@ -17,7 +18,8 @@ const model = {
         id: "firebot:sequentialeffect",
         name: "Run Sequential Effect",
         description: "Run a single effect sequentially from a list of effects",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-list-ol",
+        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

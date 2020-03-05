@@ -8,6 +8,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Dice effect
  */
@@ -19,7 +21,8 @@ const dice = {
         id: "firebot:dice",
         name: "Dice",
         description: "Specify an amount of dice to roll in chat.",
-        tags: ["Fun", "Built in"],
+        icon: "fad fa-dice",
+        categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED],
         dependencies: [EffectDependency.CHAT],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

@@ -6,6 +6,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const logger = require("../../logwrapper");
 
 const { settings } = require("../../common/settings-access");
@@ -19,7 +21,8 @@ const model = {
         id: "firebot:loopeffects",
         name: "Loop Effects",
         description: "Loop an effect list",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-repeat-alt",
+        categories: [EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

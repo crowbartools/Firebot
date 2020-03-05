@@ -8,6 +8,8 @@ const { EffectDependency, EffectTrigger } = effectModels;
 
 const accountAccess = require("../../common/account-access");
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Clip effect
  */
@@ -20,7 +22,8 @@ const clip = {
         name: "Create Clip",
         description: "Creates a clip on Mixer.",
         hidden: !accountAccess.getAccounts().streamer.loggedIn || !accountAccess.getAccounts().streamer.partnered,
-        tags: ["Fun", "Built in"],
+        icon: "fad fa-film",
+        categories: [EffectCategory.COMMON, EffectCategory.FUN],
         dependencies: [EffectDependency.CHAT, EffectDependency.CONSTELLATION],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON],

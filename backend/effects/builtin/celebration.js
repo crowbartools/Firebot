@@ -8,6 +8,7 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
 /**
  * The Celebration effect
  */
@@ -18,8 +19,9 @@ const celebration = {
     definition: {
         id: "firebot:celebration",
         name: "Celebration",
-        description: "Celebrate with a variety of overlay effects.",
-        tags: ["Fun", "Built in"],
+        description: "Celebrate with firework overlay effects.",
+        icon: "fad fa-birthday-cake",
+        categories: [EffectCategory.FUN, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.OVERLAY],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

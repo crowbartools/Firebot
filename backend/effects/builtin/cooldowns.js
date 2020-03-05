@@ -6,6 +6,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Cooldown effect
  */
@@ -17,7 +19,8 @@ const cooldown = {
         id: "firebot:cooldown",
         name: "Cooldown Controls",
         description: "Put specific MixPlay controls on cooldown.",
-        tags: ["Built in"],
+        icon: "fad fa-hourglass-half",
+        categories: [EffectCategory.MIXPLAY, EffectCategory.ADVANCED],
         dependencies: [EffectDependency.INTERACTIVE],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

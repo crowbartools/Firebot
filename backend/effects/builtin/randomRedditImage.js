@@ -6,12 +6,15 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const model = {
     definition: {
         id: "firebot:randomReddit",
         name: "Random Reddit Image",
         description: "Pulls a random image from a selected subreddit.",
-        tags: ["Fun", "API", "Built in"],
+        icon: "fab fa-reddit-alien",
+        categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.CHAT],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

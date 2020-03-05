@@ -8,6 +8,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Delay effect
  */
@@ -18,8 +20,9 @@ const delay = {
     definition: {
         id: "firebot:clear-effects",
         name: "Clear Effects",
-        description: "Clear overlay, sounds, and effect queues",
-        tags: ["Logic control", "Built in"],
+        description: "Remove overlay effects, stop sounds, or clear effect queues",
+        icon: "fad fa-minus-circle",
+        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

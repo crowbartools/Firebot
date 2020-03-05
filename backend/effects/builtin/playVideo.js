@@ -9,6 +9,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Play Video effect
  */
@@ -20,7 +22,8 @@ const playVideo = {
         id: "firebot:playvideo",
         name: "Play Video",
         description: "Plays a video in the overlay.",
-        tags: ["Fun", "Built in"],
+        icon: "fad fa-video",
+        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.OVERLAY],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

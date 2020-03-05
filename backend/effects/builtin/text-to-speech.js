@@ -4,6 +4,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 /**
@@ -17,7 +19,8 @@ const delay = {
         id: "firebot:text-to-speech",
         name: "Text-To-Speech",
         description: "Have Firebot read out some text.",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-microphone-alt",
+        categories: [EffectCategory.FUN],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

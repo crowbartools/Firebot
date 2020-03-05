@@ -126,7 +126,7 @@
                     </div>
             
                     <div class="add-more-functionality" style="margin-top: 16px;margin-left: 12px;">
-                        <a class="clickable" ng-click="$ctrl.addEffect()"> <i class="far fa-plus-circle"></i> New Effect</a>
+                        <a class="clickable" ng-click="$ctrl.openNewEffectModal()"> <i class="far fa-plus-circle"></i> New Effect</a>               
                     </div>
                 </div>
                 
@@ -335,6 +335,29 @@
                     };
 
                     ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
+                };
+
+                ctrl.openNewEffectModal = function() {
+                    utilityService.showModal({
+                        component: "addNewEffectModal",
+                        backdrop: true,
+                        windowClass: "no-padding-modal",
+                        resolveObj: {
+                            trigger: () => ctrl.trigger,
+                            triggerMeta: () => ctrl.triggerMeta
+                        },
+                        closeCallback: resp => {
+                            if (resp == null) return;
+                            let { selectedEffectDef } = resp;
+
+                            let newEffect = {
+                                id: uuidv1(),
+                                type: selectedEffectDef.id
+                            };
+
+                            ctrl.openEditEffectModal(newEffect, null, ctrl.trigger);
+                        }
+                    });
                 };
 
                 ctrl.openEditEffectModal = function(effect, index, trigger) {

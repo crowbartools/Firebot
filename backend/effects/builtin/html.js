@@ -7,6 +7,9 @@ const webServer = require("../../../server/httpServer");
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
+
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The HTML effect
  */
@@ -18,7 +21,8 @@ const html = {
         id: "firebot:html",
         name: "Show HTML",
         description: "Show an HTML snippet in the overlay.",
-        tags: ["Built in"],
+        icon: "fab fa-html5",
+        categories: [EffectCategory.ADVANCED, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.OVERLAY],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],
