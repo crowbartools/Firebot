@@ -81,22 +81,28 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     })
                     .filter(e => !e.hidden);
 
-                let modalId = $ctrl.resolve.modalId;
-                utilityService.addSlidingModal(
-                    $ctrl.modalInstance.rendered.then(() => {
-                        let modalElement = $("." + modalId).children();
-                        return {
-                            element: modalElement,
-                            name: "Select New Effect",
-                            id: modalId,
-                            instance: $ctrl.modalInstance
-                        };
-                    })
-                );
+                if ($ctrl.resolve.selectedEffectTypeId) {
+                    $ctrl.selectedEffectDef = $ctrl.effectDefs.find(e => e.id === $ctrl.resolve.selectedEffectTypeId);
+                }
 
-                $scope.$on("modal.closing", function() {
-                    utilityService.removeSlidingModal();
-                });
+                if (!$ctrl.selectedEffectDef) {
+                    let modalId = $ctrl.resolve.modalId;
+                    utilityService.addSlidingModal(
+                        $ctrl.modalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                name: "Select New Effect",
+                                id: modalId,
+                                instance: $ctrl.modalInstance
+                            };
+                        })
+                    );
+
+                    $scope.$on("modal.closing", function() {
+                        utilityService.removeSlidingModal();
+                    });
+                }
 
                 $timeout(() => {
                     angular.element("#effectSearch").trigger("focus");

@@ -552,9 +552,17 @@
                 <li class="active">{{effectDefinition.definition.name}}</li>
             </ol>
 
-            <div class="effect-select-wrapper">
-                <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.type" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
+            <div style="padding-left: 15px;margin-bottom: 20px;margin-top: 10px;">
+              <div class="muted" style="font-size:12.5px;">CURRENT EFFECT:</div>
+              <div style="display:flex;align-items: center;">
+                <div style="font-size: 20px;font-weight: 100;">{{effectDefinition.definition.name}}</div>
+                <button type="button" ng-click="openNewEffectModal()" class="change-effect-button clickable" style="margin-left: 10px;">Change</button>
+              </div>
             </div>
+
+            <!--<div class="effect-select-wrapper">
+                <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.type" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
+            </div>-->
       </div>
       <div class="modal-body">        
           <div class="effect-settings-panel">

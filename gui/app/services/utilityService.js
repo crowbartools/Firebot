@@ -667,6 +667,25 @@
                             utilityService.removeSlidingModal();
                         });
 
+                        $scope.openNewEffectModal = function() {
+                            utilityService.showModal({
+                                component: "addNewEffectModal",
+                                backdrop: true,
+                                windowClass: "no-padding-modal",
+                                resolveObj: {
+                                    trigger: () => triggerType,
+                                    triggerMeta: () => triggerMeta,
+                                    selectedEffectTypeId: () => $scope.effect && $scope.effect.type
+                                },
+                                closeCallback: resp => {
+                                    if (resp == null) return;
+                                    let { selectedEffectDef } = resp;
+
+                                    $scope.effectTypeChanged(selectedEffectDef);
+                                }
+                            });
+                        };
+
                         async function validateEffect() {
 
                             if ($scope.effect.type === "Nothing") {
