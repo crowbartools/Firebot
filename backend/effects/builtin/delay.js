@@ -1,25 +1,18 @@
 "use strict";
 
-const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
-const webServer = require("../../../server/httpServer");
-
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
-/**
- * The Delay effect
- */
-const delay = {
-    /**
-   * The definition of the Effect
-   */
+const { EffectCategory } = require('../../../shared/effect-constants');
+
+const model = {
     definition: {
         id: "firebot:delay",
         name: "Delay",
         description: "Pause between effects",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-stopwatch",
+        categories: [EffectCategory.COMMON, EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],
@@ -27,14 +20,7 @@ const delay = {
             EffectTrigger.ALL
         )
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
     globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
         <eos-container header="Duration">
             <div class="input-group">
@@ -43,13 +29,7 @@ const delay = {
             </div>
         </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   */
     optionsController: $scope => {},
-    /**
-   * When the effect is saved
-   */
     optionsValidator: effect => {
         let errors = [];
         if (effect.delay == null || effect.delay.length < 1) {
@@ -57,12 +37,9 @@ const delay = {
         }
         return errors;
     },
-    /**
-   * When the effect is triggered by something
-   */
     onTriggerEvent: event => {
-        return new Promise((resolve, reject) => {
-            let effect = event.effect;
+        return new Promise(resolve => {
+            let { effect } = event;
 
             // wait for the specified time before resolving.
             setTimeout(() => {
@@ -72,4 +49,4 @@ const delay = {
     }
 };
 
-module.exports = delay;
+module.exports = model;

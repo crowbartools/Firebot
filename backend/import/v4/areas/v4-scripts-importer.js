@@ -48,7 +48,7 @@ exports.run = async () => {
             let runCustomScripts = allV4Settings.settings.runCustomScripts === true;
             settings.setCustomScriptsEnabled(runCustomScripts);
 
-            frontendCommunicator.send("flush-settings-cache");
+            settings.flushSettingsCache();
         }
 
     }

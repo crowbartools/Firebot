@@ -326,21 +326,23 @@ function uiChatMessage(data) {
                     let foundEmote = false;
                     let emoteIsGlobal = false;
 
-                    for (let channelEmote of emoteData.channelEmotes) {
-                        if (channelEmote.code === word) {
-                            emote = channelEmote;
-                            foundEmote = true;
-                            break;
-                        }
-                    }
-
-                    // didnt find a channel emote, check globals
-                    if (!foundEmote) {
-                        for (let globalEmote of emoteData.globalEmotes) {
-                            if (globalEmote.code === word) {
-                                emote = globalEmote;
-                                emoteIsGlobal = true;
+                    if (emoteData) {
+                        for (let channelEmote of emoteData.channelEmotes) {
+                            if (channelEmote.code === word) {
+                                emote = channelEmote;
+                                foundEmote = true;
                                 break;
+                            }
+                        }
+
+                        // didnt find a channel emote, check globals
+                        if (!foundEmote) {
+                            for (let globalEmote of emoteData.globalEmotes) {
+                                if (globalEmote.code === word) {
+                                    emote = globalEmote;
+                                    emoteIsGlobal = true;
+                                    break;
+                                }
                             }
                         }
                     }

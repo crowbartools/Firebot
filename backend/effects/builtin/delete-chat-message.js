@@ -3,6 +3,8 @@ const chat = require("../../common/mixer-chat");
 const effectModels = require("../models/effectModels");
 const { EffectTrigger, EffectDependency } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = ["mixer:chat-message"];
@@ -11,8 +13,9 @@ const model = {
     definition: {
         id: "firebot:delete-chat-message",
         name: "Delete Chat Message",
-        description: "Deletes the associated chat message",
-        tags: ["Logic control", "Built in"],
+        description: "Delete the associated chat message",
+        icon: "fad fa-comment-times",
+        categories: [EffectCategory.CHAT_BASED, EffectCategory.ADVANCED],
         dependencies: [EffectDependency.CHAT],
         triggers: triggers
     },

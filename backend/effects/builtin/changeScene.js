@@ -7,18 +7,15 @@ const { EffectDependency, EffectTrigger } = effectModels;
 const mixplay = require("../../interactive/mixplay");
 const mixplayManager = require("../../interactive/mixplay-project-manager");
 
-/**
- * The Delay effect
- */
-const delay = {
-    /**
-   * The definition of the Effect
-   */
+const { EffectCategory } = require('../../../shared/effect-constants');
+
+const model = {
     definition: {
         id: "firebot:changescene",
         name: "Change MixPlay Scene",
         description: "Change viewer(s) between scenes",
-        tags: ["Built in"],
+        icon: "fad fa-th-large",
+        categories: [EffectCategory.COMMON, EffectCategory.MIXPLAY],
         dependencies: [EffectDependency.INTERACTIVE],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],
@@ -204,4 +201,4 @@ const delay = {
     }
 };
 
-module.exports = delay;
+module.exports = model;

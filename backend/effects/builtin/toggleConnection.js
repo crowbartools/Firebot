@@ -6,6 +6,9 @@ const resourceTokenManager = require("../../resourceTokenManager");
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
+
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Toggle Connection effect
  */
@@ -17,7 +20,8 @@ const toggleConnection = {
         id: "firebot:toggleconnection",
         name: "Toggle Connection",
         description: "Toggles connection to specified services.",
-        tags: ["Built in"],
+        icon: "fad fa-plug",
+        categories: [EffectCategory.ADVANCED],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON],

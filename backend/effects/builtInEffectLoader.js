@@ -37,6 +37,7 @@ exports.loadEffects = () => {
     const loopEffects = require("./builtin/loopEffects");
     const textToSpeech = require("./builtin/text-to-speech");
     const deleteChatMessage = require("./builtin/delete-chat-message");
+    const stopEffectExecution = require("./builtin/stop-effect-execution");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -72,4 +73,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(loopEffects);
     effectManager.registerEffect(textToSpeech);
     effectManager.registerEffect(deleteChatMessage);
+    effectManager.registerEffect(stopEffectExecution);
 };

@@ -78,6 +78,11 @@
     animation-fill-mode: forwards;
     opacity: 0.5;
   }
+  &.below {
+    margin: 0 0px -16px 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
 }
 
 @keyframes delayed-hide {

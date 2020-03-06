@@ -11,6 +11,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Show Text effect
  */
@@ -22,7 +24,8 @@ const showText = {
         id: "firebot:showtext",
         name: "Show Text",
         description: "Shows specified text in the overlay.",
-        tags: ["Built in"],
+        icon: "fad fa-text",
+        categories: [EffectCategory.COMMON, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.OVERLAY],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

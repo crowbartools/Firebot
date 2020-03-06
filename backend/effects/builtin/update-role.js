@@ -5,6 +5,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const customRolesManager = require("../../roles/custom-roles-manager");
 
 /**
@@ -18,7 +20,8 @@ const delay = {
         id: "firebot:update-roles",
         name: "Update Viewer Roles",
         description: "Add, remove, or clear users from a custom role.",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-user-tag",
+        categories: [EffectCategory.ADVANCED],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

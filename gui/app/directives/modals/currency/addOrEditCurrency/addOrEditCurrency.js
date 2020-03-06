@@ -80,8 +80,8 @@
             };
 
             /**
-       * Delete Currency confirmation Modal
-       */
+             * Delete Currency confirmation Modal
+             */
             $ctrl.showCurrencyDeleteModal = function(currency) {
                 utilityService
                     .showConfirmationModal({
@@ -102,8 +102,8 @@
             };
 
             /**
-       * Purge Currency confirmation Modal
-       */
+             * Purge Currency confirmation Modal
+             */
             $ctrl.showCurrencyPurgeModal = function(currency) {
                 utilityService
                     .showConfirmationModal({

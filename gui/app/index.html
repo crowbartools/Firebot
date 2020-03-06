@@ -10,7 +10,8 @@
     <meta name="author" content="">
 
     <!--Webfont version of font awesome 5, use these from now on-->
-    <link rel="stylesheet" href="../fonts/fontawesome5/fontawesome-all.min.css">
+
+    <script src="https://kit.fontawesome.com/1bc4e8dcfe.js" crossorigin="anonymous"></script>
 
     <link ng-href="{{customFontCssPath}}" rel="stylesheet" type="text/css">
   
@@ -200,6 +201,7 @@
     <script type="text/javascript" src="./directives/modals/misc/copyShareCodeModal.js"></script>
     <script type="text/javascript" src="./directives/modals/effect-queues/addOrEditEffectQueueModal.js"></script>
     <script type="text/javascript" src="./directives/modals/quotes/addOrEditQuoteModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/effects/add-new-effect-modal.js"></script>
   </head>
   <body ng-cloak>
     <toast></toast>
@@ -550,9 +552,17 @@
                 <li class="active">{{effectDefinition.definition.name}}</li>
             </ol>
 
-            <div class="effect-select-wrapper">
-                <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.type" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
+            <div style="padding-left: 15px;margin-bottom: 20px;margin-top: 10px;">
+              <div class="muted" style="font-size:12.5px;">CURRENT EFFECT:</div>
+              <div style="display:flex;align-items: center;">
+                <div style="font-size: 20px;font-weight: 100;">{{effectDefinition.definition.name}}</div>
+                <button type="button" ng-click="openNewEffectModal()" class="change-effect-button clickable" style="margin-left: 10px;">Change</button>
+              </div>
             </div>
+
+            <!--<div class="effect-select-wrapper">
+                <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.type" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
+            </div>-->
       </div>
       <div class="modal-body">        
           <div class="effect-settings-panel">

@@ -31,9 +31,9 @@ async function addOrUpdateActiveChatter(user) {
     }
 
     // Stop early if user shouldn't be in active chatter list.
-    let userDB = await userDatabase.getUserByUsername(user.user_name);
-    if (userDB.disableActiveUserList) {
-        logger.debug(userDB.username + " is set to not join the active viewer list.");
+    let firebotUser = await userDatabase.getUserByUsername(user.user_name);
+    if (firebotUser && firebotUser.disableActiveUserList) {
+        logger.debug(firebotUser.username + " is set to not join the active viewer list.");
         return;
     }
 

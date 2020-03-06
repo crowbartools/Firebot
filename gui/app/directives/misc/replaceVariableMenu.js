@@ -10,7 +10,8 @@
                     replaceVariables: "@",
                     disableVariableMenu: "<",
                     onVariableInsert: "&?",
-                    menuPosition: "@"
+                    menuPosition: "@",
+                    buttonPosition: "@"
                 },
                 controller: function($scope, $element, listenerService, $timeout) {
 
@@ -77,7 +78,7 @@
                     let compiled = $compile(wrapper)(scope);
                     element.wrap(compiled);
 
-                    let button = angular.element('<span class="variables-btn" ng-click="toggleMenu()">$vars</span>');
+                    let button = angular.element(`<span class="variables-btn ${scope.buttonPosition ? scope.buttonPosition : ''}" ng-click="toggleMenu()">$vars</span>`);
                     $compile(button)(scope);
 
                     if (!scope.disableVariableMenu) {

@@ -8,7 +8,7 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
-
+const { EffectCategory } = require('../../../shared/effect-constants');
 /**
  * The API effect
  */
@@ -20,7 +20,8 @@ const api = {
         id: "firebot:api",
         name: "API Effect",
         description: "Pulls info from a pre-selected api.",
-        tags: ["Fun", "API", "Built in"],
+        icon: "fad fa-chart-network",
+        categories: [EffectCategory.FUN, EffectCategory.CHAT_BASED, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.CHAT],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

@@ -3,6 +3,9 @@
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
+
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 const logger = require("../../logwrapper");
 
 const mixplay = require("../../interactive/mixplay");
@@ -16,7 +19,8 @@ const model = {
         id: "firebot:updatecontrol",
         name: "Update Control",
         description: "Change various properties of a MixPlay Control.",
-        tags: ["Built in"],
+        icon: "fad fa-bullseye-pointer",
+        categories: [EffectCategory.ADVANCED, EffectCategory.MIXPLAY],
         dependencies: [EffectDependency.INTERACTIVE],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

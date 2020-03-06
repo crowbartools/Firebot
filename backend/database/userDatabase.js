@@ -307,6 +307,7 @@ function setChatUserOnline(data) {
                 if (user) {
                     logger.debug("ViewerDB: User exists in DB, setting online: ", data.username);
                     user.roles = data.roles; // Update user roles when they go online.
+                    user.username = data.username; // Set their username again just in case they have since changed it
                     setUserOnline(user).then(user => resolve(user), err => reject(err));
                 } else {
                     logger.debug(

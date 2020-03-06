@@ -7,6 +7,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Delay effect
  */
@@ -18,7 +20,8 @@ const model = {
         id: "firebot:runcommand",
         name: "Run Command",
         description: "Runs effects saved for the selected custom command.",
-        tags: ["Logic control", "Built in"],
+        icon: "fad fa-exclamation-square",
+        categories: [EffectCategory.ADVANCED],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

@@ -9,6 +9,7 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
  * The Control Mouse
@@ -20,8 +21,9 @@ const controlMouse = {
     definition: {
         id: "firebot:controlMouse",
         name: "Control Mouse",
-        description: "Controls mouse movement.",
-        tags: ["Fun", "Mouse", "Built in"],
+        description: "Control mouse movement",
+        icon: "fad fa-mouse",
+        categories: [EffectCategory.ADVANCED, EffectCategory.FUN],
         dependencies: [EffectDependency.INTERACTIVE],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.JOYSTICK, ControlKind.SCREEN],

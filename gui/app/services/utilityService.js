@@ -202,7 +202,9 @@
                         inputPlaceholder: () => options.inputPlaceholder,
                         saveText: () => options.saveText,
                         validationFn: () => options.validationFn,
-                        validationText: () => options.validationText
+                        validationText: () => options.validationText,
+                        trigger: () => options.trigger,
+                        triggerMeta: () => options.triggerMeta
                     },
                     closeCallback: (resp) => {
                         callback(resp.model);
@@ -666,6 +668,25 @@
                         $scope.$on("modal.closing", function() {
                             utilityService.removeSlidingModal();
                         });
+
+                        $scope.openNewEffectModal = function() {
+                            utilityService.showModal({
+                                component: "addNewEffectModal",
+                                backdrop: true,
+                                windowClass: "no-padding-modal",
+                                resolveObj: {
+                                    trigger: () => triggerType,
+                                    triggerMeta: () => triggerMeta,
+                                    selectedEffectTypeId: () => $scope.effect && $scope.effect.type
+                                },
+                                closeCallback: resp => {
+                                    if (resp == null) return;
+                                    let { selectedEffectDef } = resp;
+
+                                    $scope.effectTypeChanged(selectedEffectDef);
+                                }
+                            });
+                        };
 
                         async function validateEffect() {
 

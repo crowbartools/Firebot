@@ -5,6 +5,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The File Writer effect
  */
@@ -16,7 +18,8 @@ const fileWriter = {
         id: "firebot:filewriter",
         name: "Write To File",
         description: "Write or delete some text in a file.",
-        tags: ["Built in"],
+        icon: "fad fa-file-edit",
+        categories: [EffectCategory.ADVANCED],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

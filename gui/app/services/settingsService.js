@@ -16,6 +16,13 @@
                 settingsCache = {};
             });
 
+            backendCommunicator.on("settings-updated-main", (settingsUpdate) => {
+                if (settingsUpdate == null) return;
+                let { path, data } = settingsUpdate;
+                if (path == null || path === '') return;
+                settingsCache[path] = data;
+            });
+
             function getSettingsFile() {
                 return profileManager.getJsonDbInProfile("/settings");
             }
@@ -24,6 +31,7 @@
                 try {
                     getSettingsFile().push(path, data);
                     settingsCache[path] = data;
+                    backendCommunicator.fireEvent("settings-updated-renderer", { path, data });
                 } catch (err) {} //eslint-disable-line no-empty
             }
 
@@ -41,11 +49,22 @@
                 try {
                     getSettingsFile().delete(path);
                     delete settingsCache[path];
+                    backendCommunicator.fireEvent("settings-updated-renderer", { path, data: null });
                 } catch (err) {} //eslint-disable-line no-empty
             }
 
             service.purgeSettingsCache = function() {
                 settingsCache = {};
+                backendCommunicator.fireEvent("purge-settings-cache");
+            };
+
+            service.getGuardAgainstUnfollowUnhost = function() {
+                let enabled = getDataFromFile('/settings/moderation/guardAgainstUnfollowUnhost');
+                return enabled != null ? enabled : false;
+            };
+
+            service.setGuardAgainstUnfollowUnhost = function(enabled) {
+                pushDataToFile('/settings/moderation/guardAgainstUnfollowUnhost', enabled === true);
             };
 
             service.getKnownBoards = function() {

@@ -10,6 +10,8 @@ const { EffectTrigger } = effectModels;
 
 const customScriptProcessor = require("../../common/handlers/custom-scripts/customScriptProcessor");
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The custom var effect
  */
@@ -21,7 +23,8 @@ const fileWriter = {
         id: "firebot:customscript",
         name: "Run Custom Script",
         description: "Run a custom JS script.",
-        tags: ["Built in"],
+        icon: "fad fa-code",
+        categories: [EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX, ControlKind.JOYSTICK],
@@ -208,14 +211,14 @@ const fileWriter = {
         return errors;
     },
     onTriggerEvent: event => {
-        return new Promise(async (resolve) => {
+        return new Promise(resolve => {
 
             logger.debug("Processing script...");
 
             customScriptProcessor
                 .processScript(event.effect, event.trigger)
-                .then(() => {
-                    resolve(true);
+                .then(result => {
+                    resolve(result !== undefined ? result : true);
                 })
                 .catch(err => {
                     renderWindow.webContents.send('error', "Oops! There was an error processing the custom script. Error: " + err);

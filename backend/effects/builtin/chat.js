@@ -6,6 +6,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Chat Effect
  */
@@ -16,8 +18,9 @@ const chat = {
     definition: {
         id: "firebot:chat",
         name: "Chat",
-        description: "Sends a chat message.",
-        tags: ["Chat", "Built in"],
+        description: "Send a chat message.",
+        icon: "fad fa-comment-lines",
+        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
         dependencies: [EffectDependency.CHAT],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

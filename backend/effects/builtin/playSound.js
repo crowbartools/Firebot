@@ -8,6 +8,8 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Play Sound effect
  */
@@ -19,7 +21,8 @@ const playSound = {
         id: "firebot:playsound",
         name: "Play Sound",
         description: "Plays a sound effect",
-        tags: ["Fun", "Built in"],
+        icon: "fad fa-waveform",
+        categories: [EffectCategory.COMMON],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

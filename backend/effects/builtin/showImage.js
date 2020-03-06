@@ -11,6 +11,8 @@ const { EffectDependency, EffectTrigger } = effectModels;
 const logger = require("../../logwrapper");
 const path = require("path");
 
+const { EffectCategory } = require('../../../shared/effect-constants');
+
 /**
  * The Show Image effect
  */
@@ -22,7 +24,8 @@ const showImage = {
         id: "firebot:showImage",
         name: "Show Image/GIF",
         description: "Shows an image in the overlay.",
-        tags: ["Fun", "Built in"],
+        icon: "fad fa-image",
+        categories: [EffectCategory.COMMON, EffectCategory.FUN, EffectCategory.OVERLAY],
         dependencies: [EffectDependency.OVERLAY],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

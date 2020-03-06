@@ -4,6 +4,8 @@ const { ControlKind, InputEvent } = require('../../../../interactive/constants/M
 const effectModels = require("../../../../effects/models/effectModels");
 const { EffectTrigger } = effectModels;
 
+const { EffectCategory } = require("../../../../../shared/effect-constants");
+
 const request = require("request");
 
 const integrationManager = require("../../../IntegrationManager");
@@ -19,7 +21,8 @@ const effect = {
         id: "streamlabs:spin-wheel",
         name: "Spin The Wheel",
         description: "Trigger StreamLab's \"Spin the Wheel\" feature",
-        tags: ["Streamlabs"],
+        icon: "fad fa-tire",
+        categories: [EffectCategory.INTEGRATIONS],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

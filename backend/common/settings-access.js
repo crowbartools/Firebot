@@ -2,10 +2,29 @@
 
 const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
+const frontendCommunicator = require("./frontend-communicator");
 
 // This file centralizes access to the settings db
 // We will need to refactor other files to use this.
 let settings = {};
+
+let settingsCache = {};
+
+settings.flushSettingsCache = function() {
+    settingsCache = {};
+    frontendCommunicator.send("flush-settings-cache");
+};
+
+frontendCommunicator.on("settings-updated-main", (settingsUpdate) => {
+    if (settingsUpdate == null) return;
+    let { path, data } = settingsUpdate;
+    if (path == null || path === '') return;
+    settingsCache[path] = data;
+});
+
+frontendCommunicator.on("purge-settings-cache", () => {
+    settingsCache = {};
+});
 
 function getSettingsFile() {
     return profileManager.getJsonDbInProfile("/settings");
@@ -14,20 +33,27 @@ function getSettingsFile() {
 function pushDataToFile(path, data) {
     try {
         getSettingsFile().push(path, data);
+        settingsCache[path] = data;
+        frontendCommunicator.send("settings-updated-main", { path, data });
     } catch (err) {
         logger.debug(err.message);
     }
 }
 
-function getDataFromFile(path) {
-    let data = null;
+function getDataFromFile(path, forceCacheUpdate = false) {
     try {
-        data = getSettingsFile().getData(path);
-    } catch (err) {
-        logger.debug(err.message);
-    }
-    return data;
+        if (settingsCache[path] == null || forceCacheUpdate) {
+            let data = getSettingsFile().getData(path);
+            settingsCache[path] = data;
+        }
+    } catch (err) {} //eslint-disable-line no-empty
+    return settingsCache[path];
 }
+
+settings.getGuardAgainstUnfollowUnhost = function() {
+    let enabled = getDataFromFile('/settings/moderation/guardAgainstUnfollowUnhost');
+    return enabled != null ? enabled : false;
+};
 
 settings.getEventSettings = function() {
     return getDataFromFile("/settings/eventSettings");

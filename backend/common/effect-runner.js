@@ -143,13 +143,30 @@ async function runEffects(runEffectsContext) {
 
         try {
             let response = await triggerEffect(effect, trigger);
-            if (response && response.success === false) {
+            if (response === null || response === undefined) continue;
+            if (!response || response.success === false) {
                 logger.error(`An effect of type ${effect.type} and id ${effect.id} failed to run.`, response.reason);
+            } else {
+                if (typeof response !== "boolean") {
+                    let { execution } = response;
+                    if (execution && execution.stop) {
+                        logger.info(`Stop effect execution triggered for effect list id ${runEffectsContext.effects.id}`);
+                        return {
+                            success: true,
+                            stopEffectExecution: execution.bubbleStop
+                        };
+                    }
+                }
             }
         } catch (err) {
             logger.error(`There was an error running effect of type ${effect.type} with id ${effect.id}`, err);
         }
     }
+
+    return {
+        success: true,
+        stopEffectExecution: false
+    };
 }
 
 async function processEffects(processEffectsRequest) {
