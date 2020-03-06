@@ -202,7 +202,9 @@
                         inputPlaceholder: () => options.inputPlaceholder,
                         saveText: () => options.saveText,
                         validationFn: () => options.validationFn,
-                        validationText: () => options.validationText
+                        validationText: () => options.validationText,
+                        trigger: () => options.trigger,
+                        triggerMeta: () => options.triggerMeta
                     },
                     closeCallback: (resp) => {
                         callback(resp.model);

@@ -14,10 +14,11 @@
             <div style="display: flex;flex-direction: row;align-items: center;">
                 <button class="btn btn-default" ng-click="$ctrl.openFileExporer()">{{ $ctrl.isFile ? 'Choose File' : 'Choose Folder' }}</button>
                 <span style="padding-left: 10px;font-size: 12px;max-width: 400px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{$ctrl.model ? $ctrl.model : "No file selected."}}</span>
+                <span class="clickable" style="margin-left: 10px" ng-click="$ctrl.editFilePath()" uib-tooltip="Edit filepath manually" tooltip-append-to-body="true"><i class="fal fa-edit"></i></span>
                 <span ng-if="$ctrl.model != null && $ctrl.model !== ''" class="clickable" style="margin-left: 10px" ng-click="$ctrl.model = null"><i class="fal fa-times-circle"></i></span>
             </div>
             `,
-            controller: function($q, backendCommunicator) {
+            controller: function($scope, $q, backendCommunicator, utilityService) {
                 let ctrl = this;
 
                 ctrl.isFile = true;
@@ -32,8 +33,24 @@
                     ctrl.onUpdate({filepath: ''});
                 };
 
-                ctrl.openFileExporer = () => {
+                const { trigger, triggerMeta } = $scope.$parent;
+                ctrl.editFilePath = function() {
+                    utilityService.openGetInputModal(
+                        {
+                            model: ctrl.model,
+                            label: "Edit File Path",
+                            saveText: "Save",
+                            validationFn: () => true,
+                            trigger: trigger,
+                            triggerMeta: triggerMeta
+                        },
+                        (path) => {
+                            ctrl.model = path;
+                            ctrl.onUpdate({filepath: path});
+                        });
+                };
 
+                ctrl.openFileExporer = () => {
                     $q
                         .when(backendCommunicator.fireEventAsync("open-file-browser", {
                             options: ctrl.options,

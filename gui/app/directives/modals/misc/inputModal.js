@@ -15,7 +15,7 @@
                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
                     <div style="width: 95%; position: relative;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
-                            <input type="{{$ctrl.inputType}}" class="form-control" id="inputField" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}">
+                            <input type="{{$ctrl.inputType}}" class="form-control" id="inputField" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}" replace-variables menu-position="below" button-position="below" disable-variable-menu="$ctrl.hideVariableMenu">
                             <span id="helpBlock" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</span>
                         </div>
                     </div>
@@ -31,7 +31,7 @@
                 close: '&',
                 dismiss: '&'
             },
-            controller: function($timeout) {
+            controller: function($scope, $timeout) {
                 let $ctrl = this;
 
                 $ctrl.model = "";
@@ -44,7 +44,15 @@
                 $ctrl.hasValidationError = false;
                 $ctrl.inputType = "text";
 
+                $ctrl.hideVariableMenu = true;
+
                 $ctrl.$onInit = function () {
+
+                    $scope.trigger = $ctrl.resolve.trigger;
+                    $scope.triggerMeta = $ctrl.resolve.triggerMeta;
+
+                    $ctrl.hideVariableMenu = $scope.trigger == null || $scope.trigger === "";
+
                     if ($ctrl.resolve.model !== undefined && $ctrl.resolve.model !== null) {
                         $ctrl.model = $ctrl.resolve.model;
                     }
