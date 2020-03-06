@@ -14,7 +14,7 @@ const { EffectCategory } = require("../../shared/effect-constants");
                     <searchbar search-id="effectSearch" placeholder-text="Search effects..." query="$ctrl.effectSearch" style="width: 100%"></searchbar>
                 </div>
                 <div style="display: flex;flex-direction:row;height: 450px;">
-                    <div style="width: 150px;display:flex;flex-direction:column;height: 100%; flex-shrink: 0;background: linear-gradient(to right, #2b2d2e 0%, #292a2c 100%);">
+                    <div style="width: 150px;display:flex;flex-direction:column;height: 100%; flex-shrink: 0;background: #27292c;">
                         <div class="effect-category-header">Categories</div>
                         <div class="effect-category-wrapper" ng-class="{'selected': $ctrl.activeCategory == null}" ng-click="$ctrl.activeCategory = null;">
                             <div class="category-bar"></div>
