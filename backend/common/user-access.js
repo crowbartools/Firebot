@@ -6,35 +6,53 @@ const channelAccess = require("./channel-access");
 const mixerApi = require("../api-access");
 
 async function userFollowsUsers(userId, followCheckList) {
-    followCheckList.forEach(async (streamer) => {
-        let userFollowsUser = false;
-        if (streamer == null) {
-            return false;
-        }
+    console.log('Starting check!');
+    console.log(userId);
+    console.log(followCheckList);
+    let userFollowsUser = false;
+
+    for (let streamer of followCheckList) {
+        console.log('Does user follow: ' + streamer + '?');
 
         if (isNaN(streamer)) {
             let streamerData = await mixerApi.get(`channels/${streamer}?fields=id`, "v1", false, false);
+            console.log('WHERE IS MY RESPONSE:');
+            console.log(streamerData);
             if (streamerData != null) {
                 streamer = streamerData.id;
             }
 
+            console.log('STREAMER ID FROM USERNAME');
+            console.log(streamer);
+
             if (streamer == null) {
-                return false;
+                console.log('Streamer was null 2');
+                userFollowsUser = false;
+                break;
             }
         }
 
+        console.log('About to find relationship for ' + userId + ' following ' + streamer);
         let userRelationshipData = await mixerApi.get(`channels/${userId}/relationship?user=${streamer}`, "v1", false, true);
+        console.log(userRelationshipData);
 
         if (!userRelationshipData) {
             userFollowsUser = userRelationshipData.status && userRelationshipData.status.follows != null;
+            console.log("user follows user: " + userFollowsUser);
         }
 
-        if (!userFollowsUser) {
-            return false;
+        if (userFollowsUser) {
+            console.log('User follows person!');
+            userFollowsUser = true;
         }
-    });
 
-    return true;
+        console.log('User doesnt follow person!');
+        userFollowsUser = false;
+        break;
+    }
+
+    console.log('User follows person!');
+    return userFollowsUser;
 }
 
 async function getUserDetails(userId) {
@@ -50,8 +68,8 @@ async function getUserDetails(userId) {
             "v1", false, true);
         mixerUserData.relationship = relationshipData ? relationshipData.status : null;
 
-        streamerFollowsUser = userFollowsUsers(streamerData.userId, [mixerUserData.channel.id]);
-        userFollowsStreamer = userFollowsUsers(userId, [streamerData.userId]);
+        streamerFollowsUser = await userFollowsUsers(streamerData.userId, [mixerUserData.channel.id]);
+        userFollowsStreamer = await userFollowsUsers(userId, [streamerData.userId]);
 
         let channelLevel = await channelAccess.getChannelProgressionForUser(userId);
         if (channelLevel) {
@@ -72,4 +90,4 @@ async function getUserDetails(userId) {
 }
 
 exports.getUserDetails = getUserDetails;
-exports.userFollowsStreamers = userFollowsUsers;
+exports.userFollowsUsers = userFollowsUsers;
