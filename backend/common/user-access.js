@@ -4,55 +4,45 @@ const userDb = require("../database/userDatabase");
 const accountAccess = require("../common/account-access");
 const channelAccess = require("./channel-access");
 const mixerApi = require("../api-access");
+const logger = require('../logwrapper');
 
 async function userFollowsUsers(userId, followCheckList) {
-    console.log('Starting check!');
-    console.log(userId);
-    console.log(followCheckList);
-    let userFollowsUser = false;
+    let userFollowsUsers = false;
 
     for (let streamer of followCheckList) {
-        console.log('Does user follow: ' + streamer + '?');
+        let streamerData = null;
 
         if (isNaN(streamer)) {
-            let streamerData = await mixerApi.get(`channels/${streamer}?fields=id`, "v1", false, false);
-            console.log('WHERE IS MY RESPONSE:');
-            console.log(streamerData);
-            if (streamerData != null) {
+            try {
+                streamerData = await mixerApi.get(`channels/${streamer}?fields=id`, "v1", false, false);
                 streamer = streamerData.id;
-            }
-
-            console.log('STREAMER ID FROM USERNAME');
-            console.log(streamer);
-
-            if (streamer == null) {
-                console.log('Streamer was null 2');
-                userFollowsUser = false;
+            } catch (err) {
+                logger.debug("Unable to get streamer data for follow check.", err);
+                userFollowsUsers = false;
                 break;
             }
         }
 
-        console.log('About to find relationship for ' + userId + ' following ' + streamer);
-        let userRelationshipData = await mixerApi.get(`channels/${userId}/relationship?user=${streamer}`, "v1", false, true);
-        console.log(userRelationshipData);
+        let userRelationshipData = await mixerApi.get(`channels/${streamer}/relationship?user=${userId}`, "v1", false, true);
 
-        if (!userRelationshipData) {
-            userFollowsUser = userRelationshipData.status && userRelationshipData.status.follows != null;
-            console.log("user follows user: " + userFollowsUser);
+        if (userRelationshipData != null) {
+            userFollowsUsers = userRelationshipData.status && userRelationshipData.status.follows != null;
+        } else {
+            logger.debug('Couldnt get user relationship data for follow check.');
+            userFollowsUsers = false;
+            break;
         }
 
-        if (userFollowsUser) {
-            console.log('User follows person!');
-            userFollowsUser = true;
+        if (userFollowsUsers) {
+            userFollowsUsers = true;
+            continue;
         }
 
-        console.log('User doesnt follow person!');
-        userFollowsUser = false;
+        userFollowsUsers = false;
         break;
     }
 
-    console.log('User follows person!');
-    return userFollowsUser;
+    return userFollowsUsers;
 }
 
 async function getUserDetails(userId) {

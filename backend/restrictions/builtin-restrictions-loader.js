@@ -11,6 +11,7 @@ exports.loadRestrictions = function() {
     const viewTime = require('./builtin/viewTimeRestriction');
     const mixplayInteractions = require('./builtin/mixplayInteractions');
     const chatMessages = require('./builtin/chatMessages');
+    const followCheck = require('./builtin/followCheck');
 
     restrictionsManager.registerRestriction(permissions);
     restrictionsManager.registerRestriction(channelProgression);
@@ -20,4 +21,5 @@ exports.loadRestrictions = function() {
     restrictionsManager.registerRestriction(viewTime);
     restrictionsManager.registerRestriction(mixplayInteractions);
     restrictionsManager.registerRestriction(chatMessages);
+    restrictionsManager.registerRestriction(followCheck);
 };

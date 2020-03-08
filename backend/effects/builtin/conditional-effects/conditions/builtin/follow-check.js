@@ -10,10 +10,7 @@ module.exports = {
     leftSideValueType: "none",
     rightSideValueType: "text",
     predicate: async (conditionSettings, trigger) => {
-
         let { rightSideValue } = conditionSettings;
-
-        // normalize usernames
         let triggerUserId = trigger.metadata.userId ? trigger.metadata.userId : "";
         let normalizeFollowList = rightSideValue ? rightSideValue.toLowerCase() : "";
 
@@ -22,11 +19,7 @@ module.exports = {
         }
 
         let followCheckList = normalizeFollowList.replace(new RegExp(' ', 'g'), "").split(',');
-
         let followCheck = await userAccess.userFollowsUsers(triggerUserId, followCheckList);
-
-        console.log('Follow check returned ' + followCheck);
-
         return followCheck;
     }
 };
