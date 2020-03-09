@@ -5,7 +5,11 @@ const redditProcessor = require("../../common/handlers/redditProcessor");
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
-
+const chat = require("../../common/mixer-chat");
+const mediaProcessor = require("../../common/handlers/mediaProcessor");
+const settings = require("../../common/settings-access").settings;
+const logger = require("../../logwrapper");
+const webServer = require("../../../server/httpServer");
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const model = {
@@ -121,7 +125,59 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        redditProcessor.go(event.effect);
+        let chatter = event.effect.chatter;
+        let subName = event.effect.reddit;
+        let imageUrl = await redditProcessor.getRandomImage(subName);
+
+        try {
+            if (event.effect.show === "chat" || event.effect.show === "both") {
+                // Send Chat
+                logger.info("Random Reddit: " + imageUrl);
+                chat.broadcast(chatter, "Random Reddit: " + imageUrl);
+            }
+
+            if (event.effect.show === "overlay" || event.effect.show === "both") {
+                // Send image to overlay.
+                let position = event.effect.position,
+                    data = {
+                        url: imageUrl,
+                        imageType: "url",
+                        imagePosition: position,
+                        imageHeight: event.effect.height,
+                        imageWidth: event.effect.width,
+                        imageDuration: event.effect.length,
+                        enterAnimation: event.effect.enterAnimation,
+                        exitAnimation: event.effect.exitAnimation,
+                        customCoords: event.effect.customCoords
+                    };
+
+                // Get random location.
+                if (position === "Random") {
+                    position = mediaProcessor.getRandomPresetLocation();
+                }
+
+                if (settings.useOverlayInstances()) {
+                    if (event.effect.overlayInstance != null) {
+                        if (
+                            settings
+                                .getOverlayInstances()
+                                .includes(event.effect.overlayInstance)
+                        ) {
+                            data.overlayInstance = event.effect.overlayInstance;
+                        }
+                    }
+                }
+
+                // Send to overlay.
+                webServer.sendToOverlay("image", data);
+            }
+        } catch (err) {
+            renderWindow.webContents.send(
+                "error",
+                "There was an error sending a reddit picture."
+            );
+        }
+
         return true;
     }
 };
