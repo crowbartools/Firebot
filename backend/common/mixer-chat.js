@@ -353,9 +353,6 @@ function createChatDataProcessing(chatter) {
                 // Increment Chat Messages in user DB.
                 userdb.incrementDbField(data.user_id, "chatMessages");
 
-                // Updates or adds user to our active chatter list.
-                activeChatter.addOrUpdateActiveChatter(data);
-
                 let chatFromStreamerChannel = accountAccess.getAccounts().streamer.channelId === data.channel;
 
                 eventManager.triggerEvent("mixer", "chat-message", {
@@ -377,6 +374,9 @@ function createChatDataProcessing(chatter) {
                         data: data,
                         originatedInStreamerChannel: chatFromStreamerChannel
                     });
+
+                    // Updates or adds user to our active chatter list.
+                    activeChatter.addOrUpdateActiveChatter(data);
 
                     if (data.user_name !== accountAccess.getAccounts().streamer.username &&
                         data.user_name !== accountAccess.getAccounts().bot.username) {
