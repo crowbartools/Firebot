@@ -82,7 +82,8 @@ function createNewProject(name) {
         name: name,
         createdAt: now,
         defaultSceneId: mainSceneId,
-        scenes: [mainScene]
+        scenes: [mainScene],
+        cooldownGroups: []
     };
 
     saveProject(newProject);
