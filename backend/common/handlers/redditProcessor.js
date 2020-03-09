@@ -17,8 +17,8 @@ function postPicker(posts) {
             return image;
         }
 
-        // Failed Tests
-        posts.splice(randomNum, 1); // Remove the item from the array
+        // Failed Tests, remove from array.
+        posts.splice(randomNum, 1);
     }
 
     return false;
