@@ -41,7 +41,7 @@ const model = {
             }
 
             let followCheckList = normalizeFollowList.replace(new RegExp(' ', 'g'), "").split(',');
-            let followCheck = await userAccess.userFollowsUsers(triggerUserId, followCheckList);
+            let followCheck = await userAccess.userFollowsChannels(triggerUserId, followCheckList);
 
             if (followCheck) {
                 return resolve();

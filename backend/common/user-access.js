@@ -4,45 +4,57 @@ const userDb = require("../database/userDatabase");
 const accountAccess = require("../common/account-access");
 const channelAccess = require("./channel-access");
 const mixerApi = require("../api-access");
+const NodeCache = require('node-cache');
 const logger = require('../logwrapper');
 
-async function userFollowsUsers(userId, followCheckList) {
-    let userFollowsUsers = false;
+const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
-    for (let streamer of followCheckList) {
-        let streamerData = null;
+async function userFollowsChannels(userId, channelNamesOrIds) {
+    let userfollowsAllChannels = true;
 
-        if (isNaN(streamer)) {
-            try {
-                streamerData = await mixerApi.get(`channels/${streamer}?fields=id`, "v1", false, false);
-                streamer = streamerData.id;
-            } catch (err) {
-                logger.debug("Unable to get streamer data for follow check.", err);
-                userFollowsUsers = false;
-                break;
+    for (let channelNameOrId of channelNamesOrIds) {
+        let userFollowsChannel = false;
+
+        // check cache first
+        let cachedFollow = followCache.get(`${userId}:${channelNameOrId}`);
+        if (cachedFollow !== undefined) {
+            userFollowsChannel = cachedFollow;
+        } else {
+            // fetch relationship data
+
+            let channelId;
+            // fetch channel id if needed
+            if (isNaN(channelNameOrId)) {
+                const ids = await channelAccess.getIdsFromUsername(channelNameOrId);
+                if (ids == null) {
+                    // channel doesnt exist
+                    logger.warn('Follow Check: ' + channelNameOrId + " doesnt exist. Check failed.");
+                    userfollowsAllChannels = false;
+                    break;
+                }
+                channelId = ids.channelId;
+            } else {
+                channelId = channelNameOrId;
             }
+
+            let userRelationshipData = await mixerApi.get(`channels/${channelId}/relationship?user=${userId}`, "v1", false, true);
+
+            if (userRelationshipData != null) {
+                userFollowsChannel = userRelationshipData.status && userRelationshipData.status.follows != null;
+            } else {
+                userFollowsChannel = false;
+            }
+            // set cache value
+            followCache.set(`${userId}:${channelNameOrId}`, userFollowsChannel);
         }
 
-        let userRelationshipData = await mixerApi.get(`channels/${streamer}/relationship?user=${userId}`, "v1", false, true);
-
-        if (userRelationshipData != null) {
-            userFollowsUsers = userRelationshipData.status && userRelationshipData.status.follows != null;
-        } else {
-            logger.debug('Couldnt get user relationship data for follow check.');
-            userFollowsUsers = false;
+        if (!userFollowsChannel) {
+            userfollowsAllChannels = false;
             break;
         }
-
-        if (userFollowsUsers) {
-            userFollowsUsers = true;
-            continue;
-        }
-
-        userFollowsUsers = false;
-        break;
     }
 
-    return userFollowsUsers;
+    return userfollowsAllChannels;
 }
 
 async function getUserDetails(userId) {
@@ -58,8 +70,8 @@ async function getUserDetails(userId) {
             "v1", false, true);
         mixerUserData.relationship = relationshipData ? relationshipData.status : null;
 
-        streamerFollowsUser = await userFollowsUsers(streamerData.userId, [mixerUserData.channel.id]);
-        userFollowsStreamer = await userFollowsUsers(userId, [streamerData.userId]);
+        streamerFollowsUser = await userFollowsChannels(streamerData.userId, [mixerUserData.channel.id]);
+        userFollowsStreamer = await userFollowsChannels(userId, [streamerData.userId]);
 
         let channelLevel = await channelAccess.getChannelProgressionForUser(userId);
         if (channelLevel) {
@@ -80,4 +92,4 @@ async function getUserDetails(userId) {
 }
 
 exports.getUserDetails = getUserDetails;
-exports.userFollowsUsers = userFollowsUsers;
+exports.userFollowsChannels = userFollowsChannels;
