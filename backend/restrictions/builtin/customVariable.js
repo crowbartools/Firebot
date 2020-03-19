@@ -44,7 +44,7 @@ const model = {
             let cachedVariable = customVariableManager.getCustomVariable(restrictionData.name);
 
             // eslint-disable-next-line eqeqeq
-            if (cachedVariable !== null && cachedVariable == restrictionData.value) {
+            if (cachedVariable == restrictionData.value) {
                 passed = true;
             }
 
