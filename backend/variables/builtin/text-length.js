@@ -7,10 +7,10 @@ const model = {
         handle: "textLength",
         usage: "textLength[text]",
         description: "Returns the length of the input text",
-        possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, text) => {
-        return text.length;
+        return text ? text.length : 0;
     }
 };
 

@@ -10,7 +10,7 @@ module.exports = {
     id: "firebot:viewerroles",
     name: "Viewer's Roles",
     description: "Condition based on a given viewer role",
-    comparisonTypes: ["include", "doesn't include"],
+    comparisonTypes: ["is in role", "isn't in role"],
     leftSideValueType: "text",
     rightSideValueType: "preset",
     getRightSidePresetValues: viewerRolesService => {
@@ -68,8 +68,10 @@ module.exports = {
 
         switch (comparisonType) {
         case "include":
+        case "is in role":
             return hasRole;
         case "doesn't include":
+        case "isn't in role":
             return !hasRole;
         default:
             return false;

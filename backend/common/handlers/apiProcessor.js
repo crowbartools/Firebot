@@ -1,12 +1,7 @@
 "use strict";
 
-const request = require("request");
-const chat = require("../mixer-chat.js");
-const validator = require("validator");
-const mediaProcessor = require("./mediaProcessor");
-const settings = require("../settings-access").settings;
+const axios = require("axios");
 const logger = require("../../logwrapper");
-const webServer = require("../../../server/httpServer");
 
 // Capitalize Name
 function toTitleCase(str) {
@@ -15,205 +10,159 @@ function toTitleCase(str) {
     });
 }
 
-function randomAdvice(effect) {
-    let url = "http://api.adviceslip.com/advice",
-        chatter = effect.chatter;
-    request(url, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let json = JSON.parse(body);
-            let advice = json.slip["advice"];
-            try {
-                logger.info("Advice: " + advice);
-                chat.broadcast(chatter, "Advice: " + advice);
-            } catch (err) {
-                renderWindow.webContents.send(
-                    "error",
-                    "There was an error sending advice to chat."
-                );
-            }
-        } else {
+async function randomAdvice() {
+    let url = "http://api.adviceslip.com/advice";
+
+    return await axios.get(url)
+        .then(function(response) {
+            let advice = response.data.slip["advice"];
+            logger.info("Advice: " + advice);
+            return advice;
+        })
+        .catch(function(err) {
+            logger.debug(err);
             renderWindow.webContents.send(
                 "error",
-                "I couldnt connect to the advice API. It may be down."
+                "Couldnt connect to the advice API. It may be down."
             );
-        }
-    });
+            return "[Error getting API response]";
+        });
 }
 
-function randomCatFact(effect) {
+async function randomCatFact() {
     //http://catfacts-api.appspot.com/api/facts
-    let url = "https://catfact.ninja/fact",
-        chatter = effect.chatter;
-    request(url, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let json = JSON.parse(body);
-            let factUnclean = json.fact;
-            let fact = validator.blacklist(factUnclean, /["']/g);
-            try {
-                logger.info("Cat Fact: " + fact);
-                chat.broadcast(chatter, "Cat Fact: " + fact);
-            } catch (err) {
-                renderWindow.webContents.send(
-                    "error",
-                    "There was an error sending a cat fact to chat."
-                );
-            }
-        } else {
+    let url = "https://catfact.ninja/fact";
+
+    return await axios.get(url)
+        .then(function(response) {
+            let fact = response.data.fact;
+            logger.info("Cat Fact: " + fact);
+            return fact;
+        })
+        .catch(function(err) {
+            logger.debug(err);
             renderWindow.webContents.send(
                 "error",
-                "I couldnt connect to the cat fact api. It may be down."
+                "There was an error sending a cat fact to chat."
             );
-        }
-    });
+            return "[Error getting API response]";
+        });
 }
 
-function randomDogFact(effect) {
+async function randomDogFact() {
     //https://dog-api.kinduff.com/api/facts
-    let url = "https://dog-api.kinduff.com/api/facts",
-        chatter = effect.chatter;
-    request(url, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let json = JSON.parse(body);
-            let factUnclean = json.facts[0];
-            let fact = validator.blacklist(factUnclean, /["']/g);
-            try {
-                logger.info("Dog Fact: " + fact);
-                chat.broadcast(chatter, "Dog Fact: " + fact);
-            } catch (err) {
-                renderWindow.webContents.send(
-                    "error",
-                    "There was an error sending a dog fact to chat."
-                );
-            }
-        } else {
+    let url = "https://dog-api.kinduff.com/api/facts";
+
+    return await axios.get(url)
+        .then(function(response) {
+            let fact = response.data.facts[0];
+            logger.info("Dog Fact: " + fact);
+            return fact;
+        })
+        .catch(function(err) {
+            logger.debug(err);
             renderWindow.webContents.send(
                 "error",
-                "I couldnt conenct to the dog fact api. It may be down."
+                "Couldnt conenct to the dog fact api. It may be down."
             );
-        }
-    });
+            return "[Error getting API response]";
+        });
 }
 
-function randomPokemon(effect) {
+async function randomPokemon() {
     //http://pokeapi.co/api/v2/pokemon/NUMBER (811 max)
     let random = Math.floor(Math.random() * 721) + 1,
-        url = "http://pokeapi.co/api/v2/pokemon/" + random + "/",
-        chatter = effect.chatter;
-    request(url, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let json = JSON.parse(body);
-            let name = json.name;
+        url = "http://pokeapi.co/api/v2/pokemon/" + random + "/";
+
+    return await axios.get(url)
+        .then(function(response) {
+            let name = response.data.name;
             let nameCap = toTitleCase(name);
             let info = "http://pokemondb.net/pokedex/" + name;
 
-            let moveset = json.moves;
+            let moveset = response.data.moves;
             let movedata = moveset[Math.floor(Math.random() * moveset.length)];
             let move = movedata["move"];
             let movename = move.name;
+            let text = "I choose you " + nameCap + "! " + nameCap + " used " + movename + "! " + info;
 
-            try {
-                let text =
-          "I choose you " +
-          nameCap +
-          "! " +
-          nameCap +
-          " used " +
-          movename +
-          "! " +
-          info;
-
-                logger.info("Pokemon: " + text);
-                chat.broadcast(chatter, "Pokemon: " + text);
-            } catch (err) {
-                renderWindow.webContents.send(
-                    "error",
-                    "There was an error sending a pokemon to chat."
-                );
-            }
-        } else {
+            logger.info("Pokemon: " + text);
+            return text;
+        })
+        .catch(function(err) {
+            logger.debug(err);
             renderWindow.webContents.send(
                 "error",
-                "I couldnt hit the pokemon api. It may be down."
+                "Couldnt connect to the pokemon api. It may be down."
             );
-        }
-    });
+            return "[Error getting API response]";
+        });
 }
 
-function numberTrivia(effect) {
+async function numberTrivia() {
     // http://numbersapi.com/random
-    let url = "http://numbersapi.com/random",
-        chatter = effect.chatter;
-    request(url, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
-            try {
-                logger.info("Random Number Trivia:" + body);
-                chat.broadcast(chatter, "Number Trivia: " + body);
-            } catch (err) {
-                renderWindow.webContents.send(
-                    "error",
-                    "There was an error sending number trivia to chat."
-                );
-            }
-        } else {
+    let url = "http://numbersapi.com/random";
+
+    return await axios.get(url)
+        .then(function(response) {
+            logger.info("Random Number Trivia:" + response.data);
+            return response.data;
+        })
+        .catch(function(err) {
+            logger.debug(err);
             renderWindow.webContents.send(
                 "error",
-                "I couldnt connect to the number trivia api. It may be down."
+                "Couldnt connect to the number trivia api. It may be down."
             );
-        }
-    });
+            return "[Error getting API response]";
+        });
 }
 
-function dadJoke(effect) {
+async function dadJoke() {
     let options = {
-            url: "https://icanhazdadjoke.com/",
-            headers: {
-                'Accept': "Application/json",
-                'User-Agent': "Firebot Mixer Interactive - (https://crowbartools.com/firebot) - @firebotapp"
-            }
-        },
-        chatter = effect.chatter;
-    request(options, function(error, response, body) {
-        if (!error && response.statusCode === 200) {
-            let json = JSON.parse(body);
-            let joke = json.joke;
-            try {
-                logger.info("Dad Joke: " + joke);
-                chat.broadcast(chatter, "Dad Joke: " + joke);
-            } catch (err) {
-                renderWindow.webContents.send(
-                    "error",
-                    "There was an error sending dad joke to chat."
-                );
-            }
-        } else {
+        url: "https://icanhazdadjoke.com/",
+        headers: {
+            'Accept': "Application/json",
+            'User-Agent': "Firebot Mixer Interactive - (https://crowbartools.com/firebot) - @firebotapp"
+        }
+    };
+
+    return await axios.get(options.url, options)
+        .then(function(response) {
+            let joke = response.data.joke;
+            logger.info("Dad Joke: " + joke);
+            return joke;
+        })
+        .catch(function(err) {
+            logger.debug(err);
             renderWindow.webContents.send(
                 "error",
-                "I couldnt connect to the dad joke API. It may be down."
+                "Couldnt connect to the dad joke API. It may be down."
             );
-        }
-    });
+            return "[Error getting API response]";
+        });
 }
 
 // API Processor
-// This takes the packet, figures out the type, and then the the api function.
-function apiProcessor(effect) {
-    let apiType = effect.api;
+async function apiProcessor(apiType) {
+    let apiResponse = "[Error getting API response]";
 
-    // Do something based on api type.
     if (apiType === "Advice") {
-        randomAdvice(effect);
+        apiResponse = await randomAdvice();
     } else if (apiType === "Cat Fact") {
-        randomCatFact(effect);
+        apiResponse = await randomCatFact();
     } else if (apiType === "Dog Fact") {
-        randomDogFact(effect);
+        apiResponse = await randomDogFact();
     } else if (apiType === "Pokemon") {
-        randomPokemon(effect);
+        apiResponse = await randomPokemon();
     } else if (apiType === "Number Trivia") {
-        numberTrivia(effect);
+        apiResponse = await numberTrivia();
     } else if (apiType === "Dad Joke") {
-        dadJoke(effect);
+        apiResponse = await dadJoke();
     }
+
+    return apiResponse;
 }
 
 // Export Functions
-exports.go = apiProcessor;
+exports.getApiResponse = apiProcessor;

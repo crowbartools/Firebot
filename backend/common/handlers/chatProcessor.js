@@ -7,6 +7,7 @@ const logger = require("../../logwrapper");
 const replaceVariableManager = require("../../variables/replace-variable-manager");
 const emotesManager = require("../emotes-manager");
 const accountAccess = require("../account-access");
+const imgProbe = require('probe-image-size');
 
 // This will parse the message string and build an array of Arg numbers the user wants to use.
 function parseArg(str) {
@@ -242,8 +243,21 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
     }
 }
 
+async function getEmotePackDimensions(packUrl) {
+    try {
+        let probeResult = await imgProbe(packUrl);
+        return {
+            width: probeResult.width,
+            height: probeResult.height
+        };
+    } catch (error) {
+        logger.debug("Error getting emote pack dimensions", error);
+        return null;
+    }
+}
+
 // This handles any major message logic we need to do befor sending it over to the UI
-function uiChatMessage(data) {
+async function uiChatMessage(data) {
     let messageArr = [];
 
     // Mixer doesn't send chat messages in an array, but with chat history they do.
@@ -262,31 +276,44 @@ function uiChatMessage(data) {
     }
 
     // Loop through all messages in given data. Could contain one or more.
-    messageArr.forEach(chatMessage => {
+    for (let chatMessage of messageArr) {
         let messageSegments = chatMessage.message.message;
-
-        messageSegments.forEach(segment => {
+        for (let segment of messageSegments) {
             if (segment.type === "emoticon") {
                 // Pull in the emoticon or partner emoticon.
                 let emoticonSource = segment.source,
                     emoticonPack = segment.pack,
                     emoticonCoordX = segment.coords.x,
-                    emoticonCoordY = segment.coords.y;
+                    emoticonCoordY = segment.coords.y,
+                    emoticonWidth = segment.coords.width;
+
+                let packUrl = emoticonSource === "builtin" ? `https://mixer.com/_latest/emoticons/${emoticonPack}.png`
+                    : emoticonPack;
+
+                let size = emoticonWidth > 24 ? 28 : 24;
+
+                let scale = size / emoticonWidth;
+
+                let packDimensions = await getEmotePackDimensions(packUrl);
+
+                let sheetWidth, sheetHeight;
+                if (packDimensions) {
+                    sheetWidth = packDimensions.width;
+                    sheetHeight = packDimensions.height;
+                }
+
+                let backgroundSize = scale !== 1 && sheetHeight && sheetWidth ?
+                    `${scale * sheetWidth}px ${scale * sheetHeight}px`
+                    : undefined;
 
                 let styleObj = {
-                    height: "24px",
-                    width: "24px",
-                    "background-position": `-${emoticonCoordX}px -${emoticonCoordY}px`,
+                    height: `${size}px`,
+                    width: `${size}px`,
+                    "background-position": `-${scale * emoticonCoordX}px -${scale * emoticonCoordY}px`,
+                    "background-image": `url(${packUrl})`,
+                    "background-size": backgroundSize,
                     display: "inline-block"
                 };
-
-                if (emoticonSource === "builtin") {
-                    styleObj[
-                        "background-image"
-                    ] = `url(https://mixer.com/_latest/emoticons/${emoticonPack}.png)`;
-                } else if (emoticonSource === "external") {
-                    styleObj["background-image"] = `url(${emoticonPack})`;
-                }
 
                 segment.emoticonStyles = styleObj;
             }
@@ -383,7 +410,7 @@ function uiChatMessage(data) {
 
                 segment.firebotSubsegments = firebotData;
             }
-        });
+        }
 
         if (chatMessage.message.meta.whisper === true) {
             previousWhisperSender = chatMessage.user_name;
@@ -393,7 +420,7 @@ function uiChatMessage(data) {
         if (renderWindow) {
             renderWindow.webContents.send('chatMessage', chatMessage);
         }
-    });
+    }
 }
 
 // Get Chat History

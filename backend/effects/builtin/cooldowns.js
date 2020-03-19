@@ -223,8 +223,10 @@ const cooldown = {
         function getGroupData() {
             if ($scope.effect.mixplayProject) {
                 let currentProject = mixplayService.getCurrentProject();
-                $scope.availableGroupData = currentProject.cooldownGroups
-                    .filter(group => group.active === true);
+                if (currentProject.cooldownGroups != null) {
+                    $scope.availableGroupData = currentProject.cooldownGroups
+                        .filter(group => group.active === true);
+                }
             }
         }
         getGroupData();
