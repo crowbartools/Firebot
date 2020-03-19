@@ -36,7 +36,7 @@ const model = {
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
     */
-    predicate: (triggerData, restrictionData) => {
+    predicate: (_, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             let customVariableManager = require("../../common/custom-variable-manager");
 
