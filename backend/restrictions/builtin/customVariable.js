@@ -43,8 +43,15 @@ const model = {
             let passed = false;
             let cachedVariable = customVariableManager.getCustomVariable(restrictionData.name);
 
+            let value = restrictionData.value;
+            try {
+                value = JSON.parse(value);
+            } catch (error) {
+                //fail silently
+            }
+
             // eslint-disable-next-line eqeqeq
-            if (cachedVariable == restrictionData.value) {
+            if (cachedVariable == value) {
                 passed = true;
             }
 
