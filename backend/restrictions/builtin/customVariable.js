@@ -36,15 +36,22 @@ const model = {
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
     */
-    predicate: (triggerData, restrictionData) => {
+    predicate: (_, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             let customVariableManager = require("../../common/custom-variable-manager");
 
             let passed = false;
             let cachedVariable = customVariableManager.getCustomVariable(restrictionData.name);
 
+            let value = restrictionData.value;
+            try {
+                value = JSON.parse(value);
+            } catch (error) {
+                //fail silently
+            }
+
             // eslint-disable-next-line eqeqeq
-            if (cachedVariable !== null && cachedVariable == restrictionData.value) {
+            if (cachedVariable == value) {
                 passed = true;
             }
 

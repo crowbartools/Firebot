@@ -213,10 +213,10 @@ const currency = {
    * When the effect is triggered by something
    */
     onTriggerEvent: event => {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async resolve => {
             // Make sure viewer DB is on before continuing.
             if (!currencyDatabase.isViewerDBOn()) {
-                return resolve();
+                return resolve(true);
             }
 
             // What should this do when triggered.
@@ -225,50 +225,56 @@ const currency = {
             let amount = event.effect.amount;
 
             if (isNaN(amount)) {
-                return reject("Amount not a number: " + amount);
+                return resolve({
+                    succuss: false,
+                    reason: "Amount not a number: " + amount
+                });
             }
-
 
             // If "Remove" make number negative, otherwise just use number.
             let currency = event.effect.action === "Remove" ? -Math.abs(amount) : Math.abs(amount);
 
             // PEOPLE GONNA GET PAID
-            switch (event.effect.target) {
-            case "individual":
-                // Give currency to one person.
-                await currencyDatabase.adjustCurrencyForUser(
-                    userTarget,
-                    event.effect.currency,
-                    currency,
-                    adjustType
-                );
-                break;
-            case "allOnline":
-                // Give currency to all online.
-                await currencyDatabase.addCurrencyToOnlineUsers(
-                    event.effect.currency,
-                    currency,
-                    true,
-                    adjustType
-                );
-                break;
-            case "group":
-                // Give currency to group.
-                await currencyDatabase.addCurrencyToUserGroupOnlineUsers(
-                    event.effect.roleIds,
-                    event.effect.currency,
-                    currency,
-                    true,
-                    adjustType
-                );
-                break;
-            default:
-                logger.error("Invalid target passed to currency effect. currency.js");
-            }
+            try {
+                switch (event.effect.target) {
+                case "individual":
+                    // Give currency to one person.
+                    await currencyDatabase.adjustCurrencyForUser(
+                        userTarget,
+                        event.effect.currency,
+                        currency,
+                        adjustType
+                    );
+                    break;
+                case "allOnline":
+                    // Give currency to all online.
+                    await currencyDatabase.addCurrencyToOnlineUsers(
+                        event.effect.currency,
+                        currency,
+                        true,
+                        adjustType
+                    );
+                    break;
+                case "group":
+                    // Give currency to group.
+                    await currencyDatabase.addCurrencyToUserGroupOnlineUsers(
+                        event.effect.roleIds,
+                        event.effect.currency,
+                        currency,
+                        true,
+                        adjustType
+                    );
+                    break;
+                default:
+                    logger.error("Invalid target passed to currency effect. currency.js");
+                }
 
-            // Send chat if we have it.
-            if (event.effect.sendChat) {
-                chatProcessor.send(event.effect, event.trigger);
+                // Send chat if we have it.
+                if (event.effect.sendChat) {
+                    chatProcessor.send(event.effect, event.trigger);
+                }
+            } catch (error) {
+                logger.error("Error updating currency", error);
             }
 
             resolve(true);

@@ -142,7 +142,9 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
             return resolve();
         }
 
-        let currentViewers = await channelAccess.getCurrentViewerList() || [];
+        let currentList = await channelAccess.getCurrentViewerList();
+
+        let currentViewers = currentList || [];
         const userIdsInRoles = currentViewers
             .map(u => {
                 let mixerRoles = (u.user_roles || [])
@@ -164,9 +166,11 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
         // GIVE DEM BOBS.
         let db = userDatabase.getUserDb();
         db.find({ online: true, _id: { $in: userIdsInRoles } }, async (err, docs) => {
-            for (let user of docs) {
-                if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
-                    await adjustCurrency(user, currencyId, value, adjustType);
+            if (!err) {
+                for (let user of docs) {
+                    if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
+                        await adjustCurrency(user, currencyId, value, adjustType);
+                    }
                 }
             }
 
