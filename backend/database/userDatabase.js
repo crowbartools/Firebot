@@ -52,7 +52,7 @@ function setLastSeenDateTime() {
 function getUserByUsername(username) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
-            return resolve();
+            return resolve(false);
         }
 
         let searchTerm = new RegExp(username, 'gi');
