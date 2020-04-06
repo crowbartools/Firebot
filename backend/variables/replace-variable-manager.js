@@ -152,7 +152,7 @@ class ReplaceVariableManager extends EventEmitter {
 const manager = new ReplaceVariableManager();
 
 frontendCommunicator.on("getReplaceVariableDefinitions", (trigger) => {
-    logger.info("got 'get all vars' request");
+    logger.debug("got 'get all vars' request");
     if (trigger != null) {
 
         let variables = manager.getReplaceVariables()
@@ -188,7 +188,7 @@ frontendCommunicator.on("getReplaceVariableDefinitions", (trigger) => {
 });
 
 frontendCommunicator.onAsync("validateVariables", async eventData => {
-    logger.info("got 'validateVariables' request");
+    logger.debug("got 'validateVariables' request");
     let { data, trigger } = eventData;
 
     let errors = [];

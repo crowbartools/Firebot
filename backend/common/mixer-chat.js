@@ -1214,7 +1214,7 @@ function whisper(chatter, username, message) {
     if (chatter === "streamer") {
         try {
             global.streamerChat.call("whisper", [username, message]);
-            logger.info("Sent message as " + chatter + ".");
+            logger.debug("Sent message as " + chatter + ".");
         } catch (err) {
             logger.eror("error sending whisper as streamer", err);
             renderWindow.webContents.send('error', "There was an error sending a whisper to chat as the streamer: " + err.message);
@@ -1223,7 +1223,7 @@ function whisper(chatter, username, message) {
         try {
             if (global.botChat != null && global.botChat.isConnected != null && global.botChat.isConnected()) {
                 global.botChat.call('whisper', [username, message]);
-                logger.info('Sent message as ' + chatter + '.');
+                logger.debug('Sent message as ' + chatter + '.');
             } else {
                 // fallback to sending as streamer
                 if (global.streamerChat != null && global.streamerChat.isConnected()) {
@@ -1263,7 +1263,7 @@ function broadcast(chatter, message) {
     if (chatter === "streamer") {
         try {
             global.streamerChat.call("msg", [message]);
-            logger.info("Sent message as " + chatter + ".");
+            logger.debug("Sent message as " + chatter + ".");
             console.log("sent as streamer");
         } catch (err) {
             logger.error("error sending chat as streamer", err);
@@ -1273,7 +1273,7 @@ function broadcast(chatter, message) {
         try {
             if (global.botChat != null && global.botChat.isConnected != null && global.botChat.isConnected()) {
                 global.botChat.call('msg', [message]);
-                logger.info('Sent message as ' + chatter + '.');
+                logger.debug('Sent message as ' + chatter + '.');
             } else {
                 // looks like there is an issue with the bot, fall back to Streamer
                 if (global.streamerChat != null && global.streamerChat.isConnected()) {
