@@ -26,6 +26,7 @@ const mixerEventSource = {
             manualMetadata: {
                 username: "Firebot",
                 totalMonths: 6,
+                currentStreak: 3,
                 shared: true
             }
         },

@@ -105,10 +105,9 @@ function constellationConnect() {
             shared: true,
             username: data["user"].username,
             userId: data["user"].id,
-            totalMonths: data.totalMonths
+            totalMonths: data.totalMonths,
+            currentStreak: data.currentStreak
         });
-
-        // setLastSub(data.user.username);
     });
 
     // Resub (Cached Event)
@@ -119,10 +118,9 @@ function constellationConnect() {
             shared: false,
             username: data["user"].username,
             userId: data["user"].id,
-            totalMonths: data.totalMonths
+            totalMonths: data.totalMonths,
+            currentStreak: -1
         });
-
-        //setLastSub(data.user.username);
     });
 
     // Sub (Cached Event)
