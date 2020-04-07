@@ -303,6 +303,18 @@ function constellationConnect() {
         });
     });
 
+    // Ad-break triggered
+    ca.subscribe(prefix + 'adBreak', data => {
+
+        logger.debug("adBreak Event");
+        logger.debug(data);
+
+        eventManager.triggerEvent("mixer", "ad-break", {
+            username: "UnknownUser",
+            maxAdBreakLengthInSec: data.maxAdBreakLengthInSec
+        });
+    });
+
     ca.on('error', data => {
         logger.error("error from constellation:", data);
 

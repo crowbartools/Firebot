@@ -36,6 +36,7 @@ exports.loadReplaceVariables = () => {
         'game',
         'gift-receiver-user',
         'math',
+        'max-ad-break-length',
         'mixplay-interactions',
         'number-ceil',
         'number-floor',

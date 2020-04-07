@@ -214,6 +214,17 @@ const mixerEventSource = {
                 userTotalHearts: 120,
                 userNextLevelXp: 250
             }
+        },
+        {
+            id: "ad-break",
+            name: "Ad-Break Triggered",
+            description: "When an ad-break is triggered on your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                maxAdBreakLengthInSec: 30
+            }
         }
     ]
 };
