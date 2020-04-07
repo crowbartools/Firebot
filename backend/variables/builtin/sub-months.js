@@ -10,13 +10,11 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["mixer:subscribed", "mixer:resub"];
 triggers[EffectTrigger.MANUAL] = true;
-/**
- * The $subMonths variable
- */
-const subMonthsVariable = {
+
+const model = {
     definition: {
         handle: "subMonths",
-        description: "The number of months a viewer has been subscribed for.",
+        description: "The total number of months the user has been subscribed since the beginning of time.",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
@@ -25,4 +23,4 @@ const subMonthsVariable = {
     }
 };
 
-module.exports = subMonthsVariable;
+module.exports = model;
