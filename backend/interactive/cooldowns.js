@@ -74,7 +74,7 @@ function groupCooldown(buttons, cooldown, firebot, neverOverride = false) {
             mixerInteractive
                 .returnButton(button, buttonJson.scene)
                 .then((control) => {
-                    logger.info('Cooling Down (Group): ' + control.controlID + ' for ' + cooldown);
+                    logger.debug('Cooling Down (Group): ' + control.controlID + ' for ' + cooldown);
                     control.update({cooldown: cooldown * 1000});
                 }, (reason) => {
                     logger.warn(`Failed to get button '${button}' from Mixer. Unable to cooldown. Reason: ${reason}`);
@@ -105,7 +105,7 @@ function cooldownRouter(mixerControls, mixerControl, firebot, control) {
             }
 
             if (foundGroup) {
-                logger.info(`Found cooldown group "${foundGroup.groupName}" for control "${controlId}"`);
+                logger.debug(`Found cooldown group "${foundGroup.groupName}" for control "${controlId}"`);
                 // This button has a cooldown group... so it's time to cool them all down.
                 let groupsJson = foundGroup;
 
@@ -154,7 +154,7 @@ function cooldownRouter(mixerControls, mixerControl, firebot, control) {
                     cooldown = parseInt(control.cooldown);
                     let cooldownCheck = cooldownChecker(control.controlId, cooldown);
                     if (cooldownCheck === true) {
-                        logger.info(
+                        logger.debug(
                             "Cooling Down (Single): " + control.controlId + " for " + cooldown
                         );
                         mixerControl.update({ cooldown: cooldown * 1000 });
@@ -166,7 +166,7 @@ function cooldownRouter(mixerControls, mixerControl, firebot, control) {
             }
         } else {
             // This button is still on cooldown! Don't press it again.
-            logger.info(
+            logger.debug(
                 "Button " + control.controlId + " is still on cooldown. Ignoring press."
             );
             reject(false);

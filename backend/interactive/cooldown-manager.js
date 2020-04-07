@@ -113,7 +113,7 @@ async function cooldownControls(controlIds, cooldownDuration, neverOverride) {
         const shouldCooldown = checkCooldown(controlId, cooldown, neverOverride);
         if (shouldCooldown) {
             controlsToCooldown.push(controlId);
-            logger.info(`Triggering cooldown for control "${controlId}" for ${cooldown}s`);
+            logger.debug(`Triggering cooldown for control "${controlId}" for ${cooldown}s`);
             updateCooldownForControlId(controlId, cooldown);
         }
     }
@@ -143,7 +143,7 @@ async function handleControlCooldown(control) {
         // sort cooldownGroups by longest cooldown
         cooldownGroupsContainingControl.sort((a, b) => b.duration - a.duration);
         for (const cooldownGroup of cooldownGroupsContainingControl) {
-            logger.info(`Triggering cooldown group "${cooldownGroup.name}"`);
+            logger.debug(`Triggering cooldown group "${cooldownGroup.name}"`);
             await cooldownControls(cooldownGroup.controlIds, cooldownGroup.duration);
         }
     }

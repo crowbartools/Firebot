@@ -112,25 +112,25 @@ async function controlRouter(
                                 // Charge sparks for the button that was pressed.
                                 // Note this will fire even if the threshold hasnt passed. People pay to build up to the goal.
                                 if (inputEvent.transactionID) {
-                                    logger.info("control has sparks, checking for spark exemption and charging sparks if not exempt");
+                                    logger.debug("control has sparks, checking for spark exemption and charging sparks if not exempt");
                                     try {
                                         if (sparkExemptManager.sparkExemptionEnabled()) {
-                                            logger.info("Spark exemption is enabled, checking for selected users or groups");
+                                            logger.debug("Spark exemption is enabled, checking for selected users or groups");
                                             if (sparkExemptManager.hasExemptUsersOrGroups()) {
-                                                logger.info("We have exempt users or groups, checking spark exempt status...");
+                                                logger.debug("We have exempt users or groups, checking spark exempt status...");
 
                                                 let exempt = sparkExemptManager.userIsExempt(participant);
                                                 if (exempt === true) {
                                                     // they are exempt, charging sparks
-                                                    logger.info("User is exempt. Not charging sparks.");
+                                                    logger.debug("User is exempt. Not charging sparks.");
                                                     renderWindow.webContents.send('eventlog', {type: "general", username: 'System', event: participant.username + " appears to be spark exempt. Not charging sparks. Disable Spark Exemptions in Settings > Interactive if this is not what you want."});
                                                     return;
                                                 }
                                             } else {
-                                                logger.info("No Spark Exempt users or groups saved. Skipping check.");
+                                                logger.debug("No Spark Exempt users or groups saved. Skipping check.");
                                             }
                                         } else {
-                                            logger.info("Spark exemption is disabled.");
+                                            logger.debug("Spark exemption is disabled.");
                                         }
                                     } catch (err) {
                                         logger.error("There was an error checking spark exempt data. Charging sparks...", err);
@@ -139,15 +139,15 @@ async function controlRouter(
                                     // we made it to here, charge those sparks.
                                     mixerInteractive.sparkTransaction(inputEvent.transactionID);
 
-                                    logger.info("User not spark exempt. Captured transaction to charge sparks for " + participant.username);
+                                    logger.debug("User not spark exempt. Captured transaction to charge sparks for " + participant.username);
                                     renderWindow.webContents.send('eventlog', {type: "general", username: 'System', event: participant.username + " pressed a button with sparks. They have been charged."});
                                 } else {
-                                    logger.info("This control doesnt appear to have sparks associated to it.");
+                                    logger.debug("This control doesnt appear to have sparks associated to it.");
                                 }
                             });
                     })
                     .catch(() => {
-                        logger.info('Button is still on cooldown. Ignoring button press.');
+                        logger.debug('Button is still on cooldown. Ignoring button press.');
 
                         // Throw this button info into UI log.
                         if (control.skipLog !== true) {

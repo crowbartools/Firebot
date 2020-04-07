@@ -291,7 +291,7 @@
                     service.pollEnd(data);
                     break;
                 case "UserJoin":
-                    logger.info("Chat User Joined");
+                    logger.debug("Chat User Joined");
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -299,7 +299,7 @@
                     service.chatUserJoined(data);
                     break;
                 case "UserLeave":
-                    logger.info("Chat User Left");
+                    logger.debug("Chat User Left");
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -307,7 +307,7 @@
                     service.chatUserLeft(data);
                     break;
                 case "UserUpdate":
-                    logger.info("User updated");
+                    logger.debug("User updated");
                     service.userUpdate(data);
                     break;
                 case "Disconnected":
@@ -321,7 +321,7 @@
                     service.chatUserRefresh(data);
                     break;
                 case "ChatAlert":
-                    logger.info("Chat alert from backend.");
+                    logger.debug("Chat alert from backend.");
                     service.chatAlertMessage(data.message);
                     break;
                 default:
