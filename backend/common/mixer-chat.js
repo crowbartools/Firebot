@@ -484,14 +484,13 @@ function createChatDataProcessing(chatter) {
                 data.fbEvent = "PurgeMessage";
                 renderWindow.webContents.send("chatUpdate", data);
                 getUserInfo(data.user_id, user => {
-                    //if purge has moderator, it was a timeout/purge
-                    if (data.moderator !== undefined) {
+                    if (!data.cause) return;
+                    if (data.cause.type === "timeout") {
                         eventManager.triggerEvent("mixer", "messages-purged", {
                             username: user.username,
                             data: data
                         });
-                        //otherwise it was the result of a ban
-                    } else {
+                    } else if (data.cause.type === "ban") {
                         eventManager.triggerEvent("mixer", "user-banned", {
                             username: user.username,
                             data: data

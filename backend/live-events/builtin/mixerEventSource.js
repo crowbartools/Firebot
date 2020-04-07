@@ -145,12 +145,13 @@ const mixerEventSource = {
         },
         {
             id: "messages-purged",
-            name: "Messages Purged",
-            description: "When a messages from a user are purged",
+            name: "User Timeout",
+            description: "When a user is timed out",
             cached: false,
             queued: false,
             manualMetadata: {
-                username: "Firebot"
+                moderator: "Firebot",
+                timeoutDuration: "1m"
             }
         },
         {
@@ -167,7 +168,7 @@ const mixerEventSource = {
             cached: false,
             queued: false,
             manualMetadata: {
-                username: "Firebot"
+                moderator: "Firebot"
             }
         },
         {
