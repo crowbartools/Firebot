@@ -3,6 +3,8 @@
 const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const mixerApi = require("../api-access");
+
+const uuidv4 = require("uuid/v4");
 const NodeCache = require("node-cache");
 let linkHeaderParser = require('parse-link-header');
 
@@ -235,5 +237,30 @@ exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) =
         }
     } catch (err) {
         logger.error("Error while following/unfollowing channel", err);
+    }
+};
+
+exports.triggerAdBreak = async () => {
+    let streamerData = accountAccess.getAccounts().streamer;
+
+    try {
+        await mixerApi.post(`ads/channels/${streamerData.channelId}`, {
+            requestId: uuidv4()
+        }, "v2", false, true, true);
+    } catch (error) {
+        let { response, body } = error;
+
+        let errorReason = "Unknown error occured.";
+
+        if (response.statusCode === 401) {
+            errorReason = "Unauthorized";
+        } else if (response.statusCode === 403) {
+            errorReason = "Missing required permissions to trigger an ad-break. Please re-log into your Streamer account.";
+        } else if (response.statusCode === 429) {
+            errorReason = "You've already run two ads in the last 15 minutes!";
+        } else if (response.statusCode === 400) {
+            errorReason = body.errorMessage ? body.errorMessage.replace("[DEBUG] ") : "Something went wrong.";
+        }
+        throw new Error(errorReason);
     }
 };
