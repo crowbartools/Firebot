@@ -26,6 +26,7 @@ exports.loadFilters = () => {
     const resubShared = require("./builtin/resub-shared");
 
     const hostType = require("./builtin/host-type");
+    const hostViewerCount = require("./builtin/host-viewer-count");
 
     const messageType = require("./builtin/message-type");
     const message = require("./builtin/message");
@@ -53,6 +54,7 @@ exports.loadFilters = () => {
     filterManager.registerFilter(resubShared);
 
     filterManager.registerFilter(hostType);
+    filterManager.registerFilter(hostViewerCount);
 
     filterManager.registerFilter(messageType);
     filterManager.registerFilter(message);
