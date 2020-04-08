@@ -25,7 +25,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         tokenPath: TOKEN_PATH,
         authorizePath: AUTHORIZE_PATH
     },
-    scopes: 'user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self channel:follow:self'
+    scopes: 'user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self channel:follow:self chat:ad_break'
 };
 
 const BOT_ACCOUNT_PROVIDER = {

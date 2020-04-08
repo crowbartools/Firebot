@@ -26,6 +26,7 @@ const mixerEventSource = {
             manualMetadata: {
                 username: "Firebot",
                 totalMonths: 6,
+                currentStreak: 3,
                 shared: true
             }
         },
@@ -37,7 +38,8 @@ const mixerEventSource = {
             queued: false,
             cacheMetaKey: "username",
             manualMetadata: {
-                username: "Firebot"
+                username: "Firebot",
+                viewerCount: 5
             }
         },
         {
@@ -145,12 +147,13 @@ const mixerEventSource = {
         },
         {
             id: "messages-purged",
-            name: "Messages Purged",
-            description: "When a messages from a user are purged",
+            name: "User Timeout",
+            description: "When a user is timed out",
             cached: false,
             queued: false,
             manualMetadata: {
-                username: "Firebot"
+                moderator: "Firebot",
+                timeoutDuration: "1m"
             }
         },
         {
@@ -167,7 +170,7 @@ const mixerEventSource = {
             cached: false,
             queued: false,
             manualMetadata: {
-                username: "Firebot"
+                moderator: "Firebot"
             }
         },
         {
@@ -213,6 +216,17 @@ const mixerEventSource = {
                 userLevel: 2,
                 userTotalHearts: 120,
                 userNextLevelXp: 250
+            }
+        },
+        {
+            id: "ad-break",
+            name: "Ad-Break Triggered",
+            description: "When an ad-break is triggered on your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                maxAdBreakLengthInSec: 30
             }
         }
     ]

@@ -138,7 +138,7 @@ function mapRestrictionForFrontEnd(restriction) {
 }
 
 ipcMain.on("getRestrictions", (event) => {
-    logger.info("got 'get restrictions' request");
+    logger.debug("got 'get restrictions' request");
 
     event.returnValue = manager.getAllRestrictions().map(r => mapRestrictionForFrontEnd(r));
 });

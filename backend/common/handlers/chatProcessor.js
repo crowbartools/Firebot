@@ -8,6 +8,7 @@ const replaceVariableManager = require("../../variables/replace-variable-manager
 const emotesManager = require("../emotes-manager");
 const accountAccess = require("../account-access");
 const imgProbe = require('probe-image-size');
+const channelAccess = require("../channel-access");
 
 // This will parse the message string and build an array of Arg numbers the user wants to use.
 function parseArg(str) {
@@ -150,6 +151,9 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
             break;
         case "/purge":
             chat.chatPurge(target);
+            break;
+        case "/ad":
+            channelAccess.triggerAdBreak();
             break;
         case "/settitle": {
             messageArray.splice(0, 1);

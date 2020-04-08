@@ -11,6 +11,7 @@ const patronageManager = require("../patronageManager");
 const apiAccess = require("../api-access");
 const accountAccess = require("../common/account-access");
 const { settings } = require("../common/settings-access");
+const frontendCommunicator = require("../common/frontend-communicator");
 Carina.WebSocket = ws;
 
 // This holds the constellation connection so we can stop it later.
@@ -105,10 +106,9 @@ function constellationConnect() {
             shared: true,
             username: data["user"].username,
             userId: data["user"].id,
-            totalMonths: data.totalMonths
+            totalMonths: data.totalMonths,
+            currentStreak: data.currentStreak
         });
-
-        // setLastSub(data.user.username);
     });
 
     // Resub (Cached Event)
@@ -119,10 +119,9 @@ function constellationConnect() {
             shared: false,
             username: data["user"].username,
             userId: data["user"].id,
-            totalMonths: data.totalMonths
+            totalMonths: data.totalMonths,
+            currentStreak: -1
         });
-
-        //setLastSub(data.user.username);
     });
 
     // Sub (Cached Event)
@@ -148,6 +147,7 @@ function constellationConnect() {
             hostTimeouts[hosterId] = setTimeout((hostUser, hostUserId, isAuto) => {
                 eventManager.triggerEvent("mixer", "hosted", {
                     username: hostUser.token,
+                    viewerCount: hostUser.viewersCurrent || 0,
                     auto: isAuto
                 });
                 cancelPreviousHostTimeout(hostUserId);
@@ -155,6 +155,7 @@ function constellationConnect() {
         } else {
             eventManager.triggerEvent("mixer", "hosted", {
                 username: hoster.token,
+                viewerCount: hoster.viewersCurrent || 0,
                 auto: auto
             });
         }
@@ -301,6 +302,20 @@ function constellationConnect() {
             userTotalHearts: data.level.currentXp,
             userNextLevelXp: data.level.nextLevelXp
         });
+    });
+
+    // Ad-break triggered
+    ca.subscribe(prefix + 'adBreak', data => {
+
+        logger.debug("adBreak Event");
+        logger.debug(data);
+
+        eventManager.triggerEvent("mixer", "ad-break", {
+            username: "UnknownUser",
+            maxAdBreakLengthInSec: data.maxAdBreakLengthInSec
+        });
+
+        frontendCommunicator.send("chat-feed-system-message", `An ad-break has been started! (Max ad length: ${data.maxAdBreakLengthInSec} secs)`);
     });
 
     ca.on('error', data => {

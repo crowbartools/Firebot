@@ -1,6 +1,4 @@
 "use strict";
-
-
 const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
@@ -8,18 +6,21 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["mixer:subscribed", "mixer:resub"];
 triggers[EffectTrigger.MANUAL] = true;
+triggers[EffectTrigger.EVENT] = ["mixer:messages-purged"];
 
 const model = {
     definition: {
-        handle: "subMonths",
-        description: "The total number of months the user has been subscribed since the beginning of time.",
+        handle: "timeoutDuration",
+        description: "How long the user is timed out for. Ie '1m' or '30s'",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.totalMonths;
+        let modEventData = trigger.metadata.eventData.data;
+        if (modEventData.cause) {
+            return modEventData.cause.durationString || "UnknownDuration";
+        }
     }
 };
 

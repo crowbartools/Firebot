@@ -35,10 +35,10 @@ function buildRequestOptions(method, route, body, apiVersion = "v1", authAsStrea
     return options;
 }
 
-function promisifiedRequest(options, resolveResponse = false) {
+function promisifiedRequest(options, resolveResponse = false, resolveErrorResponse = false) {
     return new Promise((resolve, reject) => {
 
-        request(options, function(err, res) {
+        request(options, function(err, res, body) {
             if (!err && res.statusCode >= 200 && res.statusCode <= 204) {
                 if (resolveResponse) {
                     resolve(res);
@@ -46,7 +46,14 @@ function promisifiedRequest(options, resolveResponse = false) {
                     resolve(res.body);
                 }
             } else {
-                reject(err);
+                if (resolveErrorResponse) {
+                    reject({
+                        response: res,
+                        body: body
+                    });
+                } else {
+                    reject(err);
+                }
             }
         });
     });
@@ -73,11 +80,11 @@ exports.get = function(route, apiVersion = "v1", resolveResponse = false, authAs
     return promisifiedRequest(options, resolveResponse);
 };
 
-exports.post = function(route, body, apiVersion = "v1", resolveResponse = false, authAsStreamer = true) {
+exports.post = function(route, body, apiVersion = "v1", resolveResponse = false, authAsStreamer = true, resolveErrorResponse = false) {
 
     let options = buildRequestOptions("POST", route, body, apiVersion, authAsStreamer);
 
-    return promisifiedRequest(options, resolveResponse);
+    return promisifiedRequest(options, resolveResponse, resolveErrorResponse);
 };
 
 exports.patch = function(route, body, apiVersion = "v1", resolveResponse = false, authAsStreamer = true) {

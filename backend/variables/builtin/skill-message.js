@@ -8,18 +8,20 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["mixer:subscribed", "mixer:resub"];
+triggers[EffectTrigger.EVENT] = ["mixer:skill"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "subMonths",
-        description: "The total number of months the user has been subscribed since the beginning of time.",
+        handle: "skillMessage",
+        description: "Any message text associated with a skill (such as Ember Stickers)",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.totalMonths;
+        let skillData = trigger.metadata.eventData.data;
+
+        return skillData.skillMessage ? skillData.skillMessage : "";
     }
 };
 

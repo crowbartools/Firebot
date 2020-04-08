@@ -8,7 +8,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, connectionService, $timeout, $interval, $http) {
+            soundService, connectionService, $timeout, $interval, $http, backendCommunicator) {
             let service = {};
 
             // Chat Message Queue
@@ -122,10 +122,12 @@
                     }
                 });
 
-                if (data.moderator && cachedUserName) {
-                    service.chatAlertMessage(
-                        data.moderator.user_name + " purged " + cachedUserName
-                    );
+                if (data.cause && cachedUserName) {
+                    if (data.cause.type === "timeout") {
+                        service.chatAlertMessage(`${cachedUserName} was timed out by ${data.moderator.user_name} for ${data.cause.durationString}.`);
+                    } else if (data.cause.type === "ban") {
+                        service.chatAlertMessage(`${cachedUserName} was banned by ${data.moderator.user_name}.`);
+                    }
                 }
             };
 
@@ -166,6 +168,10 @@
                 };
                 service.chatQueue.push(data);
             };
+
+            backendCommunicator.on("chat-feed-system-message", (message) => {
+                service.chatAlertMessage(message);
+            });
 
             // Poll Update
             // This is fired when a poll starts or is updated.
@@ -245,13 +251,6 @@
             // Reason is, people can be added to our banned user group without being banned from the channel.
             // But we're assuming here that if they're banned from the channel we should ban them from interactive always.
             service.userUpdate = function(data) {
-                if (data == null || data.roles == null) return;
-
-                const banned = data.roles.includes("Banned");
-
-                if (banned) {
-                    service.chatAlertMessage(data.username + " has been banned.");
-                }
             };
 
             // Chat Update Handler
@@ -275,15 +274,6 @@
                     logger.info("Chat message purged");
                     service.purgeChatMessages(data);
                     break;
-                case "UserTimeout":
-                    logger.info("user timed out");
-                    service.chatAlertMessage(
-                        data.user.username +
-                " has been timed out for " +
-                data.user.duration +
-                "."
-                    );
-                    break;
                 case "PollStart":
                     service.pollUpdate(data);
                     break;
@@ -291,7 +281,7 @@
                     service.pollEnd(data);
                     break;
                 case "UserJoin":
-                    logger.info("Chat User Joined");
+                    logger.debug("Chat User Joined");
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -299,7 +289,7 @@
                     service.chatUserJoined(data);
                     break;
                 case "UserLeave":
-                    logger.info("Chat User Left");
+                    logger.debug("Chat User Left");
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -307,7 +297,7 @@
                     service.chatUserLeft(data);
                     break;
                 case "UserUpdate":
-                    logger.info("User updated");
+                    logger.debug("User updated");
                     service.userUpdate(data);
                     break;
                 case "Disconnected":
@@ -321,7 +311,7 @@
                     service.chatUserRefresh(data);
                     break;
                 case "ChatAlert":
-                    logger.info("Chat alert from backend.");
+                    logger.debug("Chat alert from backend.");
                     service.chatAlertMessage(data.message);
                     break;
                 default:
