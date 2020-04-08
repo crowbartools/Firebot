@@ -50,8 +50,12 @@ const fileWriter = {
                     <input type="radio" ng-model="effect.writeMode" value="append"/>
                     <div class="control__indicator"></div>
                 </label>
-                <label class="control-fb control--radio">Delete Line <tooltip text="'Deletes a specific line in the file.'"></tooltip>
+                <label class="control-fb control--radio">Delete Line(s) <tooltip text="'Deletes a specific line(s) in the file.'"></tooltip>
                     <input type="radio" ng-model="effect.writeMode" value="delete"/>
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--radio">Replace Line(s) <tooltip text="'Replace a specific line in the file.'"></tooltip>
+                    <input type="radio" ng-model="effect.writeMode" value="replace-line"/>
                     <div class="control__indicator"></div>
                 </label>
                 <label class="control-fb control--radio">Clear File <tooltip text="'Clears all text from the file.'"></tooltip>
@@ -68,9 +72,9 @@ const fileWriter = {
             </label>
         </eos-container>
 
-        <eos-container header="Delete Line Options" pad-top="true" ng-if="effect.writeMode === 'delete'">
+        <eos-container header="Delete Line(s) Options" pad-top="true" ng-if="effect.writeMode === 'delete'">
             <div class="controls-fb" style="padding-bottom: 5px;">
-                <label class="control-fb control--radio">Delete by line(s) <tooltip text="'Deletes line(s) at the specificed number(s)'"></tooltip>
+                <label class="control-fb control--radio">Delete by line numbers(s) <tooltip text="'Deletes line(s) at the specificed number(s)'"></tooltip>
                     <input type="radio" ng-model="effect.deleteLineMode" value="lines"/>
                     <div class="control__indicator"></div>
                 </label>
@@ -81,13 +85,30 @@ const fileWriter = {
             </div>
         </eos-container>
 
-        <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'append' || (effect.writeMode === 'delete' && effect.deleteLineMode === 'text')">
+        <eos-container header="Replace Line(s) Options" pad-top="true" ng-if="effect.writeMode === 'replace-line'">
+            <div class="controls-fb" style="padding-bottom: 5px;">
+                <label class="control-fb control--radio">Replace by line number(s) <tooltip text="'Replace line(s) at the specificed number(s)'"></tooltip>
+                    <input type="radio" ng-model="effect.replaceLineMode" value="lineNumbers"/>
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--radio">Replace by text <tooltip text="'Replace lines that equal the given text'"></tooltip>
+                    <input type="radio" ng-model="effect.replaceLineMode" value="text"/>
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
+        </eos-container>
+
+        <eos-container header="Text" pad-top="true" ng-if="effect.writeMode === 'replace' || effect.writeMode === 'append' || (effect.writeMode === 'delete' && effect.deleteLineMode === 'text') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'text')">
             <input ng-model="effect.text" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
         </eos-container>
 
-        <eos-container header="Line Number(s)" pad-top="true" ng-if="effect.writeMode === 'delete' && effect.deleteLineMode === 'lines'">
-            <p class="muted">Enter a line number or list of line numbers (separated by commas) to delete.</p>
+        <eos-container header="Line Number(s)" pad-top="true" ng-if="(effect.writeMode === 'delete' && effect.deleteLineMode === 'lines') || (effect.writeMode === 'replace-line' && effect.replaceLineMode === 'lineNumbers')">
+            <p class="muted">Enter a line number or list of line numbers (separated by commas) to {{effect.writeMode === 'delete' ? 'delete' : 'replace'}}.</p>
             <input ng-model="effect.lineNumbers" type="text" class="form-control" id="chat-line-numbers-setting" placeholder="Enter line number(s)" replace-variables="number">
+        </eos-container>
+
+        <eos-container header="Replacement Text" pad-top="true" ng-if="effect.writeMode === 'replace-line'">
+            <input ng-model="effect.replacementText" type="text" class="form-control" id="chat-text-setting" placeholder="Enter text" replace-variables>
         </eos-container>
     `,
     /**
@@ -101,6 +122,10 @@ const fileWriter = {
 
         if ($scope.effect.deleteLineMode == null) {
             $scope.effect.deleteLineMode = "lines";
+        }
+
+        if ($scope.effect.replaceLineMode == null) {
+            $scope.effect.replaceLineMode = "lineNumbers";
         }
     },
     /**
@@ -117,6 +142,12 @@ const fileWriter = {
         }
         if (effect.writeMode === 'delete' && (effect.deleteLineMode === 'text' && (effect.text == null || effect.text === ""))) {
             errors.push("Please set the line text to be deleted.");
+        }
+        if (effect.writeMode === 'replace-line' && (effect.replaceLineMode === 'lines' && (effect.lineNumbers == null || effect.lineNumbers === ""))) {
+            errors.push("Please set the line number to be replaced.");
+        }
+        if (effect.writeMode === 'replace-line' && (effect.replaceLineMode === 'text' && (effect.text == null || effect.text === ""))) {
+            errors.push("Please set the line text to be replaced.");
         }
         return errors;
     },
