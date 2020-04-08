@@ -388,6 +388,15 @@ function createChatDataProcessing(chatter) {
                 if (data.message && data.message.meta && data.message.meta["is_skill"]) {
                     let skill = data.message.meta.skill;
 
+                    let skillMessage = "";
+                    if (data.message.message) {
+                        data.message.message.forEach(m => {
+                            if (m.type === "text") {
+                                skillMessage += m.text;
+                            }
+                        });
+                    }
+
                     // This may change at a later date. Also we may find a better way to determine Skill type once
                     // we get more documentation
                     skill.isSticker = true;
@@ -395,7 +404,8 @@ function createChatDataProcessing(chatter) {
                     eventManager.triggerEvent("mixer", "skill", {
                         username: data.user_name,
                         data: {
-                            skill: skill
+                            skill: skill,
+                            skillMessage: skillMessage
                         },
                         originatedInStreamerChannel: chatFromStreamerChannel
                     });

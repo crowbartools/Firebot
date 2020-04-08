@@ -64,6 +64,7 @@ exports.loadReplaceVariables = () => {
         'skill-cost',
         'skill-currency-type',
         'skill-gif-url',
+        'skill-message',
         'skill-name',
         'skill-sticker-url',
         'stream-title',
