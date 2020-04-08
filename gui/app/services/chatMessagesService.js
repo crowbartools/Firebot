@@ -122,10 +122,12 @@
                     }
                 });
 
-                if (data.moderator && cachedUserName) {
-                    service.chatAlertMessage(
-                        data.moderator.user_name + " purged " + cachedUserName
-                    );
+                if (data.cause && cachedUserName) {
+                    if (data.cause.type === "timeout") {
+                        service.chatAlertMessage(`${cachedUserName} was timed out by ${data.moderator.user_name} for ${data.cause.durationString}.`);
+                    } else if (data.cause.type === "ban") {
+                        service.chatAlertMessage(`${cachedUserName} was banned by ${data.moderator.user_name}.`);
+                    }
                 }
             };
 
