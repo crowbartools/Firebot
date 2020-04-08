@@ -251,13 +251,6 @@
             // Reason is, people can be added to our banned user group without being banned from the channel.
             // But we're assuming here that if they're banned from the channel we should ban them from interactive always.
             service.userUpdate = function(data) {
-                if (data == null || data.roles == null) return;
-
-                const banned = data.roles.includes("Banned");
-
-                if (banned) {
-                    service.chatAlertMessage(data.username + " has been banned.");
-                }
             };
 
             // Chat Update Handler

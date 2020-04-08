@@ -39,7 +39,7 @@
                             <span class="chatSubIcon" ng-if="isSubscriber(message)">
                                 <img ng-src="{{getSubIcon(message)}}">
                             </span>
-                            <span class="chatProgressionRank" ng-style="getUserRankStyle(message.user_ascension_level)">
+                            <span ng-hide="message.action" class="chatProgressionRank" ng-style="getUserRankStyle(message.user_ascension_level)">
                                 {{message.user_ascension_level}}
                             </span>
                             <span ng-if="!message.historical && !compactDisplay" class="muted chat-timestamp">

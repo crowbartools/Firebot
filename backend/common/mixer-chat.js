@@ -1428,11 +1428,6 @@ function changeUserRole(username, role, addOrRemove) {
                                     fbEvent: "ChatAlert",
                                     message: username + " has been modded."
                                 });
-                            } else if (role === "Banned") {
-                                renderWindow.webContents.send("chatUpdate", {
-                                    fbEvent: "ChatAlert",
-                                    message: username + " has been banned."
-                                });
                             }
                         } else if (addOrRemove === "Remove") {
                             if (role === "Mod") {
