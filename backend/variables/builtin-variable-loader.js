@@ -73,6 +73,7 @@ exports.loadReplaceVariables = () => {
         'target',
         'text-length',
         'text-lowercase',
+        'text-replace',
         'text-scramble',
         'text-uppercase',
         'text-capitalize',
