@@ -8,7 +8,7 @@
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, connectionService, $timeout, $interval, $http) {
+            soundService, connectionService, $timeout, $interval, $http, backendCommunicator) {
             let service = {};
 
             // Chat Message Queue
@@ -167,6 +167,10 @@
                 service.chatQueue.push(data);
             };
 
+            backendCommunicator.on("chat-feed-system-message", (message) => {
+                service.chatAlertMessage(message);
+            });
+
             // Poll Update
             // This is fired when a poll starts or is updated.
             // Mixer fires this every second or so, but we only display chat alerts every 30 seconds.
@@ -274,15 +278,6 @@
                 case "PurgeMessage":
                     logger.info("Chat message purged");
                     service.purgeChatMessages(data);
-                    break;
-                case "UserTimeout":
-                    logger.info("user timed out");
-                    service.chatAlertMessage(
-                        data.user.username +
-                " has been timed out for " +
-                data.user.duration +
-                "."
-                    );
                     break;
                 case "PollStart":
                     service.pollUpdate(data);

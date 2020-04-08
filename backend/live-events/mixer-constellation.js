@@ -11,6 +11,7 @@ const patronageManager = require("../patronageManager");
 const apiAccess = require("../api-access");
 const accountAccess = require("../common/account-access");
 const { settings } = require("../common/settings-access");
+const frontendCommunicator = require("../common/frontend-communicator");
 Carina.WebSocket = ws;
 
 // This holds the constellation connection so we can stop it later.
@@ -311,6 +312,8 @@ function constellationConnect() {
             username: "UnknownUser",
             maxAdBreakLengthInSec: data.maxAdBreakLengthInSec
         });
+
+        frontendCommunicator.send("chat-feed-system-message", `An ad-break has been started! (Max ad length: ${data.maxAdBreakLengthInSec} secs)`);
     });
 
     ca.on('error', data => {

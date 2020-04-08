@@ -36,11 +36,7 @@ const model = {
     },
     onTriggerEvent: async () => {
 
-        try {
-            await channelAccess.triggerAdBreak();
-        } catch (error) {
-            renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
-        }
+        await channelAccess.triggerAdBreak();
 
         return true;
     }

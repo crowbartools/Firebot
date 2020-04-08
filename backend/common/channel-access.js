@@ -4,6 +4,8 @@ const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const mixerApi = require("../api-access");
 
+const frontendCommunicator = require("./frontend-communicator");
+
 const uuidv4 = require("uuid/v4");
 const NodeCache = require("node-cache");
 let linkHeaderParser = require('parse-link-header');
@@ -240,7 +242,7 @@ exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) =
     }
 };
 
-exports.triggerAdBreak = async () => {
+async function startAdBreak() {
     let streamerData = accountAccess.getAccounts().streamer;
 
     try {
@@ -263,4 +265,13 @@ exports.triggerAdBreak = async () => {
         }
         throw new Error(errorReason);
     }
+}
+
+exports.triggerAdBreak = async () => {
+    try {
+        await startAdBreak();
+    } catch (error) {
+        renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
+    }
 };
+
