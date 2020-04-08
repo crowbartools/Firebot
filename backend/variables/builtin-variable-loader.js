@@ -35,6 +35,7 @@ exports.loadReplaceVariables = () => {
         'file-line-count',
         'game',
         'gift-receiver-user',
+        'host-viewer-count',
         'math',
         'max-ad-break-length',
         'mixplay-interactions',

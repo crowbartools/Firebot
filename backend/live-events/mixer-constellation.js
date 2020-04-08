@@ -147,6 +147,7 @@ function constellationConnect() {
             hostTimeouts[hosterId] = setTimeout((hostUser, hostUserId, isAuto) => {
                 eventManager.triggerEvent("mixer", "hosted", {
                     username: hostUser.token,
+                    viewerCount: hostUser.viewersCurrent || 0,
                     auto: isAuto
                 });
                 cancelPreviousHostTimeout(hostUserId);
@@ -154,6 +155,7 @@ function constellationConnect() {
         } else {
             eventManager.triggerEvent("mixer", "hosted", {
                 username: hoster.token,
+                viewerCount: hoster.viewersCurrent || 0,
                 auto: auto
             });
         }

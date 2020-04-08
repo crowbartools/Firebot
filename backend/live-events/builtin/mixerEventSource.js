@@ -38,7 +38,8 @@ const mixerEventSource = {
             queued: false,
             cacheMetaKey: "username",
             manualMetadata: {
-                username: "Firebot"
+                username: "Firebot",
+                viewerCount: 5
             }
         },
         {
