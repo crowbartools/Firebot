@@ -16,7 +16,7 @@ const model = {
         handle: "maxAdBreakLength",
         description: "The maximum length (in seconds) the ad-break will run for.",
         triggers: triggers,
-        possibleDataOutput: [OutputDataType.number]
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
         return trigger.metadata && trigger.metadata.eventData && trigger.metadata.eventData.maxAdBreakLengthInSec ? trigger.metadata.eventData.maxAdBreakLengthInSec : 0;
