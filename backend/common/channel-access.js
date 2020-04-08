@@ -57,6 +57,23 @@ exports.getStreamerOnlineStatus = async () => {
     return onlineData.online === true;
 };
 
+exports.getStreamerAudience = async () => {
+    let streamerData = accountAccess.getAccounts().streamer;
+
+    let audienceData = await mixerApi.get(
+        `channels/${streamerData.channelId}?fields=audience`,
+        "v1",
+        false,
+        true
+    );
+
+    if (audienceData == null) {
+        return null;
+    }
+
+    return audienceData.audience;
+};
+
 const viewerRoleCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
 exports.getViewersMixerRoles = async username => {
