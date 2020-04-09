@@ -31,7 +31,7 @@ const delay = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container header="Text">
-            <textarea ng-model="effect.text" class="form-control" name="text" placeholder="Enter text" rows="4" cols="40" replace-variables></textarea>
+            <textarea ng-model="effect.text" class="form-control" name="text" placeholder="Enter text" rows="4" cols="40" replace-variables menu-position="under"></textarea>
         </eos-container>
 
         <eos-container header="Voice" pad-top="true">
