@@ -39,6 +39,7 @@ exports.loadEffects = () => {
     const deleteChatMessage = require("./builtin/delete-chat-message");
     const stopEffectExecution = require("./builtin/stop-effect-execution");
     const adBreak = require("./builtin/ad-break");
+    const runProgram = require("./builtin/run-program");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -76,4 +77,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(deleteChatMessage);
     effectManager.registerEffect(stopEffectExecution);
     effectManager.registerEffect(adBreak);
+    effectManager.registerEffect(runProgram);
 };
