@@ -1,7 +1,9 @@
 "use strict";
 (function() {
 
+    const electron = require("electron");
     const moment = require("moment");
+    moment.locale(electron.remote.app.getLocale());
 
     angular
         .module("firebotApp")
@@ -178,7 +180,7 @@
                     let followDateDisplay = null;
                     if (userFollowsStreamer) {
                         let date = relationshipData.follows.createdAt;
-                        followDateDisplay = moment(date).format("MM/DD/YYYY");
+                        followDateDisplay = moment(date).format("L");
                     }
 
                     const combined = mixerRoles.concat(channelRoles).map(r => mapMixerRole(r));
@@ -474,7 +476,7 @@
                         "fa-sign-in",
                         joinDate,
                         value => {
-                            return value ? moment(value).format("MM/DD/YYYY") : "Not saved";
+                            return value ? moment(value).format("L") : "Not saved";
                         },
                         "joinDate",
                         "date",
@@ -492,7 +494,7 @@
                         "fa-eye",
                         lastSeen,
                         value => {
-                            return value ? moment(value).format("MM/DD/YYYY") : "Not saved";
+                            return value ? moment(value).format("L") : "Not saved";
                         },
                         "lastSeen",
                         "date",

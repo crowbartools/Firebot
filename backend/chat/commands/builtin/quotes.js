@@ -1,5 +1,10 @@
 "use strict";
 
+const app = require('electron').app;
+
+const moment = require("moment");
+moment.locale(app.getLocale());
+
 /**
  * The Quotes Management
  */
@@ -125,14 +130,13 @@ const quotesManagement = {
             const logger = require("../../../logwrapper");
             const Chat = require("../../../common/mixer-chat");
             const accountAccess = require("../../../common/account-access");
-            const moment = require("moment");
 
             let { commandOptions } = event;
 
             let args = event.userCommand.args;
 
             const getFormattedQuoteString = (quote) => {
-                let prettyDate = moment(quote.createdAt).format("MM/DD/YYYY");
+                let prettyDate = moment(quote.createdAt).format('L');
                 return commandOptions.quoteDisplayTemplate
                     .replace("{id}", quote._id)
                     .replace("{text}", quote.text)

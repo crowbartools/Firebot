@@ -6,6 +6,7 @@
     const profileManager = require("../../backend/common/profile-manager");
 
     const moment = require("moment");
+    moment.locale(electron.remote.app.getLocale());
 
     agGrid.initialiseAgGridWithAngular1(angular); // eslint-disable-line no-undef
 
@@ -441,7 +442,7 @@
 
     app.filter('prettyDate', function() {
         return function(input) {
-            return (input) ? moment(input).format("MM/DD/YYYY") : 'Not saved';
+            return (input) ? moment(input).format('L') : 'Not saved';
         };
     });
 
