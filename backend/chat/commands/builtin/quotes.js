@@ -16,6 +16,17 @@ const quotesManagement = {
             user: 0,
             global: 0
         },
+        baseCommandDescription: "Display a random quote",
+        options: {
+            quoteDisplayTemplate: {
+                type: "string",
+                title: "Quote Display Template",
+                description: "How quotes are displayed in chat.",
+                tip: "Variables: {id}, {text}, {author}, {game}, {date}",
+                default: `Quote {id}: "{text}" - @{author} [{game}] [{date}]`,
+                useTextArea: true
+            }
+        },
         subCommands: [
             {
                 arg: "add",
@@ -106,8 +117,8 @@ const quotesManagement = {
         ]
     },
     /**
-   * When the command is triggered
-   */
+     * When the command is triggered
+     */
     onTriggerEvent: event => {
         return new Promise(async (resolve) => {
             const quotesManager = require("../../../quotes/quotes-manager");
@@ -116,11 +127,18 @@ const quotesManagement = {
             const accountAccess = require("../../../common/account-access");
             const moment = require("moment");
 
+            let { commandOptions } = event;
+
             let args = event.userCommand.args;
 
             const getFormattedQuoteString = (quote) => {
                 let prettyDate = moment(quote.createdAt).format("MM/DD/YYYY");
-                return `Quote ${quote._id}: "${quote.text}" - @${quote.originator} [${quote.game}] [${prettyDate}]`;
+                return commandOptions.quoteDisplayTemplate
+                    .replace("{id}", quote._id)
+                    .replace("{text}", quote.text)
+                    .replace("{author}", quote.originator)
+                    .replace("{game}", quote.game)
+                    .replace("{date}", prettyDate);
             };
 
             if (args.length === 0) {

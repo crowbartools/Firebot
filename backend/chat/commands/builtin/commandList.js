@@ -18,8 +18,8 @@ const commandList = {
         }
     },
     /**
-   * When the command is triggered
-   */
+     * When the command is triggered
+     */
     onTriggerEvent: async event => {
         const cloudSync = require('../../../cloud-sync/profile-sync.js');
         const Chat = require("../../../common/mixer-chat");
@@ -27,7 +27,7 @@ const commandList = {
         let profileJSON = {
             username: event.chatEvent.user_name,
             userRoles: event.chatEvent.user_roles,
-            profilePage: 'quotes'
+            profilePage: 'commands'
         };
 
         let binId = await cloudSync.syncProfileData(profileJSON);

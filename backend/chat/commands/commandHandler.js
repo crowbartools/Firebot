@@ -194,9 +194,24 @@ function fireCommand(
         //get system command from manager
         let cmdDef = commandManager.getSystemCommandById(command.id);
 
+        let commandOptions = {};
+        if (command.options != null) {
+            for (let optionName of Object.keys(command.options)) {
+                let option = command.options[optionName];
+                if (option) {
+                    let value = option.value;
+                    if (value == null) {
+                        value = option.default;
+                    }
+                    commandOptions[optionName] = value;
+                }
+            }
+        }
+
         //call trigger event.
         cmdDef.onTriggerEvent({
             command: command,
+            commandOptions: commandOptions,
             userCommand: userCmd,
             chatEvent: chatEvent
         });

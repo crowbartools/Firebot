@@ -46,11 +46,14 @@
                 </div>
 
                 <div ng-if="$ctrl.supportsEffects">
-                    <restrictions-list 
-                        restriction-data="$ctrl.control.restrictionData"
-                        trigger="interactive" 
-                        trigger-meta="$ctrl.triggerMeta">
-                    </restrictions-section>
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 5px;">Restrictions <span class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">(Permissions, currency costs, and more)</span></h3>
+                        <restrictions-list 
+                            restriction-data="$ctrl.control.restrictionData"
+                            trigger="interactive" 
+                            trigger-meta="$ctrl.triggerMeta">
+                        </restrictions-section>
+                    </div>  
                 </div>
 
                 <div ng-if="$ctrl.supportsEffects" class="function-button-settings" style="margin-top: 15px;">

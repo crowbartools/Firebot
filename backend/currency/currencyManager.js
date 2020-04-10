@@ -123,6 +123,22 @@ function createCurrencyCommandDefinition(currency) {
                 user: 0,
                 global: 0
             },
+            baseCommandDescription: "See your balance",
+            options: {
+                currencyBalanceMessageTemplate: {
+                    type: "string",
+                    title: "Currency Balance Message Template",
+                    description: "How the currency balance message appears in chat.",
+                    tip: "Variables: {user}, {currency}, {amount}",
+                    default: `{user}'s {currency} total is {amount}`,
+                    useTextArea: true
+                },
+                whisperCurrencyBalanceMessage: {
+                    type: "boolean",
+                    title: "Whisper Currency Balance Message",
+                    default: false
+                }
+            },
             subCommands: [
                 {
                     arg: "add",
@@ -214,6 +230,7 @@ function createCurrencyCommandDefinition(currency) {
 
             const Chat = require("../common/mixer-chat");
 
+            let { commandOptions } = event;
             let triggeredArg = event.userCommand.triggeredArg;
             let args = event.userCommand.args;
             let currencyName = event.command.currency.name;
@@ -222,9 +239,12 @@ function createCurrencyCommandDefinition(currency) {
             if (args.length === 0) {
                 currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId).then(function(amount) {
                     if (!isNaN(amount)) {
-                        Chat.smartSend(
-                            event.userCommand.commandSender + '\'s ' + currencyName + ' total is ' + util.commafy(amount) + '.'
-                        );
+                        const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                            .replace("{user}", event.userCommand.commandSender)
+                            .replace("{currency}", currencyName)
+                            .replace("{amount}", util.commafy(amount));
+
+                        Chat.smartSend(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
                     } else {
                         logger.log('Error while trying to show currency amount to user via chat command.');
                     }
