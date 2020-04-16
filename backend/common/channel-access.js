@@ -29,7 +29,7 @@ exports.getFollowDateForUser = async username => {
 
 exports.getChannelSubBadge = async channelName => {
     let badgeData = await mixerApi.get(
-        `channels/${channelName}?fields=online`,
+        `channels/${channelName}?fields=online,badge`,
         "v1",
         false,
         false
