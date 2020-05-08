@@ -149,6 +149,15 @@
                 settingsService.setSidebarControlledServices(sidebarControlledServices);
             });
 
+            backendCommunicator.on("integrationUnlinked", (intId) => {
+                let sidebarControlledServices = settingsService.getSidebarControlledServices();
+                let service = "integration." + intId;
+                if (sidebarControlledServices.includes(service)) {
+                    sidebarControlledServices = sidebarControlledServices.filter(s => s !== service);
+                }
+                settingsService.setSidebarControlledServices(sidebarControlledServices);
+            });
+
             listenerService.registerListener(
                 {
                     type: listenerService.ListenerType.INTEGRATION_CONNECTION_UPDATE
