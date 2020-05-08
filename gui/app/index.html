@@ -220,13 +220,13 @@
         <div class="tab-header">
           <span style="width:100%" class="noselect">{{sbm.currentTabName}}</span>
           <notification-center></notification-center>
-          <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle>
+          <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle aria-label="Login & Profile Management">
             <img class="login-thumbnail noselect" ng-src="{{cs.getAccountAvatar('streamer')}}">
             <img class="login-thumbnail noselect" ng-src="{{cs.getAccountAvatar('bot')}}">          
             <div class="fb-arrow down login-arrow"></div>
             <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
               <li>
-                <a href ng-click="showManageLoginsModal()">
+                <a href ng-click="showManageLoginsModal()" aria-label="Manage Logins">
                   <span>
                     <i class="fal fa-sign-in-alt"></i>
                   </span> 
@@ -236,7 +236,7 @@
               <li class="divider"></li>
               <li class="dropdown-header">Profiles</li>
               <li ng-repeat="profile in cs.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
-                <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}" aria-label="Profile Switcher">
+                <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}" aria-label="{{currentProfileId == profile.profileId ? 'Current profile ('+ profile.profileId +')' : 'Switch to ' + profile.profileId + ' profile'}}">
                     <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
                     <span class="accounts-info" style="text-transform: unset;">{{profile.profileId}}</span>
                 </a>
@@ -284,19 +284,19 @@
     <script type="text/ng-template" id="manageLoginsModal.html">
       <div class="modal-header">
         <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="errorLabel">{{'MAIN.MANAGE_LOGINS' | translate }}</h4>
+        <h4 class="modal-title" aria-label="Manage Logins">{{'MAIN.MANAGE_LOGINS' | translate }}</h4>
       </div>
       <div class="modal-body">
             <div class="row" style="text-align: center;">
               <div class="col-sm-6 streamer-login top-padding">
                 <img class="login-pic" ng-src="{{getAccountAvatar('streamer')}}">
                 <h2>{{cs.accounts.streamer.username}}</h2>
-                <button type="button" class="btn" ng-class="cs.accounts.streamer.loggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('streamer')">{{cs.accounts.streamer.loggedIn ? "Logout" : "Login"}}</button>                
+                <button type="button" class="btn" ng-class="cs.accounts.streamer.loggedIn ? 'btn-danger' : 'btn-success'" aria-label="cs.accounts.streamer.loggedIn ? 'Log Out Streamer Account' : 'Log In Streamer Account'" ng-click="loginOrLogout('streamer')">{{cs.accounts.streamer.loggedIn ? "Logout" : "Login"}}</button>                
               </div>
               <div class="col-sm-6 bot-login top-padding">
                 <img class="login-pic" ng-src="{{getAccountAvatar('bot')}}">
                 <h2>{{cs.accounts.bot.username}}</h2>
-                <button type="button" class="btn" ng-class="cs.accounts.bot.loggedIn ? 'btn-danger' : 'btn-success'" ng-click="loginOrLogout('bot')">{{cs.accounts.bot.loggedIn ? "Logout" : "Login"}}</button>
+                <button type="button" class="btn" ng-class="cs.accounts.bot.loggedIn ? 'btn-danger' : 'btn-success'" aria-label="cs.accounts.bot.loggedIn ? 'Log Out Bot Account' : 'Log In Bot Account'" ng-click="loginOrLogout('bot')">{{cs.accounts.bot.loggedIn ? "Logout" : "Login"}}</button>
               </div>
             </div>
       </div>
@@ -333,7 +333,7 @@
     <script type="text/ng-template" id="renameProfileModal.html">
         <div class="modal-header">
           <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="errorLabel">Rename Profile</h4>
+          <h4 class="modal-title">Rename Profile</h4>
         </div>
         <div class="modal-body">
   
@@ -357,7 +357,7 @@
     <script type="text/ng-template" id="deleteProfileModal.html">
       <div class="modal-header">
         <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="errorLabel">Delete Profile</h4>
+        <h4 class="modal-title">Delete Profile</h4>
       </div>
       <div class="modal-body">
         WARNING! You are about to delete this profile and all settings associated with it. Are you sure this is what you want to do?
