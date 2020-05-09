@@ -43,11 +43,6 @@ function buildCommandRegexStr(trigger, scanWholeMessage) {
     return `^${escapedTrigger}(?:\\b|$|(?=\\s))`;
 }
 
-function buildArgRegexStr(argRegex) {
-    let escapedRegex = util.escapeRegExp(argRegex);
-    return `^${escapedRegex}$`;
-}
-
 function checkForCommand(rawMessage) {
     if (rawMessage == null || rawMessage.length < 1) return null;
     let normalziedRawMessage = rawMessage.toLowerCase();
@@ -277,10 +272,9 @@ async function handleChatEvent(chatEvent) {
     let triggeredSubcmd = null;
     if (!command.scanWholeMessage && userCmd.args.length > 0 && command.subCommands) {
         for (let subcmd of command.subCommands) {
-            if (!subcmd.active) continue;
+            if (subcmd.active === false) continue;
             if (subcmd.regex) {
-                let regexStr = buildArgRegexStr(subcmd.arg);
-                let regex = new RegExp(regexStr, "gi");
+                let regex = new RegExp(`^${subcmd.arg}$`, "gi");
                 if (regex.test(userCmd.args[0])) {
                     triggeredSubcmd = subcmd;
                     userCmd.triggeredArg = subcmd.arg;
