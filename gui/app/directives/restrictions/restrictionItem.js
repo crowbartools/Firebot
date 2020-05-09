@@ -28,7 +28,6 @@
                                 </div>
                             </div>
                             
-
                     </div>
                     <div uib-collapse="hidePanel" class="expandable-item-expanded">
                         <div style="padding: 15px 20px 10px 20px;">

@@ -138,7 +138,6 @@ function addControlHandlers(controls) {
 }
 
 function triggerMixplayDisconnect(errorMessage) {
-    renderWindow.webContents.send('connection', "Offline");
     mixplayManager.setConnectedProjectId(null);
     mixplayConnected = false;
     defaultSceneId = null;
@@ -148,6 +147,7 @@ function triggerMixplayDisconnect(errorMessage) {
     if (errorMessage) {
         renderWindow.webContents.send("error", errorMessage);
     }
+    renderWindow.webContents.send('connection', "Offline");
 }
 
 async function connectToMixplay() {

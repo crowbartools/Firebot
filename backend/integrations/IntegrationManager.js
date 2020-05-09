@@ -180,6 +180,8 @@ class IntegrationManager extends EventEmitter {
         }
 
         renderWindow.webContents.send("integrationsUpdated");
+
+        frontEndCommunicator.send("integrationUnlinked", integrationId);
     }
 
     async connectIntegration(integrationId) {

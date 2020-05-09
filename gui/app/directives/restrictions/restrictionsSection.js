@@ -13,9 +13,7 @@
                 modalId: "@"
             },
             template: `
-                <div style="margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 5px;">Restrictions <span class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">(Permissions, currency costs, and more)</span></h3>
-                    
+                <div>
                     <div style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand'; color: #8A8B8D;">
                         <span>Only trigger when </span>
 

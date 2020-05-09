@@ -1167,11 +1167,13 @@ function chatConnect() {
                 "error",
                 "You need to log into your streamer account to be able to connect to chat."
             );
+            renderWindow.webContents.send("chatConnection", "Offline");
             return reject();
         }
 
         let tokenSuccess = await accountAccess.ensureTokenRefreshed("streamer");
         if (!tokenSuccess) {
+            renderWindow.webContents.send("chatConnection", "Offline");
             renderWindow.webContents.send("error", "There was an issue refreshing your streamer account auth token. Please try again. If the issue persists, try re-logging into your account.");
             return reject();
         }
@@ -1179,6 +1181,7 @@ function chatConnect() {
         try {
             await streamerConnect(streamer);
         } catch (err) {
+            renderWindow.webContents.send("chatConnection", "Offline");
             logger.error("error while connecting streamer", err);
             return reject();
         }

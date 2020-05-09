@@ -1,8 +1,9 @@
 'use strict';
 
-// generic modal for asking the user for text input
-
 (function() {
+
+    const electron = require('electron');
+
     angular
         .module('firebotApp')
         .component("dateModal", {
@@ -16,7 +17,7 @@
                     <div style="width: 95%; position: relative;">        
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
                             <div class="input-group">
-                                <input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.model" is-open="$ctrl.datePickerOpen" datepicker-options="$ctrl.dateOptions" ng-required="true" show-button-bar="false" placeholder="{{$ctrl.inputPlaceholder}}" aria-describedby="helpBlock"/>
+                                <input type="text" class="form-control" uib-datepicker-popup="{{$ctrl.dateFormat}}" ng-model="$ctrl.model" is-open="$ctrl.datePickerOpen" datepicker-options="$ctrl.dateOptions" ng-required="true" show-button-bar="false" placeholder="{{$ctrl.inputPlaceholder}}" aria-describedby="helpBlock"/>
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="$ctrl.datePickerOpen = true"><i class="fas fa-calendar"></i></button>
                                 </span>
@@ -38,6 +39,9 @@
             },
             controller: function() {
                 let $ctrl = this;
+
+                let isUSLocale = electron.remote.app.getLocale() === "en-US";
+                $ctrl.dateFormat = isUSLocale ? "MM/dd/yyyy" : "dd/MM/yyyy";
 
                 $ctrl.model = "";
 

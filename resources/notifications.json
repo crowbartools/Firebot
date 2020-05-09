@@ -1,8 +1,1 @@
-[
-    {
-        "id": 5555556,
-        "title": "V5 Beta Now Available!",
-        "message": "<div>We are incredibly excited to announce the release of the first Firebot V5 Beta! Featuring a built-in MixPlay editor, overhauled commands, events, and timer systems, third party integrations, channel currencies, quotes, multi profile support, and so much more.<br><br>Update notes and download links available <a href ng-click=\"$rootScope.openLinkExternally('https://github.com/crowbartools/Firebot/releases/tag/v5.0.0-beta1')\">here</a>.</div>",
-        "icon": "alert"
-    }
-]
+[]

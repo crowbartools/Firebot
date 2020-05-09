@@ -31,6 +31,7 @@ function UserCommand(trigger, args, commandSender) {
     this.trigger = trigger;
     this.args = args;
     this.triggeredArg = null;
+    this.subcommandId = null;
     this.commandSender = commandSender;
 }
 
@@ -40,6 +41,11 @@ function buildCommandRegexStr(trigger, scanWholeMessage) {
         return `(?:^|\\s)${escapedTrigger}(?:\\b|$|(?=\\s))`;
     }
     return `^${escapedTrigger}(?:\\b|$|(?=\\s))`;
+}
+
+function buildArgRegexStr(argRegex) {
+    let escapedRegex = util.escapeRegExp(argRegex);
+    return `^${escapedRegex}$`;
 }
 
 function checkForCommand(rawMessage) {
@@ -194,9 +200,24 @@ function fireCommand(
         //get system command from manager
         let cmdDef = commandManager.getSystemCommandById(command.id);
 
+        let commandOptions = {};
+        if (command.options != null) {
+            for (let optionName of Object.keys(command.options)) {
+                let option = command.options[optionName];
+                if (option) {
+                    let value = option.value;
+                    if (value == null) {
+                        value = option.default;
+                    }
+                    commandOptions[optionName] = value;
+                }
+            }
+        }
+
         //call trigger event.
         cmdDef.onTriggerEvent({
             command: command,
+            commandOptions: commandOptions,
             userCommand: userCmd,
             chatEvent: chatEvent
         });
@@ -256,9 +277,21 @@ async function handleChatEvent(chatEvent) {
     let triggeredSubcmd = null;
     if (!command.scanWholeMessage && userCmd.args.length > 0 && command.subCommands) {
         for (let subcmd of command.subCommands) {
-            if (subcmd.active && subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()) {
-                triggeredSubcmd = subcmd;
-                userCmd.triggeredArg = subcmd.arg;
+            if (!subcmd.active) continue;
+            if (subcmd.regex) {
+                let regexStr = buildArgRegexStr(subcmd.arg);
+                let regex = new RegExp(regexStr, "gi");
+                if (regex.test(userCmd.args[0])) {
+                    triggeredSubcmd = subcmd;
+                    userCmd.triggeredArg = subcmd.arg;
+                    userCmd.subcommandId = subcmd.id;
+                }
+            } else {
+                if (subcmd.arg.toLowerCase() === userCmd.args[0].toLowerCase()) {
+                    triggeredSubcmd = subcmd;
+                    userCmd.triggeredArg = subcmd.arg;
+                    userCmd.subcommandId = subcmd.id;
+                }
             }
         }
     }
