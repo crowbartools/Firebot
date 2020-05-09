@@ -34,6 +34,13 @@ const quotesManagement = {
         },
         subCommands: [
             {
+                id: "quotelookup",
+                arg: "\\d+",
+                regex: true,
+                usage: "[quoteId]",
+                description: "Displays the quote with the given ID."
+            },
+            {
                 arg: "add",
                 usage: "add [@username] [quoteText]",
                 description: "Adds a new quote.",
@@ -160,6 +167,23 @@ const quotesManagement = {
             }
 
             let triggeredArg = args[0];
+
+            if (event.userCommand.subcommandId === "quotelookup") {
+                let quoteId = parseInt(triggeredArg);
+                const quote = await quotesManager.getQuote(quoteId);
+                if (quote) {
+                    let formattedQuote = getFormattedQuoteString(quote);
+                    Chat.smartSend(formattedQuote);
+                    logger.debug('We pulled a quote using an id: ' + formattedQuote);
+                } else {
+                    // If we get here, it's likely the command was used wrong. Tell the sender they done fucked up
+                    Chat.smartSend(
+                        `Sorry! We couldnt find a quote with that id.`,
+                        event.userCommand.commandSender
+                    );
+                }
+                return resolve();
+            }
 
             switch (triggeredArg) {
             case "add": {
@@ -361,23 +385,6 @@ const quotesManagement = {
                 return resolve();
             }
             default: {
-                let quoteId = parseInt(triggeredArg);
-                if (!isNaN(quoteId)) {
-                    // Most likely a quote id, so go get the quote.
-                    const quote = await quotesManager.getQuote(quoteId);
-                    if (quote) {
-                        let formattedQuote = getFormattedQuoteString(quote);
-                        Chat.smartSend(formattedQuote);
-                        logger.debug('We pulled a quote using an id: ' + formattedQuote);
-                    } else {
-                        // If we get here, it's likely the command was used wrong. Tell the sender they done fucked up
-                        Chat.smartSend(
-                            `Sorry! We couldnt find a quote with that id. Please use a numbered id.`,
-                            event.userCommand.commandSender
-                        );
-                    }
-                    return resolve();
-                }
 
                 // Try getting a quote using word search.
                 const quote = await quotesManagement.getRandomQuoteByWord(triggeredArg);

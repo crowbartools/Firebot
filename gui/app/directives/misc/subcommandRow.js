@@ -10,7 +10,7 @@
       <div style="margin-bottom: 10px">
         <div class="sys-command-row" ng-init="hidePanel = true" ng-click="hidePanel = !hidePanel" ng-class="{'expanded': !hidePanel}">
 
-          <div style="flex-basis: 30%;padding-left: 20px;">{{$ctrl.subcommand.arg}}</div>
+          <div style="flex-basis: 30%;padding-left: 20px;">{{$ctrl.subcommand.regex ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</div>
 
           <div style="width: 25%">
             <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
