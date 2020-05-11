@@ -10,10 +10,7 @@ const channelAccess = require('../../common/channel-access');
 const activeChatter = require('../../roles/role-managers/active-chatters');
 const activeMixplay = require('../../roles/role-managers/active-mixplay-users');
 
-const activeUserLists = {
-    /**
-   * The definition of the Effect
-   */
+const model = {
     definition: {
         id: "firebot:activeUserLists",
         name: "Manage Active User Lists",
@@ -27,14 +24,6 @@ const activeUserLists = {
             EffectTrigger.ALL
         )
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
-    globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
     <eos-container header="List Type" pad-top="true">
         <div class="btn-group">
@@ -76,13 +65,7 @@ const activeUserLists = {
         </div>
     </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   */
     optionsController: () => {},
-    /**
-   * When the effect is triggered by something
-   */
     optionsValidator: effect => {
         let errors = [];
         if (effect.list == null || effect.list === "") {
@@ -96,9 +79,6 @@ const activeUserLists = {
         }
         return errors;
     },
-    /**
-   * When the effect is triggered by something
-   */
     onTriggerEvent: async event => {
         let username = event.effect.username;
         if (username == null) {
@@ -146,17 +126,7 @@ const activeUserLists = {
         }
 
         return true;
-    },
-    /**
-   * Code to run in the overlay
-   */
-    overlayExtension: {
-        dependencies: {
-            css: [],
-            js: []
-        },
-        event: {}
     }
 };
 
-module.exports = activeUserLists;
+module.exports = model;

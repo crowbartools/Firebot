@@ -33,7 +33,7 @@ const model = {
         <eos-container header="Hearts" pad-top="true">
             <div class="input-group">
                 <span class="input-group-addon" id="hearts-effect-type">Number of hearts</span>
-                <input ng-model="effect.progression" type="text" class="form-control" id="chat-progression-setting" aria-describedby="chat-progression-effect-type" placeholder="Number of hearts (ex: 20)" replace-variables>
+                <input ng-model="effect.progression" type="text" class="form-control" id="chat-progression-setting" aria-describedby="chat-progression-effect-type" placeholder="Enter number (ex: 20)" replace-variables>
             </div>
         </eos-container>
     `,
