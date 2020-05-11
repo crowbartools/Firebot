@@ -46,7 +46,7 @@ exports.loadEffects = () => {
     const streamGame = require("./builtin/stream-game");
     const moderatorBan = require("./builtin/moderatorBan");
     const moderatorPurge = require("./builtin/moderatorPurge");
-
+    const moderatorTimeout = require("./builtin/moderatorTimeout");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -91,4 +91,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(streamGame);
     effectManager.registerEffect(moderatorBan);
     effectManager.registerEffect(moderatorPurge);
+    effectManager.registerEffect(moderatorTimeout);
 };
