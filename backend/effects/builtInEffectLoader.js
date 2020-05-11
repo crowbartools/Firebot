@@ -44,6 +44,7 @@ exports.loadEffects = () => {
     const channelProgression = require("./builtin/channelProgression");
     const streamTitle = require("./builtin/stream-title");
     const streamGame = require("./builtin/stream-game");
+    const moderatorBan = require("./builtin/moderator-ban");
 
 
     // register them
@@ -87,4 +88,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(channelProgression);
     effectManager.registerEffect(streamTitle);
     effectManager.registerEffect(streamGame);
+    effectManager.registerEffect(moderatorBan);
 };

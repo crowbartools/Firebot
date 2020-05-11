@@ -18,7 +18,7 @@ const channelProgression = {
         name: "Give Progression (Hearts)",
         description: "Give hearts to a user, or take them away.",
         icon: "fad fa-heart",
-        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED],
+        categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.MODERATION],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

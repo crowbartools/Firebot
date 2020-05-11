@@ -17,7 +17,7 @@ const streamtitle = {
         name: "Set Stream Title",
         description: "Set the title of the stream.",
         icon: "fad fa-comment-dots",
-        categories: [EffectCategory.COMMON],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

@@ -19,7 +19,7 @@ const activeUserLists = {
         name: "Manage Active User Lists",
         description: "Add or remove users from the active user lists.",
         icon: "fad fa-users",
-        categories: [EffectCategory.COMMON],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],
