@@ -41,6 +41,7 @@ exports.loadEffects = () => {
     const adBreak = require("./builtin/ad-break");
     const runProgram = require("./builtin/run-program");
     const streamTitle = require("./builtin/stream-title");
+    const streamGame = require("./builtin/stream-game");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -80,4 +81,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(adBreak);
     effectManager.registerEffect(runProgram);
     effectManager.registerEffect(streamTitle);
+    effectManager.registerEffect(streamGame);
 };
