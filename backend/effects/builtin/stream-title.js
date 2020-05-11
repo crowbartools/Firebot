@@ -24,7 +24,7 @@ const model = {
     },
     optionsTemplate: `
         <eos-container header="Stream title" pad-top="true">
-            <textarea ng-model="effect.title" class="form-control" name="text" placeholder="Enter stream title" rows="4" cols="40" replace-variables></textarea>
+            <input ng-model="effect.title" class="form-control" type="text" placeholder="Enter stream title" replace-variables menu-position="below">
         </eos-container>
     `,
     optionsController: () => {},
