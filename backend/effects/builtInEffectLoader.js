@@ -48,6 +48,7 @@ exports.loadEffects = () => {
     const moderatorBan = require("./builtin/moderatorBan");
     const moderatorPurge = require("./builtin/moderatorPurge");
     const moderatorTimeout = require("./builtin/moderatorTimeout");
+    const moderatorMod = require("./builtin/moderatorMod");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -94,4 +95,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(moderatorBan);
     effectManager.registerEffect(moderatorPurge);
     effectManager.registerEffect(moderatorTimeout);
+    effectManager.registerEffect(moderatorMod);
 };
