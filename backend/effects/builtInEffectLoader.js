@@ -40,6 +40,7 @@ exports.loadEffects = () => {
     const stopEffectExecution = require("./builtin/stop-effect-execution");
     const adBreak = require("./builtin/ad-break");
     const runProgram = require("./builtin/run-program");
+    const activeUserLists = require("./builtin/activeUserLists");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -78,4 +79,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(stopEffectExecution);
     effectManager.registerEffect(adBreak);
     effectManager.registerEffect(runProgram);
+    effectManager.registerEffect(activeUserLists);
 };
