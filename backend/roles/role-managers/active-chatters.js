@@ -66,6 +66,14 @@ function clearInactiveChatters() {
     activeChatters = activeChatters.filter(u => u != null && u.time >= expiredTime);
 }
 
+async function removeUserFromList(removedUser) {
+    activeChatters = activeChatters.filter(u => u != null && u.username !== removedUser.user_name);
+}
+
+async function clearList() {
+    activeChatters = [];
+}
+
 function getActiveChatters() {
     return activeChatters;
 }
@@ -117,3 +125,5 @@ exports.getActiveChatters = getActiveChatters;
 exports.addOrUpdateActiveChatter = addOrUpdateActiveChatter;
 exports.cycleActiveChatters = cycleActiveChatters;
 exports.isUsernameActiveChatter = isUsernameActiveChatter;
+exports.removeUserFromList = removeUserFromList;
+exports.clearList = clearList;

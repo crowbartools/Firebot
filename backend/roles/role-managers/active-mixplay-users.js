@@ -56,22 +56,18 @@ async function addOrUpdateActiveUser(user) {
     activeMixplayUsers.push(user);
 }
 
-function removeLeavingUser(username) {
-    for (let userIndex in activeMixplayUsers) {
-        if (activeMixplayUsers[userIndex] != null) {
-            let user = activeMixplayUsers[userIndex];
-            if (user.username === username) {
-                logger.debug(user.username + " has left mixplay. Removing from active mixplay list.");
-                activeMixplayUsers.splice(userIndex, 1);
-            }
-        }
-    }
-}
-
 function clearInactiveUsers() {
     logger.debug("Clearing inactive people from active mixplay users list.");
     let expiredTime = new Date().getTime() - inactiveTimer;
     activeMixplayUsers = activeMixplayUsers.filter(u => u != null && u.time >= expiredTime);
+}
+
+async function removeUserFromList(removedUser) {
+    activeMixplayUsers = activeMixplayUsers.filter(u => u != null && u.username !== removedUser.username);
+}
+
+async function clearList() {
+    activeMixplayUsers = [];
 }
 
 function getActiveMixplayUsers() {
@@ -125,4 +121,5 @@ exports.getActiveMixplayUsers = getActiveMixplayUsers;
 exports.addOrUpdateActiveUser = addOrUpdateActiveUser;
 exports.cycleActiveMixplayUsers = cycleActiveMixplayUsers;
 exports.isUsernameActiveUser = isUsernameActiveUser;
-exports.removeLeavingUser = removeLeavingUser;
+exports.removeUserFromList = removeUserFromList;
+exports.clearList = clearList;
