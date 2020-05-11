@@ -14,7 +14,7 @@ const model = {
         name: "Set Stream Game",
         description: "Set the stream game.",
         icon: "fad fa-gamepad",
-        categories: [EffectCategory.COMMON],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],
