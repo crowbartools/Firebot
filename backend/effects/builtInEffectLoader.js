@@ -40,6 +40,7 @@ exports.loadEffects = () => {
     const stopEffectExecution = require("./builtin/stop-effect-execution");
     const adBreak = require("./builtin/ad-break");
     const runProgram = require("./builtin/run-program");
+    const channelProgression = require("./builtin/channelProgression");
     const streamTitle = require("./builtin/stream-title");
     const streamGame = require("./builtin/stream-game");
 
@@ -80,6 +81,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(stopEffectExecution);
     effectManager.registerEffect(adBreak);
     effectManager.registerEffect(runProgram);
+    effectManager.registerEffect(channelProgression);
     effectManager.registerEffect(streamTitle);
     effectManager.registerEffect(streamGame);
 };
