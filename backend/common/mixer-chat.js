@@ -121,11 +121,34 @@ function updateStreamAudience(audienceType) {
     );
 }
 
-function updateStreamGame(gameQuery) {
-    logger.info("updating channel game to: " + gameQuery);
+function updateStreamGameById(gameId) {
+    logger.info(`Updating channel to game id: ${gameId}`);
 
     let streamer = accountAccess.getAccounts().streamer;
 
+    if (gameId == null || isNaN(gameId)) return;
+
+    request.patch(
+        `https://mixer.com/api/v1/channels/${streamer.channelId}`,
+        {
+            auth: {
+                bearer: streamer.auth.access_token
+            },
+            body: {
+                typeId: gameId
+            },
+            json: true
+        },
+        err => {
+            if (err) {
+                logger.error("Error setting game for channel", err);
+            }
+        }
+    );
+}
+
+function updateStreamGame(gameQuery) {
+    logger.info("Searching for game with query: " + gameQuery);
     streamerClient
         .request("GET", "types", {
             qs: {
@@ -136,32 +159,13 @@ function updateStreamGame(gameQuery) {
             res => {
                 let gameList = res.body;
 
-                logger.silly(gameList);
-
                 if (gameList != null && Array.isArray(gameList) && gameList.length > 0) {
                     let firstGame = gameList[0];
-
-                    request.patch(
-                        "https://mixer.com/api/v1/channels/" + streamer.channelId,
-                        {
-                            auth: {
-                                bearer: streamer.auth.access_token
-                            },
-                            body: {
-                                typeId: firstGame.id
-                            },
-                            json: true
-                        },
-                        err => {
-                            if (err) {
-                                logger.error("error setting game for channel", err);
-                            }
-                        }
-                    );
+                    updateStreamGameById(firstGame.id);
                 }
             },
             function(err) {
-                logger.error("error while looking up games", err);
+                logger.error("Error while looking up games", err);
             }
         );
 }
@@ -1533,6 +1537,7 @@ exports.getCurrentViewerList = getCurrentViewerList;
 exports.getCurrentViewerListV2 = getCurrentViewerListV2;
 exports.updateStreamTitle = updateStreamTitle;
 exports.updateStreamGame = updateStreamGame;
+exports.updateStreamGameById = updateStreamGameById;
 exports.updateStreamAudience = updateStreamAudience;
 exports.createClip = createClip;
 exports.requestAsStreamer = requestAsStreamer;
