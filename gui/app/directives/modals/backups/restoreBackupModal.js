@@ -22,7 +22,7 @@
                 <p ng-if="$ctrl.restoreHasError" style="color:#ed5e5e;">
                     <b>Restore failed because:</b><br>{{$ctrl.errorMessage}}
                 </p>
-                <p ng-if="$ctrl.restoreHasError" class="muted" style="font-size:12px;">Note: You can also manually restore your backup<br>by following the steps <a href="https://github.com/crowbartools/Firebot/wiki/Firebot-V5-Manual-Restore" style="color:#7bddfa;text-decoration:underline;">here</a>.</p>
+                <p ng-if="$ctrl.restoreHasError" class="muted" style="font-size:12px;">Note: You can also manually restore your backup<br>by following <a href="https://github.com/crowbartools/Firebot/wiki/Firebot-V5-Manual-Restore" style="color:#7bddfa;text-decoration:underline;">these steps</a>.</p>
                 <p ng-if="$ctrl.restoreComplete">
                     The restore has completed successfully! Please click <b>Restart</b> below to restart Firebot, this ensures the restored data is properly loaded.
                 </p>
