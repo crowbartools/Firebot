@@ -22,6 +22,7 @@ exports.loadReplaceVariables = () => {
         'control-tooltip',
         'costream',
         'count',
+        'counter',
         'currency',
         'current-viewer-count',
         'custom-role-user-count',

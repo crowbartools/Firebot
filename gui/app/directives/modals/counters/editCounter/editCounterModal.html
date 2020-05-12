@@ -1,0 +1,48 @@
+<div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">
+      <div style="font-size: 22px;">Edit Counter:</div>
+      <div style="font-weight:bold;font-size: 24px;">{{$ctrl.counter.name}}</div>
+    </h4>
+</div>
+<div class="modal-body">
+
+    <setting-container>
+        <p>- Increment with the <b>Update Counter</b> effect</p>
+        <p>- Display value with <b>$counter[{{$ctrl.counter.name}}]</b></p>
+    </setting-container>
+
+    <setting-container header="Value">
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon" id="basic-addon3">Value</span>
+            <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.counter.value" placeholder="Enter value">
+        </div>
+    </setting-container>
+
+    <setting-container header="Settings" pad-top="true">
+        <div style="padding-top:15px">
+            <label class="control-fb control--checkbox"> Save Counter To Txt File
+                <input type="checkbox" ng-model="$ctrl.counter.saveToTxtFile" ng-change="$ctrl.saveToTxtFileChanged()">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+        <div ng-show="$ctrl.counter.saveToTxtFile">
+            <div>Txt File Path:</div>
+            <div style="margin: 15px 0;">
+                <div class="input-group" style="width:75%;">
+                    <input type="text" class="form-control" style="cursor:text;" ng-model="$ctrl.txtFilePath" disabled>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="$ctrl.copyTxtFilePath()">Copy</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <p class="muted">You can add the text file to your broadcasting software to display the counter value on your stream.</p>
+    </setting-container>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-danger pull-left" ng-click="$ctrl.delete()">Delete</button>
+    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-primary add-new-board-save" ng-click="$ctrl.save()">Save</button>
+</div>

@@ -100,7 +100,8 @@
         viewersService,
         chatModerationService,
         ttsService,
-        settingsService
+        settingsService,
+        countersService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -118,6 +119,8 @@
         viewersService.updateViewers();
 
         chatModerationService.loadChatModerationData();
+
+        countersService.loadCounters();
 
         //start notification check
         $timeout(() => {

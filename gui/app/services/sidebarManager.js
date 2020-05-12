@@ -126,6 +126,11 @@
                 .when("/quotes", {
                     templateUrl: "./templates/_quotes.html",
                     controller: "quotesController"
+                })
+
+                .when("/counters", {
+                    templateUrl: "./templates/_counters.html",
+                    controller: "countersController"
                 });
         }
     ]);

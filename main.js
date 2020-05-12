@@ -502,15 +502,15 @@ async function createDefaultFoldersAndFiles() {
             }
 
             // Create the events folder if it doesn't exist.
-            if (
-                !dataAccess.userDataPathExistsSync(
-                    "/profiles/" + profileId + "/events"
-                )
-            ) {
+            if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/events")) {
                 logger.info("Can't find the events folder, creating one now...");
-                dataAccess.makeDirInUserDataSync(
-                    "/profiles/" + profileId + "/events"
-                );
+                dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/events");
+            }
+
+            // Create the counters folder if it doesn't exist.
+            if (!dataAccess.userDataPathExistsSync(`/profiles/${profileId}/counters`)) {
+                logger.info("Can't find the counters folder, creating one now...");
+                dataAccess.makeDirInUserDataSync(`/profiles/${profileId}/counters`);
             }
 
         }
@@ -575,6 +575,9 @@ function appOnReady() {
 
         const chatModerationManager = require("./backend/chat/moderation/chat-moderation-manager");
         chatModerationManager.load();
+
+        const countersManager = require("./backend/counters/counter-manager");
+        countersManager.loadCounters();
 
         //get importer in memory
         require("./backend/import/v4/v4-importer");

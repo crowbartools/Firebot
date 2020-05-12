@@ -50,6 +50,7 @@ exports.loadEffects = () => {
     const moderatorTimeout = require("./builtin/moderatorTimeout");
     const moderatorMod = require("./builtin/moderatorMod");
     const clearChat = require("./builtin/clearChat");
+    const updateCounter = require("./builtin/update-counter");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -98,4 +99,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(moderatorTimeout);
     effectManager.registerEffect(moderatorMod);
     effectManager.registerEffect(clearChat);
+    effectManager.registerEffect(updateCounter);
 };
