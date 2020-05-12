@@ -6,6 +6,10 @@ const path = require("path");
 const uuid = require("uuid/v4");
 const sanitizeFileName = require("sanitize-filename");
 const frontendCommunicator = require("../common/frontend-communicator");
+const accountAccess = require("../common/account-access");
+
+const { TriggerType } = require("../common/EffectType");
+const effectRunner = require("../common/effect-runner");
 
 const getCountersDb = () => profileManager.getJsonDbInProfile("/counters/counters");
 
@@ -59,10 +63,6 @@ function saveCounter(counter) {
     } catch (err) {
         logger.error(err);
     }
-
-    if (!counter.saveToTxtFile) {
-        deleteCounterTxtFile(counter.name);
-    }
 }
 
 function deleteCounter(counterId) {
@@ -111,31 +111,72 @@ async function updateCounterValue(counterId, value, overridePreviousValue = fals
 
     const counter = getCounter(counterId);
 
-    const newValue = overridePreviousValue ? value : counter.value + value;
+    let newValue = overridePreviousValue ? value : counter.value + value;
+
+    let hitMin = false, hitMax = false;
+    if (counter.maximum !== undefined && counter.maximum !== null) {
+        if (counter.value !== counter.maximum && newValue >= counter.maximum) {
+            newValue = counter.maximum;
+            hitMax = true;
+        }
+    }
+    if (counter.minimum !== undefined && counter.minimum !== null) {
+        if (counter.value !== counter.minimum && newValue <= counter.minimum) {
+            newValue = counter.minimum;
+            hitMin = true;
+        }
+    }
+
+    if (newValue === counter.value) {
+        return;
+    }
+
     counter.value = newValue;
 
     saveCounter(counter);
 
-    if (counter.saveToTxtFile) {
-        await updateCounterTxtFile(counter.name, counter.value);
-    }
+    await updateCounterTxtFile(counter.name, counter.value);
 
     frontendCommunicator.send("counter-update", {
         counterId: counter.id,
         counterValue: counter.value
     });
+
+    let effects = null;
+    if (hitMin) {
+        effects = counter.minimumEffects;
+    } else if (hitMax) {
+        effects = counter.maximumEffects;
+    } else {
+        effects = counter.updateEffects;
+    }
+
+    if (effects) {
+        let processEffectsRequest = {
+            trigger: {
+                type: TriggerType.COUNTER,
+                metadata: {
+                    username: accountAccess.getAccounts().streamer.username,
+                    counter: {
+                        id: counter.id,
+                        name: counter.name,
+                        value: counter.value,
+                        minimum: counter.minimum,
+                        maximum: counter.maximum
+                    }
+                }
+            },
+            effects: effects
+        };
+        effectRunner.processEffects(processEffectsRequest);
+    }
 }
 
-frontendCommunicator.on("create-counter-txt-file", counterId => {
+frontendCommunicator.on("rename-counter", (data) => {
+    let { counterId, newName } = data;
     const counter = getCounter(counterId);
     if (counter == null) return;
-    updateCounterTxtFile(counter.name, counter.value);
-});
 
-frontendCommunicator.on("delete-counter-txt-file", counterId => {
-    const counter = getCounter(counterId);
-    if (counter == null) return;
-    deleteCounterTxtFile(counter.name);
 });
 
 frontendCommunicator.onAsync("get-counters", async () => {
@@ -149,9 +190,7 @@ frontendCommunicator.onAsync("create-counter", async (counterName) => {
 
 frontendCommunicator.on("save-counter", async (counter) => {
     saveCounter(counter);
-    if (counter.saveToTxtFile) {
-        updateCounterTxtFile(counter.name, counter.value);
-    }
+    updateCounterTxtFile(counter.name, counter.value);
 });
 
 frontendCommunicator.on("delete-counter", async (counterId) => {

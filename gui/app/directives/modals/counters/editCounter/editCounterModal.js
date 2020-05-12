@@ -1,7 +1,5 @@
 "use strict";
 
-// Basic template for a modal component, copy this and rename to build a modal.
-
 (function() {
     angular.module("firebotApp").component("editCounterModal", {
         templateUrl: "./directives/modals/counters/editCounter/editCounterModal.html",
@@ -16,14 +14,6 @@
             $ctrl.txtFilePath = "";
 
             $ctrl.counter = null;
-
-            $ctrl.saveToTxtFileChanged = () => {
-                if ($ctrl.counter.saveToTxtFile) {
-                    countersService.createTxtFileForCounter($ctrl.counter.id);
-                } else {
-                    countersService.deleteTxtFileForCounter($ctrl.counter.id);
-                }
-            };
 
             $ctrl.copyTxtFilePath = function() {
                 $rootScope.copyTextToClipboard($ctrl.txtFilePath);
@@ -50,6 +40,19 @@
                         counter: $ctrl.counter
                     }
                 });
+            };
+
+            $ctrl.triggerMeta = {};
+
+            $ctrl.modalId = "Edit Counter";
+            $ctrl.updateEffectsListUpdated = function(effects) {
+                $ctrl.counter.updateEffects = effects;
+            };
+            $ctrl.maximumEffectsListUpdated = function(effects) {
+                $ctrl.counter.maximumEffects = effects;
+            };
+            $ctrl.minimumEffectsListUpdated = function(effects) {
+                $ctrl.counter.minimumEffects = effects;
             };
 
             $ctrl.$onInit = function() {

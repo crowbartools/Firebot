@@ -10,6 +10,16 @@
     <setting-container>
         <p>- Increment with the <b>Update Counter</b> effect</p>
         <p>- Display value with <b>$counter[{{$ctrl.counter.name}}]</b></p>
+        <div><b>Txt File Path:</b></div>
+        <div style="margin: 15px 0;">
+            <div class="input-group" style="width:75%;">
+                <input type="text" class="form-control" style="cursor:text;" ng-model="$ctrl.txtFilePath" disabled>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="$ctrl.copyTxtFilePath()">Copy</button>
+                </span>
+            </div>
+        </div>
+        <p class="muted" style="font-size:15px;">Note: You can add the text file to your broadcasting software to display the counter value on your stream.</p>
     </setting-container>
 
     <setting-container header="Value">
@@ -20,24 +30,29 @@
     </setting-container>
 
     <setting-container header="Settings" pad-top="true">
-        <div style="padding-top:15px">
-            <label class="control-fb control--checkbox"> Save Counter To Txt File
-                <input type="checkbox" ng-model="$ctrl.counter.saveToTxtFile" ng-change="$ctrl.saveToTxtFileChanged()">
-                <div class="control__indicator"></div>
-            </label>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon" id="basic-addon3">Minimum <span class="muted" style="font-size: 9px;">(Optional)</span></span>
+            <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.counter.minimum" placeholder="Enter value">
         </div>
-        <div ng-show="$ctrl.counter.saveToTxtFile">
-            <div>Txt File Path:</div>
-            <div style="margin: 15px 0;">
-                <div class="input-group" style="width:75%;">
-                    <input type="text" class="form-control" style="cursor:text;" ng-model="$ctrl.txtFilePath" disabled>
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" ng-click="$ctrl.copyTxtFilePath()">Copy</button>
-                    </span>
-                </div>
-            </div>
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon" id="basic-addon3">Maximum <span class="muted" style="font-size: 9px;">(Optional)</span></span>
+            <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.counter.maximum" placeholder="Enter value">
         </div>
-        <p class="muted">You can add the text file to your broadcasting software to display the counter value on your stream.</p>
+    </setting-container>
+
+    <setting-container header="Effects On Update" pad-top="true">
+        <p>These effects are ran everytime the Counter value updates, unless the value has reached the maximum or minimum.</p>
+        <effect-list header="What should this Counter do on every update?" effects="$ctrl.counter.updateEffects" trigger="counter" trigger-meta="$ctrl.triggerMeta" update="$ctrl.updateEffectsListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
+    </setting-container>
+
+    <setting-container header="Effects On Minimum" pad-top="true" ng-show="$ctrl.counter.minimum !== undefined && $ctrl.counter.minimum !== null">
+        <p>These effects are ran when the minimum value is reached.</p>
+        <effect-list header="What should this Counter do when it reaches the minimum value?" effects="$ctrl.counter.minimumEffects" trigger="counter" trigger-meta="$ctrl.triggerMeta" update="$ctrl.minimumEffectsListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
+    </setting-container>
+
+    <setting-container header="Effects On Maximum" pad-top="true" ng-show="$ctrl.counter.maximum !== undefined && $ctrl.counter.maximum !== null">
+        <p>These effects are ran when the maximum value is reached.</p>
+        <effect-list header="What should this Counter do when it reaches the maximum value?" effects="$ctrl.counter.maximumEffects" trigger="counter" trigger-meta="$ctrl.triggerMeta" update="$ctrl.maximumEffectsListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
     </setting-container>
 </div>
 
