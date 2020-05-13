@@ -42,8 +42,6 @@
                 });
             };
 
-            $ctrl.triggerMeta = {};
-
             $ctrl.valueIsNull = (value) => value === undefined || value === null;
 
             $ctrl.editMinimum = () => {
