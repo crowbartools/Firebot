@@ -6,9 +6,10 @@
         bindings: {
             resolve: "<",
             close: "&",
-            dismiss: "&"
+            dismiss: "&",
+            modalInstance: "<"
         },
-        controller: function($rootScope, ngToast, countersService, utilityService) {
+        controller: function($rootScope, $scope, ngToast, countersService, utilityService) {
             let $ctrl = this;
 
             $ctrl.txtFilePath = "";
@@ -147,7 +148,6 @@
                 );
             };
 
-            $ctrl.modalId = "Edit Counter";
             $ctrl.updateEffectsListUpdated = function(effects) {
                 $ctrl.counter.updateEffects = effects;
             };
@@ -172,6 +172,24 @@
                 $ctrl.counter = JSON.parse(JSON.stringify($ctrl.resolve.counter));
 
                 $ctrl.txtFilePath = countersService.getTxtFilePath($ctrl.counter.name);
+
+                let modalId = $ctrl.resolve.modalId;
+                $ctrl.modalId = modalId;
+                utilityService.addSlidingModal(
+                    $ctrl.modalInstance.rendered.then(() => {
+                        let modalElement = $("." + modalId).children();
+                        return {
+                            element: modalElement,
+                            name: "Edit Counter",
+                            id: modalId,
+                            instance: $ctrl.modalInstance
+                        };
+                    })
+                );
+
+                $scope.$on("modal.closing", function() {
+                    utilityService.removeSlidingModal();
+                });
             };
         }
     });
