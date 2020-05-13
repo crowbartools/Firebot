@@ -57,11 +57,13 @@
                         inputPlaceholder: "Enter number",
                         validationFn: (value) => {
                             return new Promise(resolve => {
-                                if (!$ctrl.valueIsNull($ctrl.counter.maximum) && value >= $ctrl.counter.maximum) {
-                                    return resolve({
-                                        success: false,
-                                        reason: `Minimum cannot be greater than or equal to the maximum (${$ctrl.counter.maximum}).`
-                                    });
+                                if (!$ctrl.valueIsNull(value)) {
+                                    if (!$ctrl.valueIsNull($ctrl.counter.maximum) && value >= $ctrl.counter.maximum) {
+                                        return resolve({
+                                            success: false,
+                                            reason: `Minimum cannot be greater than or equal to the maximum (${$ctrl.counter.maximum}).`
+                                        });
+                                    }
                                 }
                                 resolve(true);
                             });
@@ -69,7 +71,7 @@
                     },
                     (editedValue) => {
                         $ctrl.counter.minimum = editedValue;
-                        if ($ctrl.counter.value < $ctrl.counter.minimum) {
+                        if (!$ctrl.valueIsNull(editedValue) && $ctrl.counter.value < $ctrl.counter.minimum) {
                             $ctrl.counter.value = $ctrl.counter.minimum;
                         }
                     }
@@ -87,19 +89,22 @@
                         inputPlaceholder: "Enter number",
                         validationFn: (value) => {
                             return new Promise(resolve => {
-                                if (!$ctrl.valueIsNull($ctrl.counter.minimum) && value <= $ctrl.counter.minimum) {
-                                    return resolve({
-                                        success: false,
-                                        reason: `Maximum cannot be less than or equal to the minimum (${$ctrl.counter.minimum}).`
-                                    });
+                                if (!$ctrl.valueIsNull(value)) {
+                                    if (!$ctrl.valueIsNull($ctrl.counter.minimum) && value <= $ctrl.counter.minimum) {
+                                        return resolve({
+                                            success: false,
+                                            reason: `Maximum cannot be less than or equal to the minimum (${$ctrl.counter.minimum}).`
+                                        });
+                                    }
                                 }
+
                                 resolve(true);
                             });
                         }
                     },
                     (editedValue) => {
                         $ctrl.counter.maximum = editedValue;
-                        if ($ctrl.counter.value > $ctrl.counter.maximum) {
+                        if (!$ctrl.valueIsNull(editedValue) && $ctrl.counter.value > $ctrl.counter.maximum) {
                             $ctrl.counter.value = $ctrl.counter.maximum;
                         }
                     }
