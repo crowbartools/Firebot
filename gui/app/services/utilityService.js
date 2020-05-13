@@ -198,9 +198,11 @@
                     size: "sm",
                     resolveObj: {
                         model: () => options.model,
+                        inputType: () => options.inputType,
                         label: () => options.label,
                         inputPlaceholder: () => options.inputPlaceholder,
                         saveText: () => options.saveText,
+                        descriptionText: () => options.descriptionText,
                         validationFn: () => options.validationFn,
                         validationText: () => options.validationText,
                         trigger: () => options.trigger,

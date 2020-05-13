@@ -249,6 +249,13 @@
                 
             </div>
             <div class="modal-footer"  style="min-height: 64px; text-align: center;">
+
+                <div ng-if="$ctrl.isFirstStep()">
+                    <span style="animation-delay: 3.3s;display: flex;flex-direction: row;justify-content: center;align-items: center;" class="animated fadeIn">
+                        <a class="btn btn-link import-settings-btn" ng-click="$ctrl.startBackupRestoreProcess()">Restore from a backup</a>
+                    </span>            
+                </div>
+
                 <div>
                     <a class="btn btn-default" ng-click="$ctrl.handlePrevious()" ng-show="$ctrl.showBackButton()">Back</a>
                     <a 
@@ -272,7 +279,7 @@
             dismiss: "&"
         },
         controller: function($rootScope, connectionService, connectionManager,
-            overlayUrlHelper, ngToast, backendCommunicator) {
+            overlayUrlHelper, ngToast, backendCommunicator, backupService) {
             let $ctrl = this;
 
             $ctrl.step = 0;
@@ -467,6 +474,15 @@
 
             $ctrl.getOverlayStatusId = function() {
                 return overlayStatusId;
+            };
+
+            $ctrl.startBackupRestoreProcess = () => {
+                backupService.openBackupZipFilePicker()
+                    .then(backupFilePath => {
+                        if (backupFilePath != null) {
+                            backupService.initiateBackupRestore(backupFilePath);
+                        }
+                    });
             };
 
             $ctrl.$onInit = function() {

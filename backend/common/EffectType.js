@@ -8,6 +8,7 @@ const Trigger = {
     EVENT: "event",
     HOTKEY: "hotkey",
     TIMER: "timer",
+    COUNTER: "counter",
     MANUAL: "manual"
 };
 

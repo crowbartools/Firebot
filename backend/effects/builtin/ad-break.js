@@ -16,7 +16,7 @@ const model = {
         description: "Trigger an ad-break",
         hidden: !accountAccess.getAccounts().streamer.loggedIn || !accountAccess.getAccounts().streamer.partnered,
         icon: "fad fa-ad",
-        categories: [EffectCategory.COMMON],
+        categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
         dependencies: [EffectDependency.CHAT],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON],

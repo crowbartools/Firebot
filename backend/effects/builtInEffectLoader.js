@@ -40,6 +40,17 @@ exports.loadEffects = () => {
     const stopEffectExecution = require("./builtin/stop-effect-execution");
     const adBreak = require("./builtin/ad-break");
     const runProgram = require("./builtin/run-program");
+    const activeUserLists = require("./builtin/activeUserLists");
+    const channelProgression = require("./builtin/channelProgression");
+    const streamTitle = require("./builtin/stream-title");
+    const streamGame = require("./builtin/stream-game");
+    const streamAudience = require("./builtin/stream-audience");
+    const moderatorBan = require("./builtin/moderatorBan");
+    const moderatorPurge = require("./builtin/moderatorPurge");
+    const moderatorTimeout = require("./builtin/moderatorTimeout");
+    const moderatorMod = require("./builtin/moderatorMod");
+    const clearChat = require("./builtin/clearChat");
+    const updateCounter = require("./builtin/update-counter");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -78,4 +89,15 @@ exports.loadEffects = () => {
     effectManager.registerEffect(stopEffectExecution);
     effectManager.registerEffect(adBreak);
     effectManager.registerEffect(runProgram);
+    effectManager.registerEffect(activeUserLists);
+    effectManager.registerEffect(channelProgression);
+    effectManager.registerEffect(streamTitle);
+    effectManager.registerEffect(streamGame);
+    effectManager.registerEffect(streamAudience);
+    effectManager.registerEffect(moderatorBan);
+    effectManager.registerEffect(moderatorPurge);
+    effectManager.registerEffect(moderatorTimeout);
+    effectManager.registerEffect(moderatorMod);
+    effectManager.registerEffect(clearChat);
+    effectManager.registerEffect(updateCounter);
 };
