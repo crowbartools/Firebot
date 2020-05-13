@@ -127,15 +127,19 @@ async function updateCounterValue(counterId, value, overridePreviousValue = fals
 
     let hitMin = false, hitMax = false;
     if (counter.maximum !== undefined && counter.maximum !== null) {
-        if (counter.value !== counter.maximum && newValue >= counter.maximum) {
+        if (newValue >= counter.maximum) {
             newValue = counter.maximum;
-            hitMax = true;
+            if (counter.value !== counter.maximum) {
+                hitMax = true;
+            }
         }
     }
     if (counter.minimum !== undefined && counter.minimum !== null) {
-        if (counter.value !== counter.minimum && newValue <= counter.minimum) {
+        if (newValue <= counter.minimum) {
             newValue = counter.minimum;
-            hitMin = true;
+            if (counter.value !== counter.minimum) {
+                hitMin = true;
+            }
         }
     }
 
