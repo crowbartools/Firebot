@@ -7,7 +7,6 @@
             $scope.countersService = countersService;
 
             $scope.openRenameCounterModal = function(counter) {
-
                 utilityService.openGetInputModal(
                     {
                         model: counter.name,
@@ -25,7 +24,6 @@
                             });
                         },
                         validationText: "Counter name cannot be empty and must be unique."
-
                     },
                     (newName) => {
                         counter.name = newName;
