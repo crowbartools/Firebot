@@ -6,6 +6,34 @@
 
             $scope.countersService = countersService;
 
+            $scope.openRenameCounterModal = function(counter) {
+
+                utilityService.openGetInputModal(
+                    {
+                        model: counter.name,
+                        label: "Rename Counter",
+                        saveText: "Save",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+                                if (value == null || value.trim().length < 1) {
+                                    resolve(false);
+                                } else if (countersService.counterNameExists(value)) {
+                                    resolve(false);
+                                } else {
+                                    resolve(true);
+                                }
+                            });
+                        },
+                        validationText: "Counter name cannot be empty and must be unique."
+
+                    },
+                    (newName) => {
+                        counter.name = newName;
+                        countersService.renameCounter(counter.id, newName);
+                    });
+            };
+
+
             $scope.openCreateCounterModal = function() {
                 utilityService.openGetInputModal(
                     {

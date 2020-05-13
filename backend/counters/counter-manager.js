@@ -41,6 +41,18 @@ function updateCounterTxtFile(counterName, counterValue) {
     return fs.writeFile(txtFilePath, counterValue, 'utf8');
 }
 
+
+function renameCounterTxtFile(oldName, newName) {
+    if (oldName == null || oldName === undefined || newName == null || newName === undefined) {
+        return Promise.resolve();
+    }
+
+    let oldTxtFilePath = getCounterTxtFilePath(oldName);
+    let newTxtFilePath = getCounterTxtFilePath(newName);
+
+    return fs.rename(oldTxtFilePath, newTxtFilePath);
+}
+
 async function deleteCounterTxtFile(counterName) {
     if (counterName == null) {
         return Promise.resolve();
@@ -172,13 +184,6 @@ async function updateCounterValue(counterId, value, overridePreviousValue = fals
     }
 }
 
-frontendCommunicator.on("rename-counter", (data) => {
-    let { counterId, newName } = data;
-    const counter = getCounter(counterId);
-    if (counter == null) return;
-
-});
-
 frontendCommunicator.onAsync("get-counters", async () => {
     return counters ? Object.values(counters) : [];
 });
@@ -191,6 +196,19 @@ frontendCommunicator.onAsync("create-counter", async (counterName) => {
 frontendCommunicator.on("save-counter", async (counter) => {
     saveCounter(counter);
     updateCounterTxtFile(counter.name, counter.value);
+});
+
+frontendCommunicator.on("rename-counter", async (data) => {
+    let { counterId, newName } = data;
+    const counter = getCounter(counterId);
+
+    if (counter) {
+        const oldName = counter.name;
+        renameCounterTxtFile(oldName, newName);
+
+        counter.name = newName;
+        saveCounter(counter);
+    }
 });
 
 frontendCommunicator.on("delete-counter", async (counterId) => {

@@ -37,7 +37,7 @@
                     return false;
                 }
                 const sanitizedName = sanitizeFileName(name).toLowerCase();
-                return service.counters.some(c => sanitizeFileName(c).toLowerCase() === sanitizedName);
+                return service.counters.some(c => sanitizeFileName(c.name).toLowerCase() === sanitizedName);
             };
 
             service.deleteCounter = (counterId) => {
@@ -50,6 +50,18 @@
                 const index = service.counters.findIndex(c => c.id === counter.id);
                 service.counters[index] = counter;
                 backendCommunicator.fireEvent("save-counter", counter);
+            };
+
+            service.renameCounter = (counterId, newName) => {
+                if (counterId == null || newName == null) return;
+                const index = service.counters.findIndex(c => c.id === counterId);
+                if (index >= 0) {
+                    service.counters[index].name = newName;
+                    backendCommunicator.fireEvent("rename-counter", {
+                        counterId,
+                        newName
+                    });
+                }
             };
 
             service.createTxtFileForCounter = (counterId) => {
