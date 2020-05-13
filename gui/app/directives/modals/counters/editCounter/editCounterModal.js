@@ -8,7 +8,7 @@
             close: "&",
             dismiss: "&"
         },
-        controller: function($rootScope, ngToast, countersService) {
+        controller: function($rootScope, ngToast, countersService, utilityService) {
             let $ctrl = this;
 
             $ctrl.txtFilePath = "";
@@ -43,6 +43,106 @@
             };
 
             $ctrl.triggerMeta = {};
+
+            $ctrl.valueIsNull = (value) => value === undefined || value === null;
+
+            $ctrl.editMinimum = () => {
+                utilityService.openGetInputModal(
+                    {
+                        model: $ctrl.counter.minimum,
+                        inputType: "number",
+                        label: "Set Minimum",
+                        saveText: "Save",
+                        descriptionText: "Set the minimum value this counter can be (optional).",
+                        inputPlaceholder: "Enter number",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+                                if (!$ctrl.valueIsNull($ctrl.counter.maximum) && value >= $ctrl.counter.maximum) {
+                                    return resolve({
+                                        success: false,
+                                        reason: `Minimum cannot be greater than or equal to the maximum (${$ctrl.counter.maximum}).`
+                                    });
+                                }
+                                resolve(true);
+                            });
+                        }
+                    },
+                    (editedValue) => {
+                        $ctrl.counter.minimum = editedValue;
+                        if ($ctrl.counter.value < $ctrl.counter.minimum) {
+                            $ctrl.counter.value = $ctrl.counter.minimum;
+                        }
+                    }
+                );
+            };
+
+            $ctrl.editMaximum = () => {
+                utilityService.openGetInputModal(
+                    {
+                        model: $ctrl.counter.maximum,
+                        inputType: "number",
+                        label: "Set Maximum",
+                        saveText: "Save",
+                        descriptionText: "Set the maximum value this counter can be (optional).",
+                        inputPlaceholder: "Enter number",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+                                if (!$ctrl.valueIsNull($ctrl.counter.minimum) && value <= $ctrl.counter.minimum) {
+                                    return resolve({
+                                        success: false,
+                                        reason: `Maximum cannot be less than or equal to the minimum (${$ctrl.counter.minimum}).`
+                                    });
+                                }
+                                resolve(true);
+                            });
+                        }
+                    },
+                    (editedValue) => {
+                        $ctrl.counter.maximum = editedValue;
+                        if ($ctrl.counter.value > $ctrl.counter.maximum) {
+                            $ctrl.counter.value = $ctrl.counter.maximum;
+                        }
+                    }
+                );
+            };
+
+            $ctrl.editCurrentValue = () => {
+                utilityService.openGetInputModal(
+                    {
+                        model: $ctrl.counter.value,
+                        inputType: "number",
+                        label: "Set Current Value",
+                        saveText: "Save",
+                        descriptionText: "Update the current value for this counter.",
+                        inputPlaceholder: "Enter number",
+                        validationFn: (value) => {
+                            return new Promise(resolve => {
+                                if (value == null) {
+                                    return resolve({
+                                        success: false,
+                                        reason: `Counter value cannot be empty.`
+                                    });
+                                }
+                                if (!$ctrl.valueIsNull($ctrl.counter.minimum) && value < $ctrl.counter.minimum) {
+                                    return resolve({
+                                        success: false,
+                                        reason: `Counter value cannot be less than the minimum (${$ctrl.counter.minimum}).`
+                                    });
+                                } else if (!$ctrl.valueIsNull($ctrl.counter.maximum) && value > $ctrl.counter.maximum) {
+                                    return resolve({
+                                        success: false,
+                                        reason: `Counter value cannot be greater than the maximum (${$ctrl.counter.maximum}).`
+                                    });
+                                }
+                                resolve(true);
+                            });
+                        }
+                    },
+                    (editedValue) => {
+                        $ctrl.counter.value = editedValue;
+                    }
+                );
+            };
 
             $ctrl.modalId = "Edit Counter";
             $ctrl.updateEffectsListUpdated = function(effects) {

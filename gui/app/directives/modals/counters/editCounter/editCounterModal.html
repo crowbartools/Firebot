@@ -8,8 +8,28 @@
 <div class="modal-body">
 
     <setting-container>
-        <p>- Increment with the <b>Update Counter</b> effect</p>
-        <p>- Display value with <b>$counter[{{$ctrl.counter.name}}]</b></p>
+        <div class="counter-wrapper">
+            <div class="small-num clickable" ng-click="$ctrl.editMinimum()" aria-label="Edit minimum">
+                <div class="value" ng-show="!$ctrl.valueIsNull($ctrl.counter.minimum)">{{$ctrl.counter.minimum}}</div>
+                <div class="not-set" ng-show="$ctrl.valueIsNull($ctrl.counter.minimum)">(Not set)</div>
+                <div class="counter-title">Minimum<span class="edit-icon"><i class="fas fa-edit"></i></span></div>
+            </div>
+            <div class="bar"></div>
+            <div class="big-num clickable" ng-click="$ctrl.editCurrentValue()" aria-label="Edit counter's current value">
+                <div class="value">{{$ctrl.counter.value}}</div>
+                <div class="counter-title">Current Value<span class="edit-icon"><i class="fas fa-edit"></i></span></div>            
+            </div>
+            <div class="bar"></div>
+            <div class="small-num clickable" ng-click="$ctrl.editMaximum()" aria-label="Edit maximum">
+                <div class="value" ng-show="!$ctrl.valueIsNull($ctrl.counter.maximum)">{{$ctrl.counter.maximum}}</div>
+                <div class="not-set" ng-show="$ctrl.valueIsNull($ctrl.counter.maximum)">(Not set)</div>
+                <div class="counter-title">Maximum<span class="edit-icon"><i class="fas fa-edit"></i></span></div>
+            </div>
+        </div>
+        <h3 class="use-title">How to use:</h3>
+        <p>- Update the value automatically with the <b>Update Counter</b> effect on a command, button, etc.</p>
+        <p>- Access value with <b>$counter[{{$ctrl.counter.name}}]</b></p>
+        <p>- Every counter has an associated txt file with the value saved, you can add this txt file to your broadcasting software to display the value on your stream.</b></p>
         <div><b>Txt File Path:</b></div>
         <div style="margin: 15px 0;">
             <div class="input-group" style="width:75%;">
@@ -19,29 +39,10 @@
                 </span>
             </div>
         </div>
-        <p class="muted" style="font-size:15px;">Note: You can add the text file to your broadcasting software to display the counter value on your stream.</p>
-    </setting-container>
-
-    <setting-container header="Current Value">
-        <div class="input-group" style="margin-bottom: 5px;">
-            <span class="input-group-addon" id="basic-addon3">Value</span>
-            <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.counter.value" placeholder="Enter value">
-        </div>
-    </setting-container>
-
-    <setting-container header="Settings" pad-top="true">
-        <div class="input-group" style="margin-bottom: 5px;">
-            <span class="input-group-addon" id="basic-addon3">Minimum <span class="muted" style="font-size: 9px;">(Optional)</span></span>
-            <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.counter.minimum" placeholder="Enter value">
-        </div>
-        <div class="input-group" style="margin-bottom: 5px;">
-            <span class="input-group-addon" id="basic-addon3">Maximum <span class="muted" style="font-size: 9px;">(Optional)</span></span>
-            <input type="number" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.counter.maximum" placeholder="Enter value">
-        </div>
     </setting-container>
 
     <setting-container header="Effects On Update" pad-top="true">
-        <p>These effects are ran everytime the Counter value updates, unless the value has reached the maximum or minimum.</p>
+        <p>These effects are ran everytime the Counter value updates, except when the value hits the maximum or minimum.</p>
         <effect-list header="What should this Counter do on every update?" effects="$ctrl.counter.updateEffects" trigger="counter" trigger-meta="$ctrl.triggerMeta" update="$ctrl.updateEffectsListUpdated(effects)" modalId="{{$ctrl.modalId}}"></effect-list>
     </setting-container>
 
