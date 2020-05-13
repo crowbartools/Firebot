@@ -24,6 +24,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
         }
         .not-set {
             font-size: 15px;
@@ -46,6 +48,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
         }
     }
 
@@ -54,10 +58,11 @@
         text-transform: uppercase;
         display: flex;
         align-items: center;
-        .edit-icon {
-            font-size:9px;
-            margin-left: 3px;
-        }
+    }
+
+    .edit-icon {
+        font-size:9px;
+        margin-left: 3px;
     }
 
     .bar {
