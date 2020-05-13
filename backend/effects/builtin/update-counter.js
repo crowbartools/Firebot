@@ -71,7 +71,7 @@ const model = {
         }
 
     },
-    optionsValidator: effect => {
+    optionsValidator: (effect, $scope) => {
         let errors = [];
         if (effect.counterId == null) {
             errors.push("Please select a counter.");
@@ -79,6 +79,12 @@ const model = {
             errors.push("Please select an update mode.");
         } else if (effect.value === undefined || effect.value === "") {
             errors.push("Please enter an update value.");
+        }
+
+        if ($scope.triggerType === 'counter') {
+            if ($scope.triggerMeta && $scope.triggerMeta.counterEffectListType === 'update' && effect.counterId === $scope.triggerMeta.triggerId) {
+                errors.push("You can't make a counter update itself. Doing so would cause an infinite loop.");
+            }
         }
 
         return errors;

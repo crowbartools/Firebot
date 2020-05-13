@@ -54,6 +54,7 @@ const chat = {
                 </div>
             </div>
         </div>
+        <p ng-show="whisper" class="muted" style="font-size:11px;"><b>ProTip:</b> To whisper the associated user, put <b>$user</b> in the whisper field.</p>
     </eos-container>
 
     `,

@@ -699,7 +699,8 @@
 
                             // validate options
                             let errors = $scope.effectDefinition.optionsValidator(
-                                $scope.effect
+                                $scope.effect,
+                                $scope
                             );
 
                             if (errors != null && errors.length > 0) {

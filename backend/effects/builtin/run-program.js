@@ -58,7 +58,7 @@ const model = {
     },
     optionsValidator: effect => {
         let errors = [];
-        if (effect.filePath == null) {
+        if (effect.programPath == null) {
             errors.push("Please select a program executable");
         }
         return errors;
