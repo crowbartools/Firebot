@@ -28,7 +28,8 @@ async function addOrUpdateActiveUser(user) {
 
     // Stop early if user shouldn't be in active chatter list.
     let userDB = await userDatabase.getUserByUsername(user.username);
-    if (userDB.disableActiveUserList) {
+
+    if (userDB && userDB.disableActiveUserList) {
         logger.debug(userDB.username + " is set to not join the active mixplay user list.");
         return;
     }
