@@ -38,6 +38,10 @@
             <file-chooser model="$ctrl.metadata.value" options="$ctrl.metadata.fileOptions"></file-chooser></file-chooser>
           </div>
 
+          <div ng-switch-when="role-percentages">
+            <role-percentages model="$ctrl.metadata.value"></role-percentages>
+          </div>
+
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>
        </div>
        

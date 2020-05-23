@@ -579,6 +579,9 @@ function appOnReady() {
         const countersManager = require("./backend/counters/counter-manager");
         countersManager.loadCounters();
 
+        const gamesManager = require("./backend/games/game-manager");
+        gamesManager.loadGameSettings();
+
         //get importer in memory
         require("./backend/import/v4/v4-importer");
 

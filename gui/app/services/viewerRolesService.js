@@ -92,6 +92,11 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 return mixerRoles.find(r => r.id === id);
             };
 
+            service.doesRoleExist = function(id) {
+                const role = service.getRoleById(id);
+                return role != null;
+            };
+
             return service;
         });
 }());
