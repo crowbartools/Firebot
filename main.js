@@ -582,6 +582,9 @@ function appOnReady() {
         const gamesManager = require("./backend/games/game-manager");
         gamesManager.loadGameSettings();
 
+        const builtinGameLoader = require("./backend/games/builtin-game-loader");
+        builtinGameLoader.loadGames();
+
         //get importer in memory
         require("./backend/import/v4/v4-importer");
 

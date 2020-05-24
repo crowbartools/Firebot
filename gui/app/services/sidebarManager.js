@@ -131,6 +131,11 @@
                 .when("/counters", {
                     templateUrl: "./templates/_counters.html",
                     controller: "countersController"
+                })
+
+                .when("/games", {
+                    templateUrl: "./templates/_games.html",
+                    controller: "gamesController"
                 });
         }
     ]);

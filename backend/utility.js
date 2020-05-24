@@ -239,3 +239,8 @@ exports.shuffleArray = function(array) {
  * @returns {[]} A flattened copy of the passed array
  */
 exports.flattenArray = arr => arr.reduce((flat, next) => flat.concat(next), []);
+
+exports.wait = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
+

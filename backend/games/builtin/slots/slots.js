@@ -3,18 +3,28 @@
 const model = {
     id: "firebot-slots",
     name: "Slots",
-    description: "Spin and win!",
-    icon: "fa-dice",
+    description: "Spin to win!",
+    icon: "fa-dice-three",
     settingCategories: {
         main: {
             title: "Settings",
-            description: "test",
             settings: {
+                currencyId: {
+                    type: "currency-select",
+                    title: "Currency",
+                    description: "Select which currency to use"
+                },
                 successChances: {
                     type: "role-percentages",
-                    title: "Success Chances",
-                    description: "The success chance percentages.",
-                    tip: "The success chance for the first role a viewer has in this list is used, so ordering is important!"
+                    title: "Roll Success Chances",
+                    description: "The chances each roll will be successful (There are 3 rolls per spin)",
+                    tip: "The success chance for the first user role a viewer has in this list is used, so ordering is important!"
+                },
+                multiplier: {
+                    type: "number",
+                    title: "Winnings Multiplier",
+                    description: "The winnings multiplier for each successful roll",
+                    default: 2
                 }
             }
         }
@@ -23,7 +33,7 @@ const model = {
     onLoad: settings => {},
     onInitialize: settings => {},
     onTerminate: settings => {},
-    onSettingsUpdate: settings => {
-
-    }
+    onSettingsUpdate: settings => {}
 };
+
+module.exports = model;

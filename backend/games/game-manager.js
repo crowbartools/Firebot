@@ -83,7 +83,7 @@ function getGameSettingsFromValues(settingCategories, savedSettings) {
 }
 
 function getGameSettings(gameId) {
-    const game = registeredGames[gameId];
+    const game = registeredGames.find(g => g.id === gameId);
     if (!game) return null;
     return buildGameSettings(game);
 }
@@ -107,21 +107,23 @@ function saveAllGameSettings() {
     }
 }
 
-frontendCommunicator.onAsync('get-games', () =>
-    registeredGames.map(g => {
+frontendCommunicator.onAsync('get-games', async () => {
+    return registeredGames.map(g => {
         return {
             id: g.id,
             name: g.name,
             description: g.description,
             icon: g.icon,
+            active: g.active,
             settingCategories: setGameSettingValues(g.settingCategories, buildGameSettings(g))
         };
-    }));
+    });
+});
 
 frontendCommunicator.on('game-settings-update', (data) => {
     const { gameId, settingCategories, activeStatus } = data;
 
-    const game = registeredGames[gameId];
+    const game = registeredGames.find(g => g.id === gameId);
 
     if (game == null) return;
 
@@ -130,6 +132,7 @@ frontendCommunicator.on('game-settings-update', (data) => {
 
     let gameSettings = getGameSettingsFromValues(settingCategories, previousSettings);
     gameSettings.active = activeStatus;
+    game.active = activeStatus;
 
     allGamesSettings[game.id] = gameSettings;
 

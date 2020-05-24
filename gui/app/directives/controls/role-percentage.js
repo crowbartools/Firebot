@@ -13,10 +13,10 @@
                 onUpdate: '&'
             },
             template: `
-            <div style="display:flex;flex-direction: row;align-items: center;padding: 0 10px;">
-                <div style="margin-right: 10px;">{{$ctrl.label}}</div>
-                <rzslider rz-slider-model="$ctrl.model" rz-slider-options="$ctrl.sliderOptions" style="transform: translateY(-8px);"></rzslider>
-                <div style="margin-left: 10px;">{{$ctrl.model}}%</div>
+            <div style="display:flex;flex-direction: row;align-items: center;padding: 0 15px;justify-content: space-between;">
+                <div style="width:85px;overflow: hidden;">{{$ctrl.label}}</div>
+                <rzslider rz-slider-model="$ctrl.model" rz-slider-options="$ctrl.sliderOptions" style="transform: translateY(-8px);width: 315px;"></rzslider>
+                <div style="width:39px;text-align:right;">{{$ctrl.model}}%</div>
             </div>
             `,
             controller: function(viewerRolesService) {
