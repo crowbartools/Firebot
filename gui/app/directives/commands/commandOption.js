@@ -20,7 +20,7 @@
           </div>
 
           <div ng-switch-when="number">
-            <input class="form-control" type="number" placeholder="Enter a number" ng-model="$ctrl.metadata.value">
+            <input class="form-control" type="number" placeholder="{{$ctrl.metadata.placeholder ? $ctrl.metadata.placeholder : 'Enter a number'}}" ng-model="$ctrl.metadata.value">
           </div>
 
           <div ng-switch-when="boolean" style="padding-top:10px;">
@@ -44,6 +44,10 @@
 
           <div ng-switch-when="currency-select" style="padding-top:5px;">
             <currency-select model="$ctrl.metadata.value"></currency-select>
+          </div>
+
+          <div ng-switch-when="chatter-select" style="padding-top:5px;">
+            <chatter-select model="$ctrl.metadata.value"></chatter-select>
           </div>
 
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>

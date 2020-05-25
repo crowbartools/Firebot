@@ -15,15 +15,15 @@ function getSpinLabel(spinCount) {
     }
 }
 
-async function spin(username, successChance) {
+async function spin(username, successChance, chatter) {
 
     let successCount = 0;
 
-    chat.smartSend(`${username} pulls back the lever...`);
+    chat.smartSend(`${username} pulls back the lever...`, null, chatter);
 
     for (let currentSpin = 1; currentSpin <= SPIN_COUNT; currentSpin++) {
 
-        await util.wait(2000);
+        await util.wait(1750);
 
         const successfulRoll = util.getRandomInt(1, 100) <= successChance;
 
@@ -31,8 +31,10 @@ async function spin(username, successChance) {
             successCount++;
         }
 
-        chat.smartSend(`${getSpinLabel(currentSpin)} reel stops, it's a ${successfulRoll ? 'HIT' : 'MISS'}`, username);
+        chat.smartSend(`${getSpinLabel(currentSpin)} reel stops, it's a ${successfulRoll ? 'HIT' : 'MISS'}`, username, chatter);
     }
+
+    await util.wait(750);
 
     return successCount;
 }

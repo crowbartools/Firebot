@@ -1,13 +1,25 @@
 "use strict";
 
+const util = require("../../../utility");
 const chat = require("../../../common/mixer-chat");
+const commandManager = require("../../../chat/commands/CommandManager");
 const gameManager = require("../../game-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");
+const customRolesManager = require("../../../roles/custom-roles-manager");
+const mixerRolesManager = require("../../../../shared/mixer-roles");
 const slotMachine = require("./slot-machine");
+const moment = require("moment");
+const NodeCache = require("node-cache");
+
+
+const activeSpinners = new NodeCache({checkperiod: 2});
+const cooldownCache = new NodeCache({checkperiod: 5});
+
+const SPIN_COMMAND_ID = "firebot:spin";
 
 const spinCommand = {
     definition: {
-        id: "firebot:spin",
+        id: SPIN_COMMAND_ID,
         name: "Spin (Slots)",
         active: true,
         trigger: "!spin",
@@ -21,45 +33,134 @@ const spinCommand = {
                 arg: "\\d+",
                 regex: true,
                 usage: "[currencyAmount]",
-                description: "Spins the slot machine with the given amount"
+                description: "Spins the slot machine with the given amount",
+                hideCooldowns: true
             }
         ]
     },
     onTriggerEvent: async event => {
 
-        const { userCommand } = event;
+        const { chatEvent, userCommand } = event;
+
+        const slotsSettings = gameManager.getGameSettings("firebot-slots");
+        const chatter = slotsSettings.settings.chatSettings.chatter;
 
         if (event.userCommand.subcommandId === "spinAmount") {
 
             const triggeredArg = userCommand.args[0];
-            const currencyAmount = parseInt(triggeredArg);
+            const wagerAmount = parseInt(triggeredArg);
 
             const username = userCommand.commandSender;
 
-            const slotsSettings = gameManager.getGameSettings("firebot-slots");
-
-            if (currencyAmount < 1) {
-                chat.smartSend("Currency amount must be more than 0.", username);
+            if (activeSpinners.get(username)) {
+                chat.smartSend("The slot machine is actively working!", username, chatter);
+                chat.deleteChat(chatEvent.id);
                 return;
             }
 
-            const userBalance = await currencyDatabase.getUserCurrencyAmount(username, slotsSettings.settings.main.currencyId);
-            if (userBalance < currencyAmount) {
-                chat.smartSend("You don't have enough to wager this amount!", username);
+            let cooldownExpireTime = cooldownCache.get(username);
+            if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
+                chat.smartSend(`The slot machine is currently on cooldown. Time remaining: ${moment().to(cooldownExpireTime, true)}`, username, chatter);
+                chat.deleteChat(chatEvent.id);
                 return;
             }
 
+            if (wagerAmount < 1) {
+                chat.smartSend("Wager amount must be more than 0.", username, chatter);
+                chat.deleteChat(chatEvent.id);
+                return;
+            }
 
+            const minWager = slotsSettings.settings.currencySettings.minWager;
+            if (minWager & minWager > 0) {
+                if (wagerAmount < minWager) {
+                    chat.smartSend(`Wager amount must be at least ${minWager}`, username, chatter);
+                    chat.deleteChat(chatEvent.id);
+                    return;
+                }
+            }
+            const maxWager = slotsSettings.settings.currencySettings.minWager;
+            if (maxWager & maxWager > 0) {
+                if (wagerAmount > maxWager) {
+                    chat.smartSend(`Wager amount can be no more than ${maxWager}`, username, chatter);
+                    chat.deleteChat(chatEvent.id);
+                    return;
+                }
+            }
+
+            activeSpinners.set(username, true);
+
+            const currencyId = slotsSettings.settings.currencySettings.currencyId;
+            const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
+            if (userBalance < wagerAmount) {
+                chat.smartSend("You don't have enough to wager this amount!", username, chatter);
+                chat.deleteChat(chatEvent.id);
+                activeSpinners.del(username);
+                return;
+            }
+
+            let cooldownSecs = slotsSettings.settings.cooldownSettings.cooldown;
+            if (cooldownSecs && cooldownSecs > 0) {
+                const expireTime = moment().add(cooldownSecs, 'seconds');
+                cooldownCache.set(username, expireTime, cooldownSecs);
+            }
+
+            await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
+
+            let successChance = 50;
+
+            let successChancesSettings = slotsSettings.settings.spinSettings.successChances;
+            if (successChancesSettings) {
+                successChance = successChancesSettings.basePercent;
+
+                const mappedMixerRoles = (userCommand.senderRoles || [])
+                    .filter(mr => mr !== "User")
+                    .map(mr => mixerRolesManager.mapMixerRole(mr));
+                const allRoles = mappedMixerRoles.concat(customRolesManager.getAllCustomRolesForViewer(username));
+
+                for (let role of successChancesSettings.roles) {
+                    if (allRoles.some(r => r.id === role.id)) {
+                        successChance = role.percent;
+                        break;
+                    }
+                }
+            }
+
+            const successfulRolls = await slotMachine.spin(username, successChance, chatter);
+
+            const winMultiplier = slotsSettings.settings.spinSettings.multiplier;
+
+            const winnings = wagerAmount * (successfulRolls * winMultiplier);
+
+            await currencyDatabase.adjustCurrencyForUser(username, currencyId, winnings);
+
+            const currency = currencyDatabase.getCurrencyById(currencyId);
+
+            chat.smartSend(`${username} hit ${successfulRolls} out of 3 and won ${util.commafy(winnings)} ${currency.name}.`, null, chatter);
+
+            activeSpinners.del(username);
+        } else {
+            chat.smartSend(`Incorrect spin usage: ${userCommand.trigger} [wagerAmount]`, userCommand.commandSender, chatter);
+            chat.deleteChat(chatEvent.id);
         }
-
     }
 };
 
-
 function registerSpinCommand() {
-
+    if (!commandManager.hasSystemCommand(SPIN_COMMAND_ID)) {
+        commandManager.registerSystemCommand(spinCommand);
+    }
 }
 
 function unregisterSpinCommand() {
-
+    commandManager.unregisterSystemCommand(SPIN_COMMAND_ID);
 }
+
+function purgeCaches() {
+    cooldownCache.flushAll();
+    activeSpinners.flushAll();
+}
+
+exports.purgeCaches = purgeCaches;
+exports.registerSpinCommand = registerSpinCommand;
+exports.unregisterSpinCommand = unregisterSpinCommand;

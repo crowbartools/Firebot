@@ -27,12 +27,16 @@ let handledMessageIds = [];
  * @param {string[]} args List of args the user provided with the command
  * @param {string} commandSender username of the person who issued the command
  */
-function UserCommand(trigger, args, commandSender) {
+function UserCommand(trigger, args, commandSender, senderRoles) {
     this.trigger = trigger;
     this.args = args;
     this.triggeredArg = null;
     this.subcommandId = null;
     this.commandSender = commandSender;
+    if (!senderRoles) {
+        senderRoles = [];
+    }
+    this.senderRoles = senderRoles;
 }
 
 function buildCommandRegexStr(trigger, scanWholeMessage) {
@@ -154,7 +158,7 @@ function cooldownCommand(command, triggeredSubcmd, username) {
     }
 }
 
-function buildUserCommand(command, rawMessage, sender) {
+function buildUserCommand(command, rawMessage, sender, senderRoles) {
     let trigger = command.trigger,
         args = [],
         commandSender = sender;
@@ -173,7 +177,7 @@ function buildUserCommand(command, rawMessage, sender) {
 
     args = args.filter(a => a.trim() !== "");
 
-    return new UserCommand(trigger, args, commandSender);
+    return new UserCommand(trigger, args, commandSender, senderRoles);
 }
 
 function fireCommand(
@@ -267,7 +271,7 @@ async function handleChatEvent(chatEvent) {
     }
 
     // build usercommand object
-    let userCmd = buildUserCommand(command, rawMessage, commandSender);
+    let userCmd = buildUserCommand(command, rawMessage, commandSender, chatEvent.user_roles);
 
     let triggeredSubcmd = null;
     if (!command.scanWholeMessage && userCmd.args.length > 0 && command.subCommands) {

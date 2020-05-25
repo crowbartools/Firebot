@@ -66,6 +66,10 @@ class CommandManager extends EventEmitter {
         return this._registeredSysCommands.find(c => c.definition.id === id);
     }
 
+    hasSystemCommand(id) {
+        return this._registeredSysCommands.some(c => c.definition.id === id);
+    }
+
     getSystemCommands() {
         return this._registeredSysCommands.map(c => {
             c.definition.type = "system";

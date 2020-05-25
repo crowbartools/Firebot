@@ -19,6 +19,8 @@ function registerGame(game) {
     let gameSettings = allGamesSettings[game.id];
     if (gameSettings) {
         game.active = gameSettings.active;
+    } else {
+        gameSettings = { active: false };
     }
 
     if (game.onLoad) {
@@ -112,6 +114,7 @@ frontendCommunicator.onAsync('get-games', async () => {
         return {
             id: g.id,
             name: g.name,
+            subtitle: g.subtitle,
             description: g.description,
             icon: g.icon,
             active: g.active,
