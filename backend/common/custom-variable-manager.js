@@ -1,9 +1,35 @@
 
 "use strict";
 const logger = require('../logwrapper');
+const eventManager = require("../live-events/EventManager");
 const NodeCache = require("node-cache");
 
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 5 });
+
+// This is supposed to be triggered whenever a custom variables it set to expire so that it can trigger an event in Firebot
+// so that users can setup effects to be ran when a custom variable expires, say for example a host, follow, ember donation train.
+
+cache.on( "expired", function( key, value){
+    logger.info('Custom Variable expired');
+    logger.info('key:' + key + ' contains: ' + value);
+
+    eventManager.triggerEvent("firebot", "custom-variable-expired", {
+        username: "Firebot",
+        expiredCustomVariableName: key,
+        expiredCustomVariableData: value
+    });
+})
+
+cache.on( "set", function( key, value){
+    logger.info('Custom Variable Created');
+    logger.info('key:' + key + ' contains: ' + value);
+
+    eventManager.triggerEvent("firebot", "custom-variable-set", {
+        username: "Firebot",
+        setCustomVariableName: key,
+        setCustomVariableData: value
+    });
+})
 
 exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
 
@@ -92,7 +118,3 @@ exports.getCustomVariable = (name, propertyPath) => {
         return null;
     }
 };
-
-
-
-

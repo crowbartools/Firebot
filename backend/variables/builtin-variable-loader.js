@@ -27,6 +27,8 @@ exports.loadReplaceVariables = () => {
         'current-viewer-count',
         'custom-role-user-count',
         'custom-variable',
+        'custom-variable-expired-data',
+        'custom-variable-expired-name',
         'date',
         'donation-amount-formatted',
         'donation-amount',
