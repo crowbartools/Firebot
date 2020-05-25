@@ -79,7 +79,7 @@ const spinCommand = {
                     return;
                 }
             }
-            const maxWager = slotsSettings.settings.currencySettings.minWager;
+            const maxWager = slotsSettings.settings.currencySettings.maxWager;
             if (maxWager & maxWager > 0) {
                 if (wagerAmount > maxWager) {
                     chat.smartSend(`Wager amount can be no more than ${maxWager}`, username, chatter);
