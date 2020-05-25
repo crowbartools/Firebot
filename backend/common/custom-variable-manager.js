@@ -9,7 +9,7 @@ const cache = new NodeCache({ stdTTL: 0, checkperiod: 5 });
 // This is supposed to be triggered whenever a custom variables it set to expire so that it can trigger an event in Firebot
 // so that users can setup effects to be ran when a custom variable expires, say for example a host, follow, ember donation train.
 
-cache.on( "expired", function( key, value){
+cache.on( "expired", function(key, value) {
     logger.info('Custom Variable expired');
     logger.info('key:' + key + ' contains: ' + value);
 
@@ -18,9 +18,9 @@ cache.on( "expired", function( key, value){
         expiredCustomVariableName: key,
         expiredCustomVariableData: value
     });
-})
+} )
 
-cache.on( "set", function( key, value){
+cache.on( "set", function(key, value) {
     logger.info('Custom Variable Created');
     logger.info('key:' + key + ' contains: ' + value);
 
@@ -29,7 +29,7 @@ cache.on( "set", function( key, value){
         setCustomVariableName: key,
         setCustomVariableData: value
     });
-})
+} )
 
 exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
 
