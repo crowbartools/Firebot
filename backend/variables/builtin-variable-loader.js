@@ -29,6 +29,8 @@ exports.loadReplaceVariables = () => {
         'custom-variable',
         'custom-variable-expired-data',
         'custom-variable-expired-name',
+        'custom-variable-set-data',
+        'custom-variable-set-name',
         'date',
         'donation-amount-formatted',
         'donation-amount',

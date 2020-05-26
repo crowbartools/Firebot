@@ -47,6 +47,12 @@ const firebotEventSource = {
             name: "Custom Variable has expired",
             description: "When a custom variable expires",
             cached: false
+        },
+        {
+            id: "custom-variable-set",
+            name: "Custom Variable was created",
+            description: "When a custom variable gets created",
+            cached: false
         }
     ]
 };
