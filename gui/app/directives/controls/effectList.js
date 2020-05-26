@@ -176,7 +176,7 @@
                     return $http.get(`https://bytebin.lucko.me/${code}`)
                         .then(resp => {
                             if (resp.status === 200) {
-                                return resp.data;
+                                return JSON.parse(decodeURIComponent(JSON.stringify(resp.data)));
                             }
                             return null;
                         }, () => {
@@ -211,6 +211,7 @@
                         },
                         async (shareCode) => {
                             let effectsData = await getSharedEffects(shareCode);
+                            debugger;
                             if (effectsData.effects != null) {
                                 ctrl.effectsData.list = ctrl.effectsData.list.concat(effectsData.effects);
                             }
