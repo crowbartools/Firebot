@@ -10,6 +10,7 @@ const logger = require("../logwrapper");
 const patronageManager = require("../patronageManager");
 const apiAccess = require("../api-access");
 const accountAccess = require("../common/account-access");
+const channelAccess = require("../common/channel-access");
 const { settings } = require("../common/settings-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 Carina.WebSocket = ws;
@@ -96,6 +97,8 @@ function constellationConnect() {
         if (data.online != null) {
             connectionManager.setOnlineStatus(data.online === true);
         }
+
+        channelAccess.updateStreamerChannelData(data);
     });
 
     // Resub Shared (Cached Event)

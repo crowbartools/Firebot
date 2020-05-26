@@ -6,9 +6,27 @@ const mixerApi = require("../api-access");
 
 const frontendCommunicator = require("./frontend-communicator");
 
+const deepmerge = require("deepmerge");
 const uuidv4 = require("uuid/v4");
 const NodeCache = require("node-cache");
 let linkHeaderParser = require('parse-link-header');
+
+let streamerChannelData;
+
+exports.updateStreamerChannelData = async (newData) => {
+    let streamerData = accountAccess.getAccounts().streamer;
+
+    if (streamerChannelData == null) {
+        streamerChannelData = await this.getMixerAccountDetailsByUsername(streamerData.username);
+    }
+
+    streamerChannelData = deepmerge(streamerChannelData, newData);
+    return streamerChannelData;
+};
+
+exports.getStreamerChannelData = async () => {
+    return streamerChannelData;
+};
 
 exports.getFollowDateForUser = async username => {
     let streamerData = accountAccess.getAccounts().streamer;
