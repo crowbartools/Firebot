@@ -5,8 +5,8 @@ const channelAccess = require("../../common/channel-access");
 const model = {
     definition: {
         id: "firebot:channelViewers",
-        name: "Viewer Count",
-        description: "Restricts when channel has a certain number of viewers.",
+        name: "Channel Viewer Count",
+        description: "Restricts when channel has a certain number of current viewers.",
         triggers: []
     },
     optionsTemplate: `
@@ -65,6 +65,10 @@ const model = {
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             let channelData = await channelAccess.getStreamerChannelData();
+            if (channelData == null) {
+                reject(`Can't determine the current number of viewers.`);
+            }
+
             let currentViewers = channelData.viewersCurrent;
             let comparison = restrictionData.comparison;
             let numViewers = restrictionData.amount;

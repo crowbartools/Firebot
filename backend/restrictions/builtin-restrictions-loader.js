@@ -14,6 +14,7 @@ exports.loadRestrictions = function() {
     const followCheck = require('./builtin/followCheck');
     const channelAudience = require('./builtin/channel-audience');
     const channelViewers = require('./builtin/channelViewers');
+    const channelGame = require('./builtin/channelGame');
 
     restrictionsManager.registerRestriction(permissions);
     restrictionsManager.registerRestriction(channelProgression);
@@ -26,4 +27,5 @@ exports.loadRestrictions = function() {
     restrictionsManager.registerRestriction(followCheck);
     restrictionsManager.registerRestriction(channelAudience);
     restrictionsManager.registerRestriction(channelViewers);
+    restrictionsManager.registerRestriction(channelGame);
 };
