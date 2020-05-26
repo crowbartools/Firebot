@@ -66,7 +66,7 @@ authManager.on("auth-success", async authData => {
         if (accountType === "streamer") {
             accountObject.partnered = userData.channel.partnered;
 
-            let subBadgeUrl = await channelAccess.getChannelSubBadge(userData.username);
+            let subBadgeUrl = await channelAccess.getStreamerSubBadge();
             accountObject.subBadge = subBadgeUrl;
 
             const clipGroups = ["Partner", "VerifiedPartner", "Staff", "Founder"];
