@@ -11,7 +11,6 @@ const slotMachine = require("./slot-machine");
 const moment = require("moment");
 const NodeCache = require("node-cache");
 
-
 const activeSpinners = new NodeCache({checkperiod: 2});
 const cooldownCache = new NodeCache({checkperiod: 5});
 
@@ -119,7 +118,7 @@ const spinCommand = {
                 const allRoles = mappedMixerRoles.concat(customRolesManager.getAllCustomRolesForViewer(username));
 
                 for (let role of successChancesSettings.roles) {
-                    if (allRoles.some(r => r.id === role.id)) {
+                    if (allRoles.some(r => r.id === role.roleId)) {
                         successChance = role.percent;
                         break;
                     }
