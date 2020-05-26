@@ -59,7 +59,8 @@ const spinCommand = {
 
             let cooldownExpireTime = cooldownCache.get(username);
             if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
-                chat.smartSend(`The slot machine is currently on cooldown. Time remaining: ${moment().to(cooldownExpireTime, true)}`, username, chatter);
+                const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
+                chat.smartSend(`The slot machine is currently on cooldown. Time remaining: ${timeRemainingDisplay}`, username, chatter);
                 chat.deleteChat(chatEvent.id);
                 return;
             }
@@ -71,17 +72,17 @@ const spinCommand = {
             }
 
             const minWager = slotsSettings.settings.currencySettings.minWager;
-            if (minWager & minWager > 0) {
+            if (minWager != null & minWager > 0) {
                 if (wagerAmount < minWager) {
-                    chat.smartSend(`Wager amount must be at least ${minWager}`, username, chatter);
+                    chat.smartSend(`Wager amount must be at least ${minWager}.`, username, chatter);
                     chat.deleteChat(chatEvent.id);
                     return;
                 }
             }
             const maxWager = slotsSettings.settings.currencySettings.maxWager;
-            if (maxWager & maxWager > 0) {
+            if (maxWager != null & maxWager > 0) {
                 if (wagerAmount > maxWager) {
-                    chat.smartSend(`Wager amount can be no more than ${maxWager}`, username, chatter);
+                    chat.smartSend(`Wager amount can be no more than ${maxWager}.`, username, chatter);
                     chat.deleteChat(chatEvent.id);
                     return;
                 }
