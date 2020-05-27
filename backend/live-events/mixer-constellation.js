@@ -10,6 +10,7 @@ const logger = require("../logwrapper");
 const patronageManager = require("../patronageManager");
 const apiAccess = require("../api-access");
 const accountAccess = require("../common/account-access");
+const channelAccess = require("../common/channel-access");
 const { settings } = require("../common/settings-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 Carina.WebSocket = ws;
@@ -65,27 +66,9 @@ function cancelPreviousHostTimeout(userId) {
     }
 }
 
-// Constellation Connect
-// This will connect to constellation and subscribe to all constellation events we need.
-function constellationConnect() {
-
-    let streamer = accountAccess.getAccounts().streamer;
-    if (!streamer.loggedIn) {
-        constellationDisconnect();
-        return;
-    }
-
-    let channelId = streamer.channelId;
-
-    logger.info("Connecting to Constellation.", channelId);
-    ca = new Carina({ isBot: true }).open();
-
-    // Clear any previous subscriptions just in case something weird happens.
-    ca.subscriptions = {};
-
+function subscribeToGeneral(ca, prefix) {
     // Channel Status
     // This gets general channel data such as online status, num followers, current viewers.
-    let prefix = "channel:" + channelId + ":";
     ca.subscribe(prefix + "update", data => {
         if (data.viewersCurrent != null) {
             renderWindow.webContents.send("currentViewersUpdate", {
@@ -96,8 +79,12 @@ function constellationConnect() {
         if (data.online != null) {
             connectionManager.setOnlineStatus(data.online === true);
         }
-    });
 
+        channelAccess.updateStreamerChannelData(data);
+    });
+}
+
+function subscribeToResubShared(ca, prefix) {
     // Resub Shared (Cached Event)
     // This is a resub event in which the user manually triggered the celebration.
     ca.subscribe(prefix + "resubShared", data => {
@@ -110,11 +97,12 @@ function constellationConnect() {
             currentStreak: data.currentStreak
         });
     });
+}
 
+function subscribeToResub(ca, prefix) {
     // Resub (Cached Event)
     // This is a resub event in which the users payment went through, but they might not be in the channel.
     ca.subscribe(prefix + "resubscribed", data => {
-
         eventManager.triggerEvent("mixer", "resub", {
             shared: false,
             username: data["user"].username,
@@ -123,7 +111,9 @@ function constellationConnect() {
             currentStreak: -1
         });
     });
+}
 
+function subscribeToSub(ca, prefix) {
     // Sub (Cached Event)
     // This is an initial sub to the channel.
     ca.subscribe(prefix + "subscribed", data => {
@@ -132,9 +122,10 @@ function constellationConnect() {
             userId: data["user"].id,
             totalMonths: 0
         });
-        //setLastSub(data.user.username);
     });
+}
 
+function subscribeToHost(ca, prefix) {
     // Host (Cached Event)
     // This is a channel host.
     ca.subscribe(prefix + "hosted", data => {
@@ -160,7 +151,9 @@ function constellationConnect() {
             });
         }
     });
+}
 
+function subscribeToUnhost(ca, prefix) {
     ca.subscribe(prefix + "unhosted", data => {
         if (data == null) return;
 
@@ -170,7 +163,9 @@ function constellationConnect() {
             cancelPreviousHostTimeout(hosterId);
         }
     });
+}
 
+function subscribeToFollow(ca, prefix) {
     // Follow (Cached Event)
     // This is a follow event. Filters out unfollows.
     ca.subscribe(prefix + "followed", data => {
@@ -200,13 +195,14 @@ function constellationConnect() {
             });
         }
     });
+}
 
+function subscribeToSkills(ca, prefix) {
     // Skill
     ca.subscribe(prefix + 'skill', data => {
 
         logger.debug("Constellation Skill Event");
         logger.debug(data);
-
 
         //if gif skill effect, extract url and send to frontend
         if (data && data.manifest) {
@@ -245,7 +241,6 @@ function constellationConnect() {
                         .then(userData => {
 
                             logger.debug("user data", userData);
-
                             logger.debug("Got user data, triggering gif event with url: " + gifUrl);
 
                             return userData.username;
@@ -265,7 +260,9 @@ function constellationConnect() {
             }
         }
     });
+}
 
+function subscribeToPatronageUpdate(ca, prefix) {
     // Patronage updates
     ca.subscribe(prefix + 'patronageUpdate', data => {
 
@@ -274,7 +271,9 @@ function constellationConnect() {
 
         patronageManager.setChannelPatronageData(data);
     });
+}
 
+function subscribeToGiftedSub(ca, prefix) {
     // Subscription gifted
     ca.subscribe(prefix + 'subscriptionGifted', data => {
         eventManager.triggerEvent("mixer", "subscription-gifted", {
@@ -282,7 +281,9 @@ function constellationConnect() {
             giftReceiverUser: data.giftReceiverUsername
         });
     });
+}
 
+function subscribeToProgressionLevelUp(ca, channelId) {
     ca.subscribe(`progression:${channelId}:levelup`, async data => {
         if (data == null || data.userId == null || data.level == null) return;
 
@@ -303,7 +304,9 @@ function constellationConnect() {
             userNextLevelXp: data.level.nextLevelXp
         });
     });
+}
 
+function subscribeToAdBreak(ca, prefix) {
     // Ad-break triggered
     ca.subscribe(prefix + 'adBreak', data => {
 
@@ -317,13 +320,46 @@ function constellationConnect() {
 
         frontendCommunicator.send("chat-feed-system-message", `An ad-break has been started! (Max ad length: ${data.maxAdBreakLengthInSec} secs)`);
     });
+}
+
+function subscribeToConstellationEvents(ca, channelId) {
+    // Clear any previous subscriptions just in case something weird happens.
+    ca.subscriptions = {};
+    let prefix = "channel:" + channelId + ":";
+
+    subscribeToGeneral(ca, prefix);
+    subscribeToResubShared(ca, prefix);
+    subscribeToResub(ca, prefix);
+    subscribeToSub(ca, prefix);
+    subscribeToGiftedSub(ca, prefix);
+    subscribeToHost(ca, prefix);
+    subscribeToUnhost(ca, prefix);
+    subscribeToFollow(ca, prefix);
+    subscribeToSkills(ca, prefix);
+    subscribeToPatronageUpdate(ca, prefix);
+    subscribeToProgressionLevelUp(ca, channelId);
+    subscribeToAdBreak(ca, prefix);
+}
+
+// Constellation Connect
+// This will connect to constellation and subscribe to all constellation events we need.
+function constellationConnect() {
+
+    let streamer = accountAccess.getAccounts().streamer;
+    if (!streamer.loggedIn) {
+        constellationDisconnect();
+        return;
+    }
+
+    let channelId = streamer.channelId;
+
+    logger.info("Connecting to Constellation.", channelId);
+    ca = new Carina({ isBot: true }).open();
+
+    subscribeToConstellationEvents(ca, channelId);
 
     ca.on('error', data => {
         logger.error("error from constellation:", data);
-
-        //attempt to reconnect and reset status
-        constellationConnected = false;
-        reconnectService.reconnect("Constellation", false, false);
     });
 
     // Set to connected.
@@ -346,7 +382,6 @@ ipcMain.on("mixerConstellation", function(event, status) {
     if (status === "connect" || status === "connected") {
         constellationConnect();
     } else {
-    // Kill connection.
         constellationDisconnect();
     }
 });

@@ -6,9 +6,35 @@ const mixerApi = require("../api-access");
 
 const frontendCommunicator = require("./frontend-communicator");
 
+const deepmerge = require("deepmerge");
 const uuidv4 = require("uuid/v4");
 const NodeCache = require("node-cache");
 let linkHeaderParser = require('parse-link-header');
+
+// Holds an updating model of the streamers channel data.
+let streamerChannelData;
+
+exports.refreshStreamerChannelData = async () => {
+    let streamerData = accountAccess.getAccounts().streamer;
+    streamerChannelData = await this.getMixerAccountDetailsByUsername(streamerData.username);
+};
+
+exports.updateStreamerChannelData = async (newData) => {
+    if (streamerChannelData == null) {
+        await this.refreshStreamerChannelData();
+    }
+
+    streamerChannelData = deepmerge(streamerChannelData, newData);
+    return streamerChannelData;
+};
+
+exports.getStreamerChannelData = async () => {
+    if (streamerChannelData == null) {
+        await this.refreshStreamerChannelData();
+    }
+
+    return streamerChannelData;
+};
 
 exports.getFollowDateForUser = async username => {
     let streamerData = accountAccess.getAccounts().streamer;
@@ -27,51 +53,35 @@ exports.getFollowDateForUser = async username => {
     return new Date(followerData[0].followed.createdAt);
 };
 
-exports.getChannelSubBadge = async channelName => {
-    let badgeData = await mixerApi.get(
-        `channels/${channelName}?fields=online,badge`,
-        "v1",
-        false,
-        false
-    );
-    if (!badgeData || !badgeData.badge) {
+exports.getStreamerSubBadge = async () => {
+    if (!streamerChannelData || !streamerChannelData.badge) {
         return null;
     }
-    return badgeData.badge.url;
+    return streamerChannelData.badge.url;
 };
 
 exports.getStreamerOnlineStatus = async () => {
-    let streamerData = accountAccess.getAccounts().streamer;
-
-    let onlineData = await mixerApi.get(
-        `channels/${streamerData.channelId}?fields=online`,
-        "v1",
-        false,
-        true
-    );
-
-    if (onlineData == null) {
+    if (streamerChannelData == null) {
         return false;
     }
 
-    return onlineData.online === true;
+    return streamerChannelData.online === true;
 };
 
 exports.getStreamerAudience = async () => {
-    let streamerData = accountAccess.getAccounts().streamer;
-
-    let audienceData = await mixerApi.get(
-        `channels/${streamerData.channelId}?fields=audience`,
-        "v1",
-        false,
-        true
-    );
-
-    if (audienceData == null) {
+    if (streamerChannelData == null) {
         return null;
     }
 
-    return audienceData.audience;
+    return streamerChannelData.audience;
+};
+
+exports.getStreamerGameData = async () => {
+    if (streamerChannelData == null) {
+        return null;
+    }
+
+    return streamerChannelData.type;
 };
 
 const viewerRoleCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });

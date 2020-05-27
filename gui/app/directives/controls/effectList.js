@@ -211,7 +211,6 @@
                         },
                         async (shareCode) => {
                             let effectsData = await getSharedEffects(shareCode);
-                            debugger;
                             if (effectsData.effects != null) {
                                 ctrl.effectsData.list = ctrl.effectsData.list.concat(effectsData.effects);
                             }
