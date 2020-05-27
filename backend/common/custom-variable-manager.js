@@ -17,8 +17,8 @@ cache.on("expired", function(key, value) {
 cache.on("set", function(key, value) {
     eventManager.triggerEvent("firebot", "custom-variable-set", {
         username: "Firebot",
-        setCustomVariableName: key,
-        setCustomVariableData: value
+        createdCustomVariableName: key,
+        createdCustomVariableData: value
     });
 });
 

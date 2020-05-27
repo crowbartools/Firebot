@@ -1,6 +1,7 @@
 "use strict";
 
 const channelAccess = require("../../common/channel-access");
+const mixerTypes = require("../../mixer-client/api/types");
 
 const model = {
     definition: {
@@ -11,21 +12,6 @@ const model = {
     },
     optionsTemplate: `
     <div>
-    <eos-container header="Mode">
-        <div class="controls-fb" style="padding-bottom: 5px;">
-            <label class="control-fb control--radio">Specific game  <tooltip text="'Search for a specific game.'"></tooltip>
-                <input type="radio" ng-model="restriction.mode" value="specific"/>
-                <div class="control__indicator"></div>
-            </label>
-            <label class="control-fb control--radio">Custom game <tooltip text="'Input any name and Firebot will find the closest game.'"></tooltip>
-                <input type="radio" ng-model="restriction.mode" value="custom"/>
-                <div class="control__indicator"></div>
-            </label>
-        </div>
-    </eos-container>
-
-    <eos-container header="Specific Game" pad-top="true" ng-if="restriction.mode === 'specific'" >
-
         <ui-select ng-model="selectedGame" theme="bootstrap" spinner-enabled="true" on-select="gameSelected($item)" style="margin-bottom:10px;">
             <ui-select-match placeholder="Search for game">
                 <div style="height: 21px; display:flex; flex-direction: row; align-items: center;">
@@ -40,19 +26,10 @@ const model = {
                 </div>                                  
             </ui-select-choices>
         </ui-select>
-
-    </eos-container>
-
-    <eos-container header="Custom Game" pad-top="true" ng-if="restriction.mode === 'custom'">
-        <input ng-model="restriction.gameName" class="form-control" type="text" placeholder="Enter game name" replace-variables>
-    </eos-container>
     </div>
     `,
     optionsController: ($scope, $http) => {
         let restriction = $scope.restriction;
-        if (restriction.mode == null) {
-            restriction.mode = "specific";
-        }
 
         $scope.games = [];
         $scope.searchGames = function(gameQuery) {
@@ -65,7 +42,7 @@ const model = {
             });
         };
 
-        if (restriction.mode === "specific" && restriction.gameId != null) {
+        if (restriction.gameId != null) {
             $http.get(`https://mixer.com/api/v1/types/${restriction.gameId}`)
                 .then(function(response) {
                     $scope.selectedGame = response.data;
@@ -74,44 +51,51 @@ const model = {
 
         $scope.gameSelected = function(game) {
             if (game != null) {
-                console.log(game);
                 restriction.gameId = game.id;
-                restriction.gameName = game.name;
             }
         };
     },
-    optionsValueDisplay: (restriction) => {
-        let gameTitle = restriction.gameName;
-
-        if (gameTitle == null) {
-            gameTitle = "";
-        }
-
-        return `Game is ${gameTitle}.`;
+    optionsValueDisplay: (restriction, $http) => {
+        return new Promise(resolve => {
+            if (restriction.gameId != null) {
+                $http.get(`https://mixer.com/api/v1/types/${restriction.gameId}`)
+                    .then(function(response) {
+                        resolve(response.data.name);
+                    });
+            } else {
+                resolve('[Game Not Set]');
+            }
+        });
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            let channelData = await channelAccess.getStreamerGameData();
-            if (channelData == null) {
-                reject(`Can't determine the game being played.`);
+
+            const expectedGameId = restrictionData.gameId;
+            if (expectedGameId == null) {
+                return resolve();
             }
 
-            let currentGameTitle = channelData.name;
-            let gameTitle = restrictionData.gameName;
+            const channelGame = await channelAccess.getStreamerGameData();
+            if (channelGame == null) {
+                return reject(`Can't determine the game being played.`);
+            }
+
+            const currentGameId = channelGame.id;
 
             let passed = false;
 
-            if (gameTitle.toLowerCase() === currentGameTitle.toLowerCase()) {
+            if (expectedGameId === currentGameId) {
                 passed = true;
             }
 
             if (passed) {
                 resolve();
             } else {
-                reject(`Game must be set to ${gameTitle}.`);
+                const typeInfo = await mixerTypes.getTypeInformation(expectedGameId);
+                reject(`Channel game isn't '${typeInfo ? typeInfo.name : 'correct'}'.`);
             }
         });
     },

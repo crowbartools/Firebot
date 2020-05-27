@@ -25,7 +25,7 @@ const model = {
     `,
     optionsController: ($scope) => {
         if ($scope.restriction.audience == null) {
-            return "18+";
+            $scope.restriction.audience = "18+";
         }
     },
     optionsValueDisplay: (restriction) => {
@@ -39,7 +39,7 @@ const model = {
         if (audience === "18+") {
             return "18+";
         }
-        return "Not set";
+        return "18+";
     },
     /*
       function that resolves/rejects a promise based on if the restriction critera is met
@@ -48,10 +48,12 @@ const model = {
         return new Promise(async (resolve, reject) => {
             let passed = false;
 
+            if (restrictionData.audience == null) {
+                restrictionData.audience = "18+";
+            }
+
             let channelAudience = await channelAccess.getStreamerAudience();
-            if (restrictionData.audience == null
-                || channelAudience == null
-                || restrictionData.audience === channelAudience) {
+            if (channelAudience == null || restrictionData.audience === channelAudience) {
                 passed = true;
             }
 

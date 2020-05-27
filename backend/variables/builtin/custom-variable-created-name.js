@@ -13,15 +13,13 @@ triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "setCustomVariableData",
-        description: "Data from the created custom variable.",
+        handle: "createdCustomVariableName",
+        description: "Name of the created custom variable.",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        const setCustomVariableData = trigger.metadata.eventData.setCustomVariableData;
-
-        return setCustomVariableData;
+        return trigger.metadata.eventData.createdCustomVariableName || "";
     }
 };
 
