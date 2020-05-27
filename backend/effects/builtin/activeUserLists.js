@@ -37,6 +37,9 @@ const model = {
                 <li ng-click="effect.list = 'Active Mixplay Users'">
                     <a href>Active Mixplay Users</a>
                 </li>
+                <li ng-click="effect.list = 'All'">
+                    <a href>All Active User Lists</a>
+                </li>
             </ul>
         </div>
     </eos-container>
@@ -119,6 +122,18 @@ const model = {
                 await activeMixplay.removeUserFromList(user);
             } else if (event.effect.action === "Clear List") {
                 await activeMixplay.clearList();
+            }
+            break;
+        case "All":
+            if (event.effect.action === "Add User") {
+                await activeMixplay.addOrUpdateActiveUser(user);
+                await activeChatter.addOrUpdateActiveChatter(user);
+            } else if (event.effect.action === "Remove User") {
+                await activeMixplay.removeUserFromList(user);
+                await activeChatter.removeUserFromList(user);
+            } else if (event.effect.action === "Clear List") {
+                await activeMixplay.clearList();
+                await activeChatter.clearList();
             }
             break;
         default:
