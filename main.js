@@ -538,6 +538,9 @@ function appOnReady() {
         const accountAccess = require("./backend/common/account-access");
         accountAccess.updateAccountCache();
 
+        const mixerClient = require("./backend/mixer-client/client");
+        mixerClient.setupClients();
+
         // load effects
         builtInEffectLoader.loadEffects();
 
