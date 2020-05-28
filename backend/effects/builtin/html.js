@@ -58,7 +58,7 @@ const html = {
         </eos-collapsable-panel>
     </eos-container>
 
-    <eos-enter-exit-animations effect="effect" limit-to="Exit" pad-top="true"></eos-enter-exit-animations>
+    <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
 
     <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance>
 
