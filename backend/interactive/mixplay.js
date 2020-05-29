@@ -509,6 +509,8 @@ exports.getHiddenControls = () => hiddenControls;
 exports.markControlAsHidden = (controlId, hidden) => hiddenControls[controlId] = hidden;
 
 exports.client = mixplayClient;
+exports.connect = connectToMixplay;
+exports.disconnect = disconnectFromMixplay;
 exports.mapMixplayControl = mapMixplayControl;
 exports.moveViewerToScene = moveViewerToScene;
 exports.moveViewersToNewScene = moveViewersToNewScene;

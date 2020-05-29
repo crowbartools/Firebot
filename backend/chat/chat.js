@@ -303,4 +303,4 @@ class MixerChat extends EventEmitter {
     }
 }
 
-exports = new MixerChat();
+module.exports = new MixerChat();
