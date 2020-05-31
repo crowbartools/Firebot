@@ -10,7 +10,7 @@ const model = {
         possibleDataOutput: [OutputDataType.STRING]
     },
     evaluator: (_, input) => {
-        const data = input.replace(/\s/g,'');
+        const data = input.replace(/\s/g, '');
 
         // cast input as number, and if its finite return the recast input
         if (data != null && data.length > 0) {
