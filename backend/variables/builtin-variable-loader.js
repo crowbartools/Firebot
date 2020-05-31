@@ -67,6 +67,7 @@ exports.loadReplaceVariables = () => {
         'random-advice',
         'read-api',
         'read-file',
+        'remove-spaces',
         'skill-cost',
         'skill-currency-type',
         'skill-gif-url',
