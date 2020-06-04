@@ -5,6 +5,8 @@
 
     const moment = require('moment');
 
+    const uuid = require("uuid/v4");
+
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
@@ -134,7 +136,7 @@
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
                 let data = {
-                    id: "System" + Date.now(),
+                    id: "System" + uuid(),
                     user_name: "Alert", // eslint-disable-line
                     user_id: "firebot-system-message", // eslint-disable-line
                     user_roles: [ // eslint-disable-line

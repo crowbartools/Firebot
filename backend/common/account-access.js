@@ -4,6 +4,7 @@ const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
 const authManager = require("../auth/auth-manager");
+const channelAccess = require('../common/channel-access');
 
 /**
  * A streamer or bot account
@@ -56,8 +57,48 @@ function sendAccoutUpdate() {
     frontendCommunicator.send("accountUpdate", cache);
 }
 
+/**
+ * Updates a streamer account object with various settings
+ * @param {FirebotAccount} streamerAccount
+ * @returns {Promise<FirebotAccount>}
+ */
+async function updateStreamerAccountSettings(streamerAccount) {
+    if (streamerAccount == null || streamerAccount.channelId == null) return null;
+
+    const channelData = await channelAccess.getMixerAccountDetailsById(streamerAccount.channelId);
+    streamerAccount.partnered = channelData.partnered;
+
+    try {
+        const subBadgeUrl = await channelAccess.getChannelSubBadge(channelData.user.username);
+        streamerAccount.subBadge = subBadgeUrl;
+    } catch (error) {
+        logger.warn("Unable to get sub badge url");
+    }
+
+    try {
+        const canClip = await channelAccess.getChannelHasClipsEnabled(channelData.id, channelData.user.groups);
+        streamerAccount.canClip = canClip;
+    } catch (error) {
+        logger.warn("Unable to determine if channel can clip");
+    }
+
+    return streamerAccount;
+}
+
+function saveAccountDataToFile(accountType) {
+    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let account = cache[accountType];
+    try {
+        authDb.push(`/${accountType}`, account);
+    } catch (error) {
+        if (error.name === 'DatabaseError') {
+            logger.error(`Error saving ${accountType} account settings`, error);
+        }
+    }
+}
+
 // Update auth cache
-function loadAccountData() {
+async function loadAccountData() {
     let authDb = profileManager.getJsonDbInProfile("/auth");
     try {
         let dbData = authDb.getData("/"),
@@ -66,7 +107,14 @@ function loadAccountData() {
 
         if (streamer != null && streamer.auth != null) {
             streamer.loggedIn = true;
-            cache.streamer = streamer;
+
+            const updatedStreamer = await updateStreamerAccountSettings(streamer);
+            if (updatedStreamer != null) {
+                cache.streamer = updatedStreamer;
+                saveAccountDataToFile("streamer");
+            } else {
+                cache.streamer = streamer;
+            }
         }
 
         if (bot != null && bot.auth != null) {
@@ -80,18 +128,6 @@ function loadAccountData() {
     sendAccoutUpdate();
 }
 loadAccountData();
-
-function saveAccountDataToFile(accountType) {
-    let authDb = profileManager.getJsonDbInProfile("/auth");
-    let account = cache[accountType];
-    try {
-        authDb.push(`/${accountType}`, account);
-    } catch (error) {
-        if (error.name === 'DatabaseError') {
-            logger.error(`Error saving ${accountType} account settings`, error);
-        }
-    }
-}
 
 /**
  * Update and save data for an account
@@ -111,6 +147,7 @@ function updateAccount(accountType, account) {
     }
 
     account.loggedIn = true;
+
     cache[accountType] = account;
 
     sendAccoutUpdate();
@@ -186,4 +223,5 @@ frontendCommunicator.on("logoutAccount", accountType => {
 exports.updateAccountCache = loadAccountData;
 exports.updateAccount = updateAccount;
 exports.ensureTokenRefreshed = ensureTokenRefreshed;
+exports.updateStreamerAccountSettings = updateStreamerAccountSettings;
 exports.getAccounts = () => cache;

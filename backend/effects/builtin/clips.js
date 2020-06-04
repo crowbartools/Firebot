@@ -7,6 +7,7 @@ const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
 const accountAccess = require("../../common/account-access");
+const streamerAccount = accountAccess.getAccounts().streamer;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -21,7 +22,7 @@ const clip = {
         id: "firebot:clip",
         name: "Create Clip",
         description: "Creates a clip on Mixer.",
-        hidden: !accountAccess.getAccounts().streamer.loggedIn || !accountAccess.getAccounts().streamer.partnered,
+        hidden: !streamerAccount.loggedIn || !streamerAccount.canClip,
         icon: "fad fa-film",
         categories: [EffectCategory.COMMON, EffectCategory.FUN],
         dependencies: [EffectDependency.CHAT, EffectDependency.CONSTELLATION],

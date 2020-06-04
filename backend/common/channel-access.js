@@ -140,6 +140,11 @@ exports.getMixerAccountDetailsByUsername = async username => {
     return userData;
 };
 
+exports.getMixerAccountDetailsById = channelIdOrUsername => {
+    return exports.getMixerAccountDetailsByUsername(channelIdOrUsername);
+};
+
+
 exports.getChannelProgressionByUsername = async function(username) {
 
     let idData = await exports.getIdsFromUsername(username);
@@ -290,5 +295,34 @@ exports.triggerAdBreak = async () => {
     } catch (error) {
         renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
     }
+};
+
+const clipGroups = ["Partner", "VerifiedPartner", "Staff", "Founder"];
+exports.getChannelHasClipsEnabled = async (channelId, userGroups = null) => {
+    if (userGroups == null) {
+        let channelData = await exports.getMixerAccountDetailsById(channelId);
+        if (channelData == null || channelData.user == null || channelData.user.groups == null) return false;
+        userGroups = channelData.user.groups;
+    }
+
+    let roleCanClip = userGroups.some(ug => clipGroups.some(cg => ug.name === cg));
+    if (roleCanClip) {
+        return true;
+    }
+
+    let entitlementsData = await mixerApi.get(
+        `monetization/status/channels/${channelId}/entitlements/current`,
+        "v2",
+        false,
+        false
+    );
+
+    if (entitlementsData != null && entitlementsData.entitlements != null) {
+        if (entitlementsData.entitlements.some(e => e.revenueSource.toLowerCase().includes("clip"))) {
+            return true;
+        }
+    }
+
+    return false;
 };
 
