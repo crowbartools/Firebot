@@ -45,6 +45,7 @@
 
                 $ctrl.displayText = "";
                 $ctrl.setDisplayText = function() {
+                    if ($ctrl.restrictionDefinition == null) return "";
                     let displayValueFunc = $ctrl.restrictionDefinition.optionsValueDisplay;
                     if (displayValueFunc != null && $ctrl.restriction != null) {
                         // Invoke the func and inject any dependancies

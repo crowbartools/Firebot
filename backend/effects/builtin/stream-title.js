@@ -28,9 +28,7 @@ const model = {
             <p ng-show="trigger == 'command'" class="muted" style="font-size:11px;margin-top:6px;"><b>ProTip:</b> Use <b>$arg[all]</b> to include every word after the command !trigger.</p>
         </eos-container>
     `,
-    optionsController: ($scope) => {
-        console.log($scope.triggerType, $scope.trigger);
-    },
+    optionsController: () => {},
     optionsValidator: effect => {
         let errors = [];
         if (effect.title == null) {
