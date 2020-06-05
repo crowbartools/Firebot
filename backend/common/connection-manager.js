@@ -3,7 +3,6 @@ const EventEmitter = require("events");
 const channelAccess = require("./channel-access");
 const frontendCommunicator = require("./frontend-communicator");
 
-
 const chat = require("../chat/chat");
 const constellation = require("../live-events/mixer-constellation");
 const mixplay = require("../interactive/mixplay");
@@ -29,6 +28,32 @@ async function checkOnline() {
     updateOnlineStatus(isOnline);
 }
 
+function emitServiceConnectionUpdateEvents(serviceId, connectedOrDisconnected) {
+    const eventData = {
+        serviceId: serviceId,
+        connected: connectedOrDisconnected
+    };
+    manager.emit("service-connection-update", eventData);
+    frontendCommunicator.send("service-connection-update", eventData);
+}
+
+// Chat listeners
+chat.on("connected", () => {
+    emitServiceConnectionUpdateEvents("chat", true);
+});
+chat.on("disconnected", () => {
+    emitServiceConnectionUpdateEvents("chat", false);
+});
+
+// Constellation listeners
+constellation.on("connected", () => {
+    emitServiceConnectionUpdateEvents("constellation", true);
+});
+constellation.on("disconnected", () => {
+    emitServiceConnectionUpdateEvents("constellation", false);
+});
+
+/**@extends NodeJS.EventEmitter */
 class ConnectionManager extends EventEmitter {
     constructor() {
         super();
@@ -109,7 +134,6 @@ function updateServiceConnection(serviceId, shouldConnect) {
         }
     }
 }
-
 
 frontendCommunicator.on("connect-all-sidebar-services", () => {
 
