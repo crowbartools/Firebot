@@ -11,8 +11,6 @@ const commandAccess = require("../data-access/command-access");
 const chatProcessor = require("../common/handlers/chatProcessor.js");
 const reconnectService = require("./reconnect.js");
 const logger = require("../logwrapper");
-
-const eventManager = require("../live-events/EventManager");
 const accountAccess = require("./account-access");
 const profileAccess = require("./profile-manager");
 const userdb = require("../database/userDatabase");
@@ -332,6 +330,8 @@ function setPollActivelyRunning(duration = 0) {
 function createChatDataProcessing(chatter) {
     return new Promise((resolve, reject) => {
         let socket = [];
+
+        const eventManager = require("../live-events/EventManager");
 
         logger.debug(`Creating chat data proccessing for ${chatter}`);
 
@@ -997,6 +997,7 @@ function streamerConnect(streamer) {
                 // Start active chatters list.
                 activeChatter.cycleActiveChatters();
 
+                const eventManager = require("../live-events/EventManager");
                 // Fire the chat connected event.
                 try {
                     eventManager.triggerEvent("firebot", "chat-connected", {

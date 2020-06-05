@@ -1,6 +1,6 @@
 "use strict";
 
-const connectionManager = require("../../../common/connection-manager");
+//const connectionManager = require("../../../common/connection-manager");
 const channelAccess = require("../../../common/channel-access");
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
         }
 
         if (data.online != null) {
-            connectionManager.setOnlineStatus(data.online);
+            //connectionManager.setOnlineStatus(data.online);
         }
 
         channelAccess.updateStreamerChannelData(data);

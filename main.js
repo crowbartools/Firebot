@@ -18,8 +18,6 @@ const settings = require("./backend/common/settings-access").settings;
 const dataAccess = require("./backend/common/data-access.js");
 const profileManager = require("./backend/common/profile-manager.js");
 const backupManager = require("./backend/backupManager");
-const userDatabase = require("./backend/database/userDatabase");
-const connectionManager = require("./backend/common/connection-manager");
 const webServer = require("./server/httpServer");
 const fontManager = require("./backend/fontManager");
 
@@ -263,8 +261,6 @@ function createWindow() {
 
     let hotkeyManager = require("./backend/hotkeys/hotkey-manager");
     hotkeyManager.refreshHotkeyCache();
-
-    connectionManager.startOnlineCheckInterval();
 
     const timerManager = require("./backend/timers/timer-manager");
     timerManager.startTimers();
@@ -538,6 +534,9 @@ function appOnReady() {
         const accountAccess = require("./backend/common/account-access");
         await accountAccess.updateAccountCache();
 
+        const connectionManager = require("./backend/common/connection-manager");
+        connectionManager.startOnlineCheckInterval();
+
         const mixerClient = require("./backend/mixer-client/client");
         mixerClient.setupClients();
 
@@ -606,6 +605,7 @@ function appOnReady() {
         //start the REST api server
         webServer.start();
 
+        const userDatabase = require("./backend/database/userDatabase");
         // Set users in user db to offline if for some reason they are still set to online. (app crash or something)
         userDatabase.setAllUsersOffline();
 
@@ -626,6 +626,7 @@ function windowClosed() {
         let hotkeyManager = require("./backend/hotkeys/hotkey-manager");
         hotkeyManager.unregisterAllHotkeys();
 
+        const userDatabase = require("./backend/database/userDatabase");
         userDatabase.setAllUsersOffline().then(() => {
             if (settings.backupOnExit()) {
                 backupManager.startBackup(false, app.quit);
