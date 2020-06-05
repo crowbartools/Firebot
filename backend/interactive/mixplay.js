@@ -14,7 +14,6 @@ const userDatabase = require("../database/userDatabase");
 const activeMixplayUsers = require('../roles/role-managers/active-mixplay-users');
 
 const mixplayManager = require('./mixplay-project-manager');
-const eventManager = require("../live-events/EventManager");
 
 const controlManager = require("./control-manager");
 
@@ -236,6 +235,7 @@ async function connectToMixplay() {
 
         defaultSceneId = currentProject.defaultSceneId;
 
+        const eventManager = require("../live-events/EventManager");
         eventManager.triggerEvent("firebot", "mixplay-connected", {
             username: "Firebot"
         });
@@ -394,6 +394,7 @@ mixplayClient.state.on('participantJoin', async participant => {
             await updateParticipantWithUserData(firebotUser, participant);
         }
 
+        const eventManager = require("../live-events/EventManager");
         eventManager.triggerEvent("mixer", "user-joined-mixplay", {
             username: participant.username
         });
