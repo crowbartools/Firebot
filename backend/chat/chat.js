@@ -8,6 +8,9 @@ const accountAccess = require("../common/account-access");
 
 const client = require("../mixer-client/client");
 
+/**@type MixerChat */
+let mixerChat;
+
 /**
  * Creates a Mixer chat socket and authenticates
  * @param {string} accountType The type of account to connect with ('streamer' or 'bot')
@@ -48,15 +51,33 @@ function ensureSocketIsClosed(socket) {
  * @param {Mixer.Socket} streamerSocket The streamers socket
  */
 function setupStreamerSocketListeners(streamerSocket) {
+    streamerSocket.on("ChatMessage", data => {
 
+    });
+
+    streamerSocket.on('error', error => {
+        logger.error("Streamer chat socket error", error);
+    });
+
+    streamerSocket.on('reconnecting', () => {
+        mixerChat.emit("reconnecting");
+    });
+
+    streamerSocket.on('connected', () => {
+        mixerChat.emit("connected");
+    });
+
+    streamerSocket.on('closed', () => {
+        mixerChat.emit("disconnected");
+        ensureSocketIsClosed(mixerChat._botSocket);
+    });
 }
 
 /**
  * Sets up listeners for the bot socket
  * @param {Mixer.Socket} botSocket The bots socket
- * @param {NodeJS.EventEmitter} eventEmitter The MixerChat event emitter
  */
-function setupBotSocketListeners(botSocket, eventEmitter) {
+function setupBotSocketListeners(botSocket) {
     botSocket.on("ChatMessage", data => {
         // if someone whispers the bot account, we want to act on that
         if (data.message.meta.whisper) {
@@ -72,9 +93,7 @@ function setupBotSocketListeners(botSocket, eventEmitter) {
         logger.error("Bot chat socket error", error);
     });
 
-    botSocket.on('reconnecting', () => {
-
-    });
+    botSocket.on('reconnecting', () => {});
 
     botSocket.on('closed', () => {});
 }
@@ -113,6 +132,7 @@ class MixerChat extends EventEmitter {
 
         // join chat with streamer
         this._streamerSocket = await joinChat('streamer');
+        setupStreamerSocketListeners();
 
         // join chat with bot, if its logged in
         if (accounts.bot.loggedIn) {
@@ -120,6 +140,8 @@ class MixerChat extends EventEmitter {
             ensureSocketIsClosed(this._botSocket);
 
             this._botSocket = await joinChat('bot');
+
+            setupBotSocketListeners();
         }
     }
 
@@ -129,10 +151,6 @@ class MixerChat extends EventEmitter {
     disconnect() {
         ensureSocketIsClosed(this._streamerSocket);
         ensureSocketIsClosed(this._botSocket);
-
-        this.emit("chat-disconnected");
-
-        // tell front end chat is no longer connecting
     }
 
 
@@ -303,4 +321,6 @@ class MixerChat extends EventEmitter {
     }
 }
 
-module.exports = new MixerChat();
+mixerChat = new MixerChat();
+
+module.exports = mixerChat;
