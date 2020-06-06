@@ -13,95 +13,34 @@ const frontendCommunicator = require("../common/frontend-communicator");
 const userDatabase = require("../database/userDatabase");
 const activeMixplayUsers = require('../roles/role-managers/active-mixplay-users');
 
+const { buildMixplayModelFromProject, mapMixplayControl } = require("./mixplay-helpers");
+
 const mixplayManager = require('./mixplay-project-manager');
 
 const controlManager = require("./control-manager");
 
 // Setup mixer Interactive and make it a global variable for use throughout the app.
 const interactive = require("@mixer/interactive-node");
-const ws = require('ws');
+interactive.setWebSocket(require('ws'));
 
-interactive.setWebSocket(ws);
 const mixplayClient = new interactive.GameClient();
 
-let mixplayConnected = false;
+const SocketState = Object.freeze({
+    Idle: 1,
+    Connecting: 2,
+    Connected: 3,
+    Closing: 4,
+    Reconnecting: 5,
+    Refreshing: 6
+});
+
+function mixplayIsConnected() {
+    return mixplayClient.socket.state === SocketState.Connected;
+}
 
 let defaultSceneId = "";
 
 let hiddenControls = {};
-
-function mapMixplayControl(firebotControl) {
-    let mixplayControl = firebotControl.mixplay;
-
-    mixplayControl.controlID = firebotControl.id;
-    mixplayControl.kind = firebotControl.kind;
-    if (firebotControl.position != null) {
-        mixplayControl.position = firebotControl.position;
-    }
-    if (firebotControl.active != null) {
-        mixplayControl.disabled = !firebotControl.active;
-    }
-
-    //if text size is just a number, append "px"
-    if (mixplayControl.textSize !== null && mixplayControl.textSize !== undefined) {
-        if (!isNaN(mixplayControl.textSize)) {
-            mixplayControl.textSize += "px";
-        }
-    }
-
-    if (mixplayControl.backgroundImage != null) {
-        mixplayControl.backgroundImage = mixplayControl.backgroundImage.trim();
-    }
-
-    if (mixplayControl.progress != null) {
-        let progress = mixplayControl.progress.toString().replace("%", "").trim();
-        if (isNaN(progress)) {
-            mixplayControl.progress = undefined;
-        } else {
-            mixplayControl.progress = Number(progress) / 100;
-        }
-    }
-
-    return mixplayControl;
-}
-
-function mapMixplayScene(firebotScene, id) {
-    let mixplayScene = {
-        sceneID: id,
-        controls: []
-    };
-
-    if (firebotScene.controls) {
-        for (let fbControl of firebotScene.controls) {
-            let mixplayControl = mapMixplayControl(fbControl);
-            mixplayScene.controls.push(mixplayControl);
-        }
-    }
-
-    return mixplayScene;
-}
-
-function buildMixplayModalFromProject(project) {
-    //copy the scenes to avoid issues with references
-    let firebotScenes = JSON.parse(JSON.stringify(project.scenes));
-
-    let defaultScene;
-    let otherScenes = [];
-    for (let fbScene of firebotScenes) {
-        if (fbScene.id === project.defaultSceneId) {
-            defaultScene = mapMixplayScene(fbScene, 'default');
-        } else {
-            otherScenes.push(mapMixplayScene(fbScene, fbScene.id));
-        }
-    }
-
-    return {
-        id: project.id,
-        defaultScene: defaultScene,
-        otherScenes: otherScenes,
-        groups: []
-    };
-}
 
 // Helper function factory to bind events
 function addControlHandlers(controls) {
@@ -136,56 +75,64 @@ function addControlHandlers(controls) {
     });
 }
 
-function triggerMixplayDisconnect(errorMessage) {
+function handleMixplayDisconnect(errorMessage) {
     mixplayManager.setConnectedProjectId(null);
-    mixplayConnected = false;
     defaultSceneId = null;
-    if (mixplayClient) {
-        mixplayClient.close();
-    }
     if (errorMessage) {
         renderWindow.webContents.send("error", errorMessage);
     }
     renderWindow.webContents.send('connection', "Offline");
 }
 
+mixplayClient.on('open', () => {
+    renderWindow.webContents.send('connection', "Online");
+});
+
+mixplayClient.on('close', () => {
+    handleMixplayDisconnect();
+});
+
+mixplayClient.on('error', err => {
+    logger.warn("MixPlay error", err);
+});
+
 async function connectToMixplay() {
 
     let tokenSuccess = await accountAccess.ensureTokenRefreshed("streamer");
     if (!tokenSuccess) {
-        triggerMixplayDisconnect("There was an issue refreshing your streamer account auth token. Please try again. If the issue persists, try re-logging into your account.");
+        handleMixplayDisconnect("There was an issue refreshing your streamer account auth token. Please try again. If the issue persists, try re-logging into your account.");
         return;
     }
 
     let streamer = accountAccess.getAccounts().streamer;
     if (!streamer.loggedIn) {
-        triggerMixplayDisconnect("You must log into your streamer account before you can connect to MixPlay.");
+        handleMixplayDisconnect("You must log into your streamer account before you can connect to MixPlay.");
         return;
     }
 
     if (!mixplayManager.hasProjects()) {
         // no projects saved yet.
-        triggerMixplayDisconnect("Unable to connect to MixPlay as there are no MixPlay projects created. If you do not plan to use MixPlay for now, you can disable it from being controlled from the sidebar by openning the Connection Panel (click Connections in bottom left)");
+        handleMixplayDisconnect("Unable to connect to MixPlay as there are no MixPlay projects created. If you do not plan to use MixPlay for now, you can disable it from being controlled from the sidebar by openning the Connection Panel (click Connections in bottom left)");
         return;
     }
 
     let activeProjectId = settings.getActiveMixplayProjectId();
 
     if (!activeProjectId || activeProjectId.length < 1) {
-        triggerMixplayDisconnect("You currently have no active project selected. Please select one via the project dropdown in the Controls tab.");
+        handleMixplayDisconnect("You currently have no active project selected. Please select one via the project dropdown in the Controls tab.");
         return;
     }
 
     let currentProject = mixplayManager.getProjectById(activeProjectId);
     if (currentProject == null) {
-        triggerMixplayDisconnect("The project set as active doesn't appear to exist anymore. Please set or create a new one in the Controls tab.");
+        handleMixplayDisconnect("The project set as active doesn't appear to exist anymore. Please set or create a new one in the Controls tab.");
         return;
     }
 
     // clear our hidden controls cache, this is used in the update control effect
     hiddenControls = {};
 
-    let model = buildMixplayModalFromProject(currentProject);
+    let model = buildMixplayModelFromProject(currentProject);
 
     mixplayManager.setConnectedProjectId(activeProjectId);
 
@@ -230,8 +177,6 @@ async function connectToMixplay() {
 
         //mark as successfully connected
         mixplayClient.ready(true);
-        renderWindow.webContents.send('connection', "Online");
-        mixplayConnected = true;
 
         defaultSceneId = currentProject.defaultSceneId;
 
@@ -244,16 +189,9 @@ async function connectToMixplay() {
 
     } catch (error) {
         logger.warn("Failed to connect to MixPlay", error);
-        triggerMixplayDisconnect("Failed to connect to MixPlay.");
+        handleMixplayDisconnect("Failed to connect to MixPlay.");
     }
 }
-
-mixplayClient.on('error', err => {
-    logger.warn("MixPlay error", err);
-
-    triggerMixplayDisconnect();
-});
-
 
 async function getParticipantsForGroup(groupId) {
     const allParticipants = mixplayClient.state.getParticipants();
@@ -349,7 +287,7 @@ async function updateCooldownForControls(controlIds, cooldown) {
 }
 
 async function updateParticipantWithData(userId, data, participant = null) {
-    if (!mixplayConnected) return;
+    if (!mixplayIsConnected()) return;
 
     if (participant == null) {
         participant = mixplayClient.state.getParticipantByUserID(userId);
@@ -423,7 +361,7 @@ function translateSceneIdForMixplay(sceneId) {
 }
 
 ipcMain.on("controlUpdated", function(_, id) {
-    if (!mixplayConnected) return;
+    if (!mixplayIsConnected()) return;
     let firebotControl = controlManager.getControlById(id, mixplayManager.getConnectedProjectId());
     if (firebotControl) {
         let mixplayControl = mixplayClient.state.getControl(id);
@@ -434,7 +372,7 @@ ipcMain.on("controlUpdated", function(_, id) {
 });
 
 ipcMain.on("controlsUpdated", function(_, data) {
-    if (!mixplayConnected) return;
+    if (!mixplayIsConnected()) return;
     let {sceneId, controls } = data;
     if (!sceneId || !controls) return;
     controls = controls.map(c => mapMixplayControl(c));
@@ -449,7 +387,7 @@ ipcMain.on("controlsUpdated", function(_, data) {
 });
 
 ipcMain.on("controlsRemoved", function(_, data) {
-    if (!mixplayConnected) return;
+    if (!mixplayIsConnected()) return;
     let { sceneId, controlIds } = data;
 
     let scene = mixplayClient.state.getScene(translateSceneIdForMixplay(sceneId));
@@ -459,7 +397,7 @@ ipcMain.on("controlsRemoved", function(_, data) {
 });
 
 frontendCommunicator.onAsync("controlAdded", async data => {
-    if (!mixplayConnected) return true;
+    if (!mixplayIsConnected()) return true;
 
     let { sceneId } = data;
     let firebotControl = data.newControl;
@@ -487,13 +425,8 @@ function disconnectFromMixplay() {
     logger.info('Disconnecting from MixPlay.');
 
     mixplayClient.close();
-
-    //clear Cooldowns
-    //clear thresholds
-    // Send connection status to ui.
-    renderWindow.webContents.send('connection', "Offline");
-    mixplayConnected = false;
 }
+
 // Listen for disconnect toggle
 ipcMain.on("mixerInteractive", function(_, status) {
     if (status !== "connect" && status !== "connected") {
@@ -502,9 +435,7 @@ ipcMain.on("mixerInteractive", function(_, status) {
     }
 });
 
-exports.mixplayIsConnected = function() {
-    return mixplayConnected;
-};
+exports.mixplayIsConnected = mixplayIsConnected;
 
 exports.getHiddenControls = () => hiddenControls;
 exports.markControlAsHidden = (controlId, hidden) => hiddenControls[controlId] = hidden;

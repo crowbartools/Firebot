@@ -8,6 +8,8 @@ const constellation = require("../live-events/mixer-constellation");
 const mixplay = require("../interactive/mixplay");
 const integrationManager = require("../integrations/IntegrationManager");
 
+const { ConnectionState } = require("../../shared/connection-constants");
+
 let isOnline = false;
 let onlineCheckIntervalId;
 
@@ -28,10 +30,10 @@ async function checkOnline() {
     updateOnlineStatus(isOnline);
 }
 
-function emitServiceConnectionUpdateEvents(serviceId, connectedOrDisconnected) {
+function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
     const eventData = {
         serviceId: serviceId,
-        connected: connectedOrDisconnected
+        connectionState: connectionState
     };
     manager.emit("service-connection-update", eventData);
     frontendCommunicator.send("service-connection-update", eventData);
@@ -39,18 +41,18 @@ function emitServiceConnectionUpdateEvents(serviceId, connectedOrDisconnected) {
 
 // Chat listeners
 chat.on("connected", () => {
-    emitServiceConnectionUpdateEvents("chat", true);
+    emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected);
 });
 chat.on("disconnected", () => {
-    emitServiceConnectionUpdateEvents("chat", false);
+    emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected);
 });
 
 // Constellation listeners
 constellation.on("connected", () => {
-    emitServiceConnectionUpdateEvents("constellation", true);
+    emitServiceConnectionUpdateEvents("constellation", ConnectionState.Connected);
 });
 constellation.on("disconnected", () => {
-    emitServiceConnectionUpdateEvents("constellation", false);
+    emitServiceConnectionUpdateEvents("constellation", ConnectionState.Disconnected);
 });
 
 /**@extends NodeJS.EventEmitter */

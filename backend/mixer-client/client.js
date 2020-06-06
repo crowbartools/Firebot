@@ -15,7 +15,6 @@ const botClient = new Mixer.Client(new Mixer.DefaultRequestRunner());
  */
 async function setupClients() {
 
-    accountAccess.updateAccountCache();
     await accountAccess.ensureTokenRefreshed("streamer");
     await accountAccess.ensureTokenRefreshed("bot");
 
@@ -41,6 +40,10 @@ async function setupClients() {
         }));
     }
 }
+
+accountAccess.events.on("account-update", () => {
+    setupClients();
+});
 
 /**
  * Gets connection information from Mixer's chat servers

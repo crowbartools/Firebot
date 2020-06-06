@@ -5,6 +5,10 @@ const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
 const authManager = require("../auth/auth-manager");
 const channelAccess = require('../common/channel-access');
+const EventEmitter = require("events");
+
+/**@type {NodeJS.EventEmitter} */
+const accountEvents = new EventEmitter();
 
 /**
  * A streamer or bot account
@@ -55,6 +59,7 @@ let cache = new AccountCache(
 
 function sendAccoutUpdate() {
     frontendCommunicator.send("accountUpdate", cache);
+    accountEvents.emit("account-update", cache);
 }
 
 /**
@@ -220,6 +225,7 @@ frontendCommunicator.on("logoutAccount", accountType => {
     removeAccount(accountType);
 });
 
+exports.events = accountEvents;
 exports.updateAccountCache = loadAccountData;
 exports.updateAccount = updateAccount;
 exports.ensureTokenRefreshed = ensureTokenRefreshed;
