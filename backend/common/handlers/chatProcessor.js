@@ -1,7 +1,8 @@
 "use strict";
 
 const { ipcMain } = require("electron");
-const chat = require("../mixer-chat.js");
+const mixerChat = require("../../chat/chat");
+const oldChat = require("../mixer-chat.js");
 const profileManager = require("../profile-manager");
 const logger = require("../../logwrapper");
 const replaceVariableManager = require("../../variables/replace-variable-manager");
@@ -127,30 +128,30 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
 
         switch (command) {
         case "/clear":
-            chat.clearChatMessages();
+            mixerChat.clearChat();
             break;
         case "/giveaway":
-            chat.chatGiveaway();
+            mixerChat.startGiveaway();
             break;
         case "/timeout": {
             logger.debug("timing out user " + target + " for " + arg2);
-            chat.timeout(target, arg2);
+            mixerChat.timeoutUser(target, arg2);
             break;
         }
         case "/ban":
-            chat.changeUserRole(target, "Banned", "Add");
+            oldChat.changeUserRole(target, "Banned", "Add");
             break;
         case "/unban":
-            chat.changeUserRole(target, "Banned", "Remove");
+            oldChat.changeUserRole(target, "Banned", "Remove");
             break;
         case "/mod":
-            chat.changeUserRole(target, "Mod", "Add");
+            oldChat.changeUserRole(target, "Mod", "Add");
             break;
         case "/unmod":
-            chat.changeUserRole(target, "Mod", "Remove");
+            oldChat.changeUserRole(target, "Mod", "Remove");
             break;
         case "/purge":
-            chat.chatPurge(target);
+            mixerChat.purgeUserMessages(target);
             break;
         case "/ad":
             channelAccess.triggerAdBreak();
@@ -158,23 +159,23 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
         case "/settitle": {
             messageArray.splice(0, 1);
             let title = messageArray.join(" ");
-            chat.updateStreamTitle(title);
+            oldChat.updateStreamTitle(title);
             break;
         }
         case "/setgame": {
             messageArray.splice(0, 1);
             let game = messageArray.join(" ");
-            chat.updateStreamGame(game);
+            oldChat.updateStreamGame(game);
             break;
         }
         case "/setaudience": {
             let normalizedArg = arg1 != null ? arg1.toLowerCase() : "";
             if (
                 normalizedArg === "family" ||
-          normalizedArg === "teen" ||
-          normalizedArg === "18+"
+                normalizedArg === "teen" ||
+                normalizedArg === "18+"
             ) {
-                chat.updateStreamAudience(normalizedArg);
+                oldChat.updateStreamAudience(normalizedArg);
             }
             break;
         }
@@ -188,7 +189,7 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
 
             try {
                 // Send to mixer.
-                chat.smartSend(messageArray.join(" "), whisper, chatter);
+                mixerChat.sendChatMessage(messageArray.join(" "), whisper, chatter);
 
                 // Send to UI to inject outgoing whisper.
                 injectWhisper(chatter, whisper, messageArray.join(" "));
@@ -218,7 +219,7 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
 
                 if (messageText.length > 0) {
 
-                    chat.smartSend(messageText, target, chatter);
+                    mixerChat.sendChatMessage(messageText, target, chatter);
 
                     // Send to UI to inject outgoing whisper.
                     injectWhisper(chatter, target, messageText);
@@ -236,7 +237,7 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
                 whisper = whisper.replace("$(user)", username);
             }
 
-            chat.smartSend(message, whisper, chatter);
+            mixerChat.sendChatMessage(message, whisper, chatter);
         }
     } catch (err) {
         renderWindow.webContents.send(
@@ -457,7 +458,7 @@ async function uiChatUserRefresh() {
     let chatUsers;
 
     try {
-        chatUsers = await chat.getCurrentViewerListV2();
+        chatUsers = await oldChat.getCurrentViewerListV2();
     } catch (err) {
         logger.warn(err);
         return;
@@ -476,7 +477,7 @@ async function uiChatUserRefresh() {
 // This will send a list of commands in a whipser to someone.
 function commandList(trigger) {
     // Get commands
-    let dbCommands = chat.getCommandCache();
+    let dbCommands = oldChat.getCommandCache();
     let activeCommands = dbCommands["Active"];
     let commandArray = [];
 
@@ -507,7 +508,7 @@ function commandList(trigger) {
     // Alright, lets send off each packet.
     for (let chunk in message) {
         if (chunk != null && chunk.length > 0) {
-            chat.whisper("bot", whisperTo, message[chunk]);
+            oldChat.whisper("bot", whisperTo, message[chunk]);
         }
     }
 }

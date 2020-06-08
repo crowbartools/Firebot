@@ -2,6 +2,8 @@
 
 const {ipcMain} = require('electron');
 
+const EventEmitter = require("events");
+
 const FIREBOT_MIXPLAY_VERSION_ID = 334620;
 const FIREBOT_MIXPLAY_SHARECODE = "moo33cku";
 
@@ -25,6 +27,9 @@ interactive.setWebSocket(require('ws'));
 
 const mixplayClient = new interactive.GameClient();
 
+/**@type {NodeJS.EventEmitter} */
+const events = new EventEmitter();
+
 const SocketState = Object.freeze({
     Idle: 1,
     Connecting: 2,
@@ -35,7 +40,7 @@ const SocketState = Object.freeze({
 });
 
 function mixplayIsConnected() {
-    return mixplayClient.socket.state === SocketState.Connected;
+    return mixplayClient.socket && mixplayClient.socket.state === SocketState.Connected;
 }
 
 let defaultSceneId = "";
@@ -82,21 +87,35 @@ function handleMixplayDisconnect(errorMessage) {
         renderWindow.webContents.send("error", errorMessage);
     }
     renderWindow.webContents.send('connection', "Offline");
+    events.emit("disconnected");
 }
 
 mixplayClient.on('open', () => {
     renderWindow.webContents.send('connection', "Online");
+    events.emit("connected");
 });
 
 mixplayClient.on('close', () => {
-    handleMixplayDisconnect();
+    setTimeout(() => {
+        if (mixplayClient.socket.state === SocketState.Closing || mixplayClient.socket.state === SocketState.Idle) {
+            handleMixplayDisconnect();
+        } else if (mixplayClient.socket.state === SocketState.Connecting) {
+            events.emit("connecting");
+        } else if (mixplayClient.socket.state === SocketState.Reconnecting) {
+            events.emit("reconnecting");
+        }
+    }, 1);
 });
 
 mixplayClient.on('error', err => {
     logger.warn("MixPlay error", err);
+    if (mixplayClient.socket.state === SocketState.Closing || mixplayClient.socket.state === SocketState.Idle) {
+        handleMixplayDisconnect();
+    }
 });
 
 async function connectToMixplay() {
+    events.emit("connecting");
 
     let tokenSuccess = await accountAccess.ensureTokenRefreshed("streamer");
     if (!tokenSuccess) {
@@ -440,6 +459,7 @@ exports.mixplayIsConnected = mixplayIsConnected;
 exports.getHiddenControls = () => hiddenControls;
 exports.markControlAsHidden = (controlId, hidden) => hiddenControls[controlId] = hidden;
 
+exports.events = events;
 exports.client = mixplayClient;
 exports.connect = connectToMixplay;
 exports.disconnect = disconnectFromMixplay;

@@ -262,9 +262,6 @@ function createWindow() {
     let hotkeyManager = require("./backend/hotkeys/hotkey-manager");
     hotkeyManager.refreshHotkeyCache();
 
-    const timerManager = require("./backend/timers/timer-manager");
-    timerManager.startTimers();
-
     const currencyManager = require("./backend/currency/currencyManager");
     currencyManager.startTimer();
 
@@ -536,6 +533,9 @@ function appOnReady() {
 
         const connectionManager = require("./backend/common/connection-manager");
         connectionManager.startOnlineCheckInterval();
+
+        const timerManager = require("./backend/timers/timer-manager");
+        timerManager.startTimers();
 
         const mixerClient = require("./backend/mixer-client/client");
         mixerClient.setupClients();

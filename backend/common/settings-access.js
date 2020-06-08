@@ -290,4 +290,12 @@ settings.setWhileLoopEnabled = function(enabled) {
     pushDataToFile('/settings/whileLoopEnabled', enabled === true);
 };
 
+/**@returns {string[]} */
+settings.getSidebarControlledServices = function() {
+    const services = getDataFromFile("/settings/sidebarControlledServices");
+    return services != null
+        ? services
+        : ["interactive", "chat", "constellation"];
+};
+
 exports.settings = settings;

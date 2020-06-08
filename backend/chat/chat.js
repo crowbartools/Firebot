@@ -5,36 +5,14 @@ const ws = require('ws');
 
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
+const frontendCommunicator = require("../common/frontend-communicator");
+
+const chatListenerManager = require("./chat-listeners/chat-listener-manager");
 
 const client = require("../mixer-client/client");
 
 /**@type MixerChat */
 let mixerChat;
-
-/**
- * Creates a Mixer chat socket and authenticates
- * @param {string} accountType The type of account to connect with ('streamer' or 'bot')
- * @returns {Promise.<Mixer.Socket>}
- */
-async function joinChat(accountType) {
-
-    let channelId, userId;
-    if (accountType === "streamer") {
-        const streamer = accountAccess.getAccounts().streamer;
-        channelId = streamer.channelId;
-        userId = streamer.userId;
-    } else {
-        const bot = accountAccess.getAccounts().bot;
-        channelId = bot.channelId;
-        userId = bot.userId;
-    }
-
-    const joinInformation = await client.getChatConnectionInformation(accountType);
-
-    const socket = new Mixer.Socket(ws, joinInformation.endpoints).boot();
-
-    return socket.auth(channelId, userId, joinInformation.authkey).then(() => socket);
-}
 
 /**
  * Ensure a socket is closed
@@ -47,30 +25,68 @@ function ensureSocketIsClosed(socket) {
 }
 
 /**
+ * Creates a Mixer chat socket and authenticates
+ * @param {string} accountType The type of account to connect with ('streamer' or 'bot')
+ * @returns {Promise.<Mixer.Socket>}
+ */
+async function joinChat(accountType) {
+
+    const streamer = accountAccess.getAccounts().streamer;
+    const channelId = streamer.channelId;
+
+    let userId;
+    if (accountType === "streamer") {
+        userId = streamer.userId;
+    } else {
+        const bot = accountAccess.getAccounts().bot;
+        userId = bot.userId;
+    }
+
+    const joinInformation = await client.getChatConnectionInformation(accountType);
+
+    const socket = new Mixer.Socket(ws, joinInformation.endpoints);
+
+    if (accountType === "streamer") {
+        socket.on('reconnecting', () => {
+            mixerChat.emit("reconnecting");
+        });
+
+        socket.on('connected', () => {
+            mixerChat.emit("connected");
+        });
+
+        socket.on('closed', () => {
+            mixerChat.emit("disconnected");
+            ensureSocketIsClosed(mixerChat._botSocket);
+        });
+
+        socket.on('error', error => {
+            logger.error("Streamer chat socket error", error);
+        });
+    } else {
+        socket.on('error', error => {
+            logger.error("Bot chat socket error", error);
+        });
+
+        socket.on('connected', () => {});
+
+        socket.on('closed', () => {});
+    }
+
+    socket.boot();
+
+    return socket.auth(channelId, userId, joinInformation.authkey).then(() => socket);
+}
+
+/**
  * Sets up listeners for the streamer socket
  * @param {Mixer.Socket} streamerSocket The streamers socket
  */
 function setupStreamerSocketListeners(streamerSocket) {
-    streamerSocket.on("ChatMessage", data => {
-
-    });
-
-    streamerSocket.on('error', error => {
-        logger.error("Streamer chat socket error", error);
-    });
-
-    streamerSocket.on('reconnecting', () => {
-        mixerChat.emit("reconnecting");
-    });
-
-    streamerSocket.on('connected', () => {
-        mixerChat.emit("connected");
-    });
-
-    streamerSocket.on('closed', () => {
-        mixerChat.emit("disconnected");
-        ensureSocketIsClosed(mixerChat._botSocket);
-    });
+    const streamerListeners = chatListenerManager.getStreamerListeners();
+    for (const listener of streamerListeners) {
+        streamerSocket.on(listener.event, data => listener.callback(data));
+    }
 }
 
 /**
@@ -78,24 +94,10 @@ function setupStreamerSocketListeners(streamerSocket) {
  * @param {Mixer.Socket} botSocket The bots socket
  */
 function setupBotSocketListeners(botSocket) {
-    botSocket.on("ChatMessage", data => {
-        // if someone whispers the bot account, we want to act on that
-        if (data.message.meta.whisper) {
-            //commandHandler.handleChatEvent(data);
-            if (data.user_name !== accountAccess.getAccounts().streamer.username) {
-                // Send to UI to show in chat window.
-                //chatProcessor.uiChatMessage(data);
-            }
-        }
-    });
-
-    botSocket.on('error', error => {
-        logger.error("Bot chat socket error", error);
-    });
-
-    botSocket.on('reconnecting', () => {});
-
-    botSocket.on('closed', () => {});
+    const botListeners = chatListenerManager.getBotListeners();
+    for (const listener of botListeners) {
+        botSocket.on(listener.event, data => listener.callback(data));
+    }
 }
 
 /**@extends NodeJS.EventEmitter */
@@ -125,14 +127,19 @@ class MixerChat extends EventEmitter {
      */
     async connect() {
         const accounts = accountAccess.getAccounts();
-        if (!accounts.streamer.loggedIn) return;
+        if (!accounts.streamer.loggedIn) {
+            this.emit("disconnected");
+            return;
+        }
+
+        this.emit("connecting");
 
         // Ensure previous streamer socket is closed
         ensureSocketIsClosed(this._streamerSocket);
 
         // join chat with streamer
         this._streamerSocket = await joinChat('streamer');
-        setupStreamerSocketListeners();
+        setupStreamerSocketListeners(this._streamerSocket);
 
         // join chat with bot, if its logged in
         if (accounts.bot.loggedIn) {
@@ -141,7 +148,7 @@ class MixerChat extends EventEmitter {
 
             this._botSocket = await joinChat('bot');
 
-            setupBotSocketListeners();
+            setupBotSocketListeners(this._botSocket);
         }
     }
 
@@ -166,7 +173,12 @@ class MixerChat extends EventEmitter {
     async sendChatMessage(message, username, accountType) {
         if (message == null) return null;
 
-        const botAvailable = accountAccess.getAccounts().bot.loggedIn;
+        // Normalize account type
+        if (accountType != null) {
+            accountType = accountType.toLowerCase();
+        }
+
+        const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botSocket && this._botSocket.isConnected;
         if (accountType == null) {
             accountType = botAvailable ? "bot" : "streamer";
         } else if (accountType === "bot" && !botAvailable) {
@@ -322,5 +334,9 @@ class MixerChat extends EventEmitter {
 }
 
 mixerChat = new MixerChat();
+
+frontendCommunicator.on("delete-message", messageId => {
+    mixerChat.deleteMessage(messageId);
+});
 
 module.exports = mixerChat;

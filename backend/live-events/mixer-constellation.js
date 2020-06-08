@@ -23,11 +23,12 @@ class MixerConstellation extends EventEmitter {
                 this.emit("connected");
 
                 logger.info("Constellation connected.");
-                renderWindow.webContents.send("constellationConnection", "Online");
             } else if (state === State.Closing) {
                 this.emit("disconnected");
-
-                renderWindow.webContents.send("constellationConnection", "Offline");
+            } else if (state === State.Reconnecting) {
+                this.emit("reconnecting");
+            } else if (state === State.Connecting) {
+                this.emit("connecting");
             }
         });
 
@@ -62,7 +63,12 @@ class MixerConstellation extends EventEmitter {
     }
 
     disconnect() {
-        this._constellation.close();
+        if (this._constellation.socket.getState() === State.Idle) {
+            //already disconnected
+            this.emit("disconnected");
+        } else {
+            this._constellation.close();
+        }
     }
 
     getConstellationStatus() {

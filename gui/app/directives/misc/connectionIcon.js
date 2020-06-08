@@ -154,14 +154,26 @@
             $rootScope.$on("connection:update", (event, data) => {
                 if (data.type !== ctrl.type) return;
 
+                let shouldUpdate = false;
                 if (data.type === "overlay") {
                     ctrl.connectionStatus = data.status;
-                } else {
-                    ctrl.connectionStatus = connectionManager.getConnectionStatusForService(ctrl.type);
+                    shouldUpdate = true;
                 }
 
-                setBubbleClasses();
-                generateTooltip();
+                if (data.status === ConnectionStatus.CONNECTED || data.status === ConnectionStatus.DISCONNECTED) {
+                    if (data.type.startsWith("integration.")) {
+                        ctrl.connectionStatus = connectionService.integrationsOverallStatus;
+                    } else {
+                        ctrl.connectionStatus = data.status;
+                        console.log(`Set status "${ctrl.connectionStatus}" for connection type "${ctrl.type}"`);
+                    }
+                    shouldUpdate = true;
+                }
+
+                if (shouldUpdate) {
+                    setBubbleClasses();
+                    generateTooltip();
+                }
             });
 
             ctrl.$onInit = function() {
@@ -182,9 +194,13 @@
                     ctrl.connectionIcon = ConnectionIcon.INTEGRATIONS;
                 }
 
-                ctrl.connectionStatus = connectionManager.getConnectionStatusForService(
-                    ctrl.type
-                );
+                if (ctrl.type === ConnectionType.OVERLAY) {
+                    ctrl.connectionStatus = "warning";
+                } else {
+                    ctrl.connectionStatus = "disconnected";
+                }
+
+
                 setBubbleClasses();
                 generateTooltip();
             };
