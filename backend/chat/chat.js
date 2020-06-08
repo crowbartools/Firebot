@@ -9,7 +9,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
 
 const chatListenerManager = require("./chat-listeners/chat-listener-manager");
 
-const client = require("../mixer-client/client");
+const client = require("../mixer-api/client");
 
 /**@type MixerChat */
 let mixerChat;

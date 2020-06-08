@@ -4,8 +4,8 @@ const Mixer = require("@mixer/client-node");
 const mixerClient = require("../client");
 
 /**
- * A Mixer type (ie a game or category a channel can be set to)
- * @typedef {Object} MixerTypeInformation
+ * A Mixer Channel type (ie a game or category a channel can be set to)
+ * @typedef {Object} MixerChannelType
  * @property {string} id - The type ID
  * @property {string} [name] - Name for the type
  * @property {string} parent - The parent of the type
@@ -16,13 +16,13 @@ const mixerClient = require("../client");
  */
 
 /**
-  * Gets the information for a particular type.
-  * @argument {string} typeId - The unique ID of the type
-  * @return {Promise<MixerTypeInformation>}
-  */
-exports.getTypeInformation = async (typeId) => {
+ * Gets the information for a particular Channel type.
+ * @argument {string} typeId - The unique ID of the type
+ * @return {Promise<MixerChannelType>}
+ */
+exports.getChannelType = async (typeId) => {
     try {
-        /**@type {Mixer.IResponse<MixerTypeInformation>} */
+        /**@type {Mixer.IResponse<MixerChannelType>} */
         const response = await mixerClient.streamer.request("get", `types/${typeId}`);
         return response.body;
     } catch (error) {

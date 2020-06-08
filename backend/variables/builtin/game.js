@@ -1,8 +1,8 @@
 "use strict";
 
 const accountAccess = require("../../common/account-access");
-const mixerChat = require("../../common/mixer-chat");
 const { OutputDataType } = require("../../../shared/variable-contants");
+const mixerApi = require("../../mixer-api/api");
 
 const model = {
     definition: {
@@ -16,7 +16,7 @@ const model = {
             username = accountAccess.getAccounts().streamer.username;
         }
 
-        let channelData = await mixerChat.getGeneralChannelData(username, false);
+        const channelData = await mixerApi.channels.getStreamersChannel();
         return channelData.type ? channelData.type.name : "[No game set]";
     }
 };

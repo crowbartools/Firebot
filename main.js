@@ -537,7 +537,7 @@ function appOnReady() {
         const timerManager = require("./backend/timers/timer-manager");
         timerManager.startTimers();
 
-        const mixerClient = require("./backend/mixer-client/client");
+        const mixerClient = require("./backend/mixer-api/client");
         mixerClient.setupClients();
 
         // load effects

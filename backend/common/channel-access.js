@@ -6,6 +6,8 @@ const mixerApi = require("../api-access");
 
 const frontendCommunicator = require("./frontend-communicator");
 
+const api = require("../mixer-api/api");
+
 const deepmerge = require("deepmerge");
 const uuidv4 = require("uuid/v4");
 const NodeCache = require("node-cache");
@@ -255,6 +257,26 @@ exports.updateUserRole = async (userId, role, addOrRemove) => {
     } catch (err) {
         logger.error("Error while updating user roles", err);
     }
+};
+
+exports.modUser = async username => {
+    const ids = await exports.getIdsFromUsername(username);
+    return api.channels.updateUserRoles(ids.userId, ["Mod"]);
+};
+
+exports.unmodUser = async username => {
+    const ids = await exports.getIdsFromUsername(username);
+    return api.channels.updateUserRoles(ids.userId, null, ["Mod"]);
+};
+
+exports.banUser = async username => {
+    const ids = await exports.getIdsFromUsername(username);
+    return api.channels.updateUserRoles(ids.userId, ["Banned"]);
+};
+
+exports.unbanUser = async username => {
+    const ids = await exports.getIdsFromUsername(username);
+    return api.channels.updateUserRoles(ids.userId, null, ["Banned"]);
 };
 
 exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) => {

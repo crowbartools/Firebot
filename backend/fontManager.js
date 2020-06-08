@@ -78,11 +78,11 @@ function generateAppFontCssFile() {
         let fontPath = "file:///" + font.path;
 
         cssFileRaw +=
-`@font-face {
-    font-family: '${font.name}';
-    src: url('${fontPath}') format('${font.format}')
-}
-`;
+            `@font-face {
+                font-family: '${font.name}';
+                src: url('${fontPath}') format('${font.format}')
+            }
+            `;
     });
 
     let fontCssPath = path.join(fontFolder, path.sep, "fonts.css");

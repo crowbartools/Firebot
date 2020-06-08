@@ -1,8 +1,8 @@
 "use strict";
 
-const Chat = require("../../../common/mixer-chat");
 const Steam = require("../../../data-access/steam-access");
-const accountAccess = require("./../../../common/account-access");
+const mixerChat = require("../../chat");
+const mixerApi = require("../../../mixer-api/api");
 
 const steam = {
     definition: {
@@ -23,7 +23,7 @@ const steam = {
         let gameName = event.userCommand.args.join(" ").trim();
 
         if (gameName == null || gameName.length < 1) {
-            let channelData = await Chat.getGeneralChannelData(accountAccess.getAccounts().streamer.username, false);
+            const channelData = await mixerApi.channels.getStreamersChannel();
             gameName = channelData.type ? channelData.type.name : "";
         }
 
@@ -48,7 +48,7 @@ const steam = {
             message = `${gameDetails.name} ${detailString} ${gameDetails.url}`;
         }
 
-        Chat.smartSend(message);
+        mixerChat.sendChatMessage(message);
     }
 };
 

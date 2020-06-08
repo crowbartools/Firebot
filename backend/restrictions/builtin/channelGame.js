@@ -1,7 +1,7 @@
 "use strict";
 
 const channelAccess = require("../../common/channel-access");
-const mixerTypes = require("../../mixer-client/api/types");
+const mixerApi = require("../../mixer-api/api");
 
 const model = {
     definition: {
@@ -94,7 +94,7 @@ const model = {
             if (passed) {
                 resolve();
             } else {
-                const typeInfo = await mixerTypes.getTypeInformation(expectedGameId);
+                const typeInfo = await mixerApi.types.getChannelType(expectedGameId);
                 reject(`Channel game isn't '${typeInfo ? typeInfo.name : 'correct'}'.`);
             }
         });

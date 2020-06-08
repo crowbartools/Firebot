@@ -1,9 +1,9 @@
 "use strict";
 
 const request = require("request");
-const Mixer = require('@mixer/client-node');
+const Mixer = require("@mixer/client-node");
 const ws = require("ws");
-const retry = require('retry-as-promised');
+const retry = require("retry-as-promised");
 
 const { ipcMain } = require("electron");
 const commandHandler = require("../chat/commands/commandHandler");
@@ -14,11 +14,11 @@ const accountAccess = require("./account-access");
 const profileAccess = require("./profile-manager");
 const userdb = require("../database/userDatabase");
 const apiAccess = require("../api-access");
-let linkHeaderParser = require('parse-link-header');
+let linkHeaderParser = require("parse-link-header");
 const emotesManager = require("./emotes-manager");
-const activeChatter = require('../roles/role-managers/active-chatters');
+const activeChatter = require("../roles/role-managers/active-chatters");
 
-require('request-debug')(request, function(type, data) {
+require("request-debug")(request, function (type, data) {
     //huge json response from steam, dont log this bad boi
     if (data.body && data.body.applist) return;
     logger.debug("Request debug: ", { type: type, data: JSON.stringify(data) });
@@ -44,10 +44,10 @@ function getChatUserInfo(userID, callback) {
     // Request User Info and return response.
     streamerClient
         .request("GET", `chats/` + streamer["channelId"] + "/users/" + userID)
-        .then(response => {
+        .then((response) => {
             callback(response);
         })
-        .catch(error => {
+        .catch((error) => {
             // Log error for dev.
             logger.error("error getting chat user info", error);
             callback(null);
@@ -58,11 +58,11 @@ function getUserInfo(userID, callback) {
     // Request User Info and return response.
     streamerClient
         .request("GET", "users/" + userID)
-        .then(response => {
+        .then((response) => {
             let user = response.body;
             callback(user);
         })
-        .catch(error => {
+        .catch((error) => {
             // Log error for dev.
             logger.error("error while getting user info", error);
             callback(null);
@@ -84,7 +84,7 @@ function updateStreamTitle(title) {
             },
             json: true
         },
-        err => {
+        (err) => {
             if (err) {
                 logger.error("error setting title for channel", err);
             }
@@ -107,7 +107,7 @@ function updateStreamAudience(audienceType) {
             },
             json: true
         },
-        err => {
+        (err) => {
             if (err) {
                 logger.error("error setting audience for channel", err);
             }
@@ -133,7 +133,7 @@ function updateStreamGameById(gameId) {
             },
             json: true
         },
-        err => {
+        (err) => {
             if (err) {
                 logger.error("Error setting game for channel", err);
             }
@@ -150,7 +150,7 @@ function updateStreamGame(gameQuery) {
             }
         })
         .then(
-            res => {
+            (res) => {
                 let gameList = res.body;
 
                 if (gameList != null && Array.isArray(gameList) && gameList.length > 0) {
@@ -158,7 +158,7 @@ function updateStreamGame(gameQuery) {
                     updateStreamGameById(firstGame.id);
                 }
             },
-            function(err) {
+            function (err) {
                 logger.error("Error while looking up games", err);
             }
         );
@@ -166,22 +166,20 @@ function updateStreamGame(gameQuery) {
 
 function getCurrentBroadcast() {
     let streamerData = accountAccess.getAccounts().streamer;
-    return streamerClient.request("GET", `channels/${streamerData.channelId}/broadcast`)
-        .then(resp => {
-            if (resp.statusCode === 200)
-                return resp.body;
+    return streamerClient.request("GET", `channels/${streamerData.channelId}/broadcast`).then((resp) => {
+        if (resp.statusCode === 200) return resp.body;
 
-            return null;
-        });
+        return null;
+    });
 }
 
 function requestAsStreamer(method, route, body) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         let options = {
             url: `https://mixer.com/api/v1/${route}`,
             method: method,
             headers: {
-                'User-Agent': 'MixerClient/0.13.0 (JavaScript; Node.js v6.5.0)'
+                "User-Agent": "MixerClient/0.13.0 (JavaScript; Node.js v6.5.0)"
             },
             json: true,
             body: body
@@ -189,74 +187,77 @@ function requestAsStreamer(method, route, body) {
 
         let streamerData = accountAccess.getAccounts().streamer;
         if (streamerData.loggedIn) {
-            options.headers['Authorization'] = `Bearer ${streamerData.auth.access_token}`;
+            options.headers["Authorization"] = `Bearer ${streamerData.auth.access_token}`;
         }
 
-        request(options, function(err, res) {
+        request(options, function (err, res) {
             resolve(res);
         });
     });
 }
 
 async function createClip(title) {
-    return retry(async function (options) {
-        return new Promise(async (resolve, reject) => {
-            let clipResult = { success: false };
-            let streamerData = accountAccess.getAccounts().streamer;
-            if (!streamerData.partnered && !streamerData.canClip) {
-                logger.warn("An unapproved user type attempted to create a clip!");
-                clipResult.reason = "Not allowed to create clips!";
-                return resolve(clipResult);
-            }
+    return retry(
+        async function (options) {
+            return new Promise(async (resolve, reject) => {
+                let clipResult = { success: false };
+                let streamerData = accountAccess.getAccounts().streamer;
+                if (!streamerData.partnered && !streamerData.canClip) {
+                    logger.warn("An unapproved user type attempted to create a clip!");
+                    clipResult.reason = "Not allowed to create clips!";
+                    return resolve(clipResult);
+                }
 
-            let currentBroadcast = await getCurrentBroadcast();
-            if (currentBroadcast == null) {
-                clipResult.reason = "Not currently broadcasting";
-                return resolve(clipResult);
-            }
+                let currentBroadcast = await getCurrentBroadcast();
+                if (currentBroadcast == null) {
+                    clipResult.reason = "Not currently broadcasting";
+                    return resolve(clipResult);
+                }
 
-            let createClipRequest = {
-                broadcastId: currentBroadcast.id,
-                clipDurationInSeconds: 30
-            };
+                let createClipRequest = {
+                    broadcastId: currentBroadcast.id,
+                    clipDurationInSeconds: 30
+                };
 
-            if (title != null) {
-                createClipRequest.highlightTitle = title;
-            }
+                if (title != null) {
+                    createClipRequest.highlightTitle = title;
+                }
 
-            let createClipResponse = await requestAsStreamer('POST', 'clips/create', createClipRequest);
+                let createClipResponse = await requestAsStreamer("POST", "clips/create", createClipRequest);
 
-            logger.debug(createClipResponse.statusCode);
-            logger.debug(createClipResponse.statusMessage);
-            logger.debug(createClipResponse.body);
+                logger.debug(createClipResponse.statusCode);
+                logger.debug(createClipResponse.statusMessage);
+                logger.debug(createClipResponse.body);
 
-            if (createClipResponse.statusCode === 200) {
-                logger.info(`Clip Info: Title '${title}' || Duration ${createClipRequest.clipDurationInSeconds}s || Broadcast Id ${currentBroadcast.id}`);
-                clipResult.success = true;
-                clipResult.highlightResponse = createClipResponse.body;
-                clipResult.reason = "Success!";
-                return resolve(clipResult);
-            }
+                if (createClipResponse.statusCode === 200) {
+                    logger.info(`Clip Info: Title '${title}' || Duration ${createClipRequest.clipDurationInSeconds}s || Broadcast Id ${currentBroadcast.id}`);
+                    clipResult.success = true;
+                    clipResult.highlightResponse = createClipResponse.body;
+                    clipResult.reason = "Success!";
+                    return resolve(clipResult);
+                }
 
-            if (options.current === 3 && createClipResponse.statusCode !== 200) {
-                clipResult.success = false;
-                clipResult.reason = `Failed to create a clip after several tries. (Code: ${createClipResponse.statusCode})`;
-                return resolve(clipResult);
-            }
+                if (options.current === 3 && createClipResponse.statusCode !== 200) {
+                    clipResult.success = false;
+                    clipResult.reason = `Failed to create a clip after several tries. (Code: ${createClipResponse.statusCode})`;
+                    return resolve(clipResult);
+                }
 
-            return reject();
-        });
-    }, {
-        max: 4, // maximum amount of tries
-        timeout: 5000, // throw if no response or error within millisecond timeout, default: undefined,
-        backoffBase: 500, // Initial backoff duration in ms. Default: 100,
-        backoffExponent: 1.5 // Exponent to increase backoff each try. Default: 1.1
-    });
+                return reject();
+            });
+        },
+        {
+            max: 4, // maximum amount of tries
+            timeout: 5000, // throw if no response or error within millisecond timeout, default: undefined,
+            backoffBase: 500, // Initial backoff duration in ms. Default: 100,
+            backoffExponent: 1.5 // Exponent to increase backoff each try. Default: 1.1
+        }
+    );
 }
 
 // Creates the chat websocket
 // This sets up and auths with the chat websocket.
-function createChatSocket (chatter, userId, channelId, endpoints, authkey) {
+function createChatSocket(chatter, userId, channelId, endpoints, authkey) {
     logger.info(`Setting up chat socket for ${chatter}`);
     return new Promise((resolve, reject) => {
         if (authkey != null) {
@@ -266,48 +267,50 @@ function createChatSocket (chatter, userId, channelId, endpoints, authkey) {
             // Handle errors
             // Without this the app seems to hang when the socket connection above gets server errors back.
             // With this the socket above seems to search for the next working connection point automatically.
-            socket.on('error', error => {
+            socket.on("error", (error) => {
                 logger.error(`error from chat ${chatter} socket`, error);
             });
 
             // Confirm login.
             if (chatter === "Streamer") {
-                socket.auth(channelId, userId, authkey)
+                socket
+                    .auth(channelId, userId, authkey)
                     .then((res) => {
                         if (res.authenticated === true) {
                             global.streamerChat = socket;
 
                             resolve("Streamer");
                         } else {
-                            logger.error(chatter + ' did not authenticate successfully.');
+                            logger.error(chatter + " did not authenticate successfully.");
                             reject(res);
                         }
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         reject(err);
                     });
             } else if (chatter === "Bot") {
-                socket.auth(channelId, userId, authkey)
+                socket
+                    .auth(channelId, userId, authkey)
                     .then((res) => {
                         if (res.authenticated === true) {
-                            logger.info('Successfully authenticated the bot chat socket!');
+                            logger.info("Successfully authenticated the bot chat socket!");
                             global.botChat = socket;
 
                             resolve("Bot");
                         } else {
-                            logger.error(chatter + ' did not authenticate successfully.');
+                            logger.error(chatter + " did not authenticate successfully.");
                             reject(res);
                         }
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         logger.error("Error authenticating bot for chat socket", err);
                         reject(err);
                     });
             } else {
-                reject('Error creating chat socket for ' + chatter + '.');
+                reject("Error creating chat socket for " + chatter + ".");
             }
         } else {
-            logger.info('No auth key provided to connect to chat for ' + chatter);
+            logger.info("No auth key provided to connect to chat for " + chatter);
         }
     });
 }
@@ -354,10 +357,10 @@ function getCurrentViewers() {
             }
         })
         .then(
-            res => {
+            (res) => {
                 return res.body.viewersCurrent;
             },
-            function(err) {
+            function (err) {
                 logger.error("error while getting current viewers", err);
                 return 0;
             }
@@ -365,25 +368,28 @@ function getCurrentViewers() {
 }
 
 function getCurrentViewerList() {
-    logger.info('Attempting to get current viewer list (v1)');
+    logger.info("Attempting to get current viewer list (v1)");
     let dbAuth = profileAccess.getJsonDbInUserData("/auth"),
-        streamer = dbAuth.getData('/streamer');
+        streamer = dbAuth.getData("/streamer");
 
-    return streamerClient.request('GET', 'chats/' + streamer.channelId + "/users", {
-        qs: {
-            fields: 'userName'
-        }
-    })
-        .then(res => {
-            let usernames = res.body.map(u => u.userName);
-            usernames.push(streamer.username);
-            return usernames;
-        }, function (err) {
-            logger.error("error while getting current viewer list", err);
-            return [];
-        });
+    return streamerClient
+        .request("GET", "chats/" + streamer.channelId + "/users", {
+            qs: {
+                fields: "userName"
+            }
+        })
+        .then(
+            (res) => {
+                let usernames = res.body.map((u) => u.userName);
+                usernames.push(streamer.username);
+                return usernames;
+            },
+            function (err) {
+                logger.error("error while getting current viewer list", err);
+                return [];
+            }
+        );
 }
-
 
 function getContinuationToken(linkHeader) {
     let parsed = linkHeaderParser(linkHeader);
@@ -393,13 +399,11 @@ function getContinuationToken(linkHeader) {
     return null;
 }
 
-
 function getCurrentViewerListV2(users, continuationToken = null, namesOnly = false) {
     if (users == null) {
         users = [];
     }
     return new Promise(async (resolve, reject) => {
-
         let streamerChannelId = accountAccess.getAccounts().streamer.channelId;
         let urlRoute = `chats/${streamerChannelId}/users?limit=100`;
 
@@ -416,12 +420,14 @@ function getCurrentViewerListV2(users, continuationToken = null, namesOnly = fal
         }
 
         let userlistParsed = response.body;
-        let userlistMapped = userlistParsed.map(u => {
-            return namesOnly ? u.username : {
-                userId: u.userId,
-                username: u.username,
-                user_roles: u.userRoles // eslint-disable-line camelcase
-            };
+        let userlistMapped = userlistParsed.map((u) => {
+            return namesOnly
+                ? u.username
+                : {
+                    userId: u.userId,
+                    username: u.username,
+                    user_roles: u.userRoles // eslint-disable-line camelcase
+                };
         });
 
         users = users.concat(userlistMapped);
@@ -436,67 +442,20 @@ function getCurrentViewerListV2(users, continuationToken = null, namesOnly = fal
     });
 }
 
-exports.getUserAvatarUrl = async channelNameOrId => {
+exports.getUserAvatarUrl = async (channelNameOrId) => {
     if (channelNameOrId == null) {
         channelNameOrId = accountAccess.getAccounts().streamer.channelId;
     }
 
-    let data = await streamerClient.request('GET', 'channels/' + channelNameOrId);
+    let data = await streamerClient.request("GET", "channels/" + channelNameOrId);
 
     return data.body.user.avatarUrl;
-};
-
-// Gets general channel data, defaults to streamer data
-exports.getGeneralChannelData = async (channelNameOrId, getBroadcastData = true) => {
-    if (channelNameOrId == null) {
-        let dbAuth = profileAccess.getJsonDbInProfile("/auth"),
-            streamer = dbAuth.getData("/streamer");
-        channelNameOrId = streamer.channelId;
-    }
-
-    let generalDeets = {};
-    try {
-        let data = await streamerClient.request(
-            "GET",
-            "channels/" + channelNameOrId,
-            {
-                qs: {
-                    fields: "online,name,type,id,userId,token,viewersCurrent"
-                }
-            }
-        );
-        generalDeets = data.body;
-
-    } catch (err) {
-        logger.error("error while getting channel deets", err);
-        return null;
-    }
-
-    if (getBroadcastData && generalDeets.online === true) {
-        try {
-            let broadcastData = await streamerClient.request(
-                "GET",
-                `channels/${generalDeets.id}/broadcast`,
-                {
-                    qs: {
-                        fields: "startedAt"
-                    }
-                }
-            );
-
-            generalDeets.startedAt = broadcastData.body.startedAt;
-        } catch (err) {
-            logger.error("error while getting broadcast deets", err);
-        }
-    }
-
-    return generalDeets;
 };
 
 // Streamer Chat Connect
 // This checks to see if the streamer is logged into the app, and if so it will connect them to chat.
 function streamerConnect(streamer) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         // streamer Login
         streamerClient.use(
             new Mixer.OAuthProvider(streamerClient, {
@@ -509,7 +468,7 @@ function streamerConnect(streamer) {
         );
 
         // Get our current chat users.
-        getCurrentViewers().then(currentViewers => {
+        getCurrentViewers().then((currentViewers) => {
             renderWindow.webContents.send("currentViewersUpdate", {
                 viewersCurrent: currentViewers
             });
@@ -519,18 +478,13 @@ function streamerConnect(streamer) {
         let userInfo;
         streamerClient
             .request("GET", `users/` + streamer.userId)
-            .then(response => {
+            .then((response) => {
                 userInfo = response.body;
-                return new Mixer.ChatService(streamerClient).join(
-                    response.body.channel.id
-                );
+                return new Mixer.ChatService(streamerClient).join(response.body.channel.id);
             })
-            .catch(error => {
+            .catch((error) => {
                 // Popup error.
-                renderWindow.webContents.send(
-                    "error",
-                    "Error getting chat endpoints. Did you lose connection?"
-                );
+                renderWindow.webContents.send("error", "Error getting chat endpoints. Did you lose connection?");
 
                 // Set connection status to offline
                 renderWindow.webContents.send("chatConnection", "Offline");
@@ -541,19 +495,13 @@ function streamerConnect(streamer) {
                 // Try to reconnect
                 chatConnected = false;
                 reconnectService.reconnect("Chat", false, false);
-                return { then: function() {} };
+                return { then: function () {} };
             })
-            .then(response => {
+            .then((response) => {
                 const body = response.body;
-                return createChatSocket(
-                    "Streamer",
-                    userInfo.id,
-                    userInfo.channel.id,
-                    body.endpoints,
-                    body.authkey
-                );
+                return createChatSocket("Streamer", userInfo.id, userInfo.channel.id, body.endpoints, body.authkey);
             })
-            .catch(error => {
+            .catch((error) => {
                 // Popup error.
                 renderWindow.webContents.send("error", "Error creating chat socket.");
 
@@ -566,38 +514,29 @@ function streamerConnect(streamer) {
                 // Try to reconnect
                 chatConnected = false;
                 reconnectService.reconnect("Chat", false, false);
-                return { then: function() {} };
+                return { then: function () {} };
             })
-            .then(response => {
+            .then((response) => {
                 return createChatDataProcessing(response);
             })
-            .catch(error => {
+            .catch((error) => {
                 // Popup error.
-                renderWindow.webContents.send(
-                    "error",
-                    "Error setting up chat data processing for Streamer."
-                );
+                renderWindow.webContents.send("error", "Error setting up chat data processing for Streamer.");
 
                 // Set connection status to offline
                 renderWindow.webContents.send("chatConnection", "Offline");
 
                 // Log error for dev.
-                logger.error(
-                    "error while setting up chat data proccess for streamer",
-                    error
-                );
+                logger.error("error while setting up chat data proccess for streamer", error);
 
                 // Try to reconnect
                 chatConnected = false;
                 reconnectService.reconnect("Chat", false, false);
-                return { then: function() {} };
+                return { then: function () {} };
             })
-            .catch(error => {
+            .catch((error) => {
                 // Popup error.
-                renderWindow.webContents.send(
-                    "error",
-                    "Error updating username cache for commands."
-                );
+                renderWindow.webContents.send("error", "Error updating username cache for commands.");
 
                 // Set connection status to offline
                 renderWindow.webContents.send("chatConnection", "Offline");
@@ -608,14 +547,11 @@ function streamerConnect(streamer) {
                 // Try to reconnect
                 chatConnected = false;
                 reconnectService.reconnect("Chat", false, false);
-                return { then: function() {} };
+                return { then: function () {} };
             })
-            .catch(error => {
+            .catch((error) => {
                 // Popup error.
-                renderWindow.webContents.send(
-                    "error",
-                    "Error starting timed commands or auto grouper."
-                );
+                renderWindow.webContents.send("error", "Error starting timed commands or auto grouper.");
 
                 // Set connection status to offline
                 renderWindow.webContents.send("chatConnection", "Offline");
@@ -626,7 +562,7 @@ function streamerConnect(streamer) {
                 // Try to reconnect
                 chatConnected = false;
                 reconnectService.reconnect("Chat", false, false);
-                return { then: function() {} };
+                return { then: function () {} };
             })
             .then(() => {
                 // Get chat history and send it to ui.
@@ -635,13 +571,10 @@ function streamerConnect(streamer) {
                 // Get chat user list and send it to ui.
                 chatProcessor.uiChatUserRefresh();
             })
-            .catch(error => {
+            .catch((error) => {
                 console.log(error);
                 // Popup error.
-                renderWindow.webContents.send(
-                    "error",
-                    "Error getting chat history or refreshing chat userlist."
-                );
+                renderWindow.webContents.send("error", "Error getting chat history or refreshing chat userlist.");
 
                 // Set connection status to offline
                 renderWindow.webContents.send("chatConnection", "Offline");
@@ -652,7 +585,7 @@ function streamerConnect(streamer) {
                 // Try to reconnect
                 chatConnected = false;
                 reconnectService.reconnect("Chat", false, false);
-                return { then: function() {} };
+                return { then: function () {} };
             })
             .then(() => {
                 // Set connection status to online
@@ -683,12 +616,9 @@ function streamerConnect(streamer) {
 
                 resolve(true);
             })
-            .catch(error => {
+            .catch((error) => {
                 // Popup error.
-                renderWindow.webContents.send(
-                    "error",
-                    "Error finishing chat connection processes."
-                );
+                renderWindow.webContents.send("error", "Error finishing chat connection processes.");
 
                 // Set connection status to offline
                 renderWindow.webContents.send("chatConnection", "Offline");
@@ -699,7 +629,7 @@ function streamerConnect(streamer) {
                 // Try to reconnect
                 chatConnected = false;
                 reconnectService.reconnect("Chat", false, false);
-                return { then: function() {} };
+                return { then: function () {} };
             });
     });
 }
@@ -709,8 +639,6 @@ function streamerConnect(streamer) {
 function botConnect(bot) {
     return new Promise((resolve) => {
         if (bot && bot.loggedIn) {
-
-
             let streamerChannelId = accountAccess.getAccounts().streamer.channelId;
 
             // Bot Login
@@ -728,16 +656,13 @@ function botConnect(bot) {
             // Request chat endpoints and connect.
             botClient
                 .request("GET", `users/${bot.userId}`)
-                .then(response => {
+                .then((response) => {
                     userInfo = response.body;
                     return new Mixer.ChatService(botClient).join(streamerChannelId);
                 })
-                .catch(error => {
+                .catch((error) => {
                     // Popup error.
-                    renderWindow.webContents.send(
-                        "error",
-                        "Error getting chat endpoints."
-                    );
+                    renderWindow.webContents.send("error", "Error getting chat endpoints.");
 
                     // Set connection status to offline
                     renderWindow.webContents.send("chatConnection", "Offline");
@@ -748,24 +673,15 @@ function botConnect(bot) {
                     // Try to reconnect
                     chatConnected = false;
                     reconnectService.reconnect("Chat", false, false);
-                    return { then: function() {} };
+                    return { then: function () {} };
                 })
-                .then(response => {
+                .then((response) => {
                     const body = response.body;
-                    return createChatSocket(
-                        "Bot",
-                        userInfo.id,
-                        streamerChannelId,
-                        body.endpoints,
-                        body.authkey
-                    );
+                    return createChatSocket("Bot", userInfo.id, streamerChannelId, body.endpoints, body.authkey);
                 })
-                .catch(error => {
+                .catch((error) => {
                     // Popup error.
-                    renderWindow.webContents.send(
-                        "error",
-                        "Couldnt connect to chat as the bot."
-                    );
+                    renderWindow.webContents.send("error", "Couldnt connect to chat as the bot.");
 
                     // Set connection status to offline
                     renderWindow.webContents.send("chatConnection", "Offline");
@@ -776,17 +692,14 @@ function botConnect(bot) {
                     // Try to reconnect
                     chatConnected = false;
                     reconnectService.reconnect("Chat", false, false);
-                    return { then: function() {} };
+                    return { then: function () {} };
                 })
-                .then(response => {
+                .then((response) => {
                     return createChatDataProcessing(response);
                 })
-                .catch(error => {
+                .catch((error) => {
                     // Popup error.
-                    renderWindow.webContents.send(
-                        "error",
-                        "Error setting up chat data processing for Bot."
-                    );
+                    renderWindow.webContents.send("error", "Error setting up chat data processing for Bot.");
 
                     // Set connection status to offline
                     renderWindow.webContents.send("chatConnection", "Offline");
@@ -797,12 +710,12 @@ function botConnect(bot) {
                     // Try to reconnect
                     chatConnected = false;
                     reconnectService.reconnect("Chat", false, false);
-                    return { then: function() {} };
+                    return { then: function () {} };
                 })
                 .then(() => {
                     resolve(true);
                 })
-                .catch(error => {
+                .catch((error) => {
                     // Log error for dev.
                     logger.error(error);
 
@@ -810,10 +723,10 @@ function botConnect(bot) {
                     chatConnected = false;
 
                     // Set connection status to offline
-                    renderWindow.webContents.send('chatConnection', "Offline");
+                    renderWindow.webContents.send("chatConnection", "Offline");
 
-                    reconnectService.reconnect('Chat', false, false);
-                    return {then: function() {} };
+                    reconnectService.reconnect("Chat", false, false);
+                    return { then: function () {} };
                 });
         } else {
             resolve(true);
@@ -827,9 +740,9 @@ function reconnectIfConnected() {
         chatConnected = false;
 
         // Set connection status to offline
-        renderWindow.webContents.send('chatConnection', "Offline");
+        renderWindow.webContents.send("chatConnection", "Offline");
 
-        reconnectService.reconnect('Chat', false, false);
+        reconnectService.reconnect("Chat", false, false);
     }
 }
 
@@ -837,14 +750,10 @@ function reconnectIfConnected() {
 // This function connects to mixer chat and monitors messages.
 function chatConnect() {
     return new Promise(async (resolve, reject) => {
-
         const streamer = accountAccess.getAccounts().streamer;
 
         if (!streamer.loggedIn) {
-            renderWindow.webContents.send(
-                "error",
-                "You need to log into your streamer account to be able to connect to chat."
-            );
+            renderWindow.webContents.send("error", "You need to log into your streamer account to be able to connect to chat.");
             renderWindow.webContents.send("chatConnection", "Offline");
             return reject();
         }
@@ -852,7 +761,10 @@ function chatConnect() {
         let tokenSuccess = await accountAccess.ensureTokenRefreshed("streamer");
         if (!tokenSuccess) {
             renderWindow.webContents.send("chatConnection", "Offline");
-            renderWindow.webContents.send("error", "There was an issue refreshing your streamer account auth token. Please try again. If the issue persists, try re-logging into your account.");
+            renderWindow.webContents.send(
+                "error",
+                "There was an issue refreshing your streamer account auth token. Please try again. If the issue persists, try re-logging into your account."
+            );
             return reject();
         }
 
@@ -884,9 +796,8 @@ function chatConnect() {
 // Whisper
 // Send a whisper to a specific person from whoever the chatter is (streamer or bot).
 function whisper(chatter, username, message) {
-
     if (!chatConnected) {
-        renderWindow.webContents.send('error', "Attempted to whipser to chat when chat doesnt appear to be connected. Please reconnect if issue persists.");
+        renderWindow.webContents.send("error", "Attempted to whipser to chat when chat doesnt appear to be connected. Please reconnect if issue persists.");
         return;
     }
 
@@ -907,18 +818,18 @@ function whisper(chatter, username, message) {
             logger.debug("Sent message as " + chatter + ".");
         } catch (err) {
             logger.eror("error sending whisper as streamer", err);
-            renderWindow.webContents.send('error', "There was an error sending a whisper to chat as the streamer: " + err.message);
+            renderWindow.webContents.send("error", "There was an error sending a whisper to chat as the streamer: " + err.message);
         }
     } else if (chatter === "bot") {
         try {
             if (global.botChat != null && global.botChat.isConnected != null && global.botChat.isConnected()) {
-                global.botChat.call('whisper', [username, message]);
-                logger.debug('Sent message as ' + chatter + '.');
+                global.botChat.call("whisper", [username, message]);
+                logger.debug("Sent message as " + chatter + ".");
             } else {
                 // fallback to sending as streamer
                 if (global.streamerChat != null && global.streamerChat.isConnected()) {
-                    logger.info('There appears to be an error with the bot, falling back to the Steamer account...');
-                    global.streamerChat.call('whisper', [username, message]);
+                    logger.info("There appears to be an error with the bot, falling back to the Steamer account...");
+                    global.streamerChat.call("whisper", [username, message]);
                 } else {
                     logger.warn("We couldnt send chat as either the bot or streamer");
                     reconnectIfConnected();
@@ -926,7 +837,7 @@ function whisper(chatter, username, message) {
             }
         } catch (err) {
             logger.error("error sending whisper as bot", err);
-            renderWindow.webContents.send('error', "There was an error sending a whisper to chat as the bot." + err.message);
+            renderWindow.webContents.send("error", "There was an error sending a whisper to chat as the bot." + err.message);
         }
     }
 }
@@ -934,9 +845,8 @@ function whisper(chatter, username, message) {
 // Broadcast
 // Send a broadcast to the channel from whoever the chatter is (streamer or bot).
 function broadcast(chatter, message) {
-
     if (!chatConnected) {
-        renderWindow.webContents.send('error', "Attempted to broadcast to chat when chat doesnt appear to be connected. Please reconnect if issue persists.");
+        renderWindow.webContents.send("error", "Attempted to broadcast to chat when chat doesnt appear to be connected. Please reconnect if issue persists.");
         return;
     }
 
@@ -957,28 +867,31 @@ function broadcast(chatter, message) {
             console.log("sent as streamer");
         } catch (err) {
             logger.error("error sending chat as streamer", err);
-            renderWindow.webContents.send('error', "There was an error sending a message to chat as the streamer.");
+            renderWindow.webContents.send("error", "There was an error sending a message to chat as the streamer.");
         }
     } else if (chatter === "bot") {
         try {
             if (global.botChat != null && global.botChat.isConnected != null && global.botChat.isConnected()) {
-                global.botChat.call('msg', [message]);
-                logger.debug('Sent message as ' + chatter + '.');
+                global.botChat.call("msg", [message]);
+                logger.debug("Sent message as " + chatter + ".");
             } else {
                 // looks like there is an issue with the bot, fall back to Streamer
                 if (global.streamerChat != null && global.streamerChat.isConnected()) {
-                    logger.info('There appears to be an error with the bot, falling back to the Steamer account...');
-                    renderWindow.webContents.send('eventlog', {type: "general", username: "System", event: "- Attempted to chat as bot but there appears to be an issue. Falling back to streamer."});
-                    global.streamerChat.call('msg', [message]);
+                    logger.info("There appears to be an error with the bot, falling back to the Steamer account...");
+                    renderWindow.webContents.send("eventlog", {
+                        type: "general",
+                        username: "System",
+                        event: "- Attempted to chat as bot but there appears to be an issue. Falling back to streamer."
+                    });
+                    global.streamerChat.call("msg", [message]);
                 } else {
                     logger.warn("We couldnt send chat as either the bot or streamer");
                     reconnectIfConnected();
                 }
             }
-
         } catch (err) {
             logger.error("error sending chat as bot", err);
-            renderWindow.webContents.send('error', "There was an error sending a message to chat as the bot.");
+            renderWindow.webContents.send("error", "There was an error sending a message to chat as the bot.");
         }
     }
 }
@@ -1033,11 +946,12 @@ function timeout(chatter, time) {
 // This deletes a chat message by id.
 function deleteChatMessage(id) {
     if (global.streamerChat != null) {
-        global.streamerChat.call("deleteMessage", [id])
+        global.streamerChat
+            .call("deleteMessage", [id])
             .then(() => {
                 logger.debug("Successfully deleted chat message");
             })
-            .catch(err => {
+            .catch((err) => {
                 logger.warn("Failed to delete chat message, Mixer response: ", err);
             });
     }
@@ -1065,23 +979,18 @@ function chatPurge(username) {
 // This will change a user's role.
 function changeUserRole(username, role, addOrRemove) {
     if (role === "Mod" || role === "Banned") {
-
         let streamer = accountAccess.getAccounts().streamer;
 
         // Request User Info and return response.
         streamerClient
             .request("GET", "channels/" + username + "?fields=userId&noCount=1")
-            .then(response => {
+            .then((response) => {
                 response = response.body;
 
                 // Alright, lets set up our options packet.
                 let userId = response.userId,
                     options = {
-                        url:
-                            `https://mixer.com/api/v1/channels/` +
-                            streamer.channelId +
-                            "/users/" +
-                            userId,
+                        url: `https://mixer.com/api/v1/channels/` + streamer.channelId + "/users/" + userId,
                         method: "PATCH",
                         headers: {
                             Authorization: "Bearer " + streamer.auth.access_token,
@@ -1101,15 +1010,13 @@ function changeUserRole(username, role, addOrRemove) {
                         remove: [role]
                     };
                 } else {
-                    logger.error(
-                        'addOrRemove variable can only be set to "Add" or "Remove" for changing roles.'
-                    );
+                    logger.error('addOrRemove variable can only be set to "Add" or "Remove" for changing roles.');
                     return;
                 }
 
                 // I tried so hard to get this to work with the Mixer client node package, but I don't think it likes PATCH much.
                 // So I've gone with a regular request function here instead. - FB.
-                request(options, function(err, res) {
+                request(options, function (err, res) {
                     if (res.statusCode === 200) {
                         // Success!
                         // Let's send an appropriate chat alert message.
@@ -1135,35 +1042,26 @@ function changeUserRole(username, role, addOrRemove) {
                         }
                     } else {
                         // Error
-                        renderWindow.webContents.send(
-                            "error",
-                            "Something went wrong while trying to change roles for this user."
-                        );
+                        renderWindow.webContents.send("error", "Something went wrong while trying to change roles for this user.");
                         logger.error(err);
                     }
                 });
             })
-            .catch(error => {
+            .catch((error) => {
                 // Log error for dev.
                 logger.error(error);
-                renderWindow.webContents.send(
-                    "error",
-                    "Something went wrong while trying to change roles for this user."
-                );
+                renderWindow.webContents.send("error", "Something went wrong while trying to change roles for this user.");
             });
     } else {
-        renderWindow.webContents.send(
-            "error",
-            "Firebot tried to change someone to an illegal role."
-        );
+        renderWindow.webContents.send("error", "Firebot tried to change someone to an illegal role.");
     }
 }
 
-ipcMain.on("deleteChatMessage", function(event, data) {
+ipcMain.on("deleteChatMessage", function (event, data) {
     deleteChatMessage(data.messageId);
 });
 
-ipcMain.on("changeUserModStatus", function(event, data) {
+ipcMain.on("changeUserModStatus", function (event, data) {
     changeUserRole(data.userName, "Mod", data.modStatus ? "Add" : "Remove");
 });
 
@@ -1174,17 +1072,17 @@ function getChatStatus() {
 
 // Auth Process
 // This kicks off the login process once refresh tokens are recieved.
-ipcMain.on("gotChatRefreshToken", function() {
+ipcMain.on("gotChatRefreshToken", function () {
     chatConnect();
 });
 
 // Chat Toggle
 // Controls Turning on and off chat when connection button is pressed.
-ipcMain.on("mixerChat", function(event, status) {
+ipcMain.on("mixerChat", function (event, status) {
     if (status === "connect" || status === "connected") {
-    // Do nothing as this is handled by the "gotRefreshToken" auth process.
+        // Do nothing as this is handled by the "gotRefreshToken" auth process.
     } else {
-    // Kill connection.
+        // Kill connection.
         chatDisconnect();
 
         // Set all users offline.
