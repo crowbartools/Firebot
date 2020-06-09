@@ -18,19 +18,24 @@
                         <span>Only trigger when </span>
 
                         <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
-                            <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getRestrictionModeDisplay()}}<span class="fb-arrow down ddtext"></span></div>
+                            <div class="noselect pointer ddtext" style="font-size: 12px;">
+                                <a href aria-label="Control Restrictions Options">
+                                    {{$ctrl.getRestrictionModeDisplay()}}
+                                    <span class="fb-arrow down ddtext"></span>
+                                </a>
+                            </div>
                             <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
 
                                 <li ng-click="$ctrl.restrictionData.mode = 'all'">
-                                    <a style="padding-left: 10px;">all restrictions pass</a>
+                                    <a href style="padding-left: 10px;" aria-label="all restrictions pass">all restrictions pass</a>
                                 </li>
 
                                 <li ng-click="$ctrl.restrictionData.mode = 'any'">
-                                    <a style="padding-left: 10px;">any restriction passes</a>
+                                    <a href style="padding-left: 10px;" aria-label="any restrictions pass">any restriction pass</a>
                                 </li>
 
                                 <li ng-click="$ctrl.restrictionData.mode = 'none'">
-                                    <a style="padding-left: 10px;">no restrictions pass</a>
+                                    <a href style="padding-left: 10px;" aria-label="no restrictions pass">no restrictions pass</a>
                                 </li>
                             </ul>
                         </div>
@@ -48,6 +53,7 @@
                             ng-show="$ctrl.canAddMoreRestrictions"
                             ng-click="$ctrl.showAddRestrictionModal()" 
                             uib-tooltip="Add Restriction" 
+                            aria-label="Add Restriction"  
                             tooltip-append-to-body="true">
                                 <i class="far fa-plus"></i> 
                         </div>

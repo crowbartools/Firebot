@@ -33,7 +33,7 @@
                         <div style="padding: 15px 20px 10px 20px;">
                             <restriction-options restriction="$ctrl.restriction" restriction-definition="$ctrl.restrictionDefinition"></restriction-options>
                             <div style="padding-top: 10px">
-                                <button class="btn btn-danger" ng-click="$ctrl.delete()"><i class="far fa-trash"></i></button>
+                                <button class="btn btn-danger" ng-click="$ctrl.delete()" aria-label="Delete restriction"><i class="far fa-trash"></i></button>
                             </div>
                         </div>
                     </div>
