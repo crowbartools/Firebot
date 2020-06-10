@@ -44,10 +44,10 @@ function thresholdRouter(control) {
                 } else {
                     // We're still trying to hit the threshold.
                     // Pass our newest progress numbers to mixer.
-                    //mixerInteractive.progressUpdate(
+                    /*mixerInteractive.progressUpdate(
                         buttonId,
                         progressCalc(thresholdSaved[buttonId], controlThreshold)
-                    );
+                    );*/
                     reject(false);
                 }
             }
