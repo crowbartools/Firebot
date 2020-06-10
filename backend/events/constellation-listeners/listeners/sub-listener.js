@@ -1,6 +1,6 @@
 "use strict";
 
-const eventManager = require("../../../live-events/EventManager");
+const eventManager = require("../../../events/EventManager");
 
 module.exports = {
     event: "channel:{streamerChannelId}:subscribed",

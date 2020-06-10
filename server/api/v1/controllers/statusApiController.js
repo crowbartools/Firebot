@@ -1,15 +1,15 @@
 "use strict";
 
-const mixerInteractive = require('../../../../backend/common/mixer-interactive.js');
-const chat = require('../../../../backend/common/mixer-chat.js');
-const constellation = require("../../../../backend/live-events/mixer-constellation");
+const chat = require("../../../../backend/chat/chat");
+const mixplay = require("../../../../backend/interactive/mixplay");
+const constellation = require("../../../../backend/events/constellation");
 
 exports.getStatus = function(req, res) {
     let status = {
         connections: {
-            interactive: mixerInteractive.getInteractiveStatus(),
-            chat: chat.getChatStatus(),
-            constellation: constellation.getConstellationStatus()
+            interactive: mixplay.mixplayIsConnected(),
+            chat: chat.chatIsConnected(),
+            constellation: constellation.constellationIsConnected()
         }
     };
     res.json(status);

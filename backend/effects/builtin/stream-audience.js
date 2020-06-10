@@ -6,7 +6,7 @@ const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-const chat = require("../../common/mixer-chat");
+const channelAccess = require("../../common/channel-access");
 
 const streamAudience = {
     /**
@@ -74,7 +74,7 @@ const streamAudience = {
    */
     onTriggerEvent: async event => {
         let audience = event.effect.audience.toLowerCase();
-        chat.updateStreamAudience(audience);
+        await channelAccess.setStreamerAudience(audience);
         return true;
     },
     /**

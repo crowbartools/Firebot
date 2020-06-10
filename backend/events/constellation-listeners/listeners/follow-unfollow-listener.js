@@ -1,7 +1,7 @@
 "use strict";
 
 const { settings } = require("../../../common/settings-access");
-const eventManager = require("../../../live-events/EventManager");
+const eventManager = require("../../../events/EventManager");
 
 const followTimeouts = {};
 

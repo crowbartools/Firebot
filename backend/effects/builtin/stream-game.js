@@ -6,7 +6,7 @@ const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-const chat = require("../../common/mixer-chat");
+const channelAccess = require("../../common/channel-access");
 
 const model = {
     definition: {
@@ -98,9 +98,9 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.mode === "specific") {
-            chat.updateStreamGameById(event.effect.gameId);
+            await channelAccess.setStreamGameById(event.effect.gameId);
         } else {
-            chat.updateStreamGame(event.effect.gameName);
+            await channelAccess.setStreamGameByName(event.effect.gameName);
         }
         return true;
     }

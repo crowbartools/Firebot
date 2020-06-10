@@ -5,7 +5,7 @@ module.exports = {
     accountType: "streamer",
     event: "SkillAttribution",
     callback: (data) => {
-        const eventManager = require("../../../live-events/EventManager");
+        const eventManager = require("../../../events/EventManager");
 
         logger.debug("SkillAtro Chat Skill event");
         logger.debug(data);

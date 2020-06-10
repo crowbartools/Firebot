@@ -6,7 +6,7 @@ module.exports = {
     accountType: "streamer",
     event: "UserLeave",
     callback: (data) => {
-        const eventManager = require("../../../live-events/EventManager");
+        const eventManager = require("../../../events/EventManager");
 
         userdb.setChatUserOffline(data.id);
 

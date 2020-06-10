@@ -7,7 +7,7 @@ const { EffectTrigger, EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const logger = require('../../logwrapper');
-const chat = require("../../common/mixer-chat");
+const chat = require("../../chat/chat");
 
 const model = {
     definition: {
@@ -29,12 +29,12 @@ const model = {
         </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: () => {
         let errors = [];
         return errors;
     },
-    onTriggerEvent: async event => {
-        chat.clearChatMessages();
+    onTriggerEvent: async () => {
+        await chat.clearChat();
         logger.debug("Chat was cleared via the clear chat effect.");
         return true;
     }

@@ -71,7 +71,7 @@ class MixerConstellation extends EventEmitter {
         }
     }
 
-    getConstellationStatus() {
+    constellationIsConnected() {
         return this._constellation.socket.state === State.Connected;
     }
 }

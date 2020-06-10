@@ -6,7 +6,7 @@ module.exports = {
     accountType: "streamer",
     event: "PurgeMessage",
     callback: async data => {
-        const eventManager = require("../../../live-events/EventManager");
+        const eventManager = require("../../../events/EventManager");
 
         data.fbEvent = "PurgeMessage";
         renderWindow.webContents.send("chatUpdate", data);

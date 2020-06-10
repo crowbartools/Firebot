@@ -6,8 +6,10 @@ const ws = require('ws');
 const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
-
+const emotesManager = require("./../common/emotes-manager");
+const userDb = require("../database/userDatabase");
 const chatListenerManager = require("./chat-listeners/chat-listener-manager");
+const channelAccess = require("../common/channel-access");
 
 const client = require("../mixer-api/client");
 
@@ -68,9 +70,13 @@ async function joinChat(accountType) {
             logger.error("Bot chat socket error", error);
         });
 
-        socket.on('connected', () => {});
+        socket.on('connected', () => {
+            logger.debug("Bot socket connected");
+        });
 
-        socket.on('closed', () => {});
+        socket.on('closed', () => {
+            logger.debug("Bot socket closed");
+        });
     }
 
     socket.boot();
@@ -150,6 +156,8 @@ class MixerChat extends EventEmitter {
 
             setupBotSocketListeners(this._botSocket);
         }
+
+        emotesManager.updateEmotesCache();
     }
 
     /**
@@ -158,6 +166,7 @@ class MixerChat extends EventEmitter {
     disconnect() {
         ensureSocketIsClosed(this._streamerSocket);
         ensureSocketIsClosed(this._botSocket);
+        userDb.setAllUsersOffline();
     }
 
 
@@ -319,6 +328,42 @@ class MixerChat extends EventEmitter {
     }
 
     /**
+     * Ban a user
+     * @param {string} username The username of the user to ban
+     * @returns {Promise<void>}
+     */
+    banUser(username) {
+        return channelAccess.banUser(username);
+    }
+
+    /**
+     * Unban a user
+     * @param {string} username The username of the user to unban
+     * @returns {Promise<void>}
+     */
+    unbanUser(username) {
+        return channelAccess.unbanUser(username);
+    }
+
+    /**
+     * Mod a user
+     * @param {string} username The username of the user to mod
+     * @returns {Promise<void>}
+     */
+    modUser(username) {
+        return channelAccess.modUser(username);
+    }
+
+    /**
+     * Unmod a user
+     * @param {string} username The username of the user to unmod
+     * @returns {Promise<void>}
+     */
+    unmodUser(username) {
+        return channelAccess.unmodUser(username);
+    }
+
+    /**
      * Starts a Mixer giveaway
      * @returns {Promise<boolean>} Whether or not starting the giveway was successful
      */
@@ -337,6 +382,18 @@ mixerChat = new MixerChat();
 
 frontendCommunicator.on("delete-message", messageId => {
     mixerChat.deleteMessage(messageId);
+});
+
+frontendCommunicator.on("update-user-mod-status", data => {
+    if (data == null) return;
+    const { username, shouldBeMod } = data;
+    if (username == null || shouldBeMod == null) return;
+
+    if (shouldBeMod) {
+        mixerChat.modUser(username);
+    } else {
+        mixerChat.unmodUser(username);
+    }
 });
 
 module.exports = mixerChat;

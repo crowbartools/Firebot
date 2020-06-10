@@ -75,11 +75,11 @@ function validateEffectCanRun(effectId, triggerType) {
     }
 
     const mixplay = require("../interactive/mixplay");
-    const Chat = require("./mixer-chat.js");
+    const chat = require("../chat/chat");
 
     // Validate Dependancies
     let mixplayStatus = mixplay.mixplayIsConnected();
-    let chatStatus = Chat.getChatStatus();
+    let chatStatus = chat.chatIsConnected();
 
     let validDeps = effectDefinition.dependencies.every(d => {
         if (d === EffectDependency.INTERACTIVE) {

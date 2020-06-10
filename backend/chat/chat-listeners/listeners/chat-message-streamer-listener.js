@@ -5,14 +5,14 @@ const userdb = require("../../../database/userDatabase");
 const accountAccess = require("../../../common/account-access");
 const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
 const commandHandler = require("../../../chat/commands/commandHandler");
-const chatProcessor = require("../../../common/handlers/chatProcessor.js");
 const activeChatter = require('../../../roles/role-managers/active-chatters');
 
 module.exports = {
     accountType: "streamer",
     event: "ChatMessage",
     callback: (data) => {
-        const eventManager = require("../../../live-events/EventManager");
+        const chatProcessor = require("../../../common/handlers/chatProcessor.js");
+        const eventManager = require("../../../events/EventManager");
         const timerManager = require("../../../timers/timer-manager");
 
         //Send to chat moderation service

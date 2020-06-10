@@ -1,16 +1,16 @@
 "use strict";
 
-const eventManager = require("../../../live-events/EventManager");
+const eventManager = require("../../../events/EventManager");
 
 module.exports = {
-    event: "channel:{streamerChannelId}:resubShared",
+    event: "channel:{streamerChannelId}:resubscribed",
     callback: (data) => {
         eventManager.triggerEvent("mixer", "resub", {
-            shared: true,
+            shared: false,
             username: data.user.username,
             userId: data.user.id,
             totalMonths: data.totalMonths,
-            currentStreak: data.currentStreak
+            currentStreak: -1
         });
     }
 };

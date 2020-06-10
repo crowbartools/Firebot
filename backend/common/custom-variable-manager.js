@@ -1,7 +1,7 @@
 
 "use strict";
 const logger = require('../logwrapper');
-const eventManager = require("../live-events/EventManager");
+const eventManager = require("../events/EventManager");
 const NodeCache = require("node-cache");
 
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 5 });

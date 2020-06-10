@@ -1,7 +1,7 @@
 "use strict";
 
 const request = require("request");
-const logger = require("../logwrapper");
+const logger = require("../../../../logwrapper");
 const Fuse = require("fuse.js");
 
 let steamCache = [];

@@ -102,8 +102,11 @@ function saveAccountDataToFile(accountType) {
     }
 }
 
-// Update auth cache
-async function loadAccountData() {
+/**
+ * Loads account data from file into memory
+ * @param {boolean} [emitUpdate=true] - If an account update event should be emitted
+ */
+async function loadAccountData(emitUpdate = true) {
     let authDb = profileManager.getJsonDbInProfile("/auth");
     try {
         let dbData = authDb.getData("/"),
@@ -130,9 +133,10 @@ async function loadAccountData() {
         logger.warn("Couldnt update auth cache");
     }
 
-    sendAccoutUpdate();
+    if (emitUpdate) {
+        sendAccoutUpdate();
+    }
 }
-loadAccountData();
 
 /**
  * Update and save data for an account
@@ -163,12 +167,13 @@ function updateAccount(accountType, account) {
 /**
  * Refreshes a given accounts access token only if necessary
  * @param {string} accountType - The type of account ("streamer" or "bot")
+ * @param {boolean} [emitUpdate=false] - If an account update event should be emitted
  */
-async function ensureTokenRefreshed(accountType) {
-    if (accountType !== "streamer" && accountType !== "bot") return;
+async function ensureTokenRefreshed(accountType, emitUpdate = false) {
+    if (accountType !== "streamer" && accountType !== "bot") return false;
 
     let account = cache[accountType];
-    if (!account.loggedIn) return;
+    if (!account.loggedIn) return false;
 
     let oldToken = account.auth;
 
@@ -183,6 +188,9 @@ async function ensureTokenRefreshed(accountType) {
         logger.debug("Mixer account token updated, saving.");
         cache[accountType].auth = updatedToken;
         saveAccountDataToFile(accountType);
+        if (emitUpdate) {
+            sendAccoutUpdate();
+        }
         return true;
     }
 

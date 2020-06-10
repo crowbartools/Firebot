@@ -2,7 +2,7 @@
 
 const logger = require("../../../logwrapper");
 
-const eventManager = require("../../../live-events/EventManager");
+const eventManager = require("../../../events/EventManager");
 
 const EVENT_SOURCE_ID = "streamloots";
 const EventId = {

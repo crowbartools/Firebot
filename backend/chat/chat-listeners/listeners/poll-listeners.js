@@ -13,7 +13,7 @@ exports.pollStart = {
     accountType: "streamer",
     event: "PollStart",
     callback: (data) => {
-        const eventManager = require("../../../live-events/EventManager");
+        const eventManager = require("../../../events/EventManager");
 
         data.fbEvent = "PollStart";
         renderWindow.webContents.send("chatUpdate", data);
@@ -37,7 +37,7 @@ exports.pollEnd = {
     accountType: "streamer",
     event: "PollEnd",
     callback: (data) => {
-        const eventManager = require("../../../live-events/EventManager");
+        const eventManager = require("../../../events/EventManager");
 
         data.fbEvent = "PollEnd";
         renderWindow.webContents.send("chatUpdate", data);

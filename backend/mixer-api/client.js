@@ -13,11 +13,7 @@ const botClient = new Mixer.Client(new Mixer.DefaultRequestRunner());
 /**
  * Sets up the streamer and bot clients with oauth providers
  */
-async function setupClients() {
-
-    await accountAccess.ensureTokenRefreshed("streamer");
-    await accountAccess.ensureTokenRefreshed("bot");
-
+function setupClients() {
     const streamer = accountAccess.getAccounts().streamer;
     if (streamer.loggedIn) {
         streamerClient.use(new Mixer.OAuthProvider(streamerClient, {
@@ -41,6 +37,16 @@ async function setupClients() {
     }
 }
 
+/**
+ * Refreshes tokens and then ensures clients are setup.
+ */
+async function initClients() {
+    await accountAccess.ensureTokenRefreshed("streamer");
+    await accountAccess.ensureTokenRefreshed("bot");
+    setupClients();
+}
+
+
 accountAccess.events.on("account-update", () => {
     setupClients();
 });
@@ -59,6 +65,7 @@ async function getChatConnectionInformation(accountType) {
     return client.chat.join(channelId).then(response => response.body);
 }
 
+exports.initClients = initClients;
 exports.setupClients = setupClients;
 exports.getChatConnectionInformation = getChatConnectionInformation;
 exports.streamer = streamerClient;

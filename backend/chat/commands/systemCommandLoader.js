@@ -11,7 +11,7 @@ exports.loadCommands = () => {
     const mixerage = require("./builtin/mixerage");
     const quotesManagement = require('./builtin/quotes');
     const currencyManager = require('../../currency/currencyManager');
-    const steam = require("./builtin/steam");
+    const steam = require("./builtin/steam/steam");
     const customRoleManagement = require("./builtin/custom-role-management");
 
     // register them

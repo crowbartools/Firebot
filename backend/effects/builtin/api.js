@@ -3,7 +3,7 @@
 const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const apiProcessor = require("../../common/handlers/apiProcessor");
-const chat = require("../../common/mixer-chat");
+const chat = require("../../chat/chat");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
@@ -161,25 +161,12 @@ const api = {
    * When the effect is triggered by something
    */
     onTriggerEvent: async event => {
-        let chatter = event.effect.chatter;
-        let apiType = event.effect.api;
+        const chatter = event.effect.chatter;
+        const apiType = event.effect.api;
 
-        let apiResponse = await apiProcessor.getApiResponse(apiType);
+        const apiResponse = await apiProcessor.getApiResponse(apiType);
 
-        // Do something based on api type.
-        if (apiType === "Advice") {
-            chat.broadcast(chatter, "Advice: " + apiResponse);
-        } else if (apiType === "Cat Fact") {
-            chat.broadcast(chatter, "Cat Fact: " + apiResponse);
-        } else if (apiType === "Dog Fact") {
-            chat.broadcast(chatter, "Dog Fact: " + apiResponse);
-        } else if (apiType === "Pokemon") {
-            chat.broadcast(chatter, "Pokemon: " + apiResponse);
-        } else if (apiType === "Number Trivia") {
-            chat.broadcast(chatter, "Number Trivia: " + apiResponse);
-        } else if (apiType === "Dad Joke") {
-            chat.broadcast(chatter, "Dad Joke: " + apiResponse);
-        }
+        chat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
 
         return true;
     },

@@ -7,7 +7,7 @@ const { EffectTrigger, EffectDependency} = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const logger = require('../../logwrapper');
-const chat = require("../../common/mixer-chat");
+const channelAccess = require("../../common/channel-access");
 
 const model = {
     definition: {
@@ -59,12 +59,12 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Mod") {
-            chat.changeUserRole(event.effect.username, "Mod", "Add");
+            channelAccess.modUser(event.effect.username);
             logger.debug(event.effect.username + " was modded via the mod effect.");
         }
 
         if (event.effect.action === "Unmod") {
-            chat.changeUserRole(event.effect.username, "Mod", "Remove");
+            channelAccess.unmodUser(event.effect.username);
             logger.debug(event.effect.username + " was modded via the mod effect.");
         }
 

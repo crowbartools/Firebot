@@ -7,7 +7,7 @@ const { EffectTrigger } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const logger = require('../../logwrapper');
-const chat = require("../../common/mixer-chat");
+const channelAccess = require("../../common/channel-access");
 
 const model = {
     definition: {
@@ -59,11 +59,11 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Ban") {
-            chat.changeUserRole(event.effect.username, "Banned", "Add");
+            channelAccess.banUser(event.effect.username);
             logger.debug(event.effect.username + " was banned via the ban effect.");
         }
         if (event.effect.action === "Unban") {
-            chat.changeUserRole(event.effect.username, "Banned", "Remove");
+            channelAccess.unbanUser(event.effect.username);
             logger.debug(event.effect.username + " was unbanned via the ban effect.");
         }
         return true;

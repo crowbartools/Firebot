@@ -2,7 +2,7 @@
 
 const channelAccess = require("../../../common/channel-access");
 const moment = require("moment");
-const Chat = require("../../../common/mixer-chat");
+const chat = require("../../chat");
 const util = require("../../../utility");
 
 /**
@@ -31,7 +31,7 @@ const followage = {
         let followDate = await channelAccess.getFollowDateForUser(commandSender);
 
         if (followDate === null) {
-            Chat.smartSend(`${commandSender} is not following the channel.`);
+            chat.sendChatMessage(`${commandSender} is not following the channel.`);
         } else {
             let followDateMoment = moment(followDate),
                 nowMoment = moment();
@@ -41,7 +41,7 @@ const followage = {
                 nowMoment
             );
 
-            Chat.smartSend(
+            chat.sendChatMessage(
                 `${commandSender} followed ${followAgeString} ago on ${followDateMoment.format(
                     "DD MMMM YYYY HH:mm"
                 )} UTC`

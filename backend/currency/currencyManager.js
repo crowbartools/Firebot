@@ -4,7 +4,7 @@ const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const currencyDatabase = require("../database/currencyDatabase");
 const CommandManager = require("../chat/commands/CommandManager");
-const mixerChat = require('../common/mixer-chat');
+const chat = require('../chat/chat');
 const moment = require("moment");
 const connectionManager = require("../common/connection-manager");
 const util = require("../utility");
@@ -47,7 +47,7 @@ function applyCurrency() {
     Object.values(currencyData).forEach(currency => {
         let currentMinutes = moment().minutes();
         let intervalMod = currentMinutes % currency.interval;
-        let chatConnected = mixerChat.getChatStatus();
+        const chatConnected = chat.chatIsConnected();
         if (intervalMod === 0 && currency.active && chatConnected) {
             // do payout
             logger.info(
@@ -228,7 +228,7 @@ function createCurrencyCommandDefinition(currency) {
          */
         onTriggerEvent: async event => {
 
-            const Chat = require("../common/mixer-chat");
+            const chat = require("../chat/chat");
 
             let { commandOptions } = event;
             let triggeredArg = event.userCommand.triggeredArg;
@@ -244,7 +244,7 @@ function createCurrencyCommandDefinition(currency) {
                             .replace("{currency}", currencyName)
                             .replace("{amount}", util.commafy(amount));
 
-                        Chat.smartSend(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
+                        chat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
                     } else {
                         logger.log('Error while trying to show currency amount to user via chat command.');
                     }
@@ -261,13 +261,13 @@ function createCurrencyCommandDefinition(currency) {
                 // Adjust currency, it will return true on success and false on failure.
                 currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust).then(function(status) {
                     if (status) {
-                        Chat.smartSend(
+                        chat.sendChatMessage(
                             'Added ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.',
                             event.userCommand.commandSender
                         );
                     } else {
                         // Error removing currency.
-                        Chat.smartSend(
+                        chat.sendChatMessage(
                             `Error: Could not add currency to user.`,
                             event.userCommand.commandSender
                         );
@@ -285,13 +285,13 @@ function createCurrencyCommandDefinition(currency) {
                 // Adjust currency, it will return true on success and false on failure.
                 let adjustSucess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
                 if (adjustSucess) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         'Removed ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' from ' + username + '.',
                         event.userCommand.commandSender
                     );
                 } else {
                     // Error removing currency.
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Error: Could not remove currency from user.`,
                         event.userCommand.commandSender
                     );
@@ -309,14 +309,14 @@ function createCurrencyCommandDefinition(currency) {
                 // Does this currency have transfer active?
                 let currencyCheck = currencyDatabase.getCurrencies();
                 if (currencyCheck[currencyId].transfer === "Disallow") {
-                    Chat.smartSend('Transfers are not allowed for this currency.', event.userCommand.commandSender);
+                    chat.sendChatMessage('Transfers are not allowed for this currency.', event.userCommand.commandSender);
                     logger.debug(event.userCommand.commandSender + ' tried to give currency, but transfers are turned off for it. ' + currencyId);
                     return false;
                 }
 
                 // Dont allow person to give themselves currency.
                 if (event.userCommand.commandSender.toLowerCase() === username.toLowerCase()) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         'You can\'t give yourself currency. -_-',
                         event.userCommand.commandSender
                     );
@@ -330,13 +330,13 @@ function createCurrencyCommandDefinition(currency) {
 
                 // If we get false, there was an error.
                 if (userAmount === false) {
-                    Chat.smartSend('Error: Could not retrieve currency.', event.userCommand.commandSender);
+                    chat.sendChatMessage('Error: Could not retrieve currency.', event.userCommand.commandSender);
                     return false;
                 }
 
                 // Check to make sure we have enough currency to give.
                 if (userAmount < currencyAdjust) {
-                    Chat.smartSend('You do not have enough ' + currencyName + ' to do this action.', event.userCommand.commandSender);
+                    chat.sendChatMessage('You do not have enough ' + currencyName + ' to do this action.', event.userCommand.commandSender);
                     return false;
                 }
 
@@ -347,11 +347,11 @@ function createCurrencyCommandDefinition(currency) {
                     // Subtract currency from command user now.
                     currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg).then(function(status) {
                         if (status) {
-                            Chat.smartSend('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', event.userCommand.commandSender);
+                            chat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', event.userCommand.commandSender);
                             return true;
                         }
                         // Error removing currency.
-                        Chat.smartSend(
+                        chat.sendChatMessage(
                             `Error: Could not remove currency to user during give transaction.`,
                             event.userCommand.commandSender
                         );
@@ -362,7 +362,7 @@ function createCurrencyCommandDefinition(currency) {
 
                 } else {
                     // Error removing currency.
-                    Chat.smartSend(`Error: Could not add currency to user. Was there a typo in the username?`, event.userCommand.commandSender);
+                    chat.sendChatMessage(`Error: Could not add currency to user. Was there a typo in the username?`, event.userCommand.commandSender);
                     logger.error('Error adding currency during give transaction for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
                     return false;
                 }
@@ -372,14 +372,14 @@ function createCurrencyCommandDefinition(currency) {
             case "addall": {
                 let currencyAdjust = Math.abs(parseInt(args[1]));
                 if (isNaN(currencyAdjust)) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Error: Could not add currency to all online users.`,
                         event.userCommand.commandSender
                     );
                     return;
                 }
                 currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust);
-                Chat.smartSend(
+                chat.sendChatMessage(
                     `Added ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` to everyone! :hype-bot`
                 );
 
@@ -389,14 +389,14 @@ function createCurrencyCommandDefinition(currency) {
             case "removeall": {
                 let currencyAdjust = -Math.abs(parseInt(args[1]));
                 if (isNaN(currencyAdjust)) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Error: Could not remove currency from all online users.`,
                         event.userCommand.commandSender
                     );
                     return;
                 }
                 currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust);
-                Chat.smartSend(
+                chat.sendChatMessage(
                     `Removed ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` from everyone! :bork-bot`
                 );
 

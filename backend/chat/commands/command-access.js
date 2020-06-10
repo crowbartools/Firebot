@@ -1,9 +1,9 @@
 "use strict";
 const { ipcMain } = require("electron");
 const moment = require("moment");
-const logger = require("../logwrapper");
-const profileManager = require("../common/profile-manager");
-const frontendCommunicator = require("../common/frontend-communicator");
+const logger = require("../../logwrapper");
+const profileManager = require("../../common/profile-manager");
+const frontendCommunicator = require("../../common/frontend-communicator");
 
 let getCommandsDb = () => profileManager.getJsonDbInProfile("/chat/commands");
 

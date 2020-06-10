@@ -23,10 +23,10 @@ const fontManager = require("./backend/fontManager");
 
 const builtInEffectLoader = require("./backend/effects/builtInEffectLoader");
 const systemCommandLoader = require("./backend/chat/commands/systemCommandLoader");
-const builtInEventSourceLoader = require("./backend/live-events/builtinEventSourceLoader");
+const builtInEventSourceLoader = require("./backend/events/builtinEventSourceLoader");
 const integrationLoader = require("./backend/integrations/integrationLoader");
 const builtInVariableLoader = require("./backend/variables/builtin-variable-loader");
-const builtInEventFilterLoader = require("./backend/live-events/filters/builtin-filter-loader");
+const builtInEventFilterLoader = require("./backend/events/filters/builtin-filter-loader");
 const builtInRestrictionsLoader = require("./backend/restrictions/builtin-restrictions-loader");
 
 const Effect = require("./backend/common/EffectType");
@@ -234,7 +234,7 @@ function createWindow() {
     mainWindow.webContents.on("did-finish-load", () => {
         mainWindow.show();
 
-        const eventManager = require("./backend/live-events/EventManager");
+        const eventManager = require("./backend/events/EventManager");
         eventManager.triggerEvent("firebot", "firebot-started", {
             username: "Firebot"
         });
@@ -529,7 +529,7 @@ function appOnReady() {
 
         // load accounts
         const accountAccess = require("./backend/common/account-access");
-        await accountAccess.updateAccountCache();
+        await accountAccess.updateAccountCache(true);
 
         const connectionManager = require("./backend/common/connection-manager");
         connectionManager.startOnlineCheckInterval();
@@ -538,7 +538,7 @@ function appOnReady() {
         timerManager.startTimers();
 
         const mixerClient = require("./backend/mixer-api/client");
-        mixerClient.setupClients();
+        mixerClient.initClients();
 
         // load effects
         builtInEffectLoader.loadEffects();
@@ -566,7 +566,7 @@ function appOnReady() {
         const mixplayProjectManager = require("./backend/interactive/mixplay-project-manager");
         mixplayProjectManager.loadProjects();
 
-        const eventsAccess = require("./backend/live-events/events-access");
+        const eventsAccess = require("./backend/events/events-access");
         eventsAccess.loadEventsAndGroups();
 
         const customRolesManager = require("./backend/roles/custom-roles-manager");
@@ -608,9 +608,6 @@ function appOnReady() {
         const userDatabase = require("./backend/database/userDatabase");
         // Set users in user db to offline if for some reason they are still set to online. (app crash or something)
         userDatabase.setAllUsersOffline();
-
-        //ensure token is refreshed
-        await accountAccess.ensureTokenRefreshed("streamer");
 
         return true;
     });

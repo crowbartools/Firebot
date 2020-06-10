@@ -6,7 +6,7 @@ const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-const chat = require("../../common/mixer-chat");
+const channelAccess = require("../../common/channel-access");
 
 const model = {
     definition: {
@@ -37,7 +37,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        chat.updateStreamTitle(event.effect.title);
+        await channelAccess.setStreamTitle(event.effect.title);
         return true;
     }
 };

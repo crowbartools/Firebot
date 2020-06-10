@@ -117,12 +117,6 @@ mixplayClient.on('error', err => {
 async function connectToMixplay() {
     events.emit("connecting");
 
-    let tokenSuccess = await accountAccess.ensureTokenRefreshed("streamer");
-    if (!tokenSuccess) {
-        handleMixplayDisconnect("There was an issue refreshing your streamer account auth token. Please try again. If the issue persists, try re-logging into your account.");
-        return;
-    }
-
     let streamer = accountAccess.getAccounts().streamer;
     if (!streamer.loggedIn) {
         handleMixplayDisconnect("You must log into your streamer account before you can connect to MixPlay.");
@@ -199,7 +193,7 @@ async function connectToMixplay() {
 
         defaultSceneId = currentProject.defaultSceneId;
 
-        const eventManager = require("../live-events/EventManager");
+        const eventManager = require("../events/EventManager");
         eventManager.triggerEvent("firebot", "mixplay-connected", {
             username: "Firebot"
         });
@@ -351,7 +345,7 @@ mixplayClient.state.on('participantJoin', async participant => {
             await updateParticipantWithUserData(firebotUser, participant);
         }
 
-        const eventManager = require("../live-events/EventManager");
+        const eventManager = require("../events/EventManager");
         eventManager.triggerEvent("mixer", "user-joined-mixplay", {
             username: participant.username
         });

@@ -39,15 +39,6 @@ router
     .route("/effects/:effect/dependencies")
     .get(effects.getEffectDependencies);
 
-// Groups
-const groups = require("./controllers/groupsApiController");
-
-router.route("/groups").get(groups.getAllGroups);
-
-router.route("/groups/:groupName").get(groups.getGroup);
-
-router.route("/groups/:groupName/users").get(groups.getGroupUsers);
-
 // Fonts
 
 const fonts = require("./controllers/fontsApiController");

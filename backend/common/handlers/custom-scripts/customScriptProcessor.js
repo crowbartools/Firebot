@@ -1,5 +1,5 @@
 'use strict';
-const chat = require('../../mixer-chat.js');
+const mixerChat = require('../../../chat/chat');
 const profileManager = require("../../profile-manager");
 const settings = require('../../settings-access').settings;
 const path = require('path');
@@ -13,21 +13,15 @@ const {
 const effectRunner = require('../../effect-runner.js');
 const accountAccess = require('../../account-access');
 const uuidv1 = require("uuid/v1");
-const { TriggerType } = require('../../EffectType.js');
+const mixerApi = require("../../../mixer-api/api");
 
 function getUserRoles(participant) {
-    return new Promise(resolve => {
-        if (participant != null && participant.userID != null) {
-            chat.getUser(participant.userID, r => {
-                if (r != null) {
-                    resolve(r.body.userRoles);
-                } else {
-                    resolve([]);
-                }
-            });
-        } else {
-            resolve([]);
+    return new Promise(async resolve => {
+        if (participant == null || participant.userID == null) {
+            return resolve([]);
         }
+        const user = await mixerApi.chats.getUserInChat(participant.userID);
+        resolve(user ? user.userRoles : []);
     });
 }
 
@@ -139,7 +133,16 @@ function scriptProcessor(effect, trigger) {
                         JsonDb: require('node-json-db'),
                         moment: require('moment'),
                         logger: logger,
-                        chat: chat,
+                        // thin chat shim for basic backworks compatibility
+                        chat: {
+                            smartSend: (...args) => {
+                                mixerChat.sendChatMessage(...args);
+                            },
+                            deleteChat: (id) => {
+                                mixerChat.deleteMessage(id);
+                            }
+                        },
+                        mixerChat: mixerChat,
                         mixplay: require("../../../interactive/mixplay"),
                         utils: require("../../../utility")
                     };

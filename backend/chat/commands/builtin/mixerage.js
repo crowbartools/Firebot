@@ -2,7 +2,7 @@
 
 const channelAccess = require("../../../common/channel-access");
 const moment = require("moment");
-const Chat = require("../../../common/mixer-chat");
+const chat = require("../../chat");
 const util = require("../../../utility");
 
 /**
@@ -33,7 +33,7 @@ const uptime = {
         );
 
         if (userDetails === null) {
-            Chat.smartSend(`${commandSender} not found.`);
+            chat.sendChatMessage(`${commandSender} not found.`);
         } else {
             let joinedMixerDateMoment = moment(userDetails.createdAt),
                 nowMoment = moment();
@@ -43,7 +43,7 @@ const uptime = {
                 nowMoment
             );
 
-            Chat.smartSend(
+            chat.sendChatMessage(
                 `${commandSender} joined Mixer ${joinedMixerString} ago on ${joinedMixerDateMoment.format(
                     "DD MMMM YYYY HH:mm"
                 )} UTC`

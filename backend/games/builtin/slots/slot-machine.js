@@ -1,5 +1,5 @@
 "use strict";
-const chat = require("../../../common/mixer-chat");
+const chat = require("../../../chat/chat");
 const util = require("../../../utility");
 
 const SPIN_COUNT = 3;
@@ -19,7 +19,7 @@ async function spin(username, successChance, chatter) {
 
     let successCount = 0;
 
-    chat.smartSend(`${username} pulls back the lever...`, null, chatter);
+    chat.sendChatMessage(`${username} pulls back the lever...`, null, chatter);
 
     for (let currentSpin = 1; currentSpin <= SPIN_COUNT; currentSpin++) {
 
@@ -31,7 +31,7 @@ async function spin(username, successChance, chatter) {
             successCount++;
         }
 
-        chat.smartSend(`${getSpinLabel(currentSpin)} reel stops, it's a ${successfulRoll ? 'HIT' : 'MISS'}`, username, chatter);
+        chat.sendChatMessage(`${getSpinLabel(currentSpin)} reel stops, it's a ${successfulRoll ? 'HIT' : 'MISS'}`, username, chatter);
     }
 
     await util.wait(750);

@@ -6,7 +6,7 @@ const channelAccess = require("./channel-access");
 const frontendCommunicator = require("./frontend-communicator");
 const { settings } = require("./settings-access");
 const chat = require("../chat/chat");
-const constellation = require("../live-events/mixer-constellation");
+const constellation = require("../events/constellation");
 const mixplay = require("../interactive/mixplay");
 const integrationManager = require("../integrations/IntegrationManager");
 
@@ -113,7 +113,7 @@ class ConnectionManager extends EventEmitter {
 
     updateConstellationConnection(shouldConnect) {
         if (shouldConnect) {
-            if (!constellation.getConstellationStatus()) {
+            if (!constellation.constellationIsConnected()) {
                 constellation.connect();
             } else {
                 return false;

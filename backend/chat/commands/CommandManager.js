@@ -3,7 +3,7 @@
 const { ipcMain } = require("electron");
 const logger = require("../../logwrapper");
 const EventEmitter = require("events");
-const commandAccess = require("../../data-access/command-access");
+const commandAccess = require("./command-access");
 
 class CommandManager extends EventEmitter {
     constructor() {

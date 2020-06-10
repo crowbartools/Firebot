@@ -4,8 +4,6 @@ const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const mixerApi = require("../api-access");
 
-const frontendCommunicator = require("./frontend-communicator");
-
 const api = require("../mixer-api/api");
 
 const deepmerge = require("deepmerge");
@@ -14,6 +12,7 @@ const NodeCache = require("node-cache");
 let linkHeaderParser = require('parse-link-header');
 
 // Holds an updating model of the streamers channel data.
+/**@type {import('../mixer-api/resource/channels').MixerChannelSimple} */
 let streamerChannelData;
 
 exports.refreshStreamerChannelData = async () => {
@@ -78,12 +77,39 @@ exports.getStreamerAudience = async () => {
     return streamerChannelData.audience;
 };
 
+exports.setStreamerAudience = async (audience) => {
+    await api.channels.updateStreamersChannel({
+        audience: audience
+    });
+};
+
 exports.getStreamerGameData = async () => {
     if (streamerChannelData == null) {
         return null;
     }
 
     return streamerChannelData.type;
+};
+
+exports.setStreamGameById = async typeId => {
+    await api.channels.updateStreamersChannel({
+        typeId: typeId
+    });
+};
+
+exports.setStreamGameByName = async typeNameQuery => {
+    const types = await api.types.searchChannelTypes(typeNameQuery);
+    if (types.length > 0) {
+        await api.channels.updateStreamersChannel({
+            typeId: types[0].id
+        });
+    }
+};
+
+exports.setStreamTitle = async newTitle => {
+    await api.channels.updateStreamersChannel({
+        name: newTitle
+    });
 };
 
 const viewerRoleCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });

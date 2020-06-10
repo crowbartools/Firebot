@@ -4,7 +4,7 @@ module.exports = {
     accountType: "streamer",
     event: "ClearMessages",
     callback: (data) => {
-        const eventManager = require("../../../live-events/EventManager");
+        const eventManager = require("../../../events/EventManager");
 
         data.fbEvent = "ClearMessages";
         renderWindow.webContents.send("chatUpdate", data);

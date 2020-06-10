@@ -29,3 +29,18 @@ exports.getChannelType = async (typeId) => {
         return null;
     }
 };
+
+/**
+ * List available channel types
+ * @argument {string} query - The unique ID of the type
+ * @return {Promise<MixerChannelType[]>}
+ */
+exports.searchChannelTypes = async (query = "") => {
+    try {
+        /**@type {Mixer.IResponse<MixerChannelType>} */
+        const response = await mixerClient.streamer.request("get", `types?query=${query}`);
+        return response.body;
+    } catch (error) {
+        return [];
+    }
+};

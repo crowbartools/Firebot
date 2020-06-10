@@ -241,7 +241,7 @@
             const playConnectionStatusSound = utilityService.debounce(connectionState => {
                 let soundType = connectionState === ConnectionState.Connected ? "Online" : "Offline";
                 soundService.connectSound(soundType);
-            }, 100);
+            }, 250);
 
             backendCommunicator.on("service-connection-update", (data) => {
                 /**@type {string} */
@@ -286,24 +286,6 @@
              * OLD CONNECTION STUFF. TODO: Delete
              */
             service.connectedBoard = "";
-
-            service.toggleConnectionToInteractive = function() {};
-
-            service.connectToInteractive = function() {};
-
-            service.disconnectFromInteractive = function() {};
-
-            service.toggleConnectionToChat = function() {};
-
-            service.connectToChat = function() {};
-
-            service.disconnectFromChat = function() {};
-
-            service.toggleConnectionToConstellation = function() {};
-
-            service.connectToConstellation = function() {};
-
-            service.disconnectFromConstellation = function() {};
 
             // Connection Monitor for Overlay
             // Recieves event from main process that connection has been established or disconnected.

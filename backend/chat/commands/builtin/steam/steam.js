@@ -1,8 +1,8 @@
 "use strict";
 
-const Steam = require("../../../data-access/steam-access");
-const mixerChat = require("../../chat");
-const mixerApi = require("../../../mixer-api/api");
+const Steam = require("./steam-access");
+const mixerChat = require("../../../chat");
+const mixerApi = require("../../../../mixer-api/api");
 
 const steam = {
     definition: {

@@ -1,7 +1,7 @@
 "use strict";
 const logger = require("../../../logwrapper");
 const apiAccess = require("../../../api-access");
-const eventManager = require("../../../live-events/EventManager");
+const eventManager = require("../../../events/EventManager");
 
 module.exports = {
     event: "channel:{streamerChannelId}:skill",

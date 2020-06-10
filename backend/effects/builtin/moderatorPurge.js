@@ -7,7 +7,7 @@ const { EffectTrigger, EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const logger = require('../../logwrapper');
-const chat = require("../../common/mixer-chat");
+const chat = require("../../chat/chat");
 
 const model = {
     definition: {
@@ -40,7 +40,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        chat.chatPurge(event.effect.username);
+        chat.purgeUserMessages(event.effect.username);
         logger.debug(event.effect.username + " was purged via the purge effect.");
 
         return true;

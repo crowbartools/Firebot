@@ -1,5 +1,6 @@
 "use strict";
 
+const logger = require("../../logwrapper");
 const Mixer = require("@mixer/client-node");
 const mixerClient = require("../client");
 const accountAccess = require("../../common/account-access");
@@ -16,6 +17,7 @@ const accountAccess = require("../../common/account-access");
  * @property {boolean} suspended - Indicates if the channel is suspended.
  * @property {string} name - The title of the channel.
  * @property {string} audience - The target audience of the channel.
+ * @property {number} typeId - The ID of the Mixer channel type (ie a game or category a channel can be set to)
  * @property {number} viewersTotal - Amount of unique viewers that ever viewed this channel.
  * @property {number} viewersCurrent - Amount of current viewers.
  * @property {number} numFollowers - Amount of followers.
@@ -70,6 +72,24 @@ exports.getStreamersChannel = async () => {
 };
 
 /**
+ * Updates the Streamers channel.
+ * @argument {MixerChannelSimple} channelProperties - properties of the channel to update.
+ * @return {Promise<MixerChannelSimple>} - The updated channel
+ */
+exports.updateStreamersChannel = async channelProperties => {
+    const streamerChannelId = accountAccess.getAccounts().streamer.channelId;
+    try {
+        /**@type {Mixer.IResponse<MixerChannelSimple>} */
+        const response = await mixerClient.streamer.request("patch", `channels/${streamerChannelId}`, {
+            body: channelProperties
+        });
+        return response.body;
+    } catch (error) {
+        return null;
+    }
+};
+
+/**
  * Updates a user's roles on the Streamers channel. This can be used to make a user a moderator or to ban them.
  * @argument {number} userId - The ID the user to update the roles for.
  * @argument {BannedOrModRole[]} rolesToAdd - List of groups to add the user to.
@@ -79,12 +99,14 @@ exports.getStreamersChannel = async () => {
 exports.updateUserRoles = async (userId, rolesToAdd, rolesToRemove) => {
     const streamerChannelId = accountAccess.getAccounts().streamer.channelId;
     try {
-        /**@type {Mixer.IResponse<MixerChannel>} */
         await mixerClient.streamer.request("patch", `channels/${streamerChannelId}/users/${userId}`, {
-            add: rolesToAdd,
-            remove: rolesToRemove
+            body: {
+                add: rolesToAdd,
+                remove: rolesToRemove
+            }
         });
     } catch (error) {
+        logger.error('failed to update users roles', error);
         return;
     }
 };
