@@ -8,7 +8,8 @@ const logger = require("../../logwrapper");
  * Information required to create a clip.
  * @typedef {Object} ClipRequest
  * @property {string} broadcastId - Unique id for the broadcast being clipped
- * @property {string} highlightTitle - A message explaining the reason for request failure.
+ * @property {string} [highlightTitle] - Title of the clip being created (default is the broadcast title)
+ * @property {number} [clipDurationInSeconds] - Length of the clip to create (default 30s, min 5s, max 300s)
  */
 
 /**

@@ -52,12 +52,12 @@ exports.createClip = async function(effect, trigger) {
     if (!streamerData.partnered && !streamerData.canClip) {
         logger.warn("An unapproved user type attempted to create a clip!");
         renderWindow.webContents.send('error', `Failed to create a clip on Mixer. Reason: Not allowed to create clips at this time.`);
-        return;
+        return false;
     }
 
     if (broadcast == null) {
         renderWindow.webContents.send('error', `Failed to create a clip on Mixer. Reason: Streamer channel is not live.`);
-        return;
+        return false;
     }
 
     if (effect.postLink) {
@@ -68,11 +68,30 @@ exports.createClip = async function(effect, trigger) {
     if (title == null || title === "") {
         title = "$streamTitle (Created by $user)";
     }
-
     title = await util.populateStringWithTriggerData(title, trigger);
+
+    let duration = 30;
+    if (effect.clipDuration != null) {
+        let normalizedDuration = effect.clipDuration
+            .toString()
+            .trim()
+            .replace("s", "");
+
+        if (!isNaN(normalizedDuration)) {
+            duration = parseInt(normalizedDuration);
+        }
+    }
+
+    // enforce limits
+    if (duration < 5) {
+        duration = 5;
+    } else if (duration > 300) {
+        duration = 300;
+    }
 
     const clipProperties = await mixerApi.clips.createClip({
         broadcastId: broadcast.id,
+        clipDurationInSeconds: duration,
         highlightTitle: title
     });
 
@@ -101,4 +120,5 @@ exports.createClip = async function(effect, trigger) {
         }
         renderWindow.webContents.send('error', `Failed to create a clip on Mixer`);
     }
+    return true;
 };
