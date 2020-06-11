@@ -6,7 +6,7 @@ module.exports = {
     id: "firebot-heist",
     name: "Heist",
     subtitle: "Score big as a team",
-    description: "This game allows viewers to wager their currency to participate in a heist. If they succeed, they will get a payout based on their inital wager.",
+    description: "This game allows viewers to wager their currency by participating in a heist. If they succeed, they will get a payout based on their initial wager. Feel free to edit all of the messages to completely change the theme!",
     icon: "fa-sack-dollar",
     settingCategories: {
         currencySettings: {
