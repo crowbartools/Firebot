@@ -2,6 +2,9 @@
 
 const spinCommand = require("./spin-command");
 
+/**
+ * @type {import('../../game-manager').FirebotGame}
+ */
 module.exports = {
     id: "firebot-slots",
     name: "Slots",
