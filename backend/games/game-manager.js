@@ -34,14 +34,13 @@ function registerGame(game) {
     registeredGames.push(game);
 }
 
-function buildGameSettings(game) {
+function buildGameSettings(game, savedSettings) {
     let settingsData = {
         active: game.active,
         settings: {}
     };
 
-    let savedSettings = allGamesSettings[game.id];
-    if (savedSettings) {
+    if (savedSettings != null) {
         settingsData = savedSettings;
     }
 
@@ -87,7 +86,7 @@ function getGameSettingsFromValues(settingCategories, savedSettings) {
 function getGameSettings(gameId) {
     const game = registeredGames.find(g => g.id === gameId);
     if (!game) return null;
-    return buildGameSettings(game);
+    return buildGameSettings(game, allGamesSettings[game.id]);
 }
 
 function loadGameSettings() {
@@ -109,7 +108,7 @@ function saveAllGameSettings() {
     }
 }
 
-frontendCommunicator.onAsync('get-games', async () => {
+function getGames() {
     return registeredGames.map(g => {
         return {
             id: g.id,
@@ -118,26 +117,41 @@ frontendCommunicator.onAsync('get-games', async () => {
             description: g.description,
             icon: g.icon,
             active: g.active,
-            settingCategories: setGameSettingValues(g.settingCategories, buildGameSettings(g))
+            settingCategories: setGameSettingValues(g.settingCategories, buildGameSettings(g, allGamesSettings[g.id]))
         };
     });
+}
+
+frontendCommunicator.onAsync('get-games', async () => {
+    return getGames();
 });
 
-frontendCommunicator.on('game-settings-update', (data) => {
-    const { gameId, settingCategories, activeStatus } = data;
-
+function updateGameSettings(gameId, settingCategories, activeStatus) {
     const game = registeredGames.find(g => g.id === gameId);
 
     if (game == null) return;
 
-    let previousSettings = buildGameSettings(game);
+
+    let previousSettings = buildGameSettings(game, allGamesSettings[game.id]);
     let previousActiveStatus = previousSettings.active;
 
-    let gameSettings = getGameSettingsFromValues(settingCategories, previousSettings);
-    gameSettings.active = activeStatus;
-    game.active = activeStatus;
+    let gameSettings;
+    if (settingCategories == null) {
+        gameSettings = {
+            active: false
+        };
 
-    allGamesSettings[game.id] = gameSettings;
+        game.active = false;
+
+        delete allGamesSettings[game.id];
+    } else {
+
+        gameSettings = getGameSettingsFromValues(settingCategories, previousSettings);
+        gameSettings.active = activeStatus;
+        game.active = activeStatus;
+
+        allGamesSettings[game.id] = gameSettings;
+    }
 
     saveAllGameSettings();
 
@@ -152,11 +166,27 @@ frontendCommunicator.on('game-settings-update', (data) => {
             }
         }
     } else {
-        if (previousActiveStatus && game.onTerminate) {
-            game.onTerminate(gameSettings);
+        if (previousActiveStatus && game.onUnload) {
+            game.onUnload(gameSettings);
         }
     }
+}
 
+frontendCommunicator.on('game-settings-update', (data) => {
+    const { gameId, settingCategories, activeStatus } = data;
+
+    updateGameSettings(gameId, settingCategories, activeStatus);
+
+});
+
+frontendCommunicator.on('reset-game-to-defaults', (gameId) => {
+    const game = registeredGames.find(g => g.id === gameId);
+
+    if (game == null) return;
+
+    updateGameSettings(gameId, null, null);
+
+    frontendCommunicator.send("game-settings-updated", getGames());
 });
 
 exports.loadGameSettings = loadGameSettings;

@@ -11,7 +11,7 @@
         template: `
        <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 20px;font-size: 15px;font-weight: 600;">
 
-          <div>{{$ctrl.metadata.type != 'boolean' ? $ctrl.metadata.title ? $ctrl.metadata.title : $ctrl.name : ""}}</div>
+          <div>{{$ctrl.metadata.type != 'boolean' && $ctrl.metadata.title ? $ctrl.metadata.title : ""}}</div>
           <div ng-if="$ctrl.metadata.type != 'boolean' && $ctrl.metadata.description" style="padding-bottom: 5px;font-size: 14px;font-weight: 300;">{{$ctrl.metadata.description}}</div>
 
           <div ng-switch-when="string">
@@ -42,12 +42,20 @@
             <role-percentages model="$ctrl.metadata.value"></role-percentages>
           </div>
 
+          <div ng-switch-when="role-numbers">
+            <role-numbers model="$ctrl.metadata.value" settings="$ctrl.metadata.settings"></role-numbers>
+          </div>
+
           <div ng-switch-when="currency-select" style="padding-top:5px;">
             <currency-select model="$ctrl.metadata.value"></currency-select>
           </div>
 
           <div ng-switch-when="chatter-select" style="padding-top:5px;">
             <chatter-select model="$ctrl.metadata.value"></chatter-select>
+          </div>
+
+          <div ng-switch-when="edittable-list" style="padding-top:5px;">
+            <edittable-list model="$ctrl.metadata.value" settings="$ctrl.metadata.settings"></edittable-list>
           </div>
 
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>

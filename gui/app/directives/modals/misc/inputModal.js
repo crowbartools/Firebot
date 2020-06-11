@@ -16,7 +16,31 @@
                     <p ng-if="$ctrl.descriptionText">{{$ctrl.descriptionText}}</p>
                     <div style="width: 95%; position: relative;">
                         <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
-                            <input type="{{$ctrl.inputType}}" class="form-control" id="inputField" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}" replace-variables menu-position="below" button-position="below" disable-variable-menu="$ctrl.hideVariableMenu">
+                            <input
+                                ng-hide="$ctrl.useTextArea" 
+                                type="{{$ctrl.inputType}}" 
+                                class="form-control" 
+                                id="inputField" 
+                                ng-model="$ctrl.model" 
+                                ng-keyup="$event.keyCode == 13 && $ctrl.save() " 
+                                aria-describedby="helpBlock" 
+                                placeholder="{{$ctrl.inputPlaceholder}}" 
+                                replace-variables 
+                                menu-position="below" 
+                                button-position="below" 
+                                disable-variable-menu="$ctrl.hideVariableMenu">
+                            <textarea
+                                ng-show="$ctrl.useTextArea"
+                                class="form-control" 
+                                ng-model="$ctrl.model" 
+                                ng-keyup="$event.keyCode == 13 && $ctrl.save() " 
+                                aria-describedby="helpBlock" 
+                                placeholder="{{$ctrl.inputPlaceholder}}" 
+                                replace-variables 
+                                menu-position="under" 
+                                rows="3" 
+                                style="width:100%"
+                                disable-variable-menu="$ctrl.hideVariableMenu"></textarea>
                             <span id="helpBlock" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</span>
                         </div>
                     </div>
@@ -45,6 +69,7 @@
                 $ctrl.hasValidationError = false;
                 $ctrl.inputType = "text";
                 $ctrl.descriptionText = null;
+                $ctrl.useTextArea = false;
 
                 $ctrl.hideVariableMenu = true;
 
@@ -93,6 +118,10 @@
 
                     if ($ctrl.resolve.descriptionText) {
                         $ctrl.descriptionText = $ctrl.resolve.descriptionText;
+                    }
+
+                    if ($ctrl.resolve.useTextArea) {
+                        $ctrl.useTextArea = $ctrl.resolve.useTextArea === true;
                     }
 
                     $timeout(() => {

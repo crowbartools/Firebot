@@ -1,8 +1,6 @@
 "use strict";
 
 (function() {
-    //This a wrapped dropdown element that automatically handles the particulars
-
     angular
         .module('firebotApp')
         .component("rolePercentage", {

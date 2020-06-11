@@ -46,7 +46,6 @@ async function initClients() {
     setupClients();
 }
 
-
 accountAccess.events.on("account-update", () => {
     setupClients();
 });

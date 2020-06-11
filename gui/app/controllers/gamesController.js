@@ -1,4 +1,7 @@
 "use strict";
+
+const { indexOf } = require("angular-route");
+
 (function() {
     angular
         .module("firebotApp")
@@ -12,9 +15,18 @@
                     resolveObj: {
                         game: () => game
                     },
-                    closeCallback: updatedGame => {
-                        if (updatedGame == null) return;
-                        gamesService.saveGame(updatedGame);
+                    closeCallback: resp => {
+                        const action = resp.action;
+
+                        if (action === 'save') {
+                            const updatedGame = resp.game;
+                            if (updatedGame == null) return;
+                            gamesService.saveGame(updatedGame);
+                        }
+
+                        if (action === 'reset') {
+                            gamesService.resetGameToDefault(resp.gameId);
+                        }
                     }
                 });
             };

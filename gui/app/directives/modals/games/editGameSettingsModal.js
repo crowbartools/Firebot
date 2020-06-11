@@ -23,25 +23,29 @@
                             <div class="control__indicator"></div>
                         </label>
                     </div>
+                    <p class="muted" style="margin-top: 20px;">Note: You can edit the command !trigger for this game in <strong>Commands</strong> > <strong>System Commands</strong></p>
                 </setting-container>
 
-                <setting-container ng-if="$ctrl.game.settingCategories != null" ng-repeat="categoryMeta in $ctrl.settingCategoriesArray | orderBy:'sortRank'"  header="{{categoryMeta.title}}" description="{{categoryMeta.description}}" pad-top="$index > 0 ? true : false">
+                <setting-container ng-if="$ctrl.game.settingCategories != null" ng-repeat="categoryMeta in $ctrl.settingCategoriesArray | orderBy:'sortRank'"  header="{{categoryMeta.title}}" description="{{categoryMeta.description}}" pad-top="$index > 0 ? true : false" collapsed="true">
                     <command-option ng-repeat="(optionName, optionMetadata) in categoryMeta.settings"
                                 name="optionName"
                                 metadata="optionMetadata"></command-option>
                 </setting-container>
 
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
+            <div class="modal-footer sticky-footer edit-game-footer">
+                <button ng-show="$ctrl.game != null" type="button" class="btn btn-warning pull-left" ng-click="$ctrl.resetToDefaults()">Reset</button>
+                <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+                <button ng-show="$ctrl.game != null" type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
+            <scroll-sentinel element-class="edit-game-footer"></scroll-sentinel>
             `,
         bindings: {
             resolve: "<",
             close: "&",
             dismiss: "&"
         },
-        controller: function(ngToast) {
+        controller: function(ngToast, utilityService) {
             let $ctrl = this;
 
             $ctrl.game = null;
@@ -57,6 +61,26 @@
                 }
             };
 
+            $ctrl.resetToDefaults = () => {
+                utilityService
+                    .showConfirmationModal({
+                        title: `Reset To Defaults`,
+                        question: `Are you sure you want reset ${$ctrl.game.name} to default settings?`,
+                        confirmLabel: "Reset",
+                        confirmBtnType: "btn-danger"
+                    })
+                    .then(confirmed => {
+                        if (confirmed) {
+                            $ctrl.close({
+                                $value: {
+                                    gameId: $ctrl.game.id,
+                                    action: "reset"
+                                }
+                            });
+                        }
+                    });
+            };
+
             function validate() {
                 if ($ctrl.game.settingCategories) {
                     for (let category of Object.values($ctrl.game.settingCategories)) {
@@ -65,6 +89,9 @@
                                 if (setting.validation.required) {
                                     if (setting.type === 'string' && setting.value === "") {
                                         ngToast.create(`Please input a value for the ${setting.title} option`);
+                                        return false;
+                                    } else if (setting.type === 'edittable-list' && (setting.value == null || setting.value.length === 0)) {
+                                        ngToast.create(`Please input some text for the ${setting.title} option`);
                                         return false;
                                     } else if (setting.value === null || setting.value === undefined) {
                                         ngToast.create(`Please select/input a value for the ${setting.title} option`);
@@ -91,7 +118,10 @@
             $ctrl.save = () => {
                 if (!validate()) return;
                 $ctrl.close({
-                    $value: $ctrl.game
+                    $value: {
+                        game: $ctrl.game,
+                        action: "save"
+                    }
                 });
             };
         }

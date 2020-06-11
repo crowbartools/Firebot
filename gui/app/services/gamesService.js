@@ -18,6 +18,12 @@
                     });
             };
 
+            backendCommunicator.on("game-settings-updated", (games) => {
+                if (games) {
+                    service.games = games;
+                }
+            });
+
             service.saveGame = (game) => {
                 const index = service.games.findIndex(g => g.id === game.id);
                 if (index < 0) return;
@@ -28,6 +34,10 @@
                     activeStatus: game.active,
                     settingCategories: game.settingCategories
                 });
+            };
+
+            service.resetGameToDefault = gameId => {
+                backendCommunicator.fireEvent("reset-game-to-defaults", gameId);
             };
 
             return service;

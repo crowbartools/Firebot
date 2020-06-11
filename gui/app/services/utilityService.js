@@ -202,6 +202,7 @@
                         label: () => options.label,
                         inputPlaceholder: () => options.inputPlaceholder,
                         saveText: () => options.saveText,
+                        useTextArea: () => options.useTextArea,
                         descriptionText: () => options.descriptionText,
                         validationFn: () => options.validationFn,
                         validationText: () => options.validationText,

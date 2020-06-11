@@ -5,7 +5,7 @@ const spinCommand = require("./spin-command");
 const model = {
     id: "firebot-slots",
     name: "Slots",
-    subtitle: "Spin to win!",
+    subtitle: "Spin to win",
     description: "This game allows viewers to wager their currency at a Slot Machine. All they need to do is type '!spin [wagerAmount]' in chat to pull the lever! When the lever is pulled, three reels are spun, each of which can HIT or MISS. The number of HITs determines the winnings!",
     icon: "fa-dice-three",
     settingCategories: {
@@ -97,13 +97,13 @@ const model = {
             spinCommand.registerSpinCommand();
         }
     },
-    onInitialize: settings => {},
-    onTerminate: settings => {
+    onUnload: settings => {
         if (!settings.active) {
             spinCommand.unregisterSpinCommand();
         }
         spinCommand.purgeCaches();
     },
+    onInitialize: settings => {},
     onSettingsUpdate: settings => {
         spinCommand.purgeCaches();
         if (settings.active) {

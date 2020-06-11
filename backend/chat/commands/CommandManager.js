@@ -162,7 +162,7 @@ class CommandManager extends EventEmitter {
             c => c.definition.id === id
         );
         if (defaultCmd != null) {
-            defaultCmd.trigger = newTrigger;
+            defaultCmd.definition.trigger = newTrigger;
         }
 
         renderWindow.webContents.send("systemCommandsUpdated");

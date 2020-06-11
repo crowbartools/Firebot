@@ -2,8 +2,7 @@
 
 const gameManager = require("./game-manager");
 
-const slots = require("./builtin/slots/slots");
-
 exports.loadGames = () => {
-    gameManager.registerGame(slots);
+    gameManager.registerGame(require("./builtin/slots/slots"));
+    gameManager.registerGame(require("./builtin/heist/heist"));
 };
