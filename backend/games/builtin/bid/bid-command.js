@@ -5,9 +5,6 @@ const chat = require("../../../chat/chat");
 const commandManager = require("../../../chat/commands/CommandManager");
 const gameManager = require("../../game-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");
-const customRolesManager = require("../../../roles/custom-roles-manager");
-const mixerRolesManager = require("../../../../shared/mixer-roles");
-//const bidRunner = require("./bid-runner.js");
 const moment = require("moment");
 const NodeCache = require("node-cache");
 
