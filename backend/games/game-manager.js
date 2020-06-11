@@ -23,12 +23,8 @@ function registerGame(game) {
         gameSettings = { active: false };
     }
 
-    if (game.onLoad) {
+    if (gameSettings.active && game.onLoad) {
         game.onLoad(gameSettings);
-    }
-
-    if (game.active && game.initializeTrigger === 'immediate' && game.onInitialize) {
-        game.onInitialize(gameSettings);
     }
 
     registeredGames.push(game);
@@ -156,17 +152,16 @@ function updateGameSettings(gameId, settingCategories, activeStatus) {
     saveAllGameSettings();
 
     if (gameSettings.active) {
-        if (game.onSettingsUpdate) {
+        //game has been enabled, load it
+        if (previousActiveStatus === false && game.onLoad) {
+            game.onLoad(gameSettings);
+        } else if (game.onSettingsUpdate) {
+            // just trigger settings update
             game.onSettingsUpdate(gameSettings);
         }
-
-        if (!previousActiveStatus) {
-            if (game.initializeTrigger === 'immediate' && game.onInitialize) {
-                game.onInitialize(gameSettings);
-            }
-        }
     } else {
-        if (previousActiveStatus && game.onUnload) {
+        //game has been disabled, unload it
+        if (previousActiveStatus === true && game.onUnload) {
             game.onUnload(gameSettings);
         }
     }
@@ -176,7 +171,6 @@ frontendCommunicator.on('game-settings-update', (data) => {
     const { gameId, settingCategories, activeStatus } = data;
 
     updateGameSettings(gameId, settingCategories, activeStatus);
-
 });
 
 frontendCommunicator.on('reset-game-to-defaults', (gameId) => {

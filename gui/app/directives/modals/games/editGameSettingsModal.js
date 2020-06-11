@@ -27,9 +27,9 @@
                 </setting-container>
 
                 <setting-container ng-if="$ctrl.game.settingCategories != null" ng-repeat="categoryMeta in $ctrl.settingCategoriesArray | orderBy:'sortRank'"  header="{{categoryMeta.title}}" description="{{categoryMeta.description}}" pad-top="$index > 0 ? true : false" collapsed="true">
-                    <command-option ng-repeat="(optionName, optionMetadata) in categoryMeta.settings"
-                                name="optionName"
-                                metadata="optionMetadata"></command-option>
+                    <command-option ng-repeat="setting in categoryMeta.settingsArray | orderBy:'sortRank'"
+                                name="setting.settingName"
+                                metadata="setting"></command-option>
                 </setting-container>
 
             </div>
@@ -55,7 +55,17 @@
             $ctrl.$onInit = function() {
                 if ($ctrl.resolve.game) {
                     $ctrl.game = JSON.parse(JSON.stringify($ctrl.resolve.game));
-                    $ctrl.settingCategoriesArray = Object.values($ctrl.game.settingCategories);
+                    $ctrl.settingCategoriesArray = Object.values($ctrl.game.settingCategories)
+                        .map(sc => {
+                            sc.settingsArray = [];
+                            const settingNames = Object.keys(sc.settings);
+                            for (const settingName of settingNames) {
+                                const setting = sc.settings[settingName];
+                                setting.settingName = settingName;
+                                sc.settingsArray.push(setting);
+                            }
+                            return sc;
+                        });
                 } else {
                     $ctrl.dismiss();
                 }

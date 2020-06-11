@@ -17,6 +17,7 @@ module.exports = {
                     type: "currency-select",
                     title: "Currency",
                     description: "Which currency to use for this game.",
+                    sortRank: 1,
                     validation: {
                         required: true
                     }
@@ -27,6 +28,7 @@ module.exports = {
                     description: "The default wager amount to use if a viewer doesn't specify one.",
                     placeholder: "Enter amount",
                     tip: "Optional",
+                    sortRank: 2,
                     validation: {
                         min: 1
                     }
@@ -36,6 +38,7 @@ module.exports = {
                     title: "Min Wager Amount",
                     placeholder: "Enter amount",
                     default: 1,
+                    sortRank: 3,
                     validation: {
                         min: 1
                     }
@@ -45,6 +48,7 @@ module.exports = {
                     title: "Max Wager Amount",
                     placeholder: "Enter amount",
                     tip: "Optional",
+                    sortRank: 4,
                     validation: {
                         min: 1
                     }
@@ -89,6 +93,7 @@ module.exports = {
                     description: "The minimum required users before starting.",
                     placeholder: "Enter count",
                     default: 1,
+                    sortRank: 1,
                     validation: {
                         min: 1
                     }
@@ -99,6 +104,7 @@ module.exports = {
                     description: "The delay time before a heist starts to allow people to join.",
                     placeholder: "Enter mins",
                     default: 2,
+                    sortRank: 2,
                     validation: {
                         min: 1
                     }
@@ -109,6 +115,7 @@ module.exports = {
                     description: "The cooldown before another heist can be triggered.",
                     placeholder: "Enter mins",
                     default: 5,
+                    sortRank: 3,
                     validation: {
                         min: 1
                     }
@@ -120,21 +127,23 @@ module.exports = {
             description: "These are whispered",
             sortRank: 6,
             settings: {
-                aOnJoin: {
+                onJoin: {
                     type: "string",
                     title: "On Join",
                     useTextArea: true,
                     default: "You have joined the heist with {wager} {currency}!",
                     tip: "Available variables: {user}, {wager}, {currency}",
+                    sortRank: 1,
                     validation: {
                         required: true
                     }
                 },
-                bAlreadyJoined: {
+                alreadyJoined: {
                     type: "string",
                     title: "Already Joined",
                     useTextArea: true,
                     default: "You've already joined the heist team!",
+                    sortRank: 2,
                     validation: {
                         required: true
                     }
@@ -145,7 +154,7 @@ module.exports = {
             title: "General Messages",
             sortRank: 5,
             settings: {
-                aTeamCreation: {
+                teamCreation: {
                     type: "string",
                     title: "Team Creation",
                     description: "Sent when a heist is triggered by someone.",
@@ -156,7 +165,7 @@ module.exports = {
                         required: true
                     }
                 },
-                bOnCooldown: {
+                onCooldown: {
                     type: "string",
                     title: "When On Cooldown",
                     description: "Sent when someone tries to trigger the heist and it's on cooldown.",
@@ -167,7 +176,7 @@ module.exports = {
                         required: true
                     }
                 },
-                cCooldownOver: {
+                cooldownOver: {
                     type: "string",
                     title: "Cooldown Over",
                     description: "Sent when the cooldown is over.",
@@ -178,7 +187,7 @@ module.exports = {
                         required: true
                     }
                 },
-                dStartMessage: {
+                startMessage: {
                     type: "string",
                     title: "Heist Started",
                     description: "Sent when the heist has started.",
@@ -188,7 +197,7 @@ module.exports = {
                         required: true
                     }
                 },
-                eTeamTooSmall: {
+                teamTooSmall: {
                     type: "string",
                     title: "Team Too Small",
                     description: "Sent when the start delay has ended and team size doesn't mean the Required Users count.",
@@ -199,7 +208,7 @@ module.exports = {
                         required: true
                     }
                 },
-                fHeistWinnings: {
+                heistWinnings: {
                     type: "string",
                     title: "Heist Winnings",
                     description: "Sent at the completion of the heist, lists those who survived and their winnings.",
@@ -216,13 +225,14 @@ module.exports = {
             title: "Group Outcome Messages",
             sortRank: 7,
             settings: {
-                a100percent: {
+                hundredPercent: {
                     type: "edittable-list",
                     title: "100% Victory",
                     default: [
                         "The heist was a complete success and everyone escaped in the getaway car!"
                     ],
                     description: "One of these will be chosen at random.",
+                    sortRank: 5,
                     settings: {
                         useTextArea: true,
                         sortable: false,
@@ -235,13 +245,14 @@ module.exports = {
                         required: true
                     }
                 },
-                b7599percent: {
+                top25Percent: {
                     type: "edittable-list",
                     title: "75-99% Victory",
                     default: [
                         "A few went down as they exited the bank, but most of the team made it!"
                     ],
                     description: "One of these will be chosen at random.",
+                    sortRank: 4,
                     settings: {
                         useTextArea: true,
                         sortable: false,
@@ -254,13 +265,14 @@ module.exports = {
                         required: true
                     }
                 },
-                c2574percent: {
+                mid50Percent: {
                     type: "edittable-list",
                     title: "25-74% Victory",
                     default: [
                         "The security was tighter than expected and many were lost in the gunfire, but some made it out with cash."
                     ],
                     description: "One of these will be chosen at random.",
+                    sortRank: 3,
                     settings: {
                         useTextArea: true,
                         sortable: false,
@@ -273,13 +285,14 @@ module.exports = {
                         required: true
                     }
                 },
-                d124percent: {
+                bottom25Percent: {
                     type: "edittable-list",
                     title: "1-24% Victory",
                     default: [
                         "Just about everybody died, a lucky few made it to the boat with what cash was left..."
                     ],
                     description: "One of these will be chosen at random.",
+                    sortRank: 2,
                     settings: {
                         useTextArea: true,
                         sortable: false,
@@ -292,13 +305,14 @@ module.exports = {
                         required: true
                     }
                 },
-                e0percent: {
+                zeroPercent: {
                     type: "edittable-list",
                     title: "0% Victory",
                     default: [
                         "Despite your best efforts, the entire team was lost..."
                     ],
                     description: "One of these will be chosen at random.",
+                    sortRank: 1,
                     settings: {
                         useTextArea: true,
                         sortable: false,
@@ -317,7 +331,7 @@ module.exports = {
             title: "Solo Outcome Messages",
             sortRank: 8,
             settings: {
-                aSoloSuccess: {
+                soloSuccess: {
                     type: "edittable-list",
                     title: "Solo Success",
                     description: "Sent when a heist is successful with a solo team (One message is chosen at random)",
@@ -325,6 +339,7 @@ module.exports = {
                         "@{user} managed to complete the heist on their own and made out with a huge bag of money!"
                     ],
                     tip: "Available variables: {user}",
+                    sortRank: 1,
                     settings: {
                         useTextArea: true,
                         sortable: false,
@@ -337,7 +352,7 @@ module.exports = {
                         required: true
                     }
                 },
-                bSoloFail: {
+                soloFail: {
                     type: "edittable-list",
                     title: "Solo Fail",
                     description: "Sent when a heist fails with a solo team (One message is chosen at random)",
@@ -345,6 +360,7 @@ module.exports = {
                         "Nothing went right for @{user} and they were apprehended!"
                     ],
                     tip: "Available variables: {user}",
+                    sortRank: 2,
                     settings: {
                         useTextArea: true,
                         sortable: false,
@@ -370,27 +386,14 @@ module.exports = {
             }
         }
     },
-    initializeTrigger: null, // "chat"
     onLoad: settings => {
-        if (settings.active) {
-            heistCommand.registerHeistCommand();
-        }
+        heistCommand.registerHeistCommand();
     },
     onUnload: settings => {
-        if (!settings.active) {
-            heistCommand.unregisterHeistCommand();
-        }
+        heistCommand.unregisterHeistCommand();
         heistCommand.clearCooldown();
-    },
-    onInitialize: settings => {
-
     },
     onSettingsUpdate: settings => {
         heistCommand.clearCooldown();
-        if (settings.active) {
-            heistCommand.registerHeistCommand();
-        } else {
-            heistCommand.unregisterHeistCommand();
-        }
     }
 };

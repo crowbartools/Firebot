@@ -5,7 +5,6 @@ const chat = require("../../../chat/chat");
 const commandManager = require("../../../chat/commands/CommandManager");
 const currencyDatabase = require("../../../database/currencyDatabase");
 const util = require("../../../utility");
-const utils = require("node-json-db/lib/utils");
 
 /**
  * @typedef HeistUser
@@ -35,7 +34,7 @@ function triggerCooldown() {
     exports.cooldownExpireTime = expireTime;
 
     const command = commandManager.getSystemCommandById("firebot:heist");
-    const cooldownOverMessage = heistSettings.settings.generalMessages.cCooldownOver
+    const cooldownOverMessage = heistSettings.settings.generalMessages.cooldownOver
         .replace("{command}", command.definition.trigger);
 
     cooldownTimeoutId = setTimeout((msg) => {
@@ -47,7 +46,7 @@ async function runHeist() {
     const heistSettings = gameManager.getGameSettings("firebot-heist");
     const chatter = heistSettings.settings.chatSettings.chatter;
 
-    const startMessage = heistSettings.settings.generalMessages.dStartMessage;
+    const startMessage = heistSettings.settings.generalMessages.startMessage;
     chat.sendChatMessage(startMessage, null, chatter);
 
     // wait a few secs for suspense
@@ -67,21 +66,21 @@ async function runHeist() {
     let messages;
     if (percentSurvived >= 100) {
         if (usersInHeist.length > 1) {
-            messages = heistSettings.settings.groupOutcomeMessages.a100percent;
+            messages = heistSettings.settings.groupOutcomeMessages.hundredPercent;
         } else {
-            messages = heistSettings.settings.soloOutcomeMessages.aSoloSuccess;
+            messages = heistSettings.settings.soloOutcomeMessages.soloSuccess;
         }
     } else if (percentSurvived >= 75 && percentSurvived <= 99) {
-        messages = heistSettings.settings.groupOutcomeMessages.b7599percent;
+        messages = heistSettings.settings.groupOutcomeMessages.top25Percent;
     } else if (percentSurvived >= 25 && percentSurvived <= 74) {
-        messages = heistSettings.settings.groupOutcomeMessages.c2574percent;
+        messages = heistSettings.settings.groupOutcomeMessages.mid50Percent;
     } else if (percentSurvived >= 1 && percentSurvived <= 24) {
-        messages = heistSettings.settings.groupOutcomeMessages.d124percent;
+        messages = heistSettings.settings.groupOutcomeMessages.bottom25Percent;
     } else {
         if (usersInHeist.length > 1) {
-            messages = heistSettings.settings.groupOutcomeMessages.e0percent;
+            messages = heistSettings.settings.groupOutcomeMessages.zeroPercent;
         } else {
-            messages = heistSettings.settings.soloOutcomeMessages.bSoloFail;
+            messages = heistSettings.settings.soloOutcomeMessages.soloFail;
         }
     }
 
@@ -114,7 +113,7 @@ async function runHeist() {
         winningsString = "None";
     }
 
-    const winningsMessage = heistSettings.settings.generalMessages.fHeistWinnings
+    const winningsMessage = heistSettings.settings.generalMessages.heistWinnings
         .replace("{winnings}", winningsString);
 
     try {
@@ -152,7 +151,7 @@ exports.triggerLobbyStart = (startDelayMins) => {
             }
 
             const chatter = heistSettings.settings.chatSettings.chatter;
-            let teamTooSmallMessage = heistSettings.settings.generalMessages.eTeamTooSmall;
+            let teamTooSmallMessage = heistSettings.settings.generalMessages.teamTooSmall;
             if (usersInHeist.length > 0) {
                 teamTooSmallMessage = teamTooSmallMessage
                     .replace("{user}", usersInHeist[0].username);

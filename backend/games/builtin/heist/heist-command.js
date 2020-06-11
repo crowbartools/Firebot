@@ -57,7 +57,7 @@ const heistCommand = {
         // see if the heist is on cooldown before doing anything else
         if (heistRunner.cooldownExpireTime && moment().isBefore(heistRunner.cooldownExpireTime)) {
             const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(heistRunner.cooldownExpireTime, 'seconds')));
-            const cooldownMsg = heistSettings.settings.generalMessages.bOnCooldown
+            const cooldownMsg = heistSettings.settings.generalMessages.onCooldown
                 .replace("{cooldown}", timeRemainingDisplay);
             chat.sendChatMessage(cooldownMsg, null, chatter);
             return;
@@ -65,7 +65,7 @@ const heistCommand = {
 
         // check if the user has already joined an active heist
         if (heistRunner.lobbyOpen && heistRunner.userOnTeam(username)) {
-            const alreadyJoinedMsg = heistSettings.settings.entryMessages.bAlreadyJoined;
+            const alreadyJoinedMsg = heistSettings.settings.entryMessages.alreadyJoined;
             chat.sendChatMessage(alreadyJoinedMsg, username, chatter);
             chat.deleteMessage(chatEvent.id);
             return;
@@ -122,7 +122,7 @@ const heistCommand = {
             const startDelay = heistSettings.settings.generalSettings.startDelay || 1;
             heistRunner.triggerLobbyStart(startDelay);
 
-            const teamCreationMessage = heistSettings.settings.generalMessages.aTeamCreation
+            const teamCreationMessage = heistSettings.settings.generalMessages.teamCreation
                 .replace("{user}", username)
                 .replace("{command}", userCommand.trigger)
                 .replace("{maxWager}", maxWager)
@@ -174,7 +174,7 @@ const heistCommand = {
             winnings: wagerAmount * winningsMultiplier
         });
 
-        const onJoinMessage = heistSettings.settings.entryMessages.aOnJoin
+        const onJoinMessage = heistSettings.settings.entryMessages.onJoin
             .replace("{user}", username)
             .replace("{wager}", util.commafy(wagerAmount))
             .replace("{currency}", currency.name);

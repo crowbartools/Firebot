@@ -2,7 +2,7 @@
 
 const spinCommand = require("./spin-command");
 
-const model = {
+module.exports = {
     id: "firebot-slots",
     name: "Slots",
     subtitle: "Spin to win",
@@ -17,6 +17,7 @@ const model = {
                     type: "currency-select",
                     title: "Currency",
                     description: "Which currency to use for this game.",
+                    sortRank: 1,
                     validation: {
                         required: true
                     }
@@ -26,6 +27,7 @@ const model = {
                     title: "Min Wager Amount",
                     placeholder: "Enter amount",
                     tip: "Optional",
+                    sortRank: 2,
                     validation: {
                         min: 0
                     }
@@ -35,6 +37,7 @@ const model = {
                     title: "Max Wager Amount",
                     placeholder: "Enter amount",
                     tip: "Optional",
+                    sortRank: 3,
                     validation: {
                         min: 0
                     }
@@ -49,13 +52,15 @@ const model = {
                     type: "role-percentages",
                     title: "Roll Success Chances",
                     description: "The chances each roll will be successful (There are 3 rolls per spin)",
-                    tip: "The success chance for the first user role a viewer has in this list is used, so ordering is important!"
+                    tip: "The success chance for the first user role a viewer has in this list is used, so ordering is important!",
+                    sortRank: 1
                 },
                 multiplier: {
                     type: "number",
                     title: "Winnings Multiplier",
                     description: "The winnings multiplier for each successful roll",
                     tip: "The winnings are calculated as: WagerAmount * (SuccessfulHits * Multiplier)",
+                    sortRank: 2,
                     default: 1,
                     validation: {
                         required: true,
@@ -91,27 +96,14 @@ const model = {
             }
         }
     },
-    initializeTrigger: null, // "immediate" | "chat"
     onLoad: settings => {
-        if (settings.active) {
-            spinCommand.registerSpinCommand();
-        }
+        spinCommand.registerSpinCommand();
     },
     onUnload: settings => {
-        if (!settings.active) {
-            spinCommand.unregisterSpinCommand();
-        }
+        spinCommand.unregisterSpinCommand();
         spinCommand.purgeCaches();
     },
-    onInitialize: settings => {},
     onSettingsUpdate: settings => {
         spinCommand.purgeCaches();
-        if (settings.active) {
-            spinCommand.registerSpinCommand();
-        } else {
-            spinCommand.unregisterSpinCommand();
-        }
     }
 };
-
-module.exports = model;
