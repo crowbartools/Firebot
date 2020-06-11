@@ -15,8 +15,22 @@ let activeBiddingInfo = {
 };
 let bidTimer;
 const cooldownCache = new NodeCache({checkperiod: 5});
-
 const BID_COMMAND_ID = "firebot:bid";
+
+function purgeCaches() {
+    cooldownCache.flushAll();
+    activeBiddingInfo = {
+        "active": false,
+        "currentBid": 0,
+        "topBidder": ""
+    };
+}
+
+function stopBidding(chatter) {
+    clearTimeout(bidTimer);
+    chat.sendChatMessage(`${activeBiddingInfo.topBidder} has won the bidding with ${activeBiddingInfo.currentBid}!`, null, chatter);
+    purgeCaches();
+}
 
 const bidCommand = {
     definition: {
@@ -63,19 +77,18 @@ const bidCommand = {
         const currency = currencyDatabase.getCurrencyById(currencyId);
         const currencyName = currency.name;
 
-        if(event.userCommand.subcommandId === "bidStart"){
+        if (event.userCommand.subcommandId === "bidStart") {
             const triggeredArg = userCommand.args[1];
             const bidAmount = parseInt(triggeredArg);
+            const username = userCommand.commandSender;
 
-            if(isNaN(bidAmount)){
+            if (isNaN(bidAmount)) {
                 chat.sendChatMessage(`Invalid amount. Please enter a number to start bidding.`, username, chatter);
                 chat.deleteMessage(chatEvent.id);
                 return;
             }
 
-            const username = userCommand.commandSender;
-
-            if(activeBiddingInfo.active !== false){
+            if (activeBiddingInfo.active !== false) {
                 chat.sendChatMessage(`There is already a bid running. Use !bid stop to stop it.`, username, chatter);
                 chat.deleteMessage(chatEvent.id);
                 return;
@@ -86,17 +99,17 @@ const bidCommand = {
                 "currentBid": bidAmount,
                 "topBidder": ""
             };
-            
+
             let raiseMinimum = bidSettings.settings.currencySettings.minIncrement;
             let minimumBidWithRaise = activeBiddingInfo.currentBid + raiseMinimum;
             chat.sendChatMessage(`Bidding has started at ${bidAmount} ${currencyName}. Type !bid ${minimumBidWithRaise} to start bidding.`, null, chatter);
 
             let timeLimit = bidSettings.settings.timeSettings.timeLimit * 60000;
-            bidTimer = setTimeout(function(){ 
+            bidTimer = setTimeout(function() {
                 stopBidding(chatter);
             }, timeLimit);
 
-        } else if (event.userCommand.subcommandId === "bidStop"){
+        } else if (event.userCommand.subcommandId === "bidStop") {
             stopBidding(chatter);
         } else if (event.userCommand.subcommandId === "bidAmount") {
 
@@ -104,7 +117,7 @@ const bidCommand = {
             const bidAmount = parseInt(triggeredArg);
             const username = userCommand.commandSender;
 
-            if(activeBiddingInfo.active === false){
+            if (activeBiddingInfo.active === false) {
                 chat.sendChatMessage(`There is no active bidding in progress.`, username, chatter);
                 chat.deleteMessage(chatEvent.id);
                 return;
@@ -118,7 +131,7 @@ const bidCommand = {
                 return;
             }
 
-            if(activeBiddingInfo.topBidder == username){
+            if (activeBiddingInfo.topBidder === username) {
                 chat.sendChatMessage("You are already the top bidder. You can't bid against yourself.", username, chatter);
                 chat.deleteMessage(chatEvent.id);
                 return;
@@ -138,7 +151,7 @@ const bidCommand = {
                     return;
                 }
             }
-            
+
             const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
             if (userBalance < bidAmount) {
                 chat.sendChatMessage(`You don't have enough ${currencyName}!`, username, chatter);
@@ -148,15 +161,15 @@ const bidCommand = {
 
             let raiseMinimum = bidSettings.settings.currencySettings.minIncrement;
             let minimumBidWithRaise = activeBiddingInfo.currentBid + raiseMinimum;
-            if(bidAmount < minimumBidWithRaise){
+            if (bidAmount < minimumBidWithRaise) {
                 chat.sendChatMessage(`You must bid at least ${minimumBidWithRaise} ${currencyName}.`, username, chatter);
                 chat.deleteMessage(chatEvent.id);
                 return;
             }
-            
+
             let previousHighBidder = activeBiddingInfo.topBidder;
             let previousHighBidAmount = activeBiddingInfo.currentBid;
-            if(previousHighBidder != null && previousHighBidder !== ""){
+            if (previousHighBidder != null && previousHighBidder !== "") {
                 await currencyDatabase.adjustCurrencyForUser(previousHighBidder, currencyId, -Math.abs(previousHighBidAmount));
                 chat.sendChatMessage(`You have been out bid! You've been refunded ${previousHighBidAmount} ${currencyName}.`, previousHighBidder, chatter);
             }
@@ -165,6 +178,7 @@ const bidCommand = {
             let newTopBidWithRaise = bidAmount + raiseMinimum;
             chat.sendChatMessage(`${username} is the new high bidder at ${bidAmount} ${currencyName}. To bid type !bid ${newTopBidWithRaise}.`);
 
+            // eslint-disable-next-line no-use-before-define
             setNewHighBidder(username, bidAmount);
 
             let cooldownSecs = bidSettings.settings.cooldownSettings.cooldown;
@@ -179,12 +193,6 @@ const bidCommand = {
     }
 };
 
-function stopBidding(chatter){
-    clearTimeout(bidTimer);
-    chat.sendChatMessage(`${activeBiddingInfo.topBidder} has won the bidding with ${activeBiddingInfo.currentBid}!`, null, chatter);
-    purgeCaches();
-}
-
 function registerBidCommand() {
     if (!commandManager.hasSystemCommand(BID_COMMAND_ID)) {
         commandManager.registerSystemCommand(bidCommand);
@@ -195,18 +203,9 @@ function unregisterBidCommand() {
     commandManager.unregisterSystemCommand(BID_COMMAND_ID);
 }
 
-function setNewHighBidder(username, amount){
+function setNewHighBidder(username, amount) {
     activeBiddingInfo.currentBid = amount;
     activeBiddingInfo.topBidder = username;
-}
-
-function purgeCaches() {
-    cooldownCache.flushAll();
-    activeBiddingInfo = {
-        "active": false,
-        "currentBid": 0,
-        "topBidder": ""
-    };
 }
 
 exports.purgeCaches = purgeCaches;
