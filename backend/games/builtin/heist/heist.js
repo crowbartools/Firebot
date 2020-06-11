@@ -226,7 +226,7 @@ module.exports = {
             sortRank: 7,
             settings: {
                 hundredPercent: {
-                    type: "edittable-list",
+                    type: "editable-list",
                     title: "100% Victory",
                     default: [
                         "The heist was a complete success and everyone escaped in the getaway car!"
@@ -246,7 +246,7 @@ module.exports = {
                     }
                 },
                 top25Percent: {
-                    type: "edittable-list",
+                    type: "editable-list",
                     title: "75-99% Victory",
                     default: [
                         "A few went down as they exited the bank, but most of the team made it!"
@@ -266,7 +266,7 @@ module.exports = {
                     }
                 },
                 mid50Percent: {
-                    type: "edittable-list",
+                    type: "editable-list",
                     title: "25-74% Victory",
                     default: [
                         "The security was tighter than expected and many were lost in the gunfire, but some made it out with cash."
@@ -286,7 +286,7 @@ module.exports = {
                     }
                 },
                 bottom25Percent: {
-                    type: "edittable-list",
+                    type: "editable-list",
                     title: "1-24% Victory",
                     default: [
                         "Just about everybody died, a lucky few made it to the boat with what cash was left..."
@@ -306,7 +306,7 @@ module.exports = {
                     }
                 },
                 zeroPercent: {
-                    type: "edittable-list",
+                    type: "editable-list",
                     title: "0% Victory",
                     default: [
                         "Despite your best efforts, the entire team was lost..."
@@ -332,7 +332,7 @@ module.exports = {
             sortRank: 8,
             settings: {
                 soloSuccess: {
-                    type: "edittable-list",
+                    type: "editable-list",
                     title: "Solo Success",
                     description: "Sent when a heist is successful with a solo team (One message is chosen at random)",
                     default: [
@@ -353,7 +353,7 @@ module.exports = {
                     }
                 },
                 soloFail: {
-                    type: "edittable-list",
+                    type: "editable-list",
                     title: "Solo Fail",
                     description: "Sent when a heist fails with a solo team (One message is chosen at random)",
                     default: [
@@ -386,14 +386,14 @@ module.exports = {
             }
         }
     },
-    onLoad: settings => {
+    onLoad: gameSettings => {
         heistCommand.registerHeistCommand();
     },
-    onUnload: settings => {
+    onUnload: gameSettings => {
         heistCommand.unregisterHeistCommand();
         heistCommand.clearCooldown();
     },
-    onSettingsUpdate: settings => {
+    onSettingsUpdate: gameSettings => {
         heistCommand.clearCooldown();
     }
 };

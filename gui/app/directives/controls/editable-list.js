@@ -5,7 +5,7 @@ const deepmerge = require("deepmerge");
 (function() {
     angular
         .module('firebotApp')
-        .component("edittableList", {
+        .component("editableList", {
             bindings: {
                 model: "=",
                 settings: "<",

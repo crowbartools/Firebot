@@ -100,7 +100,7 @@
                                     if (setting.type === 'string' && setting.value === "") {
                                         ngToast.create(`Please input a value for the ${setting.title} option`);
                                         return false;
-                                    } else if (setting.type === 'edittable-list' && (setting.value == null || setting.value.length === 0)) {
+                                    } else if (setting.type === 'editable-list' && (setting.value == null || setting.value.length === 0)) {
                                         ngToast.create(`Please input some text for the ${setting.title} option`);
                                         return false;
                                     } else if (setting.value === null || setting.value === undefined) {

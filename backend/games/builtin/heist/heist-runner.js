@@ -5,6 +5,7 @@ const chat = require("../../../chat/chat");
 const commandManager = require("../../../chat/commands/CommandManager");
 const currencyDatabase = require("../../../database/currencyDatabase");
 const util = require("../../../utility");
+const { boolean } = require("mathjs");
 
 /**
  * @typedef HeistUser
@@ -14,7 +15,6 @@ const util = require("../../../utility");
  * @property {number} winnings - The winnings the user will receive should they win
  *
  */
-
 
 /**@type {HeistUser[]} */
 let usersInHeist = [];

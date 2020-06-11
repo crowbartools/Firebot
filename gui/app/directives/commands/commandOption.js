@@ -54,8 +54,8 @@
             <chatter-select model="$ctrl.metadata.value"></chatter-select>
           </div>
 
-          <div ng-switch-when="edittable-list" style="padding-top:5px;">
-            <edittable-list model="$ctrl.metadata.value" settings="$ctrl.metadata.settings"></edittable-list>
+          <div ng-switch-when="editable-list" style="padding-top:5px;">
+            <editable-list model="$ctrl.metadata.value" settings="$ctrl.metadata.settings"></editable-list>
           </div>
 
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>
