@@ -2,6 +2,9 @@
 
 const heistCommand = require("./heist-command");
 
+/**
+ * @type {import('../../game-manager').FirebotGame}
+ */
 module.exports = {
     id: "firebot-heist",
     name: "Heist",

@@ -45,7 +45,7 @@ let getGameDb = () => profileManager.getJsonDbInProfile("/games");
  */
 
 /**
-  * @typedef FirebotGame
+  * @typedef FirebotGame - A game in Firebot
   * @property {string} id - Unique id for the game
   * @property {string} name - Human readable name for the game
   * @property {string} subtitle - Very short tagline for the game, shows up in the games tab
