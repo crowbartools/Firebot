@@ -27,9 +27,7 @@ class IntegrationManager extends EventEmitter {
 
         let integrationDb = profileManager.getJsonDbInProfile("/integrations");
         try {
-            let integrationSettings = integrationDb.getData(
-                `/${integration.definition.id}`
-            );
+            let integrationSettings = integrationDb.getData(`/${integration.definition.id}`);
             if (integrationSettings != null) {
                 integration.definition.settings = integrationSettings.settings;
                 integration.definition.linked = integrationSettings.linked !== false;
@@ -172,6 +170,7 @@ class IntegrationManager extends EventEmitter {
         if (int == null || !int.definition.linked) return;
 
         try {
+            int.integration.unlink();
             let integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.delete(`/${integrationId}`);
             int.definition.settings = null;

@@ -23,7 +23,7 @@
                             <div class="control__indicator"></div>
                         </label>
                     </div>
-                    <p class="muted" style="margin-top: 20px;">Note: You can edit the command !trigger for this game in <strong>Commands</strong> > <strong>System Commands</strong></p>
+                    <p class="muted" style="margin-top: 20px;">Note: Once enabled, you can view the associated !command for this game, edit it's trigger, and tweak it's permissions in <strong>Commands</strong> tab > <strong>System Commands</strong></p>
                 </setting-container>
 
                 <setting-container ng-if="$ctrl.game.settingCategories != null" ng-repeat="categoryMeta in $ctrl.settingCategoriesArray | orderBy:'sortRank'"  header="{{categoryMeta.title}}" description="{{categoryMeta.description}}" pad-top="$index > 0 ? true : false" collapsed="true">
