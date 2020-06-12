@@ -34,7 +34,7 @@
 
             </div>
             <div class="modal-footer sticky-footer edit-game-footer">
-                <button ng-show="$ctrl.game != null" type="button" class="btn btn-warning pull-left" ng-click="$ctrl.resetToDefaults()">Reset</button>
+                <button ng-show="$ctrl.game != null" type="button" class="btn btn-danger pull-left" ng-click="$ctrl.resetToDefaults()">Reset to default</button>
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                 <button ng-show="$ctrl.game != null" type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
             </div>
