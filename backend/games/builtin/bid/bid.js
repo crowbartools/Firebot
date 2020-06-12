@@ -6,7 +6,7 @@ module.exports = {
     id: "firebot-bid",
     name: "Bid",
     subtitle: "Put something up for auction",
-    description: "This game allows users to place bids against each other. All they need to do is type '!bid [bidAmount]' in chat! The user bidding must have enough currency to bid and their bid must be higher than the current highest bid.",
+    description: "This game allows users to place bids against each other. Once bidding is started users can type '!bid [bidAmount]' in chat. When a user is outbid they get their currency back. The winner will lose whatever currency they bid. Useful as a giveaway tool!",
     icon: "fa-gavel",
     settingCategories: {
         currencySettings: {
@@ -24,9 +24,9 @@ module.exports = {
                 },
                 minBid: {
                     type: "number",
-                    title: "Min Bid Amount",
+                    title: "Minimum Opening Bid",
                     placeholder: "Enter amount",
-                    tip: "Optional",
+                    tip: "The minimum amount for the opening bid.",
                     default: 1,
                     sortRank: 2,
                     validation: {
@@ -37,7 +37,7 @@ module.exports = {
                     type: "number",
                     title: "Minimum Bid Raise",
                     placeholder: "Enter amount",
-                    tip: "Optional. User must bid at least this amount over the highest bidder.",
+                    tip: "User must bid at least this amount over the highest bidder.",
                     default: 1,
                     sortRank: 4,
                     validation: {
@@ -54,7 +54,7 @@ module.exports = {
                     type: "number",
                     title: "Time Limit (min)",
                     placeholder: "Enter minutes",
-                    tip: "Optional. Whoever is the highest bidder after this time will win.",
+                    tip: "Whoever is the highest bidder after this time will win.",
                     default: 2,
                     sortRank: 1,
                     validation: {
@@ -71,7 +71,7 @@ module.exports = {
                     type: "number",
                     title: "Cooldown (secs)",
                     placeholder: "Enter secs",
-                    tip: "Cooldown is applied per viewer.",
+                    tip: "Cooldown is applied per viewer. A user can only place a bid this often.",
                     default: 5,
                     validation: {
                         min: 0

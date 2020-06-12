@@ -48,14 +48,42 @@ const bidCommand = {
                 arg: "start",
                 usage: "start [currencyAmount]",
                 description: "Starts the bidding at the listed amount.",
-                hideCooldowns: true
+                hideCooldowns: true,
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 id: "bidStop",
                 arg: "stop",
                 usage: "stop",
                 description: "Stops the bid and picks a winner.",
-                hideCooldowns: true
+                hideCooldowns: true,
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "Mod",
+                                "ChannelEditor",
+                                "Owner"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 id: "bidAmount",
@@ -90,6 +118,12 @@ const bidCommand = {
 
             if (activeBiddingInfo.active !== false) {
                 chat.sendChatMessage(`There is already a bid running. Use !bid stop to stop it.`, username, chatter);
+                chat.deleteMessage(chatEvent.id);
+                return;
+            }
+
+            if (bidAmount < bidSettings.settings.currencySettings.minBid) {
+                chat.sendChatMessage(`The opening bid must be more than ${bidSettings.settings.currencySettings.minBid}.`, username, chatter);
                 chat.deleteMessage(chatEvent.id);
                 return;
             }
