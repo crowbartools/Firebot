@@ -38,7 +38,7 @@ const bidCommand = {
         name: "Bid",
         active: true,
         trigger: "!bid",
-        description: "Allows viewers to play the Bid game.",
+        description: "Allows viewers to participate in the Bid game.",
         autoDeleteTrigger: false,
         scanWholeMessage: false,
         hideCooldowns: true,
@@ -47,7 +47,7 @@ const bidCommand = {
                 id: "bidStart",
                 arg: "start",
                 usage: "start [currencyAmount]",
-                description: "Starts the bidding at the listed amount.",
+                description: "Starts the bidding at the given amount.",
                 hideCooldowns: true,
                 restrictionData: {
                     restrictions: [
@@ -68,7 +68,7 @@ const bidCommand = {
                 id: "bidStop",
                 arg: "stop",
                 usage: "stop",
-                description: "Stops the bid and picks a winner.",
+                description: "Manually stops the bidding. Highest bidder wins.",
                 hideCooldowns: true,
                 restrictionData: {
                     restrictions: [
@@ -90,7 +90,7 @@ const bidCommand = {
                 arg: "\\d+",
                 regex: true,
                 usage: "[currencyAmount]",
-                description: "Joins the bidding at the listed amount.",
+                description: "Joins the bidding at the given amount.",
                 hideCooldowns: true
             }
         ]
