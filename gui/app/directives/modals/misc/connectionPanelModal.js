@@ -120,8 +120,9 @@
                 $ctrl.cm = connectionManager;
             };
 
-            let sidebarControlledServices = settingsService.getSidebarControlledServices();
+
             $ctrl.toggledServiceIsChecked = function(service) {
+                let sidebarControlledServices = settingsService.getSidebarControlledServices();
                 if (sidebarControlledServices.includes(service)) {
                     sidebarControlledServices = sidebarControlledServices.filter(
                         s => s !== service
@@ -133,6 +134,7 @@
             };
 
             $ctrl.serviceIsChecked = function(service) {
+                let sidebarControlledServices = settingsService.getSidebarControlledServices();
                 return sidebarControlledServices.includes(service);
             };
 

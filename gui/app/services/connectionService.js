@@ -181,6 +181,7 @@
                         break;
                     }
                 }
+                debugger;
                 if (oneDisconnected) {
                     service.integrationsOverallStatus = 'disconnected';
                 } else {
@@ -262,13 +263,16 @@
 
                 service.connections[serviceId] = connectionState;
 
+                updateSidebarServicesOverallStatus();
+
+                if (serviceId.startsWith("integration.")) {
+                    updateIntegrationsOverallStatus();
+                }
+
                 $rootScope.$broadcast("connection:update", {
                     type: serviceId,
                     status: connectionState
                 });
-
-                updateSidebarServicesOverallStatus();
-                updateIntegrationsOverallStatus();
             });
 
             backendCommunicator.on("integrationLinked", (intId) => {

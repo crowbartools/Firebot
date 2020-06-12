@@ -15,7 +15,7 @@ settings.flushSettingsCache = function() {
     frontendCommunicator.send("flush-settings-cache");
 };
 
-frontendCommunicator.on("settings-updated-main", (settingsUpdate) => {
+frontendCommunicator.on("settings-updated-renderer", (settingsUpdate) => {
     if (settingsUpdate == null) return;
     let { path, data } = settingsUpdate;
     if (path == null || path === '') return;

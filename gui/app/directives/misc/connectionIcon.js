@@ -152,21 +152,22 @@
             }
 
             $rootScope.$on("connection:update", (event, data) => {
-                if (data.type !== ctrl.type) return;
+                if (ctrl.type === ConnectionType.INTEGRATIONS) {
+                    if (!data.type.startsWith("integration.")) return;
+                } else if (data.type !== ctrl.type) {
+                    return;
+                }
 
                 let shouldUpdate = false;
                 if (data.type === "overlay") {
                     ctrl.connectionStatus = data.status;
                     shouldUpdate = true;
-                }
-
-                if (data.status === ConnectionStatus.CONNECTED || data.status === ConnectionStatus.DISCONNECTED) {
-                    if (data.type.startsWith("integration.")) {
-                        ctrl.connectionStatus = connectionService.integrationsOverallStatus;
-                    } else {
-                        ctrl.connectionStatus = data.status;
-                        console.log(`Set status "${ctrl.connectionStatus}" for connection type "${ctrl.type}"`);
-                    }
+                } else if (data.type.startsWith("integration.")) {
+                    ctrl.connectionStatus = connectionService.integrationsOverallStatus;
+                    shouldUpdate = true;
+                } else if (data.status === ConnectionStatus.CONNECTED || data.status === ConnectionStatus.DISCONNECTED) {
+                    ctrl.connectionStatus = data.status;
+                    console.log(`Set status "${ctrl.connectionStatus}" for connection type "${ctrl.type}"`);
                     shouldUpdate = true;
                 }
 
