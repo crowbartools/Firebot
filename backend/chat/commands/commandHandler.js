@@ -3,7 +3,6 @@
 const { ipcMain } = require("electron");
 const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
-const chat = require("../chat");
 const util = require("../../utility");
 const moment = require("moment");
 const NodeCache = require("node-cache");
@@ -227,6 +226,8 @@ function fireCommand(
 }
 
 async function handleChatEvent(chatEvent) {
+
+    const chat = require("../chat");
 
     logger.debug("Checking for command in message...");
 

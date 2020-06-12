@@ -10,7 +10,7 @@ const activeChatter = require('../../../roles/role-managers/active-chatters');
 module.exports = {
     accountType: "streamer",
     event: "ChatMessage",
-    callback: (data) => {
+    callback: async (data) => {
         const chatProcessor = require("../../../common/handlers/chatProcessor.js");
         const eventManager = require("../../../events/EventManager");
         const timerManager = require("../../../timers/timer-manager");
@@ -24,9 +24,6 @@ module.exports = {
         });
 
         logger.debug("Recieved chat", data);
-
-        // Increment Chat Messages in user DB.
-        userdb.incrementDbField(data.user_id, "chatMessages");
 
         let chatFromStreamerChannel = accountAccess.getAccounts().streamer.channelId === data.channel;
 
@@ -93,5 +90,15 @@ module.exports = {
                 });
             }
         }
+
+        // make sure user is in DB
+        await userdb.setChatUserOnline({
+            id: data.user_id,
+            username: data.user_name,
+            roles: data.user_roles
+        });
+
+        // Increment Chat Messages in user DB.
+        await userdb.incrementDbField(data.user_id, "chatMessages");
     }
 };

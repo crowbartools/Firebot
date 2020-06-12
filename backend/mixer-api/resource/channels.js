@@ -101,8 +101,8 @@ exports.updateUserRoles = async (userId, rolesToAdd, rolesToRemove) => {
     try {
         await mixerClient.streamer.request("patch", `channels/${streamerChannelId}/users/${userId}`, {
             body: {
-                add: rolesToAdd,
-                remove: rolesToRemove
+                add: rolesToAdd || [],
+                remove: rolesToRemove || []
             }
         });
     } catch (error) {

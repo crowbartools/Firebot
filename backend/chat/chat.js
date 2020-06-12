@@ -7,7 +7,6 @@ const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 const emotesManager = require("./../common/emotes-manager");
-const userDb = require("../database/userDatabase");
 const chatListenerManager = require("./chat-listeners/chat-listener-manager");
 const channelAccess = require("../common/channel-access");
 
@@ -166,7 +165,6 @@ class MixerChat extends EventEmitter {
     disconnect() {
         ensureSocketIsClosed(this._streamerSocket);
         ensureSocketIsClosed(this._botSocket);
-        userDb.setAllUsersOffline();
     }
 
 

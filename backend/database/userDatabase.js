@@ -7,6 +7,7 @@ const { ipcMain } = require("electron");
 const { settings } = require("../common/settings-access.js");
 const currencyDatabase = require("./currencyDatabase");
 const mixplay = require("../interactive/mixplay");
+const chat = require("../chat/chat");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
 const channelAccess = require("../common/channel-access");
@@ -354,7 +355,13 @@ function setChatUserOffline(id) {
         // Find the user by id to get their minutes viewed.
         // Update their minutes viewed with our new times.
         db.find({ _id: id }, (err, user) => {
-
+            if (err) {
+                logger.error(err);
+                return;
+            }
+            if (user == null || user.length < 1) {
+                return;
+            }
             db.update({ _id: user[0]._id }, { $set: { online: false } }, {}, function(err) {
                 if (err) {
                     logger.error("ViewerDB: Error setting user to offline.", err);
@@ -386,6 +393,14 @@ function setAllUsersOffline() {
         });
     });
 }
+
+chat.on("connected", () => {
+    setChatUsersOnline();
+});
+
+chat.on("disconnected", () => {
+    setAllUsersOffline();
+});
 
 //establish the connection, set everyone offline, start last seen timer
 function connectUserDatabase() {

@@ -61,9 +61,13 @@ exports.getStreamerCanClip = async broadcastId => {
 exports.createClip = async clipRequest => {
     try {
         /**@type {Mixer.IResponse<ClipProperties>} */
+
         const response = await mixerClient.streamer.request("post", `clips/create`, {
             body: clipRequest
         });
+        if (response.statusCode !== 200) {
+            return null;
+        }
         return response.body;
     } catch (error) {
         logger.warning(error);

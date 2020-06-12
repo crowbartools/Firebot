@@ -25,7 +25,7 @@ const clip = {
         hidden: !streamerAccount.loggedIn || !streamerAccount.canClip,
         icon: "fad fa-film",
         categories: [EffectCategory.COMMON, EffectCategory.FUN],
-        dependencies: [EffectDependency.CHAT, EffectDependency.CONSTELLATION],
+        dependencies: [EffectDependency.CHAT],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON],
             [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN],
