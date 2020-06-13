@@ -130,7 +130,7 @@ const spinCommand = {
 
             const winMultiplier = slotsSettings.settings.spinSettings.multiplier;
 
-            const winnings = wagerAmount * (successfulRolls * winMultiplier);
+            const winnings = Math.floor(wagerAmount * (successfulRolls * winMultiplier));
 
             await currencyDatabase.adjustCurrencyForUser(username, currencyId, winnings);
 

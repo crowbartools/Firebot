@@ -91,6 +91,8 @@ const heistCommand = {
             return;
         }
 
+        wagerAmount = Math.floor(wagerAmount || 0);
+
         // make sure wager doesnt violate min or max values
         const minWager = heistSettings.settings.currencySettings.minWager || 1;
         if (minWager != null & minWager > 0) {
@@ -175,7 +177,7 @@ const heistCommand = {
             username: username,
             wager: wagerAmount,
             successPercentage: successChance,
-            winnings: wagerAmount * winningsMultiplier
+            winnings: Math.floor(wagerAmount * winningsMultiplier)
         });
 
         const onJoinMessage = heistSettings.settings.entryMessages.onJoin
