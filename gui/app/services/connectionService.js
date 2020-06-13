@@ -181,7 +181,6 @@
                         break;
                     }
                 }
-                debugger;
                 if (oneDisconnected) {
                     service.integrationsOverallStatus = 'disconnected';
                 } else {
