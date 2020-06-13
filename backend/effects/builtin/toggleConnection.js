@@ -92,8 +92,12 @@ const toggleConnection = {
    */
     onTriggerEvent: async event => {
         // What should this do when triggered.
-        let effect = event.effect;
-        renderWindow.webContents.send("toggleServicesRequest", effect.services);
+        const effect = event.effect;
+        const services = effect.services || [];
+
+        const connectionManager = require("../../common/connection-manager");
+        connectionManager.toggleConnections(services);
+
         return true;
     }
 };

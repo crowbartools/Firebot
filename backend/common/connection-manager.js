@@ -132,6 +132,34 @@ class ConnectionManager extends EventEmitter {
         }
         return true;
     }
+
+    /**
+     *
+     * @param {string[]} serviceIds
+     */
+    toggleConnections(serviceIds) {
+        for (const serviceId of serviceIds) {
+            switch (serviceId) {
+            case "interactive": {
+                const shouldConnect = !mixplay.mixplayIsConnected();
+                manager.updateMixPlayConnection(shouldConnect);
+                break;
+            }
+            case "chat": {
+                const shouldConnect = !chat.chatIsConnected();
+                manager.updateChatConnection(shouldConnect);
+                break;
+            }
+            case "constellation": {
+                const shouldConnect = !constellation.constellationIsConnected();
+                manager.updateConstellationConnection(shouldConnect);
+                break;
+            }
+            default:
+                //not supporting integrations for this yet
+            }
+        }
+    }
 }
 manager = new ConnectionManager();
 
@@ -195,7 +223,7 @@ frontendCommunicator.on("connect-sidebar-controlled-services", async () => {
             await waitForServiceConnectDisconnect(id);
         }
     } catch (error) {
-        logger.error("error connecting all services", error);
+        logger.error("error connecting services", error);
     }
 
     frontendCommunicator.send("connect-sidebar-controlled-services-complete");
