@@ -119,7 +119,7 @@ const commandManagement = {
     onTriggerEvent: event => {
         return new Promise(async (resolve) => {
             const commandManager = require("../CommandManager");
-            const Chat = require("../../../common/mixer-chat");
+            const chat = require("../../chatt");
 
             let activeCustomCommands = commandManager
                 .getAllCustomCommands()
@@ -141,7 +141,7 @@ const commandManagement = {
             let args = event.userCommand.args;
 
             if (args.length < 2) {
-                Chat.smartSend(
+                chat.sendChatMessage(
                     `Invalid command. Usage: ${event.command.trigger} ${usage}`,
                     event.userCommand.commandSender
                 );
@@ -151,7 +151,7 @@ const commandManagement = {
             let { trigger, remainingData } = seperateTriggerFromArgs(args);
 
             if (trigger == null || trigger === "") {
-                Chat.smartSend(
+                chat.sendChatMessage(
                     `Invalid command. Usage: ${event.command.trigger} ${usage}`,
                     event.userCommand.commandSender
                 );
@@ -161,7 +161,7 @@ const commandManagement = {
             switch (triggeredArg) {
             case "add": {
                 if (args.length < 3 || remainingData == null || remainingData === "") {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Invalid command. Usage: ${event.command.trigger} ${usage}`,
                         event.userCommand.commandSender
                     );
@@ -169,7 +169,7 @@ const commandManagement = {
                 }
 
                 if (commandManager.triggerIsTaken(trigger)) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `The trigger '${trigger}' has already been taken, please try again.`,
                         event.userCommand.commandSender
                     );
@@ -199,7 +199,7 @@ const commandManagement = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
-                Chat.smartSend(
+                chat.sendChatMessage(
                     `Added command '${trigger}' with response: ${remainingData}`
                 );
 
@@ -207,7 +207,7 @@ const commandManagement = {
             }
             case "response": {
                 if (args.length < 3 || remainingData == null || remainingData === "") {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Invalid command. Usage: ${event.command.trigger} ${usage}`,
                         event.userCommand.commandSender
                     );
@@ -216,7 +216,7 @@ const commandManagement = {
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try agian.`,
                         event.userCommand.commandSender
                     );
@@ -226,7 +226,7 @@ const commandManagement = {
                 let chatEffectsCount = command.effects ? command.effects.list.filter(e => e.type === "firebot:chat").length : 0;
 
                 if (chatEffectsCount > 1) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `The command '${trigger}' has more than one Chat Effect, preventing the response from being editable via chat.`,
                         event.userCommand.commandSender
                     );
@@ -246,7 +246,7 @@ const commandManagement = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
 
-                Chat.smartSend(
+                chat.sendChatMessage(
                     `Updated '${trigger}' with response: ${remainingData}`
                 );
 
@@ -255,7 +255,7 @@ const commandManagement = {
             case "setcount": {
                 let countArg = remainingData.trim();
                 if (countArg === "" || isNaN(countArg)) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Invalid command. Usage: ${event.command.trigger} ${usage}`,
                         event.userCommand.commandSender
                     );
@@ -264,7 +264,7 @@ const commandManagement = {
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try agian.`,
                         event.userCommand.commandSender
                     );
@@ -280,7 +280,7 @@ const commandManagement = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
 
-                Chat.smartSend(
+                chat.sendChatMessage(
                     `Updated useage count for '${trigger}' to: ${newCount}`
                 );
 
@@ -290,7 +290,7 @@ const commandManagement = {
                 let cooldownArgs = remainingData.trim().split(" ");
                 if (args.length < 3 || remainingData === "" || cooldownArgs.length < 2 || isNaN(cooldownArgs[0])
                     || isNaN(cooldownArgs[1])) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Invalid command. Usage: ${event.command.trigger} ${usage}`,
                         event.userCommand.commandSender
                     );
@@ -299,7 +299,7 @@ const commandManagement = {
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`,
                         event.userCommand.commandSender
                     );
@@ -324,7 +324,7 @@ const commandManagement = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
 
-                Chat.smartSend(
+                chat.sendChatMessage(
                     `Updated '${trigger}' with cooldowns: ${userCooldown}s (user), ${globalCooldown}s (global)`
                 );
 
@@ -332,7 +332,7 @@ const commandManagement = {
             }
             case "restrict": {
                 if (args.length < 3 || remainingData === "") {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Invalid command. Usage: ${event.command.trigger} ${usage}`,
                         event.userCommand.commandSender
                     );
@@ -341,7 +341,7 @@ const commandManagement = {
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try again.`,
                         event.userCommand.commandSender
                     );
@@ -353,7 +353,7 @@ const commandManagement = {
 
 
                 if (roleIds === false) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Please provide a valid group name: All, Sub, Mod, Streamer, or a custom group's name`,
                         event.userCommand.commandSender
                     );
@@ -373,7 +373,7 @@ const commandManagement = {
 
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
 
-                Chat.smartSend(`Updated '${trigger}' restrictions to: ${remainingData}`);
+                chat.sendChatMessage(`Updated '${trigger}' restrictions to: ${remainingData}`);
 
                 break;
             }
@@ -381,7 +381,7 @@ const commandManagement = {
 
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
-                    Chat.smartSend(
+                    chat.sendChatMessage(
                         `Could not find a command with the trigger '${trigger}', please try agian.`,
                         event.userCommand.commandSender
                     );
@@ -390,7 +390,7 @@ const commandManagement = {
 
                 commandManager.removeCustomCommandByTrigger(trigger);
 
-                Chat.smartSend(`Successfully removed command '${trigger}'.`);
+                chat.sendChatMessage(`Successfully removed command '${trigger}'.`);
                 break;
             }
             default:

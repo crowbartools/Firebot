@@ -1,6 +1,6 @@
 "use strict";
 
-const filterManager = require("../../../../live-events/filters/filter-manager");
+const filterManager = require("../../../../events/filters/filter-manager");
 
 exports.registerFilters = () => {
     const cardName = require("./card-name");

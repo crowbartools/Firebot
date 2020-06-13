@@ -4,7 +4,7 @@ const { ipcMain } = require("electron");
 const settings = require("../../common/settings-access").settings;
 const logger = require("../../logwrapper");
 const userDatabase = require("../../database/userDatabase");
-const Chat = require("../../common/mixer-chat");
+const chat = require("../../chat/chat");
 
 // Active user toggle
 let activeUserListStatus = settings.getActiveChatUserListEnabled();
@@ -79,7 +79,7 @@ function getActiveChatters() {
 }
 
 function cycleActiveChatters() {
-    let chatConnected = Chat.getChatStatus();
+    let chatConnected = chat.chatIsConnected();
     if (!chatConnected) {
         return;
     }

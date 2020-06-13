@@ -2,7 +2,7 @@
 const logger = require("../../logwrapper");
 const profileManager = require("../../common/profile-manager");
 const { Worker } = require("worker_threads");
-const chat = require("../../common/mixer-chat");
+const chat = require("../chat");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const rolesManager = require("../../roles/custom-roles-manager");
 
@@ -48,7 +48,7 @@ function startModerationService() {
         case "deleteMessage": {
             if (event.messageId) {
                 logger.debug(`Chat message with id '${event.messageId}' contains a banned word. Deleting...`);
-                chat.deleteChat(event.messageId);
+                chat.deleteMessage(event.messageId);
             }
             break;
         }

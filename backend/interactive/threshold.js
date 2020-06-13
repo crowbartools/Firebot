@@ -1,5 +1,5 @@
 "use strict";
-const mixerInteractive = require("../common/mixer-interactive.js");
+//TODO: This needs to be updated to work in V5 when we are ready to reimplement this feature
 
 // This var will save the threshhold status of all buttons.
 let thresholdSaved = [];
@@ -39,15 +39,15 @@ function thresholdRouter(control) {
                     // We've passed the threshold
                     // Reset everything and resolve.
                     thresholdSaved[buttonId] = 0;
-                    mixerInteractive.progressUpdate(buttonId, 0);
+                    //mixerInteractive.progressUpdate(buttonId, 0);
                     resolve(true);
                 } else {
                     // We're still trying to hit the threshold.
                     // Pass our newest progress numbers to mixer.
-                    mixerInteractive.progressUpdate(
+                    /*mixerInteractive.progressUpdate(
                         buttonId,
                         progressCalc(thresholdSaved[buttonId], controlThreshold)
-                    );
+                    );*/
                     reject(false);
                 }
             }

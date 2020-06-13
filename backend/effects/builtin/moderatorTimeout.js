@@ -7,7 +7,7 @@ const { EffectTrigger, EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const logger = require('../../logwrapper');
-const chat = require("../../common/mixer-chat");
+const chat = require("../../chat/chat");
 
 const model = {
     definition: {
@@ -49,9 +49,8 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        chat.timeout(event.effect.username, event.effect.time);
+        await chat.timeoutUser(event.effect.username, event.effect.time);
         logger.debug(event.effect.username + " was timed out for " + event.effect.time + " via the timeout effect.");
-
         return true;
     }
 };

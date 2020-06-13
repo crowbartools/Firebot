@@ -72,6 +72,8 @@
                 ipcRenderer.send(type, data);
             };
 
+            service.send = service.fireEvent;
+
             return service;
         });
 }());

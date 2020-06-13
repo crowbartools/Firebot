@@ -251,7 +251,7 @@ function getUserCurrencyAmount(username, currencyId) {
             return resolve(0);
         }
         userDatabase.getUserByUsername(username).then(user => {
-            if (!isNaN(user.currency[currencyId])) {
+            if (user != null && !isNaN(user.currency[currencyId])) {
                 return resolve(user.currency[currencyId]);
             }
             return resolve(0);

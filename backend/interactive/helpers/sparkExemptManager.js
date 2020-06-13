@@ -3,7 +3,6 @@
 const { ipcMain } = require("electron");
 let settings = require("../../common/settings-access.js").settings;
 const logger = require("../../logwrapper");
-const permissions = require("../permissions.js");
 
 let exemptUsers = [];
 let exemptGroups = [];
@@ -42,7 +41,9 @@ function userIsExempt(participant) {
     logger.info(`Checking channel groups...`);
     let userRoles = participant.channelGroups;
 
-    let combinedRoles = permissions.getCombinedRoles(participant.username, userRoles),
+    // TODO: Rewrite this to work in V5 when we reimplement Spark Exemptions
+
+    /*let combinedRoles = permissions.getCombinedRoles(participant.username, userRoles),
         exemptGroupMap = permissions.mapRoleNames(exemptGroups);
 
     if (exemptGroupMap.length === 0 || exemptGroupMap.every(g => g == null || g.trim() === "")) {
@@ -54,7 +55,7 @@ function userIsExempt(participant) {
         // user is in one or more of the exempt groups!
         logger.info(`${userName} is in an exempt group. Not charging sparks. Exempt groups: ${exemptGroupMap}, user groups: ${combinedRoles}`);
         return true;
-    }
+    }*/
 
     logger.info(`User doesnt appear to be exempt!`);
     return false;

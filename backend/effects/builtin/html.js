@@ -58,7 +58,7 @@ const html = {
         </eos-collapsable-panel>
     </eos-container>
 
-    <eos-enter-exit-animations effect="effect" limit-to="Exit" pad-top="true"></eos-enter-exit-animations>
+    <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
 
     <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance>
 
@@ -110,6 +110,12 @@ const html = {
             html: HTML,
             length: duration,
             removal: removal,
+            inbetweenAnimation: effect.inbetweenAnimation,
+            inbetweenDelay: effect.inbetweenDelay,
+            inbetweenDuration: effect.inbetweenDuration,
+            inbetweenRepeat: effect.inbetweenRepeat,
+            enterAnimation: effect.enterAnimation,
+            enterDuration: effect.enterDuration,
             exitAnimation: effect.exitAnimation,
             exitDuration: effect.exitDuration
         };
@@ -137,11 +143,9 @@ const html = {
             name: "html",
             onOverlayEvent: event => {
 
-                let data = event;
-
                 let element, _element;
 
-                element = _element = $(data.html);
+                element = _element = $(event.html);
 
                 _element.hide();
 
@@ -149,24 +153,47 @@ const html = {
 
                 _element.show();
 
-                setTimeout(function() {
-                    // If CSS class is provided, remove element(s) with provided CSS class.
-                    if (data.removal && data.removal.length > 0) {
-                        element = element.parent().find("." + data.removal);
+                element.animateCss(event.enterAnimation, event.enterDuration, null, null, (data) => {
 
-                        //If no elements found, remove original element.
-                        if (element.length > 0) {
-                            element.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
-                                element.remove();
+                    data.htmlElement.animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
+
+                    setTimeout(function() {
+                        if (data.inbetweenAnimation) {
+                            data.htmlElement.css("animation-duration", "");
+                            data.htmlElement.css("animation-delay", "");
+                            data.htmlElement.css("animation-iteration-count", "");
+                            data.htmlElement.removeClass('animated ' + data.inbetweenAnimation);
+                        }
+
+                        // If CSS class is provided, remove element(s) with provided CSS class.
+                        if (data.removal && data.removal.length > 0) {
+                            const removalElement = data.htmlElement.parent().find("." + data.removal);
+
+                            //If no elements found, remove original element.
+                            if (removalElement.length > 0) {
+                                data.htmlElement.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
+                                    data.htmlElement.remove();
+                                });
+                            } else {
+                                removalElement.remove();
+                            }
+                        } else {
+                            data.htmlElement.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
+                                data.htmlElement.remove();
                             });
                         }
-                    } else {
-                        element.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
-                            element.remove();
-                        });
-                    }
-
-                }, parseFloat(data.length || 10) * 1000); // Default Show Time: 10 Seconds
+                    }, parseFloat(data.duration || 5) * 1000);
+                }, {
+                    htmlElement: element,
+                    removal: event.removal,
+                    duration: event.length,
+                    exitAnimation: event.exitAnimation,
+                    exitDuration: event.exitDuration,
+                    inbetweenAnimation: event.inbetweenAnimation,
+                    inbetweenDuration: event.inbetweenDuration,
+                    inbetweenDelay: event.inbetweenDelay,
+                    inbetweenRepeat: event.inbetweenRepeat
+                });
             }
         }
     }

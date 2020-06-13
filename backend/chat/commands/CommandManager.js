@@ -3,7 +3,7 @@
 const { ipcMain } = require("electron");
 const logger = require("../../logwrapper");
 const EventEmitter = require("events");
-const commandAccess = require("../../data-access/command-access");
+const commandAccess = require("./command-access");
 
 class CommandManager extends EventEmitter {
     constructor() {
@@ -64,6 +64,10 @@ class CommandManager extends EventEmitter {
 
     getSystemCommandById(id) {
         return this._registeredSysCommands.find(c => c.definition.id === id);
+    }
+
+    hasSystemCommand(id) {
+        return this._registeredSysCommands.some(c => c.definition.id === id);
     }
 
     getSystemCommands() {
@@ -158,7 +162,7 @@ class CommandManager extends EventEmitter {
             c => c.definition.id === id
         );
         if (defaultCmd != null) {
-            defaultCmd.trigger = newTrigger;
+            defaultCmd.definition.trigger = newTrigger;
         }
 
         renderWindow.webContents.send("systemCommandsUpdated");

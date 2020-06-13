@@ -8,7 +8,7 @@
     angular
         .module("firebotApp")
         .factory("connectionService", function(listenerService, soundService, $rootScope, backendCommunicator,
-            logger, accountAccess, settingsService, utilityService) {
+            logger, accountAccess, settingsService, utilityService, integrationService) {
             let service = {};
 
             backendCommunicator.on("accountUpdate", accounts => {
@@ -125,199 +125,174 @@
                 service.profiles = profiles;
             };
 
-            /**
-             * CONNECTION LISTENERS
-             */
-
             service.isConnectingAll = false;
 
-            service.connectedToInteractive = false;
-            service.waitingForStatusChange = false;
+            /*
+             * NEW CONNECTION HANDLING
+             */
+
+            /**
+             * Each connection state
+             * @readonly
+             * @enum {string}
+             */
+            const ConnectionState = Object.freeze({
+                Connected: "connected",
+                Disconnected: "disconnected",
+                Connecting: "connecting",
+                Reconnecting: "reconnecting"
+            });
+
+            service.connections = {
+                interactive: ConnectionState.Disconnected,
+                chat: ConnectionState.Disconnected,
+                constellation: ConnectionState.Disconnected
+            };
+
+            // this can be 'disconnected', 'partial', or 'connected'
+            service.sidebarServicesOverallStatus = 'disconnected';
+            function updateSidebarServicesOverallStatus() {
+                let oneDisconnected = false;
+                let oneConnected = false;
+                const serviceIds = settingsService.getSidebarControlledServices();
+                for (const serviceId of serviceIds) {
+                    if (service.connections[serviceId] === ConnectionState.Connected) {
+                        oneConnected = true;
+                    } else {
+                        oneDisconnected = true;
+                    }
+                }
+                if (oneDisconnected) {
+                    service.sidebarServicesOverallStatus = oneConnected ? 'partial' : 'disconnected';
+                } else {
+                    service.sidebarServicesOverallStatus = 'connected';
+                }
+                logger.debug(`Set overall sidebar service status to "${service.sidebarServicesOverallStatus}"`);
+            }
+
+            // this can be 'disconnected', connected'
+            service.integrationsOverallStatus = ConnectionState.Disconnected;
+            function updateIntegrationsOverallStatus() {
+                let oneDisconnected = false;
+                for (const integration of integrationService.getLinkedIntegrations()) {
+                    const intServiceId = `integration.${integration.id}`;
+                    if (service.connections[intServiceId] !== ConnectionState.Connected) {
+                        oneDisconnected = true;
+                        break;
+                    }
+                }
+                if (oneDisconnected) {
+                    service.integrationsOverallStatus = 'disconnected';
+                } else {
+                    service.integrationsOverallStatus = 'connected';
+                }
+            }
+
+            for (const integration of integrationService.getLinkedIntegrations()) {
+                const intServiceId = `integration.${integration.id}`;
+                service.connections[intServiceId] = ConnectionState.Disconnected;
+            }
+
+            service.ConnectionState = ConnectionState;
+
+            service.connectToService = function(serviceId) {
+                backendCommunicator.send("connect-service", serviceId);
+            };
+
+            service.disconnectFromService = function(serviceId) {
+                backendCommunicator.send("disconnect-service", serviceId);
+            };
+
+            service.toggleConnectionToService = function(serviceId) {
+                if (service.connections[serviceId] == null) return;
+                if (service.connections[serviceId] === 'connected') {
+                    service.disconnectFromService(serviceId);
+                } else {
+                    service.connectToService(serviceId);
+                }
+            };
+
+            service.connectSidebarControlledServices = () => {
+                service.isConnectingAll = true;
+                backendCommunicator.send("connect-sidebar-controlled-services");
+            };
+            service.disconnectSidebarControlledServices = () => backendCommunicator.send("disconnect-sidebar-controlled-services");
+            service.toggleSidebarControlledServices = () => {
+                if (service.isConnectingAll) return;
+                if (service.sidebarServicesOverallStatus === 'disconnected') {
+                    soundService.resetPopCounter();
+                    service.connectSidebarControlledServices();
+                    logger.debug("Triggering connection of all sidebar controlled services");
+                } else {
+                    service.disconnectSidebarControlledServices();
+                    logger.debug("Triggering disconnection of all sidebar controlled services");
+                }
+            };
+
+            backendCommunicator.on("connect-sidebar-controlled-services-complete", () => {
+                service.isConnectingAll = false;
+                if (service.sidebarServicesOverallStatus === 'disconnected') {
+                    soundService.connectSound("Offline");
+                } else {
+                    soundService.connectSound("Online");
+                }
+            });
+
+            const playConnectionStatusSound = utilityService.debounce(connectionState => {
+                let soundType = connectionState === ConnectionState.Connected ? "Online" : "Offline";
+                soundService.connectSound(soundType);
+            }, 250);
+
+            backendCommunicator.on("service-connection-update", (data) => {
+                /**@type {string} */
+                const serviceId = data.serviceId;
+                /**@type {ConnectionState} */
+                const connectionState = data.connectionState;
+
+                //see if there has been no change
+                if (service.connections[serviceId] === connectionState) return;
+
+                if (connectionState === ConnectionState.Connected || connectionState === ConnectionState.Disconnected) {
+                    if (!service.isConnectingAll) {
+                        playConnectionStatusSound(connectionState);
+                    } else {
+                        soundService.popSound();
+                    }
+                }
+
+                service.connections[serviceId] = connectionState;
+
+                updateSidebarServicesOverallStatus();
+
+                if (serviceId.startsWith("integration.")) {
+                    updateIntegrationsOverallStatus();
+                }
+
+                $rootScope.$broadcast("connection:update", {
+                    type: serviceId,
+                    status: connectionState
+                });
+            });
+
+            backendCommunicator.on("integrationLinked", (intId) => {
+                const serviceId = `integration.${intId}`;
+                service.connections[serviceId] = ConnectionState.Disconnected;
+            });
+
+            backendCommunicator.on("integrationUnlinked", (intId) => {
+                const serviceId = `integration.${intId}`;
+                delete service.connections[serviceId];
+            });
+
+
+            /*
+             * OLD CONNECTION STUFF. TODO: Delete
+             */
             service.connectedBoard = "";
-
-            service.toggleConnectionToInteractive = function() {
-                // Clear all reconnect timeouts if any are running.
-                ipcRenderer.send("clearReconnect", "Interactive");
-
-                if (service.connectedToInteractive === true) {
-                    service.disconnectFromInteractive();
-                } else if (!service.waitingForChatStatusChange) {
-                    service.connectToInteractive();
-                }
-            };
-
-            service.connectToInteractive = function() {
-                // Let's connect! Get new tokens and connect.
-                if (service.waitingForStatusChange) return false;
-
-                service.waitingForStatusChange = true;
-
-                ipcRenderer.send('gotRefreshToken');
-            };
-
-            service.disconnectFromInteractive = function() {
-                // Disconnect!
-                service.waitingForStatusChange = true;
-                ipcRenderer.send("mixerInteractive", "disconnect");
-            };
-
-            let ListenerType = listenerService.ListenerType;
-
-            // Connection Monitor
-            // Recieves event from main process that connection has been established or disconnected.
-            listenerService.registerListener(
-                { type: ListenerType.CONNECTION_STATUS },
-                isConnected => {
-                    service.connectedToInteractive = isConnected;
-
-                    if (!service.isConnectingAll) {
-                        let soundType = isConnected ? "Online" : "Offline";
-                        soundService.connectSound(soundType);
-                    }
-
-                    let status = isConnected ? "connected" : "disconnected";
-                    $rootScope.$broadcast("connection:update", {
-                        type: "interactive",
-                        status: status
-                    });
-
-                    service.waitingForStatusChange = false;
-                }
-            );
-
-            // Connect Request
-            // Recieves an event from the main process when the global hotkey is hit for connecting.
-            listenerService.registerListener(
-                { type: ListenerType.CONNECTION_CHANGE_REQUEST },
-                () => {
-                    service.toggleConnectionToInteractive();
-                }
-            );
-
-            /**
-       * Chat Connection Stuff
-       */
-            service.connectedToChat = false;
-            service.waitingForChatStatusChange = false;
-
-            service.toggleConnectionToChat = function() {
-                // Clear all reconnect timeouts if any are running.
-                ipcRenderer.send("clearReconnect", "Chat");
-
-                if (service.connectedToChat === true) {
-                    service.disconnectFromChat();
-                } else if (!service.waitingForStatusChange) {
-                    service.connectToChat();
-                }
-            };
-
-            service.connectToChat = function() {
-                // Let's connect! Get new tokens and connect.
-                if (service.waitingForChatStatusChange) return;
-                service.waitingForChatStatusChange = true;
-                ipcRenderer.send('gotChatRefreshToken');
-            };
-
-            service.disconnectFromChat = function() {
-                // Disconnect!
-                service.waitingForChatStatusChange = true;
-                ipcRenderer.send("mixerChat", "disconnect");
-            };
-
-            // Connection Monitor
-            // Recieves event from main process that connection has been established or disconnected.
-            listenerService.registerListener(
-                { type: ListenerType.CHAT_CONNECTION_STATUS },
-                isChatConnected => {
-                    service.connectedToChat = isChatConnected;
-
-                    if (!service.isConnectingAll) {
-                        let soundType = isChatConnected ? "Online" : "Offline";
-                        soundService.connectSound(soundType);
-                    }
-
-                    let status = isChatConnected ? "connected" : "disconnected";
-                    $rootScope.$broadcast("connection:update", {
-                        type: "chat",
-                        status: status
-                    });
-
-                    service.waitingForChatStatusChange = false;
-                }
-            );
-
-            // Connect Request
-            // Recieves an event from the main process when the global hotkey is hit for connecting.
-            listenerService.registerListener(
-                { type: ListenerType.CHAT_CONNECTION_CHANGE_REQUEST },
-                () => {
-                    service.toggleConnectionToChat();
-                }
-            );
-
-            /**
-       * Constellation Connection Stuff
-       */
-            service.connectedToConstellation = false;
-            service.waitingForConstellationStatusChange = false;
-
-            service.toggleConnectionToConstellation = function() {
-                // Clear all reconnect timeouts if any are running.
-                ipcRenderer.send("clearReconnect", "Constellation");
-
-                if (service.connectedToConstellation === true) {
-                    service.disconnectFromConstellation();
-                } else if (!service.waitingForStatusChange) {
-                    service.connectToConstellation();
-                }
-            };
-
-            service.connectToConstellation = function() {
-                // Let's connect! Get new tokens and connect.
-                if (service.waitingForConstellationStatusChange) return;
-                service.waitingForConstellationStatusChange = true;
-                ipcRenderer.send('gotConstellationRefreshToken');
-            };
-
-            service.disconnectFromConstellation = function() {
-                // Disconnect!
-                service.waitingForConstellationStatusChange = true;
-                ipcRenderer.send("mixerConstellation", "disconnect");
-            };
-
-            // Connection Monitor
-            // Recieves event from main process that connection has been established or disconnected.
-            listenerService.registerListener(
-                { type: ListenerType.CONSTELLATION_CONNECTION_STATUS },
-                isConstellationConnected => {
-                    service.connectedToConstellation = isConstellationConnected;
-
-                    if (!service.isConnectingAll) {
-                        let soundType = isConstellationConnected ? "Online" : "Offline";
-                        soundService.connectSound(soundType);
-                    }
-
-                    let status = isConstellationConnected ? "connected" : "disconnected";
-                    $rootScope.$broadcast("connection:update", {
-                        type: "constellation",
-                        status: status
-                    });
-
-                    service.waitingForConstellationStatusChange = false;
-                }
-            );
-
-            // Connect Request
-            // Recieves an event from the main process when the global hotkey is hit for connecting.
-            listenerService.registerListener(
-                { type: ListenerType.CONSTELLATION_CONNECTION_CHANGE_REQUEST },
-                () => {
-                    service.toggleConnectionToConstellation();
-                }
-            );
 
             // Connection Monitor for Overlay
             // Recieves event from main process that connection has been established or disconnected.
+            let ListenerType = listenerService.ListenerType;
             listenerService.registerListener(
                 { type: ListenerType.OVERLAY_CONNECTION_STATUS },
                 overlayStatusData => {

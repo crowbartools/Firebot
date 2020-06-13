@@ -300,7 +300,6 @@ const showImage = {
                     resourceToken: data.resourceToken
                 };
 
-                // ebiggz: 😘
                 let styles = (data.imageWidth ? `width: ${data.imageWidth};` : '') +
                             (data.imageHeight ? `height: ${data.imageHeight};` : '');
                 let imageTag = `<img src="${filepathNew}" style="${styles}">`;

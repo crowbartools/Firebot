@@ -6,12 +6,12 @@ const moment = require("moment");
 const { ipcMain } = require("electron");
 const { settings } = require("../common/settings-access.js");
 const currencyDatabase = require("./currencyDatabase");
-const mixerChat = require('../common/mixer-chat');
 const mixplay = require("../interactive/mixplay");
+const chat = require("../chat/chat");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
 const channelAccess = require("../common/channel-access");
-const eventManager = require("../live-events/EventManager");
+const eventManager = require("../events/EventManager");
 const accountAccess = require("../common/account-access");
 const util = require("../utility");
 
@@ -328,21 +328,21 @@ function setChatUserOnline(data) {
 }
 
 // Sets chat users online using the same function we use to get the chat viewer list for the ui.
-function setChatUsersOnline() {
-    mixerChat.getCurrentViewerListV2().then((viewerList) => {
-        for (let viewer of viewerList) {
+async function setChatUsersOnline() {
+    const viewers = await channelAccess.getCurrentViewerList();
 
-            // Here we convert the viewer list viewer object to one that matches
-            // what we get from chat messages...
-            let viewerPacket = {
-                id: viewer.userId,
-                username: viewer.username,
-                roles: viewer.user_roles
-            };
+    for (const viewer of viewers) {
 
-            setChatUserOnline(viewerPacket);
-        }
-    });
+        // Here we convert the viewer list viewer object to one that matches
+        // what we get from chat messages...
+        const viewerPacket = {
+            id: viewer.userId,
+            username: viewer.username,
+            roles: viewer.user_roles
+        };
+
+        setChatUserOnline(viewerPacket);
+    }
 }
 
 //set user offline, update time spent records
@@ -355,7 +355,13 @@ function setChatUserOffline(id) {
         // Find the user by id to get their minutes viewed.
         // Update their minutes viewed with our new times.
         db.find({ _id: id }, (err, user) => {
-
+            if (err) {
+                logger.error(err);
+                return;
+            }
+            if (user == null || user.length < 1) {
+                return;
+            }
             db.update({ _id: user[0]._id }, { $set: { online: false } }, {}, function(err) {
                 if (err) {
                     logger.error("ViewerDB: Error setting user to offline.", err);
@@ -387,6 +393,14 @@ function setAllUsersOffline() {
         });
     });
 }
+
+chat.on("connected", () => {
+    setChatUsersOnline();
+});
+
+chat.on("disconnected", () => {
+    setAllUsersOffline();
+});
 
 //establish the connection, set everyone offline, start last seen timer
 function connectUserDatabase() {

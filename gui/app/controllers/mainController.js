@@ -101,7 +101,8 @@
         chatModerationService,
         ttsService,
         settingsService,
-        countersService
+        countersService,
+        gamesService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -121,6 +122,8 @@
         chatModerationService.loadChatModerationData();
 
         countersService.loadCounters();
+
+        gamesService.loadGames();
 
         //start notification check
         $timeout(() => {

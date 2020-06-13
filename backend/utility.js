@@ -1,6 +1,6 @@
 "use strict";
 
-const Chat = require("./common/mixer-chat");
+const mixerApi = require("./mixer-api/api");
 const moment = require("moment");
 const logger = require("./logwrapper");
 const request = require("request");
@@ -165,22 +165,17 @@ exports.populateStringWithTriggerData = async function(string = "", trigger) {
 };
 
 exports.getUptime = async () => {
-    let uptimeString = "[API ERROR]";
+    const broadcast = await mixerApi.channels.getStreamersBroadcast();
 
-    let channelDeets = await Chat.getGeneralChannelData();
-    if (channelDeets != null) {
-        if (channelDeets.online) {
-            let startAt = channelDeets.startedAt,
-                duration = moment.duration(moment().diff(moment(startAt))),
-                seconds = duration.asSeconds();
-
-            uptimeString = getUptimeString(seconds);
-        } else {
-            uptimeString = "Not currently broadcasting";
-        }
+    if (broadcast == null) {
+        return "Not currently broadcasting";
     }
 
-    return uptimeString;
+    const durationSecs = moment
+        .duration(moment().diff(moment(broadcast.startedAt)))
+        .asSeconds();
+
+    return getUptimeString(durationSecs);
 };
 
 exports.getDateDiffString = function(date1, date2) {
@@ -239,3 +234,8 @@ exports.shuffleArray = function(array) {
  * @returns {[]} A flattened copy of the passed array
  */
 exports.flattenArray = arr => arr.reduce((flat, next) => flat.concat(next), []);
+
+exports.wait = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
+

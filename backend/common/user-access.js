@@ -57,9 +57,13 @@ async function userFollowsChannels(userId, channelNamesOrIds) {
     return userfollowsAllChannels;
 }
 
+function getUser(userId) {
+    return mixerApi.get(`users/${userId}`, "v1", false, false);
+}
+
 async function getUserDetails(userId) {
 
-    let mixerUserData = await mixerApi.get(`users/${userId}`, "v1", false, false);
+    let mixerUserData = await getUser(userId);
 
     let streamerFollowsUser = false;
     let userFollowsStreamer = false;
@@ -91,5 +95,6 @@ async function getUserDetails(userId) {
     return userDetails;
 }
 
+exports.getUser = getUser;
 exports.getUserDetails = getUserDetails;
 exports.userFollowsChannels = userFollowsChannels;

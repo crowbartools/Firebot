@@ -58,7 +58,7 @@
               </label>
             </div>
 
-            <div style="padding-bottom:10px">
+            <div style="padding-bottom:10px" ng-hide="$ctrl.subcommand.hideCooldowns">
               <div class="muted" style="font-weight:bold; font-size: 12px;">COOLDOWNS</div>
               <div class="input-group">
                 <span class="input-group-addon">Global</span>

@@ -1,7 +1,7 @@
 "use strict";
 
 const util = require("../../../utility");
-const Chat = require("../../../common/mixer-chat");
+const chat = require("../../chat");
 
 /**
  * The Uptime command
@@ -25,7 +25,7 @@ const model = {
    */
     onTriggerEvent: async () => {
         let uptimeString = await util.getUptime();
-        Chat.smartSend(`Broadcasting time: ${uptimeString}`);
+        chat.sendChatMessage(`Broadcasting time: ${uptimeString}`);
     }
 };
 

@@ -20,6 +20,7 @@
 
                         <nav-category name="{{'SIDEBAR.CHAT' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Commands" name="{{'SIDEBAR.CHAT.COMMANDS' | translate }}" icon="fa-exclamation"></nav-link>
+                        <nav-link page="Games" name="Games" icon="fa-dice"></nav-link>
                         <nav-link page="Chat Feed" name="{{'SIDEBAR.CHAT.CHAT_FEED' | translate }}" icon="fa-comment-alt-lines"></nav-link>
 
                         <nav-category name="{{'SIDEBAR.OTHER' | translate }}" pad-top="true"></nav-category>
@@ -45,14 +46,14 @@
                         <div class="connection-status-wrapper">
                             <div class='interactive-status-wrapper'>
                                 <div class="interative-status-icon" 
-                                    ng-class="{'contracted': !$ctrl.sbm.navExpanded, 'connected': $ctrl.cm.allServicesConnected(), 'partial-connected': $ctrl.cm.partialServicesConnected()}" 
+                                    ng-class="{'contracted': !$ctrl.sbm.navExpanded, 'connected': $ctrl.cs.sidebarServicesOverallStatus === 'connected', 'partial-connected': $ctrl.cs.sidebarServicesOverallStatus === 'partial'}" 
                                     uib-tooltip-template="'connectTooltipTemplate.html'" 
                                     tooltip-placement="{{!$ctrl.sbm.navExpanded ? 'right-bottom' : 'top-left'}}"
                                     tooltip-append-to-body="true"
-                                    ng-click="$ctrl.cm.toggleSidebarServices()"
+                                    ng-click="$ctrl.cs.toggleSidebarControlledServices()"
                                     tabindex="0"
-                                    aria-label="{{ $ctrl.cm.allServicesConnected() ? 'Disconnect Services' : 'Connect Services' }}">
-                                    <i class="fad" ng-class="$ctrl.cm.isWaitingForServicesStatusChange() ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
+                                    aria-label="{{ $ctrl.cs.sidebarServicesOverallStatus == 'connected' ? 'Disconnect Services' : 'Connect Services' }}">
+                                    <i class="fad" ng-class="$ctrl.cs.isConnectingAll ? 'fa-sync fa-spin force-white-text' : 'fa-power-off'"></i>
                                 </div>
                                 <div style="cursor:pointer;" ng-click="$ctrl.showConnectionPanelModal()">
                                     <div class="interactive-status-text">
@@ -115,7 +116,6 @@
             `,
         controller: function(
             sidebarManager,
-            connectionManager,
             updatesService,
             connectionService,
             integrationService,
@@ -126,8 +126,6 @@
             let ctrl = this;
 
             ctrl.sbm = sidebarManager;
-
-            ctrl.cm = connectionManager;
 
             ctrl.cs = connectionService;
 

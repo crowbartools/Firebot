@@ -5,7 +5,7 @@ const logger = require("./logwrapper");
 const request = require("request");
 const accountAccess = require("./common/account-access");
 
-const eventManager = require("./live-events/EventManager");
+const eventManager = require("./events/EventManager");
 
 const CLIENT_ID = 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9';
 

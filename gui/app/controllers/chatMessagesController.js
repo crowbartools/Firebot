@@ -154,12 +154,10 @@
             $scope.chatFeedIsEnabled = function() {
                 // if chat feed is disabled in settings
                 if (!chatMessagesService.getChatFeed()) {
-                    $scope.disabledMessage =
-            "The chat feed is currently disabled. Click the gear in the bottom right corner to enable.";
+                    $scope.disabledMessage = "The chat feed is currently disabled. Click the gear in the bottom right corner to enable.";
                     return false;
-                } else if (!connectionService.connectedToChat) {
-                    $scope.disabledMessage =
-            "The chat feed will enable once a connection to Chat has been made.";
+                } else if (connectionService.connections['chat'] !== 'connected') {
+                    $scope.disabledMessage = "The chat feed will enable once a connection to Chat has been made.";
                     return false;
                 }
                 return true;

@@ -15,7 +15,7 @@ settings.flushSettingsCache = function() {
     frontendCommunicator.send("flush-settings-cache");
 };
 
-frontendCommunicator.on("settings-updated-main", (settingsUpdate) => {
+frontendCommunicator.on("settings-updated-renderer", (settingsUpdate) => {
     if (settingsUpdate == null) return;
     let { path, data } = settingsUpdate;
     if (path == null || path === '') return;
@@ -288,6 +288,14 @@ settings.getWhileLoopEnabled = function() {
 
 settings.setWhileLoopEnabled = function(enabled) {
     pushDataToFile('/settings/whileLoopEnabled', enabled === true);
+};
+
+/**@returns {string[]} */
+settings.getSidebarControlledServices = function() {
+    const services = getDataFromFile("/settings/sidebarControlledServices");
+    return services != null
+        ? services
+        : ["interactive", "chat", "constellation"];
 };
 
 exports.settings = settings;

@@ -1,7 +1,6 @@
 "use strict";
 
-const accountAccess = require("../../common/account-access");
-const mixerChat = require("../../common/mixer-chat");
+const mixerApi = require("../../mixer-api/api");
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
@@ -17,8 +16,8 @@ const model = {
         }
 
         try {
-            let avatarUrl = await mixerChat.getUserAvatarUrl(username);
-            return avatarUrl;
+            const channelData = await mixerApi.channels.getChannel(username);
+            return channelData ? channelData.user.avatarUrl : "";
         } catch (err) {
             return "[No Avatar Found]";
         }

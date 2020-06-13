@@ -51,7 +51,7 @@ const model = {
         }
 
         if (upperIndex > args.length - 1) {
-            return null;
+            return "";
         }
         upperIndex = upperIndex - 1;
 

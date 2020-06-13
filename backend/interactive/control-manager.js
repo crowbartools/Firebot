@@ -13,7 +13,7 @@ const userDatabase = require("../database/userDatabase.js");
 const cooldownManager = require("./cooldown-manager");
 const logger = require("../logwrapper");
 
-const mixerChat = require("../common/mixer-chat");
+const chat = require ("../chat/chat");
 
 function getConnectedProject() {
     const connectedProjectId = mixplayProjectManager.getConnectedProjectId();
@@ -89,7 +89,7 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
                     reason = restrictionReason;
                 }
                 logger.debug(`${participant.username} could not use control '${control.name}' because: ${reason}`);
-                mixerChat.smartSend("You cannot use this control because: " + reason, participant.username);
+                chat.sendChatMessage("You cannot use this control because: " + reason, participant.username);
                 return;
             }
         }

@@ -3,7 +3,7 @@ const path = require("path");
 const logger = require("../../../logwrapper");
 const importHelpers = require("../import-helpers");
 
-const commandAccess = require("../../../data-access/command-access");
+const commandAccess = require("../../../chat/commands/command-access");
 
 const effectsMapper = require("../v4-effect-mapper");
 const permissionMapper = require("../v4-permission-mapper");

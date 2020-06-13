@@ -1,6 +1,7 @@
 "use strict";
 
-const Chat = require("../mixer-chat");
+const chat = require("../../chat/chat");
+const mixerApi = require("../../mixer-api/api");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 const accountAccess = require("../account-access");
@@ -44,42 +45,80 @@ function downloadAndSaveClip(uri, title = "") {
 
 exports.createClip = async function(effect, trigger) {
 
+    const streamerAccount = accountAccess.getAccounts().streamer;
+    const broadcast = await mixerApi.channels.getStreamersBroadcast();
+
+    let streamerData = accountAccess.getAccounts().streamer;
+    if (!streamerData.partnered && !streamerData.canClip) {
+        logger.warn("An unapproved user type attempted to create a clip!");
+        renderWindow.webContents.send('error', `Failed to create a clip on Mixer. Reason: Not allowed to create clips at this time.`);
+        return false;
+    }
+
+    if (broadcast == null) {
+        renderWindow.webContents.send('error', `Failed to create a clip on Mixer. Reason: Streamer channel is not live.`);
+        return false;
+    }
+
     if (effect.postLink) {
-        Chat.smartSend("Creating clip...");
+        chat.sendChatMessage("Creating clip...");
     }
 
     let title = effect.clipTitle;
     if (title == null || title === "") {
         title = "$streamTitle (Created by $user)";
     }
-
     title = await util.populateStringWithTriggerData(title, trigger);
-    let clipResult = await Chat.createClip(title);
 
-    if (clipResult.success) {
-        if (effect.postLink) {
-            let streamerData = accountAccess.getAccounts().streamer;
-            let message = `Clip created: https://mixer.com/${streamerData.username}?clip=${clipResult.highlightResponse.shareableId}`;
-            Chat.smartSend(message);
+    let duration = 30;
+    if (effect.clipDuration != null) {
+        let normalizedDuration = effect.clipDuration
+            .toString()
+            .trim()
+            .replace("s", "");
+
+        if (!isNaN(normalizedDuration)) {
+            duration = parseInt(normalizedDuration);
         }
-        logger.info("Successfully created a Mixer clip!");
-    } else {
-        if (effect.postLink) {
-            Chat.smartSend("Whoops! Something went wrong when creating a clip. :(");
-        }
-        renderWindow.webContents.send('error', `Failed to create a clip on Mixer. Reason: ${clipResult.reason}`);
     }
 
-    if (effect.download) {
-        let streamLocator = clipResult.highlightResponse.contentLocators.find(l => l.locatorType === "HlsStreaming");
+    // enforce limits
+    if (duration < 5) {
+        duration = 5;
+    } else if (duration > 300) {
+        duration = 300;
+    }
+
+    const clipProperties = await mixerApi.clips.createClip({
+        broadcastId: broadcast.id,
+        clipDurationInSeconds: duration,
+        highlightTitle: title
+    });
+
+    const creationSuccessful = clipProperties != null;
+
+    if (creationSuccessful) {
+        if (effect.postLink) {
+            const message = `Clip created: https://mixer.com/${streamerAccount.username}?clip=${clipProperties.shareableId}`;
+            chat.sendChatMessage(message);
+        }
+
+        const streamLocator = clipProperties.contentLocators.find(l => l.locatorType === "HlsStreaming");
         if (streamLocator != null) {
-            let streamUri = streamLocator.uri;
             try {
-                await downloadAndSaveClip(streamUri, title);
+                await downloadAndSaveClip(streamLocator.uri, title);
                 renderWindow.webContents.send('eventlog', {type: "general", username: "System:", event: `Successfully saved clip to download folder.`});
             } catch (e) {
                 renderWindow.webContents.send('eventlog', {type: "general", username: "System:", event: `Failed to download and save clip for reason: ${e}`});
             }
         }
+
+        logger.info("Successfully created a Mixer clip!");
+    } else {
+        if (effect.postLink) {
+            chat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
+        }
+        renderWindow.webContents.send('error', `Failed to create a clip on Mixer`);
     }
+    return true;
 };

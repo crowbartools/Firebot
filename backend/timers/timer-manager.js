@@ -2,7 +2,7 @@
 
 const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
-const timerAccess = require("../data-access/timer-access");
+const timerAccess = require("./timer-access");
 const connectionManager = require("../common/connection-manager");
 const accountAccess = require("../common/account-access");
 const { TriggerType } = require("../common/EffectType");

@@ -31,6 +31,12 @@ function mixerSocketConnect(){
 			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.meta.overlayInstance}`)
 			console.log(data);
 
+			if(event == "OVERLAY:REFRESH") {
+				console.log("Refreshing overlay...");
+				location.reload();
+				return;
+			}
+
 			if(olInstance != null && olInstance != "") {
 				if(data.meta.overlayInstance != olInstance) {
 					console.log("Event is for a different instance. Ignoring.")
@@ -41,12 +47,6 @@ function mixerSocketConnect(){
 					console.log("Event is for a specific instance. Ignoring.")
 					return;
 				}
-			}
-
-			if(event == "OVERLAY:REFRESH") {
-				console.log("Refreshing overlay...");
-				location.reload();
-				return;
 			}
 
 			firebotOverlay.emit(event, data.meta);

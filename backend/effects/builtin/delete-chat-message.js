@@ -1,5 +1,5 @@
 "use strict";
-const chat = require("../../common/mixer-chat");
+const chat = require("../../chat/chat");
 const effectModels = require("../models/effectModels");
 const { EffectTrigger, EffectDependency } = effectModels;
 
@@ -39,7 +39,7 @@ const model = {
         }
 
         if (messageId) {
-            chat.deleteChat(messageId);
+            chat.deleteMessage(messageId);
         }
 
         return true;

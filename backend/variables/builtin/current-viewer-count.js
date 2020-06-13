@@ -1,6 +1,6 @@
 "use strict";
 const logger = require("../../logwrapper");
-const MixerChat = require('../../common/mixer-chat');
+const channelAccess = require("../../common/channel-access");
 
 const { OutputDataType } = require("../../../shared/variable-contants");
 
@@ -13,9 +13,9 @@ const model = {
     evaluator: async () => {
         logger.debug("Getting number of viewers in chat for variable.");
 
-        let viewersCount = await MixerChat.getCurrentViewers();
+        const streamerChannel = await channelAccess.getStreamerChannelData();
 
-        return viewersCount;
+        return streamerChannel ? streamerChannel.viewersCurrent : 0;
     }
 };
 

@@ -43,7 +43,7 @@ function getData(shareCode) {
             json: true
         }, function(err, httpResponse, body) {
             if (!err && httpResponse.statusCode === 200) {
-                resolve(body);
+                resolve(JSON.parse(decodeURIComponent(JSON.stringify(body))));
             } else {
                 resolve(null);
             }

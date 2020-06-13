@@ -419,20 +419,14 @@
             };
 
             service.deleteMessage = messageId => {
-                listenerService.fireEvent(
-                    listenerService.EventType.DELETE_CHAT_MESSAGE,
-                    { messageId: messageId }
-                );
+                backendCommunicator.send("delete-message", messageId);
             };
 
-            service.changeModStatus = (userName, modStatus) => {
-                listenerService.fireEvent(
-                    listenerService.EventType.CHANGE_USER_MOD_STATUS,
-                    {
-                        userName: userName,
-                        modStatus: modStatus
-                    }
-                );
+            service.changeModStatus = (username, shouldBeMod) => {
+                backendCommunicator.send("update-user-mod-status", {
+                    username,
+                    shouldBeMod
+                });
             };
 
 

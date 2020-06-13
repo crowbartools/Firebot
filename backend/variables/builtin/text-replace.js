@@ -11,15 +11,19 @@ const model = {
         usage: "replace[textInput, searchValue, replacement]",
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, input, search, replacement) => {
+    evaluator: (_, input, search, replacement = "") => {
 
-        if (input == null || search == null || replacement == null) {
-            return "[Missing values]";
+        if (input == null) {
+            return "[Missing input]";
+        }
+
+        if (search == null) {
+            return input;
         }
 
         let escapedSearch = utils.escapeRegExp(search);
 
-        return input.replace(new RegExp(escapedSearch), replacement);
+        return input.replace(new RegExp(escapedSearch, "g"), replacement);
     }
 };
 

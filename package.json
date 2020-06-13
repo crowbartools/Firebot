@@ -1,6 +1,6 @@
 {
     "name": "firebotv5",
-    "version": "5.12.2",
+    "version": "5.13.0",
     "description": "An application for mixer.com that celebrates and promotes interactive controls.",
     "main": "main.js",
     "scripts": {
@@ -60,6 +60,7 @@
         "carina": "^0.11.2",
         "compare-versions": "^3.5.1",
         "countup.js-angular1": "^1.0.0",
+        "deepmerge": "^4.2.2",
         "ejs": "^2.7.1",
         "electron-gh-releases": "^2.0.4",
         "electron-oauth2": "^3.0.0",

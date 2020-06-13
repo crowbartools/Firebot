@@ -25,7 +25,7 @@ const clip = {
         hidden: !streamerAccount.loggedIn || !streamerAccount.canClip,
         icon: "fad fa-film",
         categories: [EffectCategory.COMMON, EffectCategory.FUN],
-        dependencies: [EffectDependency.CHAT, EffectDependency.CONSTELLATION],
+        dependencies: [EffectDependency.CHAT],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON],
             [InputEvent.MOUSEDOWN, InputEvent.KEYDOWN],
@@ -44,6 +44,12 @@ const clip = {
         <eos-container header="Clip Title" pad-top="true">
             <p>The title for the new clip (Leave blank to default to current stream title).</p>
             <input ng-model="effect.clipTitle" type="text" class="form-control" placeholder="Enter text" replace-variables>
+        </eos-container>
+
+        <eos-container header="Clip Duration" pad-top="true">
+            <p>The duration of the clip in seconds (default 30s, min 5s, max 300s)</p>
+            <input ng-model="effect.clipDuration" type="text" class="form-control" placeholder="Enter duration" replace-variables="number">
+            <p ng-show="trigger == 'command'" class="muted" style="font-size:12px;margin-top:6px;"><b>ProTip:</b> Use <b>$ensureNumber[$arg, 30]</b> to allow viewers to specify a clip duration but default to 30 if they don't provide one. Example: !clip 60</p>
         </eos-container>
 
         <eos-container>
@@ -71,9 +77,14 @@ const clip = {
     /**
    * The controller for the front end Options
    */
-    optionsController: ($scope, listenerService) => {
-    // The name of the api and if it has images available to show or not.
+    optionsController: ($scope) => {
+        if ($scope.effect.clipDuration == null) {
+            $scope.effect.clipDuration = 30;
+        }
 
+        if ($scope.effect.clipTitle == null) {
+            $scope.effect.clipTitle = "$streamTitle (Created by $user)";
+        }
     },
     /**
    * When the effect is triggered by something
@@ -86,8 +97,7 @@ const clip = {
    * When the effect is triggered by something
    */
     onTriggerEvent: async event => {
-        clipProcessor.createClip(event.effect, event.trigger);
-        return true;
+        return await clipProcessor.createClip(event.effect, event.trigger);
     }
 };
 

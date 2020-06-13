@@ -4,7 +4,7 @@ const logger = require("../../../logwrapper");
 const uuid = require("uuid/v1");
 const importHelpers = require("../import-helpers");
 const effectsMapper = require("../v4-effect-mapper");
-const eventsAccess = require("../../../live-events/events-access");
+const eventsAccess = require("../../../events/events-access");
 
 //v4 event types are keys, supported v5 types are values
 const v4EventTypeMap = {

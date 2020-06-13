@@ -4,11 +4,38 @@ const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const mixerApi = require("../api-access");
 
-const frontendCommunicator = require("./frontend-communicator");
+const api = require("../mixer-api/api");
 
+const deepmerge = require("deepmerge");
 const uuidv4 = require("uuid/v4");
 const NodeCache = require("node-cache");
 let linkHeaderParser = require('parse-link-header');
+
+// Holds an updating model of the streamers channel data.
+/**@type {import('../mixer-api/resource/channels').MixerChannelSimple} */
+let streamerChannelData;
+
+exports.refreshStreamerChannelData = async () => {
+    let streamerData = accountAccess.getAccounts().streamer;
+    streamerChannelData = await this.getMixerAccountDetailsByUsername(streamerData.username);
+};
+
+exports.updateStreamerChannelData = async (newData) => {
+    if (streamerChannelData == null) {
+        await this.refreshStreamerChannelData();
+    }
+
+    streamerChannelData = deepmerge(streamerChannelData, newData);
+    return streamerChannelData;
+};
+
+exports.getStreamerChannelData = async () => {
+    if (streamerChannelData == null) {
+        await this.refreshStreamerChannelData();
+    }
+
+    return streamerChannelData;
+};
 
 exports.getFollowDateForUser = async username => {
     let streamerData = accountAccess.getAccounts().streamer;
@@ -27,51 +54,62 @@ exports.getFollowDateForUser = async username => {
     return new Date(followerData[0].followed.createdAt);
 };
 
-exports.getChannelSubBadge = async channelName => {
-    let badgeData = await mixerApi.get(
-        `channels/${channelName}?fields=online,badge`,
-        "v1",
-        false,
-        false
-    );
-    if (!badgeData || !badgeData.badge) {
+exports.getStreamerSubBadge = async () => {
+    if (!streamerChannelData || !streamerChannelData.badge) {
         return null;
     }
-    return badgeData.badge.url;
+    return streamerChannelData.badge.url;
 };
 
 exports.getStreamerOnlineStatus = async () => {
-    let streamerData = accountAccess.getAccounts().streamer;
-
-    let onlineData = await mixerApi.get(
-        `channels/${streamerData.channelId}?fields=online`,
-        "v1",
-        false,
-        true
-    );
-
-    if (onlineData == null) {
+    if (streamerChannelData == null) {
         return false;
     }
 
-    return onlineData.online === true;
+    return streamerChannelData.online === true;
 };
 
 exports.getStreamerAudience = async () => {
-    let streamerData = accountAccess.getAccounts().streamer;
-
-    let audienceData = await mixerApi.get(
-        `channels/${streamerData.channelId}?fields=audience`,
-        "v1",
-        false,
-        true
-    );
-
-    if (audienceData == null) {
+    if (streamerChannelData == null) {
         return null;
     }
 
-    return audienceData.audience;
+    return streamerChannelData.audience;
+};
+
+exports.setStreamerAudience = async (audience) => {
+    await api.channels.updateStreamersChannel({
+        audience: audience
+    });
+};
+
+exports.getStreamerGameData = async () => {
+    if (streamerChannelData == null) {
+        return null;
+    }
+
+    return streamerChannelData.type;
+};
+
+exports.setStreamGameById = async typeId => {
+    await api.channels.updateStreamersChannel({
+        typeId: typeId
+    });
+};
+
+exports.setStreamGameByName = async typeNameQuery => {
+    const types = await api.types.searchChannelTypes(typeNameQuery);
+    if (types.length > 0) {
+        await api.channels.updateStreamersChannel({
+            typeId: types[0].id
+        });
+    }
+};
+
+exports.setStreamTitle = async newTitle => {
+    await api.channels.updateStreamersChannel({
+        name: newTitle
+    });
 };
 
 const viewerRoleCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
@@ -245,6 +283,26 @@ exports.updateUserRole = async (userId, role, addOrRemove) => {
     } catch (err) {
         logger.error("Error while updating user roles", err);
     }
+};
+
+exports.modUser = async username => {
+    const ids = await exports.getIdsFromUsername(username);
+    return api.channels.updateUserRoles(ids.userId, ["Mod"]);
+};
+
+exports.unmodUser = async username => {
+    const ids = await exports.getIdsFromUsername(username);
+    return api.channels.updateUserRoles(ids.userId, null, ["Mod"]);
+};
+
+exports.banUser = async username => {
+    const ids = await exports.getIdsFromUsername(username);
+    return api.channels.updateUserRoles(ids.userId, ["Banned"]);
+};
+
+exports.unbanUser = async username => {
+    const ids = await exports.getIdsFromUsername(username);
+    return api.channels.updateUserRoles(ids.userId, null, ["Banned"]);
 };
 
 exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) => {
