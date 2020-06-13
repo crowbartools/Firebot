@@ -85,6 +85,10 @@ const heistCommand = {
         if (event.userCommand.subcommandId === "wagerAmount") {
             const triggeredArg = userCommand.args[0];
             wagerAmount = parseInt(triggeredArg);
+        } else {
+            chat.sendChatMessage("Please include a valid wager amount!", username, chatter);
+            chat.deleteMessage(chatEvent.id);
+            return;
         }
 
         // make sure wager doesnt violate min or max values
