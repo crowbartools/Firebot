@@ -153,9 +153,9 @@ const html = {
 
                 _element.show();
 
-                element.animateCss(event.enterAnimation || "none", event.enterDuration, null, null, (data) => {
+                element.animateCss(event.enterAnimation, event.enterDuration, null, null, (data) => {
 
-                    data.htmlElement.animateCss(data.inbetweenAnimation || "none", data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
+                    data.htmlElement.animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
 
                     setTimeout(function() {
                         if (data.inbetweenAnimation) {
