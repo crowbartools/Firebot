@@ -66,6 +66,12 @@ class CommandManager extends EventEmitter {
         return this._registeredSysCommands.find(c => c.definition.id === id);
     }
 
+    getSystemCommandTrigger(id) {
+        const sysCommandsWithOverrides = this.getAllSystemCommandDefinitions();
+        const command = sysCommandsWithOverrides.find(sc => sc.id === id);
+        return command ? command.trigger : null;
+    }
+
     hasSystemCommand(id) {
         return this._registeredSysCommands.some(c => c.definition.id === id);
     }

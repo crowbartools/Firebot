@@ -33,9 +33,9 @@ function triggerCooldown() {
     const expireTime = moment().add(cooldownMins, 'minutes');
     exports.cooldownExpireTime = expireTime;
 
-    const command = commandManager.getSystemCommandById("firebot:heist");
+    const trigger = commandManager.getSystemCommandTrigger("firebot:heist");
     const cooldownOverMessage = heistSettings.settings.generalMessages.cooldownOver
-        .replace("{command}", command.definition.trigger);
+        .replace("{command}", trigger ? trigger : '!heist');
 
     cooldownTimeoutId = setTimeout((msg) => {
         chat.sendChatMessage(msg, null, chatter);
