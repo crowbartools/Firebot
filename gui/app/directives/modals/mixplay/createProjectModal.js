@@ -119,7 +119,7 @@
                     return $http.get(`https://bytebin.lucko.me/${code}`)
                         .then(resp => {
                             if (resp.status === 200) {
-                                return resp.data ? resp.data.mixplayProject : null;
+                                return resp.data ? JSON.parse(unescape(JSON.stringify(resp.data.mixplayProject))) : null;
                             }
                             return null;
                         }, () => {

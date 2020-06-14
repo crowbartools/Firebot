@@ -178,7 +178,7 @@
                     return $http.get(`https://bytebin.lucko.me/${code}`)
                         .then(resp => {
                             if (resp.status === 200) {
-                                return JSON.parse(decodeURIComponent(JSON.stringify(resp.data)));
+                                return JSON.parse(unescape(JSON.stringify(resp.data)));
                             }
                             return null;
                         }, () => {
