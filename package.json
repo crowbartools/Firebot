@@ -91,7 +91,7 @@
         "robotjs": "^0.6.0",
         "roll": "^1.2.0",
         "sanitize-filename": "^1.6.3",
-        "simple-oauth2": "^2.5.2",
+        "simple-oauth2": "^3.4.0",
         "socket.io-client": "^2.3.0",
         "ui-select": "^0.19.8",
         "underscore": "^1.9.1",

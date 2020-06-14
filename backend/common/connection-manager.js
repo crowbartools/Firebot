@@ -195,11 +195,6 @@ manager.on("service-connection-update", (data) => {
 });
 
 frontendCommunicator.on("connect-sidebar-controlled-services", async () => {
-    // Make sure tokens are refreshed if needed
-    const accountAccess = require("./account-access");
-    await accountAccess.ensureTokenRefreshed("streamer");
-    await accountAccess.ensureTokenRefreshed("bot");
-
     const serviceIds = settings.getSidebarControlledServices();
 
     const waitForServiceConnectDisconnect = (serviceId) => {

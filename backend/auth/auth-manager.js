@@ -56,7 +56,7 @@ class AuthManager extends EventEmitter {
         const provider = this.getAuthProvider(providerId);
         let accessToken = provider.oauthClient.accessToken.create(tokenData);
 
-        const EXPIRATION_WINDOW_IN_SECONDS = 43200; // 12 hours
+        const EXPIRATION_WINDOW_IN_SECONDS = 4500; // 1hr 15 min
         if (accessToken.expired(EXPIRATION_WINDOW_IN_SECONDS)) {
             try {
                 const params = {
