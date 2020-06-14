@@ -22,8 +22,14 @@
                 <div uib-collapse="$ctrl.collapsed" class="fb-setting-content" ng-transclude></div>
             </div>
         `,
-        controller: function() {
+        controller: function($scope, $timeout) {
             const $ctrl = this;
+
+            function rerenderSliders() {
+                $timeout(function() {
+                    $scope.$broadcast("rzSliderForceRender");
+                }, 100);
+            }
 
             if ($ctrl.collapsed == null) {
                 $ctrl.collapsed = false;
@@ -31,6 +37,11 @@
 
             $ctrl.toggleCollapse = () => {
                 $ctrl.collapsed = !$ctrl.collapsed;
+                rerenderSliders();
+            };
+
+            $ctrl.$onInit = () => {
+                rerenderSliders();
             };
         }
     });

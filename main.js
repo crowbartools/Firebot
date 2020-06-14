@@ -74,10 +74,10 @@ function squirrelEvents() {
             // use case-fallthrough to do normal installation
             break;
         case "--squirrel-install": //eslint-disable-line no-fallthrough
-        // Optional - do things such as:
-        // - Install desktop and start menu shortcuts
-        // - Add your .exe to the PATH
-        // - Write to the registry for things like file associations and explorer context menus
+            // Optional - do things such as:
+            // - Install desktop and start menu shortcuts
+            // - Add your .exe to the PATH
+            // - Write to the registry for things like file associations and explorer context menus
 
             // Install shortcuts
             cp = require("child_process");
@@ -114,9 +114,9 @@ function squirrelEvents() {
             return true;
         }
         case "--squirrel-obsolete":
-        // This is called on the outgoing version of your app before
-        // we update to the new version - it's the opposite of
-        // --squirrel-updated
+            // This is called on the outgoing version of your app before
+            // we update to the new version - it's the opposite of
+            // --squirrel-updated
             app.quit();
             return;
         }
@@ -529,7 +529,7 @@ function appOnReady() {
 
         // load accounts
         const accountAccess = require("./backend/common/account-access");
-        await accountAccess.updateAccountCache(true);
+        await accountAccess.updateAccountCache(false);
 
         const connectionManager = require("./backend/common/connection-manager");
         connectionManager.startOnlineCheckInterval();
