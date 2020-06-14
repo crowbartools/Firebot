@@ -16,7 +16,7 @@ const model = {
             username = accountAccess.getAccounts().streamer.username;
         }
 
-        const channelData = await mixerApi.channels.getStreamersChannel();
+        const channelData = await mixerApi.channels.getChannel(username);
         return channelData.type ? channelData.type.name : "[No game set]";
     }
 };
