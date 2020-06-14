@@ -31,31 +31,36 @@ $.fn.extend({
 		}
 		var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
 		if(animationName !== "none") {
+			const element = $(this);
+
 			if(animationDuration) {
-				$(this).css("animation-duration", animationDuration);
+				element.css("animation-duration", animationDuration);
 			}
 
 			if(animationDelay) {
-				$(this).css("animation-delay", animationDelay);
+				element.css("animation-delay", animationDelay);
 			}
 
 			if(animationRepeat) {
-				$(this).css("animation-iteration-count", animationRepeat);
+				element.css("animation-iteration-count", animationRepeat);
 			}
 
-			this.addClass('animated ' + animationName).one(animationEnd, function() {
+			this.addClass('animated ' + animationName).on(animationEnd, function(event) {
+				element.off(animationEnd);
+
 				if(animationDuration) {
-					$(this).css("animation-duration", "");
+					element.css("animation-duration", "");
 				}
 
 				if(animationDelay) {
-					$(this).css("animation-delay", "");
+					element.css("animation-delay", "");
 				}
 	
-				$(this).removeClass('animated ' + animationName);
+				element.removeClass('animated ' + animationName);
+
 				callback(data);
 			});
-		} else { 
+		} else {
 			callback(data);
 		}	
         return this;
