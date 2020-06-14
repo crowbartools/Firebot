@@ -243,9 +243,11 @@ settings.getViewerDbStatus = function() {
     let status = getDataFromFile("/settings/viewerDB");
     return status != null ? status : true;
 };
+
 settings.getClipDownloadFolder = function() {
+    const dataAccess = require("./data-access");
     let dlFolder = getDataFromFile('/settings/clips/downloadFolder');
-    return dlFolder != null && dlFolder !== "" ? dlFolder : profileManager.getPathInProfile("/clips/");
+    return dlFolder != null && dlFolder !== "" ? dlFolder : dataAccess.getPathInUserData("/clips/");
 };
 
 /*
