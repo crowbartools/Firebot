@@ -12,16 +12,16 @@ const {
 
 logger.info("Starting Firebot...");
 
+// Handle any squrriel install/update events
+// returns false if the rest of app execution should stop.
+if (!handleSquirrelEvents()) {
+    return;
+}
+
 // ensure only a single instance of the app runs
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
     app.quit();
-    return;
-}
-
-// Handle any squrriel install/update events
-// returns false if the rest of app execution should stop.
-if (!handleSquirrelEvents()) {
     return;
 }
 
