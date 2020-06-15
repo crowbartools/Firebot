@@ -92,15 +92,12 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
         let message = effect.message;
         let chatter = effect.chatter;
         let whisper = effect.whisper;
-        let username = trigger.metadata.username;
         let messageArray = [];
 
         // Replace vars
         if (populateReplaceVars) {
             logger.debug("Populating string with replace vars...");
             try {
-                //message = await util.populateStringWithTriggerData(message, trigger);
-
                 message = await replaceVariableManager.evaluateText(message, trigger, { type: trigger.type });
             } catch (err) {
                 logger.error(err);
@@ -230,13 +227,9 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
 
             break;
         default:
-        // Whispers and broadcasts
-        // This occurs if a whisper is sent via button chat effect, or if a regular chat message is sent via chat effect or chat window.
+            // Whispers and broadcasts
+            // This occurs if a whisper is sent via button chat effect, or if a regular chat message is sent via chat effect or chat window.
             logger.debug("attempting to send chat");
-            if (whisper != null && whisper !== "") {
-                whisper = whisper.replace("$(user)", username);
-            }
-
             chat.sendChatMessage(message, whisper, chatter);
         }
     } catch (err) {
