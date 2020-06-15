@@ -48,6 +48,11 @@
                         ng-model="$ctrl.command.regexDescription" placeholder="This regex matches...">
                 </div>
             </eos-collapsable-panel>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon3">Description <tooltip text="'Displayed on the command list webpage'"></tooltip></span>
+                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.command.description" placeholder="Enter description">
+            </div>
         </div>
 
         <div style="padding-bottom:1em">
