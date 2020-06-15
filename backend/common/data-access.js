@@ -109,7 +109,7 @@ let makeDirInUserData = async function(filePath) {
 let makeDirInUserDataSync = function(filePath) {
     try {
         let joinedPath = path.join(userDataPath, filePath);
-        fs.mkdir(joinedPath, () => {});
+        fs.mkdirSync(joinedPath);
         return true;
     } catch (err) {
         const logger = require("../logwrapper");

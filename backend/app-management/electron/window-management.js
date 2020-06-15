@@ -6,10 +6,22 @@ const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
 
-function buildMainWindow() {
+/**
+ * Firebot's main window
+ * Keeps a global reference of the window object, if you don't, the window will
+ * be closed automatically when the JavaScript object is garbage collected.
+ *@type {Electron.BrowserWindow}
+ */
+exports.mainWindow = null;
 
-    const logger = require("../logwrapper");
+/**
+ * The splashscreen window.
+ *@type {Electron.BrowserWindow}
+ */
+let splashscreenWindow;
 
+
+function createMainWindow() {
     let mainWindowState = windowStateKeeper({
         defaultWidth: 1280,
         defaultHeight: 720
@@ -23,14 +35,18 @@ function buildMainWindow() {
         height: mainWindowState.height,
         minWidth: 300,
         minHeight: 50,
-        icon: path.join(__dirname, "../../gui/images/logo_transparent_2.png"),
+        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
         show: false,
         webPreferences: {
             nodeIntegration: true
         }
     });
 
-    const frontendCommunicator = require("../common/frontend-communicator");
+    //set a global reference, lots of backend files depend on this being available globally
+    exports.mainWindow = mainWindow;
+    global.renderWindow = mainWindow;
+
+    const frontendCommunicator = require("../../common/frontend-communicator");
     const menuTemplate = [
         {
             label: 'Edit',
@@ -102,32 +118,25 @@ function buildMainWindow() {
     // and load the index.html of the app.
     mainWindow.loadURL(
         url.format({
-            pathname: path.join(__dirname, "../../gui/app/index.html"),
+            pathname: path.join(__dirname, "../../../gui/app/index.html"),
             protocol: "file:",
             slashes: true
         })
     );
 
-    return mainWindow;
-}
-
-/**
- *
- * @param {Electron.BrowserWindow} window
- * @param {Electron.BrowserWindow} splashScreen
- */
-function setupWindowListeners(window, splashScreen) {
     // wait for the main window's content to load, then show it
-    window.webContents.on("did-finish-load", () => {
-        window.show();
-        splashScreen.destroy();
-        const eventManager = require("../events/EventManager");
+    mainWindow.webContents.on("did-finish-load", () => {
+        mainWindow.show();
+        if (splashscreenWindow) {
+            splashscreenWindow.destroy();
+        }
+        const eventManager = require("../../events/EventManager");
         eventManager.triggerEvent("firebot", "firebot-started", {
             username: "Firebot"
         });
     });
 
-    window.webContents.on('new-window', function(e, url) {
+    mainWindow.webContents.on('new-window', function(e, url) {
         e.preventDefault();
         shell.openExternal(url);
     });
@@ -137,11 +146,11 @@ function setupWindowListeners(window, splashScreen) {
  * Creates the splash screen
  * @returns {Electron.BrowserWindow}
  */
-function buildSplashScreen() {
+function createSplashScreen() {
     const splash = new BrowserWindow({
         width: 300,
         height: 350,
-        icon: path.join(__dirname, "../../gui/images/logo_transparent_2.png"),
+        icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
         transparent: true,
         frame: false,
         closable: false,
@@ -151,15 +160,16 @@ function buildSplashScreen() {
         hasShadow: true,
         alwaysOnTop: false
     });
+
     splash.loadURL(
         url.format({
-            pathname: path.join(__dirname, "../../gui/splashscreen/splash.html"),
+            pathname: path.join(__dirname, "../../../gui/splashscreen/splash.html"),
             protocol: "file:",
             slashes: true
         }));
-    return splash;
+
+    splashscreenWindow = splash;
 }
 
-exports.buildMainWindow = buildMainWindow;
-exports.buildSplashScreen = buildSplashScreen;
-exports.setupWindowListeners = setupWindowListeners;
+exports.createMainWindow = createMainWindow;
+exports.createSplashScreen = createSplashScreen;

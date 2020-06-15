@@ -14,9 +14,9 @@ function ensureDirExists(path) {
     }
 }
 
-async function ensureRequiredFoldersExist() {
+function ensureRequiredFoldersExist() {
 
-    logger.info("Ensuring default folders and files exist for all users...");
+    logger.info("Ensuring required data folders exist...");
 
     //create the root "firebot-data" folder
     dataAccess.createFirebotDataDir();
