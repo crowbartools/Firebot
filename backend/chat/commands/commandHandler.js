@@ -321,6 +321,7 @@ async function handleChatEvent(chatEvent) {
             type: TriggerType.COMMAND,
             metadata: {
                 username: commandSender,
+                userId: chatEvent.user_id,
                 userMixerRoles: chatEvent.user_roles,
                 command: command,
                 userCommand: userCmd,
