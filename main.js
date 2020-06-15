@@ -14,13 +14,10 @@ let mainWindow;
 function startApp() {
 
     const logger = require("./backend/logwrapper");
+    logger.info("Starting Firebot...");
+
     const { settings } = require("./backend/common/settings-access");
     const { startBackup } = require("./backend/backupManager");
-
-    //const accountAccess = require("./backend/common/account-access");
-    //const chat = require("./backend/chat/chat");
-    // constellation = require("./backend/events/constellation");
-    // mixplay = require("./backend/interactive/mixplay");
 
     // ensure only a single instance of the app runs
     const gotTheLock = app.requestSingleInstanceLock();
@@ -47,6 +44,34 @@ function startApp() {
 
     const { ensureRequiredFoldersExist } = require("./backend/app-management/data-tasks");
     ensureRequiredFoldersExist();
+
+    app.on("window-all-closed", () => {
+        // Unregister all shortcuts.
+        let hotkeyManager = require("./backend/hotkeys/hotkey-manager");
+        hotkeyManager.unregisterAllHotkeys();
+
+        const chatModerationManager = require("./backend/chat/moderation/chat-moderation-manager");
+        chatModerationManager.stopService();
+
+        const userDatabase = require("./backend/database/userDatabase");
+        userDatabase.setAllUsersOffline().then(() => {
+            if (settings.backupOnExit()) {
+                startBackup(false, app.quit);
+            } else {
+                app.quit();
+            }
+        });
+    });
+
+    app.on("will-quit", () => {
+        const {
+            handleProfileDeletion,
+            handleProfileRename } = require("./backend/app-management/profile-tasks");
+        handleProfileRename();
+        handleProfileDeletion();
+    });
+
+    app.on("quit", () => {});
 
     app.whenReady().then(async () => {
 
@@ -170,34 +195,6 @@ function startApp() {
                     msg: msg,
                     meta: meta
                 });
-            }
-        });
-    });
-
-    app.on("quit", () => {
-        const {
-            handleProfileDeletion,
-            handleProfileRename } = require("./backend/app-management/profile-tasks");
-        handleProfileRename();
-        handleProfileDeletion();
-    });
-
-    app.on("window-all-closed", () => {
-        // Unregister all shortcuts.
-        let hotkeyManager = require("./backend/hotkeys/hotkey-manager");
-        hotkeyManager.unregisterAllHotkeys();
-
-        const chatModerationManager = require("./backend/chat/moderation/chat-moderation-manager");
-        chatModerationManager.stopService();
-
-        const userDatabase = require("./backend/database/userDatabase");
-        userDatabase.setAllUsersOffline().then(() => {
-            if (settings.backupOnExit()) {
-                startBackup(false, app.quit);
-            } else if (process.platform !== "darwin") {
-                // On OS X it is common for applications and their menu bar
-                // to stay active until the user quits explicitly with Cmd + Q
-                app.quit();
             }
         });
     });

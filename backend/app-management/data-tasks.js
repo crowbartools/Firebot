@@ -56,7 +56,7 @@ async function ensureRequiredFoldersExist() {
     }
 
     for (const profileId of activeProfiles) {
-        if (profileId != null) continue;
+        if (profileId == null) continue;
 
         const requiredProfileDirPaths = [
             `/profiles/${profileId}`,
@@ -66,14 +66,14 @@ async function ensureRequiredFoldersExist() {
             `/profiles/${profileId}/currency`,
             `/profiles/${profileId}/counters`,
             `/profiles/${profileId}/fonts`,
-            `/profiles/${profileId}/events`
-            `/profiles/${profileId}/roles`
-            `/profiles/${profileId}/db`
+            `/profiles/${profileId}/events`,
+            `/profiles/${profileId}/roles`,
+            `/profiles/${profileId}/db`,
             `/profiles/${profileId}/effects`
         ];
 
-        for (const path of requiredProfileDirPaths) {
-            ensureDirExists(path);
+        for (const profilePath of requiredProfileDirPaths) {
+            ensureDirExists(profilePath);
         }
     }
 

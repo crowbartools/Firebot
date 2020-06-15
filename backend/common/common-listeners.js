@@ -44,8 +44,12 @@ exports.setupCommonListeners = () => {
 
     // restarts the app
     ipcMain.on("restartApp", () => {
-        app.relaunch({ args: process.argv.slice(1).concat(["--relaunch"]) });
-        app.exit(0);
+        const chatModerationManager = require("../chat/moderation/chat-moderation-manager");
+        chatModerationManager.stopService();
+        setTimeout(() => {
+            app.relaunch({ args: process.argv.slice(1).concat(["--relaunch"]) });
+            app.exit(0);
+        }, 100);
     });
 
     // Opens the firebot root folder
