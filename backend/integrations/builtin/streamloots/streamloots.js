@@ -10,6 +10,7 @@ const integrationDefinition = {
     id: "streamloots",
     name: "StreamLoots",
     description: "Chest purchase/Card redemption events",
+    connectionToggle: true,
     linkType: "id",
     idDetails: {
         steps:

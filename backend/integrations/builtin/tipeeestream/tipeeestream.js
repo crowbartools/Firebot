@@ -10,6 +10,7 @@ const integrationDefinition = {
     id: "tipeeestream",
     name: "TipeeeStream",
     description: "Donation events",
+    connectionToggle: true,
     linkType: "auth",
     authProviderDetails: {
         id: "tipeeestream",
