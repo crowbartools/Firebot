@@ -17,8 +17,6 @@ class IntegrationManager extends EventEmitter {
     }
 
     registerIntegration(integration) {
-        // TODO: validate integration
-
         integration.definition.linked = false;
 
         if (integration.definition.linkType === "auth") {
@@ -38,7 +36,9 @@ class IntegrationManager extends EventEmitter {
                 integration.definition.linked = false;
             }
         } catch (err) {
-            logger.warn(err);
+            if (err.name !== "DataError") {
+                logger.warn(err);
+            }
         }
 
         integration.integration.init(
