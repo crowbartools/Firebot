@@ -2,13 +2,13 @@
 const { app } = require("electron");
 
 const logger = require("./backend/logwrapper");
+const { handleSquirrelEvents } = require("./backend/app-management/squirrel-events");
 const {
     whenReady,
     windowsAllClosed,
     willQuit,
     secondInstance
 } = require("./backend/app-management/electron/electron-events");
-const { handleSquirrelEvents } = require("./backend/app-management/squirrel-events");
 
 logger.info("Starting Firebot...");
 
