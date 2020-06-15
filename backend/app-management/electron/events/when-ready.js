@@ -5,7 +5,8 @@ exports.whenReady = async () => {
 
     const windowManagement = require("../window-management");
 
-    windowManagement.createSplashScreen();
+    logger.debug("Showing splash screen...");
+    await windowManagement.createSplashScreen();
 
     // Ensure required folders are created
     const { ensureRequiredFoldersExist } = require("../../data-tasks");

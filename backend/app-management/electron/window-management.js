@@ -144,7 +144,6 @@ function createMainWindow() {
 
 /**
  * Creates the splash screen
- * @returns {Electron.BrowserWindow}
  */
 function createSplashScreen() {
     const splash = new BrowserWindow({
@@ -157,18 +156,16 @@ function createSplashScreen() {
         fullscreenable: false,
         movable: false,
         resizable: false,
-        hasShadow: true,
-        alwaysOnTop: false
+        center: true
     });
+    splashscreenWindow = splash;
 
-    splash.loadURL(
+    return splash.loadURL(
         url.format({
             pathname: path.join(__dirname, "../../../gui/splashscreen/splash.html"),
             protocol: "file:",
             slashes: true
         }));
-
-    splashscreenWindow = splash;
 }
 
 exports.createMainWindow = createMainWindow;
