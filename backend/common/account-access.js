@@ -4,7 +4,6 @@ const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
 const authManager = require("../auth/auth-manager");
-const channelAccess = require('../common/channel-access');
 const EventEmitter = require("events");
 
 /**@type {NodeJS.EventEmitter} */
@@ -69,6 +68,8 @@ function sendAccoutUpdate() {
  */
 async function updateStreamerAccountSettings(streamerAccount) {
     if (streamerAccount == null || streamerAccount.channelId == null) return null;
+
+    const channelAccess = require('../common/channel-access');
 
     const channelData = await channelAccess.getMixerAccountDetailsById(streamerAccount.channelId);
     streamerAccount.partnered = channelData.partnered;
