@@ -156,9 +156,14 @@ function createSplashScreen() {
         fullscreenable: false,
         movable: false,
         resizable: false,
-        center: true
+        center: true,
+        show: false
     });
     splashscreenWindow = splash;
+
+    splash.on("ready-to-show", () => {
+        splash.show();
+    });
 
     return splash.loadURL(
         url.format({
