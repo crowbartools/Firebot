@@ -134,18 +134,23 @@ function createMainWindow() {
  * Creates the splash screen
  */
 function createSplashScreen() {
+    const isLinux = process.platform !== 'win32' && process.platform !== 'darwin';
     const splash = new BrowserWindow({
         width: 240,
         height: 325,
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
-        transparent: true,
+        transparent: !isLinux,
+        backgroundColor: isLinux ? "#34363C" : undefined,
         frame: false,
         closable: false,
         fullscreenable: false,
         movable: false,
         resizable: false,
         center: true,
-        show: false
+        show: false,
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
     splashscreenWindow = splash;
 
