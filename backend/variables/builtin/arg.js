@@ -16,8 +16,22 @@ triggers[EffectTrigger.MANUAL] = true;
 const model = {
     definition: {
         handle: "arg",
-        usage: "arg[num, num2]",
-        description: "Grabs the argument at the given index. If you provide two indexes, all arguments ",
+        usage: "arg[#]",
+        description: "Grabs the command argument(aka a singular word after the command !trigger) at the given index.",
+        examples: [
+            {
+                usage: "arg[1,2]",
+                description: "Grab a range of args."
+            },
+            {
+                usage: "arg[2,last]",
+                description: "Grab a range of args up to the last arg."
+            },
+            {
+                usage: "arg[all]",
+                description: "Grab all args. This is a good way to grab all text after the !command trigger."
+            }
+        ],
         triggers: triggers,
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },

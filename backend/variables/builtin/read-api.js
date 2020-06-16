@@ -20,12 +20,17 @@ function callUrl(url) {
 const model = {
     definition: {
         handle: "readApi",
-        usage: "readApi[url, responseJsonPath]",
-        description: 'Calls the given url and inserts the response. If the response is JSON, you can traverse the object. IE $readApi["some/url", "object.path.here"]',
+        usage: "readApi[url]",
+        description: 'Calls the given url and inserts the response.',
+        examples: [
+            {
+                usage: 'readApi[url, object.path.here]',
+                description: "Traverse a JSON response object."
+            }
+        ],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
     evaluator: async (_, url, responseJsonPath) => {
-
         try {
 
             let content = await callUrl(url);
