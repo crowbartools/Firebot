@@ -27,7 +27,8 @@ const listeners = [
     require("./listeners/resub-listener"),
     require("./listeners/resub-shared-listener"),
     require("./listeners/skills-listener"),
-    require("./listeners/sub-listener")
+    require("./listeners/sub-listener"),
+    require("./listeners/gifted-sub-listener")
 ];
 Object.freeze(listeners);
 
