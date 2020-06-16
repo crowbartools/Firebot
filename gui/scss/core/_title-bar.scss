@@ -12,10 +12,14 @@
     font-weight: 100;
 }
 
-.window-title {
-    display: none;
+.titlebar.windows {
+    .window-title {
+        display: none;
+    }
+    
+    .menubar {
+        margin-right: auto;
+    }
 }
 
-.menubar {
-    margin-right: auto;
-}
+
