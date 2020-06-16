@@ -35,7 +35,11 @@
             padding: 40px 25px;
             background: #34363c;
             border-radius: 30px;
-            box-shadow: 0px 3px 20px -7px rgba(0,0,0,0.86);
+            box-shadow: 0px 5px 10px -7px rgba(0,0,0,0.86);
+        }
+
+        .splash-box.linux {
+            box-shadow: none;
         }
 
         .logo-wrapper {
@@ -88,7 +92,7 @@
         }
     </style>
     <div class="splash-wrapper">
-        <div class="splash-box">
+        <div id="box" class="splash-box">
             <div class="logo-wrapper">
                 <img style="width: 165px;" src="../images/logo_transparent_2.png" draggable="false">
             </div>  
@@ -99,5 +103,12 @@
             </div>
         </div>
     </div>
+    <script>
+        const isLinux = process.platform !== 'win32' && process.platform !== 'darwin';
+        if(isLinux) {
+            const box = document.getElementById("box");
+            box.classList.add("linux");
+        }
+    </script>
 </body>
 </html>
