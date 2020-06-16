@@ -39,6 +39,7 @@ exports.loadReplaceVariables = () => {
         'ensure-number',
         'file-line-count',
         'game',
+        'gift-giver-user',
         'gift-receiver-user',
         'host-viewer-count',
         'math',

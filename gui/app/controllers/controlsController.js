@@ -576,6 +576,15 @@
                 ];
 
                 if (control.kind === "button" || control.kind === "textbox" || control.kind === "joystick") {
+
+                    menuOptions.push({
+                        html: `<a href ><i class="fas fa-vial" style="margin-right: 10px;"></i> Test Effects</a>`,
+                        click: function ($itemScope) {
+                            let currentControl = $itemScope.control.control;
+                            ipcRenderer.send('runEffectsManually', currentControl.effects || { list: [] });
+                        }
+                    });
+
                     menuOptions.push({
                         html: `<a href ><i class="far ${control.active ? 'fa-toggle-off' : 'fa-toggle-on'}" style="margin-right: 10px;"></i> ${control.active ? 'Disable' : 'Enable'}</a>`,
                         click: function ($itemScope) {

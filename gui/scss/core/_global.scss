@@ -1832,3 +1832,8 @@ thead th{
   filter: blur(0.7px);
 }
 
+.modal-open .modal {
+  overscroll-behavior: contain;
+  will-change: transform;
+}
+

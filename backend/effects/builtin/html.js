@@ -143,22 +143,22 @@ const html = {
             name: "html",
             onOverlayEvent: event => {
 
-                let element, _element;
+                let element = $(event.html);
 
-                element = _element = $(event.html);
+                element.hide();
 
-                _element.hide();
+                $('#wrapper').append(element);
 
-                $('#wrapper').append(_element);
-
-                _element.show();
+                element.show();
 
                 element.animateCss(event.enterAnimation, event.enterDuration, null, null, (data) => {
 
-                    data.htmlElement.animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
+                    if (data.inbetweenAnimation != null && data.inbetweenAnimation !== "" && data.inbetweenAnimation !== "none") {
+                        data.htmlElement.animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
+                    }
 
                     setTimeout(function() {
-                        if (data.inbetweenAnimation) {
+                        if (data.inbetweenAnimation != null && data.inbetweenAnimation !== "" && data.inbetweenAnimation !== "none") {
                             data.htmlElement.css("animation-duration", "");
                             data.htmlElement.css("animation-delay", "");
                             data.htmlElement.css("animation-iteration-count", "");
@@ -167,18 +167,18 @@ const html = {
 
                         // If CSS class is provided, remove element(s) with provided CSS class.
                         if (data.removal && data.removal.length > 0) {
-                            const removalElement = data.htmlElement.parent().find("." + data.removal);
+                            let elementToRemove = $("#wrapper").find("." + data.removal);
 
                             //If no elements found, remove original element.
-                            if (removalElement.length > 0) {
-                                data.htmlElement.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
-                                    data.htmlElement.remove();
-                                });
-                            } else {
-                                removalElement.remove();
+                            if (elementToRemove.length < 1) {
+                                elementToRemove = data.htmlElement;
                             }
+
+                            elementToRemove.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() {
+                                elementToRemove.remove();
+                            });
                         } else {
-                            data.htmlElement.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
+                            data.htmlElement.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() {
                                 data.htmlElement.remove();
                             });
                         }

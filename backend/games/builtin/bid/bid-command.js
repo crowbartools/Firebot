@@ -204,13 +204,13 @@ const bidCommand = {
             let previousHighBidder = activeBiddingInfo.topBidder;
             let previousHighBidAmount = activeBiddingInfo.currentBid;
             if (previousHighBidder != null && previousHighBidder !== "") {
-                await currencyDatabase.adjustCurrencyForUser(previousHighBidder, currencyId, -Math.abs(previousHighBidAmount));
+                await currencyDatabase.adjustCurrencyForUser(previousHighBidder, currencyId, previousHighBidAmount);
                 chat.sendChatMessage(`You have been out bid! You've been refunded ${previousHighBidAmount} ${currencyName}.`, previousHighBidder, chatter);
             }
 
             await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(bidAmount));
             let newTopBidWithRaise = bidAmount + raiseMinimum;
-            chat.sendChatMessage(`${username} is the new high bidder at ${bidAmount} ${currencyName}. To bid type !bid ${newTopBidWithRaise}.`);
+            chat.sendChatMessage(`${username} is the new high bidder at ${bidAmount} ${currencyName}. To bid, type !bid ${newTopBidWithRaise} (or higher).`);
 
             // eslint-disable-next-line no-use-before-define
             setNewHighBidder(username, bidAmount);

@@ -4,7 +4,6 @@ const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
 const authManager = require("../auth/auth-manager");
-const channelAccess = require('../common/channel-access');
 const EventEmitter = require("events");
 
 /**@type {NodeJS.EventEmitter} */
@@ -69,6 +68,8 @@ function sendAccoutUpdate() {
  */
 async function updateStreamerAccountSettings(streamerAccount) {
     if (streamerAccount == null || streamerAccount.channelId == null) return null;
+
+    const channelAccess = require('../common/channel-access');
 
     const channelData = await channelAccess.getMixerAccountDetailsById(streamerAccount.channelId);
     streamerAccount.partnered = channelData.partnered;
@@ -138,6 +139,9 @@ async function loadAccountData(emitUpdate = true) {
     }
 }
 
+let streamerTokenIssue = false;
+let botTokenIssue = false;
+
 /**
  * Update and save data for an account
  * @param {string} accountType - The type of account ("streamer" or "bot")
@@ -145,6 +149,13 @@ async function loadAccountData(emitUpdate = true) {
  */
 function updateAccount(accountType, account) {
     if ((accountType !== "streamer" && accountType !== "bot") || account == null) return;
+
+    // reset token issue flags
+    if (accountType === 'streamer') {
+        streamerTokenIssue = false;
+    } else {
+        botTokenIssue = false;
+    }
 
     // dont let streamer and bot be the same
     let otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
@@ -181,6 +192,11 @@ async function ensureTokenRefreshed(accountType, emitUpdate = false) {
     let updatedToken = await authManager.refreshTokenIfExpired(accountProviderId, account.auth);
 
     if (updatedToken == null) {
+        if (accountType === "streamer") {
+            streamerTokenIssue = true;
+        } else {
+            botTokenIssue = true;
+        }
         return false;
     }
 
@@ -239,3 +255,5 @@ exports.updateAccount = updateAccount;
 exports.ensureTokenRefreshed = ensureTokenRefreshed;
 exports.updateStreamerAccountSettings = updateStreamerAccountSettings;
 exports.getAccounts = () => cache;
+exports.streamerTokenIssue = () => streamerTokenIssue;
+exports.botTokenIssue = () => botTokenIssue;

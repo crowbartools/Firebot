@@ -46,7 +46,11 @@ function getDataFromFile(path, forceCacheUpdate = false) {
             let data = getSettingsFile().getData(path);
             settingsCache[path] = data;
         }
-    } catch (err) {} //eslint-disable-line no-empty
+    } catch (err) {
+        if (err.name !== "DataError") {
+            logger.warn(err);
+        }
+    }
     return settingsCache[path];
 }
 

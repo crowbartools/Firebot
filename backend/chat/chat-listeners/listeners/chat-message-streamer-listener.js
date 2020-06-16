@@ -1,11 +1,9 @@
 "use strict";
 
 const logger = require("../../../logwrapper");
-const userdb = require("../../../database/userDatabase");
 const accountAccess = require("../../../common/account-access");
 const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
 const commandHandler = require("../../../chat/commands/commandHandler");
-const activeChatter = require('../../../roles/role-managers/active-chatters');
 
 module.exports = {
     accountType: "streamer",
@@ -47,6 +45,7 @@ module.exports = {
                 originatedInStreamerChannel: chatFromStreamerChannel
             });
 
+            const activeChatter = require('../../../roles/role-managers/active-chatters');
             // Updates or adds user to our active chatter list.
             activeChatter.addOrUpdateActiveChatter(data);
 
@@ -91,6 +90,7 @@ module.exports = {
             }
         }
 
+        const userdb = require("../../../database/userDatabase");
         // make sure user is in DB
         await userdb.setChatUserOnline({
             id: data.user_id,

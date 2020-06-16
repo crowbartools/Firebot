@@ -11,42 +11,59 @@ const logger = require("../../logwrapper");
 const model = {
     definition: {
         handle: "readFile",
-        usage: "readFile[\"path/to/file.txt\"]",
-        description: "Read contents of a text file. Optionally include 'true' as a second argument to select a random line, or a number to read a specific line.",
+        usage: 'readFile[path\\to\\file.txt]',
+        description: "Read contents of a text file.",
+        examples: [
+            {
+                usage: "readFile[path\\to\\file.txt, 1]",
+                description: "Read a specific line number from the file."
+            },
+            {
+                usage: "readFile[path\\to\\file.txt, last]",
+                description: "Read the last line from the file."
+            },
+            {
+                usage: "readFile[path\\to\\file.txt, random]",
+                description: "Read a random line from the file."
+            }
+        ],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, filePath, randomLine) => {
+    evaluator: (_, filePath, lineOrRandom) => {
 
         if (filePath === null || !filePath.endsWith(".txt")) return "[File Path Error]";
         try {
-            let contents = fs.readFileSync(filePath, "utf8");
-            let filteredLines = [];
+            const contents = fs.readFileSync(filePath, "utf8");
+            let lines = [];
 
-            let shouldReadRandomLine = randomLine === true || randomLine === "true";
-            if (shouldReadRandomLine || !isNaN(randomLine)) {
-                let lines = contents.replace(/\r\n/g, "\n").split("\n");
-                filteredLines = lines.filter(l => l != null && l.trim() !== "");
+            let readLine = false;
+            let lineToRead = -1;
+            if (lineOrRandom != null) {
+                lines = contents.replace(/\r\n/g, "\n")
+                    .split("\n")
+                    .filter(l => l != null && l.trim() !== "");
+
+                if (!isNaN(lineOrRandom)) {
+                    lineToRead = parseInt(lineOrRandom - 1);
+                    if (lineToRead < 0) {
+                        lineToRead = 0;
+                    }
+                    readLine = true;
+                } else if (lineOrRandom === true || lineOrRandom.toLowerCase() === "true" || lineOrRandom.toLowerCase() === "random") {
+                    lineToRead = util.getRandomInt(0, lines.length - 1);
+                    readLine = true;
+                } else if (lineOrRandom.toLowerCase() === "last") {
+                    lineToRead = lines.length - 1;
+                    readLine = true;
+                }
             }
 
-            // Get line at random.
-            if (shouldReadRandomLine) {
-                let randIndex = util.getRandomInt(0, filteredLines.length - 1);
-                let selectedLine = filteredLines[randIndex];
-                if (selectedLine != null) {
-                    return selectedLine;
+            if (readLine) {
+                if (lineToRead < lines.length) {
+                    return lines[lineToRead] || "";
                 }
                 return "";
             }
-
-            if (!isNaN(randomLine)) {
-                randomLine = randomLine - 1;
-                let selectedLine = filteredLines[randomLine];
-                if (selectedLine != null) {
-                    return filteredLines[randomLine];
-                }
-                return "";
-            }
-
             return contents;
         } catch (err) {
             logger.error("error reading file", err);

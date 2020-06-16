@@ -132,7 +132,7 @@
                     }
                     integrations = integrationService
                         .getIntegrations()
-                        .filter(i => i.linked);
+                        .filter(i => i.linked && i.connectionToggle);
 
 
                     integrations.forEach(i => {

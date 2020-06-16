@@ -39,11 +39,11 @@
             };
 
             service.getLinkedIntegrations = function() {
-                return service.getIntegrations().filter(i => i.linked);
+                return service.getIntegrations().filter(i => i.linked && i.connectionToggle);
             };
 
             service.oneIntegrationIsLinked = function() {
-                return integrations.some(i => i.linked);
+                return integrations.some(i => i.linked && i.connectionToggle);
             };
 
             service.connectIntegration = function(id) {

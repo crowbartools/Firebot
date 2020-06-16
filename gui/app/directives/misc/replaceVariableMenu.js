@@ -98,10 +98,18 @@
                                 </div>
                             </div>
                             <div style="padding: 10px;overflow-y: scroll; height: 250px;">
-                                <dl>
-                                    <dt ng-repeat-start="variable in variables | orderBy:'handle' | variableSearch:variableSearchText" style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></dt>
-                                    <dd ng-repeat-end style="margin-bottom: 8px;" class="muted">{{variable.description || ""}}</dd>
-                                </dl>
+                                <div ng-repeat="variable in variables | orderBy:'handle' | variableSearch:variableSearchText" style="margin-bottom: 8px;">
+                                    <div style="font-weight: 900;">\${{variable.usage ? variable.usage : variable.handle}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(variable)"></i></div>
+                                    <div class="muted">{{variable.description || ""}}</div>
+                                    <div ng-show="variable.examples && variable.examples.length > 0" style="font-size: 13px;padding-left: 5px; margin-top:3px;">
+                                        <collapsable-section show-text="Other examples" hide-text="Other examples" text-color="#0b8dc6">
+                                            <div ng-repeat="example in variable.examples" style="margin-bottom: 6px;">
+                                                <div style="font-weight: 900;">\${{example.usage}} <i class="fal fa-plus-circle clickable" uib-tooltip="Add to textfield" style="color: #0b8dc6" ng-click="addVariable(example)"></i></div>
+                                                <div class="muted">{{example.description || ""}}</div>
+                                            </div>
+                                        </collapsable-section>
+                                    </div>
+                                </div>
                             </div>                    
                         </div>`
                     );

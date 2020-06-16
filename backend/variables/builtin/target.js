@@ -17,8 +17,14 @@ triggers[EffectTrigger.MANUAL] = true;
 const commmandTarget = {
     definition: {
         handle: "target",
-        description: "Acts like the $arg variable but strips out any leading '@' symbols. Useful when the argument is expected to be a username.",
-        usage: "target[#]",
+        description: "Similiar to the $arg variable but strips out any leading '@' symbols. Useful when the argument is expected to be a username.",
+        usage: "target",
+        examples: [
+            {
+                usage: "target[#]",
+                description: "Grab the target at the given index (IE with '!command @ebiggz @TheLastMage', $target[2] would be 'TheLastMage')"
+            }
+        ],
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },

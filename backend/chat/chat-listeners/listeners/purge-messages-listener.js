@@ -1,7 +1,5 @@
 "use strict";
 
-const userAccess = require("../../../common/user-access");
-
 module.exports = {
     accountType: "streamer",
     event: "PurgeMessage",
@@ -13,6 +11,8 @@ module.exports = {
 
         const userId = data.user_id;
         if (userId == null) return;
+
+        const userAccess = require("../../../common/user-access");
 
         const user = await userAccess.getUser(userId);
 

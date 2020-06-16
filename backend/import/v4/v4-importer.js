@@ -146,13 +146,17 @@ async function importV4Data(settings) {
     frontendCommunicator.send("v4-import-complete", { success: true, incompatibilityWarnings: incompatibilityWarnings });
 }
 
-frontendCommunicator.on("start-v4-import", (importSettings) => {
-    importV4Data(importSettings);
-});
+function setupListeners() {
+    frontendCommunicator.on("start-v4-import", (importSettings) => {
+        importV4Data(importSettings);
+    });
 
-frontendCommunicator.onAsync("v4-data-check", async () => {
-    return await checkForV4Data();
-});
+    frontendCommunicator.onAsync("v4-data-check", async () => {
+        return await checkForV4Data();
+    });
+}
+
 
 exports.checkForV4Data = checkForV4Data;
 exports.importV4Data = importV4Data;
+exports.setupListeners = setupListeners;

@@ -11,14 +11,28 @@ module.exports = {
     rightSideValueType: "text",
     predicate: async (conditionSettings, trigger) => {
         let { rightSideValue } = conditionSettings;
-        let triggerUserId = trigger.metadata.userId ? trigger.metadata.userId : "";
-        let normalizeFollowList = rightSideValue ? rightSideValue.toLowerCase() : "";
 
-        if (normalizeFollowList === "" || triggerUserId === "") {
+        let triggerUserId = trigger.metadata.userId;
+        let triggerUsername = trigger.metadata.username;
+
+        let followListString = rightSideValue;
+
+        if (followListString == null) {
             return false;
         }
 
-        let followCheckList = normalizeFollowList.replace(new RegExp(' ', 'g'), "").split(',');
+        if (triggerUserId == null) {
+            const mixerAPi = require("../../../../../mixer-api/api");
+            const channelData = await mixerAPi.channels.getChannel(triggerUsername);
+            if (channelData) {
+                triggerUserId = channelData.userId;
+            }
+        }
+
+        let followCheckList = followListString.split(',')
+            .filter(f => f != null)
+            .map(f => f.toLowerCase().trim());
+
         let followCheck = await userAccess.userFollowsChannels(triggerUserId, followCheckList);
         return followCheck;
     }

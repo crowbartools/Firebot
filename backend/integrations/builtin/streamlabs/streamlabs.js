@@ -12,9 +12,11 @@ const integrationDefinition = {
     name: "Streamlabs",
     description: "Donation and Extra Life Donation events",
     linkType: "auth",
+    connectionToggle: false,
     authProviderDetails: {
         id: "streamlabs",
         name: "StreamLabs",
+        redirectUriHost: "localhost",
         client: {
             id: 'XtzRXbIUU9OZcU3siwNBXOSVFD8DGjYhkLmeUqYQ',
             secret: "pJMm1ktVgtXkNEdhU5HIowQNCLxZyMLin0yu0q6b"
@@ -81,7 +83,10 @@ class StreamlabsIntegration extends EventEmitter {
         this.connected = true;
     }
     disconnect() {
-        this._socket.close();
+        if (this._socket) {
+            this._socket.close();
+        }
+
         this.connected = false;
 
         this.emit("disconnected", integrationDefinition.id);
@@ -99,7 +104,9 @@ class StreamlabsIntegration extends EventEmitter {
         this.emit("settings-update", integrationDefinition.id, settings);
     }
     unlink() {
-        this._socket.close();
+        if (this._socket) {
+            this._socket.close();
+        }
     }
 }
 

@@ -15,9 +15,8 @@
                 <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;margin-top: 15px;">
                     <p ng-if="$ctrl.descriptionText">{{$ctrl.descriptionText}}</p>
                     <div style="width: 95%; position: relative;">
-                        <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
-                            <input
-                                ng-hide="$ctrl.useTextArea" 
+                        <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}" ng-hide="$ctrl.useTextArea" >
+                            <input  
                                 type="{{$ctrl.inputType}}" 
                                 class="form-control" 
                                 id="inputField" 
@@ -26,9 +25,12 @@
                                 aria-describedby="helpBlock" 
                                 placeholder="{{$ctrl.inputPlaceholder}}" 
                                 replace-variables 
-                                menu-position="below" 
+                                menu-position="under"
                                 button-position="below" 
                                 disable-variable-menu="$ctrl.hideVariableMenu">
+                            <span id="helpBlock" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</span>
+                        </div>
+                        <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}" ng-show="$ctrl.useTextArea">
                             <textarea
                                 ng-show="$ctrl.useTextArea"
                                 class="form-control" 
