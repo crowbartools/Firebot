@@ -24,3 +24,24 @@ exports.connectHueBridge = async (integrationData) => {
         return false;
     }
 };
+
+exports.deleteHueUser = async (integrationData) => {
+    const promises = [];
+
+    if (authenticatedApi == null) {
+        await this.connectHueBridge(integrationData);
+    }
+
+    await authenticatedApi.users.getAll()
+        .then(async allUsers => {
+            allUsers.forEach(user => {
+                if (user.name === "Firebot#Firebot-Hue" && user.username != null) {
+                    console.log(`Deleting ${user.name} (${user.username})`);
+                    promises.push(authenticatedApi.users.deleteUser(user.username));
+                }
+            });
+        });
+
+    const deletionResults = await Promise.all(promises);
+    console.log(JSON.stringify(deletionResults));
+};

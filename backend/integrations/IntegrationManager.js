@@ -167,7 +167,7 @@ class IntegrationManager extends EventEmitter {
         this.disconnectIntegration(int);
 
         try {
-            int.integration.unlink();
+            int.integration.unlink(int.definition);
             let integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.delete(`/${integrationId}`);
             int.definition.settings = null;

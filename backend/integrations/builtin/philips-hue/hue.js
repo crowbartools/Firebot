@@ -61,8 +61,10 @@ class HueIntegration extends EventEmitter {
         );
         throw new Error("Please press the link button on your hue bridge, then click the link button in Firebot.");
     }
-    unlink() {
+    async unlink(integrationData) {
         // TODO: Disconnect from authed instance.
+        await hueHandler.deleteHueUser(integrationData);
+
     }
     async discoverBridge() {
         const discoveryResults = await discovery.nupnpSearch();
