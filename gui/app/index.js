@@ -38,6 +38,12 @@ function boot() {
     angular.bootstrap(document, ["firebotApp"], {
         strictDi: false
     });
+
+    const customTitlebar = require('custom-electron-titlebar');
+
+    new customTitlebar.Titlebar({
+        backgroundColor: customTitlebar.Color.fromHex('#1E2023')
+    });
 }
 
 document.addEventListener("DOMContentLoaded", boot);

@@ -37,6 +37,9 @@ function createMainWindow() {
         minHeight: 50,
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
         show: false,
+        titleBarStyle: "hiddenInset",
+        backgroundColor: "#1E2023",
+        frame: false,
         webPreferences: {
             nodeIntegration: true
         }
@@ -62,27 +65,6 @@ function createMainWindow() {
                 }
             ]
         },
-
-        {
-            label: 'View',
-            submenu: [
-                {
-                    role: 'resetzoom'
-                },
-                {
-                    role: 'zoomin'
-                },
-                {
-                    role: 'zoomout'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    role: 'toggledevtools'
-                }
-            ]
-        },
         {
             label: 'Window',
             submenu: [
@@ -91,6 +73,12 @@ function createMainWindow() {
                 },
                 {
                     role: 'close'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'toggledevtools'
                 }
             ]
         },
