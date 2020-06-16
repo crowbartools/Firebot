@@ -18,8 +18,8 @@ const model = {
                 description: "Gets the game set for associated user (Ie who triggered command, pressed button, etc)."
             },
             {
-                usage: "game[ebiggz]",
-                description: "Gets the game set for a specific channel (Update desired channel name)"
+                usage: "game[ChannelOne]",
+                description: "Gets the game set for a specific channel."
             }
         ],
         possibleDataOutput: [OutputDataType.TEXT]
