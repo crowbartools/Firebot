@@ -135,8 +135,8 @@ function createMainWindow() {
  */
 function createSplashScreen() {
     const splash = new BrowserWindow({
-        width: 300,
-        height: 350,
+        width: 240,
+        height: 325,
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
         transparent: true,
         frame: false,
