@@ -197,28 +197,38 @@ manager.on("service-connection-update", (data) => {
 frontendCommunicator.on("connect-sidebar-controlled-services", async () => {
     const serviceIds = settings.getSidebarControlledServices();
 
-    const waitForServiceConnectDisconnect = (serviceId) => {
-        const promise = new Promise(resolve => {
-            currentlyWaitingService = {
-                serviceId: serviceId,
-                callback: () => resolve()
-            };
-        });
-        const willUpdate = updateServiceConnection(serviceId, true);
-        if (!willUpdate && currentlyWaitingService) {
-            currentlyWaitingService.callback();
-            currentlyWaitingService = null;
-        }
-        return promise;
-    };
+    const accountAccess = require("./account-access");
+    if (!accountAccess.getAccounts().streamer.loggedIn) {
+        renderWindow.webContents.send("error", "You must sign into your Streamer Mixer account before connecting.");
+    } else if (accountAccess.streamerTokenIssue()) {
+        const botTokenIssue = accountAccess.getAccounts().bot.loggedIn && accountAccess.botTokenIssue();
 
-    try {
-        for (const id of serviceIds) {
-            await util.wait(175);
-            await waitForServiceConnectDisconnect(id);
+        const message = `There is an issue with the Streamer ${botTokenIssue ? ' and Bot' : ""} Mixer account${botTokenIssue ? 's' : ""}. Please re-sign into the account${botTokenIssue ? 's' : ""} and try again.`;
+        renderWindow.webContents.send("error", message);
+    } else {
+        const waitForServiceConnectDisconnect = (serviceId) => {
+            const promise = new Promise(resolve => {
+                currentlyWaitingService = {
+                    serviceId: serviceId,
+                    callback: () => resolve()
+                };
+            });
+            const willUpdate = updateServiceConnection(serviceId, true);
+            if (!willUpdate && currentlyWaitingService) {
+                currentlyWaitingService.callback();
+                currentlyWaitingService = null;
+            }
+            return promise;
+        };
+
+        try {
+            for (const id of serviceIds) {
+                await util.wait(175);
+                await waitForServiceConnectDisconnect(id);
+            }
+        } catch (error) {
+            logger.error("error connecting services", error);
         }
-    } catch (error) {
-        logger.error("error connecting services", error);
     }
 
     frontendCommunicator.send("connect-sidebar-controlled-services-complete");
