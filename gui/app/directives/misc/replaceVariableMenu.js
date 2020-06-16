@@ -13,7 +13,7 @@
                     menuPosition: "@",
                     buttonPosition: "@"
                 },
-                controller: function($scope, $element, listenerService, $timeout) {
+                controller: function($scope, $element, $q, backendCommunicator, $timeout) {
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
@@ -24,11 +24,13 @@
                     function getVariables() {
                         const { trigger, triggerMeta } = $scope.$parent;
 
-                        $scope.variables = listenerService.fireEventSync("getReplaceVariableDefinitions", {
-                            type: trigger,
-                            id: triggerMeta && triggerMeta.triggerId,
-                            dataOutput: $scope.replaceVariables
-                        });
+                        if (!$scope.disableVariableMenu) {
+                            $scope.variables = backendCommunicator.fireEventSync("getReplaceVariableDefinitions", {
+                                type: trigger,
+                                id: triggerMeta && triggerMeta.triggerId,
+                                dataOutput: $scope.replaceVariables
+                            });
+                        }
                     }
                     getVariables();
 

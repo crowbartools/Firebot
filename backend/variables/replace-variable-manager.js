@@ -151,7 +151,7 @@ class ReplaceVariableManager extends EventEmitter {
 
 const manager = new ReplaceVariableManager();
 
-frontendCommunicator.on("getReplaceVariableDefinitions", (trigger) => {
+frontendCommunicator.on("getReplaceVariableDefinitions", trigger => {
     logger.debug("got 'get all vars' request");
     if (trigger != null) {
 
