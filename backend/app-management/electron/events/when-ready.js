@@ -102,6 +102,8 @@ exports.whenReady = async () => {
     logger.info("Creating or connecting user database");
     const userdb = require("../../../database/userDatabase");
     userdb.connectUserDatabase();
+    // Set users in user db to offline if for some reason they are still set to online. (app crash or something)
+    userdb.setAllUsersOffline();
 
     logger.info("Creating or connecting stats database");
     const statsdb = require("../../../database/statsDatabase");
@@ -114,6 +116,21 @@ exports.whenReady = async () => {
     //load patronage data
     const patronageManager = require("../../../patronageManager");
     patronageManager.loadPatronageData();
+
+    // These are defined globally for Custom Scripts.
+    // We will probably wnat to handle these differently but we shouldn't
+    // change anything until we are ready as changing this will break most scripts
+    const Effect = require("../../../common/EffectType");
+    global.EffectType = Effect.EffectTypeV5Map;
+    const profileManager = require("../../../common/profile-manager");
+    global.SCRIPTS_DIR = profileManager.getPathInProfile("/scripts/");
+
+    const backupManager = require("../../../backupManager");
+    backupManager.onceADayBackUpCheck();
+
+    //start the REST api server
+    const webServer = require("../../../../server/httpServer");
+    webServer.start();
 
     windowManagement.createMainWindow();
 
