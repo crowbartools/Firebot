@@ -7,9 +7,11 @@ exports.loadIntegrations = () => {
     const streamlabs = require("./builtin/streamlabs/streamlabs");
     const tipeeestream = require("./builtin/tipeeestream/tipeeestream");
     const streamloots = require("./builtin/streamloots/streamloots");
+    const hue = require("./builtin/philips-hue/hue");
 
     // register them
     integrationManager.registerIntegration(streamlabs);
     integrationManager.registerIntegration(tipeeestream);
     integrationManager.registerIntegration(streamloots);
+    integrationManager.registerIntegration(hue);
 };
