@@ -1,6 +1,7 @@
 "use strict";
 const EventEmitter = require("events");
 const logger = require("../../../logwrapper");
+const hueHandler = require("./hue-handler");
 const v3 = require('node-hue-api').v3,
     discovery = v3.discovery,
     hueApi = v3.api;
@@ -23,22 +24,23 @@ class HueIntegration extends EventEmitter {
     init() {
         // Register hue specific events and variables here.
     }
-    connect(integrationData) {
-        // TODO: Auth with username and key we've saved. Maybe separate this out into it's own file.
+    async connect(integrationData) {
+        let connection = await hueHandler.connectHueBridge(integrationData);
 
-        // Create a new API instance that is authenticated with the new user we created
-        //const authenticatedApi = await hueApi.createLocal(ipAddress).connect(createdUser.username);
+        if (connection) {
+            this.emit("connected", integrationDefinition.id);
+            this.connected = true;
+            return true;
+        }
 
-        // Do something with the authenticated user/api
-        //const bridgeConfig = await authenticatedApi.configuration.get();
-        //console.log(`Connected to Hue Bridge: ${bridgeConfig.name} :: ${bridgeConfig.ipaddress}`);
-
-        this.emit("connected", integrationDefinition.id);
-        this.connected = true;
+        renderWindow.webContents.send(
+            "error",
+            "Could not connect to hue. The bridge might have changed ip addresses or lost user info. Try re-linking to hue."
+        );
+        return false;
     }
     disconnect() {
         // TODO: Disconnect from authed instance.
-
         this.emit("disconnected", integrationDefinition.id);
     }
     async link() {
@@ -80,6 +82,7 @@ class HueIntegration extends EventEmitter {
         let createdUser;
         try {
             createdUser = await unauthenticatedApi.users.createUser(appName, deviceName);
+            createdUser.ipAddress = ipAddress;
             return createdUser;
         } catch (err) {
             if (err.getHueErrorType() === 101) {
