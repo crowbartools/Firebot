@@ -140,7 +140,7 @@ const playSound = {
                 logger.warn("Unable to read sound folder", err);
             }
 
-            let filteredFiles = files.filter(i => (/\.(mpg|ogg|wav)$/i).test(i));
+            let filteredFiles = files.filter(i => (/\.(mp3|ogg|wav)$/i).test(i));
             let chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
 
             if (filteredFiles.length === 0) {
