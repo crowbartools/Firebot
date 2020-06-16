@@ -2,7 +2,6 @@
 "use strict";
 const electron = require("electron");
 const { ipcRenderer } = electron;
-const { remote } = electron;
 
 const logger = require("../../backend/logwrapper");
 
@@ -39,10 +38,10 @@ function boot() {
         strictDi: false
     });
 
-    const customTitlebar = require('custom-electron-titlebar');
+    const { Titlebar, Color } = require('custom-electron-titlebar');
 
-    new customTitlebar.Titlebar({
-        backgroundColor: customTitlebar.Color.fromHex('#1E2023')
+    new Titlebar({
+        backgroundColor: Color.fromHex('#1E2023')
     });
 }
 
