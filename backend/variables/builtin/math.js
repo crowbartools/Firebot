@@ -26,7 +26,7 @@ const model = {
             logger.warn("error parsing math expression", err);
             evalulation = -1;
         }
-        if (typeof evalulation === "object") {
+        if (evalulation != null && typeof evalulation === "object") {
             if (evalulation.entries.length > 0) {
                 evalulation = evalulation.entries[0];
             } else {
