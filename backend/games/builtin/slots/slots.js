@@ -67,7 +67,7 @@ module.exports = {
                     default: 1,
                     validation: {
                         required: true,
-                        min: 1
+                        min: 0.5
                     }
                 }
             }
