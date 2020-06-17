@@ -58,6 +58,10 @@
             <editable-list model="$ctrl.metadata.value" settings="$ctrl.metadata.settings"></editable-list>
           </div>
 
+          <div ng-switch-when="discord-channel-webhooks" style="padding-top:5px;">
+            <discord-channel-webhooks model="$ctrl.metadata.value"></discord-channel-webhooks>
+          </div>
+
           <div ng-if="$ctrl.metadata.tip != null && $ctrl.metadata.tip !== ''" class="muted" style="font-size:12px; padding-top: 3px;">{{$ctrl.metadata.tip}}</div>
        </div>
        

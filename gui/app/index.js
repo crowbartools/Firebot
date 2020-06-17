@@ -41,7 +41,8 @@ function boot() {
     const { Titlebar, Color } = require('custom-electron-titlebar');
 
     new Titlebar({
-        backgroundColor: Color.fromHex('#1E2023')
+        backgroundColor: Color.fromHex('#1E2023'),
+        icon: "../images/logo_transparent_2.png"
     });
 }
 
