@@ -5,8 +5,11 @@ const hueHandler = require("./hue-handler");
 const v3 = require('node-hue-api').v3,
     discovery = v3.discovery,
     hueApi = v3.api;
+
 const appName = 'Firebot';
 const deviceName = 'Firebot-Hue';
+
+const hueEffectsLoader = require("./effects/hue-effect-loader");
 
 const integrationDefinition = {
     id: "hue",
@@ -23,6 +26,7 @@ class HueIntegration extends EventEmitter {
     }
     init() {
         // Register hue specific events and variables here.
+        hueEffectsLoader.registerEffects();
     }
     async connect(integrationData) {
         let connection = await hueHandler.connectHueBridge(integrationData);
