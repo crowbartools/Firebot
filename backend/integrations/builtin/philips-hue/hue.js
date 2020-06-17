@@ -1,7 +1,7 @@
 "use strict";
 const EventEmitter = require("events");
 const logger = require("../../../logwrapper");
-const hueHandler = require("./hue-handler");
+const hueManager = require("./hue-manager");
 const v3 = require('node-hue-api').v3,
     discovery = v3.discovery,
     hueApi = v3.api;
@@ -9,7 +9,7 @@ const v3 = require('node-hue-api').v3,
 const appName = 'Firebot';
 const deviceName = 'Firebot-Hue';
 
-const hueEffectsLoader = require("./effects/hue-effect-loader");
+const effectManager = require("../../../effects/effectManager");
 
 const integrationDefinition = {
     id: "hue",
@@ -19,28 +19,38 @@ const integrationDefinition = {
     connectionToggle: false
 };
 
+async function connectToHue(hueUser) {
+    let connection = await hueManager.connectHueBridge(hueUser);
+
+    if (connection) {
+        return true;
+    }
+
+    renderWindow.webContents.send(
+        "error",
+        "Could not connect to hue. The bridge might have changed ip addresses or lost user info. Try re-linking to hue."
+    );
+    return false;
+}
+
 class HueIntegration extends EventEmitter {
     constructor() {
         super();
         this.connected = false;
     }
-    init() {
+    init(linked, integrationData) {
         // Register hue specific events and variables here.
-        hueEffectsLoader.registerEffects();
+
+        effectManager.registerEffect(require("./effects/hue-scenes"));
+
+        if (linked) {
+            if (integrationData && integrationData.settings && integrationData.settings.user) {
+                connectToHue(integrationData.settings.user);
+            }
+        }
     }
     async connect(integrationData) {
-        let connection = await hueHandler.connectHueBridge(integrationData);
 
-        if (connection) {
-            this.emit("connected", integrationDefinition.id);
-            this.connected = true;
-            return true;
-        }
-
-        renderWindow.webContents.send(
-            "error",
-            "Could not connect to hue. The bridge might have changed ip addresses or lost user info. Try re-linking to hue."
-        );
         return false;
     }
     disconnect() {
@@ -48,15 +58,17 @@ class HueIntegration extends EventEmitter {
         this.emit("disconnected", integrationDefinition.id);
     }
     async link() {
-        let settings = {};
+        const settings = {};
 
-        let hueUser = await this.discoverAndCreateUser();
+        const hueUser = await this.discoverAndCreateUser();
 
         if (hueUser !== false) {
             settings.user = hueUser;
 
             this.emit("settings-update", integrationDefinition.id, settings);
-            return settings;
+
+            connectToHue(hueUser);
+            return;
         }
 
         renderWindow.webContents.send(
@@ -66,9 +78,7 @@ class HueIntegration extends EventEmitter {
         throw new Error("Please press the link button on your hue bridge, then click the link button in Firebot.");
     }
     async unlink(integrationData) {
-        // TODO: Disconnect from authed instance.
-        await hueHandler.deleteHueUser(integrationData);
-
+        await hueManager.deleteHueUser(integrationData);
     }
     async discoverBridge() {
         const discoveryResults = await discovery.nupnpSearch();
