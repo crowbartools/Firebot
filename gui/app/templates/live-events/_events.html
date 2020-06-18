@@ -51,7 +51,7 @@
                                     <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename</a>
                                 </li>
                                 <li ng-click="es.toggleEventGroupActiveStatus(group.id)">
-                                    <a href ><i class="fas fa-star" style="margin-right: 10px;"></i> Make {{group.active ? 'inactive' : 'active'}}</a>
+                                    <a href ><i class="fas" ng-class="{'fa-toggle-on': !group.active, 'fa-toggle-off': group.active}" style="margin-right: 10px;"></i>{{group.active ? 'Deactivate' : 'Activate'}}</a>
                                 </li>
                                 <li ng-click="es.duplicateEventGroup(group)">
                                     <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate set</a>
