@@ -29,7 +29,6 @@ function ensureRequiredFoldersExist() {
         ensureDirExists(path);
     }
 
-
     // Setup required folders for each profile
     const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
     let activeProfiles = [];
