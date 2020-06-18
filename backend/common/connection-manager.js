@@ -69,14 +69,6 @@ class ConnectionManager extends EventEmitter {
         super();
     }
 
-    startOnlineCheckInterval() {
-        if (onlineCheckIntervalId != null) {
-            clearInterval(onlineCheckIntervalId);
-        }
-        checkOnline();
-        onlineCheckIntervalId = setInterval(checkOnline, 10000);
-    }
-
     setOnlineStatus(online) {
         updateOnlineStatus(online);
     }
