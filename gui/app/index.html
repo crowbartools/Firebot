@@ -421,7 +421,7 @@
         <h2 class="modal-title">Firebot Overlay Info</h2>
         <button type="button" class="close" aria-label="Close" ng-click="dismiss()" style="position: absolute;right: 25px;"><span aria-hidden="true">&times;</span></button>
       </div>
-      <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;">
+      <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;font-weight: 100;">
         <div ng-hide="showingInstance">      
           <p>Effects that show things on stream (ie images, videos, etc) need Firebot's overlay file to be added to your broadcasting software.</p>
           <h3>How To Add The Overlay</h3>
@@ -435,6 +435,7 @@
         </div>
 
         <div style="display: flex;width: 100%;margin: 15px 0;">
+
           <div style="margin-right: 5px;">
             <div class="dropdown">
               <button class="btn btn-default dropdown-toggle" type="button" id="broadcast-software-types" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -454,11 +455,12 @@
                 <button class="btn btn-primary" type="button" ng-click="copy()">Copy</button>
               </span>
             </div>
-            <p ng-if="pathCopied" style="color: green;">
-              Overlay path copied!
-            </p>
           </div>
         </div>
+
+        <p ng-show="selectedBroadcastingSoftware === 'Direct Link/2 PC Setup'" class="muted">
+          <b>Note:</b> For 2 PC setups, you will need to update "localhost" in the url with the local IP address of this computer.
+        </p>
 
       </div>
       <div class="modal-footer" style="text-align:center;">
