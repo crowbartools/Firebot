@@ -21,8 +21,7 @@ exports.whenReady = async () => {
     const accountAccess = require("../../../common/account-access");
     await accountAccess.updateAccountCache(false);
 
-    const connectionManager = require("../../../common/connection-manager");
-    connectionManager.startOnlineCheckInterval();
+    require("../../../common/connection-manager");
 
     const timerManager = require("../../../timers/timer-manager");
     timerManager.startTimers();
@@ -131,6 +130,9 @@ exports.whenReady = async () => {
     //start the REST api server
     const webServer = require("../../../../server/httpServer");
     webServer.start();
+
+    const channelAccess = require("../../../common/channel-access");
+    channelAccess.refreshStreamerChannelData();
 
     windowManagement.createMainWindow();
 

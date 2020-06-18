@@ -378,6 +378,11 @@ class MixerChat extends EventEmitter {
 
 mixerChat = new MixerChat();
 
+mixerChat.on("connected", () => {
+    const eventManager = require("../events/EventManager");
+    eventManager.triggerEvent("firebot", "chat-connected");
+});
+
 frontendCommunicator.on("delete-message", messageId => {
     mixerChat.deleteMessage(messageId);
 });

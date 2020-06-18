@@ -16,8 +16,8 @@ triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 
 module.exports = {
     definition: {
-        handle: "user",
-        description: "The associated user (if there is one) for the given trigger",
+        handle: "username",
+        description: "The associated user (if there is one) for the given trigger. Alternative to $user",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },

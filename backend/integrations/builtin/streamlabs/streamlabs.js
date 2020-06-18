@@ -12,7 +12,7 @@ const integrationDefinition = {
     name: "Streamlabs",
     description: "Donation and Extra Life Donation events",
     linkType: "auth",
-    connectionToggle: false,
+    connectionToggle: true,
     authProviderDetails: {
         id: "streamlabs",
         name: "StreamLabs",

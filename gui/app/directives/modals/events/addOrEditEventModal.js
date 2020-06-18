@@ -14,11 +14,12 @@
             <h4 class="modal-title" id="editEventLabel">{{$ctrl.isNewEvent ? "Add Event" : "Edit Event"}}</h4>
         </div>
         <div class="modal-body">
-            <div class="general-event-settings">        
-                <div class="effect-setting-container setting-padtop">
+            <div class="general-event-settings">
+            
+                <div class="effect-setting-container">
                     <div class="input-group settings-eventid">
-                        <span class="input-group-addon" id="basic-addon3">Event Name</span>
-                        <input type="text" class="form-control ng-pristine ng-untouched ng-valid ng-not-empty event-id" aria-describedby="basic-addon3" ng-model="$ctrl.event.name">
+                        <span class="input-group-addon" id="basic-addon3">Name</span>
+                        <input type="text" class="form-control event-id" aria-describedby="basic-addon3" placeholder="Enter name" ng-model="$ctrl.event.name" ng-change="$ctrl.nameChanged()">
                     </div>
                 </div>
         
@@ -74,6 +75,11 @@
 
             $ctrl.isNewEvent = true;
 
+            $ctrl.eventNameManuallyEditted = true;
+            $ctrl.nameChanged = () => {
+                $ctrl.eventNameManuallyEditted = true;
+            };
+
             $ctrl.event = {
                 name: "",
                 active: true
@@ -91,6 +97,7 @@
             $ctrl.$onInit = function() {
                 if ($ctrl.resolve.event == null) {
                     $ctrl.isNewEvent = true;
+                    $ctrl.eventNameManuallyEditted = false;
                 } else {
                     $ctrl.isNewEvent = false;
                     $ctrl.event = JSON.parse(angular.toJson($ctrl.resolve.event));
@@ -123,6 +130,9 @@
             $ctrl.eventChanged = function(event) {
                 $ctrl.event.eventId = event.eventId;
                 $ctrl.event.sourceId = event.sourceId;
+                if (!$ctrl.eventNameManuallyEditted) {
+                    $ctrl.event.name = event.name;
+                }
                 updateTriggerId();
             };
 

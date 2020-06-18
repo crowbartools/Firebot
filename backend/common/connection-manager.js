@@ -69,14 +69,6 @@ class ConnectionManager extends EventEmitter {
         super();
     }
 
-    startOnlineCheckInterval() {
-        if (onlineCheckIntervalId != null) {
-            clearInterval(onlineCheckIntervalId);
-        }
-        checkOnline();
-        onlineCheckIntervalId = setInterval(checkOnline, 10000);
-    }
-
     setOnlineStatus(online) {
         updateOnlineStatus(online);
     }
@@ -125,6 +117,10 @@ class ConnectionManager extends EventEmitter {
     }
 
     updateIntegrationConnection(integrationId, shouldConnect) {
+        if (!integrationManager.integrationIsConnectable(integrationId)) {
+            return false;
+        }
+
         if (shouldConnect) {
             integrationManager.connectIntegration(integrationId);
         } else {

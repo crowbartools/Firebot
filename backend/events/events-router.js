@@ -13,7 +13,7 @@ const userEventCache = new NodeCache({ stdTTL: 43200, checkperiod: 600 });
 // Cache Event
 // This will cache the event so we don't fire it multiple times per session.
 // Any event that needs to only fire once should run through this before hitting the live event router.
-function cacheNewEvent(sourceId, eventId, eventSettingId, eventMetaKey = null) {
+function cacheNewEvent(sourceId, eventId, eventSettingId, ttlInSecs = undefined, eventMetaKey = null) {
     /**
     Example of cache storage.
       {
@@ -29,9 +29,9 @@ function cacheNewEvent(sourceId, eventId, eventSettingId, eventMetaKey = null) {
 
     let eventCached = userEventCache.get(key);
     if (!eventCached) {
-    //event for this user hasnt fired yet
-    // Update the cache.
-        userEventCache.set(key, true);
+        // event for this user hasnt fired yet
+        // Update the cache.
+        userEventCache.set(key, true, ttlInSecs);
     }
     return eventCached;
 }
@@ -107,7 +107,7 @@ async function onEventTriggered(event, source, meta, isManual = false) {
             if (event.cacheMetaKey && meta) {
                 cacheMetaKey = meta[event.cacheMetaKey];
             }
-            let previouslyCached = cacheNewEvent(source.id, event.id, eventSetting.id, cacheMetaKey);
+            let previouslyCached = cacheNewEvent(source.id, event.id, eventSetting.id, event.cacheTtlInSecs, cacheMetaKey);
             if (previouslyCached) {
                 return;
             }

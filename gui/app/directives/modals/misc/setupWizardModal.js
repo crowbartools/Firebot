@@ -235,7 +235,7 @@
                         <h1 style="margin-top: 0px;animation-delay: 0.4s" class="animated bounceIn">You're all set!</h1>
                         <br>
                         <p style="animation-delay: 0.8s" class="animated fadeIn">
-                            If you need help or have a suggestion, we'd love to hear from you.<br>Click the About link in the sidebar to see where you can find us.
+                            If you need help or have a suggestion, we'd love to hear from you.<br>Go to <b>Help</b> > <b>About</b> to see where you can find us.
                         </p>
                         <br>
                         <p style="animation-delay: 1.8s" class="animated fadeIn">

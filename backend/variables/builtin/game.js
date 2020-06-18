@@ -10,8 +10,16 @@ const model = {
         description: "Gets the current game set for your channel",
         examples: [
             {
-                usage: "game[username]",
-                description: "Gets the game set for the given usernames channel."
+                usage: "game[$target]",
+                description: "When in a command, gets the game set for the target user."
+            },
+            {
+                usage: "game[$user]",
+                description: "Gets the game set for associated user (Ie who triggered command, pressed button, etc)."
+            },
+            {
+                usage: "game[ChannelOne]",
+                description: "Gets the game set for a specific channel."
             }
         ],
         possibleDataOutput: [OutputDataType.TEXT]

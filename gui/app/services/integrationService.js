@@ -10,7 +10,8 @@
             settingsService,
             listenerService,
             backendCommunicator,
-            logger
+            logger,
+            utilityService
         ) {
             let service = {};
 
@@ -129,6 +130,35 @@
                 } else {
                     service.linkIntegration(id);
                 }
+            };
+
+            service.openIntegrationSettings = function(id) {
+                const integration = getIntegrationById(id);
+                if (integration == null) return;
+
+                utilityService.showModal({
+                    component: "editIntegrationUserSettingsModal",
+                    windowClass: "no-padding-modal",
+                    resolveObj: {
+                        integration: () => integration
+                    },
+                    closeCallback: resp => {
+                        const action = resp.action;
+
+                        if (action === 'save') {
+
+                            const updatedIntegration = resp.integration;
+                            if (updatedIntegration == null) return;
+
+                            const index = integrations.findIndex(i => i.id === updatedIntegration.id);
+                            if (index > -1) {
+                                integrations[index] = updatedIntegration;
+                            }
+
+                            backendCommunicator.send("integrationUserSettingsUpdate", updatedIntegration);
+                        }
+                    }
+                });
             };
 
             listenerService.registerListener(

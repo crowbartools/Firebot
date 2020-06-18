@@ -2,7 +2,6 @@
 "use strict";
 const electron = require("electron");
 const { ipcRenderer } = electron;
-const { remote } = electron;
 
 const logger = require("../../backend/logwrapper");
 
@@ -37,6 +36,13 @@ require("angularjs-color-picker");
 function boot() {
     angular.bootstrap(document, ["firebotApp"], {
         strictDi: false
+    });
+
+    const { Titlebar, Color } = require('custom-electron-titlebar');
+
+    new Titlebar({
+        backgroundColor: Color.fromHex('#1E2023')
+        //icon: "../images/logo_transparent_2.png"
     });
 }
 

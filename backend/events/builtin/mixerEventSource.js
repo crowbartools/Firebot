@@ -228,6 +228,22 @@ const mixerEventSource = {
                 username: "Firebot",
                 maxAdBreakLengthInSec: 30
             }
+        },
+        {
+            id: "stream-went-live",
+            name: "Stream Went Live",
+            description: "When you go live (Sometimes takes a few secs to trigger).",
+            cached: true,
+            cacheTtlInSecs: 30,
+            manualMetadata: {}
+        },
+        {
+            id: "stream-gone-offline",
+            name: "Stream Went Offline",
+            description: "When your stream has gone offline.",
+            cached: true,
+            cacheTtlInSecs: 30,
+            manualMetadata: {}
         }
     ]
 };
