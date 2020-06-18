@@ -21,10 +21,14 @@ function ensureRequiredFoldersExist() {
     //create the root "firebot-data" folder
     dataAccess.createFirebotDataDir();
 
+    // copy over overlay wrapper
+    dataAccess.copyResourceToUserData(null, "overlay.html", "");
+
     const requiredRootDirPaths = ["/profiles", "/backups", "/clips"];
     for (const path of requiredRootDirPaths) {
         ensureDirExists(path);
     }
+
 
     // Setup required folders for each profile
     const globalSettingsDb = dataAccess.getJsonDbInUserData("./global-settings");
