@@ -42,7 +42,7 @@
                 utilityService.openGetInputModal(
                     {
                         model: "",
-                        label: "New Event Group Name",
+                        label: "New Event Set Name",
                         saveText: "Create",
                         validationFn: (value) => {
                             return new Promise(resolve => {
@@ -53,7 +53,7 @@
                                 }
                             });
                         },
-                        validationText: "Group name cannot be empty."
+                        validationText: "Event Set name cannot be empty."
 
                     },
                     (name) => {
@@ -65,7 +65,7 @@
                 utilityService.openGetInputModal(
                     {
                         model: group.name,
-                        label: "Rename Event Group",
+                        label: "Rename Event Set",
                         saveText: "Save",
                         validationFn: (value) => {
                             return new Promise(resolve => {
@@ -76,7 +76,7 @@
                                 }
                             });
                         },
-                        validationText: "Group name cannot be empty."
+                        validationText: "Event set name cannot be empty."
 
                     },
                     (name) => {
@@ -88,8 +88,8 @@
             $scope.showDeleteGroupModal = function(group) {
                 utilityService
                     .showConfirmationModal({
-                        title: "Delete Event Group",
-                        question: `Are you sure you want to delete the event group "${group.name}"?`,
+                        title: "Delete Event Set",
+                        question: `Are you sure you want to delete the event set "${group.name}"? This will delete all events within it.`,
                         confirmLabel: "Delete",
                         confirmBtnType: "btn-danger"
                     })
@@ -161,8 +161,8 @@
             $scope.getEventActiveStatus = function(active) {
                 let groupId = eventsService.getSelectedTab();
                 if (groupId !== "mainevents") {
-                    let groupIsActive = eventsService.groupIsActive(groupId);
-                    if (!groupIsActive) {
+                    let group = eventsService.getEventGroup(groupId);
+                    if (group && !group.active) {
                         return false;
                     }
                 }
@@ -173,9 +173,9 @@
 
                 let groupId = eventsService.getSelectedTab();
                 if (groupId !== "mainevents") {
-                    let groupIsActive = eventsService.groupIsActive(groupId);
-                    if (!groupIsActive) {
-                        return "Disabled (Group not active)";
+                    let group = eventsService.getEventGroup(groupId);
+                    if (!group || !group.active) {
+                        return "Disabled (Set not active)";
                     }
                 }
 
@@ -275,7 +275,8 @@
                 if (groupId === "mainevents") {
                     return true;
                 }
-                return eventsService.groupIsActive(groupId);
+                let group = eventsService.getEventGroup(groupId);
+                return group ? group.active === true : false;
             };
 
             $scope.eventMenuOptions = [

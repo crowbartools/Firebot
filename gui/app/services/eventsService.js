@@ -8,7 +8,6 @@
         let service = {};
 
         let mainEvents = [],
-            activeGroup = null,
             groups = [];
 
 
@@ -17,10 +16,6 @@
 
             if (eventData.mainEvents) {
                 mainEvents = eventData.mainEvents;
-            }
-
-            if (eventData.activeGroup) {
-                activeGroup = eventData.activeGroup;
             }
 
             if (eventData.groups) {
@@ -47,18 +42,6 @@
             return selectedTab;
         };
 
-        service.setActiveEventGroup = function(groupId) {
-            activeGroup = groupId;
-            backendCommunicator.fireEvent("eventUpdate", {
-                action: "setActiveGroup",
-                meta: groupId
-            });
-        };
-
-        service.groupIsActive = function(groupId) {
-            return activeGroup === groupId;
-        };
-
         service.getEventGroups = function() {
             return groups;
         };
@@ -72,15 +55,12 @@
             const newGroup = {
                 id: newId,
                 name: name,
+                active: true,
                 events: []
             };
             service.saveGroup(newGroup);
 
             service.setSelectedTab(newId);
-
-            if (groups.length === 1) {
-                service.setActiveEventGroup(newId);
-            }
         };
 
         service.duplicateEventGroup = function(group) {
@@ -107,11 +87,19 @@
             });
         };
 
+        service.toggleEventGroupActiveStatus = function(groupId) {
+            const group = service.getEventGroup(groupId);
+            if (group) {
+                group.active = !group.active;
+            }
+            backendCommunicator.fireEvent("eventUpdate", {
+                action: "saveGroup",
+                meta: JSON.parse(angular.toJson(group))
+            });
+        };
+
         service.deleteGroup = function(groupId) {
             groups = groups.filter(g => g.id !== groupId);
-            if (activeGroup === groupId) {
-                activeGroup = null;
-            }
             if (selectedTab === groupId) {
                 service.setSelectedTab("mainevents");
             }

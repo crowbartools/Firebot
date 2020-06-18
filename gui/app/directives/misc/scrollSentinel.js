@@ -16,7 +16,6 @@
                     $timeout(() => {
                         let observer = new IntersectionObserver(entries => {
                             let entry = entries[0];
-
                             angular.element(`.${$ctrl.elementClass}`).toggleClass('is-stuck', !entry.isIntersecting);
                         });
 
@@ -24,7 +23,7 @@
                         if (sentinel != null) {
                             observer.observe(sentinel);
                         }
-                    }, 100);
+                    }, 150);
                 };
             }
         });
