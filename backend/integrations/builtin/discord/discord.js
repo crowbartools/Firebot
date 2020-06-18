@@ -1,50 +1,62 @@
 "use strict";
 const EventEmitter = require("events");
 
+const effectManager = require("../../../effects/effectManager");
+
 const integrationDefinition = {
     id: "discord",
     name: "Discord",
     description: "Send messages to Discord channels.",
     linkType: "none",
+    connectionToggle: false,
     configurable: true,
     settingCategories: {
         webhookSettings: {
-            title: "Settings",
+            title: "Channel Setup",
+            sortRank: 2,
+            settings: {
+                channels: {
+                    title: "Saved Channels",
+                    description: "The collection of channel names and webhook urls that Firebot can post messages to.",
+                    type: "discord-channel-webhooks",
+                    sortRank: 1
+                }
+            }
+        },
+        botOverrides: {
+            title: "Bot Overrides",
+            sortRank: 1,
             settings: {
                 botName: {
                     title: "Bot Name",
-                    description: "The name of the user that will post messages.",
+                    description: "This overrides the bot name set for a webhook in Discord. If left empty, whatever name you set in Discord for the webhook will be used.",
                     type: "string",
-                    tip: "Optional."
+                    tip: "Optional.",
+                    sortRank: 1
                 },
                 botImageUrl: {
                     title: "Bot Image URL",
-                    description: "The URL of the avatar image of the user posting messages.",
+                    description: "This overrides the avatar image of bot posting images. If left empty, whatever profile pic you set in Discord for the webhook will be used.",
                     type: "string",
                     tip: "Optional.",
-                    hasBottomHr: true
-                },
-                channels: {
-                    title: "Channels",
-                    type: "discord-channel-webhooks"
+                    sortRank: 2
                 }
             }
         }
-    },
-    connectionToggle: false
+    }
 };
 
 class DiscordIntegration extends EventEmitter {
     constructor() {
         super();
     }
-    init(integrationData) {}
-    onUserSettingsUpdate(integrationData) {
-        console.log(integrationData);
+    init() {
+        effectManager.registerEffect(require('./send-discord-message-effect'));
     }
-    connect(integrationData) {}
+    onUserSettingsUpdate(integrationData) {}
+    connect() {}
     disconnect() {}
-    link(linkData) {}
+    link() {}
     unlink() {}
 }
 

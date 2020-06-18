@@ -146,8 +146,15 @@
                         const action = resp.action;
 
                         if (action === 'save') {
+
                             const updatedIntegration = resp.integration;
                             if (updatedIntegration == null) return;
+
+                            const index = integrations.findIndex(i => i.id === updatedIntegration.id);
+                            if (index > -1) {
+                                integrations[index] = updatedIntegration;
+                            }
+
                             backendCommunicator.send("integrationUserSettingsUpdate", updatedIntegration);
                         }
 

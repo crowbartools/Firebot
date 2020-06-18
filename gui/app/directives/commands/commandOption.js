@@ -12,7 +12,7 @@
        <div ng-switch="$ctrl.metadata.type" style="padding-bottom: 20px;font-size: 15px;font-weight: 600;">
 
           <div>{{$ctrl.metadata.type != 'boolean' && $ctrl.metadata.title ? $ctrl.metadata.title : ""}}</div>
-          <div ng-if="$ctrl.metadata.type != 'boolean' && $ctrl.metadata.description" style="padding-bottom: 5px;font-size: 14px;font-weight: 300;">{{$ctrl.metadata.description}}</div>
+          <div ng-if="$ctrl.metadata.type != 'boolean' && $ctrl.metadata.description" style="padding-bottom: 5px;font-size: 14px;font-weight: 100;opacity:0.8;">{{$ctrl.metadata.description}}</div>
 
           <div ng-switch-when="string">
             <textarea ng-if="$ctrl.metadata.useTextArea" ng-model="$ctrl.metadata.value" class="form-control" placeholder="Enter text" rows="5" style="width:100%"></textarea>
