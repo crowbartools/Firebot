@@ -157,8 +157,6 @@
 
                             backendCommunicator.send("integrationUserSettingsUpdate", updatedIntegration);
                         }
-
-                        if (action === 'reset') {}
                     }
                 });
             };

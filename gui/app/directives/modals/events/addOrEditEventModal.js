@@ -131,7 +131,6 @@
                 $ctrl.event.eventId = event.eventId;
                 $ctrl.event.sourceId = event.sourceId;
                 if (!$ctrl.eventNameManuallyEditted) {
-                    debugger;
                     $ctrl.event.name = event.name;
                 }
                 updateTriggerId();
