@@ -119,7 +119,7 @@ const commandManagement = {
     onTriggerEvent: event => {
         return new Promise(async (resolve) => {
             const commandManager = require("../CommandManager");
-            const chat = require("../../chatt");
+            const chat = require("../../chat");
 
             let activeCustomCommands = commandManager
                 .getAllCustomCommands()
