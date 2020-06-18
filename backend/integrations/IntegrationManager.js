@@ -125,6 +125,17 @@ class IntegrationManager extends EventEmitter {
         return integration.definition;
     }
 
+    integrationIsConnectable(integrationId) {
+        const integration = this.getIntegrationDefinitionById(integrationId);
+        if (integration == null) {
+            return false;
+        }
+        if (!integration.linked || !integration.connectionToggle) {
+            return false;
+        }
+        return true;
+    }
+
     getAllIntegrationDefinitions() {
         return this._integrations
             .map(i => i.definition)
@@ -133,6 +144,7 @@ class IntegrationManager extends EventEmitter {
                     id: i.id,
                     name: i.name,
                     description: i.description,
+                    linked: i.linked,
                     linkType: i.linkType,
                     connectionToggle: i.connectionToggle,
                     idDetails: i.idDetails,

@@ -117,6 +117,10 @@ class ConnectionManager extends EventEmitter {
     }
 
     updateIntegrationConnection(integrationId, shouldConnect) {
+        if (!integrationManager.integrationIsConnectable(integrationId)) {
+            return false;
+        }
+
         if (shouldConnect) {
             integrationManager.connectIntegration(integrationId);
         } else {
