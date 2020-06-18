@@ -33,7 +33,7 @@ const model = {
                 evalulation = -1;
             }
         }
-        return evalulation;
+        return evalulation != null ? evalulation : -1;
     },
     argsCheck: (exp) => {
 
