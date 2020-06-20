@@ -30,6 +30,24 @@ module.exports = {
             connectionManager.setOnlineStatus(newChannelData.online);
         }
 
+        if (newChannelData.name) {
+            if (newChannelData.name !== currentChannelData.name) {
+                eventsManager.triggerEvent('mixer', 'stream-title-changed');
+            }
+        }
+
+        if (newChannelData.typeId) {
+            if (newChannelData.typeId !== currentChannelData.typeId) {
+                eventsManager.triggerEvent('mixer', 'stream-game-changed');
+            }
+        }
+
+        if (newChannelData.audience) {
+            if (newChannelData.audience !== currentChannelData.audience) {
+                eventsManager.triggerEvent('mixer', 'stream-audience-changed');
+            }
+        }
+
         channelAccess.updateStreamerChannelData(newChannelData);
     }
 };

@@ -74,6 +74,7 @@ exports.loadReplaceVariables = () => {
         'skill-message',
         'skill-name',
         'skill-sticker-url',
+        'stream-audience',
         'stream-title',
         'streamer',
         'sub-months',
