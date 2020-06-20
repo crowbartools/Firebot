@@ -28,6 +28,12 @@
             loadAllEventData();
         });
 
+        backendCommunicator.on("event-group-update", (group) => {
+            const index = groups.findIndex(g => g.id === group.id);
+            if (index < 0) return;
+            groups[index] = group;
+        });
+
 
         let selectedTab = "mainevents";
         service.setSelectedTab = function(groupId) {

@@ -140,8 +140,19 @@ ipcMain.on("eventUpdate", (_, data) => {
         saveMainEvents(meta);
         break;
     }
-
 });
+
+function updateEventGroupActiveStatus(groupId, active = false) {
+    const group = groups[groupId];
+
+    if (group == null) return;
+
+    group.active = active;
+
+    saveGroup(group);
+
+    frontendCommunicator.send("event-group-update", group);
+}
 
 exports.triggerUiRefresh = () => {
     frontendCommunicator.send("main-events-update");
@@ -151,3 +162,4 @@ exports.triggerUiRefresh = () => {
 exports.saveNewEventToMainEvents = saveNewEventToMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;
+exports.updateEventGroupActiveStatus = updateEventGroupActiveStatus;
