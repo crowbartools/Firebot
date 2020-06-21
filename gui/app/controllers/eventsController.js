@@ -16,6 +16,7 @@
                 return eventsService.getEventGroup(selectedTab).events;
             };
 
+
             function updateEvent(groupId, index, event) {
                 if (groupId === "mainevents") {
                     eventsService.getMainEvents()[index] = event;

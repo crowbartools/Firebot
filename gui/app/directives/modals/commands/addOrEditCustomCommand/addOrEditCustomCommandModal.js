@@ -15,6 +15,8 @@
         controller: function($scope, utilityService, commandsService, ngToast) {
             let $ctrl = this;
 
+            $ctrl.allSortTags = commandsService.getSortTags();
+
             $ctrl.command = {
                 active: true,
                 cooldown: {},

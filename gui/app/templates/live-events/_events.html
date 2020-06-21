@@ -78,7 +78,26 @@
             <scroll-sentinel element-class="events-sticky"></scroll-sentinel>
             <div class="events-tab-header events-sticky sticky-top">
                 <button ng-click="showAddOrEditEventModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Event</button>
-                <searchbar ng-hide="getSelectedEvents().length < 1" placeholder-text="Search Events" query="eventSearch" style="flex-basis: 250px;"></searchbar>
+
+                <div ng-hide="getSelectedEvents().length < 1" style="display: flex; flex-direction: row;align-items: center;">
+                    <div class="btn-group" style="margin-right:10px;" uib-dropdown>
+                        <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                            {{es.selectedSortTagDisplay()}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem" ng-click="es.setSelectedSortTag(null)"><a href>All Events</a></li>
+                            <li class="divider" ng-show="es.getSortTags().length > 0"></li>
+                            <li class="dropdown-header" ng-show="es.getSortTags().length > 0">Sort Tags</li>
+                            <li ng-repeat="tag in es.getSortTags()" ng-click="es.setSelectedSortTag(tag)" role="menuitem">
+                                <a href>{{tag.name}}</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li role="menuitem" ng-click="es.openManageTagsModal()"><a href>Edit sort tags</a></li>
+                        </ul>
+                    </div>
+    
+                    <searchbar placeholder-text="Search Events" query="eventSearch" style="flex-basis: 250px;"></searchbar>
+                </div>
             </div>
 
             <div style="padding: 0 20px 20px 20px;">
@@ -86,8 +105,12 @@
                 <div ng-if="getSelectedEvents().length < 1" class="noselect muted" style="margin: 13px 0 0 13px;">
                   <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No events saved. You should make one! :)</span>
                 </div>
+
+                <div ng-if="getSelectedEvents().length > 0 && filteredEvents && filteredEvents.length < 1" class="noselect muted" style="margin: 13px 0 0 13px;">
+                    <span style="margin-left:8px">No events found.</span>
+                </div>
       
-                <table class="fb-table" ng-hide="getSelectedEvents().length < 1">
+                <table class="fb-table" ng-hide="getSelectedEvents().length < 1 || (filteredEvents && filteredEvents.length < 1)">
                     <thead>
                         <tr style="font-size: 11px;">
                             <th style="width:5%"></th> 
@@ -99,7 +122,7 @@
                         </tr> 
                     </thead> 
                     <tbody> 
-                        <tr ng-repeat="event in getSelectedEvents() | orderBy: 'type' | filter:eventSearch track by event.id" context-menu="eventMenuOptions">
+                        <tr ng-repeat="event in filteredEvents = (getSelectedEvents() | orderBy: 'type' | sortTagSearch:es.selectedSortTag | filter:eventSearch) track by event.id" context-menu="eventMenuOptions">
                             <td style="text-align: center;">
                                 <span style="color: #2aa1c0; font-size: 20px;" ng-click="fireEventManually(event)">
                                     <i class="fas fa-play-circle clickable"></i>
