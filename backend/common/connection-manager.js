@@ -74,7 +74,7 @@ class ConnectionManager extends EventEmitter {
             clearInterval(onlineCheckIntervalId);
         }
         checkOnline();
-        onlineCheckIntervalId = setInterval(checkOnline, 10000);
+        onlineCheckIntervalId = setInterval(checkOnline, 30000);
     }
 
     setOnlineStatus(online) {
@@ -125,6 +125,10 @@ class ConnectionManager extends EventEmitter {
     }
 
     updateIntegrationConnection(integrationId, shouldConnect) {
+        if (!integrationManager.integrationIsConnectable(integrationId)) {
+            return false;
+        }
+
         if (shouldConnect) {
             integrationManager.connectIntegration(integrationId);
         } else {

@@ -244,4 +244,4 @@ function setNewHighBidder(username, amount) {
 
 exports.purgeCaches = purgeCaches;
 exports.registerBidCommand = registerBidCommand;
-exports.unregisterbidCommand = unregisterBidCommand;
+exports.unregisterBidCommand = unregisterBidCommand;

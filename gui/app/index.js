@@ -42,6 +42,7 @@ function boot() {
 
     new Titlebar({
         backgroundColor: Color.fromHex('#1E2023')
+        //icon: "../images/logo_transparent_2.png"
     });
 }
 

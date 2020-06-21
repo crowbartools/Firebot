@@ -9,6 +9,8 @@ const { EffectDependency, EffectTrigger } = effectModels;
 const accountAccess = require("../../common/account-access");
 const streamerAccount = accountAccess.getAccounts().streamer;
 
+const discord = require("../../integrations/builtin/discord/discord-message-sender");
+
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 /**
@@ -60,7 +62,19 @@ const clip = {
                 </label>
             </div>
 
-            <div style="padding-top:15px">
+            <div style="padding-top:15px" ng-show="hasChannels">
+                <label class="control-fb control--checkbox"> Post clip in Discord channel
+                    <input type="checkbox" ng-model="effect.postInDiscord">
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
+
+            <div ng-show="effect.postInDiscord" style="margin-left: 30px;">
+                <div>Discord Channel:</div>
+                <dropdown-select options="channelOptions" selected="effect.discordChannelId"></dropdown-select>
+            </div>
+
+            <div style="padding-top:20px">
                 <label class="control-fb control--checkbox"> Download clip <tooltip text="'You can change which folder clips save to in the Settings tab.'"></tooltip>
                     <input type="checkbox" ng-model="effect.download">
                     <div class="control__indicator"></div>
@@ -77,7 +91,7 @@ const clip = {
     /**
    * The controller for the front end Options
    */
-    optionsController: ($scope) => {
+    optionsController: ($scope, $q, backendCommunicator) => {
         if ($scope.effect.clipDuration == null) {
             $scope.effect.clipDuration = 30;
         }
@@ -85,12 +99,37 @@ const clip = {
         if ($scope.effect.clipTitle == null) {
             $scope.effect.clipTitle = "$streamTitle (Created by $user)";
         }
+
+        $scope.hasChannels = false;
+        $scope.channelOptions = {};
+        $q.when(backendCommunicator.fireEventAsync("getDiscordChannels"))
+            .then(channels => {
+                if (channels && channels.length > 0) {
+                    const newChannels = {};
+
+                    for (const channel of channels) {
+                        newChannels[channel.id] = channel.name;
+                    }
+
+                    if ($scope.effect.channelId == null ||
+                        newChannels[$scope.effect.channelId] == null) {
+                        $scope.effect.channelId = channels[0].id;
+                    }
+
+                    $scope.channelOptions = newChannels;
+
+                    $scope.hasChannels = true;
+                }
+            });
     },
     /**
    * When the effect is triggered by something
    */
     optionsValidator: effect => {
         let errors = [];
+        if (effect.postInDiscord && effect.discordChannelId == null) {
+            errors.push("Please select Discord channel.");
+        }
         return errors;
     },
     /**

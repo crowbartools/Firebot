@@ -10,13 +10,7 @@ const request = require("request");
 
 const integrationManager = require("../../../IntegrationManager");
 
-/**
- * The Delay effect
- */
 const effect = {
-    /**
-   * The definition of the Effect
-   */
     definition: {
         id: "streamlabs:spin-wheel",
         name: "Spin The Wheel",
@@ -30,14 +24,7 @@ const effect = {
             EffectTrigger.ALL
         )
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
     globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
         <eos-container>
             <div class="effect-info alert alert-info">
@@ -45,18 +32,9 @@ const effect = {
             </div>
         </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   */
     optionsController: () => {},
-    /**
-   * When the effect is saved
-   */
     optionsValidator: () => {
     },
-    /**
-   * When the effect is triggered by something
-   */
     onTriggerEvent: () => {
         return new Promise(resolve => {
 

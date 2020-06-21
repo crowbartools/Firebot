@@ -66,10 +66,14 @@ class EventManager extends EventEmitter {
 
         if (isManual) {
             meta = event.manualMetadata || {};
-            if (meta.username == null) {
-                const accountAccess = require("../common/account-access");
-                meta.username = accountAccess.getAccounts().streamer.username;
-            }
+        }
+        if (meta == null) {
+            meta = {};
+        }
+
+        if (meta.username == null) {
+            const accountAccess = require("../common/account-access");
+            meta.username = accountAccess.getAccounts().streamer.username;
         }
 
         eventsRouter.onEventTriggered(event, source, meta, isManual);

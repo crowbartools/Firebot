@@ -26,14 +26,14 @@ const model = {
             logger.warn("error parsing math expression", err);
             evalulation = -1;
         }
-        if (typeof evalulation === "object") {
+        if (evalulation != null && typeof evalulation === "object") {
             if (evalulation.entries.length > 0) {
                 evalulation = evalulation.entries[0];
             } else {
                 evalulation = -1;
             }
         }
-        return evalulation;
+        return evalulation != null ? evalulation : -1;
     },
     argsCheck: (exp) => {
 

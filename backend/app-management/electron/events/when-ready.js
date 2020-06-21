@@ -132,6 +132,9 @@ exports.whenReady = async () => {
     const webServer = require("../../../../server/httpServer");
     webServer.start();
 
+    const channelAccess = require("../../../common/channel-access");
+    channelAccess.refreshStreamerChannelData();
+
     windowManagement.createMainWindow();
 
     // forward backend logs to front end

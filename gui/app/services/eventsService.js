@@ -1,15 +1,17 @@
 "use strict";
 
+const { sort } = require("mathjs");
+
 (function() {
     //This handles events
     const uuidv1 = require("uuid/v1");
 
-    angular.module("firebotApp").factory("eventsService", function(logger, backendCommunicator, objectCopyHelper) {
+    angular.module("firebotApp").factory("eventsService", function(logger, backendCommunicator, objectCopyHelper, utilityService) {
         let service = {};
 
-        let mainEvents = [],
-            activeGroup = null,
-            groups = [];
+        let mainEvents = [];
+        let groups = [];
+        let sortTags = [];
 
 
         function loadAllEventData() {
@@ -19,12 +21,12 @@
                 mainEvents = eventData.mainEvents;
             }
 
-            if (eventData.activeGroup) {
-                activeGroup = eventData.activeGroup;
-            }
-
             if (eventData.groups) {
                 groups = eventData.groups;
+            }
+
+            if (eventData.sortTags) {
+                sortTags = eventData.sortTags;
             }
         }
         loadAllEventData();
@@ -32,6 +34,40 @@
         backendCommunicator.on("main-events-update", () => {
             loadAllEventData();
         });
+
+        backendCommunicator.on("event-group-update", (group) => {
+            const index = groups.findIndex(g => g.id === group.id);
+            if (index < 0) return;
+            groups[index] = group;
+        });
+
+        service.openManageTagsModal = () => {
+            utilityService.showModal({
+                component: "manageSortTagsModal",
+                size: "sm",
+                resolveObj: {
+                    tags: () => sortTags
+                },
+                closeCallback: tags => {
+                    sortTags = tags;
+                    backendCommunicator.fireEvent("event-sort-tags-update", sortTags);
+                    if (service.selectedSortTag && !sortTags.some(t => t.id === service.selectedSortTag.id)) {
+                        service.selectedSortTag = null;
+                    }
+                }
+            });
+        };
+
+        service.getSortTags = () => {
+            return sortTags;
+        };
+        service.selectedSortTag = null;
+        service.selectedSortTagDisplay = () => {
+            return service.selectedSortTag != null ? service.selectedSortTag.name : "All Events";
+        };
+        service.setSelectedSortTag = (tag) => {
+            service.selectedSortTag = tag;
+        };
 
 
         let selectedTab = "mainevents";
@@ -47,18 +83,6 @@
             return selectedTab;
         };
 
-        service.setActiveEventGroup = function(groupId) {
-            activeGroup = groupId;
-            backendCommunicator.fireEvent("eventUpdate", {
-                action: "setActiveGroup",
-                meta: groupId
-            });
-        };
-
-        service.groupIsActive = function(groupId) {
-            return activeGroup === groupId;
-        };
-
         service.getEventGroups = function() {
             return groups;
         };
@@ -72,15 +96,12 @@
             const newGroup = {
                 id: newId,
                 name: name,
+                active: true,
                 events: []
             };
             service.saveGroup(newGroup);
 
             service.setSelectedTab(newId);
-
-            if (groups.length === 1) {
-                service.setActiveEventGroup(newId);
-            }
         };
 
         service.duplicateEventGroup = function(group) {
@@ -107,11 +128,19 @@
             });
         };
 
+        service.toggleEventGroupActiveStatus = function(groupId) {
+            const group = service.getEventGroup(groupId);
+            if (group) {
+                group.active = !group.active;
+            }
+            backendCommunicator.fireEvent("eventUpdate", {
+                action: "saveGroup",
+                meta: JSON.parse(angular.toJson(group))
+            });
+        };
+
         service.deleteGroup = function(groupId) {
             groups = groups.filter(g => g.id !== groupId);
-            if (activeGroup === groupId) {
-                activeGroup = null;
-            }
             if (selectedTab === groupId) {
                 service.setSelectedTab("mainevents");
             }

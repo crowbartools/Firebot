@@ -7,6 +7,7 @@ const EventEmitter = require("events");
 const { shell } = require('electron');
 const { settings } = require('../common/settings-access');
 const frontEndCommunicator = require('../common/frontend-communicator');
+const { setValuesForFrontEnd, buildSaveDataFromSettingValues } = require("../common/firebot-setting-helpers");
 
 /**@extends {NodeJS.EventEmitter} */
 class IntegrationManager extends EventEmitter {
@@ -28,6 +29,7 @@ class IntegrationManager extends EventEmitter {
             let integrationSettings = integrationDb.getData(`/${integration.definition.id}`);
             if (integrationSettings != null) {
                 integration.definition.settings = integrationSettings.settings;
+                integration.definition.userSettings = integrationSettings.userSettings;
                 integration.definition.linked = integrationSettings.linked !== false;
                 integration.definition.auth = integrationSettings.auth;
                 integration.definition.accountId = integrationSettings.accountId;
@@ -46,7 +48,8 @@ class IntegrationManager extends EventEmitter {
             {
                 oauth: integration.definition.auth,
                 accountId: integration.definition.accountId,
-                settings: integration.definition.settings
+                settings: integration.definition.settings,
+                userSettings: integration.definition.userSettings
             }
         );
 
@@ -79,13 +82,38 @@ class IntegrationManager extends EventEmitter {
 
                 let int = this.getIntegrationById(id);
                 if (int != null) {
-                    int.definition.settings = settings;
                     int.definition.linked = true;
+                    int.definition.settings = settings;
                 }
+
             } catch (error) {
                 logger.warn(error);
             }
         });
+    }
+
+    saveIntegrationUserSettings(id, settings, notifyInt = true) {
+        try {
+            let integrationDb = profileManager.getJsonDbInProfile("/integrations");
+            integrationDb.push(`/${id}/userSettings`, settings);
+
+            let int = this.getIntegrationById(id);
+            if (int != null) {
+                int.definition.userSettings = settings;
+            }
+
+            if (notifyInt && int.integration.onUserSettingsUpdate) {
+                const integrationData = {
+                    settings: int.definition.settings,
+                    userSettings: int.definition.userSettings,
+                    oauth: int.definition.auth,
+                    accountId: int.definition.accountId
+                };
+                int.integration.onUserSettingsUpdate(integrationData);
+            }
+        } catch (error) {
+            logger.warn(error);
+        }
     }
 
     getIntegrationById(integrationId) {
@@ -97,8 +125,34 @@ class IntegrationManager extends EventEmitter {
         return integration.definition;
     }
 
+    integrationIsConnectable(integrationId) {
+        const integration = this.getIntegrationDefinitionById(integrationId);
+        if (integration == null) {
+            return false;
+        }
+        if (!integration.linked || !integration.connectionToggle) {
+            return false;
+        }
+        return true;
+    }
+
     getAllIntegrationDefinitions() {
-        return this._integrations.map(i => i.definition);
+        return this._integrations
+            .map(i => i.definition)
+            .map(i => {
+                return {
+                    id: i.id,
+                    name: i.name,
+                    description: i.description,
+                    linked: i.linked,
+                    linkType: i.linkType,
+                    connectionToggle: i.connectionToggle,
+                    idDetails: i.idDetails,
+                    configurable: i.configurable,
+                    settings: i.settings,
+                    settingCategories: i.settingCategories ? setValuesForFrontEnd(i.settingCategories, i.userSettings) : undefined
+                };
+            });
     }
 
     saveIntegrationAuth(integration, authData) {
@@ -191,7 +245,8 @@ class IntegrationManager extends EventEmitter {
         }
 
         let integrationData = {
-            settings: int.definition.settings
+            settings: int.definition.settings,
+            userSettings: int.definition.userSettings
         };
 
         if (int.definition.linkType === "auth") {
@@ -238,6 +293,17 @@ class IntegrationManager extends EventEmitter {
 }
 
 const manager = new IntegrationManager();
+
+frontEndCommunicator.on("integrationUserSettingsUpdate", (integrationData) => {
+    if (integrationData == null) return;
+
+    const int = manager.getIntegrationById(integrationData.id);
+    if (int != null) {
+        manager.saveIntegrationUserSettings(int.definition.id,
+            buildSaveDataFromSettingValues(integrationData.settingCategories, int.definition.userSettings));
+    }
+});
+
 
 frontEndCommunicator.on("enteredIntegrationAccountId", async (idData) => {
     const { integrationId, accountId } = idData;

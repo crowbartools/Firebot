@@ -3,7 +3,9 @@
 const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
-
+const fs = require('fs-extra');
+const logger = require("../../logwrapper");
+const path = require("path");
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
@@ -39,31 +41,56 @@ const playSound = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-    <eos-container header="Sound">
-        <div style="margin-bottom: 10px">
-            <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
-        </div>
-
-        <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
-    </eos-container>
-
-    <eos-container header="Volume" pad-top="true">
-        <div class="volume-slider-wrapper">
-            <i class="fal fa-volume-down volume-low"></i>
-            <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10, hideLimitLabels: true, showSelectionBar: true}"></rzslider>
-            <i class="fal fa-volume-up volume-high"></i>
+    <eos-container header="Type">
+        <div class="controls-fb-inline" style="padding-bottom: 5px;">
+            <label class="control-fb control--radio">Local file
+                <input type="radio" ng-model="effect.soundType" value="local"/>
+                <div class="control__indicator"></div>
+            </label>
+            <label class="control-fb control--radio">Random from folder
+                <input type="radio" ng-model="effect.soundType" value="folderRandom"/>
+                <div class="control__indicator"></div>
+            </label>
         </div>
     </eos-container>
+    
+    <div ng-hide="effect.soundType == null">
+        <eos-container header="Sound">
+            <div ng-if="effect.soundType === 'folderRandom'">
+                <file-chooser model="effect.folder" options="{ directoryOnly: true, filters: [], title: 'Select Sound Folder'}"></file-chooser>
+            </div>
 
-    <eos-audio-output-device effect="effect" pad-top="true"></eos-audio-output-device>
+            <div ng-if="effect.soundType === 'local'">
+                <div style="margin-bottom: 10px">
+                    <file-chooser model="effect.filepath" options="{ filters: [ {name: 'Audio', extensions: ['mp3', 'ogg', 'wav', 'flac']} ]}" on-update="soundFileUpdated(filepath)"></file-chooser>
+                </div>
+                <div>
+                    <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
+                </div>
+            </div>
+        </eos-container>
 
-    <eos-overlay-instance ng-if="effect.audioOutputDevice && effect.audioOutputDevice.deviceId === 'overlay'"
-        effect="effect" pad-top="true"></eos-overlay-instance>
+        <eos-container header="Volume" pad-top="true">
+            <div class="volume-slider-wrapper">
+                <i class="fal fa-volume-down volume-low"></i>
+                <rzslider rz-slider-model="effect.volume" rz-slider-options="{floor: 1, ceil: 10, hideLimitLabels: true, showSelectionBar: true}"></rzslider>
+                <i class="fal fa-volume-up volume-high"></i>
+            </div>
+        </eos-container>
+
+        <eos-audio-output-device effect="effect" pad-top="true"></eos-audio-output-device>
+
+        <eos-overlay-instance ng-if="effect.audioOutputDevice && effect.audioOutputDevice.deviceId === 'overlay'"effect="effect" pad-top="true"></eos-overlay-instance>
+    </div>
     `,
     /**
    * The controller for the front end Options
    */
     optionsController: ($scope, listenerService) => {
+        if ($scope.effect.soundType == null) {
+            $scope.effect.soundType = "local";
+        }
+
         if ($scope.effect.volume == null) {
             $scope.effect.volume = 5;
         }
@@ -74,9 +101,18 @@ const playSound = {
     optionsValidator: effect => {
         let errors = [];
         console.log(effect);
-        if (effect.filepath == null || effect.filepath.length < 1) {
-            errors.push("Please select a sound file.");
+
+        if (effect.soundType === "local" || effect.soundType == null) {
+            if (effect.filepath == null || effect.filepath.length < 1) {
+                errors.push("Please select a sound file.");
+            }
+        } else {
+            if (effect.folder == null || effect.folder.length < 1) {
+                errors.push("Please select a sound folder.");
+            }
         }
+
+
         return errors;
     },
     /**
@@ -84,20 +120,48 @@ const playSound = {
    */
     onTriggerEvent: async event => {
         let effect = event.effect;
+
+        // Fallback 6-16-20
+        if (effect.soundType == null) {
+            effect.soundType = "local";
+        }
+
         let data = {
             filepath: effect.filepath,
             volume: effect.volume
         };
 
+        // Get random sound
+        if (effect.soundType === "folderRandom") {
+            let files = [];
+            try {
+                files = await fs.readdir(effect.folder);
+            } catch (err) {
+                logger.warn("Unable to read sound folder", err);
+            }
+
+            let filteredFiles = files.filter(i => (/\.(mp3|ogg|wav)$/i).test(i));
+            let chosenFile = filteredFiles[Math.floor(Math.random() * filteredFiles.length)];
+
+            if (filteredFiles.length === 0) {
+                logger.error('No sounds were found in the select sound folder.');
+            }
+
+            let fullFilePath = path.join(effect.folder, chosenFile);
+            data.filepath = fullFilePath;
+        }
+
+        // Set output device.
         let selectedOutputDevice = effect.audioOutputDevice;
         if (selectedOutputDevice == null || selectedOutputDevice.label === "App Default") {
             selectedOutputDevice = settings.getAudioOutputDevice();
         }
         data.audioOutputDevice = selectedOutputDevice;
 
+        // Generate token if going to overlay, otherwise send to gui.
         if (selectedOutputDevice.deviceId === "overlay") {
             let resourceToken = resourceTokenManager.storeResourcePath(
-                effect.filepath,
+                data.filepath,
                 30
             );
             data.resourceToken = resourceToken;

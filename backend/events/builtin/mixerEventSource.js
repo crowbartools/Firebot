@@ -228,6 +228,40 @@ const mixerEventSource = {
                 username: "Firebot",
                 maxAdBreakLengthInSec: 30
             }
+        },
+        {
+            id: "stream-went-live",
+            name: "Stream Went Live",
+            description: "When you go live (Sometimes takes a few secs to trigger).",
+            cached: true,
+            cacheTtlInSecs: 30,
+            manualMetadata: {}
+        },
+        {
+            id: "stream-gone-offline",
+            name: "Stream Went Offline",
+            description: "When your stream has gone offline.",
+            cached: true,
+            cacheTtlInSecs: 30,
+            manualMetadata: {}
+        },
+        {
+            id: "stream-title-changed",
+            name: "Stream Title Changed",
+            description: "When your streams title has been changed",
+            manualMetadata: {}
+        },
+        {
+            id: "stream-game-changed",
+            name: "Stream Game Changed",
+            description: "When your streams game has been changed",
+            manualMetadata: {}
+        },
+        {
+            id: "stream-audience-changed",
+            name: "Stream Audience Changed",
+            description: "When your streams audience level has been changed",
+            manualMetadata: {}
         }
     ]
 };
