@@ -90,8 +90,7 @@ const effect = {
         const effect = event.effect;
         const sceneId = effect.sceneId;
 
-        // TODO: Activate Scene
-        const hueIntegration = integrationManager.getIntegrationDefinitionById("hue");
+        hueManager.setHueScene(sceneId);
     }
 };
 

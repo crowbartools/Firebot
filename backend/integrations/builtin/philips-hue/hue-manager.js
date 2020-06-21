@@ -25,30 +25,12 @@ async function connectHueBridge(hueUser) {
 }
 
 async function deleteHueUser(hueUser) {
-    if (authenticatedApi == null) {
-        const successfullyConnected = await connectHueBridge(hueUser);
-        if (!successfullyConnected) {
-            return;
-        }
-    }
+    // The hue api does not allow deleting users. So, this will just show a popup to the user on where to go to delete Firebot access.
 
-    /**@type {Promise<any>[]}*/
-    const promises = [];
-
-    const users = authenticatedApi.users.getAll();
-    for (const user of users) {
-        if (user.name === "Firebot#Firebot-Hue") {
-            try {
-                console.log(user);
-                promises.push(authenticatedApi.users.deleteUser(user.username));
-            } catch (err) {
-                logger.error(err);
-            }
-        }
-    }
-
-    const deletionResults = await Promise.all(promises);
-    console.log(JSON.stringify(deletionResults));
+    renderWindow.webContents.send(
+        "error",
+        "The Hue API does not allow Firebot to delete it's access from the hue bridge. Please visit https://account.meethue.com/apps and click deactivate on Firebot."
+    );
 }
 
 function getAllHueScenes() {
@@ -58,7 +40,7 @@ function getAllHueScenes() {
     return authenticatedApi.scenes.getAll();
 }
 
-async function activateHueScene(sceneId) {
+async function setHueScene(sceneId) {
     if (authenticatedApi == null) {
         return null;
     }
@@ -74,4 +56,4 @@ frontEndCommunicator.onAsync("getAllHueScenes", () => {
 exports.connectHueBridge = connectHueBridge;
 exports.deleteHueUser = deleteHueUser;
 exports.getAllHueScenes = getAllHueScenes;
-exports.activateHueScene = activateHueScene;
+exports.setHueScene = setHueScene;
