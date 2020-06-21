@@ -271,7 +271,7 @@
               </div>
               <div>
                   <button class="btn btn-default" ng-show="integration.configurable" ng-click="integrations.openIntegrationSettings(integration.id)">Configure</button>
-                  <button class="btn btn-default" ng-show="integration.linkType === 'auth' || integration.linkType === 'id'" ng-click="integrations.toggleLinkforIntegration(integration.id)">{{integrations.integrationIsLinked(integration.id) ? 'Unlink' : 'Link'}}</button>
+                  <button class="btn btn-default" ng-show="integration.linkType === 'auth' || integration.linkType === 'id' || integration.linkType === 'other'" ng-click="integrations.toggleLinkforIntegration(integration.id)">{{integrations.integrationIsLinked(integration.id) ? 'Unlink' : 'Link'}}</button>
               </div>
             </div>
           </div>

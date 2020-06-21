@@ -15,10 +15,12 @@ async function connectHueBridge(hueUser) {
         authenticatedApi = await hueApi.createLocal(hueUser.ipAddress).connect(hueUser.username);
         return true;
     } catch (err) {
-        if (err.getHueErrorType() === 101) {
-            logger.error('Hue error ' + err.getHueErrorType());
-        } else {
-            logger.error(`Unexpected Error: ${err.message}`);
+        if (err) {
+            if (err.getHueErrorType && err.getHueErrorType() === 101) {
+                logger.error('Hue error ' + err.getHueErrorType(), err);
+            } else {
+                logger.error(`Unexpected Error: ${err.message}`, err);
+            }
         }
         return false;
     }
