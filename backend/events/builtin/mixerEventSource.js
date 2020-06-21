@@ -244,6 +244,24 @@ const mixerEventSource = {
             cached: true,
             cacheTtlInSecs: 30,
             manualMetadata: {}
+        },
+        {
+            id: "stream-title-changed",
+            name: "Stream Title Changed",
+            description: "When your streams title has been changed",
+            manualMetadata: {}
+        },
+        {
+            id: "stream-game-changed",
+            name: "Stream Game Changed",
+            description: "When your streams game has been changed",
+            manualMetadata: {}
+        },
+        {
+            id: "stream-audience-changed",
+            name: "Stream Audience Changed",
+            description: "When your streams audience level has been changed",
+            manualMetadata: {}
         }
     ]
 };

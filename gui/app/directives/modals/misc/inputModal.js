@@ -56,9 +56,10 @@
             bindings: {
                 resolve: '<',
                 close: '&',
-                dismiss: '&'
+                dismiss: '&',
+                modalInstance: "<"
             },
-            controller: function($scope, $timeout) {
+            controller: function($scope, $timeout, utilityService) {
                 let $ctrl = this;
 
                 $ctrl.model = "";
@@ -125,6 +126,23 @@
                     if ($ctrl.resolve.useTextArea) {
                         $ctrl.useTextArea = $ctrl.resolve.useTextArea === true;
                     }
+
+                    const modalId = $ctrl.resolve.modalId;
+                    utilityService.addSlidingModal(
+                        $ctrl.modalInstance.rendered.then(() => {
+                            let modalElement = $("." + modalId).children();
+                            return {
+                                element: modalElement,
+                                name: "",
+                                id: modalId,
+                                instance: $ctrl.modalInstance
+                            };
+                        })
+                    );
+
+                    $scope.$on("modal.closing", function() {
+                        utilityService.removeSlidingModal();
+                    });
 
                     $timeout(() => {
                         angular.element("#inputField").trigger("focus");

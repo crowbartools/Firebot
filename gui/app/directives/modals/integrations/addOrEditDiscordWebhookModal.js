@@ -1,8 +1,9 @@
 "use strict";
 
-const uuid = require("uuid/v4");
-
 (function() {
+
+    const uuid = require("uuid/v4");
+
     angular.module("firebotApp")
         .component("addOrEditDiscordWebhookModal", {
             template: `

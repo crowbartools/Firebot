@@ -10,23 +10,20 @@
             logger,
             connectionService,
             listenerService,
-            backendCommunicator
+            backendCommunicator,
+            utilityService
         ) {
             let service = {};
 
             let getCommandsDb = () =>
                 profileManager.getJsonDbInProfile("/chat/commands");
 
-            let getCommandGroupsDb = () =>
-                profileManager.getJsonDbInProfile("/chat/command-groups");
-
             // in memory commands storage
             let commandsCache = {
                 systemCommands: [],
-                customCommands: []
+                customCommands: [],
+                sortTags: []
             };
-
-            let commandGroups = [];
 
             // Refresh commands cache
             service.refreshCommands = function() {
@@ -45,24 +42,57 @@
                     commandsCache.customCommands = Object.values(cmdData.customCommands);
                 }
 
+                if (cmdData.sortTags) {
+                    logger.debug("loaded sort tags");
+                    commandsCache.sortTags = cmdData.sortTags;
+                }
+
                 commandsCache.systemCommands = listenerService.fireEventSync(
                     "getAllSystemCommandDefinitions"
                 );
 
                 // Refresh the command cache.
                 ipcRenderer.send("refreshCommandCache");
-
-                //load cmd groups
-                let groupsDb = getCommandGroupsDb();
-                try {
-                    commandGroups = groupsDb.getData("/groups");
-                } catch (error) {
-                    if (error.name === 'DatabaseError') {
-                        logger.error("Failed to load command groups", error);
-                    }
-                    return;
-                }
             };
+
+            // SORT TAGS
+            service.saveSortTags = () => {
+                try {
+                    const commandDb = getCommandsDb();
+                    commandDb.push("/sortTags", commandsCache.sortTags);
+                } catch (err) {} //eslint-disable-line no-empty
+            };
+
+            service.getSortTags = () => {
+                return commandsCache.sortTags;
+            };
+
+            service.selectedSortTag = null;
+            service.selectedSortTagDisplay = () => {
+                return service.selectedSortTag != null ? service.selectedSortTag.name : "All Commands";
+            };
+            service.setSelectedSortTag = (tag) => {
+                service.selectedSortTag = tag;
+            };
+
+            service.openManageTagsModal = () => {
+                utilityService.showModal({
+                    component: "manageSortTagsModal",
+                    size: "sm",
+                    resolveObj: {
+                        tags: () => commandsCache.sortTags
+                    },
+                    closeCallback: tags => {
+                        commandsCache.sortTags = tags;
+                        service.saveSortTags();
+                        if (service.selectedSortTag && !commandsCache.sortTags.some(t => t.id === service.selectedSortTag.id)) {
+                            service.selectedSortTag = null;
+                        }
+                    }
+                });
+            };
+
+            //END SORT TAGS
 
             backendCommunicator.on("custom-commands-updated", () => {
                 service.refreshCommands();
@@ -148,33 +178,6 @@
                 } catch (err) {
                     logger.warn("error when deleting command", err);
                 } //eslint-disable-line no-empty
-            };
-
-            function saveCommandGroups() {
-                getCommandGroupsDb.push("/groups", commandGroups, true);
-            }
-
-            service.addCommandGroup = function(groupName) {
-                if (commandGroups.includes(groupName) ||
-                    groupName == null ||
-                    groupName === "" ||
-                    groupName.toLowerCase() === "all") {
-                    return;
-                }
-
-                commandGroups.push(groupName);
-
-                saveCommandGroups();
-            };
-
-            service.removeCommandGroup = function(groupName) {
-                if (!commandGroups.includes(groupName)) {
-                    return;
-                }
-
-                commandGroups = commandGroups.filter(g => g !== groupName);
-
-                saveCommandGroups();
             };
 
             listenerService.registerListener(

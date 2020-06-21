@@ -9,6 +9,8 @@ const { settings } = require("../settings-access");
 const sanitize = require("sanitize-filename");
 const moment = require("moment");
 const path = require("path");
+const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");
+const discord = require("../../integrations/builtin/discord/discord-message-sender");
 const downloadClip = require("./clip-downloader");
 
 function downloadAndSaveClip(uri, title = "") {
@@ -101,6 +103,11 @@ exports.createClip = async function(effect, trigger) {
         if (effect.postLink) {
             const message = `Clip created: https://mixer.com/${streamerAccount.username}?clip=${clipProperties.shareableId}`;
             chat.sendChatMessage(message);
+        }
+
+        if (effect.postInDiscord) {
+            const clipEmbed = await discordEmbedBuilder.buildClipEmbed(clipProperties);
+            discord.sendDiscordMessage(effect.discordChannelId, "A new clip was created!", clipEmbed);
         }
 
         const streamLocator = clipProperties.contentLocators.find(l => l.locatorType === "HlsStreaming");

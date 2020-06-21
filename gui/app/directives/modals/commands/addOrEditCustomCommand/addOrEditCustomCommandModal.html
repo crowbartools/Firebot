@@ -89,6 +89,11 @@
                 </div>             
             </div>
 
+            <div class="effect-setting-container" style="padding-bottom:1em" ng-show="$ctrl.allSortTags != null && $ctrl.allSortTags.length > 0">
+                <h3>Sort Tags</h3>
+                <sort-tag-list current-tag-ids="$ctrl.command.sortTags" all-tags="$ctrl.allSortTags"></sort-tag-list>
+            </div>
+
             <div class="other-settings" style="padding-bottom:1em">
                 <div class="settings-title">
                     <h3>Settings</h3>

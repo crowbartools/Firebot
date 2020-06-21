@@ -10,6 +10,7 @@ const EVENTS_FOLDER = "/events/";
 
 let mainEvents = [];
 let groups = {};
+let sortTags = [];
 
 function getEventsDb() {
     return profileManager.getJsonDbInProfile(EVENTS_FOLDER + "events");
@@ -24,6 +25,16 @@ function saveGroup(group) {
         logger.debug(`Saved event group '${group.id}'.`);
     } catch (err) {
         logger.warn(`Unable to save event group '${group.id}'.`, err);
+    }
+}
+
+function saveSortTags() {
+    let eventsDb = getEventsDb();
+    try {
+        eventsDb.push("/sortTags", sortTags);
+        logger.debug(`Saved event sort tags.`);
+    } catch (err) {
+        logger.warn(`Unable to save event sort tags.`, err);
     }
 }
 
@@ -43,7 +54,6 @@ function loadEventsAndGroups() {
             groups = eventsData.groups;
         }
 
-
         // convert old active group data to new
         // changed in v5.14.0
         if (eventsData.activeGroup) {
@@ -53,6 +63,10 @@ function loadEventsAndGroups() {
                 saveGroup(activeGroup);
             }
             eventsDb.delete("/activeGroup");
+        }
+
+        if (eventsData.sortTags) {
+            sortTags = eventsData.sortTags;
         }
 
         logger.debug(`Loaded event data.`);
@@ -117,7 +131,8 @@ ipcMain.on("getAllEventData", event => {
     logger.debug("got 'get all event data' request");
     event.returnValue = {
         mainEvents: Array.isArray(mainEvents) ? mainEvents : Object.values(mainEvents),
-        groups: Object.values(groups)
+        groups: Object.values(groups),
+        sortTags: sortTags
     };
 });
 
@@ -140,8 +155,24 @@ ipcMain.on("eventUpdate", (_, data) => {
         saveMainEvents(meta);
         break;
     }
-
 });
+
+frontendCommunicator.on("event-sort-tags-update", tags => {
+    sortTags = tags;
+    saveSortTags();
+});
+
+function updateEventGroupActiveStatus(groupId, active = false) {
+    const group = groups[groupId];
+
+    if (group == null) return;
+
+    group.active = active;
+
+    saveGroup(group);
+
+    frontendCommunicator.send("event-group-update", group);
+}
 
 exports.triggerUiRefresh = () => {
     frontendCommunicator.send("main-events-update");
@@ -151,3 +182,4 @@ exports.triggerUiRefresh = () => {
 exports.saveNewEventToMainEvents = saveNewEventToMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;
+exports.updateEventGroupActiveStatus = updateEventGroupActiveStatus;

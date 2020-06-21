@@ -75,7 +75,7 @@
                 return new Promise(resolve => {
                     empty(RESTORE_FOLDER_PATH, false, o => {
                         if (o.error) {
-                            logger.error(o.error);
+                            logger.warn(o.error);
                         }
                         resolve();
                     });

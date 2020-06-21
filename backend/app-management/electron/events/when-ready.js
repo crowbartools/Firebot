@@ -21,7 +21,8 @@ exports.whenReady = async () => {
     const accountAccess = require("../../../common/account-access");
     await accountAccess.updateAccountCache(false);
 
-    require("../../../common/connection-manager");
+    const connectionManager = require("../../../common/connection-manager");
+    connectionManager.startOnlineCheckInterval();
 
     const timerManager = require("../../../timers/timer-manager");
     timerManager.startTimers();
