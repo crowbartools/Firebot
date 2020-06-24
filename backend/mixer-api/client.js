@@ -66,21 +66,12 @@ function setupClients() {
 
 let tokenRefreshIntervalId = null;
 function startTokenRefreshInterval() {
-    if (tokenRefreshIntervalId != null) {
-        clearInterval(tokenRefreshIntervalId);
-    }
-    tokenRefreshIntervalId = setInterval(async () => {
-        await accountAccess.ensureTokenRefreshed("bot");
-        await accountAccess.ensureTokenRefreshed("streamer", true);
-    }, 60 * 60 * 1000); // every hour
 }
 
 /**
  * Refreshes tokens and then ensures clients are setup.
  */
 async function initClients() {
-    await accountAccess.ensureTokenRefreshed("streamer");
-    await accountAccess.ensureTokenRefreshed("bot");
     setupClients();
     startTokenRefreshInterval();
 }

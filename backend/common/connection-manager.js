@@ -5,7 +5,7 @@ const logger = require("../logwrapper");
 const channelAccess = require("./channel-access");
 const frontendCommunicator = require("./frontend-communicator");
 const { settings } = require("./settings-access");
-const chat = require("../chat/chat");
+const twitchChat = require("../chat/twitch-chat");
 const constellation = require("../events/constellation");
 const integrationManager = require("../integrations/IntegrationManager");
 
@@ -41,10 +41,10 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
 }
 
 // Chat listeners
-chat.on("connected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected));
-chat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
-chat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
-chat.on("reconnecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Reconnecting));
+twitchChat.on("connected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected));
+twitchChat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
+twitchChat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
+twitchChat.on("reconnecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Reconnecting));
 
 // Constellation listeners
 constellation.on("connected", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Connected));
@@ -80,13 +80,13 @@ class ConnectionManager extends EventEmitter {
 
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
-            if (!chat.chatIsConnected()) {
-                chat.connect();
+            if (!twitchChat.chatIsConnected()) {
+                twitchChat.connect();
             } else {
                 return false;
             }
         } else {
-            chat.disconnect();
+            twitchChat.disconnect();
         }
         return true;
     }
@@ -125,7 +125,7 @@ class ConnectionManager extends EventEmitter {
         for (const serviceId of serviceIds) {
             switch (serviceId) {
             case "chat": {
-                const shouldConnect = !chat.chatIsConnected();
+                const shouldConnect = !twitchChat.chatIsConnected();
                 manager.updateChatConnection(shouldConnect);
                 break;
             }

@@ -1,22 +1,71 @@
 "use strict";
+const logger = require("../logwrapper");
+const EventEmitter = require("events");
 const ChatClient = require('twitch-chat-client').default;
-
 const twitchClient = require("../twitch-api/client");
-
 const accountAccess = require("../common/account-access");
 
-async function connect() {
 
-    const streamer = accountAccess.getAccounts().streamer;
-    if (!streamer.loggedIn) return;
+/**@extends NodeJS.EventEmitter */
+class TwitchChat extends EventEmitter {
 
-    const client = twitchClient.getClient();
-    if (client == null) return;
+    constructor() {
+        super();
 
-    const chatClient = await ChatClient.forTwitchClient(client);
+        /** @type {ChatClient} */
+        this._streamerChatClient = null;
 
-    chatClient.onRegister(() => chatClient.join(streamer.username));
+        /** @type {ChatClient} */
+        this._botChatClient = null;
+    }
 
-    // listen to more events...
-    await chatClient.connect();
+    chatIsConnected() {
+        return this._streamerChatClient != null && this._streamerChatClient.isConnected;
+    }
+
+    async disconnect(emitDisconnectEvent = true) {
+        if (this.chatIsConnected()) {
+            await this._streamerChatClient.quit();
+        }
+        if (emitDisconnectEvent) {
+            this.emit("disconnected");
+        }
+    }
+
+    async connect() {
+        const streamer = accountAccess.getAccounts().streamer;
+        if (!streamer.loggedIn) return;
+
+        const client = twitchClient.getClient();
+        if (client == null) return;
+
+        this.emit("connecting");
+
+        try {
+            await this.disconnect(false);
+
+            this._streamerChatClient = await ChatClient.forTwitchClient(client);
+
+            this._streamerChatClient.onRegister(() => this._streamerChatClient.join(streamer.username));
+
+            // listen to more events...
+            await this._streamerChatClient.connect();
+
+            this._streamerChatClient.onPrivmsg((channel, user, message, msg) => {
+                if (message === '!ping') {
+                    this._streamerChatClient.say(channel, 'Pong!');
+                }
+            });
+
+            this.emit("connected");
+        } catch (error) {
+            logger.error("Chat connect error", error);
+            await this.disconnect();
+        }
+    }
 }
+
+module.exports = new TwitchChat();
+
+
+
