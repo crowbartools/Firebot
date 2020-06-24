@@ -5,6 +5,7 @@ const ChatClient = require('twitch-chat-client').default;
 const twitchClient = require("../twitch-api/client");
 const accountAccess = require("../common/account-access");
 
+const chatHelpers = require("./chat-helpers");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -52,10 +53,13 @@ class TwitchChat extends EventEmitter {
             await this._streamerChatClient.connect();
 
             this._streamerChatClient.onPrivmsg((channel, user, message, msg) => {
+                chatHelpers.parseChatMessage(msg);
                 if (message === '!ping') {
                     this._streamerChatClient.say(channel, 'Pong!');
                 }
             });
+
+            await chatHelpers.cacheBadges();
 
             this.emit("connected");
         } catch (error) {

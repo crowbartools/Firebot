@@ -343,52 +343,10 @@
             };
 
             service.getSubIcon = function() {
-                if (service.subIconCache !== false) {
-                    // Check to see if we've cached the icon yet. If we have, use it.
-                    return service.subIconCache;
-                }
-
-                // We haven't cached the icon yet, lets do that.
-                let dbAuth = profileManager.getJsonDbInProfile("/auth-twitch"),
-                    streamer = dbAuth.getData("/streamer"),
-                    subIcon = [];
-
-                try {
-                    // If this runs it means we have saved it to the auth file.
-                    subIcon = dbAuth.getData("/streamer/subBadge");
-                    service.subIconCache = subIcon;
-                    return service.subIconCache;
-                } catch (err) {
-                    // If this runs it means we've never saved the sub badge.
-                    request({
-                        url: 'https://mixer.com/api/v1/channels/' + streamer.username + '?fields=badge,partnered',
-                        headers: {
-                            'Client-ID': 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9'
-                        }
-                    }, function (err, res) {
-                        let data = JSON.parse(res.body);
-
-                        // Push all to db.
-                        if (data.partnered === true) {
-                            dbAuth.push('./streamer/subBadge', data.badge.url);
-                            service.subIconCache = data.badge.url;
-                        }
-
-                        return service.subIconCache;
-                    }
-                    );
-                }
+                return "";
             };
 
             service.levels = {};
-            $http.get("https://mixer.com/api/v1/ascension/levels")
-                .then(response => {
-                    if (response.status === 200 && response.data && response.data.levels) {
-                        for (let level of response.data.levels) {
-                            service.levels[`${level.level}`] = level;
-                        }
-                    }
-                }, () => {});
 
 
             // This submits a chat message to mixer.
@@ -473,15 +431,6 @@
                     data.whisper = data.message.meta.whisper === true;
 
                     data.action = data.message.meta.me === true;
-                } else if (data.skill) {
-                    data.isSkill = true;
-
-                    // Set the icon for the currency used.
-                    if (data.skill.currency === "Sparks") {
-                        data.currencyIcon = "fas fa-bolt";
-                    } else {
-                        data.currencyIcon = "fas fa-fire";
-                    }
                 }
 
 

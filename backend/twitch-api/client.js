@@ -37,7 +37,6 @@ exports.setupTwitchClient = () => {
         }
     );
 
-
     const bot = accountAccess.getAccounts().bot;
     if (!bot.loggedIn) return;
     botClient = TwitchClient.withCredentials(
