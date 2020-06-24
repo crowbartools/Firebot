@@ -13,8 +13,8 @@
                 $rootScope.$broadcast("navToggled");
             };
 
-            service.currentTab = "buttons";
-            service.currentTabName = "Controls";
+            service.currentTab = "commands";
+            service.currentTabName = "Commands";
 
             service.setTab = function(tabId, name) {
                 service.currentTab = tabId.toLowerCase();
@@ -63,14 +63,14 @@
         function($routeProvider) {
             $routeProvider
 
-                .when("/", {
-                    templateUrl: "./templates/interactive/_interactive.html",
-                    controller: "controlsController"
-                })
-
                 .when("/viewer-roles", {
                     templateUrl: "./templates/_viewerroles.html",
                     controller: "viewerRolesController"
+                })
+
+                .when("/", {
+                    templateUrl: "./templates/chat/_commands.html",
+                    controller: "commandsController"
                 })
 
                 .when("/commands", {

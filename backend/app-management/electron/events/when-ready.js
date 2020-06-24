@@ -14,8 +14,8 @@ exports.whenReady = async () => {
 
     //load mixer auth
     require("../../../auth/auth-manager");
-    const mixerAuth = require("../../../auth/mixer-auth");
-    mixerAuth.registerMixerAuthProviders();
+    const twitchAuth = require("../../../auth/twitch-auth");
+    twitchAuth.registerTwitchAuthProviders();
 
     // load accounts
     const accountAccess = require("../../../common/account-access");

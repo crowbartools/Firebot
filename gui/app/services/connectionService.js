@@ -36,7 +36,7 @@
                     if (service.accounts.streamer.loggedIn) {
                         service.logout(type);
                     } else {
-                        shell.openExternal(`http://localhost:${settingsService.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent("mixer:streamer-account")}`);
+                        shell.openExternal(`http://localhost:${settingsService.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent("twitch:streamer-account")}`);
                     }
                 } else if (type === "bot") {
                     if (service.accounts.bot.loggedIn) {
@@ -104,7 +104,7 @@
                     // If it exists, overwrite defaults.
                     let streamer;
                     try {
-                        let profileDb = dataAccess.getJsonDbInUserData("./profiles/" + profileId + "/auth");
+                        let profileDb = dataAccess.getJsonDbInUserData("./profiles/" + profileId + "/auth-twitch");
                         streamer = profileDb.getData("/streamer");
                     } catch (err) {
                         logger.info("Couldnt get streamer data for profile " + profileId + " while updating the UI. Its possible this account hasnt logged in yet.");

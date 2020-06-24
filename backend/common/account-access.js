@@ -92,7 +92,7 @@ async function updateStreamerAccountSettings(streamerAccount) {
 }
 
 function saveAccountDataToFile(accountType) {
-    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     let account = cache[accountType];
     try {
         authDb.push(`/${accountType}`, account);
@@ -108,7 +108,7 @@ function saveAccountDataToFile(accountType) {
  * @param {boolean} [emitUpdate=true] - If an account update event should be emitted
  */
 async function loadAccountData(emitUpdate = true) {
-    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {
         let dbData = authDb.getData("/"),
             streamer = dbData.streamer,
@@ -223,7 +223,7 @@ function removeAccount(accountType) {
         authManager.revokeTokens(accountProviderId, account.auth);
     }*/
 
-    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {
         authDb.delete(`/${accountType}`);
     } catch (error) {

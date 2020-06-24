@@ -10,24 +10,9 @@
                 <div style="display: flex;justify-content: space-around">
                 <div style="width: 70%;">
                     <div style="text-align: center;font-size: 18px;color: gray;font-weight: 100;padding-bottom: 15px;">
-                        MIXER SERVICES
+                        TWITCH SERVICES
                     </div>
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
-                        <div class="connection-tile">
-                            <span class="connection-title">MixPlay <tooltip text="'Used for interactive buttons and controls'"></tooltip></span>
-                            <connection-button 
-                                connected="$ctrl.conn.connections['interactive'] === 'connected'" 
-                                connecting="$ctrl.conn.connections['interactive'] === 'connecting'"
-                                connection-name="MixPlay"
-                                on-connection-click="$ctrl.conn.toggleConnectionToService('interactive')"></connection-button>
-                            <div class="sub-title">
-                                <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have MixPlay be controlled by the sidebar connect button.'"></tooltip></div>
-                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
-                                    <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('interactive')" ng-click="$ctrl.toggledServiceIsChecked('interactive')">
-                                    <div class="control__indicator"></div>                                             
-                                </label>
-                            </div>
-                        </div>
                         <div class="connection-tile">
                             <span class="connection-title">Chat <tooltip text="'Used for commands, chat effects, chat feed, sticker events, etc.'"></tooltip></span>
                             <connection-button 

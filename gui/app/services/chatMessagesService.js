@@ -349,7 +349,7 @@
                 }
 
                 // We haven't cached the icon yet, lets do that.
-                let dbAuth = profileManager.getJsonDbInProfile("/auth"),
+                let dbAuth = profileManager.getJsonDbInProfile("/auth-twitch"),
                     streamer = dbAuth.getData("/streamer"),
                     subIcon = [];
 
