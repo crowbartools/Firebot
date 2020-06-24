@@ -6,7 +6,6 @@ const channelAccess = require("./channel-access");
 const frontendCommunicator = require("./frontend-communicator");
 const { settings } = require("./settings-access");
 const twitchChat = require("../chat/twitch-chat");
-const constellation = require("../events/constellation");
 const integrationManager = require("../integrations/IntegrationManager");
 
 const { ConnectionState } = require("../../shared/connection-constants");
@@ -45,12 +44,6 @@ twitchChat.on("connected", () => emitServiceConnectionUpdateEvents("chat", Conne
 twitchChat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
 twitchChat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
 twitchChat.on("reconnecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Reconnecting));
-
-// Constellation listeners
-constellation.on("connected", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Connected));
-constellation.on("disconnected", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Disconnected));
-constellation.on("connecting", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Connecting));
-constellation.on("reconnecting", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Reconnecting));
 
 // Integrations listener
 integrationManager.on("integration-connected", (id) => emitServiceConnectionUpdateEvents(`integration.${id}`, ConnectionState.Connected));
@@ -91,19 +84,6 @@ class ConnectionManager extends EventEmitter {
         return true;
     }
 
-    updateConstellationConnection(shouldConnect) {
-        if (shouldConnect) {
-            if (!constellation.constellationIsConnected()) {
-                constellation.connect();
-            } else {
-                return false;
-            }
-        } else {
-            constellation.disconnect();
-        }
-        return true;
-    }
-
     updateIntegrationConnection(integrationId, shouldConnect) {
         if (!integrationManager.integrationIsConnectable(integrationId)) {
             return false;
@@ -129,11 +109,6 @@ class ConnectionManager extends EventEmitter {
                 manager.updateChatConnection(shouldConnect);
                 break;
             }
-            case "constellation": {
-                const shouldConnect = !constellation.constellationIsConnected();
-                manager.updateConstellationConnection(shouldConnect);
-                break;
-            }
             default:
                 //not supporting integrations for this yet
             }
@@ -146,8 +121,6 @@ function updateServiceConnection(serviceId, shouldConnect) {
     switch (serviceId) {
     case "chat":
         return manager.updateChatConnection(shouldConnect);
-    case "constellation":
-        return manager.updateConstellationConnection(shouldConnect);
     default:
         if (serviceId.startsWith("integration.")) {
             const integrationId = serviceId.replace("integration.", "");

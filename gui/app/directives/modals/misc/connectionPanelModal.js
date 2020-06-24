@@ -13,6 +13,7 @@
                         TWITCH SERVICES
                     </div>
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
+
                         <div class="connection-tile">
                             <span class="connection-title">Chat <tooltip text="'Used for commands, chat effects, chat feed, sticker events, etc.'"></tooltip></span>
                             <connection-button 
@@ -28,6 +29,7 @@
                                 </label>
                             </div>
                         </div>
+                        
                         <div class="connection-tile">
                             <span class="connection-title">Events <tooltip text="'Used for events, live viewer count on chat feed, Skills, etc'"></tooltip></span>
                             <connection-button 
@@ -43,6 +45,7 @@
                                 </label>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
                 <div>

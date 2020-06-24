@@ -37,9 +37,6 @@ exports.setupTwitchClient = () => {
         }
     );
 
-    client.badges.getChannelBadges(streamer.userId, true).then(data => {
-    });
-
 
     const bot = accountAccess.getAccounts().bot;
     if (!bot.loggedIn) return;
