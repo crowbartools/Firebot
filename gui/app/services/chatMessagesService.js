@@ -22,16 +22,6 @@
             // Chat User List
             service.chatUsers = [];
 
-            //this contains executionId and gif url correllations for the mixer gif effect
-            let gifSkillDictionary = {};
-
-            // Sub Icon Cache
-            service.subIconCache = false;
-
-            // Poll Cache
-            // This stores poll durations.
-            service.pollCache = false;
-
             // Tells us if we should process in app chat or not.
             service.getChatFeed = function() {
                 return settingsService.getRealChatFeed();
@@ -168,7 +158,7 @@
                     subscriber: false,
                     timestamp: moment(new Date()).format('h:mm A')
                 };
-                service.chatQueue.push(data);
+                //service.chatQueue.push(data);
             };
 
             backendCommunicator.on("chat-feed-system-message", (message) => {
@@ -264,8 +254,6 @@
                     logger.info("Chat cleared");
                     service.clearChatQueue();
 
-                    gifSkillDictionary = {};
-
                     service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
                     break;
                 case "DeleteMessage":
@@ -351,11 +339,10 @@
 
             // This submits a chat message to mixer.
             service.submitChat = function(sender, message) {
-                let chatPacket = {
+                backendCommunicator.send("send-chat-message", {
                     message: message,
-                    chatter: sender
-                };
-                ipcRenderer.send("uiChatMessage", chatPacket);
+                    accountType: sender
+                });
             };
 
             // Gets view count setting for ui.
@@ -406,101 +393,28 @@
             }, 250);
 
 
-            function parseChatEventObject(data) {
-
-                if (data.user_avatar == null) {
-                    data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
+            backendCommunicator.on("twitch:chat:message", chatMessage => {
+                if (chatMessage.tagged) {
+                    soundService.playChatNotification();
                 }
 
-                if (data.message) {
-                    let streamerName = connectionService.accounts.streamer.username,
-                        botName = connectionService.accounts.bot.username;
+                const now = moment();
+                chatMessage.timestamp = now;
+                chatMessage.timestampDisplay = now.format('h:mm A');
 
-                    let isTagged =
-                        data.message.message.some(s => s.type === "tag" &&
-                            (s.username.toLowerCase() === streamerName.toLowerCase() ||
-                            s.username.toLowerCase() === botName.toLowerCase()));
-
-                    if (isTagged) {
-                        data.tagged = true;
-                        if (!data.historical) {
-                            soundService.playChatNotification();
-                        }
-                    }
-
-                    data.whisper = data.message.meta.whisper === true;
-
-                    data.action = data.message.meta.me === true;
+                if (chatMessage.profilePicUrl == null) {
+                    chatMessage.profilePicUrl = "../images/placeholders/default-profile-pic.png";
                 }
 
-
-                // Returns first role in set of roles which should be their primary.
-                // Filters out subscriber, because we have a separate function for that and
-                // it doesnt have it's own chat color.
-                data.mainColorRole = data.user_roles.find(r => r !== "Subscriber");
-
-                data.subscriber = data.user_roles.some(r => r === "Subscriber");
-
-                data.timestamp = moment(data.date).format('h:mm A');
-
-                return data;
-            }
-
-            service.skillHasGifUrl = function(executionId) {
-                return gifSkillDictionary[executionId] != null;
-            };
-
-            service.getGifUrlForSkill = function(executionId) {
-                return gifSkillDictionary[executionId];
-            };
-
-            // Watches for a non chat (aka not sticker) skill event
-            // it looks like a regular chat event object except instead of a
-            // .message property, it has a .skill one.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.GIF_FOR_SKILL },
-                (data) => {
-                    if (settingsService.getRealChatFeed()) {
-                        gifSkillDictionary[data.executionId] = data.gifUrl;
-                    }
-                });
-
-            // Watches for a non chat (aka not sticker) skill event
-            // it looks like a regular chat event object except instead of a
-            // .message property, it has a .skill one.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.NON_CHAT_SKILL },
-                (data) => {
-                    if (settingsService.getRealChatFeed()) {
-                        let queueEntry = parseChatEventObject(data);
-
-                        // Push new message to queue.
-                        messageHoldingQueue.push(queueEntry);
-                    }
-                });
-
-
-            // Watches for an chat message from main process
-            // Pushes it to chat queue when it is recieved.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CHAT_MESSAGE },
-                (data) => {
-
-                    if (settingsService.getRealChatFeed() === true) {
-
-                        let queueEntry = parseChatEventObject(data);
-
-                        let existingIndex = service.chatQueue.findIndex(m => m.id === queueEntry.id);
-                        if (existingIndex > -1) {
-                            // this message already exists, update it (likely a catbot message being restored)
-                            service.chatQueue[existingIndex] = queueEntry;
-                        } else {
-                            // Push new message to queue.
-                            messageHoldingQueue.push(queueEntry);
-                        }
-                    }
+                if (settingsService.getRealChatFeed() === true) {
+                    // Push new message to queue.
+                    messageHoldingQueue.push({
+                        id: uuid(),
+                        type: "message",
+                        data: chatMessage
+                    });
                 }
-            );
+            });
 
             // Watches for an chat update from main process
             // This handles clears, deletions, timeouts, etc... Anything that isn't a message.

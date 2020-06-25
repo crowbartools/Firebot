@@ -383,20 +383,4 @@ mixerChat.on("connected", () => {
     eventManager.triggerEvent("firebot", "chat-connected");
 });
 
-frontendCommunicator.on("delete-message", messageId => {
-    mixerChat.deleteMessage(messageId);
-});
-
-frontendCommunicator.on("update-user-mod-status", data => {
-    if (data == null) return;
-    const { username, shouldBeMod } = data;
-    if (username == null || shouldBeMod == null) return;
-
-    if (shouldBeMod) {
-        mixerChat.modUser(username);
-    } else {
-        mixerChat.unmodUser(username);
-    }
-});
-
 module.exports = mixerChat;

@@ -37,6 +37,12 @@ exports.setupTwitchClient = () => {
         }
     );
 
+    client.kraken.chat.getEmotesBySets("1").then(data => {
+        console.log(data);
+    }, error => {
+        console.log(error);
+    });
+
     const bot = accountAccess.getAccounts().bot;
     if (!bot.loggedIn) return;
     botClient = TwitchClient.withCredentials(

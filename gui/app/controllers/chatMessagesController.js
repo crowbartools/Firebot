@@ -30,6 +30,8 @@
             $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
 
+            $scope.cms = chatMessagesService;
+
             $scope.selectedUserData = {};
 
             $scope.currentViewers = 0;
@@ -127,11 +129,6 @@
             // Returns the message id of the message.
             $scope.getMessageId = function(data) {
                 return data.id;
-            };
-
-            $scope.getWhisperData = function(data) {
-                let target = data.target;
-                return "Whispered to " + target + ".";
             };
 
             $scope.getTimeStamp = function(message) {
