@@ -5,9 +5,9 @@ const ChatClient = require('twitch-chat-client').default;
 const twitchClient = require("../twitch-api/client");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
+const commandHandler = require("../chat/commands/commandHandler");
 
 const chatHelpers = require("./chat-helpers");
-const { default: TwitchClient } = require("twitch");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -55,10 +55,9 @@ class TwitchChat extends EventEmitter {
         if (client == null) return;
 
         this.emit("connecting");
+        await this.disconnect(false);
 
         try {
-            await this.disconnect(false);
-
             this._streamerChatClient = await ChatClient.forTwitchClient(client, {
                 requestMembershipEvents: true
             });
@@ -70,13 +69,24 @@ class TwitchChat extends EventEmitter {
 
             await chatHelpers.cacheBadges();
 
+            await chatHelpers.cacheStreamerEmotes();
+
             this._streamerChatClient.onPrivmsg(async (_channel, _user, _message, msg) => {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg);
+
+                // send to the frontend
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+
+                commandHandler.handleChatMessage(firebotChatMessage);
             });
 
             this._streamerChatClient.onWhisper(async (_user, _message, msg) => {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, true);
+                frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+            });
+
+            this._streamerChatClient.onAction(async (_channel, _user, _message, msg) => {
+                const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, false, true);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
             });
 
@@ -104,13 +114,15 @@ class TwitchChat extends EventEmitter {
      * @param {string} message The message to send
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
-    _say(message, accountType) {
+    async _say(message, accountType) {
         const chatClient = accountType === 'streamer' ? this._streamerChatClient : this._botChatClient;
         try {
             logger.debug(`Sending message as ${accountType}.`);
             const streamer = accountAccess.getAccounts().streamer;
-            chatClient.createMessage();
             chatClient.say(streamer.username, message);
+
+            const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
+            frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
         } catch (error) {
             logger.error(`Error attempting to send message with ${accountType}`, error);
         }

@@ -11,7 +11,7 @@ let client;
 /**@type {TwitchClient} */
 let botClient;
 
-exports.setupTwitchClient = () => {
+function setupTwitchClients() {
     const streamer = accountAccess.getAccounts().streamer;
     if (!streamer.loggedIn) return;
 
@@ -32,7 +32,7 @@ exports.setupTwitchClient = () => {
                 auth.expires_at = token.expiryDate; // eslint-disable-line camelcase
                 streamer.auth = auth;
 
-                accountAccess.updateAccount("streamer", streamer);
+                accountAccess.updateAccount("streamer", streamer, false);
             }
         }
     );
@@ -56,11 +56,16 @@ exports.setupTwitchClient = () => {
                 auth.scope = token.scope;
                 botAccount.auth = auth;
 
-                accountAccess.updateAccount("bot", botAccount);
+                accountAccess.updateAccount("bot", botAccount, false);
             }
         }
     );
-};
+}
 
+accountAccess.events.on("accountUpdate", () => {
+    setupTwitchClients();
+});
+
+exports.setupTwitchClients = setupTwitchClients;
 exports.getClient = () => client;
 exports.getBotClient = () => botClient;

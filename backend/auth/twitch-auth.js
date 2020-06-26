@@ -62,6 +62,7 @@ authManager.on("auth-success", async authData => {
         let accountType = providerId === STREAMER_ACCOUNT_PROVIDER_ID ? "streamer" : "bot";
         let accountObject = {
             username: userData.login,
+            displayName: userData.display_name,
             channelId: userData.id,
             userId: userData.id,
             avatar: userData.profile_image_url,

@@ -23,8 +23,9 @@ const accountEvents = new EventEmitter();
  * A streamer or bot account
  * @typedef {Object} FirebotAccount
  * @property {string} username - The account username
+ * @property {string} displayName - The users displayName
  * @property {number} userId - The user id for the account
- * @property {number} channelId - The channel id for the account
+ * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
  * @property {string} avatar - The avatar url for the account
  * @property {string} subBadge - The sub badge url for the account
  * @property {boolean} partnered - If the channel is partnered
@@ -147,7 +148,7 @@ let botTokenIssue = false;
  * @param {string} accountType - The type of account ("streamer" or "bot")
  * @param {FirebotAccount} account - The  account
  */
-function updateAccount(accountType, account) {
+function updateAccount(accountType, account, emitUpdate = true) {
     if ((accountType !== "streamer" && accountType !== "bot") || account == null) return;
 
     // reset token issue flags
@@ -170,7 +171,9 @@ function updateAccount(accountType, account) {
 
     cache[accountType] = account;
 
-    sendAccoutUpdate();
+    if (emitUpdate) {
+        sendAccoutUpdate();
+    }
 
     saveAccountDataToFile(accountType);
 }

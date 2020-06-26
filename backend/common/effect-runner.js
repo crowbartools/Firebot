@@ -74,25 +74,11 @@ function validateEffectCanRun(effectId, triggerType) {
         return false;
     }
 
-    const mixplay = require("../interactive/mixplay");
-    const chat = require("../chat/chat");
-
-    // Validate Dependancies
-    let mixplayStatus = mixplay.mixplayIsConnected();
-    let chatStatus = chat.chatIsConnected();
+    const twitchChat = require("../chat/twitch-chat");
 
     let validDeps = effectDefinition.dependencies.every(d => {
-        if (d === EffectDependency.INTERACTIVE) {
-            return mixplayStatus;
-        }
-
         if (d === EffectDependency.CHAT) {
-            return chatStatus;
-        }
-
-        if (d === EffectDependency.CONSTELLATION) {
-            // TODO: update to actually check state of constellation
-            return true;
+            return twitchChat.chatIsConnected();
         }
 
         if (d === EffectDependency.OVERLAY) {

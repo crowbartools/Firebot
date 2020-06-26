@@ -28,7 +28,7 @@ exports.whenReady = async () => {
     timerManager.startTimers();
 
     const twitchClient = require("../../../twitch-api/client");
-    twitchClient.setupTwitchClient();
+    twitchClient.setupTwitchClients();
 
     // load effects
     const { loadEffects } = require("../../../effects/builtInEffectLoader");

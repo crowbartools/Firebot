@@ -1,12 +1,12 @@
 "use strict";
 
-const chatProcessor = require("../../common/handlers/chatProcessor");
-
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
+
+const twitchChat = require("../../chat/twitch-chat");
 
 /**
  * The Chat Effect
@@ -76,7 +76,9 @@ const chat = {
    * When the effect is triggered by something
    */
     onTriggerEvent: async event => {
-        chatProcessor.send(event.effect, event.trigger);
+        const { effect, trigger } = event;
+
+        twitchChat.sendChatMessage(effect.message, null, effect.chatter);
         return true;
     },
     /**

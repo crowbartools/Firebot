@@ -167,7 +167,6 @@ class MixerChat extends EventEmitter {
         ensureSocketIsClosed(this._botSocket);
     }
 
-
     /**
      * Sends the message as the bot if available, otherwise as the streamer.
      * If a username is provided, the message will be whispered.
