@@ -168,6 +168,61 @@ class TwitchChat extends EventEmitter {
             }
         }
     }
+
+    deleteMessage(messageId) {
+        const streamer = accountAccess.getAccounts().streamer;
+        if (this._streamerChatClient == null || !streamer.loggedIn) return;
+        this._streamerChatClient.deleteMessage(streamer.username, messageId);
+    }
+
+    mod(username) {
+        if (username == null) return;
+
+        const streamer = accountAccess.getAccounts().streamer;
+
+        return this._streamerChatClient.mod(streamer.username, username);
+    }
+
+    unmod(username) {
+        if (username == null) return;
+
+        const streamer = accountAccess.getAccounts().streamer;
+
+        return this._streamerChatClient.unmod(streamer.username, username);
+    }
+
+    ban(username, reason) {
+        if (username == null) return;
+
+        const streamer = accountAccess.getAccounts().streamer;
+
+        this._streamerChatClient.ban(streamer.username, username, reason);
+    }
+
+    unban(username) {
+        if (username == null) return;
+
+        const streamer = accountAccess.getAccounts().streamer;
+
+        this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
+    }
+
+    clearChat() {
+        if (this._streamerChatClient == null) return;
+        this._streamerChatClient.clear();
+    }
+
+    purgeUserMessages(username, reason = "") {
+        const streamer = accountAccess.getAccounts().streamer;
+        if (this._streamerChatClient == null || !streamer.loggedIn) return;
+        this._streamerChatClient.purge(streamer.username, username, reason);
+    }
+
+    timeoutUser(username, duration = 600, reason = "") {
+        const streamer = accountAccess.getAccounts().streamer;
+        if (this._streamerChatClient == null || !streamer.loggedIn) return;
+        this._streamerChatClient.timeout(streamer.username, username, duration, reason);
+    }
 }
 
 const twitchChat = new TwitchChat();

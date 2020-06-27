@@ -1,11 +1,10 @@
 "use strict";
 const moment = require("moment");
 const gameManager = require("../../game-manager");
-const chat = require("../../../chat/chat");
+const twitchChat = require("../../../chat/twitch-chat");
 const commandManager = require("../../../chat/commands/CommandManager");
 const currencyDatabase = require("../../../database/currencyDatabase");
 const util = require("../../../utility");
-const { boolean } = require("mathjs");
 
 /**
  * @typedef HeistUser
@@ -38,7 +37,7 @@ function triggerCooldown() {
         .replace("{command}", trigger ? trigger : '!heist');
 
     cooldownTimeoutId = setTimeout((msg) => {
-        chat.sendChatMessage(msg, null, chatter);
+        twitchChat.sendChatMessage(msg, null, chatter);
     }, cooldownMins * 60000, cooldownOverMessage);
 }
 
@@ -47,7 +46,7 @@ async function runHeist() {
     const chatter = heistSettings.settings.chatSettings.chatter;
 
     const startMessage = heistSettings.settings.generalMessages.startMessage;
-    chat.sendChatMessage(startMessage, null, chatter);
+    twitchChat.sendChatMessage(startMessage, null, chatter);
 
     // wait a few secs for suspense
     await util.wait(7 * 1000);
@@ -117,8 +116,8 @@ async function runHeist() {
         .replace("{winnings}", winningsString);
 
     try {
-        await chat.sendChatMessage(outcomeMessage, null, chatter);
-        await chat.sendChatMessage(winningsMessage, null, chatter);
+        twitchChat.sendChatMessage(outcomeMessage, null, chatter);
+        twitchChat.sendChatMessage(winningsMessage, null, chatter);
     } catch (error) {
         //weird error
     }
@@ -157,7 +156,7 @@ exports.triggerLobbyStart = (startDelayMins) => {
                     .replace("{user}", usersInHeist[0].username);
             }
 
-            chat.sendChatMessage(teamTooSmallMessage, null, chatter);
+            twitchChat.sendChatMessage(teamTooSmallMessage, null, chatter);
 
             usersInHeist = [];
             return;

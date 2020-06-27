@@ -1,6 +1,6 @@
 "use strict";
 
-const chat = require("../../chat/chat");
+const twitchChat = require("../../chat/twitch-chat");
 const mixerApi = require("../../mixer-api/api");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
@@ -63,7 +63,7 @@ exports.createClip = async function(effect, trigger) {
     }
 
     if (effect.postLink) {
-        chat.sendChatMessage("Creating clip...");
+        twitchChat.sendChatMessage("Creating clip...");
     }
 
     let title = effect.clipTitle;
@@ -102,7 +102,7 @@ exports.createClip = async function(effect, trigger) {
     if (creationSuccessful) {
         if (effect.postLink) {
             const message = `Clip created: https://mixer.com/${streamerAccount.username}?clip=${clipProperties.shareableId}`;
-            chat.sendChatMessage(message);
+            twitchChat.sendChatMessage(message);
         }
 
         if (effect.postInDiscord) {
@@ -123,7 +123,7 @@ exports.createClip = async function(effect, trigger) {
         logger.info("Successfully created a Mixer clip!");
     } else {
         if (effect.postLink) {
-            chat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
+            twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
         }
         renderWindow.webContents.send('error', `Failed to create a clip on Mixer`);
     }

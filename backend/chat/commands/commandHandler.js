@@ -232,7 +232,7 @@ function fireCommand(
  */
 async function handleChatMessage(firebotChatMessage) {
 
-    const chat = require("../chat");
+    const twitchChat = require("../twitch-chat");
 
     logger.debug("Checking for command in message...");
 
@@ -293,14 +293,14 @@ async function handleChatMessage(firebotChatMessage) {
 
     if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
         logger.debug("Auto delete trigger is on, attempting to delete chat message");
-        chat.deleteMessage(firebotChatMessage.id);
+        twitchChat.deleteMessage(firebotChatMessage.id);
     }
 
     // check if command meets min args requirement
     let minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
     if (userCmd.args.length < minArgs) {
         let usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
-        chat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`, commandSender);
+        twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`, commandSender);
         return false;
     }
 
@@ -335,7 +335,7 @@ async function handleChatMessage(firebotChatMessage) {
                 reason = restrictionReason;
             }
             logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
-            chat.sendChatMessage("You cannot use this command because: " + reason, commandSender);
+            twitchChat.sendChatMessage("You cannot use this command because: " + reason, commandSender);
             return false;
         }
     }
@@ -350,7 +350,7 @@ async function handleChatMessage(firebotChatMessage) {
 
     if (remainingCooldown > 0) {
         logger.debug("Command is still on cooldown, alerting viewer...");
-        chat.sendChatMessage(
+        twitchChat.sendChatMessage(
             "This command is still on cooldown for: " +
         util.secondsForHumans(remainingCooldown),
             commandSender

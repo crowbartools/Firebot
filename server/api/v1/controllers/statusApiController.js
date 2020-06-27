@@ -1,15 +1,11 @@
 "use strict";
 
-const chat = require("../../../../backend/chat/chat");
-const mixplay = require("../../../../backend/interactive/mixplay");
-const constellation = require("../../../../backend/events/constellation");
+const chat = require("../../../../backend/chat/twitch-chat");
 
 exports.getStatus = function(req, res) {
     let status = {
         connections: {
-            interactive: mixplay.mixplayIsConnected(),
-            chat: chat.chatIsConnected(),
-            constellation: constellation.constellationIsConnected()
+            chat: chat.chatIsConnected()
         }
     };
     res.json(status);

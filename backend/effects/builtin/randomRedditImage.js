@@ -5,7 +5,7 @@ const redditProcessor = require("../../common/handlers/redditProcessor");
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
-const chat = require("../../chat/chat");
+const twitchChat = require("../../chat/twitch-chat");
 const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const settings = require("../../common/settings-access").settings;
 const logger = require("../../logwrapper");
@@ -133,7 +133,7 @@ const model = {
             if (event.effect.show === "chat" || event.effect.show === "both") {
                 // Send Chat
                 logger.debug("Random Reddit: " + imageUrl);
-                chat.sendChatMessage("Random Reddit: " + imageUrl, null, chatter);
+                twitchChat.sendChatMessage("Random Reddit: " + imageUrl, null, chatter);
             }
 
             if (event.effect.show === "overlay" || event.effect.show === "both") {

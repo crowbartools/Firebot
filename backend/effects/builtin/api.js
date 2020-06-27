@@ -3,7 +3,7 @@
 const { settings } = require("../../common/settings-access");
 const resourceTokenManager = require("../../resourceTokenManager");
 const apiProcessor = require("../../common/handlers/apiProcessor");
-const chat = require("../../chat/chat");
+const twitchChat = require("../../chat/twitch-chat");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
@@ -166,7 +166,7 @@ const api = {
 
         const apiResponse = await apiProcessor.getApiResponse(apiType);
 
-        chat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
+        twitchChat.sendChatMessage(`${apiType}: ${apiResponse}`, null, chatter);
 
         return true;
     },

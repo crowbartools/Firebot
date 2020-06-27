@@ -4,7 +4,7 @@ const { ipcMain } = require("electron");
 const settings = require("../../common/settings-access").settings;
 const logger = require("../../logwrapper");
 const userDatabase = require("../../database/userDatabase");
-const chat = require("../../chat/chat");
+const twitchChat = require("../../chat/twitch-chat");
 
 // Active user toggle
 let activeUserListStatus = settings.getActiveChatUserListEnabled();
@@ -79,7 +79,7 @@ function getActiveChatters() {
 }
 
 function cycleActiveChatters() {
-    let chatConnected = chat.chatIsConnected();
+    let chatConnected = twitchChat.chatIsConnected();
     if (!chatConnected) {
         return;
     }

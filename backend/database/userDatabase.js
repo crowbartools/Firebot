@@ -7,7 +7,7 @@ const { ipcMain } = require("electron");
 const { settings } = require("../common/settings-access.js");
 const currencyDatabase = require("./currencyDatabase");
 const mixplay = require("../interactive/mixplay");
-const chat = require("../chat/chat");
+const twitchChat = require("../chat/twitch-chat");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
 const channelAccess = require("../common/channel-access");
@@ -394,11 +394,11 @@ function setAllUsersOffline() {
     });
 }
 
-chat.on("connected", () => {
+twitchChat.on("connected", () => {
     setChatUsersOnline();
 });
 
-chat.on("disconnected", () => {
+twitchChat.on("disconnected", () => {
     setAllUsersOffline();
 });
 
