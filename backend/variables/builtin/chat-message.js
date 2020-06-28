@@ -1,3 +1,4 @@
+// Migration: info needed
 "use strict";
 const {
     EffectTrigger
