@@ -17,7 +17,6 @@ exports.loadEffects = () => {
     const showEvents = require("./builtin/showEvents");
     const controlEmulation = require("./builtin/controlEmulation");
     const showImage = require("./builtin/showImage");
-    const updateControl = require("./builtin/updateControl");
     const toggleConnection = require("./builtin/toggleConnection");
     const showText = require("./builtin/showText");
     const delay = require("./builtin/delay");
@@ -27,7 +26,6 @@ exports.loadEffects = () => {
     const randomRedditImage = require("./builtin/randomRedditImage");
     const customVariable = require("./builtin/customVariable");
     const controlMouse = require('./builtin/controlMouse');
-    const changeScene = require('./builtin/changeScene');
     const runCommand = require('./builtin/runCommand');
     const customScript = require('./builtin/customScript');
     const clearEffects = require('./builtin/clearEffects');
@@ -41,10 +39,8 @@ exports.loadEffects = () => {
     const adBreak = require("./builtin/ad-break");
     const runProgram = require("./builtin/run-program");
     const activeUserLists = require("./builtin/activeUserLists");
-    const channelProgression = require("./builtin/channelProgression");
     const streamTitle = require("./builtin/stream-title");
     const streamGame = require("./builtin/stream-game");
-    const streamAudience = require("./builtin/stream-audience");
     const moderatorBan = require("./builtin/moderatorBan");
     const moderatorPurge = require("./builtin/moderatorPurge");
     const moderatorTimeout = require("./builtin/moderatorTimeout");
@@ -67,7 +63,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(showEvents);
     effectManager.registerEffect(controlEmulation);
     effectManager.registerEffect(showImage);
-    effectManager.registerEffect(updateControl);
     effectManager.registerEffect(toggleConnection);
     effectManager.registerEffect(showText);
     effectManager.registerEffect(delay);
@@ -77,7 +72,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(randomRedditImage);
     effectManager.registerEffect(customVariable);
     effectManager.registerEffect(controlMouse);
-    effectManager.registerEffect(changeScene);
     effectManager.registerEffect(runCommand);
     effectManager.registerEffect(customScript);
     effectManager.registerEffect(clearEffects);
@@ -91,10 +85,8 @@ exports.loadEffects = () => {
     effectManager.registerEffect(adBreak);
     effectManager.registerEffect(runProgram);
     effectManager.registerEffect(activeUserLists);
-    effectManager.registerEffect(channelProgression);
     effectManager.registerEffect(streamTitle);
     effectManager.registerEffect(streamGame);
-    effectManager.registerEffect(streamAudience);
     effectManager.registerEffect(moderatorBan);
     effectManager.registerEffect(moderatorPurge);
     effectManager.registerEffect(moderatorTimeout);
