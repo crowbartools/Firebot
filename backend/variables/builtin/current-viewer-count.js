@@ -1,3 +1,5 @@
+// Migration: done
+
 "use strict";
 
 const logger = require("../../logwrapper");
