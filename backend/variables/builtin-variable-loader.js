@@ -13,7 +13,6 @@ exports.loadReplaceVariables = () => {
         'commafy',
         'command-trigger',
         'concat',
-        'costream',
         'count',
         'counter',
         'currency',
