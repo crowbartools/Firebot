@@ -5,7 +5,6 @@ const replaceVariableManager = require("./replace-variable-manager");
 exports.loadReplaceVariables = () => {
     [
         'active-chat-user-count',
-        'active-mixplay-user-count',
         'arg',
         'array-length',
         'bot',
