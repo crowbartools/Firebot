@@ -3,7 +3,7 @@
 "use strict";
 
 const logger = require("../../logwrapper");
-const accountAccess = require("../../common/accountAccess");
+const accountAccess = require("../../common/account-access");
 const twitchApi = require("../../twitch-api/client");
 
 const { OutputDataType } = require("../../../shared/variable-contants");
