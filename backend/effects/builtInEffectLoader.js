@@ -51,6 +51,7 @@ exports.loadEffects = () => {
     const clearChat = require("./builtin/clearChat");
     const updateCounter = require("./builtin/update-counter");
     const toggleEventSet = require("./builtin/toggle-event-set");
+    const cooldowns = require("./builtin/cooldowns");
 
     // register them
     effectManager.registerEffect(playSoundEffect);
@@ -100,4 +101,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(clearChat);
     effectManager.registerEffect(updateCounter);
     effectManager.registerEffect(toggleEventSet);
+    effectManager.registerEffect(cooldowns);
 };
