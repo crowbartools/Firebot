@@ -3,6 +3,8 @@
 const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const mixerApi = require("../api-access");
+const twitchApi = require('../twitch-api/client');
+const client = twitchApi.getClient();
 
 const api = require("../mixer-api/api");
 
@@ -322,29 +324,16 @@ exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) =
     }
 };
 
-async function startAdBreak() {
-    let streamerData = accountAccess.getAccounts().streamer;
+async function startAdBreak(adLength) {
+    const streamerAccount = accountAccess.getAccounts().streamer;
+    const channelId = (await client.helix.users.getUserByName(streamerAccount.username)).id;
 
-    try {
-        await mixerApi.post(`ads/channels/${streamerData.channelId}`, {
-            requestId: uuidv4()
-        }, "v2", false, true, true);
-    } catch (error) {
-        let { response, body } = error;
-
-        let errorReason = "Unknown error occured.";
-
-        if (response.statusCode === 401) {
-            errorReason = "Unauthorized";
-        } else if (response.statusCode === 403) {
-            errorReason = "Missing required permissions to trigger an ad-break. Please re-log into your Streamer account.";
-        } else if (response.statusCode === 429) {
-            errorReason = "You've already run two ads in the last 15 minutes!";
-        } else if (response.statusCode === 400) {
-            errorReason = body.errorMessage ? body.errorMessage.replace("[DEBUG] ") : "Something went wrong.";
-        }
-        throw new Error(errorReason);
+    if (adLength == null) {
+        adLength = 30;
     }
+
+    await client.kraken.channels.startChannelCommercial(channelId, adLength);
+    logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
 }
 
 exports.triggerAdBreak = async () => {
