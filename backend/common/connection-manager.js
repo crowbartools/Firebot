@@ -73,11 +73,7 @@ class ConnectionManager extends EventEmitter {
 
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
-            if (!twitchChat.chatIsConnected()) {
-                twitchChat.connect();
-            } else {
-                return false;
-            }
+            twitchChat.connect();
         } else {
             twitchChat.disconnect();
         }

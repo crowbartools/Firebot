@@ -25,8 +25,8 @@
         ) {
             let ctrl = this;
 
-            let events = listenerService.fireEventSync("getAllEvents");
-            let sources = listenerService.fireEventSync("getAllEventSources");
+            let events = listenerService.fireEventSync("getAllEvents", false);
+            let sources = listenerService.fireEventSync("getAllEventSources", false);
 
             function getSelected() {
                 // sort events by name

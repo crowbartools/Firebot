@@ -7,7 +7,7 @@
         },
         template: `
       <span class="connection-icon" uib-tooltip-html="$ctrl.tooltip" tooltip-append-to-body="true" tooltip-placement="top-left">
-          <i class="fas" ng-class="$ctrl.connectionIcon"></i>
+          <i ng-class="$ctrl.connectionIcon"></i>
           <span class="status-bubble" ng-class="$ctrl.bubbleClass">
               <i class="fas" ng-class="$ctrl.bubbleIconClass"></i>
           </span>
@@ -29,9 +29,7 @@
             ctrl.tooltip = "";
 
             const ConnectionType = {
-                INTERACTIVE: "interactive",
                 CHAT: "chat",
-                CONSTELLATION: "constellation",
                 OVERLAY: "overlay",
                 INTEGRATIONS: "integrations"
             };
@@ -43,11 +41,9 @@
             };
 
             const ConnectionIcon = {
-                INTERACTIVE: "fa-gamepad",
-                CHAT: "fa-comment",
-                CONSTELLATION: "fa-list",
-                OVERLAY: "fa-tv-retro",
-                INTEGRATIONS: "fa-globe"
+                CHAT: "fab fa-twitch",
+                OVERLAY: "fas fa-tv-retro",
+                INTEGRATIONS: "fas fa-globe"
             };
 
             const BubbleIcon = {
@@ -84,31 +80,11 @@
                     count = 0;
 
                 switch (ctrl.type) {
-                case ConnectionType.INTERACTIVE:
-                    if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
-                        ctrl.tooltip = "<b>MixPlay:</b> Connected";
-                        let connectedBoard = connectionService.connectedBoard;
-                        if (connectedBoard !== "") {
-                            ctrl.tooltip += "<br/>(" + connectedBoard + ")";
-                        }
-                    } else {
-                        ctrl.tooltip = "<b>MixPlay:</b> Disconnected";
-                    }
-                    break;
-
                 case ConnectionType.CHAT:
                     if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
-                        ctrl.tooltip = "<b>Chat:</b> Connected";
+                        ctrl.tooltip = "<b>Twitch:</b> Connected";
                     } else {
-                        ctrl.tooltip = "<b>Chat:</b> Disconnected";
-                    }
-                    break;
-
-                case ConnectionType.CONSTELLATION:
-                    if (ctrl.connectionStatus === ConnectionStatus.CONNECTED) {
-                        ctrl.tooltip = "<b>Events:</b> Connected";
-                    } else {
-                        ctrl.tooltip = "<b>Events:</b> Disconnected";
+                        ctrl.tooltip = "<b>Twitch:</b> Disconnected";
                     }
                     break;
 

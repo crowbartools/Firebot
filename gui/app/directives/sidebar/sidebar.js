@@ -60,7 +60,6 @@
                                         <div class="interative-status-subtitle" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
                                             <span style="width: 100%;display: flex;justify-content: space-between;margin-top: 5px;">
                                                 <connection-icon type="chat"></connection-icon>
-                                                <connection-icon type="constellation"></connection-icon>
                                                 <connection-icon type="overlay"></connection-icon>
                                                 <connection-icon type="integrations" ng-if="$ctrl.is.oneIntegrationIsLinked()"></connection-icon>
                                             </span>
@@ -82,15 +81,9 @@
                 <script type="text/ng-template" id="connectTooltipTemplate.html">
                   <div ng-if="!$ctrl.sbm.navExpanded">
                       <span>
-                        <span><b>Chat Status:</b></span>
+                        <span><b>Twitch Status:</b></span>
                         </br>
                         <span>{{$ctrl.cs.connectedToChat ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
-                        </br></br>
-                      </span>
-                      <span>
-                        <span><b>Events Status:</b></span>
-                        </br>
-                        <span>{{$ctrl.cs.connectedToConstellation ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
                         </br></br>
                       </span>
                       <span>

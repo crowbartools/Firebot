@@ -144,9 +144,7 @@
             });
 
             service.connections = {
-                interactive: ConnectionState.Disconnected,
-                chat: ConnectionState.Disconnected,
-                constellation: ConnectionState.Disconnected
+                chat: ConnectionState.Disconnected
             };
 
             // this can be 'disconnected', 'partial', or 'connected'
@@ -156,6 +154,9 @@
                 let oneConnected = false;
                 const serviceIds = settingsService.getSidebarControlledServices();
                 for (const serviceId of serviceIds) {
+
+                    if (serviceId == null || (serviceId !== "chat" && !serviceId.startsWith("integration."))) continue;
+
                     if (service.connections[serviceId] === ConnectionState.Connected) {
                         oneConnected = true;
                     } else {
