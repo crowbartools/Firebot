@@ -14,7 +14,7 @@ const model = {
         id: "firebot:ad-break",
         name: "Ad Break",
         description: "Trigger an ad-break",
-        hidden: !accountAccess.getAccounts().streamer.loggedIn || !accountAccess.getAccounts().streamer.partnered,
+        hidden: !accountAccess.getAccounts().streamer.loggedIn,
         icon: "fad fa-ad",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
         dependencies: [EffectDependency.CHAT],
@@ -26,7 +26,7 @@ const model = {
     },
     globalSettings: {},
     optionsTemplate: `
-        <eos-container>
+        <eos-container header="Ad Duration" pad-top="true">
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="ad-effect-type">{{effect.adLength ? effect.adLength : 'Pick one'}}</span> <span class="caret"></span>
@@ -51,6 +51,11 @@ const model = {
                         <a href>180 sec</a>
                     </li>
                 </ul>
+            </div>
+        </eos-container>
+        <eos-container>
+            <div class="effect-info alert alert-warning">
+                Note: You must be an affiliate or partner to use this effect.
             </div>
         </eos-container>
     `,

@@ -9,7 +9,6 @@ exports.loadEffects = () => {
     const api = require("./builtin/api");
     const celebration = require("./builtin/celebration");
     const clips = require('./builtin/clips');
-    const cooldowns = require("./builtin/cooldowns");
     const dice = require("./builtin/dice");
     const fileWriter = require("./builtin/fileWriter");
     const html = require("./builtin/html");
@@ -55,7 +54,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(api);
     effectManager.registerEffect(celebration);
     effectManager.registerEffect(clips);
-    effectManager.registerEffect(cooldowns);
     effectManager.registerEffect(dice);
     effectManager.registerEffect(fileWriter);
     effectManager.registerEffect(html);

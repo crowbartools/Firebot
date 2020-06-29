@@ -40,20 +40,16 @@ exports.getStreamerChannelData = async () => {
 };
 
 exports.getFollowDateForUser = async username => {
-    let streamerData = accountAccess.getAccounts().streamer;
+    const streamerData = accountAccess.getAccounts().streamer;
+    const userId = (await client.kraken.users.getUserByName(username)).id;
+    const channelId = (await client.kraken.users.getUserByName(streamerData.username)).id;
+    const followerDate = (await client.kraken.users.getFollowedChannel(userId, channelId)).followDate;
 
-    let followerData = await mixerApi.get(
-        `channels/${streamerData.channelId}/follow?where=username:eq:${username}`,
-        "v1",
-        false,
-        false
-    );
-
-    if (followerData == null || followerData.length < 1) {
+    if (followerDate == null || followerDate.length < 1) {
         return null;
     }
 
-    return new Date(followerData[0].followed.createdAt);
+    return new Date(followerDate);
 };
 
 exports.getStreamerSubBadge = async () => {
@@ -196,30 +192,6 @@ exports.getChannelProgressionByUsername = async function(username) {
     return exports.getChannelProgressionForUser(idData.userId);
 };
 
-
-exports.getChannelProgressionForUser = async function(userId) {
-    let streamerData = accountAccess.getAccounts().streamer;
-    try {
-        let chatProgression = await mixerApi
-            .get(`ascension/channels/${streamerData.channelId}/users/${userId}`, "v1", false, true);
-        return chatProgression && chatProgression.level;
-    } catch (err) {
-        return null;
-    }
-};
-
-exports.giveHeartsToUser = async (userId, amount) => {
-    let streamerData = accountAccess.getAccounts().streamer;
-    try {
-        await mixerApi.post(`ascension/channels/${streamerData.channelId}/users/${userId}/grant`, {
-            xp: amount
-        });
-        return exports.getChannelProgressionForUser(userId);
-    } catch (err) {
-        return null;
-    }
-};
-
 function getContinuationToken(linkHeader) {
     let parsed = linkHeaderParser(linkHeader);
     if (parsed.next) {
@@ -342,34 +314,5 @@ exports.triggerAdBreak = async () => {
     } catch (error) {
         renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
     }
-};
-
-const clipGroups = ["Partner", "VerifiedPartner", "Staff", "Founder"];
-exports.getChannelHasClipsEnabled = async (channelId, userGroups = null) => {
-    if (userGroups == null) {
-        let channelData = await exports.getMixerAccountDetailsById(channelId);
-        if (channelData == null || channelData.user == null || channelData.user.groups == null) return false;
-        userGroups = channelData.user.groups;
-    }
-
-    let roleCanClip = userGroups.some(ug => clipGroups.some(cg => ug.name === cg));
-    if (roleCanClip) {
-        return true;
-    }
-
-    let entitlementsData = await mixerApi.get(
-        `monetization/status/channels/${channelId}/entitlements/current`,
-        "v2",
-        false,
-        false
-    );
-
-    if (entitlementsData != null && entitlementsData.entitlements != null) {
-        if (entitlementsData.entitlements.some(e => e.revenueSource.toLowerCase().includes("clip"))) {
-            return true;
-        }
-    }
-
-    return false;
 };
 
