@@ -32,11 +32,16 @@ const model = {
         }
 
         const twitchClient = twitchApi.getClient();
-        const channelData = await twitchClient.helix.streams.getStreamByUserName(username);
-        const streamGame = channelData.getGame();
 
+        try {
+            const streamInfo = await twitchClient.helix.streams.getStreamByUserName(username);
+            const gameInfo = streamInfo.getGame();
 
-        return streamGame.name ? streamGame.name : "[No game set]";
+            return gameInfo.name != null ? gameInfo.name : "[]";
+
+        } catch (ignore) {
+            return "[No game set]";
+        }
     }
 };
 
