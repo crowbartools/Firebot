@@ -1,6 +1,6 @@
 "use strict";
 
-const mixerApi = require("../../mixer-api/api");
+const twitchApi = require("../../twitch-api/client");
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
@@ -14,10 +14,11 @@ const model = {
         if (username == null) {
             username = trigger.metadata.username;
         }
+        const twitchClient = twitchApi.getClient();
 
         try {
-            const channelData = await mixerApi.channels.getChannel(username);
-            return channelData ? channelData.user.avatarUrl : "";
+            const userInfo = await twitchClient.helix.users.getUserByName(username);
+            return userInfo.profilePictureUrl ? userInfo.profilePictureUrl : "[No Avatar Found]";
         } catch (err) {
             return "[No Avatar Found]";
         }

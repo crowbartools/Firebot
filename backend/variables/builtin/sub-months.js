@@ -1,5 +1,6 @@
-"use strict";
+// Migration: info - Need implementation details
 
+"use strict";
 
 const {
     EffectTrigger

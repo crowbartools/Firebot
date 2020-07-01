@@ -9,7 +9,6 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = true;
-triggers[EffectTrigger.INTERACTIVE] = true;
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 
