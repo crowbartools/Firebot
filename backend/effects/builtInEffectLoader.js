@@ -66,7 +66,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(showEvents);
     effectManager.registerEffect(controlEmulation);
     effectManager.registerEffect(showImage);
-    effectManager.registerEffect(updateControl);
     effectManager.registerEffect(toggleConnection);
     effectManager.registerEffect(showText);
     effectManager.registerEffect(delay);
@@ -76,7 +75,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(randomRedditImage);
     effectManager.registerEffect(customVariable);
     effectManager.registerEffect(controlMouse);
-    effectManager.registerEffect(changeScene);
     effectManager.registerEffect(runCommand);
     effectManager.registerEffect(customScript);
     effectManager.registerEffect(clearEffects);
@@ -93,7 +91,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(channelProgression);
     effectManager.registerEffect(streamTitle);
     effectManager.registerEffect(streamGame);
-    effectManager.registerEffect(streamAudience);
     effectManager.registerEffect(moderatorBan);
     effectManager.registerEffect(moderatorPurge);
     effectManager.registerEffect(moderatorTimeout);
@@ -102,4 +99,9 @@ exports.loadEffects = () => {
     effectManager.registerEffect(updateCounter);
     effectManager.registerEffect(toggleEventSet);
     effectManager.registerEffect(cooldowns);
+
+    // Deactivated for Twitch.
+    effectManager.registerEffect(changeScene);
+    effectManager.registerEffect(streamAudience);
+    effectManager.registerEffect(updateControl);
 };

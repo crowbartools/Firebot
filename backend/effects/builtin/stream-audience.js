@@ -6,17 +6,16 @@ const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-const channelAccess = require("../../common/channel-access");
-
 const streamAudience = {
     /**
    * The definition of the Effect
    */
     definition: {
         id: "firebot:streamaudience",
-        name: "Set Stream Audience",
+        name: "Set Stream Audience (Deprecated)",
         description: "Set the audience rating for the stream.",
         icon: "fad fa-users",
+        hidden: true,
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
@@ -34,22 +33,9 @@ const streamAudience = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-    <eos-container header="Audience" pad-top="true">
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="list-effect-type">{{effect.audience ? effect.audience : 'Pick one'}}</span> <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu celebrate-effect-dropdown">
-                <li ng-click="effect.audience = 'Family'">
-                    <a href>Family</a>
-                </li>
-                <li ng-click="effect.audience = 'Teen'">
-                    <a href>Teen</a>
-                </li>
-                <li ng-click="effect.audience = '18+'">
-                    <a href>18+</a>
-                </li>
-            </ul>
+    <eos-container header="Invalid Effect">
+        <div class="effect-info alert alert-info" style="margin-bottom:0;">
+            This effect was built for Mixer and no longer works.
         </div>
     </eos-container>
     `,
@@ -64,19 +50,12 @@ const streamAudience = {
    */
     optionsValidator: effect => {
         let errors = [];
-        if (effect.audience == null) {
-            errors.push("Please select an audience.");
-        }
         return errors;
     },
     /**
    * When the effect is triggered do something
    */
-    onTriggerEvent: async event => {
-        let audience = event.effect.audience.toLowerCase();
-        await channelAccess.setStreamerAudience(audience);
-        return true;
-    },
+    onTriggerEvent: async () => true,
     /**
    * Code to run in the overlay
    */
