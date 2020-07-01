@@ -1,5 +1,6 @@
-"use strict";
+// Migration: todo - Need twitch event
 
+"use strict";
 
 const {
     EffectTrigger
