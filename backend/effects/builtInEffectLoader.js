@@ -16,8 +16,6 @@ exports.loadEffects = () => {
     const showEvents = require("./builtin/showEvents");
     const controlEmulation = require("./builtin/controlEmulation");
     const showImage = require("./builtin/showImage");
-    const updateControl = require("./builtin/updateControl");
-    const toggleConnection = require("./builtin/toggleConnection");
     const showText = require("./builtin/showText");
     const delay = require("./builtin/delay");
     const randomEffect = require("./builtin/randomEffect");
@@ -26,7 +24,6 @@ exports.loadEffects = () => {
     const randomRedditImage = require("./builtin/randomRedditImage");
     const customVariable = require("./builtin/customVariable");
     const controlMouse = require('./builtin/controlMouse');
-    const changeScene = require('./builtin/changeScene');
     const runCommand = require('./builtin/runCommand');
     const customScript = require('./builtin/customScript');
     const clearEffects = require('./builtin/clearEffects');
@@ -40,10 +37,8 @@ exports.loadEffects = () => {
     const adBreak = require("./builtin/ad-break");
     const runProgram = require("./builtin/run-program");
     const activeUserLists = require("./builtin/activeUserLists");
-    const channelProgression = require("./builtin/channelProgression");
     const streamTitle = require("./builtin/stream-title");
     const streamGame = require("./builtin/stream-game");
-    const streamAudience = require("./builtin/stream-audience");
     const moderatorBan = require("./builtin/moderatorBan");
     const moderatorPurge = require("./builtin/moderatorPurge");
     const moderatorTimeout = require("./builtin/moderatorTimeout");
@@ -51,7 +46,6 @@ exports.loadEffects = () => {
     const clearChat = require("./builtin/clearChat");
     const updateCounter = require("./builtin/update-counter");
     const toggleEventSet = require("./builtin/toggle-event-set");
-    const cooldowns = require("./builtin/cooldowns");
 
     // register them
     effectManager.registerEffect(playSoundEffect); // No migration needed.
@@ -98,6 +92,12 @@ exports.loadEffects = () => {
     effectManager.registerEffect(toggleEventSet); // No migration needed.
 
     // Deactivated for Twitch.
+    const changeScene = require('./builtin/changeScene');
+    const streamAudience = require("./builtin/stream-audience");
+    const updateControl = require("./builtin/updateControl");
+    const channelProgression = require("./builtin/channelProgression");
+    const cooldowns = require("./builtin/cooldowns");
+    const toggleConnection = require("./builtin/toggleConnection");
     effectManager.registerEffect(changeScene);
     effectManager.registerEffect(streamAudience);
     effectManager.registerEffect(updateControl);
