@@ -36,7 +36,6 @@ exports.loadReplaceVariables = () => {
         'host-viewer-count',
         'math',
         'max-ad-break-length',
-        'mixplay-interactions',
         'moderator',
         'number-ceil',
         'number-floor',
