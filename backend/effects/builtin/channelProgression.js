@@ -6,15 +6,13 @@ const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-const logger = require("../../logwrapper");
-const channelAccess = require("../../common/channel-access");
-
 const model = {
     definition: {
         id: "firebot:channelProgression",
-        name: "Give Progression (Hearts)",
+        name: "Give Progression (Deprecated)",
         description: "Give hearts to a user, or take them away.",
         icon: "fad fa-heart",
+        hidden: true,
         categories: [EffectCategory.COMMON, EffectCategory.CHAT_BASED, EffectCategory.MODERATION],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
@@ -24,41 +22,18 @@ const model = {
         )
     },
     optionsTemplate: `
-        <eos-container header="Username">
-            <div class="input-group">
-                <span class="input-group-addon" id="hearts-username">Username</span>
-                <input ng-model="effect.username" type="text" class="form-control" id="chat-username-setting" aria-describedby="chat-username" placeholder="Username" replace-variables menu-position="below">
-            </div>
-        </eos-container>
-        <eos-container header="Hearts" pad-top="true">
-            <div class="input-group">
-                <span class="input-group-addon" id="hearts-effect-type">Number of hearts</span>
-                <input ng-model="effect.progression" type="text" class="form-control" id="chat-progression-setting" aria-describedby="chat-progression-effect-type" placeholder="Enter number (can be negative)" replace-variables>
-            </div>
-        </eos-container>
+    <eos-container header="Invalid Effect">
+        <div class="effect-info alert alert-info" style="margin-bottom:0;">
+            This effect was built for Mixer and no longer works.
+        </div>
+    </eos-container>
     `,
     optionsController: () => {},
-    optionsValidator: effect => {
+    optionsValidator: () => {
         let errors = [];
-        if (effect.progression == null || effect.progression === "") {
-            errors.push("You must enter the number of hearts to give.");
-        }
-        if (effect.username == null || effect.username === "") {
-            errors.push("You must enter a username.");
-        }
         return errors;
     },
-    onTriggerEvent: async event => {
-        let progressionTarget = await channelAccess.getIdsFromUsername(event.effect.username);
-
-        if (progressionTarget != null) {
-            channelAccess.giveHeartsToUser(progressionTarget.userId, event.effect.progression);
-        } else {
-            logger.error("User ID was invalid for channel progression effect.");
-        }
-
-        return true;
-    }
+    onTriggerEvent: async () => true
 };
 
 module.exports = model;

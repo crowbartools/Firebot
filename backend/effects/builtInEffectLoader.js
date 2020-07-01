@@ -54,41 +54,40 @@ exports.loadEffects = () => {
     const cooldowns = require("./builtin/cooldowns");
 
     // register them
-    effectManager.registerEffect(playSoundEffect);
-    effectManager.registerEffect(chatEffect);
-    effectManager.registerEffect(api);
-    effectManager.registerEffect(celebration);
-    effectManager.registerEffect(clips);
-    effectManager.registerEffect(dice);
-    effectManager.registerEffect(fileWriter);
-    effectManager.registerEffect(html);
-    effectManager.registerEffect(playVideo);
+    effectManager.registerEffect(playSoundEffect); // No migration needed.
+    effectManager.registerEffect(chatEffect); // Converted for Twitch.
+    effectManager.registerEffect(api); // No migration needed.
+    effectManager.registerEffect(celebration); // No migration needed.
+    effectManager.registerEffect(clips); // Converted for Twitch, needs Discord posts fixed.
+    effectManager.registerEffect(dice); // No migration needed.
+    effectManager.registerEffect(fileWriter); // No migration needed.
+    effectManager.registerEffect(html); // No migration needed.
+    effectManager.registerEffect(playVideo); // No migration needed.
     effectManager.registerEffect(showEvents);
-    effectManager.registerEffect(controlEmulation);
-    effectManager.registerEffect(showImage);
+    effectManager.registerEffect(controlEmulation); // No migration needed.
+    effectManager.registerEffect(showImage); // No migration needed.
     effectManager.registerEffect(toggleConnection);
-    effectManager.registerEffect(showText);
-    effectManager.registerEffect(delay);
-    effectManager.registerEffect(randomEffect);
-    effectManager.registerEffect(effectGroup);
-    effectManager.registerEffect(currency);
-    effectManager.registerEffect(randomRedditImage);
-    effectManager.registerEffect(customVariable);
-    effectManager.registerEffect(controlMouse);
-    effectManager.registerEffect(runCommand);
-    effectManager.registerEffect(customScript);
-    effectManager.registerEffect(clearEffects);
-    effectManager.registerEffect(sequentialEffect);
-    effectManager.registerEffect(updateRole);
-    effectManager.registerEffect(conditionalEffects);
-    effectManager.registerEffect(loopEffects);
-    effectManager.registerEffect(textToSpeech);
-    effectManager.registerEffect(deleteChatMessage);
-    effectManager.registerEffect(stopEffectExecution);
-    effectManager.registerEffect(adBreak);
-    effectManager.registerEffect(runProgram);
-    effectManager.registerEffect(activeUserLists);
-    effectManager.registerEffect(channelProgression);
+    effectManager.registerEffect(showText); // No migration needed.
+    effectManager.registerEffect(delay); // No migration needed.
+    effectManager.registerEffect(randomEffect); // No migration needed.
+    effectManager.registerEffect(effectGroup); // No migration needed.
+    effectManager.registerEffect(currency); // No migration needed.
+    effectManager.registerEffect(randomRedditImage); // No migration needed.
+    effectManager.registerEffect(customVariable); // No migration needed.
+    effectManager.registerEffect(controlMouse); // No migration needed.
+    effectManager.registerEffect(runCommand); // No migration needed.
+    effectManager.registerEffect(customScript); // No migration needed.
+    effectManager.registerEffect(clearEffects); // No migration needed.
+    effectManager.registerEffect(sequentialEffect); // No migration needed.
+    effectManager.registerEffect(updateRole); // No migration needed.
+    effectManager.registerEffect(conditionalEffects); // No migration needed.
+    effectManager.registerEffect(loopEffects); // No migration needed.
+    effectManager.registerEffect(textToSpeech); // No migration needed.
+    effectManager.registerEffect(deleteChatMessage); // Converted for Twitch
+    effectManager.registerEffect(stopEffectExecution); // No migration needed.
+    effectManager.registerEffect(adBreak); // Converted for Twitch
+    effectManager.registerEffect(runProgram); // No migration needed.
+    effectManager.registerEffect(activeUserLists); // No migration needed.
     effectManager.registerEffect(streamTitle);
     effectManager.registerEffect(streamGame);
     effectManager.registerEffect(moderatorBan);
@@ -96,12 +95,13 @@ exports.loadEffects = () => {
     effectManager.registerEffect(moderatorTimeout);
     effectManager.registerEffect(moderatorMod);
     effectManager.registerEffect(clearChat);
-    effectManager.registerEffect(updateCounter);
-    effectManager.registerEffect(toggleEventSet);
-    effectManager.registerEffect(cooldowns);
+    effectManager.registerEffect(updateCounter); // No migration needed.
+    effectManager.registerEffect(toggleEventSet); // No migration needed.
 
     // Deactivated for Twitch.
     effectManager.registerEffect(changeScene);
     effectManager.registerEffect(streamAudience);
     effectManager.registerEffect(updateControl);
+    effectManager.registerEffect(channelProgression);
+    effectManager.registerEffect(cooldowns);
 };
