@@ -1,9 +1,9 @@
 "use strict";
 
 const authManager = require("./auth-manager");
-const apiAccess = require("../api-access");
-const channelAccess = require("../common/channel-access");
 const accountAccess = require("../common/account-access");
+const logger = require("../logwrapper");
+const axios = require("axios").default;
 
 const TWITCH_CLIENT_ID = "umhhyrvkdriayr0psc3ttmsnq2j8h0";
 const TWITCH_CLIENT_SECRET = "z681sr828rf5ql70ilpf3sk3ein9v7";
@@ -52,11 +52,34 @@ exports.registerTwitchAuthProviders = () => {
     authManager.registerAuthProvider(BOT_ACCOUNT_PROVIDER);
 };
 
+async function getUserCurrent(accessToken) {
+    try {
+        const response = await axios.get('https://api.twitch.tv/helix/users', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'User-Agent': 'Firebot v5',
+                'Client-ID': TWITCH_CLIENT_ID
+            },
+            responseType: "json"
+        });
+
+        if (response.status >= 200 && response.status <= 204) {
+            const userData = response.data;
+            if (userData.data && userData.data.length > 0) {
+                return userData.data[0];
+            }
+        }
+    } catch (error) {
+        logger.error("Error getting current twitch user", error);
+    }
+    return null;
+}
+
 authManager.on("auth-success", async authData => {
     let { providerId, tokenData } = authData;
 
     if (providerId === STREAMER_ACCOUNT_PROVIDER_ID || providerId === BOT_ACCOUNT_PROVIDER_ID) {
-        const userData = await apiAccess.getUserCurrent(tokenData.access_token);
+        const userData = await getUserCurrent(tokenData.access_token);
         if (userData == null) return;
 
         let accountType = providerId === STREAMER_ACCOUNT_PROVIDER_ID ? "streamer" : "bot";
