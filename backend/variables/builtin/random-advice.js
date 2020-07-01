@@ -1,3 +1,5 @@
+// Migration: done
+
 "use strict";
 
 const apiProcessor = require("../../common/handlers/apiProcessor");
