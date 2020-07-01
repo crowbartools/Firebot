@@ -66,7 +66,6 @@ exports.loadEffects = () => {
     effectManager.registerEffect(showEvents);
     effectManager.registerEffect(controlEmulation); // No migration needed.
     effectManager.registerEffect(showImage); // No migration needed.
-    effectManager.registerEffect(toggleConnection);
     effectManager.registerEffect(showText); // No migration needed.
     effectManager.registerEffect(delay); // No migration needed.
     effectManager.registerEffect(randomEffect); // No migration needed.
@@ -104,4 +103,5 @@ exports.loadEffects = () => {
     effectManager.registerEffect(updateControl);
     effectManager.registerEffect(channelProgression);
     effectManager.registerEffect(cooldowns);
+    effectManager.registerEffect(toggleConnection);
 };

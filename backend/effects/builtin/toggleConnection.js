@@ -18,9 +18,10 @@ const toggleConnection = {
    */
     definition: {
         id: "firebot:toggleconnection",
-        name: "Toggle Connection",
+        name: "Toggle Connection (Deprecated)",
         description: "Toggles connection to specified services.",
         icon: "fad fa-plug",
+        hidden: true,
         categories: [EffectCategory.ADVANCED],
         dependencies: [],
         triggers: effectModels.buildEffectTriggersObject(
@@ -38,68 +39,29 @@ const toggleConnection = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-    <div class="alert alert-info">
-        This effect will toggle Firebot's connection to Mixer services. Most often used with hotkeys!
-    </div>
-
-    <eos-container header="Connections To Toggle">
-        <label class="control-fb control--checkbox"> MixPlay
-            <input type="checkbox" ng-checked="serviceIsChecked('interactive')" ng-click="toggleService('interactive')">
-            <div class="control__indicator"></div>
-        </label>
-        <label class="control-fb control--checkbox"> Chat
-            <input type="checkbox" ng-checked="serviceIsChecked('chat')" ng-click="toggleService('chat')">
-            <div class="control__indicator"></div>
-        </label>
-        <label class="control-fb control--checkbox"> Events
-            <input type="checkbox" ng-checked="serviceIsChecked('constellation')" ng-click="toggleService('constellation')">
-            <div class="control__indicator"></div>
-        </label>
+    <eos-container header="Invalid Effect">
+        <div class="effect-info alert alert-info" style="margin-bottom:0;">
+            This effect was built for Mixer and no longer works.
+        </div>
     </eos-container>
     `,
     /**
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, listenerService) => {
-        if ($scope.effect.services == null) {
-            $scope.effect.services = [];
-        }
-
-        $scope.serviceIsChecked = service =>
-            $scope.effect.services.includes(service);
-
-        $scope.toggleService = service => {
-            if ($scope.serviceIsChecked(service)) {
-                $scope.effect.services = $scope.effect.services.filter(
-                    s => s !== service
-                );
-            } else {
-                $scope.effect.services.push(service);
-            }
-        };
-    },
+    optionsController: () => {},
     /**
    * When the effect is triggered by something
    * Used to validate fields in the option template.
    */
-    optionsValidator: effect => {
+    optionsValidator: () => {
         let errors = [];
         return errors;
     },
     /**
    * When the effect is triggered by something
    */
-    onTriggerEvent: async event => {
-        // What should this do when triggered.
-        const effect = event.effect;
-        const services = effect.services || [];
-
-        const connectionManager = require("../../common/connection-manager");
-        connectionManager.toggleConnections(services);
-
-        return true;
-    }
+    onTriggerEvent: async () => true
 };
 
 module.exports = toggleConnection;
