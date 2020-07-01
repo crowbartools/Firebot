@@ -1,7 +1,9 @@
+// Migration: done
+
 "use strict";
 
+const twitchApi = require("../../twitch-api/client");
 const accountAccess = require("../../common/account-access");
-const channelAccess = require("../../common/channel-access");
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
@@ -29,11 +31,13 @@ const model = {
         if (username == null) {
             username = accountAccess.getAccounts().streamer.username;
         }
+        const twitchClient = twitchApi.getClient();
 
         try {
-            let channelData = await channelAccess.getMixerAccountDetailsByUsername(username);
-            return channelData.name ? channelData.name : "[No title set]";
-        } catch (err) {
+            const streamInfo = await twitchClient.helix.streams.getStreamByUserName(username);
+            return streamInfo.title ? streamInfo.title : "[No title set]";
+
+        } catch (ignore) {
             return "[No title set]";
         }
     }
