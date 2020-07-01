@@ -1,8 +1,10 @@
+// Migration: done
+
 "use strict";
 
+const twitchApi = require("../../twitch-api/client");
 const accountAccess = require("../../common/account-access");
 const { OutputDataType } = require("../../../shared/variable-contants");
-const mixerApi = require("../../mixer-api/api");
 
 const model = {
     definition: {
@@ -29,8 +31,12 @@ const model = {
             username = accountAccess.getAccounts().streamer.username;
         }
 
-        const channelData = await mixerApi.channels.getChannel(username);
-        return channelData.type ? channelData.type.name : "[No game set]";
+        const twitchClient = twitchApi.getClient();
+        const channelData = await twitchClient.helix.streams.getStreamByUserName(username);
+        const streamGame = channelData.getGame();
+
+
+        return streamGame.name ? streamGame.name : "[No game set]";
     }
 };
 
