@@ -7,6 +7,7 @@ const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");
 const twitchChatListeners = require("./chat-listeners/twitch-chat-listeners");
+const followPoll = require("../twitch-api/follow-poll");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -43,6 +44,7 @@ class TwitchChat extends EventEmitter {
         if (emitDisconnectEvent) {
             this.emit("disconnected");
         }
+        followPoll.stopFollowPoll();
     }
 
     /**
@@ -84,6 +86,7 @@ class TwitchChat extends EventEmitter {
 
             twitchChatListeners.setupChatListeners(this._streamerChatClient);
 
+            followPoll.startFollowPoll();
         } catch (error) {
             logger.error("Chat connect error", error);
             await this.disconnect();

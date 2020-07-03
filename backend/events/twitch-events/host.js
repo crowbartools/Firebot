@@ -1,9 +1,9 @@
 "use strict";
 
-const eventManager = require("../../../events/EventManager");
+const eventManager = require("../../events/EventManager");
 
 exports.triggerHost = (username, auto, viewerCount = 0) => {
-    eventManager.triggerEvent("mixer", "hosted", {
+    eventManager.triggerEvent("twitch", "host", {
         username: username,
         viewerCount: viewerCount,
         auto: auto
