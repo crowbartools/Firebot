@@ -91,6 +91,18 @@ class TwitchChat extends EventEmitter {
             logger.error("Chat connect error", error);
             await this.disconnect();
         }
+
+        try {
+            this._botChatClient = await ChatClient.forTwitchClient(twitchClient.getBotClient(), {
+                requestMembershipEvents: true
+            });
+
+            this._botChatClient.onRegister(() => this._botChatClient.join(streamer.username));
+
+            await this._botChatClient.connect();
+        } catch (error) {
+            logger.error("Error joining streamers chat channel with Bot account", error);
+        }
     }
 
     /**
@@ -132,7 +144,7 @@ class TwitchChat extends EventEmitter {
             accountType = accountType.toLowerCase();
         }
 
-        const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botSocket && this._botSocket.isConnected;
+        const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.isConnected;
         if (accountType == null) {
             accountType = botAvailable ? "bot" : "streamer";
         } else if (accountType === "bot" && !botAvailable) {

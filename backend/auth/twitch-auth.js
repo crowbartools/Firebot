@@ -37,7 +37,8 @@ const BOT_ACCOUNT_PROVIDER = {
     id: BOT_ACCOUNT_PROVIDER_ID,
     name: "Bot Account",
     client: {
-        id: TWITCH_CLIENT_ID
+        id: TWITCH_CLIENT_ID,
+        secret: TWITCH_CLIENT_SECRET
     },
     auth: {
         tokenHost: HOST,
