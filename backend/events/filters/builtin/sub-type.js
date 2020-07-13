@@ -7,7 +7,7 @@ module.exports = {
     name: "Sub Type",
     description: "Filter by the type of sub (Prime, Tier 1, 2, 3, etc)",
     events: [
-        { eventSourceId: "twitch", eventId: "sub" }
+        { eventSourceId: "twitch", eventId: "sub" },
         { eventSourceId: "twitch", eventId: "subs-gifted" }
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT],
@@ -33,17 +33,17 @@ module.exports = {
         ];
     },
     getSelectedValueDisplay: (filterSettings) => {
-        switch(filterSettings.value) {
-            case "Prime":
-                return "Prime";
-            case "1000":
-                return "Tier 1";
-            case "2000":
-                return "Tier 2";
-            case "3000":
-                return "Tier 3";
-            default:
-                return "[Not set]"
+        switch (filterSettings.value) {
+        case "Prime":
+            return "Prime";
+        case "1000":
+            return "Tier 1";
+        case "2000":
+            return "Tier 2";
+        case "3000":
+            return "Tier 3";
+        default:
+            return "[Not set]";
         }
     },
     predicate: (filterSettings, eventData) => {
@@ -51,7 +51,7 @@ module.exports = {
         let { comparisonType, value } = filterSettings;
         let { eventMeta } = eventData;
 
-        if(value == null) {
+        if (value == null) {
             return true;
         }
 
