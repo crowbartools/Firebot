@@ -7,20 +7,19 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted"];
+triggers[EffectTrigger.EVENT] = ["twitch:cheer"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "giftReceiverUsername",
-        description: "The name of the user who just received a gifted sub.",
+        handle: "cheerBitsAmount",
+        description: "The total amount of bits in the cheer.",
         triggers: triggers,
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        const gifteeUsername = trigger.metadata.eventData.gifteeUsername;
-
-        return gifteeUsername || "UnknownUser";
+        let totalBits = trigger.metadata.eventData.totalBits || 0;
+        return totalBits;
     }
 };
 

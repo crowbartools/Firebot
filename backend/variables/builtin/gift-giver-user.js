@@ -1,5 +1,3 @@
-// Migration: todo - Need twitch sub-gift event trigger
-
 "use strict";
 
 const {
@@ -9,19 +7,19 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["mixer:subscription-gifted"];
+triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
         handle: "giftGiverUsername",
-        description: "The name of the user who gifted a sub to someone.",
+        description: "The name of the user who gifted a sub(s).",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        let receiverUsername = trigger.metadata.eventData.gifterUser;
-        return receiverUsername || "UnknownUser";
+        let gifterUsername = trigger.metadata.eventData.gifterUsername;
+        return gifterUsername || "UnknownUser";
     }
 };
 

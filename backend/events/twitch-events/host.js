@@ -6,6 +6,6 @@ exports.triggerHost = (username, auto, viewerCount = 0) => {
     eventManager.triggerEvent("twitch", "host", {
         username: username,
         viewerCount: viewerCount,
-        auto: auto
+        auto: auto === undefined ? false : auto
     });
 };

@@ -13,6 +13,13 @@ exports.setupChatListeners = (streamerChatClient) => {
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
         commandHandler.handleChatMessage(firebotChatMessage);
+
+        const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
+        viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
+
+        if (!msg.isCheer) return;
+        const cheerListener = require("../../events/twitch-events/cheer");
+        cheerListener.triggerCheer(msg.userInfo.displayName, msg.totalBits, msg.params.message);
     });
 
     streamerChatClient.onWhisper(async (_user, _message, msg) => {
@@ -37,24 +44,24 @@ exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onSub((_channel, _user, subInfo) => {
         const subListener = require("../../events/twitch-events/sub");
-        subListener.triggerSub(subInfo.displayName, subInfo.planName, subInfo.months,
+        subListener.triggerSub(subInfo.displayName, subInfo.plan, subInfo.planName, subInfo.months,
             subInfo.streak, subInfo.isPrime);
     });
 
     streamerChatClient.onResub((_channel, _username, subInfo) => {
         const subListener = require("../../events/twitch-events/sub");
-        subListener.triggerSub(subInfo.displayName, subInfo.planName, subInfo.months,
-            subInfo.streak, subInfo.isPrime);
+        subListener.triggerSub(subInfo.displayName, subInfo.plan, subInfo.planName, subInfo.months,
+            subInfo.streak, subInfo.isPrime, true);
     });
 
-    streamerChatClient.onSubGift((channel, user, giftSubInfo, msg) => {
+    streamerChatClient.onSubGift((_channel, _user, giftSubInfo) => {
         const giftSubListener = require("../../events/twitch-events/gift-sub");
-        giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName, giftSubInfo.displayName, giftSubInfo.gifterGiftCount, giftSubInfo.planName);
+        giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName, giftSubInfo.displayName,
+            giftSubInfo.gifterGiftCount, giftSubInfo.plan, giftSubInfo.planName);
     });
 
-    streamerChatClient.onRaid((_channel, _username, raidInfo, msg) => {
+    streamerChatClient.onRaid((_channel, _username, raidInfo) => {
         const raidListener = require("../../events/twitch-events/raid");
         raidListener.triggerRaid(raidInfo.displayName, raidInfo.viewerCount);
     });
-
 };

@@ -57,6 +57,27 @@ module.exports = {
                 username: "Firebot",
                 totalMonths: 0
             }
+        },
+        {
+            id: "cheer",
+            name: "Cheer",
+            description: "When someone cheers in your channel (uses bits).",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                totalMonths: 0
+            }
+        },
+        {
+            id: "viewer-arrived",
+            name: "Viewer Arrived",
+            description: "When a viewer first chats in your channel.",
+            cached: true,
+            cacheMetaKey: "username",
+            manualMetadata: {
+                username: "Firebot",
+                totalMonths: 0
+            }
         }
     ]
 };

@@ -7,20 +7,18 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted"];
+triggers[EffectTrigger.EVENT] = ["twitch:sub"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "giftReceiverUsername",
-        description: "The name of the user who just received a gifted sub.",
+        handle: "subType",
+        description: "The type of sub (ie Tier 1, 2, 3, etc).",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        const gifteeUsername = trigger.metadata.eventData.gifteeUsername;
-
-        return gifteeUsername || "UnknownUser";
+        return trigger.metadata.eventData.subType || "";
     }
 };
 

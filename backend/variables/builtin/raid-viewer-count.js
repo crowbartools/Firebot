@@ -7,18 +7,19 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:sub"];
+triggers[EffectTrigger.EVENT] = ["twitch:raid"];
 triggers[EffectTrigger.MANUAL] = true;
+
 
 const model = {
     definition: {
-        handle: "subCurrentStreak",
-        description: "Number of consecutive months a user has been subscribed to your channel.",
+        handle: "raidViewerCount",
+        description: "Get the number of viewers brought over by a raid",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.NUMBER]
     },
-    evaluator: (trigger) => {
-        return trigger.metadata.eventData.streak || 1;
+    evaluator: async (trigger) => {
+        return trigger.metadata.eventData.viewerCount || 0;
     }
 };
 

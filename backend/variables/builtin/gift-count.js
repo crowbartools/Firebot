@@ -12,15 +12,13 @@ triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "giftReceiverUsername",
-        description: "The name of the user who just received a gifted sub.",
+        handle: "giftCount",
+        description: "The number of subs gifted.",
         triggers: triggers,
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        const gifteeUsername = trigger.metadata.eventData.gifteeUsername;
-
-        return gifteeUsername || "UnknownUser";
+        return trigger.metadata.eventData.giftCount || 0;
     }
 };
 

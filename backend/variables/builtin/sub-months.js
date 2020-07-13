@@ -1,5 +1,3 @@
-// Migration: info - Need implementation details
-
 "use strict";
 
 const {
@@ -9,7 +7,7 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["mixer:subscribed", "mixer:resub"];
+triggers[EffectTrigger.EVENT] = ["twitch:sub"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
@@ -20,7 +18,7 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.totalMonths;
+        return trigger.metadata.eventData.totalMonths || 1;
     }
 };
 

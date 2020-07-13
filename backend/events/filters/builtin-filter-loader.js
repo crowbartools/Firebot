@@ -24,6 +24,7 @@ exports.loadFilters = () => {
     const newViewTime = require("./builtin/new-view-time");
 
     const resubShared = require("./builtin/resub-shared");
+    const subType = require("./builtin/sub-type");
 
     const hostType = require("./builtin/host-type");
     const hostViewerCount = require("./builtin/host-viewer-count");
@@ -52,6 +53,7 @@ exports.loadFilters = () => {
     filterManager.registerFilter(newViewTime);
 
     filterManager.registerFilter(resubShared);
+    filterManager.registerFilter(subType);
 
     filterManager.registerFilter(hostType);
     filterManager.registerFilter(hostViewerCount);
