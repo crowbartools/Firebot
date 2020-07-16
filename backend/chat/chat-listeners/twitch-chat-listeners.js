@@ -3,10 +3,12 @@
 const frontendCommunicator = require("../../common/frontend-communicator");
 const commandHandler = require("../commands/commandHandler");
 const chatHelpers = require("../chat-helpers");
+const activeUserHandler = require("./active-user-handler");
 
 /** @arg {import('twitch-chat-client/lib/ChatClient').default} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrivmsg(async (_channel, _user, _message, msg) => {
+
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg);
 
         // send to the frontend
@@ -14,12 +16,15 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         commandHandler.handleChatMessage(firebotChatMessage);
 
+        activeUserHandler.addActiveUser(msg.userInfo);
+
         const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
         viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
 
-        if (!msg.isCheer) return;
-        const cheerListener = require("../../events/twitch-events/cheer");
-        cheerListener.triggerCheer(msg.userInfo.displayName, msg.totalBits, msg.params.message);
+        if (msg.isCheer) {
+            const cheerListener = require("../../events/twitch-events/cheer");
+            cheerListener.triggerCheer(msg.userInfo.displayName, msg.totalBits, msg.params.message);
+        }
     });
 
     streamerChatClient.onWhisper(async (_user, _message, msg) => {

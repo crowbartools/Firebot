@@ -224,7 +224,7 @@ function removeUser(userId) {
     });
 }
 
-function createNewUser(userId, username, channelRoles, isOnline = false) {
+function createNewUser(userId, username, displayName, profilePicUrl, isOnline = false) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
             return resolve(null);
@@ -238,18 +238,18 @@ function createNewUser(userId, username, channelRoles, isOnline = false) {
         let user = {
             username: username,
             _id: userId,
-            roles: channelRoles,
+            displayName: displayName,
+            profilePicUrl: profilePicUrl,
+            twitch: true,
             online: isOnline,
             onlineAt: Date.now(),
             lastSeen: Date.now(),
             joinDate: Date.now(),
             minutesInChannel: 0,
-            mixplayInteractions: 0,
             chatMessages: 0,
             disableAutoStatAccrual: disableAutoStatAccrual,
             disableActiveUserList: false,
-            currency: {},
-            ranks: {}
+            currency: {}
         };
 
         // THIS IS WHERE YOU ADD IN ANY DYNAMIC FIELDS THAT ALL USERS SHOULD HAVE.
@@ -296,35 +296,55 @@ function setUserOnline(user) {
     });
 }
 
-//set a user online or add them to the database as online
-function setChatUserOnline(data) {
-    return new Promise((resolve, reject) => {
+/**
+ * @typedef {Object} UserDetails
+ * @property {number} id
+ * @property {string} username
+ * @property {string} displayName
+ * @property {string} profilePicUrl
+ */
+
+/**
+ * Set a user as online
+ * @param {UserDetails} userDetails
+ */
+function setChatUserOnline(userDetails) {
+    return new Promise((resolve) => {
         if (!isViewerDBOn()) {
             return resolve();
         }
-        getUserById(data.id).then(
-            async user => {
-                if (user) {
-                    logger.debug("ViewerDB: User exists in DB, setting online: ", data.username);
-                    user.roles = data.roles; // Update user roles when they go online.
-                    user.username = data.username; // Set their username again just in case they have since changed it
-                    setUserOnline(user).then(user => resolve(user), err => reject(err));
-                } else {
-                    logger.debug(
-                        "ViewerDB: Adding Chat User to DB and setting online: ",
-                        data.username
-                    );
-                    await createUserFromChat(data, true);
 
-                    resolve();
+        const now = Date.now();
+
+        db.update(
+            { _id: userDetails.id },
+            {
+                $set: {
+                    username: userDetails.username,
+                    displayName: userDetails.displayName,
+                    profilePicUrl: userDetails.profilePicUrl,
+                    online: true,
+                    onlineAt: now,
+                    lastSeen: now
                 }
             },
-            err => {
-                logger.error("Unable to set user online.", err);
+            {},
+            function (err) {
+                if (err) {
+                    logger.error("Failed to set user to online", err);
+                }
                 resolve();
-            }
-        );
+            });
     });
+}
+
+/**
+ * Adds a new user to the database
+ * @param {UserDetails} userDetails
+ */
+function addNewUserFromChat(userDetails) {
+    return createNewUser(userDetails.id, userDetails.username, userDetails.displayName,
+        userDetails.profilePicUrl, true);
 }
 
 // Sets chat users online using the same function we use to get the chat viewer list for the ui.
@@ -643,3 +663,4 @@ exports.incrementDbField = incrementDbField;
 exports.getUserDb = getUserDb;
 exports.setChatUsersOnline = setChatUsersOnline;
 exports.getTopViewTimeUsers = getTopViewTimeUsers;
+exports.addNewUserFromChat = addNewUserFromChat;

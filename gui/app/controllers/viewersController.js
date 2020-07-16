@@ -52,7 +52,7 @@
                         'width': '50px'
                     },
                     sortable: false,
-                    cellTemplate: `<img ng-src="https://mixer.com/api/v1/users/{{data._id}}/avatar?w=50&h=50" style="width: 25px;height: 25px;border-radius: 25px;"/>`,
+                    cellTemplate: `<img ng-src="{{data.twitch ? data.profilePicUrl : '../images/placeholders/mixer-icon.png'}}"  style="width: 25px;height: 25px;border-radius: 25px;"/>`,
                     cellController: () => {}
                 },
                 {
@@ -63,7 +63,7 @@
                         'min-width': '125px'
                     },
                     sortable: true,
-                    cellTemplate: `{{data.username}}`,
+                    cellTemplate: `{{data.displayName || data.username}}`,
                     cellController: () => {}
                 },
                 {
@@ -93,14 +93,6 @@
                             return minutesInChannel < 60 ? 'Less than an hour' : Math.round(minutesInChannel / 60);
                         };
                     }
-                },
-                {
-                    name: "MIXPLAY INTERACTIONS",
-                    icon: "fa-gamepad",
-                    dataField: "mixplayInteractions",
-                    sortable: true,
-                    cellTemplate: `{{data.mixplayInteractions}}`,
-                    cellController: () => {}
                 },
                 {
                     name: "CHAT MESSAGES",
