@@ -1,5 +1,5 @@
 "use strict";
-
+const logger = require("../logwrapper");
 const twitchAuth = require("../auth/twitch-auth");
 const accountAccess = require("../common/account-access");
 
@@ -39,13 +39,15 @@ function setupTwitchClients() {
 
     const bot = accountAccess.getAccounts().bot;
     if (!bot.loggedIn) return;
+
     botClient = TwitchClient.withCredentials(
         twitchAuth.TWITCH_CLIENT_ID,
         bot.auth.access_token,
         undefined,
         {
-            secret: twitchAuth.TWITCH_CLIENT_SECRET,
+            clientSecret: twitchAuth.TWITCH_CLIENT_SECRET,
             refreshToken: bot.auth.refresh_token,
+            expiry: bot.auth.expires_at != null ? new Date(bot.auth.expires_at) : undefined,
             onRefresh: (token) => {
                 const botAccount = accountAccess.getAccounts().bot;
 

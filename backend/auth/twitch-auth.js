@@ -93,13 +93,6 @@ authManager.on("auth-success", async authData => {
             auth: tokenData
         };
 
-        /*if (accountType === "streamer") {
-            const updatedStreamerAccount = await accountAccess.updateStreamerAccountSettings(accountObject);
-            if (updatedStreamerAccount != null) {
-                accountObject = updatedStreamerAccount;
-            }
-        }*/
-
         accountAccess.updateAccount(accountType, accountObject);
     }
 });
