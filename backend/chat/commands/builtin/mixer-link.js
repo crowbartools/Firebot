@@ -6,7 +6,7 @@ const mixerLink = {
     id: "firebot:linkmixer",
     name: "Link Mixer Management",
     active: true,
-    trigger: "!quote",
+    trigger: "!mixerlink",
     description: "Allows users to link their mixer account to their twitch account",
     autoDeleteTrigger: true,
     scanWholeMessage: false,
