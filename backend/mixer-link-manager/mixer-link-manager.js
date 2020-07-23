@@ -1,6 +1,6 @@
 'use strict';
 
-const Datastore = require('nedb');
+/*const Datastore = require('nedb');
 const logger = require('../logwrapper');
 const profileManager = require('../common/profile-manager');
 const frontendCommunicator = require("../common/frontend-communicator");
@@ -75,4 +75,4 @@ frontendCommunicator.on('mixer-link-unlink', twitchid => {
 });
 
 
-module.exports = factory;
+module.exports = factory;*/

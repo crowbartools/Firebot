@@ -6,6 +6,8 @@ const channelAccess = require("./channel-access");
 const mixerApi = require("../api-access");
 const NodeCache = require('node-cache');
 const logger = require('../logwrapper');
+const twitchClient = require("../twitch-api/client");
+const { streamer } = require("../mixer-api/client");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
@@ -58,36 +60,50 @@ async function userFollowsChannels(userId, channelNamesOrIds) {
 }
 
 function getUser(userId) {
-    return mixerApi.get(`users/${userId}`, "v1", false, false);
+    const client = twitchClient.getClient();
+    return client.kraken.users.getUser(userId);
 }
 
 async function getUserDetails(userId) {
 
-    let mixerUserData = await getUser(userId);
 
-    let streamerFollowsUser = false;
-    let userFollowsStreamer = false;
-    if (mixerUserData) {
-        const streamerData = accountAccess.getAccounts().streamer;
 
-        let relationshipData = await mixerApi.get(`channels/${streamerData.channelId}/relationship?user=${userId}`,
-            "v1", false, true);
-        mixerUserData.relationship = relationshipData ? relationshipData.status : null;
+    const twitchUser = await getUser(userId);
+    const twitchUserData = {
+        id: twitchUser.id,
+        username: twitchUser.name,
+        displayName: twitchUser.displayName,
+        iconUrl: twitchUser.logoUrl,
+        creationDate: twitchUser.creationDate
+    };
 
-        streamerFollowsUser = await userFollowsChannels(streamerData.userId, [mixerUserData.channel.id]);
-        userFollowsStreamer = await userFollowsChannels(userId, [streamerData.userId]);
+    const streamerData = accountAccess.getAccounts().streamer;
 
-        let channelLevel = await channelAccess.getChannelProgressionForUser(userId);
-        if (channelLevel) {
-            mixerUserData.channelLevel = channelLevel;
-        }
+    const client = twitchClient.getClient();
+    const userFollowsStreamerResponse = await client.helix.users.getFollows({
+        user: userId,
+        followedUser: streamerData.userId
+    });
+
+    const streamerFollowsUserResponse = await client.helix.users.getFollows({
+        user: streamerData.userId,
+        followedUser: userId
+    });
+
+    const streamerFollowsUser = streamerFollowsUserResponse.data != null &&
+        streamerFollowsUserResponse.data.length === 1;
+    const userFollowsStreamer = userFollowsStreamerResponse.data != null &&
+        userFollowsStreamerResponse.data.length === 1;
+
+    if (twitchUserData) {
+        twitchUserData.relationship = null;
     }
 
     let firebotUserData = await userDb.getUserById(userId);
 
     const userDetails = {
         firebotData: firebotUserData || {},
-        mixerData: mixerUserData,
+        twitchData: twitchUserData,
         streamerFollowsUser: streamerFollowsUser,
         userFollowsStreamer: userFollowsStreamer
     };
