@@ -222,15 +222,17 @@ exports.getCurrentViewerList = function(users, continuationToken = null, namesOn
         }
 
         let userlistParsed = response.body;
-        let userlistMapped = userlistParsed.map(u => {
-            return namesOnly ? u.username : {
-                userId: u.userId,
-                username: u.username,
-                user_roles: u.userRoles // eslint-disable-line camelcase
-            };
-        });
+        if (Array.isArray(userlistParsed)) {
+            let userlistMapped = userlistParsed.map(u => {
+                return namesOnly ? u.username : {
+                    userId: u.userId,
+                    username: u.username,
+                    user_roles: u.userRoles // eslint-disable-line camelcase
+                };
+            });
 
-        users = users.concat(userlistMapped);
+            users = users.concat(userlistMapped);
+        }
 
         let linkHeader = response.headers.link;
         if (linkHeader) {
