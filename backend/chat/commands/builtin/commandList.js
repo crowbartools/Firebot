@@ -39,7 +39,7 @@ const commandList = {
             );
         } else {
             chat.sendChatMessage(
-                `Here a list of the commands you can use. https://crowbartools.com/tools/firebot/profile?id=${binId}`,
+                `Here a list of the commands you can use. https://firebot.app/profile?id=${binId}`,
                 event.userCommand.commandSender
             );
         }
