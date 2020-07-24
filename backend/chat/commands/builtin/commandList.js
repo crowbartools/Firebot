@@ -22,24 +22,26 @@ const commandList = {
      */
     onTriggerEvent: async event => {
         const cloudSync = require('../../../cloud-sync/profile-sync.js');
-        const chat = require("../../chat");
+        const twitchChat = require("../../../chat/twitch-chat");
+
+        console.log(event);
 
         let profileJSON = {
-            username: event.chatEvent.user_name,
-            userRoles: event.chatEvent.user_roles,
+            username: event.chatMessage.username,
+            userRoles: event.chatMessage.roles,
             profilePage: 'commands'
         };
 
         let binId = await cloudSync.syncProfileData(profileJSON);
 
         if (binId == null) {
-            chat.sendChatMessage(
+            twitchChat.sendChatMessage(
                 "There are no commands that you are allowed to run.",
                 event.userCommand.commandSender
             );
         } else {
-            chat.sendChatMessage(
-                `Here a list of the commands you can use. https://firebot.app/profile?id=${binId}`,
+            twitchChat.sendChatMessage(
+                `Here is a list of the commands you can use. https://firebot.app/profile?id=${binId}`,
                 event.userCommand.commandSender
             );
         }
