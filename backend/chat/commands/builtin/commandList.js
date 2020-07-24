@@ -23,7 +23,7 @@ const commandList = {
     onTriggerEvent: async event => {
         const cloudSync = require('../../../cloud-sync/profile-sync.js');
         const twitchChat = require("../../../chat/twitch-chat");
-        
+
         let profileJSON = {
             username: event.chatMessage.username,
             userRoles: event.chatMessage.roles,
