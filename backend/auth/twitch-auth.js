@@ -30,7 +30,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         tokenPath: TOKEN_PATH,
         authorizePath: AUTHORIZE_PATH
     },
-    scopes: 'channel:edit:commercial bits:read channel:read:hype_train channel:read:subscriptions user:read:broadcast channel:moderate chat:edit chat:read whispers:read whispers:edit user:edit:broadcast user_subscriptions channel_commercial user_follows_edit'
+    scopes: 'channel:edit:commercial bits:read channel:read:hype_train channel:read:subscriptions user:read:broadcast channel:moderate chat:edit chat:read whispers:read whispers:edit user:edit:broadcast user_subscriptions channel_commercial user_follows_edit channel_editor'
 };
 
 const BOT_ACCOUNT_PROVIDER = {
