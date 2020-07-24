@@ -7,6 +7,9 @@ const request = require("request");
 
 const replaceVariableManager = require("./variables/replace-variable-manager");
 
+const accountAccess = require("./common/account-access");
+const twitchApi = require("./twitch-api/client");
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -165,14 +168,18 @@ exports.populateStringWithTriggerData = async function(string = "", trigger) {
 };
 
 exports.getUptime = async () => {
-    const broadcast = await mixerApi.channels.getStreamersBroadcast();
+    const client = twitchApi.getClient();
 
-    if (broadcast == null) {
+    const streamerAccount = accountAccess.getAccounts().streamer;
+    const channelData = await client.helix.streams.getStreamByUserName(streamerAccount.username);
+
+    if (channelData == null) {
         return "Not currently broadcasting";
     }
 
+    const startedDate = channelData.startDate;
     const durationSecs = moment
-        .duration(moment().diff(moment(broadcast.startedAt)))
+        .duration(moment().diff(moment(startedDate)))
         .asSeconds();
 
     return getUptimeString(durationSecs);

@@ -28,10 +28,9 @@ const steam = {
         if (gameName == null || gameName.length < 1) {
             const streamerAccount = accountAccess.getAccounts().streamer;
             const channelData = await client.helix.streams.getStreamByUserName(streamerAccount.username);
+            const gameInfo = channelData.getGame();
 
-            if (channelData != null) {
-                gameName = channelData.game ? channelData.game : "";
-            }
+            gameName = gameInfo.name != null ? gameInfo.name : "";
         }
 
         if (gameName != null && gameName !== "") {
