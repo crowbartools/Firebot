@@ -1,78 +1,132 @@
 'use strict';
 
-/*const Datastore = require('nedb');
 const logger = require('../logwrapper');
-const profileManager = require('../common/profile-manager');
-const frontendCommunicator = require("../common/frontend-communicator");
+const NodeCache = require("node-cache");
 
-let db, loader;
+const userDatabase = require("../database/userDatabase");
 
-function loadLinkDatabase() {
-    // todo
-}
-function isLinkPending(twitchid) {
-    // todo
-}
-function isLinked(twitchid) {
-    // todo
-}
-function link(twitchid, mixername) {
-    // todo
-}
-function unlink(twitchid) {
-    // todo
-}
+// cache link requests for 60 secs
+const linkRequestCache = new NodeCache({ stdTTL: 60, checkperiod: 10 });
 
-function factory() {
-
-    // factory has already been called; return the loader promise
-    if (loader) {
-        return loader;
+async function verifyAndGetUsers(twitchUsername, mixerUsername) {
+    const twitchUser = await userDatabase.getTwitchUserByUsername(twitchUsername);
+    if (twitchUser == null) {
+        throw new Error(`Twitch user '${twitchUsername}' not found in Firebot data`);
     }
 
-    // get path to db
-    let path = profileManager.getPathInProfile("db/mixerlinks.db");
-
-    // create the db instance
-    db = new Datastore({ filename: path });
-
-    // attempt to load the db
-    loader = new Promise((resolve, reject) => {
-        db.loadDatabase(err => {
-
-            // failed to load the db
-            if (err) {
-                logger.error("Error Loading Database: ", err.message);
-                logger.debug("Failed Database Path: ", path);
-                reject(err);
-
-            // db loaded
-            } else {
-                resolve({
-                    loadLinkDatabase,
-                    isLinkPending,
-                    isLinked,
-                    link,
-                    unlink
-                });
-            }
-        });
-    });
-
-    return loader;
+    const mixerUser = await userDatabase.getMixerUserByUsername(mixerUsername);
+    if (mixerUser == null) {
+        throw new Error(`Mixer user '${mixerUsername}' not found in Firebot data`);
+    }
+    return [twitchUser, mixerUser];
 }
 
-frontendCommunicator.onAync('mixer-link-get-all', async () => {
-    // todo
-});
+/**
+ * Add a link request
+ * @param {string} twitchUsername
+ * @param {string} mixerUsername
+ */
+async function addLinkRequest(twitchUsername, mixerUsername) {
+    twitchUsername = twitchUsername.toLowerCase();
+    mixerUsername = mixerUsername.toLowerCase();
 
-frontendCommunicator.on('mixer-link-set', (twitchid, mixername) => {
-    // todo
-});
+    // throws an error if either the twitch or mixer user doesnt exist in firebot
+    const [twitchUser] = await verifyAndGetUsers(twitchUsername, mixerUsername);
 
-frontendCommunicator.on('mixer-link-unlink', twitchid => {
-    // todo
-});
+    if (twitchUser.mixerLink != null) {
+        throw new Error(`Twitch user '${twitchUsername}' has already been linked with a previous Mixer account.`);
+    }
 
+    linkRequestCache.set(twitchUsername, mixerUsername);
+}
 
-module.exports = factory;*/
+/**
+ * Check if a link request exists for a given twitch user.
+ * @param {string} twitchUsername
+ * @returns {boolean}
+ */
+function linkRequestExists(twitchUsername) {
+    return linkRequestCache.get(twitchUsername) != null;
+}
+
+/**
+ * Approve a link request
+ * @param {string} twitchUsername
+ * @returns {Promise<boolean>} Returns true if successfully linked, returns false no request is present for given twitch name.
+ */
+async function approveLinkRequest(twitchUsername, moderatorName) {
+    twitchUsername = twitchUsername.toLowerCase();
+
+    if (!linkRequestExists(twitchUsername)) {
+        return false;
+    }
+
+    const mixerUsername = linkRequestCache.get(twitchUsername);
+
+    linkRequestCache.del(twitchUsername);
+
+    const [twitchUser, mixerUser] = await verifyAndGetUsers(twitchUsername, mixerUsername);
+
+    if (twitchUser.mixerLink != null) {
+        throw new Error(`Twitch user '${twitchUsername}' has already been linked with a previous Mixer account.`);
+    }
+
+    twitchUser.mixerLink = {
+        mixerUsername: mixerUser.username,
+        approvedBy: moderatorName,
+        linkedAt: Date.now(),
+        mixerData: mixerUser
+    };
+
+    // merge values
+    twitchUser.onlineAt = mixerUser.onlineAt;
+    twitchUser.lastSeen = mixerUser.lastSeen;
+    twitchUser.joinDate = mixerUser.joinDate;
+
+    twitchUser.disableAutoStatAccrual = mixerUser.disableAutoStatAccrual;
+    twitchUser.disableActiveUserList = mixerUser.disableActiveUserList;
+
+    twitchUser.minutesInChannel += mixerUser.minutesInChannel;
+    twitchUser.chatMessages += mixerUser.chatMessages;
+
+    if (mixerUser.currency != null) {
+        if (twitchUser.currency == null) {
+            twitchUser.currency = {};
+        }
+        for (const [currencyId, mixerAmount] of Object.entries(mixerUser.currency)) {
+            if (twitchUser.currency[currencyId] != null) {
+                twitchUser.currency[currencyId] += mixerAmount;
+            } else {
+                twitchUser.currency[currencyId] = mixerAmount;
+            }
+        }
+    }
+
+    await userDatabase.updateUser(twitchUser);
+
+    await userDatabase.removeUser(mixerUser._id);
+
+    return true;
+}
+
+/**
+ * Deny a link request
+ * @param {string} twitchUsername
+ * @returns {boolean} Returns true if successfully denied, returns false no request is present for given twitch name.
+ */
+function denyLinkRequest(twitchUsername) {
+    twitchUsername = twitchUsername.toLowerCase();
+
+    if (!linkRequestExists(twitchUsername)) {
+        return false;
+    }
+
+    linkRequestCache.del(twitchUsername);
+
+    return true;
+}
+
+exports.addLinkRequest = addLinkRequest;
+exports.linkRequestExists = linkRequestExists;
+exports.approveLinkRequest = approveLinkRequest;
+exports.denyLinkRequest = denyLinkRequest;

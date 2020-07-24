@@ -50,8 +50,6 @@ function checkForCommand(rawMessage) {
     if (rawMessage == null || rawMessage.length < 1) return null;
     let normalziedRawMessage = rawMessage.toLowerCase();
 
-
-
     let allCommands = commandManager.getAllActiveCommands();
 
     for (let command of allCommands) {

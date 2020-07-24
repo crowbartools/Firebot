@@ -66,6 +66,42 @@ function getUserByUsername(username) {
     });
 }
 
+//look up user object by name
+function getTwitchUserByUsername(username) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve(null);
+        }
+
+        let searchTerm = new RegExp(username, 'gi');
+
+        db.findOne({ username: { $regex: searchTerm }, twitch: true }, (err, doc) => {
+            if (err) {
+                return resolve(null);
+            }
+            return resolve(doc);
+        });
+    });
+}
+
+//look up user object by mixer name
+function getMixerUserByUsername(username) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve(null);
+        }
+
+        let searchTerm = new RegExp(username, 'gi');
+
+        db.findOne({ username: { $regex: searchTerm }, twitch: { $exists: false } }, (err, doc) => {
+            if (err) {
+                return resolve(null);
+            }
+            return resolve(doc);
+        });
+    });
+}
+
 //look up user object by id
 function getUserById(id) {
     return new Promise((resolve) => {
@@ -216,11 +252,32 @@ function calcAllUsersOnlineMinutes() {
 }
 
 function removeUser(userId) {
-    if (userId == null) return;
-    db.remove({ _id: userId }, {}, function (err) {
-        if (err) {
-            logger.warn("Failed to remove user from DB", err);
+    return new Promise(resolve => {
+        if (userId == null) {
+            return resolve(false);
         }
+        db.remove({ _id: userId }, {}, function (err) {
+            if (err) {
+                logger.warn("Failed to remove user from DB", err);
+                return resolve(false);
+            }
+            resolve(true);
+        });
+    });
+}
+
+function updateUser(user) {
+    return new Promise(resolve => {
+        if (user == null) {
+            return resolve(false);
+        }
+        db.update({ _id: user._id }, user, {}, function (err) {
+            if (err) {
+                logger.warn("Failed to update user in DB", err);
+                return resolve(false);
+            }
+            resolve(true);
+        });
     });
 }
 
@@ -659,8 +716,12 @@ exports.setAllUsersOffline = setAllUsersOffline;
 exports.getUserOnlineMinutes = getUserOnlineMinutes;
 exports.getUserByUsername = getUserByUsername;
 exports.getUserById = getUserById;
+exports.getMixerUserByUsername = getMixerUserByUsername;
+exports.getTwitchUserByUsername = getTwitchUserByUsername;
 exports.incrementDbField = incrementDbField;
 exports.getUserDb = getUserDb;
+exports.removeUser = removeUser;
+exports.updateUser = updateUser;
 exports.setChatUsersOnline = setChatUsersOnline;
 exports.getTopViewTimeUsers = getTopViewTimeUsers;
 exports.addNewUserFromChat = addNewUserFromChat;
