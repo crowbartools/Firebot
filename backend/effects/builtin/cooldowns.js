@@ -6,19 +6,14 @@ const { EffectDependency, EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Cooldown effect
- */
-const cooldown = {
-    /**
-   * The definition of the Effect
-   */
+const model = {
     definition: {
         id: "firebot:cooldown",
         name: "Cooldown Controls (Deprecated)",
+        hidden: true,
         description: "Put specific MixPlay controls on cooldown.",
         icon: "fad fa-hourglass-half",
-        categories: [EffectCategory.MIXPLAY, EffectCategory.ADVANCED],
+        categories: [EffectCategory.ADVANCED],
         dependencies: [EffectDependency.INTERACTIVE],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],
@@ -29,27 +24,16 @@ const cooldown = {
     optionsTemplate: `
     <eos-container header="Invalid Effect">
         <div class="effect-info alert alert-info" style="margin-bottom:0;">
-            This effect was built for Mixer and no longer works.
+            This effect only worked on Mixer. It now does nothing and can be removed.
         </div>
     </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   * Port over from effectHelperService.js
-   */
     optionsController: () => {},
-    /**
-   * When the effect is triggered by something
-   * Used to validate fields in the option template.
-   */
     optionsValidator: () => {
         let errors = [];
         return errors;
     },
-    /**
-   * When the effect is triggered by something
-   */
     onTriggerEvent: async () => true
 };
 
-module.exports = cooldown;
+module.exports = model;

@@ -13,7 +13,7 @@ const model = {
         description: "Change various properties of a MixPlay Control.",
         icon: "fad fa-bullseye-pointer",
         hidden: true,
-        categories: [EffectCategory.ADVANCED, EffectCategory.MIXPLAY],
+        categories: [EffectCategory.ADVANCED],
         dependencies: [EffectDependency.INTERACTIVE],
         triggers: effectModels.buildEffectTriggersObject(
             [ControlKind.BUTTON, ControlKind.TEXTBOX],

@@ -7,7 +7,6 @@ const mixerApi = require("../api-access");
 const NodeCache = require('node-cache');
 const logger = require('../logwrapper');
 const twitchClient = require("../twitch-api/client");
-const { streamer } = require("../mixer-api/client");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
@@ -66,7 +65,13 @@ function getUser(userId) {
 
 async function getUserDetails(userId) {
 
+    const firebotUserData = await userDb.getUserById(userId);
 
+    if (!firebotUserData.twitch) {
+        return {
+            firebotData: firebotUserData || {}
+        };
+    }
 
     const twitchUser = await getUser(userId);
     const twitchUserData = {
@@ -98,8 +103,6 @@ async function getUserDetails(userId) {
     if (twitchUserData) {
         twitchUserData.relationship = null;
     }
-
-    let firebotUserData = await userDb.getUserById(userId);
 
     const userDetails = {
         firebotData: firebotUserData || {},

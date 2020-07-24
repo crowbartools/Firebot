@@ -21,19 +21,19 @@
                     </div>
                 </div>
                 <div ng-if="!$ctrl.loading">
-                    <img ng-src="{{$ctrl.viewerDetails.twitchData.iconUrl}}" 
+                    <img ng-src="{{ $ctrl.viewerDetails.firebotData.twitch ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/mixer-icon.png'}}" 
                         style="width: 200px;height: 200px;border-radius: 200px;position: absolute;left: -50px;top: -50px;"/>
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
-                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.twitchData.displayName}}</div>
+                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.firebotData.twitch ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
                         </div>
-                        <div style="display:flex;margin-top:7px;">              
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:7px;">              
                             <div style="margin-right: 11px;" uib-tooltip="Twitch Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.twitchData.creationDate)}}</div>                       
                         </div>
-                        <div style="display:flex;margin-top:10px;">
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:10px;">
                             <div ng-repeat="role in $ctrl.roles | orderBy : 'rank'" uib-tooltip="{{role.tooltip}}" ng-style="role.style" style="margin-right: 10px;font-size: 13px;text-transform: uppercase;font-weight: bold;font-family: "Roboto";">{{role.name}}</div>
                         </div>
-                        <div style="display:flex;margin-top:10px;">
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:10px;">
                             <div ng-repeat="action in $ctrl.actions" ng-click="action.onClick()" class="clickable" uib-tooltip="{{action.name}}" style="margin-right: 10px; display:flex; width: 30px; height:30px; align-items:center; justify-content: center; border-radius: 18px; border: 1.5px solid whitesmoke;">            
                                 <i ng-class="action.icon"></i>
                             </div>
@@ -73,7 +73,7 @@
                             <button type="button" class="btn btn-default" ng-click="$ctrl.saveUser()">Save User in Firebot</button>
                         </div>
                     </div>
-                    <div style="margin: 10px 10px 0;" ng-show="$ctrl.hasCustomRoles">
+                    <div style="margin: 10px 10px 0;" ng-show="$ctrl.hasCustomRoles && $ctrl.viewerDetails.twitchData != null">
                         <div style="font-size:13px;font-weight: bold;opacity:0.9;margin-bottom:5px;">CUSTOM ROLES</div>
                         <div class="role-bar" ng-repeat="customRole in $ctrl.customRoles track by customRole.id">
                             <span>{{customRole.name}}</span>
@@ -495,22 +495,6 @@
                         }
                     ));
 
-                    let mixplayInteractions = $ctrl.viewerDetails.firebotData.mixplayInteractions || 0;
-                    dataPoints.push(new ViewerDataPoint(
-                        "MixPlay Interactions",
-                        "fa-gamepad",
-                        mixplayInteractions,
-                        value => value,
-                        "mixplayInteractions",
-                        "number",
-                        value => {
-                            return value ? parseInt(value) : 0;
-                        },
-                        value => {
-                            return value ? parseInt(value) : 0;
-                        }
-                    ));
-
                     let chatMessages = $ctrl.viewerDetails.firebotData.chatMessages || 0;
                     dataPoints.push(new ViewerDataPoint(
                         "Chat Messages",
@@ -597,10 +581,12 @@
 
                 function init() {
                     $ctrl.hasFirebotData = Object.keys($ctrl.viewerDetails.firebotData).length > 0;
-                    loadRoles();
-                    buildActions();
                     buildDataPoints();
-                    loadCustomRoles();
+                    if ($ctrl.viewerDetails.twitchData != null) {
+                        buildActions();
+                        loadRoles();
+                        loadCustomRoles();
+                    }
                 }
 
                 $ctrl.removeViewer = function() {
