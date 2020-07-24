@@ -40,8 +40,8 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        //await channelAccess.setStreamTitle(event.effect.title);
         const client = twitchClient.getClient();
+
         await client.callAPI({
             type: TwitchAPICallType.Helix,
             method: "PATCH",

@@ -118,7 +118,7 @@ class TwitchChat extends EventEmitter {
             const streamer = accountAccess.getAccounts().streamer;
             chatClient.say(streamer.username, message);
 
-            if (accountType === 'streamer') {
+            if (accountType === 'streamer' && !message.startsWith("/")) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
             }
@@ -257,9 +257,9 @@ frontendCommunicator.on("update-user-mod-status", data => {
     if (username == null || shouldBeMod == null) return;
 
     if (shouldBeMod) {
-        //twitchChat.modUser(username);
+        twitchChat.mod(username);
     } else {
-        //twitchChat.unmodUser(username);
+        twitchChat.unmod(username);
     }
 });
 

@@ -42,6 +42,15 @@
             // from the end of the array instead of the front
             $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
 
+            function focusMessageInput() {
+                angular.element("#chatMessageInput").trigger("focus");
+            }
+
+            $scope.updateChatInput = function(text) {
+                $scope.chatMessage = text;
+                focusMessageInput();
+            };
+
             $scope.toggleCompactMode = function() {
                 $scope.compactDisplay = !$scope.compactDisplay;
                 settingsService.setChatCompactMode($scope.compactDisplay);
@@ -166,60 +175,6 @@
 
             $scope.getChatViewerListSetting = function() {
                 return chatMessagesService.getChatViewerListSetting();
-            };
-
-            $scope.showUserDetailsModal = (userId) => {
-                if (userId == null) return;
-                let closeFunc = () => {};
-                utilityService.showModal({
-                    component: "viewerDetailsModal",
-                    backdrop: true,
-                    resolveObj: {
-                        userId: () => userId
-                    },
-                    closeCallback: closeFunc,
-                    dismissCallback: closeFunc
-                });
-            };
-
-            function focusMessageInput() {
-                angular.element("#chatMessageInput").trigger("focus");
-            }
-
-            $scope.messageActionSelected = (action, userName, userId, msgId) => {
-                switch (action.toLowerCase()) {
-                case "delete":
-                    chatMessagesService.deleteMessage(msgId);
-                    break;
-                case "timeout":
-                    $scope.chatMessage = "/timeout @" + userName + " 5m";
-                    focusMessageInput();
-                    break;
-                case "ban":
-                    $scope.chatMessage = "/ban @" + userName;
-                    focusMessageInput();
-                    break;
-                case "mod":
-                    chatMessagesService.changeModStatus(userName, true);
-                    break;
-                case "unmod":
-                    chatMessagesService.changeModStatus(userName, false);
-                    break;
-                case "whisper":
-                    $scope.chatMessage = "/w @" + userName + " ";
-                    focusMessageInput();
-                    break;
-                case "mention":
-                    $scope.chatMessage = "@" + userName + " ";
-                    focusMessageInput();
-                    break;
-                case "details": {
-                    $scope.showUserDetailsModal(userId);
-                    break;
-                }
-                default:
-                    return;
-                }
             };
 
             // This happens when a chat message is submitted.
