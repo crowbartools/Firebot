@@ -111,7 +111,7 @@ class TwitchChat extends EventEmitter {
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
     async _say(message, accountType) {
-        const chatClient = accountType === 'streamer' ? this._streamerChatClient : this._botChatClient;
+        const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
         try {
             logger.debug(`Sending message as ${accountType}.`);
 
@@ -124,6 +124,21 @@ class TwitchChat extends EventEmitter {
             }
         } catch (error) {
             logger.error(`Error attempting to send message with ${accountType}`, error);
+        }
+    }
+
+    /**
+     * Sends a whisper to the given user (INTERNAL USE ONLY)
+     * @param {string} message The message to send
+     * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
+     */
+    async _whisper(message, username, accountType) {
+        const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
+        try {
+            logger.debug(`Sending whisper as ${accountType} to ${username}.`);
+            chatClient.whisper(username, message);
+        } catch (error) {
+            logger.error(`Error attempting to send whisper with ${accountType}`, error);
         }
     }
 
@@ -161,7 +176,7 @@ class TwitchChat extends EventEmitter {
         // Send all message fragments
         for (let fragment of messageFragments) {
             if (shouldWhisper) {
-                //this._whisper(fragment, username, accountType)
+                //this._whisper(fragment, username, accountType);
             } else {
                 this._say(fragment, accountType);
             }

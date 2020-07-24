@@ -20,10 +20,10 @@
     <p ng-if="viewerRolesService.getCustomRoles().length < 1" class="muted">No custom roles saved.</p>
 </div>
 
-<h3 style="text-transform: uppercase;font-weight: 200;font-size: 19px;margin-top:30px;">Mixer Roles</h3>
-<p class="muted">These roles are predefined by Mixer and cannot be edited.</p>
+<h3 style="text-transform: uppercase;font-weight: 200;font-size: 19px;margin-top:30px;">Twitch Roles</h3>
+<p class="muted">These roles are predefined by Twitch and cannot be edited.</p>
 <div class="new-tile-grid" style="width: 100%">
-    <div ng-repeat="role in viewerRolesService.getMixerRoles() track by $index" class="new-tile gray centered">
+    <div ng-repeat="role in viewerRolesService.getTwitchRoles() track by $index" class="new-tile gray centered">
         <div class="content row">
             <div class="detail-wrapper nomargin">
                 <div class="detail" style="font-size: 1.6em;">

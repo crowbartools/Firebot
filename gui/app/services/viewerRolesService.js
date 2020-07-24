@@ -1,6 +1,7 @@
 "use strict";
 
 const mixerRoleConstants = require("../../shared/mixer-roles");
+const twitchRoleConstants = require("../../shared/twitch-roles");
 const firebotRoleConstants = require("../../shared/firebot-roles");
 
 (function() {
@@ -79,8 +80,13 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 return mixerRoles;
             };
 
+            const twitchRoles = twitchRoleConstants.getTwitchRoles();
+            service.getTwitchRoles = function() {
+                return twitchRoles;
+            };
+
             service.getAllRoles = () => {
-                return service.getMixerRoles().concat(service.getFirebotRoles()).concat(service.getCustomRoles());
+                return service.getTwitchRoles().concat(service.getFirebotRoles()).concat(service.getCustomRoles());
             };
 
             service.getRoleById = function(id) {
@@ -89,7 +95,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                     return customRole;
                 }
 
-                return mixerRoles.find(r => r.id === id);
+                return twitchRoles.find(r => r.id === id);
             };
 
             service.doesRoleExist = function(id) {
