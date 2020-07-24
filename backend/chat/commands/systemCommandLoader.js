@@ -8,7 +8,6 @@ exports.loadCommands = () => {
     const commandManagement = require("./builtin/commandManagement");
     const uptime = require("./builtin/uptime");
     const followage = require("./builtin/followage");
-    const mixerage = require("./builtin/mixerage");
     const quotesManagement = require('./builtin/quotes');
     const currencyManager = require('../../currency/currencyManager');
     const steam = require("./builtin/steam/steam");
@@ -20,11 +19,14 @@ exports.loadCommands = () => {
     commandManager.registerSystemCommand(commandManagement);
     commandManager.registerSystemCommand(uptime);
     commandManager.registerSystemCommand(followage);
-    commandManager.registerSystemCommand(mixerage);
     commandManager.registerSystemCommand(quotesManagement);
     commandManager.registerSystemCommand(steam);
     commandManager.registerSystemCommand(customRoleManagement);
     commandManager.registerSystemCommand(mixerLink);
 
     currencyManager.createAllCurrencyCommands();
+
+    // Deprecated
+    const mixerage = require("./builtin/mixerage");
+    commandManager.registerSystemCommand(mixerage);
 };
