@@ -16,6 +16,7 @@ const model = {
     definition: {
         handle: "userRankBadgeUrl",
         description: "The image url to the rank badge a viewer is currently in.",
+        hidden: true,
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },

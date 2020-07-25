@@ -1,9 +1,9 @@
 "use strict";
 
 const Steam = require("./steam-access");
-const accountAccess = require("../../../../common/account-access");
 const twitchChat = require("../../../twitch-chat");
 const twitchApi = require('../../../../twitch-api/client');
+const twitchChannels = require("../../../../twitch-api/resources/channel");
 
 const steam = {
     definition: {
@@ -25,11 +25,10 @@ const steam = {
         let message = "Couldn't find a Steam game using that name!";
 
         if (gameName == null || gameName.length < 1) {
-            const client = twitchApi.getClient();
-            const channelData = await client.kraken.channels.getMyChannel();
-            const gameInfo = channelData.game;
 
-            gameName = gameInfo.name != null ? gameInfo.name : "";
+            const channelData = await twitchChannels.getChannelInformation();
+
+            gameName = channelData && channelData.game_name ? channelData.game_name : "";
         }
 
         if (gameName != null && gameName !== "") {

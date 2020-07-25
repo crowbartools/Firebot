@@ -129,7 +129,7 @@ const quotesManagement = {
             const quotesManager = require("../../../quotes/quotes-manager");
             const logger = require("../../../logwrapper");
             const twitchChat = require("../../twitch-chat");
-            const twitchApi = require("../../../twitch-api/client");
+            const twitchChannels = require("../../../twitch-api/resources/channel");
 
             let { commandOptions } = event;
 
@@ -182,11 +182,9 @@ const quotesManagement = {
                     return resolve();
                 }
 
-                // Get stream info so we can get the game name.
-                const client = twitchApi.getClient();
-                const channelData = await client.kraken.channels.getMyChannel();
+                const channelData = await twitchChannels.getChannelInformation();
 
-                let currentGameName = channelData && channelData.game ? channelData.game : "Unknown game";
+                let currentGameName = channelData && channelData.game_name ? channelData.game_name : "Unknown game";
 
                 let newQuote = {
                     text: args.slice(2, args.length).join(" "),

@@ -2,7 +2,7 @@
 
 "use strict";
 
-const twitchApi = require("../../twitch-api/client");
+const twitchChannels = require("../../twitch-api/resources/channel");
 const accountAccess = require("../../common/account-access");
 const { OutputDataType } = require("../../../shared/variable-contants");
 
@@ -31,17 +31,9 @@ const model = {
             username = accountAccess.getAccounts().streamer.username;
         }
 
-        const twitchClient = twitchApi.getClient();
+        const channelInfo = await twitchChannels.getChannelInformationByUsername(username);
 
-        try {
-            const streamInfo = await twitchClient.helix.streams.getStreamByUserName(username);
-            const gameInfo = streamInfo.getGame();
-
-            return gameInfo.name != null ? gameInfo.name : "[]";
-
-        } catch (ignore) {
-            return "[No game set]";
-        }
+        return channelInfo != null ? channelInfo.game_name : "";
     }
 };
 

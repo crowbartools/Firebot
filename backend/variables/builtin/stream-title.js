@@ -2,7 +2,7 @@
 
 "use strict";
 
-const twitchApi = require("../../twitch-api/client");
+const twitchChannels = require("../../twitch-api/resources/channel");
 const accountAccess = require("../../common/account-access");
 const { OutputDataType } = require("../../../shared/variable-contants");
 
@@ -21,7 +21,7 @@ const model = {
                 description: "Gets the stream title  for associated user (Ie who triggered command, pressed button, etc)."
             },
             {
-                usage: "streamTitle[ChannelOne]",
+                usage: "streamTitle[ebiggz]",
                 description: "Gets the stream title for a specific channel."
             }
         ],
@@ -31,15 +31,10 @@ const model = {
         if (username == null) {
             username = accountAccess.getAccounts().streamer.username;
         }
-        const twitchClient = twitchApi.getClient();
 
-        try {
-            const streamInfo = await twitchClient.helix.streams.getStreamByUserName(username);
-            return streamInfo.title ? streamInfo.title : "[No title set]";
+        const channelInfo = await twitchChannels.getChannelInformationByUsername(username);
 
-        } catch (ignore) {
-            return "[No title set]";
-        }
+        return channelInfo != null ? channelInfo.title : "[No channel found]";
     }
 };
 

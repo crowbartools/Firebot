@@ -14,7 +14,6 @@ triggers[EffectTrigger.EVENT] = true;
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 
-
 module.exports = {
     definition: {
         handle: "user",
