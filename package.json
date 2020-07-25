@@ -20,7 +20,7 @@
     "author": "A Mixer Community Project",
     "license": "GPL-3.0",
     "devDependencies": {
-        "electron": "^7.1.9",
+        "electron": "^7.2.4",
         "electron-packager": "^12.2.0",
         "electron-rebuild": "^1.8.6",
         "eslint": "^5.16.0",
