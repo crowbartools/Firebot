@@ -13,6 +13,9 @@ let botClient;
 
 function setupTwitchClients() {
 
+    client = null;
+    botClient = null;
+
     logger.info("Setting up twitch clients...");
 
     const streamer = accountAccess.getAccounts().streamer;
@@ -83,7 +86,7 @@ function setupTwitchClients() {
     logger.info("Successfully setup bot Twitch client");
 }
 
-accountAccess.events.on("accountUpdate", () => {
+accountAccess.events.on("account-update", () => {
     setupTwitchClients();
 });
 
