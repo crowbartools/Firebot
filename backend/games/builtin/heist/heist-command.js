@@ -66,7 +66,7 @@ const heistCommand = {
         // check if the user has already joined an active heist
         if (heistRunner.lobbyOpen && heistRunner.userOnTeam(username)) {
             const alreadyJoinedMsg = heistSettings.settings.entryMessages.alreadyJoined;
-            twitchChat.sendChatMessage(alreadyJoinedMsg, username, chatter);
+            twitchChat.sendChatMessage(alreadyJoinedMsg, null, chatter);
             twitchChat.deleteMessage(chatEvent.id);
             return;
         }
@@ -76,7 +76,7 @@ const heistCommand = {
         if (event.userCommand.args.length < 1) {
             let defaultWager = heistSettings.settings.currencySettings.defaultWager;
             if (defaultWager == null || defaultWager < 1) {
-                twitchChat.sendChatMessage("Please include a wager amount!", username, chatter);
+                twitchChat.sendChatMessage("Please include a wager amount!", null, chatter);
                 twitchChat.deleteMessage(chatEvent.id);
                 return;
             }
@@ -86,7 +86,7 @@ const heistCommand = {
             const triggeredArg = userCommand.args[0];
             wagerAmount = parseInt(triggeredArg);
         } else {
-            twitchChat.sendChatMessage("Please include a valid wager amount!", username, chatter);
+            twitchChat.sendChatMessage("Please include a valid wager amount!", null, chatter);
             twitchChat.deleteMessage(chatEvent.id);
             return;
         }
@@ -97,7 +97,7 @@ const heistCommand = {
         const minWager = heistSettings.settings.currencySettings.minWager || 1;
         if (minWager != null & minWager > 0) {
             if (wagerAmount < minWager) {
-                twitchChat.sendChatMessage(`Wager amount must be at least ${minWager}.`, username, chatter);
+                twitchChat.sendChatMessage(`Wager amount must be at least ${minWager}.`, null, chatter);
                 twitchChat.deleteMessage(chatEvent.id);
                 return;
             }
@@ -105,7 +105,7 @@ const heistCommand = {
         const maxWager = heistSettings.settings.currencySettings.maxWager;
         if (maxWager != null & maxWager > 0) {
             if (wagerAmount > maxWager) {
-                twitchChat.sendChatMessage(`Wager amount can be no more than ${maxWager}.`, username, chatter);
+                twitchChat.sendChatMessage(`Wager amount can be no more than ${maxWager}.`, null, chatter);
                 twitchChat.deleteMessage(chatEvent.id);
                 return;
             }
@@ -114,7 +114,7 @@ const heistCommand = {
         // check users balance
         const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
         if (userBalance < wagerAmount) {
-            twitchChat.sendChatMessage("You don't have enough to wager this amount!", username, chatter);
+            twitchChat.sendChatMessage("You don't have enough to wager this amount!", null, chatter);
             twitchChat.deleteMessage(chatEvent.id);
             return;
         }
@@ -184,7 +184,7 @@ const heistCommand = {
             .replace("{user}", username)
             .replace("{wager}", util.commafy(wagerAmount))
             .replace("{currency}", currency.name);
-        twitchChat.sendChatMessage(onJoinMessage, username, chatter);
+        twitchChat.sendChatMessage(onJoinMessage, null, chatter);
     }
 };
 

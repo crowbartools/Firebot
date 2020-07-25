@@ -31,7 +31,7 @@ async function spin(username, successChance, chatter) {
             successCount++;
         }
 
-        twitchChat.sendChatMessage(`${getSpinLabel(currentSpin)} reel stops, it's a ${successfulRoll ? 'HIT' : 'MISS'}`, username, chatter);
+        //twitchChat.sendChatMessage(`${getSpinLabel(currentSpin)} reel stops, it's a ${successfulRoll ? 'HIT' : 'MISS'}`, username, chatter);
     }
 
     await util.wait(750);

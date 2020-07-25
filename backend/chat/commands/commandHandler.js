@@ -298,7 +298,7 @@ async function handleChatMessage(firebotChatMessage) {
     let minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
     if (userCmd.args.length < minArgs) {
         let usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
-        twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`, commandSender);
+        twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`);
         return false;
     }
 
@@ -333,7 +333,7 @@ async function handleChatMessage(firebotChatMessage) {
                 reason = restrictionReason;
             }
             logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
-            twitchChat.sendChatMessage("You cannot use this command because: " + reason, commandSender);
+            twitchChat.sendChatMessage("Sorry ${commandSender}, you cannot use this command because: " + reason);
             return false;
         }
     }
@@ -350,9 +350,7 @@ async function handleChatMessage(firebotChatMessage) {
         logger.debug("Command is still on cooldown, alerting viewer...");
         twitchChat.sendChatMessage(
             "This command is still on cooldown for: " +
-        util.secondsForHumans(remainingCooldown),
-            commandSender
-        );
+        util.secondsForHumans(remainingCooldown));
         return false;
     }
 
