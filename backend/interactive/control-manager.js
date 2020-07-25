@@ -5,7 +5,6 @@ const activeMixplayUsers = require('../roles/role-managers/active-mixplay-users'
 
 const effectManager = require("../effects/effectManager");
 const effectRunner = require("../common/effect-runner");
-const sparkExemptManager = require("./helpers/sparkExemptManager");
 const restrictionsManager = require("../restrictions/restriction-manager");
 const { TriggerType } = require("../common/EffectType");
 const { settings } = require('../common/settings-access');
@@ -144,29 +143,6 @@ async function handleInput(inputType, sceneId, inputEvent, participant) {
             // Charge sparks for the button that was pressed.
             // Note this will fire even if the threshold hasnt passed. People pay to build up to the goal.
             if (inputEvent.transactionID) {
-                logger.debug("control has sparks, checking for spark exemption and charging sparks if not exempt");
-                try {
-                    if (sparkExemptManager.sparkExemptionEnabled()) {
-                        logger.debug("Spark exemption is enabled, checking for selected users or groups");
-                        if (sparkExemptManager.hasExemptUsersOrGroups()) {
-                            logger.debug("We have exempt users or groups, checking spark exempt status...");
-
-                            let exempt = sparkExemptManager.userIsExempt(participant);
-                            if (exempt === true) {
-                                // they are exempt, charging sparks
-                                logger.debug("User is exempt. Not charging sparks.");
-                                renderWindow.webContents.send('eventlog', {type: "general", username: 'System', event: participant.username + " appears to be spark exempt. Not charging sparks. Disable Spark Exemptions in Settings > Interactive if this is not what you want."});
-                                return;
-                            }
-                        } else {
-                            logger.debug("No Spark Exempt users or groups saved. Skipping check.");
-                        }
-                    } else {
-                        logger.debug("Spark exemption is disabled.");
-                    }
-                } catch (err) {
-                    logger.error("There was an error checking spark exempt data. Charging sparks...", err);
-                }
 
                 // we made it to here, charge those sparks.
                 mixplay.client.captureTransaction(inputEvent.transactionID);
