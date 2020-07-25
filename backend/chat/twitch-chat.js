@@ -173,7 +173,7 @@ class TwitchChat extends EventEmitter {
         const shouldWhisper = username != null && username.trim() !== "";
 
         // split message into fragments that don't exceed the max message length
-        const messageFragments = message.match(/[\s\S]{1,360}/g)
+        const messageFragments = message.match(/[\s\S]{1,500}/g)
             .map(mf => mf.trim())
             .filter(mf => mf !== "");
 
