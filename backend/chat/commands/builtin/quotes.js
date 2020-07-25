@@ -129,7 +129,7 @@ const quotesManagement = {
             const quotesManager = require("../../../quotes/quotes-manager");
             const logger = require("../../../logwrapper");
             const twitchChat = require("../../twitch-chat");
-            const twitchChannels = require("../../../twitch-api/resources/channels");
+            const twitchChannels = require("../../../twitch-api/resource/channels");
 
             let { commandOptions } = event;
 
