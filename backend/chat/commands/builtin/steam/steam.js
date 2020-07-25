@@ -2,8 +2,7 @@
 
 const Steam = require("./steam-access");
 const twitchChat = require("../../../twitch-chat");
-const twitchApi = require('../../../../twitch-api/client');
-const twitchChannels = require("../../../../twitch-api/resources/channels");
+const twitchChannels = require("../../../../twitch-api/resource/channels");
 
 const steam = {
     definition: {

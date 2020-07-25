@@ -2,7 +2,7 @@
 
 "use strict";
 
-const twitchChannels = require("../../twitch-api/resources/channels");
+const twitchChannels = require("../../twitch-api/resource/channels");
 const accountAccess = require("../../common/account-access");
 const { OutputDataType } = require("../../../shared/variable-contants");
 

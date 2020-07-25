@@ -3,7 +3,8 @@
 exports.willQuit = () => {
     const {
         handleProfileDeletion,
-        handleProfileRename } = require("../../../app-management/profile-tasks");
+        handleProfileRename
+    } = require("../../../app-management/profile-tasks");
     handleProfileRename();
     handleProfileDeletion();
 };

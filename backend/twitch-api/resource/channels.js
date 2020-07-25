@@ -1,7 +1,7 @@
 "use strict";
 
-const { TwitchAPICallType } = require('twitch/lib');
 const twitchApi = require("../client");
+const { TwitchAPICallType } = require('twitch/lib');
 const accountAccess = require("../../common/account-access");
 const logger = require('../../logwrapper');
 
@@ -17,17 +17,17 @@ const logger = require('../../logwrapper');
 /**
  * Get channel info (game, title, etc) for the given broadcaster user id
  * @param {string} [broadcasterId] The id of the broadcaster to get channel info for. Defaults to Streamer channel if left blank.
- * @returns {Promise<TwitchChannelInformation>}  
+ * @returns {Promise<TwitchChannelInformation>}
  */
 async function getChannelInformation(broadcasterId) {
 
     // default to streamer id
-    if(broadcasterId == null || broadcasterId === "") {
+    if (broadcasterId == null || broadcasterId === "") {
         broadcasterId = accountAccess.getAccounts().streamer.userId;
     }
 
     const client = twitchApi.getClient();
-    try {   
+    try {
         const response = await client.callAPI({
             type: TwitchAPICallType.Helix,
             url: "channels",
@@ -36,12 +36,12 @@ async function getChannelInformation(broadcasterId) {
                 "broadcaster_id": broadcasterId
             }
         });
-        if(response == null || response.data == null || response.data.length < 1) {
+        if (response == null || response.data == null || response.data.length < 1) {
             return null;
         }
         /**@type {TwitchChannelInformation} */
         return response.data[0];
-    } catch(error) {
+    } catch (error) {
         logger.error("Failed to get twitch channel info", error);
         return null;
     }
@@ -50,10 +50,10 @@ async function getChannelInformation(broadcasterId) {
 /**
  * Get channel info (game, title, etc) for the given username
  * @param {string} username The id of the broadcaster to get channel info for.
- * @returns {Promise<TwitchChannelInformation>}  
+ * @returns {Promise<TwitchChannelInformation>}
  */
 async function getChannelInformationByUsername(username) {
-    if(username == null) {
+    if (username == null) {
         return null;
     }
 
@@ -62,11 +62,11 @@ async function getChannelInformationByUsername(username) {
     let user;
     try {
         user = await client.helix.users.getUserByName(username);
-    } catch(error) {
+    } catch (error) {
         logger.error(`Error getting user with username ${username}`, error);
     }
 
-    if(user == null) {
+    if (user == null) {
         return null;
     }
 

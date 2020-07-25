@@ -31,38 +31,42 @@ exports.whenReady = async () => {
     twitchClient.setupTwitchClients();
 
     // load effects
+    logger.debug("Loading effects...");
     const { loadEffects } = require("../../../effects/builtInEffectLoader");
     loadEffects();
 
     // load commands
+    logger.debug("Loading sys commands...");
     const { loadCommands } = require("../../../chat/commands/systemCommandLoader");
     loadCommands();
 
     // load event sources
+    logger.debug("Loading event sources...");
     const { loadEventSources } = require("../../../events/builtinEventSourceLoader");
     loadEventSources();
 
     // load event filters
+    logger.debug("Loading event filters...");
     const { loadFilters } = require("../../../events/filters/builtin-filter-loader");
     loadFilters();
 
     // load integrations
+    logger.debug("Loading integrations...");
     const { loadIntegrations } = require("../../../integrations/integrationLoader");
     loadIntegrations();
 
     // load variables
+    logger.debug("Loading variables...");
     const { loadReplaceVariables } = require("../../../variables/builtin-variable-loader");
     loadReplaceVariables();
 
     // load restrictions
+    logger.debug("Loading restrictions...");
     const { loadRestrictions } = require("../../../restrictions/builtin-restrictions-loader");
     loadRestrictions();
 
     const fontManager = require("../../../fontManager");
     fontManager.generateAppFontCssFile();
-
-    const mixplayProjectManager = require("../../../interactive/mixplay-project-manager");
-    mixplayProjectManager.loadProjects();
 
     const eventsAccess = require("../../../events/events-access");
     eventsAccess.loadEventsAndGroups();
