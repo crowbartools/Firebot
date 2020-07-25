@@ -592,10 +592,14 @@
                 $ctrl.removeViewer = function() {
                     if (!$ctrl.hasFirebotData) return;
 
+                    const displayName = $ctrl.viewerDetails.firebotData.twitch ?
+                        $ctrl.viewerDetails.twitchData.displayName :
+                        $ctrl.viewerDetails.firebotData.username;
+
                     utilityService
                         .showConfirmationModal({
                             title: `Remove Viewer Data`,
-                            question: `Are you sure you want remove ${$ctrl.viewerDetails.twitchData.displayName}'s data from Firebot?`,
+                            question: `Are you sure you want remove ${displayName}'s data from Firebot?`,
                             confirmLabel: "Remove",
                             confirmBtnType: "btn-danger"
                         })
