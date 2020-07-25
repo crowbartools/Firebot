@@ -4,7 +4,6 @@ const { TwitchAPICallType } = require('twitch/lib');
 const twitchApi = require("../client");
 const accountAccess = require("../../common/account-access");
 const logger = require('../../logwrapper');
-const { null, null } = require('mathjs');
 
 /**
  * @typedef TwitchChannelInformation
@@ -28,8 +27,7 @@ async function getChannelInformation(broadcasterId) {
     }
 
     const client = twitchApi.getClient();
-    try {
-        /**@type {TwitchChannelInformation} */
+    try {   
         const response = await client.callAPI({
             type: TwitchAPICallType.Helix,
             url: "channels",
@@ -38,7 +36,11 @@ async function getChannelInformation(broadcasterId) {
                 "broadcaster_id": broadcasterId
             }
         });
-        return response;
+        if(response == null || response.data == null || response.data.length < 1) {
+            return null;
+        }
+        /**@type {TwitchChannelInformation} */
+        return response.data[0];
     } catch(error) {
         logger.error("Failed to get twitch channel info", error);
         return null;
