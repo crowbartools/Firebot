@@ -88,14 +88,14 @@
             };
 
             $ctrl.addViewer = function() {
-                utilityService.openViewerSearchModal(
+                utilityService.openGetInputModal(
                     {
                         label: "Add Viewer",
                         saveText: "Add",
-                        validationFn: (user) => {
+                        validationFn: (username) => {
                             return new Promise(resolve => {
-                                if (user == null) return resolve(false);
-                                if (findIndexIgnoreCase($ctrl.role.viewers, user.username) !== -1) {
+                                if (username == null) return resolve(false);
+                                if (findIndexIgnoreCase($ctrl.role.viewers, username) !== -1) {
                                     return resolve(false);
                                 }
                                 resolve(true);
@@ -103,8 +103,8 @@
                         },
                         validationText: "Viewer already has this role."
                     },
-                    (user) => {
-                        $ctrl.role.viewers.push(user.username);
+                    (username) => {
+                        $ctrl.role.viewers.push(username);
                     });
             };
 
