@@ -453,7 +453,7 @@ body {
 }
 
 .login-pic{
-   border-radius:.25rem;
+   border-radius: 110px;
    border: 2px solid $dark-background-border;
    width: 220px;
 }
@@ -480,6 +480,7 @@ body {
     img{
       height:42px;
       width:42px;
+      border-radius: 25px;
     }
     hr{
       margin:5px 0px 5px 0px!important;
@@ -491,7 +492,7 @@ body {
     height: 42px;
     width: 42px;
     margin-right: 10px;
-    border-radius: 7px;
+    border-radius: 50px;
 }
 
 .login-arrow {
@@ -581,7 +582,7 @@ body {
   }
   .interactive-status-text{
     display:inline-block;
-    width: 111px;
+    width: 83px;
     text-align: center;
   }
   .interative-status-icon.connected {

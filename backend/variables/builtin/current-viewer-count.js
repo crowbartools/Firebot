@@ -1,6 +1,10 @@
+// Migration: done
+
 "use strict";
+
 const logger = require("../../logwrapper");
-const channelAccess = require("../../common/channel-access");
+const accountAccess = require("../../common/account-access");
+const twitchApi = require("../../twitch-api/client");
 
 const { OutputDataType } = require("../../../shared/variable-contants");
 
@@ -13,9 +17,15 @@ const model = {
     evaluator: async () => {
         logger.debug("Getting number of viewers in chat for variable.");
 
-        const streamerChannel = await channelAccess.getStreamerChannelData();
+        // get streamer user id
+        const channelId = accountAccess.getAccounts().streamer.userId;
 
-        return streamerChannel ? streamerChannel.viewersCurrent : 0;
+        // retrieve stream data for user id
+        const twitchClient = twitchApi.getClient();
+        const streamInfo = await twitchClient.getStreamByUser(channelId);
+
+        // extract viewer count
+        return streamInfo ? streamInfo.viewers : 0;
     }
 };
 

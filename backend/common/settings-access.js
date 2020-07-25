@@ -301,7 +301,7 @@ settings.getSidebarControlledServices = function() {
     const services = getDataFromFile("/settings/sidebarControlledServices");
     return services != null
         ? services
-        : ["interactive", "chat", "constellation"];
+        : ["chat"];
 };
 
 exports.settings = settings;

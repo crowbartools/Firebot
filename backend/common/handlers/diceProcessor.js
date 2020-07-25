@@ -1,7 +1,9 @@
 "use strict";
 
 const Roll = require("roll");
-const chat = require("../../chat/chat");
+
+const twitchChat = require("../../chat/twitch-chat");
+
 const logger = require("../../logwrapper");
 
 function diceProcessor(effect, trigger) {
@@ -41,7 +43,7 @@ function diceProcessor(effect, trigger) {
             // Put together the message
             const message = `Dice Roll: ${username} rolled a ${diceResults} on ${dice}.`;
 
-            chat.sendChatMessage(message, whisperTarget, chatter);
+            twitchChat.sendChatMessage(message, whisperTarget, chatter);
         }
     } catch (err) {
         logger.error(err);

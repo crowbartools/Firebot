@@ -3,6 +3,8 @@
 const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const mixerApi = require("../api-access");
+const twitchApi = require('../twitch-api/client');
+const client = twitchApi.getClient();
 
 const api = require("../mixer-api/api");
 
@@ -38,20 +40,16 @@ exports.getStreamerChannelData = async () => {
 };
 
 exports.getFollowDateForUser = async username => {
-    let streamerData = accountAccess.getAccounts().streamer;
+    const streamerData = accountAccess.getAccounts().streamer;
+    const userId = (await client.kraken.users.getUserByName(username)).id;
+    const channelId = (await client.kraken.users.getUserByName(streamerData.username)).id;
+    const followerDate = (await client.kraken.users.getFollowedChannel(userId, channelId)).followDate;
 
-    let followerData = await mixerApi.get(
-        `channels/${streamerData.channelId}/follow?where=username:eq:${username}`,
-        "v1",
-        false,
-        false
-    );
-
-    if (followerData == null || followerData.length < 1) {
+    if (followerDate == null || followerDate.length < 1) {
         return null;
     }
 
-    return new Date(followerData[0].followed.createdAt);
+    return new Date(followerDate);
 };
 
 exports.getStreamerSubBadge = async () => {
@@ -194,30 +192,6 @@ exports.getChannelProgressionByUsername = async function(username) {
     return exports.getChannelProgressionForUser(idData.userId);
 };
 
-
-exports.getChannelProgressionForUser = async function(userId) {
-    let streamerData = accountAccess.getAccounts().streamer;
-    try {
-        let chatProgression = await mixerApi
-            .get(`ascension/channels/${streamerData.channelId}/users/${userId}`, "v1", false, true);
-        return chatProgression && chatProgression.level;
-    } catch (err) {
-        return null;
-    }
-};
-
-exports.giveHeartsToUser = async (userId, amount) => {
-    let streamerData = accountAccess.getAccounts().streamer;
-    try {
-        await mixerApi.post(`ascension/channels/${streamerData.channelId}/users/${userId}/grant`, {
-            xp: amount
-        });
-        return exports.getChannelProgressionForUser(userId);
-    } catch (err) {
-        return null;
-    }
-};
-
 function getContinuationToken(linkHeader) {
     let parsed = linkHeaderParser(linkHeader);
     if (parsed.next) {
@@ -248,15 +222,17 @@ exports.getCurrentViewerList = function(users, continuationToken = null, namesOn
         }
 
         let userlistParsed = response.body;
-        let userlistMapped = userlistParsed.map(u => {
-            return namesOnly ? u.username : {
-                userId: u.userId,
-                username: u.username,
-                user_roles: u.userRoles // eslint-disable-line camelcase
-            };
-        });
+        if (Array.isArray(userlistParsed)) {
+            let userlistMapped = userlistParsed.map(u => {
+                return namesOnly ? u.username : {
+                    userId: u.userId,
+                    username: u.username,
+                    user_roles: u.userRoles // eslint-disable-line camelcase
+                };
+            });
 
-        users = users.concat(userlistMapped);
+            users = users.concat(userlistMapped);
+        }
 
         let linkHeader = response.headers.link;
         if (linkHeader) {
@@ -322,29 +298,16 @@ exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) =
     }
 };
 
-async function startAdBreak() {
-    let streamerData = accountAccess.getAccounts().streamer;
+async function startAdBreak(adLength) {
+    const streamerAccount = accountAccess.getAccounts().streamer;
+    const channelId = (await client.helix.users.getUserByName(streamerAccount.username)).id;
 
-    try {
-        await mixerApi.post(`ads/channels/${streamerData.channelId}`, {
-            requestId: uuidv4()
-        }, "v2", false, true, true);
-    } catch (error) {
-        let { response, body } = error;
-
-        let errorReason = "Unknown error occured.";
-
-        if (response.statusCode === 401) {
-            errorReason = "Unauthorized";
-        } else if (response.statusCode === 403) {
-            errorReason = "Missing required permissions to trigger an ad-break. Please re-log into your Streamer account.";
-        } else if (response.statusCode === 429) {
-            errorReason = "You've already run two ads in the last 15 minutes!";
-        } else if (response.statusCode === 400) {
-            errorReason = body.errorMessage ? body.errorMessage.replace("[DEBUG] ") : "Something went wrong.";
-        }
-        throw new Error(errorReason);
+    if (adLength == null) {
+        adLength = 30;
     }
+
+    await client.kraken.channels.startChannelCommercial(channelId, adLength);
+    logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
 }
 
 exports.triggerAdBreak = async () => {
@@ -353,34 +316,5 @@ exports.triggerAdBreak = async () => {
     } catch (error) {
         renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
     }
-};
-
-const clipGroups = ["Partner", "VerifiedPartner", "Staff", "Founder"];
-exports.getChannelHasClipsEnabled = async (channelId, userGroups = null) => {
-    if (userGroups == null) {
-        let channelData = await exports.getMixerAccountDetailsById(channelId);
-        if (channelData == null || channelData.user == null || channelData.user.groups == null) return false;
-        userGroups = channelData.user.groups;
-    }
-
-    let roleCanClip = userGroups.some(ug => clipGroups.some(cg => ug.name === cg));
-    if (roleCanClip) {
-        return true;
-    }
-
-    let entitlementsData = await mixerApi.get(
-        `monetization/status/channels/${channelId}/entitlements/current`,
-        "v2",
-        false,
-        false
-    );
-
-    if (entitlementsData != null && entitlementsData.entitlements != null) {
-        if (entitlementsData.entitlements.some(e => e.revenueSource.toLowerCase().includes("clip"))) {
-            return true;
-        }
-    }
-
-    return false;
 };
 

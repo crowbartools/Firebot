@@ -1,10 +1,9 @@
-
 "use strict";
 const logger = require("./logwrapper");
 const request = require("request");
 const axios = require('axios');
 const accountAccess = require("./common/account-access");
-const CLIENT_ID = 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9';
+const CLIENT_ID = "umhhyrvkdriayr0psc3ttmsnq2j8h0";
 
 const HEADERS = {
     'User-Agent': 'Firebot v5',
@@ -104,11 +103,15 @@ exports.delete = function(route, apiVersion = "v1", resolveResponse = false, aut
 exports.getUserCurrent = (accessToken) => {
     return new Promise(resolve => {
         request({
-            url: 'https://mixer.com/api/v1/users/current',
+            url: 'https://api.twitch.tv/helix/users',
             auth: {
                 'bearer': accessToken
             },
-            headers: HEADERS,
+            headers: {
+                'Authorization': accessToken,
+                'User-Agent': 'Firebot v5',
+                'Client-ID': CLIENT_ID
+            },
             json: true
         }, function (err, response) {
             if (err) {
@@ -116,7 +119,8 @@ exports.getUserCurrent = (accessToken) => {
                 return resolve(null);
             }
             if (response.statusCode >= 200 && response.statusCode <= 204) {
-                resolve(response.body);
+                let userData = response.body;
+                resolve(userData.data && userData.data.length > 0 ? userData.data[0] : null);
             } else {
                 resolve(null);
             }

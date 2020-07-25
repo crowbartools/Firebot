@@ -8,7 +8,7 @@ function sync(jsonData) {
         request.post({
             url: 'https://bytebin.lucko.me/post',
             headers: {
-                'User-Agent': 'Firebot V5 - https://crowbartools.com',
+                'User-Agent': 'Firebot V5 - https://firebot.app',
                 'Content-Type': 'json',
                 'Content-Encoding': 'gzip'
             },
@@ -38,7 +38,7 @@ function getData(shareCode) {
         request.get({
             url: `https://bytebin.lucko.me/${shareCode}`,
             headers: {
-                'User-Agent': 'Firebot V5 - https://crowbartools.com'
+                'User-Agent': 'Firebot V5 - https://firebot.app'
             },
             json: true
         }, function(err, httpResponse, body) {

@@ -23,8 +23,9 @@ const accountEvents = new EventEmitter();
  * A streamer or bot account
  * @typedef {Object} FirebotAccount
  * @property {string} username - The account username
+ * @property {string} displayName - The users displayName
  * @property {number} userId - The user id for the account
- * @property {number} channelId - The channel id for the account
+ * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
  * @property {string} avatar - The avatar url for the account
  * @property {string} subBadge - The sub badge url for the account
  * @property {boolean} partnered - If the channel is partnered
@@ -69,7 +70,7 @@ function sendAccoutUpdate() {
 async function updateStreamerAccountSettings(streamerAccount) {
     if (streamerAccount == null || streamerAccount.channelId == null) return null;
 
-    const channelAccess = require('../common/channel-access');
+    /*const channelAccess = require('../common/channel-access');
 
     const channelData = await channelAccess.getMixerAccountDetailsById(streamerAccount.channelId);
     streamerAccount.partnered = channelData.partnered;
@@ -86,13 +87,13 @@ async function updateStreamerAccountSettings(streamerAccount) {
         streamerAccount.canClip = canClip;
     } catch (error) {
         logger.warn("Unable to determine if channel can clip");
-    }
+    }*/
 
     return streamerAccount;
 }
 
 function saveAccountDataToFile(accountType) {
-    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     let account = cache[accountType];
     try {
         authDb.push(`/${accountType}`, account);
@@ -108,7 +109,7 @@ function saveAccountDataToFile(accountType) {
  * @param {boolean} [emitUpdate=true] - If an account update event should be emitted
  */
 async function loadAccountData(emitUpdate = true) {
-    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {
         let dbData = authDb.getData("/"),
             streamer = dbData.streamer,
@@ -147,7 +148,7 @@ let botTokenIssue = false;
  * @param {string} accountType - The type of account ("streamer" or "bot")
  * @param {FirebotAccount} account - The  account
  */
-function updateAccount(accountType, account) {
+function updateAccount(accountType, account, emitUpdate = true) {
     if ((accountType !== "streamer" && accountType !== "bot") || account == null) return;
 
     // reset token issue flags
@@ -170,7 +171,9 @@ function updateAccount(accountType, account) {
 
     cache[accountType] = account;
 
-    sendAccoutUpdate();
+    if (emitUpdate) {
+        sendAccoutUpdate();
+    }
 
     saveAccountDataToFile(accountType);
 }
@@ -223,7 +226,7 @@ function removeAccount(accountType) {
         authManager.revokeTokens(accountProviderId, account.auth);
     }*/
 
-    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {
         authDb.delete(`/${accountType}`);
     } catch (error) {

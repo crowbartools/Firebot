@@ -30,6 +30,8 @@
             $scope.chatSender = "Streamer";
             $scope.disabledMessage = "";
 
+            $scope.cms = chatMessagesService;
+
             $scope.selectedUserData = {};
 
             $scope.currentViewers = 0;
@@ -39,6 +41,15 @@
             // the number of messages to show visually, we have to make the number negative so angular knows to limit
             // from the end of the array instead of the front
             $scope.messageDisplayLimit = chatMessagesService.chatMessageDisplayLimit * -1;
+
+            function focusMessageInput() {
+                angular.element("#chatMessageInput").trigger("focus");
+            }
+
+            $scope.updateChatInput = function(text) {
+                $scope.chatMessage = text;
+                focusMessageInput();
+            };
 
             $scope.toggleCompactMode = function() {
                 $scope.compactDisplay = !$scope.compactDisplay;
@@ -129,11 +140,6 @@
                 return data.id;
             };
 
-            $scope.getWhisperData = function(data) {
-                let target = data.target;
-                return "Whispered to " + target + ".";
-            };
-
             $scope.getTimeStamp = function(message) {
                 //Todo: create setting to allow user to switch to 24 hr time
                 return message.timestamp;
@@ -169,60 +175,6 @@
 
             $scope.getChatViewerListSetting = function() {
                 return chatMessagesService.getChatViewerListSetting();
-            };
-
-            $scope.showUserDetailsModal = (userId) => {
-                if (userId == null) return;
-                let closeFunc = () => {};
-                utilityService.showModal({
-                    component: "viewerDetailsModal",
-                    backdrop: true,
-                    resolveObj: {
-                        userId: () => userId
-                    },
-                    closeCallback: closeFunc,
-                    dismissCallback: closeFunc
-                });
-            };
-
-            function focusMessageInput() {
-                angular.element("#chatMessageInput").trigger("focus");
-            }
-
-            $scope.messageActionSelected = (action, userName, userId, msgId) => {
-                switch (action.toLowerCase()) {
-                case "delete":
-                    chatMessagesService.deleteMessage(msgId);
-                    break;
-                case "timeout":
-                    $scope.chatMessage = "/timeout @" + userName + " 5m";
-                    focusMessageInput();
-                    break;
-                case "ban":
-                    $scope.chatMessage = "/ban @" + userName;
-                    focusMessageInput();
-                    break;
-                case "mod":
-                    chatMessagesService.changeModStatus(userName, true);
-                    break;
-                case "unmod":
-                    chatMessagesService.changeModStatus(userName, false);
-                    break;
-                case "whisper":
-                    $scope.chatMessage = "/w @" + userName + " ";
-                    focusMessageInput();
-                    break;
-                case "mention":
-                    $scope.chatMessage = "@" + userName + " ";
-                    focusMessageInput();
-                    break;
-                case "details": {
-                    $scope.showUserDetailsModal(userId);
-                    break;
-                }
-                default:
-                    return;
-                }
             };
 
             // This happens when a chat message is submitted.

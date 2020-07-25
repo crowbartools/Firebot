@@ -182,7 +182,7 @@ function buildUserCommand(command, rawMessage, sender, senderRoles) {
 function fireCommand(
     command,
     userCmd,
-    chatEvent,
+    firebotChatMessage,
     commandSender,
     isManual = false
 ) {
@@ -217,37 +217,38 @@ function fireCommand(
             command: command,
             commandOptions: commandOptions,
             userCommand: userCmd,
-            chatEvent: chatEvent
+            chatMessage: firebotChatMessage
         });
     } else if (command.type === "custom") {
         logger.info("Executing custom command effects");
-        customCommandExecutor.execute(command, userCmd, chatEvent, isManual);
+        customCommandExecutor.execute(command, userCmd, firebotChatMessage, isManual);
     }
 }
 
-async function handleChatEvent(chatEvent) {
+/**
+ * @arg {import('../chat-helpers').FirebotChatMessage} firebotChatMessage
+ */
+async function handleChatMessage(firebotChatMessage) {
 
-    const chat = require("../chat");
+    const twitchChat = require("../twitch-chat");
 
     logger.debug("Checking for command in message...");
 
-    let commandSender = chatEvent.user_name; // Username of the person that sent the command.
+    // Username of the person that sent the command.
+    let commandSender = firebotChatMessage.username;
 
     // Check to see if handled message array contains the id of this message already.
     // If it does, that means that one of the logged in accounts has already handled the message.
-    if (handledMessageIds.includes(chatEvent.id)) {
+    if (handledMessageIds.includes(firebotChatMessage.id)) {
         // We can remove the handled id now, to keep the array small.
-        handledMessageIds = handledMessageIds.filter(id => id !== chatEvent.id);
+        handledMessageIds = handledMessageIds.filter(id => id !== firebotChatMessage.id);
         return false;
     }
     // throw the message id into the array. This prevents both the bot and the streamer accounts from replying
-    handledMessageIds.push(chatEvent.id);
+    handledMessageIds.push(firebotChatMessage.id);
 
     logger.debug("Combining message segments...");
-    let rawMessage = "";
-    chatEvent.message.message.forEach(m => {
-        rawMessage += m.text;
-    });
+    const rawMessage = firebotChatMessage.rawText;
 
     // search for and return command if found
     logger.debug("Searching for command...");
@@ -259,20 +260,13 @@ async function handleChatEvent(chatEvent) {
     }
 
     // check if chat came from the bot and if we should ignore it.
-    if (chatEvent.user_name === accountAccess.getAccounts().bot.username && command.ignoreBot !== false) {
+    if (firebotChatMessage.username === accountAccess.getAccounts().bot.username && command.ignoreBot !== false) {
         logger.debug("Message came from bot and this command is set to ignore it");
         return false;
     }
 
-    //check if command originated from a costream channel
-    let streamerChannelId = accountAccess.getAccounts().streamer.channelId;
-    if (chatEvent.channel !== streamerChannelId && !command.allowInCostreams) {
-        logger.debug("Chat originated in another stream and allowInCostreams is not enabled. Ignoring.");
-        return false;
-    }
-
     // build usercommand object
-    let userCmd = buildUserCommand(command, rawMessage, commandSender, chatEvent.user_roles);
+    let userCmd = buildUserCommand(command, rawMessage, commandSender, firebotChatMessage.roles);
 
     let triggeredSubcmd = null;
     if (!command.scanWholeMessage && userCmd.args.length > 0 && command.subCommands) {
@@ -297,14 +291,14 @@ async function handleChatEvent(chatEvent) {
 
     if (command.autoDeleteTrigger || (triggeredSubcmd && triggeredSubcmd.autoDeleteTrigger)) {
         logger.debug("Auto delete trigger is on, attempting to delete chat message");
-        chat.deleteMessage(chatEvent.id);
+        twitchChat.deleteMessage(firebotChatMessage.id);
     }
 
     // check if command meets min args requirement
     let minArgs = triggeredSubcmd ? triggeredSubcmd.minArgs || 0 : command.minArgs || 0;
     if (userCmd.args.length < minArgs) {
         let usage = triggeredSubcmd ? triggeredSubcmd.usage : command.usage;
-        chat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`, commandSender);
+        twitchChat.sendChatMessage(`Invalid command. Usage: ${command.trigger} ${usage || ""}`);
         return false;
     }
 
@@ -321,11 +315,11 @@ async function handleChatEvent(chatEvent) {
             type: TriggerType.COMMAND,
             metadata: {
                 username: commandSender,
-                userId: chatEvent.user_id,
-                userMixerRoles: chatEvent.user_roles,
+                userId: firebotChatMessage.userId,
+                userTwitchRoles: firebotChatMessage.roles,
                 command: command,
                 userCommand: userCmd,
-                chatEvent: chatEvent
+                chatMessage: firebotChatMessage
             }
         };
         try {
@@ -339,7 +333,7 @@ async function handleChatEvent(chatEvent) {
                 reason = restrictionReason;
             }
             logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
-            chat.sendChatMessage("You cannot use this command because: " + reason, commandSender);
+            twitchChat.sendChatMessage("Sorry ${commandSender}, you cannot use this command because: " + reason);
             return false;
         }
     }
@@ -354,11 +348,9 @@ async function handleChatEvent(chatEvent) {
 
     if (remainingCooldown > 0) {
         logger.debug("Command is still on cooldown, alerting viewer...");
-        chat.sendChatMessage(
+        twitchChat.sendChatMessage(
             "This command is still on cooldown for: " +
-        util.secondsForHumans(remainingCooldown),
-            commandSender
-        );
+        util.secondsForHumans(remainingCooldown));
         return false;
     }
 
@@ -389,7 +381,7 @@ async function handleChatEvent(chatEvent) {
         updateCommandCount(command);
     }
 
-    fireCommand(command, userCmd, chatEvent, commandSender, false, false);
+    fireCommand(command, userCmd, firebotChatMessage, commandSender, false, false);
     return true;
 }
 
@@ -413,6 +405,6 @@ ipcMain.on("refreshCommandCache", function() {
     flushCooldownCache();
 });
 
-exports.handleChatEvent = handleChatEvent;
+exports.handleChatMessage = handleChatMessage;
 exports.triggerCustomCommand = triggerCustomCommand;
 exports.flushCooldownCache = flushCooldownCache;

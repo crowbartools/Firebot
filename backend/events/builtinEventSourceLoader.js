@@ -5,9 +5,9 @@ const eventManager = require("./EventManager");
 exports.loadEventSources = () => {
     // get event definitions
     const firebotEventSource = require("./builtin/firebotEventSource");
-    const mixerEventSource = require("./builtin/mixerEventSource");
+    const twitchEventSource = require("./builtin/twitchEventSource");
 
     // register them
     eventManager.registerEventSource(firebotEventSource);
-    eventManager.registerEventSource(mixerEventSource);
+    eventManager.registerEventSource(twitchEventSource);
 };

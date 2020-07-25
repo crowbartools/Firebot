@@ -7,7 +7,7 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["mixer:hosted"];
+triggers[EffectTrigger.EVENT] = ["twitch:host"];
 triggers[EffectTrigger.MANUAL] = true;
 
 
@@ -19,7 +19,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async (trigger) => {
-        return trigger.metadata && trigger.metadata.eventData && trigger.metadata.eventData.viewerCount ? trigger.metadata.eventData.viewerCount : 0;
+        return trigger.metadata.eventData.viewerCount || 0;
     }
 };
 

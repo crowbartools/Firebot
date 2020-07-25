@@ -1,8 +1,9 @@
 "use strict";
 
 const Steam = require("./steam-access");
-const mixerChat = require("../../../chat");
-const mixerApi = require("../../../../mixer-api/api");
+const twitchChat = require("../../../twitch-chat");
+const twitchApi = require('../../../../twitch-api/client');
+const twitchChannels = require("../../../../twitch-api/resources/channels");
 
 const steam = {
     definition: {
@@ -21,34 +22,36 @@ const steam = {
     },
     onTriggerEvent: async event => {
         let gameName = event.userCommand.args.join(" ").trim();
+        let message = "Couldn't find a Steam game using that name!";
 
         if (gameName == null || gameName.length < 1) {
-            const channelData = await mixerApi.channels.getStreamersChannel();
-            gameName = channelData.type ? channelData.type.name : "";
+
+            const channelData = await twitchChannels.getChannelInformation();
+
+            gameName = channelData && channelData.game_name ? channelData.game_name : "";
         }
 
-        let gameDetails = await Steam.getSteamGameDetails(gameName);
+        if (gameName != null && gameName !== "") {
+            let gameDetails = await Steam.getSteamGameDetails(gameName);
 
-        let message = "";
-        if (gameDetails == null) {
-            message = "Couldn't find a Steam game using that name!";
-        } else {
-            let details = [];
-            if (gameDetails.price) {
-                details.push(`Price: ${gameDetails.price}`);
-            }
-            if (gameDetails.releaseDate) {
-                details.push(`Released: ${gameDetails.releaseDate}`);
-            }
-            if (gameDetails.score) {
-                details.push(`Metacritic: ${gameDetails.score}`);
-            }
-            let detailString = details.length > 0 ? `(${details.join(" - ")})` : "";
+            if (gameDetails !== null) {
+                let details = [];
+                if (gameDetails.price) {
+                    details.push(`Price: ${gameDetails.price}`);
+                }
+                if (gameDetails.releaseDate) {
+                    details.push(`Released: ${gameDetails.releaseDate}`);
+                }
+                if (gameDetails.score) {
+                    details.push(`Metacritic: ${gameDetails.score}`);
+                }
+                let detailString = details.length > 0 ? `(${details.join(" - ")})` : "";
 
-            message = `${gameDetails.name} ${detailString} ${gameDetails.url}`;
+                message = `${gameDetails.name} ${detailString} ${gameDetails.url}`;
+            }
         }
 
-        mixerChat.sendChatMessage(message);
+        twitchChat.sendChatMessage(message);
     }
 };
 

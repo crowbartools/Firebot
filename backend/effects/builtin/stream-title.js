@@ -6,7 +6,10 @@ const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-const channelAccess = require("../../common/channel-access");
+const twitchClient = require("../../twitch-api/client");
+const { TwitchAPICallType } = require('twitch/lib');
+
+const accountAccess = require("../../common/account-access");
 
 const model = {
     definition: {
@@ -37,7 +40,17 @@ const model = {
         return errors;
     },
     onTriggerEvent: async event => {
-        await channelAccess.setStreamTitle(event.effect.title);
+        const client = twitchClient.getClient();
+
+        await client.callAPI({
+            type: TwitchAPICallType.Helix,
+            method: "PATCH",
+            url: "channels",
+            query: {
+                "broadcaster_id": accountAccess.getAccounts().streamer.userId,
+                "title": event.effect.title
+            }
+        });
         return true;
     }
 };

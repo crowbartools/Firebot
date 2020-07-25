@@ -1,7 +1,7 @@
 "use strict";
 
 const util = require("../../../utility");
-const chat = require("../../chat");
+const chat = require("../../twitch-chat");
 
 /**
  * The Uptime command

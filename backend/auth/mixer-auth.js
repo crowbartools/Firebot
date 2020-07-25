@@ -1,8 +1,6 @@
 "use strict";
 
 const authManager = require("./auth-manager");
-const apiAccess = require("../api-access");
-const channelAccess = require("../common/channel-access");
 const accountAccess = require("../common/account-access");
 const effectsManager = require("../effects/effectManager");
 
@@ -47,35 +45,3 @@ exports.registerMixerAuthProviders = () => {
     authManager.registerAuthProvider(STREAMER_ACCOUNT_PROVIDER);
     authManager.registerAuthProvider(BOT_ACCOUNT_PROVIDER);
 };
-
-authManager.on("auth-success", async authData => {
-    let { providerId, tokenData } = authData;
-
-    if (providerId === STREAMER_ACCOUNT_PROVIDER_ID || providerId === BOT_ACCOUNT_PROVIDER_ID) {
-        const userData = await apiAccess.getUserCurrent(tokenData.access_token);
-        if (userData == null) return;
-
-        let accountType = providerId === STREAMER_ACCOUNT_PROVIDER_ID ? "streamer" : "bot";
-        let accountObject = {
-            username: userData.username,
-            userId: userData.id,
-            channelId: userData.channel.id,
-            avatar: userData.avatarUrl,
-            auth: tokenData
-        };
-
-        if (accountType === "streamer") {
-            const updatedStreamerAccount = await accountAccess.updateStreamerAccountSettings(accountObject);
-            if (updatedStreamerAccount != null) {
-                accountObject = updatedStreamerAccount;
-            }
-        }
-
-        let clipEffect = effectsManager.getEffectById("firebot:clip");
-        if (clipEffect) {
-            clipEffect.definition.hidden = !accountObject.canClip;
-        }
-
-        accountAccess.updateAccount(accountType, accountObject);
-    }
-});

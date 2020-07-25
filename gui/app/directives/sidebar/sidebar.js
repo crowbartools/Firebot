@@ -15,9 +15,6 @@
                 <div class="nav-body-wrapper">
                     <div class="nav-links-wrapper" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
 
-                        <nav-category name="{{'SIDEBAR.INTERACTIVE' | translate }}"></nav-category>
-                        <nav-link page="Buttons" name="{{'SIDEBAR.INTERACTIVE.BUTTONS' | translate }}" icon="fa-gamepad" is-index="true"></nav-link>
-
                         <nav-category name="{{'SIDEBAR.CHAT' | translate }}" pad-top="true"></nav-category>
                         <nav-link page="Commands" name="{{'SIDEBAR.CHAT.COMMANDS' | translate }}" icon="fa-exclamation"></nav-link>
                         <nav-link page="Games" name="Games" icon="fa-dice"></nav-link>
@@ -62,9 +59,7 @@
                                         </div>
                                         <div class="interative-status-subtitle" ng-class="{'contracted': !$ctrl.sbm.navExpanded}">
                                             <span style="width: 100%;display: flex;justify-content: space-between;margin-top: 5px;">
-                                                <connection-icon type="interactive"></connection-icon>
                                                 <connection-icon type="chat"></connection-icon>
-                                                <connection-icon type="constellation"></connection-icon>
                                                 <connection-icon type="overlay"></connection-icon>
                                                 <connection-icon type="integrations" ng-if="$ctrl.is.oneIntegrationIsLinked()"></connection-icon>
                                             </span>
@@ -85,22 +80,10 @@
                 <!-- Tooltip template -->
                 <script type="text/ng-template" id="connectTooltipTemplate.html">
                   <div ng-if="!$ctrl.sbm.navExpanded">
-                    <span>
-                        <span><b>MixPlay Status:</b></span>
-                        </br>
-                        <span>{{$ctrl.cs.connectedToInteractive ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
-                        </br></br>
-                      </span>
                       <span>
-                        <span><b>Chat Status:</b></span>
+                        <span><b>Twitch Status:</b></span>
                         </br>
                         <span>{{$ctrl.cs.connectedToChat ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
-                        </br></br>
-                      </span>
-                      <span>
-                        <span><b>Events Status:</b></span>
-                        </br>
-                        <span>{{$ctrl.cs.connectedToConstellation ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
                         </br></br>
                       </span>
                       <span>

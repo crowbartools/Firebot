@@ -54,7 +54,8 @@ class EventManager extends EventEmitter {
     }
 
     getAllEvents() {
-        let eventArrays = this._registeredEventSources.map(es => es.events);
+        let eventArrays = this._registeredEventSources
+            .map(es => es.events);
         let events = util.flattenArray(eventArrays);
         return events;
     }
@@ -82,12 +83,12 @@ class EventManager extends EventEmitter {
 
 const manager = new EventManager();
 
-ipcMain.on("getAllEventSources", event => {
+ipcMain.on("getAllEventSources", (event) => {
     logger.info("got 'get all event sources' request");
     event.returnValue = manager.getAllEventSources();
 });
 
-ipcMain.on("getAllEvents", event => {
+ipcMain.on("getAllEvents", (event) => {
     logger.info("got 'get all events' request");
     event.returnValue = manager.getAllEvents();
 });

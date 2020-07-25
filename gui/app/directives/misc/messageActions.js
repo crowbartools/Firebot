@@ -24,8 +24,6 @@
             ) {
                 let vm = this;
 
-                let shouldOpen = $scope.message.user_id !== "firebot-system-message";
-
                 let template = `
                         <div class="popover message-actions" role="{{vm.role}}">
                             <div class="name-wrapper">
@@ -59,8 +57,6 @@
                 function getActions() {
                     let actions = [];
 
-                    if (vm.message.user_id === "firebot-system-message") return actions;
-
                     actions.push({
                         name: "Details",
                         icon: "fa-info-circle"
@@ -72,18 +68,19 @@
                     });
 
                     actions.push({
-                        name: "Whisper",
-                        icon: "fa-envelope"
-                    });
-
-                    actions.push({
                         name: "Mention",
                         icon: "fa-at"
                     });
 
-                    if (vm.message.user_name !== connectionService.accounts.streamer.username &&
-                        vm.message.user_name !== connectionService.accounts.bot.username) {
-                        if (vm.message.user_roles.includes("Mod")) {
+                    if (vm.message.username !== connectionService.accounts.streamer.username &&
+                        vm.message.username !== connectionService.accounts.bot.username) {
+
+                        actions.push({
+                            name: "Whisper",
+                            icon: "fa-envelope"
+                        });
+
+                        if (vm.message.roles.includes("mod")) {
                             actions.push({
                                 name: "Unmod",
                                 icon: "fa-user-times"
@@ -121,8 +118,8 @@
                 vm.actionClicked = actionName => {
                     $scope.onActionSelected({
                         actionName: actionName,
-                        userName: $scope.message.user_name,
-                        userId: $scope.message.user_id,
+                        userName: $scope.message.username,
+                        userId: $scope.message.userId,
                         msgId: $scope.message.id
                     });
                     hidePopover();
@@ -172,7 +169,7 @@
                 }
 
                 function showPopover() {
-                    if (shouldOpen && !vm.isVisible) {
+                    if (!vm.isVisible) {
                         loadPopover();
                         $document.find("body").append(popover);
                         positionPopover();

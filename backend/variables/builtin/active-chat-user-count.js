@@ -1,3 +1,5 @@
+// Migration: info needed
+
 "use strict";
 const logger = require("../../logwrapper");
 const activeViewerHandler = require('../../roles/role-managers/active-chatters');

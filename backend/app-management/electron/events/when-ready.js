@@ -12,10 +12,10 @@ exports.whenReady = async () => {
     const { ensureRequiredFoldersExist } = require("../../data-tasks");
     ensureRequiredFoldersExist();
 
-    //load mixer auth
+    // load twitch auth
     require("../../../auth/auth-manager");
-    const mixerAuth = require("../../../auth/mixer-auth");
-    mixerAuth.registerMixerAuthProviders();
+    const twitchAuth = require("../../../auth/twitch-auth");
+    twitchAuth.registerTwitchAuthProviders();
 
     // load accounts
     const accountAccess = require("../../../common/account-access");
@@ -27,8 +27,8 @@ exports.whenReady = async () => {
     const timerManager = require("../../../timers/timer-manager");
     timerManager.startTimers();
 
-    const mixerClient = require("../../../mixer-api/client");
-    mixerClient.initClients();
+    const twitchClient = require("../../../twitch-api/client");
+    twitchClient.setupTwitchClients();
 
     // load effects
     const { loadEffects } = require("../../../effects/builtInEffectLoader");

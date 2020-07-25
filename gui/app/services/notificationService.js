@@ -144,34 +144,7 @@
             };
 
             function checkMixerStatus() {
-                $http.get("https://status.mixer.com/index.json")
-                    .then((response) => {
-
-                        let data = response.data;
-
-                        if (data === null) return;
-
-                        service.mixerStatus.description = data.status.description;
-
-                        if (data.status.indicator !== "none") {
-                            service.mixerReportingIssues = true;
-                        } else {
-                            service.mixerReportingIssues = false;
-                        }
-
-                        let incidents = data.incidents;
-                        if (incidents != null && data.incidents.length > 0) {
-                            service.mixerStatus.unresolvedIncidents =
-                                incidents
-                                    .filter(i => i.status !== "resolved")
-                                    .map(i => {
-                                        i.hasUpdates = i.incident_updates != null && i.incident_updates.length > 0;
-                                        return i;
-                                    });
-                        }
-                    }, (reason) => {
-                        logger.info("Failed to get mixer status: " + reason);
-                    });
+                // TODO: Deprecated
             }
 
             service.NotificationIconType = NotificationIconType;

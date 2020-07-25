@@ -1,3 +1,5 @@
+// Migration: done
+
 'use strict';
 
 const { OutputDataType } = require("../../../shared/variable-contants");
@@ -9,7 +11,7 @@ const model = {
         usage: "concat[text, text, ...]",
         possibleDataOuput: [OutputDataType.TEXT]
     },
-    evaluator: (_, ...args) => args.reduce((res, cur) => res + String(cur), "")
+    evaluator: (_, ...args) => args.join('')
 };
 
 module.exports = model;

@@ -1,6 +1,5 @@
 "use strict";
 
-
 const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
@@ -8,7 +7,7 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["mixer:subscription-gifted"];
+triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
@@ -19,9 +18,9 @@ const model = {
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        let receiverUsername = trigger.metadata.eventData.giftReceiverUser;
+        const gifteeUsername = trigger.metadata.eventData.gifteeUsername;
 
-        return receiverUsername || "UnknownUser";
+        return gifteeUsername || "UnknownUser";
     }
 };
 

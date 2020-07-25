@@ -5,9 +5,7 @@ const logger = require("../logwrapper");
 const channelAccess = require("./channel-access");
 const frontendCommunicator = require("./frontend-communicator");
 const { settings } = require("./settings-access");
-const chat = require("../chat/chat");
-const constellation = require("../events/constellation");
-const mixplay = require("../interactive/mixplay");
+const twitchChat = require("../chat/twitch-chat");
 const integrationManager = require("../integrations/IntegrationManager");
 
 const { ConnectionState } = require("../../shared/connection-constants");
@@ -42,22 +40,10 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
 }
 
 // Chat listeners
-chat.on("connected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected));
-chat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
-chat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
-chat.on("reconnecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Reconnecting));
-
-// Constellation listeners
-constellation.on("connected", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Connected));
-constellation.on("disconnected", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Disconnected));
-constellation.on("connecting", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Connecting));
-constellation.on("reconnecting", () => emitServiceConnectionUpdateEvents("constellation", ConnectionState.Reconnecting));
-
-// Mixplay listeners
-mixplay.events.on("connected", () => emitServiceConnectionUpdateEvents("interactive", ConnectionState.Connected));
-mixplay.events.on("disconnected", () => emitServiceConnectionUpdateEvents("interactive", ConnectionState.Disconnected));
-mixplay.events.on("connecting", () => emitServiceConnectionUpdateEvents("interactive", ConnectionState.Connecting));
-mixplay.events.on("reconnecting", () => emitServiceConnectionUpdateEvents("interactive", ConnectionState.Reconnecting));
+twitchChat.on("connected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connected));
+twitchChat.on("disconnected", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Disconnected));
+twitchChat.on("connecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Connecting));
+twitchChat.on("reconnecting", () => emitServiceConnectionUpdateEvents("chat", ConnectionState.Reconnecting));
 
 // Integrations listener
 integrationManager.on("integration-connected", (id) => emitServiceConnectionUpdateEvents(`integration.${id}`, ConnectionState.Connected));
@@ -87,39 +73,9 @@ class ConnectionManager extends EventEmitter {
 
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
-            if (!chat.chatIsConnected()) {
-                chat.connect();
-            } else {
-                return false;
-            }
+            twitchChat.connect();
         } else {
-            chat.disconnect();
-        }
-        return true;
-    }
-
-    updateMixPlayConnection(shouldConnect) {
-        if (shouldConnect) {
-            if (!mixplay.mixplayIsConnected()) {
-                mixplay.connect();
-            } else {
-                return false;
-            }
-        } else {
-            mixplay.disconnect();
-        }
-        return true;
-    }
-
-    updateConstellationConnection(shouldConnect) {
-        if (shouldConnect) {
-            if (!constellation.constellationIsConnected()) {
-                constellation.connect();
-            } else {
-                return false;
-            }
-        } else {
-            constellation.disconnect();
+            twitchChat.disconnect();
         }
         return true;
     }
@@ -144,19 +100,9 @@ class ConnectionManager extends EventEmitter {
     toggleConnections(serviceIds) {
         for (const serviceId of serviceIds) {
             switch (serviceId) {
-            case "interactive": {
-                const shouldConnect = !mixplay.mixplayIsConnected();
-                manager.updateMixPlayConnection(shouldConnect);
-                break;
-            }
             case "chat": {
-                const shouldConnect = !chat.chatIsConnected();
+                const shouldConnect = !twitchChat.chatIsConnected();
                 manager.updateChatConnection(shouldConnect);
-                break;
-            }
-            case "constellation": {
-                const shouldConnect = !constellation.constellationIsConnected();
-                manager.updateConstellationConnection(shouldConnect);
                 break;
             }
             default:
@@ -169,12 +115,8 @@ manager = new ConnectionManager();
 
 function updateServiceConnection(serviceId, shouldConnect) {
     switch (serviceId) {
-    case "interactive":
-        return manager.updateMixPlayConnection(shouldConnect);
     case "chat":
         return manager.updateChatConnection(shouldConnect);
-    case "constellation":
-        return manager.updateConstellationConnection(shouldConnect);
     default:
         if (serviceId.startsWith("integration.")) {
             const integrationId = serviceId.replace("integration.", "");
@@ -203,11 +145,11 @@ frontendCommunicator.on("connect-sidebar-controlled-services", async () => {
 
     const accountAccess = require("./account-access");
     if (!accountAccess.getAccounts().streamer.loggedIn) {
-        renderWindow.webContents.send("error", "You must sign into your Streamer Mixer account before connecting.");
+        renderWindow.webContents.send("error", "You must sign into your Streamer Twitch account before connecting.");
     } else if (accountAccess.streamerTokenIssue()) {
         const botTokenIssue = accountAccess.getAccounts().bot.loggedIn && accountAccess.botTokenIssue();
 
-        const message = `There is an issue with the Streamer ${botTokenIssue ? ' and Bot' : ""} Mixer account${botTokenIssue ? 's' : ""}. Please re-sign into the account${botTokenIssue ? 's' : ""} and try again.`;
+        const message = `There is an issue with the Streamer ${botTokenIssue ? ' and Bot' : ""} Twitch account${botTokenIssue ? 's' : ""}. Please re-sign into the account${botTokenIssue ? 's' : ""} and try again.`;
         renderWindow.webContents.send("error", message);
     } else {
         const waitForServiceConnectDisconnect = (serviceId) => {

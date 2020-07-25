@@ -1,8 +1,10 @@
+// Migration: done
+
 "use strict";
 
+const twitchChannels = require("../../twitch-api/resources/channels");
 const accountAccess = require("../../common/account-access");
 const { OutputDataType } = require("../../../shared/variable-contants");
-const mixerApi = require("../../mixer-api/api");
 
 const model = {
     definition: {
@@ -29,8 +31,9 @@ const model = {
             username = accountAccess.getAccounts().streamer.username;
         }
 
-        const channelData = await mixerApi.channels.getChannel(username);
-        return channelData.type ? channelData.type.name : "[No game set]";
+        const channelInfo = await twitchChannels.getChannelInformationByUsername(username);
+
+        return channelInfo != null ? channelInfo.game_name : "";
     }
 };
 

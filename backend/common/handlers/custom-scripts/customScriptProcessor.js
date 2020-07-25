@@ -1,5 +1,5 @@
 'use strict';
-const mixerChat = require('../../../chat/chat');
+const twitchChat = require('../../../chat/twitch-chat');
 const profileManager = require("../../profile-manager");
 const settings = require('../../settings-access').settings;
 const path = require('path');
@@ -136,13 +136,13 @@ function scriptProcessor(effect, trigger) {
                         // thin chat shim for basic backworks compatibility
                         chat: {
                             smartSend: (...args) => {
-                                mixerChat.sendChatMessage(...args);
+                                twitchChat.sendChatMessage(...args);
                             },
                             deleteChat: (id) => {
-                                mixerChat.deleteMessage(id);
+                                twitchChat.deleteMessage(id);
                             }
                         },
-                        mixerChat: mixerChat,
+                        twitchChat: twitchChat,
                         mixplay: require("../../../interactive/mixplay"),
                         utils: require("../../../utility")
                     };

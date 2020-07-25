@@ -1,3 +1,5 @@
+// Migration: todo - Need implentation info related to viewer list
+
 "use strict";
 const channelAccess = require("../../common/channel-access");
 const util = require("../../utility");

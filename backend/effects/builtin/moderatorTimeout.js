@@ -7,7 +7,7 @@ const { EffectTrigger, EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const logger = require('../../logwrapper');
-const chat = require("../../chat/chat");
+const twitchChat = require("../../chat/twitch-chat");
 
 const model = {
     definition: {
@@ -32,8 +32,8 @@ const model = {
     </eos-container>
     <eos-container header="Time" pad-top="true">
         <div class="input-group">
-            <span class="input-group-addon" id="time-type">Time</span>
-            <input ng-model="effect.time" type="text" class="form-control" id="list-username-setting" aria-describedby="list-time-type" placeholder="Examples: 6s, 10m, 1h, 1d" replace-variables>
+            <span class="input-group-addon" id="time-type">Time (Seconds)</span>
+            <input ng-model="effect.time" type="text" class="form-control" id="list-username-setting" aria-describedby="list-time-type" placeholder="Seconds" replace-variables="number">
         </div>
     </eos-container>
     `,
@@ -43,14 +43,23 @@ const model = {
         if (effect.username == null && effect.username !== "") {
             errors.push("Please enter a username.");
         }
-        if (effect.time == null && effect.time !== "") {
+        if (effect.time == null && (effect.time !== "" || effect.time < 0)) {
             errors.push("Please enter an amount of time.");
         }
         return errors;
     },
     onTriggerEvent: async event => {
-        await chat.timeoutUser(event.effect.username, event.effect.time);
-        logger.debug(event.effect.username + " was timed out for " + event.effect.time + " via the timeout effect.");
+        let time = event.effect.time;
+        if (time) {
+            //try to remove previous mixer style data
+            time = time
+                .replace("s", "")
+                .replace("m", "")
+                .replace("h", "")
+                .replace("d", "");
+        }
+        await twitchChat.timeoutUser(event.effect.username, event.effect.time);
+        logger.debug(event.effect.username + " was timed out for " + event.effect.time + "s via the timeout effect.");
         return true;
     }
 };

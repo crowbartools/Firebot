@@ -10,7 +10,7 @@ const model = {
         active: true,
         trigger: "!role",
         description: "Allows management of viewer's custom roles from chat.",
-        autoDeleteTrigger: true,
+        autoDeleteTrigger: false,
         scanWholeMessage: false,
         cooldown: {
             user: 0,
@@ -23,8 +23,7 @@ const model = {
                     type: "firebot:permissions",
                     mode: "roles",
                     roleIds: [
-                        "ChannelEditor",
-                        "Owner"
+                        "broadcaster"
                     ]
                 }
             ]

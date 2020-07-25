@@ -5,9 +5,6 @@ const app = require('electron').app;
 const moment = require("moment");
 moment.locale(app.getLocale());
 
-/**
- * The Quotes Management
- */
 const quotesManagement = {
     definition: {
         id: "firebot:quotesmanagement",
@@ -15,7 +12,7 @@ const quotesManagement = {
         active: true,
         trigger: "!quote",
         description: "Allows quote management via chat.",
-        autoDeleteTrigger: true,
+        autoDeleteTrigger: false,
         scanWholeMessage: false,
         cooldown: {
             user: 0,
@@ -51,9 +48,8 @@ const quotesManagement = {
                             type: "firebot:permissions",
                             mode: "roles",
                             roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
+                                "mod",
+                                "broadcaster"
                             ]
                         }
                     ]
@@ -70,9 +66,8 @@ const quotesManagement = {
                             type: "firebot:permissions",
                             mode: "roles",
                             roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
+                                "mod",
+                                "broadcaster"
                             ]
                         }
                     ]
@@ -89,9 +84,8 @@ const quotesManagement = {
                             type: "firebot:permissions",
                             mode: "roles",
                             roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
+                                "mod",
+                                "broadcaster"
                             ]
                         }
                     ]
@@ -108,9 +102,8 @@ const quotesManagement = {
                             type: "firebot:permissions",
                             mode: "roles",
                             roleIds: [
-                                "Mod",
-                                "ChannelEditor",
-                                "Owner"
+                                "mod",
+                                "broadcaster"
                             ]
                         }
                     ]
@@ -135,8 +128,8 @@ const quotesManagement = {
         return new Promise(async (resolve) => {
             const quotesManager = require("../../../quotes/quotes-manager");
             const logger = require("../../../logwrapper");
-            const chat = require("../../chat");
-            const api = require("../../../mixer-api/api");
+            const twitchChat = require("../../twitch-chat");
+            const twitchChannels = require("../../../twitch-api/resources/channels");
 
             let { commandOptions } = event;
 
@@ -158,10 +151,10 @@ const quotesManagement = {
 
                 if (quote) {
                     let formattedQuote = getFormattedQuoteString(quote);
-                    chat.sendChatMessage(formattedQuote);
+                    twitchChat.sendChatMessage(formattedQuote);
                     logger.debug('We pulled a quote by id: ' + formattedQuote);
                 } else {
-                    chat.sendChatMessage(`Could not find a random quote!`);
+                    twitchChat.sendChatMessage(`Could not find a random quote!`);
                 }
                 return resolve();
             }
@@ -173,14 +166,11 @@ const quotesManagement = {
                 const quote = await quotesManager.getQuote(quoteId);
                 if (quote) {
                     let formattedQuote = getFormattedQuoteString(quote);
-                    chat.sendChatMessage(formattedQuote);
+                    twitchChat.sendChatMessage(formattedQuote);
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
                 } else {
                     // If we get here, it's likely the command was used wrong. Tell the sender they done fucked up
-                    chat.sendChatMessage(
-                        `Sorry! We couldnt find a quote with that id.`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(`Sorry! We couldnt find a quote with that id.`);
                 }
                 return resolve();
             }
@@ -188,15 +178,13 @@ const quotesManagement = {
             switch (triggeredArg) {
             case "add": {
                 if (args.length < 3) {
-                    chat.sendChatMessage(`Please provide some quote text!`, event.userCommand.commandSender);
+                    twitchChat.sendChatMessage(`Please provide some quote text!`);
                     return resolve();
                 }
 
-                // Get stream info so we can get the game name.
-                let streamerChannelData = await api.channels.getStreamersChannel();
+                const channelData = await twitchChannels.getChannelInformation();
 
-                let currentGameName = streamerChannelData.type && streamerChannelData.type.name ?
-                    streamerChannelData.type.name : "Unknown game";
+                let currentGameName = channelData && channelData.game_name ? channelData.game_name : "Unknown game";
 
                 let newQuote = {
                     text: args.slice(2, args.length).join(" "),
@@ -208,7 +196,7 @@ const quotesManagement = {
                 let newQuoteId = await quotesManager.addQuote(newQuote);
                 let newQuoteText = await quotesManager.getQuote(newQuoteId);
                 let formattedQuote = getFormattedQuoteString(newQuoteText);
-                chat.sendChatMessage(
+                twitchChat.sendChatMessage(
                     `Added ${formattedQuote}`
                 );
                 logger.debug(`Quote #${newQuoteId} added!`);
@@ -218,15 +206,12 @@ const quotesManagement = {
                 let quoteId = parseInt(args[1]);
                 if (!isNaN(quoteId)) {
                     await quotesManager.removeQuote(quoteId);
-                    chat.sendChatMessage(`Quote ${quoteId} was removed.`);
+                    twitchChat.sendChatMessage(`Quote ${quoteId} was removed.`);
                     logger.debug('A quote was removed: ' + quoteId);
                     return resolve();
                 }
 
-                chat.sendChatMessage(
-                    `Sorry! Couldnt find a quote with that id number.`,
-                    event.userCommand.commandSender
-                );
+                twitchChat.sendChatMessage(`Sorry! Couldnt find a quote with that id number.`);
                 logger.error('Quotes: NaN passed to remove quote command.');
                 return resolve();
             }
@@ -234,23 +219,17 @@ const quotesManagement = {
                 const cloudSync = require('../../../cloud-sync/profile-sync');
 
                 let profileJSON = {
-                    'username': event.chatEvent.user_name,
-                    'userRoles': event.chatEvent.user_roles,
-                    'profilePage': 'quotes'
+                    username: event.chatMessage.username,
+                    userRoles: event.chatMessage.roles,
+                    profilePage: 'quotes'
                 };
 
                 let binId = await cloudSync.syncProfileData(profileJSON);
 
                 if (binId == null) {
-                    chat.sendChatMessage(
-                        "There are no quotes to pull!",
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage("There are no quotes to pull!");
                 } else {
-                    chat.sendChatMessage(
-                        `Here a list of quotes! https://crowbartools.com/tools/firebot/profile?id=${binId}`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(`Here a list of quotes! https://firebot.app/profile?id=${binId}`);
                 }
 
                 return resolve();
@@ -270,7 +249,7 @@ const quotesManagement = {
                     let formattedQuote = getFormattedQuoteString(quote);
 
                     // send to chat
-                    chat.sendChatMessage(formattedQuote);
+                    twitchChat.sendChatMessage(formattedQuote);
 
                     // log (Maybe move this to the manager?)
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
@@ -278,10 +257,7 @@ const quotesManagement = {
                 // no matching quote found
                 } else {
 
-                    chat.sendChatMessage(
-                        `Sorry! We couldnt find a quote using those terms.`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(`Sorry! We couldnt find a quote using those terms.`);
                 }
 
                 // resolve promise
@@ -289,29 +265,20 @@ const quotesManagement = {
             }
             case "edittext": {
                 if (args.length < 3) {
-                    chat.sendChatMessage(
-                        `Invalid usage! ${event.userCommand.trigger} edittext [quoteId] [newText]`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} edittext [quoteId] [newText]`);
                     return resolve();
                 }
 
                 let quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
-                    chat.sendChatMessage(
-                        `Invalid Quote Id!`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(`Invalid Quote Id!`);
                     return resolve();
                 }
 
                 const quote = await quotesManager.getQuote(quoteId);
 
                 if (quote == null) {
-                    chat.sendChatMessage(
-                        `Cannot find quote with id ${quoteId}`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
                     return resolve();
                 }
 
@@ -321,15 +288,12 @@ const quotesManagement = {
                 try {
                     await quotesManager.updateQuote(quote);
                 } catch (err) {
-                    chat.sendChatMessage(
-                        `Failed to update quote ${quoteId}!`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
                     return resolve();
                 }
 
                 let formattedQuote = getFormattedQuoteString(quote);
-                chat.sendChatMessage(
+                twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
 
@@ -338,29 +302,23 @@ const quotesManagement = {
             }
             case "edituser": {
                 if (args.length < 3) {
-                    chat.sendChatMessage(
-                        `Invalid usage! ${event.userCommand.trigger} edituser [quoteId] [newUsername]`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        `Invalid usage! ${event.userCommand.trigger} edituser [quoteId] [newUsername]`);
                     return resolve();
                 }
 
                 let quoteId = parseInt(args[1]);
                 if (isNaN(quoteId)) {
-                    chat.sendChatMessage(
-                        `Invalid Quote Id!`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        `Invalid Quote Id!`);
                     return resolve();
                 }
 
                 const quote = await quotesManager.getQuote(quoteId);
 
                 if (quote == null) {
-                    chat.sendChatMessage(
-                        `Cannot find quote with id ${quoteId}`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        `Cannot find quote with id ${quoteId}`);
                     return resolve();
                 }
 
@@ -370,15 +328,13 @@ const quotesManagement = {
                 try {
                     await quotesManager.updateQuote(quote);
                 } catch (err) {
-                    chat.sendChatMessage(
-                        `Failed to update quote ${quoteId}!`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        `Failed to update quote ${quoteId}!`);
                     return resolve();
                 }
 
                 let formattedQuote = getFormattedQuoteString(quote);
-                chat.sendChatMessage(
+                twitchChat.sendChatMessage(
                     `Edited ${formattedQuote}`
                 );
 
@@ -391,7 +347,7 @@ const quotesManagement = {
                 const quote = await quotesManagement.getRandomQuoteByWord(triggeredArg);
                 if (quote) {
                     let formattedQuote = getFormattedQuoteString(quote);
-                    chat.sendChatMessage(
+                    twitchChat.sendChatMessage(
                         formattedQuote
                     );
                     logger.debug('We pulled a quote using words: ' + formattedQuote);

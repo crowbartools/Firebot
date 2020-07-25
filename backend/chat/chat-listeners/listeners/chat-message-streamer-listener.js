@@ -92,11 +92,11 @@ module.exports = {
 
         const userdb = require("../../../database/userDatabase");
         // make sure user is in DB
-        await userdb.setChatUserOnline({
+        /*await userdb.setChatUserOnline({
             id: data.user_id,
             username: data.user_name,
             roles: data.user_roles
-        });
+        });*/
 
         // Increment Chat Messages in user DB.
         await userdb.incrementDbField(data.user_id, "chatMessages");

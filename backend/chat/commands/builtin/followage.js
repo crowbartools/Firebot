@@ -2,7 +2,7 @@
 
 const channelAccess = require("../../../common/channel-access");
 const moment = require("moment");
-const chat = require("../../chat");
+const chat = require("../../twitch-chat");
 const util = require("../../../utility");
 
 /**

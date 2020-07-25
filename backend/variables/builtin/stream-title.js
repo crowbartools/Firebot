@@ -1,7 +1,9 @@
+// Migration: done
+
 "use strict";
 
+const twitchChannels = require("../../twitch-api/resources/channels");
 const accountAccess = require("../../common/account-access");
-const channelAccess = require("../../common/channel-access");
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
@@ -19,7 +21,7 @@ const model = {
                 description: "Gets the stream title  for associated user (Ie who triggered command, pressed button, etc)."
             },
             {
-                usage: "streamTitle[ChannelOne]",
+                usage: "streamTitle[ebiggz]",
                 description: "Gets the stream title for a specific channel."
             }
         ],
@@ -30,12 +32,9 @@ const model = {
             username = accountAccess.getAccounts().streamer.username;
         }
 
-        try {
-            let channelData = await channelAccess.getMixerAccountDetailsByUsername(username);
-            return channelData.name ? channelData.name : "[No title set]";
-        } catch (err) {
-            return "[No title set]";
-        }
+        const channelInfo = await twitchChannels.getChannelInformationByUsername(username);
+
+        return channelInfo != null ? channelInfo.title : "[No channel found]";
     }
 };
 

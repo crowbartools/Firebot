@@ -167,7 +167,6 @@ class MixerChat extends EventEmitter {
         ensureSocketIsClosed(this._botSocket);
     }
 
-
     /**
      * Sends the message as the bot if available, otherwise as the streamer.
      * If a username is provided, the message will be whispered.
@@ -381,22 +380,6 @@ mixerChat = new MixerChat();
 mixerChat.on("connected", () => {
     const eventManager = require("../events/EventManager");
     eventManager.triggerEvent("firebot", "chat-connected");
-});
-
-frontendCommunicator.on("delete-message", messageId => {
-    mixerChat.deleteMessage(messageId);
-});
-
-frontendCommunicator.on("update-user-mod-status", data => {
-    if (data == null) return;
-    const { username, shouldBeMod } = data;
-    if (username == null || shouldBeMod == null) return;
-
-    if (shouldBeMod) {
-        mixerChat.modUser(username);
-    } else {
-        mixerChat.unmodUser(username);
-    }
 });
 
 module.exports = mixerChat;

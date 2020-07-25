@@ -1,3 +1,5 @@
+// Migration: done
+
 "use strict";
 const quoteManager = require("../../quotes/quotes-manager");
 const logger = require("../../logwrapper");

@@ -15,26 +15,6 @@
        </div>
 
        <script type="text/ng-template" id="notificationCenterPopupTemplate.html">
-
-        <div class="notification-popover-header">
-            <span>Mixer Status</span>
-        </div>
-        <div class="noti-preview-wrapper">
-            <div class="notification-card" ng-click="$ctrl.openStatusModal()" aria-label="Mixer Status">
-                <span class="noti-unread-indicator read"></span>
-                <span class="mixer-status-icon" ng-class="{ unhealthy: $ctrl.notiService.mixerReportingIssues }">
-                    <i class="fal" ng-class="$ctrl.notiService.getStatusIcon()"></i>
-                </span>
-                <div class="noti-title-wrapper">
-                    <span class="noti-text" style="max-height: 65px; overflow: hidden;">{{$ctrl.notiService.mixerStatus.description}}</span>
-                </div>
-                <div class="flex-center" style="margin-right: 5px;">
-                    <span style="padding: 5px;font-size:20px;">
-                        <i class="fal fa-chevron-right"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
           
           <div class="notification-popover-header">
             <span>Notifications</span>

@@ -197,25 +197,20 @@ class IntegrationManager extends EventEmitter {
     }
 
     async linkIntegration(int, linkData) {
-
         try {
             await int.integration.link(linkData);
-        } catch (err) {
-            logger.warn(err);
-        }
-
-        try {
-            let integrationDb = profileManager.getJsonDbInProfile(
-                "/integrations"
-            );
-            integrationDb.push(`/${int.definition.id}/linked`, true);
-            int.definition.linked = true;
         } catch (error) {
             logger.warn(error);
+            return; // link failed, return.
         }
 
-        renderWindow.webContents.send("integrationsUpdated");
+        let integrationDb = profileManager.getJsonDbInProfile(
+            "/integrations"
+        );
+        integrationDb.push(`/${int.definition.id}/linked`, true);
+        int.definition.linked = true;
 
+        renderWindow.webContents.send("integrationsUpdated");
         frontEndCommunicator.send("integrationLinked", int.definition.id);
     }
 
@@ -226,7 +221,7 @@ class IntegrationManager extends EventEmitter {
         this.disconnectIntegration(int);
 
         try {
-            int.integration.unlink();
+            int.integration.unlink(int.definition);
             let integrationDb = profileManager.getJsonDbInProfile("/integrations");
             integrationDb.delete(`/${integrationId}`);
             int.definition.settings = null;

@@ -1,7 +1,7 @@
 "use strict";
 
 const util = require("../../../utility");
-const chat = require("../../../chat/chat");
+const twitchChat = require("../../../chat/twitch-chat");
 const commandManager = require("../../../chat/commands/CommandManager");
 const gameManager = require("../../game-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");
@@ -52,38 +52,38 @@ const spinCommand = {
             const username = userCommand.commandSender;
 
             if (activeSpinners.get(username)) {
-                chat.sendChatMessage("The slot machine is actively working!", username, chatter);
-                chat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage("The slot machine is actively working!", null, chatter);
+                twitchChat.deleteMessage(chatEvent.id);
                 return;
             }
 
             let cooldownExpireTime = cooldownCache.get(username);
             if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
-                chat.sendChatMessage(`The slot machine is currently on cooldown. Time remaining: ${timeRemainingDisplay}`, username, chatter);
-                chat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`The slot machine is currently on cooldown. Time remaining: ${timeRemainingDisplay}`, null, chatter);
+                twitchChat.deleteMessage(chatEvent.id);
                 return;
             }
 
             if (wagerAmount < 1) {
-                chat.sendChatMessage("Wager amount must be more than 0.", username, chatter);
-                chat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage("Wager amount must be more than 0.", null, chatter);
+                twitchChat.deleteMessage(chatEvent.id);
                 return;
             }
 
             const minWager = slotsSettings.settings.currencySettings.minWager;
             if (minWager != null & minWager > 0) {
                 if (wagerAmount < minWager) {
-                    chat.sendChatMessage(`Wager amount must be at least ${minWager}.`, username, chatter);
-                    chat.deleteMessage(chatEvent.id);
+                    twitchChat.sendChatMessage(`Wager amount must be at least ${minWager}.`, null, chatter);
+                    twitchChat.deleteMessage(chatEvent.id);
                     return;
                 }
             }
             const maxWager = slotsSettings.settings.currencySettings.maxWager;
             if (maxWager != null & maxWager > 0) {
                 if (wagerAmount > maxWager) {
-                    chat.sendChatMessage(`Wager amount can be no more than ${maxWager}.`, username, chatter);
-                    chat.deleteMessage(chatEvent.id);
+                    twitchChat.sendChatMessage(`Wager amount can be no more than ${maxWager}.`, null, chatter);
+                    twitchChat.deleteMessage(chatEvent.id);
                     return;
                 }
             }
@@ -93,8 +93,8 @@ const spinCommand = {
             const currencyId = slotsSettings.settings.currencySettings.currencyId;
             const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
             if (userBalance < wagerAmount) {
-                chat.sendChatMessage("You don't have enough to wager this amount!", username, chatter);
-                chat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage("You don't have enough to wager this amount!", null, chatter);
+                twitchChat.deleteMessage(chatEvent.id);
                 activeSpinners.del(username);
                 return;
             }
@@ -136,12 +136,12 @@ const spinCommand = {
 
             const currency = currencyDatabase.getCurrencyById(currencyId);
 
-            chat.sendChatMessage(`${username} hit ${successfulRolls} out of 3 and won ${util.commafy(winnings)} ${currency.name}.`, null, chatter);
+            twitchChat.sendChatMessage(`${username} hit ${successfulRolls} out of 3 and won ${util.commafy(winnings)} ${currency.name}.`, null, chatter);
 
             activeSpinners.del(username);
         } else {
-            chat.sendChatMessage(`Incorrect spin usage: ${userCommand.trigger} [wagerAmount]`, userCommand.commandSender, chatter);
-            chat.deleteMessage(chatEvent.id);
+            twitchChat.sendChatMessage(`Incorrect spin usage: ${userCommand.trigger} [wagerAmount]`, null, chatter);
+            twitchChat.deleteMessage(chatEvent.id);
         }
     }
 };

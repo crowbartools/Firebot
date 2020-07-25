@@ -7,7 +7,7 @@ const { EffectTrigger, EffectDependency } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const logger = require('../../logwrapper');
-const chat = require("../../chat/chat");
+const twitchChat = require("../../chat/twitch-chat");
 
 const model = {
     definition: {
@@ -34,7 +34,7 @@ const model = {
         return errors;
     },
     onTriggerEvent: async () => {
-        await chat.clearChat();
+        await twitchChat.clearChat();
         logger.debug("Chat was cleared via the clear chat effect.");
         return true;
     }

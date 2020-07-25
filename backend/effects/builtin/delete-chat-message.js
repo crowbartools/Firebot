@@ -1,5 +1,5 @@
 "use strict";
-const chat = require("../../chat/chat");
+const twitchChat = require("../../chat/twitch-chat");
 const effectModels = require("../models/effectModels");
 const { EffectTrigger, EffectDependency } = effectModels;
 
@@ -32,14 +32,14 @@ const model = {
 
         let messageId = null;
         if (trigger.type === EffectTrigger.COMMAND) {
-            messageId = trigger.metadata.chatEvent.id;
+            messageId = trigger.metadata.chatMessage.id;
         } else if (trigger.type === EffectTrigger.EVENT) {
             // if trigger is event, build chat message from chat event data
             messageId = trigger.metadata.eventData.data.id;
         }
 
         if (messageId) {
-            chat.deleteMessage(messageId);
+            twitchChat.deleteMessage(messageId);
         }
 
         return true;

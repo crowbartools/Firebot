@@ -1,10 +1,10 @@
 ![Firebot Logo](https://i.imgur.com/DBH1G1e.png)
 
-An all-in-one desktop bot for Mixer featuring support for MixPlay, Chat Commands, Events, Timers, Currencies, Third Party Integrations, and so much more. Visit Firebot's [website](https://crowbartools.com/tools/firebot/) for more info.
+An all-in-one desktop bot for Mixer featuring support for MixPlay, Chat Commands, Events, Timers, Currencies, Third Party Integrations, and so much more. Visit Firebot's [website](https://firebot.app) for more info.
 
 ![Build Status](https://github.com/crowbartools/Firebot/workflows/Build%20Status/badge.svg?branch=master)
 ![Build Status](https://github.com/crowbartools/Firebot/workflows/Build%20Tests/badge.svg?branch=v5)
-[![Total Downloads](https://img.shields.io/github/downloads/crowbartools/firebot/total.svg)](https://crowbartools.com/tools/firebot/)
+[![Total Downloads](https://img.shields.io/github/downloads/crowbartools/firebot/total.svg)](https://firebot.app)
 [![Version](https://img.shields.io/github/release/crowbartools/firebot.svg)](https://github.com/crowbartools/Firebot/releases)
 [![Discord](https://img.shields.io/discord/372817064034959370.svg?label=Discord+(chat))](https://discord.gg/DegW792)
 [![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)](https://twitter.com/FirebotApp)
@@ -12,7 +12,7 @@ An all-in-one desktop bot for Mixer featuring support for MixPlay, Chat Commands
 ***
 ## FAQ
 ### How do I get Firebot?
-Head on over to [Firebot's website](https://crowbartools.com/tools/firebot/) and download the latest version!
+Head on over to [Firebot's website](https://firebot.app) and download the latest version!
 
 ### What if I have a question or need help?
 Please visit our [Discord server](https://discord.gg/DegW792) or send us a [tweet](https://twitter.com/FirebotApp). We are more than happy to help.
