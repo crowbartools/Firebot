@@ -151,9 +151,8 @@ function createCurrencyCommandDefinition(currency) {
                                 type: "firebot:permissions",
                                 mode: "roles",
                                 roleIds: [
-                                    "Mod",
-                                    "ChannelEditor",
-                                    "Owner"
+                                    "mod",
+                                    "broadcaster"
                                 ]
                             }
                         ]
@@ -170,9 +169,8 @@ function createCurrencyCommandDefinition(currency) {
                                 type: "firebot:permissions",
                                 mode: "roles",
                                 roleIds: [
-                                    "Mod",
-                                    "ChannelEditor",
-                                    "Owner"
+                                    "mod",
+                                    "broadcaster"
                                 ]
                             }
                         ]
@@ -194,9 +192,8 @@ function createCurrencyCommandDefinition(currency) {
                                 type: "firebot:permissions",
                                 mode: "roles",
                                 roleIds: [
-                                    "Mod",
-                                    "ChannelEditor",
-                                    "Owner"
+                                    "mod",
+                                    "broadcaster"
                                 ]
                             }
                         ]
@@ -213,9 +210,8 @@ function createCurrencyCommandDefinition(currency) {
                                 type: "firebot:permissions",
                                 mode: "roles",
                                 roleIds: [
-                                    "Mod",
-                                    "ChannelEditor",
-                                    "Owner"
+                                    "mod",
+                                    "broadcaster"
                                 ]
                             }
                         ]

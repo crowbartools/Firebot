@@ -4,7 +4,6 @@ const Steam = require("./steam-access");
 const accountAccess = require("../../../../common/account-access");
 const twitchChat = require("../../../twitch-chat");
 const twitchApi = require('../../../../twitch-api/client');
-const client = twitchApi.getClient();
 
 const steam = {
     definition: {
@@ -26,9 +25,9 @@ const steam = {
         let message = "Couldn't find a Steam game using that name!";
 
         if (gameName == null || gameName.length < 1) {
-            const streamerAccount = accountAccess.getAccounts().streamer;
-            const channelData = await client.helix.streams.getStreamByUserName(streamerAccount.username);
-            const gameInfo = channelData.getGame();
+            const client = twitchApi.getClient();
+            const channelData = await client.kraken.channels.getMyChannel();
+            const gameInfo = channelData.game;
 
             gameName = gameInfo.name != null ? gameInfo.name : "";
         }
