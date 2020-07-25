@@ -45,7 +45,8 @@ async function addLinkRequest(twitchUsername, mixerUsername) {
  * @param {string} twitchUsername
  * @returns {boolean}
  */
-function linkRequestExists(twitchUsername) {
+function linkRequestExists(twitchUsername = "") {
+    twitchUsername = twitchUsername.toLowerCase();
     return linkRequestCache.get(twitchUsername) != null;
 }
 
