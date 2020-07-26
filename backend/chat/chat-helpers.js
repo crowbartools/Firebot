@@ -129,14 +129,14 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
 /**@arg {import('twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage').default} msg
  * @returns {FirebotChatMessage}
 */
-exports.buildFirebotChatMessage = async (msg, whisper = false, action = false) => {
+exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action = false) => {
 
     /**@type {FirebotChatMessage} */
     const firebotChatMessage = {
         id: msg.tags.get("id"),
         username: msg.userInfo.displayName,
         userId: msg.userInfo.userId,
-        rawText: msg.params.message,
+        rawText: msgText,
         whisper: whisper,
         action: action,
         tagged: false,
@@ -150,6 +150,17 @@ exports.buildFirebotChatMessage = async (msg, whisper = false, action = false) =
     firebotChatMessage.profilePicUrl = profilePicUrl;
 
     const { streamer, bot } = accountAccess.getAccounts();
+
+    /**
+     * this is a hack to override the message param for actions.
+     * Action message params normally have some weird control characters and an "ACTION" prefix (look up CTCP for IRC).
+     * The twitch library we use has a bug where it doesnt take this into account in msg.parseEmotes()
+     * So here we are overriding the internal message param with the raw text before we call parseEmotes
+     */
+    if (action && msg._params && msg._params.length > 1) {
+        msg._params[1].value = msgText;
+        msg.parseParams();
+    }
 
     const messageParts = msg.parseEmotes();
     for (const part of messageParts) {
