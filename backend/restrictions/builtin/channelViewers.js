@@ -1,6 +1,9 @@
 "use strict";
 
-const channelAccess = require("../../common/channel-access");
+const twitchApi = require("../../twitch-api/client");
+
+const accountAccess = require("../../common/account-access");
+const logger = require("../../logwrapper");
 
 const model = {
     definition: {
@@ -64,12 +67,21 @@ const model = {
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            let channelData = await channelAccess.getStreamerChannelData();
-            if (channelData == null) {
-                reject(`Can't determine the current number of viewers.`);
+            const client = twitchApi.getClient();
+            const streamer = accountAccess.getAccounts().streamer;
+
+            let currentViewers = null;
+            try {
+                const stream = await client.helix.streams.getStreamByUserId(streamer.userId);
+                currentViewers = stream.viewers;
+            } catch (error) {
+                logger.warning("unable to get stream viewer count", error);
             }
 
-            let currentViewers = channelData.viewersCurrent;
+            if (currentViewers) {
+                return reject(`Can't determine the current number of viewers.`);
+            }
+
             let comparison = restrictionData.comparison;
             let numViewers = restrictionData.amount;
             let comparisonText = "";

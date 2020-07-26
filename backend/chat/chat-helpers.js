@@ -199,6 +199,7 @@ exports.buildFirebotChatMessage = async (msg, whisper = false, action = false) =
 
     if (firebotChatMessage.isFounder) {
         firebotChatMessage.roles.push("founder");
+        firebotChatMessage.roles.push("sub");
     }
     if (firebotChatMessage.isMod) {
         firebotChatMessage.roles.push("mod");

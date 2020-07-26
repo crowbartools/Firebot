@@ -124,9 +124,7 @@
                 $ctrl.showAddRestrictionModal = function() {
 
                     let options = restrictionDefinitions
-                        /*.filter(r => {
-                            return !$ctrl.restrictionData.restrictions.some(rs => rs.type === r.definition.id);
-                        })*/
+                        .filter(r => !r.definition.hidden)
                         .map(r => {
                             return {
                                 id: r.definition.id,
