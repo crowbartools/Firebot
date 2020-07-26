@@ -332,8 +332,12 @@ async function handleChatMessage(firebotChatMessage) {
             } else {
                 reason = restrictionReason;
             }
+
             logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
-            twitchChat.sendChatMessage("Sorry ${commandSender}, you cannot use this command because: " + reason);
+            if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
+                twitchChat.sendChatMessage(`Sorry ${commandSender}, you cannot use this command because: ${reason}`);
+            }
+
             return false;
         }
     }
