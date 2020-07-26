@@ -43,12 +43,6 @@ const clip = {
    * You can alternatively supply a url to a html file via optionTemplateUrl
    */
     optionsTemplate: `
-        <eos-container header="Clip Duration" pad-top="true">
-            <p>The duration of the clip in seconds (default 30s, min 5s, max 300s)</p>
-            <input ng-model="effect.clipDuration" type="text" class="form-control" placeholder="Enter duration" replace-variables="number">
-            <p ng-show="trigger == 'command'" class="muted" style="font-size:12px;margin-top:6px;"><b>ProTip:</b> Use <b>$ensureNumber[$arg, 30]</b> to allow viewers to specify a clip duration but default to 30 if they don't provide one. Example: !clip 60</p>
-        </eos-container>
-
         <eos-container>
             <div style="padding-top:15px">
                 <label class="control-fb control--checkbox"> Post clip link in chat
@@ -57,7 +51,7 @@ const clip = {
                 </label>
             </div>
 
-            <div style="padding-top:15px" ng-show="hasChannels">
+            <!--<div style="padding-top:15px" ng-show="hasChannels">
                 <label class="control-fb control--checkbox"> Post clip in Discord channel
                     <input type="checkbox" ng-model="effect.postInDiscord">
                     <div class="control__indicator"></div>
@@ -74,7 +68,7 @@ const clip = {
                     <input type="checkbox" ng-model="effect.download">
                     <div class="control__indicator"></div>
                 </label>
-            </div>
+            </div>-->
         </eos-container>
 
         <eos-container>

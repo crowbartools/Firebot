@@ -52,31 +52,12 @@ exports.createClip = async function(effect, trigger) {
         twitchChat.sendChatMessage("Creating clip...");
     }
 
-    let duration = 30;
-    if (effect.clipDuration != null) {
-        let normalizedDuration = effect.clipDuration
-            .toString()
-            .trim()
-            .replace("s", "");
-
-        if (!isNaN(normalizedDuration)) {
-            duration = parseInt(normalizedDuration);
-        }
-    }
-
-    // enforce limits
-    if (duration < 5) {
-        duration = 5;
-    } else if (duration > 60) {
-        duration = 60;
-    }
-
-    const clipProperties = await client.helix.clips.createClip({
+    const clipId = await client.helix.clips.createClip({
         channelId: channelId,
         createAfterDelay: true
     });
 
-    if (clipProperties == null) {
+    if (clipId == null) {
         if (effect.postLink) {
             twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
         }
@@ -84,24 +65,24 @@ exports.createClip = async function(effect, trigger) {
         return;
     }
 
-    const creationSuccessful = await client.helix.clips.getClipById(clipProperties);
+    const clip = await client.helix.clips.getClipById(clipId);
 
-    if (creationSuccessful) {
+    if (clip != null) {
         if (effect.postLink) {
-            const message = `${creationSuccessful.embedUrl}`;
+            const message = `${clip.embedUrl}`;
             twitchChat.sendChatMessage(message);
         }
 
         /** Discord embed has not been converted for twitch yet 6/28/20
         if (effect.postInDiscord) {
-            const clipEmbed = await discordEmbedBuilder.buildClipEmbed(clipProperties);
+            const clipEmbed = await discordEmbedBuilder.buildClipEmbed(clip);
             discord.sendDiscordMessage(effect.discordChannelId, "A new clip was created!", clipEmbed);
         }
          */
 
         if (effect.download) {
             try {
-                await downloadAndSaveClip(creationSuccessful);
+                //await downloadAndSaveClip(clip);
                 renderWindow.webContents.send('eventlog', {type: "general", username: "System:", event: `Successfully saved clip to download folder.`});
             } catch (e) {
                 renderWindow.webContents.send('eventlog', {type: "general", username: "System:", event: `Failed to download and save clip for reason: ${e}`});
