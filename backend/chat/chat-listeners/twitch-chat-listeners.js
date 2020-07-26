@@ -57,7 +57,7 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onSubGift((_channel, _user, giftSubInfo) => {
         const giftSubListener = require("../../events/twitch-events/gift-sub");
         giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName, giftSubInfo.displayName,
-            giftSubInfo.gifterGiftCount, giftSubInfo.plan, giftSubInfo.planName);
+            giftSubInfo.gifterGiftCount, giftSubInfo.plan, giftSubInfo.planName, giftSubInfo.months);
     });
 
     streamerChatClient.onRaid((_channel, _username, raidInfo) => {
