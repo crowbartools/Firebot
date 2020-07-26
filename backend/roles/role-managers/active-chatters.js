@@ -3,9 +3,6 @@
 const { ipcMain } = require("electron");
 const settings = require("../../common/settings-access").settings;
 const logger = require("../../logwrapper");
-const userDatabase = require("../../database/userDatabase");
-const twitchChat = require("../../chat/twitch-chat");
-
 // Active user toggle
 let activeUserListStatus = settings.getActiveChatUserListEnabled();
 
@@ -26,6 +23,8 @@ async function addOrUpdateActiveChatter(userId, username = "") {
     if (!activeUserListStatus) {
         return;
     }
+
+    const userDatabase = require("../../database/userDatabase");
 
     username = username.toLowerCase();
 
@@ -78,6 +77,7 @@ function getActiveChatters() {
 }
 
 function cycleActiveChatters() {
+    const twitchChat = require("../../chat/twitch-chat");
     let chatConnected = twitchChat.chatIsConnected();
     if (!chatConnected) {
         return;
