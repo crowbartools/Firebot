@@ -127,14 +127,13 @@ module.exports = {
         },
         entryMessages: {
             title: "Entry Messages",
-            description: "These are whispered",
             sortRank: 6,
             settings: {
                 onJoin: {
                     type: "string",
                     title: "On Join",
                     useTextArea: true,
-                    default: "You have joined the heist with {wager} {currency}!",
+                    default: "{user} has joined the heist with {wager} {currency}!",
                     tip: "Available variables: {user}, {wager}, {currency}",
                     sortRank: 1,
                     validation: {
@@ -145,7 +144,8 @@ module.exports = {
                     type: "string",
                     title: "Already Joined",
                     useTextArea: true,
-                    default: "You've already joined the heist team!",
+                    default: "{user}, you've already joined the heist team!",
+                    tip: "Available variables: {user}",
                     sortRank: 2,
                     validation: {
                         required: true
