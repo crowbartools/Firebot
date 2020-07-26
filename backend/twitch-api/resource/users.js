@@ -59,11 +59,11 @@ async function getUsersChatRoles(userIdOrName = "") {
             if (badge.id === "broadcaster") {
                 roles.push("broadcaster");
             } else if (badge.id === "subscriber" || badge.id === "founder") {
-                roles.push("subscriber");
+                roles.push("sub");
             } else if (badge.id === "vip") {
                 roles.push("vip");
             } else if (badge.id === "moderator") {
-                roles.push("moderator");
+                roles.push("mod");
             }
         }
     }
