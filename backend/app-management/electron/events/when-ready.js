@@ -30,6 +30,9 @@ exports.whenReady = async () => {
     const twitchClient = require("../../../twitch-api/client");
     twitchClient.setupTwitchClients();
 
+    const twitchFrontendListeners = require("../../../twitch-api/frontend-twitch-listeners");
+    twitchFrontendListeners.setupListeners();
+
     // load effects
     logger.debug("Loading effects...");
     const { loadEffects } = require("../../../effects/builtInEffectLoader");

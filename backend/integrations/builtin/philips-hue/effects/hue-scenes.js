@@ -8,15 +8,7 @@ const { EffectCategory } = require("../../../../../shared/effect-constants");
 
 const hueManager = require("../hue-manager");
 
-const integrationManager = require("../../../IntegrationManager");
-
-/**
- * The Delay effect
- */
 const effect = {
-    /**
-   * The definition of the Effect
-   */
     definition: {
         id: "hue:scenes",
         name: "Hue Scenes",
@@ -30,14 +22,7 @@ const effect = {
             EffectTrigger.ALL
         )
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
     globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
         <eos-container header="Activate Hue Scene">
             <ui-select ng-model="selectedScene" theme="bootstrap" on-select="sceneSelected($item)" style="margin-bottom:10px;">
@@ -54,9 +39,6 @@ const effect = {
             </ui-select>
         </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   */
     optionsController: ($scope, $q, backendCommunicator) => {
         $scope.hueScenes = [];
 
@@ -71,21 +53,14 @@ const effect = {
                     }
                 }
             });
+
         $scope.sceneSelected = (scene) => {
             if (scene) {
                 $scope.effect.sceneId = scene._data.id;
             }
         };
     },
-    /**
-   * When the effect is saved
-   */
-    optionsValidator: () => {
-
-    },
-    /**
-   * When the effect is triggered by something
-   */
+    optionsValidator: () => {},
     onTriggerEvent: async (event) => {
         const effect = event.effect;
         const sceneId = effect.sceneId;
