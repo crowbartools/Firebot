@@ -1,10 +1,9 @@
 "use strict";
 
-const channelAccess = require("../../../../../common/channel-access");
-
+const twitchUsers = require("../../../../../twitch-api/resource/users");
 const firebotRolesManager = require("../../../../../roles/firebot-roles-manager");
 const customRolesManager = require("../../../../../roles/custom-roles-manager");
-const mixerRolesManager = require("../../../../../../shared/mixer-roles");
+const twitchRolesManager = require("../../../../../../shared/twitch-roles");
 
 module.exports = {
     id: "firebot:viewerroles",
@@ -15,7 +14,7 @@ module.exports = {
     rightSideValueType: "preset",
     getRightSidePresetValues: viewerRolesService => {
         return viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getMixerRoles())
+            .concat(viewerRolesService.getTwitchRoles())
             .concat(viewerRolesService.getFirebotRoles())
             .map(r => {
                 return {
@@ -26,7 +25,7 @@ module.exports = {
     },
     valueIsStillValid: (condition, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getMixerRoles())
+            .concat(viewerRolesService.getTwitchRoles())
             .concat(viewerRolesService.getFirebotRoles());
 
         let role = allRoles.find(r => r.id === condition.rightSideValue);
@@ -35,7 +34,7 @@ module.exports = {
     },
     getRightSideValueDisplay: (condition, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getMixerRoles())
+            .concat(viewerRolesService.getTwitchRoles())
             .concat(viewerRolesService.getFirebotRoles());
 
         let role = allRoles.find(r => r.id === condition.rightSideValue);
@@ -55,14 +54,17 @@ module.exports = {
             username = trigger.metadata.username;
         }
 
-        let mixerUserRoles = await channelAccess.getViewersMixerRoles(username);
+        let twitchUserRoles = null;
+        if (twitchUserRoles == null) {
+            twitchUserRoles = await twitchUsers.getUsersChatRoles(username);
+        }
+
         let firebotUserRoles = firebotRolesManager.getAllFirebotRolesForViewer(username) || [];
         let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        let userMixerRoles = (mixerUserRoles || [])
-            .filter(mr => mr !== "User")
-            .map(mr => mixerRolesManager.mapMixerRole(mr));
+        let userTwitchRoles = (twitchUserRoles || [])
+            .map(r => twitchRolesManager.mapTwitchRole(r));
 
-        let allRoles = userCustomRoles.concat(firebotUserRoles).concat(userMixerRoles);
+        let allRoles = userCustomRoles.concat(firebotUserRoles).concat(userTwitchRoles);
 
         let hasRole = allRoles.some(r => r.id === rightSideValue);
 
