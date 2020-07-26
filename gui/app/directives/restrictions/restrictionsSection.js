@@ -58,8 +58,8 @@
                                 <i class="far fa-plus"></i> 
                         </div>
                     </div>
-                    <div>
-                        <label class="control-fb control--checkbox"> Send chat message when restrictions fail
+                    <div style="margin-top: 5px;">
+                        <label class="control-fb control--checkbox"> Send chat message if restrictions fail
                             <input type="checkbox" ng-model="$ctrl.restrictionData.sendFailMessage">
                             <div class="control__indicator"></div>
                         </label>
