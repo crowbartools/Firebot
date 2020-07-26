@@ -8,6 +8,10 @@ exports.setupListeners = () => {
     const client = twitchApi.getClient();
 
     frontendCommunicator.onAsync("search-twitch-games", async query => {
-        // query twitch api with client, return list of games
+        let games = await client.helix.games.getGameByName(query);
+        if (games != null) {
+            return games._data;
+        }
+        return;
     });
 };
