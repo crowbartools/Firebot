@@ -2,6 +2,7 @@
 const logger = require("../logwrapper");
 const twitchAuth = require("../auth/twitch-auth");
 const accountAccess = require("../common/account-access");
+const { TwitchAPICallType } = require("twitch/lib");
 
 const TwitchClient = require('twitch').default;
 

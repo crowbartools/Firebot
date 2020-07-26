@@ -58,6 +58,12 @@
                                 <i class="far fa-plus"></i> 
                         </div>
                     </div>
+                    <div style="margin-top: 5px;">
+                        <label class="control-fb control--checkbox"> Send chat message if restrictions fail
+                            <input type="checkbox" ng-model="$ctrl.restrictionData.sendFailMessage">
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
                 </div>
             `,
             controller: function(utilityService, backendCommunicator) {
@@ -95,7 +101,8 @@
                     if ($ctrl.restrictionData == null) {
                         $ctrl.restrictionData = {
                             restrictions: [],
-                            mode: "all"
+                            mode: "all",
+                            sendFailMessage: true
                         };
                     }
 
@@ -105,6 +112,10 @@
 
                     if ($ctrl.restrictionData.restrictions == null) {
                         $ctrl.restrictionData.restrictions = [];
+                    }
+
+                    if ($ctrl.restrictionData.sendFailMessage == null) {
+                        $ctrl.restrictionData.sendFailMessage = true;
                     }
 
                     updateCanAddMoreRestrictions();
@@ -124,9 +135,7 @@
                 $ctrl.showAddRestrictionModal = function() {
 
                     let options = restrictionDefinitions
-                        /*.filter(r => {
-                            return !$ctrl.restrictionData.restrictions.some(rs => rs.type === r.definition.id);
-                        })*/
+                        .filter(r => !r.definition.hidden)
                         .map(r => {
                             return {
                                 id: r.definition.id,

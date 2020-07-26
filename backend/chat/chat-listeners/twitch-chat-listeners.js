@@ -7,9 +7,9 @@ const activeUserHandler = require("./active-user-handler");
 
 /** @arg {import('twitch-chat-client/lib/ChatClient').default} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
-    streamerChatClient.onPrivmsg(async (_channel, _user, _message, msg) => {
+    streamerChatClient.onPrivmsg(async (_channel, _user, messageText, msg) => {
 
-        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg);
+        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
         // send to the frontend
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
@@ -27,18 +27,13 @@ exports.setupChatListeners = (streamerChatClient) => {
         }
     });
 
-    streamerChatClient.onWhisper(async (_user, _message, msg) => {
-        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, true);
+    streamerChatClient.onWhisper(async (_user, messageText, msg) => {
+        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
     });
 
-    streamerChatClient.onAction(async (_channel, _user, _message, msg) => {
-        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, false, true);
-        frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
-    });
-
-    streamerChatClient.onAction(async (_channel, _user, _message, msg) => {
-        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, false, true);
+    streamerChatClient.onAction(async (_channel, _user, messageText, msg) => {
+        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, false, true);
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
     });
 
@@ -62,7 +57,7 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onSubGift((_channel, _user, giftSubInfo) => {
         const giftSubListener = require("../../events/twitch-events/gift-sub");
         giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName, giftSubInfo.displayName,
-            giftSubInfo.gifterGiftCount, giftSubInfo.plan, giftSubInfo.planName);
+            giftSubInfo.gifterGiftCount, giftSubInfo.plan, giftSubInfo.planName, giftSubInfo.months);
     });
 
     streamerChatClient.onRaid((_channel, _username, raidInfo) => {

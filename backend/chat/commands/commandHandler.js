@@ -332,8 +332,12 @@ async function handleChatMessage(firebotChatMessage) {
             } else {
                 reason = restrictionReason;
             }
+
             logger.debug(`${commandSender} could not use command '${command.trigger}' because: ${reason}`);
-            twitchChat.sendChatMessage("Sorry ${commandSender}, you cannot use this command because: " + reason);
+            if (restrictionData.sendFailMessage || restrictionData.sendFailMessage == null) {
+                twitchChat.sendChatMessage(`Sorry ${commandSender}, you cannot use this command because: ${reason}`);
+            }
+
             return false;
         }
     }
@@ -348,9 +352,9 @@ async function handleChatMessage(firebotChatMessage) {
 
     if (remainingCooldown > 0) {
         logger.debug("Command is still on cooldown, alerting viewer...");
-        twitchChat.sendChatMessage(
-            "This command is still on cooldown for: " +
-        util.secondsForHumans(remainingCooldown));
+        if (command.sendCooldownMessage || command.sendCooldownMessage == null) {
+            twitchChat.sendChatMessage(`${commandSender}, this command is still on cooldown for: ${util.secondsForHumans(remainingCooldown)}`);
+        }
         return false;
     }
 

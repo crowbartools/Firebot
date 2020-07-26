@@ -7,14 +7,14 @@ const model = {
         id: "firebot:channelprogression",
         name: "Channel Progression",
         description: "Restrict based on Channel Progression rank.",
+        hidden: true,
         triggers: []
     },
     optionsTemplate: `
         <div>
-            <div id="minimumRank" class="mixplay-header" style="padding: 0 0 4px 0">
-                MINIMUM RANK
-            </div>
-            <input type="number" class="form-control" aria-describedby="minimumRank" ng-model="restriction.minimumRank" placeholder="Enter minimum rank" min="0" max="99">  
+            <div class="alert alert-danger">
+                This restriction only worked on Mixer. It now does nothing and can be removed.
+            </div> 
         </div>
     `,
     optionsController: ($scope) => {
@@ -31,24 +31,7 @@ const model = {
     */
     predicate: (triggerData, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-
-            let level = 0;
-            if (triggerData.type === "command") {
-                level = triggerData.metadata.chatEvent.user_ascension_level;
-            } else {
-                let username = triggerData.metadata.username;
-
-                let progressionData = await channelAccess.getChannelProgressionByUsername(username);
-                level = progressionData.level;
-            }
-
-            let passed = level >= restrictionData.minimumRank;
-
-            if (passed) {
-                resolve();
-            } else {
-                reject("You don't meet the minimum channel progression rank");
-            }
+            resolve();
         });
     },
     /*

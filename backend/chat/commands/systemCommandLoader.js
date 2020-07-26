@@ -25,8 +25,4 @@ exports.loadCommands = () => {
     commandManager.registerSystemCommand(mixerLink);
 
     currencyManager.createAllCurrencyCommands();
-
-    // Deprecated
-    const mixerage = require("./builtin/mixerage");
-    commandManager.registerSystemCommand(mixerage);
 };

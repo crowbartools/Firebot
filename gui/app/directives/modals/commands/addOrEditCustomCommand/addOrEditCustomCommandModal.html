@@ -68,6 +68,13 @@
                 <input class="form-control" type="number" min="0" placeholder="secs"
                     ng-model="$ctrl.command.cooldown.user">
             </div>
+
+            <div style="margin-top: 5px;">
+                <label class="control-fb control--checkbox"> Send chat message if on cooldown
+                    <input type="checkbox" ng-model="$ctrl.command.sendCooldownMessage">
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
         </div>
 
         <div style="padding-bottom:1em">
@@ -104,15 +111,9 @@
                         <div class="control__indicator"></div>
                     </label>
                     <!--<label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone uses this command'"></tooltip>
-                    <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
-                    <div class="control__indicator"></div>
-                </label>-->
-                    <label class="control-fb control--checkbox">Allow in Costream Channels <tooltip
-                            text="'Allow this command to be used by anyone in a costream chat. If unchecked only viewers in your channel can use this command.'">
-                        </tooltip>
-                        <input type="checkbox" ng-model="$ctrl.command.allowInCostreams" aria-label="...">
+                        <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
                         <div class="control__indicator"></div>
-                    </label>
+                    </label>-->
                     <label class="control-fb control--checkbox">Hidden <tooltip
                             text="'Hide this command from the !commands list'"></tooltip>
                         <input type="checkbox" ng-model="$ctrl.command.hidden" aria-label="...">

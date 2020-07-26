@@ -13,18 +13,11 @@ const discord = require("../../integrations/builtin/discord/discord-message-send
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-/**
- * The Clip effect
- */
 const clip = {
-    /**
-   * The definition of the Effect
-   */
     definition: {
         id: "firebot:clip",
         name: "Create Clip",
-        description: "Creates a clip on Mixer.",
-        hidden: !streamerAccount.loggedIn || !streamerAccount.canClip,
+        description: "Creates a clip on Twitch.",
         icon: "fad fa-film",
         categories: [EffectCategory.COMMON, EffectCategory.FUN],
         dependencies: [EffectDependency.CHAT],
@@ -34,21 +27,8 @@ const clip = {
             EffectTrigger.ALL
         )
     },
-    /**
-   * Global settings that will be available in the Settings tab
-   */
     globalSettings: {},
-    /**
-   * The HTML template for the Options view (ie options when effect is added to something such as a button.
-   * You can alternatively supply a url to a html file via optionTemplateUrl
-   */
     optionsTemplate: `
-        <eos-container header="Clip Duration" pad-top="true">
-            <p>The duration of the clip in seconds (default 30s, min 5s, max 300s)</p>
-            <input ng-model="effect.clipDuration" type="text" class="form-control" placeholder="Enter duration" replace-variables="number">
-            <p ng-show="trigger == 'command'" class="muted" style="font-size:12px;margin-top:6px;"><b>ProTip:</b> Use <b>$ensureNumber[$arg, 30]</b> to allow viewers to specify a clip duration but default to 30 if they don't provide one. Example: !clip 60</p>
-        </eos-container>
-
         <eos-container>
             <div style="padding-top:15px">
                 <label class="control-fb control--checkbox"> Post clip link in chat
@@ -57,7 +37,7 @@ const clip = {
                 </label>
             </div>
 
-            <div style="padding-top:15px" ng-show="hasChannels">
+            <!--<div style="padding-top:15px" ng-show="hasChannels">
                 <label class="control-fb control--checkbox"> Post clip in Discord channel
                     <input type="checkbox" ng-model="effect.postInDiscord">
                     <div class="control__indicator"></div>
@@ -74,7 +54,7 @@ const clip = {
                     <input type="checkbox" ng-model="effect.download">
                     <div class="control__indicator"></div>
                 </label>
-            </div>
+            </div>-->
         </eos-container>
 
         <eos-container>
@@ -83,9 +63,6 @@ const clip = {
             </div>
         </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   */
     optionsController: ($scope, $q, backendCommunicator) => {
         if ($scope.effect.clipDuration == null) {
             $scope.effect.clipDuration = 30;
@@ -113,9 +90,6 @@ const clip = {
                 }
             });
     },
-    /**
-   * When the effect is triggered by something
-   */
     optionsValidator: effect => {
         let errors = [];
         if (effect.postInDiscord && effect.discordChannelId == null) {
@@ -123,9 +97,6 @@ const clip = {
         }
         return errors;
     },
-    /**
-   * When the effect is triggered by something
-   */
     onTriggerEvent: async event => {
         return await clipProcessor.createClip(event.effect, event.trigger);
     }

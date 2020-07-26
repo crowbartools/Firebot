@@ -1,25 +1,20 @@
 "use strict";
 
 const channelAccess = require("../../common/channel-access");
+const { ResolvedKeybinding } = require("custom-electron-titlebar/lib/common/keyCodes");
 
 const model = {
     definition: {
         id: "firebot:channel-audience",
         name: "Channel Audience",
         description: "Restricts based on the current channel audience (Family/Teen/18+).",
+        hidden: true,
         triggers: []
     },
     optionsTemplate: `
         <div>
-            <div id="channelAudience" class="mixplay-header" style="padding: 0 0 4px 0">
-                Audience Type
-            </div>
-            <div>
-                <select class="fb-select" ng-model="restriction.audience">    
-                    <option label="Family Friendly" value="family">Family Friendly</option>
-                    <option label="Teen" value="teen">Teen</option>
-                    <option label="18+" value="18+">18+</option>
-                </select>
+            <div class="alert alert-danger">
+                This restriction only worked on Mixer. It now does nothing and can be removed.
             </div>
         </div>
     `,
@@ -46,22 +41,7 @@ const model = {
     */
     predicate: (_, restrictionData) => {
         return new Promise(async (resolve, reject) => {
-            let passed = false;
-
-            if (restrictionData.audience == null) {
-                restrictionData.audience = "18+";
-            }
-
-            let channelAudience = await channelAccess.getStreamerAudience();
-            if (channelAudience == null || restrictionData.audience === channelAudience) {
-                passed = true;
-            }
-
-            if (passed) {
-                resolve();
-            } else {
-                reject("Channel is not set to the required audience level.");
-            }
+            resolve();
         });
     },
     /*

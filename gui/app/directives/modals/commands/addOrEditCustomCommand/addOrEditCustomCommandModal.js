@@ -19,6 +19,7 @@
 
             $ctrl.command = {
                 active: true,
+                sendCooldownMessage: true,
                 cooldown: {},
                 effects: {}
             };
@@ -32,6 +33,10 @@
 
                 if ($ctrl.command.ignoreBot === undefined) {
                     $ctrl.command.ignoreBot = true;
+                }
+
+                if ($ctrl.command.sendCooldownMessage == null) {
+                    $ctrl.command.sendCooldownMessage = true;
                 }
 
                 let modalId = $ctrl.resolve.modalId;

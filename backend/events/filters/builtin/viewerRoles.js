@@ -1,27 +1,22 @@
 "use strict";
 
-const channelAccess = require("../../../common/channel-access");
+const twitchUsers = require("../../../twitch-api/resource/users");
 
 const customRolesManager = require("../../../roles/custom-roles-manager");
-const mixerRolesManager = require("../../../../shared/mixer-roles");
+const twitchRolesManager = require("../../../../shared/twitch-roles");
 
 module.exports = {
     id: "firebot:viewerroles",
     name: "Viewer's Roles",
     description: "Filter to a given viewer role",
     events: [
-        { eventSourceId: "mixer", eventId: "chat-message" },
-        { eventSourceId: "mixer", eventId: "subscribed" },
-        { eventSourceId: "mixer", eventId: "resub" },
-        { eventSourceId: "mixer", eventId: "hosted" },
-        { eventSourceId: "mixer", eventId: "followed" },
-        { eventSourceId: "mixer", eventId: "user-joined-mixplay" },
-        { eventSourceId: "mixer", eventId: "user-joined-chat" },
-        { eventSourceId: "mixer", eventId: "user-left-chat" },
-        { eventSourceId: "mixer", eventId: "messages-purged" },
-        { eventSourceId: "mixer", eventId: "user-banned" },
-        { eventSourceId: "mixer", eventId: "skill" },
-        { eventSourceId: "mixer", eventId: "viewer-arrived" },
+        { eventSourceId: "twitch", eventId: "cheer" },
+        { eventSourceId: "twitch", eventId: "subs-gifted" },
+        { eventSourceId: "twitch", eventId: "sub" },
+        { eventSourceId: "twitch", eventId: "follow" },
+        { eventSourceId: "twitch", eventId: "raid" },
+        { eventSourceId: "twitch", eventId: "host" },
+        { eventSourceId: "twitch", eventId: "viewer-arrived" },
         { eventSourceId: "streamloots", eventId: "purchase" },
         { eventSourceId: "streamloots", eventId: "redemption" },
         { eventSourceId: "firebot", eventId: "view-time-update" }
@@ -31,14 +26,14 @@ module.exports = {
     presetValues: viewerRolesService => {
         return viewerRolesService
             .getCustomRoles()
-            .concat(viewerRolesService.getMixerRoles())
+            .concat(viewerRolesService.getTwitchRoles())
             .map(r => ({value: r.id, display: r.name}));
 
     },
     valueIsStillValid: (filterSettings, viewerRolesService) => {
         let allRoles = viewerRolesService
             .getCustomRoles()
-            .concat(viewerRolesService.getMixerRoles());
+            .concat(viewerRolesService.getTwitchRoles());
 
         let role = allRoles.find(r => r.id === filterSettings.value);
 
@@ -46,7 +41,7 @@ module.exports = {
     },
     getSelectedValueDisplay: (filterSettings, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getMixerRoles());
+            .concat(viewerRolesService.getTwitchRoles());
 
         let role = allRoles.find(r => r.id === filterSettings.value);
 
@@ -66,17 +61,16 @@ module.exports = {
             return false;
         }
 
-        let mixerUserRoles = eventMeta.data && (eventMeta.data.user_roles || eventMeta.data.userRoles);
-        if (mixerUserRoles == null) {
-            mixerUserRoles = await channelAccess.getViewersMixerRoles(username);
+        let twitchUserRoles = null;
+        if (twitchUserRoles == null) {
+            twitchUserRoles = await twitchUsers.getUsersChatRoles(username);
         }
 
         let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        let userMixerRoles = (mixerUserRoles || [])
-            .filter(mr => mr !== "User")
-            .map(mr => mixerRolesManager.mapMixerRole(mr));
+        let userTwitchRoles = (twitchUserRoles || [])
+            .map(r => twitchRolesManager.mapTwitchRole(r));
 
-        let allRoles = userCustomRoles.concat(userMixerRoles);
+        let allRoles = userCustomRoles.concat(userTwitchRoles);
 
         let hasRole = allRoles.some(r => r.id === value);
 

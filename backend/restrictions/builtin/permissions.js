@@ -105,9 +105,12 @@ const model = {
                 let userTwitchRoles = (triggerData.metadata.userTwitchRoles || [])
                     .map(mr => twitchRolesManager.mapTwitchRole(mr));
 
-                let allRoles = userCustomRoles.concat(userTwitchRoles);
+                let allRoles = userCustomRoles.concat(userTwitchRoles).filter(r => r != null);
 
-                let expectedRoleIds = restrictionData.roleIds;
+                let expectedRoleIds = restrictionData.roleIds || [];
+
+                // convert any mixer roles to twitch roles
+                expectedRoleIds = expectedRoleIds.map(r => twitchRolesManager.mapMixerRoleIdToTwitchRoleId(r));
 
                 let hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
 

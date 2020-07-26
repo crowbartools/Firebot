@@ -52,38 +52,33 @@ const spinCommand = {
             const username = userCommand.commandSender;
 
             if (activeSpinners.get(username)) {
-                twitchChat.sendChatMessage("The slot machine is actively working!", null, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`${username}, your slot machine is actively working!`, null, chatter);
                 return;
             }
 
             let cooldownExpireTime = cooldownCache.get(username);
             if (cooldownExpireTime && moment().isBefore(cooldownExpireTime)) {
                 const timeRemainingDisplay = util.secondsForHumans(Math.abs(moment().diff(cooldownExpireTime, 'seconds')));
-                twitchChat.sendChatMessage(`The slot machine is currently on cooldown. Time remaining: ${timeRemainingDisplay}`, null, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`${username}, your slot machine is currently on cooldown. Time remaining: ${timeRemainingDisplay}`, null, chatter);
                 return;
             }
 
             if (wagerAmount < 1) {
-                twitchChat.sendChatMessage("Wager amount must be more than 0.", null, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`${username}, your wager amount must be more than 0.`, null, chatter);
                 return;
             }
 
             const minWager = slotsSettings.settings.currencySettings.minWager;
             if (minWager != null & minWager > 0) {
                 if (wagerAmount < minWager) {
-                    twitchChat.sendChatMessage(`Wager amount must be at least ${minWager}.`, null, chatter);
-                    twitchChat.deleteMessage(chatEvent.id);
+                    twitchChat.sendChatMessage(`${username}, your wager amount must be at least ${minWager}.`, null, chatter);
                     return;
                 }
             }
             const maxWager = slotsSettings.settings.currencySettings.maxWager;
             if (maxWager != null & maxWager > 0) {
                 if (wagerAmount > maxWager) {
-                    twitchChat.sendChatMessage(`Wager amount can be no more than ${maxWager}.`, null, chatter);
-                    twitchChat.deleteMessage(chatEvent.id);
+                    twitchChat.sendChatMessage(`${username}, your wager amount can be no more than ${maxWager}.`, null, chatter);
                     return;
                 }
             }
@@ -93,8 +88,7 @@ const spinCommand = {
             const currencyId = slotsSettings.settings.currencySettings.currencyId;
             const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
             if (userBalance < wagerAmount) {
-                twitchChat.sendChatMessage("You don't have enough to wager this amount!", null, chatter);
-                twitchChat.deleteMessage(chatEvent.id);
+                twitchChat.sendChatMessage(`${username}, you don't have enough to wager this amount!`, null, chatter);
                 activeSpinners.del(username);
                 return;
             }
@@ -136,12 +130,11 @@ const spinCommand = {
 
             const currency = currencyDatabase.getCurrencyById(currencyId);
 
-            twitchChat.sendChatMessage(`${username} hit ${successfulRolls} out of 3 and won ${util.commafy(winnings)} ${currency.name}.`, null, chatter);
+            twitchChat.sendChatMessage(`${username} hit ${successfulRolls} out of 3 and won ${util.commafy(winnings)} ${currency.name}!`, null, chatter);
 
             activeSpinners.del(username);
         } else {
             twitchChat.sendChatMessage(`Incorrect spin usage: ${userCommand.trigger} [wagerAmount]`, null, chatter);
-            twitchChat.deleteMessage(chatEvent.id);
         }
     }
 };
