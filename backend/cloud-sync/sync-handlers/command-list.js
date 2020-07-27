@@ -11,7 +11,8 @@ async function getCommandListForSync(username, userRoles) {
 
     for (let cmd of allCommands) {
         if (!cmd.active || cmd.hidden) continue;
-        if (username == null || userRoles == null) {
+        commandData.allowedCmds.push(cmd);
+        /*if (username == null || userRoles == null) {
             commandData.allowedCmds.push(cmd);
         } else {
 
@@ -21,7 +22,7 @@ async function getCommandListForSync(username, userRoles) {
             if (userHasPermission && cmd.active !== false) {
                 commandData.allowedCmds.push(cmd);
             }
-        }
+        }*/
     }
 
     // Filter!
