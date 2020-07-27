@@ -47,6 +47,20 @@ async function getChannelInformation(broadcasterId) {
     }
 }
 
+async function updateChannelInformation(title = undefined, gameId = undefined) {
+    const client = twitchApi.getClient();
+    await client.callAPI({
+        type: TwitchAPICallType.Helix,
+        method: "PATCH",
+        url: "channels",
+        query: {
+            "broadcaster_id": accountAccess.getAccounts().streamer.userId,
+            "title": title,
+            "game_id": gameId
+        }
+    });
+}
+
 /**
  * Get channel info (game, title, etc) for the given username
  * @param {string} username The id of the broadcaster to get channel info for.
@@ -75,3 +89,4 @@ async function getChannelInformationByUsername(username) {
 
 exports.getChannelInformation = getChannelInformation;
 exports.getChannelInformationByUsername = getChannelInformationByUsername;
+exports.updateChannelInformation = updateChannelInformation;

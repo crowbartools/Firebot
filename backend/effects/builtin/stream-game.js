@@ -6,7 +6,7 @@ const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
-const channelAccess = require("../../common/channel-access");
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -41,13 +41,13 @@ const model = {
             <ui-select ng-model="selectedGame" theme="bootstrap" spinner-enabled="true" on-select="gameSelected($item)" style="margin-bottom:10px;">
                 <ui-select-match placeholder="Search for game">
                     <div style="height: 21px; display:flex; flex-direction: row; align-items: center;">
-                        <img style="height: 21px; width: 21px; border-radius: 5px; margin-right:5px;" ng-src="{{$select.selected.coverUrl}}">
+                        <img style="height: 21px; width: 21px; border-radius: 5px; margin-right:5px;" ng-src="{{$select.selected.boxArtUrl}}">
                         <div style="font-weight: 100;font-size: 17px;">{{$select.selected.name}}</div>
                     </div>
                 </ui-select-match>
                 <ui-select-choices minimum-input-length="1" repeat="game in games | filter: $select.search" refresh="searchGames($select.search)" refresh-delay="400" style="position:relative;">
                     <div style="height: 35px; display:flex; flex-direction: row; align-items: center;">
-                        <img style="height: 30px; width: 30px; border-radius: 5px; margin-right:10px;" ng-src="{{game.coverUrl}}">
+                        <img style="height: 30px; width: 30px; border-radius: 5px; margin-right:10px;" ng-src="{{game.boxArtUrl}}">
                         <div style="font-weight: 100;font-size: 17px;">{{game.name}}</div>
                     </div>                                  
                 </ui-select-choices>
@@ -59,25 +59,26 @@ const model = {
             <input ng-model="effect.gameName" class="form-control" type="text" placeholder="Enter game name" replace-variables>
         </eos-container>
     `,
-    optionsController: ($scope, $http) => {
+    optionsController: ($scope, $q, backendCommunicator) => {
         if ($scope.effect.mode == null) {
             $scope.effect.mode = "specific";
         }
         $scope.games = [];
         $scope.searchGames = function(gameQuery) {
-            return $http.get('https://mixer.com/api/v1/types', {
-                params: {
-                    query: gameQuery
-                }
-            }).then(function(response) {
-                $scope.games = response.data;
-            });
+            $q.when(backendCommunicator.fireEventAsync("search-twitch-games", gameQuery))
+                .then(games => {
+                    if (games != null) {
+                        $scope.games = games;
+                    }
+                });
         };
 
         if ($scope.effect.mode === "specific" && $scope.effect.gameId != null) {
-            $http.get(`https://mixer.com/api/v1/types/${$scope.effect.gameId}`)
-                .then(function(response) {
-                    $scope.selectedGame = response.data;
+            $q.when(backendCommunicator.fireEventAsync("get-twitch-game", $scope.effect.gameId))
+                .then(game => {
+                    if (game != null) {
+                        $scope.selectedGame = game;
+                    }
                 });
         }
 
@@ -98,9 +99,12 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.mode === "specific") {
-            await channelAccess.setStreamGameById(event.effect.gameId);
+            await twitchApi.channels.updateChannelInformation(undefined, event.effect.gameId);
         } else {
-            await channelAccess.setStreamGameByName(event.effect.gameName);
+            const categories = await twitchApi.categories.searchCategories(event.effect.gameName);
+            if (categories && categories.length > 0) {
+                await twitchApi.channels.updateChannelInformation(undefined, categories[0].id);
+            }
         }
         return true;
     }

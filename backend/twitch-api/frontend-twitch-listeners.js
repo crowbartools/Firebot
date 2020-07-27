@@ -1,17 +1,16 @@
 "use strict";
 
-const twitchApi = require("./client");
-
+const twitchCategories = require("./resource/categories");
 const frontendCommunicator = require("../common/frontend-communicator");
 
 exports.setupListeners = () => {
-    const client = twitchApi.getClient();
 
-    frontendCommunicator.onAsync("search-twitch-games", async query => {
-        let games = await client.helix.games.getGameByName(query);
-        if (games != null) {
-            return games._data;
-        }
-        return;
+    frontendCommunicator.onAsync("search-twitch-games", query => {
+        return twitchCategories.searchCategories(query);
     });
+
+    frontendCommunicator.onAsync("get-twitch-game", gameId => {
+        return twitchCategories.getCategoryById(gameId);
+    });
+
 };
