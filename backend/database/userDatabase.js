@@ -6,7 +6,6 @@ const moment = require("moment");
 const { ipcMain } = require("electron");
 const { settings } = require("../common/settings-access.js");
 const currencyDatabase = require("./currencyDatabase");
-const mixplay = require("../interactive/mixplay");
 const twitchChat = require("../chat/twitch-chat");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
@@ -190,10 +189,6 @@ function userViewTimeUpdate(user, previousTotalMinutes, newTotalMinutes) {
     let newHours = newTotalMinutes > 0 ? parseInt(newTotalMinutes / 60) : 0;
     if (newHours < 1) return;
     if (newHours !== previousHours) {
-
-        mixplay.updateParticipantWithData(user._id, {
-            viewTime: `${util.commafy(newHours)} hrs`
-        });
 
         eventManager.triggerEvent("firebot", "view-time-update", {
             username: user.username,
@@ -603,7 +598,6 @@ function incrementDbField(userId, fieldName) {
                 if (updatedDoc != null) {
                     let updateObj = {};
                     updateObj[fieldName] = util.commafy(updatedDoc[fieldName]);
-                    mixplay.updateParticipantWithData(userId, updateObj);
                 }
             }
             resolve();
@@ -661,10 +655,6 @@ frontendCommunicator.on("updateViewerDataField", (data) => {
     db.update({ _id: userId }, { $set: updateObject }, { returnUpdatedDocs: true }, function(err, _, updatedDoc) {
         if (err) {
             logger.error("Error updating user.", err);
-        } else {
-            if (updatedDoc != null) {
-                mixplay.updateParticipantWithUserData(updatedDoc);
-            }
         }
     });
 });
