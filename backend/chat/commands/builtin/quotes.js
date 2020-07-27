@@ -27,6 +27,16 @@ const quotesManagement = {
                 tip: "Variables: {id}, {text}, {author}, {game}, {date}",
                 default: `Quote {id}: "{text}" - @{author} [{game}] [{date}]`,
                 useTextArea: true
+            },
+            quoteDateFormat: {
+                type: "enum",
+                title: "Quote Date Format",
+                description: "How dates should be formatted for the 'editdate' mod command.",
+                options: [
+                    "MM/DD/YYYY",
+                    "DD/MM/YYYY"
+                ],
+                default: "MM/DD/YYYY"
             }
         },
         subCommands: [
@@ -95,6 +105,44 @@ const quotesManagement = {
                 arg: "edituser",
                 usage: "edituser [quoteId] [newUsername]",
                 description: "Edit the user of the given quote.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "mod",
+                                "broadcaster"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "editgame",
+                usage: "editgame [quoteId] [newGame]",
+                minArgs: 3,
+                description: "Edit the game of the given quote.",
+                restrictionData: {
+                    restrictions: [
+                        {
+                            id: "sys-cmd-mods-only-perms",
+                            type: "firebot:permissions",
+                            mode: "roles",
+                            roleIds: [
+                                "mod",
+                                "broadcaster"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                arg: "editdate",
+                usage: "editdate [quoteId] [newDate]",
+                minArgs: 3,
+                description: "Edit the date of the given quote.",
                 restrictionData: {
                     restrictions: [
                         {
@@ -284,6 +332,90 @@ const quotesManagement = {
 
                 const newText = args.slice(2).join(" ");
                 quote.text = newText;
+
+                try {
+                    await quotesManager.updateQuote(quote);
+                } catch (err) {
+                    twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
+                    return resolve();
+                }
+
+                let formattedQuote = getFormattedQuoteString(quote);
+                twitchChat.sendChatMessage(
+                    `Edited ${formattedQuote}`
+                );
+
+                // resolve promise
+                return resolve();
+            }
+            case "editgame": {
+                if (args.length < 3) {
+                    twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editgame [quoteId] [newGame]`);
+                    return resolve();
+                }
+
+                let quoteId = parseInt(args[1]);
+                if (isNaN(quoteId)) {
+                    twitchChat.sendChatMessage(`Invalid Quote Id!`);
+                    return resolve();
+                }
+
+                const quote = await quotesManager.getQuote(quoteId);
+
+                if (quote == null) {
+                    twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                    return resolve();
+                }
+
+                const newGameName = args.slice(2).join(" ");
+                quote.game = newGameName;
+
+                try {
+                    await quotesManager.updateQuote(quote);
+                } catch (err) {
+                    twitchChat.sendChatMessage(`Failed to update quote ${quoteId}!`);
+                    return resolve();
+                }
+
+                let formattedQuote = getFormattedQuoteString(quote);
+                twitchChat.sendChatMessage(
+                    `Edited ${formattedQuote}`
+                );
+
+                // resolve promise
+                return resolve();
+            }
+            case "editdate": {
+
+                const dateFormat = commandOptions.quoteDateFormat;
+
+                if (args.length < 3) {
+                    twitchChat.sendChatMessage(`Invalid usage! ${event.userCommand.trigger} editdate [quoteId] ${dateFormat}`);
+                    return resolve();
+                }
+
+                let quoteId = parseInt(args[1]);
+                if (isNaN(quoteId)) {
+                    twitchChat.sendChatMessage(`Invalid Quote Id!`);
+                    return resolve();
+                }
+
+                const quote = await quotesManager.getQuote(quoteId);
+
+                if (quote == null) {
+                    twitchChat.sendChatMessage(`Cannot find quote with id ${quoteId}`);
+                    return resolve();
+                }
+
+                const newDate = args.slice(2).join(" ");
+
+                const date = moment(newDate, dateFormat);
+                if (!date.isValid()) {
+                    twitchChat.sendChatMessage(`Invalid date format!`);
+                    return resolve();
+                }
+
+                quote.createdAt = date.toISOString();
 
                 try {
                     await quotesManager.updateQuote(quote);
