@@ -376,7 +376,7 @@ function createCurrencyCommandDefinition(currency) {
                 }
                 currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust);
                 twitchChat.sendChatMessage(
-                    `Added ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` to everyone! :hype-bot`
+                    `Added ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` to everyone!`
                 );
 
 
@@ -393,7 +393,7 @@ function createCurrencyCommandDefinition(currency) {
                 }
                 currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust);
                 twitchChat.sendChatMessage(
-                    `Removed ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` from everyone! :bork-bot`
+                    `Removed ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` from everyone!`
                 );
 
 
