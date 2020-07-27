@@ -83,7 +83,7 @@ const playVideo = {
             <file-chooser model="effect.file" options="{ filters: [ {name: 'Video', extensions: ['mp4', 'webm', 'ogv']} ]}"></file-chooser>
         </div>
         <div ng-show="effect.videoType == 'YouTube Video'" class="input-group">
-            <span class="input-group-addon">YouTube ID</span>
+            <span class="input-group-addon">YouTube Url/ID</span>
             <input
                 type="text"
                 class="form-control"
@@ -182,7 +182,7 @@ const playVideo = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, listenerService, utilityService) => {
+    optionsController: ($scope, $rootScope, $timeout, utilityService) => {
         $scope.showOverlayInfoModal = function(overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
@@ -202,6 +202,9 @@ const playVideo = {
         // Set Video Type
         $scope.setVideoType = function(type) {
             $scope.effect.videoType = type;
+            $timeout(function() {
+                $rootScope.$broadcast("rzSliderForceRender");
+            }, 1000);
         };
 
         if ($scope.effect.volume == null) {
@@ -451,6 +454,31 @@ const playVideo = {
                     let wrappedHtml = getPositionWrappedHTML(wrapperId, positionData, youtubeElement); // eslint-disable-line no-undef
 
                     $('.wrapper').append(wrappedHtml);
+
+
+                    try {
+                        const url = new URL(youtubeId);
+                        if (url.hostname.includes("www.youtube.com")) {
+                            for (const [key, value] of url.searchParams) {
+                                if (key === "v") {
+                                    youtubeId = value;
+                                } else if (key === "t") {
+                                    videoStarttime = value;
+                                }
+                            }
+                        }
+                        if (url.hostname.includes("youtu.be")) {
+                            youtubeId = url.pathname.replace("/", "");
+                            for (const [key, value] of url.searchParams) {
+                                if (key === "t") {
+                                    videoStarttime = value;
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        //failed to convert url
+                    }
+
 
                     // Add iframe.
 

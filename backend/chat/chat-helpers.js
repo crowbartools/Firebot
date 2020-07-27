@@ -82,6 +82,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         id: uuid(),
         username: streamer.displayName,
         userId: streamer.userId,
+        rawText: text,
         profilePicUrl: streamer.avatar,
         whisper: false,
         action: false,
@@ -198,12 +199,12 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
     firebotChatMessage.isSubscriber = msg.userInfo.isSubscriber;
     firebotChatMessage.isVip = msg.userInfo.isVip;
 
-    if (streamer.loggedIn && firebotChatMessage.username === streamer.username) {
+    if (streamer.loggedIn && firebotChatMessage.username === streamer.displayName) {
         firebotChatMessage.isBroadcaster = true;
         firebotChatMessage.roles.push("broadcaster");
     }
 
-    if (bot.loggedIn && firebotChatMessage.username === bot.username) {
+    if (bot.loggedIn && firebotChatMessage.username === bot.displayName) {
         firebotChatMessage.isBot = true;
         firebotChatMessage.roles.push("bot");
     }

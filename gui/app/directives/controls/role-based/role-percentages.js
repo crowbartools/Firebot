@@ -56,7 +56,7 @@
                 };
 
                 $ctrl.openAddRoleModal = () => {
-                    let allRoles = viewerRolesService.getMixerRoles().concat(viewerRolesService.getCustomRoles());
+                    let allRoles = viewerRolesService.getTwitchRoles().concat(viewerRolesService.getCustomRoles());
 
                     let options = allRoles
                         .filter(r =>

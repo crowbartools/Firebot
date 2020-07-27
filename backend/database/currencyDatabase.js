@@ -9,7 +9,6 @@ const customRolesManager = require("../roles/custom-roles-manager");
 const mixerRolesManager = require("../../shared/mixer-roles");
 const firebotRolesManager = require("../roles/firebot-roles-manager");
 const util = require("../utility");
-const mixplay = require("../interactive/mixplay");
 
 let currencyCache = {};
 
@@ -92,7 +91,6 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
             } else {
                 let updateObj = {};
                 updateObj[`currency:${currencyId}`] = util.commafy(valueToSet);
-                mixplay.updateParticipantWithData(user._id, updateObj);
             }
             return resolve();
         });

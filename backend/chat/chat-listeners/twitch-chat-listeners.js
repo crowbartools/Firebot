@@ -5,6 +5,15 @@ const commandHandler = require("../commands/commandHandler");
 const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 
+
+/** @arg {import('twitch-chat-client/lib/ChatClient').default} botChatClient */
+exports.setupBotChatListeners = (botChatClient) => {
+    botChatClient.onWhisper(async (_user, messageText, msg) => {
+        const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
+        commandHandler.handleChatMessage(firebotChatMessage);
+    });
+};
+
 /** @arg {import('twitch-chat-client/lib/ChatClient').default} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrivmsg(async (_channel, _user, messageText, msg) => {
@@ -29,6 +38,9 @@ exports.setupChatListeners = (streamerChatClient) => {
 
     streamerChatClient.onWhisper(async (_user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, true);
+
+        commandHandler.handleChatMessage(firebotChatMessage);
+
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
     });
 

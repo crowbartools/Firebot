@@ -69,8 +69,8 @@
                     ng-model="$ctrl.command.cooldown.user">
             </div>
 
-            <div style="margin-top: 5px;">
-                <label class="control-fb control--checkbox"> Send chat message if on cooldown
+            <div style="margin-top: 5px;" ng-show="$ctrl.command.cooldown.global > 0 || $ctrl.command.cooldown.user > 0">
+                <label class="control-fb control--checkbox"> Send chat message when on cooldown
                     <input type="checkbox" ng-model="$ctrl.command.sendCooldownMessage">
                     <div class="control__indicator"></div>
                 </label>

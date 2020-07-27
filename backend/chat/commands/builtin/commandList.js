@@ -34,14 +34,10 @@ const commandList = {
 
         if (binId == null) {
             twitchChat.sendChatMessage(
-                "There are no commands that you are allowed to run.",
-                event.userCommand.commandSender
-            );
+                `${event.chatMessage.username}, there are no commands that you are allowed to run.`, null, "Bot");
         } else {
             twitchChat.sendChatMessage(
-                `Here is a list of the commands you can use. https://firebot.app/profile?id=${binId}`,
-                event.userCommand.commandSender
-            );
+                `You can view the list of commands here: https://firebot.app/profile?id=${binId}`, null, "Bot");
         }
     }
 };

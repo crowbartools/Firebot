@@ -8,6 +8,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");
 const twitchChatListeners = require("./chat-listeners/twitch-chat-listeners");
 const followPoll = require("../twitch-api/follow-poll");
+const commandHandler = require("./commands/commandHandler");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -99,6 +100,8 @@ class TwitchChat extends EventEmitter {
 
             this._botChatClient.onRegister(() => this._botChatClient.join(streamer.username));
 
+            twitchChatListeners.setupBotChatListeners(this._botChatClient);
+
             await this._botChatClient.connect();
         } catch (error) {
             logger.error("Error joining streamers chat channel with Bot account", error);
@@ -120,6 +123,7 @@ class TwitchChat extends EventEmitter {
 
             if (accountType === 'streamer' && !message.startsWith("/")) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
+                commandHandler.handleChatMessage(firebotChatMessage);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
             }
         } catch (error) {
@@ -133,7 +137,7 @@ class TwitchChat extends EventEmitter {
      * @param {string} accountType The type of account to whisper with ('streamer' or 'bot')
      */
     async _whisper(message, username = "", accountType) {
-        const chatClient = this._streamerChatClient;
+        const chatClient = accountType === 'bot' ? this._botChatClient : this._streamerChatClient;
         try {
             logger.debug(`Sending whisper as ${accountType} to ${username}.`);
 
@@ -163,14 +167,15 @@ class TwitchChat extends EventEmitter {
             accountType = accountType.toLowerCase();
         }
 
+        const shouldWhisper = username != null && username.trim() !== "";
+
         const botAvailable = accountAccess.getAccounts().bot.loggedIn && this._botChatClient && this._botChatClient.isConnected;
         if (accountType == null) {
-            accountType = botAvailable ? "bot" : "streamer";
+            accountType = botAvailable && !shouldWhisper ? "bot" : "streamer";
         } else if (accountType === "bot" && !botAvailable) {
             accountType = "streamer";
         }
 
-        const shouldWhisper = username != null && username.trim() !== "";
 
         // split message into fragments that don't exceed the max message length
         const messageFragments = message.match(/[\s\S]{1,500}/g)
