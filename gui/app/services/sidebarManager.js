@@ -24,9 +24,6 @@
                 //hack that somewhat helps with the autoupdate slider styling issues on first load
                 $timeout(function() {
                     $rootScope.$broadcast("rzSliderForceRender");
-                });
-                $timeout(function() {
-                    $rootScope.$broadcast("rzSliderForceRender");
                 }, 50);
             };
 
