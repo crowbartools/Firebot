@@ -8,6 +8,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");
 const twitchChatListeners = require("./chat-listeners/twitch-chat-listeners");
 const followPoll = require("../twitch-api/follow-poll");
+const commandHandler = require("./commands/commandHandler");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -99,6 +100,8 @@ class TwitchChat extends EventEmitter {
 
             this._botChatClient.onRegister(() => this._botChatClient.join(streamer.username));
 
+            twitchChatListeners.setupBotChatListeners(this._botChatClient);
+
             await this._botChatClient.connect();
         } catch (error) {
             logger.error("Error joining streamers chat channel with Bot account", error);
@@ -120,6 +123,7 @@ class TwitchChat extends EventEmitter {
 
             if (accountType === 'streamer' && !message.startsWith("/")) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
+                commandHandler.handleChatMessage(firebotChatMessage);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
             }
         } catch (error) {

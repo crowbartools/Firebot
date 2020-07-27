@@ -82,6 +82,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         id: uuid(),
         username: streamer.displayName,
         userId: streamer.userId,
+        rawText: text,
         profilePicUrl: streamer.avatar,
         whisper: false,
         action: false,
