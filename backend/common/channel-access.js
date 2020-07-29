@@ -4,7 +4,7 @@
 const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
 const twitchApi = require('../twitch-api/client');
-
+const twitchChat = require('../chat/twitch-chat');
 const deepmerge = require("deepmerge");
 const uuidv4 = require("uuid/v4");
 const NodeCache = require("node-cache");
@@ -170,23 +170,19 @@ exports.updateUserRole = async (userId, role, addOrRemove) => {
 };
 
 exports.modUser = async username => {
-    //TODO: Needs to be updated for twitch.
-    return null;
+    return twitchChat.mod(username);
 };
 
 exports.unmodUser = async username => {
-    //TODO: Needs to be updated for twitch.
-    return null;
+    return twitchChat.unmod(username);
 };
 
 exports.banUser = async username => {
-    //TODO: Needs to be updated for twitch.
-    return null;
+    return twitchChat.ban(username);
 };
 
 exports.unbanUser = async username => {
-    //TODO: Needs to be updated for twitch.
-    return null;
+    return twitchChat.unban(username);
 };
 
 exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) => {
