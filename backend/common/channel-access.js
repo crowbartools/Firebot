@@ -1,12 +1,9 @@
+/* eslint-disable no-warning-comments */
 "use strict";
 
 const logger = require('../logwrapper');
 const accountAccess = require("../common/account-access");
-const mixerApi = require("../api-access");
 const twitchApi = require('../twitch-api/client');
-const client = twitchApi.getClient();
-
-const api = require("../mixer-api/api");
 
 const deepmerge = require("deepmerge");
 const uuidv4 = require("uuid/v4");
@@ -18,8 +15,17 @@ let linkHeaderParser = require('parse-link-header');
 let streamerChannelData;
 
 exports.refreshStreamerChannelData = async () => {
-    let streamerData = accountAccess.getAccounts().streamer;
-    streamerChannelData = await this.getMixerAccountDetailsByUsername(streamerData.username);
+    const client = twitchApi.getClient();
+    if (client == null) {
+        return;
+    }
+
+    let channel = await client.kraken.channels.getMyChannel();
+    let channelData = channel._data;
+    let streamData = await channel.getStream();
+    channelData.stream = streamData;
+
+    streamerChannelData = channelData;
 };
 
 exports.updateStreamerChannelData = async (newData) => {
@@ -40,6 +46,7 @@ exports.getStreamerChannelData = async () => {
 };
 
 exports.getFollowDateForUser = async username => {
+    const client = twitchApi.getClient();
     const streamerData = accountAccess.getAccounts().streamer;
     const userId = (await client.kraken.users.getUserByName(username)).id;
     const channelId = (await client.kraken.users.getUserByName(streamerData.username)).id;
@@ -53,252 +60,141 @@ exports.getFollowDateForUser = async username => {
 };
 
 exports.getStreamerSubBadge = async () => {
-    if (!streamerChannelData || !streamerChannelData.badge) {
-        return null;
-    }
-    return streamerChannelData.badge.url;
+    // TODO: For Twitch this should return an array of sub badges?
+    return null;
 };
 
 exports.getStreamerOnlineStatus = async () => {
-    if (streamerChannelData == null) {
+    await this.refreshStreamerChannelData();
+
+    if (streamerChannelData.stream == null) {
         return false;
     }
 
-    return streamerChannelData.online === true;
+    return true;
 };
 
 exports.getStreamerAudience = async () => {
-    if (streamerChannelData == null) {
-        return null;
-    }
-
-    return streamerChannelData.audience;
+    //TODO: Audience means something else on twitch.
+    return null;
 };
 
 exports.setStreamerAudience = async (audience) => {
-    await api.channels.updateStreamersChannel({
-        audience: audience
-    });
+    //TODO: Audience means something else on twitch.
 };
 
 exports.getStreamerGameData = async () => {
-    if (streamerChannelData == null) {
+    if (streamerChannelData.game == null) {
         return null;
     }
 
-    return streamerChannelData.type;
+    return streamerChannelData.game;
 };
 
 exports.setStreamGameById = async typeId => {
-    await api.channels.updateStreamersChannel({
-        typeId: typeId
-    });
+    await twitchApi.channels.updateChannelInformation(undefined, typeId);
 };
 
 exports.setStreamGameByName = async typeNameQuery => {
-    const types = await api.types.searchChannelTypes(typeNameQuery);
-    if (types.length > 0) {
-        await api.channels.updateStreamersChannel({
-            typeId: types[0].id
-        });
+    const categories = await twitchApi.categories.searchCategories(typeNameQuery);
+    if (categories && categories.length > 0) {
+        await twitchApi.channels.updateChannelInformation(undefined, categories[0].id);
     }
 };
 
 exports.setStreamTitle = async newTitle => {
-    await api.channels.updateStreamersChannel({
-        name: newTitle
+    const { TwitchAPICallType } = require('twitch/lib');
+    const client = twitchApi.getClient();
+
+    await client.callAPI({
+        type: TwitchAPICallType.Helix,
+        method: "PATCH",
+        url: "channels",
+        query: {
+            "broadcaster_id": accountAccess.getAccounts().streamer.userId,
+            "title": newTitle
+        }
     });
 };
 
 const viewerRoleCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
 exports.getViewersMixerRoles = async username => {
-
-    let cachedRoles = viewerRoleCache.get(username);
-    if (cachedRoles != null) {
-        return cachedRoles;
-    }
-
-    let idData = await exports.getIdsFromUsername(username);
-
-    if (idData == null) {
-        return [];
-    }
-
-    let chatUser = await exports.getChatUser(idData.userId);
-
-    if (chatUser == null) {
-        return [];
-    }
-
-    let userRoles = chatUser.userRoles || [];
-
-    viewerRoleCache.set(username, userRoles);
-
-    return chatUser.userRoles;
+    return [];
 };
 
 exports.getChatUser = async userId => {
-    let streamerData = accountAccess.getAccounts().streamer;
-    try {
-        return await mixerApi.get(`chats/${streamerData.channelId}/users/${userId}`, "v1", false, true);
-    } catch (err) {
+    const client = twitchApi.getClient();
+    let user = client.kraken.users.getUser(userId);
+
+    if (user == null) {
         return null;
     }
+
+    return user;
 };
 
 exports.getIdsFromUsername = async username => {
+    //TODO: This should probably just return the user id only.
     try {
-        let ids = await mixerApi.get(`channels/${username}?fields=id,userId`, "v1", false, false);
+        const client = twitchApi.getClient();
+        let user = client.kraken.users.getUserByName(username);
         return {
-            channelId: ids.id,
-            userId: ids.userId
+            userId: user.id
         };
-
     } catch (err) {
         return null;
     }
 };
 
 exports.getMixerAccountDetailsByUsername = async username => {
-
-    let userData = await mixerApi.get(
-        `channels/${username}`,
-        "v1",
-        false,
-        false
-    );
-
-    if (userData == null) {
-        return null;
-    }
-
-    return userData;
+    return null;
 };
 
 exports.getMixerAccountDetailsById = channelIdOrUsername => {
-    return exports.getMixerAccountDetailsByUsername(channelIdOrUsername);
+    return null;
 };
-
 
 exports.getChannelProgressionByUsername = async function(username) {
-
-    let idData = await exports.getIdsFromUsername(username);
-
-    if (idData == null) {
-        return null;
-    }
-
-    return exports.getChannelProgressionForUser(idData.userId);
+    return null;
 };
 
-function getContinuationToken(linkHeader) {
-    let parsed = linkHeaderParser(linkHeader);
-    if (parsed.next) {
-        return parsed.next.continuationToken;
-    }
-    return null;
-}
-
 exports.getCurrentViewerList = function(users, continuationToken = null, namesOnly = false) {
-    if (users == null) {
-        users = [];
-    }
-    return new Promise(async (resolve, reject) => {
-
-        let streamerChannelId = accountAccess.getAccounts().streamer.channelId;
-        let urlRoute = `chats/${streamerChannelId}/users?limit=100`;
-
-        if (continuationToken) {
-            let encodedToken = encodeURIComponent(continuationToken);
-            urlRoute += `&continuationToken=${encodedToken}`;
-        }
-
-        let response;
-        try {
-            response = await mixerApi.get(urlRoute, "v2", true, true);
-        } catch (err) {
-            return reject(err);
-        }
-
-        let userlistParsed = response.body;
-        if (Array.isArray(userlistParsed)) {
-            let userlistMapped = userlistParsed.map(u => {
-                return namesOnly ? u.username : {
-                    userId: u.userId,
-                    username: u.username,
-                    user_roles: u.userRoles // eslint-disable-line camelcase
-                };
-            });
-
-            users = users.concat(userlistMapped);
-        }
-
-        let linkHeader = response.headers.link;
-        if (linkHeader) {
-            let newContinuationToken = getContinuationToken(linkHeader);
-            resolve(exports.getCurrentViewerList(users, newContinuationToken, namesOnly));
-        } else {
-            resolve(users);
-        }
-    });
+    //TODO: Needs to be updated for twitch.
+    users = [];
+    return users;
 };
 
 exports.updateUserRole = async (userId, role, addOrRemove) => {
-
-    if (userId == null || (role !== "Mod" && role !== "Banned")) return;
-
-    let streamerData = accountAccess.getAccounts().streamer;
-
-    let body = {};
-    let key = addOrRemove ? "add" : "remove";
-    body[key] = [role];
-
-    try {
-        await mixerApi.patch(`channels/${streamerData.channelId}/users/${userId}`, body);
-    } catch (err) {
-        logger.error("Error while updating user roles", err);
-    }
+    //TODO: Needs to be updated for twitch.
 };
 
 exports.modUser = async username => {
-    const ids = await exports.getIdsFromUsername(username);
-    return api.channels.updateUserRoles(ids.userId, ["Mod"]);
+    //TODO: Needs to be updated for twitch.
+    return null;
 };
 
 exports.unmodUser = async username => {
-    const ids = await exports.getIdsFromUsername(username);
-    return api.channels.updateUserRoles(ids.userId, null, ["Mod"]);
+    //TODO: Needs to be updated for twitch.
+    return null;
 };
 
 exports.banUser = async username => {
-    const ids = await exports.getIdsFromUsername(username);
-    return api.channels.updateUserRoles(ids.userId, ["Banned"]);
+    //TODO: Needs to be updated for twitch.
+    return null;
 };
 
 exports.unbanUser = async username => {
-    const ids = await exports.getIdsFromUsername(username);
-    return api.channels.updateUserRoles(ids.userId, null, ["Banned"]);
+    //TODO: Needs to be updated for twitch.
+    return null;
 };
 
 exports.toggleFollowOnChannel = async (channelIdToFollow, shouldFollow = true) => {
-
-    let streamerUserId = accountAccess.getAccounts().streamer.userId;
-
-    try {
-        if (shouldFollow) {
-            await mixerApi.post(`channels/${channelIdToFollow}/follow`, {
-                user: streamerUserId
-            });
-        } else {
-            await mixerApi.delete(`channels/${channelIdToFollow}/follow?user=${streamerUserId}`);
-        }
-    } catch (err) {
-        logger.error("Error while following/unfollowing channel", err);
-    }
+    //TODO: Needs to be updated for twitch.
 };
 
 async function startAdBreak(adLength) {
+    const client = twitchApi.getClient();
     const streamerAccount = accountAccess.getAccounts().streamer;
     const channelId = (await client.helix.users.getUserByName(streamerAccount.username)).id;
 

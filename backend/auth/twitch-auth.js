@@ -38,6 +38,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'channel:read:subscriptions',
         'channel_commercial',
         'channel_editor',
+        'channel_read',
         'chat:edit',
         'chat:read',
         'clips:edit',

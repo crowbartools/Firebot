@@ -403,6 +403,10 @@ function addNewUserFromChat(userDetails) {
 async function setChatUsersOnline() {
     const viewers = await channelAccess.getCurrentViewerList();
 
+    if (viewers == null) {
+        return;
+    }
+
     for (const viewer of viewers) {
 
         // Here we convert the viewer list viewer object to one that matches
