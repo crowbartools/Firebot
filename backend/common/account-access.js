@@ -70,25 +70,6 @@ function sendAccoutUpdate() {
 async function updateStreamerAccountSettings(streamerAccount) {
     if (streamerAccount == null || streamerAccount.channelId == null) return null;
 
-    /*const channelAccess = require('../common/channel-access');
-
-    const channelData = await channelAccess.getMixerAccountDetailsById(streamerAccount.channelId);
-    streamerAccount.partnered = channelData.partnered;
-
-    try {
-        const subBadgeUrl = await channelAccess.getChannelSubBadge(channelData.user.username);
-        streamerAccount.subBadge = subBadgeUrl;
-    } catch (error) {
-        logger.warn("Unable to get sub badge url");
-    }
-
-    try {
-        const canClip = await channelAccess.getChannelHasClipsEnabled(channelData.id, channelData.user.groups);
-        streamerAccount.canClip = canClip;
-    } catch (error) {
-        logger.warn("Unable to determine if channel can clip");
-    }*/
-
     return streamerAccount;
 }
 

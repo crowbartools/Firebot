@@ -147,18 +147,6 @@ exports.getIdsFromUsername = async username => {
     }
 };
 
-exports.getMixerAccountDetailsByUsername = async username => {
-    return null;
-};
-
-exports.getMixerAccountDetailsById = channelIdOrUsername => {
-    return null;
-};
-
-exports.getChannelProgressionByUsername = async function(username) {
-    return null;
-};
-
 exports.getCurrentViewerList = function(users, continuationToken = null, namesOnly = false) {
     //TODO: Needs to be updated for twitch.
     users = [];
