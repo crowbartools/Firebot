@@ -253,6 +253,10 @@ const twitchChat = new TwitchChat();
 frontendCommunicator.on("send-chat-message", sendData => {
     const { message, accountType } = sendData;
 
+    // Run commands from firebot chat.
+    let firebotMessage = chatHelpers.buildFirebotChatMessageFromText(message);
+    commandHandler.handleChatMessage(firebotMessage);
+
     twitchChat.sendChatMessage(message, null, accountType);
 });
 
