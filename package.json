@@ -1,7 +1,7 @@
 {
     "name": "firebotv5",
     "version": "5.16.3",
-    "description": "An application for mixer.com that celebrates and promotes interactive controls.",
+    "description": "A chat bot for streamers on various services.",
     "main": "main.js",
     "scripts": {
         "start": "grunt scss && electron . --dev --js-flags=\"--harmony\"",
@@ -11,13 +11,13 @@
     },
     "repository": "https://github.com/crowbartools/Firebot",
     "keywords": [
-        "mixer",
-        "mixer.com",
+        "twitch",
+        "twitch.tv",
         "stream",
         "streaming",
         "electron"
     ],
-    "author": "A Mixer Community Project",
+    "author": "The Streaming Community",
     "license": "GPL-3.0",
     "devDependencies": {
         "electron": "^7.2.4",
