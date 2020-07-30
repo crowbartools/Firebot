@@ -63,7 +63,7 @@ const BOT_ACCOUNT_PROVIDER = {
         tokenPath: TOKEN_PATH,
         authorizePath: AUTHORIZE_PATH
     },
-    scopes: 'channel:moderate chat:edit chat:read whispers:edit'
+    scopes: 'channel:moderate chat:edit chat:read whispers:edit channel_read'
 };
 
 exports.registerTwitchAuthProviders = () => {
