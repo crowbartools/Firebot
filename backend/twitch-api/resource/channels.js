@@ -53,13 +53,16 @@ async function getOnlineStatus(username) {
         return false;
     }
 
-    let stream = await client.helix.streams.getStreamByUserName(username);
-
-    if (stream == null) {
-        return false;
+    try {
+        const stream = await client.helix.streams.getStreamByUserName(username);
+        if (stream != null) {
+            return true;
+        }
+    } catch (error) {
+        logger.error("Error while trying to get streamers broadcast", error);
     }
 
-    return true;
+    return false;
 }
 
 async function updateChannelInformation(title = undefined, gameId = undefined) {
