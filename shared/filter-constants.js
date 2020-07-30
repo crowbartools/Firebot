@@ -8,6 +8,10 @@ const ComparisonType = Object.freeze({
     LESS_THAN: "less than",
     LESS_THAN_OR_EQUAL_TO: "less than or equal to",
     CONTAINS: "contains",
+    DOESNT_STARTS_WITH: "doesn't start with",
+    STARTS_WITH: "starts with",
+    DOESNT_END_WITH: "doesn't end with",
+    ENDS_WITH: "ends with",
     MATCHES_REGEX: "matches regex"
 });
 

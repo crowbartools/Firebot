@@ -78,6 +78,17 @@ module.exports = {
                 username: "Firebot",
                 totalMonths: 0
             }
+        },
+        {
+            id: "chat-message",
+            name: "Chat Message",
+            description: "When someone chats in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                messageText: "Test message"
+            }
         }
     ]
 };
