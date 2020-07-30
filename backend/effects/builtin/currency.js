@@ -1,7 +1,7 @@
 "use strict";
 
 const currencyDatabase = require("../../database/currencyDatabase");
-const chatProcessor = require("../../common/handlers/chatProcessor");
+const twitchChat = require("../../chat/twitch-chat");
 const logger = require("../../logwrapper");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
@@ -271,7 +271,8 @@ const currency = {
 
                 // Send chat if we have it.
                 if (event.effect.sendChat) {
-                    chatProcessor.send(event.effect, event.trigger);
+                    const { message, whisper, chatter } = event.effect;
+                    twitchChat.sendChatMessage(message, whisper, chatter);
                 }
             } catch (error) {
                 logger.error("Error updating currency", error);
