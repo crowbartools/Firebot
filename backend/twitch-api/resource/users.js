@@ -74,5 +74,22 @@ async function getUsersChatRoles(userIdOrName = "") {
     return roles;
 }
 
+async function getFollowDateForUser(username) {
+    const client = twitchApi.getClient();
+    const streamerData = accountAccess.getAccounts().streamer;
+
+    const userId = (await client.kraken.users.getUserByName(username)).id;
+    const channelId = (await client.kraken.users.getUserByName(streamerData.username)).id;
+
+    const followerDate = (await client.kraken.users.getFollowedChannel(userId, channelId)).followDate;
+
+    if (followerDate == null || followerDate.length < 1) {
+        return null;
+    }
+
+    return new Date(followerDate);
+}
+
 exports.getUsersChatRoles = getUsersChatRoles;
+exports.getFollowDateForUser = getFollowDateForUser;
 
