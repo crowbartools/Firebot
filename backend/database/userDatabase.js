@@ -638,12 +638,12 @@ frontendCommunicator.onAsync("getViewerDetails", (userId) => {
 
 frontendCommunicator.on("updateViewerRole", (data) => {
     const { userId, role, addOrRemove } = data;
-    twitchApi.users.updateUserRole(userId, role, addOrRemove);
+    //await twitchApi.users.updateUserRole(userId, role, addOrRemove);
 });
 
 frontendCommunicator.on("toggleFollowOnChannel", (data) => {
     const { channelIdToFollow, shouldFollow } = data;
-    twitchApi.users.toggleFollowOnChannel(channelIdToFollow, shouldFollow);
+    //await twitchApi.users.toggleFollowOnChannel(channelIdToFollow, shouldFollow);
 });
 
 frontendCommunicator.on("updateViewerDataField", (data) => {

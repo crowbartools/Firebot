@@ -77,6 +77,7 @@ async function getUsersChatRoles(userIdOrName = "") {
 async function updateUserRole(userId, role, addOrRemove) {
     // eslint-disable-next-line no-warning-comments
     //TODO: Needs to be updated for twitch.
+    return true;
 }
 
 async function getFollowDateForUser(username) {
@@ -116,6 +117,7 @@ async function doesUserFollowChannel(username, channelName) {
 async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
     // eslint-disable-next-line no-warning-comments
     //TODO: Needs to be updated for twitch.
+    return true;
 }
 
 exports.getUserChatInfoByName = getUserChatInfoByName;

@@ -154,7 +154,7 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
         case "/settitle": {
             messageArray.splice(0, 1);
             let title = messageArray.join(" ");
-            twitchApi.channels.updateChannelInformation(title);
+            await twitchApi.channels.updateChannelInformation(title);
             break;
         }
         case "/setgame": {
