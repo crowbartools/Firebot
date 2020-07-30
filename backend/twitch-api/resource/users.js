@@ -74,6 +74,11 @@ async function getUsersChatRoles(userIdOrName = "") {
     return roles;
 }
 
+async function updateUserRole(userId, role, addOrRemove) {
+    // eslint-disable-next-line no-warning-comments
+    //TODO: Needs to be updated for twitch.
+}
+
 async function getFollowDateForUser(username) {
     const client = twitchApi.getClient();
     const streamerData = accountAccess.getAccounts().streamer;
@@ -90,6 +95,32 @@ async function getFollowDateForUser(username) {
     return new Date(followerDate);
 }
 
+async function doesUserFollowChannel(username, channelName) {
+    const client = twitchApi.getClient();
+
+    const userId = (await client.kraken.users.getUserByName(username)).id;
+    const channelId = (await client.kraken.users.getUserByName(channelName)).id;
+
+    if (userId == null || channelId == null) {
+        return false;
+    }
+
+    const followerDate = (await client.kraken.users.getFollowedChannel(userId, channelId)).followDate;
+    if (followerDate == null || followerDate.length < 1) {
+        return false;
+    }
+
+    return true;
+}
+
+async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
+    // eslint-disable-next-line no-warning-comments
+    //TODO: Needs to be updated for twitch.
+}
+
+exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.getFollowDateForUser = getFollowDateForUser;
-
+exports.toggleFollowOnChannel = toggleFollowOnChannel;
+exports.updateUserRole = updateUserRole;
+exports.doesUserFollowChannel = doesUserFollowChannel;

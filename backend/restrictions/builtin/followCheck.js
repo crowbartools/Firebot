@@ -34,10 +34,10 @@ const model = {
         return new Promise(async (resolve, reject) => {
             const userAccess = require("../../common/user-access");
 
-            let triggerUserId = trigger.metadata.userId || "";
+            let triggerUsername = trigger.metadata.username || "";
             let followListString = restrictionData.value || "";
 
-            if (triggerUserId === "", followListString === "") {
+            if (triggerUsername === "", followListString === "") {
                 return resolve();
             }
 
@@ -45,7 +45,7 @@ const model = {
                 .filter(f => f != null)
                 .map(f => f.toLowerCase().trim());
 
-            let followCheck = await userAccess.userFollowsChannels(triggerUserId, followCheckList);
+            let followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList);
 
             if (followCheck) {
                 return resolve();

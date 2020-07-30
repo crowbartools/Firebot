@@ -246,6 +246,13 @@ class TwitchChat extends EventEmitter {
         if (this._streamerChatClient == null || !streamer.loggedIn) return;
         this._streamerChatClient.timeout(streamer.username, username, duration, reason);
     }
+
+    getViewerList() {
+        // eslint-disable-next-line no-warning-comments
+        //TODO: Needs updated for twitch.
+        let users = [];
+        return users;
+    }
 }
 
 const twitchChat = new TwitchChat();

@@ -6,8 +6,7 @@ const { EffectDependency, EffectTrigger } = effectModels;
 const { EffectCategory } = require('../../../shared/effect-constants');
 
 const accountAccess = require("../../common/account-access");
-
-const channelAccess = require("../../common/channel-access");
+const twitchApi = require("../../twitch-api/api");
 
 const model = {
     definition: {
@@ -70,7 +69,7 @@ const model = {
             adLength = 30;
         }
 
-        await channelAccess.triggerAdBreak(adLength);
+        await twitchApi.channels.triggerAdBreak(adLength);
         return true;
     }
 };

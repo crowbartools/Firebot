@@ -33,7 +33,7 @@ let moderationService = null;
 function startModerationService() {
     if (moderationService != null) return;
 
-    const chat = require("../chat");
+    const chat = require("../twitch-chat");
 
     let servicePath = require("path").resolve(__dirname, "./moderation-service.js");
 
