@@ -1,15 +1,16 @@
 "use strict";
 
 const { ipcMain } = require("electron");
-const profileManager = require("../profile-manager");
 const logger = require("../../logwrapper");
 const replaceVariableManager = require("../../variables/replace-variable-manager");
 const emotesManager = require("../emotes-manager");
 const accountAccess = require("../account-access");
 const imgProbe = require('probe-image-size');
-const channelAccess = require("../channel-access");
+
 const mixerApi = require("../../mixer-api/api");
-const chat = require("../../chat/chat");
+
+const twitchApi = require("../../twitch-api/api");
+const twitchChat = require("../../chat/twitch-chat");
 
 // This will parse the message string and build an array of Arg numbers the user wants to use.
 function parseArg(str) {
@@ -125,55 +126,43 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
 
         switch (command) {
         case "/clear":
-            chat.clearChat();
-            break;
-        case "/giveaway":
-            chat.startGiveaway();
+            twitchChat.clearChat();
             break;
         case "/timeout": {
             logger.debug("timing out user " + target + " for " + arg2);
-            chat.timeoutUser(target, arg2);
+            twitchChat.timeoutUser(target, arg2);
             break;
         }
         case "/ban":
-            channelAccess.banUser(target);
+            twitchChat.banUser(target);
             break;
         case "/unban":
-            channelAccess.unbanUser(target);
+            twitchChat.unbanUser(target);
             break;
         case "/mod":
-            channelAccess.modUser(target);
+            twitchChat.modUser(target);
             break;
         case "/unmod":
-            channelAccess.unmodUser(target);
+            twitchChat.unmodUser(target);
             break;
         case "/purge":
-            chat.purgeUserMessages(target);
+            twitchChat.timeoutUser(target, 1);
             break;
         case "/ad":
-            channelAccess.triggerAdBreak();
+            await twitchApi.channels.triggerAdBreak();
             break;
         case "/settitle": {
             messageArray.splice(0, 1);
             let title = messageArray.join(" ");
-            channelAccess.setStreamTitle(title);
+            await twitchApi.channels.updateChannelInformation(title);
             break;
         }
         case "/setgame": {
             messageArray.splice(0, 1);
-            let game = messageArray.join(" ");
-            channelAccess.setStreamGameByName(game);
-            break;
-        }
-        case "/setaudience": {
-            let normalizedArg = arg1 != null ? arg1.toLowerCase() : "";
-            if (
-                normalizedArg === "family" ||
-                normalizedArg === "teen" ||
-                normalizedArg === "18+"
-            ) {
-                channelAccess.setStreamerAudience(normalizedArg);
-            }
+            const game = messageArray.join(" ");
+            const categories = await twitchApi.categories.searchCategories(game);
+            await twitchApi.channels.updateChannelInformation(undefined, categories[0].id);
+
             break;
         }
         case "/whisper":
@@ -186,7 +175,7 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
 
             try {
                 // Send to mixer.
-                chat.sendChatMessage(messageArray.join(" "), whisper, chatter);
+                twitchChat.sendChatMessage(messageArray.join(" "), whisper, chatter);
 
                 // Send to UI to inject outgoing whisper.
                 injectWhisper(chatter, whisper, messageArray.join(" "));
@@ -216,7 +205,7 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
 
                 if (messageText.length > 0) {
 
-                    chat.sendChatMessage(messageText, target, chatter);
+                    twitchChat.sendChatMessage(messageText, target, chatter);
 
                     // Send to UI to inject outgoing whisper.
                     injectWhisper(chatter, target, messageText);
@@ -230,7 +219,7 @@ async function textProcessor(effect, trigger, populateReplaceVars = true) {
             // Whispers and broadcasts
             // This occurs if a whisper is sent via button chat effect, or if a regular chat message is sent via chat effect or chat window.
             logger.debug("attempting to send chat");
-            chat.sendChatMessage(message, whisper, chatter);
+            twitchChat.sendChatMessage(message, whisper, chatter);
         }
     } catch (err) {
         renderWindow.webContents.send(
@@ -441,7 +430,7 @@ async function uiChatUserRefresh() {
     let chatUsers;
 
     try {
-        chatUsers = await channelAccess.getCurrentViewerList();
+        chatUsers = await twitchChat.getViewerList();
     } catch (err) {
         logger.warn(err);
         return;
@@ -457,7 +446,7 @@ async function uiChatUserRefresh() {
     logger.info('Chat userlist refreshed.');
 }
 
-chat.on("connected", async () => {
+twitchChat.on("connected", async () => {
     await uiGetChatHistory();
     await uiChatUserRefresh();
 });

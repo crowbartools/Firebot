@@ -69,7 +69,7 @@ exports.createClip = async function(effect, trigger) {
 
     if (clip != null) {
         if (effect.postLink) {
-            const message = `${clip.embedUrl}`;
+            const message = `${clip.url}`;
             twitchChat.sendChatMessage(message);
         }
 

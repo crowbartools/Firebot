@@ -9,10 +9,11 @@ const currencyDatabase = require("./currencyDatabase");
 const twitchChat = require("../chat/twitch-chat");
 const frontendCommunicator = require("../common/frontend-communicator");
 const userAccess = require("../common/user-access");
-const channelAccess = require("../common/channel-access");
 const eventManager = require("../events/EventManager");
 const accountAccess = require("../common/account-access");
 const util = require("../utility");
+
+const twitchApi = require("../twitch-api/api");
 
 /**
  * @type Datastore
@@ -401,7 +402,11 @@ function addNewUserFromChat(userDetails) {
 
 // Sets chat users online using the same function we use to get the chat viewer list for the ui.
 async function setChatUsersOnline() {
-    const viewers = await channelAccess.getCurrentViewerList();
+    const viewers = await twitchChat.getViewerList();
+
+    if (viewers == null) {
+        return;
+    }
 
     for (const viewer of viewers) {
 
@@ -631,19 +636,14 @@ frontendCommunicator.onAsync("getViewerDetails", (userId) => {
     return userAccess.getUserDetails(userId);
 });
 
-frontendCommunicator.onAsync("updateUserHearts", (data) => {
-    const { userId, amount } = data;
-    return channelAccess.giveHeartsToUser(userId, amount);
-});
-
 frontendCommunicator.on("updateViewerRole", (data) => {
     const { userId, role, addOrRemove } = data;
-    channelAccess.updateUserRole(userId, role, addOrRemove);
+    //await twitchApi.users.updateUserRole(userId, role, addOrRemove);
 });
 
 frontendCommunicator.on("toggleFollowOnChannel", (data) => {
     const { channelIdToFollow, shouldFollow } = data;
-    channelAccess.toggleFollowOnChannel(channelIdToFollow, shouldFollow);
+    //await twitchApi.users.toggleFollowOnChannel(channelIdToFollow, shouldFollow);
 });
 
 frontendCommunicator.on("updateViewerDataField", (data) => {

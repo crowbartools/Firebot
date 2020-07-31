@@ -54,7 +54,7 @@
             };
 
             $ctrl.delete = function() {
-                if ($ctrl.timer) return;
+                if ($ctrl.timer == null) return;
                 $ctrl.close({ $value: { timer: $ctrl.timer, action: "delete" } });
             };
 

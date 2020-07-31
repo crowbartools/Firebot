@@ -148,16 +148,16 @@
                                         <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
                                         <ul class="dropdown-menu" uib-dropdown-menu>
                                             <li>
-                                                <a href ng-click="showAddOrEditEventModal($index)">Edit</a>
+                                                <a href ng-click="showAddOrEditEventModal(event.id)">Edit</a>
                                             </li>
                                             <li ng-show="selectedGroupIsActive()">
-                                                <a href ng-click="toggleEventActiveStatus($index)">{{event.active ? 'Disable' : 'Enable'}}</a>
+                                                <a href ng-click="toggleEventActiveStatus(event.id)">{{event.active ? 'Disable' : 'Enable'}}</a>
                                             </li>
                                             <li>
-                                              <a href ng-click="duplicateEvent($index)">Duplicate</a>
+                                              <a href ng-click="duplicateEvent(event.id)">Duplicate</a>
                                             </li>
                                             <li>
-                                                <a href ng-click="showDeleteEventModal($index, event.name ? event.name : 'Unnamed')" style="color: #fb7373;">Delete</a>
+                                                <a href ng-click="showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed')" style="color: #fb7373;">Delete</a>
                                             </li>
                                         </ul>
                                     </div>

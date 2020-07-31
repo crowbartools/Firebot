@@ -60,13 +60,11 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Mod") {
-            twitchChat.mod(event.effect.username);
+            await twitchChat.mod(event.effect.username);
             logger.debug(event.effect.username + " was modded via the mod effect.");
-        }
-
-        if (event.effect.action === "Unmod") {
-            twitchChat.unmod(event.effect.username);
-            logger.debug(event.effect.username + " was modded via the mod effect.");
+        } else if (event.effect.action === "Unmod") {
+            await twitchChat.unmod(event.effect.username);
+            logger.debug(event.effect.username + " was unmodded via the mod effect.");
         }
 
         return true;

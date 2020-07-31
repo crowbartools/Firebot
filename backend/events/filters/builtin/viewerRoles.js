@@ -17,6 +17,7 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "raid" },
         { eventSourceId: "twitch", eventId: "host" },
         { eventSourceId: "twitch", eventId: "viewer-arrived" },
+        { eventSourceId: "twitch", eventId: "chat-message" },
         { eventSourceId: "streamloots", eventId: "purchase" },
         { eventSourceId: "streamloots", eventId: "redemption" },
         { eventSourceId: "firebot", eventId: "view-time-update" }
@@ -61,7 +62,7 @@ module.exports = {
             return false;
         }
 
-        let twitchUserRoles = null;
+        let twitchUserRoles = eventMeta.twitchUserRoles;
         if (twitchUserRoles == null) {
             twitchUserRoles = await twitchUsers.getUsersChatRoles(username);
         }

@@ -2,11 +2,12 @@
 const EventEmitter = require("events");
 const util = require("../utility");
 const logger = require("../logwrapper");
-const channelAccess = require("./channel-access");
 const frontendCommunicator = require("./frontend-communicator");
 const { settings } = require("./settings-access");
+const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
 const integrationManager = require("../integrations/IntegrationManager");
+const accountAccess = require("../common/account-access");
 
 const { ConnectionState } = require("../../shared/connection-constants");
 
@@ -26,7 +27,8 @@ function updateOnlineStatus(online) {
 }
 
 async function checkOnline() {
-    let isOnline = await channelAccess.getStreamerOnlineStatus();
+    const username = accountAccess.getAccounts().streamer.username;
+    const isOnline = await twitchApi.channels.getOnlineStatus(username);
     updateOnlineStatus(isOnline);
 }
 

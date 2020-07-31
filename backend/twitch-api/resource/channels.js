@@ -47,6 +47,24 @@ async function getChannelInformation(broadcasterId) {
     }
 }
 
+async function getOnlineStatus(username) {
+    const client = twitchApi.getClient();
+    if (client == null) {
+        return false;
+    }
+
+    try {
+        const stream = await client.helix.streams.getStreamByUserName(username);
+        if (stream != null) {
+            return true;
+        }
+    } catch (error) {
+        logger.error("Error while trying to get streamers broadcast", error);
+    }
+
+    return false;
+}
+
 async function updateChannelInformation(title = undefined, gameId = undefined) {
     const client = twitchApi.getClient();
     await client.callAPI({
@@ -87,6 +105,27 @@ async function getChannelInformationByUsername(username) {
     return getChannelInformation(user.id);
 }
 
+async function triggerAdBreak(adLength) {
+    try {
+        const client = twitchApi.getClient();
+        const streamerAccount = accountAccess.getAccounts().streamer;
+        const channelId = (await client.helix.users.getUserByName(streamerAccount.username)).id;
+
+        if (adLength == null) {
+            adLength = 30;
+        }
+
+        await client.kraken.channels.startChannelCommercial(channelId, adLength);
+        logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
+        return true;
+    } catch (error) {
+        renderWindow.webContents.send("error", `Failed to trigger ad-break because: ${error.message}`);
+        return false;
+    }
+}
+
 exports.getChannelInformation = getChannelInformation;
 exports.getChannelInformationByUsername = getChannelInformationByUsername;
 exports.updateChannelInformation = updateChannelInformation;
+exports.triggerAdBreak = triggerAdBreak;
+exports.getOnlineStatus = getOnlineStatus;

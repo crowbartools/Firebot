@@ -31,6 +31,7 @@ exports.loadReplaceVariables = () => {
         'donation-from',
         'donation-message',
         'ensure-number',
+        'eval-vars',
         'file-line-count',
         'game',
         'gift-count',

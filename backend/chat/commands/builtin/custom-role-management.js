@@ -1,7 +1,7 @@
 "use strict";
 
 const customRoleManager = require("../../../roles/custom-roles-manager");
-const chat = require("../../chat");
+const chat = require("../../twitch-chat");
 
 const model = {
     definition: {

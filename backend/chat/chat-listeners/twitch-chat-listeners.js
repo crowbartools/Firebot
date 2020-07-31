@@ -4,7 +4,7 @@ const frontendCommunicator = require("../../common/frontend-communicator");
 const commandHandler = require("../commands/commandHandler");
 const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
-
+const accountAccess = require("../../common/account-access");
 
 /** @arg {import('twitch-chat-client/lib/ChatClient').default} botChatClient */
 exports.setupBotChatListeners = (botChatClient) => {
@@ -16,7 +16,7 @@ exports.setupBotChatListeners = (botChatClient) => {
 
 /** @arg {import('twitch-chat-client/lib/ChatClient').default} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
-    streamerChatClient.onPrivmsg(async (_channel, _user, messageText, msg) => {
+    streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
 
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
@@ -33,6 +33,16 @@ exports.setupChatListeners = (streamerChatClient) => {
         if (msg.isCheer) {
             const cheerListener = require("../../events/twitch-events/cheer");
             cheerListener.triggerCheer(msg.userInfo.displayName, msg.totalBits, msg.params.message);
+        }
+
+        const { streamer, bot } = accountAccess.getAccounts();
+        if (user !== streamer.username && user !== bot.username) {
+            const timerManager = require("../../timers/timer-manager");
+            timerManager.incrementChatLineCounters();
+
+            const chatMessageListener = require("../../events/twitch-events/chat-message");
+            chatMessageListener.triggerChatMessage(msg.userInfo.displayName,
+                firebotChatMessage.roles, firebotChatMessage.rawText);
         }
     });
 

@@ -246,12 +246,23 @@ class TwitchChat extends EventEmitter {
         if (this._streamerChatClient == null || !streamer.loggedIn) return;
         this._streamerChatClient.timeout(streamer.username, username, duration, reason);
     }
+
+    getViewerList() {
+        // eslint-disable-next-line no-warning-comments
+        //TODO: Needs updated for twitch.
+        let users = [];
+        return users;
+    }
 }
 
 const twitchChat = new TwitchChat();
 
 frontendCommunicator.on("send-chat-message", sendData => {
     const { message, accountType } = sendData;
+
+    // Run commands from firebot chat.
+    let firebotMessage = chatHelpers.buildFirebotChatMessageFromText(message);
+    commandHandler.handleChatMessage(firebotMessage);
 
     twitchChat.sendChatMessage(message, null, accountType);
 });

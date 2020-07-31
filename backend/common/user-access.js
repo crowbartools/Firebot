@@ -2,51 +2,27 @@
 
 const userDb = require("../database/userDatabase");
 const accountAccess = require("../common/account-access");
-const channelAccess = require("./channel-access");
-const mixerApi = require("../api-access");
 const NodeCache = require('node-cache');
-const logger = require('../logwrapper');
+const twitchApi = require("../twitch-api/api");
 const twitchClient = require("../twitch-api/client");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
-async function userFollowsChannels(userId, channelNamesOrIds) {
+async function userFollowsChannels(username, channelNames) {
     let userfollowsAllChannels = true;
 
-    for (let channelNameOrId of channelNamesOrIds) {
+    for (let channelName of channelNames) {
         let userFollowsChannel = false;
 
         // check cache first
-        let cachedFollow = followCache.get(`${userId}:${channelNameOrId}`);
+        let cachedFollow = followCache.get(`${username}:${channelName}`);
         if (cachedFollow !== undefined) {
             userFollowsChannel = cachedFollow;
         } else {
-            // fetch relationship data
+            const userFollowsChannel = await twitchApi.users.doesUserFollowChannel(username, channelName);
 
-            let channelId;
-            // fetch channel id if needed
-            if (isNaN(channelNameOrId)) {
-                const ids = await channelAccess.getIdsFromUsername(channelNameOrId);
-                if (ids == null) {
-                    // channel doesnt exist
-                    logger.warn('Follow Check: ' + channelNameOrId + " doesnt exist. Check failed.");
-                    userfollowsAllChannels = false;
-                    break;
-                }
-                channelId = ids.channelId;
-            } else {
-                channelId = channelNameOrId;
-            }
-
-            let userRelationshipData = await mixerApi.get(`channels/${channelId}/relationship?user=${userId}`, "v1", false, true);
-
-            if (userRelationshipData != null) {
-                userFollowsChannel = userRelationshipData.status && userRelationshipData.status.follows != null;
-            } else {
-                userFollowsChannel = false;
-            }
             // set cache value
-            followCache.set(`${userId}:${channelNameOrId}`, userFollowsChannel);
+            followCache.set(`${username}:${channelName}`, userFollowsChannel);
         }
 
         if (!userFollowsChannel) {

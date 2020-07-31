@@ -12,7 +12,7 @@ const userDatabase = require("../database/userDatabase.js");
 const cooldownManager = require("./cooldown-manager");
 const logger = require("../logwrapper");
 
-const chat = require ("../chat/chat");
+const chat = require ("../chat/twitch-chat");
 
 function getConnectedProject() {
     const connectedProjectId = mixplayProjectManager.getConnectedProjectId();

@@ -30,7 +30,25 @@ const STREAMER_ACCOUNT_PROVIDER = {
         tokenPath: TOKEN_PATH,
         authorizePath: AUTHORIZE_PATH
     },
-    scopes: 'channel:edit:commercial bits:read channel:read:hype_train channel:read:subscriptions user:read:broadcast channel:moderate chat:edit chat:read whispers:read whispers:edit user:edit:broadcast user_subscriptions channel_commercial user_follows_edit channel_editor'
+    scopes: [
+        'bits:read',
+        'channel:edit:commercial',
+        'channel:moderate',
+        'channel:read:hype_train',
+        'channel:read:subscriptions',
+        'channel_commercial',
+        'channel_editor',
+        'channel_read',
+        'chat:edit',
+        'chat:read',
+        'clips:edit',
+        'user:read:broadcast',
+        'whispers:read',
+        'whispers:edit',
+        'user:edit:broadcast',
+        'user_subscriptions',
+        'user_follows_edit'
+    ].join(' ')
 };
 
 const BOT_ACCOUNT_PROVIDER = {
@@ -45,7 +63,7 @@ const BOT_ACCOUNT_PROVIDER = {
         tokenPath: TOKEN_PATH,
         authorizePath: AUTHORIZE_PATH
     },
-    scopes: 'channel:moderate chat:edit chat:read whispers:edit'
+    scopes: 'channel:moderate chat:edit chat:read whispers:edit channel_read'
 };
 
 exports.registerTwitchAuthProviders = () => {
