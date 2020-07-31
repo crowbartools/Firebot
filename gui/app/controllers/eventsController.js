@@ -16,24 +16,29 @@
                 return eventsService.getEventGroup(selectedTab).events;
             };
 
-
-            function updateEvent(groupId, index, event) {
+            function updateEvent(groupId, event) {
                 if (groupId === "mainevents") {
-                    eventsService.getMainEvents()[index] = event;
+                    const mainEvents = eventsService.getMainEvents();
+                    const index = mainEvents.findIndex(e => e.id === event.id);
+                    mainEvents[index] = event;
                     eventsService.saveMainEvents();
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
+                    const group = eventsService.getEventGroup(groupId);
+                    const index = group.events.findIndex(e => e.id === event.id);
                     group.events[index] = event;
                     eventsService.saveGroup(group);
                 }
             }
 
-            function deleteEvent(groupId, index) {
+            function deleteEvent(groupId, eventId) {
                 if (groupId === "mainevents") {
-                    eventsService.getMainEvents().splice(index, 1);
+                    const mainEvents = eventsService.getMainEvents();
+                    const index = mainEvents.findIndex(e => e.id === eventId);
+                    mainEvents.splice(index, 1);
                     eventsService.saveMainEvents();
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
+                    const group = eventsService.getEventGroup(groupId);
+                    const index = group.events.findIndex(e => e.id === eventId);
                     group.events.splice(index, 1);
                     eventsService.saveGroup(group);
                 }
@@ -101,25 +106,24 @@
                     });
             };
 
-            $scope.showAddOrEditEventModal = function(index) {
+            $scope.showAddOrEditEventModal = function(eventId) {
 
-                let selectedGroupId = eventsService.getSelectedTab(),
-                    event;
+                let selectedGroupId = eventsService.getSelectedTab();
+                let event;
 
-                if (index !== null && index !== undefined) {
-                    let selectedEvents = $scope.getSelectedEvents();
-                    event = selectedEvents[index];
+                if (eventId != null) {
+                    const selectedEvents = $scope.getSelectedEvents();
+                    event = selectedEvents.find(e => e.id === eventId);
                 }
 
                 utilityService.showModal({
                     component: "addOrEditEventModal",
                     resolveObj: {
                         event: () => event,
-                        index: () => index,
                         groupId: () => selectedGroupId
                     },
                     closeCallback: resp => {
-                        let { action, event, groupId, index } = resp;
+                        let { action, event, groupId } = resp;
 
                         switch (action) {
                         case "add":
@@ -133,17 +137,17 @@
                             }
                             break;
                         case "update":
-                            updateEvent(groupId, index, event);
+                            updateEvent(groupId, event);
                             break;
                         case "delete":
-                            deleteEvent(groupId, index);
+                            deleteEvent(groupId, event.id);
                             break;
                         }
                     }
                 });
             };
 
-            $scope.showDeleteEventModal = function(index, name) {
+            $scope.showDeleteEventModal = function(eventId, name) {
                 utilityService
                     .showConfirmationModal({
                         title: "Delete Event",
@@ -153,8 +157,8 @@
                     })
                     .then(confirmed => {
                         if (confirmed) {
-                            let groupId = eventsService.getSelectedTab();
-                            deleteEvent(groupId, index);
+                            const groupId = eventsService.getSelectedTab();
+                            deleteEvent(groupId, eventId);
                         }
                     });
             };
@@ -183,35 +187,35 @@
                 return active ? "Enabled" : "Disabled";
             };
 
-            $scope.toggleEventActiveStatus = function(index) {
-                let groupId = eventsService.getSelectedTab();
+            $scope.toggleEventActiveStatus = function(eventId) {
+                const groupId = eventsService.getSelectedTab();
                 if (groupId === "mainevents") {
-                    let event = eventsService.getMainEvents()[index];
+                    const event = eventsService.getMainEvents().find(e => e.id === eventId);
                     event.active = !event.active;
                     eventsService.saveMainEvents();
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
-                    let event = group.events[index];
+                    const group = eventsService.getEventGroup(groupId);
+                    const event = group.events.find(e => e.id === eventId);
                     event.active = !event.active;
                     eventsService.saveGroup(group);
                 }
             };
 
-            $scope.duplicateEvent = function(index) {
-                let groupId = eventsService.getSelectedTab();
+            $scope.duplicateEvent = function(eventId) {
+                const groupId = eventsService.getSelectedTab();
                 if (groupId === "mainevents") {
-                    let event = eventsService.getMainEvents()[index];
+                    const event = eventsService.getMainEvents().find(e => e.id === eventId);
 
-                    let copiedEvent = objectCopyHelper.copyObject("events", [event])[0];
+                    const copiedEvent = objectCopyHelper.copyObject("events", [event])[0];
                     copiedEvent.name += " copy";
 
                     eventsService.getMainEvents().push(copiedEvent);
                     eventsService.saveMainEvents();
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
-                    let event = group.events[index];
+                    const group = eventsService.getEventGroup(groupId);
+                    const event = group.events.find(e => e.id === eventId);
 
-                    let copiedEvent = objectCopyHelper.copyObject("events", [event])[0];
+                    const copiedEvent = objectCopyHelper.copyObject("events", [event])[0];
 
                     copiedEvent.name += " copy";
 
@@ -220,14 +224,14 @@
                 }
             };
 
-            $scope.copyEvent = function(index) {
-                let groupId = eventsService.getSelectedTab();
+            $scope.copyEvent = function(eventId) {
+                const groupId = eventsService.getSelectedTab();
                 if (groupId === "mainevents") {
-                    let event = eventsService.getMainEvents()[index];
+                    const event = eventsService.getMainEvents().find(e => e.id === eventId);
                     objectCopyHelper.copyObject("events", [event]);
                 } else {
-                    let group = eventsService.getEventGroup(groupId);
-                    let event = group.events[index];
+                    const group = eventsService.getEventGroup(groupId);
+                    const event = group.events.find(e => e.id === eventId);
                     objectCopyHelper.copyObject("events", [event]);
                 }
             };
@@ -284,23 +288,22 @@
                 {
                     html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
                     click: function ($itemScope) {
-                        let index = $itemScope.$index;
-                        $scope.showAddOrEditEventModal(index);
+                        const event = $itemScope.event;
+                        $scope.showAddOrEditEventModal(event.id);
                     }
                 },
                 {
                     html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
                     click: function ($itemScope) {
-                        let index = $itemScope.$index;
-                        $scope.toggleEventActiveStatus(index);
+                        const event = $itemScope.event;
+                        $scope.toggleEventActiveStatus(event.id);
                     }
                 },
                 {
                     html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
                     click: function ($itemScope) {
-                        let index = $itemScope.$index;
-                        let event = $itemScope.event;
-                        $scope.showDeleteEventModal(index, event.name ? event.name : 'Unnamed');
+                        const event = $itemScope.event;
+                        $scope.showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed');
                     }
                 }
             ];
