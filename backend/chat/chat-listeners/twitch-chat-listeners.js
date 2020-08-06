@@ -41,8 +41,7 @@ exports.setupChatListeners = (streamerChatClient) => {
             timerManager.incrementChatLineCounters();
 
             const chatMessageListener = require("../../events/twitch-events/chat-message");
-            chatMessageListener.triggerChatMessage(msg.userInfo.displayName,
-                firebotChatMessage.roles, firebotChatMessage.rawText);
+            chatMessageListener.triggerChatMessage(firebotChatMessage);
         }
     });
 
