@@ -15,8 +15,9 @@ let cycleActiveTimer = [];
 let activeChatters = [];
 
 function isUsernameActiveChatter(username = "") {
-    username = username.toLowerCase();
-    return activeChatters.some(c => c.username === username);
+    const expiredTime = new Date().getTime() - inactiveTimer;
+    return activeChatters.some(c => c.username.toLowerCase() === username.toLowerCase()
+        && c.time >= expiredTime);
 }
 
 async function addOrUpdateActiveChatter(userId, username = "") {
@@ -25,8 +26,6 @@ async function addOrUpdateActiveChatter(userId, username = "") {
     }
 
     const userDatabase = require("../../database/userDatabase");
-
-    username = username.toLowerCase();
 
     // Stop early if user shouldn't be in active chatter list.
     let firebotUser = await userDatabase.getUserByUsername(username);
