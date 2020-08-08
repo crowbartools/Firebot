@@ -89,6 +89,20 @@ module.exports = {
                 username: "Firebot",
                 messageText: "Test message"
             }
+        },
+        {
+            id: "channel-reward-redemption",
+            name: "Channel Reward Redemption",
+            description: "When someone redeems a channel reward",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                rewardName: "Test Reward",
+                rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
+                rewardCost: "200",
+                messageText: "Test message"
+            }
         }
     ]
 };

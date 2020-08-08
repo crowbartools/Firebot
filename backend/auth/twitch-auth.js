@@ -36,6 +36,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'channel:moderate',
         'channel:read:hype_train',
         'channel:read:subscriptions',
+        'channel:read:redemptions',
         'channel_commercial',
         'channel_editor',
         'channel_read',
