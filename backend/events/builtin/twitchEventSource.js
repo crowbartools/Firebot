@@ -93,7 +93,7 @@ module.exports = {
         {
             id: "channel-reward-redemption",
             name: "Channel Reward Redemption",
-            description: "When someone redeems a channel reward",
+            description: "When someone redeems a CUSTOM channel reward",
             cached: false,
             queued: false,
             manualMetadata: {
