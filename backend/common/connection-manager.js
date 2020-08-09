@@ -6,6 +6,7 @@ const frontendCommunicator = require("./frontend-communicator");
 const { settings } = require("./settings-access");
 const twitchApi = require("../twitch-api/api");
 const twitchChat = require("../chat/twitch-chat");
+const twitchPubSubClient = require("../twitch-api/pubsub/pubsub-client");
 const integrationManager = require("../integrations/IntegrationManager");
 const accountAccess = require("../common/account-access");
 
@@ -76,8 +77,10 @@ class ConnectionManager extends EventEmitter {
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
             twitchChat.connect();
+            twitchPubSubClient.createClient();
         } else {
             twitchChat.disconnect();
+            twitchPubSubClient.removeListeners();
         }
         return true;
     }
@@ -93,24 +96,6 @@ class ConnectionManager extends EventEmitter {
             integrationManager.disconnectIntegration(integrationId);
         }
         return true;
-    }
-
-    /**
-     *
-     * @param {string[]} serviceIds
-     */
-    toggleConnections(serviceIds) {
-        for (const serviceId of serviceIds) {
-            switch (serviceId) {
-            case "chat": {
-                const shouldConnect = !twitchChat.chatIsConnected();
-                manager.updateChatConnection(shouldConnect);
-                break;
-            }
-            default:
-                //not supporting integrations for this yet
-            }
-        }
     }
 }
 manager = new ConnectionManager();

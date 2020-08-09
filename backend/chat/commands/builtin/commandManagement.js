@@ -36,14 +36,18 @@ function mapPermArgToRoleIds(permArg) {
     switch (normalizedPerm) {
     case "all":
     case "everyone":
-        return null;
+        break;
     case "sub":
-        groups.push("Subscriber");
-    case "mod": // eslint-disable-line no-fallthrough
-        groups.push("Mod");
-        groups.push("ChannelEditor");
-    case "streamer": // eslint-disable-line no-fallthrough
-        groups.push("Owner");
+        groups.push("sub");
+        break;
+    case "vip":
+        groups.push("vip");
+        break;
+    case "mod":
+        groups.push("mod");
+        break;
+    case "streamer":
+        groups.push("broadcaster");
         break;
     }
 
@@ -60,7 +64,7 @@ const commandManagement = {
         active: true,
         trigger: "!command",
         description: "Allows custom command management via chat.",
-        autoDeleteTrigger: true,
+        autoDeleteTrigger: false,
         scanWholeMessage: false,
         cooldown: {
             user: 0,
@@ -119,7 +123,7 @@ const commandManagement = {
     onTriggerEvent: event => {
         return new Promise(async (resolve) => {
             const commandManager = require("../CommandManager");
-            const chat = require("../../chat");
+            const chat = require("../../twitch-chat");
 
             let activeCustomCommands = commandManager
                 .getAllCustomCommands()
@@ -142,9 +146,7 @@ const commandManagement = {
 
             if (args.length < 2) {
                 chat.sendChatMessage(
-                    `Invalid command. Usage: ${event.command.trigger} ${usage}`,
-                    event.userCommand.commandSender
-                );
+                    `Invalid command. Usage: ${event.command.trigger} ${usage}`);
                 return resolve();
             }
 
@@ -152,8 +154,7 @@ const commandManagement = {
 
             if (trigger == null || trigger === "") {
                 chat.sendChatMessage(
-                    `Invalid command. Usage: ${event.command.trigger} ${usage}`,
-                    event.userCommand.commandSender
+                    `Invalid command. Usage: ${event.command.trigger} ${usage}`
                 );
                 return resolve();
             }
@@ -162,16 +163,14 @@ const commandManagement = {
             case "add": {
                 if (args.length < 3 || remainingData == null || remainingData === "") {
                     chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
-                        event.userCommand.commandSender
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
                     );
                     return resolve();
                 }
 
                 if (commandManager.triggerIsTaken(trigger)) {
                     chat.sendChatMessage(
-                        `The trigger '${trigger}' has already been taken, please try again.`,
-                        event.userCommand.commandSender
+                        `The trigger '${trigger}' is already in use, please try again.`
                     );
                     return resolve();
                 }
@@ -200,7 +199,7 @@ const commandManagement = {
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender);
 
                 chat.sendChatMessage(
-                    `Added command '${trigger}' with response: ${remainingData}`
+                    `Added command '${trigger}'!`
                 );
 
                 break;
@@ -208,8 +207,7 @@ const commandManagement = {
             case "response": {
                 if (args.length < 3 || remainingData == null || remainingData === "") {
                     chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
-                        event.userCommand.commandSender
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
                     );
                     return resolve();
                 }
@@ -217,8 +215,7 @@ const commandManagement = {
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
                     chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try agian.`,
-                        event.userCommand.commandSender
+                        `Could not find a command with the trigger '${trigger}', please try agian.`
                     );
                     return resolve();
                 }
@@ -227,8 +224,7 @@ const commandManagement = {
 
                 if (chatEffectsCount > 1) {
                     chat.sendChatMessage(
-                        `The command '${trigger}' has more than one Chat Effect, preventing the response from being editable via chat.`,
-                        event.userCommand.commandSender
+                        `The command '${trigger}' has more than one Chat Effect, preventing the response from being editable via chat.`
                     );
                     return resolve();
                 }
@@ -256,8 +252,7 @@ const commandManagement = {
                 let countArg = remainingData.trim();
                 if (countArg === "" || isNaN(countArg)) {
                     chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
-                        event.userCommand.commandSender
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
                     );
                     return resolve();
                 }
@@ -265,8 +260,7 @@ const commandManagement = {
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
                     chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try agian.`,
-                        event.userCommand.commandSender
+                        `Could not find a command with the trigger '${trigger}', please try agian.`
                     );
                     return resolve();
                 }
@@ -291,8 +285,7 @@ const commandManagement = {
                 if (args.length < 3 || remainingData === "" || cooldownArgs.length < 2 || isNaN(cooldownArgs[0])
                     || isNaN(cooldownArgs[1])) {
                     chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
-                        event.userCommand.commandSender
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
                     );
                     return resolve();
                 }
@@ -300,8 +293,7 @@ const commandManagement = {
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
                     chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`,
-                        event.userCommand.commandSender
+                        `Could not find a command with the trigger '${trigger}', please try again.`
                     );
                     return resolve();
                 }
@@ -333,8 +325,7 @@ const commandManagement = {
             case "restrict": {
                 if (args.length < 3 || remainingData === "") {
                     chat.sendChatMessage(
-                        `Invalid command. Usage: ${event.command.trigger} ${usage}`,
-                        event.userCommand.commandSender
+                        `Invalid command. Usage: ${event.command.trigger} ${usage}`
                     );
                     return resolve();
                 }
@@ -342,8 +333,7 @@ const commandManagement = {
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
                     chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try again.`,
-                        event.userCommand.commandSender
+                        `Could not find a command with the trigger '${trigger}', please try again.`
                     );
                     return resolve();
                 }
@@ -354,8 +344,7 @@ const commandManagement = {
 
                 if (roleIds === false) {
                     chat.sendChatMessage(
-                        `Please provide a valid group name: All, Sub, Mod, Streamer, or a custom group's name`,
-                        event.userCommand.commandSender
+                        `Please provide a valid group name: All, Sub, Mod, Streamer, or a custom group's name`
                     );
                     return resolve();
                 }
@@ -382,8 +371,7 @@ const commandManagement = {
                 let command = activeCustomCommands.find(c => c.trigger === trigger);
                 if (command === null) {
                     chat.sendChatMessage(
-                        `Could not find a command with the trigger '${trigger}', please try agian.`,
-                        event.userCommand.commandSender
+                        `Could not find a command with the trigger '${trigger}', please try agian.`
                     );
                     return resolve();
                 }

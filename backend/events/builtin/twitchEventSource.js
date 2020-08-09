@@ -50,12 +50,24 @@ module.exports = {
         },
         {
             id: "subs-gifted",
-            name: "Subs Gifted",
-            description: "When someone gifts subs in your channel.",
+            name: "Sub Gifted",
+            description: "When someone gifts a sub to someone else in your channel.",
             cached: false,
             manualMetadata: {
                 username: "Firebot",
                 totalMonths: 0
+            }
+        },
+        {
+            id: "community-subs-gifted",
+            name: "Community Subs Gifted",
+            description: "When someone gifts random subs to the community of the channel",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                gifterUsername: "Firebot",
+                subCount: 5,
+                subPlan: "1000"
             }
         },
         {
@@ -87,6 +99,20 @@ module.exports = {
             queued: false,
             manualMetadata: {
                 username: "Firebot",
+                messageText: "Test message"
+            }
+        },
+        {
+            id: "channel-reward-redemption",
+            name: "Channel Reward Redemption",
+            description: "When someone redeems a CUSTOM channel reward",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                rewardName: "Test Reward",
+                rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
+                rewardCost: "200",
                 messageText: "Test message"
             }
         }

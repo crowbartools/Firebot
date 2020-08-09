@@ -7,19 +7,18 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted", "community-subs-gifted"];
+triggers[EffectTrigger.EVENT] = ["twitch:channel-reward-redemption"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "giftGiverUsername",
-        description: "The name of the user who gifted a sub(s).",
+        handle: "rewardCost",
+        description: "The channel point cost of the reward",
         triggers: triggers,
-        possibleDataOutput: [OutputDataType.TEXT]
+        possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        let gifterUsername = trigger.metadata.eventData.gifterUsername;
-        return gifterUsername || "UnknownUser";
+        return trigger.metadata.eventData.rewardCost;
     }
 };
 
