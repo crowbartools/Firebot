@@ -14,16 +14,14 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "raid" },
         { eventSourceId: "twitch", eventId: "host" },
         { eventSourceId: "twitch", eventId: "viewer-arrived" },
+        { eventSourceId: "twitch", eventId: "community-subs-gifted" },
+        { eventSourceId: "twitch", eventId: "channel-reward-redemption" },
+        { eventSourceId: "twitch", eventId: "viewer-arrived" },
         { eventSourceId: "streamloots", eventId: "purchase" },
         { eventSourceId: "streamloots", eventId: "redemption" }
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT, ComparisonType.CONTAINS, ComparisonType.MATCHES_REGEX],
     valueType: "text",
-    /*presetValues: () => {
-        return new Promise(resolve => {
-            return [{value: 1, display: "one"}];
-        });
-    },*/
     predicate: (filterSettings, eventData) => {
 
         let { comparisonType, value } = filterSettings;
