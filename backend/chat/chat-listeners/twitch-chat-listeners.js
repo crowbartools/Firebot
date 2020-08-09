@@ -14,13 +14,31 @@ exports.setupBotChatListeners = (botChatClient) => {
     });
 };
 
+const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
+
 /** @arg {import('twitch-chat-client/lib/ChatClient').default} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
-
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
 
         // send to the frontend
+        if (firebotChatMessage.isHighlighted) {
+            firebotChatMessage.customRewardId = HIGHLIGHT_MESSAGE_REWARD_ID;
+            frontendCommunicator.send("twitch:chat:rewardredemption", {
+                id: HIGHLIGHT_MESSAGE_REWARD_ID,
+                messageText: firebotChatMessage.rawText,
+                user: {
+                    id: firebotChatMessage.userId,
+                    username: firebotChatMessage.username
+                },
+                reward: {
+                    id: HIGHLIGHT_MESSAGE_REWARD_ID,
+                    name: "Highlight Message",
+                    cost: 0,
+                    imageUrl: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-4.png"
+                }
+            });
+        }
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
         commandHandler.handleChatMessage(firebotChatMessage);
@@ -63,7 +81,7 @@ exports.setupChatListeners = (streamerChatClient) => {
         hostListener.triggerHost(byChannel, auto, viewers);
     });
 
-    streamerChatClient.onSub((_channel, _user, subInfo) => {
+    streamerChatClient.onSub((_channel, _user, subInfo, msg) => {
         const subListener = require("../../events/twitch-events/sub");
         subListener.triggerSub(subInfo.displayName, subInfo.plan, subInfo.planName, subInfo.months,
             subInfo.streak, subInfo.isPrime);
@@ -75,10 +93,17 @@ exports.setupChatListeners = (streamerChatClient) => {
             subInfo.streak, subInfo.isPrime, true);
     });
 
-    streamerChatClient.onSubGift((_channel, _user, giftSubInfo) => {
+    streamerChatClient.onSubGift((_channel, _user, giftSubInfo, msg) => {
         const giftSubListener = require("../../events/twitch-events/gift-sub");
-        giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName, giftSubInfo.displayName,
-            giftSubInfo.gifterGiftCount, giftSubInfo.plan, giftSubInfo.planName, giftSubInfo.months);
+        giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName,
+            giftSubInfo.displayName, giftSubInfo.plan, giftSubInfo.planName,
+            giftSubInfo.months);
+    });
+
+    streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {
+        const communitySubListener = require("../../events/twitch-events/community-gift-sub");
+        communitySubListener.triggerCommunitySubGift(subInfo.gifterDisplayName,
+            subInfo.plan, subInfo.count);
     });
 
     streamerChatClient.onRaid((_channel, _username, raidInfo) => {

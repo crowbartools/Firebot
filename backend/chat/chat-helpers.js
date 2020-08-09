@@ -57,6 +57,7 @@ exports.cacheStreamerEmotes = async () => {
  * @property {number} userId
  * @property {string[]} roles
  * @property {any[]} badges
+ * @property {string} customRewardId
  * @property {string} color
  * @property {string} rawText
  * @property {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart[]} parts
@@ -71,6 +72,7 @@ exports.cacheStreamerEmotes = async () => {
  * @property {boolean} isSubscriber
  * @property {boolean} isVip
  * @property {boolean} isCheer
+ * @property {boolean} isHighlighted
  *
  */
 
@@ -137,6 +139,8 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
         id: msg.tags.get("id"),
         username: msg.userInfo.displayName,
         userId: msg.userInfo.userId,
+        customRewardId: msg.tags.get("custom-reward-id"),
+        isHighlighted: msg.tags.get("msg-id") === "highlighted-message",
         rawText: msgText,
         whisper: whisper,
         action: action,

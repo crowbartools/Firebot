@@ -16,7 +16,10 @@
                         compact-display="compactDisplay"
                         alternate-backgrounds="alternateBackgrounds"
                         hide-deleted-messagess="hideDeletedMessages"
-                        update-chat-input="updateChatInput(text)"></chat-message>
+                        update-chat-input="updateChatInput(text)" />
+                    <reward-redemption 
+                        ng-if="chatItem.type === 'redemption'"
+                        redemption="chatItem.data" />
                 </div>
             </div>
         </div>

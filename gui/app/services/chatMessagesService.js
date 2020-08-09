@@ -1,8 +1,5 @@
 "use strict";
 (function() {
-    //This manages the chat window.
-    const profileManager = require("../../backend/common/profile-manager.js");
-
     const moment = require('moment');
 
     const uuid = require("uuid/v4");
@@ -392,6 +389,32 @@
                 }
             }, 250);
 
+            backendCommunicator.on("twitch:chat:rewardredemption", redemption => {
+                if (settingsService.getRealChatFeed()) {
+
+                    const redemptionItem = {
+                        id: uuid(),
+                        type: "redemption",
+                        data: redemption
+                    };
+
+                    if (messageHoldingQueue && messageHoldingQueue.length > 0) {
+                        const lastQueueItem = messageHoldingQueue[messageHoldingQueue.length - 1];
+                        if (!lastQueueItem.rewardMatched &&
+                            lastQueueItem.type === "message" &&
+                            lastQueueItem.data.customRewardId != null &&
+                            lastQueueItem.data.customRewardId === redemption.reward.id &&
+                            lastQueueItem.data.userId === redemption.user.id) {
+                            lastQueueItem.rewardMatched = true;
+                            messageHoldingQueue.splice(-1, 0, redemptionItem);
+                            return;
+                        }
+                    }
+
+                    messageHoldingQueue.push(redemptionItem);
+                }
+            });
+
 
             backendCommunicator.on("twitch:chat:message", chatMessage => {
                 if (chatMessage.tagged) {
@@ -406,13 +429,26 @@
                     chatMessage.profilePicUrl = "../images/placeholders/default-profile-pic.png";
                 }
 
-                if (settingsService.getRealChatFeed() === true) {
+                if (settingsService.getRealChatFeed()) {
                     // Push new message to queue.
-                    messageHoldingQueue.push({
+                    const messageItem = {
                         id: uuid(),
                         type: "message",
                         data: chatMessage
-                    });
+                    };
+
+                    if (chatMessage.customRewardId != null &&
+                        messageHoldingQueue &&
+                        messageHoldingQueue.length > 0) {
+                        const lastQueueItem = messageHoldingQueue[messageHoldingQueue.length - 1];
+                        if (lastQueueItem.type === "redemption" &&
+                            lastQueueItem.data.reward.id === chatMessage.customRewardId &&
+                            lastQueueItem.data.user.id === chatMessage.userId) {
+                            messageItem.rewardMatched = true;
+                        }
+                    }
+
+                    messageHoldingQueue.push(messageItem);
                 }
             });
 

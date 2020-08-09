@@ -5,7 +5,7 @@ const twitchClient = require("../client");
 const PubSubClient = require("twitch-pubsub-client").default;
 
 /**@type {import("twitch-pubsub-client").default} */
-let prepubescent;
+let pubSubClient;
 
 /**@type {import("twitch-pubsub-client").PubSubListener[]} */
 let listeners = [];
@@ -20,23 +20,18 @@ function removeListeners() {
 async function createClient() {
     removeListeners();
 
-    prepubescent = new PubSubClient();
+    pubSubClient = new PubSubClient();
     const apiClient = twitchClient.getClient();
-    await prepubescent.registerUserListener(apiClient);
+    await pubSubClient.registerUserListener(apiClient);
 
     const streamer = accountAccess.getAccounts().streamer;
 
-    const eventManager = require("../../events/EventManager");
-    const redemptionListener = await prepubescent.onRedemption(streamer.userId, (message) => {
-        eventManager.triggerEvent("twitch", "channel-reward-redemption", {
-            username: message.userDisplayName,
-            messageText: message.message,
-            rewardId: message.rewardId,
-            rewardImage: message.rewardImage,
-            rewardName: message.rewardName,
-            rewardCost: message.rewardCost
+    const rewardRedemptionHandler =
+        require("../../events/twitch-events/reward-redemption");
+    const redemptionListener = await pubSubClient.onRedemption(streamer.userId,
+        (message) => {
+            rewardRedemptionHandler.handleRewardRedemption(message);
         });
-    });
 
     listeners.push(redemptionListener);
 }

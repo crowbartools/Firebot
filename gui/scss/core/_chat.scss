@@ -45,6 +45,20 @@
         background: $chat-message-alternate-bg;
     }
 }
+.reward-redemption {
+    img {
+        width: 25px; 
+        margin-right: 3px;
+    }
+    padding: 6px;
+    padding-left: 10px;
+    background: rgb(49, 49, 49);
+    border-top: 1px solid #29292988;
+    &.isHighlight {
+        background-color: #43517B;
+    }
+}
+
 .chat-message {
     display: flex;
     flex-direction: row;
@@ -83,6 +97,13 @@
         .chatContent{
             font-style: italic;
         }
+    }
+    &.isCustomReward {
+        background-color: rgb(49, 49, 49);
+        border-bottom: 1px solid #29292988;
+    }
+    &.isHighlighted {
+        background-color: #43517B;
     }
     &.isWhisper{
         .chatContent{

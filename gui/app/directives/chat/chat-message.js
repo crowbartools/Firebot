@@ -11,7 +11,7 @@
             },
             template: `
                 <div class="chat-message" 
-                    ng-class="{ isAction: $ctrl.message.action, isWhisper: $ctrl.message.whisper, isDeleted: $ctrl.message.deleted, isTagged: $ctrl.message.tagged, isCompact: $ctrl.compactDisplay, spoilers: $ctrl.hideDeletedMessages }" 
+                    ng-class="{ isAction: $ctrl.message.action, isWhisper: $ctrl.message.whisper, isDeleted: $ctrl.message.deleted, isTagged: $ctrl.message.tagged, isCompact: $ctrl.compactDisplay, spoilers: $ctrl.hideDeletedMessages, isHighlighted: $ctrl.message.isHighlighted, isCustomReward: $ctrl.message.customRewardId != null }" 
                     ng-attr-messageId="{{$ctrl.message.id}}">
                     <div class="chat-user-avatar-wrapper" message-actions message="$ctrl.message" on-action-selected="$ctrl.messageActionSelected(actionName, userName, userId, msgId)">
                         <span>
@@ -48,8 +48,6 @@
             controller: function(chatMessagesService, utilityService) {
 
                 const $ctrl = this;
-
-
 
                 $ctrl.showUserDetailsModal = (userId) => {
                     if (userId == null) return;
