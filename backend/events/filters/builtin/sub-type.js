@@ -8,7 +8,8 @@ module.exports = {
     description: "Filter by the type of sub (Prime, Tier 1, 2, 3, etc)",
     events: [
         { eventSourceId: "twitch", eventId: "sub" },
-        { eventSourceId: "twitch", eventId: "subs-gifted" }
+        { eventSourceId: "twitch", eventId: "subs-gifted" },
+        { eventSourceId: "twitch", eventId: "community-subs-gifted" }
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT],
     valueType: "preset",

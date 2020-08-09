@@ -21,16 +21,6 @@ exports.handleRewardRedemption = (redemptionMessage) => {
         }
     }
 
-
-    eventManager.triggerEvent("twitch", "channel-reward-redemption", {
-        username: redemptionMessage.userDisplayName,
-        messageText: redemptionMessage.message,
-        rewardId: redemptionMessage.rewardId,
-        rewardImage: imageUrl,
-        rewardName: redemptionMessage.rewardName,
-        rewardCost: redemptionMessage.rewardCost
-    });
-
     frontendCommunicator.send("twitch:chat:rewardredemption", {
         id: redemptionMessage.id,
         status: redemptionMessage.status,
@@ -47,4 +37,15 @@ exports.handleRewardRedemption = (redemptionMessage) => {
             imageUrl: imageUrl
         }
     });
+
+    setTimeout(() => {
+        eventManager.triggerEvent("twitch", "channel-reward-redemption", {
+            username: redemptionMessage.userDisplayName,
+            messageText: redemptionMessage.message,
+            rewardId: redemptionMessage.rewardId,
+            rewardImage: imageUrl,
+            rewardName: redemptionMessage.rewardName,
+            rewardCost: redemptionMessage.rewardCost
+        });
+    }, 250);
 };

@@ -120,10 +120,6 @@ exports.whenReady = async () => {
     const quotesdb = require("../../../quotes/quotes-manager");
     quotesdb.loadQuoteDatabase();
 
-    //load patronage data
-    const patronageManager = require("../../../patronageManager");
-    patronageManager.loadPatronageData();
-
     // These are defined globally for Custom Scripts.
     // We will probably wnat to handle these differently but we shouldn't
     // change anything until we are ready as changing this will break most scripts
