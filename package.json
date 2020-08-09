@@ -1,6 +1,6 @@
 {
     "name": "firebotv5",
-    "version": "5.16.5",
+    "version": "5.17.0",
     "description": "A chat bot for streamers on various services.",
     "main": "main.js",
     "scripts": {
