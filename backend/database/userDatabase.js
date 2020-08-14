@@ -55,9 +55,9 @@ function getUserByUsername(username) {
             return resolve(false);
         }
 
-        let searchTerm = new RegExp(`^${username}$`, 'gi');
+        let searchTerm = new RegExp(`^${username}$`, 'i');
 
-        db.findOne({ username: { $regex: searchTerm } }, (err, doc) => {
+        db.findOne({ username: { $regex: searchTerm }, twitch: true }, (err, doc) => {
             if (err) {
                 return resolve(false);
             }
@@ -73,7 +73,7 @@ function getTwitchUserByUsername(username) {
             return resolve(null);
         }
 
-        let searchTerm = new RegExp(username, 'gi');
+        let searchTerm = new RegExp(`^${username}$`, 'i');
 
         db.findOne({ username: { $regex: searchTerm }, twitch: true }, (err, doc) => {
             if (err) {
