@@ -35,6 +35,7 @@
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
                     service.currentTab.toLowerCase() === "commands" ||
+                    service.currentTab.toLowerCase() === "effects" ||
                     service.currentTab.toLowerCase() === "events" ||
                     service.currentTab.toLowerCase() === "moderation" ||
                     service.currentTab.toLowerCase() === "buttons"
@@ -73,6 +74,11 @@
                 .when("/commands", {
                     templateUrl: "./templates/chat/_commands.html",
                     controller: "commandsController"
+                })
+
+                .when("/effects", {
+                    templateUrl: "./templates/_effects.html",
+                    controller: "effectsController"
                 })
 
                 .when("/chat-feed", {
