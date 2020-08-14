@@ -6,7 +6,7 @@ const commandManager = require("../../../chat/commands/CommandManager");
 const gameManager = require("../../game-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");
 const customRolesManager = require("../../../roles/custom-roles-manager");
-const mixerRolesManager = require("../../../../shared/mixer-roles");
+const twitchRolesManager = require("../../../../shared/twitch-roles");
 const slotMachine = require("./slot-machine");
 const moment = require("moment");
 const NodeCache = require("node-cache");
@@ -107,10 +107,10 @@ const spinCommand = {
             if (successChancesSettings) {
                 successChance = successChancesSettings.basePercent;
 
-                const mappedMixerRoles = (userCommand.senderRoles || [])
-                    .filter(mr => mr !== "User")
-                    .map(mr => mixerRolesManager.mapMixerRole(mr));
-                const allRoles = mappedMixerRoles.concat(customRolesManager.getAllCustomRolesForViewer(username));
+                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+                const userTwitchRoles = (userCommand.senderRoles || [])
+                    .map(r => twitchRolesManager.mapTwitchRole(r));
+                const allRoles = userCustomRoles.concat(userTwitchRoles);
 
                 for (let role of successChancesSettings.roles) {
                     if (allRoles.some(r => r.id === role.roleId)) {
