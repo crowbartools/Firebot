@@ -4,9 +4,9 @@
         .module("firebotApp")
         .controller("effectsController", function(
             $scope,
-            effectQueuesService
+            effectQueuesService,
+            presetEffectListsService
         ) {
-
             $scope.activeTab = 0;
 
             $scope.eqs = effectQueuesService;
@@ -19,5 +19,14 @@
                 effectQueuesService.showDeleteEffectQueueModal(queueId);
             };
 
+            $scope.pels = presetEffectListsService;
+
+            $scope.addOrEditPresetEffectList = (presetListId) => {
+                presetEffectListsService.showAddEditPresetEffectListModal(presetListId);
+            };
+
+            $scope.deletePresetEffectList = (presetListId) => {
+                presetEffectListsService.showDeletePresetEffectListModal(presetListId);
+            };
         });
 }());

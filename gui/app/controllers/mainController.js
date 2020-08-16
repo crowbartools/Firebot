@@ -102,7 +102,8 @@
         ttsService,
         settingsService,
         countersService,
-        gamesService
+        gamesService,
+        presetEffectListsService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -124,6 +125,8 @@
         countersService.loadCounters();
 
         gamesService.loadGames();
+
+        presetEffectListsService.loadPresetEffectLists();
 
         //start notification check
         $timeout(() => {

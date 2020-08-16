@@ -48,6 +48,7 @@ exports.loadReplaceVariables = () => {
         'number-max',
         'number-min',
         'number-round',
+        'preset-list-arg',
         'profile-page-bytebin-token',
         'quote',
         'raid-viewer-count',

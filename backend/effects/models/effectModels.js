@@ -16,6 +16,7 @@ const EffectTrigger = Object.freeze({
     HOTKEY: "hotkey",
     TIMER: "timer",
     COUNTER: "counter",
+    PRESET_LIST: "preset",
     MANUAL: "manual",
     ALL: "all"
 });

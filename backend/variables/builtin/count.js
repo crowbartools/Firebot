@@ -10,6 +10,7 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
+triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {

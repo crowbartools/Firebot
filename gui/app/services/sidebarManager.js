@@ -46,6 +46,7 @@
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
                     service.currentTab.toLowerCase() === "buttons" ||
+                    service.currentTab.toLowerCase() === "effects" ||
                     service.currentTab.toLowerCase() === "events" ||
                     service.currentTab.toLowerCase() === "commands"
                 );
