@@ -1,10 +1,13 @@
 "use strict";
 
+const logger = require("../../logwrapper");
 const eventManager = require("../EventManager");
 const frontendCommunicator = require("../../common/frontend-communicator");
 
 /**@argument {import('twitch-pubsub-client').PubSubRedemptionMessage} redemptionMessage */
 exports.handleRewardRedemption = (redemptionMessage) => {
+
+    logger.debug("Got reward redemption event!");
 
     let imageUrl;
     if (redemptionMessage._data &&

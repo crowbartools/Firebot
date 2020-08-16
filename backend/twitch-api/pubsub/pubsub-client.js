@@ -1,4 +1,5 @@
 "use strict";
+const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const twitchClient = require("../client");
 
@@ -20,20 +21,29 @@ function removeListeners() {
 async function createClient() {
     removeListeners();
 
+    logger.info("Connecting to Twitch PubSub...");
+
     pubSubClient = new PubSubClient();
-    const apiClient = twitchClient.getClient();
-    await pubSubClient.registerUserListener(apiClient);
+    try {
+        const apiClient = twitchClient.getClient();
+        await pubSubClient.registerUserListener(apiClient);
 
-    const streamer = accountAccess.getAccounts().streamer;
+        const streamer = accountAccess.getAccounts().streamer;
 
-    const rewardRedemptionHandler =
+        const rewardRedemptionHandler =
         require("../../events/twitch-events/reward-redemption");
-    const redemptionListener = await pubSubClient.onRedemption(streamer.userId,
-        (message) => {
-            rewardRedemptionHandler.handleRewardRedemption(message);
-        });
+        const redemptionListener = await pubSubClient.onRedemption(streamer.userId,
+            (message) => {
+                rewardRedemptionHandler.handleRewardRedemption(message);
+            });
 
-    listeners.push(redemptionListener);
+        listeners.push(redemptionListener);
+    } catch (err) {
+        logger.error("Failed to connect to Twitch PubSub!", err);
+        return;
+    }
+
+    logger.info("Connected to the Twitch PubSub!");
 }
 
 exports.createClient = createClient;

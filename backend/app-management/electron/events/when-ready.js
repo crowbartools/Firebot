@@ -80,6 +80,9 @@ exports.whenReady = async () => {
     const effectQueueManager = require("../../../effects/queues/effect-queue-manager");
     effectQueueManager.loadEffectQueues();
 
+    const presetEffectListManager = require("../../../effects/preset-lists/preset-effect-list-manager");
+    presetEffectListManager.loadPresetEffectLists();
+
     const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
     chatModerationManager.load();
 

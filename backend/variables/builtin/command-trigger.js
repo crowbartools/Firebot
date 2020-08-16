@@ -8,10 +8,6 @@ const {
 
 const { OutputDataType } = require("../../../shared/variable-contants");
 
-/**
- * The $subMonths variable
- */
-
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.MANUAL] = true;
