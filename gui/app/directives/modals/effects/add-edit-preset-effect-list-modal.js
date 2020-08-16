@@ -36,6 +36,17 @@
                 <div style="margin-top:20px;">
                     <effect-list effects="$ctrl.presetList.effects" trigger="preset" update="$ctrl.effectListUpdated(effects)"></effect-list>
                 </div>
+
+                <div style="margin-top: 20px;">
+                    <collapsable-panel header="How to trigger from StreamDeck">
+                        <p>Steps:</p>
+                        <ol>
+                            <li>Add "Website" Action to a StreamDeck button</li>
+                            <li>Set URL to <b>http://localhost:7472/api/v1/effects/preset/{{$ctrl.presetList.id}}</b></li>
+                            <li>Check "Access in background"</li>
+                        </ol>
+                    </collapsable-panel>
+                </div>
             </div>
             
             <div class="modal-footer">

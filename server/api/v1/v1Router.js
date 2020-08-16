@@ -31,16 +31,18 @@ router
     .get(effects.getEffects)
     .post(effects.runEffects);
 
-router.route("/effects/:effect").get(effects.getEffect);
+router.route("/effects/preset/:presetListId")
+    .post(effects.runPresetList);
 
-router.route("/effects/:effect/triggers").get(effects.getEffectTriggers);
+router.route("/effects/preset/:presetListId")
+    .post(effects.runPresetList)
+    .get(effects.runPresetList);
 
-router
-    .route("/effects/:effect/dependencies")
-    .get(effects.getEffectDependencies);
+router.route("/effects/:effectId")
+    .get(effects.getEffect);
+
 
 // Fonts
-
 const fonts = require("./controllers/fontsApiController");
 router.route("/fonts")
     .get(fonts.getFontNames);
