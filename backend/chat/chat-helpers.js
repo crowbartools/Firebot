@@ -1,5 +1,6 @@
 "use strict";
 
+const logger = require("../logwrapper");
 const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/client");
 const uuid = require("uuid/v4");
@@ -100,7 +101,12 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
     if (streamerEmotes) {
         const words = text.split(" ");
         for (const word of words) {
-            const emoteId = await streamerEmotes.findEmoteId(word);
+            let emoteId = null;
+            try {
+                emoteId = await streamerEmotes.findEmoteId(word);
+            } catch (err) {
+                logger.debug(`Failed to find emote id for ${word}`, err);
+            }
 
             /**@type {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart} */
             let part;
