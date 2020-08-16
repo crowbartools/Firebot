@@ -1,7 +1,7 @@
 {
     "name": "firebotv5",
-    "version": "5.17.0",
-    "description": "A chat bot for streamers on various services.",
+    "version": "5.18.0",
+    "description": "A chat bot for Twitch streamers.",
     "main": "main.js",
     "scripts": {
         "start": "grunt scss && electron . --dev --js-flags=\"--harmony\"",
