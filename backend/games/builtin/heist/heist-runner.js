@@ -141,7 +141,7 @@ exports.triggerLobbyStart = (startDelayMins) => {
 
         const heistSettings = gameManager.getGameSettings("firebot-heist");
         const minTeamSize = heistSettings.settings.generalSettings.minimumUsers;
-        if (usersInHeist.length < minTeamSize) {
+        if (usersInHeist.length < minTeamSize - 1) { // user is added to usersInHeist after triggerLobbyStart is called in heist-command
 
             // give currency back to users who joined
             const currencyId = heistSettings.settings.currencySettings.currencyId;
