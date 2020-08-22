@@ -36,7 +36,7 @@ class RestrictionsManager extends EventEmitter {
         return this._registeredRestrictions;
     }
 
-    checkPermissionsPredicateOnly(restrictionData, username, mixerRoles) {
+    checkPermissionsPredicateOnly(restrictionData, username, twitchRoles) {
         if (restrictionData == null || restrictionData.restrictions == null ||
             restrictionData.restrictions.length < 1) {
             return Promise.resolve(true);
@@ -55,7 +55,7 @@ class RestrictionsManager extends EventEmitter {
         let triggerData = {
             metadata: {
                 username: username,
-                userMixerRoles: mixerRoles
+                userTwitchRoles: twitchRoles
             }
         };
         return this.runRestrictionPredicates(triggerData, permRestrictionData)
@@ -138,7 +138,7 @@ function mapRestrictionForFrontEnd(restriction) {
 }
 
 ipcMain.on("getRestrictions", (event) => {
-    logger.info("got 'get restrictions' request");
+    logger.debug("got 'get restrictions' request");
 
     event.returnValue = manager.getAllRestrictions().map(r => mapRestrictionForFrontEnd(r));
 });

@@ -1,3 +1,5 @@
+// Migration: done
+
 "use strict";
 const quoteManager = require("../../quotes/quotes-manager");
 const logger = require("../../logwrapper");
@@ -7,7 +9,13 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 const model = {
     definition: {
         handle: "quote",
-        description: "Get a random quote or specify a quote id number.",
+        description: "Get a random quote",
+        examples: [
+            {
+                usage: "quote[#]",
+                description: "Get a specific quote id."
+            }
+        ],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, quoteId) => {

@@ -1,5 +1,6 @@
-"use strict";
+// Migration: done
 
+"use strict";
 
 const { OutputDataType } = require("../../../shared/variable-contants");
 

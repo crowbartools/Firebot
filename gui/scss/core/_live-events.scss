@@ -1,4 +1,4 @@
-.events-header {
+.events-tab-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -7,7 +7,6 @@
     background: $light-background-color;
     margin-top: 10px;
 }
-
 
 .live-events{
     .play-button {

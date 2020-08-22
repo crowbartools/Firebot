@@ -198,9 +198,12 @@
                     size: "sm",
                     resolveObj: {
                         model: () => options.model,
+                        inputType: () => options.inputType,
                         label: () => options.label,
                         inputPlaceholder: () => options.inputPlaceholder,
                         saveText: () => options.saveText,
+                        useTextArea: () => options.useTextArea,
+                        descriptionText: () => options.descriptionText,
                         validationFn: () => options.validationFn,
                         validationText: () => options.validationText,
                         trigger: () => options.trigger,
@@ -275,13 +278,16 @@
                         $scope,
                         $rootScope,
                         $uibModalInstance,
+                        ngToast,
                         settingsService,
                         instanceName
                     ) => {
 
                         $scope.usingOverlayInstances = settingsService.useOverlayInstances();
 
-                        $scope.broadcastingSoftwares = ["OBS/SLOBS", "XSplit"];
+                        $scope.broadcastingSoftwares = [
+                            "OBS/SLOBS", "XSplit", "Direct Link/2 PC Setup"
+                        ];
 
                         $scope.selectedBroadcastingSoftware = "OBS/SLOBS";
 
@@ -296,10 +302,17 @@
 
                             let port = settingsService.getWebServerPort();
 
-                            let params = {};
-                            if (port !== 7472 && !isNaN(port)) {
-                                params["port"] = settingsService.getWebServerPort();
+                            if ($scope.selectedBroadcastingSoftware === "Direct Link/2 PC Setup") {
+                                overlayPath = `http://localhost:${port}/overlay`;
                             }
+
+                            let params = {};
+                            if ($scope.selectedBroadcastingSoftware !== "Direct Link/2 PC Setup") {
+                                if (port !== 7472 && !isNaN(port)) {
+                                    params["port"] = settingsService.getWebServerPort();
+                                }
+                            }
+
 
                             if (instanceName != null && instanceName !== "") {
                                 $scope.showingInstance = true;
@@ -329,7 +342,10 @@
                         $scope.pathCopied = false;
                         $scope.copy = function() {
                             $rootScope.copyTextToClipboard($scope.overlayPath);
-                            $scope.pathCopied = true;
+                            ngToast.create({
+                                className: 'success',
+                                content: "Overlay path copied!"
+                            });
                         };
 
                         $scope.dismiss = function() {
@@ -697,7 +713,8 @@
 
                             // validate options
                             let errors = $scope.effectDefinition.optionsValidator(
-                                $scope.effect
+                                $scope.effect,
+                                $scope
                             );
 
                             if (errors != null && errors.length > 0) {

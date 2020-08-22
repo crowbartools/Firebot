@@ -4,7 +4,6 @@ const request = require("request");
 
 const accountAccess = require("./account-access");
 
-
 /**
  * An Elixr Emote
  * @typedef {Object} ElixrEmote

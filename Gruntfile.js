@@ -32,7 +32,7 @@ module.exports = function(grunt) {
         platform = process.platform === 'win32' ? 'win64' : process.platform;
     }
     if (platform !== 'win64' && platform !== 'linux') {
-        grunt.fail.fatal(new Error('Platform not supported'), 1);
+        //grunt.fail.fatal(new Error('Platform not supported'), 1);
     }
 
     // Base configuration

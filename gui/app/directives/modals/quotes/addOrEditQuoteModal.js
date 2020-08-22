@@ -3,6 +3,7 @@
 (function() {
 
     const moment = require("moment");
+    const electron = require('electron');
 
     angular.module("firebotApp")
         .component("addOrEditQuoteModal", {
@@ -43,7 +44,7 @@
                         <div style="width: 100%; position: relative;">
                             <div class="form-group" ng-class="{'has-error': $ctrl.createdDateError}">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" uib-datepicker-popup="MM/dd/yyyy" ng-model="$ctrl.createdAtDate" is-open="$ctrl.datePickerOpen" datepicker-options="$ctrl.dateOptions" ng-required="true" show-button-bar="false" placeholder="Enter created date" aria-describedby="dateHelpBlock"/>
+                                    <input type="text" class="form-control" uib-datepicker-popup="{{$ctrl.dateFormat}}" ng-model="$ctrl.createdAtDate" is-open="$ctrl.datePickerOpen" datepicker-options="$ctrl.dateOptions" ng-required="true" show-button-bar="false" placeholder="Enter created date" aria-describedby="dateHelpBlock"/>
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-default" ng-click="$ctrl.datePickerOpen = true"><i class="fas fa-calendar"></i></button>
                                     </span>
@@ -80,6 +81,9 @@
                 let $ctrl = this;
 
                 $ctrl.isNewQuote = true;
+
+                let isUSLocale = electron.remote.app.getLocale() === "en-US";
+                $ctrl.dateFormat = isUSLocale ? "MM/dd/yyyy" : "dd/MM/yyyy";
 
                 $ctrl.quote = {
                     text: "",

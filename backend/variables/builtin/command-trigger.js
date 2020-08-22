@@ -1,15 +1,12 @@
-"use strict";
+// Migration: done
 
+"use strict";
 
 const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
 const { OutputDataType } = require("../../../shared/variable-contants");
-
-/**
- * The $subMonths variable
- */
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;

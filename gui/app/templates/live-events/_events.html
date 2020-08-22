@@ -9,7 +9,7 @@
           <div class="flex-row-center jspacebetween scene-row" style="flex-shrink: 0;" ng-class="{'selected': es.tabIsSelected('mainevents')}"  ng-click="es.setSelectedTab('mainevents')">
             <div class="flex-row-center" style="height:100%;">
               <div class="selected-scene-icon" ng-class="{'transparent': !es.tabIsSelected('mainevents')}"></div>
-              <div>Main Events <tooltip text="'A collection of events that are always active, regardless of which event group is active.'"></tooltip></div>
+              <div>General Events <tooltip text="'A collection of events that are always active, regardless of which event sets are active.'"></tooltip></div>
             </div>
             <div class="flex-row-center jspacebetween">
               <span class="status-dot active" uib-tooltip="Main events are always active." tooltip-append-to-body="true"></span>
@@ -30,37 +30,34 @@
           <div style="height: 2px; background: #3e3f40; margin: 15px 0 10px;flex-shrink: 0;"></div>
 
           <div class="mixplay-header flex-row-center jspacebetween" style="flex-shrink: 0;">
-            <span>Event Groups <tooltip text="'Only one event group can be active at a time. This allows you to switch between groups of events. Useful for creating holiday themes, etc.'"></tooltip></span>
+            <span>Event Sets <tooltip text="'Event Sets allow you to create different sets of events (ie for specific games or holiday themes) and selectively activate them.'"></tooltip></span>
             <div class="clickable" ng-click="showCreateEventGroupModal()"><i class="fas fa-plus-circle"></i></div>
           </div>
 
             <div style="height: 100%; overflow-y: auto;">
-                <div class="muted" ng-if="es.getEventGroups().length < 1" style="margin-left: 18px;font-size: 12px;">No groups saved.</div>
+                <div class="muted" ng-if="es.getEventGroups().length < 1" style="margin-left: 18px;font-size: 12px;">No sets created.</div>
 
-                <div ng-repeat="group in es.getEventGroups()" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': es.tabIsSelected(group.id)}"  ng-click="es.setSelectedTab(group.id)">
+                <div ng-repeat="group in es.getEventGroups() track by group.id" class="flex-row-center jspacebetween scene-row" ng-class="{'selected': es.tabIsSelected(group.id)}"  ng-click="es.setSelectedTab(group.id)">
                     <div class="flex-row-center" style="height:100%;">
                     <div class="selected-scene-icon" ng-class="{'transparent': !es.tabIsSelected(group.id)}"></div>
                     <div class="row-text" style="max-width: 145px;">{{group.name}}</div>
                     </div>
                     <div class="flex-row-center jspacebetween">
-                        <span ng-if="es.groupIsActive(group.id)" class="status-dot active" uib-tooltip="This event group is active" tooltip-append-to-body="true"></span>
+                        <span ng-if="group.active" class="status-dot active" uib-tooltip="This event set is active" tooltip-append-to-body="true"></span>
                         <div uib-dropdown uib-dropdown-toggle dropdown-append-to-body="true" class="clickable" ng-click="$event.stopPropagation()" style="font-size: 21px;height: 20px;width: 36px;text-align: center;display: flex;align-items: center;justify-content: center;">
                             <span class="noselect pointer" ><i class="fal fa-ellipsis-v"></i></span>
                             <ul class="dropdown-menu" uib-dropdown-menu>
                                 <li ng-click="showRenameEventGroupModal(group)">
                                     <a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Rename</a>
                                 </li>
-                                <li ng-show="es.groupIsActive(group.id)" ng-click="es.setActiveEventGroup(null)">
-                                    <a href ><i class="fas fa-star" style="margin-right: 10px;"></i> Unset as active group</a>
-                                </li>
-                                <li ng-hide="es.groupIsActive(group.id)" ng-click="es.setActiveEventGroup(group.id)">
-                                    <a href ><i class="far fa-star" style="margin-right: 10px;"></i> Set as active group</a>
+                                <li ng-click="es.toggleEventGroupActiveStatus(group.id)">
+                                    <a href ><i class="fas" ng-class="{'fa-toggle-on': !group.active, 'fa-toggle-off': group.active}" style="margin-right: 10px;"></i>{{group.active ? 'Deactivate' : 'Activate'}}</a>
                                 </li>
                                 <li ng-click="es.duplicateEventGroup(group)">
-                                    <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate group</a>
+                                    <a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate set</a>
                                 </li>
                                 <li ng-click="showDeleteGroupModal(group)">
-                                    <a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete group</a>
+                                    <a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete set</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li ng-click="copyEvents(group.id)">
@@ -77,12 +74,30 @@
         </div>
 
         <div style="width: 100%;overflow-y: scroll;">
-
-            <scroll-sentinel element-class="events-header"></scroll-sentinel>
-
-            <div class="sticky-top events-header">
+            <div>
+            <scroll-sentinel element-class="events-sticky"></scroll-sentinel>
+            <div class="events-tab-header events-sticky sticky-top">
                 <button ng-click="showAddOrEditEventModal()" class="btn btn-primary"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Event</button>
-                <searchbar ng-hide="getSelectedEvents().length < 1" placeholder-text="Search Events" query="eventSearch" style="flex-basis: 250px;"></searchbar>
+
+                <div ng-hide="getSelectedEvents().length < 1" style="display: flex; flex-direction: row;align-items: center;">
+                    <div class="btn-group" style="margin-right:10px;" uib-dropdown>
+                        <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                            {{es.selectedSortTagDisplay()}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem" ng-click="es.setSelectedSortTag(null)"><a href>All Events</a></li>
+                            <li class="divider" ng-show="es.getSortTags().length > 0"></li>
+                            <li class="dropdown-header" ng-show="es.getSortTags().length > 0">Sort Tags</li>
+                            <li ng-repeat="tag in es.getSortTags()" ng-click="es.setSelectedSortTag(tag)" role="menuitem">
+                                <a href>{{tag.name}}</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li role="menuitem" ng-click="es.openManageTagsModal()"><a href>Edit sort tags</a></li>
+                        </ul>
+                    </div>
+    
+                    <searchbar placeholder-text="Search Events" query="eventSearch" style="flex-basis: 250px;"></searchbar>
+                </div>
             </div>
 
             <div style="padding: 0 20px 20px 20px;">
@@ -90,8 +105,12 @@
                 <div ng-if="getSelectedEvents().length < 1" class="noselect muted" style="margin: 13px 0 0 13px;">
                   <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No events saved. You should make one! :)</span>
                 </div>
+
+                <div ng-if="getSelectedEvents().length > 0 && filteredEvents && filteredEvents.length < 1" class="noselect muted" style="margin: 13px 0 0 13px;">
+                    <span style="margin-left:8px">No events found.</span>
+                </div>
       
-                <table class="fb-table" ng-hide="getSelectedEvents().length < 1">
+                <table class="fb-table" ng-hide="getSelectedEvents().length < 1 || (filteredEvents && filteredEvents.length < 1)">
                     <thead>
                         <tr style="font-size: 11px;">
                             <th style="width:5%"></th> 
@@ -103,7 +122,7 @@
                         </tr> 
                     </thead> 
                     <tbody> 
-                        <tr ng-repeat="event in getSelectedEvents() | orderBy: 'type' | filter:eventSearch track by event.id" context-menu="eventMenuOptions">
+                        <tr ng-repeat="event in filteredEvents = (getSelectedEvents() | orderBy: 'type' | sortTagSearch:es.selectedSortTag | filter:eventSearch) track by event.id" context-menu="eventMenuOptions">
                             <td style="text-align: center;">
                                 <span style="color: #2aa1c0; font-size: 20px;" ng-click="fireEventManually(event)">
                                     <i class="fas fa-play-circle clickable"></i>
@@ -129,16 +148,16 @@
                                         <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
                                         <ul class="dropdown-menu" uib-dropdown-menu>
                                             <li>
-                                                <a href ng-click="showAddOrEditEventModal($index)">Edit</a>
+                                                <a href ng-click="showAddOrEditEventModal(event.id)">Edit</a>
                                             </li>
                                             <li ng-show="selectedGroupIsActive()">
-                                                <a href ng-click="toggleEventActiveStatus($index)">{{event.active ? 'Disable' : 'Enable'}}</a>
+                                                <a href ng-click="toggleEventActiveStatus(event.id)">{{event.active ? 'Disable' : 'Enable'}}</a>
                                             </li>
                                             <li>
-                                              <a href ng-click="duplicateEvent($index)">Duplicate</a>
+                                              <a href ng-click="duplicateEvent(event.id)">Duplicate</a>
                                             </li>
                                             <li>
-                                                <a href ng-click="showDeleteEventModal($index, event.name ? event.name : 'Unnamed')" style="color: #fb7373;">Delete</a>
+                                                <a href ng-click="showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed')" style="color: #fb7373;">Delete</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -148,7 +167,7 @@
                     </tbody>
                 </table>
               </div>
-
+            </div>
         </div>
         
 

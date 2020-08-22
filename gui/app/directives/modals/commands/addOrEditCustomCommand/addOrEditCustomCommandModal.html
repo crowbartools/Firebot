@@ -48,6 +48,11 @@
                         ng-model="$ctrl.command.regexDescription" placeholder="This regex matches...">
                 </div>
             </eos-collapsable-panel>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon3">Description <tooltip text="'Displayed on the command list webpage'"></tooltip></span>
+                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.command.description" placeholder="Enter description">
+            </div>
         </div>
 
         <div style="padding-bottom:1em">
@@ -63,6 +68,13 @@
                 <input class="form-control" type="number" min="0" placeholder="secs"
                     ng-model="$ctrl.command.cooldown.user">
             </div>
+
+            <div style="margin-top: 5px;" ng-show="$ctrl.command.cooldown.global > 0 || $ctrl.command.cooldown.user > 0">
+                <label class="control-fb control--checkbox"> Send chat message when on cooldown
+                    <input type="checkbox" ng-model="$ctrl.command.sendCooldownMessage">
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
         </div>
 
         <div style="padding-bottom:1em">
@@ -76,9 +88,17 @@
             </div>
 
             <div>
-                <restrictions-list restriction-data="$ctrl.command.restrictionData" trigger="command"
-                    trigger-meta="$ctrl.triggerMeta">
-                    </restrictions-section>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 5px;">Restrictions <span class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">(Permissions, currency costs, and more)</span></h3>
+                    <restrictions-list restriction-data="$ctrl.command.restrictionData" trigger="command"
+                        trigger-meta="$ctrl.triggerMeta">
+                        </restrictions-list>
+                </div>             
+            </div>
+
+            <div class="effect-setting-container" style="padding-bottom:1em" ng-show="$ctrl.allSortTags != null && $ctrl.allSortTags.length > 0">
+                <h3>Sort Tags</h3>
+                <sort-tag-list current-tag-ids="$ctrl.command.sortTags" all-tags="$ctrl.allSortTags"></sort-tag-list>
             </div>
 
             <div class="other-settings" style="padding-bottom:1em">
@@ -91,15 +111,9 @@
                         <div class="control__indicator"></div>
                     </label>
                     <!--<label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone uses this command'"></tooltip>
-                    <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
-                    <div class="control__indicator"></div>
-                </label>-->
-                    <label class="control-fb control--checkbox">Allow in Costream Channels <tooltip
-                            text="'Allow this command to be used by anyone in a costream chat. If unchecked only viewers in your channel can use this command.'">
-                        </tooltip>
-                        <input type="checkbox" ng-model="$ctrl.command.allowInCostreams" aria-label="...">
+                        <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
                         <div class="control__indicator"></div>
-                    </label>
+                    </label>-->
                     <label class="control-fb control--checkbox">Hidden <tooltip
                             text="'Hide this command from the !commands list'"></tooltip>
                         <input type="checkbox" ng-model="$ctrl.command.hidden" aria-label="...">
@@ -108,6 +122,11 @@
                     <label class="control-fb control--checkbox">Ignore Bot Account <tooltip
                         text="'Whether or not the bot account should be able to trigger this command.'"></tooltip>
                         <input type="checkbox" ng-model="$ctrl.command.ignoreBot" aria-label="...">
+                        <div class="control__indicator"></div>
+                    </label>
+                    <label class="control-fb control--checkbox">Ignore Streamer Account <tooltip
+                        text="'Whether or not the streamer account should be able to trigger this command.'"></tooltip>
+                        <input type="checkbox" ng-model="$ctrl.command.ignoreStreamer" aria-label="...">
                         <div class="control__indicator"></div>
                     </label>
                 </div>

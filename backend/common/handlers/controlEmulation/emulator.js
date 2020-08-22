@@ -228,7 +228,7 @@ function keyHolding(key, state, modifiers) {
                 robotjs.keyToggle(key, state, cleanModifiers);
             }
         } catch (err) {
-            logger.error(err);
+            logger.error(err, state, key);
             renderWindow.webContents.send(
                 "error",
                 "There was an error trying to press button: " + key

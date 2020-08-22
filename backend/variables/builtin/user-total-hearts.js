@@ -1,3 +1,5 @@
+// Migration: todo - Need implementation details
+
 "use strict";
 
 const {
@@ -14,6 +16,7 @@ const model = {
     definition: {
         handle: "userTotalHearts",
         description: "The total hearts (xp) a viewer has towards channel progression.",
+        hidden: true,
         triggers: triggers,
         possibleDataOutput: [OutputDataType.NUMBER]
     },

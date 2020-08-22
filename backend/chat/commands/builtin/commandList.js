@@ -18,30 +18,26 @@ const commandList = {
         }
     },
     /**
-   * When the command is triggered
-   */
+     * When the command is triggered
+     */
     onTriggerEvent: async event => {
         const cloudSync = require('../../../cloud-sync/profile-sync.js');
-        const Chat = require("../../../common/mixer-chat");
+        const twitchChat = require("../../../chat/twitch-chat");
 
         let profileJSON = {
-            username: event.chatEvent.user_name,
-            userRoles: event.chatEvent.user_roles,
-            profilePage: 'quotes'
+            username: event.chatMessage.username,
+            userRoles: event.chatMessage.roles,
+            profilePage: 'commands'
         };
 
         let binId = await cloudSync.syncProfileData(profileJSON);
 
         if (binId == null) {
-            Chat.smartSend(
-                "There are no commands that you are allowed to run.",
-                event.userCommand.commandSender
-            );
+            twitchChat.sendChatMessage(
+                `${event.chatMessage.username}, there are no commands that you are allowed to run.`, null, "Bot");
         } else {
-            Chat.smartSend(
-                `Here a list of the commands you can use. https://crowbartools.com/tools/firebot/profile?id=${binId}`,
-                event.userCommand.commandSender
-            );
+            twitchChat.sendChatMessage(
+                `You can view the list of commands here: https://firebot.app/profile?id=${binId}`, null, "Bot");
         }
     }
 };

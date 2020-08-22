@@ -22,7 +22,7 @@
             let $ctrl = this;
             $ctrl.openLinkExternally = $rootScope.openLinkExternally;
 
-            $ctrl.variables = listenerService.fireEventSync("getReplaceVariableDefinitions");
+            $ctrl.variables = [];
 
             $ctrl.$onInit = function() {
 

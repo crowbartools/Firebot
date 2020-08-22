@@ -15,7 +15,7 @@ settings.flushSettingsCache = function() {
     frontendCommunicator.send("flush-settings-cache");
 };
 
-frontendCommunicator.on("settings-updated-main", (settingsUpdate) => {
+frontendCommunicator.on("settings-updated-renderer", (settingsUpdate) => {
     if (settingsUpdate == null) return;
     let { path, data } = settingsUpdate;
     if (path == null || path === '') return;
@@ -46,7 +46,11 @@ function getDataFromFile(path, forceCacheUpdate = false) {
             let data = getSettingsFile().getData(path);
             settingsCache[path] = data;
         }
-    } catch (err) {} //eslint-disable-line no-empty
+    } catch (err) {
+        if (err.name !== "DataError") {
+            logger.warn(err);
+        }
+    }
     return settingsCache[path];
 }
 
@@ -243,9 +247,11 @@ settings.getViewerDbStatus = function() {
     let status = getDataFromFile("/settings/viewerDB");
     return status != null ? status : true;
 };
+
 settings.getClipDownloadFolder = function() {
+    const dataAccess = require("./data-access");
     let dlFolder = getDataFromFile('/settings/clips/downloadFolder');
-    return dlFolder != null && dlFolder !== "" ? dlFolder : profileManager.getPathInProfile("/clips/");
+    return dlFolder != null && dlFolder !== "" ? dlFolder : dataAccess.getPathInUserData("/clips/");
 };
 
 /*
@@ -288,6 +294,14 @@ settings.getWhileLoopEnabled = function() {
 
 settings.setWhileLoopEnabled = function(enabled) {
     pushDataToFile('/settings/whileLoopEnabled', enabled === true);
+};
+
+/**@returns {string[]} */
+settings.getSidebarControlledServices = function() {
+    const services = getDataFromFile("/settings/sidebarControlledServices");
+    return services != null
+        ? services
+        : ["chat"];
 };
 
 exports.settings = settings;

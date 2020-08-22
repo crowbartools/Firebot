@@ -1,6 +1,6 @@
 "use strict";
 
-const eventManager = require("../../../../live-events/EventManager");
+const eventManager = require("../../../../events/EventManager");
 
 const EVENT_SOURCE_ID = "streamlabs";
 const EventId = {

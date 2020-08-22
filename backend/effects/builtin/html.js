@@ -58,7 +58,7 @@ const html = {
         </eos-collapsable-panel>
     </eos-container>
 
-    <eos-enter-exit-animations effect="effect" limit-to="Exit" pad-top="true"></eos-enter-exit-animations>
+    <eos-enter-exit-animations effect="effect" pad-top="true"></eos-enter-exit-animations>
 
     <eos-overlay-instance effect="effect" pad-top="true"></eos-overlay-instance>
 
@@ -110,6 +110,12 @@ const html = {
             html: HTML,
             length: duration,
             removal: removal,
+            inbetweenAnimation: effect.inbetweenAnimation,
+            inbetweenDelay: effect.inbetweenDelay,
+            inbetweenDuration: effect.inbetweenDuration,
+            inbetweenRepeat: effect.inbetweenRepeat,
+            enterAnimation: effect.enterAnimation,
+            enterDuration: effect.enterDuration,
             exitAnimation: effect.exitAnimation,
             exitDuration: effect.exitDuration
         };
@@ -137,36 +143,57 @@ const html = {
             name: "html",
             onOverlayEvent: event => {
 
-                let data = event;
+                let element = $(event.html);
 
-                let element, _element;
+                element.hide();
 
-                element = _element = $(data.html);
+                $('#wrapper').append(element);
 
-                _element.hide();
+                element.show();
 
-                $('#wrapper').append(_element);
+                element.animateCss(event.enterAnimation, event.enterDuration, null, null, (data) => {
 
-                _element.show();
-
-                setTimeout(function() {
-                    // If CSS class is provided, remove element(s) with provided CSS class.
-                    if (data.removal && data.removal.length > 0) {
-                        element = element.parent().find("." + data.removal);
-
-                        //If no elements found, remove original element.
-                        if (element.length > 0) {
-                            element.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
-                                element.remove();
-                            });
-                        }
-                    } else {
-                        element.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() { // Default Animation: Fade Out
-                            element.remove();
-                        });
+                    if (data.inbetweenAnimation != null && data.inbetweenAnimation !== "" && data.inbetweenAnimation !== "none") {
+                        data.htmlElement.animateCss(data.inbetweenAnimation, data.inbetweenDuration, data.inbetweenDelay, data.inbetweenRepeat);
                     }
 
-                }, parseFloat(data.length || 10) * 1000); // Default Show Time: 10 Seconds
+                    setTimeout(function() {
+                        if (data.inbetweenAnimation != null && data.inbetweenAnimation !== "" && data.inbetweenAnimation !== "none") {
+                            data.htmlElement.css("animation-duration", "");
+                            data.htmlElement.css("animation-delay", "");
+                            data.htmlElement.css("animation-iteration-count", "");
+                            data.htmlElement.removeClass('animated ' + data.inbetweenAnimation);
+                        }
+
+                        // If CSS class is provided, remove element(s) with provided CSS class.
+                        if (data.removal && data.removal.length > 0) {
+                            let elementToRemove = $("#wrapper").find("." + data.removal);
+
+                            //If no elements found, remove original element.
+                            if (elementToRemove.length < 1) {
+                                elementToRemove = data.htmlElement;
+                            }
+
+                            elementToRemove.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() {
+                                elementToRemove.remove();
+                            });
+                        } else {
+                            data.htmlElement.animateCss(data.exitAnimation || "fadeOut", data.exitDuration, null, null, function() {
+                                data.htmlElement.remove();
+                            });
+                        }
+                    }, parseFloat(data.duration || 5) * 1000);
+                }, {
+                    htmlElement: element,
+                    removal: event.removal,
+                    duration: event.length,
+                    exitAnimation: event.exitAnimation,
+                    exitDuration: event.exitDuration,
+                    inbetweenAnimation: event.inbetweenAnimation,
+                    inbetweenDuration: event.inbetweenDuration,
+                    inbetweenDelay: event.inbetweenDelay,
+                    inbetweenRepeat: event.inbetweenRepeat
+                });
             }
         }
     }

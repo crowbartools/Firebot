@@ -15,8 +15,12 @@ let profileToRename = null;
 
 
 function restartApp() {
-    app.relaunch({ args: process.argv.slice(1).concat(["--relaunch"]) });
-    app.exit(0);
+    const chatModerationManager = require("../chat/moderation/chat-moderation-manager");
+    chatModerationManager.stopService();
+    setTimeout(() => {
+        app.relaunch({ args: process.argv.slice(1).concat(["--relaunch"]) });
+        app.exit(0);
+    }, 100);
 }
 
 // This app will active a new profile. It will set the loggedInProfile setting in globalsettings and then restart the app.
@@ -56,30 +60,6 @@ function createNewProfile(profileId) {
 
     // Get next profile id and push to active profiles.
     activeProfiles.push(profileId);
-
-    // Create the profiles folder if it doesn't exist. It's required
-    // for the folders below that are within it
-    if (!dataAccess.userDataPathExistsSync("/profiles")) {
-        logger.info("Can't find the profiles folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/profiles");
-    }
-
-    if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId)) {
-        logger.info("Can't find a specific profile folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/profiles/" + profileId);
-    }
-
-    // Create the scripts folder if it doesn't exist
-    if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/scripts")) {
-        logger.info("Can't find the scripts folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/scripts");
-    }
-
-    // Create the chat folder if it doesn't exist.
-    if (!dataAccess.userDataPathExistsSync("/profiles/" + profileId + "/chat")) {
-        logger.info("Can't find the chat folder, creating one now...");
-        dataAccess.makeDirInUserDataSync("/profiles/" + profileId + "/chat");
-    }
 
     // Push our new profile to settings.
     globalSettingsDb.push("/profiles/activeProfiles", activeProfiles);

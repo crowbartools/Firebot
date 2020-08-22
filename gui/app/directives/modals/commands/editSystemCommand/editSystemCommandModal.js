@@ -4,8 +4,7 @@
 
 (function() {
     angular.module("firebotApp").component("editSystemCommandModal", {
-        templateUrl:
-      "./directives/modals/commands/editSystemCommand/editSystemCommandModal.html",
+        templateUrl: "./directives/modals/commands/editSystemCommand/editSystemCommandModal.html",
         bindings: {
             resolve: "<",
             close: "&",

@@ -1,0 +1,114 @@
+<div style="min-width: 500px;height:100%;width:100%;display: flex;flex-direction: column;">
+    <div class="fb-commands-tab-wrapper">
+        <ul class="nav nav-tabs fb-tabs">
+            <li role="presentation" ng-class="{'active' : activeTab === 0}" ng-click="activeTab = 0">
+                <a href>EFFECT QUEUES</a>
+            </li>
+            <li role="presentation" ng-class="{'active' : activeTab === 1}" ng-click="activeTab = 1">
+                <a href>PRESET EFFECT LISTS</a>
+            </li>
+        </ul>
+    </div>
+
+    <div style="overflow-y: scroll;height:100%;"> 
+        <div ng-if="activeTab === 0">
+            <scroll-sentinel element-class="effect-queue-header"></scroll-sentinel>      
+            <div class="light-bg sticky-top effect-queue-header" style="padding: 15px; margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
+                <button ng-click="addOrEditQueue()" class="btn btn-primary hvr-icon-grow"><i class="fas fa-plus-circle hvr-icon" style="margin-right:5px;"></i> New Effect Queue</button>
+                
+                <!--<div style="display: flex; flex-direction: row;align-items: center;">
+                    <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandSearch" style="flex-basis: 250px;"></searchbar>
+                </div>-->
+                
+            </div>   
+            <div style="padding: 15px;">
+                <div ng-if="eqs.getEffectQueues().length === 0" class="noselect muted" style="padding-left: 13px">
+                    <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No effect queues saved. You should make one! :) </span>
+                </div>
+                <table ng-show="eqs.getEffectQueues().length > 0" class="fb-table">
+                    <thead>
+                        <tr style="font-size: 11px;">
+                            <th class="muted" style="padding-left: 10px;"><i class="fas fa-tag"></i> NAME</th> 
+                            <th class="muted"><i class="fas fa-bring-forward"></i> MODE</th> 
+                            <th class="muted"><i class="fas fa-clock"></i> INTERVAL</th>
+                            <th></th> 
+                        </tr> 
+                    </thead> 
+                    <tbody> 
+                        <tr ng-repeat="queue in eqs.getEffectQueues() track by queue.id">
+                            <td class="command-trigger-cell" style="padding-left: 10px;">
+                                <span class="trigger">{{queue.name}}</span>
+                            </td>
+                            <td>
+                                {{queue.mode === 'interval' ? 'Interval' : 'Auto'}}                       
+                            </td>
+                            <td>
+                                {{queue.mode === 'interval' ? queue.interval+'s' : 'n/a'}}  
+                            </td> 
+                            <td>
+                                <div style="text-align: right;">
+                                    <div uib-dropdown uib-dropdown-toggle class="pull-right">
+                                        <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
+                                        <ul class="dropdown-menu" uib-dropdown-menu>
+                                            <li>
+                                                <a href ng-click="addOrEditQueue(queue.id)">Edit</a>
+                                            </li>
+                                            <li>
+                                                <a href ng-click="deleteQueue(queue.id)" style="color: #fb7373;">Delete</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>                       
+                            </td> 
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div ng-if="activeTab === 1">
+            <scroll-sentinel element-class="preset-effect-list-header"></scroll-sentinel>      
+            <div class="light-bg sticky-top preset-effect-list-header" style="padding: 15px; margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
+                <button ng-click="addOrEditPresetEffectList()" class="btn btn-primary hvr-icon-grow"><i class="fas fa-plus-circle hvr-icon" style="margin-right:5px;"></i> New Preset Effect List</button>
+            </div>   
+            <div style="padding: 15px;">
+                <div ng-if="pels.getPresetEffectLists().length === 0" class="noselect muted" style="padding-left: 13px">
+                    <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No Preset Effect Lists saved. You should make one! :)</span>
+                </div>
+                <table ng-show="pels.getPresetEffectLists().length > 0" class="fb-table">
+                    <thead>
+                        <tr style="font-size: 11px;">
+                            <th class="muted" style="padding-left: 10px;"><i class="fas fa-tag"></i> NAME</th> 
+                            <th class="muted"><i class="fas fa-magic"></i> EFFECTS</th>
+                            <th></th> 
+                        </tr> 
+                    </thead> 
+                    <tbody> 
+                        <tr ng-repeat="presetList in pels.getPresetEffectLists() track by presetList.id">
+                            <td class="command-trigger-cell" style="padding-left: 10px;">
+                                <span class="trigger">{{presetList.name}}</span>
+                            </td>
+                            <td>
+                                {{presetList.effects ? presetList.effects.list.length : 0}}  
+                            </td> 
+                            <td>
+                                <div style="text-align: right;">
+                                    <div uib-dropdown uib-dropdown-toggle class="pull-right">
+                                        <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
+                                        <ul class="dropdown-menu" uib-dropdown-menu>
+                                            <li>
+                                                <a href ng-click="addOrEditPresetEffectList(presetList.id)">Edit</a>
+                                            </li>
+                                            <li>
+                                                <a href ng-click="deletePresetEffectList(presetList.id)" style="color: #fb7373;">Delete</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>                       
+                            </td> 
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

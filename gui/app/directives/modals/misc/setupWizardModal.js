@@ -19,7 +19,7 @@
                         <span style="animation-delay: 1.3s" class="animated bounceIn">Firebot</span>
                         </div>
                         <div style="animation-delay: 2.0s" class="animated fadeIn welcome-subtitle">
-                            <span>A Tool For Mixer Streamers</span>
+                            <span>A Tool For Twitch Streamers</span>
                         </div>
                         <div style="animation-delay: 3.2s" class="animated fadeInUp">
                             <a class="btn btn-info hvr-icon-forward " ng-click="$ctrl.handleNext()">Get started <i class="fas fa-arrow-right hvr-icon"></i></a>
@@ -42,12 +42,6 @@
                                     </div>
                                     <div style="text-align:left !important;display:flex; justify-content: center;">
                                         <div style="transform: translateX(40px);">
-                                            <div style="margin-bottom: 3px">
-                                                <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> MixPlay Projects
-                                                    <input type="checkbox" ng-model="$ctrl.importSettings.mixplay">
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
                                             <div style="margin-bottom: 3px">
                                                 <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity:0.9;display:inline-block;"> Chat Commands
                                                     <input type="checkbox" ng-model="$ctrl.importSettings.commands">
@@ -135,7 +129,7 @@
 
                     <div ng-switch-when="2" class="wave">
                         <p>
-                            Firebot supports two different Mixer accounts:</br></br>
+                            Firebot supports two different accounts:</br></br>
                             <b>Streamer</b> - the account you stream with <span class="muted">(Required)</span></br>
                             <b>Bot</b> - a second account that can chat to your viewers  <span class="muted">(Optional)</span>
                         </p>
@@ -235,7 +229,7 @@
                         <h1 style="margin-top: 0px;animation-delay: 0.4s" class="animated bounceIn">You're all set!</h1>
                         <br>
                         <p style="animation-delay: 0.8s" class="animated fadeIn">
-                            If you need help or have a suggestion, we'd love to hear from you.<br>Click the About link in the sidebar to see where you can find us.
+                            If you need help or have a suggestion, we'd love to hear from you.<br>Go to <b>Help</b> > <b>About</b> to see where you can find us.
                         </p>
                         <br>
                         <p style="animation-delay: 1.8s" class="animated fadeIn">
@@ -249,6 +243,13 @@
                 
             </div>
             <div class="modal-footer"  style="min-height: 64px; text-align: center;">
+
+                <div ng-if="$ctrl.isFirstStep()">
+                    <span style="animation-delay: 3.3s;display: flex;flex-direction: row;justify-content: center;align-items: center;" class="animated fadeIn">
+                        <a class="btn btn-link import-settings-btn" ng-click="$ctrl.startBackupRestoreProcess()">Restore from a backup</a>
+                    </span>            
+                </div>
+
                 <div>
                     <a class="btn btn-default" ng-click="$ctrl.handlePrevious()" ng-show="$ctrl.showBackButton()">Back</a>
                     <a 
@@ -272,7 +273,7 @@
             dismiss: "&"
         },
         controller: function($rootScope, connectionService, connectionManager,
-            overlayUrlHelper, ngToast, backendCommunicator) {
+            overlayUrlHelper, ngToast, backendCommunicator, backupService) {
             let $ctrl = this;
 
             $ctrl.step = 0;
@@ -366,8 +367,7 @@
             $ctrl.importSettings = {};
 
             $ctrl.canStartImport = () => {
-                return $ctrl.importSettings.mixplay ||
-                $ctrl.importSettings.commands ||
+                return $ctrl.importSettings.commands ||
                 $ctrl.importSettings.events ||
                 $ctrl.importSettings.viewerGroups ||
                 $ctrl.importSettings.hotkeys ||
@@ -467,6 +467,15 @@
 
             $ctrl.getOverlayStatusId = function() {
                 return overlayStatusId;
+            };
+
+            $ctrl.startBackupRestoreProcess = () => {
+                backupService.openBackupZipFilePicker()
+                    .then(backupFilePath => {
+                        if (backupFilePath != null) {
+                            backupService.initiateBackupRestore(backupFilePath);
+                        }
+                    });
             };
 
             $ctrl.$onInit = function() {

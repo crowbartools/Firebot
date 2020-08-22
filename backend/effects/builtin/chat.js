@@ -1,12 +1,12 @@
 "use strict";
 
-const chatProcessor = require("../../common/handlers/chatProcessor");
-
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectDependency, EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
+
+const twitchChat = require("../../chat/twitch-chat");
 
 /**
  * The Chat Effect
@@ -41,7 +41,7 @@ const chat = {
 
     <eos-container header="Message To Send" pad-top="true">
         <textarea ng-model="effect.message" class="form-control" name="text" placeholder="Enter message" rows="4" cols="40" replace-variables></textarea>
-        <div style="color: #fb7373;" ng-if="effect.message && effect.message.length > 360">Chat messages cannot be longer than 360 characters. This message will get automatically trimmed if the length is still too long after all replace variables have been populated.</div>
+        <div style="color: #fb7373;" ng-if="effect.message && effect.message.length > 500">Chat messages cannot be longer than 500 characters. This message will get automatically chunked into mutltiple messages if it's too long after all replace variables have been populated.</div>
         <div style="display: flex; flex-direction: row; width: 100%; height: 36px; margin: 10px 0 10px; align-items: center;">
             <label class="control-fb control--checkbox" style="margin: 0px 15px 0px 0px"> Whisper</tooltip>
                 <input type="checkbox" ng-init="whisper = (effect.whisper != null && effect.whisper !== '')" ng-model="whisper" ng-click="effect.whisper = ''">
@@ -54,6 +54,7 @@ const chat = {
                 </div>
             </div>
         </div>
+        <p ng-show="whisper" class="muted" style="font-size:11px;"><b>ProTip:</b> To whisper the associated user, put <b>$user</b> in the whisper field.</p>
     </eos-container>
 
     `,
@@ -75,7 +76,9 @@ const chat = {
    * When the effect is triggered by something
    */
     onTriggerEvent: async event => {
-        chatProcessor.send(event.effect, event.trigger);
+        const { effect, trigger } = event;
+
+        twitchChat.sendChatMessage(effect.message, null, effect.chatter);
         return true;
     },
     /**

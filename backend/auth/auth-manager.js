@@ -20,8 +20,11 @@ class AuthManager extends EventEmitter {
 
         const oauthClient = this.buildOAuthClientForProvider(authProviderDetails);
 
+        const redirectUrlHost = authProviderDetails.redirectUriHost || "localhost";
+        const redirectUri = `http://${redirectUrlHost}:${HTTP_PORT}/api/v1/auth/callback`;
+
         const authorizationUri = oauthClient.authorizationCode.authorizeURL({
-            redirect_uri: this.REDIRECT_URI, //eslint-disable-line camelcase
+            redirect_uri: redirectUri, //eslint-disable-line camelcase
             scope: authProviderDetails.scopes || '',
             state: authProviderDetails.id
         });
@@ -30,6 +33,7 @@ class AuthManager extends EventEmitter {
             id: authProviderDetails.id,
             oauthClient: oauthClient,
             authorizationUri: authorizationUri,
+            redirectUri: redirectUri,
             details: authProviderDetails
         };
 
@@ -56,7 +60,8 @@ class AuthManager extends EventEmitter {
         const provider = this.getAuthProvider(providerId);
         let accessToken = provider.oauthClient.accessToken.create(tokenData);
 
-        if (accessToken.expired()) {
+        const EXPIRATION_WINDOW_IN_SECONDS = 4500; // 1hr 15 min
+        if (accessToken.expired(EXPIRATION_WINDOW_IN_SECONDS)) {
             try {
                 const params = {
                     scope: provider.details.scopes

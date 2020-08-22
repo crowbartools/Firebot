@@ -1,33 +1,28 @@
 <div class="modal-header">
     <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss()"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title">
-      <span ng-if="!$ctrl.isNewCommand">Edit System Command - </span> {{$ctrl.command.name }}
+      <div style="font-size: 22px;">Edit System Command:</div>
+      <div style="font-weight:bold;font-size: 24px;">{{$ctrl.command.name}}</div>
     </h4>
 </div>
 <div class="modal-body">
-    <div class="general-button-settings">
 
-        <div style="padding-bottom:1em">
-
-            <div class="input-group">
-                <span class="input-group-addon" id="basic-addon3">Trigger</span>
-                <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.command.trigger" placeholder="!something">
-            </div>
-
-            <div class="controls-fb-inline">
-                <label class="control-fb control--checkbox">Auto Delete Trigger <tooltip text="'Have Firebot automatically delete the message that triggers this command to keep chat cleaner.'"></tooltip>
-                    <input type="checkbox" ng-model="$ctrl.command.autoDeleteTrigger" aria-label="...">
-                    <div class="control__indicator"></div>
-                </label>
-            </div>
+    <setting-container header="Trigger">
+        <div class="input-group" style="margin-bottom: 5px;">
+            <span class="input-group-addon" id="basic-addon3">Trigger</span>
+            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="$ctrl.command.trigger" placeholder="!something">
         </div>
 
-        <div style="padding-bottom:1em">
-            <div class="settings-title">
-                <h3>Cooldowns</h3>
-            </div>
+        <div class="controls-fb-inline">
+            <label class="control-fb control--checkbox">Auto Delete Trigger <tooltip text="'Have Firebot automatically delete the message that triggers this command to keep chat cleaner.'"></tooltip>
+                <input type="checkbox" ng-model="$ctrl.command.autoDeleteTrigger" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>
+        </div>
+    </setting-container>
 
-            <div class="input-group">
+    <setting-container header="Cooldowns" pad-top="true" ng-hide="$ctrl.command.hideCooldowns">
+        <div class="input-group">
             <span class="input-group-addon">Global</span>
             <input 
                 class="form-control" 
@@ -42,57 +37,55 @@
                 min="0"
                 placeholder="secs"
                 ng-model="$ctrl.command.cooldown.user">
-            </div>
         </div>
+    </setting-container>
 
-        <div>
-            <restrictions-list 
+    <setting-container header="Restrictions" description="Permissions, currency costs, and more" pad-top="true">
+        <restrictions-list 
                 restriction-data="$ctrl.command.restrictionData"
                 trigger="command" 
                 trigger-meta="$ctrl.triggerMeta">
-            </restrictions-section>
-        </div>
+            </restrictions-list>
+    </setting-container>
+    
 
-        <div class="other-settings" style="padding-bottom:1em">
-            <div class="settings-title">
-                <h3>Settings</h3>
-            </div>
-            <div class="controls-fb-inline">
-                <label class="control-fb control--checkbox">Is Active
-                    <input type="checkbox" ng-model="$ctrl.command.active" aria-label="..." checked>
-                    <div class="control__indicator"></div>
-                </label>
-                <!--<label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone uses this command'"></tooltip>
-                    <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
-                    <div class="control__indicator"></div>
-                </label>-->
-                <label class="control-fb control--checkbox">Skip Logging
-                    <input type="checkbox" ng-model="$ctrl.command.skipLog" aria-label="...">
-                    <div class="control__indicator"></div>
-                </label>
-                <label class="control-fb control--checkbox">Allow in Costream Channels <tooltip text="'Allow this command to be used by anyone in a costream chat. If unchecked only viewers in your channel can use this command.'"></tooltip>
-                    <input type="checkbox" ng-model="$ctrl.command.allowInCostreams" aria-label="...">
-                    <div class="control__indicator"></div>
-                </label>
-            </div>
+    <setting-container header="General" pad-top="true">
+        <div class="controls-fb-inline">
+            <label class="control-fb control--checkbox">Is Active
+                <input type="checkbox" ng-model="$ctrl.command.active" aria-label="..." checked>
+                <div class="control__indicator"></div>
+            </label>
+            <!--<label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone uses this command'"></tooltip>
+                <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>-->
+            <label class="control-fb control--checkbox">Skip Logging
+                <input type="checkbox" ng-model="$ctrl.command.skipLog" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>
+            <label class="control-fb control--checkbox">Allow in Costream Channels <tooltip text="'Allow this command to be used by anyone in a costream chat. If unchecked only viewers in your channel can use this command.'"></tooltip>
+                <input type="checkbox" ng-model="$ctrl.command.allowInCostreams" aria-label="...">
+                <div class="control__indicator"></div>
+            </label>
         </div>
+    </setting-container>
 
-        <div ng-if="$ctrl.command.subCommands != null && $ctrl.command.subCommands.length > 0" class="other-settings" style="padding-bottom:1em">
-            <div class="settings-title">
-                <h3>Subcommands</h3>
-            </div>
-            
-            <div style="display:flex;font-size: 11px; font-weight: bold; padding-bottom: 10px;">
-                <div class="muted" style="flex-basis: 30%;padding-left: 20px;"><i class="fas fa-tag"></i> ARG</div>
-                <div class="muted" style="width: 25%"><i class="fas fa-clock"></i> COOLDOWNS</div>
-                <div class="muted" style="width: 25%"><i class="fas fa-lock-alt"></i> PERMISSIONS</div>
-                <div class="muted" style="width: 25%"></div>
-                <div class="muted" style="flex-basis:30px; flex-shrink: 0;padding-right: 20px;"></div>
-            </div>
-            <subcommand-row ng-repeat="subcommand in $ctrl.command.subCommands track by $index" subcommand="subcommand" cmd-trigger="{{$ctrl.command.trigger}}"></subcommand-row>
+    <setting-container header="Settings" ng-if="$ctrl.command.options != null" pad-top="true">
+        <command-option ng-repeat="(optionName, optionMetadata) in $ctrl.command.options"
+                    name="optionName"
+                    metadata="optionMetadata"></command-option>
+    </setting-container>
 
+    <setting-container header="Subcommands" ng-if="$ctrl.command.subCommands != null && $ctrl.command.subCommands.length > 0" pad-top="true">
+        <div style="display:flex;font-size: 11px; font-weight: bold; padding-bottom: 10px;">
+            <div class="muted" style="flex-basis: 30%;padding-left: 20px;"><i class="fas fa-tag"></i> ARG</div>
+            <div class="muted" style="width: 25%"><i class="fas fa-clock"></i> COOLDOWNS</div>
+            <div class="muted" style="width: 25%"><i class="fas fa-lock-alt"></i> PERMISSIONS</div>
+            <div class="muted" style="width: 25%"></div>
+            <div class="muted" style="flex-basis:30px; flex-shrink: 0;padding-right: 20px;"></div>
         </div>
-    </div>
+        <subcommand-row ng-repeat="subcommand in $ctrl.command.subCommands track by $index" subcommand="subcommand" cmd-trigger="{{$ctrl.command.trigger}}"></subcommand-row>
+    </setting-container>
 </div>
 
 <div class="modal-footer">

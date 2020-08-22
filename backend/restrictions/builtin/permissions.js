@@ -1,7 +1,7 @@
 "use strict";
 
 const customRolesManager = require("../../roles/custom-roles-manager");
-const mixerRolesManager = require("../../../shared/mixer-roles");
+const twitchRolesManager = require("../../../shared/twitch-roles");
 
 const model = {
     definition: {
@@ -38,9 +38,9 @@ const model = {
                             <div class="control__indicator"></div>
                         </label>
                     </div>
-                    <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Mixer</div>
-                    <label ng-repeat="mixerRole in getMixerRoles()" class="control-fb control--checkbox">{{mixerRole.name}}
-                        <input type="checkbox" ng-click="toggleRole(mixerRole)" ng-checked="isRoleChecked(mixerRole)"  aria-label="..." >
+                    <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Twitch</div>
+                    <label ng-repeat="twitchRole in getTwitchRoles()" class="control-fb control--checkbox">{{twitchRole.name}}
+                        <input type="checkbox" ng-click="toggleRole(twitchRole)" ng-checked="isRoleChecked(twitchRole)"  aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
                 </div> 
@@ -65,7 +65,7 @@ const model = {
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
-        $scope.getMixerRoles = viewerRolesService.getMixerRoles;
+        $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;
 
         $scope.isRoleChecked = function(role) {
             return $scope.restriction.roleIds.includes(role.id);
@@ -95,9 +95,6 @@ const model = {
         }
         return "";
     },
-    /*
-      function that resolves/rejects a promise based on if the restriction critera is met
-    */
     predicate: (triggerData, restrictionData) => {
         return new Promise((resolve, reject) => {
             if (restrictionData.mode === "roles") {
@@ -105,13 +102,15 @@ const model = {
                 let username = triggerData.metadata.username;
 
                 let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-                let userMixerRoles = (triggerData.metadata.userMixerRoles || [])
-                    .filter(mr => mr !== "User")
-                    .map(mr => mixerRolesManager.mapMixerRole(mr));
+                let userTwitchRoles = (triggerData.metadata.userTwitchRoles || [])
+                    .map(mr => twitchRolesManager.mapTwitchRole(mr));
 
-                let allRoles = userCustomRoles.concat(userMixerRoles);
+                let allRoles = userCustomRoles.concat(userTwitchRoles).filter(r => r != null);
 
-                let expectedRoleIds = restrictionData.roleIds;
+                let expectedRoleIds = restrictionData.roleIds || [];
+
+                // convert any mixer roles to twitch roles
+                expectedRoleIds = expectedRoleIds.map(r => twitchRolesManager.mapMixerRoleIdToTwitchRoleId(r));
 
                 let hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
 

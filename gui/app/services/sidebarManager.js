@@ -13,8 +13,8 @@
                 $rootScope.$broadcast("navToggled");
             };
 
-            service.currentTab = "buttons";
-            service.currentTabName = "Controls";
+            service.currentTab = "commands";
+            service.currentTabName = "Commands";
 
             service.setTab = function(tabId, name) {
                 service.currentTab = tabId.toLowerCase();
@@ -22,9 +22,6 @@
                 service.currentTabName = name ? name : tabId;
 
                 //hack that somewhat helps with the autoupdate slider styling issues on first load
-                $timeout(function() {
-                    $rootScope.$broadcast("rzSliderForceRender");
-                });
                 $timeout(function() {
                     $rootScope.$broadcast("rzSliderForceRender");
                 }, 50);
@@ -38,6 +35,7 @@
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
                     service.currentTab.toLowerCase() === "commands" ||
+                    service.currentTab.toLowerCase() === "effects" ||
                     service.currentTab.toLowerCase() === "events" ||
                     service.currentTab.toLowerCase() === "moderation" ||
                     service.currentTab.toLowerCase() === "buttons"
@@ -48,6 +46,7 @@
                 return (
                     service.currentTab.toLowerCase() === "chat feed" ||
                     service.currentTab.toLowerCase() === "buttons" ||
+                    service.currentTab.toLowerCase() === "effects" ||
                     service.currentTab.toLowerCase() === "events" ||
                     service.currentTab.toLowerCase() === "commands"
                 );
@@ -63,19 +62,24 @@
         function($routeProvider) {
             $routeProvider
 
-                .when("/", {
-                    templateUrl: "./templates/interactive/_interactive.html",
-                    controller: "controlsController"
-                })
-
                 .when("/viewer-roles", {
                     templateUrl: "./templates/_viewerroles.html",
                     controller: "viewerRolesController"
                 })
 
+                .when("/", {
+                    templateUrl: "./templates/chat/_commands.html",
+                    controller: "commandsController"
+                })
+
                 .when("/commands", {
                     templateUrl: "./templates/chat/_commands.html",
                     controller: "commandsController"
+                })
+
+                .when("/effects", {
+                    templateUrl: "./templates/_effects.html",
+                    controller: "effectsController"
                 })
 
                 .when("/chat-feed", {
@@ -126,6 +130,16 @@
                 .when("/quotes", {
                     templateUrl: "./templates/_quotes.html",
                     controller: "quotesController"
+                })
+
+                .when("/counters", {
+                    templateUrl: "./templates/_counters.html",
+                    controller: "countersController"
+                })
+
+                .when("/games", {
+                    templateUrl: "./templates/_games.html",
+                    controller: "gamesController"
                 });
         }
     ]);

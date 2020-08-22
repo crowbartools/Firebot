@@ -1,9 +1,8 @@
 "use strict";
 
 const authManager = require("./auth-manager");
-const apiAccess = require("../api-access");
-const channelAccess = require("../common/channel-access");
 const accountAccess = require("../common/account-access");
+const effectsManager = require("../effects/effectManager");
 
 
 const MIXER_CLIENT_ID = "eb2f0f37d57de659852af2f409e95889c868d9caf128e396";
@@ -25,7 +24,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         tokenPath: TOKEN_PATH,
         authorizePath: AUTHORIZE_PATH
     },
-    scopes: 'user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self channel:follow:self'
+    scopes: 'user:details:self interactive:robot:self chat:connect chat:chat chat:whisper chat:bypass_links chat:bypass_slowchat chat:bypass_catbot chat:bypass_filter chat:clear_messages chat:giveaway_start chat:poll_start chat:remove_message chat:timeout chat:view_deleted chat:purge channel:details:self channel:update:self channel:clip:create:self channel:follow:self chat:ad_break'
 };
 
 const BOT_ACCOUNT_PROVIDER = {
@@ -46,34 +45,3 @@ exports.registerMixerAuthProviders = () => {
     authManager.registerAuthProvider(STREAMER_ACCOUNT_PROVIDER);
     authManager.registerAuthProvider(BOT_ACCOUNT_PROVIDER);
 };
-
-authManager.on("auth-success", async authData => {
-    let { providerId, tokenData } = authData;
-
-    if (providerId === STREAMER_ACCOUNT_PROVIDER_ID || providerId === BOT_ACCOUNT_PROVIDER_ID) {
-        const userData = await apiAccess.getUserCurrent(tokenData.access_token);
-        if (userData == null) return;
-
-        let accountType = providerId === STREAMER_ACCOUNT_PROVIDER_ID ? "streamer" : "bot";
-        let accountObject = {
-            username: userData.username,
-            userId: userData.id,
-            channelId: userData.channel.id,
-            avatar: userData.avatarUrl,
-            auth: tokenData
-        };
-
-        if (accountType === "streamer") {
-            accountObject.partnered = userData.channel.partnered;
-
-            let subBadgeUrl = await channelAccess.getChannelSubBadge(userData.username);
-            accountObject.subBadge = subBadgeUrl;
-
-            const clipGroups = ["Partner", "VerifiedPartner", "Staff", "Founder"];
-            let canClip = userData.groups.some(ug => clipGroups.some(cg => ug.name === cg));
-            accountObject.canClip = canClip;
-        }
-
-        accountAccess.updateAccount(accountType, accountObject);
-    }
-});

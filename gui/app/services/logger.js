@@ -42,6 +42,10 @@
             return callLogger("warn", ...args);
         };
 
+        service.warning = (...args) => {
+            return service.warn(...args);
+        };
+
         service.info = (...args) => {
             return callLogger("info", ...args);
         };

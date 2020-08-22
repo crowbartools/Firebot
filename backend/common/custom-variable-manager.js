@@ -1,9 +1,26 @@
 
 "use strict";
 const logger = require('../logwrapper');
+const eventManager = require("../events/EventManager");
 const NodeCache = require("node-cache");
 
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 5 });
+
+cache.on("expired", function(key, value) {
+    eventManager.triggerEvent("firebot", "custom-variable-expired", {
+        username: "Firebot",
+        expiredCustomVariableName: key,
+        expiredCustomVariableData: value
+    });
+});
+
+cache.on("set", function(key, value) {
+    eventManager.triggerEvent("firebot", "custom-variable-set", {
+        username: "Firebot",
+        createdCustomVariableName: key,
+        createdCustomVariableData: value
+    });
+});
 
 exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
 
@@ -92,7 +109,3 @@ exports.getCustomVariable = (name, propertyPath) => {
         return null;
     }
 };
-
-
-
-

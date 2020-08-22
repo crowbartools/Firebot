@@ -16,12 +16,12 @@
                 replace: true,
                 template: `<div><div id="child"></div></div>`,
                 link: function($scope, element) {
-                    $scope.$watch("type", function() {
+                    $scope.$watch("type", function(newValue, oldValue) {
+                        let effectDef = $scope.effectDef;
 
-                        let effectDef = listenerService.fireEventSync(
-                            "getEffectDefinition",
-                            $scope.type
-                        );
+                        if (effectDef == null) {
+                            return;
+                        }
 
                         let optionsTemplate = effectDef.optionsTemplate || "";
                         let el = angular.element(
@@ -31,7 +31,6 @@
                         let template = $compile(el)($scope);
 
                         element.children("#child").replaceWith(template);
-
                     });
                 },
                 controller: ($scope, $injector, listenerService) => {
@@ -46,6 +45,7 @@
                             "getEffectDefinition",
                             $scope.type
                         );
+                        $scope.effectDef = effectDef;
 
                         if (effectDef) {
                             // Note(erik) : I know this is bad practice, but it was the only way I could figure out
@@ -64,7 +64,8 @@
                     findController();
 
                     // Find new controller if the user changes the type via the dropdown
-                    $scope.$watch("type", function() {
+                    $scope.$watch("type", function(newValue, oldValue) {
+                        if (newValue === oldValue) return;
                         findController();
                     });
                 }

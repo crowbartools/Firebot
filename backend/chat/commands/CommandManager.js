@@ -3,7 +3,7 @@
 const { ipcMain } = require("electron");
 const logger = require("../../logwrapper");
 const EventEmitter = require("events");
-const commandAccess = require("../../data-access/command-access");
+const commandAccess = require("./command-access");
 
 class CommandManager extends EventEmitter {
     constructor() {
@@ -66,6 +66,16 @@ class CommandManager extends EventEmitter {
         return this._registeredSysCommands.find(c => c.definition.id === id);
     }
 
+    getSystemCommandTrigger(id) {
+        const sysCommandsWithOverrides = this.getAllSystemCommandDefinitions();
+        const command = sysCommandsWithOverrides.find(sc => sc.id === id);
+        return command ? command.trigger : null;
+    }
+
+    hasSystemCommand(id) {
+        return this._registeredSysCommands.some(c => c.definition.id === id);
+    }
+
     getSystemCommands() {
         return this._registeredSysCommands.map(c => {
             c.definition.type = "system";
@@ -77,6 +87,47 @@ class CommandManager extends EventEmitter {
         let cmdDefs = this._registeredSysCommands.map(c => {
             let override = this._sysCommandOverrides[c.definition.id];
             if (override != null) {
+                if (c.definition.options) {
+                    override.options = Object.assign(c.definition.options, override.options);
+
+                    //remove now nonexistent options
+                    for (let overrideOptionName of Object.keys(override.options)) {
+                        if (c.definition.options[overrideOptionName] == null) {
+                            delete override.options[overrideOptionName];
+                        }
+                    }
+                } else {
+                    override.options = null;
+                }
+
+                if (c.definition.baseCommandDescription) {
+                    override.baseCommandDescription = c.definition.baseCommandDescription;
+                }
+
+                if (c.definition.subCommands) {
+                    if (!override.subCommands) {
+                        override.subCommands = c.definition.subCommands;
+                    } else {
+                        //add new args
+                        for (let subCommand of c.definition.subCommands) {
+                            if (!override.subCommands.some(sc => sc.arg === subCommand.arg)) {
+                                override.subCommands.push(subCommand);
+                            }
+                        }
+
+                        //remove now nonexistent args
+                        for (let i = 0; i < override.subCommands.length; i++) {
+                            let overrideSubCommand = override.subCommands[i];
+                            if (!c.definition.subCommands.some(sc => sc.arg === overrideSubCommand.arg)) {
+                                override.subCommands.splice(i, 1);
+                            }
+                        }
+                    }
+
+                } else {
+                    override.subCommands = [];
+                }
+
                 return override;
             }
             return c.definition;
@@ -117,7 +168,7 @@ class CommandManager extends EventEmitter {
             c => c.definition.id === id
         );
         if (defaultCmd != null) {
-            defaultCmd.trigger = newTrigger;
+            defaultCmd.definition.trigger = newTrigger;
         }
 
         renderWindow.webContents.send("systemCommandsUpdated");

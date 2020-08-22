@@ -33,15 +33,19 @@ const model = {
     predicate: async (trigger, restrictionData) => {
         return new Promise(async (resolve, reject) => {
             const userAccess = require("../../common/user-access");
-            let triggerUserId = trigger.metadata.userId ? trigger.metadata.userId : "";
-            let normalizeFollowList = restrictionData.value ? restrictionData.value.toLowerCase() : "";
 
-            if (normalizeFollowList === "" || triggerUserId === "") {
-                return reject("You are not following the correct people to use this.");
+            let triggerUsername = trigger.metadata.username || "";
+            let followListString = restrictionData.value || "";
+
+            if (triggerUsername === "", followListString === "") {
+                return resolve();
             }
 
-            let followCheckList = normalizeFollowList.replace(new RegExp(' ', 'g'), "").split(',');
-            let followCheck = await userAccess.userFollowsChannels(triggerUserId, followCheckList);
+            let followCheckList = followListString.split(',')
+                .filter(f => f != null)
+                .map(f => f.toLowerCase().trim());
+
+            let followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList);
 
             if (followCheck) {
                 return resolve();

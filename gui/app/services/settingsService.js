@@ -41,7 +41,11 @@
                         let data = getSettingsFile().getData(path);
                         settingsCache[path] = data;
                     }
-                } catch (err) {} //eslint-disable-line no-empty
+                } catch (err) {
+                    if (err.name !== "DataError") {
+                        logger.warn(err);
+                    }
+                }
                 return settingsCache[path];
             }
 
@@ -620,7 +624,7 @@
                 let services = getDataFromFile("/settings/sidebarControlledServices");
                 return services != null
                     ? services
-                    : ["interactive", "chat", "constellation"];
+                    : ["chat"];
             };
 
             service.setSidebarControlledServices = function(services) {

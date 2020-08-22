@@ -1,3 +1,5 @@
+// Migration: info - Need implementation details
+
 "use strict";
 
 const { OutputDataType } = require("../../../shared/variable-contants");
@@ -15,7 +17,7 @@ const model = {
         if (username == null) {
             username = trigger.metadata.username;
         }
-        let viewer = await viewerDB.getUserByUsername(trigger.metadata.username);
+        let viewer = await viewerDB.getUserByUsername(username);
         if (!viewer) {
             return 0;
         }

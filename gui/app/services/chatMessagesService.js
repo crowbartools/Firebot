@@ -1,14 +1,13 @@
 "use strict";
 (function() {
-    //This manages the chat window.
-    const profileManager = require("../../backend/common/profile-manager.js");
-
     const moment = require('moment');
+
+    const uuid = require("uuid/v4");
 
     angular
         .module('firebotApp')
         .factory('chatMessagesService', function ($rootScope, logger, listenerService, settingsService,
-            soundService, connectionService, $timeout, $interval, $http) {
+            soundService, connectionService, $timeout, $interval, $http, backendCommunicator) {
             let service = {};
 
             // Chat Message Queue
@@ -19,16 +18,6 @@
 
             // Chat User List
             service.chatUsers = [];
-
-            //this contains executionId and gif url correllations for the mixer gif effect
-            let gifSkillDictionary = {};
-
-            // Sub Icon Cache
-            service.subIconCache = false;
-
-            // Poll Cache
-            // This stores poll durations.
-            service.pollCache = false;
 
             // Tells us if we should process in app chat or not.
             service.getChatFeed = function() {
@@ -122,17 +111,19 @@
                     }
                 });
 
-                if (data.moderator && cachedUserName) {
-                    service.chatAlertMessage(
-                        data.moderator.user_name + " purged " + cachedUserName
-                    );
+                if (data.cause && cachedUserName) {
+                    if (data.cause.type === "timeout") {
+                        service.chatAlertMessage(`${cachedUserName} was timed out by ${data.moderator.user_name} for ${data.cause.durationString}.`);
+                    } else if (data.cause.type === "ban") {
+                        service.chatAlertMessage(`${cachedUserName} was banned by ${data.moderator.user_name}.`);
+                    }
                 }
             };
 
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
                 let data = {
-                    id: "System" + Date.now(),
+                    id: "System" + uuid(),
                     user_name: "Alert", // eslint-disable-line
                     user_id: "firebot-system-message", // eslint-disable-line
                     user_roles: [ // eslint-disable-line
@@ -164,8 +155,12 @@
                     subscriber: false,
                     timestamp: moment(new Date()).format('h:mm A')
                 };
-                service.chatQueue.push(data);
+                //service.chatQueue.push(data);
             };
+
+            backendCommunicator.on("chat-feed-system-message", (message) => {
+                service.chatAlertMessage(message);
+            });
 
             // Poll Update
             // This is fired when a poll starts or is updated.
@@ -245,13 +240,6 @@
             // Reason is, people can be added to our banned user group without being banned from the channel.
             // But we're assuming here that if they're banned from the channel we should ban them from interactive always.
             service.userUpdate = function(data) {
-                if (data == null || data.roles == null) return;
-
-                const banned = data.roles.includes("Banned");
-
-                if (banned) {
-                    service.chatAlertMessage(data.username + " has been banned.");
-                }
             };
 
             // Chat Update Handler
@@ -263,8 +251,6 @@
                     logger.info("Chat cleared");
                     service.clearChatQueue();
 
-                    gifSkillDictionary = {};
-
                     service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
                     break;
                 case "DeleteMessage":
@@ -275,15 +261,6 @@
                     logger.info("Chat message purged");
                     service.purgeChatMessages(data);
                     break;
-                case "UserTimeout":
-                    logger.info("user timed out");
-                    service.chatAlertMessage(
-                        data.user.username +
-                " has been timed out for " +
-                data.user.duration +
-                "."
-                    );
-                    break;
                 case "PollStart":
                     service.pollUpdate(data);
                     break;
@@ -291,7 +268,7 @@
                     service.pollEnd(data);
                     break;
                 case "UserJoin":
-                    logger.info("Chat User Joined");
+                    logger.debug("Chat User Joined");
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -299,7 +276,7 @@
                     service.chatUserJoined(data);
                     break;
                 case "UserLeave":
-                    logger.info("Chat User Left");
+                    logger.debug("Chat User Left");
 
                     // Standardize user roles naming.
                     data.user_roles = data.roles; // eslint-disable-line
@@ -307,7 +284,7 @@
                     service.chatUserLeft(data);
                     break;
                 case "UserUpdate":
-                    logger.info("User updated");
+                    logger.debug("User updated");
                     service.userUpdate(data);
                     break;
                 case "Disconnected":
@@ -321,7 +298,7 @@
                     service.chatUserRefresh(data);
                     break;
                 case "ChatAlert":
-                    logger.info("Chat alert from backend.");
+                    logger.debug("Chat alert from backend.");
                     service.chatAlertMessage(data.message);
                     break;
                 default:
@@ -351,61 +328,18 @@
             };
 
             service.getSubIcon = function() {
-                if (service.subIconCache !== false) {
-                    // Check to see if we've cached the icon yet. If we have, use it.
-                    return service.subIconCache;
-                }
-
-                // We haven't cached the icon yet, lets do that.
-                let dbAuth = profileManager.getJsonDbInProfile("/auth"),
-                    streamer = dbAuth.getData("/streamer"),
-                    subIcon = [];
-
-                try {
-                    // If this runs it means we have saved it to the auth file.
-                    subIcon = dbAuth.getData("/streamer/subBadge");
-                    service.subIconCache = subIcon;
-                    return service.subIconCache;
-                } catch (err) {
-                    // If this runs it means we've never saved the sub badge.
-                    request({
-                        url: 'https://mixer.com/api/v1/channels/' + streamer.username + '?fields=badge,partnered',
-                        headers: {
-                            'Client-ID': 'f78304ba46861ddc7a8c1fb3706e997c3945ef275d7618a9'
-                        }
-                    }, function (err, res) {
-                        let data = JSON.parse(res.body);
-
-                        // Push all to db.
-                        if (data.partnered === true) {
-                            dbAuth.push('./streamer/subBadge', data.badge.url);
-                            service.subIconCache = data.badge.url;
-                        }
-
-                        return service.subIconCache;
-                    }
-                    );
-                }
+                return "";
             };
 
             service.levels = {};
-            $http.get("https://mixer.com/api/v1/ascension/levels")
-                .then(response => {
-                    if (response.status === 200 && response.data && response.data.levels) {
-                        for (let level of response.data.levels) {
-                            service.levels[`${level.level}`] = level;
-                        }
-                    }
-                }, () => {});
 
 
             // This submits a chat message to mixer.
             service.submitChat = function(sender, message) {
-                let chatPacket = {
+                backendCommunicator.send("send-chat-message", {
                     message: message,
-                    chatter: sender
-                };
-                ipcRenderer.send("uiChatMessage", chatPacket);
+                    accountType: sender
+                });
             };
 
             // Gets view count setting for ui.
@@ -427,20 +361,14 @@
             };
 
             service.deleteMessage = messageId => {
-                listenerService.fireEvent(
-                    listenerService.EventType.DELETE_CHAT_MESSAGE,
-                    { messageId: messageId }
-                );
+                backendCommunicator.send("delete-message", messageId);
             };
 
-            service.changeModStatus = (userName, modStatus) => {
-                listenerService.fireEvent(
-                    listenerService.EventType.CHANGE_USER_MOD_STATUS,
-                    {
-                        userName: userName,
-                        modStatus: modStatus
-                    }
-                );
+            service.changeModStatus = (username, shouldBeMod) => {
+                backendCommunicator.send("update-user-mod-status", {
+                    username,
+                    shouldBeMod
+                });
             };
 
 
@@ -461,111 +389,68 @@
                 }
             }, 250);
 
+            backendCommunicator.on("twitch:chat:rewardredemption", redemption => {
+                if (settingsService.getRealChatFeed()) {
 
-            function parseChatEventObject(data) {
+                    const redemptionItem = {
+                        id: uuid(),
+                        type: "redemption",
+                        data: redemption
+                    };
 
-                if (data.user_avatar == null) {
-                    data.user_avatar = "https://mixer.com/_latest/assets/images/main/avatars/default.png"; // eslint-disable-line
-                }
-
-                if (data.message) {
-                    let streamerName = connectionService.accounts.streamer.username,
-                        botName = connectionService.accounts.bot.username;
-
-                    let isTagged =
-                        data.message.message.some(s => s.type === "tag" &&
-                            (s.username.toLowerCase() === streamerName.toLowerCase() ||
-                            s.username.toLowerCase() === botName.toLowerCase()));
-
-                    if (isTagged) {
-                        data.tagged = true;
-                        if (!data.historical) {
-                            soundService.playChatNotification();
+                    if (messageHoldingQueue && messageHoldingQueue.length > 0) {
+                        const lastQueueItem = messageHoldingQueue[messageHoldingQueue.length - 1];
+                        if (!lastQueueItem.rewardMatched &&
+                            lastQueueItem.type === "message" &&
+                            lastQueueItem.data.customRewardId != null &&
+                            lastQueueItem.data.customRewardId === redemption.reward.id &&
+                            lastQueueItem.data.userId === redemption.user.id) {
+                            lastQueueItem.rewardMatched = true;
+                            messageHoldingQueue.splice(-1, 0, redemptionItem);
+                            return;
                         }
                     }
 
-                    data.whisper = data.message.meta.whisper === true;
+                    messageHoldingQueue.push(redemptionItem);
+                }
+            });
 
-                    data.action = data.message.meta.me === true;
-                } else if (data.skill) {
-                    data.isSkill = true;
 
-                    // Set the icon for the currency used.
-                    if (data.skill.currency === "Sparks") {
-                        data.currencyIcon = "fas fa-bolt";
-                    } else {
-                        data.currencyIcon = "fas fa-fire";
-                    }
+            backendCommunicator.on("twitch:chat:message", chatMessage => {
+                if (chatMessage.tagged) {
+                    soundService.playChatNotification();
                 }
 
+                const now = moment();
+                chatMessage.timestamp = now;
+                chatMessage.timestampDisplay = now.format('h:mm A');
 
-                // Returns first role in set of roles which should be their primary.
-                // Filters out subscriber, because we have a separate function for that and
-                // it doesnt have it's own chat color.
-                data.mainColorRole = data.user_roles.find(r => r !== "Subscriber");
+                if (chatMessage.profilePicUrl == null) {
+                    chatMessage.profilePicUrl = "../images/placeholders/default-profile-pic.png";
+                }
 
-                data.subscriber = data.user_roles.some(r => r === "Subscriber");
+                if (settingsService.getRealChatFeed()) {
+                    // Push new message to queue.
+                    const messageItem = {
+                        id: uuid(),
+                        type: "message",
+                        data: chatMessage
+                    };
 
-                data.timestamp = moment(data.date).format('h:mm A');
-
-                return data;
-            }
-
-            service.skillHasGifUrl = function(executionId) {
-                return gifSkillDictionary[executionId] != null;
-            };
-
-            service.getGifUrlForSkill = function(executionId) {
-                return gifSkillDictionary[executionId];
-            };
-
-            // Watches for a non chat (aka not sticker) skill event
-            // it looks like a regular chat event object except instead of a
-            // .message property, it has a .skill one.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.GIF_FOR_SKILL },
-                (data) => {
-                    if (settingsService.getRealChatFeed()) {
-                        gifSkillDictionary[data.executionId] = data.gifUrl;
-                    }
-                });
-
-            // Watches for a non chat (aka not sticker) skill event
-            // it looks like a regular chat event object except instead of a
-            // .message property, it has a .skill one.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.NON_CHAT_SKILL },
-                (data) => {
-                    if (settingsService.getRealChatFeed()) {
-                        let queueEntry = parseChatEventObject(data);
-
-                        // Push new message to queue.
-                        messageHoldingQueue.push(queueEntry);
-                    }
-                });
-
-
-            // Watches for an chat message from main process
-            // Pushes it to chat queue when it is recieved.
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.CHAT_MESSAGE },
-                (data) => {
-
-                    if (settingsService.getRealChatFeed() === true) {
-
-                        let queueEntry = parseChatEventObject(data);
-
-                        let existingIndex = service.chatQueue.findIndex(m => m.id === queueEntry.id);
-                        if (existingIndex > -1) {
-                            // this message already exists, update it (likely a catbot message being restored)
-                            service.chatQueue[existingIndex] = queueEntry;
-                        } else {
-                            // Push new message to queue.
-                            messageHoldingQueue.push(queueEntry);
+                    if (chatMessage.customRewardId != null &&
+                        messageHoldingQueue &&
+                        messageHoldingQueue.length > 0) {
+                        const lastQueueItem = messageHoldingQueue[messageHoldingQueue.length - 1];
+                        if (lastQueueItem.type === "redemption" &&
+                            lastQueueItem.data.reward.id === chatMessage.customRewardId &&
+                            lastQueueItem.data.user.id === chatMessage.userId) {
+                            messageItem.rewardMatched = true;
                         }
                     }
+
+                    messageHoldingQueue.push(messageItem);
                 }
-            );
+            });
 
             // Watches for an chat update from main process
             // This handles clears, deletions, timeouts, etc... Anything that isn't a message.

@@ -24,12 +24,14 @@
             $http,
             backendCommunicator,
             ttsService,
-            accountAccess
+            accountAccess,
+            backupService
         ) {
             $scope.settings = settingsService;
 
-            $scope.canClip = connectionService.accounts.streamer.partnered
-                || connectionService.accounts.streamer.canClip;
+            $scope.getCanClip = () => {
+                return connectionService.accounts && connectionService.accounts.streamer && connectionService.accounts.streamer.canClip;
+            };
 
             $scope.clipsFolder = settingsService.getClipDownloadFolder();
 
@@ -111,10 +113,7 @@
             $scope.startBackup = function() {
                 $scope.isBackingUp = true;
                 $scope.backupCompleted = false;
-                listenerService.fireEvent(
-                    listenerService.EventType.INITIATE_BACKUP,
-                    true
-                );
+                backupService.startBackup();
             };
 
             $scope.currentMaxBackups = settingsService.maxBackupCount();
@@ -290,110 +289,6 @@
 
             $scope.currentPort = settingsService.getWebSocketPort();
 
-            function startRestoreFromBackup(backup) {
-                let downloadModalContext = {
-                    templateUrl: "./templates/misc-modals/restoringModal.html",
-                    keyboard: false,
-                    backdrop: "static",
-                    size: "sm",
-                    resolveObj: {
-                        backup: () => {
-                            return backup;
-                        }
-                    },
-                    controllerFunc: ($scope, $uibModalInstance, $timeout, backup, settingsService, listenerService) => {
-                        $scope.restoreComplete = false;
-                        $scope.errorMessage = "";
-
-                        $timeout(() => {
-                            if (!$scope.restoreComplete && !$scope.restoreHasError) {
-                                $scope.restoreHasError = true;
-                                $scope.errorMessage = "Restore is taking longer than normal. There may have been an error. You can close and try again or check your log files and contact us. We are happy to help!";
-                            }
-                        }, 30 * 1000);
-
-                        $scope.dismiss = function() {
-                            if ($scope.restoreComplete) {
-                                listenerService.fireEvent(
-                                    listenerService.EventType.RESTART_APP
-                                );
-                            } else {
-                                $uibModalInstance.dismiss("cancel");
-                            }
-                        };
-
-                        function reloadEverything() {
-                            settingsService.purgeSettingsCache();
-
-                            $scope.restoreComplete = true;
-                        }
-
-                        function clearRestoreFolder() {
-                            return new Promise(resolve => {
-                                let restoreFolder = dataAccess.getPathInTmpDir("/restore");
-
-                                empty(restoreFolder, false, o => {
-                                    if (o.error) {
-                                        logger.error(o.error);
-                                    }
-                                    resolve();
-                                });
-                            });
-                        }
-
-                        function copyFilesOver() {
-
-                            let source = dataAccess.getPathInTmpDir("/restore");
-                            let destination = dataAccess.getPathInUserData("/");
-                            let profilesFolder = dataAccess.getPathInUserData("/profiles");
-
-                            // Clear profiles directory
-                            empty(profilesFolder, false, o => {
-
-                                if (o.error) {
-                                    logger.error(o.error);
-                                    $scope.errorMessage = "The restore failed when trying to copy data.";
-                                    return;
-                                }
-
-                                // Load in backup.
-                                fs.move(source, destination, function(err) {
-                                    if (err) {
-                                        logger.error("Failed to copy backup data!");
-                                        logger.error(err);
-                                        $scope.restoreHasError = true;
-                                        $scope.errorMessage = "The restore failed when trying to copy data.";
-                                    } else {
-                                        logger.info('Copied backup data');
-
-                                        // Reload the app
-                                        reloadEverything();
-                                    }
-                                });
-                            });
-                        }
-
-                        async function beginRestore() {
-
-                            await clearRestoreFolder();
-
-                            let backupFolderPath = path.resolve(dataAccess.getUserDataPath() + path.sep + "backups") + path.sep;
-                            let backupName = backup.name + ".zip";
-                            fs.createReadStream(backupFolderPath + backupName).pipe(
-                                unzipper
-                                    .Extract({ path: dataAccess.getPathInTmpDir("/restore") }) //eslint-disable-line new-cap
-                                    .on("close", () => {
-                                        logger.info("extracted!");
-                                        copyFilesOver();
-                                    })
-                            );
-                        }
-
-                        $timeout(beginRestore, 1000);
-                    }
-                };
-                utilityService.showModal(downloadModalContext);
-            }
             /**
             * Modals
             */
@@ -544,7 +439,11 @@
                                 .then(confirmed => {
                                     if (confirmed) {
                                         $uibModalInstance.dismiss("cancel");
-                                        startRestoreFromBackup(backup);
+
+                                        const backupFilePath =
+                                            path.join(backupService.BACKUPS_FOLDER_PATH, `${backup.name}.zip`);
+
+                                        backupService.initiateBackupRestore(backupFilePath);
                                     }
                                 });
                         };

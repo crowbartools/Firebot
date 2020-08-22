@@ -1,3 +1,5 @@
+// Migration: done
+
 "use strict";
 
 const { OutputDataType } = require("../../../shared/variable-contants");
@@ -5,7 +7,7 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 const model = {
     definition: {
         handle: "trim",
-        description: "Removes any whitespace from the beginning or end of input text.",
+        description: "Removes any whitespace from the beginning and end of input text.",
         usage: "trim[text]",
         possibleDataOutput: [OutputDataType.TEXT]
     },

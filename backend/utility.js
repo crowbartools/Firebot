@@ -1,11 +1,14 @@
 "use strict";
 
-const Chat = require("./common/mixer-chat");
+const mixerApi = require("./mixer-api/api");
 const moment = require("moment");
 const logger = require("./logwrapper");
 const request = require("request");
 
 const replaceVariableManager = require("./variables/replace-variable-manager");
+
+const accountAccess = require("./common/account-access");
+const twitchApi = require("./twitch-api/client");
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -165,22 +168,21 @@ exports.populateStringWithTriggerData = async function(string = "", trigger) {
 };
 
 exports.getUptime = async () => {
-    let uptimeString = "[API ERROR]";
+    const client = twitchApi.getClient();
 
-    let channelDeets = await Chat.getGeneralChannelData();
-    if (channelDeets != null) {
-        if (channelDeets.online) {
-            let startAt = channelDeets.startedAt,
-                duration = moment.duration(moment().diff(moment(startAt))),
-                seconds = duration.asSeconds();
+    const streamerAccount = accountAccess.getAccounts().streamer;
+    const channelData = await client.helix.streams.getStreamByUserName(streamerAccount.username);
 
-            uptimeString = getUptimeString(seconds);
-        } else {
-            uptimeString = "Not currently broadcasting";
-        }
+    if (channelData == null) {
+        return "Not currently broadcasting";
     }
 
-    return uptimeString;
+    const startedDate = channelData.startDate;
+    const durationSecs = moment
+        .duration(moment().diff(moment(startedDate)))
+        .asSeconds();
+
+    return getUptimeString(durationSecs);
 };
 
 exports.getDateDiffString = function(date1, date2) {
@@ -239,3 +241,8 @@ exports.shuffleArray = function(array) {
  * @returns {[]} A flattened copy of the passed array
  */
 exports.flattenArray = arr => arr.reduce((flat, next) => flat.concat(next), []);
+
+exports.wait = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
+

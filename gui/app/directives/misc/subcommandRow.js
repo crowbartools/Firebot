@@ -10,7 +10,7 @@
       <div style="margin-bottom: 10px">
         <div class="sys-command-row" ng-init="hidePanel = true" ng-click="hidePanel = !hidePanel" ng-class="{'expanded': !hidePanel}">
 
-          <div style="flex-basis: 30%;padding-left: 20px;">{{$ctrl.subcommand.arg}}</div>
+          <div style="flex-basis: 30%;padding-left: 20px;">{{$ctrl.subcommand.regex ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</div>
 
           <div style="width: 25%">
             <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
@@ -58,7 +58,7 @@
               </label>
             </div>
 
-            <div style="padding-bottom:10px">
+            <div style="padding-bottom:10px" ng-hide="$ctrl.subcommand.hideCooldowns">
               <div class="muted" style="font-weight:bold; font-size: 12px;">COOLDOWNS</div>
               <div class="input-group">
                 <span class="input-group-addon">Global</span>
@@ -79,12 +79,14 @@
             </div>
 
             <div>
-              <!--<div class="muted" style="font-weight:bold; font-size: 12px;">PERMISSIONS</div>-->
               <div>
-                  <restrictions-list 
-                      restriction-data="$ctrl.subcommand.restrictionData"
-                      trigger="command">
-                  </restrictions-section>
+                <div style="margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 5px;">Restrictions <span class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">(Permissions, currency costs, and more)</span></h3>
+                    <restrictions-list 
+                        restriction-data="$ctrl.subcommand.restrictionData"
+                        trigger="command">
+                    </restrictions-section>
+                </div>
               </div>
             </div>
           </div>
@@ -133,7 +135,7 @@
                         return `Viewer (${permissions.username ? permissions.username : 'No name'})`;
                     }
                 } else {
-                    return "This subcommand will use the permissions of the root command.";
+                    return "This subcommand will use the permissions of the base command.";
                 }
             };
 
@@ -160,7 +162,7 @@
                     return `This ${cmdType} is restricted to the user: ${username}`;
                 default:
                     if (isSub) {
-                        return `This ${cmdType} will use the permissions of the root command.`;
+                        return `This ${cmdType} will use the permissions of the base command.`;
                     }
                     return `This ${cmdType} is available to everyone`;
                 }

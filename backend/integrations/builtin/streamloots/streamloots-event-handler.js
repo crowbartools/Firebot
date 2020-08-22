@@ -2,7 +2,7 @@
 
 const logger = require("../../../logwrapper");
 
-const eventManager = require("../../../live-events/EventManager");
+const eventManager = require("../../../events/EventManager");
 
 const EVENT_SOURCE_ID = "streamloots";
 const EventId = {
@@ -46,14 +46,13 @@ exports.processStreamLootsEvent = (eventData) => {
 
     let metadata = {
         imageUrl: eventData.imageUrl,
-        soundUrl: eventData.soundUrl,
-        message: eventData.message
+        soundUrl: eventData.soundUrl
     };
 
     let streamlootsEventType = eventData.data.type;
 
-    let username = getFieldValue("username", eventData.data.fields);
-    metadata.username = username;
+    metadata.message = getFieldValue("message", eventData.data.fields);
+    metadata.username = getFieldValue("username", eventData.data.fields);
 
     let eventId;
     if (streamlootsEventType === "purchase") {

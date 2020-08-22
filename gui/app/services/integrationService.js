@@ -10,7 +10,8 @@
             settingsService,
             listenerService,
             backendCommunicator,
-            logger
+            logger,
+            utilityService
         ) {
             let service = {};
 
@@ -39,11 +40,11 @@
             };
 
             service.getLinkedIntegrations = function() {
-                return service.getIntegrations().filter(i => i.linked);
+                return service.getIntegrations().filter(i => i.linked && i.connectionToggle);
             };
 
             service.oneIntegrationIsLinked = function() {
-                return integrations.some(i => i.linked);
+                return integrations.some(i => i.linked && i.connectionToggle);
             };
 
             service.connectIntegration = function(id) {
@@ -131,6 +132,35 @@
                 }
             };
 
+            service.openIntegrationSettings = function(id) {
+                const integration = getIntegrationById(id);
+                if (integration == null) return;
+
+                utilityService.showModal({
+                    component: "editIntegrationUserSettingsModal",
+                    windowClass: "no-padding-modal",
+                    resolveObj: {
+                        integration: () => integration
+                    },
+                    closeCallback: resp => {
+                        const action = resp.action;
+
+                        if (action === 'save') {
+
+                            const updatedIntegration = resp.integration;
+                            if (updatedIntegration == null) return;
+
+                            const index = integrations.findIndex(i => i.id === updatedIntegration.id);
+                            if (index > -1) {
+                                integrations[index] = updatedIntegration;
+                            }
+
+                            backendCommunicator.send("integrationUserSettingsUpdate", updatedIntegration);
+                        }
+                    }
+                });
+            };
+
             listenerService.registerListener(
                 {
                     type: listenerService.ListenerType.INTEGRATIONS_UPDATED
@@ -145,6 +175,15 @@
                 let service = "integration." + intId;
                 if (!sidebarControlledServices.includes(service)) {
                     sidebarControlledServices.push(service);
+                }
+                settingsService.setSidebarControlledServices(sidebarControlledServices);
+            });
+
+            backendCommunicator.on("integrationUnlinked", (intId) => {
+                let sidebarControlledServices = settingsService.getSidebarControlledServices();
+                let service = "integration." + intId;
+                if (sidebarControlledServices.includes(service)) {
+                    sidebarControlledServices = sidebarControlledServices.filter(s => s !== service);
                 }
                 settingsService.setSidebarControlledServices(sidebarControlledServices);
             });

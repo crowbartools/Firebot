@@ -2,7 +2,6 @@
 const logger = require("../../logwrapper");
 const profileManager = require("../../common/profile-manager");
 const { Worker } = require("worker_threads");
-const chat = require("../../common/mixer-chat");
 const frontendCommunicator = require("../../common/frontend-communicator");
 const rolesManager = require("../../roles/custom-roles-manager");
 
@@ -34,6 +33,8 @@ let moderationService = null;
 function startModerationService() {
     if (moderationService != null) return;
 
+    const chat = require("../twitch-chat");
+
     let servicePath = require("path").resolve(__dirname, "./moderation-service.js");
 
     if (servicePath.includes("app.asar")) {
@@ -48,7 +49,7 @@ function startModerationService() {
         case "deleteMessage": {
             if (event.messageId) {
                 logger.debug(`Chat message with id '${event.messageId}' contains a banned word. Deleting...`);
-                chat.deleteChat(event.messageId);
+                chat.deleteMessage(event.messageId);
             }
             break;
         }

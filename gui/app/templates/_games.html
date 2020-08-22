@@ -1,0 +1,14 @@
+<div style="margin-top:20px;display:flex;flex-wrap: wrap;">
+    <div ng-repeat="game in gamesService.games track by game.id" class="fb-tile orange centered" ng-class="{'inactive': !game.active}" style="margin-right: 10px;flex: 0 0 auto;width:250px;height:150px;">
+        <div class="edit-btn" ng-click="openEditGameSettingsModal(game)"></div>
+        <div class="content">
+            <div class="subtitle" style="font-size: 45px;">
+                <i class="fad" ng-class="game.icon" aria-hidden="true"></i>
+            </div>
+            <div class="detail-wrapper nomargin">
+                <div class="detail" style="font-size: 1.6em;">{{game.name}}</div>
+                <div class="detail-description">{{game.subtitle}}</div>
+            </div>
+        </div>
+    </div>
+</div>

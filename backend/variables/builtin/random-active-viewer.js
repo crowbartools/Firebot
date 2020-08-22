@@ -1,3 +1,5 @@
+// Migration: todo - Need implementation details
+
 "use strict";
 const util = require("../../utility");
 const logger = require("../../logwrapper");
@@ -10,7 +12,13 @@ const model = {
     definition: {
         handle: "randomActiveViewer",
         usage: "randomActiveViewer",
-        description: "Get a random active chatter. Optionally include a custom role name to get an active user in that role.",
+        description: "Get a random active chatter.",
+        examples: [
+            {
+                usage: "randomActiveViewer[roleName]",
+                description: "Filter to an active viewer in a specific role."
+            }
+        ],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, roleName) => {

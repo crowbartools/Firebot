@@ -15,13 +15,37 @@
             <scroll-sentinel element-class="custom-cmd-header"></scroll-sentinel>      
             <div class="light-bg sticky-top custom-cmd-header" style="padding: 15px; margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
                 <button ng-click="openAddOrEditCustomCommandModal()" class="btn btn-primary hvr-icon-grow"><i class="fas fa-plus-circle hvr-icon" style="margin-right:5px;"></i> New Custom Command</button>
-                <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandSearch" style="flex-basis: 250px;"></searchbar>
+                
+                <div style="display: flex; flex-direction: row;align-items: center;">
+
+                    <div class="btn-group" style="margin-right:10px;" uib-dropdown>
+                        <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                            {{commandsService.selectedSortTagDisplay()}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                            <li role="menuitem" ng-click="commandsService.setSelectedSortTag(null)"><a href>All Commands</a></li>
+                            <li class="divider" ng-show="commandsService.getSortTags().length > 0"></li>
+                            <li class="dropdown-header" ng-show="commandsService.getSortTags().length > 0">Sort Tags</li>
+                            <li ng-repeat="tag in commandsService.getSortTags()" ng-click="commandsService.setSelectedSortTag(tag)" role="menuitem">
+                                <a href>{{tag.name}}</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li role="menuitem" ng-click="commandsService.openManageTagsModal()"><a href>Edit sort tags</a></li>
+                        </ul>
+                    </div>
+
+                    <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandSearch" style="flex-basis: 250px;"></searchbar>
+                </div>
+                
             </div>
             <div style="padding: 15px;">
                 <div ng-if="commandsService.getCustomCommands().length === 0" class="noselect muted" style="padding-left: 13px">
                     <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No custom commands saved. You should make one! :) </span>
                 </div>
-                <table ng-show="commandsService.getCustomCommands().length > 0" class="fb-table">
+                <div ng-if="commandsService.getCustomCommands().length > 0 && filteredCommands && filteredCommands.length < 1" class="noselect muted" style="padding-left: 13px">
+                    <span style="margin-left:8px">No custom commands found.</span>
+                </div>
+                <table ng-show="commandsService.getCustomCommands().length > 0 && (filteredCommands == null || filteredCommands.length > 0)" class="fb-table">
                     <thead>
                         <tr style="font-size: 11px;">
                             <th style="width:5%"></th> 
@@ -34,7 +58,7 @@
                         </tr> 
                     </thead> 
                     <tbody> 
-                        <tr ng-repeat="command in commandsService.getCustomCommands() | triggerSearch:commandSearch track by command.id" context-menu="commandMenuOptions">
+                        <tr ng-repeat="command in filteredCommands = (commandsService.getCustomCommands() | sortTagSearch:commandsService.selectedSortTag | triggerSearch:commandSearch) track by command.id" context-menu="commandMenuOptions">
                             <td style="text-align: center;">
                                 <span style="color: #2aa1c0; font-size: 20px;" ng-click="manuallyTriggerCommand(command.id)">
                                     <i class="fas fa-play-circle clickable"></i>

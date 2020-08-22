@@ -1,7 +1,9 @@
 "use strict";
 (function() {
 
+    const electron = require("electron");
     const moment = require("moment");
+    moment.locale(electron.remote.app.getLocale());
 
     angular
         .module("firebotApp")
@@ -11,25 +13,27 @@
                 <button type="button" class="close" style="font-size: 45px;font-weight: 100;position: absolute;top: 2px;right: 10px;z-index: 100000;" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
             </div>
             <div class="modal-body">              
-                <div ng-show="$ctrl.loading">Loading...</div>
+                <div ng-show="$ctrl.loading" style="height: 464px;display: flex;align-items: center;justify-content: center;">
+                    <div class="bubble-spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                    </div>
+                </div>
                 <div ng-if="!$ctrl.loading">
-                    <img ng-src="https://mixer.com/api/v1/users/{{$ctrl.viewerDetails.mixerData.id}}/avatar" 
+                    <img ng-src="{{ $ctrl.viewerDetails.firebotData.twitch ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/mixer-icon.png'}}" 
                         style="width: 200px;height: 200px;border-radius: 200px;position: absolute;left: -50px;top: -50px;"/>
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
-                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.mixerData.username}}</div>
-                            <!--<div style="margin-left: 10px;font-size: 11px;background: #47aed2;border-radius: 16px;padding: 3px 10px;font-weight: bold;display: inline-block;height: max-content;">LVL {{$ctrl.viewerDetails.mixerData.level}}</div>-->
+                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.firebotData.twitch ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
                         </div>
-                        <div style="display:flex;margin-top:7px;">
-                            <div style="margin-right: 15px;" uib-tooltip="Mixer Level"><strong>LVL</strong> {{$ctrl.viewerDetails.mixerData.level}}</div>                 
-                            <div style="margin-right: 15px;display: flex;align-items: center;" uib-tooltip="Sparks"><img aria-label="spark" class="spark-coin" style="height: 14px;vertical-align: text-top;margin-right:2px;" src="https://mixer.com/_static/img/design/ui/spark-coin/spark-coin.svg"> {{$ctrl.viewerDetails.mixerData.sparks | commify}}</div>
-                            <div style="margin-right: 11px;" uib-tooltip="Mixer Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.mixerData.createdAt)}}</div>  
-                            <div ng-click="$ctrl.showGiveHeartsModal()" class="clickable" style="margin-right: 15px;display: flex;align-items: center;" uib-tooltip="Channel Level" ng-if="$ctrl.viewerDetails.mixerData.channelLevel != null"><img aria-label="spark" class="spark-coin" style="height: 19px;vertical-align: text-top;" ng-src="{{$ctrl.channelProgressionImgSrc}}">{{$ctrl.viewerDetails.mixerData.channelLevel.level}}<span class="muted" style="font-size: 6px;margin-left:3px"><i class="fas fa-edit"></i></span></div>                        
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:7px;">              
+                            <div style="margin-right: 11px;" uib-tooltip="Twitch Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.twitchData.creationDate)}}</div>                       
                         </div>
-                        <div style="display:flex;margin-top:10px;">
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:10px;">
                             <div ng-repeat="role in $ctrl.roles | orderBy : 'rank'" uib-tooltip="{{role.tooltip}}" ng-style="role.style" style="margin-right: 10px;font-size: 13px;text-transform: uppercase;font-weight: bold;font-family: "Roboto";">{{role.name}}</div>
                         </div>
-                        <div style="display:flex;margin-top:10px;">
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:10px;">
                             <div ng-repeat="action in $ctrl.actions" ng-click="action.onClick()" class="clickable" uib-tooltip="{{action.name}}" style="margin-right: 10px; display:flex; width: 30px; height:30px; align-items:center; justify-content: center; border-radius: 18px; border: 1.5px solid whitesmoke;">            
                                 <i ng-class="action.icon"></i>
                             </div>
@@ -69,7 +73,7 @@
                             <button type="button" class="btn btn-default" ng-click="$ctrl.saveUser()">Save User in Firebot</button>
                         </div>
                     </div>
-                    <div style="margin: 10px 10px 0;" ng-show="$ctrl.hasCustomRoles">
+                    <div style="margin: 10px 10px 0;" ng-show="$ctrl.hasCustomRoles && $ctrl.viewerDetails.twitchData != null">
                         <div style="font-size:13px;font-weight: bold;opacity:0.9;margin-bottom:5px;">CUSTOM ROLES</div>
                         <div class="role-bar" ng-repeat="customRole in $ctrl.customRoles track by customRole.id">
                             <span>{{customRole.name}}</span>
@@ -105,36 +109,6 @@
 
                 $ctrl.channelProgressionImgSrc = "";
 
-                function loadChannelProgressionData() {
-                    if ($ctrl.viewerDetails.mixerData.channelLevel) {
-                        $ctrl.channelProgressionImgSrc = $ctrl.viewerDetails.mixerData.channelLevel.assetsUrl.replace("{variant}", "large.gif");
-                    }
-                }
-
-                $ctrl.showGiveHeartsModal = () => {
-                    utilityService.openGetInputModal(
-                        {
-                            model: 0,
-                            label: "Give/Remove Hearts",
-                            saveText: "Save",
-                            inputPlaceholder: "Enter hearts..."
-                        },
-                        (hearts) => {
-                            if (hearts == null || isNaN(hearts)) return;
-
-                            $q(resolve => {
-                                backendCommunicator.fireEventAsync("updateUserHearts", {userId: $ctrl.resolve.userId, amount: hearts})
-                                    .then(channelLevel => {
-                                        resolve(channelLevel);
-                                    });
-                            }).then(channelLevel => {
-                                if (channelLevel == null) return;
-                                $ctrl.viewerDetails.mixerData.channelLevel = channelLevel;
-                                loadChannelProgressionData();
-                            });
-                        }
-                    );
-                };
 
                 $ctrl.roles = [];
 
@@ -169,7 +143,7 @@
                 };
 
                 function loadRoles() {
-                    const mixerRoles = $ctrl.viewerDetails.mixerData.groups.map(g => g.name);
+                    /*const mixerRoles = $ctrl.viewerDetails.mixerData.groups.map(g => g.name);
 
                     const relationshipData = $ctrl.viewerDetails.mixerData.relationship;
                     const channelRoles = relationshipData ? relationshipData.roles : [];
@@ -178,7 +152,7 @@
                     let followDateDisplay = null;
                     if (userFollowsStreamer) {
                         let date = relationshipData.follows.createdAt;
-                        followDateDisplay = moment(date).format("MM/DD/YYYY");
+                        followDateDisplay = moment(date).format("L");
                     }
 
                     const combined = mixerRoles.concat(channelRoles).map(r => mapMixerRole(r));
@@ -253,7 +227,7 @@
                         }
                         }
                     }
-                    $ctrl.roles = roles;
+                    $ctrl.roles = roles;*/
                 }
 
                 class ViewerAction {
@@ -277,7 +251,7 @@
                         utilityService
                             .showConfirmationModal({
                                 title: this.name,
-                                question: `Are you sure you want to ${this.name.toLowerCase()} ${$ctrl.viewerDetails.mixerData.username}?`,
+                                question: `Are you sure you want to ${this.name.toLowerCase()} ${$ctrl.viewerDetails.twitchData.displayName}?`,
                                 confirmLabel: this.name,
                                 confirmBtnType: this._confirmBtnType
                             })
@@ -295,14 +269,11 @@
 
                 function buildActions() {
 
-                    const relationshipData = $ctrl.viewerDetails.mixerData.relationship;
+                    /*const relationshipData = $ctrl.viewerDetails.mixerData.relationship;
                     const channelRoles = relationshipData ? relationshipData.roles : [];
 
                     if (channelRoles.includes("Owner")) return;
 
-                    /**
-                     * @type {Array.<ViewerAction>}
-                     */
                     let actions = [];
 
                     const streamerFollowsUser = $ctrl.viewerDetails.streamerFollowsUser;
@@ -372,7 +343,7 @@
                     )
                     );
 
-                    $ctrl.actions = actions;
+                    $ctrl.actions = actions;*/
                 }
 
                 $ctrl.disableAutoStatAccuralChange = () => {
@@ -474,7 +445,7 @@
                         "fa-sign-in",
                         joinDate,
                         value => {
-                            return value ? moment(value).format("MM/DD/YYYY") : "Not saved";
+                            return value ? moment(value).format("L") : "Not saved";
                         },
                         "joinDate",
                         "date",
@@ -492,7 +463,7 @@
                         "fa-eye",
                         lastSeen,
                         value => {
-                            return value ? moment(value).format("MM/DD/YYYY") : "Not saved";
+                            return value ? moment(value).format("L") : "Not saved";
                         },
                         "lastSeen",
                         "date",
@@ -521,22 +492,6 @@
                             let mins = parseInt(value) * 60;
 
                             return mins;
-                        }
-                    ));
-
-                    let mixplayInteractions = $ctrl.viewerDetails.firebotData.mixplayInteractions || 0;
-                    dataPoints.push(new ViewerDataPoint(
-                        "MixPlay Interactions",
-                        "fa-gamepad",
-                        mixplayInteractions,
-                        value => value,
-                        "mixplayInteractions",
-                        "number",
-                        value => {
-                            return value ? parseInt(value) : 0;
-                        },
-                        value => {
-                            return value ? parseInt(value) : 0;
                         }
                     ));
 
@@ -581,7 +536,7 @@
                 $ctrl.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
                 $ctrl.customRoles = [];
                 function loadCustomRoles() {
-                    let username = $ctrl.viewerDetails.mixerData.username;
+                    let username = $ctrl.viewerDetails.twitchData.displayName;
 
                     let viewerRoles = viewerRolesService.getCustomRoles();
                     $ctrl.hasCustomRolesAvailable = viewerRoles
@@ -591,7 +546,7 @@
                 }
 
                 $ctrl.openAddCustomRoleModal = () => {
-                    let username = $ctrl.viewerDetails.mixerData.username;
+                    let username = $ctrl.viewerDetails.twitchData.displayName;
                     let options = viewerRolesService.getCustomRoles()
                         .filter(r => !r.viewers.some(v => v.toLowerCase() === username.toLowerCase()))
                         .map(r => {
@@ -611,7 +566,7 @@
                         (roleId) => {
                             if (!roleId) return;
 
-                            let username = $ctrl.viewerDetails.mixerData.username;
+                            let username = $ctrl.viewerDetails.twitchData.displayName;
 
                             viewerRolesService.addUserToRole(roleId, username);
                             loadCustomRoles();
@@ -619,27 +574,32 @@
                 };
 
                 $ctrl.removeUserFromRole = (roleId) => {
-                    let username = $ctrl.viewerDetails.mixerData.username;
+                    let username = $ctrl.viewerDetails.twitchData.displayName;
                     viewerRolesService.removeUserFromRole(roleId, username);
                     loadCustomRoles();
                 };
 
                 function init() {
                     $ctrl.hasFirebotData = Object.keys($ctrl.viewerDetails.firebotData).length > 0;
-                    loadRoles();
-                    buildActions();
                     buildDataPoints();
-                    loadCustomRoles();
-                    loadChannelProgressionData();
+                    if ($ctrl.viewerDetails.twitchData != null) {
+                        buildActions();
+                        loadRoles();
+                        loadCustomRoles();
+                    }
                 }
 
                 $ctrl.removeViewer = function() {
                     if (!$ctrl.hasFirebotData) return;
 
+                    const displayName = $ctrl.viewerDetails.firebotData.twitch ?
+                        $ctrl.viewerDetails.twitchData.displayName :
+                        $ctrl.viewerDetails.firebotData.username;
+
                     utilityService
                         .showConfirmationModal({
                             title: `Remove Viewer Data`,
-                            question: `Are you sure you want remove ${$ctrl.viewerDetails.mixerData.username}'s data from Firebot?`,
+                            question: `Are you sure you want remove ${displayName}'s data from Firebot?`,
                             confirmLabel: "Remove",
                             confirmBtnType: "btn-danger"
                         })
@@ -658,12 +618,12 @@
                 $ctrl.saveUser = function() {
                     if ($ctrl.hasFirebotData) return;
 
-                    const relationshipData = $ctrl.viewerDetails.mixerData.relationship;
+                    const relationshipData = $ctrl.viewerDetails.twitchData.relationship;
                     const channelRoles = relationshipData ? relationshipData.roles : [];
 
                     let createViewerRequest = {
                         id: $ctrl.resolve.userId,
-                        username: $ctrl.viewerDetails.mixerData.username,
+                        username: $ctrl.viewerDetails.twitchData.displayName,
                         roles: channelRoles
                     };
 

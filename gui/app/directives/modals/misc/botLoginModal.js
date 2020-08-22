@@ -35,7 +35,7 @@
                     }
                 });
 
-                $ctrl.botLoginUrl = `http://localhost:${settingsService.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent("mixer:bot-account")}`;
+                $ctrl.botLoginUrl = `http://localhost:${settingsService.getWebServerPort()}/api/v1/auth?providerId=${encodeURIComponent("twitch:bot-account")}`;
 
                 $ctrl.copy = function() {
                     $rootScope.copyTextToClipboard($ctrl.botLoginUrl);

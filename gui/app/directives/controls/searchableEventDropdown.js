@@ -25,12 +25,11 @@
         ) {
             let ctrl = this;
 
-            let events = listenerService.fireEventSync("getAllEvents");
-            let sources = listenerService.fireEventSync("getAllEventSources");
+            let events = listenerService.fireEventSync("getAllEvents", false);
+            let sources = listenerService.fireEventSync("getAllEventSources", false);
 
             function getSelected() {
                 // sort events by name
-                console.log(events);
                 ctrl.options = events.sort((a, b) => {
                     let textA = a.name.toUpperCase();
                     let textB = b.name.toUpperCase();
@@ -41,7 +40,7 @@
                 ctrl.selectedEvent = ctrl.options.find(
                     e =>
                         e.id === ctrl.selected.eventId &&
-            e.sourceId === ctrl.selected.sourceId
+                        e.sourceId === ctrl.selected.sourceId
                 );
             }
 
@@ -66,7 +65,7 @@
             //when a new effect is selected, set the selected type
             ctrl.selectOption = function(option) {
                 ctrl.update({
-                    event: { eventId: option.id, sourceId: option.sourceId }
+                    event: { eventId: option.id, sourceId: option.sourceId, name: option.name }
                 });
             };
         }

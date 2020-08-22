@@ -3,7 +3,7 @@
 const effectRunner = require("../../common/effect-runner");
 const { TriggerType } = require("../../common/EffectType");
 
-exports.execute = function(command, userCommand, chatEvent, manual = false) {
+exports.execute = function(command, userCommand, firebotChatMessage, manual = false) {
     let processEffectsRequest = {
         trigger: {
             type: manual ? TriggerType.MANUAL : TriggerType.COMMAND,
@@ -11,7 +11,7 @@ exports.execute = function(command, userCommand, chatEvent, manual = false) {
                 username: userCommand.commandSender,
                 command: command,
                 userCommand: userCommand,
-                chatEvent: chatEvent
+                chatMessage: firebotChatMessage
             }
         },
         effects: command.effects

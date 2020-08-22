@@ -1,9 +1,11 @@
+// Migration: todo - Need implentation info related to viewer list
+
 "use strict";
-const channelAccess = require("../../common/channel-access");
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 
 const { OutputDataType } = require("../../../shared/variable-contants");
+const twitchChat = require("../../chat/twitch-chat");
 
 const model = {
     definition: {
@@ -16,7 +18,7 @@ const model = {
         //return util.getRandomInt(internalMin, internalMax);
         logger.debug("Getting random viewer...");
 
-        let currentViewers = await channelAccess.getCurrentViewerList();
+        let currentViewers = await twitchChat.getViewerList();
 
         if (currentViewers && currentViewers.length > 0) {
             let randIndex = util.getRandomInt(0, currentViewers.length - 1);

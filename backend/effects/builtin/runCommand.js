@@ -1,7 +1,7 @@
 "use strict";
 
 const effectRunner = require("../../common/effect-runner");
-const commandAccess = require("../../data-access/command-access");
+const commandAccess = require("../../chat/commands/command-access");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");

@@ -34,31 +34,33 @@
             <p style="font-size: 18px">{{$ctrl.command.description}}</p>
             <div>
               <div class="muted" style="font-weight:bold; font-size: 12px;">USAGE</div>
-              <p style="font-size: 15px;font-weight: 600;">{{$ctrl.command.trigger}} {{$ctrl.command.usage ? $ctrl.command.usage : ''}}</p>
+              <p ng-if="!$ctrl.command.subCommands || $ctrl.command.subCommands.length < 1" style="font-size: 15px;font-weight: 600;">{{$ctrl.command.trigger}} {{$ctrl.command.usage ? $ctrl.command.usage : ''}}</p>
             </div>
-            <p class="muted" ng-if="$ctrl.command.usage">{{$ctrl.command.trigger}} {{$ctrl.command.usage}}</p>
-            <div style="padding-top: 5px;" ng-if="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0">
+            
+            <div ng-if="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0">
 
-              <div class="muted" style="font-weight:bold; font-size: 12px;">SUBCOMMANDS</div>
+              <div ng-if="$ctrl.command.baseCommandDescription" style="padding-bottom: 15px;">
+                <span style="font-weight: 600;">{{$ctrl.command.trigger}}</span>  —  <span style="font-size: 13px;">{{$ctrl.command.baseCommandDescription}}</span>
+              </div>        
               <div ng-repeat="subCmd in $ctrl.command.subCommands track by $index" style="padding-top: 5px; padding-bottom: 15px;">
                 <span style="font-weight: 600;">{{$ctrl.command.trigger}} {{subCmd.usage}}</span>  —  <span style="font-size: 13px;">{{subCmd.description}}</span>
-                <div style="padding-left:15px;">
-                <div style="display: inline-block; margin-right: 25px;">
-                  <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> COOLDOWNS</span></div>
-                    <div>
-                      <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
-                          <i class="fal fa-globe"></i> {{$ctrl.command.cooldown.global ? $ctrl.command.cooldown.global + "s" : "-" }}
-                      </span>
-                      <span uib-tooltip="User cooldown">
-                          <i class="fal fa-user"></i> {{$ctrl.command.cooldown.user ? $ctrl.command.cooldown.user + "s" : "-" }}
-                      </span>
+                <!--<div style="padding-left:15px;">
+                    <div style="display: inline-block; margin-right: 25px;">
+                        <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> COOLDOWNS</span></div>
+                        <div>
+                            <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
+                                <i class="fal fa-globe"></i> {{$ctrl.command.cooldown.global ? $ctrl.command.cooldown.global + "s" : "-" }}
+                            </span>
+                            <span uib-tooltip="User cooldown">
+                                <i class="fal fa-user"></i> {{$ctrl.command.cooldown.user ? $ctrl.command.cooldown.user + "s" : "-" }}
+                            </span>
+                        </div>
                     </div>
-                  </div>
-                  <div style="display: inline-block;">
-                    <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> PERMISSIONS</span></div>
-                    <div><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType(subCmd, true)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd, true)"></tooltip></div>
-                  </div>
-                </div>                
+                    <div style="display: inline-block;">
+                        <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> PERMISSIONS</span></div>
+                        <div><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType(subCmd, true)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd, true)"></tooltip></div>
+                    </div>
+                </div>-->                
               </div>
             </div>
             <div style="padding-top: 10px">
@@ -95,7 +97,7 @@
                 }
                 default:
                     if (isSub) {
-                        return `This ${cmdType} will use the permissions of the root command.`;
+                        return `This ${cmdType} will use the permissions of the base command.`;
                     }
                     return `This ${cmdType} is available to everyone`;
                 }
@@ -141,7 +143,7 @@
                     }
                 } else {
                     if (isSub) {
-                        return "This subcommand will use the permissions of the root command.";
+                        return "This subcommand will use the permissions of the base command.";
                     }
                     return "This command is available to everyone";
                 }
@@ -152,6 +154,7 @@
 
                 utilityService.showModal({
                     component: "editSystemCommandModal",
+                    windowClass: "no-padding-modal",
                     resolveObj: {
                         command: () => cmd
                     },

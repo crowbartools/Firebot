@@ -4,7 +4,7 @@ const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const currencyDatabase = require("../database/currencyDatabase");
 const CommandManager = require("../chat/commands/CommandManager");
-const mixerChat = require('../common/mixer-chat');
+const twitchChat = require('../chat/twitch-chat');
 const moment = require("moment");
 const connectionManager = require("../common/connection-manager");
 const util = require("../utility");
@@ -47,7 +47,7 @@ function applyCurrency() {
     Object.values(currencyData).forEach(currency => {
         let currentMinutes = moment().minutes();
         let intervalMod = currentMinutes % currency.interval;
-        let chatConnected = mixerChat.getChatStatus();
+        const chatConnected = twitchChat.chatIsConnected();
         if (intervalMod === 0 && currency.active && chatConnected) {
             // do payout
             logger.info(
@@ -123,6 +123,22 @@ function createCurrencyCommandDefinition(currency) {
                 user: 0,
                 global: 0
             },
+            baseCommandDescription: "See your balance",
+            options: {
+                currencyBalanceMessageTemplate: {
+                    type: "string",
+                    title: "Currency Balance Message Template",
+                    description: "How the currency balance message appears in chat.",
+                    tip: "Variables: {user}, {currency}, {amount}",
+                    default: `{user}'s {currency} total is {amount}`,
+                    useTextArea: true
+                },
+                whisperCurrencyBalanceMessage: {
+                    type: "boolean",
+                    title: "Whisper Currency Balance Message",
+                    default: false
+                }
+            },
             subCommands: [
                 {
                     arg: "add",
@@ -135,9 +151,8 @@ function createCurrencyCommandDefinition(currency) {
                                 type: "firebot:permissions",
                                 mode: "roles",
                                 roleIds: [
-                                    "Mod",
-                                    "ChannelEditor",
-                                    "Owner"
+                                    "mod",
+                                    "broadcaster"
                                 ]
                             }
                         ]
@@ -154,9 +169,8 @@ function createCurrencyCommandDefinition(currency) {
                                 type: "firebot:permissions",
                                 mode: "roles",
                                 roleIds: [
-                                    "Mod",
-                                    "ChannelEditor",
-                                    "Owner"
+                                    "mod",
+                                    "broadcaster"
                                 ]
                             }
                         ]
@@ -178,9 +192,8 @@ function createCurrencyCommandDefinition(currency) {
                                 type: "firebot:permissions",
                                 mode: "roles",
                                 roleIds: [
-                                    "Mod",
-                                    "ChannelEditor",
-                                    "Owner"
+                                    "mod",
+                                    "broadcaster"
                                 ]
                             }
                         ]
@@ -197,9 +210,8 @@ function createCurrencyCommandDefinition(currency) {
                                 type: "firebot:permissions",
                                 mode: "roles",
                                 roleIds: [
-                                    "Mod",
-                                    "ChannelEditor",
-                                    "Owner"
+                                    "mod",
+                                    "broadcaster"
                                 ]
                             }
                         ]
@@ -212,8 +224,9 @@ function createCurrencyCommandDefinition(currency) {
          */
         onTriggerEvent: async event => {
 
-            const Chat = require("../common/mixer-chat");
+            const twitchChat = require("../chat/twitch-chat");
 
+            let { commandOptions } = event;
             let triggeredArg = event.userCommand.triggeredArg;
             let args = event.userCommand.args;
             let currencyName = event.command.currency.name;
@@ -222,9 +235,12 @@ function createCurrencyCommandDefinition(currency) {
             if (args.length === 0) {
                 currencyDatabase.getUserCurrencyAmount(event.userCommand.commandSender, currencyId).then(function(amount) {
                     if (!isNaN(amount)) {
-                        Chat.smartSend(
-                            event.userCommand.commandSender + '\'s ' + currencyName + ' total is ' + util.commafy(amount) + '.'
-                        );
+                        const balanceMessage = commandOptions.currencyBalanceMessageTemplate
+                            .replace("{user}", event.userCommand.commandSender)
+                            .replace("{currency}", currencyName)
+                            .replace("{amount}", util.commafy(amount));
+
+                        twitchChat.sendChatMessage(balanceMessage, commandOptions.whisperCurrencyBalanceMessage ? event.userCommand.commandSender : null);
                     } else {
                         logger.log('Error while trying to show currency amount to user via chat command.');
                     }
@@ -241,16 +257,12 @@ function createCurrencyCommandDefinition(currency) {
                 // Adjust currency, it will return true on success and false on failure.
                 currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust).then(function(status) {
                     if (status) {
-                        Chat.smartSend(
-                            'Added ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.',
-                            event.userCommand.commandSender
-                        );
+                        twitchChat.sendChatMessage(
+                            'Added ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.');
                     } else {
                         // Error removing currency.
-                        Chat.smartSend(
-                            `Error: Could not add currency to user.`,
-                            event.userCommand.commandSender
-                        );
+                        twitchChat.sendChatMessage(
+                            `Error: Could not add currency to user.`);
                         logger.error('Error adding currency for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
                     }
                 });
@@ -265,16 +277,12 @@ function createCurrencyCommandDefinition(currency) {
                 // Adjust currency, it will return true on success and false on failure.
                 let adjustSucess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
                 if (adjustSucess) {
-                    Chat.smartSend(
-                        'Removed ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' from ' + username + '.',
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        'Removed ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' from ' + username + '.');
                 } else {
                     // Error removing currency.
-                    Chat.smartSend(
-                        `Error: Could not remove currency from user.`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        `Error: Could not remove currency from user.`);
                     logger.error('Error removing currency for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
                 }
 
@@ -289,17 +297,15 @@ function createCurrencyCommandDefinition(currency) {
                 // Does this currency have transfer active?
                 let currencyCheck = currencyDatabase.getCurrencies();
                 if (currencyCheck[currencyId].transfer === "Disallow") {
-                    Chat.smartSend('Transfers are not allowed for this currency.', event.userCommand.commandSender);
+                    twitchChat.sendChatMessage('Transfers are not allowed for this currency.');
                     logger.debug(event.userCommand.commandSender + ' tried to give currency, but transfers are turned off for it. ' + currencyId);
                     return false;
                 }
 
                 // Dont allow person to give themselves currency.
                 if (event.userCommand.commandSender.toLowerCase() === username.toLowerCase()) {
-                    Chat.smartSend(
-                        'You can\'t give yourself currency. -_-',
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        `${event.userCommand.commandSender}, you can't give yourself currency.`);
                     logger.debug(username + ' tried to give themselves currency.');
                     return false;
                 }
@@ -310,13 +316,13 @@ function createCurrencyCommandDefinition(currency) {
 
                 // If we get false, there was an error.
                 if (userAmount === false) {
-                    Chat.smartSend('Error: Could not retrieve currency.', event.userCommand.commandSender);
+                    twitchChat.sendChatMessage('Error: Could not retrieve currency.');
                     return false;
                 }
 
                 // Check to make sure we have enough currency to give.
                 if (userAmount < currencyAdjust) {
-                    Chat.smartSend('You do not have enough ' + currencyName + ' to do this action.', event.userCommand.commandSender);
+                    twitchChat.sendChatMessage('You do not have enough ' + currencyName + ' to do this action.');
                     return false;
                 }
 
@@ -327,14 +333,12 @@ function createCurrencyCommandDefinition(currency) {
                     // Subtract currency from command user now.
                     currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg).then(function(status) {
                         if (status) {
-                            Chat.smartSend('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', event.userCommand.commandSender);
+                            twitchChat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', event.userCommand.commandSender);
                             return true;
                         }
                         // Error removing currency.
-                        Chat.smartSend(
-                            `Error: Could not remove currency to user during give transaction.`,
-                            event.userCommand.commandSender
-                        );
+                        twitchChat.sendChatMessage(
+                            `Error: Could not remove currency to user during give transaction.`);
                         logger.error('Error removing currency during give transaction for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
                         return false;
 
@@ -342,7 +346,7 @@ function createCurrencyCommandDefinition(currency) {
 
                 } else {
                     // Error removing currency.
-                    Chat.smartSend(`Error: Could not add currency to user. Was there a typo in the username?`, event.userCommand.commandSender);
+                    twitchChat.sendChatMessage(`Error: Could not add currency to user. Was there a typo in the username?`);
                     logger.error('Error adding currency during give transaction for user (' + username + ') via chat command. Currency: ' + currencyId + '. Value: ' + currencyAdjust);
                     return false;
                 }
@@ -352,15 +356,13 @@ function createCurrencyCommandDefinition(currency) {
             case "addall": {
                 let currencyAdjust = Math.abs(parseInt(args[1]));
                 if (isNaN(currencyAdjust)) {
-                    Chat.smartSend(
-                        `Error: Could not add currency to all online users.`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        `Error: Could not add currency to all online users.`);
                     return;
                 }
-                currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust);
-                Chat.smartSend(
-                    `Added ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` to everyone! :hype-bot`
+                currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust, true);
+                twitchChat.sendChatMessage(
+                    `Added ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` to everyone!`
                 );
 
 
@@ -369,15 +371,13 @@ function createCurrencyCommandDefinition(currency) {
             case "removeall": {
                 let currencyAdjust = -Math.abs(parseInt(args[1]));
                 if (isNaN(currencyAdjust)) {
-                    Chat.smartSend(
-                        `Error: Could not remove currency from all online users.`,
-                        event.userCommand.commandSender
-                    );
+                    twitchChat.sendChatMessage(
+                        `Error: Could not remove currency from all online users.`);
                     return;
                 }
-                currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust);
-                Chat.smartSend(
-                    `Removed ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` from everyone! :bork-bot`
+                currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust, true);
+                twitchChat.sendChatMessage(
+                    `Removed ` + util.commafy(args[1]) + ` ` + currencyName + ` from everyone!`
                 );
 
 

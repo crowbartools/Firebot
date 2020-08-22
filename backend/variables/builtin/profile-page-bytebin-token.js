@@ -1,3 +1,5 @@
+// Migration: done
+
 "use strict";
 
 const cloudSync = require("../../cloud-sync/profile-sync");

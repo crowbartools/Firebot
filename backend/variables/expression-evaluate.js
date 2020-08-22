@@ -10,7 +10,7 @@ const {
 // Define probeing regexes
 const probeText = /^((?:[^$\\]|(?:\\[$\\])|(?:\\(?![$\\]))|(?:\$(?![a-z][a-z\d])))+)/;
 const probeArg = /^\s*((?:[^"$\\,\] ]|(?:\\[\\"\]$])|(?:\\(?![\\"\]$]))|(?: +(?=$|[^ \],]))|(?:\$(?![a-z][a-z\d])))+)/;
-const probeQuote = /^"((?:[^\\"]|\\[\\"]|\\(?!\\"))+)"/;
+const probeQuote = /^"((?:[^\\"]|\\[\\"]|\\(?!\\"))*)"/;
 const probeVar = /^\s*\$([a-z][a-z\d]+)/i;
 
 function text(expression, cursor = 0, isArg = false) {

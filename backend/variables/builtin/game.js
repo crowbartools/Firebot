@@ -1,14 +1,29 @@
+// Migration: done
+
 "use strict";
 
+const twitchChannels = require("../../twitch-api/resource/channels");
 const accountAccess = require("../../common/account-access");
-const mixerChat = require("../../common/mixer-chat");
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "game",
-        usage: "game[username]",
-        description: "Gets the current game set for your channel or the given usernames channel",
+        description: "Gets the current game set for your channel",
+        examples: [
+            {
+                usage: "game[$target]",
+                description: "When in a command, gets the game set for the target user."
+            },
+            {
+                usage: "game[$user]",
+                description: "Gets the game set for associated user (Ie who triggered command, pressed button, etc)."
+            },
+            {
+                usage: "game[ChannelOne]",
+                description: "Gets the game set for a specific channel."
+            }
+        ],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, username) => {
@@ -16,8 +31,9 @@ const model = {
             username = accountAccess.getAccounts().streamer.username;
         }
 
-        let channelData = await mixerChat.getGeneralChannelData(username, false);
-        return channelData.type ? channelData.type.name : "[No game set]";
+        const channelInfo = await twitchChannels.getChannelInformationByUsername(username);
+
+        return channelInfo != null ? channelInfo.game_name : "";
     }
 };
 

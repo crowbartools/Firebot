@@ -304,6 +304,14 @@
                 }
             };
 
+            $scope.toggleControlActiveState = control => {
+                if (control == null) return;
+                control.active = !control.active;
+                mixplayService.saveControlForCurrentScene(control);
+                $scope.updateControlPositions();
+                mixplayService.triggerControlUpdatedEvent(control.id);
+            };
+
             $scope.deleteAllControls = function() {
                 utilityService
                     .showConfirmationModal({
@@ -564,15 +572,35 @@
                                 $scope.removeControlFromGrid(control);
                             }
                         }
-                    },
-                    {
-                        html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete Control</a>`,
-                        click: function ($itemScope) {
-                            let control = $itemScope.control.control;
-                            $scope.deleteControl(control);
-                        }
                     }
                 ];
+
+                if (control.kind === "button" || control.kind === "textbox" || control.kind === "joystick") {
+
+                    menuOptions.push({
+                        html: `<a href ><i class="fas fa-vial" style="margin-right: 10px;"></i> Test Effects</a>`,
+                        click: function ($itemScope) {
+                            let currentControl = $itemScope.control.control;
+                            ipcRenderer.send('runEffectsManually', currentControl.effects || { list: [] });
+                        }
+                    });
+
+                    menuOptions.push({
+                        html: `<a href ><i class="far ${control.active ? 'fa-toggle-off' : 'fa-toggle-on'}" style="margin-right: 10px;"></i> ${control.active ? 'Disable' : 'Enable'}</a>`,
+                        click: function ($itemScope) {
+                            let currentControl = $itemScope.control.control;
+                            $scope.toggleControlActiveState(currentControl);
+                        }
+                    });
+                }
+
+                menuOptions.push({
+                    html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete Control</a>`,
+                    click: function ($itemScope) {
+                        let control = $itemScope.control.control;
+                        $scope.deleteControl(control);
+                    }
+                });
 
                 let resizable = $scope.getControlSettings(control.kind).resizable;
 

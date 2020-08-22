@@ -4,6 +4,10 @@ const profileManager = require("./profile-manager");
 const logger = require("../logwrapper");
 const frontendCommunicator = require("./frontend-communicator");
 const authManager = require("../auth/auth-manager");
+const EventEmitter = require("events");
+
+/**@type {NodeJS.EventEmitter} */
+const accountEvents = new EventEmitter();
 
 /**
  * A streamer or bot account
@@ -19,8 +23,9 @@ const authManager = require("../auth/auth-manager");
  * A streamer or bot account
  * @typedef {Object} FirebotAccount
  * @property {string} username - The account username
+ * @property {string} displayName - The users displayName
  * @property {number} userId - The user id for the account
- * @property {number} channelId - The channel id for the account
+ * @property {number} channelId - DEPRECATED: The channel id for the account (same as userId)
  * @property {string} avatar - The avatar url for the account
  * @property {string} subBadge - The sub badge url for the account
  * @property {boolean} partnered - If the channel is partnered
@@ -54,35 +59,22 @@ let cache = new AccountCache(
 
 function sendAccoutUpdate() {
     frontendCommunicator.send("accountUpdate", cache);
+    accountEvents.emit("account-update", cache);
 }
 
-// Update auth cache
-function loadAccountData() {
-    let authDb = profileManager.getJsonDbInProfile("/auth");
-    try {
-        let dbData = authDb.getData("/"),
-            streamer = dbData.streamer,
-            bot = dbData.bot;
+/**
+ * Updates a streamer account object with various settings
+ * @param {FirebotAccount} streamerAccount
+ * @returns {Promise<FirebotAccount>}
+ */
+async function updateStreamerAccountSettings(streamerAccount) {
+    if (streamerAccount == null || streamerAccount.channelId == null) return null;
 
-        if (streamer != null && streamer.auth != null) {
-            streamer.loggedIn = true;
-            cache.streamer = streamer;
-        }
-
-        if (bot != null && bot.auth != null) {
-            bot.loggedIn = true;
-            cache.bot = bot;
-        }
-    } catch (err) {
-        logger.warn("Couldnt update auth cache");
-    }
-
-    sendAccoutUpdate();
+    return streamerAccount;
 }
-loadAccountData();
 
 function saveAccountDataToFile(accountType) {
-    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     let account = cache[accountType];
     try {
         authDb.push(`/${accountType}`, account);
@@ -94,12 +86,58 @@ function saveAccountDataToFile(accountType) {
 }
 
 /**
+ * Loads account data from file into memory
+ * @param {boolean} [emitUpdate=true] - If an account update event should be emitted
+ */
+async function loadAccountData(emitUpdate = true) {
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
+    try {
+        let dbData = authDb.getData("/"),
+            streamer = dbData.streamer,
+            bot = dbData.bot;
+
+        if (streamer != null && streamer.auth != null) {
+            streamer.loggedIn = true;
+
+            const updatedStreamer = await updateStreamerAccountSettings(streamer);
+            if (updatedStreamer != null) {
+                cache.streamer = updatedStreamer;
+                saveAccountDataToFile("streamer");
+            } else {
+                cache.streamer = streamer;
+            }
+        }
+
+        if (bot != null && bot.auth != null) {
+            bot.loggedIn = true;
+            cache.bot = bot;
+        }
+    } catch (err) {
+        logger.warn("Couldnt update auth cache");
+    }
+
+    if (emitUpdate) {
+        sendAccoutUpdate();
+    }
+}
+
+let streamerTokenIssue = false;
+let botTokenIssue = false;
+
+/**
  * Update and save data for an account
  * @param {string} accountType - The type of account ("streamer" or "bot")
  * @param {FirebotAccount} account - The  account
  */
-function updateAccount(accountType, account) {
+function updateAccount(accountType, account, emitUpdate = true) {
     if ((accountType !== "streamer" && accountType !== "bot") || account == null) return;
+
+    // reset token issue flags
+    if (accountType === 'streamer') {
+        streamerTokenIssue = false;
+    } else {
+        botTokenIssue = false;
+    }
 
     // dont let streamer and bot be the same
     let otherAccount = accountType === "streamer" ? cache.bot : cache.streamer;
@@ -111,9 +149,12 @@ function updateAccount(accountType, account) {
     }
 
     account.loggedIn = true;
+
     cache[accountType] = account;
 
-    sendAccoutUpdate();
+    if (emitUpdate) {
+        sendAccoutUpdate();
+    }
 
     saveAccountDataToFile(accountType);
 }
@@ -121,12 +162,13 @@ function updateAccount(accountType, account) {
 /**
  * Refreshes a given accounts access token only if necessary
  * @param {string} accountType - The type of account ("streamer" or "bot")
+ * @param {boolean} [emitUpdate=false] - If an account update event should be emitted
  */
-async function ensureTokenRefreshed(accountType) {
-    if (accountType !== "streamer" && accountType !== "bot") return;
+async function ensureTokenRefreshed(accountType, emitUpdate = false) {
+    if (accountType !== "streamer" && accountType !== "bot") return false;
 
     let account = cache[accountType];
-    if (!account.loggedIn) return;
+    if (!account.loggedIn) return false;
 
     let oldToken = account.auth;
 
@@ -134,6 +176,11 @@ async function ensureTokenRefreshed(accountType) {
     let updatedToken = await authManager.refreshTokenIfExpired(accountProviderId, account.auth);
 
     if (updatedToken == null) {
+        if (accountType === "streamer") {
+            streamerTokenIssue = true;
+        } else {
+            botTokenIssue = true;
+        }
         return false;
     }
 
@@ -141,6 +188,9 @@ async function ensureTokenRefreshed(accountType) {
         logger.debug("Mixer account token updated, saving.");
         cache[accountType].auth = updatedToken;
         saveAccountDataToFile(accountType);
+        if (emitUpdate) {
+            sendAccoutUpdate();
+        }
         return true;
     }
 
@@ -157,7 +207,7 @@ function removeAccount(accountType) {
         authManager.revokeTokens(accountProviderId, account.auth);
     }*/
 
-    let authDb = profileManager.getJsonDbInProfile("/auth");
+    let authDb = profileManager.getJsonDbInProfile("/auth-twitch");
     try {
         authDb.delete(`/${accountType}`);
     } catch (error) {
@@ -183,7 +233,11 @@ frontendCommunicator.on("logoutAccount", accountType => {
     removeAccount(accountType);
 });
 
+exports.events = accountEvents;
 exports.updateAccountCache = loadAccountData;
 exports.updateAccount = updateAccount;
 exports.ensureTokenRefreshed = ensureTokenRefreshed;
+exports.updateStreamerAccountSettings = updateStreamerAccountSettings;
 exports.getAccounts = () => cache;
+exports.streamerTokenIssue = () => streamerTokenIssue;
+exports.botTokenIssue = () => botTokenIssue;

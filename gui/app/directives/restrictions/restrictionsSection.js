@@ -13,26 +13,29 @@
                 modalId: "@"
             },
             template: `
-                <div style="margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 5px;">Restrictions <span class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">(Permissions, currency costs, and more)</span></h3>
-                    
+                <div>
                     <div style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand'; color: #8A8B8D;">
                         <span>Only trigger when </span>
 
                         <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
-                            <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getRestrictionModeDisplay()}}<span class="fb-arrow down ddtext"></span></div>
+                            <div class="noselect pointer ddtext" style="font-size: 12px;">
+                                <a href aria-label="Control Restrictions Options">
+                                    {{$ctrl.getRestrictionModeDisplay()}}
+                                    <span class="fb-arrow down ddtext"></span>
+                                </a>
+                            </div>
                             <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
 
                                 <li ng-click="$ctrl.restrictionData.mode = 'all'">
-                                    <a style="padding-left: 10px;">all restrictions pass</a>
+                                    <a href style="padding-left: 10px;" aria-label="all restrictions pass">all restrictions pass</a>
                                 </li>
 
                                 <li ng-click="$ctrl.restrictionData.mode = 'any'">
-                                    <a style="padding-left: 10px;">any restriction passes</a>
+                                    <a href style="padding-left: 10px;" aria-label="any restrictions pass">any restriction pass</a>
                                 </li>
 
                                 <li ng-click="$ctrl.restrictionData.mode = 'none'">
-                                    <a style="padding-left: 10px;">no restrictions pass</a>
+                                    <a href style="padding-left: 10px;" aria-label="no restrictions pass">no restrictions pass</a>
                                 </li>
                             </ul>
                         </div>
@@ -50,9 +53,16 @@
                             ng-show="$ctrl.canAddMoreRestrictions"
                             ng-click="$ctrl.showAddRestrictionModal()" 
                             uib-tooltip="Add Restriction" 
+                            aria-label="Add Restriction"  
                             tooltip-append-to-body="true">
                                 <i class="far fa-plus"></i> 
                         </div>
+                    </div>
+                    <div style="margin-top: 5px;" ng-show="$ctrl.restrictionData.restrictions.length > 0">
+                        <label class="control-fb control--checkbox"> Send chat message when restrictions not met 
+                            <input type="checkbox" ng-model="$ctrl.restrictionData.sendFailMessage">
+                            <div class="control__indicator"></div>
+                        </label>
                     </div>
                 </div>
             `,
@@ -91,7 +101,8 @@
                     if ($ctrl.restrictionData == null) {
                         $ctrl.restrictionData = {
                             restrictions: [],
-                            mode: "all"
+                            mode: "all",
+                            sendFailMessage: true
                         };
                     }
 
@@ -101,6 +112,10 @@
 
                     if ($ctrl.restrictionData.restrictions == null) {
                         $ctrl.restrictionData.restrictions = [];
+                    }
+
+                    if ($ctrl.restrictionData.sendFailMessage == null) {
+                        $ctrl.restrictionData.sendFailMessage = true;
                     }
 
                     updateCanAddMoreRestrictions();
@@ -120,9 +135,7 @@
                 $ctrl.showAddRestrictionModal = function() {
 
                     let options = restrictionDefinitions
-                        /*.filter(r => {
-                            return !$ctrl.restrictionData.restrictions.some(rs => rs.type === r.definition.id);
-                        })*/
+                        .filter(r => !r.definition.hidden)
                         .map(r => {
                             return {
                                 id: r.definition.id,

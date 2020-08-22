@@ -36,16 +36,6 @@
                 }
             );
 
-            // listen for toggle service requests from the backend
-            listenerService.registerListener(
-                { type: listenerService.ListenerType.TOGGLE_SERVICES_REQUEST },
-                services => {
-                    if (service.isWaitingForServicesStatusChange()) return;
-                    let shouldConnect = service.connectedServiceCount(services) === 0;
-                    service.toggleConnectionForServices(services, shouldConnect);
-                }
-            );
-
             service.isWaitingForServicesStatusChange = function() {
                 return (
                     connectionService.waitingForStatusChange ||

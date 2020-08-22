@@ -6,6 +6,7 @@
     const profileManager = require("../../backend/common/profile-manager");
 
     const moment = require("moment");
+    moment.locale(electron.remote.app.getLocale());
 
     agGrid.initialiseAgGridWithAngular1(angular); // eslint-disable-line no-undef
 
@@ -99,7 +100,10 @@
         viewersService,
         chatModerationService,
         ttsService,
-        settingsService
+        settingsService,
+        countersService,
+        gamesService,
+        presetEffectListsService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -117,6 +121,12 @@
         viewersService.updateViewers();
 
         chatModerationService.loadChatModerationData();
+
+        countersService.loadCounters();
+
+        gamesService.loadGames();
+
+        presetEffectListsService.loadPresetEffectLists();
 
         //start notification check
         $timeout(() => {
@@ -410,6 +420,16 @@
     });
 
 
+    app.filter("sortTagSearch", function() {
+        return function(elements, tag) {
+            if (elements == null || tag == null) return elements;
+            return elements.filter(e =>
+                e.sortTags != null && e.sortTags.some(t => t === tag.id)
+            );
+        };
+    });
+
+
     // This adds a filter that we can use for searching varaibles
     app.filter("variableSearch", function() {
         return function(variables, query) {
@@ -441,7 +461,7 @@
 
     app.filter('prettyDate', function() {
         return function(input) {
-            return (input) ? moment(input).format("MM/DD/YYYY") : 'Not saved';
+            return (input) ? moment(input).format('L') : 'Not saved';
         };
     });
 

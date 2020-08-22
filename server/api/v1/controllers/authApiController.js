@@ -28,7 +28,7 @@ exports.getAuthCallback = async (req, res) => {
     const code = req.query.code;
     const options = {
         code: code,
-        redirect_uri: authManager.REDIRECT_URI //eslint-disable-line camelcase
+        redirect_uri: provider.redirectUri //eslint-disable-line camelcase
     };
 
     try {

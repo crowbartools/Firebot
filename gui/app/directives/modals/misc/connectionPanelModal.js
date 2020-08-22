@@ -10,31 +10,16 @@
                 <div style="display: flex;justify-content: space-around">
                 <div style="width: 70%;">
                     <div style="text-align: center;font-size: 18px;color: gray;font-weight: 100;padding-bottom: 15px;">
-                        MIXER SERVICES
+                        TWITCH
                     </div>
                     <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
                         <div class="connection-tile">
-                            <span class="connection-title">MixPlay <tooltip text="'Used for interactive buttons and controls'"></tooltip></span>
+                            <span class="connection-title">Chat & Events <tooltip text="'Used for commands, chat effects, chat feed, events, etc.'"></tooltip></span>
                             <connection-button 
-                                connected="$ctrl.conn.connectedToInteractive" 
-                                connecting="$ctrl.conn.waitingForStatusChange"
-                                connection-name="MixPlay"
-                                on-connection-click="$ctrl.conn.toggleConnectionToInteractive()"></connection-button>
-                            <div class="sub-title">
-                                <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have MixPlay be controlled by the sidebar connect button.'"></tooltip></div>
-                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
-                                    <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('interactive')" ng-click="$ctrl.toggledServiceIsChecked('interactive')">
-                                    <div class="control__indicator"></div>                                             
-                                </label>
-                            </div>
-                        </div>
-                        <div class="connection-tile">
-                            <span class="connection-title">Chat <tooltip text="'Used for commands, chat effects, chat feed, sticker events, etc.'"></tooltip></span>
-                            <connection-button 
-                                connected="$ctrl.conn.connectedToChat" 
-                                connecting="$ctrl.conn.waitingForChatStatusChange"
+                                connected="$ctrl.conn.connections['chat'] === 'connected'" 
+                                connecting="$ctrl.conn.connections['chat'] === 'connecting'"
                                 connection-name="Chat"
-                                on-connection-click="$ctrl.conn.toggleConnectionToChat()"></connection-button>
+                                on-connection-click="$ctrl.conn.toggleConnectionToService('chat')"></connection-button>
                             <div class="sub-title">
                                 <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Chat be controlled by the sidebar connect button.'"></tooltip></div>
                                 <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
@@ -43,21 +28,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="connection-tile">
-                            <span class="connection-title">Events <tooltip text="'Used for events, live viewer count on chat feed, Skills, etc'"></tooltip></span>
-                            <connection-button 
-                                connected="$ctrl.conn.connectedToConstellation" 
-                                connecting="$ctrl.conn.waitingForConstellationStatusChange"
-                                connection-name="Events"
-                                on-connection-click="$ctrl.conn.toggleConnectionToConstellation()"></connection-button>
-                            <div class="sub-title">
-                                <div style="padding-bottom: 4px;">Sidebar controlled <tooltip text="'Check this to have Events be controlled by the sidebar connect button.'"></tooltip></div>
-                                <label class="control-fb control--checkbox" style="position: relative;height: 20px;padding: 0;margin: 0;width: 20px;"> 
-                                    <input type="checkbox" ng-checked="$ctrl.serviceIsChecked('constellation')" ng-click="$ctrl.toggledServiceIsChecked('constellation')">
-                                    <div class="control__indicator"></div>                                             
-                                </label>
-                            </div>
-                        </div>
+                                              
                     </div>
                 </div>
                 <div>
@@ -120,8 +91,9 @@
                 $ctrl.cm = connectionManager;
             };
 
-            let sidebarControlledServices = settingsService.getSidebarControlledServices();
+
             $ctrl.toggledServiceIsChecked = function(service) {
+                let sidebarControlledServices = settingsService.getSidebarControlledServices();
                 if (sidebarControlledServices.includes(service)) {
                     sidebarControlledServices = sidebarControlledServices.filter(
                         s => s !== service
@@ -133,6 +105,7 @@
             };
 
             $ctrl.serviceIsChecked = function(service) {
+                let sidebarControlledServices = settingsService.getSidebarControlledServices();
                 return sidebarControlledServices.includes(service);
             };
 

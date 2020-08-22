@@ -63,6 +63,9 @@ let logger = new winston.Logger({
     transports: [consoleTransport, rotateFileTransport]
 });
 
+// uncaught exception - log the error
+process.on("uncaughtException", logger.error); //eslint-disable-line no-console
+
 // Export
 module.exports = logger;
 

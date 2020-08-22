@@ -1,3 +1,5 @@
+// Migration: info - Needs implementation details
+
 "use strict";
 
 const {
@@ -9,17 +11,13 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = true;
-triggers[EffectTrigger.INTERACTIVE] = true;
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 
-/**
- * The $user variable
- */
-const model = {
+module.exports = {
     definition: {
         handle: "user",
-        description: "The associated user (if there is one) for this control/command/event/etc",
+        description: "The associated user (if there is one) for the given trigger",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
@@ -28,4 +26,3 @@ const model = {
     }
 };
 
-module.exports = model;

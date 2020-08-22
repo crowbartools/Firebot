@@ -1,3 +1,4 @@
+// Migration: info needed
 "use strict";
 const {
     EffectTrigger
@@ -8,7 +9,7 @@ const { OutputDataType } = require("../../../shared/variable-contants");
 let triggers = {};
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = ["mixer:chat-message"];
+triggers[EffectTrigger.EVENT] = ["twitch:chat-message"];
 
 const model = {
     definition: {
@@ -30,11 +31,7 @@ const model = {
         } else if (trigger.type === EffectTrigger.EVENT) {
 
             // if trigger is event, build chat message from chat event data
-            let chatEvent = trigger.metadata.eventData.data;
-            chatEvent.message.message.forEach(m => {
-                chatMessage += m.text;
-            });
-
+            chatMessage = trigger.metadata.eventData.messageText;
         }
 
         return chatMessage.trim();

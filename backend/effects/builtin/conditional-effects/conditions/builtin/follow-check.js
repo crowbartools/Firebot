@@ -11,15 +11,19 @@ module.exports = {
     rightSideValueType: "text",
     predicate: async (conditionSettings, trigger) => {
         let { rightSideValue } = conditionSettings;
-        let triggerUserId = trigger.metadata.userId ? trigger.metadata.userId : "";
-        let normalizeFollowList = rightSideValue ? rightSideValue.toLowerCase() : "";
 
-        if (normalizeFollowList === "" || triggerUserId === "") {
+        let triggerUsername = trigger.metadata.username;
+        let followListString = rightSideValue;
+
+        if (followListString == null) {
             return false;
         }
 
-        let followCheckList = normalizeFollowList.replace(new RegExp(' ', 'g'), "").split(',');
-        let followCheck = await userAccess.userFollowsChannels(triggerUserId, followCheckList);
+        let followCheckList = followListString.split(',')
+            .filter(f => f != null)
+            .map(f => f.toLowerCase().trim());
+
+        let followCheck = await userAccess.userFollowsChannels(triggerUsername, followCheckList);
         return followCheck;
     }
 };

@@ -1,3 +1,5 @@
+// Migration: done
+
 "use strict";
 
 const customVariableManager = require("../../common/custom-variable-manager");

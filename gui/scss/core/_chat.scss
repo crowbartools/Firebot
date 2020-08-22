@@ -40,6 +40,24 @@
     padding-left: 3px;
     padding-right: 3px;display: flex;justify-content: space-between;align-items: flex-start;
 }
+.chat-item {
+    &.alternate:nth-child(even) {
+        background: $chat-message-alternate-bg;
+    }
+}
+.reward-redemption {
+    img {
+        width: 25px; 
+        margin-right: 3px;
+    }
+    padding: 6px;
+    padding-left: 10px;
+    background: rgb(49, 49, 49);
+    border-top: 1px solid #29292988;
+    &.isHighlight {
+        background-color: #43517B;
+    }
+}
 
 .chat-message {
     display: flex;
@@ -49,74 +67,11 @@
     padding: 0 10px;
     padding-top: 7px;
     padding-bottom: 7px;
-    &.alternate:nth-child(even) {
-        background: $chat-message-alternate-bg;
-    }
     &.isCompact {
         align-items: baseline;
         min-height: 25px;
         padding-top: 2px;
         padding-bottom: 7px;
-    }
-    &[role="User"]{
-        color: $usercolor;
-        .chatUserAvatar img {
-            border: 1px solid $usercolor;
-        }
-        a{
-            color:$usercolor;
-        }
-    }
-    &[role="Pro"], &[role="Partner"], &[role="VerifiedPartner"]{
-        color: $procolor;
-        .chatUserAvatar img {
-            border: 1px solid $procolor;
-        }
-        a{
-            color: $procolor;
-        }
-    }
-    &[role="Mod"], &[role="ChannelEditor"]{
-        color: $modcolor;
-        .chatUserAvatar img {
-            border: 1px solid $modcolor;
-        }
-        a{
-            color: $modcolor;
-        }
-    }
-    &[role="Staff"]{
-        color: $staffcolor;
-        .chatUserAvatar img {
-            border: 1px solid $staffcolor;
-        }
-        a{
-            color: $staffcolor;
-        }
-    }
-    &[role="Owner"]{
-        color: $ownercolor;
-        .chatUserAvatar img {
-            border: 1px solid $ownercolor;
-        }
-        a{
-            color: $ownercolor;
-        }
-    }
-    &[role="System"]{
-        color: $alertcolor;
-        .chatUserAvatar img {
-            border: 1px solid $alertcolor;
-        }
-        a{
-            color: $alertcolor;
-        }
-        .chatRight{
-            background-color:$alert-bg-color;
-            &::before{
-                border-color:transparent $alert-bg-color transparent transparent;
-            }
-        }
     }
     .whisperData{
         color:$chatTextColor;
@@ -125,12 +80,13 @@
     }
     .chatContent{
         color: $chatTextColor;
-        line-height:24px;
-        font-size:1em;
+        line-height: 24px;
+        font-size: 1.25em;
         word-break: break-word;
+        padding: 2px 0;
         .chatEmoticon{
-            position:relative;
-            top:7px;
+            position: relative;
+            max-height: 28px;
         }
     }
     .chatEventInfo{
@@ -141,6 +97,13 @@
         .chatContent{
             font-style: italic;
         }
+    }
+    &.isCustomReward {
+        background-color: rgb(49, 49, 49);
+        border-bottom: 1px solid #29292988;
+    }
+    &.isHighlighted {
+        background-color: #43517B;
     }
     &.isWhisper{
         .chatContent{
@@ -201,6 +164,14 @@
     font-size: 1.11em;
     cursor: pointer;
     align-items: center;
+
+    .user-badges {
+        img {
+            margin-right: 3px;
+            max-height: 18px;
+            display: inline-block;
+        }
+    }
 }
 
 .chatProgressionRank {

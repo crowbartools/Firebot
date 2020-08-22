@@ -8,13 +8,7 @@ const { EffectCategory } = require('../../../shared/effect-constants');
 
 const frontendCommunicator = require("../../common/frontend-communicator");
 
-/**
- * The Delay effect
- */
-const delay = {
-    /**
-   * The definition of the Effect
-   */
+const model = {
     definition: {
         id: "firebot:text-to-speech",
         name: "Text-To-Speech",
@@ -31,7 +25,7 @@ const delay = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container header="Text">
-            <textarea ng-model="effect.text" class="form-control" name="text" placeholder="Enter text" rows="4" cols="40" replace-variables></textarea>
+            <textarea ng-model="effect.text" class="form-control" name="text" placeholder="Enter text" rows="4" cols="40" replace-variables menu-position="under"></textarea>
         </eos-container>
 
         <eos-container header="Voice" pad-top="true">
@@ -47,9 +41,6 @@ const delay = {
             </div>
         </eos-container>
     `,
-    /**
-   * The controller for the front end Options
-   */
     optionsController: ($scope, ttsService) => {
         if ($scope.effect.voiceId == null) {
             $scope.effect.voiceId = "default";
@@ -68,9 +59,6 @@ const delay = {
             return voice ? voice.name : "Unknown Voice";
         };
     },
-    /**
-   * When the effect is saved
-   */
     optionsValidator: effect => {
         let errors = [];
         if (effect.text == null || effect.text.length < 1) {
@@ -78,9 +66,6 @@ const delay = {
         }
         return errors;
     },
-    /**
-   * When the effect is triggered by something
-   */
     onTriggerEvent: async event => {
         let effect = event.effect;
 
@@ -93,4 +78,4 @@ const delay = {
     }
 };
 
-module.exports = delay;
+module.exports = model;
