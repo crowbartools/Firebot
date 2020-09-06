@@ -6,7 +6,7 @@ import { appRoutes } from "./constants";
 
 const App = () => (
     <>
-        <div className="bp3-dark w-full h-full bg-gray-700">
+        <div className="bp3-dark w-full h-full bg-dark-400">
             <Router>
                 <SideNav />
                 <div style={{ paddingLeft: "65px" }} className="h-full w-full">
