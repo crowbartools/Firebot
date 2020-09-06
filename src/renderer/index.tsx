@@ -12,8 +12,8 @@ library.add(far, fas);
 
 // Render app
 ReactDOM.render(
-    <AppContainer>
-        <App />
-    </AppContainer>,
-    document.getElementById("root")
+  <AppContainer>
+    <App />
+  </AppContainer>,
+  document.getElementById("root")
 );
