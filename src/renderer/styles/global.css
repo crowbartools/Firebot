@@ -1,0 +1,13 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.fb-active-menu-item > .fb-nav-item {
+  background: black;
+}
+
+.fb-active-menu-item > .fb-nav-item > .fb-nav-item-bar {
+  width: 0.5rem;
+}

@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "ES6",
+        "jsx": "react",
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "baseUrl": ".",
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "paths": {
+            "Shared/*": ["src/shared/*"],
+            "Utilities": ["src/shared/util/index.ts"],
+            "Typings/*": ["src/shared/typings/*"]
+        }
+    },
+
+    "include": ["./**/*.ts"],
+    "exclude": ["./node_modules/**/*"],
+
+    "files": ["./src/main/main.ts", "src/renderer/index.tsx", "./src/renderer/preload.ts"]
+}

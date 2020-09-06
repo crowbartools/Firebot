@@ -1,0 +1,51 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true,
+        "jest": true
+    },
+
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+
+    "plugins": ["@typescript-eslint", "react", "jest"],
+
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:jest/recommended",
+        "prettier",
+        "prettier/@typescript-eslint",
+        "prettier/react"
+    ],
+    "ignorePatterns": ["node_modules/**/*", "dist/**/*"],
+    "settings": {
+        "react": {
+            "createClass": "createReactClass",
+            "pragma": "React",
+            "fragment": "Fragment",
+            "version": "detect",
+            "flowVersion": "0.53"
+        },
+        "propWrapperFunctions": [
+            "forbidExtraProps",
+            { "property": "freeze", "object": "Object" },
+            { "property": "myFavoriteWrapper" }
+        ],
+        "linkComponents": ["Hyperlink", { "name": "Link", "linkAttribute": "to" }]
+    },
+    "rules": {
+        "no-use-before-define": "error",
+        "react/display-name": 0,
+        "@typescript-eslint/explicit-function-return-type": [0],
+        "@typescript-eslint/explicit-module-boundary-types": 0
+    }
+}
