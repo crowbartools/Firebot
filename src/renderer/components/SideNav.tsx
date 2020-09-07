@@ -97,7 +97,7 @@ const MenuItem = (isOpen: boolean) => (menuItem: MenuItem, index: number) => {
             <NavLink
                 exact={true}
                 to={appRoutes[menuItem.to]}
-                className={clsx({
+                className={clsx("focus:outline-none", {
                     "pointer-events-none": menuItem.disabled,
                 })}
             >
@@ -173,7 +173,7 @@ export const SideNav = () => {
                 animate={isOpen ? variantType.visible : variantType.hidden}
             />
             <motion.aside
-                className="fixed h-full z-30 bg-dark-500 overflow-y-auto"
+                className="fixed h-full z-30 bg-dark-500 overflow-hidden"
                 style={{ width: "65px" }}
                 whileHover={{ width: 250 }}
                 onHoverStart={thunk(toggleIsOpen, [true])}
