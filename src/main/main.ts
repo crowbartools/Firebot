@@ -20,7 +20,7 @@ const createWindow = () => {
     });
 
     // initialize
-    comm(win.webContents.send);
+    comm(win.webContents);
 
     comm().register('testMethod', async (data) => {
         console.log("TEST METHOD DATA", data.foo);

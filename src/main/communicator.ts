@@ -1,15 +1,15 @@
-import { ipcMain } from "electron";
-import { IpcSend, Communicator } from "Utilities";
+import { ipcMain, WebContents } from "electron";
+import { Communicator } from "Utilities";
 
 let comm: Communicator;
-export default (send?: IpcSend): Communicator => {
-    if (send == null) {
+export default (sender?: WebContents): Communicator => {
+    if (sender == null) {
         if (comm) {
             return comm;
         }
         throw new Error("communicator not initialized for main process");
     }
 
-    comm = new Communicator(ipcMain, send);
+    comm = new Communicator(ipcMain, sender);
     return comm;
 };

@@ -2,6 +2,7 @@ import IpcEvents from "Typings/ipc-events";
 import IpcMethods from "Typings/ipc-methods";
 
 import { jsonClone, wildcard } from "Utilities";
+import { WebContents, IpcRenderer } from "electron";
 
 export interface IpcMessage {
     type: "event" | "invoke" | "reply";
@@ -40,10 +41,13 @@ interface Method {
     (data: any): any;
 }
 
+type IpcSender = WebContents | IpcRenderer;
+
 export class Communicator {
     private emitter: IpcEmitter;
 
-    private send: IpcSend;
+
+    private sender: IpcSender;
 
     private listeners: Record<string, Listener[]> = {};
 
@@ -51,9 +55,9 @@ export class Communicator {
 
     private msgId = 0;
 
-    constructor(ipcEmitter: IpcEmitter, ipcSend: IpcSend) {
+    constructor(ipcEmitter: IpcEmitter, sender: IpcSender) {
         this.emitter = ipcEmitter;
-        this.send = ipcSend;
+        this.sender = sender;
 
         this.emitter.on("firebot-comm", (sender, message: IpcMessage): void => {
             if (message.type === "event" && message.id === 0) {
@@ -106,7 +110,7 @@ export class Communicator {
     }
 
     emit<E extends keyof IpcEvents>(event: E, data: IpcEvents[E]): void {
-        this.send("firebot-comm", <IpcMessageEvent>{
+        this.sender.send("firebot-comm", <IpcMessageEvent>{
             type: "event",
             name: event,
             data,
@@ -202,7 +206,7 @@ export class Communicator {
             };
 
             this.emitter.on("firebot-comm", waiter);
-            this.send("firebot-comm", invocation);
+            this.sender.send("firebot-comm", invocation);
         });
     }
 
@@ -225,12 +229,6 @@ export class Communicator {
             }
         }
 
-        console.log("this.send type: ", typeof this.send);
-        try { 
-            this.send("firebot-comm", reply);
-        } catch(err) {
-            console.log("failed to call this.send!", err);
-        }
-        console.log('after this.send try/catch');
+        this.sender.send("firebot-comm", reply);
     }
 }
