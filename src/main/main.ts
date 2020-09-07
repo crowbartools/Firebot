@@ -52,12 +52,14 @@ app.on("activate", () => {
 });
 
 app.whenReady()
-    .then(() => {
-        return Promise.all([installExtension(REACT_DEVELOPER_TOOLS, true), installExtension(MOBX_DEVTOOLS, true)]);
-    })
-    .then(() => {
+    .then(async () => {
+        if (process.env.NODE_ENV !== "production") {
+            try {
+                await installExtension(REACT_DEVELOPER_TOOLS, true);
+                await installExtension(MOBX_DEVTOOLS, true);
+            } catch(err) {
+                console.log("failed to load extension(s)", err);
+            }
+        }
         createWindow();
-    })
-    .catch((err) => {
-        console.log("failed to load extension(s)", err);
     });
