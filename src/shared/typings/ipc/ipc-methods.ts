@@ -1,4 +1,4 @@
-export default interface IpcMethods {
+export default interface IpcMethods extends Record<string, { request: unknown, response: unknown }> {
     testMethod: {
         request: {
             foo: string;
@@ -6,5 +6,5 @@ export default interface IpcMethods {
         response: {
             bar: boolean;
         }
-    }
+    },
 }

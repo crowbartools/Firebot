@@ -1,12 +1,12 @@
-import IpcEvents from "Typings/ipc-events";
-import IpcMethods from "Typings/ipc-methods";
+import IpcEvents from "Shared/typings/ipc/ipc-events";
+import IpcMethods from "Typings/ipc/ipc-methods";
 
 import { jsonClone, wildcard } from "Utilities";
 import { WebContents, IpcRenderer } from "electron";
 
 export interface IpcMessage {
     type: "event" | "invoke" | "reply";
-    name: string;
+    name: Extract<keyof IpcMethods, string>;
     id: number;
 }
 export interface IpcMessageEvent extends IpcMessage {
@@ -50,7 +50,7 @@ export class Communicator {
 
     private listeners: Record<string, Listener[]> = {};
 
-    private methods: Record<string, Method> = {};
+    private methods: Record<keyof IpcMethods, Method> = {};
 
     private msgId = 0;
 
@@ -167,7 +167,7 @@ export class Communicator {
         this.methods[method] = handler;
     }
 
-    unregister<M extends keyof IpcMethods>(method: M, handler: (data: IpcMethods[M]) => Promise<any>): void {
+    unregister<M extends keyof IpcMethods>(method: M, handler: (data: IpcMethods[M]['request']) => Promise<IpcMethods[M]['response']>): void {
         if (this.methods[method] == null) {
             throw new Error(`method '${method}' not registered`);
         }
@@ -179,7 +179,7 @@ export class Communicator {
     }
 
     // how to document the promise?
-    invoke<M extends keyof IpcMethods>(method: M, data: IpcMethods[M]['request']): Promise<IpcMethods[M]['response']> {
+    invoke<M extends Extract<keyof IpcMethods, string>>(method: M, data: IpcMethods[M]['request']): Promise<IpcMethods[M]['response']> {
         this.msgId += 1;
         const invocation: IpcMessageInvoke = {
             type: "invoke",
