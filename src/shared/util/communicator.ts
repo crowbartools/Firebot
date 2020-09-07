@@ -156,7 +156,7 @@ export class Communicator {
         }
     }
 
-    register<M extends keyof IpcMethods>(method: M, handler: (data: IpcMethods[M]) => Promise<any>): void {
+    register<M extends keyof IpcMethods>(method: M, handler: (data: IpcMethods[M]['request']) => Promise<IpcMethods[M]['response']>): void {
         if (this.methods[method] != null) {
             throw new Error("method already registered");
         }
@@ -176,7 +176,7 @@ export class Communicator {
     }
 
     // how to document the promise?
-    invoke<M extends keyof IpcMethods>(method: M, data: IpcMethods[M]): Promise<any> {
+    invoke<M extends keyof IpcMethods>(method: M, data: IpcMethods[M]['request']): Promise<IpcMethods[M]['response']> {
         this.msgId += 1;
         const invocation: IpcMessageInvoke = {
             type: "invoke",
@@ -193,7 +193,7 @@ export class Communicator {
 
                 this.emitter.off("firebot-comm", waiter);
 
-                const reply = <IpcMessageReply>message;
+                const reply = message as IpcMessageReply;
                 if (reply.status === "error") {
                     reject(reply.result);
                 } else {
@@ -206,7 +206,7 @@ export class Communicator {
         });
     }
 
-    private async processInvoke(message: IpcMessageInvoke) {
+     private async processInvoke(message: IpcMessageInvoke) {
         const reply = <IpcMessageReply>{
             type: "reply",
             status: "error",
@@ -225,6 +225,12 @@ export class Communicator {
             }
         }
 
-        this.send("firebot-comm", reply);
+        console.log("this.send type: ", typeof this.send);
+        try { 
+            this.send("firebot-comm", reply);
+        } catch(err) {
+            console.log("failed to call this.send!", err);
+        }
+        console.log('after this.send try/catch');
     }
 }

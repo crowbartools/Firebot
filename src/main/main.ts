@@ -22,6 +22,13 @@ const createWindow = () => {
     // initialize
     comm(win.webContents.send);
 
+    comm().register('testMethod', async (data) => {
+        console.log("TEST METHOD DATA", data.foo);
+        return {
+            bar: true
+        }
+    });
+
     win.webContents.once("dom-ready", () => {
         if (process.env.NODE_ENV !== "production") {
             win.webContents.openDevTools();

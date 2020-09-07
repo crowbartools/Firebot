@@ -17,3 +17,9 @@ ReactDOM.render(
     </AppContainer>,
     document.getElementById("root")
 );
+
+setTimeout(() => {
+    window.fbComm.invoke('testMethod', { foo: "testing"}).then(({ bar }) => {
+        console.log("TEST RESPONSE: " + bar); 
+    })
+}, 1000);
