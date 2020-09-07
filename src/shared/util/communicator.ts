@@ -46,7 +46,6 @@ type IpcSender = WebContents | IpcRenderer;
 export class Communicator {
     private emitter: IpcEmitter;
 
-
     private sender: IpcSender;
 
     private listeners: Record<string, Listener[]> = {};
