@@ -18,20 +18,30 @@ interface MenuItem {
     to: keyof typeof appRoutes;
 }
 
-const menuItems: MenuItem[] = [
-    {
-        icon: <FontAwesomeIcon icon={["fas", "exclamation"]} />,
-        iconClassName: "",
-        title: "Commands",
-        to: "COMMANDS",
-    },
-    {
-        icon: <FontAwesomeIcon icon={["fas", "comment-alt"]} />,
-        iconClassName: "",
-        title: "Chat Feed",
-        to: "CHAT_FEED",
-    },
-];
+const menu: Record<string, MenuItem[]> = {
+    Chat: [
+        {
+            icon: <FontAwesomeIcon icon={["fas", "exclamation"]} />,
+            iconClassName: "",
+            title: "Commands",
+            to: "COMMANDS",
+        },
+        {
+            icon: <FontAwesomeIcon icon={["far", "comment-alt"]} />,
+            iconClassName: "",
+            title: "Chat Feed",
+            to: "CHAT_FEED",
+        },
+    ],
+    Management: [
+        {
+            icon: <FontAwesomeIcon icon={["fas", "cog"]} />,
+            iconClassName: "",
+            title: "Settings",
+            to: "SETTINGS",
+        },
+    ],
+};
 
 const variantType = {
     hidden: "hidden",
@@ -50,6 +60,15 @@ const menuItemTitleVariants: Variants = {
         },
         y: 0,
     }),
+};
+
+const categoryHeaderVariants: Variants = {
+    [variantType.hidden]: {
+        opacity: 0,
+    },
+    [variantType.visible]: {
+        opacity: 1,
+    },
 };
 
 const headerVariants: Variants = {
@@ -74,7 +93,7 @@ const MenuItem = (isOpen: boolean) => (menuItem: MenuItem, index: number) => {
     const isActive = location.pathname === appRoutes[menuItem.to];
 
     return (
-        <li key={menuItem.to}>
+        <li key={menuItem.to} className="px-2 mb-1">
             <NavLink
                 exact={true}
                 to={appRoutes[menuItem.to]}
@@ -82,39 +101,54 @@ const MenuItem = (isOpen: boolean) => (menuItem: MenuItem, index: number) => {
                     "pointer-events-none": menuItem.disabled,
                 })}
             >
-                <div
+                <motion.div
+                    whileHover={{ scale: 1.025 }}
                     className={clsx(
-                        "fb-nav-item relative hover:bg-dark-600 transition duration-300 ease-in-out",
+                        { "bg-dark-600": isActive, "hover:bg-dark-600 hover:bg-opacity-50 ": !isActive },
+                        "rounded-lg transition duration-150 ease-in-out",
                         "flex items-center h-12 relative",
-                        { "bg-dark-600": isActive },
                         menuItem.className
                     )}
                 >
                     <div
-                        className={clsx("fb-nav-item-bar bg-gold-500 absolute h-full left-0", {
-                            "w-1": isActive,
+                        className={clsx("w-12 flex justify-center items-center text-xl", {
+                            "text-white text-opacity-75": !isActive,
+                            "text-gold-500": isActive,
                         })}
-                    />
-                    <div className="w-20 h-14 flex justify-center items-center text-xl text-gold-500">
+                    >
                         {menuItem.icon}
                     </div>
                     <motion.div
                         custom={index}
                         variants={menuItemTitleVariants}
                         animate={isOpen ? variantType.visible : variantType.hidden}
-                        className={clsx("absolute inset-0 ml-20 w-64 flex items-center")}
+                        className={clsx("absolute inset-0 ml-16 w-64 flex items-center uppercase font-thin font-base")}
                     >
-                        <span className={clsx({ "text-white": !menuItem.disabled })}>{menuItem.title}</span>
+                        <span className={clsx({ "text-white": !menuItem.disabled, "font-semibold": isActive })}>
+                            {menuItem.title}
+                        </span>
                     </motion.div>
-                </div>
+                </motion.div>
             </NavLink>
         </li>
     );
 };
 
-export const SidebarHeader = (isOpen: boolean) => (
-    <div className={clsx("flex items-center h-16 relative")}>
-        <div className="w-20 h-14 flex justify-center items-center">
+const CategoryHeader = (category: string, isOpen: boolean) => (
+    <li>
+        <motion.div
+            variants={categoryHeaderVariants}
+            animate={isOpen ? variantType.visible : variantType.hidden}
+            className={clsx("ml-4 mb-1 mt-2 font-base text-gray-800 font-semibold")}
+        >
+            {category}
+        </motion.div>
+    </li>
+);
+
+const SidebarHeader = (isOpen: boolean) => (
+    <div className={clsx("flex items-center h-16 relative border-b border-dark-400 mb-3")}>
+        <div className="w-24 flex justify-center items-center">
             <img src={logo} className="w-8" />
         </div>
         <motion.div
@@ -141,12 +175,19 @@ export const SideNav = () => {
             <motion.aside
                 className="fixed h-full z-30 bg-dark-500 overflow-y-auto"
                 style={{ width: "65px" }}
-                whileHover={{ width: 220 }}
+                whileHover={{ width: 250 }}
                 onHoverStart={thunk(toggleIsOpen, [true])}
                 onHoverEnd={thunk(toggleIsOpen, [false])}
             >
                 {SidebarHeader(isOpen)}
-                <ul className="h-full">{menuItems.map(MenuItem(isOpen))}</ul>
+                <ul className="h-full">
+                    {Object.keys(menu).map((category) => (
+                        <>
+                            {CategoryHeader(category, isOpen)}
+                            {menu[category].map(MenuItem(isOpen))}
+                        </>
+                    ))}
+                </ul>
             </motion.aside>
         </>
     );

@@ -2,6 +2,11 @@ module.exports = {
     purge: [],
     theme: {
         extend: {},
+        fontFamily: {
+            base: ['"Open Sans"'],
+            secondary: ['"Roboto"'],
+            tertiary: ['"Quicksand'],
+        },
         colors: {
             transparent: "transparent",
 

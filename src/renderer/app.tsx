@@ -17,6 +17,9 @@ const App = () => (
                         <Route path={appRoutes.CHAT_FEED}>
                             <div className="h-full w-full flex justify-center items-center">Chat Feed!</div>
                         </Route>
+                        <Route path={appRoutes.SETTINGS}>
+                            <div className="h-full w-full flex justify-center items-center">Settings!</div>
+                        </Route>
                     </Switch>
                 </div>
             </Router>
