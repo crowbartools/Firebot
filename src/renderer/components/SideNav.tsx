@@ -65,6 +65,9 @@ const menuItemTitleVariants: Variants = {
 const categoryHeaderVariants: Variants = {
     [variantType.hidden]: {
         opacity: 0,
+        transition: {
+            duration: 0.1,
+        },
     },
     [variantType.visible]: {
         opacity: 1,
@@ -102,7 +105,7 @@ const MenuItem = (isOpen: boolean) => (menuItem: MenuItem, index: number) => {
                 })}
             >
                 <motion.div
-                    whileHover={{ scale: 1.025 }}
+                    whileTap={!isActive ? { scale: 0.95 } : null}
                     className={clsx(
                         { "bg-dark-600": isActive, "hover:bg-dark-600 hover:bg-opacity-50 ": !isActive },
                         "rounded-lg transition duration-150 ease-in-out",
