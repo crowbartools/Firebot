@@ -6,7 +6,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import { AppContainer } from "react-hot-loader";
 import "./styles/index.css";
 
-import App from "./App";
+import App from "./app";
 
 library.add(far, fas);
 
@@ -19,7 +19,7 @@ ReactDOM.render(
 );
 
 setTimeout(() => {
-    window.fbComm.invoke('testMethod', { foo: "testing"}).then(({ bar }) => {
-        console.log("TEST RESPONSE: " + bar); 
-    })
+    window.fbComm.invoke("testMethod", { foo: "testing" }).then(({ bar }) => {
+        console.log("TEST RESPONSE: " + bar);
+    });
 }, 1000);
