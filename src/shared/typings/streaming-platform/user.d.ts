@@ -8,6 +8,7 @@ export interface UserRole {
 
 export interface PlatformUser {
     id: Id;
+    channelId?: Id;
     username: string;
     displayName: string;
     roles?: UserRole[];

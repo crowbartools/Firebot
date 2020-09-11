@@ -1,3 +1,4 @@
+import { OnlyRequire } from "../modules/global";
 import { Id } from "./helpers";
 import { PlatformUser } from "./user";
 
@@ -27,7 +28,7 @@ export interface EmoteMessagePart extends MessagePartType {
 export interface ChatMessage {
     id: Id;
     platformId: string;
-    user: PlatformUser;
+    user: OnlyRequire<PlatformUser, "id" | "username" | "displayName" | "roles">;
     avatarUrl: string;
     deleted?: boolean;
     tagged?: boolean;
