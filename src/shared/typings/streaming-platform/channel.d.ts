@@ -3,7 +3,7 @@ import { Id } from "./helpers";
 
 export interface ChannelInfo {
     userId: Id;
-    channelId?: Id;
+    id: Id;
     title: string;
     category: Partial<ChannelCategory>;
     broadcasterLanguage?: string;
