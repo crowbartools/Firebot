@@ -1,0 +1,26 @@
+import { PlatformEventEmitter, StreamingPlatform } from "Shared/typings/streaming-platform";
+import twitchApi from "./twitch-api";
+
+class Twitch extends PlatformEventEmitter implements StreamingPlatform {
+    constructor() {
+        super();
+    }
+
+    id = "twitch";
+    name = "Twitch";
+    api = twitchApi;
+
+    init() {
+        console.log("Twitch init");
+    }
+
+    disconnect() {
+        this.emit("disconnected");
+    }
+
+    connect() {
+        this.emit("connected");
+    }
+}
+
+export default Twitch;

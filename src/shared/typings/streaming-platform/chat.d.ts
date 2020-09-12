@@ -1,4 +1,4 @@
-import { OnlyRequire } from "../modules/global";
+import { OnlyRequire } from "../misc/global";
 import { Id } from "./helpers";
 import { PlatformUser } from "./user";
 

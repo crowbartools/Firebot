@@ -1,6 +1,14 @@
+import { TypedEmitter } from "../misc/typed-emitter";
 import { PlatformApi } from "./api";
 
-export interface StreamingPlatform extends NodeJS.EventEmitter {
+interface PlatformEvents {
+    connected: VoidFunction;
+    disconnected: VoidFunction;
+}
+
+export class PlatformEventEmitter extends TypedEmitter<PlatformEvents> {}
+
+declare interface StreamingPlatform extends PlatformEventEmitter {
     id: string;
     name: string;
     init: VoidFunction;
