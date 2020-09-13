@@ -1,72 +1,26 @@
-import * as path from "path";
+import { app } from "electron";
+import {
+    whenReady,
+    windowsAllClosed,
+    secondInstance,
+    activate,
+} from "./app-management";
 
-import { app, BrowserWindow } from "electron";
+function startFirebot() {
+    console.log("Starting Firebot...");
 
-import installExtension, { REACT_DEVELOPER_TOOLS, MOBX_DEVTOOLS } from "electron-devtools-installer";
-
-import comm from "./communicator";
-
-let win: BrowserWindow | null;
-
-const createWindow = () => {
-    win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        minWidth: 275,
-        webPreferences: {
-            nodeIntegration: false,
-            preload: path.join(__dirname, "./preload.js"),
-        },
-    });
-
-    // initialize
-    comm(win.webContents);
-
-    comm().register('testMethod', async (data) => {
-        console.log("TEST METHOD DATA", data.foo);
-        return {
-            bar: true
-        }
-    });
-
-    win.webContents.once("dom-ready", () => {
-        if (process.env.NODE_ENV !== "production") {
-            win.webContents.openDevTools();
-        }
-    });
-
-    win.on("closed", () => {
-        win = null;
-    });
-
-    if (process.env.NODE_ENV !== "production") {
-        win.loadURL("http://localhost:2003");
-    } else {
-        win.loadFile(path.join(__dirname, "./index.html"));
-    }
-};
-
-app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
+    // ensure only a single instance of the app runs
+    const gotTheLock = app.requestSingleInstanceLock();
+    if (!gotTheLock) {
         app.quit();
+        return;
     }
-});
 
-app.on("activate", () => {
-    if (win === null) {
-        createWindow();
-    }
-});
+    // Setup app listeners
+    app.on("second-instance", secondInstance);
+    app.on("window-all-closed", windowsAllClosed);
+    app.on("activate", activate);
+    app.whenReady().then(whenReady);
+}
 
-app.whenReady()
-    .then(async () => {
-        if (process.env.NODE_ENV !== "production") {
-            try {
-                await installExtension(REACT_DEVELOPER_TOOLS, true);
-                await installExtension(MOBX_DEVTOOLS, true);
-            } catch(err) {
-                console.log("failed to load extension(s)", err);
-            }
-        }
-        createWindow();
-    });
+startFirebot();

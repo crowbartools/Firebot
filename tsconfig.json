@@ -19,5 +19,9 @@
     "include": ["./**/*.ts"],
     "exclude": ["./node_modules/**/*"],
 
-    "files": ["./src/main/main.ts", "src/renderer/index.tsx", "./src/renderer/preload.ts"]
+    "files": [
+        "src/main/main.ts",
+        "src/renderer/index.tsx",
+        "./src/renderer/preload.ts"
+    ]
 }
