@@ -11,8 +11,8 @@
         "experimentalDecorators": true,
         "paths": {
             "Shared/*": ["src/shared/*"],
-            "Utilities": ["src/shared/util/index.ts"],
-            "Typings/*": ["src/shared/typings/*"]
+            "SharedUtilities": ["src/shared/util/index.ts"],
+            "SharedTypes/*": ["src/shared/typings/*"]
         }
     },
 

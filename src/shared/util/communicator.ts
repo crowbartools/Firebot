@@ -1,7 +1,7 @@
-import IpcEvents from "Shared/typings/ipc/ipc-events";
-import IpcMethods from "Typings/ipc/ipc-methods";
+import IpcEvents from "SharedTypes/ipc/ipc-events";
+import IpcMethods from "SharedTypes/ipc/ipc-methods";
 
-import { jsonClone, wildcard } from "Utilities";
+import { jsonClone, wildcard } from "SharedUtilities";
 import { WebContents, IpcRenderer } from "electron";
 
 export interface IpcMessage {
@@ -67,7 +67,11 @@ export class Communicator {
         });
     }
 
-    on<E extends keyof IpcEvents>(event: E, handler: (event: IpcEvents[E]) => void, once = false): void {
+    on<E extends keyof IpcEvents>(
+        event: E,
+        handler: (event: IpcEvents[E]) => void,
+        once = false
+    ): void {
         if (this.listeners[event] == null) {
             this.listeners[event] = [];
         }
@@ -78,11 +82,18 @@ export class Communicator {
         });
     }
 
-    once<E extends keyof IpcEvents>(event: E, handler: (event: IpcEvents[E]) => void): void {
+    once<E extends keyof IpcEvents>(
+        event: E,
+        handler: (event: IpcEvents[E]) => void
+    ): void {
         this.on(event, handler, true);
     }
 
-    off<E extends keyof IpcEvents>(event: E, handler: (event: IpcEvents[E]) => void, once = false): void {
+    off<E extends keyof IpcEvents>(
+        event: E,
+        handler: (event: IpcEvents[E]) => void,
+        once = false
+    ): void {
         if (this.listeners[event]?.length === 0) {
             this.listeners[event] = null;
         }
@@ -104,7 +115,10 @@ export class Communicator {
         }
     }
 
-    offOnce<E extends keyof IpcEvents>(event: E, handler: (event: IpcEvents[E]) => void): void {
+    offOnce<E extends keyof IpcEvents>(
+        event: E,
+        handler: (event: IpcEvents[E]) => void
+    ): void {
         this.off(event, handler, true);
     }
 
@@ -134,11 +148,17 @@ export class Communicator {
                         i += 1;
                     }
                 } catch (err) {
-                    console.log(`Error From Communicator Listener of ${event.name}`, err);
+                    console.log(
+                        `Error From Communicator Listener of ${event.name}`,
+                        err
+                    );
                     listeners.splice(i, 1);
                 }
             }
-        } else if (event.name.indexOf("?") === -1 && event.name.indexOf("*") === -1) {
+        } else if (
+            event.name.indexOf("?") === -1 &&
+            event.name.indexOf("*") === -1
+        ) {
             // Get a list of events that have listeners
             Object.keys(this.listeners)
                 .filter((key) => {
@@ -159,7 +179,12 @@ export class Communicator {
         }
     }
 
-    register<M extends keyof IpcMethods>(method: M, handler: (data: IpcMethods[M]['request']) => Promise<IpcMethods[M]['response']>): void {
+    register<M extends keyof IpcMethods>(
+        method: M,
+        handler: (
+            data: IpcMethods[M]["request"]
+        ) => Promise<IpcMethods[M]["response"]>
+    ): void {
         if (this.methods[method] != null) {
             throw new Error("method already registered");
         }
@@ -167,19 +192,29 @@ export class Communicator {
         this.methods[method] = handler;
     }
 
-    unregister<M extends keyof IpcMethods>(method: M, handler: (data: IpcMethods[M]['request']) => Promise<IpcMethods[M]['response']>): void {
+    unregister<M extends keyof IpcMethods>(
+        method: M,
+        handler: (
+            data: IpcMethods[M]["request"]
+        ) => Promise<IpcMethods[M]["response"]>
+    ): void {
         if (this.methods[method] == null) {
             throw new Error(`method '${method}' not registered`);
         }
         if (this.methods[method] !== handler) {
-            throw new Error(`handler for '${method}' does not match given handler`);
+            throw new Error(
+                `handler for '${method}' does not match given handler`
+            );
         }
 
         this.methods[method] = null;
     }
 
     // how to document the promise?
-    invoke<M extends Extract<keyof IpcMethods, string>>(method: M, data: IpcMethods[M]['request']): Promise<IpcMethods[M]['response']> {
+    invoke<M extends Extract<keyof IpcMethods, string>>(
+        method: M,
+        data: IpcMethods[M]["request"]
+    ): Promise<IpcMethods[M]["response"]> {
         this.msgId += 1;
         const invocation: IpcMessageInvoke = {
             type: "invoke",
@@ -209,7 +244,7 @@ export class Communicator {
         });
     }
 
-     private async processInvoke(message: IpcMessageInvoke) {
+    private async processInvoke(message: IpcMessageInvoke) {
         const reply = <IpcMessageReply>{
             type: "reply",
             status: "error",

@@ -1,4 +1,4 @@
-import { StreamingPlatform } from "Shared/typings/streaming-platform";
+import { StreamingPlatform } from "SharedTypes/streaming-platform";
 
 const platforms: StreamingPlatform[] = [];
 

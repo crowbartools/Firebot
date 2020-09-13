@@ -1,5 +1,5 @@
 import { ipcMain, WebContents } from "electron";
-import { Communicator } from "Utilities";
+import { Communicator } from "SharedUtilities";
 
 let comm: Communicator;
 export default (sender?: WebContents): Communicator => {

@@ -1,4 +1,7 @@
-import { PlatformEventEmitter, StreamingPlatform } from "Shared/typings/streaming-platform";
+import {
+    PlatformEventEmitter,
+    StreamingPlatform,
+} from "SharedTypes/streaming-platform";
 import twitchApi from "./twitch-api";
 
 class Twitch extends PlatformEventEmitter implements StreamingPlatform {

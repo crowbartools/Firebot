@@ -15,12 +15,12 @@ export async function whenReady() {
         }
     }
 
+    createMainWindow();
+
     communicator().register("testMethod", async (data) => {
         console.log("TEST METHOD DATA", data.foo);
         return {
             bar: true,
         };
     });
-
-    createMainWindow();
 }
