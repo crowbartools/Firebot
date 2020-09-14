@@ -2,6 +2,7 @@
     "version": "6.0.0",
     "license": "GPL-3.0",
     "name": "firebot",
+    "productName": "Firebot",
     "description": "A general purpose highly-customizable chat bot for streamers",
     "author": "Crowbar Tools",
     "keywords": [
@@ -77,11 +78,16 @@
         "clsx": "^1.1.1",
         "electron-window-state": "^5.0.3",
         "framer-motion": "^2.6.6",
+        "mobx": "^5.15.6",
         "mobx-react": "^6.3.0",
+        "node-json-db": "^1.1.0",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
         "react-router-dom": "^5.2.0",
-        "tailwindcss": "^1.8.2"
+        "tailwindcss": "^1.8.2",
+        "winston": "^3.3.3",
+        "winston-daily-rotate-file": "^4.5.0",
+        "winston-transport": "^4.4.0"
     },
     "build": {
         "productName": "Firebot",

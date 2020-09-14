@@ -4,17 +4,24 @@ import {
     windowsAllClosed,
     secondInstance,
     activate,
+    makeFirebotDataDir,
+    ensureRootDataDirsExist,
 } from "./app-management";
+import { logger } from "./utils";
 
-function startFirebot() {
-    console.log("Starting Firebot...");
-
+async function startFirebot() {
     // ensure only a single instance of the app runs
     const gotTheLock = app.requestSingleInstanceLock();
     if (!gotTheLock) {
         app.quit();
         return;
     }
+
+    await makeFirebotDataDir();
+
+    logger.info("Starting Firebot...");
+
+    await ensureRootDataDirsExist();
 
     // Setup app listeners
     app.on("second-instance", secondInstance);

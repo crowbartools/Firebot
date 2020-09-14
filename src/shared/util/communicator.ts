@@ -1,7 +1,7 @@
 import IpcEvents from "SharedTypes/ipc/ipc-events";
 import IpcMethods from "SharedTypes/ipc/ipc-methods";
 
-import { jsonClone, wildcard } from "SharedUtilities";
+import { jsonClone, wildcard } from "SharedUtils";
 import { WebContents, IpcRenderer } from "electron";
 
 export interface IpcMessage {
@@ -9,9 +9,9 @@ export interface IpcMessage {
     name: Extract<keyof IpcMethods, string>;
     id: number;
 }
-export interface IpcMessageEvent extends IpcMessage {
+export interface IpcMessageEvent<E extends keyof IpcEvents> extends IpcMessage {
     type: "event";
-    data: any;
+    data: IpcEvents[E];
 }
 export interface IpcMessageInvoke extends IpcMessage {
     type: "invoke";
@@ -33,8 +33,8 @@ export interface IpcSend {
     (channel: string, message: IpcMessage): void;
 }
 
-interface Listener {
-    handler: (data: IpcMessageEvent) => void;
+interface Listener<E extends keyof IpcEvents> {
+    handler: (data: IpcMessageEvent<E>["data"]) => void;
     once: boolean;
 }
 interface Method {
@@ -48,7 +48,7 @@ export class Communicator {
 
     private sender: IpcSender;
 
-    private listeners: Record<string, Listener[]> = {};
+    private listeners: Record<string, Listener<keyof IpcEvents>[]> = {};
 
     private methods: Record<keyof IpcMethods, Method> = {};
 
@@ -60,16 +60,16 @@ export class Communicator {
 
         this.emitter.on("firebot-comm", (sender, message: IpcMessage): void => {
             if (message.type === "event" && message.id === 0) {
-                this.processEvent(<IpcMessageEvent>message);
+                this.processEvent(message as never);
             } else if (message.type === "invoke" && message.id > 0) {
-                this.processInvoke(<IpcMessageInvoke>message);
+                this.processInvoke(message as never);
             }
         });
     }
 
     on<E extends keyof IpcEvents>(
         event: E,
-        handler: (event: IpcEvents[E]) => void,
+        handler: (data: IpcMessageEvent<E>["data"]) => void,
         once = false
     ): void {
         if (this.listeners[event] == null) {
@@ -84,14 +84,14 @@ export class Communicator {
 
     once<E extends keyof IpcEvents>(
         event: E,
-        handler: (event: IpcEvents[E]) => void
+        handler: (data: IpcMessageEvent<E>["data"]) => void
     ): void {
         this.on(event, handler, true);
     }
 
     off<E extends keyof IpcEvents>(
         event: E,
-        handler: (event: IpcEvents[E]) => void,
+        handler: (data: IpcMessageEvent<E>["data"]) => void,
         once = false
     ): void {
         if (this.listeners[event]?.length === 0) {
@@ -117,13 +117,13 @@ export class Communicator {
 
     offOnce<E extends keyof IpcEvents>(
         event: E,
-        handler: (event: IpcEvents[E]) => void
+        handler: (data: IpcMessageEvent<E>["data"]) => void
     ): void {
         this.off(event, handler, true);
     }
 
     emit<E extends keyof IpcEvents>(event: E, data: IpcEvents[E]): void {
-        this.sender.send("firebot-comm", <IpcMessageEvent>{
+        this.sender.send("firebot-comm", <IpcMessageEvent<E>>{
             type: "event",
             name: event,
             data,
@@ -131,7 +131,7 @@ export class Communicator {
         });
     }
 
-    private processEvent(event: IpcMessageEvent) {
+    private processEvent<E extends keyof IpcEvents>(event: IpcMessageEvent<E>) {
         if (this.listeners[event.name] != null) {
             // static listeners get priority
             const listeners = this.listeners[event.name];
@@ -140,7 +140,7 @@ export class Communicator {
                 const { handler, once } = listeners[i];
 
                 try {
-                    handler(jsonClone(event.data));
+                    handler(jsonClone(event.data as never));
 
                     if (once === true) {
                         listeners.splice(i, 1);

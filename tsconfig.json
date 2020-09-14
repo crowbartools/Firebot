@@ -10,8 +10,7 @@
         "moduleResolution": "node",
         "experimentalDecorators": true,
         "paths": {
-            "Shared/*": ["src/shared/*"],
-            "SharedUtilities": ["src/shared/util/index.ts"],
+            "SharedUtils": ["src/shared/util/index.ts"],
             "SharedTypes/*": ["src/shared/typings/*"]
         }
     },

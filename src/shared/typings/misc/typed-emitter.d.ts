@@ -1,9 +1,9 @@
 declare type ListenerSignature<L> = {
-    [E in keyof L]: (...args: any[]) => any;
+    [E in keyof L]: (...args: unknown[]) => unknown;
 };
 
 declare type DefaultListener = {
-    [k: string]: (...args: any[]) => any;
+    [k: string]: (...args: unknown[]) => unknown;
 };
 
 export class TypedEmitter<L extends ListenerSignature<L> = DefaultListener> {

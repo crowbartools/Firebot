@@ -1,4 +1,4 @@
-import { Communicator } from "SharedUtilities";
+import { Communicator } from "SharedUtils";
 
 declare global {
     interface Window {

@@ -1,4 +1,4 @@
-import { PlatformApi, PlatformUser } from "Shared/typings/streaming-platform";
+import { PlatformApi, PlatformUser } from "SharedTypes/streaming-platform/";
 
 const TWITCH_PLATFORM_ID = "twitch";
 
