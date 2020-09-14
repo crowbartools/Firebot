@@ -1,8 +1,8 @@
-import { Communicator } from "SharedUtils";
+import { communicator } from "SharedUtils";
 
 declare global {
     interface Window {
-        fbComm: Communicator;
+        fbComm: typeof communicator;
     }
 }
 
