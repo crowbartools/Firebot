@@ -1,4 +1,5 @@
 import { ipcRenderer } from "electron";
-import { Communicator } from "SharedUtils";
+import { communicator } from "SharedUtils";
 
-window.fbComm = new Communicator(ipcRenderer, ipcRenderer);
+communicator.init(ipcRenderer, ipcRenderer);
+window.fbComm = communicator;

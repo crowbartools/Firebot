@@ -1,8 +1,8 @@
-import { BrowserWindow, Menu, shell } from "electron";
+import { BrowserWindow, ipcMain, Menu, shell } from "electron";
 import windowStateKeeper from "electron-window-state";
 import path from "path";
 import { applicationMenu } from "./menu-builder";
-import { communicator } from "../../utils";
+import { communicator } from "SharedUtils";
 
 let mainWindow: BrowserWindow = null;
 
@@ -34,7 +34,7 @@ export function createMainWindow() {
     });
 
     // initialize IPC communicator
-    communicator(mainWindow.webContents);
+    communicator.init(ipcMain, mainWindow.webContents);
 
     mainWindow.webContents.on("new-window", function (e, url) {
         e.preventDefault();

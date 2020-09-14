@@ -4,10 +4,7 @@ import { serialize } from "SharedUtils";
 import winston, { format, transports } from "winston";
 import "winston-daily-rotate-file";
 import Transport, { TransportStreamOptions } from "winston-transport";
-import communicator, {
-    communicatorIsReady,
-    whenCommunicatorIsReady,
-} from "./communicator";
+import { communicator } from "SharedUtils";
 import { getPathInFirebotData } from "./data-helpers";
 
 const SPLAT = Symbol.for("splat");
@@ -19,9 +16,10 @@ class RendererProxyTransport extends Transport {
 
     log(info: winston.Logform.TransformableInfo, callback: VoidFunction) {
         setImmediate(() => this.emit("logged", info));
+
         if (!info.message?.includes("(Renderer)")) {
-            if (communicatorIsReady()) {
-                communicator().emit("mainLog", {
+            if (communicator.ready()) {
+                communicator.emit("mainLog", {
                     level: info.level as LogLevel,
                     message: info.message,
                     meta: info[SPLAT as never],
@@ -119,8 +117,6 @@ process.on("unhandledRejection", (reason) => {
     }
 });
 
-whenCommunicatorIsReady().then(() => {
-    communicator().on("rendererLog", ({ level, message, stack }) => {
-        logger[level](`(Renderer) ${message}${stack ? `- ${stack}` : ""}`);
-    });
+communicator.on("rendererLog", ({ level, message, stack }) => {
+    logger[level](`(Renderer) ${message}${stack ? `- ${stack}` : ""}`);
 });
