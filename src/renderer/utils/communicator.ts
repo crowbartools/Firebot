@@ -1,2 +1,2 @@
-const communicator = window.fbComm;
+const communicator = window.FirebotCommunicator;
 export default communicator;

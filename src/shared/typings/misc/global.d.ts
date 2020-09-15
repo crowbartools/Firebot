@@ -2,7 +2,7 @@ import { communicator } from "SharedUtils";
 
 declare global {
     interface Window {
-        fbComm: typeof communicator;
+        FirebotCommunicator: typeof communicator;
     }
 }
 
