@@ -1,12 +1,10 @@
+import { UserProfile } from "SharedTypes/firebot/profile";
 import { FbConfig } from "../utils/fb-config";
 
 interface GlobalSettings {
     debugMode: boolean;
     activeProfile: string;
-    profiles: Array<{
-        id: string;
-        name: string;
-    }>;
+    profiles: Array<UserProfile>;
 }
 
 const globalSettingsConfig = new FbConfig<GlobalSettings>("global-settings", {
@@ -14,3 +12,5 @@ const globalSettingsConfig = new FbConfig<GlobalSettings>("global-settings", {
     activeProfile: null,
     profiles: [],
 });
+
+export default globalSettingsConfig;

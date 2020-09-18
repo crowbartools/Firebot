@@ -6,7 +6,7 @@ import { WebContents, IpcRenderer } from "electron";
 
 export interface IpcMessage {
     type: "event" | "invoke" | "reply";
-    name: Extract<keyof IpcMethods, string>;
+    name: string;
     id: number;
 }
 export interface IpcMessageEvent<E extends keyof IpcEvents> extends IpcMessage {
@@ -44,7 +44,7 @@ interface Method {
 type IpcSender = WebContents | IpcRenderer;
 
 const listeners: Record<string, Listener<keyof IpcEvents>[]> = {};
-const methods: Record<keyof IpcMethods, Method> = {};
+const methods: Record<string, Method> = {};
 
 let emitter: IpcEmitter;
 let sender: IpcSender;
@@ -173,7 +173,7 @@ const processEvent = function <E extends keyof IpcEvents>(
 export function register<M extends keyof IpcMethods>(
     method: M,
     handler: (
-        data: IpcMethods[M]["request"]
+        data?: IpcMethods[M]["request"]
     ) => Promise<IpcMethods[M]["response"]>
 ): void {
     if (methods[method] != null) {
@@ -244,11 +244,13 @@ const processInvoke = async function (message: IpcMessageInvoke) {
         id: message.id,
     };
 
-    if (methods[message.name] == null) {
+    if (methods[message.name as keyof IpcMethods] == null) {
         reply.result = "method not registered";
     } else {
         try {
-            reply.result = await methods[message.name](message.data);
+            reply.result = await methods[message.name as keyof IpcMethods](
+                message.data
+            );
             reply.status = "ok";
         } catch (e) {
             reply.result = e.message;

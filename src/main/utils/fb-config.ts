@@ -11,6 +11,7 @@ export class FbConfig<Settings> {
         this.jsonDb = new JsonDB(
             new Config(getPathInFirebotData(filePath), true, true, "/")
         );
+        this.load();
     }
 
     get<K extends keyof Settings>(key: K): Settings[K] {
