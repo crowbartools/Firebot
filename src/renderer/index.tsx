@@ -6,7 +6,6 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import { AppContainer } from "react-hot-loader";
 import "./styles/index.css";
 
-import { logger } from "./utils";
 import App from "./app";
 
 library.add(far, fas);

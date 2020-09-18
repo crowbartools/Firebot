@@ -25,39 +25,42 @@ export const emitIpcEvent = <K extends keyof IpcEvents>(
     };
 };
 
-export const registerIpcMethods = <M extends Array<keyof IpcMethods>>(
-    methods: M,
-    passedThis: {
-        [P in M[0]]: (
-            request: IpcMethods[M[0]]["request"]
-        ) => IpcMethods[M[0]]["response"];
-    }
+/**
+ * Convenience method for registering ipc methods with matching ones in a class
+ *
+ * **IMPORTANT**: Use this in a constructor of a singleton class
+ * @param passedThis - The "this" variable from a class constructor
+ * @param methods - IPC Method names
+ */
+export const registerIpcMethods = <M extends ReadonlyArray<keyof IpcMethods>>(
+    passedThis: Pick<IpcMethods, M[number]>,
+    ...methods: M
 ) => {
     for (const method of methods) {
-        communicator.register(method, async (data) => {
-            return (passedThis as any)[method](data);
+        communicator.register(method, async (...data) => {
+            return (passedThis as any)[method](...data);
         });
     }
 };
 
 // WIP class decorator
-// export const registerIpcMethods = <M extends keyof IpcMethods>(
-//     methods: Array<keyof IpcMethods>
+// export const registerIpcMethodsTest = <
+//     M extends ReadonlyArray<keyof IpcMethods>
+// >(
+//     ...methods: M
 // ) => {
-//     return function (
-//         constructor: new (...args: any[]) => {
-//             [P in M]: void;0
-//         }
-//     ) {
-//         return class extends constructor {
+//     return function <
+//         B extends new (...args: any[]) => OnlyRequire<IpcMethods, M[number]>
+//     >(Base: B) {
+//         return class extends Base {
 //             constructor(...args: any[]) {
 //                 super(...args);
 //                 for (const method of methods) {
-//                     communicator.register(method, async (data) => {
-//                         return this[method](data);
+//                     communicator.register(method, async (...data) => {
+//                         return this[method](...data);
 //                     });
 //                 }
 //             }
 //         };
 //     };
-// }
+// };

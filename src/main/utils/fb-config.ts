@@ -3,11 +3,12 @@ import { Config } from "node-json-db/dist/lib/JsonDBConfig";
 import { getPathInFirebotData } from "../utils";
 
 export class FbConfig<Settings> {
+    private defaultSettings: Settings;
     private settings: Settings;
     private jsonDb: JsonDB;
 
-    constructor(filePath: string, defaultData: Settings) {
-        this.settings = defaultData;
+    constructor(filePath: string, defaultSettings: Settings) {
+        this.defaultSettings = this.settings = defaultSettings;
         this.jsonDb = new JsonDB(
             new Config(getPathInFirebotData(filePath), true, true, "/")
         );
@@ -15,7 +16,7 @@ export class FbConfig<Settings> {
     }
 
     get<K extends keyof Settings>(key: K): Settings[K] {
-        return this.settings[key];
+        return this.settings[key] ?? this.defaultSettings[key];
     }
 
     set<K extends keyof Settings, V extends Settings[K]>(

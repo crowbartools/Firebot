@@ -37,14 +37,15 @@ interface Listener<E extends keyof IpcEvents> {
     handler: (data: IpcMessageEvent<E>["data"]) => void;
     once: boolean;
 }
-interface Method {
-    (data: any): any;
-}
+
+type HandlerFunc<M extends keyof IpcMethods> = (
+    ...data: Parameters<IpcMethods[M]>
+) => Promise<ReturnType<IpcMethods[M]>>;
 
 type IpcSender = WebContents | IpcRenderer;
 
 const listeners: Record<string, Listener<keyof IpcEvents>[]> = {};
-const methods: Record<string, Method> = {};
+const methods: Record<string, HandlerFunc<keyof IpcMethods>> = {};
 
 let emitter: IpcEmitter;
 let sender: IpcSender;
@@ -172,9 +173,7 @@ const processEvent = function <E extends keyof IpcEvents>(
 
 export function register<M extends keyof IpcMethods>(
     method: M,
-    handler: (
-        data?: IpcMethods[M]["request"]
-    ) => Promise<IpcMethods[M]["response"]>
+    handler: HandlerFunc<M>
 ): void {
     if (methods[method] != null) {
         throw new Error("method already registered");
@@ -185,9 +184,7 @@ export function register<M extends keyof IpcMethods>(
 
 export function unregister<M extends keyof IpcMethods>(
     method: M,
-    handler: (
-        data: IpcMethods[M]["request"]
-    ) => Promise<IpcMethods[M]["response"]>
+    handler: HandlerFunc<M>
 ): void {
     if (methods[method] == null) {
         throw new Error(`method '${method}' not registered`);
@@ -201,8 +198,8 @@ export function unregister<M extends keyof IpcMethods>(
 
 export function invoke<M extends Extract<keyof IpcMethods, string>>(
     method: M,
-    data: IpcMethods[M]["request"]
-): Promise<IpcMethods[M]["response"]> {
+    ...data: Parameters<IpcMethods[M]>
+): Promise<ReturnType<IpcMethods[M]>> {
     if (sender == null || emitter == null) {
         throw new Error("not initialized");
     }
@@ -249,10 +246,11 @@ const processInvoke = async function (message: IpcMessageInvoke) {
     } else {
         try {
             reply.result = await methods[message.name as keyof IpcMethods](
-                message.data
+                ...message.data
             );
             reply.status = "ok";
         } catch (e) {
+            console.error(e);
             reply.result = e.message;
         }
     }

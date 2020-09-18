@@ -1,9 +1,8 @@
 import { UserProfile } from "SharedTypes/firebot/profile";
-import IpcMethods from "SharedTypes/ipc/ipc-methods";
 import { TypedEmitter } from "tiny-typed-emitter";
 import { v4 as uuid } from "uuid";
 import globalSettingsConfig from "./settings/global-settings";
-import { communicator } from "./utils";
+import { registerIpcMethods } from "./utils";
 
 class ProfileManager extends TypedEmitter<{
     profileChanged: (profile: UserProfile) => void;
@@ -14,21 +13,13 @@ class ProfileManager extends TypedEmitter<{
         super();
         this.profiles = globalSettingsConfig.get("profiles");
 
-        communicator.register("getUserProfiles", async () => {
-            return this.getUserProfiles();
-        });
-
-        communicator.register("addUserProfile", async ({ name }) => {
-            return this.addUserProfile(name);
-        });
-
-        communicator.register("removeUserProfile", async ({ id }) => {
-            this.removeUserProfile(id);
-        });
-
-        communicator.register("switchToProfile", async ({ id }) => {
-            this.switchUserProfiles(id);
-        });
+        registerIpcMethods(
+            this,
+            "getUserProfiles",
+            "addUserProfile",
+            "removeUserProfile",
+            "switchToProfile"
+        );
     }
 
     getUserProfiles() {
@@ -53,7 +44,7 @@ class ProfileManager extends TypedEmitter<{
         }
     }
 
-    switchUserProfiles(id: string) {
+    switchToProfile(id: string) {
         const currentActiveProfileId = globalSettingsConfig.get(
             "activeProfile"
         );

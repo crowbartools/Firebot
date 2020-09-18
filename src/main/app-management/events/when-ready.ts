@@ -15,7 +15,7 @@ export async function whenReady() {
         }
     }
 
-    console.log(profileManager.getUserProfiles());
+    console.log("USER PROFILES", profileManager.getUserProfiles());
 
     createMainWindow();
 }
