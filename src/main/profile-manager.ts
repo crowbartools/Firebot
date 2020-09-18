@@ -1,51 +1,74 @@
+import { UserProfile } from "SharedTypes/firebot/profile";
+import { TypedEmitter } from "SharedTypes/misc/typed-emitter";
 import { v4 as uuid } from "uuid";
 import globalSettingsConfig from "./settings/global-settings";
 import { communicator } from "./utils";
 
-const profiles = globalSettingsConfig.get("profiles");
+class ProfileManager extends TypedEmitter<{
+    profileChanged: (profile: UserProfile) => void;
+}> {
+    private profiles: UserProfile[];
 
-export function getUserProfiles() {
-    return profiles;
-}
+    constructor() {
+        super();
 
-export function addUserProfile(name: string) {
-    const newProfile = {
-        id: uuid(),
-        name,
-    };
-    profiles.push(newProfile);
-    globalSettingsConfig.set("profiles", profiles);
-    return newProfile;
-}
+        this.profiles = globalSettingsConfig.get("profiles");
 
-export function removeUserProfile(id: string) {
-    const index = profiles.findIndex((p) => p.id === id);
-    if (index > -1) {
-        profiles.splice(index, 1);
-        globalSettingsConfig.set("profiles", profiles);
+        communicator.register("getUserProfiles", async () => {
+            return this.getUserProfiles();
+        });
+
+        communicator.register("addUserProfile", async ({ name }) => {
+            return this.addUserProfile(name);
+        });
+
+        communicator.register("removeUserProfile", async ({ id }) => {
+            this.removeUserProfile(id);
+        });
+
+        communicator.register("switchToProfile", async ({ id }) => {
+            this.switchUserProfiles(id);
+        });
+    }
+
+    getUserProfiles() {
+        return this.profiles;
+    }
+
+    addUserProfile(name: string) {
+        const newProfile = {
+            id: uuid(),
+            name,
+        };
+        this.profiles.push(newProfile);
+        globalSettingsConfig.set("profiles", this.profiles);
+        return newProfile;
+    }
+
+    removeUserProfile(id: string) {
+        const index = this.profiles.findIndex((p) => p.id === id);
+        if (index > -1) {
+            this.profiles.splice(index, 1);
+            globalSettingsConfig.set("profiles", this.profiles);
+        }
+    }
+
+    switchUserProfiles(id: string) {
+        const currentActiveProfileId = globalSettingsConfig.get(
+            "activeProfile"
+        );
+
+        if (
+            currentActiveProfileId != id &&
+            this.profiles.some((p) => p.id === id)
+        ) {
+            globalSettingsConfig.set("activeProfile", id);
+            this.emit(
+                "profileChanged",
+                this.profiles.find((p) => p.id === id)
+            );
+        }
     }
 }
 
-export function switchUserProfiles(id: string) {
-    const currentActiveProfileId = globalSettingsConfig.get("activeProfile");
-
-    if (currentActiveProfileId != id && profiles.some((p) => p.id === id)) {
-        globalSettingsConfig.set("activeProfile", id);
-    }
-}
-
-communicator.register("getUserProfiles", async () => {
-    return profiles;
-});
-
-communicator.register("addUserProfile", async ({ name }) => {
-    return addUserProfile(name);
-});
-
-communicator.register("removeUserProfile", async ({ id }) => {
-    removeUserProfile(id);
-});
-
-communicator.register("switchToProfile", async ({ id }) => {
-    switchUserProfiles(id);
-});
+export default new ProfileManager();
