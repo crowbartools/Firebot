@@ -1,5 +1,6 @@
 import { UserProfile } from "SharedTypes/firebot/profile";
-import { TypedEmitter } from "SharedTypes/misc/typed-emitter";
+import IpcMethods from "SharedTypes/ipc/ipc-methods";
+import { TypedEmitter } from "tiny-typed-emitter";
 import { v4 as uuid } from "uuid";
 import globalSettingsConfig from "./settings/global-settings";
 import { communicator } from "./utils";
@@ -11,7 +12,6 @@ class ProfileManager extends TypedEmitter<{
 
     constructor() {
         super();
-
         this.profiles = globalSettingsConfig.get("profiles");
 
         communicator.register("getUserProfiles", async () => {
@@ -36,7 +36,7 @@ class ProfileManager extends TypedEmitter<{
     }
 
     addUserProfile(name: string) {
-        const newProfile = {
+        const newProfile: UserProfile = {
             id: uuid(),
             name,
         };

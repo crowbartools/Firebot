@@ -1,4 +1,4 @@
-import { TypedEmitter } from "../misc/typed-emitter";
+import { TypedEmitter } from "tiny-typed-emitter";
 import { PlatformApi } from "./api";
 
 interface PlatformEvents {
