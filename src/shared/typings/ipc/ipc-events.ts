@@ -1,3 +1,4 @@
+import { UserProfile } from "SharedTypes/firebot/profile";
 import { LogLevel } from "../misc/logging";
 
 export default interface IpcEvents {
@@ -12,4 +13,5 @@ export default interface IpcEvents {
         message: string;
         meta?: unknown[];
     };
+    activeProfileChanged: UserProfile;
 }

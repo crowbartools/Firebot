@@ -7,21 +7,23 @@ import { communicator } from ".";
  * Method name must match a known IPC Event and it's argument must
  * match the expected event data.
  */
-export const emitIpcEvent = <K extends keyof IpcEvents>(
-    _: unknown,
-    methodName: K,
-    descriptor: TypedPropertyDescriptor<(data: IpcEvents[K]) => void>
-) => {
-    const originalMethod = descriptor.value;
+export const emitIpcEvent = <K extends keyof IpcEvents>(eventName: K) => {
+    return (
+        _: unknown,
+        _methodName: string,
+        descriptor: TypedPropertyDescriptor<(data: IpcEvents[K]) => void>
+    ) => {
+        const originalMethod = descriptor.value;
 
-    descriptor.value = function (data) {
-        // emit event to communicator
-        if (communicator.ready()) {
-            communicator.emit(methodName, data);
-        }
+        descriptor.value = function (data) {
+            // emit event to communicator
+            if (communicator.ready()) {
+                communicator.emit(eventName, data);
+            }
 
-        // call original method
-        return originalMethod.apply(this, [data]);
+            // call original method
+            return originalMethod.apply(this, [data]);
+        };
     };
 };
 
@@ -30,7 +32,7 @@ type OptionalPromisify<T> = {
     [P in keyof T]: T[P] extends (...args: any) => any
         ? (
               ...args: Parameters<T[P]>
-          ) => Promise<ReturnType<T[P]>> | ReturnType<T[P]>
+          ) => Promise<ReturnType<T[P]> | Error> | ReturnType<T[P]>
         : never;
 };
 

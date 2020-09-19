@@ -9,10 +9,7 @@ export class FbConfig<Settings> {
 
     constructor(filePath: string, defaultSettings: Settings) {
         this.defaultSettings = this.settings = defaultSettings;
-        this.jsonDb = new JsonDB(
-            new Config(getPathInFirebotData(filePath), true, true, "/")
-        );
-        this.load();
+        this.load(filePath);
     }
 
     get<K extends keyof Settings>(key: K): Settings[K] {
@@ -27,7 +24,10 @@ export class FbConfig<Settings> {
         this.jsonDb.push(`/${key}`, value);
     }
 
-    load(): void {
+    load(filePath: string): void {
+        this.jsonDb = new JsonDB(
+            new Config(getPathInFirebotData(filePath), true, true, "/")
+        );
         const settings = this.jsonDb.getData("/") as Settings | null;
         if (settings != null) {
             this.settings = settings;

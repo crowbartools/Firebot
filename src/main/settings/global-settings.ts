@@ -6,11 +6,8 @@ interface GlobalSettings {
     activeProfile: string;
     profiles: Array<UserProfile>;
 }
-
-const globalSettingsConfig = new FbConfig<GlobalSettings>("global-settings", {
+export default new FbConfig<GlobalSettings>("global-settings", {
     debugMode: false,
     activeProfile: null,
     profiles: [],
 });
-
-export default globalSettingsConfig;

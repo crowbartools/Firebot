@@ -5,4 +5,5 @@ export default interface IpcMethods {
     addUserProfile: (name: string) => UserProfile;
     removeUserProfile: (id: string) => void;
     switchToProfile: (id: string) => void;
+    renameProfile: (id: string, newName: string) => string;
 }

@@ -7,11 +7,8 @@ import { AppContainer } from "react-hot-loader";
 import "./styles/index.css";
 
 import App from "./app";
-import { logger } from "./utils";
 
 library.add(far, fas);
-
-logger.info("testing");
 
 // Render app
 ReactDOM.render(
