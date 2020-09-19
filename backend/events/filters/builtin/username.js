@@ -33,18 +33,18 @@ module.exports = {
         let filterUsername = value ? value.toLowerCase() : "";
 
         switch (comparisonType) {
-            case ComparisonType.IS:
-                return eventUsername === filterUsername;
-            case ComparisonType.IS_NOT:
-                return eventUsername !== filterUsername;
-            case ComparisonType.CONTAINS:
-                return eventUsername.includes(filterUsername);
-            case ComparisonType.MATCHES_REGEX: {
-                let regex = new RegExp(filterUsername, "gi");
-                return regex.test(eventUsername);
-            }
-            default:
-                return false;
+        case ComparisonType.IS:
+            return eventUsername === filterUsername;
+        case ComparisonType.IS_NOT:
+            return eventUsername !== filterUsername;
+        case ComparisonType.CONTAINS:
+            return eventUsername.includes(filterUsername);
+        case ComparisonType.MATCHES_REGEX: {
+            let regex = new RegExp(filterUsername, "gi");
+            return regex.test(eventUsername);
+        }
+        default:
+            return false;
         }
     }
 };
