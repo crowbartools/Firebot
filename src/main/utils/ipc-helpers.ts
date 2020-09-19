@@ -74,6 +74,7 @@ export const registerIpcMethods = <M extends Array<keyof IpcMethods>>(
                     }
                 );
 
+                // register methods
                 for (const method of verifiedMethods) {
                     communicator.register(method, (...data) => {
                         return Promise.resolve(thisClass[method](...data));
@@ -84,5 +85,59 @@ export const registerIpcMethods = <M extends Array<keyof IpcMethods>>(
 
         // Set the ExtendedClass type as the base type to make ts happy again
         return RegisterIpcMethodsExtendedClass as typeof constructor;
+    };
+};
+
+type IpcEventListenerMethods<T> = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [P in keyof T]-?: (data: T[P]) => void;
+};
+
+type IpcEventListenerConstructor<E extends keyof IpcEvents> = Constructor & {
+    new (...args: unknown[]): IpcEventListenerMethods<Pick<IpcEvents, E>>;
+};
+
+/**
+ * Class decorator for registering ipc event listeners with matching methods in a class
+ *
+ * **IMPORTANT**: Only use this for classes that will be singletons
+ * @param events - IPC Event names
+ */
+export const registerIpcEventListeners = <E extends Array<keyof IpcEvents>>(
+    ...events: E
+) => {
+    return function <B extends IpcEventListenerConstructor<E[number]>>(
+        constructor: B
+    ) {
+        // Set the base constructor as a simple constructor to make ts happy
+        const CurrentClass = constructor as Constructor;
+
+        // New class that extends the current class with
+        class RegisterIpcEventListenerExtendedClass extends CurrentClass {
+            constructor(...args: unknown[]) {
+                // forward any args
+                super(...args);
+
+                // set this to any to make ts happy
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const thisClass = this as any;
+
+                // removes any duplicate method names filters out any methods that
+                // don't appear to exist on the class, just to be absolutely sure
+                const verifiedMethods = Array.from(new Set(events)).filter(
+                    (m) => {
+                        return typeof thisClass[m] === "function";
+                    }
+                ) as Array<keyof IpcEvents>;
+
+                // setup listeners
+                for (const method of verifiedMethods) {
+                    communicator.on(method, thisClass[method]);
+                }
+            }
+        }
+
+        // Set the ExtendedClass type as the base type to make ts happy again
+        return RegisterIpcEventListenerExtendedClass as typeof constructor;
     };
 };
