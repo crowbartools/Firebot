@@ -1,7 +1,7 @@
 "use strict";
 const logger = require("../logwrapper");
 const EventEmitter = require("events");
-const ChatClient = require('twitch-chat-client').default;
+const { ChatClient } = require("twitch-chat-client");
 const twitchClient = require("../twitch-api/client");
 const accountAccess = require("../common/account-access");
 const frontendCommunicator = require("../common/frontend-communicator");

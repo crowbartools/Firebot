@@ -3,12 +3,12 @@ const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const twitchClient = require("../client");
 
-const PubSubClient = require("twitch-pubsub-client").default;
+const { PubSubClient } = require("twitch-pubsub-client");
 
-/**@type {import("twitch-pubsub-client").default} */
+/**@type {PubSubClient} */
 let pubSubClient;
 
-/**@type {import("twitch-pubsub-client").PubSubListener[]} */
+/**@type {Array<import("twitch-pubsub-client").PubSubListener>} */
 let listeners = [];
 
 function removeListeners() {
