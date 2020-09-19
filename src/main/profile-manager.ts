@@ -18,14 +18,6 @@ class ProfileManager extends TypedEmitter<{
     constructor() {
         super();
         this.profiles = globalSettingsConfig.get("profiles");
-
-        // registerIpcMethods(
-        //     this,
-        //     "getUserProfiles",
-        //     "addUserProfile",
-        //     "removeUserProfile",
-        //     "switchToProfile"
-        // );
     }
 
     getUserProfiles() {

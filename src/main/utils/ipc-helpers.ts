@@ -1,6 +1,5 @@
 import IpcEvents from "SharedTypes/ipc/ipc-events";
 import IpcMethods from "SharedTypes/ipc/ipc-methods";
-import { OnlyRequire } from "SharedTypes/misc/global";
 import { communicator } from ".";
 
 /**
@@ -43,13 +42,13 @@ export const registerIpcMethods = <M extends Array<keyof IpcMethods>>(
     ...methods: M
 ) => {
     return function <B extends IpcMethodConstructor<M[number]>>(
-        baseConstructor: B
+        constructor: B
     ) {
         // Set the base constructor as a simple constructor to make ts happy
-        const CurrentClass = baseConstructor as Constructor;
+        const CurrentClass = constructor as Constructor;
 
         // New class that extends the current class with
-        class ExtendedClass extends CurrentClass {
+        class RegisterIpcMethodsExtendedClass extends CurrentClass {
             constructor(...args: unknown[]) {
                 super(...args);
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +69,6 @@ export const registerIpcMethods = <M extends Array<keyof IpcMethods>>(
         }
 
         // Set the ExtendedClass type as the base type to make ts happy again
-        return ExtendedClass as typeof baseConstructor;
+        return RegisterIpcMethodsExtendedClass as typeof constructor;
     };
 };
