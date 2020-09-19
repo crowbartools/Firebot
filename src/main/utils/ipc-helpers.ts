@@ -25,11 +25,20 @@ export const emitIpcEvent = <K extends keyof IpcEvents>(
     };
 };
 
+type OptionalPromisify<T> = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [P in keyof T]: T[P] extends (...args: any) => any
+        ? (
+              ...args: Parameters<T[P]>
+          ) => Promise<ReturnType<T[P]>> | ReturnType<T[P]>
+        : never;
+};
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Constructor = { new (...args: unknown[]): {} };
 
 type IpcMethodConstructor<M extends keyof IpcMethods> = Constructor & {
-    new (...args: unknown[]): Pick<IpcMethods, M>;
+    new (...args: unknown[]): OptionalPromisify<Pick<IpcMethods, M>>;
 };
 
 /**
@@ -50,10 +59,15 @@ export const registerIpcMethods = <M extends Array<keyof IpcMethods>>(
         // New class that extends the current class with
         class RegisterIpcMethodsExtendedClass extends CurrentClass {
             constructor(...args: unknown[]) {
+                // forward any args
                 super(...args);
+
+                // set this to any to make ts happy
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const thisClass = this as any;
 
+                // removes any duplicate method names filters out any methods that
+                // don't appear to exist on the class, just to be absolutely sure
                 const verifiedMethods = Array.from(new Set(methods)).filter(
                     (m) => {
                         return typeof thisClass[m] === "function";
@@ -61,8 +75,8 @@ export const registerIpcMethods = <M extends Array<keyof IpcMethods>>(
                 );
 
                 for (const method of verifiedMethods) {
-                    communicator.register(method, async (...data) => {
-                        return thisClass[method](...data);
+                    communicator.register(method, (...data) => {
+                        return Promise.resolve(thisClass[method](...data));
                     });
                 }
             }
