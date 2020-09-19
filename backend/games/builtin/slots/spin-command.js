@@ -8,6 +8,7 @@ const currencyDatabase = require("../../../database/currencyDatabase");
 const customRolesManager = require("../../../roles/custom-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 const slotMachine = require("./slot-machine");
+const logger = require("../../../logwrapper");
 const moment = require("moment");
 const NodeCache = require("node-cache");
 
@@ -83,15 +84,21 @@ const spinCommand = {
                 }
             }
 
-            activeSpinners.set(username, true);
-
             const currencyId = slotsSettings.settings.currencySettings.currencyId;
-            const userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
+            let userBalance;
+            try {
+                userBalance = await currencyDatabase.getUserCurrencyAmount(username, currencyId);
+            } catch (error) {
+                logger.error(error);
+                userBalance = 0;
+            }
+
             if (userBalance < wagerAmount) {
                 twitchChat.sendChatMessage(`${username}, you don't have enough to wager this amount!`, null, chatter);
-                activeSpinners.del(username);
                 return;
             }
+
+            activeSpinners.set(username, true);
 
             let cooldownSecs = slotsSettings.settings.cooldownSettings.cooldown;
             if (cooldownSecs && cooldownSecs > 0) {
@@ -99,24 +106,36 @@ const spinCommand = {
                 cooldownCache.set(username, expireTime, cooldownSecs);
             }
 
-            await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
+            try {
+                await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
+            } catch (error) {
+                logger.error(error);
+                twitchChat.sendChatMessage(`Sorry ${username}, there was an error deducting currency from your balance so the spin has been canceled.`, null, chatter);
+                activeSpinners.del(username);
+                return;
+            }
 
             let successChance = 50;
 
             let successChancesSettings = slotsSettings.settings.spinSettings.successChances;
             if (successChancesSettings) {
-                successChance = successChancesSettings.basePercent;
+                try {
+                    successChance = successChancesSettings.basePercent;
 
-                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-                const userTwitchRoles = (userCommand.senderRoles || [])
-                    .map(r => twitchRolesManager.mapTwitchRole(r));
-                const allRoles = userCustomRoles.concat(userTwitchRoles);
+                    const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+                    const userTwitchRoles = (userCommand.senderRoles || [])
+                        .map(r => twitchRolesManager.mapTwitchRole(r))
+                        .filter(r => !!r);
+                    const allRoles = userCustomRoles.concat(userTwitchRoles);
 
-                for (let role of successChancesSettings.roles) {
-                    if (allRoles.some(r => r.id === role.roleId)) {
-                        successChance = role.percent;
-                        break;
+                    for (let role of successChancesSettings.roles) {
+                        if (allRoles.some(r => r.id === role.roleId)) {
+                            successChance = role.percent;
+                            break;
+                        }
                     }
+                } catch (error) {
+                    logger.error("There was an error while computing success chances, using base", error);
                 }
             }
 

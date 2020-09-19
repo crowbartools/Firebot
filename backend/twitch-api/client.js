@@ -3,12 +3,12 @@ const logger = require("../logwrapper");
 const twitchAuth = require("../auth/twitch-auth");
 const accountAccess = require("../common/account-access");
 
-const TwitchClient = require('twitch').default;
+const { ApiClient } = require('twitch');
 
-/**@type {TwitchClient} */
+/**@type {ApiClient} */
 let client;
 
-/**@type {TwitchClient} */
+/**@type {ApiClient} */
 let botClient;
 
 function setupTwitchClients() {
@@ -24,7 +24,7 @@ function setupTwitchClients() {
         return;
     }
 
-    client = TwitchClient.withCredentials(
+    client = ApiClient.withCredentials(
         twitchAuth.TWITCH_CLIENT_ID,
         streamer.auth.access_token,
         undefined,
@@ -57,7 +57,7 @@ function setupTwitchClients() {
         return;
     }
 
-    botClient = TwitchClient.withCredentials(
+    botClient = ApiClient.withCredentials(
         twitchAuth.TWITCH_CLIENT_ID,
         bot.auth.access_token,
         undefined,

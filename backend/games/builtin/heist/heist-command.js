@@ -117,26 +117,11 @@ const heistCommand = {
         // deduct wager from user balance
         await currencyDatabase.adjustCurrencyForUser(username, currencyId, -Math.abs(wagerAmount));
 
-        // Ensure the game has been started and the lobby ready
-        if (!heistRunner.lobbyOpen) {
-
-            const startDelay = heistSettings.settings.generalSettings.startDelay || 1;
-            heistRunner.triggerLobbyStart(startDelay);
-
-            const teamCreationMessage = heistSettings.settings.generalMessages.teamCreation
-                .replace("{user}", username)
-                .replace("{command}", userCommand.trigger)
-                .replace("{maxWager}", maxWager)
-                .replace("{minMager}", minWager)
-                .replace("{requiredUsers}", heistSettings.settings.generalSettings.minimumUsers);
-
-            twitchChat.sendChatMessage(teamCreationMessage, null, chatter);
-        }
-
         // get all user roles
         const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
         const userTwitchRoles = (userCommand.senderRoles || [])
-            .map(r => twitchRolesManager.mapTwitchRole(r));
+            .map(r => twitchRolesManager.mapTwitchRole(r))
+            .filter(r => !!r);
         const allRoles = userCustomRoles.concat(userTwitchRoles);
 
         // get the users success percentage
@@ -165,6 +150,22 @@ const heistCommand = {
                     break;
                 }
             }
+        }
+
+        // Ensure the game has been started and the lobby ready
+        if (!heistRunner.lobbyOpen) {
+
+            const startDelay = heistSettings.settings.generalSettings.startDelay || 1;
+            heistRunner.triggerLobbyStart(startDelay);
+
+            const teamCreationMessage = heistSettings.settings.generalMessages.teamCreation
+                .replace("{user}", username)
+                .replace("{command}", userCommand.trigger)
+                .replace("{maxWager}", maxWager)
+                .replace("{minMager}", minWager)
+                .replace("{requiredUsers}", heistSettings.settings.generalSettings.minimumUsers);
+
+            twitchChat.sendChatMessage(teamCreationMessage, null, chatter);
         }
 
         // add the user to the game
