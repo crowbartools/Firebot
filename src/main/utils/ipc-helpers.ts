@@ -1,5 +1,6 @@
 import IpcEvents from "SharedTypes/ipc/ipc-events";
 import IpcMethods from "SharedTypes/ipc/ipc-methods";
+import { OnlyRequire } from "SharedTypes/misc/global";
 import { communicator } from ".";
 
 /**
@@ -25,42 +26,50 @@ export const emitIpcEvent = <K extends keyof IpcEvents>(
     };
 };
 
-/**
- * Convenience method for registering ipc methods with matching ones in a class
- *
- * **IMPORTANT**: Use this in a constructor of a singleton class
- * @param passedThis - The "this" variable from a class constructor
- * @param methods - IPC Method names
- */
-export const registerIpcMethods = <M extends ReadonlyArray<keyof IpcMethods>>(
-    passedThis: Pick<IpcMethods, M[number]>,
-    ...methods: M
-) => {
-    for (const method of methods) {
-        communicator.register(method, async (...data) => {
-            return (passedThis as any)[method](...data);
-        });
-    }
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Constructor = { new (...args: unknown[]): {} };
+
+type IpcMethodConstructor<M extends keyof IpcMethods> = Constructor & {
+    new (...args: unknown[]): Pick<IpcMethods, M>;
 };
 
-// WIP class decorator
-// export const registerIpcMethodsTest = <
-//     M extends ReadonlyArray<keyof IpcMethods>
-// >(
-//     ...methods: M
-// ) => {
-//     return function <
-//         B extends new (...args: any[]) => OnlyRequire<IpcMethods, M[number]>
-//     >(Base: B) {
-//         return class extends Base {
-//             constructor(...args: any[]) {
-//                 super(...args);
-//                 for (const method of methods) {
-//                     communicator.register(method, async (...data) => {
-//                         return this[method](...data);
-//                     });
-//                 }
-//             }
-//         };
-//     };
-// };
+/**
+ * Class decorator for registering ipc methods with matching ones in a class
+ *
+ * **IMPORTANT**: Only use this for classes that will be singletons
+ * @param methods - IPC Method names
+ */
+export const registerIpcMethods = <M extends Array<keyof IpcMethods>>(
+    ...methods: M
+) => {
+    return function <B extends IpcMethodConstructor<M[number]>>(
+        baseConstructor: B
+    ) {
+        // Set the base constructor as a simple constructor to make ts happy
+        const CurrentClass = baseConstructor as Constructor;
+
+        // New class that extends the current class with
+        class ExtendedClass extends CurrentClass {
+            constructor(...args: unknown[]) {
+                super(...args);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const thisClass = this as any;
+
+                const verifiedMethods = Array.from(new Set(methods)).filter(
+                    (m) => {
+                        return typeof thisClass[m] === "function";
+                    }
+                );
+
+                for (const method of verifiedMethods) {
+                    communicator.register(method, async (...data) => {
+                        return thisClass[method](...data);
+                    });
+                }
+            }
+        }
+
+        // Set the ExtendedClass type as the base type to make ts happy again
+        return ExtendedClass as typeof baseConstructor;
+    };
+};

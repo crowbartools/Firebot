@@ -4,6 +4,12 @@ import { v4 as uuid } from "uuid";
 import globalSettingsConfig from "./settings/global-settings";
 import { registerIpcMethods } from "./utils";
 
+@registerIpcMethods(
+    "getUserProfiles",
+    "addUserProfile",
+    "removeUserProfile",
+    "switchToProfile"
+)
 class ProfileManager extends TypedEmitter<{
     profileChanged: (profile: UserProfile) => void;
 }> {
@@ -13,13 +19,13 @@ class ProfileManager extends TypedEmitter<{
         super();
         this.profiles = globalSettingsConfig.get("profiles");
 
-        registerIpcMethods(
-            this,
-            "getUserProfiles",
-            "addUserProfile",
-            "removeUserProfile",
-            "switchToProfile"
-        );
+        // registerIpcMethods(
+        //     this,
+        //     "getUserProfiles",
+        //     "addUserProfile",
+        //     "removeUserProfile",
+        //     "switchToProfile"
+        // );
     }
 
     getUserProfiles() {
