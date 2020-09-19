@@ -65,6 +65,7 @@ let logger = new winston.Logger({
 
 // uncaught exception - log the error
 process.on("uncaughtException", logger.error); //eslint-disable-line no-console
+process.on("unhandledRejection", error => logger.error("Unhandled promise rejection", error));
 
 // Export
 module.exports = logger;

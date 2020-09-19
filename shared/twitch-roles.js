@@ -33,7 +33,12 @@ function mapMixerRoleIdToTwitchRoleId(mixerRoleId) {
 }
 
 exports.getTwitchRoles = () => twitchRoles;
-exports.mapTwitchRole = role => twitchRoles.find(r => r.id === role);
+exports.mapTwitchRole = role => {
+    if (role === "founder") {
+        return twitchRoles.find(r => r.id === 'sub');
+    }
+    return twitchRoles.find(r => r.id === role);
+};
 exports.mapMixerRoleIdToTwitchRoleId = mapMixerRoleIdToTwitchRoleId;
 
 
