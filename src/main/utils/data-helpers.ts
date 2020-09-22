@@ -37,6 +37,26 @@ export async function pathExists(filePath: string): Promise<boolean> {
     }
 }
 
+function pathExistsSync(filePath: string) {
+    try {
+        fs.accessSync(filePath);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+/**
+ * Only use this sync version during app start up. Otherwise please use
+ * the async version.
+ */
+export function ensureFirebotDataDirExistsSync(relativePath = "") {
+    const fullPath = path.join(firebotDataPath, relativePath);
+    if (!pathExistsSync(fullPath)) {
+        fs.mkdirSync(fullPath);
+    }
+}
+
 export async function ensureFirebotDataDirExists(relativePath = "") {
     const fullPath = path.join(firebotDataPath, relativePath);
     if (!(await pathExists(fullPath))) {

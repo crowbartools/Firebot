@@ -7,9 +7,10 @@ import { UserProfile } from "SharedTypes/firebot/profile";
 import globalSettingsConfig from "./settings/global-settings";
 import {
     registerIpcMethods,
-    ensureFirebotDataDirExists,
     getPathInFirebotData,
     emitIpcEvent,
+    communicator,
+    ensureFirebotDataDirExistsSync,
 } from "./utils";
 
 const PROFILES_DIR = "profiles";
@@ -32,12 +33,10 @@ class ProfileManager extends TypedEmitter<{
         if (!this.profiles.length) {
             this.addUserProfile("Default Profile");
         }
-    }
 
-    @emitIpcEvent("activeProfileChanged")
-    private setActiveProfile(profile: UserProfile) {
-        globalSettingsConfig.set("activeProfile", profile.id);
-        this.emit("activeProfileChanged", profile);
+        communicator.register("getActiveUserProfileId", async () =>
+            globalSettingsConfig.get("activeProfile")
+        );
     }
 
     get activeProfile() {
@@ -46,18 +45,24 @@ class ProfileManager extends TypedEmitter<{
         );
     }
 
+    @emitIpcEvent("activeProfileChanged")
+    private setActiveProfile(profile: UserProfile) {
+        globalSettingsConfig.set("activeProfile", profile.id);
+        this.emit("activeProfileChanged", profile);
+    }
+
     getUserProfiles() {
         return this.profiles;
     }
 
-    async addUserProfile(name: string) {
+    addUserProfile(name: string) {
         name = sanitizeFilename(name);
         const newProfile: UserProfile = {
             id: uuid(),
             name,
         };
 
-        await ensureFirebotDataDirExists(path.join(PROFILES_DIR, name));
+        ensureFirebotDataDirExistsSync(path.join(PROFILES_DIR, name));
 
         if (!this.profiles.length) {
             this.setActiveProfile(newProfile);

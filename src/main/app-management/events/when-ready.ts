@@ -16,7 +16,6 @@ export async function whenReady() {
         }
     }
 
-    console.log(profileSettings.get("isFirstOpen"));
     profileSettings.set("isFirstOpen", false);
 
     createMainWindow();
