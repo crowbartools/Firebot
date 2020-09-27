@@ -11,6 +11,7 @@ module.exports = {
     description: "Condition based on a given viewer role",
     comparisonTypes: ["is in role", "isn't in role"],
     leftSideValueType: "text",
+    leftSideTextPlaceholder: "Enter username",
     rightSideValueType: "preset",
     getRightSidePresetValues: viewerRolesService => {
         return viewerRolesService.getCustomRoles()
