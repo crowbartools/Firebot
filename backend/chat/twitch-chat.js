@@ -9,6 +9,7 @@ const chatHelpers = require("./chat-helpers");
 const twitchChatListeners = require("./chat-listeners/twitch-chat-listeners");
 const followPoll = require("../twitch-api/follow-poll");
 const commandHandler = require("./commands/commandHandler");
+const activeUserHandler = require("./chat-listeners/active-user-handler");
 
 /**@extends NodeJS.EventEmitter */
 class TwitchChat extends EventEmitter {
@@ -46,6 +47,11 @@ class TwitchChat extends EventEmitter {
             this.emit("disconnected");
         }
         followPoll.stopFollowPoll();
+
+        activeUserHandler.clearAllActiveUsers();
+
+        const userDatabase = require("../database/userDatabase");
+        await userDatabase.setAllUsersOffline();
     }
 
     /**
@@ -123,6 +129,11 @@ class TwitchChat extends EventEmitter {
 
             if (accountType === 'streamer' && !message.startsWith("/")) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
+                await activeUserHandler.addActiveUser({
+                    userId: firebotChatMessage.userId,
+                    userName: firebotChatMessage.username,
+                    displayName: firebotChatMessage.username
+                }, true, false);
                 commandHandler.handleChatMessage(firebotChatMessage);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
             }

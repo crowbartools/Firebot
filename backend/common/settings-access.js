@@ -204,14 +204,9 @@ settings.setMaxBackupCount = function(maxBackupCount) {
     pushDataToFile("/settings/maxBackupCount", maxBackupCount);
 };
 
-settings.getActiveChatUserListEnabled = function() {
-    let enabled = getDataFromFile("/settings/activeChatUsers/status");
-    return enabled != null ? enabled : true;
-};
-
 settings.getActiveChatUserListTimeout = function() {
     let inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
-    return inactiveTimer != null ? parseInt(inactiveTimer) : 10;
+    return inactiveTimer != null ? parseInt(inactiveTimer) : 5;
 };
 
 settings.getActiveMixplayUserListEnabled = function() {

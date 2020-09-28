@@ -395,9 +395,9 @@ function setChatUserOnline(userDetails) {
  * Adds a new user to the database
  * @param {UserDetails} userDetails
  */
-function addNewUserFromChat(userDetails) {
+function addNewUserFromChat(userDetails, isOnline = true) {
     return createNewUser(userDetails.id, userDetails.username, userDetails.displayName,
-        userDetails.profilePicUrl, true);
+        userDetails.profilePicUrl, isOnline);
 }
 
 // Sets chat users online using the same function we use to get the chat viewer list for the ui.

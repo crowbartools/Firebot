@@ -45,10 +45,6 @@ module.exports = {
                 originatedInStreamerChannel: chatFromStreamerChannel
             });
 
-            const activeChatter = require('../../../roles/role-managers/active-chatters');
-            // Updates or adds user to our active chatter list.
-            activeChatter.addOrUpdateActiveChatter(data);
-
             if (data.user_name !== accountAccess.getAccounts().streamer.username &&
                         data.user_name !== accountAccess.getAccounts().bot.username) {
                 timerManager.incrementChatLineCounters();

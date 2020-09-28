@@ -325,18 +325,9 @@
                 pushDataToFile("/settings/sounds", enabled);
             };
 
-            service.getActiveChatUserListEnabled = function() {
-                let status = getDataFromFile("/settings/activeChatUsers/status");
-                return status != null ? status : true;
-            };
-
-            service.setActiveChatUsers = function(status) {
-                pushDataToFile("/settings/activeChatUsers/status", status);
-            };
-
             service.getActiveChatUserListTimeout = function() {
                 let inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
-                return inactiveTimer != null ? inactiveTimer : "10";
+                return inactiveTimer != null ? parseInt(inactiveTimer) : 5;
             };
 
             service.setActiveChatUserListTimeout = function(inactiveTimer) {

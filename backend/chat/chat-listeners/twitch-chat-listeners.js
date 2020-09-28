@@ -43,7 +43,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         commandHandler.handleChatMessage(firebotChatMessage);
 
-        activeUserHandler.addActiveUser(msg.userInfo);
+        activeUserHandler.addActiveUser(msg.userInfo, true);
 
         const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
         viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);

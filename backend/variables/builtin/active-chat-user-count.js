@@ -2,7 +2,8 @@
 
 "use strict";
 const logger = require("../../logwrapper");
-const activeViewerHandler = require('../../roles/role-managers/active-chatters');
+
+const activeViewerHandler = require("../../chat/chat-listeners/active-user-handler");
 
 const { OutputDataType } = require("../../../shared/variable-contants");
 
@@ -15,13 +16,7 @@ const model = {
     evaluator: async () => {
         logger.debug("Getting number of active viewers in chat.");
 
-        let activeViewers = activeViewerHandler.getActiveChatters();
-
-        if (activeViewers && activeViewers.length > 0) {
-            return activeViewers.length;
-        }
-
-        return 0;
+        return activeViewerHandler.getActiveUserCount() || 0;
     }
 };
 

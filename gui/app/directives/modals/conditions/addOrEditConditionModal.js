@@ -14,7 +14,7 @@
             <div class="modal-body">
                
                 <div style="display: flex;flex-direction: column;">
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                    <div class="mixplay-header muted" style="padding: 0 0 4px 0;">
                         Type
                     </div>
                     <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
@@ -46,7 +46,7 @@
                         </div>
                     </div>
 
-                    <div class="mixplay-header" style="padding: 0 0 4px 0; margin-top: 12px;">
+                    <div class="mixplay-header muted" style="padding: 0 0 4px 0; margin-top: 12px;">
                         COMPARATOR
                     </div>
                     <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
@@ -60,7 +60,7 @@
                         </ul>
                     </div>
 
-                    <div class="mixplay-header" style="padding: 0 0 4px 0; margin-top: 12px;">
+                    <div class="mixplay-header muted" style="padding: 0 0 4px 0; margin-top: 12px;">
                         EXPECTED VALUE
                     </div>
                     <div ng-switch="$ctrl.currentConditionDef.rightSideValueType" style="flex: 1 1 0;">
@@ -76,7 +76,6 @@
                                     </li>
                                 </ul>
                             </div>
-
                         </div>
                         <div ng-switch-default>
                             <textarea type="{{$ctrl.currentConditionDef.rightSideValueType}}" class="form-control" style="min-width: 100px;" ng-model="$ctrl.selectedCondition.rightSideValue" placeholder="{{$ctrl.currentConditionDef.rightSideTextPlaceholder}}" menu-position="under" replace-variables disable-variable-menu="$ctrl.currentConditionDef.rightSideValueType !== 'text'"></textarea>

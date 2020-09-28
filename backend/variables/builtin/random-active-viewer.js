@@ -3,7 +3,7 @@
 "use strict";
 const util = require("../../utility");
 const logger = require("../../logwrapper");
-const activeViewerHandler = require('../../roles/role-managers/active-chatters');
+const activeUserHandler = require('../../chat/chat-listeners/active-user-handler');
 const customRoleManager = require('../../roles/custom-roles-manager');
 
 const { OutputDataType } = require("../../../shared/variable-contants");
@@ -24,31 +24,33 @@ const model = {
     evaluator: async (_, roleName) => {
         logger.debug("Getting random active viewer...");
 
-        let activeViewers = activeViewerHandler.getActiveChatters();
+        const activeViewerCount = activeUserHandler.getActiveUserCount();
 
-        if (activeViewers == null || activeViewers.length === 0) {
+        if (activeViewerCount === 0) {
             return "[Unable to get random active user]";
         }
 
         if (roleName == null) {
-            let randIndex = util.getRandomInt(0, activeViewers.length - 1);
-            return activeViewers[randIndex].username;
+            return activeUserHandler.getRandomActiveUser().username;
         }
 
         if (roleName != null) {
-            let customRole = customRoleManager.getRoleByName(roleName);
+            const customRole = customRoleManager.getRoleByName(roleName);
             if (customRole == null) {
                 return "[Unable to get random active user]";
             }
 
-            let customRoleUsers = customRole.viewers;
+            const customRoleUsers = customRole.viewers;
             if (customRoleUsers.length === 0) {
                 return "[Unable to get random active user]";
             }
 
-            let roleIntersection = activeViewers.filter(user => customRoleUsers.includes(user.username));
-            let randIndex = util.getRandomInt(0, roleIntersection.length - 1);
-            return roleIntersection[randIndex].username;
+            const usersWithRole = activeUserHandler.getAllActiveUsers().filter(user => customRoleUsers.includes(user.username));
+            if (usersWithRole.length === 0) {
+                return "[Unable to get random active user]";
+            }
+            const randIndex = util.getRandomInt(0, usersWithRole.length - 1);
+            return usersWithRole[randIndex].username;
         }
 
         return "[Unable to get random active user]";
