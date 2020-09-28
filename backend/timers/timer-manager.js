@@ -37,7 +37,7 @@ function runTimer(timer) {
 
     // check if we have chat lines requirement
     if (timer.requiredChatLines > 0) {
-        // check if enough chat lines have happenened
+        // check if enough chat lines have happened
         if (interval.chatLinesSinceLastRunCount < timer.requiredChatLines) {
             // set timer to waiting for chat lines
             logger.debug(`Not enough chat lines have happened since last time the timer "${timer.name}" has ran. Waiting for enough lines.`);

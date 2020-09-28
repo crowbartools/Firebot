@@ -162,6 +162,7 @@ function scriptProcessor(effect, trigger) {
                         customVariableManager: require("../../../common/custom-variable-manager"),
                         customRolesManager: require("../../../roles/custom-roles-manager"),
                         firebotRolesManager: require("../../../roles/firebot-roles-manager"),
+                        timerManager: require("../../../timers/timer-manager"),
                         gameManager: require("../../../games/game-manager"),
                         mixplay: {},
                         utils: require("../../../utility")
