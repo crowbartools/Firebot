@@ -90,9 +90,10 @@ function scriptProcessor(effect, trigger) {
             if (typeof customScript.run === "function") {
                 setTimeout(function() {
 
-                    let manifest = {
+                    const manifest = {
                         name: "Unknown Script",
-                        version: "Unknown Version"
+                        version: "Unknown Version",
+                        startupOnly: false
                     };
 
                     // set manifest values if they exist
@@ -101,7 +102,15 @@ function scriptProcessor(effect, trigger) {
                         if (scriptManifest) {
                             manifest.name = scriptManifest.name || manifest.name;
                             manifest.version = scriptManifest.version || manifest.version;
+                            manifest.startupOnly = scriptManifest.startupOnly;
                         }
+                    }
+
+                    if (manifest.startupOnly && !(trigger.type === "event" &&
+                        trigger.eventSource === "firebot" &&
+                        trigger.eventId === "firebot-started")) {
+                        renderWindow.webContents.send("error", `Could not run startup only script "${manifest.name}": It was executed outside of a Firebot Started Event.`);
+                        return resolve();
                     }
 
                     let streamerName = accountAccess.getAccounts().streamer.username || "Unknown Streamer";
@@ -133,7 +142,7 @@ function scriptProcessor(effect, trigger) {
                         JsonDb: require('node-json-db'),
                         moment: require('moment'),
                         logger: logger,
-                        // thin chat shim for basic backworks compatibility
+                        // thin chat shim for basic backwards compatibility
                         chat: {
                             smartSend: (...args) => {
                                 twitchChat.sendChatMessage(...args);
@@ -143,11 +152,20 @@ function scriptProcessor(effect, trigger) {
                             }
                         },
                         twitchChat: twitchChat,
-                        mixplay: require("../../../interactive/mixplay"),
+                        effectManager: require("../../../effects/effectManager"),
+                        conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
+                        restrictionManager: require("../../../restrictions/restriction-manager"),
+                        commandManager: require("../../../chat/commands/CommandManager"),
+                        eventManager: require("../../../events/EventManager"),
+                        eventFilterManager: require("../../../events/filters/filter-manager"),
+                        replaceVariableManager: require("../../../variables/replace-variable-manager"),
+                        integrationManager: require("../../../integrations/IntegrationManager"),
+                        customVariableManager: require("../../../common/custom-variable-manager"),
+                        mixplay: {},
                         utils: require("../../../utility")
                     };
 
-                    //simpify parameters
+                    //simplify parameters
                     let simpleParams = {};
                     if (parameters != null) {
                         Object.keys(parameters).forEach(k => {
@@ -162,7 +180,7 @@ function scriptProcessor(effect, trigger) {
 
                     let runRequest = {
                         modules: modules,
-                        control: control,
+                        control: {},
                         command: userCommand,
                         user: {
                             name: username
@@ -172,7 +190,6 @@ function scriptProcessor(effect, trigger) {
                             settings: {
                                 webServerPort: settings.getWebServerPort()
                             },
-                            currentInteractiveBoardId: settings.getLastBoardName(),
                             version: app.getVersion()
                         },
                         parameters: simpleParams,
