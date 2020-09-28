@@ -46,6 +46,7 @@ exports.loadEffects = () => {
     const clearChat = require("./builtin/clearChat");
     const updateCounter = require("./builtin/update-counter");
     const toggleEventSet = require("./builtin/toggle-event-set");
+    const cooldownCommand = require("./builtin/cooldown-command");
 
     // register them
     effectManager.registerEffect(playSoundEffect); // No migration needed.
@@ -90,6 +91,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(clearChat);
     effectManager.registerEffect(updateCounter); // No migration needed.
     effectManager.registerEffect(toggleEventSet); // No migration needed.
+    effectManager.registerEffect(cooldownCommand);
 
     // Deactivated for Twitch.
     const changeScene = require('./builtin/changeScene');
