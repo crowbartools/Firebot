@@ -20,13 +20,24 @@ const followage = {
         cooldown: {
             user: 0,
             global: 0
+        },
+        options: {
+            displayTemplate: {
+                type: "string",
+                title: "Output Template",
+                description: "How the followage message is formatted",
+                tip: "Variables: {user}, {followage}, {followdate}",
+                default: `{user} followed {followage} ago on {followdate} UTC`,
+                useTextArea: true
+            }
         }
     },
     /**
    * When the command is triggered
    */
     onTriggerEvent: async event => {
-        let commandSender = event.userCommand.commandSender;
+        const commandSender = event.userCommand.commandSender;
+        const commandOptions = event.commandOptions;
 
         let followDate = await twitchApi.users.getFollowDateForUser(commandSender);
 
@@ -41,8 +52,10 @@ const followage = {
                 nowMoment
             );
 
-            chat.sendChatMessage(
-                `${commandSender} followed ${followAgeString} ago on ${followDateMoment.format("DD MMMM YYYY HH:mm")} UTC`
+            chat.sendChatMessage(commandOptions.displayTemplate
+                .replace("{user}", commandSender)
+                .replace("{followage}", followAgeString)
+                .replace("{followdate}", followDateMoment.format("DD MMMM YYYY HH:mm"))
             );
         }
     }

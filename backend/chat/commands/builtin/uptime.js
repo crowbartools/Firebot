@@ -18,14 +18,26 @@ const model = {
         cooldown: {
             user: 0,
             global: 0
+        },
+        options: {
+            uptimeDisplayTemplate: {
+                type: "string",
+                title: "Output Template",
+                description: "How the uptime message is formatted",
+                tip: "Variables: {uptime}",
+                default: `Broadcasting time: {uptime}`,
+                useTextArea: true
+            }
         }
     },
     /**
-   * When the command is triggered
-   */
-    onTriggerEvent: async () => {
+     * When the command is triggered
+     */
+    onTriggerEvent: async event => {
         let uptimeString = await util.getUptime();
-        chat.sendChatMessage(`Broadcasting time: ${uptimeString}`);
+        const { commandOptions } = event;
+        chat.sendChatMessage(commandOptions.uptimeDisplayTemplate
+            .replace("{uptime}", uptimeString));
     }
 };
 
