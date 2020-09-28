@@ -12,7 +12,8 @@ exports.loadCommands = () => {
     const currencyManager = require('../../currency/currencyManager');
     const steam = require("./builtin/steam/steam");
     const customRoleManagement = require("./builtin/custom-role-management");
-    const mixerLink = require('./builtin/mixer-link.js');
+    const mixerLink = require('./builtin/mixer-link');
+    const marker = require('./builtin/marker');
 
     // register them
     commandManager.registerSystemCommand(commandList);
@@ -23,6 +24,7 @@ exports.loadCommands = () => {
     commandManager.registerSystemCommand(steam);
     commandManager.registerSystemCommand(customRoleManagement);
     commandManager.registerSystemCommand(mixerLink);
+    commandManager.registerSystemCommand(marker);
 
     currencyManager.createAllCurrencyCommands();
 };
