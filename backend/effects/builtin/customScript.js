@@ -105,9 +105,19 @@ const fileWriter = {
                 //grab the manifest
                 if (typeof customScript.getScriptManifest === "function") {
                     $scope.scriptManifest = customScript.getScriptManifest();
-
                 } else {
                     $scope.scriptManifest = null;
+                }
+
+                if ($scope.scriptManifest != null && $scope.scriptManifest.startupOnly) {
+                    if ($scope.trigger !== "event" || !($scope.triggerMeta != null
+                        && $scope.triggerMeta.triggerId === "firebot:firebot-started")) {
+                        utilityService.showInfoModal(`Unable to load '${$scope.effect.scriptName}' as this script can only be used in the Firebot Started Event.`);
+                        $scope.effect.scriptName = undefined;
+                        $scope.effect.parameters = undefined;
+                        $scope.scriptManifest = undefined;
+                        return;
+                    }
                 }
 
                 if (!initialLoad && ($scope.scriptManifest == null || $scope.scriptManifest.firebotVersion !== "5")) {
