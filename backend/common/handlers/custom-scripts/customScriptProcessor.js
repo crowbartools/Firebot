@@ -62,11 +62,10 @@ function scriptProcessor(effect, trigger) {
     return new Promise(resolve => {
         let scriptName = effect.scriptName,
             parameters = effect.parameters,
-            control = trigger.metadata.control,
             userCommand = trigger.metadata.userCommand,
             participant = trigger.metadata.participant;
 
-        logger.debug("running scrpt: " + scriptName);
+        logger.debug("running script: " + scriptName);
 
         if (!settings.isCustomScriptsEnabled()) {
             renderWindow.webContents.send("error", "Something attempted to run a custom script but this feature is disabled!");
@@ -161,6 +160,9 @@ function scriptProcessor(effect, trigger) {
                         replaceVariableManager: require("../../../variables/replace-variable-manager"),
                         integrationManager: require("../../../integrations/IntegrationManager"),
                         customVariableManager: require("../../../common/custom-variable-manager"),
+                        customRolesManager: require("../../../roles/custom-roles-manager"),
+                        firebotRolesManager: require("../../../roles/firebot-roles-manager"),
+                        gameManager: require("../../../games/game-manager"),
                         mixplay: {},
                         utils: require("../../../utility")
                     };

@@ -23,7 +23,7 @@ const toggleConnection = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container>
-        <p>This effect toggles connection to Twitch services when ran.</p>
+            <p>This effect toggles connection to Twitch services when ran.</p>
         </eos-container>
     `,
     optionsController: () => {},
