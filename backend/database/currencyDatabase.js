@@ -193,7 +193,7 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adju
         }
 
         let db = userDatabase.getUserDb();
-        db.find({ online: true }, (err, docs) => {
+        db.find({ online: true }, async (err, docs) => {
             // If error
             if (err) {
                 return reject(err);
@@ -202,7 +202,7 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adju
             // Do the loop!
             for (let user of docs) {
                 if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
-                    adjustCurrency(user, currencyId, value, adjustType);
+                    await adjustCurrency(user, currencyId, value, adjustType);
                 }
             }
             return resolve();
