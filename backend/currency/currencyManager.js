@@ -137,6 +137,38 @@ function createCurrencyCommandDefinition(currency) {
                     type: "boolean",
                     title: "Whisper Currency Balance Message",
                     default: false
+                },
+                addMessageTemplate: {
+                    type: "string",
+                    title: "Add Currency Message Template",
+                    description: "How the !currency add message appears in chat.",
+                    tip: "Variables: {user}, {currency}, {amount}",
+                    default: `Added {amount} {currency} to {user}.`,
+                    useTextArea: true
+                },
+                removeMessageTemplate: {
+                    type: "string",
+                    title: "Remove Currency Message Template",
+                    description: "How the !currency remove message appears in chat.",
+                    tip: "Variables: {user}, {currency}, {amount}",
+                    default: `Removed {amount} {currency} from {user}.`,
+                    useTextArea: true
+                },
+                addAllMessageTemplate: {
+                    type: "string",
+                    title: "Add All Currency Message Template",
+                    description: "How the !currency addall message appears in chat.",
+                    tip: "Variables: {currency}, {amount}",
+                    default: `Added {amount} {currency} to everyone!`,
+                    useTextArea: true
+                },
+                removeAllMessageTemplate: {
+                    type: "string",
+                    title: "Remove All Currency Message Template",
+                    description: "How the !currency removeall message appears in chat.",
+                    tip: "Variables: {currency}, {amount}",
+                    default: `Removed {amount} {currency} from everyone!`,
+                    useTextArea: true
                 }
             },
             subCommands: [
@@ -257,8 +289,11 @@ function createCurrencyCommandDefinition(currency) {
                 // Adjust currency, it will return true on success and false on failure.
                 currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust).then(function(status) {
                     if (status) {
-                        twitchChat.sendChatMessage(
-                            'Added ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.');
+                        const addMessageTemplate = commandOptions.addMessageTemplate
+                            .replace("{user}", username)
+                            .replace("{currency}", currencyName)
+                            .replace("{amount}", util.commafy(currencyAdjust));
+                        twitchChat.sendChatMessage(addMessageTemplate);
                     } else {
                         // Error removing currency.
                         twitchChat.sendChatMessage(
@@ -275,10 +310,13 @@ function createCurrencyCommandDefinition(currency) {
                     currencyAdjust = -Math.abs(parseInt(args[2]));
 
                 // Adjust currency, it will return true on success and false on failure.
-                let adjustSucess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
-                if (adjustSucess) {
-                    twitchChat.sendChatMessage(
-                        'Removed ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' from ' + username + '.');
+                let adjustSuccess = await currencyDatabase.adjustCurrencyForUser(username, currencyId, currencyAdjust);
+                if (adjustSuccess) {
+                    const removeMessageTemplate = commandOptions.removeMessageTemplate
+                        .replace("{user}", username)
+                        .replace("{currency}", currencyName)
+                        .replace("{amount}", util.commafy(parseInt(args[2])));
+                    twitchChat.sendChatMessage(removeMessageTemplate);
                 } else {
                     // Error removing currency.
                     twitchChat.sendChatMessage(
@@ -361,10 +399,11 @@ function createCurrencyCommandDefinition(currency) {
                     return;
                 }
                 currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust, true);
-                twitchChat.sendChatMessage(
-                    `Added ` + util.commafy(currencyAdjust) + ` ` + currencyName + ` to everyone!`
-                );
 
+                const addAllMessageTemplate = commandOptions.addAllMessageTemplate
+                    .replace("{currency}", currencyName)
+                    .replace("{amount}", util.commafy(currencyAdjust));
+                twitchChat.sendChatMessage(addAllMessageTemplate);
 
                 break;
             }
@@ -376,10 +415,11 @@ function createCurrencyCommandDefinition(currency) {
                     return;
                 }
                 currencyDatabase.addCurrencyToOnlineUsers(currencyId, currencyAdjust, true);
-                twitchChat.sendChatMessage(
-                    `Removed ` + util.commafy(args[1]) + ` ` + currencyName + ` from everyone!`
-                );
 
+                const removeAllMessageTemplate = commandOptions.removeAllMessageTemplate
+                    .replace("{currency}", currencyName)
+                    .replace("{amount}", util.commafy(parseInt(args[1])));
+                twitchChat.sendChatMessage(removeAllMessageTemplate);
 
                 break;
             }

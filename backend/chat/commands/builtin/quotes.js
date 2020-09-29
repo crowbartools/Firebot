@@ -218,7 +218,7 @@ const quotesManagement = {
                     logger.debug('We pulled a quote using an id: ' + formattedQuote);
                 } else {
                     // If we get here, it's likely the command was used wrong. Tell the sender they done fucked up
-                    twitchChat.sendChatMessage(`Sorry! We couldnt find a quote with that id.`);
+                    twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with that id.`);
                 }
                 return resolve();
             }
