@@ -46,6 +46,20 @@
                 angular.element("#chatMessageInput").trigger("focus");
             }
 
+            $scope.showUserDetailsModal = (userId) => {
+                if (userId == null) return;
+                let closeFunc = () => {};
+                utilityService.showModal({
+                    component: "viewerDetailsModal",
+                    backdrop: true,
+                    resolveObj: {
+                        userId: () => userId
+                    },
+                    closeCallback: closeFunc,
+                    dismissCallback: closeFunc
+                });
+            };
+
             $scope.updateChatInput = function(text) {
                 $scope.chatMessage = text;
                 focusMessageInput();

@@ -4,6 +4,8 @@ const chatHelpers = require("../chat-helpers");
 
 const { settings } = require("../../common/settings-access");
 
+const frontendCommunicator = require("../../common/frontend-communicator");
+
 const utils = require("../../utility");
 
 const NodeCache = require("node-cache");
@@ -57,7 +59,7 @@ exports.getAllActiveUsers = () => {
 
 /**
  * Add or update an active user
- * @arg {import('twitch-chat-client/lib/ChatUser').default} chatUser
+ * @arg {import('twitch-chat-client/lib/ChatUser').ChatUser} chatUser
  */
 exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = false) => {
     const userDatabase = require("../../database/userDatabase");
@@ -70,6 +72,12 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
         id: chatUser.userId,
         username: chatUser.userName,
         displayName: chatUser.displayName,
+        twitchRoles: [
+            ...(chatUser.isBroadcaster ? ['broadcaster'] : []),
+            ...(chatUser.isFounder || chatUser.isSubscriber ? ['sub'] : []),
+            ...(chatUser.isMod ? ['mod'] : []),
+            ...(chatUser.isVip ? ['vip'] : [])
+        ],
         profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId))
     };
 
@@ -83,6 +91,10 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
             onlineUsers.ttl(chatUser.userId, ttl);
         } else {
             onlineUsers.set(chatUser.userId, true, ttl);
+            frontendCommunicator.send("twitch:chat:user-joined", {
+                id: chatUser.userId,
+                username: chatUser.displayName
+            });
             await userDatabase.setChatUserOnline(userDetails);
         }
     }
@@ -115,9 +127,11 @@ exports.removeActiveUser = async (usernameOrId) => {
 exports.clearAllActiveUsers = () => {
     activeUsers.flushAll();
     onlineUsers.flushAll();
+    frontendCommunicator.send("twitch:chat:clear-user-list");
 };
 
-onlineUsers.on("expired", key => {
+onlineUsers.on("expired", userId => {
     const userDatabase = require("../../database/userDatabase");
-    userDatabase.setChatUserOffline(key);
+    userDatabase.setChatUserOffline(userId);
+    frontendCommunicator.send("twitch:chat:user-left", userId);
 });

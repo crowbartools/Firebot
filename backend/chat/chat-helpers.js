@@ -222,13 +222,14 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
     if (firebotChatMessage.isFounder) {
         firebotChatMessage.roles.push("founder");
         firebotChatMessage.roles.push("sub");
+    } else if (firebotChatMessage.isSubscriber) {
+        firebotChatMessage.roles.push("sub");
     }
+
     if (firebotChatMessage.isMod) {
         firebotChatMessage.roles.push("mod");
     }
-    if (firebotChatMessage.isSubscriber) {
-        firebotChatMessage.roles.push("sub");
-    }
+
     if (firebotChatMessage.isVip) {
         firebotChatMessage.roles.push("vip");
     }

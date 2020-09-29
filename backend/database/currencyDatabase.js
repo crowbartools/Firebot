@@ -4,12 +4,10 @@ const userDatabase = require("./userDatabase");
 const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
 const { settings } = require("../common/settings-access.js");
-const channelAccess = require("../common/channel-access");
 const customRolesManager = require("../roles/custom-roles-manager");
-const mixerRolesManager = require("../../shared/mixer-roles");
+const twitchRolesManager = require("../../shared/twitch-roles");
 const firebotRolesManager = require("../roles/firebot-roles-manager");
 const util = require("../utility");
-const twitchChat = require("../chat/twitch-chat");
 
 let currencyCache = {};
 
@@ -141,26 +139,27 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
             return resolve();
         }
 
-        let currentList = await twitchChat.getViewerList();
+        const onlineUsers = await userDatabase.getOnlineUsers();
 
-        let currentViewers = currentList || [];
-        const userIdsInRoles = currentViewers
+        const userIdsInRoles = onlineUsers
             .map(u => {
-                let mixerRoles = (u.user_roles || [])
-                    .filter(mr => mr !== "User")
-                    .map(mr => mixerRolesManager.mapMixerRole(mr));
-                let customRoles = customRolesManager.getAllCustomRolesForViewer(u.username);
-                let firebotRoles = firebotRolesManager.getAllFirebotRolesForViewer(u.username);
-                u.allRoles = mixerRoles.concat(customRoles).concat(firebotRoles);
+                u.allRoles = [
+                    ...u.twitchRoles.map(tr => twitchRolesManager.mapTwitchRole(tr)),
+                    ...customRolesManager.getAllCustomRolesForViewer(u.username),
+                    ...firebotRolesManager.getAllFirebotRolesForViewer(u.username)
+                ];
                 return u;
             })
             .filter(u => u.allRoles.some(r => roleIds.includes(r.id)))
-            .map(u => u.userId);
+            .map(u => u._id);
 
         // Log it.
         logger.debug('Paying out ' + value + ' currency (' + currencyId + ') for online users:');
         logger.debug("role ids", roleIds);
         logger.debug("user ids", userIdsInRoles);
+
+
+        if (!userIdsInRoles.length) return resolve();
 
         // GIVE DEM BOBS.
         let db = userDatabase.getUserDb();

@@ -415,6 +415,17 @@
                 }
             });
 
+            backendCommunicator.on("twitch:chat:user-joined", user => {
+                service.chatUserJoined(user);
+            });
+
+            backendCommunicator.on("twitch:chat:user-left", id => {
+                service.chatUserLeft(({ id }));
+            });
+
+            backendCommunicator.on("twitch:chat:clear-user-list", () => {
+                service.clearUserList();
+            });
 
             backendCommunicator.on("twitch:chat:message", chatMessage => {
                 if (chatMessage.tagged) {
