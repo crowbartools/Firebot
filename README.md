@@ -9,7 +9,8 @@ An all-in-one desktop bot for Twitch featuring support for Chat Commands, Events
 [![Discord](https://img.shields.io/discord/372817064034959370.svg?label=Discord+(chat))](https://discord.gg/DegW792)
 [![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)](https://twitter.com/FirebotApp)
 
-***
+![Firebot Screenshot](https://i.imgur.com/Iu9BIix.png)
+
 ## FAQ
 ### How do I get Firebot?
 Head on over to [Firebot's website](https://firebot.app) and download the latest version!
