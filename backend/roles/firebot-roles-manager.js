@@ -1,17 +1,13 @@
 "use strict";
 
-const logger = require("../logwrapper");
 const firebotRoles = require("../../shared/firebot-roles");
 
-const ActiveChatters = require("./role-managers/active-chatters");
-const ActiveMixplayUsers = require('./role-managers/active-mixplay-users');
+const activeChatUsers = require("../chat/chat-listeners/active-user-handler");
 
 function userIsInFirebotRole(role, username) {
     switch (role.id) {
     case "ActiveChatters":
-        return ActiveChatters.isUsernameActiveChatter(username);
-    case "ActiveMixplayUsers":
-        return ActiveMixplayUsers.isUsernameActiveUser(username);
+        return activeChatUsers.userIsActive(username);
     default:
         return false;
     }

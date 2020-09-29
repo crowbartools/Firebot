@@ -9,8 +9,10 @@ const path = require("path");
 const discordEmbedBuilder = require("../../integrations/builtin/discord/discord-embed-builder");
 const discord = require("../../integrations/builtin/discord/discord-message-sender");
 const downloadClip = require("./clip-downloader");
+const utils = require("../../utility");
 
 const twitchApi = require("../../twitch-api/client");
+const { where } = require("underscore");
 const client = twitchApi.getClient();
 
 function downloadAndSaveClip(clipProperties) {
@@ -52,10 +54,15 @@ exports.createClip = async function(effect, trigger) {
         twitchChat.sendChatMessage("Creating clip...");
     }
 
-    const clipId = await client.helix.clips.createClip({
-        channelId: channelId,
-        createAfterDelay: true
-    });
+    let clipId;
+
+    try {
+        clipId = await client.helix.clips.createClip({
+            channelId: channelId
+        });
+    } catch (err) {
+        //failed to create clip
+    }
 
     if (clipId == null) {
         if (effect.postLink) {
@@ -65,23 +72,36 @@ exports.createClip = async function(effect, trigger) {
         return;
     }
 
-    const clip = await client.helix.clips.getClipById(clipId);
+    /**@type {import('twitch').HelixClip} */
+    let clip;
+    let attempts = 0;
+    do {
+        attempts++;
+        try {
+            clip = await client.helix.clips.getClipById(clipId);
+        } catch (err) {
+            //failed to get clip
+        }
+        if (clip == null) {
+            await utils.wait(1000);
+        }
+    }
+    while (clip == null && attempts < 10);
 
     if (clip != null) {
         if (effect.postLink) {
-            const message = `${clip.url}`;
+            const message = `Clip created: ${clip.url}`;
             twitchChat.sendChatMessage(message);
         }
 
-        /** Discord embed has not been converted for twitch yet 6/28/20
         if (effect.postInDiscord) {
             const clipEmbed = await discordEmbedBuilder.buildClipEmbed(clip);
             discord.sendDiscordMessage(effect.discordChannelId, "A new clip was created!", clipEmbed);
         }
-         */
 
         if (effect.download) {
             try {
+                // TODO: Convert this to work with twitch clips
                 //await downloadAndSaveClip(clip);
                 renderWindow.webContents.send('eventlog', {type: "general", username: "System:", event: `Successfully saved clip to download folder.`});
             } catch (e) {

@@ -66,9 +66,6 @@
                             </td> 
                             <td class="command-trigger-cell">
                                 <span class="trigger" uib-tooltip="{{command.trigger}}" tooltip-popup-delay="500" tooltip-append-to-body="true">{{command.trigger}}</span> <tooltip ng-if="command.triggerIsRegex" text="'Description: ' + command.regexDescription"></tooltip>
-                                <span class="muted" style="margin-left: 5px; font-size: 11px;" ng-show="command.allowInCostreams" uib-tooltip="Allowed in costreams" tooltip-append-to-body="true">
-                                    <i class="fas fa-users"></i>
-                                </span>
                                 <span class="muted" style="margin-left: 5px; font-size: 11px;" ng-show="command.hidden" uib-tooltip="Hidden from !commands list" tooltip-append-to-body="true">
                                     <i class="fas fa-eye-slash"></i>
                                 </span>

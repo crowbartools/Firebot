@@ -2,53 +2,122 @@
 
 const chatHelpers = require("../chat-helpers");
 
-const NodeCache = require("node-cache");
-const ACTIVE_TIMEOUT = 300; // 5 mins
-const activeUsers = new NodeCache({ stdTTL: ACTIVE_TIMEOUT, checkperiod: 15 });
+const { settings } = require("../../common/settings-access");
 
-const activeChattersRoleHandler = require("../../roles/role-managers/active-chatters");
+const utils = require("../../utility");
+
+const NodeCache = require("node-cache");
+const DEFAULT_ACTIVE_TIMEOUT = 300; // 5 mins
+
+// this is used only for setting "online: true" in user db (which is the used for currency payouts)
+const onlineUsers = new NodeCache({ stdTTL: DEFAULT_ACTIVE_TIMEOUT, checkperiod: 15 });
+
+// this is used for general active user features
+const activeUsers = new NodeCache({ stdTTL: DEFAULT_ACTIVE_TIMEOUT, checkperiod: 15 });
+
+/**
+ * Check if user is active
+ */
+exports.userIsActive = (usernameOrId) => {
+    if (typeof usernameOrId === 'string') {
+        usernameOrId = usernameOrId.toLowerCase();
+    }
+    return activeUsers.get(usernameOrId) != null;
+};
+
+exports.getActiveUserCount = () => {
+    // we divide by two because we add two entries for every user (username and id)
+    return activeUsers.keys().length / 2;
+};
+
+exports.getRandomActiveUser = () => {
+    const allActiveUsers = exports.getAllActiveUsers();
+    const randomIndex = utils.getRandomInt(0, allActiveUsers.length - 1);
+    return allActiveUsers[randomIndex];
+};
+
+/**
+ * Simple User
+ * @typedef {Object} User
+ * @property {id} id
+ * @property {string} username
+ */
+
+/**
+  * @returns {User[]}
+  */
+exports.getAllActiveUsers = () => {
+    return activeUsers.keys().filter(v => !isNaN(v)).map(id => {
+        return {
+            id: parseInt(id),
+            username: activeUsers.get(id)
+        };
+    });
+};
 
 /**
  * Add or update an active user
  * @arg {import('twitch-chat-client/lib/ChatUser').default} chatUser
  */
-exports.addActiveUser = async (chatUser) => {
+exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = false) => {
     const userDatabase = require("../../database/userDatabase");
 
-    const userActive = activeUsers.get(chatUser.userId);
+    const ttl = settings.getActiveChatUserListTimeout * 60;
 
-    // if user isnt active, cache active status, create db record
-    if (!userActive) {
-        activeUsers.set(chatUser.userId, true);
+    let user = await userDatabase.getUserById(chatUser.userId);
 
-        const profilePicUrl = await chatHelpers.getUserProfilePicUrl(chatUser.userId);
+    const userDetails = {
+        id: chatUser.userId,
+        username: chatUser.userName,
+        displayName: chatUser.displayName,
+        profilePicUrl: (await chatHelpers.getUserProfilePicUrl(chatUser.userId))
+    };
 
-        const user = await userDatabase.getUserById(chatUser.userId);
-
-        const userDetails = {
-            id: chatUser.userId,
-            username: chatUser.userName,
-            displayName: chatUser.displayName,
-            profilePicUrl
-        };
-
-        if (user == null) {
-            await userDatabase.addNewUserFromChat(userDetails);
-        } else {
-            await userDatabase.setChatUserOnline(userDetails);
-        }
-
-    } else {
-        // user is still active reset ttl
-        activeUsers.ttl(chatUser.userId, ACTIVE_TIMEOUT);
+    if (user == null) {
+        user = await userDatabase.addNewUserFromChat(userDetails, includeInOnline);
     }
 
-    await activeChattersRoleHandler.addOrUpdateActiveChatter(chatUser.userId, chatUser.displayName);
+    if (includeInOnline) {
+        const userOnline = onlineUsers.get(chatUser.userId);
+        if (userOnline) {
+            onlineUsers.ttl(chatUser.userId, ttl);
+        } else {
+            onlineUsers.set(chatUser.userId, true, ttl);
+            await userDatabase.setChatUserOnline(userDetails);
+        }
+    }
 
     await userDatabase.incrementDbField(chatUser.userId, "chatMessages");
+
+    if (!forceActive && user.disableActiveUserList) return;
+
+    const userActive = activeUsers.get(chatUser.userId);
+    if (!userActive) {
+        activeUsers.set(chatUser.userId, chatUser.userName, ttl);
+        activeUsers.set(chatUser.userName, chatUser.userId, ttl);
+    } else {
+        // user is still active reset ttl
+        activeUsers.ttl(chatUser.userId, ttl);
+        activeUsers.ttl(chatUser.userName, ttl);
+    }
 };
 
-activeUsers.on("expired", key => {
+exports.removeActiveUser = async (usernameOrId) => {
+    const isUsername = typeof usernameOrId === 'string';
+    if (isUsername) {
+        usernameOrId = usernameOrId.toLowerCase();
+    }
+    const other = activeUsers.get(usernameOrId);
+    if (other == null) return;
+    activeUsers.del([usernameOrId, other]);
+};
+
+exports.clearAllActiveUsers = () => {
+    activeUsers.flushAll();
+    onlineUsers.flushAll();
+};
+
+onlineUsers.on("expired", key => {
     const userDatabase = require("../../database/userDatabase");
     userDatabase.setChatUserOffline(key);
 });

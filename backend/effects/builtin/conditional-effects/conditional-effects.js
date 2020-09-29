@@ -30,6 +30,7 @@ const model = {
     optionsTemplate: `
         <eos-container>
 
+        <div ui-sortable="sortableOptions" ng-model="effect.ifs">
             <div ng-repeat="ifCondition in effect.ifs" style="margin-bottom: 15px;">
                 <condition-section header="{{$index === 0 ? 'If' : 'Else If'}}" label="ifCondition.label" initially-open="$index === 0 && openFirst">
                     <condition-list condition-data="ifCondition.conditionData" trigger="trigger" trigger-meta="triggerMeta"></condition-list>
@@ -45,12 +46,13 @@ const model = {
                     </div>
                 </condition-section>          
             </div>
+        </div>
 
             <button class="btn btn-link" ng-click="addIf()"><i class="fal fa-plus-circle"></i> Add <strong>{{effect.ifs.length === 0 ? 'If' : 'Else If'}}</strong> Clause</button>
 
             <div style="margin-top: 15px;">
 
-                <condition-section header="Otherwise" label="effect.otherwiseLabel">
+                <condition-section header="Otherwise" label="effect.otherwiseLabel" draggable="false">
                     <div style="padding-bottom: 10px;padding-left: 2px;font-size: 15px;font-family: 'Quicksand'; color: #c0c1c2;">
                         <span>If none of the above conditions pass, run the following effects:</span>
                     </div>
@@ -65,6 +67,11 @@ const model = {
         </eos-container>
     `,
     optionsController: ($scope, utilityService) => {
+
+        $scope.sortableOptions = {
+            handle: ".dragHandle",
+            stop: () => {}
+        };
 
         $scope.openFirst = false;
         if ($scope.effect.ifs == null) {

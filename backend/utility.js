@@ -61,7 +61,7 @@ exports.secondsForHumans = function(seconds) {
     return returntext.trim();
 };
 
-function getUptimeString(secs) {
+exports.formattedSeconds = (secs, simpleOutput = false) => {
     let allSecs = secs;
 
     allSecs = Math.round(allSecs);
@@ -76,6 +76,10 @@ function getUptimeString(secs) {
     let hasHours = hours > 0,
         hasMins = minutes > 0,
         hasSecs = seconds > 0;
+
+    if (simpleOutput) {
+        return `${hours}:${minutes.toString().padStart(2, "0")}`;
+    }
 
     let uptimeStr = "";
 
@@ -105,7 +109,7 @@ function getUptimeString(secs) {
     }
 
     return uptimeStr;
-}
+};
 
 exports.anyPromise = function(promises) {
     return Promise.all(promises.map(p => {
@@ -182,7 +186,7 @@ exports.getUptime = async () => {
         .duration(moment().diff(moment(startedDate)))
         .asSeconds();
 
-    return getUptimeString(durationSecs);
+    return exports.formattedSeconds(durationSecs);
 };
 
 exports.getDateDiffString = function(date1, date2) {

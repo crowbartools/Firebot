@@ -1,6 +1,6 @@
 "use strict";
 
-// Modal for adding or editting a condition
+// Modal for adding or editing a condition
 
 (function() {
     angular.module("firebotApp")
@@ -13,7 +13,10 @@
             </div>
             <div class="modal-body">
                
-                <div style="display: flex;flex-wrap: wrap;">
+                <div style="display: flex;flex-direction: column;">
+                    <div class="mixplay-header muted" style="padding: 0 0 4px 0;">
+                        Type
+                    </div>
                     <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
                         <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
                         {{$ctrl.getConditionName($ctrl.selectedCondition.type)}}<span class="caret"></span>
@@ -39,10 +42,13 @@
                             </div>
                         </div>
                         <div ng-switch-default>
-                            <input type="{{$ctrl.currentConditionDef.leftSideValueType}}" class="form-control" style="min-width: 310px;" ng-model="$ctrl.selectedCondition.leftSideValue" placeholder="Value" menu-position="below" replace-variables disable-variable-menu="$ctrl.currentConditionDef.leftSideValueType !== 'text'">
+                            <textarea type="{{$ctrl.currentConditionDef.leftSideValueType}}" class="form-control" style="min-width: 310px;" ng-model="$ctrl.selectedCondition.leftSideValue" placeholder="{{$ctrl.currentConditionDef.leftSideTextPlaceholder}}" menu-position="under" replace-variables disable-variable-menu="$ctrl.currentConditionDef.leftSideValueType !== 'text'"></textarea>
                         </div>
                     </div>
 
+                    <div class="mixplay-header muted" style="padding: 0 0 4px 0; margin-top: 12px;">
+                        COMPARATOR
+                    </div>
                     <div class="btn-group" style="margin-right: 5px;margin-bottom:5px;" uib-dropdown>
                         <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
                         {{$ctrl.selectedCondition.comparisonType}} <span class="caret"></span>
@@ -54,6 +60,9 @@
                         </ul>
                     </div>
 
+                    <div class="mixplay-header muted" style="padding: 0 0 4px 0; margin-top: 12px;">
+                        EXPECTED VALUE
+                    </div>
                     <div ng-switch="$ctrl.currentConditionDef.rightSideValueType" style="flex: 1 1 0;">
                         <div ng-switch-when="preset">
 
@@ -67,10 +76,9 @@
                                     </li>
                                 </ul>
                             </div>
-
                         </div>
                         <div ng-switch-default>
-                            <input type="{{$ctrl.currentConditionDef.rightSideValueType}}" class="form-control" style="min-width: 100px;" ng-model="$ctrl.selectedCondition.rightSideValue" placeholder="Value" menu-position="below" replace-variables disable-variable-menu="$ctrl.currentConditionDef.rightSideValueType !== 'text'">
+                            <textarea type="{{$ctrl.currentConditionDef.rightSideValueType}}" class="form-control" style="min-width: 100px;" ng-model="$ctrl.selectedCondition.rightSideValue" placeholder="{{$ctrl.currentConditionDef.rightSideTextPlaceholder}}" menu-position="under" replace-variables disable-variable-menu="$ctrl.currentConditionDef.rightSideValueType !== 'text'"></textarea>
                         </div>
                     </div>         
                 </div>

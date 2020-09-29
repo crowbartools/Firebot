@@ -33,9 +33,9 @@
                         <span> of the following conditions pass:</span>
                     </div>
                     <div style="display:flex;flex-wrap: wrap;">           
-                        <button ng-repeat="condition in $ctrl.conditionData.conditions track by $index" class="filter-bar" ng-click="$ctrl.openAddOrEditConditionModal($index)">
-                            <condition-display condition="condition" condition-type="$ctrl.getConditionType(condition.type)"></condition-display>
-                            <a class="filter-remove-btn clickable" style="padding-left: 10px;" ng-click="$event.stopPropagation();$ctrl.removeConditionAtIndex($index)" uib-tooltip="Remove condition" tooltip-append-to-body="true">
+                        <button ng-repeat="condition in $ctrl.conditionData.conditions track by $index" class="filter-bar" style="max-width: 100%;" ng-click="$ctrl.openAddOrEditConditionModal($index)">
+                            <condition-display condition="condition" condition-type="$ctrl.getConditionType(condition.type)" style="width: 94%"></condition-display>
+                            <a class="filter-remove-btn clickable" style="margin-left: 10px; flex-shrink: 0;" ng-click="$event.stopPropagation();$ctrl.removeConditionAtIndex($index)" uib-tooltip="Remove condition" tooltip-append-to-body="true">
                                 <i class="far fa-times"></i>
                             </a>
                         </button>

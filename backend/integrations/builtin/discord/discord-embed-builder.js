@@ -51,36 +51,30 @@ async function buildChannelEmbed() {
 }
 
 /**
- * @param {import('../../../mixer-api/resource/clips').ClipProperties} clipProperties
+ * @param {import('twitch').HelixClip} clip
  */
-async function buildClipEmbed(clipProperties) {
-    const thumbnail = clipProperties.contentLocators.find(c => c.locatorType === "Thumbnail_Large");
+async function buildClipEmbed(clip) {
     const streamer = accountAccess.getAccounts().streamer;
-    const type = await mixerApi.types.getChannelType(clipProperties.typeId);
+    const game = await clip.getGame();
     return {
-        title: clipProperties.title,
-        url: `https://mixer.com/${streamer.username}?clip=${clipProperties.shareableId}`,
+        title: clip.title,
+        url: clip.url,
         color: 2210285,
         footer: {
             text: streamer.username,
-            icon_url: `https://mixer.com/api/v1/users/${streamer.userId}/avatar` //eslint-disable-line camelcase
+            icon_url: streamer.avatar //eslint-disable-line camelcase
         },
         fields: [
             {
-                name: "Duration",
-                value: `${clipProperties.durationInSeconds} secs`,
-                inline: true
-            },
-            {
                 name: "Game",
-                value: type.name,
+                value: game.name,
                 inline: true
             }
         ],
         image: {
-            url: thumbnail.uri
+            url: clip.thumbnailUrl
         },
-        timestamp: clipProperties.uploadDate
+        timestamp: clip.creationDate
     };
 }
 

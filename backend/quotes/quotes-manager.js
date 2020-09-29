@@ -138,6 +138,70 @@ function getRandomQuoteByWord(searchTerm) {
     });
 }
 
+function getRandomQuoteByDate(dateConfig) {
+    let regex = "^";
+    if (dateConfig.year) {
+        regex += dateConfig.year.toString().length === 2 ?
+            `20${dateConfig.year}-` :
+            `${dateConfig.year}-`;
+    } else {
+        regex += '\\d{4}-';
+    }
+
+    regex += dateConfig.month < 10 ? `${dateConfig.month.toString().padStart(2, "0")}-` : `${dateConfig.month}-`;
+    regex += dateConfig.day < 10 ? `${dateConfig.day.toString().padStart(2, "0")}` : `${dateConfig.day}`;
+    regex += "T";
+
+    const datePattern = new RegExp(regex);
+
+    return new Promise(resolve => {
+        db.find(
+            {createdAt: { $regex: datePattern}},
+            function (err, docs) {
+                if (err || !docs.length) {
+                    resolve(null);
+                }
+                let doc = docs[Math.floor(Math.random() * docs.length)];
+                return resolve(doc);
+            });
+    });
+}
+
+function getRandomQuoteByAuthor(author) {
+    return new Promise(resolve => {
+        db.find({originator: { $regex: new RegExp(`^${regExpEscape(author)}$`, 'i')}},
+            // result handler
+            function (err, docs) {
+
+                // error or no docs: resolve to no result
+                if (err || !docs.length) {
+                    resolve(null);
+                }
+
+                // get a random doc from the list
+                let doc = docs[Math.floor(Math.random() * docs.length)];
+
+                // return the chosen doc
+                return resolve(doc);
+            });
+    });
+}
+
+function getRandomQuoteByGame(gameSearch) {
+    const gamePattern = new RegExp(`${regExpEscape(gameSearch)}`, 'i');
+    return new Promise(resolve => {
+        db.find(
+            {game: { $regex: gamePattern}},
+            function (err, docs) {
+                if (err || !docs.length) {
+                    resolve(null);
+                }
+                let doc = docs[Math.floor(Math.random() * docs.length)];
+                return resolve(doc);
+            });
+    });
+}
+
 // searches quotes list for entries containing the specified text and returns a random entry from the matched items
 // replacement for getRandomQuoteByWord
 function getRandomQuoteContainingText(text) {
@@ -163,7 +227,7 @@ function getRandomQuoteContainingText(text) {
                 // get a random doc from the list
                 let doc = docs[Math.floor(Math.random() * docs.length)];
 
-                // return the choosen doc
+                // return the chosen doc
                 return resolve(doc);
             });
     });
@@ -276,5 +340,8 @@ exports.getQuote = getQuote;
 exports.getRandomQuote = getRandomQuote;
 exports.getRandomQuoteByWord = getRandomQuoteByWord;
 exports.getRandomQuoteContainingText = getRandomQuoteContainingText;
+exports.getRandomQuoteByAuthor = getRandomQuoteByAuthor;
+exports.getRandomQuoteByDate = getRandomQuoteByDate;
+exports.getRandomQuoteByGame = getRandomQuoteByGame;
 exports.loadQuoteDatabase = loadQuoteDatabase;
 exports.getAllQuotes = getAllQuotes;

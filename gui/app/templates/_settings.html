@@ -90,25 +90,9 @@
         <uib-tab index="2" heading="Chat">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
-              <div class="setting-heading">Active Chat Users List</div>
-                <div class="setting-description">
-                  Keep track of active users in the backend for use in variables and other things. Deactivating may slightly improve performance on larger channels.
-                </div>
-                <div class="dropdown options-activeChatUserList-dropdown"style="display: inline-block">
-                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      <span class="dropdown-text">{{settings.getActiveChatUserListEnabled() ? 'On' : 'Off'}}</span>
-                      <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="options-activeChatUserList">
-                      <li><a href ng-click="setActiveChatUsers(true)">On</a></li>
-                      <li><a href ng-click="setActiveChatUsers(false)">Off</a></li>
-                    </ul>
-                  </div>
-            </div>
-            <div class="setting col-sm-6">
               <div class="setting-heading">Inactive User Time</div>
                 <div class="setting-description">
-                  The amount of time it takes for an active user to be marked as inactive after their last chat message. Doesn't have any affect unless active chat user list is on.
+                  The amount of time it takes for an active user to be marked as inactive after their last chat message.s
                 </div>
                 <div class="dropdown options-activeChatUserTimeout-dropdown"style="display: inline-block">
                     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -116,18 +100,9 @@
                       <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="options-activeChatUserTimeout">
-                      <li><a href ng-click="setActiveChatUserTimeout('5')">5</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('10')">10</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('15')">15</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('20')">20</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('25')">25</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('30')">30</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('35')">35</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('40')">40</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('45')">45</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('50')">50</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('55')">55</a></li>
-                      <li><a href ng-click="setActiveChatUserTimeout('60')">60</a></li>
+                      <li ng-repeat="n in [5,10,15,20,25,30,35,40,45,50,55,60]">
+                        <a href ng-click="setActiveChatUserTimeout(n)">{{n}}</a>
+                      </li>
                     </ul>
                     <span> minutes</span>
                   </div>
@@ -342,7 +317,7 @@
             <div class="setting col-sm-6">
                 <div class="setting-heading">Debug Mode</div>
                 <div class="setting-description">
-                  When Debug Mode is enbabled, Firebot will log a lot more information to it's log files. This is often useful when troubleshooting an obscure problem. <b>Firebot must be restarted for changes to this setting to take effect.</b>
+                  When Debug Mode is enabled, Firebot will log a lot more information to it's log files. This is often useful when troubleshooting an obscure problem. <b>Firebot must be restarted for changes to this setting to take effect.</b>
                 </div>
                 <button class="btn btn-default" ng-click="settings.setDebugModeEnabled(!settings.debugModeEnabled())">{{settings.debugModeEnabled() ? 'Disable Debug Mode' : 'Enable Debug Mode' }} </button>        
             </div>
@@ -444,7 +419,7 @@
 </div>
 
 
-<!-- Modal For Editting Overlay Port -->
+<!-- Modal For Editing Overlay Port -->
 <script type="text/ng-template" id="changePortModal.html">
   <div class="modal-header">
     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -467,7 +442,7 @@
   </div>
 </script>
 
-<!-- Modal For Editting Overlay Instaces -->
+<!-- Modal For Editing Overlay Instances -->
 <script type="text/ng-template" id="editOverlayInstances.html">
   <div class="modal-header">
     <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>

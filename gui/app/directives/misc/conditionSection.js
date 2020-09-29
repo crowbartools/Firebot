@@ -6,6 +6,7 @@
             bindings: {
                 header: "@",
                 label: "=",
+                draggable: "<",
                 initiallyOpen: "<"
             },
             transclude: true,
@@ -26,6 +27,7 @@
                             </div>         
 
                             <div style="display: flex; align-items: center;">
+                                <div style="margin-right: 10px; cursor: move;" class="dragHandle" ng-class="{'hiddenHandle': !hovering || !hidePanel || !$ctrl.draggable}"><i class="fas fa-bars"></i></div>
                                 <div style="width:30px;">
                                     <i class="fas" ng-class="{'fa-chevron-right': hidePanel, 'fa-chevron-down': !hidePanel}"></i>
                                 </div>
@@ -40,6 +42,9 @@
                 let $ctrl = this;
 
                 $ctrl.$onInit = () => {
+                    if ($ctrl.draggable == null) {
+                        $ctrl.draggable = true;
+                    }
                     if ($ctrl.initiallyOpen !== undefined) {
                         $scope.hidePanel = $ctrl.initiallyOpen !== true;
                     } else {

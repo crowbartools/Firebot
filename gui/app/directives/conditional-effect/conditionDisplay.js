@@ -8,7 +8,27 @@
             },
             template: `
                 <span style="display: flex;justify-content: space-between;align-items: center;">
-                    <b class="condition-side" style="margin-right:5px">{{$ctrl.getConditionName()}}</b> {{$ctrl.condition.comparisonType}} <b class="condition-side" style="margin-left:5px">{{$ctrl.rightSideValueDisplay}}</b>
+                    <b 
+                        class="condition-side" 
+                        style="margin-right:5px" 
+                        uib-tooltip="{{$ctrl.getConditionName()}}" 
+                        tooltip-append-to-body="true">
+                            {{$ctrl.getConditionName()}}
+                    </b>
+                    <span 
+                        class="condition-side" 
+                        style="min-width: 12px;"
+                        uib-tooltip="{{$ctrl.condition.comparisonType}}" 
+                        tooltip-append-to-body="true">
+                            {{$ctrl.condition.comparisonType}}
+                    </span>
+                    <b 
+                        class="condition-side" 
+                        style="margin-left:5px"
+                        uib-tooltip="{{$ctrl.rightSideValueDisplay}}" 
+                        tooltip-append-to-body="true">
+                            {{$ctrl.rightSideValueDisplay}}
+                    </b>
                 </span>
             `,
             controller: function($injector, $q) {

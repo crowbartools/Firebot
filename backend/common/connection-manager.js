@@ -74,6 +74,10 @@ class ConnectionManager extends EventEmitter {
         return isOnline;
     }
 
+    chatIsConnected() {
+        return twitchChat.chatIsConnected();
+    }
+
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
             twitchChat.connect();

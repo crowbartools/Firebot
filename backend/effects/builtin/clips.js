@@ -37,7 +37,7 @@ const clip = {
                 </label>
             </div>
 
-            <!--<div style="padding-top:15px" ng-show="hasChannels">
+            <div style="padding-top:15px" ng-show="hasChannels">
                 <label class="control-fb control--checkbox"> Post clip in Discord channel
                     <input type="checkbox" ng-model="effect.postInDiscord">
                     <div class="control__indicator"></div>
@@ -49,7 +49,7 @@ const clip = {
                 <dropdown-select options="channelOptions" selected="effect.discordChannelId"></dropdown-select>
             </div>
 
-            <div style="padding-top:20px">
+            <!--<div style="padding-top:20px">
                 <label class="control-fb control--checkbox"> Download clip <tooltip text="'You can change which folder clips save to in the Settings tab.'"></tooltip>
                     <input type="checkbox" ng-model="effect.download">
                     <div class="control__indicator"></div>

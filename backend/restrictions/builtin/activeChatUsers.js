@@ -24,11 +24,11 @@ const model = {
       function that resolves/rejects a promise based on if the restriction critera is met
     */
     predicate: (triggerData, restrictionData) => {
-        return new Promise(async (resolve, reject) => {
-            let activeChatter = require('../../../backend/roles/role-managers/active-chatters');
+        return new Promise((resolve, reject) => {
+            const activeUserHandler = require("../../chat/chat-listeners/active-user-handler");
             let username = triggerData.metadata.username;
 
-            if (activeChatter.isUsernameActiveChatter(username)) {
+            if (activeUserHandler.userIsActive(username)) {
                 resolve();
             } else {
                 reject("You haven't sent a chat message recently");

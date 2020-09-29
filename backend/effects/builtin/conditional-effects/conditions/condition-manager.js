@@ -128,6 +128,8 @@ frontendCommunicator.on("getConditionTypes", (trigger) => {
             comparisonTypes: c.comparisonTypes,
             rightSideValueType: c.rightSideValueType,
             leftSideValueType: c.leftSideValueType ? c.leftSideValueType : "none",
+            leftSideTextPlaceholder: c.leftSideTextPlaceholder || "Enter value",
+            rightSideTextPlaceholder: c.rightSideTextPlaceholder || "Enter value",
             getRightSidePresetValues: c.getRightSidePresetValues ? c.getRightSidePresetValues.toString() : "() => {}",
             getLeftSidePresetValues: c.getLeftSidePresetValues ? c.getLeftSidePresetValues.toString() : "() => {}",
             getRightSideValueDisplay: c.getRightSideValueDisplay ? c.getRightSideValueDisplay.toString() : "condition => condition.rightSideValue",
