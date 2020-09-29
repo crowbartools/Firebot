@@ -15,8 +15,28 @@ const util = require("../utility");
 
 const twitchApi = require("../twitch-api/api");
 
+
 /**
- * @type Datastore
+ * @typedef FirebotUser
+ * @property {string} _id
+ * @property {string} username
+ * @property {string} displayName
+ * @property {string} profilePicUrl
+ * @property {boolean} twitch
+ * @property {string[]} twitchRoles
+ * @property {boolean} online
+ * @property {number} onlineAt
+ * @property {number} lastSeen
+ * @property {number} joinDate
+ * @property {number} minutesInChannel
+ * @property {number} chatMessages
+ * @property {boolean} disableAutoStatAccrual
+ * @property {boolean} disableActiveUserList
+ * @property {{Object.<string, number>}} currency
+ */
+
+/**
+ * @type Datastore<FirebotUser>
  */
 let db;
 let updateTimeIntervalId;
@@ -48,7 +68,11 @@ function setLastSeenDateTime() {
     });
 }
 
-//look up user object by name
+/**
+ *
+ * @param {string} username
+ * @returns {Promise<FirebotUser>}
+ */
 function getUserByUsername(username) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
@@ -66,7 +90,11 @@ function getUserByUsername(username) {
     });
 }
 
-//look up user object by name
+/**
+ *
+ * @param {string} username
+ * @returns {Promise<FirebotUser>}
+ */
 function getTwitchUserByUsername(username) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
@@ -102,7 +130,11 @@ function getMixerUserByUsername(username) {
     });
 }
 
-//look up user object by id
+/**
+ *
+ * @param {string} id
+ * @returns {Promise<FirebotUser>}
+ */
 function getUserById(id) {
     return new Promise((resolve) => {
         if (!isViewerDBOn()) {
@@ -277,7 +309,10 @@ function updateUser(user) {
     });
 }
 
-function createNewUser(userId, username, displayName, profilePicUrl, isOnline = false) {
+/**
+ * @returns {Promise<FirebotUser>}
+ */
+function createNewUser(userId, username, displayName, profilePicUrl, twitchRoles, isOnline = false) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
             return resolve(null);
@@ -288,12 +323,14 @@ function createNewUser(userId, username, displayName, profilePicUrl, isOnline = 
 
         let disableAutoStatAccrual = userId === streamerUserId || userId === botUserId;
 
+        /**@type {FirebotUser} */
         let user = {
             username: username,
             _id: userId,
             displayName: displayName,
             profilePicUrl: profilePicUrl,
             twitch: true,
+            twitchRoles: twitchRoles || [],
             online: isOnline,
             onlineAt: Date.now(),
             lastSeen: Date.now(),
@@ -321,31 +358,17 @@ function createNewUser(userId, username, displayName, profilePicUrl, isOnline = 
     });
 }
 
-//create a user from mixer user data
-async function createUserFromChat(data, isOnline = true) {
-    return await createNewUser(data.id, data.username, data.roles, isOnline);
-}
-
-//set a user online
-function setUserOnline(user) {
-    return new Promise((resolve, reject) => {
-        if (!isViewerDBOn()) {
-            return resolve();
-        }
-
-        if (!user.online) {
-            user.online = true;
-            user.onlineAt = Date.now();
-            user.lastSeen = Date.now();
-            db.update({ _id: user._id }, user, (err, _, affectedDocuments) => {
-                if (err) {
-                    logger.debug("Error setting user online: ", err.message);
-                    logger.debug("Errored user: ", affectedDocuments);
-                    reject();
-                }
-            });
-            resolve(user);
-        }
+/**
+ * @returns {Promise<FirebotUser[]>}
+ */
+function getOnlineUsers() {
+    return new Promise(resolve => {
+        db.find({ online: true }, async (err, docs) => {
+            if (err) {
+                return resolve([]);
+            }
+            resolve(docs);
+        });
     });
 }
 
@@ -355,6 +378,7 @@ function setUserOnline(user) {
  * @property {string} username
  * @property {string} displayName
  * @property {string} profilePicUrl
+ * @property {string[]} twitchRoles
  */
 
 /**
@@ -376,6 +400,7 @@ function setChatUserOnline(userDetails) {
                     username: userDetails.username,
                     displayName: userDetails.displayName,
                     profilePicUrl: userDetails.profilePicUrl,
+                    twitchRoles: userDetails.twitchRoles,
                     online: true,
                     onlineAt: now,
                     lastSeen: now
@@ -397,7 +422,7 @@ function setChatUserOnline(userDetails) {
  */
 function addNewUserFromChat(userDetails, isOnline = true) {
     return createNewUser(userDetails.id, userDetails.username, userDetails.displayName,
-        userDetails.profilePicUrl, isOnline);
+        userDetails.profilePicUrl, userDetails.twitchRoles, isOnline);
 }
 
 // Sets chat users online using the same function we use to get the chat viewer list for the ui.
@@ -625,7 +650,7 @@ frontendCommunicator.onAsync("getViewerFirebotData", (userId) => {
 });
 
 frontendCommunicator.onAsync("createViewerFirebotData", data => {
-    return createNewUser(data.id, data.username, data.roles);
+    //return createNewUser(data.id, data.username, data.roles);
 });
 
 frontendCommunicator.on("removeViewerFromDb", userId => {
@@ -715,3 +740,4 @@ exports.updateUser = updateUser;
 exports.setChatUsersOnline = setChatUsersOnline;
 exports.getTopViewTimeUsers = getTopViewTimeUsers;
 exports.addNewUserFromChat = addNewUserFromChat;
+exports.getOnlineUsers = getOnlineUsers;
