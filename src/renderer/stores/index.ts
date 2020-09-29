@@ -1,9 +1,11 @@
 import { createContext, useContext } from "react";
 
 import { profilesStore } from "./profiles-store";
+import { settingsStore } from "./settings-store";
 
 export const initialStore = {
     profilesStore,
+    settingsStore,
 };
 
 const RootStoreContext = createContext(initialStore);

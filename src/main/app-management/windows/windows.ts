@@ -29,9 +29,24 @@ export function createMainWindow() {
         minHeight: 50,
         webPreferences: {
             nodeIntegration: false,
+            nativeWindowOpen: true,
             preload: path.join(__dirname, "./preload.js"),
         },
     });
+
+    mainWindow.webContents.on(
+        "new-window",
+        (event, _url, frameName, _disposition, options) => {
+            if (frameName.startsWith("Firebot - ")) {
+                event.preventDefault();
+                Object.assign(options, {
+                    width: 300,
+                    height: 300,
+                });
+                event.newGuest = new BrowserWindow(options);
+            }
+        }
+    );
 
     // initialize IPC communicator
     communicator.init(ipcMain, mainWindow.webContents);
