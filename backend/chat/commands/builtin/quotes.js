@@ -165,7 +165,26 @@ const quotesManagement = {
             {
                 arg: "search",
                 usage: "search [searchTerm]",
-                description: "Gives a random quote using the search term."
+                minArgs: 2,
+                description: "Gives a random quote using the search term(s)."
+            },
+            {
+                arg: "searchuser",
+                usage: "searchuser @username",
+                minArgs: 2,
+                description: "Gives a random quote said by the given user."
+            },
+            {
+                arg: "searchdate",
+                usage: "searchdate DD MM YYYY",
+                minArgs: 3,
+                description: "Gives a random quote at the given date."
+            },
+            {
+                arg: "searchgame",
+                usage: "searchgame [searchTerm]",
+                minArgs: 2,
+                description: "Gives a random quote at the given game."
             }
         ]
     },
@@ -309,6 +328,57 @@ const quotesManagement = {
                 }
 
                 // resolve promise
+                return resolve();
+            }
+            case "searchuser": {
+                const username = args[1].replace("@", "");
+
+                const quote = await quotesManager.getRandomQuoteByAuthor(username);
+
+                if (quote != null) {
+
+                    const formattedQuote = getFormattedQuoteString(quote);
+
+                    twitchChat.sendChatMessage(formattedQuote);
+                } else {
+                    twitchChat.sendChatMessage(`Sorry! We couldn't find a quote by ${username}`);
+                }
+                return resolve();
+            }
+            case "searchgame": {
+                const searchTerm = args.slice(1).join(" ");
+                const quote = await quotesManager.getRandomQuoteByGame(searchTerm);
+                if (quote != null) {
+                    const formattedQuote = getFormattedQuoteString(quote);
+                    twitchChat.sendChatMessage(formattedQuote);
+                } else {
+                    twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with game ${searchTerm}`);
+                }
+                return resolve();
+            }
+            case "searchdate": {
+                const day = !isNaN(args[1]) ? parseInt(args[1]) : null;
+                const month = !isNaN(args[2]) ? parseInt(args[2]) : null;
+                const year = !isNaN(args[3]) ? parseInt(args[3]) : null;
+
+                if (day == null || month == null || day > 31 || day < 1 ||
+                    month > 12 || month < 1) {
+                    twitchChat.sendChatMessage(`Invalid quote date search!`);
+                    return resolve();
+                }
+
+                const quote = await quotesManager.getRandomQuoteByDate({
+                    day,
+                    month,
+                    year
+                });
+
+                if (quote != null) {
+                    const formattedQuote = getFormattedQuoteString(quote);
+                    twitchChat.sendChatMessage(formattedQuote);
+                } else {
+                    twitchChat.sendChatMessage(`Sorry! We couldn't find a quote with date ${day}/${month}/${year || "*"}`);
+                }
                 return resolve();
             }
             case "edittext": {
