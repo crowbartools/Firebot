@@ -40,6 +40,7 @@ exports.loadReplaceVariables = () => {
         'gift-sub-months',
         'gift-sub-type',
         'host-viewer-count',
+        'loop-count',
         'math',
         'max-ad-break-length',
         'moderator',
