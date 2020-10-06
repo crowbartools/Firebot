@@ -5,7 +5,7 @@ const accountAccess = require("../common/account-access");
 const twitchClient = require("../twitch-api/client");
 const uuid = require("uuid/v4");
 
-/**@type {import('twitch/lib/API/Badges/ChatBadgeList').default} */
+/**@type {import('twitch/lib/API/Badges/ChatBadgeList').ChatBadgeList} */
 let badgeCache = null;
 exports.cacheBadges = async () => {
     const streamer = accountAccess.getAccounts().streamer;
@@ -135,7 +135,8 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
     return streamerFirebotChatMessage;
 };
 
-/**@arg {import('twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage').default} msg
+/**
+ * @arg {import('twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage').TwitchPrivateMessage} msg
  * @returns {FirebotChatMessage}
 */
 exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action = false) => {
@@ -192,10 +193,10 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
         for (const [setName, version] of msg.userInfo.badges.entries()) {
 
             const set = badgeCache.getBadgeSet(setName);
-            if (set == null) continue;
+            if (set._data == null) continue;
 
             const setVersion = set.getVersion(version);
-            if (setVersion == null) continue;
+            if (setVersion._data == null) continue;
 
             firebotChatMessage.badges.push({
                 title: setVersion.title,
