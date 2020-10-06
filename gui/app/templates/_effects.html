@@ -40,7 +40,7 @@
                                 <span class="trigger">{{queue.name}}</span>
                             </td>
                             <td>
-                                {{queue.mode === 'interval' ? 'Interval' : 'Auto'}}                       
+                                {{getQueueModeName(queue.mode)}}                      
                             </td>
                             <td>
                                 {{queue.mode === 'interval' ? queue.interval+'s' : 'n/a'}}  

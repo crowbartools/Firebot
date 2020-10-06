@@ -198,10 +198,14 @@ exports.buildFirebotChatMessage = async (msg, msgText, whisper = false, action =
             const setVersion = set.getVersion(version);
             if (setVersion._data == null) continue;
 
-            firebotChatMessage.badges.push({
-                title: setVersion.title,
-                url: setVersion.getImageUrl(2)
-            });
+            try {
+                firebotChatMessage.badges.push({
+                    title: setVersion.title,
+                    url: setVersion.getImageUrl(2)
+                });
+            } catch (err) {
+                logger.debug(`Failed to find badge ${setName} v:${version}`, err);
+            }
         }
     }
 

@@ -28,6 +28,11 @@
 
                     <div style="display:flex;align-items: center;">
 
+                        <div style="margin-right: 17px;" ng-if="$ctrl.getSelectedQueueModeIsCustom()">
+                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE DURATION <tooltip text="'The duration this effect list should last in the queue before the next list is played'"></tooltip></div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center;">0</div>
+                        </div>
+
                         <div style="margin-right: 20px;display: flex;flex-direction: column;align-items: flex-end;">
                             <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE<tooltip text="'Effect queues allow you to queue up effects so they don\\'t overlap each other. Particularly useful for events!'"></tooltip></div>
                             <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
@@ -434,6 +439,15 @@
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
                     if (queue == null) return unsetDisplay;
                     return queue.name;
+                };
+
+                ctrl.getSelectedQueueModeIsCustom = () => {
+                    console.log(ctrl.effectsData.queue);
+                    if (ctrl.effectsData.queue == null) return false;
+                    const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
+                    console.log(queue);
+                    if (queue == null) return false;
+                    return queue.mode === "custom";
                 };
 
                 ctrl.toggleQueueSelection = (queueId) => {

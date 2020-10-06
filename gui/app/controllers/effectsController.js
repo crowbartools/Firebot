@@ -19,6 +19,11 @@
                 effectQueuesService.showDeleteEffectQueueModal(queueId);
             };
 
+            $scope.getQueueModeName = (modeId) => {
+                const mode = effectQueuesService.queueModes.find(m => m.id === modeId);
+                return mode ? mode.display : "Unknown";
+            };
+
             $scope.pels = presetEffectListsService;
 
             $scope.addOrEditPresetEffectList = (presetListId) => {

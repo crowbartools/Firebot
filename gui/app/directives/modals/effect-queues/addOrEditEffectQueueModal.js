@@ -69,14 +69,14 @@
             close: "&",
             dismiss: "&"
         },
-        controller: function() {
+        controller: function(effectQueuesService) {
             let $ctrl = this;
 
             $ctrl.isNewQueue = true;
 
             $ctrl.effectQueue = {
                 name: "",
-                mode: "interval"
+                mode: "custom"
             };
 
             $ctrl.$onInit = function() {
@@ -86,20 +86,7 @@
                 }
             };
 
-            $ctrl.queueModes = [
-                {
-                    id: "auto",
-                    display: "Auto",
-                    description: "Waits for effects to finish (Delay effect useful here!)",
-                    iconClass: "fa-sync"
-                },
-                {
-                    id: "interval",
-                    display: "Interval",
-                    description: "Runs effect lists on a set interval.",
-                    iconClass: "fa-stopwatch"
-                }
-            ];
+            $ctrl.queueModes = effectQueuesService.queueModes;
 
             $ctrl.save = function() {
                 if ($ctrl.effectQueue.name == null || $ctrl.effectQueue.name === "") {

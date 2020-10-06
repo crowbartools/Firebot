@@ -18,7 +18,7 @@ function getEffectQueuesDb() {
     "queueId": {
         name: "Some Queue",
         id: "queueId",
-        mode: "",  // "auto" | "interval"
+        mode: "",  // "auto" | "interval" | "custom"
         interval: 5 //secs
     }
 }

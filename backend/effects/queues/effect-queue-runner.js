@@ -43,6 +43,8 @@ class EffectQueue {
                         logger.warn(`Error while processing effects for queue ${this.id}`, err);
                         resolve(this.runQueue());
                     });
+            } else if (this.mode === "custom") {
+
             } else {
                 resolve();
             }
