@@ -18,7 +18,7 @@ class EffectQueue {
                 return resolve();
             }
 
-            let runEffectsContext = this._queue.shift();
+            const { runEffectsContext, duration } = this._queue.shift();
 
             if (runEffectsContext == null) {
                 return resolve();
@@ -44,15 +44,24 @@ class EffectQueue {
                         resolve(this.runQueue());
                     });
             } else if (this.mode === "custom") {
-
+                effectRunner.runEffects(runEffectsContext)
+                    .catch(err => {
+                        logger.warn(`Error while processing effects for queue ${this.id}`, err);
+                    });
+                setTimeout(() => {
+                    resolve(this.runQueue());
+                }, (duration || 0) * 1000);
             } else {
                 resolve();
             }
         });
     }
 
-    addEffects(runEffectsContext) {
-        this._queue.push(runEffectsContext);
+    addEffects(runEffectsContext, duration) {
+        this._queue.push({
+            runEffectsContext,
+            duration
+        });
 
         logger.debug(`Added more effects to queue ${this.id}. Current length=${this._queue.length}`);
 
@@ -72,7 +81,7 @@ class EffectQueue {
  */
 let queues = {};
 
-function addEffectsToQueue(queueConfig, runEffectsContext) {
+function addEffectsToQueue(queueConfig, runEffectsContext, duration) {
     if (queueConfig == null || runEffectsContext == null) return;
     let queue = queues[queueConfig.id];
     if (queue == null) {
@@ -81,7 +90,7 @@ function addEffectsToQueue(queueConfig, runEffectsContext) {
         queues[queueConfig.id] = queue;
     }
 
-    queue.addEffects(runEffectsContext);
+    queue.addEffects(runEffectsContext, duration);
 }
 
 function updateQueueConfig(queueConfig) {

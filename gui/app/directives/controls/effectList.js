@@ -29,8 +29,8 @@
                     <div style="display:flex;align-items: center;">
 
                         <div style="margin-right: 17px;" ng-if="$ctrl.getSelectedQueueModeIsCustom()">
-                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE DURATION <tooltip text="'The duration this effect list should last in the queue before the next list is played'"></tooltip></div>
-                            <div style="display: flex; justify-content: flex-end; align-items: center;">0</div>
+                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">EFFECTS DURATION <tooltip text="'The total duration (in secs) the queue should wait after triggering this effect list before running the next one'"></tooltip></div>
+                            <div style="display: flex; justify-content: flex-end; align-items: center;font-size: 12px;" class="clickable" ng-click="$ctrl.openEditQueueDurationModal()"><b>{{$ctrl.effectsData.queueDuration || 0}}</b><span>s</span><span class="muted" style="font-size: 9px; margin-left: 5px;"><i class="fal fa-edit"></i></span></div>
                         </div>
 
                         <div style="margin-right: 20px;display: flex;flex-direction: column;align-items: flex-end;">
@@ -478,6 +478,30 @@
                                 ctrl.effectsData.queue = undefined;
                             }
                         });
+                };
+
+                ctrl.openEditQueueDurationModal = () => {
+                    utilityService.openGetInputModal(
+                        {
+                            model: ctrl.effectsData.queueDuration || 0,
+                            label: "Edit Effects Duration",
+                            saveText: "Save",
+                            inputPlaceholder: "Enter secs",
+                            validationFn: (value) => {
+                                return new Promise(resolve => {
+                                    if (value == null || value < 0) {
+                                        return resolve(false);
+                                    }
+                                    resolve(true);
+                                });
+                            },
+                            validationText: "Value must be greater than 0."
+
+                        },
+                        (newDuration) => {
+                            ctrl.effectsData.queueDuration = newDuration;
+                        }
+                    );
                 };
 
             }
