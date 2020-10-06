@@ -27,7 +27,9 @@ async function getCommandListForSync(username, userRoles) {
 
     // Filter!
     commandData.allowedCmds = commandData.allowedCmds.map(c => {
-        return {trigger: c.trigger, description: c.description};
+        // eslint-disable-next-line no-unused-vars
+        const { effects, ...strippedCommand } = c;
+        return strippedCommand;
     });
 
 

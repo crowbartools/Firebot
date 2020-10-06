@@ -172,7 +172,8 @@ async function processEffects(processEffectsRequest) {
         const queue = effectQueueManager.getEffectQueue(queueId);
         if (queue != null) {
             logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
-            effectQueueRunner.addEffectsToQueue(queue, runEffectsContext);
+            effectQueueRunner.addEffectsToQueue(queue, runEffectsContext,
+                processEffectsRequest.effects.queueDuration);
             return;
         }
     }

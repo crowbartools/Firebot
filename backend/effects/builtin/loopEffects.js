@@ -119,9 +119,11 @@ const model = {
                 return resolve(true);
             }
 
-            let runEffects = async () => {
+            let runEffects = async (loopCount = 0) => {
+                const trigger = event.trigger;
+                trigger.metadata.loopCount = loopCount;
                 let processEffectsRequest = {
-                    trigger: event.trigger,
+                    trigger: trigger,
                     effects: {
                         id: effectList.id,
                         list: effectList.list,
@@ -148,7 +150,7 @@ const model = {
                 }
 
                 for (let i = 0; i < loopCount; i++) {
-                    const result = await runEffects();
+                    const result = await runEffects(i);
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
                             return resolve({
@@ -180,7 +182,7 @@ const model = {
                     let conditionsPass = await conditionManager.runConditions(effect.conditionData, trigger);
 
                     if (conditionsPass) {
-                        const result = await runEffects();
+                        const result = await runEffects(currentLoopCount);
                         if (result != null && result.success === true) {
                             if (result.stopEffectExecution) {
                                 return resolve({

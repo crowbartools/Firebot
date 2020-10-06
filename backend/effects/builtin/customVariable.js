@@ -63,9 +63,6 @@ const fileWriter = {
         if (effect.name == null || effect.name === "") {
             errors.push("Please provide a variable name.");
         }
-        if (effect.variableData == null || effect.variableData === "") {
-            errors.push("Please provide some variable data.");
-        }
         return errors;
     },
     onTriggerEvent: async event => {

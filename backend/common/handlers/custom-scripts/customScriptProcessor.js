@@ -164,6 +164,10 @@ function scriptProcessor(effect, trigger) {
                         firebotRolesManager: require("../../../roles/firebot-roles-manager"),
                         timerManager: require("../../../timers/timer-manager"),
                         gameManager: require("../../../games/game-manager"),
+                        currencyManager: require("../../../currency/currencyManager"),
+                        currencyDb: require("../../../database/currencyDatabase"),
+                        userDb: require("../../../database/userDatabase"),
+                        quotesManager: require("../../../quotes/quotes-manager"),
                         mixplay: {},
                         utils: require("../../../utility")
                     };

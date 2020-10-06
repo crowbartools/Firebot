@@ -17,6 +17,27 @@
             };
             service.loadEffectQueues();
 
+            service.queueModes = [
+                {
+                    id: "custom",
+                    display: "Custom",
+                    description: "Wait the custom amount of time defined for each individual effect list.",
+                    iconClass: "fa-clock"
+                },
+                {
+                    id: "auto",
+                    display: "Delay",
+                    description: "Requires a 'Delay Effect' to be present to have any effect.",
+                    iconClass: "fa-hourglass-half"
+                },
+                {
+                    id: "interval",
+                    display: "Interval",
+                    description: "Runs effect lists on a set interval.",
+                    iconClass: "fa-stopwatch"
+                }
+            ];
+
             service.getEffectQueues = function() {
                 return Object.values(effectQueues);
             };
