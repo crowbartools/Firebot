@@ -12,7 +12,7 @@ const {
 
 logger.info("Starting Firebot...");
 
-// Handle any squrriel install/update events
+// Handle any squirrel install/update events
 // returns false if the rest of app execution should stop.
 if (!handleSquirrelEvents()) {
     return;
