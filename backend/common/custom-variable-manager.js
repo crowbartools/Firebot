@@ -96,6 +96,7 @@ exports.getCustomVariable = (name, propertyPath) => {
     try {
         let pathNodes = propertyPath.split(".");
         for (let i = 0; i < pathNodes.length; i++) {
+            if (data == null) break;
             let node = pathNodes[i];
             // parse to int for array access
             if (!isNaN(node)) {
@@ -103,7 +104,7 @@ exports.getCustomVariable = (name, propertyPath) => {
             }
             data = data[node];
         }
-        return data !== undefined ? data : null;
+        return data != null ? data : null;
     } catch (error) {
         logger.debug(`error getting data from custom variable ${name} using property path ${propertyPath}`);
         return null;
