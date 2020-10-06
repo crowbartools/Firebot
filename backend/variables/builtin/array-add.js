@@ -1,0 +1,45 @@
+// Migration: done
+
+'use strict';
+
+const { OutputDataType } = require("../../../shared/variable-contants");
+
+const model = {
+    definition: {
+        handle: "arrayAdd",
+        usage: "arrayAdd[jsonArray, newElement]",
+        examples: [
+            {
+                usage: 'arrayAdd["[1,2,3]", 4]',
+                description: "Adds 4 to the end of the array. (1,2,3,4)"
+            },
+            {
+                usage: 'arrayAdd["[1,2,3]", 4, true]',
+                description: 'Adds 4 to the beginning of the array. (4,1,2,3)'
+            }
+        ],
+        description: "Returns a new array with the added element",
+        possibleDataOutput: [OutputDataType.TEXT]
+    },
+    evaluator: (_, jsonArray, newElement, addToFront = false) => {
+        if (jsonArray != null) {
+            addToFront = addToFront === true || addToFront === 'true';
+            try {
+                const array = JSON.parse(jsonArray);
+                if (Array.isArray(array)) {
+                    if (addToFront) {
+                        array.unshift(newElement);
+                    } else {
+                        array.push(newElement);
+                    }
+                    return JSON.stringify(array);
+                }
+            } catch (error) {
+                // fail silently
+            }
+        }
+        return JSON.stringify([]);
+    }
+};
+
+module.exports = model;

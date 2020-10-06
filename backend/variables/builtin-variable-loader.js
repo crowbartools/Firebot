@@ -6,9 +6,13 @@ exports.loadReplaceVariables = () => {
     [
         'active-chat-user-count',
         'arg',
+        'array-add',
         'array-filter',
         'array-find',
         'array-length',
+        'array-remove',
+        'array-reverse',
+        'array-shuffle',
         'bot',
         'chat-message',
         'chat-messages',
