@@ -22,7 +22,7 @@ const model = {
         if (data && isObjectOrArray(data)) {
             data = JSON.stringify(data);
         }
-        return data || "null";
+        return data != null ? data : "null";
     }
 };
 

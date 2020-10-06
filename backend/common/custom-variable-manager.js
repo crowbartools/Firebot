@@ -31,7 +31,7 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
         //silently fail
     }
 
-    let dataRaw = data ? data.toString().toLowerCase() : "null";
+    let dataRaw = data != null ? data.toString().toLowerCase() : "null";
     let dataIsNull = dataRaw === "null" || dataRaw === "undefined";
 
     let currentData = cache.get(name);
