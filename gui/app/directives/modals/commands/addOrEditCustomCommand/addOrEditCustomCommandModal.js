@@ -61,6 +61,10 @@
                 $ctrl.command.effects = effects;
             };
 
+            $ctrl.openAddSubcommandModal = () => {
+
+            };
+
             $ctrl.delete = function() {
                 if ($ctrl.isNewCommand) return;
                 $ctrl.close({ $value: { command: $ctrl.command, action: "delete" } });
