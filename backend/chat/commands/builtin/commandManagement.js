@@ -114,6 +114,12 @@ const commandManagement = {
                 arg: "remove",
                 usage: "remove [!trigger or \"phrase\"]",
                 description: "Removes the given command."
+            },
+            {
+                arg: "description",
+                usage: "description [!trigger or \"phrase\"]",
+                description: "Updates the description for a command.",
+                minArgs: 3
             }
         ]
     },
@@ -275,7 +281,34 @@ const commandManagement = {
                 commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
 
                 chat.sendChatMessage(
-                    `Updated useage count for '${trigger}' to: ${newCount}`
+                    `Updated usage count for '${trigger}' to: ${newCount}`
+                );
+
+                break;
+            }
+            case "description": {
+
+                const command = activeCustomCommands.find(c => c.trigger === trigger);
+                if (command === null) {
+                    chat.sendChatMessage(
+                        `Could not find a command with the trigger '${trigger}', please try again.`
+                    );
+                    return resolve();
+                }
+
+                if (remainingData == null || remainingData.length < 1) {
+                    chat.sendChatMessage(
+                        `Please provided a description for '${trigger}'!`
+                    );
+                    return resolve();
+                }
+
+                command.description = remainingData;
+
+                commandManager.saveCustomCommand(command, event.userCommand.commandSender, false);
+
+                chat.sendChatMessage(
+                    `Updated description for '${trigger}' to: ${remainingData}`
                 );
 
                 break;
