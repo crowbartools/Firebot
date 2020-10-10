@@ -105,7 +105,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
             try {
                 emoteId = await streamerEmotes.findEmoteId(word);
             } catch (err) {
-                logger.silly(`Failed to find emote id for ${word}`, err);
+                //logger.silly(`Failed to find emote id for ${word}`, err);
             }
 
             /**@type {import('twitch-chat-client/lib/Toolkit/EmoteTools').ParsedMessagePart} */

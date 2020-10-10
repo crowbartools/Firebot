@@ -58,6 +58,10 @@
             <editable-list model="$ctrl.metadata.value" settings="$ctrl.metadata.settings"></editable-list>
           </div>
 
+          <div ng-switch-when="multiselect" style="padding-top:5px;">
+            <multiselect-list model="$ctrl.metadata.value" settings="$ctrl.metadata.settings"></multiselect-list>
+          </div>
+
           <div ng-switch-when="discord-channel-webhooks" style="padding-top:5px;">
             <discord-channel-webhooks model="$ctrl.metadata.value"></discord-channel-webhooks>
           </div>

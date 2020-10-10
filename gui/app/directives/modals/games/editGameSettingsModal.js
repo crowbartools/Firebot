@@ -103,6 +103,9 @@
                                     } else if (setting.type === 'editable-list' && (setting.value == null || setting.value.length === 0)) {
                                         ngToast.create(`Please input some text for the ${setting.title} option`);
                                         return false;
+                                    } else if (setting.type === 'multiselect' && (setting.value == null || setting.value.length === 0)) {
+                                        ngToast.create(`Please select values for the ${setting.title} option`);
+                                        return false;
                                     } else if (setting.value === null || setting.value === undefined) {
                                         ngToast.create(`Please select/input a value for the ${setting.title} option`);
                                         return false;
