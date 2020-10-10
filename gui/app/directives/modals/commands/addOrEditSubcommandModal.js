@@ -1,0 +1,156 @@
+"use strict";
+
+(function() {
+    const uuid = require("uuid/v4");
+    angular.module("firebotApp")
+        .component("addOrEditSubcommandModal", {
+            template: `
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
+                <h4 class="modal-title">{{$ctrl.isNewArg ? 'Add' : 'Edit'}} Subcommand</h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        Arg Type
+                    </div>
+                    <div ng-class="{'has-error': $ctrl.kindError}">
+                        <ui-select ng-model="$ctrl.arg.type" ng-change="$ctrl.onTypeChange()" theme="bootstrap" class="control-type-list">
+                            <ui-select-match placeholder="Select arg type">{{$select.selected.type}}</ui-select-match>
+                            <ui-select-choices repeat="arg.type as arg in $ctrl.argTypes | filter: { type: $select.search }" style="position:relative;">
+                                <div style="padding: 5px;">
+                                    <div ng-bind-html="arg.type | highlight: $select.search"></div>
+                                    <small class="muted">{{arg.description}}</small>
+                                </div>     
+                            </ui-select-choices>
+                        </ui-select>
+                        <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">Please select an arg type.</div>
+                    </div>
+                </div>
+
+                <div ng-show="$ctrl.arg.type === 'Custom'" style="margin-top: 15px;">
+                    <div class="mixplay-header" style="padding: 0 0 4px 0">
+                        Arg Trigger Text <tooltip text="'The text that should trigger this subcommand'">
+                    </div>
+                    <div style="width: 100%; position: relative;">
+                        <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
+                            <input type="text" id="nameField" class="form-control" ng-model="$ctrl.arg.arg" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter trigger text" ng-keydown="$event.keyCode != 32 ? $event:$event.preventDefault()">
+                            <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">{{$ctrl.nameErrorText}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+                <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">{{$ctrl.isNewArg ? 'Add' : 'Save'}}</button>
+            </div>
+            `,
+            bindings: {
+                resolve: "<",
+                close: "&",
+                dismiss: "&"
+            },
+            controller: function($timeout) {
+                let $ctrl = this;
+
+                $ctrl.nameErrorText = 'Please provide trigger text.';
+
+                $timeout(() => {
+                    angular.element("#nameField").trigger("focus");
+                }, 50);
+
+                $ctrl.arg = {
+                    active: true,
+                    id: uuid(),
+                    type: "Custom",
+                    arg: "",
+                    regex: false
+                };
+
+                $ctrl.onTypeChange = () => {
+                    $ctrl.arg.usage = null;
+                    $ctrl.arg.arg = null;
+                };
+
+                $ctrl.nameError = false;
+                $ctrl.kindError = false;
+
+                $ctrl.argTypes = [
+                    {
+                        type: "Custom",
+                        description: "An arg that triggers on specific text"
+                    }
+                ];
+
+                function validateArgTriggerText() {
+                    if ($ctrl.arg.type !== "Custom") return true;
+                    const triggerText = $ctrl.arg.arg;
+                    if (triggerText == null || triggerText.length < 1) {
+                        $ctrl.nameErrorText = 'Please provide trigger text.';
+                        return false;
+                    }
+                    if ($ctrl.resolve.otherArgNames.some(a => a === triggerText.toLowerCase())) {
+                        $ctrl.nameErrorText = 'This trigger text already exists.';
+                        return false;
+                    }
+                    return true;
+                }
+
+                function validateArgType() {
+                    const type = $ctrl.arg.type;
+                    return type != null && type.length > 0;
+                }
+
+                $ctrl.save = function() {
+
+                    $ctrl.nameError = false;
+                    $ctrl.kindError = false;
+
+
+                    if (!validateArgType()) {
+                        $ctrl.kindError = true;
+                    }
+
+                    if ($ctrl.arg.arg != null) {
+                        $ctrl.arg.arg = $ctrl.arg.arg.trim().toLowerCase().replace(/ /g, "");
+                    }
+
+                    if (!validateArgTriggerText()) {
+                        $ctrl.nameError = true;
+                    }
+
+                    if ($ctrl.nameError || $ctrl.kindError) {
+                        return;
+                    }
+
+                    if ($ctrl.arg.type === "Number") {
+                        $ctrl.arg.regex = true;
+                        $ctrl.arg.usage = "[number]";
+                        $ctrl.arg.arg = "\\d+";
+                    } else {
+                        $ctrl.arg.regex = false;
+                    }
+
+                    $ctrl.close({
+                        $value: $ctrl.arg
+                    });
+                };
+
+                $ctrl.isNewArg = true;
+
+                $ctrl.$onInit = function() {
+                    if (!$ctrl.resolve.hasNumberArg || ($ctrl.resolve.arg && $ctrl.resolve.arg.regex)) {
+                        $ctrl.argTypes.push({
+                            type: "Number",
+                            description: "An arg that triggers on any number"
+                        });
+                    }
+
+                    if ($ctrl.resolve.arg) {
+                        $ctrl.arg = JSON.parse(angular.toJson($ctrl.resolve.arg));
+                        $ctrl.isNewArg = false;
+                    }
+                };
+            }
+        });
+}());

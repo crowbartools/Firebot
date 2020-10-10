@@ -298,7 +298,7 @@ async function handleChatMessage(firebotChatMessage) {
     let userCmd = buildUserCommand(command, rawMessage, commandSender, firebotChatMessage.roles);
 
     let triggeredSubcmd = null;
-    if (!command.scanWholeMessage && userCmd.args.length > 0 && command.subCommands) {
+    if (!command.scanWholeMessage && !command.triggerIsRegex && userCmd.args.length > 0 && command.subCommands && command.subCommands.length > 0) {
         for (let subcmd of command.subCommands) {
             if (subcmd.active === false) continue;
             if (subcmd.regex) {
@@ -315,6 +315,11 @@ async function handleChatMessage(firebotChatMessage) {
                     userCmd.subcommandId = subcmd.id;
                 }
             }
+        }
+
+        if (command.type !== "system" && triggeredSubcmd == null) {
+            twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
+            return false;
         }
     }
 
@@ -399,14 +404,6 @@ async function handleChatMessage(firebotChatMessage) {
             event: "used the " + command.trigger + " command."
         });
     }
-
-    // Throw chat alert if we have it active.
-    /*if (command.chatFeedAlert === true) {
-        renderWindow.webContents.send("chatUpdate", {
-            fbEvent: "ChatAlert",
-            message: commandSender + " used the " + command.trigger + " command."
-        });
-    }*/
 
     //update the count for the command
     if (command.type === "custom") {

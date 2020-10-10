@@ -136,6 +136,7 @@ class TwitchChat extends EventEmitter {
                 }, true, false);
                 commandHandler.handleChatMessage(firebotChatMessage);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+                twitchChatListeners.events.emit("chat-message", firebotChatMessage);
             }
         } catch (error) {
             logger.error(`Error attempting to send message with ${accountType}`, error);

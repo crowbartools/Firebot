@@ -6,6 +6,11 @@ const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
 
+
+const events = require("events");
+
+exports.events = new events.EventEmitter();
+
 /** @arg {import('twitch-chat-client/lib/ChatClient').default} botChatClient */
 exports.setupBotChatListeners = (botChatClient) => {
     botChatClient.onWhisper(async (_user, messageText, msg) => {
@@ -40,6 +45,7 @@ exports.setupChatListeners = (streamerChatClient) => {
             });
         }
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+        exports.events.emit("chat-message", firebotChatMessage);
 
         commandHandler.handleChatMessage(firebotChatMessage);
 

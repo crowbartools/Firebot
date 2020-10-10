@@ -61,6 +61,41 @@
                 $ctrl.command.effects = effects;
             };
 
+            $ctrl.deleteSubcommand = (id) => {
+                if ($ctrl.command.subCommands) {
+                    $ctrl.command.subCommands = $ctrl.command.subCommands.filter(sc => sc.id !== id);
+                }
+            };
+
+            $ctrl.editSubcommand = (id) => {
+                if ($ctrl.command.subCommands) {
+                    const subcommand = $ctrl.command.subCommands.find(sc => sc.id === id);
+                    if (subcommand) {
+                        $ctrl.openAddSubcommandModal(subcommand);
+                    }
+                }
+            };
+
+            $ctrl.openAddSubcommandModal = (arg) => {
+                utilityService.showModal({
+                    component: "addOrEditSubcommandModal",
+                    size: "sm",
+                    resolveObj: {
+                        arg: () => arg,
+                        hasNumberArg: () => $ctrl.command.subCommands && $ctrl.command.subCommands.some(sc => sc.regex),
+                        otherArgNames: () => $ctrl.command.subCommands && $ctrl.command.subCommands.filter(c => !c.regex && (arg ? c.arg !== arg.arg : true)).map(c => c.arg.toLowerCase()) || []
+                    },
+                    closeCallback: newArg => {
+                        if ($ctrl.command.subCommands == null) {
+                            $ctrl.command.subCommands = [newArg];
+                        } else {
+                            $ctrl.command.subCommands = $ctrl.command.subCommands.filter(sc => sc.id !== newArg.id);
+                            $ctrl.command.subCommands.push(newArg);
+                        }
+                    }
+                });
+            };
+
             $ctrl.delete = function() {
                 if ($ctrl.isNewCommand) return;
                 $ctrl.close({ $value: { command: $ctrl.command, action: "delete" } });
