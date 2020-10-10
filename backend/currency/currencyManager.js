@@ -371,7 +371,7 @@ function createCurrencyCommandDefinition(currency) {
                     // Subtract currency from command user now.
                     currencyDatabase.adjustCurrencyForUser(event.userCommand.commandSender, currencyId, currencyAdjustNeg).then(function(status) {
                         if (status) {
-                            twitchChat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', event.userCommand.commandSender);
+                            twitchChat.sendChatMessage('Gave ' + util.commafy(currencyAdjust) + ' ' + currencyName + ' to ' + username + '.', null);
                             return true;
                         }
                         // Error removing currency.
