@@ -110,10 +110,6 @@
                         <input type="checkbox" ng-model="$ctrl.command.active" aria-label="..." checked>
                         <div class="control__indicator"></div>
                     </label>
-                    <!--<label class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone uses this command'"></tooltip>
-                        <input type="checkbox" ng-model="$ctrl.command.chatFeedAlert" aria-label="...">
-                        <div class="control__indicator"></div>
-                    </label>-->
                     <label class="control-fb control--checkbox">Hidden <tooltip
                             text="'Hide this command from the !commands list'"></tooltip>
                         <input type="checkbox" ng-model="$ctrl.command.hidden" aria-label="...">
@@ -134,25 +130,38 @@
             </div>
         </div>
         <div class="function-button-settings">
+            <div class="settings-title" ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex">
+                <h3>Base Effects</h3>
+                <p class="muted">Always triggered if there are no subcommands. If there are subcommands, this is only triggered when the user does not provide any arguments.</p>
+            </div>
+
             <effect-list header="What should this command do?" effects="$ctrl.command.effects" trigger="command"
                 update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
         </div>
 
-        <div>
+        <div style="margin-top: 30px;" ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex">
             <div class="settings-title">
                 <h3>Subcommands</h3>
+                <p class="muted">Optionally trigger different effects based on subcommand triggers</p>
             </div>
-            <div style="display:flex;font-size: 11px; font-weight: bold; padding-bottom: 10px;">
-                <div class="muted" style="flex-basis: 30%;padding-left: 20px;"><i class="fas fa-tag"></i> ARG</div>
-                <div class="muted" style="width: 25%"><i class="fas fa-clock"></i> COOLDOWNS</div>
-                <div class="muted" style="width: 25%"><i class="fas fa-lock-alt"></i> PERMISSIONS</div>
-                <div class="muted" style="width: 25%"></div>
-                <div class="muted" style="flex-basis:30px; flex-shrink: 0;padding-right: 20px;"></div>
+            <div ng-show="$ctrl.command.subCommands && $ctrl.command.subCommands.length > 0">
+                <div style="display:flex;font-size: 11px; font-weight: bold; padding-bottom: 10px;">
+                    <div class="muted" style="flex-basis: 30%;padding-left: 20px;"><i class="fas fa-tag"></i> ARG</div>
+                    <div class="muted" style="width: 25%"><i class="fas fa-clock"></i> COOLDOWNS</div>
+                    <div class="muted" style="width: 25%"><i class="fas fa-lock-alt"></i> PERMISSIONS</div>
+                    <div class="muted" style="width: 25%"></div>
+                    <div class="muted" style="flex-basis:30px; flex-shrink: 0;padding-right: 20px;"></div>
+                </div>
+                <subcommand-row ng-repeat="subcommand in $ctrl.command.subCommands track by $index" 
+                    subcommand="subcommand" 
+                    cmd-trigger="{{$ctrl.command.trigger}}" 
+                    fully-editable="true" 
+                    on-delete="$ctrl.deleteSubcommand(id)"
+                    on-edit="$ctrl.editSubcommand(id)"></subcommand-row>
             </div>
-            <subcommand-row ng-repeat="subcommand in $ctrl.command.subCommands track by $index" subcommand="subcommand" cmd-trigger="{{$ctrl.command.trigger}}"></subcommand-row>
             <div>
                 <div class="filter-bar clickable"
-                    ng-click="$ctrl.showAddSubcommandModal()" 
+                    ng-click="$ctrl.openAddSubcommandModal()" 
                     uib-tooltip="Add Subcommand" 
                     aria-label="Add Subcommand"  
                     tooltip-append-to-body="true">

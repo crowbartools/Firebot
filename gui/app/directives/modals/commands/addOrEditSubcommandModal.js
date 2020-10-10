@@ -1,67 +1,48 @@
 "use strict";
 
 (function() {
+    const uuid = require("uuid/v4");
     angular.module("firebotApp")
         .component("addOrEditSubcommandModal", {
             template: `
             <div class="modal-header">
                 <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                <h4 class="modal-title">Add Subcommand</h4>
+                <h4 class="modal-title">{{$ctrl.isNewArg ? 'Add' : 'Edit'}} Subcommand</h4>
             </div>
             <div class="modal-body">
-            
                 <div>
-                    <div class="mixplay-header" style="padding: 0 0 4px 0">
-                        Name <tooltip text="'A name to help you identify this control. Viewers wont see this.'">
-                    </div>
-                    <div style="width: 100%; position: relative;">
-                        <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
-                            <input type="text" id="nameField" class="form-control" ng-model="$ctrl.name" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter name">
-                            <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">Please provide a name.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 15px;">
                     <div class="mixplay-header" style="padding: 0 0 4px 0">
                         Arg Type
                     </div>
                     <div ng-class="{'has-error': $ctrl.kindError}">
-                        <ui-select ng-model="$ctrl.kind" theme="bootstrap" class="control-type-list">
-                            <ui-select-match placeholder="Select control type">{{$select.selected.display}}</ui-select-match>
-                            <ui-select-choices repeat="control.kind as control in $ctrl.controlKinds | filter: { display: $select.search }" style="position:relative;">
-                                <div class="flex-row-center">
-                                    <div style="width: 30px;height: 100%;font-size:20px;margin: 0 11px;text-align: center;flex-shrink: 0;">
-                                        <i class="fas" ng-class="control.iconClass"></i>
-                                    </div>
-                                    <div>
-                                        <div ng-bind-html="control.display | highlight: $select.search"></div>
-                                        <small class="muted">{{control.description}}</small>
-                                    </div>
-                                    
-                                </div>
-                                
+                        <ui-select ng-model="$ctrl.arg.type" ng-change="$ctrl.onTypeChange()" theme="bootstrap" class="control-type-list">
+                            <ui-select-match placeholder="Select arg type">{{$select.selected.type}}</ui-select-match>
+                            <ui-select-choices repeat="arg.type as arg in $ctrl.argTypes | filter: { type: $select.search }" style="position:relative;">
+                                <div style="padding: 5px;">
+                                    <div ng-bind-html="arg.type | highlight: $select.search"></div>
+                                    <small class="muted">{{arg.description}}</small>
+                                </div>     
                             </ui-select-choices>
                         </ui-select>
-                        <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">Please select a control type.</div>
+                        <div id="helpBlock2" class="help-block" ng-show="$ctrl.kindError">Please select an arg type.</div>
                     </div>
                 </div>
 
-                <div style="margin-top: 15px;">
+                <div ng-show="$ctrl.arg.type === 'Custom'" style="margin-top: 15px;">
                     <div class="mixplay-header" style="padding: 0 0 4px 0">
-                        Options
+                        Arg Trigger Text <tooltip text="'The text that should trigger this subcommand'">
                     </div>
-                    <div>
-                        <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity.0.9;"> Add to grids <tooltip text="'Immediately add this control to all grid sizes (if there is room)'"></tooltip>
-                            <input type="checkbox" ng-model="$ctrl.addToGrids">
-                            <div class="control__indicator"></div>
-                        </label>
+                    <div style="width: 100%; position: relative;">
+                        <div class="form-group" ng-class="{'has-error': $ctrl.nameError}">
+                            <input type="text" id="nameField" class="form-control" ng-model="$ctrl.arg.arg" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="Enter trigger text" ng-keydown="$event.keyCode != 32 ? $event:$event.preventDefault()">
+                            <span id="helpBlock" class="help-block" ng-show="$ctrl.nameError">{{$ctrl.nameErrorText}}</span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
-                <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Add</button>
+                <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">{{$ctrl.isNewArg ? 'Add' : 'Save'}}</button>
             </div>
             `,
             bindings: {
@@ -72,62 +53,102 @@
             controller: function($timeout) {
                 let $ctrl = this;
 
+                $ctrl.nameErrorText = 'Please provide trigger text.';
+
                 $timeout(() => {
                     angular.element("#nameField").trigger("focus");
                 }, 50);
 
-                $ctrl.name = "";
-                $ctrl.kind = "button";
+                $ctrl.arg = {
+                    active: true,
+                    id: uuid(),
+                    type: "Custom",
+                    arg: "",
+                    regex: false
+                };
 
-                $ctrl.addToGrids = true;
+                $ctrl.onTypeChange = () => {
+                    $ctrl.arg.usage = null;
+                    $ctrl.arg.arg = null;
+                };
 
                 $ctrl.nameError = false;
                 $ctrl.kindError = false;
 
-                $ctrl.argTypes = ["Custom"];
+                $ctrl.argTypes = [
+                    {
+                        type: "Custom",
+                        description: "An arg that triggers on specific text"
+                    }
+                ];
 
-                function validateControlName() {
-                    let name = $ctrl.name;
-                    return name != null && name.length > 0;
+                function validateArgTriggerText() {
+                    if ($ctrl.arg.type !== "Custom") return true;
+                    const triggerText = $ctrl.arg.arg;
+                    if (triggerText == null || triggerText.length < 1) {
+                        $ctrl.nameErrorText = 'Please provide trigger text.';
+                        return false;
+                    }
+                    if ($ctrl.resolve.otherArgNames.some(a => a === triggerText.toLowerCase())) {
+                        $ctrl.nameErrorText = 'This trigger text already exists.';
+                        return false;
+                    }
+                    return true;
                 }
 
-                function validateControlType() {
-                    let kind = $ctrl.kind;
-                    return kind != null && kind.length > 0;
+                function validateArgType() {
+                    const type = $ctrl.arg.type;
+                    return type != null && type.length > 0;
                 }
-
 
                 $ctrl.save = function() {
 
                     $ctrl.nameError = false;
                     $ctrl.kindError = false;
 
-                    if (!validateControlName()) {
-                        $ctrl.nameError = true;
+
+                    if (!validateArgType()) {
+                        $ctrl.kindError = true;
                     }
 
-                    if (!validateControlType()) {
-                        $ctrl.kindError = true;
+                    if ($ctrl.arg.arg != null) {
+                        $ctrl.arg.arg = $ctrl.arg.arg.trim().toLowerCase().replace(/ /g, "");
+                    }
+
+                    if (!validateArgTriggerText()) {
+                        $ctrl.nameError = true;
                     }
 
                     if ($ctrl.nameError || $ctrl.kindError) {
                         return;
                     }
 
+                    if ($ctrl.arg.type === "Number") {
+                        $ctrl.arg.regex = true;
+                        $ctrl.arg.usage = "[number]";
+                        $ctrl.arg.arg = "\\d+";
+                    } else {
+                        $ctrl.arg.regex = false;
+                    }
+
                     $ctrl.close({
-                        $value: {
-                            name: $ctrl.name,
-                            kind: $ctrl.kind,
-                            addToGrids: $ctrl.addToGrids
-                        }
+                        $value: $ctrl.arg
                     });
-
-
                 };
 
+                $ctrl.isNewArg = true;
+
                 $ctrl.$onInit = function() {
-                    if (!$ctrl.resolve.hasNumberArg) {
-                        $ctrl.argTypes.push("Number");
+                    if (!$ctrl.resolve.hasNumberArg || ($ctrl.resolve.arg && $ctrl.resolve.arg.regex)) {
+                        $ctrl.argTypes.push({
+                            type: "Number",
+                            description: "An arg that triggers on any number"
+                        });
+                    }
+
+                    if ($ctrl.resolve.arg) {
+                        $ctrl.arg = JSON.parse(angular.toJson($ctrl.resolve.arg));
+                        $ctrl.isNewArg = false;
                     }
                 };
             }

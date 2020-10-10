@@ -4,7 +4,10 @@
     angular.module("firebotApp").component("subcommandRow", {
         bindings: {
             subcommand: "=",
-            cmdTrigger: "@"
+            fullyEditable: "<",
+            cmdTrigger: "@",
+            onDelete: "&",
+            onEdit: "&"
         },
         template: `
       <div style="margin-bottom: 10px">
@@ -38,13 +41,23 @@
           <div style="padding: 15px 20px 10px 20px;">
 
             <div class="muted" style="font-weight:bold; font-size: 12px;">DESCRIPTION</div>
-            <p style="font-size: 18px">{{$ctrl.subcommand.description}}</p>
+            <p style="font-size: 18px" ng-hide="$ctrl.fullyEditable">{{$ctrl.subcommand.description}}</p>
+            <input class="form-control" style="margin-bottom: 20px;" ng-show="$ctrl.fullyEditable" type="text" placeholder="Enter text" ng-model="$ctrl.subcommand.description">
 
-            <div style="padding-bottom:10px">
-              <div class="muted" style="font-weight:bold; font-size: 12px;">USAGE</div>
-              <p style="font-size: 15px;font-weight: 600;">{{$ctrl.cmdTrigger}} {{$ctrl.subcommand.usage ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</p>
+            <div style="margin-bottom:10px">
+                <div class="muted" style="font-weight:bold; font-size: 12px;">USAGE</div>
+                <p ng-show="!$ctrl.fullyEditable || $ctr.subcommand.regex" style="font-size: 15px;font-weight: 600;">{{$ctrl.cmdTrigger}} {{$ctrl.subcommand.usage ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</p>
+                <div class="input-group" ng-hide="!$ctrl.fullyEditable || $ctr.subcommand.regex">
+                    <span class="input-group-addon" style="min-width: 0;">{{$ctrl.cmdTrigger}} {{$ctrl.subcommand.regex ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</span>
+                    <input class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.compiledUsage" ng-change="$ctrl.onUsageChange()">
+                </div>
             </div>
 
+            <div ng-show="$ctrl.fullyEditable">
+                <div class="muted" style="font-weight:bold; font-size: 12px;">REQUIRED ADDITIONAL ARG COUNT <tooltip text="'The number of additional required args after the subcommands arg. If this number is not met, effects will not be triggered.'" /></div>
+                <input class="form-control" style="margin-bottom: 20px;" type="number" placeholder="Enter count" ng-model="$ctrl.adjustedMinArgs" ng-change="$ctrl.onMinArgsChange()">
+            </div>
+            
             <h4>Settings</h4>
             <div class="controls-fb-inline" style="padding-bottom:10px">
               <label class="control-fb control--checkbox">Is Active
@@ -79,7 +92,6 @@
             </div>
 
             <div>
-              <div>
                 <div style="margin-bottom: 20px;">
                     <h3 style="margin-bottom: 5px;">Restrictions <span class="muted" style="padding-bottom: 4px;padding-left: 2px;font-size: 13px;font-family: 'Quicksand';">(Permissions, currency costs, and more)</span></h3>
                     <restrictions-list 
@@ -87,16 +99,71 @@
                         trigger="command">
                     </restrictions-section>
                 </div>
-              </div>
+            </div>
+
+            <div ng-if="$ctrl.fullyEditable">
+                <effect-list header="What should this subcommand do?" effects="$ctrl.subcommand.effects" trigger="command"
+                    update="$ctrl.effectListUpdated(effects)" is-array="true"></effect-list>
+                
+                <div style="margin-top: 20px">
+                    <button class="btn btn-danger" ng-click="$ctrl.delete()" aria-label="Delete subcommand">
+                        <i class="far fa-trash"></i>
+                    </button>
+                    <button class="btn btn-primary" style="margin-left: 5px;" ng-click="$ctrl.edit()" aria-label="Edit subcommand">
+                        <i class="far fa-edit"></i> Edit Trigger
+                    </button>
+                </div>
             </div>
           </div>
         </div>
       </div>
     `,
-        controller: function(viewerRolesService) {
+        controller: function(viewerRolesService, utilityService) {
             let $ctrl = this;
 
-            $ctrl.$onInit = function() {};
+            $ctrl.compiledUsage = "";
+            $ctrl.onUsageChange = () => {
+                $ctrl.subcommand.usage = $ctrl.subcommand.arg + " " + $ctrl.compiledUsage;
+            };
+
+            $ctrl.adjustedMinArgs = 0;
+            $ctrl.onMinArgsChange = () => {
+                if ($ctrl.adjustedMinArgs > 0) {
+                    $ctrl.subcommand.minArgs = $ctrl.adjustedMinArgs + 1;
+                }
+            };
+
+            $ctrl.$onInit = function() {
+                if ($ctrl.subcommand) {
+                    if (!$ctrl.subcommand.regex && $ctrl.subcommand.usage) {
+                        $ctrl.compiledUsage = $ctrl.subcommand.usage.replace($ctrl.subcommand.arg + " ", "");
+                    }
+                    if ($ctrl.subcommand.minArgs > 0) {
+                        $ctrl.adjustedMinArgs = $ctrl.subcommand.minArgs - 1;
+                    }
+                }
+            };
+
+            $ctrl.delete = () => {
+                utilityService.showConfirmationModal({
+                    title: "Delete Subcommand",
+                    question: `Are you sure you want to delete this subcommand?`,
+                    confirmLabel: "Delete",
+                    confirmBtnType: "btn-danger"
+                }).then(confirmed => {
+                    if (confirmed) {
+                        $ctrl.onDelete({ id: $ctrl.subcommand.id });
+                    }
+                });
+            };
+
+            $ctrl.edit = () => {
+                $ctrl.onEdit({ id: $ctrl.subcommand.id });
+            };
+
+            $ctrl.effectListUpdated = function(effects) {
+                $ctrl.subcommand.effects = effects;
+            };
 
             $ctrl.getPermisisonType = () => {
                 let command = $ctrl.subcommand;
@@ -138,35 +205,6 @@
                     return "This subcommand will use the permissions of the base command.";
                 }
             };
-
-
-            /*$ctrl.getPermissionTooltip = (command, isSub) => {
-                let type = command.permission ? command.permission.type : "";
-                let cmdType = isSub ? "subcommand" : "command";
-
-                let groups, username;
-                switch (type) {
-                case "group":
-                    groups = command.permission.groups;
-                    if (groups == null || groups.length < 1) {
-                        return `This ${cmdType} is set to Group permissions, but no groups are selected.`;
-                    }
-                    return `This ${cmdType} is restricted to the groups: ${command.permission.groups.join(
-                        ", "
-                    )}`;
-                case "individual":
-                    username = command.permission.username;
-                    if (username == null || username === "") {
-                        return `This ${cmdType} is set to restrict to an individual but a name has not been provided.`;
-                    }
-                    return `This ${cmdType} is restricted to the user: ${username}`;
-                default:
-                    if (isSub) {
-                        return `This ${cmdType} will use the permissions of the base command.`;
-                    }
-                    return `This ${cmdType} is available to everyone`;
-                }
-            };*/
         }
     });
 }());

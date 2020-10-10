@@ -442,10 +442,8 @@
                 };
 
                 ctrl.getSelectedQueueModeIsCustom = () => {
-                    console.log(ctrl.effectsData.queue);
                     if (ctrl.effectsData.queue == null) return false;
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
-                    console.log(queue);
                     if (queue == null) return false;
                     return queue.mode === "custom";
                 };
