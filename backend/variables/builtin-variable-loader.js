@@ -9,6 +9,7 @@ exports.loadReplaceVariables = () => {
         'array-add',
         'array-filter',
         'array-find',
+        'array-join',
         'array-length',
         'array-remove',
         'array-reverse',
