@@ -13,7 +13,13 @@
       <div style="margin-bottom: 10px">
         <div class="sys-command-row" ng-init="hidePanel = true" ng-click="hidePanel = !hidePanel" ng-class="{'expanded': !hidePanel}">
 
-          <div style="flex-basis: 30%;padding-left: 20px;">{{$ctrl.subcommand.regex ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</div>
+          <div style="flex-basis: 30%;padding-left: 20px;">
+            {{$ctrl.subcommand.regex || $ctrl.subcommand.fallback ? ($ctrl.subcommand.usage || "").split(" ")[0] : $ctrl.subcommand.arg}}
+            <span ng-show="$ctrl.fullyEditable">
+                <i ng-if="$ctrl.subcommandTypeTitle === 'Number'" class="far fa-hashtag muted" style="font-size: 11px;" uib-tooltip="Number subcommand"></i>
+                <i ng-if="$ctrl.subcommandTypeTitle === 'Username'" class="far fa-at muted" style="font-size: 11px;" uib-tooltip="Username subcommand"></i>
+            </span>
+          </div>
 
           <div style="width: 25%">
             <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
@@ -39,17 +45,18 @@
 
         <div uib-collapse="hidePanel" class="sys-command-expanded">
           <div style="padding: 15px 20px 10px 20px;">
-
+            <h4 ng-show="$ctrl.fullyEditable" style="margin-bottom: 20px; font-weight: 200;">{{$ctrl.subcommandTypeTitle}} Subcommand</h4>
             <div class="muted" style="font-weight:bold; font-size: 12px;">DESCRIPTION</div>
             <p style="font-size: 18px" ng-hide="$ctrl.fullyEditable">{{$ctrl.subcommand.description}}</p>
             <input class="form-control" style="margin-bottom: 20px;" ng-show="$ctrl.fullyEditable" type="text" placeholder="Enter text" ng-model="$ctrl.subcommand.description">
 
             <div style="margin-bottom:10px">
                 <div class="muted" style="font-weight:bold; font-size: 12px;">USAGE</div>
-                <p ng-show="!$ctrl.fullyEditable || $ctr.subcommand.regex" style="font-size: 15px;font-weight: 600;">{{$ctrl.cmdTrigger}} {{$ctrl.subcommand.usage ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</p>
-                <div class="input-group" ng-hide="!$ctrl.fullyEditable || $ctr.subcommand.regex">
-                    <span class="input-group-addon" style="min-width: 0;">{{$ctrl.cmdTrigger}} {{$ctrl.subcommand.regex ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</span>
-                    <input class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.compiledUsage" ng-change="$ctrl.onUsageChange()">
+                <p ng-show="!$ctrl.fullyEditable" style="font-size: 15px;font-weight: 600;">{{$ctrl.cmdTrigger}} {{$ctrl.subcommand.usage ? $ctrl.subcommand.usage : $ctrl.subcommand.arg}}</p>
+                <div class="input-group" ng-hide="!$ctrl.fullyEditable">
+                    <span class="input-group-addon" style="min-width: 0;">{{$ctrl.cmdTrigger}}{{!$ctrl.subcommand.regex ? " " + $ctrl.subcommand.arg : ""}}</span>
+                    <input ng-hide="$ctrl.subcommand.regex" class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.compiledUsage" ng-change="$ctrl.onUsageChange()">
+                    <input ng-show="$ctrl.subcommand.regex" class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.subcommand.usage">
                 </div>
             </div>
 
@@ -67,6 +74,11 @@
 
               <label class="control-fb control--checkbox">Auto Delete Trigger <tooltip text="'Have Firebot automatically delete the message that triggers this subcommand to keep chat cleaner.'"></tooltip>
                   <input type="checkbox" ng-model="$ctrl.subcommand.autoDeleteTrigger" aria-label="...">
+                  <div class="control__indicator"></div>
+              </label>
+
+              <label class="control-fb control--checkbox">Hidden <tooltip text="'Hide this subcommand from the !commands list'"></tooltip>
+                  <input type="checkbox" ng-model="$ctrl.subcommand.hidden" aria-label="...">
                   <div class="control__indicator"></div>
               </label>
             </div>
@@ -109,7 +121,7 @@
                     <button class="btn btn-danger" ng-click="$ctrl.delete()" aria-label="Delete subcommand">
                         <i class="far fa-trash"></i>
                     </button>
-                    <button class="btn btn-primary" style="margin-left: 5px;" ng-click="$ctrl.edit()" aria-label="Edit subcommand">
+                    <button ng-hide="$ctrl.subcommand.fallback" class="btn btn-primary" style="margin-left: 5px;" ng-click="$ctrl.edit()" aria-label="Edit subcommand">
                         <i class="far fa-edit"></i> Edit Trigger
                     </button>
                 </div>
@@ -120,6 +132,8 @@
     `,
         controller: function(viewerRolesService, utilityService) {
             let $ctrl = this;
+
+            $ctrl.subcommandTypeTitle = "";
 
             $ctrl.compiledUsage = "";
             $ctrl.onUsageChange = () => {
@@ -135,11 +149,24 @@
 
             $ctrl.$onInit = function() {
                 if ($ctrl.subcommand) {
-                    if (!$ctrl.subcommand.regex && $ctrl.subcommand.usage) {
+                    if ((!$ctrl.subcommand.regex && !$ctrl.subcommand.fallback) && $ctrl.subcommand.usage) {
                         $ctrl.compiledUsage = $ctrl.subcommand.usage.replace($ctrl.subcommand.arg + " ", "");
                     }
                     if ($ctrl.subcommand.minArgs > 0) {
                         $ctrl.adjustedMinArgs = $ctrl.subcommand.minArgs - 1;
+                    }
+
+                    if ($ctrl.fullyEditable) {
+                        if (!$ctrl.subcommand.regex) {
+                            $ctrl.subcommandTypeTitle = "Custom";
+                        } else if ($ctrl.subcommand.fallback) {
+                            $ctrl.subcommandTypeTitle = "Fallback";
+                        } else if ($ctrl.subcommand.arg === '\\d+') {
+                            $ctrl.subcommandTypeTitle = "Number";
+                        } else if ($ctrl.subcommand.arg === '@\\w+') {
+                            $ctrl.subcommandTypeTitle = "Username";
+                        }
+                        console.log($ctrl.subcommand.arg);
                     }
                 }
             };

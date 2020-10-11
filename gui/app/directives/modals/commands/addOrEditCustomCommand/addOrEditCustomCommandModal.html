@@ -131,8 +131,7 @@
         </div>
         <div class="function-button-settings">
             <div class="settings-title" ng-hide="$ctrl.command.scanWholeMessage || $ctrl.command.triggerIsRegex">
-                <h3>Base Effects</h3>
-                <p class="muted">Always triggered if there are no subcommands. If there are subcommands, this is only triggered when the user does not provide any arguments.</p>
+                <h3>Base Effects <tooltip text="'Always triggered if there are no subcommands. If there are subcommands, this is only triggered when the user does not provide any arguments.'"></tooltip></h3>
             </div>
 
             <effect-list header="What should this command do?" effects="$ctrl.command.effects" trigger="command"
@@ -158,16 +157,27 @@
                     fully-editable="true" 
                     on-delete="$ctrl.deleteSubcommand(id)"
                     on-edit="$ctrl.editSubcommand(id)"></subcommand-row>
-            </div>
-            <div>
-                <div class="filter-bar clickable"
-                    ng-click="$ctrl.openAddSubcommandModal()" 
-                    uib-tooltip="Add Subcommand" 
-                    aria-label="Add Subcommand"  
-                    tooltip-append-to-body="true">
-                        <i class="far fa-plus"></i> 
+                <div>
+                    <div class="filter-bar clickable"
+                        ng-click="$ctrl.openAddSubcommandModal()" 
+                        uib-tooltip="Add Subcommand" 
+                        aria-label="Add Subcommand"  
+                        tooltip-append-to-body="true">
+                            <i class="far fa-plus"></i> 
+                    </div>
+                </div>
+                <div ng-if="$ctrl.command.fallbackSubcommand != null">
+                    <hr style="border-top: 1px solid #202021;" />
+                    <h4 class="muted">Fallback subcommand:</h4>
+                    <subcommand-row
+                        subcommand="$ctrl.command.fallbackSubcommand" 
+                        cmd-trigger="{{$ctrl.command.trigger}}" 
+                        fully-editable="true" 
+                        on-delete="$ctrl.deleteSubcommand('fallback-subcommand')"
+                        on-edit="$ctrl.editSubcommand('fallback-subcommand')"></subcommand-row>
                 </div>
             </div>
+            
         </div>
     </div>
 </div>
