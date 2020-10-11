@@ -1,36 +1,29 @@
 "use strict";
 
 const commandManager = require("../../chat/commands/CommandManager");
-const restrictionsManager = require("../../restrictions/restriction-manager");
 
-async function getCommandListForSync(username, userRoles) {
+async function getCommandListForSync() {
     let allCommands = commandManager.getAllActiveCommands();
     let commandData = {
         'allowedCmds': []
     };
 
-    for (let cmd of allCommands) {
-        if (!cmd.active || cmd.hidden) continue;
-        commandData.allowedCmds.push(cmd);
-        /*if (username == null || userRoles == null) {
-            commandData.allowedCmds.push(cmd);
-        } else {
-
-            let userHasPermission = await restrictionsManager
-                .checkPermissionsPredicateOnly(cmd.restrictionData, username, userRoles);
-
-            if (userHasPermission && cmd.active !== false) {
-                commandData.allowedCmds.push(cmd);
-            }
-        }*/
-    }
-
     // Filter!
-    commandData.allowedCmds = commandData.allowedCmds.map(c => {
-        // eslint-disable-next-line no-unused-vars
-        const { effects, ...strippedCommand } = c;
-        return strippedCommand;
-    });
+    commandData.allowedCmds = allCommands
+        .filter(c => c.active && !c.hidden)
+        .map(c => {
+            // eslint-disable-next-line no-unused-vars
+            const { effects, ...strippedCommand } = c;
+            return {
+                ...strippedCommand,
+                fallbackSubcommand: strippedCommand.fallbackSubcommand
+                    && !strippedCommand.fallbackSubcommand.hidden
+                    && strippedCommand.fallbackSubcommand.active ?
+                    strippedCommand.fallbackSubcommand : null,
+                subCommands: strippedCommand.subCommands ?
+                    strippedCommand.subCommands.filter(sc => sc.active && !sc.hidden) : null
+            };
+        });
 
 
     if (commandData.allowedCmds.length < 1) {

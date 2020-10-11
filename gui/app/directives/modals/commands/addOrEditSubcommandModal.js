@@ -101,6 +101,9 @@
                     return type != null && type.length > 0;
                 }
 
+                const numberRegex = "\\d+";
+                const usernameRegex = "@\\w+";
+
                 $ctrl.save = function() {
 
                     $ctrl.nameError = false;
@@ -123,12 +126,22 @@
                         return;
                     }
 
+                    $ctrl.arg.regex = false;
+                    $ctrl.arg.fallback = false;
                     if ($ctrl.arg.type === "Number") {
                         $ctrl.arg.regex = true;
                         $ctrl.arg.usage = "[number]";
-                        $ctrl.arg.arg = "\\d+";
-                    } else {
-                        $ctrl.arg.regex = false;
+                        $ctrl.arg.arg = numberRegex;
+                    } else if ($ctrl.arg.type === "Username") {
+                        $ctrl.arg.regex = true;
+                        $ctrl.arg.usage = "@username";
+                        $ctrl.arg.arg = usernameRegex;
+                    } else if ($ctrl.arg.type === "Fallback") {
+                        $ctrl.arg.fallback = true;
+                        $ctrl.arg.regex = true;
+                        $ctrl.arg.id = "fallback-subcommand";
+                        $ctrl.arg.usage = "[anything]";
+                        $ctrl.arg.arg = ".+";
                     }
 
                     $ctrl.close({
@@ -139,10 +152,27 @@
                 $ctrl.isNewArg = true;
 
                 $ctrl.$onInit = function() {
-                    if (!$ctrl.resolve.hasNumberArg || ($ctrl.resolve.arg && $ctrl.resolve.arg.regex)) {
+                    if (!$ctrl.resolve.hasNumberArg ||
+                        ($ctrl.resolve.arg && $ctrl.resolve.arg.arg === numberRegex)) {
                         $ctrl.argTypes.push({
                             type: "Number",
                             description: "An arg that triggers on any number"
+                        });
+                    }
+
+                    if (!$ctrl.resolve.hasUsernameArg ||
+                        ($ctrl.resolve.arg && $ctrl.resolve.arg.arg === usernameRegex)) {
+                        $ctrl.argTypes.push({
+                            type: "Username",
+                            description: "An arg that triggers on text that starts with an @ symbol"
+                        });
+                    }
+
+                    if (!$ctrl.resolve.hasFallbackArg ||
+                        ($ctrl.resolve.arg && $ctrl.resolve.arg.fallback)) {
+                        $ctrl.argTypes.push({
+                            type: "Fallback",
+                            description: "An arg that triggers if none of the other args are matched"
                         });
                     }
 

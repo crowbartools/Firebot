@@ -62,17 +62,22 @@
             };
 
             $ctrl.deleteSubcommand = (id) => {
-                if ($ctrl.command.subCommands) {
+                if (id === "fallback-subcommand") {
+                    $ctrl.command.fallbackSubcommand = null;
+                } else if ($ctrl.command.subCommands) {
                     $ctrl.command.subCommands = $ctrl.command.subCommands.filter(sc => sc.id !== id);
                 }
             };
 
             $ctrl.editSubcommand = (id) => {
-                if ($ctrl.command.subCommands) {
-                    const subcommand = $ctrl.command.subCommands.find(sc => sc.id === id);
-                    if (subcommand) {
-                        $ctrl.openAddSubcommandModal(subcommand);
-                    }
+                let subcommand;
+                if (id === "fallback-subcommand") {
+                    subcommand = $ctrl.command.fallbackSubcommand;
+                } else if ($ctrl.command.subCommands) {
+                    subcommand = $ctrl.command.subCommands.find(sc => sc.id === id);
+                }
+                if (subcommand) {
+                    $ctrl.openAddSubcommandModal(subcommand);
                 }
             };
 
@@ -82,15 +87,21 @@
                     size: "sm",
                     resolveObj: {
                         arg: () => arg,
-                        hasNumberArg: () => $ctrl.command.subCommands && $ctrl.command.subCommands.some(sc => sc.regex),
+                        hasNumberArg: () => $ctrl.command.subCommands && $ctrl.command.subCommands.some(sc => sc.arg === "\\d+"),
+                        hasUsernameArg: () => $ctrl.command.subCommands && $ctrl.command.subCommands.some(sc => sc.arg === "@\\w+"),
+                        hasFallbackArg: () => $ctrl.command.fallbackSubcommand != null,
                         otherArgNames: () => $ctrl.command.subCommands && $ctrl.command.subCommands.filter(c => !c.regex && (arg ? c.arg !== arg.arg : true)).map(c => c.arg.toLowerCase()) || []
                     },
                     closeCallback: newArg => {
-                        if ($ctrl.command.subCommands == null) {
-                            $ctrl.command.subCommands = [newArg];
+                        if (newArg.fallback) {
+                            $ctrl.command.fallbackSubcommand = newArg;
                         } else {
-                            $ctrl.command.subCommands = $ctrl.command.subCommands.filter(sc => sc.id !== newArg.id);
-                            $ctrl.command.subCommands.push(newArg);
+                            if ($ctrl.command.subCommands == null) {
+                                $ctrl.command.subCommands = [newArg];
+                            } else {
+                                $ctrl.command.subCommands = $ctrl.command.subCommands.filter(sc => sc.id !== newArg.id);
+                                $ctrl.command.subCommands.push(newArg);
+                            }
                         }
                     }
                 });

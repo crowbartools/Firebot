@@ -318,8 +318,13 @@ async function handleChatMessage(firebotChatMessage) {
         }
 
         if (command.type !== "system" && triggeredSubcmd == null) {
-            twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
-            return false;
+            if (command.fallbackSubcommand == null || !command.fallbackSubcommand.active) {
+                twitchChat.sendChatMessage(`Invalid Command: unknown arg used.`);
+                return false;
+            }
+            triggeredSubcmd = command.fallbackSubcommand;
+            userCmd.triggeredArg = command.fallbackSubcommand.arg;
+            userCmd.subcommandId = command.fallbackSubcommand.id;
         }
     }
 

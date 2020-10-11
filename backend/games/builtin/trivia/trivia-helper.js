@@ -18,9 +18,16 @@ const fetchQuestion = async (randomCategory, randomDifficulty, randomType, sessi
         const response = await axios.get(url);
         logger.debug("Trivia API response:", response);
         if (response.status === 200 && response.data) {
-            const data = JSON.parse(unescape(JSON.stringify(response.data).replace(/%22/g, '\\"')));
-            const responseCode = data.response_code;
-            const results = data.results || [];
+            const responseCode = response.data.response_code;
+            const results = (response.data.results || []).map(q => {
+                q.category = decodeURIComponent(q.category);
+                q.question = decodeURIComponent(q.question);
+                // eslint-disable-next-line camelcase
+                q.correct_answer = decodeURIComponent(q.correct_answer);
+                // eslint-disable-next-line camelcase
+                q.incorrect_answers = q.incorrect_answers.map(a => decodeURIComponent(a));
+                return q;
+            });
             return {
                 responseCode: responseCode,
                 results: results

@@ -7,9 +7,13 @@ exports.execute = function(command, userCommand, firebotChatMessage, manual = fa
 
     let effects = command.effects;
     if (command.subCommands && command.subCommands.length > 0 && userCommand.subcommandId != null) {
-        const subcommand = command.subCommands.find(sc => sc.id === userCommand.subcommandId);
-        if (subcommand) {
-            effects = subcommand.effects;
+        if (userCommand.subcommandId === "fallback-subcommand" && command.fallbackSubcommand) {
+            effects = command.fallbackSubcommand.effects;
+        } else {
+            const subcommand = command.subCommands.find(sc => sc.id === userCommand.subcommandId);
+            if (subcommand) {
+                effects = subcommand.effects;
+            }
         }
     }
 
