@@ -18,7 +18,7 @@ const model = {
     definition: {
         handle: "arg",
         usage: "arg[#]",
-        description: "Grabs the command argument(aka a singular word after the command !trigger) at the given index.",
+        description: "Grabs the command argument (aka a word after the command !trigger) at the given index.",
         examples: [
             {
                 usage: "arg[1,2]",
@@ -48,7 +48,7 @@ const model = {
         }
 
         if (index != null && index > 0) {
-            index = index - 1;
+            index--;
         } else {
             index = 0;
         }
@@ -58,18 +58,12 @@ const model = {
         }
 
         if (upperIndex === "last") {
-            upperIndex = args.length - 1;
+            upperIndex = args.length;
         }
 
         if (upperIndex != null) {
             upperIndex = parseInt(upperIndex);
         }
-
-        if (upperIndex > args.length - 1) {
-            return "";
-        }
-        upperIndex = upperIndex - 1;
-
 
         return args.slice(index, upperIndex).join(" ");
     },
