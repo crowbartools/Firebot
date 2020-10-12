@@ -3,6 +3,8 @@ const EventEmitter = require("events");
 const io = require("socket.io-client");
 const request = require("request");
 
+const keys = require("../../../../keys.json");
+
 const slEventHandler = require("./events/streamlabs-event-handler");
 const slVariableLoader = require("./variables/streamlabs-variable-loader");
 const slEffectsLoader = require("./effects/streamlabs-effect-loader");
@@ -18,8 +20,8 @@ const integrationDefinition = {
         name: "StreamLabs",
         redirectUriHost: "localhost",
         client: {
-            id: 'XtzRXbIUU9OZcU3siwNBXOSVFD8DGjYhkLmeUqYQ',
-            secret: "pJMm1ktVgtXkNEdhU5HIowQNCLxZyMLin0yu0q6b"
+            id: keys.streamLabsClientId,
+            secret: keys.streamLabsClientSecret
         },
         auth: {
             tokenHost: 'https://streamlabs.com',

@@ -3,6 +3,7 @@ const EventEmitter = require("events");
 const io = require("socket.io-client");
 const request = require("request");
 const logger = require("../../../logwrapper");
+const keys = require("../../../../keys.json");
 
 const tsEventHandler = require("./events/tipeeestream-event-handler");
 
@@ -16,8 +17,8 @@ const integrationDefinition = {
         id: "tipeeestream",
         name: "TipeeeStream",
         client: {
-            id: '12607_3f5rb6ma4w00kw0o0oskco00kkcoss0g4sgc8404wkososgo0w',
-            secret: "2st2xi9eztgk400sg0o4ggko0kooo0gs80o08g8cw4o0w8c0go"
+            id: keys.tipeeeStreamClientId,
+            secret: keys.tipeeeStreamClientSecret
         },
         auth: {
             tokenHost: 'https://api.tipeeestream.com',
