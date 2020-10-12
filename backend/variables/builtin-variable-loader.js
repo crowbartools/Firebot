@@ -5,6 +5,8 @@ const replaceVariableManager = require("./replace-variable-manager");
 exports.loadReplaceVariables = () => {
     [
         'active-chat-user-count',
+        'arg-array',
+        'arg-count',
         'arg',
         'array-add',
         'array-filter',
@@ -91,6 +93,7 @@ exports.loadReplaceVariables = () => {
         'textbox-input',
         'time',
         'timeout-duration',
+        'top-currency-user',
         'top-currency',
         'top-view-time',
         'user-avatar-url',
