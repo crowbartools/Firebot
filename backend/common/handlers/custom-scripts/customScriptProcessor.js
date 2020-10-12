@@ -105,9 +105,8 @@ function scriptProcessor(effect, trigger) {
                         }
                     }
 
-                    if (manifest.startupOnly && !(trigger.type === "event" &&
-                        trigger.eventSource === "firebot" &&
-                        trigger.eventId === "firebot-started")) {
+                    if (manifest.startupOnly && !((trigger.type === "event" || trigger.type === "manual") &&
+                        trigger.metadata.event.id === "firebot-started")) {
                         renderWindow.webContents.send("error", `Could not run startup only script "${manifest.name}": It was executed outside of a Firebot Started Event.`);
                         return resolve();
                     }
