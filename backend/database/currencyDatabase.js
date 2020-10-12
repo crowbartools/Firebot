@@ -258,6 +258,35 @@ function getUserCurrencyAmount(username, currencyId) {
     });
 }
 
+function getTopCurrencyPosition(currencyId, position = 1) {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve(null);
+        }
+
+        const db = userDatabase.getUserDb();
+
+        const sortObj = {};
+        sortObj[`currency.${currencyId}`] = -1;
+
+        const projectionObj = { username: 1, displayName: 1};
+        projectionObj[`currency.${currencyId}`] = 1;
+
+        db.find({ twitch: true })
+            .sort(sortObj)
+            .skip(position - 1)
+            .limit(1)
+            .projection(projectionObj)
+            .exec(function (err, docs) {
+                if (err) {
+                    logger.error("Error getting top currency holders: ", err);
+                    return resolve(null);
+                }
+                return resolve(docs && !!docs.length ? docs[0] : null);
+            });
+    });
+}
+
 function getTopCurrencyHolders(currencyId, count) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
@@ -269,16 +298,20 @@ function getTopCurrencyHolders(currencyId, count) {
         const sortObj = {};
         sortObj[`currency.${currencyId}`] = -1;
 
-        const projectionObj = { username: 1};
+        const projectionObj = { username: 1, displayName: 1};
         projectionObj[`currency.${currencyId}`] = 1;
 
-        db.find({}).sort(sortObj).limit(count).projection(projectionObj).exec(function (err, docs) {
-            if (err) {
-                logger.error("Error getting top currency holders: ", err);
-                return resolve([]);
-            }
-            return resolve(docs || []);
-        });
+        db.find({ twitch: true })
+            .sort(sortObj)
+            .limit(count)
+            .projection(projectionObj)
+            .exec(function (err, docs) {
+                if (err) {
+                    logger.error("Error getting top currency holders: ", err);
+                    return resolve([]);
+                }
+                return resolve(docs || []);
+            });
     });
 }
 
@@ -384,3 +417,4 @@ exports.getCurrencyById = getCurrencyById;
 exports.addCurrencyToUserGroupOnlineUsers = addCurrencyToUserGroupOnlineUsers;
 exports.isViewerDBOn = isViewerDBOn;
 exports.getTopCurrencyHolders = getTopCurrencyHolders;
+exports.getTopCurrencyPosition = getTopCurrencyPosition;

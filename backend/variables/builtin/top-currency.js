@@ -45,7 +45,7 @@ const model = {
         let topCurrencyHolders = await currencyDatabase.getTopCurrencyHolders(currency.id, count);
 
         let topHoldersDisplay = topCurrencyHolders.map((u, i) => {
-            return `#${i + 1}) ${u.username} - ${util.commafy(u.currency[currency.id])}`;
+            return `#${i + 1}) ${u.displayName} - ${util.commafy(u.currency[currency.id])}`;
         }).join(", ");
 
         return topHoldersDisplay;

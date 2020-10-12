@@ -18,7 +18,7 @@ triggers[EffectTrigger.MANUAL] = true;
 const commmandTarget = {
     definition: {
         handle: "target",
-        description: "Similiar to the $arg variable but strips out any leading '@' symbols. Useful when the argument is expected to be a username.",
+        description: "Similar to the $arg variable but strips out any leading '@' symbols. Useful when the argument is expected to be a username.",
         usage: "target",
         examples: [
             {
