@@ -2,6 +2,7 @@
 const { app } = require("electron");
 
 const logger = require("./backend/logwrapper");
+const secretsManager = require("./backend/secrets-manager");
 const { handleSquirrelEvents } = require("./backend/app-management/squirrel-events");
 const {
     whenReady,
@@ -11,6 +12,11 @@ const {
 } = require("./backend/app-management/electron/electron-events");
 
 logger.info("Starting Firebot...");
+
+if (!secretsManager.testSecrets()) {
+    app.quit();
+    return;
+}
 
 // Handle any squirrel install/update events
 // returns false if the rest of app execution should stop.

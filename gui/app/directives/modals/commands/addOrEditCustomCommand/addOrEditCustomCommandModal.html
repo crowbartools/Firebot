@@ -157,15 +157,6 @@
                     fully-editable="true" 
                     on-delete="$ctrl.deleteSubcommand(id)"
                     on-edit="$ctrl.editSubcommand(id)"></subcommand-row>
-                <div>
-                    <div class="filter-bar clickable"
-                        ng-click="$ctrl.openAddSubcommandModal()" 
-                        uib-tooltip="Add Subcommand" 
-                        aria-label="Add Subcommand"  
-                        tooltip-append-to-body="true">
-                            <i class="far fa-plus"></i> 
-                    </div>
-                </div>
                 <div ng-if="$ctrl.command.fallbackSubcommand != null">
                     <hr style="border-top: 1px solid #202021;" />
                     <h4 class="muted">Fallback subcommand:</h4>
@@ -177,7 +168,15 @@
                         on-edit="$ctrl.editSubcommand('fallback-subcommand')"></subcommand-row>
                 </div>
             </div>
-            
+            <div>
+                <div class="filter-bar clickable"
+                    ng-click="$ctrl.openAddSubcommandModal()" 
+                    uib-tooltip="Add Subcommand" 
+                    aria-label="Add Subcommand"  
+                    tooltip-append-to-body="true">
+                        <i class="far fa-plus"></i> 
+                </div>
+            </div>   
         </div>
     </div>
 </div>

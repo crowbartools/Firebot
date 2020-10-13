@@ -5,8 +5,10 @@ const accountAccess = require("../common/account-access");
 const logger = require("../logwrapper");
 const axios = require("axios").default;
 
-const TWITCH_CLIENT_ID = "umhhyrvkdriayr0psc3ttmsnq2j8h0";
-const TWITCH_CLIENT_SECRET = "z681sr828rf5ql70ilpf3sk3ein9v7";
+const { secrets } = require("../secrets-manager");
+
+const TWITCH_CLIENT_ID = secrets.twitchClientId;
+const TWITCH_CLIENT_SECRET = secrets.twitchClientSecret;
 
 exports.TWITCH_CLIENT_ID = TWITCH_CLIENT_ID;
 exports.TWITCH_CLIENT_SECRET = TWITCH_CLIENT_SECRET;
