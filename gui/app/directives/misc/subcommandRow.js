@@ -121,7 +121,7 @@
                     <button class="btn btn-danger" ng-click="$ctrl.delete()" aria-label="Delete subcommand">
                         <i class="far fa-trash"></i>
                     </button>
-                    <button ng-hide="$ctrl.subcommand.fallback" class="btn btn-primary" style="margin-left: 5px;" ng-click="$ctrl.edit()" aria-label="Edit subcommand">
+                    <button ng-hide="$ctrl.subcommand.fallback" class="btn btn-default" style="margin-left: 5px;" ng-click="$ctrl.edit()" aria-label="Edit subcommand">
                         <i class="far fa-edit"></i> Edit Trigger
                     </button>
                 </div>
