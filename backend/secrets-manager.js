@@ -36,7 +36,7 @@ exports.testSecrets = () => {
         }
     } catch (err) {
         if (err && err.code === "MODULE_NOT_FOUND") {
-            logger.error("Unable to find secrets.json in the root directory. Please create it.");
+            logger.error("Unable to find secrets.json in the root directory. Please create one. Contact us in the CrowbarTools Discord if you have any questions.");
             return false;
         }
     }
