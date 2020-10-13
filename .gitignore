@@ -77,7 +77,7 @@ resources/overlay/js/port.js
 eslint.log.htm
 doc/
 *.iws
-keys.json
+secrets.json
 
 # Editors
 .idea/
