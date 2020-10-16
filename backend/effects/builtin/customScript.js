@@ -8,7 +8,7 @@ const { ControlKind, InputEvent } = require('../../interactive/constants/Mixplay
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
 
-const customScriptProcessor = require("../../common/handlers/custom-scripts/customScriptProcessor");
+const customScriptRunner = require("../../common/handlers/custom-scripts/custom-script-runner");
 
 const { EffectCategory } = require('../../../shared/effect-constants');
 
@@ -155,7 +155,7 @@ const fileWriter = {
                                     let currentParam = currentParameters[defaultParameterName];
                                     let defaultParam = defaultParameters[defaultParameterName];
                                     if (currentParam != null) {
-                                        //Current param exsits lets update the value.
+                                        //Current param exists lets update the value.
                                         defaultParam.value = currentParam.value;
                                     }
                                     currentParameters[defaultParameterName] = defaultParam;
@@ -225,13 +225,13 @@ const fileWriter = {
 
             logger.debug("Processing script...");
 
-            customScriptProcessor
-                .processScript(event.effect, event.trigger)
+            customScriptRunner
+                .runScript(event.effect, event.trigger)
                 .then(result => {
-                    resolve(result !== undefined ? result : true);
+                    resolve(result != null ? result : true);
                 })
                 .catch(err => {
-                    renderWindow.webContents.send('error', "Oops! There was an error processing the custom script. Error: " + err);
+                    renderWindow.webContents.send('error', "Oops! There was an error processing the custom script. Error: " + err.message);
                     logger.error(err);
                     resolve(false);
                 });
