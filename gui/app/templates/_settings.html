@@ -404,6 +404,15 @@
             </div>
           </div>
           <div class="row" style="margin-top: 15px">
+          
+            <div class="setting col-sm-6" ng-if="settings.getCustomScriptsEnabled()">
+                <div class="setting-heading">Startup Scripts</div>
+                <div class="setting-description">
+                  Startup Scripts run immediately after Firebot opens. Scripts that add new effects, variables, event types, etc should be loaded here.
+                </div>
+                <button class="btn btn-default" ng-click="openStartupScriptsModal()">View Startup Scripts</button>        
+            </div>
+
             <div class="setting col-sm-6">
                 <div class="setting-heading">While Loop</div>
                 <div class="setting-description">

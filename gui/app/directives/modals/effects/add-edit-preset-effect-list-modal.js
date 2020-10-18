@@ -165,7 +165,7 @@
                 $ctrl.close({
                     $value: {
                         presetList: $ctrl.presetList,
-                        action: $ctrl.presetList ? "add" : "update"
+                        action: $ctrl.isNewPresetList ? "add" : "update"
                     }
                 });
             };
