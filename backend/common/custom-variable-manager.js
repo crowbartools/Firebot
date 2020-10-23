@@ -5,6 +5,7 @@ const eventManager = require("../events/EventManager");
 const NodeCache = require("node-cache");
 
 const cache = new NodeCache({ stdTTL: 0, checkperiod: 5 });
+exports._cache = cache;
 
 cache.on("expired", function(key, value) {
     eventManager.triggerEvent("firebot", "custom-variable-expired", {
@@ -21,6 +22,33 @@ cache.on("set", function(key, value) {
         createdCustomVariableData: value
     });
 });
+
+function getVariableCacheDb() {
+    const profileManager = require("../common/profile-manager");
+    return profileManager
+        .getJsonDbInProfile("custom-variable-cache");
+}
+
+exports.persistVariablesToFile = () => {
+    const db = getVariableCacheDb();
+    db.push("/", cache.data);
+};
+
+exports.loadVariablesFromFile = () => {
+    const db = getVariableCacheDb();
+    const data = db.getData("/");
+    if (data) {
+        for (const [key, {t, v}] of Object.entries(data)) {
+            const now = Date.now();
+            if (t && t > 0 && t < now) {
+                // this var has expired
+                continue;
+            }
+            const ttl = t === 0 ? 0 : (t - now) / 1000;
+            cache.set(key, v, ttl);
+        }
+    }
+};
 
 exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
 

@@ -156,6 +156,14 @@
                 pushDataToFile("/settings/runCustomScripts", enabled === true);
             };
 
+            service.getPersistCustomVariables = function() {
+                return getDataFromFile("/settings/persistCustomVariables") === true;
+            };
+
+            service.setPersistCustomVariables = function(enabled) {
+                pushDataToFile("/settings/persistCustomVariables", enabled === true);
+            };
+
             service.isBetaTester = function() {
                 let betaTester = getDataFromFile("/settings/beta");
                 return betaTester != null ? betaTester : "No";

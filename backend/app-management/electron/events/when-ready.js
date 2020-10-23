@@ -98,6 +98,12 @@ exports.whenReady = async () => {
     const builtinGameLoader = require("../../../games/builtin-game-loader");
     builtinGameLoader.loadGames();
 
+    const {settings} = require("../../../common/settings-access");
+    if (settings.getPersistCustomVariables()) {
+        const customVariableManager = require("../../../common/custom-variable-manager");
+        customVariableManager.loadVariablesFromFile();
+    }
+
     // get importer in memory
     const v4Importer = require("../../../import/v4/v4-importer");
     v4Importer.setupListeners();

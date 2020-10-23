@@ -144,6 +144,14 @@ settings.setCustomScriptsEnabled = function(enabled) {
     pushDataToFile("/settings/runCustomScripts", enabled === true);
 };
 
+settings.getPersistCustomVariables = function() {
+    return getDataFromFile("/settings/persistCustomVariables") === true;
+};
+
+settings.setPersistCustomVariables = function(enabled) {
+    pushDataToFile("/settings/persistCustomVariables", enabled === true);
+};
+
 settings.useOverlayInstances = function() {
     let oi = getDataFromFile("/settings/useOverlayInstances");
     return oi != null ? oi : false;
