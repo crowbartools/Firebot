@@ -81,6 +81,7 @@ function buildModules(scriptManifest) {
         path: require('path'),
         JsonDb: require('node-json-db'),
         moment: require('moment'),
+        howler: require("howler"),
         logger: logger,
         // thin chat shim for basic backwards compatibility
         chat: {
@@ -92,6 +93,8 @@ function buildModules(scriptManifest) {
             }
         },
         twitchChat: twitchChat,
+        twitchApi: require("../../../twitch-api/api"),
+        httpServer: require("../../../../server/httpServer"),
         effectManager: require("../../../effects/effectManager"),
         conditionManager: require("../../../effects/builtin/conditional-effects/conditions/condition-manager"),
         restrictionManager: require("../../../restrictions/restriction-manager"),
