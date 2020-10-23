@@ -49,11 +49,6 @@
                 };
 
                 $ctrl.save = () => {
-                    if ($ctrl.scriptData.name == null || $ctrl.scriptData.name.length < 1) {
-                        ngToast.create("Please give this script a name.");
-                        return;
-                    }
-
                     if ($ctrl.scriptData.scriptName == null || $ctrl.scriptData.scriptName.length < 1) {
                         ngToast.create("Please select a script.");
                         return;
