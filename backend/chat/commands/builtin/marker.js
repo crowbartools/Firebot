@@ -9,7 +9,7 @@ const utils = require("../../../utility");
 const model = {
     definition: {
         id: "firebot:create-marker",
-        name: "Create Stream Maker",
+        name: "Create Stream Marker",
         active: true,
         trigger: "!marker",
         usage: "[marker name]",
