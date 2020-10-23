@@ -12,10 +12,6 @@
                 <h4 class="modal-title">{{$ctrl.isNewScript ? "Add New" : "Edit"}} Startup Script</h4>
             </div>
             <div class="modal-body">
-                <eos-container header="Name">
-                    <firebot-input input-title="Name" model="$ctrl.scriptData.name" disableVariables="true"></firebot-input>
-                </eos-container>
-
                 <div style="margin-top: 20px;">
                     <custom-script-settings 
                         effect="$ctrl.scriptData" 
