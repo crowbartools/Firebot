@@ -99,6 +99,7 @@ exports.loadReplaceVariables = () => {
         'top-currency-user',
         'top-currency',
         'top-view-time',
+        'uptime',
         'user-avatar-url',
         'user-level',
         'user-next-level-hearts',
