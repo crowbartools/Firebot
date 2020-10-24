@@ -108,6 +108,7 @@ exports.loadReplaceVariables = () => {
         'user-total-hearts',
         'user',
         'username',
+        'usernameArray',
         'view-time'
     ].forEach(filename => {
         let definition = require(`./builtin/${filename}.js`);

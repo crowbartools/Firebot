@@ -224,6 +224,26 @@ function searchUsers(usernameFragment) {
     });
 }
 
+function getAllUsernames() {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+
+        const projectionObj = {
+            displayName: 1
+        };
+
+        db.find({ twitch: true }).projection(projectionObj).exec(function (err, docs) {
+            if (err) {
+                logger.error("Error getting all users: ", err);
+                return resolve([]);
+            }
+            return resolve(docs != null ? docs.map(u => u.displayName) : []);
+        });
+    });
+}
+
 function getTopViewTimeUsers(count) {
     return new Promise(resolve => {
         if (!isViewerDBOn()) {
@@ -782,3 +802,4 @@ exports.addNewUserFromChat = addNewUserFromChat;
 exports.getOnlineUsers = getOnlineUsers;
 exports.updateUserMetadata = updateUserMetadata;
 exports.getUserMetadata = getUserMetadata;
+exports.getAllUsernames = getAllUsernames;
