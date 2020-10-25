@@ -2,21 +2,12 @@
 
 "use strict";
 
-const {
-    EffectTrigger
-} = require("../../effects/models/effectModels");
-
 const { OutputDataType } = require("../../../shared/variable-contants");
-
-let triggers = {};
-triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
         handle: "usernameArray",
         description: "Returns a JSON array of all usernames saved in the user db",
-        triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async () => {
