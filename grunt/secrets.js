@@ -1,4 +1,5 @@
 'use strict';
+const path = require('path');
 const fs = require('fs');
 const gpgBase = 'gpg --cipher-algo AES256 --passphrase $env:PASSKEY_FOR_FIREBOT_SECRETS --pinentry-mode loopback';
 
@@ -15,27 +16,29 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('secrets', function (action) {
+        console.log(__dirname);
+
         if (process.env.PASSKEY_FOR_FIREBOT_SECRETS == null) {
             throw new Error('passkey for firebot\'s secrets not found');
         }
 
         if (action === 'encrypt') {
-            if (!fs.existsSync('../secrets.json')) {
+            if (!fs.existsSync(path.join(__dirname, '../secrets.json'))) {
                 throw new Error('secrets.json not found');
             }
 
-            if (fs.existsSync('../secrets.gpg')) {
+            if (fs.existsSync(path.join(__dirname, '../secrets.gpg'))) {
                 fs.unlink('../secrets.gpg');
             }
 
             grunt.task.run('shell:encryptsecrets');
 
         } else if (action === 'decrypt') {
-            if (!fs.existsSync('../secrets.gpg')) {
+            if (!fs.existsSync(path.join(__dirname, '../secrets.gpg'))) {
                 throw new Error('secrets.gpg not found');
             }
 
-            if (fs.existsSync('../secrets.json')) {
+            if (fs.existsSync(path.join(__dirname, '../secrets.json'))) {
                 fs.unlink('../secrets.json');
             }
 
