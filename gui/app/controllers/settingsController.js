@@ -6,8 +6,6 @@
     const path = require("path");
     const dataAccess = require("../../backend/common/data-access");
     const moment = require("moment");
-    const unzipper = require("unzipper");
-    const empty = require("empty-folder");
 
     angular
         .module("firebotApp")
@@ -292,6 +290,16 @@
             /**
             * Modals
             */
+
+            $scope.openStartupScriptsModal = function() {
+                utilityService.showModal({
+                    component: "startupScriptsListModal",
+                    size: "sm",
+                    backdrop: true,
+                    keyboard: true
+                });
+            };
+
             $scope.showFontManagementModal = function() {
                 utilityService.showModal({
                     component: "fontManagementModal",

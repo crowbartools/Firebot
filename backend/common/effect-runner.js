@@ -67,11 +67,13 @@ function validateEffectCanRun(effectId, triggerType) {
     let effectDefinition = effectManager.getEffectById(effectId).definition;
 
     // Validate trigger
-    let supported = effectDefinition.triggers[triggerType] != null
+    if (effectDefinition.triggers) {
+        let supported = effectDefinition.triggers[triggerType] != null
         && effectDefinition.triggers[triggerType] !== false;
-    if (!supported) {
-        logger.info(`${effectId} cannot be triggered by: ${triggerType}`);
-        return false;
+        if (!supported) {
+            logger.info(`${effectId} cannot be triggered by: ${triggerType}`);
+            return false;
+        }
     }
 
     const twitchChat = require("../chat/twitch-chat");
@@ -85,7 +87,7 @@ function validateEffectCanRun(effectId, triggerType) {
             return true;
         }
 
-        logger.info(`Unknown effect dependancy: ${d}`);
+        logger.info(`Unknown effect dependency: ${d}`);
         return false;
     });
 

@@ -11,6 +11,7 @@ const EffectTrigger = Object.freeze({
     INTERACTIVE: "interactive",
     COMMAND: "command",
     CUSTOM_SCRIPT: "custom_script",
+    STARTUP_SCRIPT: "startup_script",
     API: "api",
     EVENT: "event",
     HOTKEY: "hotkey",

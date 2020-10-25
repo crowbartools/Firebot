@@ -13,6 +13,7 @@ triggers[EffectTrigger.COMMAND] = true;
 triggers[EffectTrigger.EVENT] = true;
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
+triggers[EffectTrigger.PRESET_LIST] = true;
 
 module.exports = {
     definition: {

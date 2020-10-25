@@ -83,6 +83,9 @@ exports.whenReady = async () => {
     const presetEffectListManager = require("../../../effects/preset-lists/preset-effect-list-manager");
     presetEffectListManager.loadPresetEffectLists();
 
+    const startupScriptsManager = require("../../../common/handlers/custom-scripts/startup-scripts-manager");
+    startupScriptsManager.loadStartupConfig();
+
     const chatModerationManager = require("../../../chat/moderation/chat-moderation-manager");
     chatModerationManager.load();
 
@@ -94,6 +97,12 @@ exports.whenReady = async () => {
 
     const builtinGameLoader = require("../../../games/builtin-game-loader");
     builtinGameLoader.loadGames();
+
+    const {settings} = require("../../../common/settings-access");
+    if (settings.getPersistCustomVariables()) {
+        const customVariableManager = require("../../../common/custom-variable-manager");
+        customVariableManager.loadVariablesFromFile();
+    }
 
     // get importer in memory
     const v4Importer = require("../../../import/v4/v4-importer");

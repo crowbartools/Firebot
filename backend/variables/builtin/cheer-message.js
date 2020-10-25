@@ -19,7 +19,9 @@ const model = {
     },
     evaluator: (trigger) => {
         const cheerMessage = trigger.metadata.eventData.message || "";
-        return cheerMessage;
+        return cheerMessage
+            .replace(/( |\b)[a-zA-Z]+\d+( |\b)/g, "")
+            .trim();
     }
 };
 

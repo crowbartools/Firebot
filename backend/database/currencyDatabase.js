@@ -47,7 +47,7 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
         }
 
         // Dont do anything if value is not a number or is 0.
-        if (isNaN(value) || parseInt(value) === 0) {
+        if (isNaN(value)) {
             return resolve();
         }
 
@@ -61,6 +61,9 @@ function adjustCurrency(user, currencyId, value, adjustType = "adjust") {
             newUserValue = value;
             break;
         default:
+            if (parseInt(value) === 0) {
+                return resolve();
+            }
             logger.debug("Currency: Adjusting " + value + " currency to " + user.username + ". " + currencyId);
             newUserValue = (user.currency[currencyId] += parseInt(value));
         }
@@ -104,7 +107,7 @@ async function adjustCurrencyForUser(username, currencyId, value, adjustType = "
     }
 
     // Validate inputs.
-    if (username === null || currencyId === null || value === null || isNaN(value)) {
+    if (username === null || currencyId === null || value == null || isNaN(value)) {
         return false;
     }
 

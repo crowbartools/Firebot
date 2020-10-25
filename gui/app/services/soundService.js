@@ -96,13 +96,13 @@
             };
 
 
-            service.playSound = function(path, volume, outputDevice) {
+            service.playSound = function(path, volume, outputDevice, fileType = null) {
 
                 if (outputDevice == null) {
                     outputDevice = settingsService.getAudioOutputDevice();
                 }
 
-                $q.when(service.getHowlSound(path, volume, outputDevice))
+                $q.when(service.getHowlSound(path, volume, outputDevice, fileType))
                     .then(sound => {
 
                         // Clear listener after first call.
@@ -119,7 +119,7 @@
                     });
             };
 
-            service.getHowlSound = function(path, volume, outputDevice = settingsService.getAudioOutputDevice()) {
+            service.getHowlSound = function(path, volume, outputDevice = settingsService.getAudioOutputDevice(), fileType = null) {
                 return navigator.mediaDevices.enumerateDevices()
                     .then(deviceList => {
                         let filteredDevice = deviceList.filter(d => d.label === outputDevice.label
@@ -130,6 +130,7 @@
                         let sound = new Howl({
                             src: [path],
                             volume: volume,
+                            format: fileType,
                             html5: true,
                             sinkId: sinkId,
                             preload: false
@@ -173,13 +174,14 @@
                         websocketService.broadcast({
                             event: "sound",
                             filepath: filepath,
+                            format: data.format,
                             volume: volume,
                             resourceToken: data.resourceToken,
                             overlayInstance: data.overlayInstance
                         });
 
                     } else {
-                        service.playSound(filepath, volume, selectedOutputDevice);
+                        service.playSound(filepath, volume, selectedOutputDevice, data.format);
                     }
                 }
             );

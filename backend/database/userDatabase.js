@@ -13,8 +13,7 @@ const eventManager = require("../events/EventManager");
 const accountAccess = require("../common/account-access");
 const util = require("../utility");
 
-const twitchApi = require("../twitch-api/api");
-
+const jsonDataHelpers = require("../common/json-data-helpers");
 
 /**
  * @typedef FirebotUser
@@ -32,7 +31,8 @@ const twitchApi = require("../twitch-api/api");
  * @property {number} chatMessages
  * @property {boolean} disableAutoStatAccrual
  * @property {boolean} disableActiveUserList
- * @property {{Object.<string, number>}} currency
+ * @property {Object.<string, *>=} metadata
+ * @property {Object.<string, number>} currency
  */
 
 /**
@@ -112,6 +112,59 @@ function getTwitchUserByUsername(username) {
     });
 }
 
+/**
+ *
+ * @param {FirebotUser} user
+ * @returns {Promise<boolean>}
+ */
+function updateUser(user) {
+    return new Promise(resolve => {
+        if (user == null) {
+            return resolve(false);
+        }
+        db.update({ _id: user._id }, user, {}, function (err) {
+            if (err) {
+                logger.warn("Failed to update user in DB", err);
+                return resolve(false);
+            }
+            resolve(true);
+        });
+    });
+}
+
+async function updateUserMetadata(username, key, value, propertyPath) {
+
+    if (username == null || username.length < 1 || key == null || key.length < 1) return;
+
+    const user = await getTwitchUserByUsername(username);
+    if (user == null) return;
+
+    const metadata = user.metadata || {};
+
+    try {
+        const dataToSet = jsonDataHelpers.parseData(value, metadata[key], propertyPath);
+        metadata[key] = dataToSet;
+
+        user.metadata = metadata;
+
+        await updateUser(user);
+    } catch (error) {
+        logger.error("Unable to set metadata for user");
+    }
+}
+
+async function getUserMetadata(username, key, propertyPath) {
+    if (username == null || username.length < 1 || key == null || key.length < 1) return null;
+
+    const user = await getTwitchUserByUsername(username);
+
+    if (user == null) return null;
+
+    const metadata = user.metadata || {};
+
+    return jsonDataHelpers.readData(metadata[key], propertyPath);
+}
+
 //look up user object by mixer name
 function getMixerUserByUsername(username) {
     return new Promise(resolve => {
@@ -167,6 +220,26 @@ function searchUsers(usernameFragment) {
                 reject(err.message);
             }
             resolve(docs);
+        });
+    });
+}
+
+function getAllUsernames() {
+    return new Promise(resolve => {
+        if (!isViewerDBOn()) {
+            return resolve([]);
+        }
+
+        const projectionObj = {
+            displayName: 1
+        };
+
+        db.find({ twitch: true }).projection(projectionObj).exec(function (err, docs) {
+            if (err) {
+                logger.error("Error getting all users: ", err);
+                return resolve([]);
+            }
+            return resolve(docs != null ? docs.map(u => u.displayName) : []);
         });
     });
 }
@@ -294,21 +367,6 @@ function removeUser(userId) {
     });
 }
 
-function updateUser(user) {
-    return new Promise(resolve => {
-        if (user == null) {
-            return resolve(false);
-        }
-        db.update({ _id: user._id }, user, {}, function (err) {
-            if (err) {
-                logger.warn("Failed to update user in DB", err);
-                return resolve(false);
-            }
-            resolve(true);
-        });
-    });
-}
-
 /**
  * @returns {Promise<FirebotUser>}
  */
@@ -339,6 +397,7 @@ function createNewUser(userId, username, displayName, profilePicUrl, twitchRoles
             chatMessages: 0,
             disableAutoStatAccrual: disableAutoStatAccrual,
             disableActiveUserList: false,
+            metadata: {},
             currency: {}
         };
 
@@ -741,3 +800,6 @@ exports.setChatUsersOnline = setChatUsersOnline;
 exports.getTopViewTimeUsers = getTopViewTimeUsers;
 exports.addNewUserFromChat = addNewUserFromChat;
 exports.getOnlineUsers = getOnlineUsers;
+exports.updateUserMetadata = updateUserMetadata;
+exports.getUserMetadata = getUserMetadata;
+exports.getAllUsernames = getAllUsernames;

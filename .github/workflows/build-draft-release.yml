@@ -64,6 +64,10 @@ jobs:
         if: steps.tagged.outputs.tagged == 1
         run: node-gyp rebuild --silent --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell
 
+      - name: Decrypt Secrets.gpg
+        if: steps.tagged.outputs.tagged == 1
+        run: grunt secrets:decrypt
+
       - name: Build for Platform
         if: steps.tagged.outputs.tagged == 1
         run: grunt build

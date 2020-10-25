@@ -118,6 +118,10 @@ function createMainWindow() {
         if (splashscreenWindow) {
             splashscreenWindow.destroy();
         }
+
+        const startupScriptsManager = require("../../common/handlers/custom-scripts/startup-scripts-manager");
+        startupScriptsManager.runStartupScripts();
+
         const eventManager = require("../../events/EventManager");
         eventManager.triggerEvent("firebot", "firebot-started", {
             username: "Firebot"

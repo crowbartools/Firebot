@@ -15,6 +15,9 @@ Registered Tasks:
 
     lint - Runs eslint
 
+    secrets:encrypt - Encrypts an updated secrets.json to secrets.gpg
+    secrets:decrypt - Decrypts the repo's secrets.gpg to secrects.json
+
     pack
         - Runs electron-packager for the platform
         - Copies resources into the pack's resource folder
@@ -52,6 +55,7 @@ module.exports = function(grunt) {
     require('./grunt/pack.js')(grunt);
     require('./grunt/compile.js')(grunt);
     require('./grunt/setup.js')(grunt);
+    require('./grunt/secrets.js')(grunt);
 
     grunt.registerTask('build', ['scss', 'pack', 'compile']);
 };
