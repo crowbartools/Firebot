@@ -16,8 +16,6 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('secrets', function (action) {
-        console.log(__dirname);
-
         if (process.env.PASSKEY_FOR_FIREBOT_SECRETS == null) {
             throw new Error('passkey for firebot\'s secrets not found');
         }
