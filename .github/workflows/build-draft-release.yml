@@ -66,6 +66,8 @@ jobs:
 
       - name: Decrypt Secrets.gpg
         if: steps.tagged.outputs.tagged == 1
+        env: 
+          PASSKEY_FOR_FIREBOT_SECRETS: ${{ secrets.PASSKEY_FOR_FIREBOT_SECRETS }}
         run: grunt secrets:decrypt
 
       - name: Build for Platform
