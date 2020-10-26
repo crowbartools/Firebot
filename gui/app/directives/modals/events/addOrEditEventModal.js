@@ -17,15 +17,13 @@
             <div class="general-event-settings">
             
                 <div class="effect-setting-container">
-                    <div class="input-group settings-eventid">
-                        <span class="input-group-addon" id="basic-addon3">Name</span>
-                        <input type="text" class="form-control event-id" aria-describedby="basic-addon3" placeholder="Enter name" ng-model="$ctrl.event.name" ng-change="$ctrl.nameChanged()">
-                    </div>
-                </div>
-        
-                <div class="effect-setting-container setting-padtop">
                     <h3>Trigger On</h3>
                     <searchable-event-dropdown selected="{ eventId: $ctrl.event.eventId, sourceId: $ctrl.event.sourceId }" style="width:100%" update="$ctrl.eventChanged(event)"></searchable-event-dropdown>
+                </div>
+
+                <div class="effect-setting-container">
+                    <h3>Name</h3>
+                    <input type="text" class="form-control event-id" aria-describedby="basic-addon3" placeholder="Enter name" ng-model="$ctrl.event.name" ng-change="$ctrl.nameChanged()">
                 </div>
         
                 <div ng-if="$ctrl.event.eventId != null">
