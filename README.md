@@ -1,6 +1,6 @@
 ![Firebot Logo](https://i.imgur.com/DBH1G1e.png)
 
-An all-in-one desktop bot for Mixer featuring support for MixPlay, Chat Commands, Events, Timers, Currencies, Third Party Integrations, and so much more. Visit Firebot's [website](https://firebot.app) for more info.
+An all-in-one desktop bot for Twitch featuring support for Chat Commands, Events, Timers, Currencies, Third Party Integrations, and so much more. Visit Firebot's [website](https://firebot.app) for more info.
 
 ![Build Status](https://github.com/crowbartools/Firebot/workflows/Build%20Status/badge.svg?branch=master)
 ![Build Status](https://github.com/crowbartools/Firebot/workflows/Build%20Tests/badge.svg?branch=v5)
@@ -9,7 +9,8 @@ An all-in-one desktop bot for Mixer featuring support for MixPlay, Chat Commands
 [![Discord](https://img.shields.io/discord/372817064034959370.svg?label=Discord+(chat))](https://discord.gg/DegW792)
 [![Social](https://img.shields.io/twitter/follow/firebotapp.svg?style=social&label=Follow+Us!)](https://twitter.com/FirebotApp)
 
-***
+![Firebot Screenshot](https://i.imgur.com/Iu9BIix.png)
+
 ## FAQ
 ### How do I get Firebot?
 Head on over to [Firebot's website](https://firebot.app) and download the latest version!
