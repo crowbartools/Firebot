@@ -9,7 +9,8 @@ module.exports = {
     events: [
         { eventSourceId: "streamlabs", eventId: "donation" },
         { eventSourceId: "streamlabs", eventId: "eldonation" },
-        { eventSourceId: "tipeeestream", eventId: "donation" }
+        { eventSourceId: "tipeeestream", eventId: "donation" },
+        { eventSourceId: "streamelements", eventId: "donation" }
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT, ComparisonType.CONTAINS, ComparisonType.MATCHES_REGEX],
     valueType: "text",

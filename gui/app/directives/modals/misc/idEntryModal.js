@@ -9,8 +9,8 @@ const marked = require("marked");
         .module('firebotApp')
         .component("idEntryModal", {
             template: `
-            <div class="modal-header">
-                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <div class="modal-header" style="text-align: center;">
+                <button type="button" class="close" aria-label="Close" ng-click="$ctrl.dismiss();"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">{{$ctrl.label}}</h4>
             </div>
             <div class="modal-body">
@@ -21,11 +21,11 @@ const marked = require("marked");
                 </div>
              
                 <div style="margin-top: 15px;">
-                    <div ng-show="$ctrl.hasSteps" style="margin-bottom: 5px;opacity: 0.8;font-weight: 800;font-size: 16px;">ACCOUNT ID</div>
+                    <div ng-show="$ctrl.hasSteps" style="margin-bottom: 5px;opacity: 0.8;font-weight: 800;font-size: 16px;text-transform: uppercase;">{{$ctrl.idLabel}}</div>
                     <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;">     
                         <div style="width: 95%; position: relative;">
                             <div class="form-group" ng-class="{'has-error': $ctrl.hasValidationError}">
-                                <input type="text" class="form-control" id="newPort" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save() " aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}">
+                                <textarea type="text" class="form-control" rows="2" ng-model="$ctrl.model" ng-keyup="$event.keyCode == 13 && $ctrl.save()" aria-describedby="helpBlock" placeholder="{{$ctrl.inputPlaceholder}}"></textarea>
                                 <span id="helpBlock" class="help-block" ng-show="$ctrl.hasValidationError">{{$ctrl.validationText}}</span>
                             </div>
                         </div>
@@ -59,6 +59,7 @@ const marked = require("marked");
                 $ctrl.hasSteps = false;
                 $ctrl.steps = $sce.trustAsHtml("");
 
+                $ctrl.idLabel = "ID";
 
                 $ctrl.$onInit = function () {
                     if ($ctrl.resolve.model) {
@@ -68,6 +69,11 @@ const marked = require("marked");
                     if ($ctrl.resolve.label) {
                         $ctrl.label = $ctrl.resolve.label;
                     }
+
+                    if ($ctrl.resolve.idLabel) {
+                        $ctrl.idLabel = $ctrl.resolve.idLabel;
+                    }
+                    $ctrl.validationText = `${$ctrl.resolve.idLabel} cannot be empty!`;
 
                     if ($ctrl.resolve.inputPlaceholder) {
                         $ctrl.inputPlaceholder = $ctrl.resolve.inputPlaceholder;

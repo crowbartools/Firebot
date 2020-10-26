@@ -23,9 +23,10 @@
 
             backendCommunicator.on("requestIntegrationAccountId", (data) => {
                 service.openGetIdEntyModal({
-                    label: `Enter ${data.integrationName} ID`,
-                    saveText: "Save ID",
-                    inputPlaceholder: "Enter account ID...",
+                    label: `Enter ${data.integrationName} ${data.label ? data.label : "ID"}`,
+                    saveText: "Save",
+                    inputPlaceholder: `Enter ${data.label ? data.label : "ID"}`,
+                    idLabel: data.label,
                     steps: data.steps
                 }, (model) => {
                     backendCommunicator.fireEvent("enteredIntegrationAccountId", {
@@ -44,7 +45,8 @@
                         label: () => options.label,
                         inputPlaceholder: () => options.inputPlaceholder,
                         saveText: () => options.saveText,
-                        steps: () => options.steps
+                        steps: () => options.steps,
+                        idLabel: () => options.idLabel
                     },
                     closeCallback: (resp) => {
                         callback(resp.model);
