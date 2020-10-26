@@ -1,7 +1,7 @@
 'use strict';
 const path = require('path');
 const fs = require('fs');
-const gpgBase = 'gpg --cipher-algo AES256 --passphrase $env:PASSKEY_FOR_FIREBOT_SECRETS --pinentry-mode loopback';
+const gpgBase = `gpg --cipher-algo AES256 --passphrase --passphrase ${process.env.PASSKEY_FOR_FIREBOT_SECRETS} --pinentry-mode loopback`;
 
 module.exports = function (grunt) {
     grunt.config.merge({
