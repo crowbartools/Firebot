@@ -142,6 +142,29 @@ exports.manuallyCooldownCommand = (config) => {
     }
 };
 
+/**
+ *
+ * @param {object} config
+ * @param {string} config.commandId
+ * @param {string} config.username
+ * @param {object} config.cooldowns
+ * @param {boolean} [config.cooldowns.global]
+ * @param {boolean} [config.cooldowns.user]
+ */
+exports.manuallyClearCooldownCommand = (config) => {
+    if (config.commandId == null || config.cooldowns == null || (config.cooldowns.global == null && config.cooldowns.user == null)) return;
+    const globalCacheKey = `${config.commandId}`;
+    const userCacheKey = `${config.commandId}:${config.username}`;
+
+    if (cooldownCache.get(globalCacheKey) !== null && config.cooldowns.global === true) {
+        cooldownCache.del(globalCacheKey);
+    }
+
+    if (cooldownCache.get(userCacheKey) !== null && config.cooldowns.user === true) {
+        cooldownCache.del(userCacheKey);
+    }
+};
+
 function cooldownCommand(command, triggeredSubcmd, username) {
     let cooldown;
     if (triggeredSubcmd == null || triggeredSubcmd.cooldown == null) {
