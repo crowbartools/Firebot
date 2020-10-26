@@ -10,7 +10,7 @@ const model = {
     definition: {
         id: "firebot:cooldown-command",
         name: "Cooldown Command",
-        description: "Manually cooldown a command",
+        description: "Manually add or remove a cooldown for a command",
         icon: "fad fa-hourglass-half",
         categories: [EffectCategory.COMMON, EffectCategory.ADVANCED, EffectCategory.SCRIPTING],
         dependencies: [],
@@ -30,7 +30,22 @@ const model = {
                 </ui-select-choices>
             </ui-select>
         </eos-container>
-        <eos-container header="Cooldowns" pad-top="true" ng-show="effect.commandId != null">
+        <eos-container header="Action" pad-top="true" ng-show="effect.commandId != null">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="list-effect-type">{{effect.action ? effect.action : 'Pick one'}}</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu cooldown-effect-dropdown">
+                    <li ng-click="effect.action = 'Add'">
+                        <a href>Add</a>
+                    </li>
+                    <li ng-click="effect.action = 'Clear'">
+                        <a href>Clear</a>
+                    </li>
+                </ul>
+            </div>
+        </eos-container>
+        <eos-container header="Cooldowns" pad-top="true" ng-show="effect.action === 'Add'">
             <div style="margin-top:5px;">
                 <label class="control-fb control--checkbox"> Global Cooldown
                     <input type="checkbox" ng-init="showGlobal = (effect.globalCooldownSecs != null && effect.globalCooldownSecs !== '')" ng-model="showGlobal"  ng-click="effect.globalCooldownSecs = undefined">
@@ -61,6 +76,26 @@ const model = {
                 </div>         
             </div> 
         </eos-container>
+        <eos-container header="Cooldowns" pad-top="true" ng-show="effect.action === 'Clear'">
+            <div style="margin-top:5px;">
+                <label class="control-fb control--checkbox"> Clear Global Cooldown
+                    <input type="checkbox" ng-model="effect.clearGlobalCooldown">
+                    <div class="control__indicator"></div>
+                </label>       
+            </div>
+            <div style="margin-top:5px;">
+                <label class="control-fb control--checkbox"> Clear User Cooldown
+                    <input type="checkbox" ng-model="effect.clearUserCooldown">
+                    <div class="control__indicator"></div>
+                </label>
+                <div uib-collapse="!effect.clearUserCooldown" style="margin: 0 0 15px 15px;">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="username">Username</span>
+                        <input type="text" class="form-control" aria-describedby="username" replace-variables ng-model="effect.clearUsername" placeholder="Enter name">
+                    </div>
+                </div>         
+            </div> 
+        </eos-container>
     `,
     optionsController: ($scope, commandsService) => {
         $scope.commands = commandsService.getCustomCommands();
@@ -73,6 +108,9 @@ const model = {
         if (effect.userCooldownSecs != null && (effect.username == null || effect.username === '')) {
             errors.push("Please provide a username for the user cooldown");
         }
+        if (effect.clearUserCooldown != null && (effect.clearUsername == null || effect.clearUsername === '')) {
+            errors.push("Please provide a username for clearing user cooldown.");
+        }
         return errors;
     },
     onTriggerEvent: event => {
@@ -80,14 +118,26 @@ const model = {
             let { effect } = event;
 
             const commandHandler = require("../../chat/commands/commandHandler");
-            commandHandler.manuallyCooldownCommand({
-                commandId: effect.commandId,
-                username: effect.username,
-                cooldowns: {
-                    global: !isNaN(effect.globalCooldownSecs) ? parseInt(effect.globalCooldownSecs) : undefined,
-                    user: !isNaN(effect.userCooldownSecs) && effect.username != null && effect.username !== '' ? parseInt(effect.userCooldownSecs) : undefined
-                }
-            });
+
+            if (effect.action === "Add") {
+                commandHandler.manuallyCooldownCommand({
+                    commandId: effect.commandId,
+                    username: effect.username,
+                    cooldowns: {
+                        global: !isNaN(effect.globalCooldownSecs) ? parseInt(effect.globalCooldownSecs) : undefined,
+                        user: !isNaN(effect.userCooldownSecs) && effect.username != null && effect.username !== '' ? parseInt(effect.userCooldownSecs) : undefined
+                    }
+                });
+            } else if (effect.action === "Clear") {
+                commandHandler.manuallyClearCooldownCommand({
+                    commandId: effect.commandId,
+                    username: effect.clearUsername,
+                    cooldowns: {
+                        global: effect.clearGlobalCooldown,
+                        user: effect.clearUserCooldown
+                    }
+                });
+            }
 
             resolve(true);
         });
