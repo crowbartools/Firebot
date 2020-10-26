@@ -1,16 +1,16 @@
 'use strict';
 const path = require('path');
 const fs = require('fs');
-const gpgBase = `gpg --cipher-algo AES256 --passphrase --passphrase ${process.env.PASSKEY_FOR_FIREBOT_SECRETS} --pinentry-mode loopback`;
+const gpgBase = `gpg --cipher-algo AES256 --passphrase ${process.env.PASSKEY_FOR_FIREBOT_SECRETS} --pinentry-mode loopback`;
 
 module.exports = function (grunt) {
     grunt.config.merge({
         shell: {
             encryptsecrets: {
-                command: `${gpgBase} --symmetric --output secrets.gpg secrets.json`
+                command: `${gpgBase} --output secrets.gpg --symmetric secrets.json`
             },
             decryptsecrets: {
-                command: `${gpgBase} --decrypt --output secrets.json secrets.gpg`
+                command: `${gpgBase} --output secrets.json --decrypt secrets.gpg`
             }
         }
     });
