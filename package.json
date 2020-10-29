@@ -66,6 +66,7 @@
         "ejs": "^2.7.1",
         "electron-gh-releases": "^2.0.4",
         "electron-oauth2": "^3.0.0",
+        "electron-regedit": "^2.0.0",
         "electron-window-state": "^4.1.1",
         "empty-folder": "^2.0.2",
         "eventsource": "^1.0.7",
