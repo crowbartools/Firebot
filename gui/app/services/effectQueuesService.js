@@ -15,7 +15,12 @@
                     effectQueues = queues;
                 }
             };
-            service.loadEffectQueues();
+
+            backendCommunicator.on("all-queues", queues => {
+                if (queues != null) {
+                    effectQueues = queues;
+                }
+            });
 
             service.queueModes = [
                 {

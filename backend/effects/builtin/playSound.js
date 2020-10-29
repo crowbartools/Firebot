@@ -80,7 +80,7 @@ const playSound = {
 
         <eos-audio-output-device effect="effect" pad-top="true"></eos-audio-output-device>
 
-        <eos-overlay-instance ng-if="effect.audioOutputDevice && effect.audioOutputDevice.deviceId === 'overlay'"effect="effect" pad-top="true"></eos-overlay-instance>
+        <eos-overlay-instance ng-if="effect.audioOutputDevice && effect.audioOutputDevice.deviceId === 'overlay'" effect="effect" pad-top="true"></eos-overlay-instance>
     </div>
     `,
     /**

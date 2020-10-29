@@ -9,13 +9,18 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["streamlabs:donation", "streamlabs:eldonation", "tipeeestream:donation"];
+triggers[EffectTrigger.EVENT] = [
+    "streamlabs:donation",
+    "streamlabs:eldonation",
+    "tipeeestream:donation",
+    "streamelements:donation"
+];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
         handle: "donationFrom",
-        description: "The name of who sent a StreamLabs/Tipeee/ExtraLife donation",
+        description: "The name of who sent a StreamLabs/Tipeee/StreamElements/ExtraLife donation",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.TEXT]
     },

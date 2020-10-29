@@ -27,8 +27,22 @@
         ) {
             $scope.settings = settingsService;
 
+            $scope.showCreateSetupModal = () => {
+                utilityService.showModal({
+                    component: "createSetupModal"
+                });
+            };
+
+            $scope.showImportSetupModal = () => {
+                utilityService.showModal({
+                    component: "importSetupModal"
+                });
+            };
+
             $scope.getCanClip = () => {
-                return connectionService.accounts && connectionService.accounts.streamer && connectionService.accounts.streamer.canClip;
+                return connectionService.accounts
+                    && connectionService.accounts.streamer
+                    && connectionService.accounts.streamer.canClip;
             };
 
             $scope.clipsFolder = settingsService.getClipDownloadFolder();
@@ -204,8 +218,8 @@
                     .filter(
                         d =>
                             d.kind === "audiooutput" &&
-              d.deviceId !== "communications" &&
-              d.deviceId !== "default"
+                            d.deviceId !== "communications" &&
+                            d.deviceId !== "default"
                     )
                     .map(d => {
                         return { label: d.label, deviceId: d.deviceId };

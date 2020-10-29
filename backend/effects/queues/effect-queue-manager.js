@@ -86,6 +86,10 @@ function getEffectQueue(queueId) {
     return effectQueues[queueId];
 }
 
+function triggerUiRefresh() {
+    frontendCommunicator.send("all-queues", effectQueues);
+}
+
 frontendCommunicator.onAsync("getEffectQueues", async () => effectQueues);
 
 frontendCommunicator.on("saveEffectQueue", (queue) => {
@@ -97,5 +101,8 @@ frontendCommunicator.on("deleteEffectQueue", (queueId) => {
 });
 
 
+
 exports.loadEffectQueues = loadEffectQueues;
 exports.getEffectQueue = getEffectQueue;
+exports.saveEffectQueue = saveEffectQueue;
+exports.triggerUiRefresh = triggerUiRefresh;

@@ -104,7 +104,8 @@
         countersService,
         gamesService,
         presetEffectListsService,
-        startupScriptsService
+        startupScriptsService,
+        effectQueuesService,
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -130,6 +131,8 @@
         presetEffectListsService.loadPresetEffectLists();
 
         startupScriptsService.loadStartupScripts();
+
+        effectQueuesService.loadEffectQueues();
 
         //start notification check
         $timeout(() => {
@@ -392,6 +395,16 @@
                 component: "aboutModal",
                 size: "sm",
                 backdrop: true
+            });
+        });
+
+        backendCommunicator.on("setup-opened", (path) => {
+            utilityService.showModal({
+                component: "importSetupModal",
+                backdrop: true,
+                resolveObj: {
+                    setupFilePath: () => path
+                }
             });
         });
 

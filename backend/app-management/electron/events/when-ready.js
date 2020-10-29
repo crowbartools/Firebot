@@ -1,7 +1,11 @@
 "use strict";
 
+const {checkForFirebotSetupPath} = require("../../file-open-helpers");
+
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
+
+    checkForFirebotSetupPath(process.argv);
 
     const windowManagement = require("../window-management");
 
@@ -107,6 +111,9 @@ exports.whenReady = async () => {
     // get importer in memory
     const v4Importer = require("../../../import/v4/v4-importer");
     v4Importer.setupListeners();
+
+    const setupImporter = require("../../../import/setups/setup-importer");
+    setupImporter.setupListeners();
 
     const { setupCommonListeners } = require("../../../common/common-listeners");
     setupCommonListeners();

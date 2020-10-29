@@ -5,6 +5,7 @@ const { BrowserWindow, Menu, shell } = electron;
 const path = require("path");
 const url = require("url");
 const windowStateKeeper = require("electron-window-state");
+const fileOpenHelpers = require("../file-open-helpers");
 
 /**
  * Firebot's main window
@@ -126,6 +127,8 @@ function createMainWindow() {
         eventManager.triggerEvent("firebot", "firebot-started", {
             username: "Firebot"
         });
+
+        fileOpenHelpers.setWindowReady(true);
     });
 
     mainWindow.webContents.on('new-window', function(e, url) {

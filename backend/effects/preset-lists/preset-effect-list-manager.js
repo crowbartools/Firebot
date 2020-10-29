@@ -80,6 +80,10 @@ function getPresetEffectList(presetListId) {
     return presetEffectLists[presetListId];
 }
 
+function triggerUiRefresh() {
+    frontendCommunicator.send("all-preset-lists", presetEffectLists);
+}
+
 frontendCommunicator.onAsync("getPresetEffectLists", async () => presetEffectLists);
 
 frontendCommunicator.on("savePresetEffectList", (presetList) => {
@@ -92,4 +96,5 @@ frontendCommunicator.on("deletePresetEffectList", (presetListId) => {
 
 exports.loadPresetEffectLists = loadPresetEffectLists;
 exports.getPresetEffectList = getPresetEffectList;
-
+exports.savePresetEffectList = savePresetEffectList;
+exports.triggerUiRefresh = triggerUiRefresh;

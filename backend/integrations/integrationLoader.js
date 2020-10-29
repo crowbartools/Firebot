@@ -9,6 +9,7 @@ exports.loadIntegrations = () => {
     const streamloots = require("./builtin/streamloots/streamloots");
     const hue = require("./builtin/philips-hue/hue");
     const discord = require("./builtin/discord/discord");
+    const streamelements = require("./builtin/streamelements/streamelements");
 
     // register them
     integrationManager.registerIntegration(streamlabs);
@@ -16,4 +17,5 @@ exports.loadIntegrations = () => {
     integrationManager.registerIntegration(streamloots);
     integrationManager.registerIntegration(hue);
     integrationManager.registerIntegration(discord);
+    integrationManager.registerIntegration(streamelements);
 };

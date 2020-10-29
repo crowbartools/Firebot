@@ -6,7 +6,7 @@
 
     angular
         .module("firebotApp")
-        .factory("timerService", function(logger, connectionService) {
+        .factory("timerService", function(logger, connectionService, backendCommunicator) {
             let service = {};
 
             let getTimerDB = () => profileManager.getJsonDbInProfile("timers");
@@ -54,6 +54,12 @@
                     timerDb.push("/" + cleanedTimer.id, cleanedTimer);
                 } catch (err) {} //eslint-disable-line no-empty
             };
+
+            backendCommunicator.on("import-timer", timer => {
+                if (timer == null || timer.id == null) return;
+                service.saveTimer(timer);
+                ipcRenderer.send("refreshTimerCache");
+            });
 
             // Deletes a command.
             service.deleteTimer = function(timer) {

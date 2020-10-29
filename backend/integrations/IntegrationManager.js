@@ -189,7 +189,8 @@ class IntegrationManager extends EventEmitter {
             frontEndCommunicator.send("requestIntegrationAccountId", {
                 integrationId: int.definition.id,
                 integrationName: int.definition.name,
-                steps: int.definition.idDetails && int.definition.idDetails.steps
+                steps: int.definition.idDetails && int.definition.idDetails.steps,
+                label: (int.definition.idDetails && int.definition.idDetails.label) || 'ID'
             });
         } else {
             this.linkIntegration(int, null);
