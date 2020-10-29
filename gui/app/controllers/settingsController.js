@@ -219,8 +219,8 @@
                     .filter(
                         d =>
                             d.kind === "audiooutput" &&
-              d.deviceId !== "communications" &&
-              d.deviceId !== "default"
+                            d.deviceId !== "communications" &&
+                            d.deviceId !== "default"
                     )
                     .map(d => {
                         return { label: d.label, deviceId: d.deviceId };

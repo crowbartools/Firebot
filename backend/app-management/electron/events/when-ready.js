@@ -1,7 +1,11 @@
 "use strict";
 
+const {checkForFirebotSetupPath} = require("../../file-open-helpers");
+
 exports.whenReady = async () => {
     const logger = require("../../../logwrapper");
+
+    checkForFirebotSetupPath(process.argv);
 
     const windowManagement = require("../window-management");
 

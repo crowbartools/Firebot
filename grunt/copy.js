@@ -13,6 +13,7 @@ function remFiles(scope) {
 
     fs.removeSync(path.join(dir, './overlay/'));
     fs.removeSync(path.join(dir, './overlay.html'));
+    fs.removeSync(path.join(dir, './firebot-setup-file-icon.ico'));
     fs.removeSync(path.join(dir, './kbm-java/'));
     fs.removeSync(path.join(dir, './ffmpeg/'));
 }
@@ -24,6 +25,7 @@ module.exports = function (grunt) {
                 files: [
                     {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
                     {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/overlay.html']},
+                    {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/firebot-setup-file-icon.ico']},
                     {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/kbm-java/**']},
                     {expand: true, dest: 'dist/pack/Firebot-win32-x64/', src: ['resources/ffmpeg/**']}
                 ]

@@ -141,21 +141,26 @@ let copyDefaultConfigToUserData = function(
     fs.writeFileSync(destination, fs.readFileSync(source));
 };
 
-let copyResourceToUserData = function(
+const copyResourceToUserData = function(
     resourcePath = "",
     resourceName,
     userDataDestination = ""
 ) {
-    let source = getPathInWorkingDir(
-        resourcePath == null || resourcePath === ""
-            ? path.join("/resources/", resourceName)
-            : path.join("/resources/", resourcePath, resourceName)
-    );
+    try {
+        const source = getPathInWorkingDir(
+            resourcePath == null || resourcePath === ""
+                ? path.join("/resources/", resourceName)
+                : path.join("/resources/", resourcePath, resourceName)
+        );
 
-    let destination = getPathInUserData(
-        path.join(userDataDestination, resourceName)
-    );
-    fs.writeFileSync(destination, fs.readFileSync(source));
+        const destination = getPathInUserData(
+            path.join(userDataDestination, resourceName)
+        );
+        fs.writeFileSync(destination, fs.readFileSync(source));
+    } catch (error) {
+        const logger = require("../logwrapper");
+        logger.error(`Failed to copy resource ${resourceName}`, error);
+    }
 };
 
 let workingDirPathExists = function(filePath) {

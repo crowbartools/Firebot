@@ -24,6 +24,8 @@ exports.loadFilters = () => {
 
     const rewardName = require("./builtin/reward-name");
 
+    const cheerBitsAmount = require("./builtin/cheer-bits-amount");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -43,4 +45,6 @@ exports.loadFilters = () => {
     filterManager.registerFilter(message);
 
     filterManager.registerFilter(rewardName);
+
+    filterManager.registerFilter(cheerBitsAmount);
 };
