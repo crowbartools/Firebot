@@ -15,6 +15,20 @@ exports.setupCommonListeners = () => {
     const backupManager = require("../backupManager");
     const webServer = require("../../server/httpServer");
 
+    frontendCommunicator.onAsync("show-save-dialog", async data => {
+        /**@type {Electron.SaveDialogOptions} */
+        const options = data.options || {};
+
+        /**@type {Electron.SaveDialogReturnValue} */
+        let dialogResult = null;
+        try {
+            dialogResult = await dialog.showSaveDialog(options);
+        } catch (error) {
+            logger.error("Failed to show save dialog", error);
+        }
+        return dialogResult;
+    });
+
     frontendCommunicator.onAsync("open-file-browser", async data => {
         let uuid = data.uuid,
             options = data.options || {};

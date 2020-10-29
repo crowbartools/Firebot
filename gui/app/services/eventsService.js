@@ -154,6 +154,14 @@ const { sort } = require("mathjs");
             return mainEvents;
         };
 
+        service.getAllEvents = () => {
+            return [
+                ...mainEvents,
+                ...groups.map(g => g.events)
+                    .reduce((a, b) => a.concat(b), [])
+            ];
+        };
+
         service.saveMainEvents = function() {
             backendCommunicator.fireEvent("eventUpdate", {
                 action: "saveMainEvents",

@@ -108,6 +108,9 @@ exports.whenReady = async () => {
     const v4Importer = require("../../../import/v4/v4-importer");
     v4Importer.setupListeners();
 
+    const setupImporter = require("../../../import/setups/setup-importer");
+    setupImporter.setupListeners();
+
     const { setupCommonListeners } = require("../../../common/common-listeners");
     setupCommonListeners();
 

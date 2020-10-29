@@ -5,7 +5,8 @@
     const profileManager = require("../../backend/common/profile-manager.js");
     const { ipcRenderer } = require("electron");
 
-    angular.module("firebotApp").factory("currencyService", function(logger, utilityService) {
+    angular.module("firebotApp").factory("currencyService", function(logger, utilityService,
+        backendCommunicator) {
         let service = {};
 
         // The currency settings.
@@ -41,26 +42,35 @@
         };
 
         // Saved the currency modal.
-        service.saveCurrency = function(currency) {
+        service.saveCurrency = function(currency, updateName = false) {
             let currencyId = currency.id,
-                allCurrencies = service.getCurrencies(),
-                dupe = false;
+                allCurrencies = service.getCurrencies();
 
             // Check to make sure we don't have a currency with the same name.
-            Object.keys(allCurrencies).forEach(function(k) {
-                let savedCurrency = allCurrencies[k];
-                if (savedCurrency.name === currency.name) {
-                    dupe = true;
+            if (updateName) {
+                let hasDuplicate;
+                let counter = 1;
+                let name = currency.name;
+                do {
+                    hasDuplicate = Object.values(allCurrencies)
+                        .some(c => c.name === name);
+                    if (hasDuplicate) {
+                        name = currency.name + counter;
+                        counter++;
+                    }
+                } while (hasDuplicate);
+                currency.name = name;
+            } else {
+                const dupe = Object.values(allCurrencies)
+                    .some(c => c.name === name);
+                // Uh Oh! We have a currency with this name already.
+                if (dupe) {
+                    utilityService.showErrorModal(
+                        "You cannot create a currency with the same name as another currency!"
+                    );
+                    logger.error('User tried to create currency with the same name as another currency: ' + currency.name + '.');
+                    return;
                 }
-            });
-
-            // Uh Oh! We have a currency with this name already.
-            if (dupe === true) {
-                utilityService.showErrorModal(
-                    "You cannot create a currency with the same name as another currency!"
-                );
-                logger.error('User tried to create currency with the same name as another currency: ' + currency.name + '.');
-                return;
             }
 
             // Push Currency to DB.
@@ -82,6 +92,15 @@
             ipcRenderer.send("refreshCurrencyCache");
             ipcRenderer.send("refreshCurrencyCommands", {"action": "update", "currency": currency});
         };
+
+        backendCommunicator.on("import-currency", currency => {
+            if (currency == null || currency.id == null) return;
+            if (service.getCurrency(currency.id)) {
+                service.updateCurrency(currency);
+            } else {
+                service.saveCurrency(currency, true);
+            }
+        });
 
         // Purged a currency through the modal.
         service.purgeCurrency = function(currencyId) {

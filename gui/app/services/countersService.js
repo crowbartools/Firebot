@@ -87,6 +87,12 @@
                 }
             });
 
+            backendCommunicator.on("all-counters", counters => {
+                if (counters) {
+                    service.counters = counters;
+                }
+            });
+
             return service;
         });
 }());

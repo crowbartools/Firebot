@@ -18,6 +18,12 @@
                 }
             };
 
+            backendCommunicator.on("all-preset-lists", presetLists => {
+                if (presetLists != null) {
+                    presetEffectLists = presetLists;
+                }
+            });
+
             service.getPresetEffectLists = function() {
                 return Object.values(presetEffectLists);
             };

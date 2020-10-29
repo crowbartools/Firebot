@@ -188,6 +188,11 @@ async function updateCounterValue(counterId, value, overridePreviousValue = fals
     }
 }
 
+function triggerUiRefresh() {
+    frontendCommunicator.send("all-counters", counters ? Object.values(counters) : []);
+}
+
+
 frontendCommunicator.onAsync("get-counters", async () => {
     return counters ? Object.values(counters) : [];
 });
@@ -223,3 +228,5 @@ exports.loadCounters = loadCounters;
 exports.getCounter = getCounter;
 exports.getCounterByName = getCounterByName;
 exports.updateCounterValue = updateCounterValue;
+exports.saveCounter = saveCounter;
+exports.triggerUiRefresh = triggerUiRefresh;

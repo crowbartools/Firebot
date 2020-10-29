@@ -27,8 +27,22 @@
         ) {
             $scope.settings = settingsService;
 
+            $scope.showCreateSetupModal = () => {
+                utilityService.showModal({
+                    component: "createSetupModal"
+                });
+            };
+
+            $scope.showImportSetupModal = () => {
+                utilityService.showModal({
+                    component: "importSetupModal"
+                });
+            };
+
             $scope.getCanClip = () => {
-                return connectionService.accounts && connectionService.accounts.streamer && connectionService.accounts.streamer.canClip;
+                return connectionService.accounts
+                    && connectionService.accounts.streamer
+                    && connectionService.accounts.streamer.canClip;
             };
 
             $scope.clipsFolder = settingsService.getClipDownloadFolder();
