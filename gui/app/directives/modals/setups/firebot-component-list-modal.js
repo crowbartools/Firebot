@@ -6,13 +6,13 @@
             template: `
                 <div class="modal-header">
                     <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
-                    <h4 class="modal-title">Select</h4>
+                    <h4 class="modal-title">Select {{$ctrl.label}}</h4>
                 </div>
                 <div class="modal-body">
                     <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
                         {{$ctrl.label}}
                     </div>
-                    <div class="viewer-group-list" style="height: inherit; min-height: 100px;max-height: 400px;">
+                    <div class="viewer-group-list" style="height: inherit; min-height: 100px;max-height: 300px;">
                         <label ng-repeat="component in $ctrl.allComponents track by component.id" class="control-fb control--checkbox">{{component.name}}
                             <input type="checkbox" ng-click="$ctrl.toggleComponentSelected(component.id)" ng-checked="$ctrl.componentIsSelected(component.id)"  aria-label="..." >
                             <div class="control__indicator"></div>
