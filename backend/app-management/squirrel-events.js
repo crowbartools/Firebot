@@ -10,14 +10,17 @@ const dataAccess = require("../common/data-access.js");
 exports.handleSquirrelEvents = () => {
     if (process.platform === "win32") {
 
-        const { ProgId, Regedit } = require('electron-regedit');
+        const { ProgId, Regedit, ShellOption } = require('electron-regedit');
 
         new ProgId({
             description: 'Firebot Setup',
-            friendlyAppName: true,
+            friendlyAppName: "Firebot",
             squirrel: true,
-            icon: '/resources/firebot-setup-file-icon.ico',
-            extensions: ['firebotsetup']
+            icon: './resources/firebot-setup-file-icon.ico',
+            extensions: ['firebotsetup'],
+            shell: [
+                new ShellOption({verb: 'import', action: 'Import into Firebot', selected: true})
+            ]
         });
 
         let cp;

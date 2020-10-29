@@ -22,7 +22,7 @@
                             <div class="script-name" style="font-size: 30px;font-weight: 100;">{{$ctrl.setup.name || "Unnamed Setup"}} <span class="script-version muted">v{{$ctrl.setup.version}}</span></div>
                             <div style="font-size: 13px;">by <span class="script-author">{{$ctrl.setup.author}}</span></div>
                             <div class="script-description">{{$ctrl.setup.description}}</div>
-                            <button class="btn-sm btn-default" ng-click="$ctrl.resetSelectedFile()" style="margin-top: 3px;">Change</button>
+                            <button ng-show="$ctrl.allowCancel" class="btn-sm btn-default" ng-click="$ctrl.resetSelectedFile()" style="margin-top: 3px;">Cancel</button>
                         </div>
                         <div style="margin-top: 25px;">
                             <h4 class="muted">This Setup Adds:</h4>
@@ -55,6 +55,7 @@
 
                 $ctrl.setupFilePath = null;
                 $ctrl.setupSelected = false;
+                $ctrl.allowCancel = true;
 
                 $ctrl.currentIds = {};
                 [
@@ -95,18 +96,17 @@
                 };
 
                 $ctrl.onFileSelected = (filepath) => {
-                    console.log(filepath);
                     $q.when(fs.readJson(filepath))
                         .then(setup => {
                             if (setup == null || setup.components == null) {
                                 $ctrl.resetSelectedFile("Unable to load setup file: file is invalid");
                                 return;
                             }
-                            console.log(setup);
                             $ctrl.setup = setup;
                             $ctrl.setupSelected = true;
                         }, (reason) => {
                             logger.error("Failed to load setup file", reason);
+                            $ctrl.allowCancel = true;
                             $ctrl.resetSelectedFile("Failed to load setup file: file is invalid");
                             return;
                         });
@@ -131,7 +131,11 @@
                 };
 
                 $ctrl.$onInit = () => {
-
+                    if ($ctrl.resolve.setupFilePath) {
+                        $ctrl.allowCancel = false;
+                        $ctrl.setupFilePath = $ctrl.resolve.setupFilePath;
+                        $ctrl.onFileSelected($ctrl.setupFilePath);
+                    }
                 };
             }
         });
