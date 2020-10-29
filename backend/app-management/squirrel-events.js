@@ -14,12 +14,17 @@ exports.handleSquirrelEvents = () => {
 
         new ProgId({
             description: 'Firebot Setup',
-            friendlyAppName: "Firebot",
-            squirrel: true,
+            progExt: "firebotsetup",
+            squirrel: "Firebot v5.exe",
             icon: './resources/firebot-setup-file-icon.ico',
             extensions: ['firebotsetup'],
             shell: [
-                new ShellOption({verb: 'import', action: 'Import into Firebot', selected: true})
+                new ShellOption({
+                    verb: 'import',
+                    action: 'Import into Firebot',
+                    selected: true,
+                    icon: path.join(path.dirname(process.execPath), '..', 'app.ico')
+                })
             ]
         });
 
