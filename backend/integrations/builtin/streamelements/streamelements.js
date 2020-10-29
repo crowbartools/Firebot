@@ -20,7 +20,7 @@ const integrationDefinition = {
 
 3. Under the Channels tab, click the **Show Secrets** toggle.
 
-4. Copy the **JWT Token** and paste it here.`
+4. Copy the **JWT Token** and paste it here (Don't include the words "JWT Token").`
     }
 };
 
@@ -41,7 +41,6 @@ class StreamElementsIntegration extends EventEmitter {
             return;
         }
 
-
         this._socket = io('https://realtime.streamelements.com', {
             transports: ["websocket"]
         });
@@ -51,15 +50,21 @@ class StreamElementsIntegration extends EventEmitter {
                 method: 'jwt',
                 token: accountId
             });
+            setTimeout(() => {
+                if (!this.connected) {
+                    // if we still haven't connected after 20 secs, disconnect
+                    this.disconnect();
+                }
+            }, 20000);
         });
 
         this._socket.on("error", (err) => {
             logger.error(err);
-            this.emit("disconnected", integrationDefinition.id);
+            this.disconnect();
         });
 
-        this._socket.on('disconnect', function() {
-            this.emit("disconnected", integrationDefinition.id);
+        this._socket.on('disconnect', () => {
+            this.disconnect();
         });
 
         this._socket.on('authenticated', (data) => {

@@ -14,7 +14,9 @@
                         <file-chooser 
                             model="$ctrl.setupFilePath" 
                             on-update="$ctrl.onFileSelected(filepath)" 
-                            options="{filters: [ {name:'Firebot Setups',extensions:['firebotsetup']} ]}">
+                            options="{filters: [ {name:'Firebot Setups',extensions:['firebotsetup']} ]}"
+                            hide-manual-edit="true"
+                        >
                         </file-chooser>
                     </div>
                     <div ng-if="$ctrl.setupSelected">
