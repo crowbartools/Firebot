@@ -130,7 +130,7 @@ const celebration = {
                 let divClass = d.getTime();
 
                 if (type === "Fireworks") {
-                    let canvas = '<canvas id="fireworks" class="' + divClass + '-fireworks celebration ' + type + '" style="display:none;"></canvas>';
+                    let canvas = '<canvas id="fireworks" class="' + divClass + '-fireworks celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
 
                     // Throw div on page and start up.
                     $('.wrapper').append(canvas);
@@ -145,8 +145,8 @@ const celebration = {
                         stage.canvas = null;
                         stage._eventListeners = null;
 
-                        $('.' + divClass + '-image').fadeOut('fast', function() {
-                            $('.' + divClass + '-image').remove();
+                        $('.' + divClass + '-fireworks').fadeOut('fast', function() {
+                            $('.' + divClass + '-fireworks').remove();
                         });
                     }, duration, stage);
                 }
