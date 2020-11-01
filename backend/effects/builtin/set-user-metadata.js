@@ -23,7 +23,7 @@ const effect = {
     globalSettings: {},
     optionsTemplate: `
         <eos-container header="Username">
-            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.username" placeholder="Enter username" replace-variables /> 
+            <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="effect.username" placeholder="Enter username" replace-variables menu-position="below" /> 
         </eos-container>
 
         <eos-container header="Metadata Key" pad-top="true">
