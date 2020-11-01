@@ -203,7 +203,8 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adju
 
             // Do the loop!
             for (let user of docs) {
-                if (user != null && (ignoreDisable || !user.disableAutoStatAccrual)) {
+                if (user != null && user.disableActiveUserList !== true &&
+                    (ignoreDisable || !user.disableAutoStatAccrual)) {
                     await adjustCurrency(user, currencyId, value, adjustType);
                 }
             }

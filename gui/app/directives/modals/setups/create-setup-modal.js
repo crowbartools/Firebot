@@ -39,7 +39,7 @@
                     </div>
 
                     <div>
-                        <div class="alert alert-warning" role="alert" style="opacity: 0.8;margin-bottom: 0;"><b>Warning!</b> Media files (such as images, videos, sounds, customs scripts, etc) referenced by effects will <b>not</b> be included with this Setup.</div>
+                        <div class="alert alert-warning" role="alert" style="opacity: 0.8;margin-bottom: 0;"><b>Warning!</b> Media files (such as images, videos, sounds, customs scripts, etc) referenced in effects will <b>not</b> be included with this Setup.</div>
                     </div>
                 </div>
                 <div class="modal-footer">
