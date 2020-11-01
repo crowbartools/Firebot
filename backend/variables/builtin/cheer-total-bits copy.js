@@ -1,6 +1,5 @@
-// Migration: todo - Needs implementation details
-
 "use strict";
+
 const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
@@ -8,18 +7,19 @@ const {
 const { OutputDataType } = require("../../../shared/variable-contants");
 
 let triggers = {};
+triggers[EffectTrigger.EVENT] = ["twitch:cheer"];
 triggers[EffectTrigger.MANUAL] = true;
-triggers[EffectTrigger.EVENT] = ["twitch:timeout"];
 
 const model = {
     definition: {
-        handle: "timeoutDuration",
-        description: "How long the user is timed out for in minus",
+        handle: "cheerBitsAmount",
+        description: "The total amount of bits in the cheer.",
         triggers: triggers,
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.timeoutDuration || 0;
+        let totalBits = trigger.metadata.eventData.totalBits || 0;
+        return totalBits;
     }
 };
 

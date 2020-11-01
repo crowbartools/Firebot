@@ -103,6 +103,27 @@ module.exports = {
             }
         },
         {
+            id: "banned",
+            name: "Viewer Banned",
+            description: "When someone is banned in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot"
+            }
+        },
+        {
+            id: "timeout",
+            name: "Viewer Timeout",
+            description: "When someone is timed out in your channel",
+            cached: false,
+            queued: false,
+            manualMetadata: {
+                username: "Firebot",
+                timeoutDuration: "1"
+            }
+        },
+        {
             id: "channel-reward-redemption",
             name: "Channel Reward Redemption",
             description: "When someone redeems a CUSTOM channel reward",

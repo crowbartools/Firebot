@@ -21,7 +21,7 @@ exports.setupBotChatListeners = (botChatClient) => {
 
 const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 
-/** @arg {import('twitch-chat-client/lib/ChatClient').default} streamerChatClient */
+/** @arg {import('twitch-chat-client/lib/ChatClient').ChatClient} streamerChatClient */
 exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
@@ -115,5 +115,15 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onRaid((_channel, _username, raidInfo) => {
         const raidListener = require("../../events/twitch-events/raid");
         raidListener.triggerRaid(raidInfo.displayName, raidInfo.viewerCount);
+    });
+
+    streamerChatClient.onBan((_, username) => {
+        const bannedListener = require("../../events/twitch-events/viewer-banned");
+        bannedListener.triggerBanned(username);
+    });
+
+    streamerChatClient.onTimeout((_, username, duration) => {
+        const timeoutListener = require("../../events/twitch-events/viewer-timeout");
+        timeoutListener.triggerTimeout(username, duration);
     });
 };
