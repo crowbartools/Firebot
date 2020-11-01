@@ -49,7 +49,19 @@ async function getUserDetails(userId) {
         };
     }
 
-    const twitchUser = await getUser(userId);
+    let twitchUser;
+    try {
+        twitchUser = await getUser(userId);
+    } catch (error) {
+        // fail silently for now
+    }
+
+    if (twitchUser == null) {
+        return {
+            firebotData: firebotUserData || {}
+        };
+    }
+
     const twitchUserData = {
         id: twitchUser.id,
         username: twitchUser.name,

@@ -62,6 +62,11 @@ exports.getAllActiveUsers = () => {
  * @arg {import('twitch-chat-client/lib/ChatUser').ChatUser} chatUser
  */
 exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = false) => {
+
+    if (chatUser.userName === "jtv" || chatUser.displayName === "jtv") {
+        return;
+    }
+
     const userDatabase = require("../../database/userDatabase");
 
     const ttl = settings.getActiveChatUserListTimeout * 60;

@@ -21,19 +21,19 @@
                     </div>
                 </div>
                 <div ng-if="!$ctrl.loading">
-                    <img ng-src="{{ $ctrl.viewerDetails.firebotData.twitch ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/mixer-icon.png'}}" 
+                    <img ng-src="{{ $ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.iconUrl : '../images/placeholders/mixer-icon.png'}}" 
                         style="width: 200px;height: 200px;border-radius: 200px;position: absolute;left: -50px;top: -50px;"/>
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
-                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.firebotData.twitch ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
+                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
                         </div>
-                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:7px;">              
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:7px;">              
                             <div style="margin-right: 11px;" uib-tooltip="Twitch Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.twitchData.creationDate)}}</div>                       
                         </div>
-                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:10px;">
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
                             <div ng-repeat="role in $ctrl.roles | orderBy : 'rank'" uib-tooltip="{{role.tooltip}}" ng-style="role.style" style="margin-right: 10px;font-size: 13px;text-transform: uppercase;font-weight: bold;font-family: "Roboto";">{{role.name}}</div>
                         </div>
-                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch" style="display:flex;margin-top:10px;">
+                        <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:10px;">
                             <div ng-repeat="action in $ctrl.actions" ng-click="action.onClick()" class="clickable" uib-tooltip="{{action.name}}" style="margin-right: 10px; display:flex; width: 30px; height:30px; align-items:center; justify-content: center; border-radius: 18px; border: 1.5px solid whitesmoke;">            
                                 <i ng-class="action.icon"></i>
                             </div>
@@ -112,35 +112,35 @@
 
                 $ctrl.roles = [];
 
-                function mapMixerRole(rawRole) {
-                    let mappedRole;
-                    switch (rawRole) {
-                    case "Staff":
-                    case "Guardian":
-                    case "GlobalMod":
-                    case "Founder":
-                        mappedRole = "Staff";
-                        break;
-                    case "VerifiedPartner":
-                    case "Partner":
-                        mappedRole = "Partner";
-                        break;
-                    default:
-                        mappedRole = rawRole;
-                    }
-                    return mappedRole;
-                }
+                // function mapMixerRole(rawRole) {
+                //     let mappedRole;
+                //     switch (rawRole) {
+                //     case "Staff":
+                //     case "Guardian":
+                //     case "GlobalMod":
+                //     case "Founder":
+                //         mappedRole = "Staff";
+                //         break;
+                //     case "VerifiedPartner":
+                //     case "Partner":
+                //         mappedRole = "Partner";
+                //         break;
+                //     default:
+                //         mappedRole = rawRole;
+                //     }
+                //     return mappedRole;
+                // }
 
-                const bannedRole = {
-                    name: "Banned",
-                    style: {color: 'red'},
-                    rank: -1
-                };
-                const modRole = {
-                    name: "Moderator",
-                    style: {color: '#37ED3B'},
-                    rank: 6
-                };
+                // const bannedRole = {
+                //     name: "Banned",
+                //     style: {color: 'red'},
+                //     rank: -1
+                // };
+                // const modRole = {
+                //     name: "Moderator",
+                //     style: {color: '#37ED3B'},
+                //     rank: 6
+                // };
 
                 function loadRoles() {
                     /*const mixerRoles = $ctrl.viewerDetails.mixerData.groups.map(g => g.name);
@@ -592,7 +592,7 @@
                 $ctrl.removeViewer = function() {
                     if (!$ctrl.hasFirebotData) return;
 
-                    const displayName = $ctrl.viewerDetails.firebotData.twitch ?
+                    const displayName = $ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ?
                         $ctrl.viewerDetails.twitchData.displayName :
                         $ctrl.viewerDetails.firebotData.username;
 
