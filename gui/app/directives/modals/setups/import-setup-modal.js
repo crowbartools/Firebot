@@ -2,6 +2,10 @@
 
 (function() {
     const fs = require("fs-extra");
+
+    const marked = require("marked");
+    const { sanitize } = require("dompurify");
+
     angular.module("firebotApp")
         .component("importSetupModal", {
             template: `
@@ -23,8 +27,9 @@
                         <div style="padding: 15px;background: #242529;border-radius: 5px;">              
                             <div class="script-name" style="font-size: 30px;font-weight: 100;">{{$ctrl.setup.name || "Unnamed Setup"}} <span class="script-version muted">v{{$ctrl.setup.version}}</span></div>
                             <div style="font-size: 13px;">by <span class="script-author">{{$ctrl.setup.author}}</span></div>
-                            <div class="script-description">{{$ctrl.setup.description}}</div>
-                            <button ng-show="$ctrl.allowCancel" class="btn-sm btn-default" ng-click="$ctrl.resetSelectedFile()" style="margin-top: 3px;">Cancel</button>
+                            <div class="script-description" ng-bind-html="$ctrl.setup.description"></div>
+                            <button class="btn-sm btn-default" ng-click="$ctrl.popoutDescription()" style="margin-top: 3px;">Popout Description</button>
+                            <button ng-show="$ctrl.allowCancel" class="btn-sm btn-link" ng-click="$ctrl.resetSelectedFile()" style="margin-top: 3px;">Cancel</button>
                         </div>
                         <div style="margin-top: 25px;">
                             <h4 class="muted">This Setup Adds:</h4>
@@ -38,7 +43,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="display:flex; justify-content: center;">
+
+                        <div ng-show="$ctrl.setup.requireCurrency" style="margin-top: 25px;">
+                            <h4 class="muted">Currency To Use:</h4>
+                            <p class="muted">This setup requires that you select one of your currencies so it can be used in the included effects, variables, and restrictions.</p>
+                            <select 
+                                class="fb-select" 
+                                ng-model="$ctrl.selectedCurrency" 
+                                ng-options="currency as currency.name for currency in $ctrl.currencies">
+                                <option value="" disabled selected>Select currency...</option>
+                            </select>
+                        </div>
+
+                        <div style="display:flex; justify-content: center;margin-top: 25px;">
                             <button type="button" class="btn btn-primary" ng-click="$ctrl.importSetup()">Import Setup</button>
                         </div>               
                     </div> 
@@ -52,12 +69,15 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, backendCommunicator) {
+                timerService, viewerRolesService, backendCommunicator, $sce) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
                 $ctrl.setupSelected = false;
                 $ctrl.allowCancel = true;
+
+                $ctrl.currencies = currencyService.getCurrencies();
+                $ctrl.selectedCurrency = null;
 
                 $ctrl.currentIds = {};
                 [
@@ -97,6 +117,19 @@
                     $ctrl.setupFilePath = null;
                 };
 
+                $ctrl.popoutDescription = () => {
+                    const modal = window.open('', 'modal');
+
+                    modal.document.write(`
+                        <div style="font-size: 30px;font-weight: 100;">Firebot Setup - ${$ctrl.setup.name}</div>
+                        <div>${$ctrl.setup.description}</div>
+                    `);
+
+                    modal.document.title = `Firebot Setup - ${$ctrl.setup.name}`;
+                    modal.document.body.style.color = "white";
+                    modal.document.body.style.fontFamily = "sans-serif";
+                };
+
                 $ctrl.onFileSelected = (filepath) => {
                     $q.when(fs.readJson(filepath))
                         .then(setup => {
@@ -105,6 +138,9 @@
                                 return;
                             }
                             $ctrl.setup = setup;
+                            $ctrl.setup.description = $sce.trustAsHtml(
+                                sanitize(marked($ctrl.setup.description, {}))
+                            );
                             $ctrl.setupSelected = true;
                         }, (reason) => {
                             logger.error("Failed to load setup file", reason);
@@ -115,8 +151,17 @@
                 };
 
                 $ctrl.importSetup = () => {
+
+                    if ($ctrl.setup.requireCurrency && $ctrl.selectedCurrency == null) {
+                        ngToast.create("Please select a currency to use. If you don't have a currency, create one in the Currency tab and then import this Setup again.");
+                        return;
+                    }
+
                     $.when(
-                        backendCommunicator.fireEventAsync("import-setup", $ctrl.setup)
+                        backendCommunicator.fireEventAsync("import-setup", {
+                            setup: $ctrl.setup,
+                            selectedCurrency: $ctrl.selectedCurrency
+                        })
                     )
                         .then(successful => {
                             if (successful) {
@@ -128,7 +173,6 @@
                             } else {
                                 ngToast.create(`Failed to import Setup: ${$ctrl.setup.name}`);
                             }
-
                         });
                 };
 

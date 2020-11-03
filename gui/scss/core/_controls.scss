@@ -176,9 +176,10 @@
 
 .fb-select {
     height: 37px;
-    color: black;
+    color: white;
+    background: #24262A;
     border-radius: 3px;
-    border: 1px solid #cccccc;
+    border: none;
     width: 100%;
     margin-bottom: 5px;
     &:hover {

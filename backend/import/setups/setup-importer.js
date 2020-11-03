@@ -11,9 +11,51 @@ const eventsAccess = require("../../events/events-access");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
 
+function findAndReplaceCurrency(data, currency) {
+    const entries = Object.entries(data);
+    for (const [key, value] of entries) {
+        if (value && typeof value === "string") {
+            if (value.includes("$currency[")) {
+                data[key] = data[key].replace(/\$currency\[\w+\b/gm, `$currency[${currency.name}`);
+            }
+            if (value.includes("$topCurrency[")) {
+                data[key] = data[key].replace(/\$topCurrency\[\w+\b/gm, `$topCurrency[${currency.name}`);
+            }
+            if (value.includes("$topCurrencyUser[")) {
+                data[key] = data[key].replace(/\$topCurrencyUser\[\w+\b/gm, `$topCurrencyUser[${currency.name}`);
+            }
+        } else if (value && typeof value === "object") {
 
-function importSetup(setup) {
+            // check for currency effect
+            if (value.type === "firebot:currency") {
+                value.currency = currency.id;
+            // check for currency restriction
+            } else if (value.type === "firebot:channelcurrency") {
+                value.selectedCurrency = currency.id;
+            }
+
+            // recurse
+            findAndReplaceCurrency(value, currency);
+        }
+    }
+}
+
+function replaceCurrency(components, currency) {
+    // loop through every component type (command, event, etc)
+    for (const componentArray of Object.values(components)) {
+        // loop through each component
+        for (const component of componentArray) {
+            findAndReplaceCurrency(component, currency);
+        }
+    }
+}
+
+function importSetup(setup, selectedCurrency) {
     if (setup == null || setup.components == null) return false;
+
+    if (setup.requireCurrency) {
+        replaceCurrency(setup.components, selectedCurrency);
+    }
 
     // commands
     const commands = setup.components.commands || [];
@@ -97,8 +139,8 @@ function importSetup(setup) {
 }
 
 function setupListeners() {
-    frontendCommunicator.onAsync("import-setup", async (setup) => {
-        return importSetup(setup);
+    frontendCommunicator.onAsync("import-setup", async ({setup, selectedCurrency}) => {
+        return importSetup(setup, selectedCurrency);
     });
 }
 
