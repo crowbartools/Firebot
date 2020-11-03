@@ -15,7 +15,7 @@
                     <input type="text" class="form-control" ng-model="$ctrl.setup.name" placeholder="Enter name">
 
                     <h3>Description</h3>
-                    <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.setup.description" placeholder="Enter description"></textarea>
+                    <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.setup.description" placeholder="Enter description (supports Markdown)"></textarea>
 
                     <h3>Version</h3>
                     <input type="number" class="form-control" ng-model="$ctrl.setup.version" placeholder="Enter version">

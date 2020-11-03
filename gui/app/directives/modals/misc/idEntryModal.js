@@ -2,9 +2,11 @@
 
 // generic modal for asking the user for an ID for a third party integration
 
-const marked = require("marked");
-
 (function() {
+
+    const marked = require("marked");
+    const { sanitize } = require("dompurify");
+
     angular
         .module('firebotApp')
         .component("idEntryModal", {
@@ -84,7 +86,7 @@ const marked = require("marked");
                     }
 
                     if ($ctrl.resolve.steps) {
-                        $ctrl.steps = $sce.trustAsHtml(marked($ctrl.resolve.steps));
+                        $ctrl.steps = $sce.trustAsHtml(sanitize(marked($ctrl.resolve.steps)));
                         $ctrl.hasSteps = true;
                     }
                 };

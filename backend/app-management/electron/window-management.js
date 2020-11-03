@@ -42,9 +42,27 @@ function createMainWindow() {
         backgroundColor: "#1E2023",
         frame: false,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            nativeWindowOpen: true
         }
     });
+
+    mainWindow.webContents.on('new-window',
+        (event, _url, frameName, _disposition, options, _) => {
+            if (frameName === 'modal') {
+                // open window as modal
+                event.preventDefault();
+                Object.assign(options, {
+                    frame: true,
+                    titleBarStyle: "default",
+                    parent: mainWindow,
+                    width: 250,
+                    height: 400,
+                    javascript: false
+                });
+                event.newGuest = new BrowserWindow(options);
+            }
+        });
 
     //set a global reference, lots of backend files depend on this being available globally
     exports.mainWindow = mainWindow;

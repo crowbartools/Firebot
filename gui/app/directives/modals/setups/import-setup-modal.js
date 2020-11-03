@@ -2,6 +2,10 @@
 
 (function() {
     const fs = require("fs-extra");
+
+    const marked = require("marked");
+    const { sanitize } = require("dompurify");
+
     angular.module("firebotApp")
         .component("importSetupModal", {
             template: `
@@ -23,7 +27,8 @@
                         <div style="padding: 15px;background: #242529;border-radius: 5px;">              
                             <div class="script-name" style="font-size: 30px;font-weight: 100;">{{$ctrl.setup.name || "Unnamed Setup"}} <span class="script-version muted">v{{$ctrl.setup.version}}</span></div>
                             <div style="font-size: 13px;">by <span class="script-author">{{$ctrl.setup.author}}</span></div>
-                            <div class="script-description">{{$ctrl.setup.description}}</div>
+                            <div class="script-description" ng-bind-html="$ctrl.setup.description"></div>
+                            <button class="btn-sm btn-default" ng-click="$ctrl.popoutDescription()" style="margin-top: 3px;">Popout Description</button>
                             <button ng-show="$ctrl.allowCancel" class="btn-sm btn-default" ng-click="$ctrl.resetSelectedFile()" style="margin-top: 3px;">Cancel</button>
                         </div>
                         <div style="margin-top: 25px;">
@@ -52,7 +57,7 @@
             },
             controller: function($q, logger, ngToast, commandsService, countersService, currencyService,
                 effectQueuesService, eventsService, hotkeyService, presetEffectListsService,
-                timerService, viewerRolesService, backendCommunicator) {
+                timerService, viewerRolesService, backendCommunicator, $sce) {
                 const $ctrl = this;
 
                 $ctrl.setupFilePath = null;
@@ -97,6 +102,19 @@
                     $ctrl.setupFilePath = null;
                 };
 
+                $ctrl.popoutDescription = () => {
+                    const modal = window.open('', 'modal');
+
+                    modal.document.write(`
+                        <div style="font-size: 30px;font-weight: 100;">Firebot Setup - ${$ctrl.setup.name}</div>
+                        <div>${$ctrl.setup.description}</div>
+                    `);
+
+                    modal.document.title = `Firebot Setup - ${$ctrl.setup.name}`;
+                    modal.document.body.style.color = "white";
+                    modal.document.body.style.fontFamily = "sans-serif";
+                };
+
                 $ctrl.onFileSelected = (filepath) => {
                     $q.when(fs.readJson(filepath))
                         .then(setup => {
@@ -105,6 +123,9 @@
                                 return;
                             }
                             $ctrl.setup = setup;
+                            $ctrl.setup.description = $sce.trustAsHtml(
+                                sanitize(marked($ctrl.setup.description, {}))
+                            );
                             $ctrl.setupSelected = true;
                         }, (reason) => {
                             logger.error("Failed to load setup file", reason);
@@ -128,7 +149,6 @@
                             } else {
                                 ngToast.create(`Failed to import Setup: ${$ctrl.setup.name}`);
                             }
-
                         });
                 };
 

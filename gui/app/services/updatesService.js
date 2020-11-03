@@ -7,6 +7,8 @@
     const UpdateType = VersionCompare.UpdateType;
     const marked = require("marked");
 
+    const { sanitize } = require("dompurify");
+
     angular
         .module('firebotApp')
         .factory('updatesService', function (logger, $q, $http, $sce, settingsService, utilityService, listenerService) {
@@ -97,7 +99,7 @@
                             let gitName = gitNewest.name;
                             let gitDate = gitNewest.published_at;
                             let gitLink = gitNewest.html_url;
-                            let gitNotes = marked(gitNewest.body);
+                            let gitNotes = sanitize(marked(gitNewest.body));
                             let gitZipDownloadUrl = gitNewest.assets[0].browser_download_url;
 
                             // Now lets look to see if there is a newer version.
