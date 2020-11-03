@@ -43,7 +43,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="display:flex; justify-content: center;">
+
+                        <div ng-show="$ctrl.setup.requireCurrency" style="margin-top: 25px;">
+                            <h4 class="muted">Currency To Use:</h4>
+                            <p class="muted">This setup requires that you select one of your currencies so it can be used in the included effects, variables, and restrictions.</p>
+                            <select 
+                                class="fb-select" 
+                                ng-model="$ctrl.selectedCurrency" 
+                                ng-options="currency as currency.name for currency in $ctrl.currencies">
+                                <option value="" disabled selected>Select currency...</option>
+                            </select>
+                        </div>
+
+                        <div style="display:flex; justify-content: center;margin-top: 25px;">
                             <button type="button" class="btn btn-primary" ng-click="$ctrl.importSetup()">Import Setup</button>
                         </div>               
                     </div> 
@@ -63,6 +75,9 @@
                 $ctrl.setupFilePath = null;
                 $ctrl.setupSelected = false;
                 $ctrl.allowCancel = true;
+
+                $ctrl.currencies = currencyService.getCurrencies();
+                $ctrl.selectedCurrency = null;
 
                 $ctrl.currentIds = {};
                 [
@@ -136,8 +151,17 @@
                 };
 
                 $ctrl.importSetup = () => {
+
+                    if ($ctrl.setup.requireCurrency && $ctrl.selectedCurrency == null) {
+                        ngToast.create("Please select a currency to use. If you don't have a currency, create one in the Currency tab and then import this Setup again.");
+                        return;
+                    }
+
                     $.when(
-                        backendCommunicator.fireEventAsync("import-setup", $ctrl.setup)
+                        backendCommunicator.fireEventAsync("import-setup", {
+                            setup: $ctrl.setup,
+                            selectedCurrency: $ctrl.selectedCurrency
+                        })
                     )
                         .then(successful => {
                             if (successful) {

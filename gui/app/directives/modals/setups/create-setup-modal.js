@@ -38,7 +38,15 @@
                         </button>
                     </div>
 
+                    <h3>Options</h3>
                     <div>
+                        <label class="control-fb control--checkbox" style="margin-bottom: 0px; font-size: 13px;opacity.0.9;"> Require User To Select A Currency <tooltip text="'Require the user to select one of THEIR currencies before importing. Firebot will update all Currency Effects, Variables, and Restrictions in the included components to use the selected currency. This is great for Chat games.'"></tooltip>
+                            <input type="checkbox" ng-model="$ctrl.setup.requireCurrency">
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 20px;">
                         <div class="alert alert-warning" role="alert" style="opacity: 0.8;margin-bottom: 0;"><b>Warning!</b> Media files (such as images, videos, sounds, customs scripts, etc) referenced in effects will <b>not</b> be included with this Setup.</div>
                     </div>
                 </div>
@@ -145,7 +153,8 @@
                         presetEffectLists: [],
                         timers: [],
                         viewerRoles: []
-                    }
+                    },
+                    requireCurrency: false
                 };
 
                 $ctrl.save = () => {
