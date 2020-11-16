@@ -136,7 +136,8 @@
             };
 
             $scope.openDevTools = () => {
-                remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
+                require("electron").remote.BrowserWindow
+                    .getFocusedWindow().webContents.openDevTools();
             };
 
             $scope.recalculateQuoteIds = () => {
