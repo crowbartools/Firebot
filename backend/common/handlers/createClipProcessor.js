@@ -68,7 +68,6 @@ exports.createClip = async function(effect, trigger) {
         if (effect.postLink) {
             twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
         }
-        renderWindow.webContents.send('error', `Failed to create a clip.`);
         return;
     }
 
@@ -86,7 +85,7 @@ exports.createClip = async function(effect, trigger) {
             await utils.wait(1000);
         }
     }
-    while (clip == null && attempts < 10);
+    while (clip == null && attempts < 15);
 
     if (clip != null) {
         if (effect.postLink) {
@@ -114,7 +113,6 @@ exports.createClip = async function(effect, trigger) {
         if (effect.postLink) {
             twitchChat.sendChatMessage("Whoops! Something went wrong when creating a clip. :(");
         }
-        renderWindow.webContents.send('error', `Failed to create a clip.`);
     }
     return true;
 };
