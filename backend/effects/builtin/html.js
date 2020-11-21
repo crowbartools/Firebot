@@ -46,7 +46,7 @@ const html = {
     <eos-container header="Show Duration" pad-top="true">
         <div class="input-group">
             <span class="input-group-addon" id="html-length-effect-type">Seconds</span>
-            <input ng-model="effect.length" type="text" class="form-control" id="html-length-setting" aria-describedby="html-length-effect-type" type="number">
+            <input ng-model="effect.length" type="text" class="form-control" id="html-length-setting" aria-describedby="html-length-effect-type" replace-variables="number">
         </div>
         <eos-collapsable-panel show-label="Advanced" hide-label="Hide Advanced">
             <h4>Custom Removal CSS Selector</h4>
