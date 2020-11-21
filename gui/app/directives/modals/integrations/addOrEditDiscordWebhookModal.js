@@ -88,7 +88,7 @@
                 }
 
                 function validateWebhookUrl() {
-                    const webhookRegex = /^https:\/\/discordapp\.com\/api\/webhooks\/[^/\s]+\/[^/\s]+$/i;
+                    const webhookRegex = /^https:\/\/discord(?:app)?\.com\/api\/webhooks\/[^/\s]+\/[^/\s]+$/i;
                     const webhookUrl = $ctrl.channel.webhookUrl;
                     return webhookUrl != null && webhookUrl.length > 0 && webhookRegex.test(webhookUrl);
                 }

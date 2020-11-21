@@ -108,14 +108,14 @@ async function getChannelInformationByUsername(username) {
 async function triggerAdBreak(adLength) {
     try {
         const client = twitchApi.getClient();
-        const streamerAccount = accountAccess.getAccounts().streamer;
-        const channelId = (await client.helix.users.getUserByName(streamerAccount.username)).id;
+        const userId = accountAccess.getAccounts().streamer.userId;
 
         if (adLength == null) {
             adLength = 30;
         }
 
-        await client.kraken.channels.startChannelCommercial(channelId, adLength);
+        await client.kraken.channels.startChannelCommercial(userId, adLength);
+
         logger.debug(`A commercial was run. Length: ${adLength}. Twitch does not send confirmation, so we can't be sure it ran.`);
         return true;
     } catch (error) {
