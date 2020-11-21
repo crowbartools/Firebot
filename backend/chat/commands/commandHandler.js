@@ -82,11 +82,11 @@ function flushCooldownCache() {
 
 function getRemainingCooldown(command, triggeredSubcmd, username) {
     let globalCacheKey = `${command.id}${
-        triggeredSubcmd ? `:${triggeredSubcmd.arg}` : ""
+        triggeredSubcmd ? `:${triggeredSubcmd.id || triggeredSubcmd.arg}` : ""
     }`;
 
     let userCacheKey = `${command.id}${
-        triggeredSubcmd ? `:${triggeredSubcmd.arg}` : ""
+        triggeredSubcmd ? `:${triggeredSubcmd.id || triggeredSubcmd.arg}` : ""
     }:${username}`;
 
     let remainingGlobal = 0,
@@ -114,6 +114,7 @@ function getRemainingCooldown(command, triggeredSubcmd, username) {
  *
  * @param {object} config
  * @param {string} config.commandId
+ * @param {string} [config.subcommandId]
  * @param {string} config.username
  * @param {object} config.cooldowns
  * @param {number} [config.cooldowns.global]
@@ -122,8 +123,10 @@ function getRemainingCooldown(command, triggeredSubcmd, username) {
 exports.manuallyCooldownCommand = (config) => {
     if (config.commandId == null || config.cooldowns == null ||
         (config.cooldowns.global == null && config.cooldowns.user == null)) return;
-    const globalCacheKey = `${config.commandId}`;
-    const userCacheKey = `${config.commandId}:${config.username}`;
+
+    const globalCacheKey = `${config.commandId}${config.subcommandId ? `:${config.subcommandId}` : ''}`;
+    const userCacheKey = `${config.commandId}:${config.subcommandId ? `${config.subcommandId}:` : ''}${config.username}`;
+
     if (config.cooldowns.global > 0) {
         if (cooldownCache.get(globalCacheKey) == null) {
             cooldownCache.set(
@@ -146,15 +149,18 @@ exports.manuallyCooldownCommand = (config) => {
  *
  * @param {object} config
  * @param {string} config.commandId
+ * @param {string} [config.subcommandId]
  * @param {string} config.username
  * @param {object} config.cooldowns
  * @param {boolean} [config.cooldowns.global]
  * @param {boolean} [config.cooldowns.user]
  */
 exports.manuallyClearCooldownCommand = (config) => {
-    if (config.commandId == null || config.cooldowns == null || (config.cooldowns.global == null && config.cooldowns.user == null)) return;
-    const globalCacheKey = `${config.commandId}`;
-    const userCacheKey = `${config.commandId}:${config.username}`;
+    if (config.commandId == null || config.cooldowns == null ||
+        (config.cooldowns.global == null && config.cooldowns.user == null)) return;
+
+    const globalCacheKey = `${config.commandId}${config.subcommandId ? `:${config.subcommandId}` : ''}`;
+    const userCacheKey = `${config.commandId}:${config.subcommandId ? `${config.subcommandId}:` : ''}${config.username}`;
 
     if (cooldownCache.get(globalCacheKey) !== null && config.cooldowns.global === true) {
         cooldownCache.del(globalCacheKey);
@@ -176,11 +182,11 @@ function cooldownCommand(command, triggeredSubcmd, username) {
     logger.debug("Triggering cooldown for command");
 
     let globalCacheKey = `${command.id}${
-        triggeredSubcmd ? `:${triggeredSubcmd.arg}` : ""
+        triggeredSubcmd ? `:${triggeredSubcmd.id || triggeredSubcmd.arg}` : ""
     }`;
 
     let userCacheKey = `${command.id}${
-        triggeredSubcmd ? `:${triggeredSubcmd.arg}` : ""
+        triggeredSubcmd ? `:${triggeredSubcmd.id || triggeredSubcmd.arg}` : ""
     }:${username}`;
 
     if (cooldown.global > 0) {

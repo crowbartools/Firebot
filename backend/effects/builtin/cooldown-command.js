@@ -22,13 +22,29 @@ const model = {
     },
     globalSettings: {},
     optionsTemplate: `
-        <eos-container header="Command To Cooldown">
-            <ui-select ng-model="effect.commandId" theme="bootstrap">
+        <eos-container header="Command To Cooldown" ng-init="showSubcommands = effect.subcommandId != null">
+            <ui-select ng-model="effect.commandId" theme="bootstrap" on-select="commandSelected($item, $model)">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in commands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
                 </ui-select-choices>
             </ui-select>
+
+            <div style="margin-top: 10px; padding-left: 10px;" ng-show="subcommands && !!subcommands.length">
+                <label class="control-fb control--radio">Cooldown base command
+                    <input type="radio" ng-model="showSubcommands" ng-value="false" ng-click="effect.subcommandId = null"/>
+                    <div class="control__indicator"></div>
+                </label>
+                <label class="control-fb control--radio" >Cooldown subcommand
+                    <input type="radio" ng-model="showSubcommands" ng-value="true"/>
+                    <div class="control__indicator"></div>
+                </label>
+                
+                <div ng-show="showSubcommands">
+                    <dropdown-select selected="effect.subcommandId" options="subcommandOptions" placeholder="Please select"></dropdown-select>
+                </div>
+            </div>
+
         </eos-container>
         <eos-container header="Action" pad-top="true" ng-show="effect.commandId != null">
             <div class="btn-group">
@@ -99,6 +115,37 @@ const model = {
     `,
     optionsController: ($scope, commandsService) => {
         $scope.commands = commandsService.getCustomCommands();
+
+        $scope.subcommands = [];
+
+        $scope.subcommandOptions = {};
+
+        $scope.createSubcommandOptions = () => {
+            let options = {};
+            if ($scope.subcommands) {
+                $scope.subcommands.forEach(sc => {
+                    options[sc.id] = sc.regex || sc.fallback ? (sc.usage || "").split(" ")[0] : sc.arg;
+                });
+            }
+            $scope.subcommandOptions = options;
+        };
+
+        $scope.getSubcommands = () => {
+            $scope.subcommands = [];
+            const commandId = $scope.effect.commandId;
+            if (commandId == null) return;
+            const command = $scope.commands.find(c => c.id === commandId);
+            if (command == null) return;
+            if (command.subCommands) {
+                $scope.subcommands = command.subCommands;
+            }
+            $scope.createSubcommandOptions();
+        };
+        $scope.commandSelected = (command) => {
+            $scope.effect.commandId = command.id;
+            $scope.getSubcommands();
+        };
+        $scope.getSubcommands();
     },
     optionsValidator: effect => {
         let errors = [];
@@ -122,6 +169,7 @@ const model = {
             if (effect.action === "Add") {
                 commandHandler.manuallyCooldownCommand({
                     commandId: effect.commandId,
+                    subcommandId: effect.subcommandId,
                     username: effect.username,
                     cooldowns: {
                         global: !isNaN(effect.globalCooldownSecs) ? parseInt(effect.globalCooldownSecs) : undefined,
@@ -131,6 +179,7 @@ const model = {
             } else if (effect.action === "Clear") {
                 commandHandler.manuallyClearCooldownCommand({
                     commandId: effect.commandId,
+                    subcommandId: effect.subcommandId,
                     username: effect.clearUsername,
                     cooldowns: {
                         global: effect.clearGlobalCooldown,
