@@ -109,13 +109,14 @@ const showText = {
     <eos-enter-exit-animations effect="effect" class="setting-padtop"></eos-enter-exit-animations>
 
     <eos-container header="Duration" class="setting-padtop">
-    <div class="input-group">
-        <span class="input-group-addon">Seconds</span>
-        <input
-            class="form-control"
-            type="number"
-            ng-model="effect.duration">
-    </div>
+        <div class="input-group">
+            <span class="input-group-addon">Seconds</span>
+            <input
+                class="form-control"
+                type="text"
+                ng-model="effect.duration"
+                replace-variables="number">
+        </div>
     </eos-container>
 
     <eos-overlay-instance effect="effect" class="setting-padtop"></eos-overlay-instance>

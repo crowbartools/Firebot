@@ -118,7 +118,7 @@ const playVideo = {
                     type="text"
                     class="form-control"
                     aria-describedby="video-length-effect-type"
-                    type="number"
+                    replace-variables="number"
                     ng-model="effect.length">
             </div>
             <label class="control-fb control--checkbox" style="margin-top:15px;"> Loop <tooltip text="'Loop the video until the duration is reached.'"></tooltip>

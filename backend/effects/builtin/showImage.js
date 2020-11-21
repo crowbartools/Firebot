@@ -108,7 +108,7 @@ const showImage = {
                 type="text"
                 class="form-control"
                 aria-describedby="image-length-effect-type"
-                type="number"
+                replace-variables="number"
                 ng-model="effect.length">
         </div>
     </div>
