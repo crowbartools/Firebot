@@ -134,7 +134,7 @@ class TwitchChat extends EventEmitter {
                     userName: firebotChatMessage.username,
                     displayName: firebotChatMessage.username
                 }, true, false);
-                commandHandler.handleChatMessage(firebotChatMessage);
+                //commandHandler.handleChatMessage(firebotChatMessage);
                 frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
                 twitchChatListeners.events.emit("chat-message", firebotChatMessage);
             }
@@ -269,11 +269,11 @@ class TwitchChat extends EventEmitter {
 
 const twitchChat = new TwitchChat();
 
-frontendCommunicator.on("send-chat-message", sendData => {
+frontendCommunicator.on("send-chat-message", async sendData => {
     const { message, accountType } = sendData;
 
     // Run commands from firebot chat.
-    let firebotMessage = chatHelpers.buildFirebotChatMessageFromText(message);
+    let firebotMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
     commandHandler.handleChatMessage(firebotMessage);
 
     twitchChat.sendChatMessage(message, null, accountType);

@@ -307,7 +307,7 @@ module.exports = {
         triviaCommand.registerTriviaCommand();
     },
     onUnload: settings => {
-        triviaCommand.registerTriviaCommand();
+        triviaCommand.unregisterTriviaCommand();
         triviaCommand.purgeCaches();
     },
     onSettingsUpdate: settings => {
