@@ -78,7 +78,7 @@ const chat = {
     onTriggerEvent: async event => {
         const { effect, trigger } = event;
 
-        twitchChat.sendChatMessage(effect.message, null, effect.chatter);
+        twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter);
         return true;
     },
     /**
