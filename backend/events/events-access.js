@@ -100,15 +100,18 @@ function saveMainEvents(events) {
 }
 
 function saveNewEventToMainEvents(event) {
-    if (event == null) return;
-    let eventsDb = getEventsDb();
+    if (event == null || event.id == null) return;
     try {
         if (mainEvents == null) {
             mainEvents = [];
         }
+
+        // remove existing event if present
+        mainEvents = mainEvents.filter(e => e.id !== event.id);
+
         mainEvents.push(event);
-        eventsDb.push("/mainEvents[]", event, true);
-        logger.debug(`Saved main events.`);
+
+        saveMainEvents(mainEvents);
     } catch (err) {
         logger.warn(`Unable to save new event to main events.`, err);
     }
