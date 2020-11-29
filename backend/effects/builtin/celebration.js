@@ -70,7 +70,7 @@ const celebration = {
    * Port over from effectHelperService.js
    */
     optionsController: $scope => {
-        $scope.celebrationTypes = ["Fireworks"];
+        $scope.celebrationTypes = ["Fireworks", "Confetti"];
         if ($scope.effect.length == null) {
             $scope.effect.length = 5;
         }
@@ -149,6 +149,50 @@ const celebration = {
                             $('.' + divClass + '-fireworks').remove();
                         });
                     }, duration, stage);
+                }
+
+                if (type === "Confetti") {
+                    let canvas = '<canvas id="confetti" class="' + divClass + '-confetti celebration ' + type + '" style="display:none; z-index: 99;"></canvas>';
+
+                    // Throw div on page and start up.
+                    $('.wrapper').append(canvas);
+                    $('.' + divClass + '-confetti').fadeIn('fast');
+
+                    let confettiStage = confetti.create(document.getElementsByClassName(divClass + '-confetti')[0], { // eslint-disable-line no-undef
+                        resize: true,
+                        useWorker: true
+                    });
+
+                    let confettiParty = setInterval(function() {
+                        // launch a few confetti from the left edge
+                        confettiStage({ // eslint-disable-line no-undef
+                            particleCount: 10,
+                            angle: 60,
+                            spread: 40,
+                            startVelocity: 90,
+                            shapes: ['circle', 'circle', 'square'],
+                            scalar: 1.65,
+                            origin: { x: 0, y: 0.9}
+                        });
+                        // and launch a few from the right edge
+                        confettiStage({ // eslint-disable-line no-undef
+                            particleCount: 10,
+                            angle: 120,
+                            spread: 40,
+                            startVelocity: 90,
+                            shapes: ['circle', 'circle', 'square'],
+                            scalar: 1.65,
+                            origin: { x: 1, y: 0.9}
+                        });
+                    }, 250);
+
+                    setTimeout(function(confettiStage) {
+                        $('.' + divClass + '-confetti').fadeOut('slow', function() {
+                            $('.' + divClass + '-confetti').remove();
+                            confettiStage.reset();
+                            clearInterval(confettiParty);
+                        });
+                    }, duration, confettiStage);
                 }
             }
         }
