@@ -10,9 +10,26 @@ const utils = require("../../utility");
 
 const NodeCache = require("node-cache");
 const DEFAULT_ACTIVE_TIMEOUT = 300; // 5 mins
+const ONLINE_TIMEOUT = 450; // 7.50 mins
+
+/**
+ * Simple User
+ * @typedef {Object} User
+ * @property {id} id
+ * @property {string} username
+ */
+
+/**
+ * @typedef {Object} UserDetails
+ * @property {number} id
+ * @property {string} username
+ * @property {string} displayName
+ * @property {string} profilePicUrl
+ * @property {string[]} twitchRoles
+ */
 
 // this is used only for setting "online: true" in user db (which is the used for currency payouts)
-const onlineUsers = new NodeCache({ stdTTL: DEFAULT_ACTIVE_TIMEOUT, checkperiod: 15 });
+const onlineUsers = new NodeCache({ stdTTL: ONLINE_TIMEOUT, checkperiod: 15 });
 
 // this is used for general active user features
 const activeUsers = new NodeCache({ stdTTL: DEFAULT_ACTIVE_TIMEOUT, checkperiod: 15 });
@@ -38,12 +55,7 @@ exports.getRandomActiveUser = () => {
     return allActiveUsers[randomIndex];
 };
 
-/**
- * Simple User
- * @typedef {Object} User
- * @property {id} id
- * @property {string} username
- */
+
 
 /**
   * @returns {User[]}
@@ -56,6 +68,68 @@ exports.getAllActiveUsers = () => {
         };
     });
 };
+
+/**
+ *
+ * @param {UserDetails} userDetails
+ * @param {boolean} [updateDb]
+ */
+async function updateUserOnlineStatus(userDetails, updateDb = false) {
+    const logger = require("../../logwrapper");
+    const userDatabase = require("../../database/userDatabase");
+
+    const userOnline = onlineUsers.get(userDetails.id);
+    if (userOnline) {
+        logger.debug(`Updating user ${userDetails.displayName}'s "online" ttl to ${ONLINE_TIMEOUT} secs`);
+        onlineUsers.ttl(userDetails.id, ONLINE_TIMEOUT);
+    } else {
+        logger.debug(`Marking user ${userDetails.displayName} as online with ttl of ${ONLINE_TIMEOUT} secs`);
+        onlineUsers.set(userDetails.id, true, ONLINE_TIMEOUT);
+        frontendCommunicator.send("twitch:chat:user-joined", {
+            id: userDetails.id,
+            username: userDetails.displayName
+        });
+        if (updateDb) {
+            await userDatabase.setChatUserOnline(userDetails);
+        }
+    }
+}
+
+exports.addOnlineUser = async (username) => {
+    const userDatabase = require("../../database/userDatabase");
+
+    let firebotUser = await userDatabase.getTwitchUserByUsername(username);
+
+    if (firebotUser == null) {
+        const twitchApi = require("../../twitch-api/api");
+        const twitchUser = await twitchApi.getClient().helix.users.getUserByName(username);
+
+        const userDetails = {
+            id: twitchUser.id,
+            username: twitchUser.name,
+            displayName: twitchUser.displayName,
+            twitchRoles: [],
+            profilePicUrl: twitchUser.profilePictureUrl
+        };
+
+        chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.twitchUser.profilePictureUrl);
+
+        await userDatabase.addNewUserFromChat(userDetails, true);
+
+        await updateUserOnlineStatus(userDetails, false);
+    } else {
+        const userDetails = {
+            id: firebotUser._id,
+            username: firebotUser.username,
+            displayName: firebotUser.displayName,
+            twitchRoles: firebotUser.twitchRoles,
+            profilePicUrl: firebotUser.profilePicUrl
+        };
+        await updateUserOnlineStatus(userDetails, true);
+    }
+};
+
+
 
 /**
  * Add or update an active user
@@ -93,19 +167,7 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
     }
 
     if (includeInOnline) {
-        const userOnline = onlineUsers.get(chatUser.userId);
-        if (userOnline) {
-            logger.debug(`Updating user ${chatUser.displayName}'s "online" ttl to ${ttl} secs`, ttl);
-            onlineUsers.ttl(chatUser.userId, ttl);
-        } else {
-            logger.debug(`Marking user ${chatUser.displayName} as online with ttl of ${ttl} secs`, ttl);
-            onlineUsers.set(chatUser.userId, true, ttl);
-            frontendCommunicator.send("twitch:chat:user-joined", {
-                id: chatUser.userId,
-                username: chatUser.displayName
-            });
-            await userDatabase.setChatUserOnline(userDetails);
-        }
+        await updateUserOnlineStatus(userDetails, true);
     }
 
     await userDatabase.incrementDbField(chatUser.userId, "chatMessages");

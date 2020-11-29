@@ -37,6 +37,9 @@ async function getUserProfilePicUrl(userId) {
     return null;
 }
 exports.getUserProfilePicUrl = getUserProfilePicUrl;
+exports.setUserProfilePicUrl = (userId, url) => {
+    profilePicUrlCache[userId] = url;
+};
 
 /**@type {import('twitch/lib/API/Kraken/Channel/EmoteSetList').default} */
 let streamerEmotes = null;
