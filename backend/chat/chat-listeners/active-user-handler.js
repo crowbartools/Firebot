@@ -67,9 +67,11 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
         return;
     }
 
+    const logger = require("../../logwrapper");
+
     const userDatabase = require("../../database/userDatabase");
 
-    const ttl = settings.getActiveChatUserListTimeout * 60;
+    const ttl = settings.getActiveChatUserListTimeout() * 60;
 
     let user = await userDatabase.getUserById(chatUser.userId);
 
@@ -93,8 +95,10 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
     if (includeInOnline) {
         const userOnline = onlineUsers.get(chatUser.userId);
         if (userOnline) {
+            logger.debug(`Updating user ${chatUser.displayName}'s "online" ttl to ${ttl} secs`, ttl);
             onlineUsers.ttl(chatUser.userId, ttl);
         } else {
+            logger.debug(`Marking user ${chatUser.displayName} as online with ttl of ${ttl} secs`, ttl);
             onlineUsers.set(chatUser.userId, true, ttl);
             frontendCommunicator.send("twitch:chat:user-joined", {
                 id: chatUser.userId,
@@ -110,10 +114,12 @@ exports.addActiveUser = async (chatUser, includeInOnline = false, forceActive = 
 
     const userActive = activeUsers.get(chatUser.userId);
     if (!userActive) {
+        logger.debug(`Marking user ${chatUser.displayName} as active with ttl of ${ttl} secs`, ttl);
         activeUsers.set(chatUser.userId, chatUser.userName, ttl);
         activeUsers.set(chatUser.userName, chatUser.userId, ttl);
     } else {
         // user is still active reset ttl
+        logger.debug(`Updating user ${chatUser.displayName}'s "active" ttl to ${ttl} secs`, ttl);
         activeUsers.ttl(chatUser.userId, ttl);
         activeUsers.ttl(chatUser.userName, ttl);
     }
