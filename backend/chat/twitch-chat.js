@@ -8,6 +8,7 @@ const frontendCommunicator = require("../common/frontend-communicator");
 const chatHelpers = require("./chat-helpers");
 const twitchChatListeners = require("./chat-listeners/twitch-chat-listeners");
 const followPoll = require("../twitch-api/follow-poll");
+const chatterPoll = require("../twitch-api/chatter-poll");
 const commandHandler = require("./commands/commandHandler");
 const activeUserHandler = require("./chat-listeners/active-user-handler");
 
@@ -47,6 +48,7 @@ class TwitchChat extends EventEmitter {
             this.emit("disconnected");
         }
         followPoll.stopFollowPoll();
+        chatterPoll.stopChatterPoll();
 
         activeUserHandler.clearAllActiveUsers();
 
@@ -94,6 +96,7 @@ class TwitchChat extends EventEmitter {
             twitchChatListeners.setupChatListeners(this._streamerChatClient);
 
             followPoll.startFollowPoll();
+            chatterPoll.startChatterPoll();
         } catch (error) {
             logger.error("Chat connect error", error);
             await this.disconnect();

@@ -175,7 +175,7 @@ async function processEffects(processEffectsRequest) {
         if (queue != null) {
             logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
             effectQueueRunner.addEffectsToQueue(queue, runEffectsContext,
-                processEffectsRequest.effects.queueDuration);
+                processEffectsRequest.effects.queueDuration, processEffectsRequest.effects.queuePriority);
             return;
         }
     }
