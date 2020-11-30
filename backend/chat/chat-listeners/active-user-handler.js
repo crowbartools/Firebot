@@ -96,36 +96,41 @@ async function updateUserOnlineStatus(userDetails, updateDb = false) {
 }
 
 exports.addOnlineUser = async (username) => {
+    const logger = require("../../logwrapper");
     const userDatabase = require("../../database/userDatabase");
 
-    let firebotUser = await userDatabase.getTwitchUserByUsername(username);
+    try {
+        let firebotUser = await userDatabase.getTwitchUserByUsername(username);
 
-    if (firebotUser == null) {
-        const twitchApi = require("../../twitch-api/api");
-        const twitchUser = await twitchApi.getClient().helix.users.getUserByName(username);
+        if (firebotUser == null) {
+            const twitchApi = require("../../twitch-api/api");
+            const twitchUser = await twitchApi.getClient().helix.users.getUserByName(username);
 
-        const userDetails = {
-            id: twitchUser.id,
-            username: twitchUser.name,
-            displayName: twitchUser.displayName,
-            twitchRoles: [],
-            profilePicUrl: twitchUser.profilePictureUrl
-        };
+            const userDetails = {
+                id: twitchUser.id,
+                username: twitchUser.name,
+                displayName: twitchUser.displayName,
+                twitchRoles: [],
+                profilePicUrl: twitchUser.profilePictureUrl
+            };
 
-        chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.twitchUser.profilePictureUrl);
+            chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.twitchUser.profilePictureUrl);
 
-        await userDatabase.addNewUserFromChat(userDetails, true);
+            await userDatabase.addNewUserFromChat(userDetails, true);
 
-        await updateUserOnlineStatus(userDetails, false);
-    } else {
-        const userDetails = {
-            id: firebotUser._id,
-            username: firebotUser.username,
-            displayName: firebotUser.displayName,
-            twitchRoles: firebotUser.twitchRoles,
-            profilePicUrl: firebotUser.profilePicUrl
-        };
-        await updateUserOnlineStatus(userDetails, true);
+            await updateUserOnlineStatus(userDetails, false);
+        } else {
+            const userDetails = {
+                id: firebotUser._id,
+                username: firebotUser.username,
+                displayName: firebotUser.displayName,
+                twitchRoles: firebotUser.twitchRoles,
+                profilePicUrl: firebotUser.profilePicUrl
+            };
+            await updateUserOnlineStatus(userDetails, true);
+        }
+    } catch (error) {
+        logger.error(`Failed to set ${username} as online`, error);
     }
 };
 
