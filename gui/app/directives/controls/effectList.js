@@ -33,6 +33,21 @@
                             <div style="display: flex; justify-content: flex-end; align-items: center;font-size: 12px;" class="clickable" ng-click="$ctrl.openEditQueueDurationModal()"><b>{{$ctrl.effectsData.queueDuration || 0}}</b><span>s</span><span class="muted" style="font-size: 9px; margin-left: 5px;"><i class="fal fa-edit"></i></span></div>
                         </div>
 
+                        <div style="margin-right: 17px;" ng-if="$ctrl.validQueueSelected()">
+                            <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE PRIORITY <tooltip text="'If an effect list has priority, it will get added in front of other lists in the queue that do not have priority.'"></tooltip></div>
+                            <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
+                                <div class="noselect pointer ddtext" style="font-size: 12px;">{{$ctrl.getSelectedQueuePriority()}}<span class="fb-arrow down ddtext"></span></div>
+                                <ul class="dropdown-menu" style="z-index: 10000000;" uib-dropdown-menu>
+                                    <li ng-click="$ctrl.effectsData.queuePriority = 'high'">
+                                        <a href style="padding-left: 10px;" aria-label="Yes">Yes</a>   
+                                    </li>
+                                    <li ng-click="$ctrl.effectsData.queuePriority = 'none'">
+                                        <a href style="padding-left: 10px;" aria-label="No">No</a>   
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
                         <div style="margin-right: 20px;display: flex;flex-direction: column;align-items: flex-end;">
                             <div style="font-size: 10px;opacity: 0.8;text-align: right;">QUEUE<tooltip text="'Effect queues allow you to queue up effects so they don\\'t overlap each other. Particularly useful for events!'"></tooltip></div>
                             <div class="text-dropdown filter-mode-dropdown" uib-dropdown uib-dropdown-toggle>
@@ -439,6 +454,11 @@
                     const queue = effectQueuesService.getEffectQueue(ctrl.effectsData.queue);
                     if (queue == null) return unsetDisplay;
                     return queue.name;
+                };
+
+                ctrl.getSelectedQueuePriority = () => {
+                    const priority = ctrl.effectsData.queuePriority;
+                    return priority === 'high' ? 'Yes' : 'No';
                 };
 
                 ctrl.getSelectedQueueModeIsCustom = () => {
