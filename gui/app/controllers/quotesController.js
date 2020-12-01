@@ -9,7 +9,7 @@
             $scope.showAddOrEditQuoteModal = (quote) => {
                 utilityService.showModal({
                     component: "addOrEditQuoteModal",
-                    backdrop: true,
+                    backdrop: false,
                     resolveObj: {
                         quote: () => quote
                     },

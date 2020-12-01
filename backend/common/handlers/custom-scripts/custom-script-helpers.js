@@ -128,9 +128,7 @@ function buildRunRequest(scriptManifest, params, trigger) {
         },
         firebot: {
             accounts: accountAccess.getAccounts(),
-            settings: {
-                webServerPort: settings.getWebServerPort()
-            },
+            settings: settings,
             version: app.getVersion()
         },
         parameters: params,
