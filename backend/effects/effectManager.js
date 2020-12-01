@@ -121,6 +121,7 @@ frontendCommunicator.onAsync("getEffectDefinitions", async (triggerData) => {
         .map(e => e.definition)
         .filter(e => {
             if (triggerType != null) {
+                if (e.triggers == null) return true;
                 let supported = e.triggers[triggerType] != null && e.triggers[triggerType] !== false;
                 if (!supported) return false;
 

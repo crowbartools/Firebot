@@ -76,22 +76,26 @@ function validateEffectCanRun(effectId, triggerType) {
         }
     }
 
-    const twitchChat = require("../chat/twitch-chat");
 
-    let validDeps = effectDefinition.dependencies.every(d => {
-        if (d === EffectDependency.CHAT) {
-            return twitchChat.chatIsConnected();
-        }
+    if (effectDefinition.dependencies) {
+        const twitchChat = require("../chat/twitch-chat");
+        const validDeps = effectDefinition.dependencies.every(d => {
+            if (d === EffectDependency.CHAT) {
+                return twitchChat.chatIsConnected();
+            }
 
-        if (d === EffectDependency.OVERLAY) {
-            return true;
-        }
+            if (d === EffectDependency.OVERLAY) {
+                return true;
+            }
 
-        logger.info(`Unknown effect dependency: ${d}`);
-        return false;
-    });
+            logger.info(`Unknown effect dependency: ${d}`);
+            return false;
+        });
+        return validDeps;
+    }
 
-    return validDeps;
+    return true;
+
 }
 
 async function triggerEffect(effect, trigger) {
