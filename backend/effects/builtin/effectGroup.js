@@ -67,6 +67,13 @@ const effectGroup = {
                     modalId="{{modalId}}"></effect-list>
         </eos-container>
 
+        <eos-container header="Options" pad-top="true">
+            <label class="control-fb control--checkbox"> Don't wait for effects to finish <tooltip text="'Check this if you want the root effect list that triggers this list to continue its effect execution instead of waiting for these effects to complete.'"></tooltip>
+                <input type="checkbox" ng-model="effect.dontWait">
+                <div class="control__indicator"></div>
+            </label>
+        </eos-container>
+
     `,
     optionsController: ($scope, presetEffectListsService) => {
 
@@ -157,8 +164,12 @@ const effectGroup = {
                 };
             }
 
-            effectRunner.processEffects(processEffectsRequest)
-                .then(result => {
+            const effectExecutionPromise = effectRunner.processEffects(processEffectsRequest);
+
+            if (effect.dontWait) {
+                resolve(true);
+            } else {
+                effectExecutionPromise.then(result => {
                     if (result != null && result.success === true) {
                         if (result.stopEffectExecution) {
                             return resolve({
@@ -172,7 +183,7 @@ const effectGroup = {
                     }
                     resolve(true);
                 });
-
+            }
         });
     }
 };

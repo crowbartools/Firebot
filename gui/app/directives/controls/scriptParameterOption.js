@@ -20,7 +20,7 @@
             <input ng-if="!$ctrl.metadata.useTextArea" class="form-control" type="text" placeholder="Enter text" ng-model="$ctrl.metadata.value">
           </div>
           <div ng-switch-when="password">
-            <input class="form-control" type="password" placeholder="********" ng-model="$ctrl.metadata.value">
+            <input class="form-control" type="password" placeholder="Enter password" ng-model="$ctrl.metadata.value">
           </div>
           <div>
           </div>

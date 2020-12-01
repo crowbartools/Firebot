@@ -6,7 +6,7 @@
             command: "<"
         },
         template: `
-      <div style="margin-bottom: 20px">
+      <div style="margin-bottom: 20px" context-menu="$ctrl.sysCommandMenuOptions">
         <div class="sys-command-row" ng-init="hidePanel = true" ng-click="hidePanel = !hidePanel" ng-class="{'expanded': !hidePanel}">
           <div style="flex-basis: 25%;padding-left: 20px;">{{$ctrl.command.name}}</div>
           <div style="width: 20%">{{$ctrl.command.trigger}}</div>
@@ -21,7 +21,7 @@
           <div style="width: 20%"><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType($ctrl.command)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip($ctrl.command)"></tooltip></div>
           <div style="width: 20%">
             <div style="min-width: 75px">
-                <span class="status-dot" ng-class="{'active': $ctrl.command.active, 'notactive': !$ctrl.command.active}"></span> {{$ctrl.command.active ? "Active" : "Disabled"}}
+                <span class="status-dot" ng-class="{'active': $ctrl.command.active, 'notactive': !$ctrl.command.active}"></span> {{$ctrl.command.active ? "Enabled" : "Disabled"}}
             </div> 
           </div>
           <div style="flex-basis:30px; flex-shrink: 0;">
@@ -168,6 +168,22 @@
                     }
                 });
             };
+
+            $ctrl.sysCommandMenuOptions = [
+                {
+                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                    click: function () {
+                        $ctrl.openEditSystemCommandModal();
+                    }
+                },
+                {
+                    html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                    click: function () {
+                        $ctrl.command.active = !$ctrl.command.active;
+                        commandsService.saveSystemCommandOverride($ctrl.command);
+                    }
+                }
+            ];
         }
     });
 }());

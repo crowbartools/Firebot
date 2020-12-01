@@ -112,6 +112,7 @@ function buildModules(scriptManifest) {
         currencyDb: require("../../../database/currencyDatabase"),
         userDb: require("../../../database/userDatabase"),
         quotesManager: require("../../../quotes/quotes-manager"),
+        frontendCommunicator: require("../../frontend-communicator"),
         mixplay: {},
         utils: require("../../../utility")
     };
