@@ -156,6 +156,14 @@
                 pushDataToFile("/settings/runCustomScripts", enabled === true);
             };
 
+            service.getDefaultToAdvancedCommandMode = function() {
+                return getDataFromFile("/settings/defaultToAdvancedCommandMode") === true;
+            };
+
+            service.setDefaultToAdvancedCommandMode = function(defaultToAdvanced) {
+                pushDataToFile("/settings/defaultToAdvancedCommandMode", defaultToAdvanced === true);
+            };
+
             service.getPersistCustomVariables = function() {
                 return getDataFromFile("/settings/persistCustomVariables") === true;
             };

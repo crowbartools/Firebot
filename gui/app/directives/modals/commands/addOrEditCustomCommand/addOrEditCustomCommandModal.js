@@ -1,8 +1,10 @@
 "use strict";
 
-// Modal for adding or editting a command
+// Modal for adding or editing a command
 
 (function() {
+    const uuid = require("uuid/v4");
+
     angular.module("firebotApp").component("addOrEditCustomCommandModal", {
         templateUrl:
       "./directives/modals/commands/addOrEditCustomCommand/addOrEditCustomCommandModal.html",
@@ -12,16 +14,68 @@
             dismiss: "&",
             modalInstance: "<"
         },
-        controller: function($scope, utilityService, commandsService, ngToast) {
+        controller: function($scope, utilityService, commandsService, ngToast, settingsService) {
             let $ctrl = this;
 
             $ctrl.allSortTags = commandsService.getSortTags();
 
             $ctrl.command = {
                 active: true,
+                simple: !settingsService.getDefaultToAdvancedCommandMode(),
                 sendCooldownMessage: true,
                 cooldown: {},
-                effects: {}
+                effects: {
+                    id: uuid(),
+                    list: []
+                },
+                restrictionData: {
+                    restrictions: [],
+                    mode: "all",
+                    sendFailMessage: true
+                }
+            };
+
+            $ctrl.switchCommandMode = () => {
+                const currentlyAdvanced = !$ctrl.command.simple;
+                if (currentlyAdvanced) {
+                    const willBeRemoved = [];
+                    if ($ctrl.command.effects.list.length > 1 ||
+                            $ctrl.command.effects.list.some(e => e.type !== "firebot:chat")) {
+                        willBeRemoved.push("all effects save for a single Chat effect");
+                    }
+                    if ($ctrl.command.restrictionData.restrictions.length > 1 ||
+                        $ctrl.command.restrictionData.restrictions.some(r => r.type !== "firebot:permissions")) {
+                        willBeRemoved.push("all non-Permission restrictions");
+                    }
+                    if ($ctrl.command.fallbackSubcommand != null ||
+                        ($ctrl.command.subCommands && $ctrl.command.subCommands.length > 0)) {
+                        willBeRemoved.push("all Subcommands");
+                    }
+                    if (willBeRemoved.length > 0) {
+                        utilityService.showConfirmationModal({
+                            title: "Switch To Simple Mode",
+                            question: `Switching to Simple Mode will remove: ${willBeRemoved.join(", ")}. Are you sure you want to switch?`,
+                            confirmLabel: "Switch",
+                            confirmBtnType: "btn-danger"
+                        }).then(confirmed => {
+                            if (confirmed) {
+                                $ctrl.command.simple = !$ctrl.command.simple;
+                                $ctrl.command.subCommands = [];
+                                $ctrl.command.fallbackSubcommand = null;
+                            }
+                        });
+                    } else {
+                        $ctrl.command.simple = !$ctrl.command.simple;
+                    }
+
+                } else {
+                    // remove the chat message if the user didnt input anything
+                    const responseMessage = $ctrl.command.effects.list[0] && $ctrl.command.effects.list[0].message && $ctrl.command.effects.list[0].message.trim();
+                    if (!responseMessage || responseMessage === "") {
+                        $ctrl.command.effects.list = [];
+                    }
+                    $ctrl.command.simple = !$ctrl.command.simple;
+                }
             };
 
             $ctrl.$onInit = function() {
@@ -29,6 +83,9 @@
                     $ctrl.isNewCommand = true;
                 } else {
                     $ctrl.command = JSON.parse(JSON.stringify($ctrl.resolve.command));
+                    if ($ctrl.command.simple == null) {
+                        $ctrl.command.simple = false;
+                    }
                 }
 
                 if ($ctrl.command.ignoreBot === undefined) {
@@ -62,11 +119,20 @@
             };
 
             $ctrl.deleteSubcommand = (id) => {
-                if (id === "fallback-subcommand") {
-                    $ctrl.command.fallbackSubcommand = null;
-                } else if ($ctrl.command.subCommands) {
-                    $ctrl.command.subCommands = $ctrl.command.subCommands.filter(sc => sc.id !== id);
-                }
+                utilityService.showConfirmationModal({
+                    title: "Delete Subcommand",
+                    question: `Are you sure you want to delete this subcommand?`,
+                    confirmLabel: "Delete",
+                    confirmBtnType: "btn-danger"
+                }).then(confirmed => {
+                    if (confirmed) {
+                        if (id === "fallback-subcommand") {
+                            $ctrl.command.fallbackSubcommand = null;
+                        } else if ($ctrl.command.subCommands) {
+                            $ctrl.command.subCommands = $ctrl.command.subCommands.filter(sc => sc.id !== id);
+                        }
+                    }
+                });
             };
 
             $ctrl.editSubcommand = (id) => {
@@ -109,7 +175,16 @@
 
             $ctrl.delete = function() {
                 if ($ctrl.isNewCommand) return;
-                $ctrl.close({ $value: { command: $ctrl.command, action: "delete" } });
+                utilityService.showConfirmationModal({
+                    title: "Delete Command",
+                    question: `Are you sure you want to delete this command?`,
+                    confirmLabel: "Delete",
+                    confirmBtnType: "btn-danger"
+                }).then(confirmed => {
+                    if (confirmed) {
+                        $ctrl.close({ $value: { command: $ctrl.command, action: "delete" } });
+                    }
+                });
             };
 
             $ctrl.save = function() {
@@ -117,6 +192,15 @@
                     ngToast.create("Please provide a trigger.");
                     return;
                 }
+
+                if ($ctrl.command.simple) {
+                    const responseMessage = $ctrl.command.effects.list[0] && $ctrl.command.effects.list[0].message && $ctrl.command.effects.list[0].message.trim();
+                    if (!responseMessage || responseMessage === "") {
+                        ngToast.create("Please provide a response message.");
+                        return;
+                    }
+                }
+
                 if (commandsService.triggerExists($ctrl.command.trigger, $ctrl.command.id)) {
                     ngToast.create("A custom command with this trigger already exists.");
                     return;
