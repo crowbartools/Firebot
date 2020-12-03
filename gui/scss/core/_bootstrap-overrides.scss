@@ -52,9 +52,7 @@
     outline: none;
 }
 
-.btn {
-    border-radius: 2px;
-}
+
 .modal-sm {
     width: 400px;
 }
@@ -162,6 +160,13 @@ textarea.form-control {
 
 // Buttons
 
+.btn {
+    &.btn-lg {
+        height: 42px;
+        font-size: 15px;
+    }
+}
+
 .btn-danger:hover, 
 .btn-default:hover, 
 .btn-primary:hover, 
@@ -218,6 +223,10 @@ textarea.form-control {
     outline: none;
     outline-offset: 0;
     border-color: transparent;
+}
+
+.btn-link {
+    color: #12d0ff;
 }
 
 // Misc 
@@ -320,7 +329,7 @@ textarea.form-control {
 // Form Control
 .input-group-addon {
     border: 2px solid $add-on-group-border;
-    border-radius: 2px;
+    //border-radius: 2px;
     box-shadow: none;
     background-color: $add-on-group-bg;
     color: $add-on-group-text;
@@ -328,7 +337,7 @@ textarea.form-control {
 
 .form-control {
     border: 2px solid $form-control-border;
-    border-radius: 2px;
+    //border-radius: 2px;
     height: 36px;
     box-shadow: none;
     background-color: $form-control-bg;
@@ -336,11 +345,26 @@ textarea.form-control {
     &:focus {
         box-shadow: none;
     }
+    &.input-lg {
+        height: 42px;
+        font-size: 17px;
+    }
 }
 
 .input-group .form-control {
     z-index: 0; 
     float: none;
+}
+
+.form-group {
+    margin-bottom: 30px;
+    & .form-label {
+        font-size: 14px;
+        font-weight: 300;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.9;
+    }
 }
 
 .input-group .form-control:focus {
@@ -350,6 +374,11 @@ textarea.form-control {
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
     background-color: $form-control-bg + 50%;
     opacity: 1;
+}
+
+label {
+    font-size: 15px;
+    font-weight: 400;
 }
 
 // Alerts

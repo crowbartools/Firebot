@@ -28,7 +28,7 @@ function seperateTriggerFromArgs(args) {
 }
 
 function mapPermArgToRoleIds(permArg) {
-    if (permArg == null || permArg === "") return false;
+    if (permArg == null || permArg === "") return [];
 
     let normalizedPerm = permArg.toLowerCase().trim(),
         groups = [];

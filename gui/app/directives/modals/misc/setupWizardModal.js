@@ -22,7 +22,7 @@
                             <span>A Tool For Twitch Streamers</span>
                         </div>
                         <div style="animation-delay: 3.2s" class="animated fadeInUp">
-                            <a class="btn btn-info hvr-icon-forward " ng-click="$ctrl.handleNext()">Get started <i class="fas fa-arrow-right hvr-icon"></i></a>
+                            <a class="btn btn-info hvr-icon-forward" ng-click="$ctrl.handleNext()">Get started <i class="fas fa-arrow-right hvr-icon"></i></a>
                         </div>
                     </div>
 

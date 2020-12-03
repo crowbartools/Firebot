@@ -72,8 +72,17 @@
             };
 
             $scope.deleteCustomCommand = command => {
-                commandsService.deleteCustomCommand(command);
-                commandsService.refreshCommands();
+                utilityService.showConfirmationModal({
+                    title: "Delete Command",
+                    question: `Are you sure you want to delete the command '${command.trigger}'?`,
+                    confirmLabel: "Delete",
+                    confirmBtnType: "btn-danger"
+                }).then(confirmed => {
+                    if (confirmed) {
+                        commandsService.deleteCustomCommand(command);
+                        commandsService.refreshCommands();
+                    }
+                });
             };
 
             $scope.duplicateCustomCommand = command => {

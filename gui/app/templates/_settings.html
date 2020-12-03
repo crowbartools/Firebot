@@ -127,8 +127,30 @@
           </div>
         </uib-tab>
 
+         <!-- Command Settings -->
+         <uib-tab index="3" heading="Commands">
+          <div class="row" style="margin-top: 15px">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Default Mode For New Commands</div>
+              <div class="setting-description">The default command mode to use when creating new commands (Simple vs Advanced)</div>
+              <div class="dropdown options-emulation-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="options-emulation" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getDefaultToAdvancedCommandMode() ? "Advanced" : "Simple"}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-emulation">
+                  <li><a href ng-click="settings.setDefaultToAdvancedCommandMode(true)">Advanced</a></li>
+                  <li><a href ng-click="settings.setDefaultToAdvancedCommandMode(false)">Simple</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="setting col-sm-6">
+            </div>
+          </div>
+        </uib-tab>
+
         <!-- Database Settings -->
-        <uib-tab index="3" heading="Database">
+        <uib-tab index="4" heading="Database">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Viewer Database</div>
@@ -150,7 +172,7 @@
         </uib-tab>
 
         <!-- Overlay Settings -->
-        <uib-tab index="4" heading="Overlay">
+        <uib-tab index="5" heading="Overlay">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Overlay URL</div>
@@ -205,7 +227,7 @@
         </uib-tab>
 
          <!-- Integration Settings -->
-        <uib-tab index="5" heading="Integrations">
+        <uib-tab index="6" heading="Integrations">
           <div class="row" style="margin-top: 30px">
             <div class="integration-row" ng-repeat="integration in integrations.getIntegrations()">
               <div>
@@ -220,7 +242,7 @@
           </div>
         </uib-tab>
 
-        <uib-tab index="6" heading="TTS" select="refreshSliders()">
+        <uib-tab index="7" heading="TTS" select="refreshSliders()">
           <div class="row" style="margin-top: 30px">
             <div class="setting col-sm-6">
               <div class="setting-heading">Default TTS Voice</div>
@@ -263,7 +285,7 @@
         </uib-tab>
         
         <!-- Clip Settings -->
-        <uib-tab index="7" heading="Clips">
+        <uib-tab index="8" heading="Clips">
             <div class="row" style="margin-top: 15px">
               <div class="setting col-sm-6">
                 <div class="setting-heading">Clip Download Folder</div>
@@ -279,7 +301,7 @@
           </uib-tab>
         
         <!-- Backup Settings -->
-        <uib-tab index="8" heading="Backup">
+        <uib-tab index="9" heading="Backup">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">              
                 <div class="setting-heading">Backup Options</div>
@@ -329,7 +351,7 @@
         </uib-tab>
         
         <!-- Advanced Settings -->
-        <uib-tab index="9" heading="Advanced">
+        <uib-tab index="10" heading="Advanced">
           <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
                 <div class="setting-heading">Debug Mode</div>
