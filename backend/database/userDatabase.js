@@ -14,7 +14,6 @@ const accountAccess = require("../common/account-access");
 const util = require("../utility");
 
 const jsonDataHelpers = require("../common/json-data-helpers");
-const { option } = require("grunt");
 
 /**
  * @typedef FirebotUser
