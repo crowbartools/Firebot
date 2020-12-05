@@ -85,6 +85,7 @@ class ConnectionManager extends EventEmitter {
         } else {
             twitchChat.disconnect();
             twitchPubSubClient.removeListeners();
+            twitchPubSubClient.disconnectPubSub();
         }
         return true;
     }

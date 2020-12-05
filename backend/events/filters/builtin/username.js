@@ -19,7 +19,8 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "viewer-arrived" },
         { eventSourceId: "twitch", eventId: "chat-message" },
         { eventSourceId: "streamloots", eventId: "purchase" },
-        { eventSourceId: "streamloots", eventId: "redemption" }
+        { eventSourceId: "streamloots", eventId: "redemption" },
+        { eventSourceId: "streamlabs", eventId: "follow" }
     ],
     comparisonTypes: [ComparisonType.IS, ComparisonType.IS_NOT, ComparisonType.CONTAINS, ComparisonType.MATCHES_REGEX],
     valueType: "text",

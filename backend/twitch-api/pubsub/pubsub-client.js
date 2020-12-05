@@ -11,24 +11,70 @@ let pubSubClient;
 /**@type {Array<import("twitch-pubsub-client").PubSubListener>} */
 let listeners = [];
 
-function removeListeners() {
-    for (const listener of listeners) {
-        listener.remove();
+/**
+ *
+ * @param {PubSubClient} pubSubClient
+ */
+async function removeListeners(pubSubClient) {
+    if (pubSubClient) {
+        try {
+            const userListener = pubSubClient.getUserListener(
+                accountAccess.getAccounts().streamer.userId
+            );
+            if (userListener) {
+                for (const listener of listeners) {
+                    userListener.removeListener(listener);
+                    listener.remove();
+                }
+            }
+        } catch (error) {
+            //silently fail
+        }
+    } else {
+        for (const listener of listeners) {
+            try {
+                listener.remove();
+            } catch (error) {
+                logger.debug("failed to remove pubsub listener without client", error);
+            }
+        }
     }
     listeners = [];
 }
 
+async function disconnectPubSub() {
+    try {
+        if (pubSubClient && pubSubClient._rootClient && pubSubClient._rootClient.isConnected) {
+            pubSubClient._rootClient.disconnect();
+            logger.info("Disconnected from PubSub.");
+        }
+    } catch (err) {
+        logger.debug("error disconnecting pubsub", err);
+    }
+}
+
 async function createClient() {
-    removeListeners();
+
+    const streamer = accountAccess.getAccounts().streamer;
+
+    await disconnectPubSub();
 
     logger.info("Connecting to Twitch PubSub...");
 
-    pubSubClient = new PubSubClient();
-    try {
-        const apiClient = twitchClient.getClient();
-        await pubSubClient.registerUserListener(apiClient);
+    pubSubClient = new PubSubClient(pubSubClient && pubSubClient._rootClient);
 
-        const streamer = accountAccess.getAccounts().streamer;
+    const apiClient = twitchClient.getClient();
+
+    await removeListeners(pubSubClient);
+
+    try {
+        // throws error if one doesnt exist
+        pubSubClient.getUserListener(streamer.userId);
+    } catch (err) {
+        await pubSubClient.registerUserListener(apiClient);
+    }
+
+    try {
 
         const rewardRedemptionHandler =
         require("../../events/twitch-events/reward-redemption");
@@ -47,5 +93,6 @@ async function createClient() {
 }
 
 exports.createClient = createClient;
+exports.disconnectPubSub = disconnectPubSub;
 exports.removeListeners = removeListeners;
 

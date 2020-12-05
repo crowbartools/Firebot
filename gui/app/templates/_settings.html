@@ -167,6 +167,9 @@
               </div>
             </div>
             <div class="setting col-sm-6">
+              <div class="setting-heading">Purge Viewer Data</div>
+                <div class="setting-description">Sometimes you may want to periodically purge viewer data to clear out inactive viewers.</div>
+                <button class="btn btn-default" ng-click="showPurgeViewersModal()">View Purge Options</button>
             </div>
           </div>
         </uib-tab>
@@ -317,6 +320,10 @@
                       <label class="control-fb control--checkbox">Once a day
                           <input type="checkbox" ng-click="settings.setBackupOnceADay(!settings.backupOnceADay())" ng-checked="settings.backupOnceADay()" aria-label="..." >
                           <div class="control__indicator"></div>
+                      </label>
+                      <label class="control-fb control--checkbox">Before viewer purges <tooltip text="'Firebot will always backup before you do viewer purges (Database > View Purge Options)'"></tooltip>
+                        <input type="checkbox" ng-checked="true" aria-label="..." disabled>
+                        <div class="control__indicator" disabled></div>
                       </label>
                       <label class="control-fb control--checkbox">Before updates <tooltip text="'Firebot will always back up before updates. This cannot be turned off. Its for your own good <3'"></tooltip>
                         <input type="checkbox" ng-checked="true" aria-label="..." disabled>
