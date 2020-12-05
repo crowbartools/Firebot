@@ -14,6 +14,7 @@ const accountAccess = require("../common/account-access");
 const util = require("../utility");
 
 const jsonDataHelpers = require("../common/json-data-helpers");
+const { option } = require("grunt");
 
 /**
  * @typedef FirebotUser
@@ -431,6 +432,59 @@ function getOnlineUsers() {
     });
 }
 
+function getPurgeWherePredicate(options) {
+    return function () {
+        const user = this;
+        if (options.mixer && !user.twitch) {
+            return true;
+        }
+        if (!user.twitch) return false;
+
+        let daysInactive = 0;
+        if (options.daysSinceActive.enabled) {
+            daysInactive = moment().diff(moment(user.lastSeen), "days");
+        }
+        const viewTimeHours = user.minutesInChannel / 60;
+
+        if ((options.daysSinceActive.enabled || options.viewTimeHours.enabled || options.chatMessagesSent.enabled) &&
+        (!options.daysSinceActive.enabled || daysInactive > options.daysSinceActive.value) &&
+        (!options.viewTimeHours.enabled || viewTimeHours < options.viewTimeHours.value) &&
+        (!options.chatMessagesSent.enabled || user.chatMessages < options.chatMessagesSent.value)) {
+            return true;
+        }
+        return false;
+    };
+}
+
+/**
+ * @returns {Promise<FirebotUser[]>}
+ */
+function getPurgeUsers(options) {
+    return new Promise(resolve => {
+        db.find({ $where: getPurgeWherePredicate(options)}, (err, docs) => {
+            if (err) {
+                return resolve([]);
+            }
+            resolve(docs);
+        });
+    });
+}
+
+function purgeUsers(options) {
+    return new Promise(resolve => {
+        const backupManager = require("../backupManager");
+        backupManager.startBackup(false, () => {
+            db.remove({ $where: getPurgeWherePredicate(options)}, {multi: true},
+                (err, numRemoved) => {
+                    if (err) {
+                        return resolve(0);
+                    }
+                    resolve(numRemoved);
+                });
+        });
+    });
+}
+
 /**
  * @typedef {Object} UserDetails
  * @property {number} id
@@ -696,6 +750,20 @@ function incrementDbField(userId, fieldName) {
 
 //////////////////
 // Event Listeners
+
+frontendCommunicator.onAsync("getPurgePreview", (options) => {
+    if (!isViewerDBOn()) {
+        return Promise.resolve([]);
+    }
+    return getPurgeUsers(options);
+});
+
+frontendCommunicator.onAsync("purgeUsers", (options) => {
+    if (!isViewerDBOn()) {
+        return Promise.resolve(0);
+    }
+    return purgeUsers(options);
+});
 
 frontendCommunicator.onAsync("getAllViewers", () => {
     if (!isViewerDBOn()) {

@@ -40,6 +40,15 @@
                 });
             };
 
+            $scope.showPurgeViewersModal = () => {
+                utilityService.showModal({
+                    component: "purgeViewersModal",
+                    size: 'sm',
+                    backdrop: false,
+                    keyboard: true
+                });
+            };
+
             $scope.getCanClip = () => {
                 return connectionService.accounts
                     && connectionService.accounts.streamer
