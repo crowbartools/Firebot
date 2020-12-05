@@ -7,7 +7,6 @@ class UserProfilesStore {
     @observable activeProfileId: string = null;
 
     constructor() {
-        communicator.invoke("getUserProfiles").then();
         this.getProfiles();
 
         communicator.invoke("getActiveUserProfileId").then((id) => {

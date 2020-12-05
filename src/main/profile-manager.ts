@@ -14,6 +14,7 @@ import {
 } from "./utils";
 
 const PROFILES_DIR = "profiles";
+
 @registerIpcMethods(
     "getUserProfiles",
     "addUserProfile",
