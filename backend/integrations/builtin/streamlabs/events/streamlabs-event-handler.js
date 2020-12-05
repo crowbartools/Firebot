@@ -5,7 +5,8 @@ const eventManager = require("../../../../events/EventManager");
 const EVENT_SOURCE_ID = "streamlabs";
 const EventId = {
     DONATION: "donation",
-    EXTRA_LIFE_DONATION: "eldonation"
+    EXTRA_LIFE_DONATION: "eldonation",
+    FOLLOW: "follow"
 };
 
 const eventSourceDefinition = {
@@ -26,6 +27,12 @@ const eventSourceDefinition = {
             description: "When someone donates to your Extra Life campaign.",
             cached: false,
             queued: true
+        },
+        {
+            id: EventId.FOLLOW,
+            name: "Follow",
+            description: "When someone follows your Twitch channel (comes from StreamLabs, may be faster)",
+            cached: true
         }
     ]
 };
@@ -56,6 +63,17 @@ exports.processStreamLabsEvent = (eventData) => {
                 from: donoData.from
             }
         );
+    } else if (eventData.type === "follow" && eventData.for === 'twitch_account') {
+        for (const message of eventData.message) {
+            eventManager.triggerEvent(
+                EVENT_SOURCE_ID,
+                EventId.FOLLOW,
+                {
+                    username: message.name,
+                    userId: message.id
+                }
+            );
+        }
     }
 };
 
