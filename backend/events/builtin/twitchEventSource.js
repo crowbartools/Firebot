@@ -129,7 +129,7 @@ module.exports = {
             description: "When someone redeems a CUSTOM channel reward",
             cached: true,
             cacheMetaKey: "username",
-            cacheTtlInSecs: 1.5,
+            cacheTtlInSecs: 1.25,
             queued: false,
             manualMetadata: {
                 username: "Firebot",
