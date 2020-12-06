@@ -127,7 +127,9 @@ module.exports = {
             id: "channel-reward-redemption",
             name: "Channel Reward Redemption",
             description: "When someone redeems a CUSTOM channel reward",
-            cached: false,
+            cached: true,
+            cacheMetaKey: "username",
+            cacheTtlInSecs: 1.5,
             queued: false,
             manualMetadata: {
                 username: "Firebot",
