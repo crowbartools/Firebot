@@ -55,6 +55,14 @@
                             </select>
                         </div>
 
+                        <div ng-if="$ctrl.setup.importQuestions" style="margin-top:25px">
+                            <h4 class="muted">Import Questions</h4>
+                            <div ng-repeat="question in $ctrl.setup.importQuestions track by question.id">
+                                <h5>{{question.question}} <tooltip ng-show="question.helpText" text="question.helpText" /></h5>
+                                <input type="text" class="form-control" ng-model="question.answer" placeholder="Enter answer" />
+                            </div>
+                        </div>
+
                         <div style="display:flex; justify-content: center;margin-top: 25px;">
                             <button type="button" class="btn btn-primary" ng-click="$ctrl.importSetup()">Import Setup</button>
                         </div>               
@@ -154,6 +162,12 @@
 
                     if ($ctrl.setup.requireCurrency && $ctrl.selectedCurrency == null) {
                         ngToast.create("Please select a currency to use. If you don't have a currency, create one in the Currency tab and then import this Setup again.");
+                        return;
+                    }
+
+                    if ($ctrl.setup.importQuestions &&
+                        $ctrl.setup.importQuestions.some(q => q.answer == null)) {
+                        ngToast.create("Please provide an answer for all Import Questions.");
                         return;
                     }
 

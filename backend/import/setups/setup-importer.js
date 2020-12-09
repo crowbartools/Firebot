@@ -10,6 +10,7 @@ const effectQueueManager = require("../../effects/queues/effect-queue-manager");
 const eventsAccess = require("../../events/events-access");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
+const { escapeRegExp } = require("../../utility");
 
 function findAndReplaceCurrency(data, currency) {
     const entries = Object.entries(data);
@@ -40,6 +41,25 @@ function findAndReplaceCurrency(data, currency) {
     }
 }
 
+function replaceQuestionAnswers(data, questions) {
+    const entries = Object.entries(data);
+    for (const [key, value] of entries) {
+        if (value && typeof value === "string") {
+
+            for (const question of questions) {
+                if (value.includes(question.replaceToken)) {
+                    const regex = new RegExp(escapeRegExp(question.replaceToken), 'gm');
+                    data[key] = data[key].replace(regex, question.answer);
+                }
+            }
+
+        } else if (value && typeof value === "object") {
+            // recurse
+            replaceQuestionAnswers(value, questions);
+        }
+    }
+}
+
 function replaceCurrency(components, currency) {
     // loop through every component type (command, event, etc)
     for (const componentArray of Object.values(components)) {
@@ -55,6 +75,10 @@ function importSetup(setup, selectedCurrency) {
 
     if (setup.requireCurrency) {
         replaceCurrency(setup.components, selectedCurrency);
+    }
+
+    if (setup.importQuestions) {
+        replaceQuestionAnswers(setup.components, setup.importQuestions);
     }
 
     // commands
