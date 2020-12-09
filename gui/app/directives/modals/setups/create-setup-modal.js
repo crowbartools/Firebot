@@ -46,13 +46,14 @@
                         </label>
                     </div>
 
-                    <h3>Import Questions <tooltip text="'Import questions allow you to ask users for input and then Firebot will automatically replace a given token with the users input throughout the Setup components.'"/></h3>
+                    <h3>Import Questions <tooltip text="'Users must supply answers to these questions before importing this Setup. Firebot will automatically replace all instances of the given token with the user\\'s answer.'"/></h3>
                     <div>
                         <div>
                             <div ng-repeat="question in $ctrl.setup.importQuestions track by question.id" class="list-item selectable" ng-click="$ctrl.addImportQuestion(question)">
                                 <div uib-tooltip="Click to edit" style="font-weight: 400;">
                                     <div><b>Question:</b> {{question.question}}</div>
                                     <div><b>Replace Token:</b> {{question.replaceToken}}</div>
+                                    <div ng-show="question.defaultAnswer"><b>Default Answer:</b> {{question.defaultAnswer}}</div>
                                 </div>
                                 <span class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeImportQuestion(question.id);$event.stopPropagation();" aria-label="Remove item">
                                     <i class="fad fa-trash-alt" aria-hidden="true"></i>
