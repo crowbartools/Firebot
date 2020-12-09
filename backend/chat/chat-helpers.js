@@ -38,6 +38,7 @@ async function getUserProfilePicUrl(userId) {
 }
 exports.getUserProfilePicUrl = getUserProfilePicUrl;
 exports.setUserProfilePicUrl = (userId, url) => {
+    if (userId == null || url == null) return;
     profilePicUrlCache[userId] = url;
 };
 
