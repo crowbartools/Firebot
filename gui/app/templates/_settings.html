@@ -85,9 +85,11 @@
             </div>
             
           </div>
+        </uib-tab>
 
-          <div class="row">
-
+        <!-- Setup Settings -->
+        <uib-tab index="20" heading="Setups">
+          <div class="row" style="margin-top: 15px">
             <div class="setting col-sm-6">
                 <div class="setting-heading">Create a Firebot Setup</div>
                 <div class="setting-description">Create a new Firebot Setup (a collection of commands, events, currencies, etc) and share it with others!</div>
@@ -99,7 +101,6 @@
               <div class="setting-description">Import a Firebot Setup (.firebotsetup file) made by someone else!</div>
               <button class="btn btn-default" ng-click="showImportSetupModal()">Import Setup</button>
             </div>
-
           </div>
         </uib-tab>
 
@@ -109,7 +110,7 @@
             <div class="setting col-sm-6">
               <div class="setting-heading">Inactive User Time</div>
                 <div class="setting-description">
-                  The amount of time it takes for an active user to be marked as inactive after their last chat message.s
+                  The amount of time it takes for an active user to be marked as inactive after their last chat message.
                 </div>
                 <div class="dropdown options-activeChatUserTimeout-dropdown"style="display: inline-block">
                     <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
