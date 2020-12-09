@@ -26,7 +26,7 @@
         "prettier/@typescript-eslint",
         "prettier/react"
     ],
-    "ignorePatterns": ["node_modules/**/*", "dist/**/*"],
+    "ignorePatterns": ["node_modules/**/*", "dist/**/*", "configs/**/*"],
     "settings": {
         "react": {
             "createClass": "createReactClass",

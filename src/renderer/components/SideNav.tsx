@@ -87,7 +87,7 @@ const headerVariants: Variants = {
 
 const menuBackdropVariants: Variants = {
     [variantType.hidden]: { opacity: 0 },
-    [variantType.visible]: { opacity: 0.4 },
+    [variantType.visible]: { opacity: 0.25 },
 };
 
 const MenuItem = (isOpen: boolean) => (menuItem: MenuItem, index: number) => {
@@ -107,27 +107,42 @@ const MenuItem = (isOpen: boolean) => (menuItem: MenuItem, index: number) => {
                 <motion.div
                     whileTap={!isActive ? { scale: 0.95 } : null}
                     className={clsx(
-                        { "bg-dark-600": isActive, "hover:bg-dark-600 hover:bg-opacity-50 ": !isActive },
+                        {
+                            "bg-gray-900 bg-opacity-50": isActive,
+                            "hover:bg-gray-900 hover:bg-opacity-25": !isActive,
+                        },
                         "rounded-lg transition duration-150 ease-in-out",
                         "flex items-center h-12 relative",
                         menuItem.className
                     )}
                 >
                     <div
-                        className={clsx("w-12 flex justify-center items-center text-xl", {
-                            "text-white text-opacity-75": !isActive,
-                            "text-gold-500": isActive,
-                        })}
+                        className={clsx(
+                            "w-12 flex justify-center items-center text-xl",
+                            {
+                                "text-white text-opacity-75": !isActive,
+                                "text-yellow-400": isActive,
+                            }
+                        )}
                     >
                         {menuItem.icon}
                     </div>
                     <motion.div
                         custom={index}
                         variants={menuItemTitleVariants}
-                        animate={isOpen ? variantType.visible : variantType.hidden}
-                        className={clsx("absolute inset-0 ml-16 w-64 flex items-center uppercase font-thin font-base")}
+                        animate={
+                            isOpen ? variantType.visible : variantType.hidden
+                        }
+                        className={clsx(
+                            "absolute inset-0 ml-16 w-64 flex items-center uppercase font-thin font-base"
+                        )}
                     >
-                        <span className={clsx({ "text-white": !menuItem.disabled, "font-semibold": isActive })}>
+                        <span
+                            className={clsx({
+                                "text-white": !menuItem.disabled,
+                                "font-semibold": isActive,
+                            })}
+                        >
                             {menuItem.title}
                         </span>
                     </motion.div>
@@ -142,7 +157,9 @@ const CategoryHeader = (category: string, isOpen: boolean) => (
         <motion.div
             variants={categoryHeaderVariants}
             animate={isOpen ? variantType.visible : variantType.hidden}
-            className={clsx("ml-4 mb-1 mt-2 font-base text-gray-800 font-semibold")}
+            className={clsx(
+                "ml-4 mb-1 mt-2 font-base text-gray-800 font-semibold"
+            )}
         >
             {category}
         </motion.div>
@@ -150,7 +167,11 @@ const CategoryHeader = (category: string, isOpen: boolean) => (
 );
 
 const SidebarHeader = (isOpen: boolean) => (
-    <div className={clsx("flex items-center h-16 relative border-b border-dark-400 mb-3")}>
+    <div
+        className={clsx(
+            "flex items-center h-16 relative border-b border-gray-700 mb-3"
+        )}
+    >
         <div className="w-24 flex justify-center items-center">
             <img src={logo} className="w-8" />
         </div>
@@ -159,7 +180,7 @@ const SidebarHeader = (isOpen: boolean) => (
             animate={isOpen ? variantType.visible : variantType.hidden}
             className={clsx("absolute inset-0 ml-20 w-64 flex items-center")}
         >
-            <span className="text-gold-700 text-2xl font-thin">Firebot</span>
+            <span className="text-yellow-400 text-2xl font-thin">Firebot</span>
         </motion.div>
     </div>
 );
@@ -176,7 +197,7 @@ export const SideNav = () => {
                 animate={isOpen ? variantType.visible : variantType.hidden}
             />
             <motion.aside
-                className="fixed h-full z-30 bg-dark-500 overflow-hidden"
+                className="fixed h-full z-30 bg-gray-800 overflow-hidden"
                 style={{ width: "65px" }}
                 whileHover={{ width: 250 }}
                 onHoverStart={thunk(toggleIsOpen, [true])}
@@ -186,7 +207,7 @@ export const SideNav = () => {
                 <ul className="h-full">
                     {Object.keys(menu).map((category) => (
                         <>
-                            {CategoryHeader(category, isOpen)}
+                            {/* {CategoryHeader(category, isOpen)} */}
                             {menu[category].map(MenuItem(isOpen))}
                         </>
                     ))}
