@@ -69,6 +69,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" ng-click="$ctrl.loadPreviousSetup()">Load Previous</button>
                     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
                     <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Create Setup</button>
                 </div>
@@ -226,6 +227,34 @@
                 };
 
                 $ctrl.$onInit = () => {};
+
+                $ctrl.onFileSelected = (filepath) => {
+                    $q.when(fs.readJson(filepath))
+                        .then(setup => {
+                            if (setup == null || setup.components == null) {
+                                ngToast.create("Unable to load previous Setup!");
+                                return;
+                            }
+                            $ctrl.setup = setup;
+                        }, (reason) => {
+                            console.log(reason);
+                            ngToast.create("Unable to load previous Setup!");
+                            return;
+                        });
+                };
+
+                $ctrl.loadPreviousSetup = () => {
+                    $q
+                        .when(backendCommunicator.fireEventAsync("open-file-browser", {
+                            options: {
+                                filters: [{name: 'Firebot Setups', extensions: ['firebotsetup']}]
+                            }
+                        }))
+                        .then(response => {
+                            if (response.path == null) return;
+                            $ctrl.onFileSelected(response.path);
+                        });
+                };
 
                 $ctrl.removeImportQuestion = (id) => {
                     $ctrl.setup.importQuestions = $ctrl.setup.importQuestions
