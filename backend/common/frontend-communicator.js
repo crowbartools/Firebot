@@ -30,6 +30,17 @@ function registerEventWithElectron(eventName) {
     }(eventName));
 }
 
+function fireEventAsync(type, data) {
+    return new Promise(resolve => {
+        if (global.renderWindow != null) {
+            ipcMain.once(type + ":reply", (_, eventData) => {
+                resolve(eventData);
+            });
+            renderWindow.webContents.send(type, data);
+        }
+    });
+}
+
 function on(eventName, callback, async = false) {
     let id = uuidv1(),
         event = {
@@ -52,6 +63,7 @@ function onAsync(eventName, callback) {
     return on(eventName, callback, true);
 }
 
+exports.fireEventAsync = fireEventAsync;
 exports.send = send;
 exports.onAsync = onAsync;
 exports.on = function(eventName, callback) {
