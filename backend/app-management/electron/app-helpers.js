@@ -5,7 +5,7 @@ exports.restartApp = () => {
     const { app } = require("electron");
 
     try {
-        const chatModerationManager = require("../chat/moderation/chat-moderation-manager");
+        const chatModerationManager = require("../../chat/moderation/chat-moderation-manager");
         chatModerationManager.stopService();
     } catch (error) {
         //silently fail
