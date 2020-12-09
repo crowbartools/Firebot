@@ -26,13 +26,19 @@
                     ipcRenderer.on(name, function(_, data) {
                         let eventListeners = listeners[name];
                         for (let listener of eventListeners) {
-                            $q.resolve(true, () => listener.callback(data));
+                            if (listener.async) {
+                                listener.callback(data).then(returnValue => {
+                                    service.fireEvent(`${name}:reply`, returnValue);
+                                });
+                            } else {
+                                $q.resolve(true, () => listener.callback(data));
+                            }
                         }
                     });
                 }(eventName));
             }
 
-            service.on = function(eventName, callback) {
+            service.on = function(eventName, callback, async = false) {
 
                 if (typeof callback !== "function") {
                     throw new Error("Can't register an event without a callback.");
@@ -41,7 +47,8 @@
                 let id = uuidv1(),
                     event = {
                         id: id,
-                        callback: callback
+                        callback: callback,
+                        async: async
                     };
 
 
@@ -54,6 +61,8 @@
 
                 return id;
             };
+
+            service.onAsync = (eventName, callback) => service.on(eventName, callback, true);
 
             service.fireEventAsync = function(type, data) {
                 return new Promise(resolve => {

@@ -140,10 +140,15 @@
                     });
             };
 
-            service.getSoundDuration = function(path) {
+            service.getSoundDuration = function(path, format = undefined) {
                 return new Promise(resolve => {
                     let sound = new Howl({
-                        src: [path]
+                        src: [path],
+                        format: format
+                    });
+
+                    sound.on("loaderror", () => {
+                        resolve(0);
                     });
 
                     // Clear listener after first call.
@@ -153,6 +158,10 @@
                     });
                 });
             };
+
+            backendCommunicator.onAsync("getSoundDuration", async (data) => {
+                return await service.getSoundDuration(data.path, data.format);
+            });
 
             // Watches for an event from main process
             listenerService.registerListener(

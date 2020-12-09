@@ -6,11 +6,13 @@ const webServer = require("../../../server/httpServer");
 const fs = require('fs-extra');
 const logger = require("../../logwrapper");
 const path = require("path");
+const frontendCommunicator = require("../../common/frontend-communicator");
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
-const { EffectDependency, EffectTrigger } = effectModels;
+const { EffectTrigger } = effectModels;
 
 const { EffectCategory } = require('../../../shared/effect-constants');
+const { wait } = require("../../utility");
 
 /**
  * The Play Sound effect
@@ -67,6 +69,13 @@ const playSound = {
                 <div>
                     <sound-player path="effect.filepath" volume="effect.volume" output-device="effect.audioOutputDevice"></sound-player>
                 </div>
+            </div>
+
+            <div style="padding-top:20px">
+                <label class="control-fb control--checkbox"> Wait for sound to finish <tooltip text="'Wait for the sound to finish before letting the next effect play.'"></tooltip>
+                    <input type="checkbox" ng-model="effect.waitForSound">
+                    <div class="control__indicator"></div>
+                </label>
             </div>
         </eos-container>
 
@@ -171,6 +180,19 @@ const playSound = {
         } else {
             // Send data back to media.js in the gui.
             renderWindow.webContents.send("playsound", data);
+        }
+
+        if (effect.waitForSound) {
+            try {
+                const duration = await frontendCommunicator.fireEventAsync("getSoundDuration", {
+                    path: effect.filepath
+                });
+                const durationInMils = (Math.round(duration) || 0) * 1000;
+                await wait(durationInMils);
+                return true;
+            } catch (error) {
+                return true;
+            }
         }
         return true;
     },

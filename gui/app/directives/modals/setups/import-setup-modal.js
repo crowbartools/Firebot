@@ -146,9 +146,19 @@
                                 return;
                             }
                             $ctrl.setup = setup;
+                            // parse markdown
                             $ctrl.setup.description = $sce.trustAsHtml(
                                 sanitize(marked($ctrl.setup.description, {}))
                             );
+                            //set default answers
+                            if ($ctrl.setup.importQuestions) {
+                                $ctrl.setup.importQuestions = $ctrl.setup.importQuestions.map(q => {
+                                    if (q.defaultAnswer) {
+                                        q.answer = q.defaultAnswer;
+                                    }
+                                    return q;
+                                });
+                            }
                             $ctrl.setupSelected = true;
                         }, (reason) => {
                             logger.error("Failed to load setup file", reason);
