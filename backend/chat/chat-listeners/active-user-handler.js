@@ -106,6 +106,11 @@ exports.addOnlineUser = async (username) => {
             const twitchApi = require("../../twitch-api/api");
             const twitchUser = await twitchApi.getClient().helix.users.getUserByName(username);
 
+            if (twitchUser == null) {
+                logger.warn(`Could not find twitch user with username '${username}'`);
+                return;
+            }
+
             const userDetails = {
                 id: twitchUser.id,
                 username: twitchUser.name,
@@ -114,11 +119,12 @@ exports.addOnlineUser = async (username) => {
                 profilePicUrl: twitchUser.profilePictureUrl
             };
 
-            chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.twitchUser.profilePictureUrl);
+            chatHelpers.setUserProfilePicUrl(twitchUser.id, twitchUser.profilePictureUrl);
 
             await userDatabase.addNewUserFromChat(userDetails, true);
 
             await updateUserOnlineStatus(userDetails, false);
+
         } else {
             const userDetails = {
                 id: firebotUser._id,
