@@ -1,0 +1,68 @@
+"use strict";
+
+(function() {
+    const uuid = require("uuid/v4");
+    angular.module("firebotApp")
+        .component("addOrEditSetupQuestion", {
+            template: `
+                <div class="modal-header">
+                    <button type="button" class="close" ng-click="$ctrl.dismiss()"><span>&times;</span></button>
+                    <h4 class="modal-title">{{$ctrl.isNewQuestion ? 'Add' : 'Edit'}} Setup Import Question</h4>
+                </div>
+                <div class="modal-body">
+                    <h3>Question <tooltip text="'This is the question that will be asked when a user imports. Ie, What should be the default bet amount?'"/></h3>
+                    <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.question.question" placeholder="Enter question"></textarea>
+
+                    <h3>Tooltip Text <tooltip text="'This is extra text that will showup in a tooltip (This like this!)'"/></h3>
+                    <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.question.helpText" placeholder="Optional"></textarea>
+
+                    <h3>Replace Token <tooltip text="'Firebot will replace any instances of this token with the users answer to this question. A token can be anything but you might want to use uncommon characters. Ie %betamount%'"/></h3>
+                    <input type="text" class="form-control" ng-model="$ctrl.question.replaceToken" placeholder="Enter text" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
+                    <button type="button" class="btn btn-primary" ng-click="$ctrl.save()">Save</button>
+                </div>
+            `,
+            bindings: {
+                resolve: "<",
+                close: "&",
+                dismiss: "&"
+            },
+            controller: function(ngToast) {
+                const $ctrl = this;
+
+                $ctrl.isNewQuestion = true;
+
+                $ctrl.question = {
+                    id: uuid(),
+                    question: null,
+                    helpText: null,
+                    replaceToken: null
+                };
+
+                $ctrl.$onInit = () => {
+                    if ($ctrl.resolve.question) {
+                        $ctrl.question = JSON.parse(angular.toJson($ctrl.resolve.question));
+                        $ctrl.isNewQuestion = false;
+                    }
+                };
+
+                $ctrl.save = () => {
+                    if ($ctrl.question.question == null || $ctrl.question.question === "") {
+                        ngToast.create("Please include a question!");
+                        return;
+                    }
+
+                    if ($ctrl.question.replaceToken == null || $ctrl.question.replaceToken === "") {
+                        ngToast.create("Please include a replace token!");
+                        return;
+                    }
+
+                    $ctrl.close({
+                        $value: $ctrl.question
+                    });
+                };
+            }
+        });
+}());

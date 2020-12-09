@@ -46,6 +46,24 @@
                         </label>
                     </div>
 
+                    <h3>Import Questions <tooltip text="'Import questions allow you to ask users for input and then Firebot will automatically replace a given token with the users input throughout the Setup components.'"/></h3>
+                    <div>
+                        <div>
+                            <div ng-repeat="question in $ctrl.setup.importQuestions track by question.id" class="list-item selectable" ng-click="$ctrl.addImportQuestion(question)">
+                                <div uib-tooltip="Click to edit" style="font-weight: 400;">
+                                    <div><b>Question:</b> {{question.question}}</div>
+                                    <div><b>Replace Token:</b> {{question.replaceToken}}</div>
+                                </div>
+                                <span class="clickable" style="color: #fb7373;" ng-click="$ctrl.removeImportQuestion(question.id);$event.stopPropagation();" aria-label="Remove item">
+                                    <i class="fad fa-trash-alt" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <button class="filter-bar" ng-click="$ctrl.addImportQuestion()" uib-tooltip="Add Import Question" tooltip-append-to-body="true">
+                            <i class="far fa-plus"></i> 
+                        </button>  
+                    </div>
+
                     <div style="margin-top: 20px;">
                         <div class="alert alert-warning" role="alert" style="opacity: 0.8;margin-bottom: 0;"><b>Warning!</b> Media files (such as images, videos, sounds, customs scripts, etc) referenced in effects will <b>not</b> be included with this Setup.</div>
                     </div>
@@ -154,7 +172,8 @@
                         timers: [],
                         viewerRoles: []
                     },
-                    requireCurrency: false
+                    requireCurrency: false,
+                    importQuestions: []
                 };
 
                 $ctrl.save = () => {
@@ -173,7 +192,8 @@
                         return;
                     }
 
-                    if (Object.values($ctrl.setup.components).every(array => array == null || array.length < 1)) {
+                    if (Object.values($ctrl.setup.components)
+                        .every(array => array == null || array.length < 1)) {
                         ngToast.create("Please select at least one component");
                         return;
                     }
@@ -206,6 +226,32 @@
                 };
 
                 $ctrl.$onInit = () => {};
+
+                $ctrl.removeImportQuestion = (id) => {
+                    $ctrl.setup.importQuestions = $ctrl.setup.importQuestions
+                        .filter(q => q.id !== id);
+                };
+
+                $ctrl.addImportQuestion = (question) => {
+                    utilityService.showModal({
+                        component: "addOrEditSetupQuestion",
+                        size: 'md',
+                        resolveObj: {
+                            question: () => question
+                        },
+                        closeCallback: (question) => {
+                            if (question) {
+                                const index = $ctrl.setup.importQuestions
+                                    .findIndex(q => q.id === question.id);
+                                if (index > -1) {
+                                    $ctrl.setup.importQuestions[index] = question;
+                                } else {
+                                    $ctrl.setup.importQuestions.push(question);
+                                }
+                            }
+                        }
+                    });
+                };
 
                 $ctrl.openComponentListModal = (label, allComponents, selectedIds, closeCallback) => {
                     utilityService.showModal({
