@@ -55,7 +55,7 @@
                             </select>
                         </div>
 
-                        <div ng-if="$ctrl.setup.importQuestions" style="margin-top:25px">
+                        <div ng-if="$ctrl.setup.importQuestions && $ctrl.setup.importQuestions.length > 0" style="margin-top:25px">
                             <h4 class="muted">Import Questions</h4>
                             <div ng-repeat="question in $ctrl.setup.importQuestions track by question.id">
                                 <h5>{{question.question}} <tooltip ng-show="question.helpText" text="question.helpText" /></h5>
