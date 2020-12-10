@@ -1,6 +1,5 @@
 "use strict";
 
-const { ipcMain } = require("electron");
 const logger = require("../logwrapper");
 const timerAccess = require("./timer-access");
 const connectionManager = require("../common/connection-manager");
@@ -23,6 +22,13 @@ function clearIntervals(onlyClearWhenLiveTimers = false) {
         clearInterval(i.intervalId);
         delete timerIntervalCache[i.timerId];
     });
+}
+
+function clearIntervalForTimerId(timerId) {
+    const intervalData = timerIntervalCache[timerId];
+    if (intervalData == null) return;
+    clearInterval(intervalData.intervalId);
+    delete timerIntervalCache[intervalData.timerId];
 }
 
 // this is the function we run on every interval of a timer
@@ -72,6 +78,43 @@ function runTimer(timer) {
     }
 }
 
+function buildIntervalForTimer(timer) {
+    /**
+         * Create the interval.
+         * The first argument "runTimer" is the function defined above.
+         * The second argument is how often the user defined this timer to run (mins converted to milliseconds)
+         * The third argument "timer" is the timer object getting passed as an argument to the "runTimer" fuction
+         *
+         * the setInterval function returns an id that we use to clear the interval when needed
+         */
+    const intervalId = setInterval(runTimer, timer.interval * 1000, timer);
+
+    // Create our object that will track the interval and its progress
+    const intervalTracker = {
+        timerId: timer.id,
+        onlyWhenLive: timer.onlyWhenLive,
+        timer: timer,
+        requiredChatLines: timer.requiredChatLines,
+        waitingForChatLines: false,
+        chatLinesSinceLastRunCount: 0,
+        intervalId: intervalId,
+        startedAt: moment()
+    };
+
+    return intervalTracker;
+}
+
+function updateIntervalForTimer(timer) {
+    if (timer == null) return;
+    clearIntervalForTimerId(timer.id);
+    if (!timer.active || (timer.onlyWhenLive &&
+        !connectionManager.streamerIsOnline())) {
+        return;
+    }
+    const interval = buildIntervalForTimer(timer);
+    timerIntervalCache[timer.id] = interval;
+}
+
 function buildIntervalsForTimers(timers, onlyClearWhenLiveTimers = false) {
     // make sure any previous timers are cleared
     clearIntervals(onlyClearWhenLiveTimers);
@@ -82,27 +125,8 @@ function buildIntervalsForTimers(timers, onlyClearWhenLiveTimers = false) {
 
         // skip over timers that require the streamer to be live
         if (timer.onlyWhenLive && !connectionManager.streamerIsOnline()) continue;
-        /**
-         * Create the interval.
-         * The first argument "runTimer" is the function defined above.
-         * The second argument is how often the user defined this timer to run (mins converted to milliseconds)
-         * The third argument "timer" is the timer object getting passed as an argument to the "runTimer" fuction
-         *
-         * the setInterval function returns an id that we use to clear the interval when needed
-         */
-        let intervalId = setInterval(runTimer, timer.interval * 1000, timer);
 
-        // Create our object that will track the interval and its progress
-        let intervalTracker = {
-            timerId: timer.id,
-            onlyWhenLive: timer.onlyWhenLive,
-            timer: timer,
-            requiredChatLines: timer.requiredChatLines,
-            waitingForChatLines: false,
-            chatLinesSinceLastRunCount: 0,
-            intervalId: intervalId,
-            startedAt: moment()
-        };
+        const intervalTracker = buildIntervalForTimer(timer);
 
         // add to our cache
         timerIntervalCache[timer.id] = intervalTracker;
@@ -124,14 +148,16 @@ function incrementChatLineCounters() {
 
 function startTimers() {
     // get all active timers
-    timerAccess.refreshTimerCache();
     let timers = timerAccess.getTimers().filter(t => t.active);
     buildIntervalsForTimers(timers);
 }
 
-// Refresh command cooldown cache when changes happened on the front end
-ipcMain.on("refreshTimerCache", function() {
-    startTimers();
+timerAccess.on("timer-save", timer => {
+    updateIntervalForTimer(timer);
+});
+
+timerAccess.on("timer-delete", timerId => {
+    clearIntervalForTimerId(timerId);
 });
 
 // restart timers when the Streamer goes offline/online

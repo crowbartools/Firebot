@@ -106,6 +106,7 @@
         presetEffectListsService,
         startupScriptsService,
         effectQueuesService,
+        timerService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -116,6 +117,8 @@
 
         //load commands
         commandsService.refreshCommands();
+
+        timerService.loadTimers();
 
         //get integrations from backend
         integrationService.updateIntegrations();

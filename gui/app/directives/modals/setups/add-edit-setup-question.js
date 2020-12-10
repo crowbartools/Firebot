@@ -12,12 +12,12 @@
                 <div class="modal-body">
                     <h3>Question <tooltip text="'This is the question that will be asked when a user imports. Ie, What should be the default bet amount?'"/></h3>
                     <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.question.question" placeholder="Enter question"></textarea>
+                    
+                    <h3>Replace Token <tooltip text="'Firebot will replace any instances of this token with the users answer to this question. A token can be anything but you might want to use uncommon characters. Ie %WagerAmount%'"/></h3>
+                    <input type="text" class="form-control" ng-model="$ctrl.question.replaceToken" placeholder="Enter text" />
 
                     <h3>Tooltip Text <tooltip text="'This is extra text that will showup in a tooltip (Just like this!) Optional.'"/></h3>
                     <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.question.helpText" placeholder="Optional"></textarea>
-
-                    <h3>Replace Token <tooltip text="'Firebot will replace any instances of this token with the users answer to this question. A token can be anything but you might want to use uncommon characters. Ie %WagerAmount%'"/></h3>
-                    <input type="text" class="form-control" ng-model="$ctrl.question.replaceToken" placeholder="Enter text" />
 
                     <h3>Default Answer <tooltip text="'This is a default answer that will be initially set in the answer text field. Optional.'"/></h3>
                     <input type="text" class="form-control" ng-model="$ctrl.question.defaultAnswer" placeholder="Optional" />

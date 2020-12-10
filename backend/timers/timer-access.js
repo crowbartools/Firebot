@@ -1,55 +1,97 @@
 "use strict";
-const { ipcMain } = require("electron");
+const EventEmitter = require("events");
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
+const frontendCommunicator = require("../common/frontend-communicator");
 
-let getTimersDb = () => profileManager.getJsonDbInProfile("timers");
+const getTimersDb = () => profileManager.getJsonDbInProfile("timers");
 
-// in memory timer storage
-let timerCache = [];
+/**@extends {NodeJS.EventEmitter} */
+class TimerAccess extends EventEmitter {
 
-// Refreshes the timers cache
-function refreshTimerCache(retry = 1) {
-    // FB: I've set a weird retry thing here because I ran into a rare issue where upon saving settings the app tried to
-    // save and get the same file at the same time which threw errors and caused the cache to get out
-    // of sync.
+    constructor() {
+        super();
+        this._timers = {};
+    }
 
-    // Get commands file
-    let timersDb = getTimersDb();
+    getTimers() {
+        return Object.values(this._timers);
+    }
 
-    // We've got the last used board! Let's update the interactive cache.
-    if (timersDb != null) {
-        if (retry <= 3) {
-            let timerData;
-            try {
-                timerData = timersDb.getData("/");
-            } catch (err) {
-                logger.info(
-                    "Timer cache update failed. Retrying. (Try " + retry + "/3)"
-                );
-                retry = retry + 1;
-                logger.error("error getting timer data", err);
-                refreshTimerCache(retry);
-                return;
-            }
+    getTimer(timerId) {
+        return this.getTimers().find(t => t.timerId === timerId);
+    }
+
+    loadTimers() {
+        logger.debug(`Attempting to load timers...`);
+
+        const timersDb = getTimersDb();
+
+        try {
+            const timerData = timersDb.getData("/");
 
             if (timerData) {
-                timerCache = Object.values(timerData);
+                this._timers = timerData;
             }
 
-            logger.info("Updated Timer cache.");
-        } else {
-            renderWindow.webContents.send("error", "Could not sync up timer cache.");
+            logger.debug(`Loaded Timers.`);
+
+        } catch (err) {
+            logger.warn(`There was an error reading timers file.`, err);
+        }
+    }
+
+    saveTimer(timer, emitUpdateEventToFrontEnd = true) {
+        if (timer == null) return;
+
+        this._timers[timer.id] = timer;
+
+        try {
+            const timerDb = getTimersDb();
+
+            timerDb.push("/" + timer.id, timer);
+
+            logger.debug(`Saved timer ${timer.id} to file.`);
+
+            if (emitUpdateEventToFrontEnd) {
+                frontendCommunicator.send("timerUpdate", timer);
+            }
+
+            this.emit("timer-save", timer);
+        } catch (err) {
+            logger.warn(`There was an error saving an timer.`, err);
+        }
+    }
+
+    deleteTimer(timerId) {
+        if (timerId == null) return;
+
+        delete this._timers[timerId];
+
+        try {
+            const timerDb = getTimersDb();
+
+            timerDb.delete("/" + timerId);
+
+            logger.debug(`Deleted timer: ${timerId}`);
+
+            this.emit("timer-delete", timerId);
+        } catch (err) {
+            logger.warn(`There was an error deleting a timer.`, err);
         }
     }
 }
 
-refreshTimerCache();
+const timerAccess = new TimerAccess();
 
-// Refresh Timer Cache
-ipcMain.on("refreshTimerCache", function() {
-    refreshTimerCache();
+frontendCommunicator.onAsync("getTimers", async () => timerAccess.getTimers());
+
+frontendCommunicator.on("saveTimer", (timer) => {
+    timerAccess.saveTimer(timer, false);
 });
 
-exports.refreshTimerCache = refreshTimerCache;
-exports.getTimers = () => timerCache;
+frontendCommunicator.on("deleteTimer", (timerId) => {
+    timerAccess.deleteTimer(timerId);
+});
+
+module.exports = timerAccess;

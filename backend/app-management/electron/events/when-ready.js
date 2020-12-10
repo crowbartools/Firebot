@@ -28,6 +28,9 @@ exports.whenReady = async () => {
     const connectionManager = require("../../../common/connection-manager");
     connectionManager.startOnlineCheckInterval();
 
+    const timerAccess = require("../../../timers/timer-access");
+    timerAccess.loadTimers();
+
     const timerManager = require("../../../timers/timer-manager");
     timerManager.startTimers();
 

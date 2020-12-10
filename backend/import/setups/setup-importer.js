@@ -8,6 +8,7 @@ const commandAccess = require("../../chat/commands/command-access");
 const countersManager = require("../../counters/counter-manager");
 const effectQueueManager = require("../../effects/queues/effect-queue-manager");
 const eventsAccess = require("../../events/events-access");
+const timerAccess = require("../../timers/timer-access");
 const presetEffectListManager = require("../../effects/preset-lists/preset-effect-list-manager");
 const customRolesManager = require("../../roles/custom-roles-manager");
 const { escapeRegExp } = require("../../utility");
@@ -149,7 +150,7 @@ function importSetup(setup, selectedCurrency) {
     // timers
     const timers = setup.components.timers || [];
     for (const timer of timers) {
-        frontendCommunicator.send("import-timer", timer);
+        timerAccess.saveTimer(timer);
     }
 
     // viewer roles

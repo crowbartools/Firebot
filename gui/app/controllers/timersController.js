@@ -8,24 +8,20 @@
             utilityService,
             objectCopyHelper
         ) {
-            // Cache commands on app load.
-            timerService.refreshTimers();
 
             $scope.timerService = timerService;
 
             /*
-      * TIMERS
-      */
+            * TIMERS
+            */
             $scope.toggleTimerActiveState = timer => {
                 if (timer == null) return;
                 timer.active = !timer.active;
                 timerService.saveTimer(timer);
-                timerService.refreshTimers();
             };
 
             $scope.deleteTimer = timer => {
                 timerService.deleteTimer(timer);
-                timerService.refreshTimers();
             };
 
             $scope.openAddOrEditTimerModal = function(timer) {
@@ -47,9 +43,6 @@
                             timerService.deleteTimer(timer);
                             break;
                         }
-
-                        // Refresh timers
-                        timerService.refreshTimers();
                     }
                 });
             };
@@ -58,7 +51,6 @@
                 let copiedTimer = objectCopyHelper.copyObject("timer", timer);
                 copiedTimer.name += " copy";
                 timerService.saveTimer(copiedTimer);
-                timerService.refreshTimers();
             };
 
             $scope.timerMenuOptions = [

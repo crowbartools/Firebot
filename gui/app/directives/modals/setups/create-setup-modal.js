@@ -236,6 +236,12 @@
                                 ngToast.create("Unable to load previous Setup!");
                                 return;
                             }
+                            for (const [componentKey, componentList] of Object.entries(setup.components)) {
+                                const componentConfig = $ctrl.components.find(c => c.key === componentKey);
+                                if (!componentConfig) continue;
+                                setup.components[componentConfig.key] = componentConfig.all
+                                    .filter(c => componentList.some(cy => cy.id === c.id));
+                            }
                             $ctrl.setup = setup;
                         }, (reason) => {
                             console.log(reason);
