@@ -276,6 +276,9 @@
                             question: () => question
                         },
                         closeCallback: (question) => {
+                            if ($ctrl.setup.importQuestions == null) {
+                                $ctrl.setup.importQuestions = [];
+                            }
                             if (question) {
                                 const index = $ctrl.setup.importQuestions
                                     .findIndex(q => q.id === question.id);
