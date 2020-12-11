@@ -163,9 +163,66 @@ function importSetup(setup, selectedCurrency) {
     return true;
 }
 
+function removeSetupComponents(components) {
+    Object.entries(components)
+        .forEach(([componentType, componentList]) => {
+            componentList.forEach(({id, name}) => {
+                switch (componentType) {
+                case "commands":
+                    commandAccess.deleteCustomCommand(id);
+                    break;
+                case "counters":
+                    countersManager.deleteCounter(id);
+                    break;
+                case "currencies":
+                    frontendCommunicator.send("remove-currency", { id, name });
+                    break;
+                case "effectQueues":
+                    effectQueueManager.deleteEffectQueue(id);
+                    break;
+                case "events":
+                    eventsAccess.removeEventFromMainEvents(id);
+                    break;
+                case "hotkeys":
+                    frontendCommunicator.send("remove-hotkey", id);
+                    break;
+                case "presetEffectLists":
+                    presetEffectListManager.deletePresetEffectList(id);
+                    break;
+                case "timers":
+                    timerAccess.deleteTimer(id);
+                    break;
+                case "viewerRoles":
+                    customRolesManager.deleteCustomRole(id);
+                    break;
+                default:
+                    // do nothing
+                }
+            });
+            if (componentType === "commands") {
+                commandAccess.triggerUiRefresh();
+            } else if (componentType === "counters") {
+                countersManager.triggerUiRefresh();
+            } else if (componentType === "effectQueues") {
+                effectQueueManager.triggerUiRefresh();
+            } else if (componentType === "events") {
+                eventsAccess.triggerUiRefresh();
+            } else if (componentType === "presetEffectLists") {
+                presetEffectListManager.triggerUiRefresh();
+            } else if (componentType === "viewerRoles") {
+                customRolesManager.triggerUiRefresh();
+            }
+        });
+    return true;
+}
+
 function setupListeners() {
     frontendCommunicator.onAsync("import-setup", async ({setup, selectedCurrency}) => {
         return importSetup(setup, selectedCurrency);
+    });
+
+    frontendCommunicator.onAsync("remove-setup-components", async ({components}) => {
+        return removeSetupComponents(components);
     });
 }
 

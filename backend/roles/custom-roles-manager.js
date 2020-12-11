@@ -167,6 +167,8 @@ exports.userIsInRole = userIsInRole;
 
 exports.saveCustomRole = saveCustomRole;
 
+exports.deleteCustomRole = deleteCustomRole;
+
 exports.addViewerToRole = addViewerToRole;
 
 exports.removeViewerFromRole = removeViewerFromRole;

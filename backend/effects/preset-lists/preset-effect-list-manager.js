@@ -97,4 +97,5 @@ frontendCommunicator.on("deletePresetEffectList", (presetListId) => {
 exports.loadPresetEffectLists = loadPresetEffectLists;
 exports.getPresetEffectList = getPresetEffectList;
 exports.savePresetEffectList = savePresetEffectList;
+exports.deletePresetEffectList = deletePresetEffectList;
 exports.triggerUiRefresh = triggerUiRefresh;

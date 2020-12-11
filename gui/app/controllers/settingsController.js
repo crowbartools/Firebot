@@ -40,6 +40,13 @@
                 });
             };
 
+            $scope.showRemoveSetupModal = () => {
+                utilityService.showModal({
+                    component: "removeSetupModal",
+                    backdrop: true
+                });
+            };
+
             $scope.showPurgeViewersModal = () => {
                 utilityService.showModal({
                     component: "purgeViewersModal",

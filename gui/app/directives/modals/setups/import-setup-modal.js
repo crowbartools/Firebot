@@ -28,8 +28,8 @@
                             <div class="script-name" style="font-size: 30px;font-weight: 100;">{{$ctrl.setup.name || "Unnamed Setup"}} <span class="script-version muted">v{{$ctrl.setup.version}}</span></div>
                             <div style="font-size: 13px;">by <span class="script-author">{{$ctrl.setup.author}}</span></div>
                             <div class="script-description" ng-bind-html="$ctrl.setup.description"></div>
-                            <button class="btn-sm btn-default" ng-click="$ctrl.popoutDescription()" style="margin-top: 3px;">Popout Description</button>
-                            <button ng-show="$ctrl.allowCancel" class="btn-sm btn-link" ng-click="$ctrl.resetSelectedFile()" style="margin-top: 3px;">Cancel</button>
+                            <button ng-show="$ctrl.allowCancel" class="btn-sm btn-default" ng-click="$ctrl.resetSelectedFile()" style="margin-top: 3px;">Cancel</button>
+                            <button class="btn-sm btn-default pull-right" ng-click="$ctrl.popoutDescription()" style="margin-top: 3px;">Popout Description</button>
                         </div>
                         <div style="margin-top: 25px;">
                             <h4 class="muted">This Setup Adds:</h4>

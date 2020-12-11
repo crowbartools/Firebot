@@ -105,4 +105,5 @@ frontendCommunicator.on("deleteEffectQueue", (queueId) => {
 exports.loadEffectQueues = loadEffectQueues;
 exports.getEffectQueue = getEffectQueue;
 exports.saveEffectQueue = saveEffectQueue;
+exports.deleteEffectQueue = deleteEffectQueue;
 exports.triggerUiRefresh = triggerUiRefresh;

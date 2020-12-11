@@ -107,6 +107,18 @@ function saveNewCustomCommand(command) {
     } catch (err) {} //eslint-disable-line no-empty
 }
 
+function deleteCustomCommand(commandId) {
+    const commandDb = getCommandsDb();
+
+    if (commandId == null) return;
+
+    try {
+        commandDb.delete("/customCommands/" + commandId);
+    } catch (err) {
+        logger.warn("error when deleting command", err);
+    } //eslint-disable-line no-empty
+}
+
 refreshCommandCache();
 
 // Refresh Command Cache
@@ -124,7 +136,7 @@ exports.getSystemCommandOverrides = () => commandsCache.systemCommandOverrides;
 exports.saveSystemCommandOverride = saveSystemCommandOverride;
 exports.removeSystemCommandOverride = removeSystemCommandOverride;
 exports.saveNewCustomCommand = saveNewCustomCommand;
-
+exports.deleteCustomCommand = deleteCustomCommand;
 exports.getCustomCommands = () => commandsCache.customCommands;
 exports.getCustomCommand = id =>
     commandsCache.customCommands.find(c => c.id === id);

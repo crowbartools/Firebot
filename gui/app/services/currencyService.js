@@ -93,15 +93,6 @@
             ipcRenderer.send("refreshCurrencyCommands", {"action": "update", "currency": currency});
         };
 
-        backendCommunicator.on("import-currency", currency => {
-            if (currency == null || currency.id == null) return;
-            if (service.getCurrency(currency.id)) {
-                service.updateCurrency(currency);
-            } else {
-                service.saveCurrency(currency, true);
-            }
-        });
-
         // Purged a currency through the modal.
         service.purgeCurrency = function(currencyId) {
             ipcRenderer.send("purgeCurrency", currencyId);
@@ -115,6 +106,19 @@
             ipcRenderer.send("refreshCurrencyCache");
             ipcRenderer.send("refreshCurrencyCommands", {"action": "delete", "currency": currency});
         };
+
+        backendCommunicator.on("import-currency", currency => {
+            if (currency == null || currency.id == null) return;
+            if (service.getCurrency(currency.id)) {
+                service.updateCurrency(currency);
+            } else {
+                service.saveCurrency(currency, true);
+            }
+        });
+
+        backendCommunicator.on("remove-currency", currency => {
+            service.deleteCurrency(currency);
+        });
 
         return service;
     });
