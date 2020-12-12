@@ -4,18 +4,18 @@ const logger = require("../../logwrapper");
 const twitchApi = require("../client");
 const { TwitchAPICallType } = require("twitch/lib");
 
-function mapTwitchGame(game) {
+function mapTwitchGame(game, size) {
     if (game.box_art_url) {
-        game.boxArtUrl = game.box_art_url.replace("{width}x{height}", "285x380");
+        game.boxArtUrl = game.box_art_url.replace("{width}x{height}", size);
     }
     return game;
 }
 
-async function getCategoryById(gameId) {
+async function getCategoryById(gameId, size = "285x380") {
     const client = twitchApi.getClient();
     try {
         const game = await client.helix.games.getGameById(gameId);
-        return mapTwitchGame(game._data);
+        return mapTwitchGame(game._data, size);
     } catch (error) {
         logger.error("Failed to get twitch game", error);
         return null;

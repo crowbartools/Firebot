@@ -27,7 +27,7 @@ function mixerSocketConnect(){
 			
 			var olInstance = params.get("instance");
 
-			console.log(`Recieved Event: ${event}`);
+			console.log(`Received Event: ${event}`);
 			console.log(`Overlay Instance: ${olInstance}, Event Instance: ${data.meta.overlayInstance}`)
 			console.log(data);
 
