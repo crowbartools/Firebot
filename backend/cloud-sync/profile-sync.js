@@ -5,6 +5,7 @@ const cloudSync = require("./cloud-sync");
 const logger = require("../logwrapper");
 const commandList = require("./sync-handlers/command-list");
 const quoteList = require("./sync-handlers/quotes-list");
+const { settings } = require("../common/settings-access");
 
 async function syncProfileData(profileSyncData) {
     let streamerUsername = accountAccess.getAccounts().streamer.username;
@@ -16,7 +17,8 @@ async function syncProfileData(profileSyncData) {
         'chatter': profileSyncData.username,
         'profilePage': profileSyncData.profilePage,
         'commands': commands,
-        'quotes': quotes
+        'quotes': quotes,
+        'allowQuoteCSVDownloads': settings.getAllowQuoteCSVDownloads()
     };
 
     let binId = await cloudSync.sync(completeSyncJSON);
