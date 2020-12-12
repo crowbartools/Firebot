@@ -4,13 +4,14 @@
 
     angular
         .module('firebotApp')
-        .component("controlColorPicker", {
+        .component("colorPickerInput", {
             bindings: {
                 model: "=",
-                label: "@"
+                label: "@",
+                style: "@"
             },
             template: `
-            <div>
+            <div style="{{$ctrl.style}}">
                 <div class="input-group settings-buttontext">
                     <span class="input-group-addon" id="basic-addon3">{{$ctrl.label}}</span>
                     <color-picker

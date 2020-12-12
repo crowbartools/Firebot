@@ -201,10 +201,6 @@ const uuidv1 = require("uuid/v1");
                 }
             };
 
-            backendCommunicator.on("import-hotkeys-update", () => {
-                service.loadHotkeys();
-            });
-
             function saveHotkeysToFile() {
                 let hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");
                 try {
@@ -250,6 +246,16 @@ const uuidv1 = require("uuid/v1");
             };
 
             service.loadHotkeys();
+
+            backendCommunicator.on("import-hotkeys-update", () => {
+                service.loadHotkeys();
+            });
+
+            backendCommunicator.on("remove-hotkey", (hotkeyId) => {
+                service.service.deleteHotkey({
+                    id: hotkeyId
+                });
+            });
 
             return service;
         });

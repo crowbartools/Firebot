@@ -10,7 +10,7 @@
             bindings: {
                 inputTitle: "@",
                 placeholderText: "@",
-                dataType: "@",
+                inputType: "@",
                 useTextArea: "<",
                 disableVariables: "<",
                 model: "="
@@ -19,12 +19,12 @@
                 <div>
                     <div ng-if="$ctrl.useInputGroup" class="input-group">
                         <span class="input-group-addon" id="{{$ctrl.inputGroupId}}">{{$ctrl.inputTitle}}</span>
-                        <input ng-if="!$ctrl.useTextArea" type="text" class="form-control" ng-model="$ctrl.model" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables">
+                        <input ng-if="!$ctrl.useTextArea" type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}" class="form-control" ng-model="$ctrl.model" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables">
                         <textarea ng-if="$ctrl.useTextArea" ng-model="$ctrl.model" class="form-control" placeholder="{{$ctrl.placeholderText}}" rows="4" cols="40"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables"></textarea>
                     </div>
 
                     <div ng-if="!$ctrl.useInputGroup">
-                        <input ng-if="!$ctrl.useTextArea" type="text" class="form-control" ng-model="$ctrl.model" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables">
+                        <input ng-if="!$ctrl.useTextArea" type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}" class="form-control" ng-model="$ctrl.model" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables">
                         <textarea ng-if="$ctrl.useTextArea" ng-model="$ctrl.model" class="form-control" placeholder="{{$ctrl.placeholderText}}" rows="4" cols="40"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables"></textarea>
                     </div>
 
@@ -37,6 +37,7 @@
 
                 $ctrl.$onInit = () => {
                     $ctrl.useInputGroup = $ctrl.inputTitle != null && $ctrl.inputTitle !== '';
+                    console.log("input type", $ctrl.inputType);
                 };
             }
         });

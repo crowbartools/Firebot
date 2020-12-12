@@ -23,6 +23,7 @@ exports.loadFilters = () => {
     const message = require("./builtin/message");
 
     const rewardName = require("./builtin/reward-name");
+    const reward = require("./builtin/reward");
 
     const cheerBitsAmount = require("./builtin/cheer-bits-amount");
 
@@ -44,6 +45,7 @@ exports.loadFilters = () => {
     filterManager.registerFilter(messageType);
     filterManager.registerFilter(message);
 
+    filterManager.registerFilter(reward);
     filterManager.registerFilter(rewardName);
 
     filterManager.registerFilter(cheerBitsAmount);

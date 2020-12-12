@@ -63,11 +63,16 @@ exports.start = function() {
             .filter(ed => ed.dependencies != null && ed.dependencies.js != null)
             .map(ed => ed.dependencies.js)))];
 
+        const combinedGlobalStyles = effectDefs
+            .filter(ed => ed != null && ed.dependencies != null && ed.dependencies.globalStyles != null)
+            .map(ed => ed.dependencies.globalStyles);
+
         res.render("../resources/overlay", {
             events: effectDefs.map(ed => ed.event),
             dependancies: {
                 css: combinedCssDeps,
-                js: combinedJsDeps
+                js: combinedJsDeps,
+                globalStyles: combinedGlobalStyles
             }
         });
     });

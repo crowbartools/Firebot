@@ -117,6 +117,11 @@ function saveNewEventToMainEvents(event) {
     }
 }
 
+function removeEventFromMainEvents(eventId) {
+    mainEvents = mainEvents.filter(e => e.id !== eventId);
+    saveMainEvents(mainEvents);
+}
+
 function getAllActiveEvents() {
     let activeEventsArray = Array.isArray(mainEvents) ? mainEvents : Object.values(mainEvents);
 
@@ -183,6 +188,7 @@ exports.triggerUiRefresh = () => {
 
 
 exports.saveNewEventToMainEvents = saveNewEventToMainEvents;
+exports.removeEventFromMainEvents = removeEventFromMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;
 exports.updateEventGroupActiveStatus = updateEventGroupActiveStatus;

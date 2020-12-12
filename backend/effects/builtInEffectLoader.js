@@ -48,6 +48,7 @@ exports.loadEffects = () => {
     const toggleEventSet = require("./builtin/toggle-event-set");
     const cooldownCommand = require("./builtin/cooldown-command");
     const setUserMetadata = require("./builtin/set-user-metadata");
+    const shoutout = require("./builtin/shoutout");
 
     // register them
     effectManager.registerEffect(playSoundEffect); // No migration needed.
@@ -90,10 +91,11 @@ exports.loadEffects = () => {
     effectManager.registerEffect(moderatorTimeout);
     effectManager.registerEffect(moderatorMod);
     effectManager.registerEffect(clearChat);
-    effectManager.registerEffect(updateCounter); // No migration needed.
-    effectManager.registerEffect(toggleEventSet); // No migration needed.
+    effectManager.registerEffect(updateCounter);
+    effectManager.registerEffect(toggleEventSet);
     effectManager.registerEffect(cooldownCommand);
     effectManager.registerEffect(setUserMetadata);
+    effectManager.registerEffect(shoutout);
 
     // Deactivated for Twitch.
     const changeScene = require('./builtin/changeScene');

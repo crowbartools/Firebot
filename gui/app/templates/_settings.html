@@ -90,16 +90,23 @@
         <!-- Setup Settings -->
         <uib-tab index="20" heading="Setups">
           <div class="row" style="margin-top: 15px">
-            <div class="setting col-sm-6">
-                <div class="setting-heading">Create a Firebot Setup</div>
-                <div class="setting-description">Create a new Firebot Setup (a collection of commands, events, currencies, etc) and share it with others!</div>
-                <button class="btn btn-default" ng-click="showCreateSetupModal()">Create New Setup</button>
-            </div>
-
             <div class="setting col-sm-6">              
               <div class="setting-heading">Import a Firebot Setup</div>
               <div class="setting-description">Import a Firebot Setup (.firebotsetup file) made by someone else!</div>
               <button class="btn btn-default" ng-click="showImportSetupModal()">Import Setup</button>
+            </div>
+
+            <div class="setting col-sm-6">              
+              <div class="setting-heading">Remove Setup</div>
+              <div class="setting-description">Select a Setup file to have Firebot find and remove all matching components (commands, events, etc) currently saved for you. Useful if you want to completely remove a previously imported Setup.</div>
+              <button class="btn btn-default" ng-click="showRemoveSetupModal()">Remove Setup</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="setting col-sm-6">
+              <div class="setting-heading">Create a Firebot Setup</div>
+              <div class="setting-description">Create a new Firebot Setup (a collection of commands, events, currencies, etc) and share it with others!</div>
+              <button class="btn btn-default" ng-click="showCreateSetupModal()">Create New Setup</button>
             </div>
           </div>
         </uib-tab>
@@ -485,6 +492,25 @@
                   <li><a href ng-click="settings.setPersistCustomVariables(false)">Off</a></li>
                 </ul>
               </div>
+            </div>
+
+            <div class="setting col-sm-6">
+
+              <div class="setting-heading">Allow Quote .CSV Export</div>
+              <div class="setting-description">
+                Whether or not you want the "Export as .CSV" button available for quotes on the profile page
+              </div>
+              <div class="dropdown options-customscript-dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="dropdown-text">{{settings.getAllowQuoteCSVDownloads() ? 'On' : 'Off'}}</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="options-customscript">
+                  <li><a href ng-click="settings.setAllowQuoteCSVDownloads(true)">On</a></li>
+                  <li><a href ng-click="settings.setAllowQuoteCSVDownloads(false)">Off</a></li>
+                </ul>
+              </div>
+
             </div>
           </div>
 

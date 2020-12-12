@@ -78,7 +78,8 @@ function showTimedAnimatedElement(
 	exitAnimation, 
 	exitDuration, 
 	duration, 
-	tokenArg) {
+	tokenArg,
+	completeCallback = null) {
 	enterAnimation = enterAnimation ? enterAnimation : "fadeIn";
 	exitAnimation = exitAnimation ? exitAnimation : "fadeOut";
 	inbetweenAnimation = inbetweenAnimation ? inbetweenAnimation : "none";
@@ -96,6 +97,9 @@ function showTimedAnimatedElement(
 			}
 			$(data.id).find(".inner-position").animateCss(data.exitAnimation, data.exitDuration, null, null, (data1) => {
 				$(data1.id).remove();
+				if(completeCallback) {
+					completeCallback();
+				}
 			}, data);
 		}, (duration === 0 || duration != null) ? duration : 5000);
 	}, { 

@@ -212,6 +212,10 @@ settings.setMaxBackupCount = function(maxBackupCount) {
     pushDataToFile("/settings/maxBackupCount", maxBackupCount);
 };
 
+settings.getAllowQuoteCSVDownloads = function() {
+    return getDataFromFile("/settings/allowQuoteCSVDownloads") !== false;
+};
+
 settings.getActiveChatUserListTimeout = function() {
     let inactiveTimer = getDataFromFile("/settings/activeChatUsers/inactiveTimer");
     return inactiveTimer != null ? parseInt(inactiveTimer) : 5;

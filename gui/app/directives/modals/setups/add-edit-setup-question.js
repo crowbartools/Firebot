@@ -19,8 +19,17 @@
                     <h3>Tooltip Text <tooltip text="'This is extra text that will showup in a tooltip (Just like this!) Optional.'"/></h3>
                     <textarea type="text" class="form-control" rows="3" ng-model="$ctrl.question.helpText" placeholder="Optional"></textarea>
 
+                    <h3>Answer Type</h3>
+                    <select 
+                        class="fb-select" 
+                        ng-model="$ctrl.question.answerType"
+                        ng-change="$ctrl.question.defaultAnswer = undefined"; 
+                        ng-options="answerType.id as answerType.name for answerType in $ctrl.answerTypes">
+                        <option value="" disabled selected>Select answer type...</option>
+                    </select>
+
                     <h3>Default Answer <tooltip text="'This is a default answer that will be initially set in the answer text field. Optional.'"/></h3>
-                    <input type="text" class="form-control" ng-model="$ctrl.question.defaultAnswer" placeholder="Optional" />
+                    <input type="{{$ctrl.question.answerType}}" class="form-control" ng-model="$ctrl.question.defaultAnswer" placeholder="Optional" />
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-link" ng-click="$ctrl.dismiss()">Cancel</button>
@@ -37,17 +46,31 @@
 
                 $ctrl.isNewQuestion = true;
 
+                $ctrl.answerTypes = [
+                    {
+                        id: "text",
+                        name: "Text"
+                    }, {
+                        id: "number",
+                        name: "Number"
+                    }
+                ];
+
                 $ctrl.question = {
                     id: uuid(),
                     question: undefined,
                     helpText: undefined,
                     defaultAnswer: undefined,
+                    answerType: "text",
                     replaceToken: undefined
                 };
 
                 $ctrl.$onInit = () => {
                     if ($ctrl.resolve.question) {
                         $ctrl.question = JSON.parse(angular.toJson($ctrl.resolve.question));
+                        if ($ctrl.question.answerType == null) {
+                            $ctrl.question.answerType = "text";
+                        }
                         $ctrl.isNewQuestion = false;
                     }
                 };

@@ -229,4 +229,5 @@ exports.getCounter = getCounter;
 exports.getCounterByName = getCounterByName;
 exports.updateCounterValue = updateCounterValue;
 exports.saveCounter = saveCounter;
+exports.deleteCounter = deleteCounter;
 exports.triggerUiRefresh = triggerUiRefresh;

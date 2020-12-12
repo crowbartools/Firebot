@@ -12,6 +12,10 @@
             <link rel="stylesheet" type="text/css" href="<%-cssDep%>">
         <% } %>
 
+        <% for(let globalStyle of dependancies.globalStyles) { %>
+            <style><%-globalStyle%></style>
+        <% } %>
+
     </head>
     
     <body>
@@ -29,6 +33,7 @@
     <script src="js/plugins/create.js"></script>
     <script src="js/fireworks.js"></script>
     <script src="js/confetti.js"></script>
+    <script src="js/fitty.js"></script>
     <script src="js/main.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
 

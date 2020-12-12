@@ -172,6 +172,14 @@
                 pushDataToFile("/settings/persistCustomVariables", enabled === true);
             };
 
+            service.getAllowQuoteCSVDownloads = function() {
+                return getDataFromFile("/settings/allowQuoteCSVDownloads") !== false;
+            };
+
+            service.setAllowQuoteCSVDownloads = function(enabled) {
+                pushDataToFile("/settings/allowQuoteCSVDownloads", enabled === true);
+            };
+
             service.isBetaTester = function() {
                 let betaTester = getDataFromFile("/settings/beta");
                 return betaTester != null ? betaTester : "No";
