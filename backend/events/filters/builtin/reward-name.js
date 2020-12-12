@@ -5,7 +5,7 @@ const { ComparisonType } = require("../../../../shared/filter-constants");
 module.exports = {
     id: "firebot:reward-name",
     name: "Reward Name",
-    description: "Filter to a Custom Channel Reward",
+    description: "Filter to a Custom Channel Reward by Name",
     events: [
         { eventSourceId: "twitch", eventId: "channel-reward-redemption" }
     ],

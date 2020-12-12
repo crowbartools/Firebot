@@ -1,6 +1,7 @@
 "use strict";
 
 const twitchCategories = require("./resource/categories");
+const channelRewards = require("./resource/channel-rewards");
 const frontendCommunicator = require("../common/frontend-communicator");
 
 exports.setupListeners = () => {
@@ -11,6 +12,10 @@ exports.setupListeners = () => {
 
     frontendCommunicator.onAsync("get-twitch-game", gameId => {
         return twitchCategories.getCategoryById(gameId);
+    });
+
+    frontendCommunicator.onAsync("get-channel-rewards", () => {
+        return channelRewards.getCustomChannelRewards();
     });
 
 };
