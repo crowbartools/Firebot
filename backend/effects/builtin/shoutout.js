@@ -5,30 +5,32 @@ const mediaProcessor = require("../../common/handlers/mediaProcessor");
 const webServer = require("../../../server/httpServer");
 const effectModels = require("../models/effectModels");
 const { EffectDependency } = effectModels;
-const logger = require("../../logwrapper");
 const twitchApi = require("../../twitch-api/api");
 
 const { EffectCategory } = require('../../../shared/effect-constants');
-const { DatabaseError } = require("node-json-db/lib/Errors");
 
 const shoutoutStyles = `
     .firebot-shoutout-wrapper {
-        font-family: 'Roboto';
-        padding: 15px;
+        font-family: 'Open Sans';
         background: black;
-        border-radius: 15px; 
-        width: 270px;
+        border-radius: 1vw; 
+        width: 19vw;
         position: relative;
-        padding-top: 175px;
-        margin-top: 75px;
+        padding-top: 63%;
+        margin-top: 32%;
+    }
+    .firebot-shoutout-padding {
+        padding: 0 5%;
+    }
+    .firebot-shoutout-avatar-wrapper {
+        position: absolute;
+        bottom: 64%;
+        left: 0;
+        width: 90%;
     }
     .firebot-shoutout-user-avatar {
-        width: 240px;
-        height: 240px;
+        width: 100%;
         border-radius: 100%;
-        position: absolute;
-        top: -75px;
-        left: 30px;
         background: black;
         object-fit: cover;
     }
@@ -43,15 +45,15 @@ const shoutoutStyles = `
         text-align: center;
         color: white;
         font-weight: 400;
-        font-size: 24px;
+        font-size: 1.5vw;
         margin-top: 27px;
+        padding-bottom: 25px;
     }
     .firebot-shoutout-game-wrapper {
-        transform: scale(1.113) translateY(11px);
+        transform: translateY(1px);
         position: relative;
-        border-radius: 15px;
+        border-radius: 1vw;
         overflow: hidden;
-        margin-top: 25px;
         border-top-right-radius: 0; 
         border-top-left-radius: 0;
     }
@@ -80,19 +82,19 @@ const shoutoutStyles = `
     .firebot-shoutout-game-text-wrapper {
         width: 100%;
         height: 100%;
-        padding: 10px 0;
+        padding: 3% 0;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        font-size: 22px;
+        font-size: 1.6vw;
         font-weight: 400;
         text-shadow: 0px 0px 5px #000000;
         flex-direction: column;
     }
     .firebot-shoutout-game-lastseen {
         font-weight: 600;
-        font-size: 15px;
+        font-size: 1.1vw;
         text-align: center;
     }
 `;
@@ -110,29 +112,36 @@ const effect = {
         <eos-container header="Preview">
             <style>${shoutoutStyles}</style>
             <div style="display:flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
-                <div 
-                    class="firebot-shoutout-wrapper"
-                    style="width: 300px;background: linear-gradient(0deg, {{effect.bgColor2}} 0%, {{effect.bgColor1}} 100%);"
-                    >
-                    <img 
-                        class="firebot-shoutout-user-avatar"
-                        src="{{defaultAvatar}}"/>
-                    <div class="firebot-shoutout-username" style="color: {{effect.textColor}};font-size: 37px;">SomeUserName</div>
+                <div>
                     <div 
-                        ng-hide="effect.shoutoutText == null || effect.shoutoutText === ''" 
-                        class="firebot-shoutout-text"
-                        style="color: {{effect.textColor}};">
-                        {{effect.shoutoutText}}
-                    </div>
-                    
-                    <div ng-if="effect.showLastGame" class="firebot-shoutout-game-wrapper" style="transform: scale(1.13) translateY(10px);">
-                        <div class="firebot-shoutout-game-boxart" style="background-image:url('{{defaultGameBoxArt}}');" />
-                        <div class="firebot-shoutout-game-dimmer" />
-                        <div class="firebot-shoutout-game-text-wrapper">
-                            <div class="firebot-shoutout-game-lastseen">
-                                LAST SEEN PLAYING
+                        class="firebot-shoutout-wrapper"
+                        style="width: 300px;background: linear-gradient(0deg, {{effect.bgColor2}} 0%, {{effect.bgColor1}} 100%);"
+                        >
+                        <div style="position:relative;width:initial;">
+                            <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding" style="width: 100%;">
+                                <img 
+                                    class="firebot-shoutout-user-avatar"
+                                    src="{{defaultAvatar}}"/>
                             </div>
-                            Science & Technology
+                        </div>
+                        <div class="firebot-shoutout-username" style="padding: 0 10%; color: {{effect.textColor}};font-size: 32px;">SomeUserName</div>
+                        <div class="firebot-shoutout-padding">
+                            <div 
+                                ng-hide="effect.shoutoutText == null || effect.shoutoutText === ''" 
+                                class="firebot-shoutout-text"
+                                style="color: {{effect.textColor}};">
+                                {{effect.shoutoutText}}
+                            </div>
+                        </div>
+                        <div ng-if="effect.showLastGame" class="firebot-shoutout-game-wrapper">
+                            <div class="firebot-shoutout-game-boxart" style="background-image:url('{{defaultGameBoxArt}}');" />
+                            <div class="firebot-shoutout-game-dimmer" />
+                            <div class="firebot-shoutout-game-text-wrapper">
+                                <div class="firebot-shoutout-game-lastseen">
+                                    LAST SEEN PLAYING
+                                </div>
+                                Science & Technology
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -176,7 +185,7 @@ const effect = {
     `,
     optionsController: ($scope, utilityService) => {
 
-        $scope.defaultAvatar = "https://cdn.akc.org/content/hero/puppy_pictures_header.jpg";
+        $scope.defaultAvatar = "https://static-cdn.jtvnw.net/jtv_user_pictures/5545fe76-a341-4ffb-bc79-7ca8075588a1-profile_image-300x300.png";
         $scope.defaultGameBoxArt = "https://static-cdn.jtvnw.net/ttv-boxart/Science%20&%20Technology.jpg";
 
         if ($scope.effect.shoutoutText == null) {
@@ -201,6 +210,10 @@ const effect = {
 
         if ($scope.effect.duration == null) {
             $scope.effect.duration = 8;
+        }
+
+        if ($scope.effect.position == null) {
+            $scope.effect.position = "Middle Right";
         }
 
         $scope.showOverlayInfoModal = function(overlayInstance) {
@@ -272,14 +285,24 @@ const effect = {
                 const fittyId = `fit-text-${uniqueId}`;
 
                 const shoutoutElement = `
-                    <div class="animated flipInY firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%);">
-                        <img 
-                            class="firebot-shoutout-user-avatar"
-                            src="${data.avatarUrl}"/>
-                        <div>
-                            <div id="${fittyId}" class="firebot-shoutout-username" style="color: ${data.textColor}">${data.username}</div>
+                <div>
+                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%);">
+
+                        <div style="position:relative;">
+                            <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">
+                                <img 
+                                class="firebot-shoutout-user-avatar"
+                                src="${data.avatarUrl}" />
+                            </div>
                         </div>
-                        <div class="firebot-shoutout-text" style="color: ${data.textColor};display:${data.shoutoutText == null || data.shoutoutText === '' ? 'none' : 'inherit'};">
+                        <div style="padding: 0 10%;">
+                            <div>
+                                <div>
+                                    <div id="${fittyId}" class="firebot-shoutout-username" style="color: ${data.textColor}">${data.username}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="firebot-shoutout-text firebot-shoutout-padding" style="color: ${data.textColor};display:${data.shoutoutText == null || data.shoutoutText === '' ? 'none' : 'inherit'};">
                             ${data.shoutoutText}
                         </div>
                         
@@ -294,6 +317,7 @@ const effect = {
                             </div>
                         </div>
                     </div>
+                </div>
                 `;
 
                 // eslint-disable-next-line no-undef
@@ -301,8 +325,12 @@ const effect = {
 
                 $('.wrapper').append(positionWrappedHtml);
 
-                // eslint-disable-next-line no-undef
-                const fittyObj = fitty(`#${fittyId}`);
+                let fittyObj;
+                setTimeout(() => {
+                    // eslint-disable-next-line no-undef
+                    fittyObj = fitty(`#${fittyId}`);
+                }, 100);
+
 
                 const mils = data.duration * 1000;
 
