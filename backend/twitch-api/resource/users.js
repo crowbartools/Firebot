@@ -97,7 +97,13 @@ async function getFollowDateForUser(username) {
 }
 
 async function doesUserFollowChannel(username, channelName) {
+    if (username == null || channelName == null) return false;
+
     const client = twitchApi.getClient();
+
+    if (username.toLowerCase() === channelName.toLowerCase()) {
+        return true;
+    }
 
     const userId = (await client.kraken.users.getUserByName(username)).id;
     const channelId = (await client.kraken.users.getUserByName(channelName)).id;
@@ -106,8 +112,13 @@ async function doesUserFollowChannel(username, channelName) {
         return false;
     }
 
-    const followerDate = (await client.kraken.users.getFollowedChannel(userId, channelId)).followDate;
-    if (followerDate == null || followerDate.length < 1) {
+    const userFollow = await client.kraken.users.getFollowedChannel(userId, channelId);
+
+    if (userFollow == null) {
+        return false;
+    }
+
+    if (userFollow.followDate == null || userFollow.followDate.length < 1) {
         return false;
     }
 
