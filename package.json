@@ -60,6 +60,7 @@
     "body-parser": "^1.19.0",
     "carina": "^0.11.2",
     "compare-versions": "^3.5.1",
+    "cors": "^2.8.5",
     "countup.js-angular1": "^1.0.0",
     "custom-electron-titlebar": "^3.2.2-hotfix62",
     "deepmerge": "^4.2.2",
