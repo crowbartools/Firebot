@@ -8,6 +8,7 @@ const { EffectDependency } = effectModels;
 const twitchApi = require("../../twitch-api/api");
 
 const { EffectCategory } = require('../../../shared/effect-constants');
+const logger = require("../../logwrapper");
 
 const shoutoutStyles = `
     .firebot-shoutout-wrapper {
@@ -254,11 +255,18 @@ const effect = {
         const channelInfo = await twitchApi.channels.getChannelInformation(user.id);
         if (channelInfo == null) return;
 
-        const game = await twitchApi.categories.getCategoryById(channelInfo.game_id);
-
         effect.avatarUrl = user.profilePictureUrl;
-        effect.gameName = channelInfo.game_name || "Unknown game";
-        effect.gameBoxArtUrl = game.boxArtUrl;
+
+        if (effect.showLastGame) {
+            try {
+                const game = await twitchApi.categories.getCategoryById(channelInfo.game_id);
+                effect.gameName = channelInfo.game_name != null && channelInfo.game_name !== "" ? channelInfo.game_name : null;
+                effect.gameBoxArtUrl = game.boxArtUrl;
+            } catch (error) {
+                logger.debug(`Failed to find game for ${user.displayName}`, error);
+                effect.showLastGame = false;
+            }
+        }
 
         webServer.sendToOverlay("shoutout", effect);
         return true;
@@ -306,7 +314,7 @@ const effect = {
                             ${data.shoutoutText}
                         </div>
                         
-                        <div class="firebot-shoutout-game-wrapper" style="display:${!data.showLastGame ? 'none' : 'inherit'};">
+                        <div class="firebot-shoutout-game-wrapper" style="display:${!data.showLastGame || data.gameName == null ? 'none' : 'inherit'};">
                             <div class="firebot-shoutout-game-boxart" style="background-image:url('${data.gameBoxArtUrl}');"></div>
                             <div class="firebot-shoutout-game-dimmer" />
                             <div class="firebot-shoutout-game-text-wrapper">

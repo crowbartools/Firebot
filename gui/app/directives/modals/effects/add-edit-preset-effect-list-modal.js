@@ -122,6 +122,10 @@
                     $ctrl.isNewPresetList = false;
                 }
 
+                if ($ctrl.isNewPresetList && $ctrl.presetList.id == null) {
+                    $ctrl.presetList.id = uuidv1();
+                }
+
                 $ctrl.hideDeleteButton = $ctrl.resolve.hideDeleteButton;
 
                 const modalId = $ctrl.resolve.modalId;
@@ -156,10 +160,6 @@
                 if ($ctrl.presetList.name == null || $ctrl.presetList.name === "") {
                     ngToast.create("Please provide a name for this Preset List");
                     return;
-                }
-
-                if ($ctrl.isNewPresetList) {
-                    $ctrl.presetList.id = uuidv1();
                 }
 
                 $ctrl.close({

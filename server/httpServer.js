@@ -10,6 +10,7 @@ const http = require("http");
 const WebSocket = require("ws");
 const { ipcMain } = require("electron");
 const path = require('path');
+const cors = require('cors');
 
 let server = null;
 let httpServer = null;
@@ -26,6 +27,8 @@ exports.start = function() {
     }
 
     let app = express();
+
+    app.use(cors());
 
     httpServer = http.createServer(app);
     wss = new WebSocket.Server({
