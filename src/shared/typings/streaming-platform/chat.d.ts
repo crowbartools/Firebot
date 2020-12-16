@@ -1,3 +1,4 @@
+import { TypedEmitter } from "tiny-typed-emitter";
 import { OnlyRequire } from "../misc/global";
 import { Id } from "./helpers";
 import { PlatformUser } from "./user";
@@ -28,7 +29,10 @@ export interface EmoteMessagePart extends MessagePartType {
 export interface ChatMessage {
     id: Id;
     platformId: string;
-    user: OnlyRequire<PlatformUser, "id" | "username" | "displayName" | "roles">;
+    user: OnlyRequire<
+        PlatformUser,
+        "id" | "username" | "displayName" | "roles"
+    >;
     avatarUrl: string;
     deleted?: boolean;
     tagged?: boolean;
@@ -38,3 +42,29 @@ export interface ChatMessage {
     parts: Array<TextMessagePart | EmoteMessagePart>;
     metadata: Record<string, unknown>;
 }
+
+export interface ChatMessageItem {
+    type: "message";
+    chatMessage: ChatMessage;
+}
+
+export interface ChatModerationItem {
+    type: "moderation";
+    action: "delete-message" | "timeout-user" | "ban-user";
+}
+
+export interface ChatNotificationItem {
+    type: "notification";
+    text: string;
+}
+
+export type ChatItem =
+    | ChatMessageItem
+    | ChatModerationItem
+    | ChatNotificationItem;
+
+interface ChatEvents {
+    chatItem: (chatItem: ChatItem) => void;
+}
+
+export class ChatProvider extends TypedEmitter<ChatEvents> {}

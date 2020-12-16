@@ -1,5 +1,6 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import { PlatformApi } from "./api";
+import { ChatProvider } from "./chat";
 
 interface PlatformEvents {
     connected: VoidFunction;
@@ -15,4 +16,5 @@ declare interface StreamingPlatform extends PlatformEventEmitter {
     connect: VoidFunction;
     disconnect: VoidFunction;
     api: PlatformApi;
+    chat: ChatProvider;
 }
