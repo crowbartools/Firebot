@@ -40,6 +40,11 @@ function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
     };
     manager.emit("service-connection-update", eventData);
     frontendCommunicator.send("service-connection-update", eventData);
+
+    if (serviceId === "chat") {
+        const eventManager = require("../events/EventManager");
+        eventManager.triggerEvent("firebot", "chat-connected");
+    }
 }
 
 // Chat listeners
