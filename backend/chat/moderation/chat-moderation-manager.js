@@ -11,9 +11,13 @@ let getBannedWordsDb = () => profileManager.getJsonDbInProfile("/chat/moderation
 // default settings
 let chatModerationSettings = {
     bannedWordList: {
+        enabled: false
+    },
+    emoteLimit: {
         enabled: false,
-        exemptRoles: []
-    }
+        max: 10
+    },
+    exemptRoles: []
 };
 
 let bannedWords = {
@@ -85,46 +89,54 @@ function stopService() {
     }
 }
 
-function getMessageText(chatMessage) {
-    if (!chatMessage.message || !chatMessage.message.message) {
-        return null;
-    }
-    return chatMessage.message.message
-        .filter(ms => ms.type === "text")
-        .map(ms => ms.text)
-        .join("");
-}
+const countEmojis = (str) => {
+    const re = /\p{Extended_Pictographic}/ug; //eslint-disable-line
+    return ((str || '').match(re) || []).length;
+};
 
+/**
+ *
+ * @param {import("../chat-helpers").FirebotChatMessage} chatMessage
+ */
 function moderateMessage(chatMessage) {
     if (chatMessage == null) return;
 
+    if (!chatModerationSettings.bannedWordList.enabled
+        && !chatModerationSettings.emoteLimit.enabled) return;
+
     let moderateMessage = false;
 
-    // catbot already got it
-    if (chatMessage.message.meta.censored) {
-        return;
-    }
+    const userExempt = rolesManager.userIsInRole(chatMessage.username, chatMessage.roles,
+        chatModerationSettings.exemptRoles);
 
-    if (chatModerationSettings.bannedWordList.enabled) {
-        let username = chatMessage.user_name;
-        let mixerRoles = chatMessage.user_roles;
-        let userExempt = rolesManager.userIsInRole(username, mixerRoles,
-            chatModerationSettings.bannedWordList.exemptRoles);
-
-        if (!userExempt) {
-            moderateMessage = true;
-        }
+    if (!userExempt) {
+        moderateMessage = true;
     }
 
     if (moderateMessage) {
-        let message = getMessageText(chatMessage);
-        let messageId = chatMessage.id;
+
+        if (chatModerationSettings.emoteLimit.enabled && !!chatModerationSettings.emoteLimit.max) {
+            const emoteCount = chatMessage.parts.filter(p => p.type === "emote").length;
+            const emojiCount = chatMessage.parts
+                .filter(p => p.type === "text")
+                .reduce((acc, part) => acc + countEmojis(part.text), 0);
+            if ((emoteCount + emojiCount) > chatModerationSettings.emoteLimit.max) {
+                const chat = require("../twitch-chat");
+                chat.deleteMessage(chatMessage.id);
+                return;
+            }
+        }
+
+
+        const message = chatMessage.rawText;
+        const messageId = chatMessage.id;
         moderationService.postMessage(
             {
                 type: "moderateMessage",
                 message: message,
                 messageId: messageId,
-                scanForBannedWords: chatModerationSettings.bannedWordList.enabled
+                scanForBannedWords: chatModerationSettings.bannedWordList.enabled,
+                maxEmotes: null
             }
         );
     }
@@ -186,6 +198,12 @@ function load() {
         let settings = getChatModerationSettingsDb().getData("/");
         if (settings && Object.keys(settings).length > 0) {
             chatModerationSettings = settings;
+            if (settings.exemptRoles == null) {
+                settings.exemptRoles = [];
+            }
+            if (settings.emoteLimit == null) {
+                settings.emoteLimit = { enabled: false, max: 10 };
+            }
         }
 
         let words = getBannedWordsDb().getData("/");

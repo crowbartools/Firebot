@@ -475,7 +475,7 @@
             );
 
             // Connection Monitor
-            // Recieves event from main process that connection has been established or disconnected.
+            // Receives event from main process that connection has been established or disconnected.
             listenerService.registerListener(
                 { type: listenerService.ListenerType.CHAT_CONNECTION_STATUS },
                 isChatConnected => {

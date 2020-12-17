@@ -32,6 +32,7 @@ function setupTwitchClients() {
             clientSecret: twitchAuth.TWITCH_CLIENT_SECRET,
             refreshToken: streamer.auth.refresh_token,
             expiry: streamer.auth.expires_at != null ? new Date(streamer.auth.expires_at) : undefined,
+
             onRefresh: (token) => {
 
                 logger.debug("Persisting streamer access token");

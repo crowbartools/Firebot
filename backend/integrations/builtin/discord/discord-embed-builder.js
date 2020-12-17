@@ -1,6 +1,6 @@
 "use strict";
 
-const mixerApi = require("../../../mixer-api/api");
+const twitchApi = require("../../../twitch-api/api");
 
 const accountAccess = require("../../../common/account-access");
 
@@ -20,30 +20,48 @@ function buildCustomEmbed(customEmbedData) {
 }
 
 async function buildChannelEmbed() {
-    const streamerChannel = await mixerApi.channels.getStreamersChannel();
+    const streamer = accountAccess.getAccounts().streamer;
+
+    /**@type {import('twitch').HelixStream} */
+    let currentStream;
+    try {
+        currentStream = await twitchApi.getClient().helix.streams.getStreamByUserId(streamer.userId);
+    } catch (error) {
+        // stream not running
+    }
+
+    if (currentStream == null) {
+        return null;
+    }
+
+    /**@type {import('twitch').HelixUser} */
+    let user;
+    /**@type {import('twitch').HelixGame} */
+    let game;
+    try {
+        user = await currentStream.getUser();
+        game = await currentStream.getGame();
+    } catch (error) {
+        //some other error
+    }
 
     const channelEmbed = {
-        title: streamerChannel.name,
-        url: `https://mixer.com/${streamerChannel.token}`,
+        title: currentStream.title,
+        url: `https://twitch.com/${user.name}`,
         color: 2210285,
         author: {
-            name: streamerChannel.token,
-            icon_url: `https://mixer.com/api/v1/users/${streamerChannel.userId}/avatar` //eslint-disable-line camelcase
+            name: user.displayName,
+            icon_url: user.profilePictureUrl //eslint-disable-line camelcase
         },
-        fields: [
+        fields: game ? [
             {
                 name: "Game",
-                value: streamerChannel.type ? streamerChannel.type.name : "No game set",
-                inline: true
-            },
-            {
-                name: "Audience",
-                value: streamerChannel.audience,
+                value: game.name,
                 inline: true
             }
-        ],
+        ] : [],
         image: {
-            url: `https://thumbs.mixer.com/channel/${streamerChannel.id}.small.jpg`
+            url: currentStream.thumbnailUrl
         }
     };
 

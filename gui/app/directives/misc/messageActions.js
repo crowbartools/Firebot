@@ -27,8 +27,8 @@
                 let template = `
                         <div class="popover message-actions" role="{{vm.role}}">
                             <div class="name-wrapper">
-                                <img class="user-avatar" ng-src="{{vm.message.user_avatar}}">
-                                <span style="margin-left: 10px" class="user-name">{{vm.message.user_name}}</span>   
+                                <img class="user-avatar" ng-src="{{vm.message.profilePicUrl}}">
+                                <span style="margin-left: 10px" class="user-name">{{vm.message.username}}</span>   
                             </div>
                             <div class="message-action" ng-repeat="action in vm.actions" ng-click="vm.actionClicked(action.name)">
                                 <span class="action-icon"><i class="fal" ng-class="action.icon"></i></span>
@@ -80,6 +80,16 @@
                             icon: "fa-envelope"
                         });
 
+                        actions.push({
+                            name: "Quote This Message",
+                            icon: "fa-quote-right"
+                        });
+
+                        actions.push({
+                            name: "Shoutout",
+                            icon: "fa-megaphone"
+                        });
+
                         if (vm.message.roles.includes("mod")) {
                             actions.push({
                                 name: "Unmod",
@@ -120,7 +130,8 @@
                         actionName: actionName,
                         userName: $scope.message.username,
                         userId: $scope.message.userId,
-                        msgId: $scope.message.id
+                        msgId: $scope.message.id,
+                        rawText: $scope.message.rawText
                     });
                     hidePopover();
                 };
