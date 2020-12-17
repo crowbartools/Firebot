@@ -10,16 +10,19 @@
                 updateChatInput: "&"
             },
             template: `
-                <div class="chat-message" 
+                <div class="chat-message"
+                    style="cursor: pointer;" 
                     ng-class="{ isAction: $ctrl.message.action, isWhisper: $ctrl.message.whisper, isDeleted: $ctrl.message.deleted, isTagged: $ctrl.message.tagged, isCompact: $ctrl.compactDisplay, spoilers: $ctrl.hideDeletedMessages, isHighlighted: $ctrl.message.isHighlighted, isCustomReward: $ctrl.message.customRewardId != null }" 
-                    ng-attr-messageId="{{$ctrl.message.id}}">
-                    <div class="chat-user-avatar-wrapper" message-actions message="$ctrl.message" on-action-selected="$ctrl.messageActionSelected(actionName, userName, userId, msgId)">
+                    ng-attr-messageId="{{$ctrl.message.id}}"
+                    context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                    context-menu-on="click,contextmenu">
+                    <div class="chat-user-avatar-wrapper">
                         <span>
                             <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                         </span>                 
                     </div>
                     <div style="padding-left: 10px">
-                        <div class="chat-username" ng-style="{'color': $ctrl.message.color}" message-actions message="$ctrl.message" on-action-selected="$ctrl.messageActionSelected(actionName, userName, userId, msgId)">
+                        <div class="chat-username" ng-style="{'color': $ctrl.message.color}">
                             <span ng-show="$ctrl.message.badges.length > 0" class="user-badges">
                                 <img ng-repeat="badge in $ctrl.message.badges" 
                                     ng-src="{{badge.url}}"
@@ -45,7 +48,7 @@
                     </div>
                 </div>
             `,
-            controller: function(chatMessagesService, utilityService) {
+            controller: function(chatMessagesService, utilityService, connectionService) {
 
                 const $ctrl = this;
 
@@ -69,7 +72,87 @@
                     });
                 }
 
-                $ctrl.messageActionSelected = (action, userName, userId, msgId) => {
+                $ctrl.getMessageContextMenu = (message) => {
+                    const actions = [];
+
+                    actions.push({
+                        name: "Details",
+                        icon: "fa-info-circle"
+                    });
+
+                    actions.push({
+                        name: "Delete",
+                        icon: "fa-trash-alt"
+                    });
+
+                    actions.push({
+                        name: "Mention",
+                        icon: "fa-at"
+                    });
+
+                    if (message.username !== connectionService.accounts.streamer.username &&
+                        message.username !== connectionService.accounts.bot.username) {
+
+                        actions.push({
+                            name: "Whisper",
+                            icon: "fa-envelope"
+                        });
+
+                        actions.push({
+                            name: "Quote This Message",
+                            icon: "fa-quote-right"
+                        });
+
+                        actions.push({
+                            name: "Shoutout",
+                            icon: "fa-megaphone"
+                        });
+
+                        if (message.roles.includes("mod")) {
+                            actions.push({
+                                name: "Unmod",
+                                icon: "fa-user-times"
+                            });
+                        } else {
+                            actions.push({
+                                name: "Mod",
+                                icon: "fa-user-plus"
+                            });
+                        }
+
+                        actions.push({
+                            name: "Timeout",
+                            icon: "fa-clock"
+                        });
+
+                        actions.push({
+                            name: "Ban",
+                            icon: "fa-ban"
+                        });
+                    }
+
+                    return [
+                        {
+                            html: `<div class="name-wrapper">
+                                    <img class="user-avatar" src="${message.profilePicUrl}">
+                                    <span style="margin-left: 10px" class="user-name">${message.username}</span>   
+                                </div>`,
+                            enabled: false
+                        },
+                        ...actions.map(a => ({
+                            html: `
+                                <div class="message-action">
+                                    <span class="action-icon"><i class="fad ${a.icon}"></i></span>
+                                    <span class="action-name">${a.name}</span>                               
+                                </div>
+                            `,
+                            click: () => {
+                                $ctrl.messageActionSelected(a.name, message.username, message.userId, message.id, message.rawText);
+                            }
+                        }))];
+                };
+
+                $ctrl.messageActionSelected = (action, userName, userId, msgId, rawText) => {
                     switch (action.toLowerCase()) {
                     case "delete":
                         chatMessagesService.deleteMessage(msgId);
@@ -91,6 +174,12 @@
                         break;
                     case "mention":
                         updateChatField(`@${userName} `);
+                        break;
+                    case "quote this message":
+                        updateChatField(`!quote add @${userName} ${rawText}`);
+                        break;
+                    case "shoutout":
+                        updateChatField(`!so @${userName}`);
                         break;
                     case "details": {
                         $ctrl.showUserDetailsModal(userId);

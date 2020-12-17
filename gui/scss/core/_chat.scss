@@ -212,7 +212,6 @@
     }
 }
 
-.message-actions {
     .name-wrapper {
         width: 175px;
         height: 50px;
@@ -241,46 +240,6 @@
         border: 2px solid gray;
     }
 
-    &[role="User"]{
-        .user-name{
-            color: $usercolor;
-        }
-        .user-avatar {
-            border-color: $usercolor;
-        }
-    }
-    &[role="Pro"], &[role="Partner"], &[role="VerifiedPartner"]{
-        .user-name{
-            color: $procolor;
-        }
-        .user-avatar {
-            border-color: $procolor;
-        }
-    }
-    &[role="Mod"], &[role="ChannelEditor"]{
-        .user-name{
-            color: $modcolor;
-        }
-        .user-avatar {
-            border-color: $modcolor;
-        }
-    }
-    &[role="Staff"]{
-        .user-name{
-            color: $staffcolor;
-        }
-        .user-avatar {
-            border-color: $staffcolor;
-        }
-    }
-    &[role="Owner"]{
-        .user-name{
-            color: $ownercolor;
-        }
-        .user-avatar {
-            border-color: $ownercolor;
-        }
-    }
     .message-action {       
         height: 35px;
         display: flex;
@@ -300,7 +259,6 @@
     .action-icon {
         margin-right: 10px;
     }
-}
 
 .chat-timestamp {
     font-size: 0.9em; 
