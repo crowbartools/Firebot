@@ -26,11 +26,11 @@ async function buildChannelEmbed() {
     let currentStream;
     try {
         currentStream = await twitchApi.getClient().helix.streams.getStreamByUserId(streamer.userId);
-    } catch(error) {
+    } catch (error) {
         // stream not running
     }
 
-    if(currentStream == null) {
+    if (currentStream == null) {
         return null;
     }
 
@@ -41,16 +41,16 @@ async function buildChannelEmbed() {
     try {
         user = await currentStream.getUser();
         game = await currentStream.getGame();
-    } catch(error) {
+    } catch (error) {
         //some other error
     }
 
     const channelEmbed = {
         title: currentStream.title,
-        url: `https://twitch.com/${user.}`,
+        url: `https://twitch.com/${user.name}`,
         color: 2210285,
         author: {
-            name: streamerChannel.token,
+            name: user.displayName,
             icon_url: user.profilePictureUrl //eslint-disable-line camelcase
         },
         fields: game ? [
@@ -58,8 +58,8 @@ async function buildChannelEmbed() {
                 name: "Game",
                 value: game.name,
                 inline: true
-            },
-        ]: [],
+            }
+        ] : [],
         image: {
             url: currentStream.thumbnailUrl
         }
