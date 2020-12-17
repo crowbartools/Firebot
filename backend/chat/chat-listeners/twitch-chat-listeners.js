@@ -5,7 +5,7 @@ const commandHandler = require("../commands/commandHandler");
 const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
-
+const chatModerationManager = require("../moderation/chat-moderation-manager");
 
 const events = require("events");
 
@@ -25,6 +25,8 @@ const HIGHLIGHT_MESSAGE_REWARD_ID = "highlight-message";
 exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onPrivmsg(async (_channel, user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText);
+
+        chatModerationManager.moderateMessage(firebotChatMessage);
 
         // send to the frontend
         if (firebotChatMessage.isHighlighted) {

@@ -152,11 +152,11 @@ function updateAccount(accountType, account, emitUpdate = true) {
 
     cache[accountType] = account;
 
+    saveAccountDataToFile(accountType);
+
     if (emitUpdate) {
         sendAccoutUpdate();
     }
-
-    saveAccountDataToFile(accountType);
 }
 
 /**

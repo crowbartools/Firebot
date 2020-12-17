@@ -27,23 +27,25 @@
             };
 
             $scope.getExemptRoles = () => {
-                let allRoles = viewerRolesService.getMixerRoles().concat(viewerRolesService.getCustomRoles());
-
-                return allRoles.filter(r => chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.includes(r.id));
+                return [
+                    ...viewerRolesService.getTwitchRoles(),
+                    ...viewerRolesService.getCustomRoles()
+                ].filter(r => chatModerationService.chatModerationData.settings.exemptRoles.includes(r.id));
             };
 
             $scope.openAddExemptRoleModal = () => {
-                let allRoles = viewerRolesService.getMixerRoles().concat(viewerRolesService.getCustomRoles());
 
-                let options = allRoles
-                    .filter(r =>
-                        !chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.includes(r.id))
-                    .map(r => {
-                        return {
+                const options =
+                    [
+                        ...viewerRolesService.getTwitchRoles(),
+                        ...viewerRolesService.getCustomRoles()
+                    ]
+                        .filter(r =>
+                            !chatModerationService.chatModerationData.settings.exemptRoles.includes(r.id))
+                        .map(r => ({
                             id: r.id,
                             name: r.name
-                        };
-                    });
+                        }));
                 utilityService.openSelectModal(
                     {
                         label: "Add Exempt Role",
@@ -54,14 +56,14 @@
                     },
                     (roleId) => {
                         if (!roleId) return;
-                        chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.push(roleId);
+                        chatModerationService.chatModerationData.settings.exemptRoles.push(roleId);
                         chatModerationService.saveChatModerationSettings();
                     });
             };
 
             $scope.removeExemptRole = (roleId) => {
-                chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles =
-                        chatModerationService.chatModerationData.settings.bannedWordList.exemptRoles.filter(id => id !== roleId);
+                chatModerationService.chatModerationData.settings.exemptRoles =
+                        chatModerationService.chatModerationData.settings.exemptRoles.filter(id => id !== roleId);
                 chatModerationService.saveChatModerationSettings();
             };
 

@@ -4,9 +4,9 @@
             <li role="presentation" ng-class="{'active' : activeTab === 0}" ng-click="activeTab = 0">
                 <a href>CHAT MODERATION</a>
             </li>
-            <!--<li role="presentation" ng-class="{'active' : activeTab === 1}" ng-click="activeTab = 1">
+            <!-- <li role="presentation" ng-class="{'active' : activeTab === 1}" ng-click="activeTab = 1">
               <a href>GENERAL MODERATION</a>
-            </li>-->
+            </li> -->
             <li role="presentation" ng-class="{'active' : activeTab === 2}" ng-click="activeTab = 2">
                 <a href>ACTIVITY LOGS</a>
             </li>
@@ -16,33 +16,66 @@
     <div style="padding: 15px;">
         <div ng-show="activeTab === 0">
 
-            <div class="content-block" style="width: 50%;">
+          <div class="content-block" style="width: 50%;">
+            <div class="content-block-body">
+              <div style="font-weight: 600;font-size: 20px;">Exempt Roles <tooltip text="'These roles are exempt from all Moderation features.'" /></div>
+
+              <div style="margin-top: 15px">
+                <div class="role-bar" ng-repeat="role in getExemptRoles() track by role.id">
+                    <span>{{role.name}}</span>
+                    <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole(role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
+                        <i class="far fa-times"></i>
+                    </span>
+                </div>
+                <div class="role-bar clickable" ng-click="openAddExemptRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
+                    <i class="far fa-plus"></i> 
+                </div> 
+              </div>
+            </div>
+          </div>
+
+
+            <div class="content-block" style="width: 50%; margin-top: 15px;">
                 <div class="content-block-body">
-                  <div style="display: flex;align-items: center;">
-                    <div style="font-weight: 600;font-size: 20px;margin-right: 15px;" ng-class="{ muted: !cms.chatModerationData.settings.bannedWordList.enabled }">Banned Word List</div>
-                    <toggle-button toggle-model="cms.chatModerationData.settings.bannedWordList.enabled" 
-                      on-toggle="toggleBannedWordsFeature()"></toggle-button>
+                  <div style="display: flex;align-items: center;justify-content: space-between;">
+                      <div style="font-weight: 600;font-size: 20px;" ng-class="{ muted: !cms.chatModerationData.settings.bannedWordList.enabled }">Banned Word List</div>
+                      <div style="width: 150px; flex-shrink: 0;text-align: right;">
+                          <toggle-button toggle-model="cms.chatModerationData.settings.bannedWordList.enabled" 
+                          on-toggle="toggleBannedWordsFeature()" font-size="40"></toggle-button>
+                      </div> 
                   </div> 
+
                   <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.bannedWordList.enabled">
                     <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
                         Words
                     </div>
                     <button ng-click="showEditBannedWordsModal()" class="btn btn-default">Edit Word List</button>
-                    <div style="margin-top:15px;">
-                      <div id="roles" class="mixplay-header" style="padding: 0 0 4px 0">
-                          Exempt Roles
-                      </div>
+                  </div>         
+                </div>
+            </div>
 
-                      <div class="role-bar" ng-repeat="role in getExemptRoles() track by role.id">
-                          <span>{{role.name}}</span>
-                          <span class="clickable" style="padding-left: 10px;" ng-click="removeExemptRole(role.id)" uib-tooltip="Remove role" tooltip-append-to-body="true">
-                              <i class="far fa-times"></i>
-                          </span>
-                      </div>
-                      <div class="role-bar clickable" ng-click="openAddExemptRoleModal()" uib-tooltip="Add role" tooltip-append-to-body="true">
-                          <i class="far fa-plus"></i> 
-                      </div>    
-                    </div>
+            <div class="content-block" style="width: 50%; margin-top: 15px;">
+                <div class="content-block-body">
+                  <div style="display: flex;align-items: center;justify-content: space-between;">
+                      <div style="font-weight: 600;font-size: 20px;" ng-class="{ muted: !cms.chatModerationData.settings.emoteLimit.enabled }">Emote/Emoji Limit</div>
+                      <div style="width: 150px; flex-shrink: 0;text-align: right;">
+                          <toggle-button 
+                            toggle-model="cms.chatModerationData.settings.emoteLimit.enabled"
+                            auto-update-value="true"
+                            on-toggle="cms.saveChatModerationSettings()" 
+                            font-size="40" />
+                      </div> 
+                  </div> 
+
+                  <div style="margin-top: 15px" ng-show="cms.chatModerationData.settings.emoteLimit.enabled">
+                    <firebot-input
+                      input-title="Max Per Message" 
+                      placeholder-text="Enter number" 
+                      input-type="number" 
+                      disable-variables="true" 
+                      model="cms.chatModerationData.settings.emoteLimit.max"
+                      on-input-update="cms.saveChatModerationSettings()"
+                    />
                   </div>         
                 </div>
             </div>
