@@ -84,7 +84,7 @@
                       <span>
                         <span><b>Twitch Status:</b></span>
                         </br>
-                        <span>{{$ctrl.cs.connectedToChat ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
+                        <span>{{$ctrl.cs.connections['chat'] === 'connected' ? 'CONNECTED' : 'DISCONNECTED' | translate }}</span>
                         </br></br>
                       </span>
                       <span>
