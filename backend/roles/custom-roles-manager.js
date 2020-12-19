@@ -127,10 +127,10 @@ function getAllCustomRolesForViewer(username) {
 }
 
 function userIsInRole(username, userTwitchRoles, roleIdsToCheck) {
-    return [...(userTwitchRoles || [])
-        .map(mr => twitchRoleManager.mapTwitchRole(mr)),
-    ...getAllCustomRolesForViewer(username)
-    ].some(r => roleIdsToCheck.includes(r.id));
+    return [
+        ...(userTwitchRoles || []).map(mr => twitchRoleManager.mapTwitchRole(mr)),
+        ...getAllCustomRolesForViewer(username)
+    ].some(r => r != null && roleIdsToCheck.includes(r.id));
 }
 
 frontendCommunicator.onAsync("getCustomRoles", async () => customRoles);
