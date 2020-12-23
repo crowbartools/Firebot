@@ -16,6 +16,10 @@ module.exports = {
         if (start < 0) {
             start = 0;
         }
-        return text.toString().substring(start, end || start + 1);
+        if (end == null) {
+            end = start + 1;
+        }
+        const value = text.substring(start, end);
+        return value;
     }
 };

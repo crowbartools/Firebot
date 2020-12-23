@@ -5,6 +5,7 @@ const accountAccess = require("../common/account-access");
 const NodeCache = require('node-cache');
 const twitchApi = require("../twitch-api/api");
 const twitchClient = require("../twitch-api/client");
+const logger = require("../logwrapper");
 
 const followCache = new NodeCache({ stdTTL: 10, checkperiod: 10 });
 
@@ -73,6 +74,16 @@ async function getUserDetails(userId) {
     const streamerData = accountAccess.getAccounts().streamer;
 
     const client = twitchClient.getClient();
+
+    let isBanned;
+    try {
+        isBanned = await client.helix.moderation.checkUserBan(streamerData.userId, twitchUser.id);
+    } catch (error) {
+        logger.warn("Unable to get banned status", error);
+    }
+
+    const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
+
     const userFollowsStreamerResponse = await client.helix.users.getFollows({
         user: userId,
         followedUser: streamerData.userId
@@ -89,7 +100,10 @@ async function getUserDetails(userId) {
         userFollowsStreamerResponse.data.length === 1;
 
     if (twitchUserData) {
-        twitchUserData.relationship = null;
+        twitchUserData.followDate = userFollowsStreamer &&
+            userFollowsStreamerResponse.data[0].followDate;
+        twitchUserData.isBanned = isBanned;
+        twitchUserData.userRoles = userRoles || [];
     }
 
     const userDetails = {

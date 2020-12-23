@@ -298,6 +298,18 @@ frontendCommunicator.on("update-user-mod-status", data => {
     }
 });
 
+frontendCommunicator.on("update-user-banned-status", data => {
+    if (data == null) return;
+    const { username, shouldBeBanned } = data;
+    if (username == null || shouldBeBanned == null) return;
+
+    if (shouldBeBanned) {
+        twitchChat.ban(username, "Banned via Firebot");
+    } else {
+        twitchChat.unban(username);
+    }
+});
+
 module.exports = twitchChat;
 
 
