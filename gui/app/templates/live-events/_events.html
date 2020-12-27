@@ -122,7 +122,7 @@
                         </tr> 
                     </thead> 
                     <tbody> 
-                        <tr ng-repeat="event in filteredEvents = (getSelectedEvents() | orderBy: 'type' | sortTagSearch:es.selectedSortTag | filter:eventSearch) track by event.id" context-menu="eventMenuOptions">
+                        <tr ng-repeat="event in filteredEvents = (getSelectedEvents() | orderBy: 'type' | sortTagSearch:es.selectedSortTag | filter:eventSearch) track by event.id" context-menu="eventMenuOptions(event)">
                             <td style="text-align: center;">
                                 <span style="color: #2aa1c0; font-size: 20px;" ng-click="fireEventManually(event)">
                                     <i class="fas fa-play-circle clickable"></i>
@@ -143,25 +143,9 @@
                                 </div>                            
                             </td>  
                             <td>
-                                <div style="text-align: right;">
-                                    <div uib-dropdown uib-dropdown-toggle class="pull-right">
-                                        <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
-                                        <ul class="dropdown-menu" uib-dropdown-menu>
-                                            <li>
-                                                <a href ng-click="showAddOrEditEventModal(event.id)">Edit</a>
-                                            </li>
-                                            <li ng-show="selectedGroupIsActive()">
-                                                <a href ng-click="toggleEventActiveStatus(event.id)">{{event.active ? 'Disable' : 'Enable'}}</a>
-                                            </li>
-                                            <li>
-                                              <a href ng-click="duplicateEvent(event.id)">Duplicate</a>
-                                            </li>
-                                            <li>
-                                                <a href ng-click="showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed')" style="color: #fb7373;">Delete</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>                       
+                                <div style="text-align: right;margin-left: auto;">
+                                    <span class="noselect clickable" style="font-size: 30px" context-menu="eventMenuOptions(event)" context-menu-on="click"><i class="fal fa-ellipsis-h"></i></span>
+                                </div>                      
                             </td> 
                         </tr>
                     </tbody>
@@ -169,9 +153,6 @@
               </div>
             </div>
         </div>
-        
-
-
     </div>
   </div>
 </div>

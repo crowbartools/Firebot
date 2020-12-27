@@ -20,7 +20,6 @@
             $scope.commandsService = commandsService;
 
             function filterCommands() {
-                console.log(commandsService.customCommandSearch);
                 return triggerSearchFilter(sortTagSearchFilter(commandsService.getCustomCommands(), commandsService.selectedSortTag), commandsService.customCommandSearch);
             }
 
@@ -32,7 +31,7 @@
                     'commandsService.customCommandSearch',
                     'commandsService.commandsCache.customCommands'
                 ],
-                function (newVal, oldVal, scope) {
+                function (_newVal, _oldVal, scope) {
                     scope.filteredCommands = filterCommands();
                 },
                 true);
