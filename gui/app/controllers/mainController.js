@@ -442,8 +442,12 @@
     app.filter("sortTagSearch", function() {
         return function(elements, tag) {
             if (elements == null || tag == null) return elements;
-            return elements.filter(e =>
-                e.sortTags != null && e.sortTags.some(t => t === tag.id)
+            return elements.filter(e => {
+                if (tag.id === "none" && (e.sortTags == null || e.sortTags.length < 1)) {
+                    return true;
+                }
+                return e.sortTags != null && e.sortTags.some(t => t === tag.id);
+            }
             );
         };
     });
