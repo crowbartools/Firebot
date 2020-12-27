@@ -79,20 +79,26 @@ class StreamElementsIntegration extends EventEmitter {
         });
 
         this._socket.on('event:test', (data) => {
+            logger.debug("Received streamelements event:", data);
             if (data
                 && data.listener === "tip-latest"
                 && data.event
                 && data.event.type === 'tip') {
-                seEventsHandler.processStreamElementsEvent(data.event);
+                seEventsHandler.processDonationEvent(data.event);
+            } else if (data && data.listener === "follower-latest") {
+                seEventsHandler.processFollowEvent(data.event);
             }
         });
 
         this._socket.on('event', (data) => {
+            logger.debug("Received streamelements event:", data);
             if (data
                 && data.listener === "tip-latest"
                 && data.event
                 && data.event.type === 'tip') {
-                seEventsHandler.processStreamElementsEvent(data.event);
+                seEventsHandler.processDonationEvent(data.event);
+            } else if (data && data.listener === "follower-latest") {
+                seEventsHandler.processFollowEvent(data.event);
             }
         });
     }

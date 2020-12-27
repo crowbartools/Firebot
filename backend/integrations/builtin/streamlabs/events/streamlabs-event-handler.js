@@ -31,7 +31,7 @@ const eventSourceDefinition = {
         {
             id: EventId.FOLLOW,
             name: "Follow",
-            description: "When someone follows your Twitch channel (comes from StreamLabs, may be faster)",
+            description: "When someone follows your Twitch channel (comes from StreamLabs)",
             cacheMetaKey: "username",
             cached: true
         }
