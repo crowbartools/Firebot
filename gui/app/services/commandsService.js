@@ -15,11 +15,13 @@
         ) {
             let service = {};
 
+            service.customCommandSearch = "";
+
             let getCommandsDb = () =>
                 profileManager.getJsonDbInProfile("/chat/commands");
 
             // in memory commands storage
-            let commandsCache = {
+            service.commandsCache = {
                 systemCommands: [],
                 customCommands: [],
                 sortTags: []
@@ -39,15 +41,15 @@
 
                 if (cmdData.customCommands) {
                     logger.debug("loading custom commands: " + cmdData.customCommands);
-                    commandsCache.customCommands = Object.values(cmdData.customCommands);
+                    service.commandsCache.customCommands = Object.values(cmdData.customCommands);
                 }
 
                 if (cmdData.sortTags) {
                     logger.debug("loaded sort tags");
-                    commandsCache.sortTags = cmdData.sortTags;
+                    service.commandsCache.sortTags = cmdData.sortTags;
                 }
 
-                commandsCache.systemCommands = listenerService.fireEventSync(
+                service.commandsCache.systemCommands = listenerService.fireEventSync(
                     "getAllSystemCommandDefinitions"
                 );
 
@@ -59,12 +61,12 @@
             service.saveSortTags = () => {
                 try {
                     const commandDb = getCommandsDb();
-                    commandDb.push("/sortTags", commandsCache.sortTags);
+                    commandDb.push("/sortTags", service.commandsCache.sortTags);
                 } catch (err) {} //eslint-disable-line no-empty
             };
 
             service.getSortTags = () => {
-                return commandsCache.sortTags;
+                return service.commandsCache.sortTags;
             };
 
             service.selectedSortTag = null;
@@ -80,12 +82,12 @@
                     component: "manageSortTagsModal",
                     size: "sm",
                     resolveObj: {
-                        tags: () => commandsCache.sortTags
+                        tags: () => service.commandsCache.sortTags
                     },
                     closeCallback: tags => {
-                        commandsCache.sortTags = tags;
+                        service.commandsCache.sortTags = tags;
                         service.saveSortTags();
-                        if (service.selectedSortTag && !commandsCache.sortTags.some(t => t.id === service.selectedSortTag.id)) {
+                        if (service.selectedSortTag && !service.commandsCache.sortTags.some(t => t.id === service.selectedSortTag.id)) {
                             service.selectedSortTag = null;
                         }
                     }
@@ -98,9 +100,9 @@
                 service.refreshCommands();
             });
 
-            service.getSystemCommands = () => commandsCache.systemCommands;
+            service.getSystemCommands = () => service.commandsCache.systemCommands;
 
-            service.getCustomCommands = () => commandsCache.customCommands;
+            service.getCustomCommands = () => service.commandsCache.customCommands;
 
             service.saveCustomCommand = function(command, user = null) {
                 logger.debug("saving command: " + command.trigger);
@@ -137,17 +139,31 @@
                 } catch (err) {} //eslint-disable-line no-empty
             };
 
+            service.saveAllCustomCommands = (commands) => {
+                service.commandsCache.customCommands = commands;
+                const cleanedCommands = JSON.parse(angular.toJson(commands));
+                try {
+                    const commandDb = getCommandsDb();
+                    const customCommandsObj = cleanedCommands.reduce((acc, command) => {
+                        acc[command.id] = command;
+                        return acc;
+                    }, {});
+                    commandDb.push("/customCommands", customCommandsObj);
+                    ipcRenderer.send("refreshCommandCache");
+                } catch (err) {} //eslint-disable-line no-empty
+            };
+
             service.saveSystemCommandOverride = function(command) {
                 listenerService.fireEvent(
                     "saveSystemCommandOverride",
                     JSON.parse(angular.toJson(command))
                 );
 
-                let index = commandsCache.systemCommands.findIndex(
+                let index = service.commandsCache.systemCommands.findIndex(
                     c => c.id === command.id
                 );
 
-                commandsCache.systemCommands[index] = command;
+                service.commandsCache.systemCommands[index] = command;
             };
 
             service.triggerExists = function(trigger, id = null) {
@@ -155,12 +171,12 @@
 
                 trigger = trigger != null ? trigger.toLowerCase() : "";
 
-                let foundDuplicateCustomCmdTrigger = commandsCache.customCommands.some(
+                let foundDuplicateCustomCmdTrigger = service.commandsCache.customCommands.some(
                     command =>
                         command.id !== id && command.trigger && command.trigger.toLowerCase() === trigger
                 );
 
-                let foundDuplicateSystemCmdTrigger = commandsCache.systemCommands.some(
+                let foundDuplicateSystemCmdTrigger = service.commandsCache.systemCommands.some(
                     command => command.active && command.trigger && command.trigger.toLowerCase() === trigger
                 );
 
@@ -206,12 +222,12 @@
                 (data) => {
                     service.saveCustomCommand(data.command, data.user);
 
-                    let currentIndex = commandsCache.customCommands.findIndex(c => c.trigger === data.command.trigger);
+                    let currentIndex = service.commandsCache.customCommands.findIndex(c => c.trigger === data.command.trigger);
 
                     if (currentIndex === -1) {
-                        commandsCache.customCommands.push(data.command);
+                        service.commandsCache.customCommands.push(data.command);
                     } else {
-                        commandsCache.customCommands[currentIndex] = data.command;
+                        service.commandsCache.customCommands[currentIndex] = data.command;
                     }
 
                     // Refresh the backend command cache.
@@ -225,11 +241,11 @@
                 },
                 (data) => {
 
-                    let command = commandsCache.customCommands.find(c => c.trigger === data.trigger);
+                    let command = service.commandsCache.customCommands.find(c => c.trigger === data.trigger);
 
                     service.deleteCustomCommand(command);
 
-                    commandsCache.customCommands = commandsCache.customCommands.filter(c => c.id !== command.id);
+                    service.commandsCache.customCommands = service.commandsCache.customCommands.filter(c => c.id !== command.id);
 
                     // Refresh the backend command cache.
                     ipcRenderer.send("refreshCommandCache");

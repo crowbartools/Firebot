@@ -201,6 +201,51 @@
                 }
             };
 
+            function toggleSortTagForEvent(event, tagId) {
+                if (event == null) return null;
+                if (event.sortTags == null) {
+                    event.sortTags = [];
+                }
+                if (event.sortTags.includes(tagId)) {
+                    event.sortTags = event.sortTags.filter(id => id !== tagId);
+                } else {
+                    event.sortTags.push(tagId);
+                }
+                return event;
+            }
+
+            $scope.toggleSortTag = (eventId, tagId) => {
+                if (eventId == null || tagId == null) return;
+                const groupId = eventsService.getSelectedTab();
+                if (groupId === "mainevents") {
+                    const event = eventsService.getMainEvents().find(e => e.id === eventId);
+                    toggleSortTagForEvent(event, tagId);
+                    eventsService.saveMainEvents();
+                } else {
+                    const group = eventsService.getEventGroup(groupId);
+                    const event = group.events.find(e => e.id === eventId);
+                    toggleSortTagForEvent(event, tagId);
+                    eventsService.saveGroup(group);
+                }
+            };
+
+            function addEventToGroup(event, groupId) {
+                if (groupId === "mainevents") {
+                    eventsService.getMainEvents().push(event);
+                    eventsService.saveMainEvents();
+                } else {
+                    const group = eventsService.getEventGroup(groupId);
+                    group.events.push(event);
+                    eventsService.saveGroup(group);
+                }
+            }
+
+            function moveEventToGroup(event, groupId) {
+                const currentGroupId = eventsService.getSelectedTab();
+                deleteEvent(currentGroupId, event.id);
+                addEventToGroup(event, groupId);
+            }
+
             $scope.duplicateEvent = function(eventId) {
                 const groupId = eventsService.getSelectedTab();
                 if (groupId === "mainevents") {
@@ -284,29 +329,84 @@
                 return group ? group.active === true : false;
             };
 
-            $scope.eventMenuOptions = [
-                {
-                    html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
-                    click: function ($itemScope) {
-                        const event = $itemScope.event;
-                        $scope.showAddOrEditEventModal(event.id);
+            $scope.eventMenuOptions = function(event) {
+
+                const currentGroupId = eventsService.getSelectedTab();
+                const availableGroups = [
+                    { id: 'mainevents', name: "Main Events"},
+                    ...eventsService.getEventGroups().map(g => ({ id: g.id, name: g.name }))
+                ].filter(g => g.id !== currentGroupId);
+
+                const options = [
+                    {
+                        html: `<a href ><i class="far fa-pen" style="margin-right: 10px;"></i> Edit</a>`,
+                        click: function ($itemScope) {
+                            const event = $itemScope.event;
+                            $scope.showAddOrEditEventModal(event.id);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
+                        click: function ($itemScope) {
+                            const event = $itemScope.event;
+                            $scope.toggleEventActiveStatus(event.id);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-copy" style="margin-right: 10px;"></i> Copy</a>`,
+                        click: function ($itemScope) {
+                            const event = $itemScope.event;
+                            $scope.copyEvent(event.id);
+                        }
+                    },
+                    {
+                        html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
+                        click: function ($itemScope) {
+                            const event = $itemScope.event;
+                            $scope.duplicateEvent(event.id);
+                        }
+                    },
+                    {
+                        html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
+                        click: function ($itemScope) {
+                            const event = $itemScope.event;
+                            $scope.showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed');
+                        }
+                    },
+                    {
+                        text: "Move to...",
+                        children: availableGroups.map(g => {
+                            return {
+                                html: `<a href>${g.name}</a>`,
+                                click: () => {
+                                    moveEventToGroup(event, g.id);
+                                }
+                            };
+                        }),
+                        hasTopDivider: true
                     }
-                },
-                {
-                    html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
-                    click: function ($itemScope) {
-                        const event = $itemScope.event;
-                        $scope.toggleEventActiveStatus(event.id);
-                    }
-                },
-                {
-                    html: `<a href style="color: #fb7373;"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
-                    click: function ($itemScope) {
-                        const event = $itemScope.event;
-                        $scope.showDeleteEventModal(event.id, event.name ? event.name : 'Unnamed');
-                    }
+                ];
+
+                const sortTags = eventsService.getSortTags();
+
+                if (sortTags.length > 0) {
+                    options.push({
+                        text: "Sort tags...",
+                        children: sortTags.map(st => {
+                            const isSelected = event.sortTags && event.sortTags.includes(st.id);
+                            return {
+                                html: `<a href><i class="${isSelected ? 'fas fa-check' : ''}" style="margin-right: ${isSelected ? '10' : '27'}px;"></i> ${st.name}</a>`,
+                                click: () => {
+                                    $scope.toggleSortTag(event.id, st.id);
+                                }
+                            };
+                        }),
+                        hasTopDivider: true
+                    });
                 }
-            ];
+
+                return options;
+            };
 
 
             /**

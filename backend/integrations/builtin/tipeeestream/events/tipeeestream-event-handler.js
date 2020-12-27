@@ -4,7 +4,8 @@ const eventManager = require("../../../../events/EventManager");
 
 const EVENT_SOURCE_ID = "tipeeestream";
 const EventId = {
-    DONATION: "donation"
+    DONATION: "donation",
+    FOLLOW: "follow"
 };
 
 const eventSourceDefinition = {
@@ -18,6 +19,13 @@ const eventSourceDefinition = {
             description: "When someone donates to you via TipeeeStream.",
             cached: false,
             queued: true
+        },
+        {
+            id: EventId.FOLLOW,
+            name: "Follow",
+            description: "When someone follows your Twitch channel (comes from TipeeeStream)",
+            cacheMetaKey: "username",
+            cached: true
         }
     ]
 };
@@ -37,5 +45,13 @@ exports.processTipeeeStreamEvent = (eventData) => {
             donationMessage: donoData.formattedMessage,
             from: donoData.username
         });
+    } else if (eventData.type === "follow" && eventData.origin === "twitch") {
+        eventManager.triggerEvent(
+            EVENT_SOURCE_ID,
+            EventId.FOLLOW,
+            {
+                username: eventData.parameters.username
+            }
+        );
     }
 };

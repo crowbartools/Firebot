@@ -39,6 +39,7 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'channel:read:hype_train',
         'channel:read:subscriptions',
         'channel:read:redemptions',
+        'channel:manage:redemptions',
         'channel_commercial',
         'channel_editor',
         'channel_read',
@@ -49,9 +50,11 @@ const STREAMER_ACCOUNT_PROVIDER = {
         'user:read:broadcast',
         'whispers:read',
         'whispers:edit',
+        'moderation:read',
         'user:edit:broadcast',
         'user_subscriptions',
-        'user_follows_edit'
+        'user_follows_edit',
+        'user_read'
     ].join(' ')
 };
 

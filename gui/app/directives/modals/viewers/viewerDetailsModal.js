@@ -94,7 +94,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService) {
+            controller: function($q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService) {
                 let $ctrl = this;
 
                 $ctrl.loading = true;
@@ -109,54 +109,27 @@
 
                 $ctrl.channelProgressionImgSrc = "";
 
-
                 $ctrl.roles = [];
 
-                // function mapMixerRole(rawRole) {
-                //     let mappedRole;
-                //     switch (rawRole) {
-                //     case "Staff":
-                //     case "Guardian":
-                //     case "GlobalMod":
-                //     case "Founder":
-                //         mappedRole = "Staff";
-                //         break;
-                //     case "VerifiedPartner":
-                //     case "Partner":
-                //         mappedRole = "Partner";
-                //         break;
-                //     default:
-                //         mappedRole = rawRole;
-                //     }
-                //     return mappedRole;
-                // }
-
-                // const bannedRole = {
-                //     name: "Banned",
-                //     style: {color: 'red'},
-                //     rank: -1
-                // };
-                // const modRole = {
-                //     name: "Moderator",
-                //     style: {color: '#37ED3B'},
-                //     rank: 6
-                // };
+                const bannedRole = {
+                    name: "Banned",
+                    style: {color: 'red'},
+                    rank: -1
+                };
+                const modRole = {
+                    name: "Moderator",
+                    style: {color: '#37ED3B'},
+                    rank: 6
+                };
 
                 function loadRoles() {
-                    /*const mixerRoles = $ctrl.viewerDetails.mixerData.groups.map(g => g.name);
+                    const twitchRoles = $ctrl.viewerDetails.twitchData.userRoles;
 
-                    const relationshipData = $ctrl.viewerDetails.mixerData.relationship;
-                    const channelRoles = relationshipData ? relationshipData.roles : [];
-
-                    const userFollowsStreamer = relationshipData.follows != null;
-                    let followDateDisplay = null;
+                    const userFollowsStreamer = $ctrl.viewerDetails.userFollowsStreamer;
+                    let followDateDisplay;
                     if (userFollowsStreamer) {
-                        let date = relationshipData.follows.createdAt;
-                        followDateDisplay = moment(date).format("L");
+                        followDateDisplay = moment($ctrl.viewerDetails.twitchData.followDate).format("L");
                     }
-
-                    const combined = mixerRoles.concat(channelRoles).map(r => mapMixerRole(r));
-                    const allRoles = [...new Set(combined)].filter(r => r !== "User");
 
                     let roles = [];
                     if (userFollowsStreamer) {
@@ -167,37 +140,24 @@
                             rank: 2
                         });
                     }
-                    for (let role of allRoles) {
+                    if ($ctrl.viewerDetails.twitchData.isBanned) {
+                        roles.push(bannedRole);
+                    }
+                    for (let role of twitchRoles) {
                         switch (role) {
-                        case "Pro": {
+                        case "vip": {
                             roles.push({
-                                name: "Pro",
+                                name: "VIP",
                                 style: {color: '#E175FF'},
                                 rank: 3
                             });
                             continue;
                         }
-                        case "Partner": {
-                            roles.push({
-                                name: "Partner",
-                                style: {color: '#299FFF'},
-                                rank: 5
-                            });
-                            continue;
-                        }
-                        case "Mod": {
+                        case "mod": {
                             roles.push(modRole);
                             continue;
                         }
-                        case "ChannelEditor": {
-                            roles.push({
-                                name: "Channel Editor",
-                                style: {color: '#C9CCDB'},
-                                rank: 7
-                            });
-                            continue;
-                        }
-                        case "Subscriber": {
+                        case "sub": {
                             roles.push({
                                 name: "Subscriber",
                                 style: {color: '#C9CCDB'},
@@ -205,15 +165,7 @@
                             });
                             continue;
                         }
-                        case "Staff": {
-                            roles.push({
-                                name: "Staff",
-                                style: {color: '#ECBF37'},
-                                rank: 8
-                            });
-                            continue;
-                        }
-                        case "Owner": {
+                        case "broadcaster": {
                             roles.push({
                                 name: "Channel Owner",
                                 style: {color: 'white'},
@@ -221,13 +173,9 @@
                             });
                             continue;
                         }
-                        case "Banned": {
-                            roles.push(bannedRole);
-                            continue;
-                        }
                         }
                     }
-                    $ctrl.roles = roles;*/
+                    $ctrl.roles = roles;
                 }
 
                 class ViewerAction {
@@ -269,10 +217,8 @@
 
                 function buildActions() {
 
-                    /*const relationshipData = $ctrl.viewerDetails.mixerData.relationship;
-                    const channelRoles = relationshipData ? relationshipData.roles : [];
-
-                    if (channelRoles.includes("Owner")) return;
+                    const userRoles = $ctrl.viewerDetails.twitchData.userRoles;
+                    if (userRoles.includes("broadcaster")) return;
 
                     let actions = [];
 
@@ -288,62 +234,63 @@
                         },
                         follows => {
                             let shouldFollow = !follows;
-                            viewersService.toggleFollowOnChannel($ctrl.viewerDetails.mixerData.channel.id, shouldFollow);
+                            viewersService.toggleFollowOnChannel($ctrl.viewerDetails.twitchData.id, shouldFollow);
                             return shouldFollow;
                         }
                     )
                     );
 
-                    const isMod = channelRoles.includes("Mod");
-                    actions.push(new ViewerAction(
-                        "mod",
-                        isMod,
-                        mod => {
-                            return mod ? "Unmod" : "Mod";
-                        },
-                        mod => {
-                            return mod ? "fas fa-user-minus" : "fal fa-user-plus";
-                        },
-                        mod => {
-                            let newMod = !mod;
-                            viewersService.updateViewerRole($ctrl.resolve.userId, "Mod", newMod);
+                    if (connectionService.connections['chat'] === 'connected') {
+                        const isMod = userRoles.includes("mod");
+                        actions.push(new ViewerAction(
+                            "mod",
+                            isMod,
+                            mod => {
+                                return mod ? "Unmod" : "Mod";
+                            },
+                            mod => {
+                                return mod ? "fas fa-user-minus" : "fal fa-user-plus";
+                            },
+                            mod => {
+                                let newMod = !mod;
+                                viewersService.updateModStatus($ctrl.viewerDetails.twitchData.username, newMod);
+                                if (newMod) {
+                                    $ctrl.roles.push(modRole);
+                                } else {
+                                    $ctrl.roles = $ctrl.roles.filter(r => r.name !== "Moderator");
+                                }
 
-                            if (newMod) {
-                                $ctrl.roles.push(modRole);
-                            } else {
-                                $ctrl.roles = $ctrl.roles.filter(r => r.name !== "Moderator");
+                                return newMod;
                             }
+                        )
+                        );
 
-                            return newMod;
-                        }
-                    )
-                    );
+                        const isBanned = $ctrl.viewerDetails.twitchData.isBanned;
+                        actions.push(new ViewerAction(
+                            "ban",
+                            isBanned,
+                            banned => {
+                                return banned ? "Unban" : "Ban";
+                            },
+                            banned => {
+                                return banned ? "fas fa-ban" : "fal fa-ban";
+                            },
+                            banned => {
+                                let newBanned = !banned;
+                                viewersService.updateBannedStatus($ctrl.viewerDetails.twitchData.username, newBanned);
+                                if (newBanned) {
+                                    $ctrl.roles.push(bannedRole);
+                                } else {
+                                    $ctrl.roles = $ctrl.roles.filter(r => r.name !== "Banned");
+                                }
+                                return newBanned;
+                            },
+                            "btn-danger"
+                        )
+                        );
+                    }
 
-                    const isBanned = channelRoles.includes("Banned");
-                    actions.push(new ViewerAction(
-                        "ban",
-                        isBanned,
-                        banned => {
-                            return banned ? "Unban" : "Ban";
-                        },
-                        banned => {
-                            return banned ? "fas fa-ban" : "fal fa-ban";
-                        },
-                        banned => {
-                            let newBanned = !banned;
-                            viewersService.updateViewerRole($ctrl.resolve.userId, "Banned", newBanned);
-                            if (newBanned) {
-                                $ctrl.roles.push(bannedRole);
-                            } else {
-                                $ctrl.roles = $ctrl.roles.filter(r => r.name !== "Banned");
-                            }
-                            return newBanned;
-                        },
-                        "btn-danger"
-                    )
-                    );
-
-                    $ctrl.actions = actions;*/
+                    $ctrl.actions = actions;
                 }
 
                 $ctrl.disableAutoStatAccuralChange = () => {

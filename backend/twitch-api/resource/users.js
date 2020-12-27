@@ -126,9 +126,17 @@ async function doesUserFollowChannel(username, channelName) {
 }
 
 async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
-    // eslint-disable-next-line no-warning-comments
-    //TODO: Needs to be updated for twitch.
-    return true;
+    if (channelIdToFollow == null) return;
+
+    const client = twitchApi.getClient();
+
+    const user = await client.helix.users.getUserById(channelIdToFollow);
+
+    if (shouldFollow) {
+        await user.follow();
+    } else {
+        await user.unfollow();
+    }
 }
 
 exports.getUserChatInfoByName = getUserChatInfoByName;

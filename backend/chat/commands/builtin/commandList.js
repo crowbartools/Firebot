@@ -9,7 +9,7 @@ const commandList = {
         name: "Command List",
         active: true,
         trigger: "!commands",
-        description: "Whispers a list of all commands the user has permission to run.",
+        description: "Displays link to your profile page with all available commands.",
         autoDeleteTrigger: false,
         scanWholeMessage: false,
         cooldown: {

@@ -8,7 +8,7 @@
             </div>
             <div class="modal-body" style="padding-bottom: 30px;">
                 <div style="display: flex;justify-content: space-around">
-                <div style="width: 70%;">
+                <div>
                     <div style="text-align: center;font-size: 18px;color: gray;font-weight: 100;padding-bottom: 15px;">
                         TWITCH
                     </div>

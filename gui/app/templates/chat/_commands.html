@@ -34,7 +34,7 @@
                         </ul>
                     </div>
 
-                    <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandSearch" style="flex-basis: 250px;"></searchbar>
+                    <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandsService.customCommandSearch" style="flex-basis: 250px;"></searchbar>
                 </div>
                 
             </div>
@@ -57,8 +57,8 @@
                             <th></th> 
                         </tr> 
                     </thead> 
-                    <tbody> 
-                        <tr ng-repeat="command in filteredCommands = (commandsService.getCustomCommands() | sortTagSearch:commandsService.selectedSortTag | triggerSearch:commandSearch) track by command.id" context-menu="commandMenuOptions">
+                    <tbody ui-sortable="sortableOptions" ng-model="filteredCommands"> 
+                        <tr ng-repeat="command in filteredCommands track by command.id" context-menu="commandMenuOptions(command)" style="width: 100%;">
                             <td style="text-align: center;">
                                 <span style="color: #2aa1c0; font-size: 20px;" ng-click="manuallyTriggerCommand(command.id)">
                                     <i class="fas fa-play-circle clickable"></i>
@@ -90,25 +90,14 @@
                                 </div>                            
                             </td>  
                             <td>
-                                <div style="text-align: right;">
-                                    <div uib-dropdown uib-dropdown-toggle class="pull-right">
-                                        <span class="noselect clickable" style="font-size: 30px"><i class="fal fa-ellipsis-h"></i></span>
-                                        <ul class="dropdown-menu" uib-dropdown-menu>
-                                            <li>
-                                                <a href ng-click="openAddOrEditCustomCommandModal(command)">Edit</a>
-                                            </li>
-                                            <li>
-                                                <a href ng-click="toggleCustomCommandActiveState(command)">{{command.active ? 'Disable' : 'Enable'}}</a>
-                                            </li>
-                                            <li>
-                                                <a href ng-click="duplicateCustomCommand(command)">Duplicate</a>
-                                            </li>
-                                            <li>
-                                                <a href ng-click="deleteCustomCommand(command)" style="color: #fb7373;">Delete</a>
-                                            </li>
-                                        </ul>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span class="dragHandle" ng-click="$event.stopPropagation();" ng-show="commandsService.selectedSortTag == null && (commandsService.customCommandSearch == null || commandsService.customCommandSearch.length < 1)">
+                                        <i class="fal fa-bars" aria-hidden="true"></i>
+                                    </span>
+                                    <div style="text-align: right;margin-left: auto;">
+                                        <span class="noselect clickable" style="font-size: 30px" context-menu="commandMenuOptions(command)" context-menu-on="click"><i class="fal fa-ellipsis-h"></i></span>
                                     </div>
-                                </div>                       
+                                </div>                                                 
                             </td> 
                         </tr>
                     </tbody>
