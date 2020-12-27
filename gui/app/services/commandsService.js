@@ -77,6 +77,15 @@
                 service.selectedSortTag = tag;
             };
 
+            service.getSortTagNames = (tagIds) => {
+                if (tagIds == null) {
+                    return [];
+                }
+                return tagIds
+                    .filter(id => service.commandsCache.sortTags.some(t => t.id === id))
+                    .map(id => service.commandsCache.sortTags.find(t => t.id === id).name);
+            };
+
             service.openManageTagsModal = () => {
                 utilityService.showModal({
                     component: "manageSortTagsModal",

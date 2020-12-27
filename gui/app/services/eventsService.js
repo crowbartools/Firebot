@@ -69,6 +69,15 @@ const { sort } = require("mathjs");
             service.selectedSortTag = tag;
         };
 
+        service.getSortTagNames = (tagIds) => {
+            if (tagIds == null) {
+                return [];
+            }
+            return tagIds
+                .filter(id => sortTags.some(t => t.id === id))
+                .map(id => sortTags.find(t => t.id === id).name);
+        };
+
 
         let selectedTab = "mainevents";
         service.setSelectedTab = function(groupId) {

@@ -116,7 +116,7 @@
                             <th style="width:5%"></th> 
                             <th class="muted"><i class="fas fa-tag"></i> NAME</th> 
                             <th class="muted"><i class="fas fa-exclamation-square"></i> TYPE</th> 
-                            <th class="muted"><i class="fas fa-magic"></i> EFFECTS</th>
+                            <th class="muted"><i class="fas fa-tag"></i> TAGS</th>
                             <th style="width:210px;"></th> 
                             <th></th> 
                         </tr> 
@@ -134,8 +134,12 @@
                             <td>
                               {{event.eventId && event.sourceId ? friendlyEventTypeName(event.sourceId, event.eventId) : "No Type"}}                
                             </td>
-                            <td>
-                              {{getEventEffectsCount(event)}}
+                            <td style="max-width: 135px;min-width: 100px;">
+                                <div style="display: flex; flex-wrap: wrap; width: 100%; overflow: auto;max-height: 45.25px;">
+                                    <span ng-repeat="tagName in es.getSortTagNames(event.sortTags)" style="background: gray; border-radius: 15px; padding: 1px 5px; margin-right:2px;margin-bottom: 1px;font-size: 10px;line-height: 1.8;">
+                                        {{tagName}}
+                                    </span>
+                                </div>
                             </td>
                             <td>
                                 <div>
