@@ -934,8 +934,14 @@
                             question: () => {
                                 return confirmModalRequest.question;
                             },
+                            tip: () => {
+                                return confirmModalRequest.tip;
+                            },
                             cancelLabel: () => {
                                 return confirmModalRequest.cancelLabel;
+                            },
+                            cancelBtnType: () => {
+                                return confirmModalRequest.cancelBtnType;
                             },
                             confirmLabel: () => {
                                 return confirmModalRequest.confirmLabel;
@@ -950,14 +956,18 @@
                             title,
                             question,
                             cancelLabel,
+                            cancelBtnType,
                             confirmLabel,
-                            confirmBtnType
+                            confirmBtnType,
+                            tip
                         ) => {
                             $scope.title = title;
                             $scope.question = question;
                             $scope.cancelLabel = cancelLabel;
+                            $scope.cancelBtnType = cancelBtnType;
                             $scope.confirmLabel = confirmLabel;
                             $scope.confirmBtnType = confirmBtnType;
+                            $scope.tip = tip;
 
                             $scope.confirmed = false;
                             $scope.confirm = function() {

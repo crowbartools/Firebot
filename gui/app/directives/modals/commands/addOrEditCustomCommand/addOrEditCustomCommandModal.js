@@ -75,6 +75,30 @@
                         $ctrl.command.effects.list = [];
                     }
                     $ctrl.command.simple = !$ctrl.command.simple;
+
+                    if ($ctrl.isNewCommand &&
+                        !settingsService.getDefaultToAdvancedCommandMode() &&
+                        !settingsService.getSeenAdvancedCommandModePopup()) {
+                        settingsService.setSeenAdvancedCommandModePopup(true);
+                        utilityService.showConfirmationModal({
+                            title: "Default Mode",
+                            question: `Do you want to always use Advanced Mode for new Commands?`,
+                            tip: "Note: You can change this in Settings > Commands at any time",
+                            confirmLabel: "Yes",
+                            confirmBtnType: "btn-default",
+                            cancelLabel: "Not right now",
+                            cancelBtnType: "btn-default"
+                        }).then(confirmed => {
+                            if (confirmed) {
+                                settingsService.setDefaultToAdvancedCommandMode(true);
+                                ngToast.create({
+                                    className: 'success',
+                                    content: "New commands will now default to Advanced Mode.",
+                                    timeout: 7000
+                                });
+                            }
+                        });
+                    }
                 }
             };
 

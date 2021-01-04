@@ -164,6 +164,14 @@
                 pushDataToFile("/settings/defaultToAdvancedCommandMode", defaultToAdvanced === true);
             };
 
+            service.getSeenAdvancedCommandModePopup = function() {
+                return getDataFromFile("/settings/seenAdvancedCommandModePopup") === true;
+            };
+
+            service.setSeenAdvancedCommandModePopup = function(seen) {
+                pushDataToFile("/settings/seenAdvancedCommandModePopup", seen === true);
+            };
+
             service.getPersistCustomVariables = function() {
                 return getDataFromFile("/settings/persistCustomVariables") === true;
             };
