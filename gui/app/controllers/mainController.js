@@ -30,7 +30,8 @@
         'pageslide-directive',
         'ui.bootstrap.contextMenu',
         'color.picker',
-        'ngAria'
+        'ngAria',
+        'ui.codemirror'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {

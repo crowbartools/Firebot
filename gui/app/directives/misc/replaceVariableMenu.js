@@ -21,8 +21,21 @@
 
                     $scope.variables = [];
 
+                    function findTriggerDataScope(currentScope) {
+                        if (currentScope == null) {
+                            currentScope = $scope;
+                        }
+                        if (currentScope.trigger || currentScope.triggerMeta) {
+                            return currentScope;
+                        }
+                        if (currentScope.$parent == null) {
+                            return {};
+                        }
+                        return findTriggerDataScope(currentScope.$parent);
+                    }
+
                     function getVariables() {
-                        const { trigger, triggerMeta } = $scope.$parent;
+                        let { trigger, triggerMeta } = findTriggerDataScope();
 
                         if (!$scope.disableVariableMenu) {
                             $scope.variables = backendCommunicator.fireEventSync("getReplaceVariableDefinitions", {

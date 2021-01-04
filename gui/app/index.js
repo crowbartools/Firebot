@@ -19,6 +19,7 @@ require("angular-route");
 require("angular-sanitize");
 require("angular-ui-bootstrap");
 require("angularjs-slider");
+require("../../node_modules/angular-ui-codemirror/src/ui-codemirror");
 require("ui-select");
 require("angular-ui-sortable");
 require('ng-youtube-embed');
