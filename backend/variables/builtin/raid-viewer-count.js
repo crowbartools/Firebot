@@ -4,7 +4,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:raid"];
@@ -16,6 +16,7 @@ const model = {
         handle: "raidViewerCount",
         description: "Get the number of viewers brought over by a raid",
         triggers: triggers,
+        categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async (trigger) => {

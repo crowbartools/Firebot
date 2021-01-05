@@ -4,7 +4,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:sub"];
@@ -15,6 +15,7 @@ const model = {
         handle: "subCurrentStreak",
         description: "Number of consecutive months a user has been subscribed to your channel.",
         triggers: triggers,
+        categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

@@ -6,7 +6,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 const { ControlKind } = require('../../interactive/constants/MixplayConstants');
 
 let triggers = {};

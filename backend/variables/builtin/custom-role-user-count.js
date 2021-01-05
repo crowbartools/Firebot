@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 const customRolesManager = require("../../roles/custom-roles-manager");
 
 const model = {
@@ -10,6 +10,7 @@ const model = {
         handle: "customRoleUserCount",
         description: "Get the number of people in a custom role.",
         usage: "customRoleUserCount[roleName]",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async (_, roleName) => {

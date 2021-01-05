@@ -4,7 +4,7 @@
 
 const util = require("../../utility");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 
 const model = {
@@ -12,6 +12,7 @@ const model = {
         handle: "randomNumber",
         usage: "randomNumber[min, max]",
         description: "Get a random number between the given range.",
+        categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, min, max) => {

@@ -6,7 +6,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -17,7 +17,8 @@ const model = {
         handle: "argCount",
         description: "Returns the number of command args.",
         triggers: triggers,
-        possibleDataOutput: [OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.NUMBER],
+        categories: [VariableCategory.NUMBERS]
     },
     evaluator: (trigger) => {
         return trigger.metadata.userCommand ? trigger.metadata.userCommand.args.length : 0;

@@ -2,13 +2,14 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "max",
         description: "Returns the highest-value numbered passed",
         usage: "max[num1, num2, ...]",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, ...args) => {

@@ -2,7 +2,7 @@
 
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 function getPropertyAtPath(obj, propertyPath) {
     let data = obj;
@@ -38,6 +38,7 @@ const model = {
             }
         ],
         description: "Returns a new filtered array.",
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, jsonArray, matcher, propertyPath = null, removeMatches = false) => {

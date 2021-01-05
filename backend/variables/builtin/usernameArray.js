@@ -2,12 +2,13 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "usernameArray",
         description: "Returns a JSON array of all usernames saved in the user db",
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async () => {

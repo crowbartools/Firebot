@@ -2,13 +2,14 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 module.exports = {
     definition: {
         handle: "textContains",
         usage: "textContains[text, search]",
         description: "Returns true if text contains search, otherwise returns false",
+        categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, text = "", search = "") => {

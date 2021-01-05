@@ -4,12 +4,13 @@
 
 const moment = require("moment");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "date",
         description: "The current date formatted as MMM Do YYYY",
+        categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, template = 'MMM Do YYYY') => {

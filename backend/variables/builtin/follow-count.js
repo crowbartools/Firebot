@@ -2,7 +2,7 @@
 
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const api = require("../../twitch-api/api");
 const accountAccess = require("../../common/account-access");
@@ -11,6 +11,7 @@ const model = {
     definition: {
         handle: "followCount",
         description: "The number of follows you currently have.",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async () => {

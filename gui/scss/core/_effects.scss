@@ -35,6 +35,9 @@
         color: white;
         font-weight: 400;
         background: $nav-link-bg;
+        &.dark {
+            background: #222326;
+        }
         & .category-bar {
             background: $highlight-color;
         }

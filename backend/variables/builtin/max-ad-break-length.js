@@ -6,7 +6,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["mixer:ad-break"];
@@ -17,6 +17,7 @@ const model = {
         handle: "maxAdBreakLength",
         description: "The maximum length (in seconds) the ad-break will run for.",
         triggers: triggers,
+        categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

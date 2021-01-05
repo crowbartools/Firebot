@@ -2,7 +2,7 @@
 
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
@@ -19,6 +19,7 @@ const model = {
                 description: 'Removes the element at the last index (1,2)'
             }
         ],
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, jsonArray, index = 0) => {

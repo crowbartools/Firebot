@@ -2,7 +2,7 @@
 
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
@@ -19,6 +19,7 @@ const model = {
             }
         ],
         description: "Returns a new array with the added element",
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, jsonArray, newElement, addToFront = false) => {

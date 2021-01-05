@@ -4,7 +4,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:cheer"];
@@ -15,6 +15,7 @@ const model = {
         handle: "cheerMessage",
         description: "The message included with the cheer",
         triggers: triggers,
+        categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {

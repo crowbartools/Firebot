@@ -1,12 +1,13 @@
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "arrayJoin",
         usage: "arrayJoin[jsonArray, separator]",
         description: "Returns a string with each array item joined together with the given separator",
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, jsonArray, separator = ",") => {

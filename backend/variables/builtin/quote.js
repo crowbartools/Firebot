@@ -4,7 +4,7 @@
 const quoteManager = require("../../quotes/quotes-manager");
 const logger = require("../../logwrapper");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
@@ -16,6 +16,7 @@ const model = {
                 description: "Get a specific quote id."
             }
         ],
+        categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, quoteId) => {

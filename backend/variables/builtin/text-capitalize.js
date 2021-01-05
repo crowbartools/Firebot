@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const util = require("../../utility");
 
@@ -11,6 +11,7 @@ const model = {
         handle: "capitalize",
         description: "Capitalizes the given text.",
         usage: "capitalize[text]",
+        categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, text) => {

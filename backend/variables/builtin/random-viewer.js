@@ -4,13 +4,14 @@
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 const twitchChat = require("../../chat/twitch-chat");
 
 const model = {
     definition: {
         handle: "randomViewer",
         description: "Get a random viewer in chat.",
+        categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async () => {

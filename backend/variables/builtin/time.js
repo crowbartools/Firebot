@@ -4,12 +4,13 @@
 
 const moment = require("moment");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "time",
         description: "Outputs the current time.",
+        categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, template = 'h:mm a') => {

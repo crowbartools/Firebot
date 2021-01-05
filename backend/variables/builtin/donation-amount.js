@@ -6,7 +6,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = [
@@ -22,6 +22,7 @@ const model = {
         handle: "donationAmount",
         description: "The amount of a donation from StreamLabs/Tipeee/StreamElements/ExtraLife",
         triggers: triggers,
+        categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

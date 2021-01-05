@@ -6,7 +6,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.PRESET_LIST] = true;
@@ -18,6 +18,7 @@ const model = {
         usage: "presetListArg[name]",
         description: "Represents the given argument passed to this preset effect list.",
         triggers: triggers,
+        categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: (trigger, argName = "") => {

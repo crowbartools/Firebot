@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const utils = require("../../utility");
 
@@ -11,6 +11,7 @@ const model = {
         handle: "replace",
         description: "Replaces a search value with a replacement value",
         usage: "replace[textInput, searchValue, replacement]",
+        categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, input, search, replacement = "") => {

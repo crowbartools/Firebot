@@ -6,12 +6,13 @@ const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const twitchApi = require("../../twitch-api/client");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "currentViewerCount",
-        description: "Get the number of people viewing you stream.",
+        description: "Get the number of people viewing your stream.",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async () => {

@@ -1,6 +1,6 @@
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 function isObjectOrArray(data) {
     return Array.isArray(data) || (typeof data === 'object' && !(typeof data === 'string' || data instanceof String));
@@ -21,6 +21,7 @@ const model = {
             }
         ],
         description: "Get the metadata associated with the user.",
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: async (_, username, key, defaultValue = null, propertyPath = null) => {

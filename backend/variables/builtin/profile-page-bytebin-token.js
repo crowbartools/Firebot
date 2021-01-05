@@ -3,7 +3,7 @@
 "use strict";
 
 const cloudSync = require("../../cloud-sync/profile-sync");
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {

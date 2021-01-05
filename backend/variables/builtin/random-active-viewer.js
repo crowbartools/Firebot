@@ -6,7 +6,7 @@ const logger = require("../../logwrapper");
 const activeUserHandler = require('../../chat/chat-listeners/active-user-handler');
 const customRoleManager = require('../../roles/custom-roles-manager');
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
@@ -19,6 +19,7 @@ const model = {
                 description: "Filter to an active viewer in a specific role."
             }
         ],
+        categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, roleName) => {

@@ -1,13 +1,14 @@
 "use strict";
 
 const twitchApi = require("../../twitch-api/client");
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "userAvatarUrl",
         usage: "userAvatarUrl",
         description: "Gets the url for the avatar to the current user. Optionally pass in a username.",
+        categories: [VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (trigger, username) => {

@@ -6,7 +6,7 @@ const fs = require("fs-extra");
 
 const util = require("../../utility");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const logger = require("../../logwrapper");
 
@@ -29,6 +29,7 @@ const model = {
                 description: "Read a random line from the file."
             }
         ],
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, filePath, lineOrRandom) => {

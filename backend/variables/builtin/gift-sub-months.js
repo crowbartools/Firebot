@@ -4,7 +4,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:subs-gifted"];
@@ -15,6 +15,7 @@ const model = {
         handle: "giftSubMonths",
         description: "The number of months gifted by the sub",
         triggers: triggers,
+        categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

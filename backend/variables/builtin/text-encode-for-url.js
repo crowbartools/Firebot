@@ -2,13 +2,14 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "encodeForUrl",
         description: "Encodes input text for use in a URL",
         usage: "encodeForUrl[text]",
+        categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, text) => {
