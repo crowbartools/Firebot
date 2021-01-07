@@ -130,7 +130,7 @@ class TwitchChat extends EventEmitter {
             const streamer = accountAccess.getAccounts().streamer;
             chatClient.say(streamer.username, message);
 
-            if (accountType === 'streamer' && !message.startsWith("/")) {
+            if (accountType === 'streamer' && (!message.startsWith("/") || message.startsWith("/me"))) {
                 const firebotChatMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
                 await activeUserHandler.addActiveUser({
                     userId: firebotChatMessage.userId,
