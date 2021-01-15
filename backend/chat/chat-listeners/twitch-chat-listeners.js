@@ -65,10 +65,10 @@ exports.setupChatListeners = (streamerChatClient) => {
         if (user !== streamer.username && user !== bot.username) {
             const timerManager = require("../../timers/timer-manager");
             timerManager.incrementChatLineCounters();
-
-            const chatMessageListener = require("../../events/twitch-events/chat-message");
-            chatMessageListener.triggerChatMessage(firebotChatMessage);
         }
+
+        const chatMessageListener = require("../../events/twitch-events/chat-message");
+        chatMessageListener.triggerChatMessage(firebotChatMessage);
     });
 
     streamerChatClient.onWhisper(async (_user, messageText, msg) => {
@@ -82,6 +82,9 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onAction(async (_channel, _user, messageText, msg) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, false, true);
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
+
+        const chatMessageListener = require("../../events/twitch-events/chat-message");
+        chatMessageListener.triggerChatMessage(firebotChatMessage);
     });
 
     streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
