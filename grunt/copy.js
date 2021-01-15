@@ -37,6 +37,14 @@ module.exports = function (grunt) {
                     {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/kbm-java/**']},
                     {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/ffmpeg/**']}
                 ]
+            },
+            darwin: {
+                files: [
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay/**', '!resources/overlay/scss/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/overlay.html']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/kbm-java/**']},
+                    {expand: true, dest: 'dist/pack/Firebot-linux-x64/', src: ['resources/ffmpeg/**']}
+                ]
             }
         }
     });
