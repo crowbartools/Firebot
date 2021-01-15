@@ -17,10 +17,16 @@ function processCurrencyTimer(currency) {
     let bonusObject = currency.bonus;
     let basePayout = currency.payout;
 
+    // offline currency not set and stream is offline
+    if (currency.offline == null && !connectionManager.streamerIsOnline()) {
+        return;
+    }
+
     // If we have an offline currency amount and the streamer is offline, then use that.
     if (currency.offline != null && !connectionManager.streamerIsOnline()) {
         basePayout = currency.offline;
     }
+
 
     // Add base payout to everyone.
     currencyDatabase.addCurrencyToOnlineUsers(currency.id, basePayout).then(async () => {

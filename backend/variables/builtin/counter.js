@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const counterManager = require("../../counters/counter-manager");
 
@@ -11,6 +11,7 @@ const model = {
         handle: "counter",
         usage: "counter[name]",
         description: "Displays the value of the given counter.",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, name) => {

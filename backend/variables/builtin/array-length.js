@@ -2,13 +2,14 @@
 
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "arrayLength",
         usage: "arrayLength[jsonArray]",
         description: "Returns the length of the input JSON array.",
+        categories: [VariableCategory.ADVANCED, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, jsonArray) => {

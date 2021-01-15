@@ -1,6 +1,6 @@
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const nth = n => ["st", "nd", "rd"][(((n < 0 ? -n : n) + 90) % 100 - 10) % 10 - 1] || "th";
 
@@ -9,6 +9,7 @@ const model = {
         handle: "ordinalIndicator",
         description: "Adds an ordinal indicator suffix to a number (ie 'st', 'nd', 'rd')",
         usage: "ordinalIndicator[number]",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, number) => {

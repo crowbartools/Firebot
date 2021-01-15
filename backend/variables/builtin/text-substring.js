@@ -2,13 +2,14 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 module.exports = {
     definition: {
         handle: "textSubstring",
         usage: "textSubstring[text, start, end]",
         description: "Returns a substring of the provided text based on the range",
+        categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, text = "", start = 0, end) => {

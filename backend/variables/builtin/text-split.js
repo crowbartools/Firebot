@@ -2,13 +2,14 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "splitText",
         description: "Splits text with the given separator and returns a JSON array. Useful for Custom Variables.",
         usage: "splitText[text, separator]",
+        categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, text, separator = ",") => {

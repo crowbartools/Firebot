@@ -4,7 +4,7 @@
 
 const mathjs = require('mathjs');
 const logger = require("../../logwrapper");
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 const utils = require("../../utility");
 
 const model = {
@@ -12,6 +12,7 @@ const model = {
         handle: "math",
         usage: "math[expression]",
         description: "Evaluate a math equation",
+        categories: [VariableCategory.COMMON, VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async (trigger, exp) => {

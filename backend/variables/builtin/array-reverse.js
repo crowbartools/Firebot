@@ -1,11 +1,12 @@
 'use strict';
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "arrayReverse",
         usage: "arrayReverse[jsonArray]",
         description: "Returns a new reversed array",
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, jsonArray) => {

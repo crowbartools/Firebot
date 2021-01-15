@@ -40,7 +40,13 @@ const html = {
    */
     optionsTemplate: `
     <eos-container header="HTML">
-        <textarea ng-model="effect.html" class="form-control" id="html-effect-html-field" name="text" placeholder="Input your HTML" rows="5" cols="40" replace-variables></textarea>
+        <div 
+            ui-codemirror="{onLoad : codemirrorLoaded}"
+            ui-codemirror-opts="editorSettings"
+            ng-model="effect.html"
+            replace-variables 
+            menu-position="under">
+        </div>
     </eos-container>
 
     <eos-container header="Show Duration" pad-top="true">
@@ -78,6 +84,25 @@ const html = {
         $scope.showOverlayInfoModal = function(overlayInstance) {
             utilityService.showOverlayInfoModal(overlayInstance);
         };
+
+        $scope.editorSettings = {
+            mode: 'htmlmixed',
+            theme: 'blackboard',
+            lineNumbers: true,
+            autoRefresh: true,
+            showGutter: true
+        };
+
+        $scope.codemirrorLoaded = function(_editor) {
+            // Editor part
+            _editor.refresh();
+            const cmResize = require("cm-resize");
+            cmResize(_editor, {
+                minHeight: 200,
+                resizableWidth: false,
+                resizableHeight: true
+            });
+        };
     },
     /**
    * When the effect is triggered by something
@@ -89,7 +114,7 @@ const html = {
             errors.push("Please enter some HTML to show in the overlay.");
         }
         if (effect.length == null) {
-            errors.push("Please select a length to show the html in the overlay.");
+            errors.push("Please input a show duration.");
         }
         return errors;
     },

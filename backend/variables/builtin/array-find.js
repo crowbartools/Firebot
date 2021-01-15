@@ -2,7 +2,7 @@
 
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 function getPropertyAtPath(obj, propertyPath) {
     let data = obj;
@@ -34,6 +34,7 @@ const model = {
                 description: 'Finds object with username of "ebiggz"'
             }
         ],
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
     evaluator: (_, jsonArray, matcher, propertyPath = null) => {

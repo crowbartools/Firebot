@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 const request = require("request");
 const logger = require("../../logwrapper");
 
@@ -30,6 +30,7 @@ const model = {
                 description: "Traverse a JSON response object."
             }
         ],
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
     evaluator: async (_, url, responseJsonPath) => {

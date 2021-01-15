@@ -2,13 +2,14 @@
 
 const utils = require("../../utility");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "arrayShuffle",
         usage: "arrayShuffle[jsonArray]",
         description: "Returns a new shuffled array",
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, jsonArray) => {

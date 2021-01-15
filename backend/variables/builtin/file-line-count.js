@@ -4,7 +4,7 @@
 
 const fs = require("fs-extra");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const logger = require("../../logwrapper");
 
@@ -13,6 +13,7 @@ const model = {
         handle: "fileLineCount",
         usage: "fileLineCount[\"path/to/file.txt\"]",
         description: "Count the number of lines in a text file.",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (_, filePath) => {

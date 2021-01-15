@@ -5,12 +5,13 @@ const logger = require("../../logwrapper");
 
 const activeViewerHandler = require("../../chat/chat-listeners/active-user-handler");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "activeChatUserCount",
         description: "Get the number of active viewers in chat.",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: async () => {

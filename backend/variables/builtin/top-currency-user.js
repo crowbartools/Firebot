@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const currencyDatabase = require("../../database/currencyDatabase");
 
@@ -21,6 +21,7 @@ const model = {
             }
         ],
         usage: "topCurrencyUser[currencyName, position, username/amount]",
+        categories: [VariableCategory.USER, VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT, OutputDataType.NUMBER]
     },
     evaluator: async (_, currencyName, position = 1, usernameOrPosition = "username") => {

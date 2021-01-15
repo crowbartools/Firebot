@@ -6,7 +6,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
 triggers[EffectTrigger.COMMAND] = true;
@@ -19,6 +19,7 @@ const model = {
         usage: "count",
         description: "Displays the number of times the given command has been run.",
         triggers: triggers,
+        categories: [VariableCategory.COMMON, OutputDataType.NUMBER],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {

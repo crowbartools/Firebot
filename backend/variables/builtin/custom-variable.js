@@ -4,7 +4,7 @@
 
 const customVariableManager = require("../../common/custom-variable-manager");
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 function isObjectOrArray(data) {
     return Array.isArray(data) || (typeof data === 'object' && !(typeof data === 'string' || data instanceof String));
@@ -15,6 +15,7 @@ const model = {
         handle: "customVariable",
         usage: "customVariable[name]",
         description: "Get the data saved in the custom variable. Optionally provide a property path (using dot notation) or array index as a second argument.",
+        categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
     evaluator: (_, name, propertyPath) => {

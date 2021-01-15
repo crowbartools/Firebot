@@ -42,7 +42,7 @@
 }
 
 .variable-menu {
-  width: 375px; 
+  width: 500px; 
   background: #060707; 
   position: absolute; 
   right: 0px; 
@@ -76,6 +76,7 @@
   cursor: pointer;
   user-select: none;
   opacity: 1;
+  z-index: 100;
   &:hover {
     animation: delayed-hide 500ms;
     animation-delay: 500ms;
@@ -1836,5 +1837,20 @@ thead th{
 .modal-open .modal {
   overscroll-behavior: contain;
   will-change: transform;
+}
+
+.CodeMirror {
+  border-radius: 4px !important;
+}
+
+.cm-s-blackboard {
+  background: #24262a !important;
+  .CodeMirror-gutters {
+    background: #24262a !important;
+  }
+}
+
+.cm-resize-handle {
+  box-shadow: none !important;
 }
 

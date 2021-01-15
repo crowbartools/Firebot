@@ -2,13 +2,14 @@
 
 "use strict";
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "commafy",
         description: "Adds the appropriate commas to a number.",
         usage: "commafy[number]",
+        categories: [VariableCategory.NUMBERS],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (_, number) => {

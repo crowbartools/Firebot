@@ -4,7 +4,7 @@
 
 const twitchChannels = require("../../twitch-api/resource/channels");
 const accountAccess = require("../../common/account-access");
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
@@ -25,6 +25,7 @@ const model = {
                 description: "Gets the stream title for a specific channel."
             }
         ],
+        categories: [VariableCategory.COMMON, VariableCategory.USER],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: async (_, username) => {

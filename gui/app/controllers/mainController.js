@@ -30,7 +30,8 @@
         'pageslide-directive',
         'ui.bootstrap.contextMenu',
         'color.picker',
-        'ngAria'
+        'ngAria',
+        'ui.codemirror'
     ]);
 
     app.factory("$exceptionHandler", function(logger) {
@@ -453,7 +454,7 @@
     });
 
 
-    // This adds a filter that we can use for searching varaibles
+    // This adds a filter that we can use for searching variables
     app.filter("variableSearch", function() {
         return function(variables, query) {
             if (variables == null || query == null) return variables;
@@ -465,11 +466,22 @@
         };
     });
 
-    // This adds a filter that we can use for searching varaibles
+    // This adds a filter that we can use for searching effects
     app.filter("effectCategoryFilter", function() {
         return function(effects, category) {
             if (effects == null || category == null) return effects;
             return effects
+                .filter(v =>
+                    v.categories && v.categories.includes(category)
+                );
+        };
+    });
+
+    // This adds a filter that we can use for searching variables
+    app.filter("variableCategoryFilter", function() {
+        return function(variables, category) {
+            if (variables == null || category == null) return variables;
+            return variables
                 .filter(v =>
                     v.categories && v.categories.includes(category)
                 );

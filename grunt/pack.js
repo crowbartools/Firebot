@@ -34,6 +34,9 @@ module.exports = function (grunt) {
             },
             packlinux: {
                 command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=linux ${flags}`
+            },
+            packdarwin: {
+                command: `npx --no-install --ignore-existing electron-packager . Firebot --platform=darwin ${flags}`
             }
         }
     });

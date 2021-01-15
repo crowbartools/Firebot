@@ -84,6 +84,12 @@ exports.cacheStreamerEmotes = async () => {
 exports.buildFirebotChatMessageFromText = async (text = "") => {
     const streamer = accountAccess.getAccounts().streamer;
 
+    const action = text.startsWith("/me");
+
+    if (action) {
+        text = text.replace("/me", "");
+    }
+
     /**@type {FirebotChatMessage} */
     const streamerFirebotChatMessage = {
         id: uuid(),
@@ -92,7 +98,7 @@ exports.buildFirebotChatMessageFromText = async (text = "") => {
         rawText: text,
         profilePicUrl: streamer.avatar,
         whisper: false,
-        action: false,
+        action: action,
         tagged: false,
         isBroadcaster: true,
         badges: [],

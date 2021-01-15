@@ -2,13 +2,14 @@
 
 'use strict';
 
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 const model = {
     definition: {
         handle: "concat",
         description: "Appends text together",
         usage: "concat[text, text, ...]",
+        categories: [VariableCategory.TEXT],
         possibleDataOuput: [OutputDataType.TEXT]
     },
     evaluator: (_, ...args) => args.join('')
