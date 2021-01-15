@@ -346,7 +346,7 @@ function calcUserOnlineMinutes(user) {
 // Recalculates online time for all users who are online.
 function calcAllUsersOnlineMinutes() {
     const connectionManager = require("../common/connection-manager");
-    if (connectionManager.streamerIsOnline) {
+    if (connectionManager.streamerIsOnline()) {
         db.find({ online: true }, (err, docs) => {
             if (!err) {
                 docs.forEach(user => calcUserOnlineMinutes(user));
