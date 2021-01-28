@@ -35,6 +35,8 @@
                 }
             };
 
+            $scope.trigger = "command";
+
             $ctrl.switchCommandMode = () => {
                 const currentlyAdvanced = !$ctrl.command.simple;
                 if (currentlyAdvanced) {
