@@ -19,9 +19,9 @@ const model = {
         let count = 0;
         try {
             const response = await api.getClient().helix.subscriptions
-                .getSubscriptions(streamer.channelId);
-            if (response && response.data) {
-                count = response.data.length;
+                .getSubscriptionsPaginated(streamer.channelId).getAll();
+            if (response && response.length) {
+                count = response.length;
             }
         } catch {
             // silently fail
