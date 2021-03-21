@@ -49,6 +49,7 @@ exports.loadEffects = () => {
     const cooldownCommand = require("./builtin/cooldown-command");
     const setUserMetadata = require("./builtin/set-user-metadata");
     const shoutout = require("./builtin/shoutout");
+    const markAllActivityAcknowledged = require("./builtin/mark-all-activity-acknowledged");
 
     // register them
     effectManager.registerEffect(playSoundEffect); // No migration needed.
@@ -96,6 +97,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(cooldownCommand);
     effectManager.registerEffect(setUserMetadata);
     effectManager.registerEffect(shoutout);
+    effectManager.registerEffect(markAllActivityAcknowledged);
 
     // Deactivated for Twitch.
     const changeScene = require('./builtin/changeScene');

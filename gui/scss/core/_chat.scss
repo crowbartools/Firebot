@@ -26,20 +26,6 @@
     position: relative;
 }
 
-.viewer-list-column {
-    width: 25%; 
-    height: 100%; 
-    display: flex; 
-    flex-direction: column;
-}
-
-.viewer-list-header {
-    height: 27px;
-    font-size: 15px;
-    color: #9a9797;
-    padding-left: 3px;
-    padding-right: 3px;display: flex;justify-content: space-between;align-items: flex-start;
-}
 .chat-item {
     &.alternate:nth-child(even) {
         background: $chat-message-alternate-bg;
@@ -369,39 +355,76 @@
     overflow-x: hidden;
     font-size: 16px;
     text-overflow: ellipsis;
-    .chatUser{
-        &[role="Banned"]{
-            color: $bannedcolor;
-        }
-        &[role="User"]{
-            color: $usercolor;
-        }
-        &[role="Pro"], &[role="Partner"], &[role="VerifiedPartner"]{
-            color: $procolor;
-        }
-        &[role="Mod"], &[role="ChannelEditor"]{
-            color: $modcolor;
-        }
-        &[role="Staff"]{
-            color: $staffcolor;
-        }
-        &[role="Owner"]{
-            color: $ownercolor;
-        }
-        &[role="System"]{
-            color: $alertcolor;
+}
+
+.activity-list {
+    border: 2px solid rgba(170,164,164,0.43);
+    background-color: $light-background-color + 20%;
+    border-radius: 5px;
+    overflow: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    .activity {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        &.alternate-bg:nth-child(even) {
+            background: $chat-message-alternate-bg;
         }
     }
 }
 
 
 // Chat Screen
+.viewer-list-column {
+    width: 30%; 
+    height: 100%; 
+    display: flex; 
+    flex-direction: column;
+}
+
+.activity-feed-column {
+    width: 25%; 
+    flex-shrink: 0;
+    height: 100%; 
+    display: flex; 
+    flex-direction: column;
+}
+
+.viewer-list-header {
+    height: 27px;
+    font-size: 15px;
+    color: #9a9797;
+    padding-left: 3px;
+    padding-right: 3px;display: flex;justify-content: space-between;align-items: flex-start;
+}
+
+.activity-feed-header {
+    height: 27px;
+    font-size: 15px;
+    color: #9a9797;
+    padding-left: 3px;
+    padding-right: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.activity-message > p:first-child {
+    margin: 0 !important;
+}
+
+
 .chat-window-column {
     display:flex; 
     flex-direction: column;
     width: 100%; 
     height: 100%;
     padding-left: 10px;
+    padding-right: 10px;
 }
 
 .chat-window{

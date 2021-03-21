@@ -71,6 +71,11 @@ settings.setCustomScriptsEnabled = function(enabled) {
     pushDataToFile("/settings/runCustomScripts", enabled === true);
 };
 
+settings.ignoreSubsequentSubEventsAfterCommunitySub = function() {
+    const ignoreSubEvents = getDataFromFile("/settings/ignoreSubsequentSubEventsAfterCommunitySub");
+    return ignoreSubEvents != null ? ignoreSubEvents : true;
+};
+
 settings.getLastMixplayProjectId = function() {
     let projectId;
     try {

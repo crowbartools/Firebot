@@ -76,6 +76,23 @@ function runQueue() {
     });
 }
 
+function cacheActivityFeedEvent(source, event, meta) {
+    if (event.cached) {
+        let cacheMetaKey;
+        if (event.cacheMetaKey && meta) {
+            cacheMetaKey = meta[event.cacheMetaKey];
+        }
+        return cacheNewEvent(
+            source.id,
+            event.id,
+            "activity-feed",
+            event.cacheTtlInSecs,
+            cacheMetaKey
+        );
+    }
+    return false;
+}
+
 function addEventToQueue(eventPacket) {
     eventQueue.push(eventPacket);
 
@@ -87,7 +104,7 @@ function addEventToQueue(eventPacket) {
     }
 }
 
-async function onEventTriggered(event, source, meta, isManual = false) {
+async function onEventTriggered(event, source, meta, isManual = false, isRetrigger = false) {
 
     let effects = null,
         eventSettings;
@@ -102,7 +119,7 @@ async function onEventTriggered(event, source, meta, isManual = false) {
 
     for (let eventSetting of eventSettings) {
 
-        if (!isManual && event.cached) {
+        if (!isRetrigger && !isManual && event.cached) {
             let cacheMetaKey;
             if (event.cacheMetaKey && meta) {
                 cacheMetaKey = meta[event.cacheMetaKey];
@@ -155,3 +172,4 @@ async function onEventTriggered(event, source, meta, isManual = false) {
 // Export Functions
 exports.onEventTriggered = onEventTriggered;
 exports.runEventEffects = runEventEffects;
+exports.cacheActivityFeedEvent = cacheActivityFeedEvent;

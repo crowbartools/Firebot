@@ -153,12 +153,15 @@ exports.whenReady = async () => {
     const backupManager = require("../../../backupManager");
     backupManager.onceADayBackUpCheck();
 
-    //start the REST api server
+    // start the REST api server
     const webServer = require("../../../../server/httpServer");
     webServer.start();
 
     const channelAccess = require("../../../common/channel-access");
     channelAccess.refreshStreamerChannelData();
+
+    // load activity feed manager
+    require("../../../events/activity-feed-manager");
 
     windowManagement.createMainWindow();
 

@@ -18,14 +18,26 @@ const eventSourceDefinition = {
             name: "Donation",
             description: "When someone donates to you via TipeeeStream.",
             cached: false,
-            queued: true
+            queued: true,
+            activityFeed: {
+                icon: "fad fa-money-bill",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** donated **${eventData.formattedDonationAmmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
+                }
+            }
         },
         {
             id: EventId.FOLLOW,
             name: "Follow",
             description: "When someone follows your Twitch channel (comes from TipeeeStream)",
             cacheMetaKey: "username",
-            cached: true
+            cached: true,
+            activityFeed: {
+                icon: "fas fa-heart",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** followed`;
+                }
+            }
         }
     ]
 };
@@ -40,7 +52,7 @@ exports.processTipeeeStreamEvent = (eventData) => {
     if (eventData.type === "donation") {
         let donoData = eventData.parameters;
         eventManager.triggerEvent(EVENT_SOURCE_ID, EventId.DONATION, {
-            formattedDonationAmmount: eventData.formattedAmount,
+            formattedDonationAmount: eventData.formattedAmount,
             dononationAmount: donoData.amount,
             donationMessage: donoData.formattedMessage,
             from: donoData.username

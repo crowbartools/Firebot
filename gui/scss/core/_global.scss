@@ -453,6 +453,11 @@ body {
   }
 }
 
+.right-justified-dropdown {
+  right:0px!important;
+  left:inherit!important;
+}
+
 .login-pic{
    border-radius: 110px;
    border: 2px solid $dark-background-border;
@@ -478,6 +483,8 @@ body {
       right:0px!important;
       left:inherit!important;
     }
+
+
     img{
       height:42px;
       width:42px;

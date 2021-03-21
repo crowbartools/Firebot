@@ -16,9 +16,12 @@
             listenerService,
             settingsService,
             soundService,
-            utilityService
+            utilityService,
+            activityFeedService
         ) {
             $scope.settings = settingsService;
+
+            $scope.afs = activityFeedService;
 
             $scope.compactDisplay = settingsService.isChatCompactMode();
             $scope.alternateBackgrounds = settingsService.chatAlternateBackgrounds();

@@ -284,6 +284,49 @@
                 pushDataToFile("/settings/chatViewerList", chatViewerList === true);
             };
 
+            service.showActivityFeed = function() {
+                const show = getDataFromFile("/settings/activityFeed");
+                return show == null ? true : show;
+            };
+
+            service.setShowActivityFeed = function(showActivityFeed) {
+                pushDataToFile("/settings/activityFeed", showActivityFeed === true);
+            };
+
+            service.getAllowedActivityEvents = function() {
+                const events = getDataFromFile("/settings/allowedActivityEvents");
+                return events == null ? [
+                    "twitch:host",
+                    "twitch:raid",
+                    "twitch:follow",
+                    "twitch:sub",
+                    "twitch:subs-gifted",
+                    "twitch:community-subs-gifted",
+                    "twitch:cheer",
+                    "streamlabs:donation",
+                    "streamlabs:eldonation",
+                    "tipeeestream:donation",
+                    "streamelements:donation",
+                    "twitch:channel-reward-redemption"
+                ] : events;
+            };
+
+            service.setAllowedActivityEvents = function(events) {
+                if (events == null || !Array.isArray(events)) {
+                    return;
+                }
+                pushDataToFile("/settings/allowedActivityEvents", events);
+            };
+
+            service.ignoreSubsequentSubEventsAfterCommunitySub = function() {
+                const ignoreSubEvents = getDataFromFile("/settings/ignoreSubsequentSubEventsAfterCommunitySub");
+                return ignoreSubEvents != null ? ignoreSubEvents : true;
+            };
+
+            service.setIgnoreSubsequentSubEventsAfterCommunitySub = function(ignoreSubEvents) {
+                pushDataToFile("/settings/ignoreSubsequentSubEventsAfterCommunitySub", ignoreSubEvents === true);
+            };
+
             service.isChatCompactMode = function() {
                 let compact = getDataFromFile("/settings/chatCompactMode");
                 return compact != null ? compact : false;

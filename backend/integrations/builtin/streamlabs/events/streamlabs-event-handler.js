@@ -19,21 +19,39 @@ const eventSourceDefinition = {
             name: "Donation",
             description: "When someone donates to you via StreamLabs.",
             cached: false,
-            queued: true
+            queued: true,
+            activityFeed: {
+                icon: "fad fa-money-bill",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** donated **${eventData.formattedDonationAmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
+                }
+            }
         },
         {
             id: EventId.EXTRA_LIFE_DONATION,
             name: "Extra Life Donation",
             description: "When someone donates to your Extra Life campaign.",
             cached: false,
-            queued: true
+            queued: true,
+            activityFeed: {
+                icon: "fad fa-money-bill",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** donated **${eventData.formattedDonationAmount}** to ExtraLife${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
+                }
+            }
         },
         {
             id: EventId.FOLLOW,
             name: "Follow",
             description: "When someone follows your Twitch channel (comes from StreamLabs)",
             cacheMetaKey: "username",
-            cached: true
+            cached: true,
+            activityFeed: {
+                icon: "fas fa-heart",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** followed`;
+                }
+            }
         }
     ]
 };

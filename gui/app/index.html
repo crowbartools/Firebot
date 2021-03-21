@@ -2,33 +2,65 @@
 <html ng-controller="MainController">
   <head>
     <title ng-bind="appTitle">Firebot</title>
-    <link rel="icon" href="../../favicon.ico">
-    
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico" />
+
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
     <!--Webfont version of font awesome 5, use these from now on-->
 
-    <script src="https://kit.fontawesome.com/1bc4e8dcfe.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/1bc4e8dcfe.js"
+      crossorigin="anonymous"
+    ></script>
 
-    <link ng-href="{{customFontCssPath}}" rel="stylesheet" type="text/css">
-  
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700|Roboto+Mono:300|Quicksand:300,400,700" rel="stylesheet"> 
-    <link rel="stylesheet" type="text/css" href="http://csshake.surge.sh/csshake.min.css">
-    
+    <link ng-href="{{customFontCssPath}}" rel="stylesheet" type="text/css" />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:100,300,400,500,700|Roboto+Mono:300|Quicksand:300,400,700"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="http://csshake.surge.sh/csshake.min.css"
+    />
+
     <!-- Custom styles for this template -->
-    <link ng-href="../css/{{appTheme()}}.css" href="../css/Obsidian.css" rel="stylesheet">
+    <link
+      ng-href="../css/{{appTheme()}}.css"
+      href="../css/Obsidian.css"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="../../node_modules/ng-toast/dist/ngToast.min.css">
+    <link
+      rel="stylesheet"
+      href="../../node_modules/ng-toast/dist/ngToast.min.css"
+    />
 
-    <link rel="stylesheet" href="../../node_modules/angularjs-color-picker/dist/angularjs-color-picker.min.css" />
-    <link rel="stylesheet" href="../../node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/angularjs-color-picker/dist/angularjs-color-picker.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
+    />
 
-    <link rel="stylesheet" href="../../node_modules/codemirror/lib/codemirror.css" />
-    <link rel="stylesheet" href="../../node_modules/codemirror/theme/blackboard.css" />
-    
+    <link
+      rel="stylesheet"
+      href="../../node_modules/codemirror/lib/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/codemirror/theme/blackboard.css"
+    />
+
     <script src="../js/plugins/jquery-3.1.1.slim.min.js"></script>
     <script src="../js/plugins/jquery.min.js"></script>
     <script src="../js/plugins/tether.min.js"></script>
@@ -43,7 +75,10 @@
     <script src="../../node_modules/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 
     <!-- include summernote css/js -->
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.15/dist/summernote.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/summernote@0.8.15/dist/summernote.min.css"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.15/dist/summernote.min.js"></script>
 
     <script src="https://unpkg.com/ag-grid@17.1.1/dist/ag-grid.min.js"></script>
@@ -53,62 +88,167 @@
     <link rel="import" href="https://raw-dot-custom-elements.appspot.com/vpusher/the-grid/v1.4.0/the-grid/the-grid.html">  -->
 
     <script type="text/javascript" src="./index.js"></script>
-    <script type="text/javascript" src="../../node_modules/countup.js/dist/countUp.min.js"></script>    
-    <script type="text/javascript" src="./directives/plugins/ngScrollGlue.js"></script>  
-    <script type="text/javascript" src="./directives/misc/slidingPuzzle.js"></script>
-    <script type="text/javascript" src="./controllers/mainController.js"></script>
-    <script type="text/javascript" src="./controllers/controlsController.js"></script>
-    <script type="text/javascript" src="./controllers/commandsController.js"></script>
-    <script type="text/javascript" src="./controllers/effectsController.js"></script>
-    <script type="text/javascript" src="./controllers/viewerRolesController.js"></script>
-    <script type="text/javascript" src="./controllers/moderationController.js"></script>
-    <script type="text/javascript" src="./controllers/settingsController.js"></script>
-    <script type="text/javascript" src="./controllers/updatesController.js"></script>
-    <script type="text/javascript" src="./controllers/editCommandSettingsModalController.js"></script>
-    <script type="text/javascript" src="./controllers/eventsController.js"></script>
-    <script type="text/javascript" src="./controllers/chatMessagesController.js"></script>
-    <script type="text/javascript" src="./controllers/hotkeysController.js"></script>
-    <script type="text/javascript" src="./controllers/currencyController.js"></script>
-    <script type="text/javascript" src="./controllers/timersController.js"></script>
-    <script type="text/javascript" src="./controllers/viewersController.js"></script>
-    <script type="text/javascript" src="./controllers/quotesController.js"></script>
-    <script type="text/javascript" src="./controllers/countersController.js"></script>
-    <script type="text/javascript" src="./controllers/gamesController.js"></script>
+    <script
+      type="text/javascript"
+      src="../../node_modules/countup.js/dist/countUp.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/plugins/ngScrollGlue.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/slidingPuzzle.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/mainController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/controlsController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/commandsController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/effectsController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/viewerRolesController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/moderationController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/settingsController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/updatesController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/editCommandSettingsModalController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/eventsController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/chatMessagesController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/hotkeysController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/currencyController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/timersController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/viewersController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/quotesController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/countersController.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./controllers/gamesController.js"
+    ></script>
     <script type="text/javascript" src="./services/eventsService.js"></script>
     <script type="text/javascript" src="./services/commandsService.js"></script>
     <script type="text/javascript" src="./services/timerService.js"></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/eventLogService.js"></script>
-    <script type="text/javascript" src="./services/chatMessagesService.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/chatMessagesService.js"
+    ></script>
     <script type="text/javascript" src="./services/settingsService.js"></script>
     <script type="text/javascript" src="./services/utilityService.js"></script>
     <script type="text/javascript" src="./services/listenerService.js"></script>
-    <script type="text/javascript" src="./services/connectionService.js"></script>
-    <script type="text/javascript" src="./services/integrationService.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/connectionService.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./services/integrationService.js"
+    ></script>
     <script type="text/javascript" src="./services/soundService.js"></script>
-    <script type="text/javascript" src="./services/effectHelperService.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/effectHelperService.js"
+    ></script>
     <script type="text/javascript" src="./services/updatesService.js"></script>
-    <script type="text/javascript" src="./services/websocketService.js"></script>
-    <script type="text/javascript" src="./services/notificationService.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/websocketService.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./services/notificationService.js"
+    ></script>
     <script type="text/javascript" src="./services/hotKeyService.js"></script>
     <script type="text/javascript" src="./services/currencyService.js"></script>
-    <script type="text/javascript" src="./services/connectionManager.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/connectionManager.js"
+    ></script>
     <script type="text/javascript" src="./services/sidebarManager.js"></script>
     <script type="text/javascript" src="./services/logger.js"></script>
     <script type="text/javascript" src="./services/viewersService.js"></script>
     <script type="text/javascript" src="./services/mixplayService.js"></script>
-    <script type="text/javascript" src="./services/backendCommunicator.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/backendCommunicator.js"
+    ></script>
     <script type="text/javascript" src="./services/gridHelper.js"></script>
     <script type="text/javascript" src="./services/controlHelper.js"></script>
-    <script type="text/javascript" src="./services/viewerRolesService.js"></script>
-    <script type="text/javascript" src="./services/effectQueuesService.js"></script>
-    <script type="text/javascript" src="./services/presetEffectListsService.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/viewerRolesService.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./services/effectQueuesService.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./services/presetEffectListsService.js"
+    ></script>
     <script type="text/javascript" src="./services/dataAccess.js"></script>
     <script type="text/javascript" src="./services/profileManager.js"></script>
     <script type="text/javascript" src="./services/fontManager.js"></script>
-    <script type="text/javascript" src="./services/overlayUrlHelper.js"></script>
-    <script type="text/javascript" src="./services/objectCopyHelper.js"></script>
-    <script type="text/javascript" src="./services/chatModerationService.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/overlayUrlHelper.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./services/objectCopyHelper.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./services/chatModerationService.js"
+    ></script>
     <script type="text/javascript" src="./services/accountAccess.js"></script>
     <script type="text/javascript" src="./services/keyHelper.js"></script>
     <script type="text/javascript" src="./services/quotesService.js"></script>
@@ -116,170 +256,590 @@
     <script type="text/javascript" src="./services/countersService.js"></script>
     <script type="text/javascript" src="./services/backupService.js"></script>
     <script type="text/javascript" src="./services/gamesService.js"></script>
-    <script type="text/javascript" src="./services/startupScriptsService.js"></script>
+    <script
+      type="text/javascript"
+      src="./services/startupScriptsService.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./services/activityFeedService.js"
+    ></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
-    <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosContainer.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosEnterExitAnimations.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayInstance.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayPosition.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosAudioOutputDevice.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosChatterSelect.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosCollapsablePanel.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/showEventsSettings.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eventListTextOptions.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosReplaceVariables.js"></script>
-    <script type="text/javascript" src="./directives/effect-option-settings/eosReplaceVariableSection.js"></script>
-    <script type="text/javascript" src="./directives/controls/scriptParameterOption.js"></script>
-    <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
-    <script type="text/javascript" src="./directives/controls/searchableEffectDropdown.js"></script>
-    <script type="text/javascript" src="./directives/controls/searchableEventDropdown.js"></script>
-    <script type="text/javascript" src="./directives/controls/effectList.js"></script>
-    <script type="text/javascript" src="./directives/controls/actionList.js"></script>
-    <script type="text/javascript" src="./directives/controls/role-based/role-percentage.js"></script>
-    <script type="text/javascript" src="./directives/controls/role-based/role-percentages.js"></script>
-    <script type="text/javascript" src="./directives/controls/role-based/role-number.js"></script>
-    <script type="text/javascript" src="./directives/controls/role-based/role-numbers.js"></script>
-    <script type="text/javascript" src="./directives/controls/specialized/discord-channel-webhooks.js"></script>
-    <script type="text/javascript" src="./directives/controls/editable-list.js"></script>
-    <script type="text/javascript" src="./directives/controls/currency-select.js"></script>
-    <script type="text/javascript" src="./directives/controls/chatter-select.js"></script>
-    <script type="text/javascript" src="./directives/controls/sort-tag-list.js"></script>
-    <script type="text/javascript" src="./directives/controls/multiselect.js"></script>
-    <script type="text/javascript" src="./directives/controls/color-picker-input.js"></script>
-    <script type="text/javascript" src="./directives/filters/filterDisplay.js"></script>
-    <script type="text/javascript" src="./directives/filters/filterList.js"></script>
-    <script type="text/javascript" src="./directives/conditional-effect/conditionDisplay.js"></script>
-    <script type="text/javascript" src="./directives/conditional-effect/conditionList.js"></script>
-    <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
-    <script type="text/javascript" src="./directives/controls/soundPlayer.js"></script>
-    <script type="text/javascript" src="./directives/chat/chat-message.js"></script>
-    <script type="text/javascript" src="./directives/chat/reward-redemption.js"></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/chat/edit-activity-events-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/dropdownSelect.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosContainer.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosEnterExitAnimations.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosOverlayInstance.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosOverlayPosition.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosAudioOutputDevice.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosChatterSelect.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosCollapsablePanel.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/showEventsSettings.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eventListTextOptions.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosReplaceVariables.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/effect-option-settings/eosReplaceVariableSection.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/scriptParameterOption.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/fileChooser.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/searchableEffectDropdown.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/searchableEventDropdown.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/effectList.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/actionList.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/role-based/role-percentage.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/role-based/role-percentages.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/role-based/role-number.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/role-based/role-numbers.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/specialized/discord-channel-webhooks.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/editable-list.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/currency-select.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/chatter-select.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/sort-tag-list.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/multiselect.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/color-picker-input.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/filters/filterDisplay.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/filters/filterList.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/conditional-effect/conditionDisplay.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/conditional-effect/conditionList.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/notificationCenter.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/soundPlayer.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/chat/chat-message.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/chat/reward-redemption.js"
+    ></script>
     <script type="text/javascript" src="./directives/misc/tooltip.js"></script>
-    <script type="text/javascript" src="./directives/misc/connectionIcon.js"></script>
-    <script type="text/javascript" src="./directives/misc/contentBlock.js"></script>
-    <script type="text/javascript" src="./directives/misc/hotkeyCapture.js"></script>
-    <script type="text/javascript" src="./directives/misc/messageActions.js"></script>
-    <script type="text/javascript" src="./directives/misc/dynamicHtml.js"></script>
-    <script type="text/javascript" src="./directives/misc/searchbar.js"></script>
-    <script type="text/javascript" src="./directives/misc/sysCommandRow.js"></script>
-    <script type="text/javascript" src="./directives/misc/subcommandRow.js"></script>
-    <script type="text/javascript" src="./directives/misc/replaceVariableMenu.js"></script>
-    <script type="text/javascript" src="./directives/misc/bindPolymer.js"></script>
-    <script type="text/javascript" src="./directives/misc/gridListener.js"></script>
-    <script type="text/javascript" src="./directives/misc/animationend.js"></script>
-    <script type="text/javascript" src="./directives/misc/disableAnimate.js"></script>
-    <script type="text/javascript" src="./directives/misc/controlTile.js"></script>
-    <script type="text/javascript" src="./directives/misc/gridSizeSelection.js"></script>
-    <script type="text/javascript" src="./directives/misc/liveControlPreview.js"></script>
-    <script type="text/javascript" src="./directives/misc/draggableModal.js"></script>
-    <script type="text/javascript" src="./directives/misc/imageonload.js"></script>
-    <script type="text/javascript" src="./directives/misc/connectionButton.js"></script>
-    <script type="text/javascript" src="./directives/misc/toggleButton.js"></script>
-    <script type="text/javascript" src="./directives/misc/sortable-table-cell.js"></script>
-    <script type="text/javascript" src="./directives/misc/sortable-table.js"></script>
-    <script type="text/javascript" src="./directives/misc/keyCatpure.js"></script>
-    <script type="text/javascript" src="./directives/misc/scrollSentinel.js"></script>
-    <script type="text/javascript" src="./directives/misc/collapsableSection.js"></script>
-    <script type="text/javascript" src="./directives/misc/conditionSection.js"></script>
-    <script type="text/javascript" src="./directives/misc/collapsablePanel.js"></script>
-    <script type="text/javascript" src="./directives/controls/firebot-input.js"></script>
-    <script type="text/javascript" src="./directives/sidebar/navLink.js"></script>
-    <script type="text/javascript" src="./directives/sidebar/navCategory.js"></script>
-    <script type="text/javascript" src="./directives/sidebar/sidebar.js"></script>
-    <script type="text/javascript" src="./directives/restrictions/restrictionItem.js"></script>
-    <script type="text/javascript" src="./directives/restrictions/restrictionsSection.js"></script>
-    <script type="text/javascript" src="./directives/restrictions/restrictionOptions.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/connectionPanelModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/aboutModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/puzzleModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/setupWizardModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/hotkeys/addOrEditHotkey/addOrEditHotkeyModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/commands/addOrEditCustomCommand/addOrEditCustomCommandModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/commands/editSystemCommand/editSystemCommandModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/viewers/editColumnsModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/viewers/viewerDetailsModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/currency/addOrEditCurrency/addOrEditCurrency.js"></script>
-    <script type="text/javascript" src="./directives/modals/timers/addOrEditTimer/addOrEditTimerModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/inputModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/dateModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/errorDetailModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/fontManagementModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/patronageDetailsModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/mixplay/createControlModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/mixplay/editControlModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/mixplay/addOrEditCooldownGroupModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/mixplay/createProjectModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/filters/addOrEditFilter/addOrEditFilterModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/conditions/addOrEditConditionModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/events/addOrEditEventModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/roles/addOrEditCustomRoleModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/viewerSearchModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/selectModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/idEntryModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/editBannedWordsModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/txtFileWordImportModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/botLoginModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/copyShareCodeModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/misc/manage-sort-tags.js"></script>
-    <script type="text/javascript" src="./directives/modals/effect-queues/addOrEditEffectQueueModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/quotes/addOrEditQuoteModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/effects/add-edit-preset-effect-list-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/effects/add-new-effect-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/counters/editCounter/editCounterModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/backups/restoreBackupModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/games/editGameSettingsModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/integrations/editIntegrationSettingsModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/integrations/addOrEditDiscordWebhookModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/commands/addOrEditSubcommandModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/startup-scripts/startupScriptsListModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/startup-scripts/addOrEditStartupScriptModal.js"></script>
-    <script type="text/javascript" src="./directives/modals/setups/create-setup-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/setups/firebot-component-list-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/setups/import-setup-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/setups/remove-setup-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/setups/add-edit-setup-question.js"></script>
-    <script type="text/javascript" src="./directives/modals/viewers/purge-viewers-modal.js"></script>
-    <script type="text/javascript" src="./directives/modals/viewers/preview-purge-modal.js"></script>
-    <script type="text/javascript" src="./directives/commands/commandOption.js"></script>
-    <script type="text/javascript" src="./directives/commands/simple-command-options.js"></script>
-    <script type="text/javascript" src="./directives/controls/settingContainer.js"></script>
-    <script type="text/javascript" src="./directives/controls/custom-script-settings.js"></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/connectionIcon.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/contentBlock.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/hotkeyCapture.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/messageActions.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/dynamicHtml.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/searchbar.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/sysCommandRow.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/subcommandRow.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/replaceVariableMenu.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/bindPolymer.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/gridListener.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/animationend.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/disableAnimate.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/controlTile.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/gridSizeSelection.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/liveControlPreview.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/draggableModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/imageonload.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/connectionButton.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/toggleButton.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/sortable-table-cell.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/sortable-table.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/keyCatpure.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/scrollSentinel.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/collapsableSection.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/conditionSection.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/misc/collapsablePanel.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/firebot-input.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/sidebar/navLink.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/sidebar/navCategory.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/sidebar/sidebar.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/restrictions/restrictionItem.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/restrictions/restrictionsSection.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/restrictions/restrictionOptions.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/connectionPanelModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/aboutModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/puzzleModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/setupWizardModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/hotkeys/addOrEditHotkey/addOrEditHotkeyModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/commands/addOrEditCustomCommand/addOrEditCustomCommandModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/commands/editSystemCommand/editSystemCommandModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/viewers/editColumnsModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/viewers/viewerDetailsModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/currency/addOrEditCurrency/addOrEditCurrency.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/timers/addOrEditTimer/addOrEditTimerModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/inputModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/dateModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/errorDetailModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/fontManagementModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/patronageDetailsModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/mixplay/createControlModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/mixplay/editControlModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/mixplay/addOrEditCooldownGroupModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/mixplay/createProjectModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/filters/addOrEditFilter/addOrEditFilterModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/conditions/addOrEditConditionModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/events/addOrEditEventModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/roles/addOrEditCustomRoleModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/viewerSearchModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/selectModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/idEntryModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/editBannedWordsModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/txtFileWordImportModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/botLoginModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/copyShareCodeModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/misc/manage-sort-tags.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/effect-queues/addOrEditEffectQueueModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/quotes/addOrEditQuoteModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/effects/add-edit-preset-effect-list-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/effects/add-new-effect-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/counters/editCounter/editCounterModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/backups/restoreBackupModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/games/editGameSettingsModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/integrations/editIntegrationSettingsModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/integrations/addOrEditDiscordWebhookModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/commands/addOrEditSubcommandModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/startup-scripts/startupScriptsListModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/startup-scripts/addOrEditStartupScriptModal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/setups/create-setup-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/setups/firebot-component-list-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/setups/import-setup-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/setups/remove-setup-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/setups/add-edit-setup-question.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/viewers/purge-viewers-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/modals/viewers/preview-purge-modal.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/commands/commandOption.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/commands/simple-command-options.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/settingContainer.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="./directives/controls/custom-script-settings.js"
+    ></script>
   </head>
   <body ng-cloak>
     <toast></toast>
-    
-    <div class='loader-wrapper' ng-if="showSpinner">
+
+    <div class="loader-wrapper" ng-if="showSpinner">
       <div class="loader">{{'MAIN.LOADING' | translate }}</div>
     </div>
-  
-    <div class="appwrapper">
 
-      <sidebar class="noselect"></sidebar>  
+    <div class="appwrapper">
+      <sidebar class="noselect"></sidebar>
 
       <div class="fb-tab-content">
         <div class="tab-header">
-          <span style="width:100%" class="noselect">{{sbm.currentTabName}}</span>
+          <span style="width: 100%" class="noselect"
+            >{{sbm.currentTabName}}</span
+          >
           <notification-center></notification-center>
-          <div class="logins-wrapper noselect" uib-dropdown uib-dropdown-toggle aria-label="Login & Profile Management">
-            <img class="login-thumbnail noselect" ng-src="{{cs.getAccountAvatar('streamer')}}">
-            <img class="login-thumbnail noselect" ng-src="{{cs.getAccountAvatar('bot')}}">          
+          <div
+            class="logins-wrapper noselect"
+            uib-dropdown
+            uib-dropdown-toggle
+            aria-label="Login & Profile Management"
+          >
+            <img
+              class="login-thumbnail noselect"
+              ng-src="{{cs.getAccountAvatar('streamer')}}"
+            />
+            <img
+              class="login-thumbnail noselect"
+              ng-src="{{cs.getAccountAvatar('bot')}}"
+            />
             <div class="fb-arrow down login-arrow"></div>
             <ul class="dropdown-menu accounts-dropdown" uib-dropdown-menu>
               <li>
-                <a href ng-click="showManageLoginsModal()" aria-label="Manage Logins">
+                <a
+                  href
+                  ng-click="showManageLoginsModal()"
+                  aria-label="Manage Logins"
+                >
                   <span>
                     <i class="fal fa-sign-in-alt"></i>
-                  </span> 
+                  </span>
                   Manage Logins
                 </a>
               </li>
               <li class="divider"></li>
               <li class="dropdown-header">Profiles</li>
-              <li ng-repeat="profile in cs.profiles" ng-class="{'noclick': currentProfileId == profile.profileId}" uib-tooltip="Current profile" tooltip-enable="currentProfileId == profile.profileId" tooltip-append-to-body="true">
-                <a href ng-click="switchProfiles(profile.profileId)" ng-class="{'menunoclick': currentProfileId == profile.profileId}" aria-label="{{currentProfileId == profile.profileId ? 'Current profile ('+ profile.profileId +')' : 'Switch to ' + profile.profileId + ' profile'}}">
-                    <span class="accounts-image"><img ng-src="{{profile.avatar}}"></span>
-                    <span class="accounts-info" style="text-transform: unset;">{{profile.profileId}}</span>
+              <li
+                ng-repeat="profile in cs.profiles"
+                ng-class="{'noclick': currentProfileId == profile.profileId}"
+                uib-tooltip="Current profile"
+                tooltip-enable="currentProfileId == profile.profileId"
+                tooltip-append-to-body="true"
+              >
+                <a
+                  href
+                  ng-click="switchProfiles(profile.profileId)"
+                  ng-class="{'menunoclick': currentProfileId == profile.profileId}"
+                  aria-label="{{currentProfileId == profile.profileId ? 'Current profile ('+ profile.profileId +')' : 'Switch to ' + profile.profileId + ' profile'}}"
+                >
+                  <span class="accounts-image"
+                    ><img ng-src="{{profile.avatar}}"
+                  /></span>
+                  <span class="accounts-info" style="text-transform: unset"
+                    >{{profile.profileId}}</span
+                  >
                 </a>
               </li>
               <li class="divider"></li>
@@ -287,40 +847,45 @@
                 <a href ng-click="showNewProfileModal()">
                   <span>
                     <i class="fal fa-user-plus"></i>
-                  </span> 
+                  </span>
                   Add New Profile
                 </a>
               </li>
               <li>
-                    <a href ng-click="showRenameProfileModal()">
-                      <span>
-                        <i class="fal fa-pencil"></i>
-                      </span> 
-                      Rename This Profile
-                    </a>
-                  </li>
+                <a href ng-click="showRenameProfileModal()">
+                  <span>
+                    <i class="fal fa-pencil"></i>
+                  </span>
+                  Rename This Profile
+                </a>
+              </li>
               <li>
                 <a href ng-click="showDeleteProfileModal()">
                   <span>
                     <i class="fal fa-user-minus"></i>
-                  </span> 
+                  </span>
                   Delete This Profile
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        <div class="tab-body-wrapper" ng-class="{ 'no-scroll': sbm.currentTabShouldntScroll() }"> 
-          <div class="tab-body" ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }">
+        <div
+          class="tab-body-wrapper"
+          ng-class="{ 'no-scroll': sbm.currentTabShouldntScroll() }"
+        >
+          <div
+            class="tab-body"
+            ng-class="{ 'fullpage-tab': sbm.currentTabIsFullScreen() }"
+          >
             <!-- angular templating -->
             <!-- this is where tab content will be injected -->
             <div ng-view style="width: 100%"></div>
           </div>
         </div>
       </div>
-
     </div>
-    
+
     <!-- Manage Profile Modal -->
     <script type="text/ng-template" id="manageLoginsModal.html">
       <div class="modal-header">
@@ -332,7 +897,7 @@
               <div class="col-sm-6 streamer-login top-padding">
                 <img class="login-pic" ng-src="{{getAccountAvatar('streamer')}}">
                 <h2>{{cs.accounts.streamer.username}}</h2>
-                <button type="button" class="btn" ng-class="cs.accounts.streamer.loggedIn ? 'btn-danger' : 'btn-success'" aria-label="cs.accounts.streamer.loggedIn ? 'Log Out Streamer Account' : 'Log In Streamer Account'" ng-click="loginOrLogout('streamer')">{{cs.accounts.streamer.loggedIn ? "Logout" : "Login"}}</button>                
+                <button type="button" class="btn" ng-class="cs.accounts.streamer.loggedIn ? 'btn-danger' : 'btn-success'" aria-label="cs.accounts.streamer.loggedIn ? 'Log Out Streamer Account' : 'Log In Streamer Account'" ng-click="loginOrLogout('streamer')">{{cs.accounts.streamer.loggedIn ? "Logout" : "Login"}}</button>
               </div>
               <div class="col-sm-6 bot-login top-padding">
                 <img class="login-pic" ng-src="{{getAccountAvatar('bot')}}">
@@ -366,33 +931,33 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
-        <button type="button" class="btn btn-primary" ng-click="createNewProfile()">Create Profile & Restart App</button>  
+        <button type="button" class="btn btn-primary" ng-click="createNewProfile()">Create Profile & Restart App</button>
       </div>
     </script>
 
     <!-- Rename Profile Modal -->
     <script type="text/ng-template" id="renameProfileModal.html">
-        <div class="modal-header">
-          <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Rename Profile</h4>
-        </div>
-        <div class="modal-body">
-  
-            <div class="input-group">
-                <span class="input-group-addon">Profile Name</span>
-                <input type="text" class="form-control" ng-model="profileName" placeholder="Text here">
-            </div>
-  
-            <div class="alert alert-warning"  style="margin-top:15px;">
-                  Note: Renaming a profile requires an application restart.
-            </div>
-  
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
-          <button type="button" class="btn btn-primary" ng-click="renameProfile()">Rename Profile & Restart App</button>        
-        </div>
-      </script>
+      <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" ng-click="dismiss()"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Rename Profile</h4>
+      </div>
+      <div class="modal-body">
+
+          <div class="input-group">
+              <span class="input-group-addon">Profile Name</span>
+              <input type="text" class="form-control" ng-model="profileName" placeholder="Text here">
+          </div>
+
+          <div class="alert alert-warning"  style="margin-top:15px;">
+                Note: Renaming a profile requires an application restart.
+          </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
+        <button type="button" class="btn btn-primary" ng-click="renameProfile()">Rename Profile & Restart App</button>
+      </div>
+    </script>
 
     <!-- Delete Profile Modal -->
     <script type="text/ng-template" id="deleteProfileModal.html">
@@ -408,7 +973,7 @@
         <button type="button" class="btn btn-link" ng-click="dismiss()">Cancel</button>
       </div>
     </script>
-    
+
     <!-- Error Modal -->
     <script type="text/ng-template" id="errorModal.html">
       <div class="modal-header">
@@ -436,7 +1001,7 @@
         <button type="button" class="btn btn-default" ng-click="close()">Close</button>
       </div>
     </script>
-    
+
     <!-- overlay info modal -->
     <script type="text/ng-template" id="overlayInfoModal.html">
       <div class="modal-header" style="text-align:center;">
@@ -444,11 +1009,11 @@
         <button type="button" class="close" aria-label="Close" ng-click="dismiss()" style="position: absolute;right: 25px;"><span aria-hidden="true">&times;</span></button>
       </div>
       <div class="modal-body" style="text-align:center;display:flex;flex-direction: column;align-items: center;font-weight: 100;">
-        <div ng-hide="showingInstance">      
+        <div ng-hide="showingInstance">
           <p>Effects that show things on stream (ie images, videos, etc) need Firebot's overlay file to be added to your broadcasting software.</p>
           <h3>How To Add The Overlay</h3>
           <p>In your broadcasting software, add a <b>Browser/Webpage Source</b></p>
-          
+
           <p>Then in the settings for this <b>Browser/Webpage Source</b>, there should be a URL field. Copy and paste the beloew URL into that field.</p>
 
           <p>Do <b>not</b> select "Local file".</p>
@@ -467,7 +1032,7 @@
               <ul class="dropdown-menu" aria-labelledby="options-sounds">
                 <li ng-repeat="bcs in broadcastingSoftwares"><a href ng-click="updateSelectedBroadcastingSoftware(bcs)">{{bcs}}</a></li>
               </ul>
-            </div> 
+            </div>
           </div>
 
           <div style="width:100%;">
@@ -506,7 +1071,7 @@
         <button class="btn btn-primary" ng-click="save()">Save</button>
       </div>
     </script>
-    
+
     <!-- Just updated modal -->
     <script type="text/ng-template" id="updatedModal.html">
       <div class="modal-header">
@@ -521,13 +1086,13 @@
         <br />
         <p style="animation-delay: 0.3s;" class="animated fadeIn">
             You can see what's new in the <b>Updates</b> tab.
-        </p>              
+        </p>
       </div>
       <div class="modal-footer" style="text-align:center;">
         <button style="animation-delay: 0.3s;" class="btn btn-primary animated fadeIn" ng-click="dismiss()">Okay</button>
       </div>
     </script>
-    
+
     <!-- Download Modal -->
     <script type="text/ng-template" id="downloadModal.html">
       <div class="modal-header">
@@ -567,7 +1132,7 @@
       <div class="edit-effect-header">
             <div class="modal-header flex-row-center jspacebetween no-before no-after" style="padding-bottom: 0">
                 <h4 class="modal-title" style="display:inline;">{{isAddMode ? "Add New Effect" : "Edit Effect"}}</h4>
-        
+
                 <div class="flex-row acenter jspacebetween">
                     <div class="test-effects-btn clickable" uib-tooltip="Test Effect" ng-hide="effect == null || effect.type === 'Nothing'">
                         <i class="far fa-play-circle" style="cursor: pointer;" ng-click="runEffect()"></i>
@@ -609,7 +1174,7 @@
                 <searchable-effect-dropdown trigger="{{triggerType}}" trigger-meta="triggerMeta" selected="effect.type" style="width:100%" update="effectTypeChanged(effectType, $index)"></searchable-effect-dropdown>
             </div>-->
       </div>
-      <div class="modal-body">        
+      <div class="modal-body">
           <div class="effect-settings-panel">
               <div ng-show="effect.type == 'Nothing'" class="effect-specific-title"><h4>Please select an effect.</h4></div>
               <effect-options effect="effect" type="effect.type" trigger="{{triggerType}}" ng-show="effect.type != null" trigger-meta="triggerMeta"><effect-options>

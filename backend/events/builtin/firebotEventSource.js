@@ -10,11 +10,17 @@ const firebotEventSource = {
     events: [
         {
             id: "chat-connected",
-            name: "Chat Connected",
-            description: "When Firebot connects to Twitch Chat.",
+            name: "Twitch Connected",
+            description: "When Firebot connects to Twitch.",
             cached: false,
             manualMetadata: {
                 username: "Firebot"
+            },
+            activityFeed: {
+                icon: "fad fa-plug",
+                getMessage: () => {
+                    return `Connected to Twitch`;
+                }
             }
         },
         {
