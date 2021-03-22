@@ -85,6 +85,9 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         const chatMessageListener = require("../../events/twitch-events/chat-message");
         chatMessageListener.triggerChatMessage(firebotChatMessage);
+
+        const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
+        viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
     });
 
     streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
