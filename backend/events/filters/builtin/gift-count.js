@@ -14,7 +14,7 @@ module.exports = {
         let { comparisonType, value } = filterSettings;
         let { eventMeta } = eventData;
 
-        let giftCountCount = eventMeta.giftCount || 0;
+        let giftCountCount = eventMeta.subCount || 0;
 
         switch (comparisonType) {
         case "is": {

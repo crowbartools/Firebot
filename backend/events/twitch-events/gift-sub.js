@@ -20,7 +20,7 @@ exports.triggerCommunitySubGift = (gifterUsername, subPlan, subCount) => {
 
 exports.triggerSubGift = (gifterUsername, gifteeUsername, subPlan, subType, months) => {
 
-    if (settings.ignoreSubsequentSubEventsAfterCommunitySub) {
+    if (settings.ignoreSubsequentSubEventsAfterCommunitySub()) {
         const cacheKey = `${gifterUsername}:${subPlan}`;
 
         const communityCount = communitySubCache.get(cacheKey);

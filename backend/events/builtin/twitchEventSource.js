@@ -94,7 +94,7 @@ module.exports = {
             activityFeed: {
                 icon: "fad fa-gift",
                 getMessage: (eventData) => {
-                    return `**${eventData.gifterUsername}** gifted a ${eventData.giftSubMonths > 1 ? ` **${eventData.giftSubMonths} month** ` : ''} ${eventData.subPlan === 'Prime' ?
+                    return `**${eventData.gifterUsername}** gifted a ${eventData.giftSubMonths > 1 ? ` **${eventData.giftSubMonths} month** ` : ''} **${eventData.subPlan === 'Prime' ?
                         "Twitch Prime" : "Tier " + eventData.subPlan.replace("000", "")}** sub to **${eventData.gifteeUsername}**`;
                 }
             }
@@ -185,6 +185,12 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 timeoutDuration: "1"
+            },
+            activityFeed: {
+                icon: "fad fa-stopwatch",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** was timed out for **${eventData.timeoutDuration} sec(s)**`;
+                }
             }
         },
         {

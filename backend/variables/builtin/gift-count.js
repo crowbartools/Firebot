@@ -19,7 +19,7 @@ const model = {
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData.giftCount || 0;
+        return trigger.metadata.eventData.subCount || 0;
     }
 };
 
