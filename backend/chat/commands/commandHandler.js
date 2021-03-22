@@ -430,14 +430,12 @@ async function handleChatMessage(firebotChatMessage) {
     cooldownCommand(command, triggeredSubcmd, commandSender);
 
     // Log the action in Firebot's log.
-    if (command.skipLog !== true) {
-        logger.debug("Sending activity log for command to front end.");
-        renderWindow.webContents.send("eventlog", {
-            type: "general",
-            username: commandSender,
-            event: "used the " + command.trigger + " command."
-        });
-    }
+    logger.debug("Sending activity log for command to front end.");
+    renderWindow.webContents.send("eventlog", {
+        type: "general",
+        username: commandSender,
+        event: "used the " + command.trigger + " command."
+    });
 
     //update the count for the command
     if (command.type === "custom") {

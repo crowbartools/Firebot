@@ -151,21 +151,11 @@ async function onEventTriggered(event, source, meta, isManual = false, isRetrigg
         runEventEffects(effects, event, source, meta, isManual);
 
         // send to ui log
-        if (!eventSetting.skipLog) {
-            renderWindow.webContents.send('eventlog', {
-                type: "alert",
-                username: (meta.username || "") + " triggered the event",
-                event: eventSetting.name
-            });
-        }
-
-        // Send chat alert
-        if (eventSetting.chatFeedAlert) {
-            renderWindow.webContents.send('chatUpdate', {
-                fbEvent: "ChatAlert",
-                message: `The event "${eventSetting.name}" was triggered${meta.username ? ` by ${meta.username}` : ""}`
-            });
-        }
+        renderWindow.webContents.send('eventlog', {
+            type: "alert",
+            username: (meta.username || "") + " triggered the event",
+            event: eventSetting.name
+        });
     }
 }
 

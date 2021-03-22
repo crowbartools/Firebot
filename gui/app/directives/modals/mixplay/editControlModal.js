@@ -37,10 +37,6 @@
                             <input type="checkbox" ng-model="$ctrl.control.active" aria-label="..." checked>
                             <div class="control__indicator"></div>
                         </label>
-                        <label ng-show="$ctrl.supportsEffects" class="control-fb control--checkbox">Show In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when someone clicks this control'"></tooltip>
-                            <input type="checkbox" ng-model="$ctrl.control.chatFeedAlert" aria-label="...">
-                            <div class="control__indicator"></div>
-                        </label>
                     </div>
 
                 </div>

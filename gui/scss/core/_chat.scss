@@ -45,6 +45,14 @@
     }
 }
 
+.chat-alert {
+    display: flex;
+    padding: 6px;
+    padding-left: 10px;
+    background: rgb(49, 49, 49);
+    border-top: 1px solid #29292988;
+}
+
 .chat-message {
     display: flex;
     flex-direction: row;

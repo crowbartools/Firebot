@@ -43,6 +43,10 @@
               ng-if="chatItem.type === 'redemption'"
               redemption="chatItem.data"
             />
+            <chat-alert
+              ng-if="chatItem.type === 'alert'"
+              message="chatItem.data"
+            />
           </div>
         </div>
       </div>

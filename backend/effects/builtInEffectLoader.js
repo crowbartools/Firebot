@@ -6,6 +6,7 @@ exports.loadEffects = () => {
     // get effect definitions
     const playSoundEffect = require("./builtin/playSound");
     const chatEffect = require("./builtin/chat");
+    const chatFeedAlert = require("./builtin/chat-feed-alert");
     const api = require("./builtin/api");
     const celebration = require("./builtin/celebration");
     const clips = require('./builtin/clips');
@@ -54,6 +55,7 @@ exports.loadEffects = () => {
     // register them
     effectManager.registerEffect(playSoundEffect); // No migration needed.
     effectManager.registerEffect(chatEffect); // Converted for Twitch.
+    effectManager.registerEffect(chatFeedAlert);
     effectManager.registerEffect(api); // No migration needed.
     effectManager.registerEffect(celebration); // No migration needed.
     effectManager.registerEffect(clips); // Converted for Twitch, needs Discord posts fixed.
