@@ -14,7 +14,7 @@ const model = {
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, input, search, replacement = "") => {
+    evaluator: (_, input, search, replacement = "", searchIsRegex = false) => {
 
         if (input == null) {
             return "[Missing input]";
@@ -24,9 +24,7 @@ const model = {
             return input;
         }
 
-        let escapedSearch = utils.escapeRegExp(search);
-
-        return input.replace(new RegExp(escapedSearch, "g"), replacement);
+        return input.replace(new RegExp(searchIsRegex ? search : utils.escapeRegExp(search), "g"), replacement);
     }
 };
 
