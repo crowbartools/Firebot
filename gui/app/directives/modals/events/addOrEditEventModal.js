@@ -45,14 +45,6 @@
                             <input type="checkbox" ng-model="$ctrl.event.active" aria-label="..." checked>
                             <div class="control__indicator"></div>
                         </label>
-                        <label class="control-fb control--checkbox">Show Alert In Chat Feed <tooltip text="'Whether or not you want to see an alert in the chat feed when this event happens.'"></tooltip>
-                            <input type="checkbox" ng-model="$ctrl.event.chatFeedAlert" aria-label="...">
-                            <div class="control__indicator"></div>
-                        </label>
-                        <label class="control-fb control--checkbox">Skip Logging
-                            <input type="checkbox" ng-model="$ctrl.event.skipLog" aria-label="...">
-                            <div class="control__indicator"></div>
-                        </label>
                     </div>
                 </div>
             </div>

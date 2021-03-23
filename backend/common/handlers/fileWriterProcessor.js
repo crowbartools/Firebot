@@ -15,7 +15,7 @@ function removeLines(filepath, lines = []) {
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
         .filter((_, index) => !lines.includes(index))
-        .join('\n');
+        .join('\n') + "\n";
 }
 
 function removeLinesWithText(filepath, text) {
@@ -24,7 +24,7 @@ function removeLinesWithText(filepath, text) {
         .split('\n')
         .filter(l => l != null && l.trim() !== "")
         .filter(l => l !== text)
-        .join('\n');
+        .join('\n') + "\n";
 }
 
 function replaceLines(filepath, lineNumbers = [], replacement) {
@@ -36,7 +36,7 @@ function replaceLines(filepath, lineNumbers = [], replacement) {
         .map((l, index) => {
             return lineNumbers.includes(index) ? replacement : l;
         })
-        .join('\n');
+        .join('\n') + "\n";
 }
 
 function replaceLinesWithText(filepath, text, replacement) {
@@ -47,7 +47,7 @@ function replaceLinesWithText(filepath, text, replacement) {
         .map(l => {
             return l === text ? replacement : l;
         })
-        .join('\n');
+        .join('\n') + "\n";
 }
 
 exports.run = async effect => {
@@ -106,4 +106,6 @@ exports.run = async effect => {
     } catch (err) {
         logger.warn("Failed to write to file", err);
     }
+
+    return true;
 };

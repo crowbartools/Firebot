@@ -64,7 +64,7 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
 
     let currentData = cache.get(name);
 
-    if (propertyPath == null) {
+    if (propertyPath == null || propertyPath.length < 1) {
         let dataToSet = dataIsNull ? undefined : data;
         if (currentData && Array.isArray(currentData) && !Array.isArray(data) && !dataIsNull) {
             currentData.push(data);

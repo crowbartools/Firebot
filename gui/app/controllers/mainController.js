@@ -91,6 +91,7 @@
     app.run(function initializeApplication(
         logger,
         chatMessagesService,
+        activityFeedService,
         viewerRolesService,
         connectionService,
         notificationService,

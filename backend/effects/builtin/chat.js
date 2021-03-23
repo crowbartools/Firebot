@@ -76,9 +76,20 @@ const chat = {
    * When the effect is triggered by something
    */
     onTriggerEvent: async event => {
-        const { effect, trigger } = event;
+
+        const chatHelpers = require("../../chat/chat-helpers");
+
+        const commandHandler = require("../../chat/commands/commandHandler");
+
+        const { effect } = event;
 
         twitchChat.sendChatMessage(effect.message, effect.whisper, effect.chatter);
+
+        if (effect.chatter === "Streamer" && (effect.whisper == null || !effect.whisper.length)) {
+            const firebotMessage = await chatHelpers.buildFirebotChatMessageFromText(effect.message);
+            commandHandler.handleChatMessage(firebotMessage);
+        }
+
         return true;
     },
     /**

@@ -1,11 +1,8 @@
 "use strict";
 
 const { settings } = require("../../common/settings-access");
-const resourceTokenManager = require("../../resourceTokenManager");
 const webServer = require("../../../server/httpServer");
 const logger = require("../../logwrapper");
-const util = require("../../utility");
-const mediaProcessor = require("../../common/handlers/mediaProcessor");
 
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
@@ -43,8 +40,19 @@ const showText = {
    */
     optionsTemplate: `
     <eos-container header="Text">
-        <div replace-variables on-variable-insert="onVariableInsert(variable)" menu-position="bottom">
+        <div ng-class="editorClass" replace-variables on-variable-insert="onVariableInsert(variable)" menu-position="bottom">
             <summernote on-editor-ready="editorReady(editor)" ng-model="effect.text" config="editorOptions" editor="editor" editable="editable"></summernote>
+        </div>
+        <div style="margin-top: 10px;">
+            <div class="form-group">
+                <label class="form-label">Editor Background</label>
+                <div>
+                    <div class="btn-group">
+                        <label class="btn btn-default btn-lg" ng-model="editorSettings.editorBackground" ng-change="editorBackgroundChanged()" uib-btn-radio="'white'">White</label>
+                        <label class="btn btn-default btn-lg" ng-model="editorSettings.editorBackground" ng-change="editorBackgroundChanged()" uib-btn-radio="'black'">Black</label>
+                    </div>
+                </div>
+            </div>
         </div>
     </eos-container>
 
@@ -129,7 +137,27 @@ const showText = {
    * The controller for the front end Options
    * Port over from effectHelperService.js
    */
-    optionsController: ($scope, fontManager, utilityService, $timeout) => {
+    optionsController: ($scope, fontManager, utilityService, $timeout, settingsService) => {
+
+        $scope.editorClass = "text-editor-white-bg";
+
+        $scope.editorSettings = {
+            editorBackground: settingsService.getWysiwygBackground()
+        };
+
+        function updateEditorClass() {
+            if ($scope.editorSettings.editorBackground === "black") {
+                $scope.editorClass = "text-editor-black-bg";
+            } else {
+                $scope.editorClass = "text-editor-white-bg";
+            }
+        }
+        updateEditorClass();
+
+        $scope.editorBackgroundChanged = function() {
+            settingsService.setWysiwygBackground($scope.editorSettings.editorBackground);
+            updateEditorClass();
+        };
 
         if ($scope.effect.height == null || $scope.effect.height < 1) {
             $scope.effect.height = 200;

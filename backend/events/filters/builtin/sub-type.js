@@ -4,8 +4,8 @@ const { ComparisonType } = require("../../../../shared/filter-constants");
 
 module.exports = {
     id: "firebot:sub-type",
-    name: "Sub Type",
-    description: "Filter by the type of sub (Prime, Tier 1, 2, 3, etc)",
+    name: "Sub Tier",
+    description: "Filter by the tier of sub (Prime, Tier 1, 2, 3, etc)",
     events: [
         { eventSourceId: "twitch", eventId: "sub" },
         { eventSourceId: "twitch", eventId: "subs-gifted" },

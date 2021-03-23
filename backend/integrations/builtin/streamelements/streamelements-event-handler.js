@@ -19,14 +19,26 @@ const eventSourceDefinition = {
             id: EventId.DONATION,
             name: "Donation",
             description: "When someone donates.",
-            cached: false
+            cached: false,
+            activityFeed: {
+                icon: "fad fa-money-bill",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** donated **$${eventData.dononationAmount}**${eventData.donationMessage && !!eventData.donationMessage.length ? `: *${eventData.donationMessage}*` : ''}`;
+                }
+            }
         },
         {
             id: EventId.FOLLOW,
             name: "Follow",
             description: "When someone follows your Twitch channel (comes from StreamElements)",
             cacheMetaKey: "username",
-            cached: true
+            cached: true,
+            activityFeed: {
+                icon: "fas fa-heart",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** followed`;
+                }
+            }
         }
     ]
 };

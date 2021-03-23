@@ -85,6 +85,9 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         const chatMessageListener = require("../../events/twitch-events/chat-message");
         chatMessageListener.triggerChatMessage(firebotChatMessage);
+
+        const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
+        viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
     });
 
     streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
@@ -108,12 +111,12 @@ exports.setupChatListeners = (streamerChatClient) => {
         const giftSubListener = require("../../events/twitch-events/gift-sub");
         giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName,
             giftSubInfo.displayName, giftSubInfo.plan, giftSubInfo.planName,
-            giftSubInfo.months);
+            giftSubInfo.giftDuration);
     });
 
     streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {
-        const communitySubListener = require("../../events/twitch-events/community-gift-sub");
-        communitySubListener.triggerCommunitySubGift(subInfo.gifterDisplayName,
+        const giftSubListener = require("../../events/twitch-events/gift-sub");
+        giftSubListener.triggerCommunitySubGift(subInfo.gifterDisplayName,
             subInfo.plan, subInfo.count);
     });
 

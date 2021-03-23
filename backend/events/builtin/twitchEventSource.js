@@ -14,6 +14,12 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 viewerCount: 5
+            },
+            activityFeed: {
+                icon: "fad fa-house-user",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** hosted with **${eventData.viewerCount}** viewer(s)`;
+                }
             }
         },
         {
@@ -25,6 +31,12 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 viewerCount: 5
+            },
+            activityFeed: {
+                icon: "fad fa-siren-on",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** raided with **${eventData.viewerCount}** viewer(s)`;
+                }
             }
         },
         {
@@ -36,16 +48,34 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 userId: 0
+            },
+            activityFeed: {
+                icon: "fas fa-heart",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** followed`;
+                }
             }
         },
         {
             id: "sub",
             name: "Sub",
-            description: "When someone initially subscribes to your channel.",
+            description: "When someone subscribes (or resubscribes) to your channel.",
             cached: false,
             manualMetadata: {
                 username: "Firebot",
-                totalMonths: 0
+                subPlan: "1000",
+                subType: "Tier 1",
+                totalMonths: 10,
+                streak: 8,
+                isPrime: false,
+                resub: false
+            },
+            activityFeed: {
+                icon: "fas fa-star",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** ${eventData.resub ? 'resubscribed' : 'subscribed'} for **${eventData.totalMonths} month(s)** ${eventData.subPlan === 'Prime' ?
+                        "with **Twitch Prime**" : "at **Tier " + eventData.subPlan.replace("000", "") + "**"}`;
+                }
             }
         },
         {
@@ -54,8 +84,19 @@ module.exports = {
             description: "When someone gifts a sub to someone else in your channel.",
             cached: false,
             manualMetadata: {
-                username: "Firebot",
-                totalMonths: 0
+                username: "MageEnclave",
+                giftSubMonths: 1,
+                gifteeUsername: "MageEnclave",
+                gifterUsername: "Firebot",
+                subPlan: "1000",
+                subType: "Tier 1"
+            },
+            activityFeed: {
+                icon: "fad fa-gift",
+                getMessage: (eventData) => {
+                    return `**${eventData.gifterUsername}** gifted a ${eventData.giftSubMonths > 1 ? ` **${eventData.giftSubMonths} month** ` : ''} **${eventData.subPlan === 'Prime' ?
+                        "Twitch Prime" : "Tier " + eventData.subPlan.replace("000", "")}** sub to **${eventData.gifteeUsername}**`;
+                }
             }
         },
         {
@@ -68,6 +109,12 @@ module.exports = {
                 gifterUsername: "Firebot",
                 subCount: 5,
                 subPlan: "1000"
+            },
+            activityFeed: {
+                icon: "fad fa-gifts",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** gifted **${eventData.subCount} Tier ${eventData.subPlan.replace("000", "")}** sub${eventData.subCount > 1 ? 's' : ''} to the community`;
+                }
             }
         },
         {
@@ -77,7 +124,13 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "Firebot",
-                totalMonths: 0
+                totalBits: 100
+            },
+            activityFeed: {
+                icon: "fad fa-diamond",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** cheered **${eventData.totalBits}** bits`;
+                }
             }
         },
         {
@@ -87,8 +140,13 @@ module.exports = {
             cached: true,
             cacheMetaKey: "username",
             manualMetadata: {
-                username: "Firebot",
-                totalMonths: 0
+                username: "Firebot"
+            },
+            activityFeed: {
+                icon: "fad fa-house-return",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** arrived`;
+                }
             }
         },
         {
@@ -110,6 +168,12 @@ module.exports = {
             queued: false,
             manualMetadata: {
                 username: "Firebot"
+            },
+            activityFeed: {
+                icon: "fad fa-gavel",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** was banned`;
+                }
             }
         },
         {
@@ -121,6 +185,12 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 timeoutDuration: "1"
+            },
+            activityFeed: {
+                icon: "fad fa-stopwatch",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** was timed out for **${eventData.timeoutDuration} sec(s)**`;
+                }
             }
         },
         {
@@ -137,6 +207,12 @@ module.exports = {
                 rewardImage: "https://static-cdn.jtvnw.net/automatic-reward-images/highlight-1.png",
                 rewardCost: "200",
                 messageText: "Test message"
+            },
+            activityFeed: {
+                icon: "fad fa-circle",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** redeemed **${eventData.rewardName}**${eventData.messageText && !!eventData.messageText.length ? `: *${eventData.messageText}*` : ''}`;
+                }
             }
         }
     ]

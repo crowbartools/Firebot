@@ -6,6 +6,7 @@ exports.loadEffects = () => {
     // get effect definitions
     const playSoundEffect = require("./builtin/playSound");
     const chatEffect = require("./builtin/chat");
+    const chatFeedAlert = require("./builtin/chat-feed-alert");
     const api = require("./builtin/api");
     const celebration = require("./builtin/celebration");
     const clips = require('./builtin/clips');
@@ -49,10 +50,12 @@ exports.loadEffects = () => {
     const cooldownCommand = require("./builtin/cooldown-command");
     const setUserMetadata = require("./builtin/set-user-metadata");
     const shoutout = require("./builtin/shoutout");
+    const markAllActivityAcknowledged = require("./builtin/mark-all-activity-acknowledged");
 
     // register them
     effectManager.registerEffect(playSoundEffect); // No migration needed.
     effectManager.registerEffect(chatEffect); // Converted for Twitch.
+    effectManager.registerEffect(chatFeedAlert);
     effectManager.registerEffect(api); // No migration needed.
     effectManager.registerEffect(celebration); // No migration needed.
     effectManager.registerEffect(clips); // Converted for Twitch, needs Discord posts fixed.
@@ -96,6 +99,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(cooldownCommand);
     effectManager.registerEffect(setUserMetadata);
     effectManager.registerEffect(shoutout);
+    effectManager.registerEffect(markAllActivityAcknowledged);
 
     // Deactivated for Twitch.
     const changeScene = require('./builtin/changeScene');

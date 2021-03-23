@@ -7,6 +7,7 @@ const util = require("../utility");
 const eventsRouter = require("./events-router");
 const eventsAccess = require("./events-access");
 
+/**@extends NodeJS.EventEmitter */
 class EventManager extends EventEmitter {
     constructor() {
         super();
@@ -60,7 +61,7 @@ class EventManager extends EventEmitter {
         return events;
     }
 
-    triggerEvent(sourceId, eventId, meta, isManual = false) {
+    triggerEvent(sourceId, eventId, meta, isManual = false, isRetrigger = false) {
         let source = this.getEventSourceById(sourceId);
         let event = this.getEventById(sourceId, eventId);
         if (event == null) return;
@@ -77,7 +78,20 @@ class EventManager extends EventEmitter {
             meta.username = accountAccess.getAccounts().streamer.username;
         }
 
-        eventsRouter.onEventTriggered(event, source, meta, isManual);
+        eventsRouter.onEventTriggered(event, source, meta, isManual, isRetrigger);
+
+        if (!isManual && !isRetrigger) {
+            if (!eventsRouter.cacheActivityFeedEvent(source, event, meta)) {
+                this.emit("event-triggered", {
+                    event,
+                    source,
+                    meta,
+                    isManual,
+                    isRetrigger
+                });
+            }
+        }
+
     }
 }
 

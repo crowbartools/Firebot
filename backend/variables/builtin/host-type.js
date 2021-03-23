@@ -7,19 +7,20 @@ const {
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:community-subs-gifted"];
+triggers[EffectTrigger.EVENT] = ["twitch:host"];
 triggers[EffectTrigger.MANUAL] = true;
+
 
 const model = {
     definition: {
-        handle: "giftCount",
-        description: "The number of subs gifted.",
+        handle: "hostType",
+        description: "Get the type of host ('manual' or 'auto')",
         triggers: triggers,
         categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (trigger) => {
-        return trigger.metadata.eventData.subCount || 0;
+    evaluator: async (trigger) => {
+        return trigger.metadata.eventData.auto ? 'auto' : 'manual';
     }
 };
 

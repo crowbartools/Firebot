@@ -10,6 +10,8 @@
             soundService, connectionService, $timeout, $interval, $http, backendCommunicator) {
             let service = {};
 
+            let messageHoldingQueue = [];
+
             // Chat Message Queue
             service.chatQueue = [];
 
@@ -122,40 +124,47 @@
 
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
-                let data = {
-                    id: "System" + uuid(),
-                    user_name: "Alert", // eslint-disable-line
-                    user_id: "firebot-system-message", // eslint-disable-line
-                    user_roles: [ // eslint-disable-line
-                        "System"
-                    ],
-                    user_avatar: "../images/logo.png", // eslint-disable-line
-                    message: {
-                        message: [
-                            {
-                                type: "text",
-                                data: message,
-                                firebotSubsegments: [
-                                    {
-                                        type: "rawText",
-                                        text: message
-                                    }
-                                ]
-                            }
-                        ],
-                        meta: {
-                            me: true
-                        }
-                    },
-                    messageHTML: message,
-                    date: new Date(),
-                    whisper: false,
-                    action: true,
-                    mainColorRole: "System",
-                    subscriber: false,
-                    timestamp: moment(new Date()).format('h:mm A')
+
+                const alertItem = {
+                    id: uuid(),
+                    type: "alert",
+                    data: message
                 };
-                //service.chatQueue.push(data);
+
+                messageHoldingQueue.push(alertItem);
+                // let data = {
+                //     id: "System" + uuid(),
+                //     user_name: "Alert", // eslint-disable-line
+                //     user_id: "firebot-system-message", // eslint-disable-line
+                //     user_roles: [ // eslint-disable-line
+                //         "System"
+                //     ],
+                //     user_avatar: "../images/logo.png", // eslint-disable-line
+                //     message: {
+                //         message: [
+                //             {
+                //                 type: "text",
+                //                 data: message,
+                //                 firebotSubsegments: [
+                //                     {
+                //                         type: "rawText",
+                //                         text: message
+                //                     }
+                //                 ]
+                //             }
+                //         ],
+                //         meta: {
+                //             me: true
+                //         }
+                //     },
+                //     messageHTML: message,
+                //     date: new Date(),
+                //     whisper: false,
+                //     action: true,
+                //     mainColorRole: "System",
+                //     subscriber: false,
+                //     timestamp: moment(new Date()).format('h:mm A')
+                // };
             };
 
             backendCommunicator.on("chat-feed-system-message", (message) => {
@@ -370,9 +379,6 @@
                     shouldBeMod
                 });
             };
-
-
-            let messageHoldingQueue = [];
 
             $interval(() => {
                 if (messageHoldingQueue.length > 0) {
