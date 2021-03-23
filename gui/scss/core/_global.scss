@@ -1861,3 +1861,15 @@ thead th{
   box-shadow: none !important;
 }
 
+.text-editor-black-bg {
+  .note-editable {
+    background-color: black !important;
+  }
+}
+
+.text-editor-white-bg {
+  .note-editable {
+    background-color: white !important;
+  }
+}
+

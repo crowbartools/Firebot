@@ -327,6 +327,15 @@
                 pushDataToFile("/settings/ignoreSubsequentSubEventsAfterCommunitySub", ignoreSubEvents === true);
             };
 
+            service.getWysiwygBackground = function() {
+                const bg = getDataFromFile("/settings/wysiwygBackground");
+                return bg != null ? bg : 'white';
+            };
+
+            service.setWysiwygBackground = function(bg) {
+                pushDataToFile("/settings/wysiwygBackground", bg);
+            };
+
             service.isChatCompactMode = function() {
                 let compact = getDataFromFile("/settings/chatCompactMode");
                 return compact != null ? compact : false;
