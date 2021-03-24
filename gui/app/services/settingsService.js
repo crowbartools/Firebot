@@ -156,6 +156,15 @@
                 pushDataToFile("/settings/runCustomScripts", enabled === true);
             };
 
+            service.getSidebarExpanded = function() {
+                const expanded = getDataFromFile("/settings/sidebarExpanded");
+                return expanded != null ? expanded : true;
+            };
+
+            service.setSidebarExpanded = function(expanded) {
+                pushDataToFile("/settings/sidebarExpanded", expanded === true);
+            };
+
             service.getDefaultToAdvancedCommandMode = function() {
                 return getDataFromFile("/settings/defaultToAdvancedCommandMode") === true;
             };
