@@ -88,6 +88,12 @@
                     controller: "chatMessagesController"
                 })
 
+
+                .when("/channel-rewards", {
+                    templateUrl: "./templates/_channel-rewards.html",
+                    controller: "channelRewardsController"
+                })
+
                 .when("/moderation", {
                     templateUrl: "./templates/_moderation.html",
                     controller: "moderationController"
