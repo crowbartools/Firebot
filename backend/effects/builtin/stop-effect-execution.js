@@ -9,7 +9,7 @@ const { EffectCategory } = require('../../../shared/effect-constants');
 const model = {
     definition: {
         id: "firebot:stop-effect-execution",
-        name: "Stop Effect Exectution",
+        name: "Stop Effect Execution",
         description: "Stop the execution of the current effect list.",
         icon: "fad fa-stop-circle",
         categories: [EffectCategory.SCRIPTING],
