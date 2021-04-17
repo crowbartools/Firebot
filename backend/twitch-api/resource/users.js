@@ -50,6 +50,26 @@ async function getTeams (broadcasterId) {
     return teams;
 }
 
+async function getMatchingTeams (userId, streamerId) {
+    const userTeams = await getTeams(userId);
+    const streamerTeams = await getTeams(streamerId);
+
+    if (userTeams == null || streamerTeams == null) {
+        return null;
+    }
+
+    const teams = []
+    for (let streamerTeam of streamerTeams) {
+        for (let userTeam of userTeams) {
+            if (streamerTeam.id === userTeam.id) {
+                teams.push(streamerTeam);
+            }
+        }
+    }
+
+    return teams;
+}
+
 async function getUsersChatRoles(userIdOrName = "") {
 
     userIdOrName = userIdOrName.toLowerCase();
