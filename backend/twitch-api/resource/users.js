@@ -106,6 +106,15 @@ async function getUsersChatRoles(userIdOrName = "") {
         }
     }
 
+    const streamer = accountAccess.getAccounts().streamer;
+    const matchingTeams = getMatchingTeams(userChatInfo._id, streamer.userId);
+
+    if (matchingTeams != null) {
+        for (let team of matchingTeams) {
+            roles.push(team.team_name);
+        }
+    }
+
     userRoleCache.set(userChatInfo._id, roles);
     userRoleCache.set(userChatInfo.login, roles);
 
