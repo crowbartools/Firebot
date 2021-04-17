@@ -213,6 +213,41 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adju
     });
 }
 
+/**
+ * Adjusts currency for all users in the database
+ */
+function adjustCurrencyForAllUsers(currencyId, value, ignoreDisable = false,
+    adjustType = "adjust") {
+    return new Promise((resolve, reject) => {
+        if (!isViewerDBOn()) {
+            return reject();
+        }
+
+        // Don't do anything for 0 points or non numbers.
+        value = parseInt(value);
+        if (isNaN(value) || value === 0) {
+            return resolve();
+        }
+
+        const db = userDatabase.getUserDb();
+        db.find({}, async (err, docs) => {
+            // If error
+            if (err) {
+                return reject(err);
+            }
+
+            // Do the loop!
+            for (const user of docs) {
+                if (user != null &&
+                    (ignoreDisable || !user.disableAutoStatAccrual)) {
+                    await adjustCurrency(user, currencyId, value, adjustType);
+                }
+            }
+            return resolve();
+        });
+    });
+}
+
 // Add Currency To All Users
 // This will add currency to all users regardless of if they're online or not.
 function addCurrencyToAllUsers(currencyId, value) {
@@ -422,3 +457,4 @@ exports.addCurrencyToUserGroupOnlineUsers = addCurrencyToUserGroupOnlineUsers;
 exports.isViewerDBOn = isViewerDBOn;
 exports.getTopCurrencyHolders = getTopCurrencyHolders;
 exports.getTopCurrencyPosition = getTopCurrencyPosition;
+exports.adjustCurrencyForAllUsers = adjustCurrencyForAllUsers;
