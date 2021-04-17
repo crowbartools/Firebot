@@ -1,5 +1,7 @@
 name: Issue Project Automation
-on: [issues]
+on:
+  issues:
+    types: [opened]
 jobs:
   add-issue-to-projects:
     name: Add Issue To Projects
