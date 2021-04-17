@@ -124,6 +124,7 @@
 
                 function loadRoles() {
                     const twitchRoles = $ctrl.viewerDetails.twitchData.userRoles;
+                    const teamRoles = $ctrl.viewerDetails.twitchData.teamRoles;
 
                     const userFollowsStreamer = $ctrl.viewerDetails.userFollowsStreamer;
                     let followDateDisplay;
@@ -145,36 +146,47 @@
                     }
                     for (let role of twitchRoles) {
                         switch (role) {
-                        case "vip": {
-                            roles.push({
-                                name: "VIP",
-                                style: {color: '#E175FF'},
-                                rank: 3
-                            });
-                            continue;
-                        }
-                        case "mod": {
-                            roles.push(modRole);
-                            continue;
-                        }
-                        case "sub": {
-                            roles.push({
-                                name: "Subscriber",
-                                style: {color: '#C9CCDB'},
-                                rank: 4
-                            });
-                            continue;
-                        }
-                        case "broadcaster": {
-                            roles.push({
-                                name: "Channel Owner",
-                                style: {color: 'white'},
-                                rank: 0
-                            });
-                            continue;
-                        }
+                            case "vip": {
+                                roles.push({
+                                    name: "VIP",
+                                    style: {color: '#E175FF'},
+                                    rank: 3
+                                });
+                                continue;
+                            }
+                            case "mod": {
+                                roles.push(modRole);
+                                continue;
+                            }
+                            case "sub": {
+                                roles.push({
+                                    name: "Subscriber",
+                                    style: {color: '#C9CCDB'},
+                                    rank: 4
+                                });
+                                continue;
+                            }
+                            case "broadcaster": {
+                                roles.push({
+                                    name: "Channel Owner",
+                                    style: {color: 'white'},
+                                    rank: 0
+                                });
+                                continue;
+                            }
                         }
                     }
+
+                    for (let teamRole in teamRoles) {
+                        let rank = 7;
+
+                        roles.push({
+                            name: teamRole.team_display_name,
+                            style: {color: '#7954b1'},
+                            rank: rank + 1
+                        });
+                    }
+
                     $ctrl.roles = roles;
                 }
 

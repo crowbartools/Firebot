@@ -32,16 +32,9 @@ async function getUserChatInfoByName(username) {
     }
 }
 
-async function getTeams (broadcasterId) {
+async function getTeams(broadcasterId) {
     const client = twitchApi.getClient();
-
-    const teams = await client.callAPI({
-        type: TwitchAPICallType.helix,
-        url: `teams/channels`,
-        query: {
-            "broadcaster_id": broadcasterId
-        }
-    });
+    const teams = await client.kraken.channels.getChannelTeams(broadcasterId);
 
     if (teams == null) {
         return null;
@@ -50,7 +43,7 @@ async function getTeams (broadcasterId) {
     return teams;
 }
 
-async function getMatchingTeams (userId, streamerId) {
+async function getMatchingTeams(userId, streamerId) {
     const userTeams = await getTeams(userId);
     const streamerTeams = await getTeams(streamerId);
 
@@ -61,7 +54,7 @@ async function getMatchingTeams (userId, streamerId) {
     const teams = []
     for (let streamerTeam of streamerTeams) {
         for (let userTeam of userTeams) {
-            if (streamerTeam.id === userTeam.id) {
+            if (streamerTeam._id === userTeam._id) {
                 teams.push(streamerTeam);
             }
         }
@@ -103,15 +96,6 @@ async function getUsersChatRoles(userIdOrName = "") {
             } else if (badge.id === "moderator") {
                 roles.push("mod");
             }
-        }
-    }
-
-    const streamer = accountAccess.getAccounts().streamer;
-    const matchingTeams = getMatchingTeams(userChatInfo._id, streamer.userId);
-
-    if (matchingTeams != null) {
-        for (let team of matchingTeams) {
-            roles.push(team.team_name);
         }
     }
 
@@ -187,6 +171,7 @@ async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
 }
 
 exports.getUserChatInfoByName = getUserChatInfoByName;
+exports.getMatchingTeams = getMatchingTeams;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.getFollowDateForUser = getFollowDateForUser;
 exports.toggleFollowOnChannel = toggleFollowOnChannel;
