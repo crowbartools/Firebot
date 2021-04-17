@@ -32,6 +32,24 @@ async function getUserChatInfoByName(username) {
     }
 }
 
+async function getTeams (broadcasterId) {
+    const client = twitchApi.getClient();
+
+    const teams = await client.callAPI({
+        type: TwitchAPICallType.helix,
+        url: `teams/channels`,
+        query: {
+            "broadcaster_id": broadcasterId
+        }
+    });
+
+    if (teams == null) {
+        return null;
+    }
+
+    return teams;
+}
+
 async function getUsersChatRoles(userIdOrName = "") {
 
     userIdOrName = userIdOrName.toLowerCase();
