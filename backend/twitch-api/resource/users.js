@@ -51,10 +51,10 @@ async function getMatchingTeams(userId, streamerId) {
         return null;
     }
 
-    const teams = []
+    const teams = [];
     for (let streamerTeam of streamerTeams) {
         for (let userTeam of userTeams) {
-            if (streamerTeam._id === userTeam._id) {
+            if (streamerTeam.id === userTeam.id) {
                 teams.push(streamerTeam);
             }
         }
