@@ -178,10 +178,10 @@
                     }
 
                     for (let teamRole in teamRoles) {
-                        let rank = 7;
+                        let rank = 6;
 
                         roles.push({
-                            name: teamRole.team_display_name,
+                            name: teamRole.display_name,
                             style: {color: '#7954b1'},
                             rank: rank + 1
                         });
