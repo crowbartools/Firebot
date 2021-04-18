@@ -47,3 +47,18 @@
         </div>
     </div>
 </div>
+
+<h3 style="text-transform: uppercase;font-weight: 200;font-size: 19px;margin-top:30px;">Team Roles</h3>
+<p class="muted">These roles are predefined by Twitch and cannot be edited.</p>
+<div class="new-tile-grid" style="width: 100%">
+    <div ng-repeat="role in viewerRolesService.getTeamRoles() track by $index" class="new-tile gray centered">
+        <div class="content row">
+            <div class="detail-wrapper nomargin">
+                <div class="detail" style="font-size: 1.6em;">
+                    {{role.name}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <p ng-if="viewerRolesService.getTeamRoles().length < 1" class="muted">There are no stream teams you are a part of.</p>
+</div>
