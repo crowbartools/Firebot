@@ -3,6 +3,7 @@ import {
     StreamingPlatform,
 } from "SharedTypes/streaming-platform";
 import twitchApi from "./twitch-api";
+import twitchChat from "./twitch-chat";
 
 class Twitch extends PlatformEventEmitter implements StreamingPlatform {
     constructor() {
@@ -12,6 +13,8 @@ class Twitch extends PlatformEventEmitter implements StreamingPlatform {
     id = "twitch";
     name = "Twitch";
     api = twitchApi;
+
+    chat = twitchChat;
 
     init() {
         console.log("Twitch init");

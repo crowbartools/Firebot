@@ -56,6 +56,7 @@ export interface ChatModerationItem {
 export interface ChatNotificationItem {
     type: "notification";
     text: string;
+    icon: string;
 }
 
 export type ChatItem =

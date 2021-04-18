@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { motion, Variants } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../assets/images/logo.png";
+import { TemplateIcon } from "@heroicons/react/outline";
 
 import { thunk } from "../utils";
 
@@ -19,6 +20,14 @@ interface MenuItem {
 }
 
 const menu: Record<string, MenuItem[]> = {
+    Main: [
+        {
+            icon: <TemplateIcon className="h-6 w-6" aria-hidden="true" />,
+            iconClassName: "",
+            title: "Dashboard",
+            to: "DASHBOARD",
+        },
+    ],
     Chat: [
         {
             icon: <FontAwesomeIcon icon={["fas", "exclamation"]} />,
