@@ -34,9 +34,12 @@ async function getMatchingTeams(userId, streamerId) {
     return teams;
 }
 
-async function getAllTeamRolesForViewer(userId) {
+async function getAllTeamRolesForViewer(username) {
+    const client = twitchApi.getClient();
     const streamer = accountAccess.getAccounts().streamer;
-    const roles = await getMatchingTeams(userId, streamer.userId);
+    const user = await client.helix.users.getUserByName(username);
+    const roles = await getMatchingTeams(user.id, streamer.userId);
+    
     return roles
         .map(role => {
             return {
