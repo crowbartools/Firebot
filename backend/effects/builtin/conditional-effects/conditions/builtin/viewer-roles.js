@@ -3,7 +3,7 @@
 const twitchUsers = require("../../../../../twitch-api/resource/users");
 const firebotRolesManager = require("../../../../../roles/firebot-roles-manager");
 const customRolesManager = require("../../../../../roles/custom-roles-manager");
-const customRolesManager = require("../../../../../roles/team-roles-manager");
+const teamRolesManager = require("../../../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../../../shared/twitch-roles");
 
 module.exports = {
