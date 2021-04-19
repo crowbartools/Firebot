@@ -1,6 +1,5 @@
 "use strict";
 
-const twitchApi = require("../client");
 const mixerRoleConstants = require("../../shared/mixer-roles");
 const twitchRoleConstants = require("../../shared/twitch-roles");
 const firebotRoleConstants = require("../../shared/firebot-roles");
@@ -72,7 +71,11 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             };
 
             service.loadTeamRoles = async function() {
-                teamRoles = await twitchApi.getClient().teams.getStreamerTeams();
+                const roles = await backendCommunicator.fireEventAsync("getTeamRoles");
+
+                if (roles != null) {
+                    teamRoles = roles;
+                }
             };
             service.loadTeamRoles();
 
