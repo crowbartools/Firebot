@@ -7,6 +7,7 @@ const commandManager = require("../../../chat/commands/CommandManager");
 const gameManager = require("../../game-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");
 const customRolesManager = require("../../../roles/custom-roles-manager");
+const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 const logger = require("../../../logwrapper");
 const moment = require("moment");
@@ -176,10 +177,11 @@ const triviaCommand = {
             }
 
             const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+            const userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
             const userTwitchRoles = (userCommand.senderRoles || [])
                 .map(r => twitchRolesManager.mapTwitchRole(r))
                 .filter(r => !!r);
-            const allRoles = userCustomRoles.concat(userTwitchRoles);
+            const allRoles = userCustomRoles.concat(userTwitchRoles).concat(userTeamRoles);
 
             // get the users winnings multiplier
             let winningsMultiplier = 1.25;

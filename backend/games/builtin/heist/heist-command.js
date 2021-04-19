@@ -7,6 +7,7 @@ const commandManager = require("../../../chat/commands/CommandManager");
 const gameManager = require("../../game-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");
 const customRolesManager = require("../../../roles/custom-roles-manager");
+const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 const moment = require("moment");
 
@@ -119,10 +120,11 @@ const heistCommand = {
 
         // get all user roles
         const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+        const userTeamRoles = customRolesManager.getAllTeamRolesForViewer(username) || [];
         const userTwitchRoles = (userCommand.senderRoles || [])
             .map(r => twitchRolesManager.mapTwitchRole(r))
             .filter(r => !!r);
-        const allRoles = userCustomRoles.concat(userTwitchRoles);
+        const allRoles = userCustomRoles.concat(userTwitchRoles).concat(userTeamRoles);
 
         // get the users success percentage
         let successChance = 50;
