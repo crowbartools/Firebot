@@ -14,11 +14,12 @@ async function getTeams(broadcasterId) {
     return teams;
 }
 
-async function getMatchingTeams(userId, streamerId) {
+async function getMatchingTeams(userId) {
+    const streamer = accountAccess.getAccounts().streamer;
+    const streamerTeams = await getTeams(streamer.id);
     const userTeams = await getTeams(userId);
-    const streamerTeams = await getTeams(streamerId);
 
-    if (userTeams == null || streamerTeams == null) {
+    if (streamerTeams == null || userTeams == null) {
         return null;
     }
 
@@ -34,4 +35,27 @@ async function getMatchingTeams(userId, streamerId) {
     return teams;
 }
 
-exports.getMatchingTeams = getMatchingTeams;
+async function getMatchingTeamsByName(username) {
+    const client = twitchApi.getClient();
+    const userId = (await client.helix.users.getUserByName(username)).id;
+    const teams = getMatchingTeams(userId);
+    
+    if (teams == null) {
+        return null;
+    }
+
+    return teams;
+}
+
+async function getMatchingTeamsById(userId) {
+    const teams = getMatchingTeams(userId);
+    
+    if (teams == null) {
+        return null;
+    }
+
+    return teams;
+}
+
+exports.getMatchingTeamsByName = getMatchingTeamsByName;
+exports.getMatchingTeamsById = getMatchingTeamsById;
