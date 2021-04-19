@@ -32,37 +32,6 @@ async function getUserChatInfoByName(username) {
     }
 }
 
-async function getTeams(broadcasterId) {
-    const client = twitchApi.getClient();
-    const teams = await client.kraken.channels.getChannelTeams(broadcasterId);
-
-    if (teams == null) {
-        return null;
-    }
-
-    return teams;
-}
-
-async function getMatchingTeams(userId, streamerId) {
-    const userTeams = await getTeams(userId);
-    const streamerTeams = await getTeams(streamerId);
-
-    if (userTeams == null || streamerTeams == null) {
-        return null;
-    }
-
-    const teams = [];
-    for (let streamerTeam of streamerTeams) {
-        for (let userTeam of userTeams) {
-            if (streamerTeam.id === userTeam.id) {
-                teams.push(streamerTeam);
-            }
-        }
-    }
-
-    return teams;
-}
-
 async function getUsersChatRoles(userIdOrName = "") {
 
     userIdOrName = userIdOrName.toLowerCase();
@@ -171,7 +140,6 @@ async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
 }
 
 exports.getUserChatInfoByName = getUserChatInfoByName;
-exports.getMatchingTeams = getMatchingTeams;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.getFollowDateForUser = getFollowDateForUser;
 exports.toggleFollowOnChannel = toggleFollowOnChannel;
