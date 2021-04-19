@@ -16,7 +16,7 @@ async function getTeams(broadcasterId) {
 
 async function getMatchingTeams(userId) {
     const streamer = accountAccess.getAccounts().streamer;
-    const streamerTeams = await getTeams(streamer.id);
+    const streamerTeams = await getTeams(streamer.userId);
     const userTeams = await getTeams(userId);
 
     if (streamerTeams == null || userTeams == null) {
@@ -37,8 +37,8 @@ async function getMatchingTeams(userId) {
 
 async function getMatchingTeamsByName(username) {
     const client = twitchApi.getClient();
-    const userId = (await client.helix.users.getUserByName(username)).id;
-    const teams = getMatchingTeams(userId);
+    const user = await client.helix.users.getUserByName(username);
+    const teams = await getMatchingTeams(user.id);
     
     if (teams == null) {
         return null;
@@ -48,7 +48,7 @@ async function getMatchingTeamsByName(username) {
 }
 
 async function getMatchingTeamsById(userId) {
-    const teams = getMatchingTeams(userId);
+    const teams = await getMatchingTeams(userId);
     
     if (teams == null) {
         return null;
@@ -58,7 +58,12 @@ async function getMatchingTeamsById(userId) {
 }
 
 async function getStreamerTeams() {
+    const streamer = accountAccess.getAccounts().streamer;
     const streamerTeams = await getTeams(streamer.id);
+
+    if (streamerTeams == null) {
+        return null;
+    }
 
     return streamerTeams;
 }
