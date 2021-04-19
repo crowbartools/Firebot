@@ -120,7 +120,7 @@ const heistCommand = {
 
         // get all user roles
         const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        const userTeamRoles = customRolesManager.getAllTeamRolesForViewer(username) || [];
+        const userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
         const userTwitchRoles = (userCommand.senderRoles || [])
             .map(r => twitchRolesManager.mapTwitchRole(r))
             .filter(r => !!r);
