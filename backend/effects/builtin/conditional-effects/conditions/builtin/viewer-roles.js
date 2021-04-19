@@ -3,6 +3,7 @@
 const twitchUsers = require("../../../../../twitch-api/resource/users");
 const firebotRolesManager = require("../../../../../roles/firebot-roles-manager");
 const customRolesManager = require("../../../../../roles/custom-roles-manager");
+const customRolesManager = require("../../../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../../../shared/twitch-roles");
 
 module.exports = {
@@ -16,6 +17,7 @@ module.exports = {
     getRightSidePresetValues: viewerRolesService => {
         return viewerRolesService.getCustomRoles()
             .concat(viewerRolesService.getTwitchRoles())
+            .concat(viewerRolesService.getTeamRoles())
             .concat(viewerRolesService.getFirebotRoles())
             .map(r => {
                 return {
@@ -27,6 +29,7 @@ module.exports = {
     valueIsStillValid: (condition, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
             .concat(viewerRolesService.getTwitchRoles())
+            .concat(viewerRolesService.getTeamRoles())
             .concat(viewerRolesService.getFirebotRoles());
 
         let role = allRoles.find(r => r.id === condition.rightSideValue);
@@ -36,6 +39,7 @@ module.exports = {
     getRightSideValueDisplay: (condition, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
             .concat(viewerRolesService.getTwitchRoles())
+            .concat(viewerRolesService.getTeamRoles())
             .concat(viewerRolesService.getFirebotRoles());
 
         let role = allRoles.find(r => r.id === condition.rightSideValue);
@@ -62,10 +66,11 @@ module.exports = {
 
         let firebotUserRoles = firebotRolesManager.getAllFirebotRolesForViewer(username) || [];
         let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+        let userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
         let userTwitchRoles = (twitchUserRoles || [])
             .map(r => twitchRolesManager.mapTwitchRole(r));
 
-        let allRoles = userCustomRoles.concat(firebotUserRoles).concat(userTwitchRoles);
+        let allRoles = userCustomRoles.concat(firebotUserRoles).concat(userTwitchRoles).concat(userTeamRoles);
 
         let hasRole = allRoles.some(r => r.id === rightSideValue);
 
