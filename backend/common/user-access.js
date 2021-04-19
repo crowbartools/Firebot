@@ -83,7 +83,7 @@ async function getUserDetails(userId) {
     }
 
     const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
-    const teamRoles = await twitchApi.users.getMatchingTeams(twitchUser.id, streamerData.userId);
+    const teamRoles = await twitchApi.teams.getMatchingTeams(twitchUser.id, streamerData.userId);
 
     const userFollowsStreamerResponse = await client.helix.users.getFollows({
         user: userId,
