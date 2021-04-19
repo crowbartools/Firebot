@@ -66,6 +66,7 @@ const model = {
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
+        $scope.getTeamRoles = viewerRolesService.getTeamRoles;
         $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;
 
         $scope.isRoleChecked = function(role) {
