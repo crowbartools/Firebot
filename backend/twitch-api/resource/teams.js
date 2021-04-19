@@ -39,7 +39,7 @@ async function getMatchingTeamsByName(username) {
     const client = twitchApi.getClient();
     const user = await client.helix.users.getUserByName(username);
     const teams = await getMatchingTeams(user.id);
-    
+
     if (teams == null) {
         return null;
     }
@@ -49,7 +49,7 @@ async function getMatchingTeamsByName(username) {
 
 async function getMatchingTeamsById(userId) {
     const teams = await getMatchingTeams(userId);
-    
+
     if (teams == null) {
         return null;
     }

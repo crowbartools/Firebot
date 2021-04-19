@@ -146,34 +146,34 @@
                     }
                     for (let role of twitchRoles) {
                         switch (role) {
-                            case "vip": {
-                                roles.push({
-                                    name: "VIP",
-                                    style: {color: '#E175FF'},
-                                    rank: 3
-                                });
-                                continue;
-                            }
-                            case "mod": {
-                                roles.push(modRole);
-                                continue;
-                            }
-                            case "sub": {
-                                roles.push({
-                                    name: "Subscriber",
-                                    style: {color: '#C9CCDB'},
-                                    rank: 4
-                                });
-                                continue;
-                            }
-                            case "broadcaster": {
-                                roles.push({
-                                    name: "Channel Owner",
-                                    style: {color: 'white'},
-                                    rank: 0
-                                });
-                                continue;
-                            }
+                        case "vip": {
+                            roles.push({
+                                name: "VIP",
+                                style: {color: '#E175FF'},
+                                rank: 3
+                            });
+                            continue;
+                        }
+                        case "mod": {
+                            roles.push(modRole);
+                            continue;
+                        }
+                        case "sub": {
+                            roles.push({
+                                name: "Subscriber",
+                                style: {color: '#C9CCDB'},
+                                rank: 4
+                            });
+                            continue;
+                        }
+                        case "broadcaster": {
+                            roles.push({
+                                name: "Channel Owner",
+                                style: {color: 'white'},
+                                rank: 0
+                            });
+                            continue;
+                        }
                         }
                     }
 

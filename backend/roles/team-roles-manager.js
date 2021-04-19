@@ -5,17 +5,17 @@ const frontendCommunicator = require("../common/frontend-communicator");
 
 function mapRoles(teams) {
     return teams
-    .map(team => {
-        return {
-            id: team.id,
-            name: team.displayName
-        };
-    });
+        .map(team => {
+            return {
+                id: team.id,
+                name: team.displayName
+            };
+        });
 }
 
 async function getAllTeamRolesForViewer(username) {
     const roles = await twitchApi.teams.getMatchingTeamsByUsername(username);
-    
+
     return mapRoles(roles);
 }
 
@@ -37,7 +37,7 @@ frontendCommunicator.onAsync("getTeamRoles", async () => {
     }
 
     return roles;
-    
+
 });
 
 exports.getTeamRoles = getTeamRoles;
