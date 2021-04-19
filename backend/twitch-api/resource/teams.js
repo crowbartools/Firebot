@@ -57,5 +57,12 @@ async function getMatchingTeamsById(userId) {
     return teams;
 }
 
+async function getStreamerTeams() {
+    const streamerTeams = await getTeams(streamer.id);
+
+    return streamerTeams;
+}
+
 exports.getMatchingTeamsByName = getMatchingTeamsByName;
 exports.getMatchingTeamsById = getMatchingTeamsById;
+exports.getStreamerTeams = getStreamerTeams;

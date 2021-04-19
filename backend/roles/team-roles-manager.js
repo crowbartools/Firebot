@@ -1,11 +1,10 @@
 "use strict";
 
-const accountAccess = require("../../common/account-access");
 const twitchApi = require("../client");
 
 async function getAllTeamRolesForViewer(username) {
     const client = twitchApi.getClient();
-    const roles = await twitchApi.teams.getMatchingTeamsByUsername(username);
+    const roles = await client.teams.getMatchingTeamsByUsername(username);
     
     return roles
         .map(role => {
