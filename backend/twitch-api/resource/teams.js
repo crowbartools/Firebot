@@ -59,7 +59,7 @@ async function getMatchingTeamsById(userId) {
 
 async function getStreamerTeams() {
     const streamer = accountAccess.getAccounts().streamer;
-    const streamerTeams = await getTeams(streamer.id);
+    const streamerTeams = await getTeams(streamer.userId);
 
     if (streamerTeams == null) {
         return null;
