@@ -122,13 +122,10 @@
                 }
             };
 
-            service.highlightMessage = (username, rawText) => {
-                backendCommunicator.fireEvent("firebot:highlight-message", {
+            service.highlightMessage = (rawText) => {
+                backendCommunicator.fireEvent("highlight-message", {
                     action: "highlightMessage",
-                    meta: {
-                        username: username,
-                        messageText: rawText
-                    }
+                    messageText: rawText
                 });
             };
 
