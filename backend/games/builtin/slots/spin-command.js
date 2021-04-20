@@ -6,6 +6,7 @@ const commandManager = require("../../../chat/commands/CommandManager");
 const gameManager = require("../../game-manager");
 const currencyDatabase = require("../../../database/currencyDatabase");
 const customRolesManager = require("../../../roles/custom-roles-manager");
+const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 const slotMachine = require("./slot-machine");
 const logger = require("../../../logwrapper");
@@ -123,10 +124,11 @@ const spinCommand = {
                     successChance = successChancesSettings.basePercent;
 
                     const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+                    const userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
                     const userTwitchRoles = (userCommand.senderRoles || [])
                         .map(r => twitchRolesManager.mapTwitchRole(r))
                         .filter(r => !!r);
-                    const allRoles = userCustomRoles.concat(userTwitchRoles);
+                    const allRoles = userCustomRoles.concat(userTwitchRoles).concat(userTeamRoles);
 
                     for (let role of successChancesSettings.roles) {
                         if (allRoles.some(r => r.id === role.roleId)) {

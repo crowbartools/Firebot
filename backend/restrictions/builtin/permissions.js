@@ -1,6 +1,7 @@
 "use strict";
 
 const customRolesManager = require("../../roles/custom-roles-manager");
+const teamRolesManager = require("../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../shared/twitch-roles");
 
 const model = {
@@ -43,6 +44,10 @@ const model = {
                         <input type="checkbox" ng-click="toggleRole(twitchRole)" ng-checked="isRoleChecked(twitchRole)"  aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
+                    <label ng-repeat="teamRole in getTeamRoles()" class="control-fb control--checkbox">{{teamRole.name}}
+                        <input type="checkbox" ng-click="toggleRole(teamRole)" ng-checked="isRoleChecked(teamRole)"  aria-label="..." >
+                        <div class="control__indicator"></div>
+                    </label>
                 </div> 
             </div>
 
@@ -65,6 +70,7 @@ const model = {
 
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
+        $scope.getTeamRoles = viewerRolesService.getTeamRoles;
         $scope.getTwitchRoles = viewerRolesService.getTwitchRoles;
 
         $scope.isRoleChecked = function(role) {
@@ -102,10 +108,11 @@ const model = {
                 let username = triggerData.metadata.username;
 
                 let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+                let userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
                 let userTwitchRoles = (triggerData.metadata.userTwitchRoles || [])
                     .map(mr => twitchRolesManager.mapTwitchRole(mr));
 
-                let allRoles = userCustomRoles.concat(userTwitchRoles).filter(r => r != null);
+                let allRoles = userCustomRoles.concat(userTeamRoles).concat(userTwitchRoles).filter(r => r != null);
 
                 let expectedRoleIds = restrictionData.roleIds || [];
 

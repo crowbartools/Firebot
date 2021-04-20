@@ -188,6 +188,7 @@ const currency = {
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
         $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
+        $scope.getTeamRoles = viewerRolesService.getTeamRoles;
         $scope.getMixerRoles = viewerRolesService.getMixerRoles;
 
         $scope.isRoleChecked = function(role) {

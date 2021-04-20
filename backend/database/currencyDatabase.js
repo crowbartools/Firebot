@@ -5,6 +5,7 @@ const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
 const { settings } = require("../common/settings-access.js");
 const customRolesManager = require("../roles/custom-roles-manager");
+const teamRolesManager = require("../roles/team-roles-manager");
 const twitchRolesManager = require("../../shared/twitch-roles");
 const firebotRolesManager = require("../roles/firebot-roles-manager");
 const util = require("../utility");
@@ -149,6 +150,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
                 u.allRoles = [
                     ...u.twitchRoles.map(tr => twitchRolesManager.mapTwitchRole(tr)),
                     ...customRolesManager.getAllCustomRolesForViewer(u.username),
+                    ...teamRolesManager.getAllTeamRolesForViewer(u.username),
                     ...firebotRolesManager.getAllFirebotRolesForViewer(u.username)
                 ];
                 return u;

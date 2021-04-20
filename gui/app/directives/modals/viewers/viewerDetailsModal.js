@@ -124,6 +124,7 @@
 
                 function loadRoles() {
                     const twitchRoles = $ctrl.viewerDetails.twitchData.userRoles;
+                    const teamRoles = $ctrl.viewerDetails.twitchData.teamRoles;
 
                     const userFollowsStreamer = $ctrl.viewerDetails.userFollowsStreamer;
                     let followDateDisplay;
@@ -175,6 +176,17 @@
                         }
                         }
                     }
+
+                    for (let teamRole of teamRoles) {
+                        let rank = 6;
+
+                        roles.push({
+                            name: teamRole._data.display_name,
+                            style: {color: '#7954b1'},
+                            rank: rank + 1
+                        });
+                    }
+
                     $ctrl.roles = roles;
                 }
 

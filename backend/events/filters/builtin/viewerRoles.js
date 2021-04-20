@@ -3,6 +3,7 @@
 const twitchUsers = require("../../../twitch-api/resource/users");
 
 const customRolesManager = require("../../../roles/custom-roles-manager");
+const teamRolesManager = require("../../../roles/team-roles-manager");
 const twitchRolesManager = require("../../../../shared/twitch-roles");
 
 module.exports = {
@@ -29,12 +30,14 @@ module.exports = {
         return viewerRolesService
             .getCustomRoles()
             .concat(viewerRolesService.getTwitchRoles())
+            .concat(viewerRolesService.getTeamRoles())
             .map(r => ({value: r.id, display: r.name}));
 
     },
     valueIsStillValid: (filterSettings, viewerRolesService) => {
         let allRoles = viewerRolesService
             .getCustomRoles()
+            .concat(viewerRolesService.getTeamRoles())
             .concat(viewerRolesService.getTwitchRoles());
 
         let role = allRoles.find(r => r.id === filterSettings.value);
@@ -43,6 +46,7 @@ module.exports = {
     },
     getSelectedValueDisplay: (filterSettings, viewerRolesService) => {
         let allRoles = viewerRolesService.getCustomRoles()
+            .concat(viewerRolesService.getTeamRoles())
             .concat(viewerRolesService.getTwitchRoles());
 
         let role = allRoles.find(r => r.id === filterSettings.value);
@@ -69,10 +73,11 @@ module.exports = {
         }
 
         let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+        let userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
         let userTwitchRoles = (twitchUserRoles || [])
             .map(r => twitchRolesManager.mapTwitchRole(r));
 
-        let allRoles = userCustomRoles.concat(userTwitchRoles);
+        let allRoles = userCustomRoles.concat(userTwitchRoles).concat(userTeamRoles);
 
         let hasRole = allRoles.some(r => r.id === value);
 
