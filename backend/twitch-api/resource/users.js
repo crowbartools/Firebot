@@ -189,9 +189,6 @@ async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
 }
 
 exports.getUserChatInfoByName = getUserChatInfoByName;
-exports.getUserSubInfo = getUserSubInfo;
-exports.getUserSubInfoByName = getUserSubInfoByName;
-exports.getUserSubscriberRole = getUserSubscriberRole;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.getFollowDateForUser = getFollowDateForUser;
 exports.toggleFollowOnChannel = toggleFollowOnChannel;
