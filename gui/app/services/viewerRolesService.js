@@ -99,7 +99,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 return twitchRoles;
             };
 
-            const subRoles = subRoleConstants.getSubRoles();
+            const subRoles = subRoleConstants.getSubscriberRoles();
             service.getSubRoles = function() {
                 return subRoles;
             };
