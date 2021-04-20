@@ -9,13 +9,19 @@ const model = {
         handle: "regex",
         description: "Filter a string with a regular expression",
         usage: "regex[string, expression]",
+        examples: [
+            {
+                usage: "regex[string, expression, flags]",
+                description: "Add flags to the regex evaluation."
+            }
+        ],
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, stringToEvaluate, expression) => {
-        let regex = RegExp(expression);
+    evaluator: (_, stringToEvaluate, expression, flags) => {
+        const regex = RegExp(expression, flags);
 
-        return regex.exec(stringToEvaluate) || null;
+        return regex.exec(stringToEvaluate) || "No match found.";
     }
 };
 
