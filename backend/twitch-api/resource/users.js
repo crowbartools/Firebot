@@ -32,6 +32,51 @@ async function getUserChatInfoByName(username) {
     }
 }
 
+async function getUserSubInfo(userId) {
+    const client = twitchApi.getClient();
+    const streamer = accountAccess.getAccounts().streamer;
+    const subInfo = await client.helix.subscriptions.getSubscriptionForUser(streamer.userId, userId);
+
+    return subInfo;
+}
+
+async function getUserSubInfoByName(username) {
+    try {
+        const client = twitchApi.getClient();
+        const user = await client.helix.users.getUserByName(username);
+
+        return getUserSubInfo(user.id);
+    } catch (error) {
+        return null;
+    }
+}
+
+async function getUserSubscriberRole(userIdOrName) {
+    const isName = isNaN(userIdOrName);
+    const subInfo = isName ?
+        (await getUserSubInfoByName(userIdOrName)) :
+        (await getUserSubInfo(userIdOrName));
+
+    if (subInfo == null || subInfo.tier == null) {
+        return null;
+    }
+
+    let role = '';
+    switch (subInfo.tier) {
+    case "1000":
+        role = "tier1";
+        break;
+    case "2000":
+        role = "tier2";
+        break;
+    case "3000":
+        role = "tier3";
+        break;
+    }
+
+    return role;
+}
+
 async function getUsersChatRoles(userIdOrName = "") {
 
     userIdOrName = userIdOrName.toLowerCase();
@@ -49,7 +94,9 @@ async function getUsersChatRoles(userIdOrName = "") {
         (await getUserChatInfoByName(userIdOrName)) :
         (await getUserChatInfo(userIdOrName));
 
-    if (userChatInfo == null) {
+    const subscriberRole = await getUserSubscriberRole(userIdOrName);
+
+    if (userChatInfo == null && subscriberRole == null) {
         return [];
     }
 
@@ -66,6 +113,10 @@ async function getUsersChatRoles(userIdOrName = "") {
                 roles.push("mod");
             }
         }
+    }
+
+    if (subscriberRole != null) {
+        roles.push(subscriberRole);
     }
 
     userRoleCache.set(userChatInfo._id, roles);
