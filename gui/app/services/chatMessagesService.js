@@ -122,10 +122,10 @@
                 }
             };
 
-            service.highlightMessage = (rawText) => {
+            service.highlightMessage = (username, rawText) => {
                 backendCommunicator.fireEvent("highlight-message", {
-                    action: "highlightMessage",
-                    messageText: rawText
+                    username: username,
+                    chatMessage: rawText
                 });
             };
 
