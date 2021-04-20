@@ -39,7 +39,7 @@ async function getUserSubInfo(userId) {
 
     const subInfo = await client.callAPI({
         type: TwitchAPICallType.Kraken,
-        url: `users/${userId}/subscriptions/${streamer.userId}`
+        url: `channels/${streamer.userId}/subscriptions/${userId}`
     });
 
     return subInfo;
@@ -54,7 +54,7 @@ async function getUserSubInfoByName(username) {
     }
 }
 
-async function getUserSubscriberRoles(userId) {
+async function getUserSubscriberRole(userId) {
     const subInfo = await getUserSubInfo(userId);
 
     if (subInfo == null || subInfo.sub_plan == null) {
@@ -190,6 +190,7 @@ async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
 exports.getUserChatInfoByName = getUserChatInfoByName;
 exports.getUserSubInfo = getUserSubInfo;
 exports.getUserSubInfoByName = getUserSubInfoByName;
+exports.getUserSubscriberRole = getUserSubscriberRole;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.getFollowDateForUser = getFollowDateForUser;
 exports.toggleFollowOnChannel = toggleFollowOnChannel;
