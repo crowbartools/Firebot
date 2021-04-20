@@ -1,6 +1,6 @@
 "use strict";
 
-const subRoles = [
+const subscriberRoles = [
     {
         id: "prime",
         name: "Prime"
@@ -19,5 +19,5 @@ const subRoles = [
     }
 ];
 
-exports.getSubscriberRoles = () => subRoles;
+exports.getSubscriberRoles = () => subscriberRoles;
 
