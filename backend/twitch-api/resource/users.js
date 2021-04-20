@@ -54,6 +54,32 @@ async function getUserSubInfoByName(username) {
     }
 }
 
+async function getUserSubscriberRoles(userId) {
+    const subInfo = await getUserSubInfo(userId);
+
+    if (subInfo == null || subInfo.sub_plan == null) {
+        return null;
+    }
+
+    const role = '';
+    switch (subInfo.sub_plan) {
+    case "Prime":
+        role = "Prime";
+        break;
+    case "1000":
+        role = "Tier 1";
+        break;
+    case "2000":
+        role = "Tier 2";
+        break;
+    case "3000":
+        role = "Tier 3";
+        break;
+    }
+
+    return role;
+}
+
 async function getUsersChatRoles(userIdOrName = "") {
 
     userIdOrName = userIdOrName.toLowerCase();
