@@ -32,6 +32,28 @@ async function getUserChatInfoByName(username) {
     }
 }
 
+async function getUserSubInfo(userId) {
+    const client = twitchApi.getClient();
+
+    const streamer = accountAccess.getAccounts().streamer;
+
+    const subInfo = await client.callAPI({
+        type: TwitchAPICallType.Kraken,
+        url: `users/${userId}/subscriptions/${streamer.userId}`
+    });
+
+    return subInfo;
+}
+
+async function getUserSubInfoByName(username) {
+    try {
+        const user = await client.helix.users.getUserByName(username);
+        return getUserSubInfo(user.id);
+    } catch (error) {
+        return null;
+    }
+}
+
 async function getUsersChatRoles(userIdOrName = "") {
 
     userIdOrName = userIdOrName.toLowerCase();
@@ -140,6 +162,8 @@ async function toggleFollowOnChannel(channelIdToFollow, shouldFollow = true) {
 }
 
 exports.getUserChatInfoByName = getUserChatInfoByName;
+exports.getUserSubInfo = getUserSubInfo;
+exports.getUserSubInfoByName = getUserSubInfoByName;
 exports.getUsersChatRoles = getUsersChatRoles;
 exports.getFollowDateForUser = getFollowDateForUser;
 exports.toggleFollowOnChannel = toggleFollowOnChannel;
