@@ -74,6 +74,7 @@ exports.loadReplaceVariables = () => {
         'random-advice',
         'read-api',
         'read-file',
+        'regex',
         'reward-cost',
         'reward-image-url',
         'reward-message',
