@@ -60,10 +60,10 @@ const model = {
     },
     onTriggerEvent: async event => {
         if (event.effect.action === "Add VIP") {
-            await twitchChat.assignVip(event.effect.username);
+            await twitchChat.addVip(event.effect.username);
             logger.debug(event.effect.username + " was assigned VIP via the VIP effect.");
-        } else if (event.effect.action === "Unmod") {
-            await twitchChat.unassignVip(event.effect.username);
+        } else if (event.effect.action === "Remove VIP") {
+            await twitchChat.removeVip(event.effect.username);
             logger.debug(event.effect.username + " was unassigned VIP via the VIP effect.");
         }
 
