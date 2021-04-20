@@ -122,6 +122,16 @@
                 }
             };
 
+            service.highlightMessage = (username, rawText) => {
+                backendCommunicator.fireEvent("firebot:highlight-message", {
+                    action: "highlightMessage",
+                    meta: {
+                        username: username,
+                        messageText: rawText
+                    }
+                });
+            };
+
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
 
