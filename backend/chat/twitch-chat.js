@@ -245,6 +245,22 @@ class TwitchChat extends EventEmitter {
         this._streamerChatClient.say(`#${streamer.username.replace("#", "")}`, `/unban ${username}`);
     }
 
+    addVip(username) {
+        if (username == null) return;
+
+        const streamer = accountAccess.getAccounts().streamer;
+
+        return this._streamerChatClient.addVip(streamer.username, username);
+    }
+
+    removeVip(username) {
+        if (username == null) return;
+
+        const streamer = accountAccess.getAccounts().streamer;
+
+        return this._streamerChatClient.removeVip(streamer.username, username);
+    }
+
     clearChat() {
         if (this._streamerChatClient == null) return;
         this._streamerChatClient.clear();
