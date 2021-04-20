@@ -2,10 +2,6 @@
 
 const subscriberRoles = [
     {
-        id: "prime",
-        name: "Prime"
-    },
-    {
         id: "tier1",
         name: "Tier 1"
     },
