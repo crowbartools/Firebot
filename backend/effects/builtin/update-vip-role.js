@@ -15,7 +15,7 @@ const model = {
         id: "firebot:update-vip-role",
         name: "VIP",
         description: "Add or remove the VIP role of a user",
-        icon: "fad fa-crown",
+        icon: "far fa-gem",
         categories: [EffectCategory.COMMON, EffectCategory.MODERATION],
         dependencies: [EffectDependency.CHAT],
         triggers: effectModels.buildEffectTriggersObject(
