@@ -279,6 +279,9 @@ frontendCommunicator.on("send-chat-message", async sendData => {
     if (accountType === "Streamer") {
         let firebotMessage = await chatHelpers.buildFirebotChatMessageFromText(message);
         commandHandler.handleChatMessage(firebotMessage);
+
+        const chatMessageListener = require("../events/twitch-events/chat-message");
+        chatMessageListener.triggerChatMessage(firebotMessage);
     }
 
     twitchChat.sendChatMessage(message, null, accountType);
