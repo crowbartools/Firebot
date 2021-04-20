@@ -44,10 +44,13 @@ const model = {
                         <input type="checkbox" ng-click="toggleRole(twitchRole)" ng-checked="isRoleChecked(twitchRole)"  aria-label="..." >
                         <div class="control__indicator"></div>
                     </label>
-                    <label ng-repeat="teamRole in getTeamRoles()" class="control-fb control--checkbox">{{teamRole.name}}
-                        <input type="checkbox" ng-click="toggleRole(teamRole)" ng-checked="isRoleChecked(teamRole)"  aria-label="..." >
-                        <div class="control__indicator"></div>
-                    </label>
+                    <div ng-show="getTeamRoles().length > 0" style="margin-bottom: 10px;">
+                        <div style="font-size: 16px;font-weight: 900;color: #b9b9b9;font-family: 'Quicksand';margin-bottom: 5px;">Teams</div>
+                        <label ng-repeat="teamRole in getTeamRoles()" class="control-fb control--checkbox">{{teamRole.name}}
+                            <input type="checkbox" ng-click="toggleRole(teamRole)" ng-checked="isRoleChecked(teamRole)"  aria-label="..." >
+                            <div class="control__indicator"></div>
+                        </label>
+                    </div>
                 </div> 
             </div>
 
