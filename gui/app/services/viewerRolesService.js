@@ -99,11 +99,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             };
 
             service.getAllRoles = () => {
-                return service
-                    .getTwitchRoles()
-                    .concat(service.getTeamRoles())
-                    .concat(service.getFirebotRoles())
-                    .concat(service.getCustomRoles());
+                return service.getTwitchRoles().concat(service.getTeamRoles()).concat(service.getFirebotRoles()).concat(service.getCustomRoles());
             };
 
             service.getRoleById = function(id) {
