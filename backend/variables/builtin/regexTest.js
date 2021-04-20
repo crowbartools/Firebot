@@ -6,12 +6,12 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 
 const model = {
     definition: {
-        handle: "regex",
+        handle: "regexExec",
         description: "Filter a string with a regular expression",
-        usage: "regex[string, expression]",
+        usage: "regexExec[string, expression]",
         examples: [
             {
-                usage: "regex[string, expression, flags]",
+                usage: "regexExec[string, expression, flags]",
                 description: "Add flags to the regex evaluation."
             }
         ],
@@ -21,7 +21,7 @@ const model = {
     evaluator: (_, stringToEvaluate, expression, flags) => {
         const regex = RegExp(expression, flags);
 
-        return regex.exec(stringToEvaluate) || "No match found.";
+        return regex.exec(stringToEvaluate);
     }
 };
 
