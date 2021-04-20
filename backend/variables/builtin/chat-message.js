@@ -9,7 +9,7 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 let triggers = {};
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.COMMAND] = true;
-triggers[EffectTrigger.EVENT] = ["twitch:chat-message"];
+triggers[EffectTrigger.EVENT] = ["twitch:chat-message", "firebot:highlight-message"];
 
 const model = {
     definition: {
@@ -30,9 +30,8 @@ const model = {
             chatMessage = `${userCommand.trigger} ${userCommand.args.join(" ")}`;
 
         } else if (trigger.type === EffectTrigger.EVENT) {
-
             // if trigger is event, build chat message from chat event data
-            chatMessage = trigger.metadata.eventData.messageText;
+            chatMessage = trigger.metadata.chatMessage || trigger.metadata.eventData.chatMessage;
         }
 
         return chatMessage.trim();

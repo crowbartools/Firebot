@@ -122,6 +122,13 @@
                 }
             };
 
+            service.highlightMessage = (username, rawText) => {
+                backendCommunicator.fireEvent("highlight-message", {
+                    username: username,
+                    chatMessage: rawText
+                });
+            };
+
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
 
