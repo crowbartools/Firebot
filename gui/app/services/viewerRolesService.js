@@ -2,6 +2,7 @@
 
 const mixerRoleConstants = require("../../shared/mixer-roles");
 const twitchRoleConstants = require("../../shared/twitch-roles");
+const subRoleConstants = require("../../shared/subscriber-roles");
 const firebotRoleConstants = require("../../shared/firebot-roles");
 
 (function() {
@@ -98,8 +99,18 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 return twitchRoles;
             };
 
+            const subRoles = subRoleConstants.getSubRoles();
+            service.getSubRoles = function() {
+                return subRoles;
+            };
+
             service.getAllRoles = () => {
-                return service.getTwitchRoles().concat(service.getTeamRoles()).concat(service.getFirebotRoles()).concat(service.getCustomRoles());
+                return service
+                    .getTwitchRoles()
+                    .concat(service.getSubRoles())
+                    .concat(service.getTeamRoles())
+                    .concat(service.getFirebotRoles())
+                    .concat(service.getCustomRoles());
             };
 
             service.getRoleById = function(id) {
