@@ -59,8 +59,6 @@ async function getUserSubscriberRole(userIdOrName) {
         return null;
     }
 
-    console.log(subInfo.tier);
-
     let role = '';
     switch (subInfo.tier) {
     case "1000":
