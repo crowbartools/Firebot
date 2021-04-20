@@ -1,1 +1,4 @@
-*       @ebiggz @LastMageTV @SReject @brumoen
+*       @ebiggz
+/backend/variables/expression-errors.js @SReject
+/backend/variables/expression-evaluate.js @SReject
+/backend/variables/expression.js @SReject
