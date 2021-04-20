@@ -30,6 +30,7 @@ exports.loadEffects = () => {
     const clearEffects = require('./builtin/clearEffects');
     const sequentialEffect = require("./builtin/sequentialEffect");
     const updateRole = require("./builtin/update-role");
+    const updateVipRole = require("./builtin/update-vip-role");
     const conditionalEffects = require("./builtin/conditional-effects/conditional-effects");
     const loopEffects = require("./builtin/loopEffects");
     const textToSpeech = require("./builtin/text-to-speech");
@@ -79,6 +80,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(clearEffects); // No migration needed.
     effectManager.registerEffect(sequentialEffect); // No migration needed.
     effectManager.registerEffect(updateRole); // No migration needed.
+    effectManager.registerEffect(updateVipRole); 
     effectManager.registerEffect(conditionalEffects); // No migration needed.
     effectManager.registerEffect(loopEffects); // No migration needed.
     effectManager.registerEffect(textToSpeech); // No migration needed.
