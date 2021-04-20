@@ -80,7 +80,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(clearEffects); // No migration needed.
     effectManager.registerEffect(sequentialEffect); // No migration needed.
     effectManager.registerEffect(updateRole); // No migration needed.
-    effectManager.registerEffect(updateVipRole); 
+    effectManager.registerEffect(updateVipRole);
     effectManager.registerEffect(conditionalEffects); // No migration needed.
     effectManager.registerEffect(loopEffects); // No migration needed.
     effectManager.registerEffect(textToSpeech); // No migration needed.
