@@ -84,7 +84,6 @@ async function getUserDetails(userId) {
 
     const userRoles = await twitchApi.users.getUsersChatRoles(twitchUser.id);
     const teamRoles = await twitchApi.teams.getMatchingTeamsById(twitchUser.id);
-    const subscriberRole = await twitchApi.users.getUserSubscriberRole(twitchUser.id);
 
     const userFollowsStreamerResponse = await client.helix.users.getFollows({
         user: userId,
@@ -107,7 +106,6 @@ async function getUserDetails(userId) {
         twitchUserData.isBanned = isBanned;
         twitchUserData.userRoles = userRoles || [];
         twitchUserData.teamRoles = teamRoles || [];
-        twitchUserData.subscriberRole = subscriberRole || null;
     }
 
     const userDetails = {

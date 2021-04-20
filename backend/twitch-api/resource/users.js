@@ -34,14 +34,9 @@ async function getUserChatInfoByName(username) {
 
 async function getUserSubInfo(userId) {
     const client = twitchApi.getClient();
-
     const streamer = accountAccess.getAccounts().streamer;
-
-    const subInfo = await client.callAPI({
-        type: TwitchAPICallType.Kraken,
-        url: `channels/${streamer.userId}/subscriptions/${userId}`
-    });
-
+    const subInfo = await client.helix.subscriptions.getSubscriptionForUser(streamer.userId, userId);
+    
     return subInfo;
 }
 
@@ -54,26 +49,28 @@ async function getUserSubInfoByName(username) {
     }
 }
 
-async function getUserSubscriberRole(userId) {
-    const subInfo = await getUserSubInfo(userId);
+async function getUserSubscriberRole(userIdOrName) {
+    const isName = isNaN(userIdOrName);
+    const subInfo = isName ?
+        (await getUserSubInfoByName(userIdOrName)) :
+        (await getUserSubInfo(userIdOrName));
 
-    if (subInfo == null || subInfo.sub_plan == null) {
+    if (subInfo == null || subInfo.tier == null) {
         return null;
     }
 
-    const role = '';
-    switch (subInfo.sub_plan) {
-    case "Prime":
-        role = "Prime";
-        break;
+    console.log(subInfo.tier);
+
+    let role = '';
+    switch (subInfo.tier) {
     case "1000":
-        role = "Tier 1";
+        role = "tier1";
         break;
     case "2000":
-        role = "Tier 2";
+        role = "tier2";
         break;
     case "3000":
-        role = "Tier 3";
+        role = "tier3";
         break;
     }
 
@@ -97,7 +94,9 @@ async function getUsersChatRoles(userIdOrName = "") {
         (await getUserChatInfoByName(userIdOrName)) :
         (await getUserChatInfo(userIdOrName));
 
-    if (userChatInfo == null) {
+    const subscriberRole = await getUserSubscriberRole(userIdOrName);
+
+    if (userChatInfo == null && subscriberRole == null) {
         return [];
     }
 
@@ -114,6 +113,10 @@ async function getUsersChatRoles(userIdOrName = "") {
                 roles.push("mod");
             }
         }
+    }
+
+    if (subscriberRole != null) {
+        roles.push(subscriberRole);
     }
 
     userRoleCache.set(userChatInfo._id, roles);

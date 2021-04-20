@@ -119,7 +119,7 @@
                 const modRole = {
                     name: "Moderator",
                     style: {color: '#37ED3B'},
-                    rank: 6
+                    rank: 3
                 };
 
                 function loadRoles() {
@@ -146,39 +146,56 @@
                     }
                     for (let role of twitchRoles) {
                         switch (role) {
-                        case "vip": {
+                        case "vip":
                             roles.push({
                                 name: "VIP",
                                 style: {color: '#E175FF'},
-                                rank: 3
-                            });
-                            continue;
-                        }
-                        case "mod": {
-                            roles.push(modRole);
-                            continue;
-                        }
-                        case "sub": {
-                            roles.push({
-                                name: "Subscriber",
-                                style: {color: '#C9CCDB'},
                                 rank: 4
                             });
                             continue;
-                        }
-                        case "broadcaster": {
+                        case "mod":
+                            roles.push(modRole);
+                            continue;
+                        case "sub":
+                            roles.push({
+                                name: "Subscriber",
+                                style: {color: '#C9CCDB'},
+                                rank: 5
+                            });
+                            continue;
+                        case "broadcaster":
                             roles.push({
                                 name: "Channel Owner",
                                 style: {color: 'white'},
                                 rank: 0
                             });
                             continue;
-                        }
+                        case "tier1":
+                            roles.push({
+                                name: "Tier 1 Sub",
+                                style: {color: '#d6d7dc'},
+                                rank: 6
+                            });
+                            continue;
+                        case "tier2":
+                            roles.push({
+                                name: "Tier 2 Sub",
+                                style: {color: '#b1c5d4'},
+                                rank: 7
+                            });
+                            continue;
+                        case "tier3":
+                            roles.push({
+                                name: "Tier 3 Sub",
+                                style: {color: '#71879a'},
+                                rank: 8
+                            });
+                            continue;
                         }
                     }
 
                     for (let teamRole of teamRoles) {
-                        let rank = 6;
+                        let rank = 8;
 
                         roles.push({
                             name: teamRole._data.display_name,
