@@ -36,13 +36,15 @@ async function getUserSubInfo(userId) {
     const client = twitchApi.getClient();
     const streamer = accountAccess.getAccounts().streamer;
     const subInfo = await client.helix.subscriptions.getSubscriptionForUser(streamer.userId, userId);
-    
+
     return subInfo;
 }
 
 async function getUserSubInfoByName(username) {
     try {
+        const client = twitchApi.getClient();
         const user = await client.helix.users.getUserByName(username);
+        
         return getUserSubInfo(user.id);
     } catch (error) {
         return null;
