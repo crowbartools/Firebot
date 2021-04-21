@@ -119,6 +119,12 @@
                         key: "events"
                     },
                     {
+                        label: "Event Sets",
+                        all: eventsService.getAllEventGroups(),
+                        nameField: "name",
+                        key: "eventGroups"
+                    },
+                    {
                         label: "Hotkeys",
                         all: hotkeyService.getHotkeys(),
                         nameField: "name",
@@ -169,6 +175,7 @@
                         currencies: [],
                         effectQueues: [],
                         events: [],
+                        eventGroups: [],
                         hotkeys: [],
                         presetEffectLists: [],
                         timers: [],
