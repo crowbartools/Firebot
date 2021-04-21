@@ -11,10 +11,20 @@ const model = {
         handle: "replace",
         description: "Replaces a search value with a replacement value",
         usage: "replace[textInput, searchValue, replacement]",
+        examples: [
+            {
+                usage: "replace[textInput, searchValue, replacement, true]",
+                description: "Allows searching using a regular expression."
+            },
+            {
+                usage: "replace[textInput, searchValue, replacement, true, flags]",
+                description: "Add flags when using a regular expression."
+            }
+        ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, input, search, replacement = "", searchIsRegex = false) => {
+    evaluator: (_, input, search, replacement = "", searchIsRegex = false, flags = "g") => {
 
         if (input == null) {
             return "[Missing input]";
@@ -24,7 +34,7 @@ const model = {
             return input;
         }
 
-        return input.replace(new RegExp(searchIsRegex ? search : utils.escapeRegExp(search), "g"), replacement);
+        return input.replace(new RegExp(searchIsRegex ? search : utils.escapeRegExp(search), flags), replacement);
     }
 };
 
