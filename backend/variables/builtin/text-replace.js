@@ -17,14 +17,14 @@ const model = {
                 description: "Allows searching using a regular expression."
             },
             {
-                usage: "replace[textInput, searchValue, replacement, flags, true]",
+                usage: "replace[textInput, searchValue, replacement, true, flags]",
                 description: "Add flags when using a regular expression."
             }
         ],
         categories: [VariableCategory.TEXT],
         possibleDataOutput: [OutputDataType.TEXT]
     },
-    evaluator: (_, input, search, replacement = "", flags = "g", searchIsRegex = false) => {
+    evaluator: (_, input, search, replacement = "", searchIsRegex = false, flags = "g") => {
 
         if (input == null) {
             return "[Missing input]";
