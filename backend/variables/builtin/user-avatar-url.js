@@ -1,7 +1,7 @@
 "use strict";
 
 const twitchApi = require("../../twitch-api/client");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

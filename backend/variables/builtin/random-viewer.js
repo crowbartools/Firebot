@@ -4,7 +4,7 @@
 const util = require("../../utility");
 const logger = require("../../logwrapper");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 const twitchChat = require("../../chat/twitch-chat");
 
 const model = {

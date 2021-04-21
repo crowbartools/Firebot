@@ -4,7 +4,7 @@
 
 const fs = require("fs-extra");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const logger = require("../../logwrapper");
 

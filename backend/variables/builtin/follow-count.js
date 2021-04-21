@@ -2,7 +2,7 @@
 
 'use strict';
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const api = require("../../twitch-api/api");
 const accountAccess = require("../../common/account-access");

@@ -3,7 +3,7 @@
 "use strict";
 
 const accountAccess = require("../../common/account-access");
-const { OutputDataType } = require("../../../shared/variable-contants");
+const { OutputDataType } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

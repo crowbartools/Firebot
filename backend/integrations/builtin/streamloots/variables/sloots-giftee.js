@@ -1,7 +1,7 @@
 "use strict";
 
 const { EffectTrigger } = require("../../../../effects/models/effectModels");
-const { OutputDataType } = require("../../../../../shared/variable-contants");
+const { OutputDataType } = require("../../../../../shared/variable-constants");
 
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["streamloots:purchase"];
