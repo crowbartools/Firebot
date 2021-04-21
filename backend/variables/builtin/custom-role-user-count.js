@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 const customRolesManager = require("../../roles/custom-roles-manager");
 
 const model = {

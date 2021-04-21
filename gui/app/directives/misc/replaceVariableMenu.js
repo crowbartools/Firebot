@@ -1,7 +1,7 @@
 "use strict";
 (function() {
 
-    const { VariableCategory } = require("../../shared/variable-contants");
+    const { VariableCategory } = require("../../shared/variable-constants");
 
     angular.module("firebotApp")
         .directive("replaceVariables", function($compile, $document) {
