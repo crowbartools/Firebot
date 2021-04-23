@@ -6,12 +6,12 @@
 <!-- Please tag any applicable Issues (ie #123) here -->
 
 
-### Screenshots
-<!-- If applicable, please provide screenshots of any UI changes or additions -->
-
-
 ### Testing
 <!-- Outline any testing (manual or regression) you've done for these changes -->
+
+
+### Screenshots
+<!-- If applicable, please provide screenshots of any UI changes or additions -->
 
 
 <!--
