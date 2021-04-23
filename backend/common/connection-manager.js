@@ -33,7 +33,12 @@ async function checkOnline() {
     updateOnlineStatus(isOnline);
 }
 
+const serviceConnectionStates = {};
+
 function emitServiceConnectionUpdateEvents(serviceId, connectionState) {
+
+    serviceConnectionStates[serviceId] = connectionState;
+
     const eventData = {
         serviceId: serviceId,
         connectionState: connectionState
@@ -56,6 +61,11 @@ twitchChat.on("reconnecting", () => emitServiceConnectionUpdateEvents("chat", Co
 // Integrations listener
 integrationManager.on("integration-connected", (id) => emitServiceConnectionUpdateEvents(`integration.${id}`, ConnectionState.Connected));
 integrationManager.on("integration-disconnected", (id) => emitServiceConnectionUpdateEvents(`integration.${id}`, ConnectionState.Disconnected));
+
+let connectionUpdateInProgress = false;
+
+let currentlyWaitingService = null;
+
 
 /**@extends NodeJS.EventEmitter */
 class ConnectionManager extends EventEmitter {
@@ -83,6 +93,10 @@ class ConnectionManager extends EventEmitter {
         return twitchChat.chatIsConnected();
     }
 
+    serviceIsConnected(serviceId) {
+        return serviceConnectionStates[serviceId] === ConnectionState.Connected;
+    }
+
     updateChatConnection(shouldConnect) {
         if (shouldConnect) {
             twitchChat.connect();
@@ -107,23 +121,80 @@ class ConnectionManager extends EventEmitter {
         }
         return true;
     }
+
+    updateServiceConnection(serviceId, shouldConnect) {
+        switch (serviceId) {
+        case "chat":
+            return this.updateChatConnection(shouldConnect);
+        default:
+            if (serviceId.startsWith("integration.")) {
+                const integrationId = serviceId.replace("integration.", "");
+                return this.updateIntegrationConnection(integrationId, shouldConnect);
+            }
+        }
+        return false;
+    }
+
+    async updateConnectionForServices(services) {
+
+        if (connectionUpdateInProgress) return;
+
+        frontendCommunicator.send("toggle-connections-started");
+
+        connectionUpdateInProgress = true;
+
+        const accountAccess = require("./account-access");
+        if (!accountAccess.getAccounts().streamer.loggedIn) {
+            renderWindow.webContents.send("error", "You must sign into your Streamer Twitch account before connecting.");
+        } else if (accountAccess.streamerTokenIssue()) {
+            const botTokenIssue = accountAccess.getAccounts().bot.loggedIn && accountAccess.botTokenIssue();
+
+            const message = `There is an issue with the Streamer ${botTokenIssue ? ' and Bot' : ""} Twitch account${botTokenIssue ? 's' : ""}. Please re-sign into the account${botTokenIssue ? 's' : ""} and try again.`;
+            renderWindow.webContents.send("error", message);
+        } else {
+            const waitForServiceConnectDisconnect = (serviceId, action = true) => {
+                const shouldToggle = action === "toggle";
+
+                const shouldConnect = shouldToggle ? !this.serviceIsConnected(serviceId) : action;
+
+                if (shouldConnect === this.serviceIsConnected(serviceId)) {
+                    return Promise.resolve();
+                }
+
+                const promise = new Promise(resolve => {
+                    currentlyWaitingService = {
+                        serviceId: serviceId,
+                        callback: () => resolve()
+                    };
+                });
+
+                const willUpdate = this.updateServiceConnection(serviceId, shouldConnect);
+                if (!willUpdate && currentlyWaitingService) {
+                    currentlyWaitingService.callback();
+                    currentlyWaitingService = null;
+                }
+                return promise;
+            };
+
+            try {
+                for (const service of services) {
+                    await util.wait(175);
+                    await waitForServiceConnectDisconnect(service.id, service.action);
+                }
+            } catch (error) {
+                logger.error("error connecting services", error);
+            }
+        }
+
+        connectionUpdateInProgress = false;
+
+        currentlyWaitingService = null;
+
+        frontendCommunicator.send("connect-services-complete");
+    }
 }
 manager = new ConnectionManager();
 
-function updateServiceConnection(serviceId, shouldConnect) {
-    switch (serviceId) {
-    case "chat":
-        return manager.updateChatConnection(shouldConnect);
-    default:
-        if (serviceId.startsWith("integration.")) {
-            const integrationId = serviceId.replace("integration.", "");
-            return manager.updateIntegrationConnection(integrationId, shouldConnect);
-        }
-    }
-    return false;
-}
-
-let currentlyWaitingService = null;
 manager.on("service-connection-update", (data) => {
     if (currentlyWaitingService == null) return;
 
@@ -140,56 +211,25 @@ manager.on("service-connection-update", (data) => {
 frontendCommunicator.on("connect-sidebar-controlled-services", async () => {
     const serviceIds = settings.getSidebarControlledServices();
 
-    const accountAccess = require("./account-access");
-    if (!accountAccess.getAccounts().streamer.loggedIn) {
-        renderWindow.webContents.send("error", "You must sign into your Streamer Twitch account before connecting.");
-    } else if (accountAccess.streamerTokenIssue()) {
-        const botTokenIssue = accountAccess.getAccounts().bot.loggedIn && accountAccess.botTokenIssue();
-
-        const message = `There is an issue with the Streamer ${botTokenIssue ? ' and Bot' : ""} Twitch account${botTokenIssue ? 's' : ""}. Please re-sign into the account${botTokenIssue ? 's' : ""} and try again.`;
-        renderWindow.webContents.send("error", message);
-    } else {
-        const waitForServiceConnectDisconnect = (serviceId) => {
-            const promise = new Promise(resolve => {
-                currentlyWaitingService = {
-                    serviceId: serviceId,
-                    callback: () => resolve()
-                };
-            });
-            const willUpdate = updateServiceConnection(serviceId, true);
-            if (!willUpdate && currentlyWaitingService) {
-                currentlyWaitingService.callback();
-                currentlyWaitingService = null;
-            }
-            return promise;
-        };
-
-        try {
-            for (const id of serviceIds) {
-                await util.wait(175);
-                await waitForServiceConnectDisconnect(id);
-            }
-        } catch (error) {
-            logger.error("error connecting services", error);
-        }
-    }
-
-    frontendCommunicator.send("connect-sidebar-controlled-services-complete");
+    manager.updateConnectionForServices(serviceIds.map(id => ({
+        id,
+        action: true
+    })));
 });
 
 frontendCommunicator.on("disconnect-sidebar-controlled-services", () => {
     const serviceIds = settings.getSidebarControlledServices();
     for (const id of serviceIds) {
-        updateServiceConnection(id, false);
+        manager.updateServiceConnection(id, false);
     }
 });
 
 frontendCommunicator.on("connect-service", (serviceId) => {
-    updateServiceConnection(serviceId, true);
+    manager.updateServiceConnection(serviceId, true);
 });
 
 frontendCommunicator.on("disconnect-service", (serviceId) => {
-    updateServiceConnection(serviceId, false);
+    manager.updateServiceConnection(serviceId, false);
 });
 
 module.exports = manager;

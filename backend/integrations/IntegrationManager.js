@@ -121,8 +121,8 @@ class IntegrationManager extends EventEmitter {
     }
 
     getIntegrationDefinitionById(integrationId) {
-        let integration = this.getIntegrationById(integrationId);
-        return integration.definition;
+        const integration = this.getIntegrationById(integrationId);
+        return integration ? integration.definition : null;
     }
 
     integrationIsConnectable(integrationId) {

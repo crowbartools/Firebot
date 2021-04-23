@@ -230,13 +230,18 @@
                 }
             };
 
-            backendCommunicator.on("connect-sidebar-controlled-services-complete", () => {
+            backendCommunicator.on("connect-services-complete", () => {
                 service.isConnectingAll = false;
                 if (service.sidebarServicesOverallStatus === 'disconnected') {
                     soundService.connectSound("Offline");
                 } else {
                     soundService.connectSound("Online");
                 }
+            });
+
+            backendCommunicator.on("toggle-connections-started", () => {
+                soundService.resetPopCounter();
+                service.isConnectingAll = true;
             });
 
             const playConnectionStatusSound = utilityService.debounce(connectionState => {
@@ -257,7 +262,9 @@
                     if (!service.isConnectingAll) {
                         playConnectionStatusSound(connectionState);
                     } else {
-                        soundService.popSound();
+                        if (connectionState === ConnectionState.Connected) {
+                            soundService.popSound();
+                        }
                     }
                 }
 
