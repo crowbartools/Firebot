@@ -24,7 +24,7 @@ const toggleConnection = {
     optionsTemplate: `
         <eos-container header="Mode">
             <div style="padding-left: 10px;">
-                <label class="control-fb control--radio">All Connections <span class="muted"><br />Update all connections (Twitch any linked integrations)</span>
+                <label class="control-fb control--radio">All Connections <span class="muted"><br />Update all connections (Twitch and any linked integrations)</span>
                     <input type="radio" ng-model="effect.mode" value="all"/>
                     <div class="control__indicator"></div>
                 </label>
