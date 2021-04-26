@@ -448,7 +448,6 @@ ipcMain.on("deleteCurrency", (event, currencyId) => {
 
 exports.adjustCurrencyForUser = adjustCurrencyForUser;
 exports.addCurrencyToOnlineUsers = addCurrencyToOnlineUsers;
-exports.addCurrencyToOnlineUsers = addCurrencyToOnlineUsers;
 exports.getUserCurrencyAmount = getUserCurrencyAmount;
 exports.purgeCurrencyById = purgeCurrencyById;
 exports.addCurrencyToNewUser = addCurrencyToNewUser;
