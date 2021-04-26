@@ -113,6 +113,7 @@ function buildModules(scriptManifest) {
         userDb: require("../../../database/userDatabase"),
         quotesManager: require("../../../quotes/quotes-manager"),
         frontendCommunicator: require("../../frontend-communicator"),
+        counterManager: require("../../../counters/counter-manager"),
         mixplay: {},
         utils: require("../../../utility")
     };

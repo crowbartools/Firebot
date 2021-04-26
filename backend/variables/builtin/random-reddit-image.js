@@ -3,7 +3,7 @@
 "use strict";
 
 const randomRedditImage = require("../../common/handlers/redditProcessor");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

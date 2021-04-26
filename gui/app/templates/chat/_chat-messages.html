@@ -25,29 +25,28 @@
         >
       </div>
       <div class="chat-window" scroll-glue>
-        <div class="chat-window-message-wrapper">
-          <div
-            ng-repeat="chatItem in cms.chatQueue | limitTo:messageDisplayLimit track by chatItem.id"
-            class="chat-item"
-            ng-class="{ alternate: alternateBackgrounds}"
-          >
-            <chat-message
-              ng-if="chatItem.type === 'message'"
-              message="chatItem.data"
-              compact-display="compactDisplay"
-              alternate-backgrounds="alternateBackgrounds"
-              hide-deleted-messagess="hideDeletedMessages"
-              update-chat-input="updateChatInput(text)"
-            />
-            <reward-redemption
-              ng-if="chatItem.type === 'redemption'"
-              redemption="chatItem.data"
-            />
-            <chat-alert
-              ng-if="chatItem.type === 'alert'"
-              message="chatItem.data"
-            />
-          </div>
+        <div
+          ng-repeat="chatItem in cms.chatQueue | limitTo:messageDisplayLimit track by chatItem.id"
+          class="chat-item"
+          ng-class="{ alternate: alternateBackgrounds}"
+          scroll-glue-anchor
+        >
+          <chat-message
+            ng-if="chatItem.type === 'message'"
+            message="chatItem.data"
+            compact-display="compactDisplay"
+            alternate-backgrounds="alternateBackgrounds"
+            hide-deleted-messages="hideDeletedMessages"
+            update-chat-input="updateChatInput(text)"
+          />
+          <reward-redemption
+            ng-if="chatItem.type === 'redemption'"
+            redemption="chatItem.data"
+          />
+          <chat-alert
+            ng-if="chatItem.type === 'alert'"
+            message="chatItem.data"
+          />
         </div>
       </div>
     </div>

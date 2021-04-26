@@ -16,6 +16,18 @@ const twitchRoles = [
     {
         id: "broadcaster",
         name: "Streamer"
+    },
+    {
+        id: "tier1",
+        name: "Tier 1 Sub"
+    },
+    {
+        id: "tier2",
+        name: "Tier 2 Sub"
+    },
+    {
+        id: "tier3",
+        name: "Tier 3 Sub"
     }
 ];
 

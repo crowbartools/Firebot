@@ -3,14 +3,15 @@
 (function() {
     angular
         .module("firebotApp")
-        .factory("sidebarManager", function($timeout, $rootScope) {
+        .factory("sidebarManager", function($timeout, $rootScope, settingsService) {
             let service = {};
 
-            service.navExpanded = true;
+            service.navExpanded = settingsService.getSidebarExpanded();
 
             service.toggleNav = function() {
                 service.navExpanded = !service.navExpanded;
                 $rootScope.$broadcast("navToggled");
+                settingsService.setSidebarExpanded(service.navExpanded);
             };
 
             service.currentTab = "commands";
@@ -85,6 +86,12 @@
                 .when("/chat-feed", {
                     templateUrl: "./templates/chat/_chat-messages.html",
                     controller: "chatMessagesController"
+                })
+
+
+                .when("/channel-rewards", {
+                    templateUrl: "./templates/_channel-rewards.html",
+                    controller: "channelRewardsController"
                 })
 
                 .when("/moderation", {

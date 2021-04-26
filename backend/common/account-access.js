@@ -57,7 +57,7 @@ let cache = new AccountCache(
     }
 );
 
-function sendAccoutUpdate() {
+function sendAccountUpdate() {
     frontendCommunicator.send("accountUpdate", cache);
     accountEvents.emit("account-update", cache);
 }
@@ -117,7 +117,7 @@ async function loadAccountData(emitUpdate = true) {
     }
 
     if (emitUpdate) {
-        sendAccoutUpdate();
+        sendAccountUpdate();
     }
 }
 
@@ -155,7 +155,7 @@ function updateAccount(accountType, account, emitUpdate = true) {
     saveAccountDataToFile(accountType);
 
     if (emitUpdate) {
-        sendAccoutUpdate();
+        sendAccountUpdate();
     }
 }
 
@@ -189,7 +189,7 @@ async function ensureTokenRefreshed(accountType, emitUpdate = false) {
         cache[accountType].auth = updatedToken;
         saveAccountDataToFile(accountType);
         if (emitUpdate) {
-            sendAccoutUpdate();
+            sendAccountUpdate();
         }
         return true;
     }
@@ -220,7 +220,7 @@ function removeAccount(accountType) {
         username: accountType === "streamer" ? "Streamer" : "Bot",
         loggedIn: false
     };
-    sendAccoutUpdate();
+    sendAccountUpdate();
 }
 
 frontendCommunicator.on("getAccounts", () => {

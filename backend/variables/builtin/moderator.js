@@ -5,7 +5,7 @@ const {
     EffectTrigger
 } = require("../../effects/models/effectModels");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
 triggers[EffectTrigger.MANUAL] = true;

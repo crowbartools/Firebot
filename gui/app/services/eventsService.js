@@ -163,6 +163,10 @@ const { sort } = require("mathjs");
             return mainEvents;
         };
 
+        service.getAllEventGroups = () => {
+            return groups;
+        };
+
         service.getAllEvents = () => {
             return [
                 ...mainEvents,

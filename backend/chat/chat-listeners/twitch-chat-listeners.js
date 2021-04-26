@@ -90,6 +90,10 @@ exports.setupChatListeners = (streamerChatClient) => {
         viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
     });
 
+    streamerChatClient.onMessageRemove((_channel, messageId) => {
+        frontendCommunicator.send("twitch:chat:message:deleted", messageId);
+    });
+
     streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
         const hostListener = require("../../events/twitch-events/host");
         hostListener.triggerHost(byChannel, auto, viewers);

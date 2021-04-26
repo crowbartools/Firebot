@@ -104,6 +104,11 @@
                         });
 
                         actions.push({
+                            name: "Highlight This Message",
+                            icon: "fa-eye"
+                        });
+
+                        actions.push({
                             name: "Shoutout",
                             icon: "fa-megaphone"
                         });
@@ -177,6 +182,9 @@
                         break;
                     case "quote this message":
                         updateChatField(`!quote add @${userName} ${rawText}`);
+                        break;
+                    case "highlight this message":
+                        chatMessagesService.highlightMessage(userName, rawText);
                         break;
                     case "shoutout":
                         updateChatField(`!so @${userName}`);

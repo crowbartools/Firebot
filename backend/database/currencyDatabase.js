@@ -5,6 +5,7 @@ const profileManager = require("../common/profile-manager");
 const logger = require("../logwrapper");
 const { settings } = require("../common/settings-access.js");
 const customRolesManager = require("../roles/custom-roles-manager");
+const teamRolesManager = require("../roles/team-roles-manager");
 const twitchRolesManager = require("../../shared/twitch-roles");
 const firebotRolesManager = require("../roles/firebot-roles-manager");
 const util = require("../utility");
@@ -149,6 +150,7 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
                 u.allRoles = [
                     ...u.twitchRoles.map(tr => twitchRolesManager.mapTwitchRole(tr)),
                     ...customRolesManager.getAllCustomRolesForViewer(u.username),
+                    ...teamRolesManager.getAllTeamRolesForViewer(u.username),
                     ...firebotRolesManager.getAllFirebotRolesForViewer(u.username)
                 ];
                 return u;
@@ -204,6 +206,41 @@ function addCurrencyToOnlineUsers(currencyId, value, ignoreDisable = false, adju
             // Do the loop!
             for (let user of docs) {
                 if (user != null && user.disableActiveUserList !== true &&
+                    (ignoreDisable || !user.disableAutoStatAccrual)) {
+                    await adjustCurrency(user, currencyId, value, adjustType);
+                }
+            }
+            return resolve();
+        });
+    });
+}
+
+/**
+ * Adjusts currency for all users in the database
+ */
+function adjustCurrencyForAllUsers(currencyId, value, ignoreDisable = false,
+    adjustType = "adjust") {
+    return new Promise((resolve, reject) => {
+        if (!isViewerDBOn()) {
+            return reject();
+        }
+
+        // Don't do anything for 0 points or non numbers.
+        value = parseInt(value);
+        if (isNaN(value) || value === 0) {
+            return resolve();
+        }
+
+        const db = userDatabase.getUserDb();
+        db.find({}, async (err, docs) => {
+            // If error
+            if (err) {
+                return reject(err);
+            }
+
+            // Do the loop!
+            for (const user of docs) {
+                if (user != null &&
                     (ignoreDisable || !user.disableAutoStatAccrual)) {
                     await adjustCurrency(user, currencyId, value, adjustType);
                 }
@@ -421,3 +458,4 @@ exports.addCurrencyToUserGroupOnlineUsers = addCurrencyToUserGroupOnlineUsers;
 exports.isViewerDBOn = isViewerDBOn;
 exports.getTopCurrencyHolders = getTopCurrencyHolders;
 exports.getTopCurrencyPosition = getTopCurrencyPosition;
+exports.adjustCurrencyForAllUsers = adjustCurrencyForAllUsers;

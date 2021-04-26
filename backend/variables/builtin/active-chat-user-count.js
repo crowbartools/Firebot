@@ -5,7 +5,7 @@ const logger = require("../../logwrapper");
 
 const activeViewerHandler = require("../../chat/chat-listeners/active-user-handler");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

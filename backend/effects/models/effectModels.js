@@ -18,6 +18,7 @@ const EffectTrigger = Object.freeze({
     TIMER: "timer",
     COUNTER: "counter",
     PRESET_LIST: "preset",
+    CHANNEL_REWARD: "channel_reward",
     MANUAL: "manual",
     ALL: "all"
 });

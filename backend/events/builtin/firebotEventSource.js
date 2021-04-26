@@ -50,6 +50,16 @@ const firebotEventSource = {
             name: "Custom Variable Created",
             description: "When a custom variable gets created",
             cached: false
+        },
+        {
+            id: "highlight-message",
+            name: "Chat Message Highlight",
+            description: "When you select to highlight a message on your overlay.",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                messageText: "Test message"
+            }
         }
     ]
 };

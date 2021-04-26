@@ -1,6 +1,6 @@
 "use strict";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const nth = n => ["st", "nd", "rd"][(((n < 0 ? -n : n) + 90) % 100 - 10) % 10 - 1] || "th";
 
