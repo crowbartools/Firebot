@@ -14,7 +14,7 @@ function mapRoles(teams) {
 }
 
 async function getAllTeamRolesForViewer(username) {
-    const roles = await twitchApi.teams.getMatchingTeamsByUsername(username);
+    const roles = await twitchApi.teams.getMatchingTeamsByName(username);
 
     return mapRoles(roles);
 }
