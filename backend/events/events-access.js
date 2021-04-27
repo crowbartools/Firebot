@@ -189,6 +189,7 @@ exports.triggerUiRefresh = () => {
 
 exports.saveNewEventToMainEvents = saveNewEventToMainEvents;
 exports.saveGroup = saveGroup;
+exports.deleteGroup = deleteGroup;
 exports.removeEventFromMainEvents = removeEventFromMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;
