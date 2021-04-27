@@ -24,7 +24,28 @@
           >{{disabledMessage}}</span
         >
       </div>
-      <div class="chat-window" scroll-glue>
+      <button
+        ng-hide="scrollGlued"
+        ng-click="scrollGlued = true"
+        class="btn-sm clickable"
+        style="
+          position: absolute;
+          bottom: 0px;
+          left: 50%;
+          transform: translateX(-50%);
+          margin-bottom: 10px;
+          background: rgba(104, 105, 108, 0.6);
+          border: none;
+          color: white;
+        "
+      >
+        Chat Paused Due to Scroll
+      </button>
+      <div
+        class="chat-window"
+        ng-init="scrollGlued = true"
+        scroll-glue="scrollGlued"
+      >
         <div
           ng-repeat="chatItem in cms.chatQueue | limitTo:messageDisplayLimit track by chatItem.id"
           class="chat-item"
