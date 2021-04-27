@@ -217,6 +217,8 @@ function removeSetupComponents(components) {
                 effectQueueManager.triggerUiRefresh();
             } else if (componentType === "events") {
                 eventsAccess.triggerUiRefresh();
+            } else if (componentType === "eventGroups") {
+                eventsAccess.triggerUiRefresh();
             } else if (componentType === "presetEffectLists") {
                 presetEffectListManager.triggerUiRefresh();
             } else if (componentType === "viewerRoles") {
