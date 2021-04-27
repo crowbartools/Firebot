@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           npm config set msvs_version 2015
-          npm install --quiet --global --production windows-build-tools@4.0.0
+          npm install --quiet --global --production windows-build-tools@5.2.2
 
       - name: Build Prep for Linux
         if: steps.tagged.outputs.tagged == 1 && runner.os == 'linux'
