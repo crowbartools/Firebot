@@ -1,13 +1,14 @@
 {
   "name": "firebotv5",
-  "version": "5.36.0",
+  "version": "5.37.0",
   "description": "A chat bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
     "start": "grunt scss && electron . --dev --js-flags=\"--harmony\"",
     "start:noscss": "electron . --js-flags=\"--harmony\"",
-    "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
-    "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.1.9 --arch=darwin --dist-url=https://atom.io/download/atom-shell",
+    "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.2.4 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
+    "rebuild:new": "npm rebuild --runtime=electron --target=7.2.4 --disturl=https://atom.io/download/atom-shell --abi=83",
+    "rebuild:darwin": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.2.4 --arch=darwin --dist-url=https://atom.io/download/atom-shell",
     "setup": "npm install && npm rebuild && npm run rebuild"
   },
   "repository": "https://github.com/crowbartools/Firebot",
@@ -33,6 +34,7 @@
     "grunt-sass": "^3.1.0",
     "grunt-shell": "^3.0.1",
     "husky": "^0.14.3",
+    "node-gyp": "^8.0.0",
     "node-sass": "^4.14.1"
   },
   "dependencies": {
@@ -56,7 +58,7 @@
     "angularjs-scroll-glue": "^2.2.0",
     "angularjs-slider": "^6.7.0",
     "archiver": "^2.1.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "big-text.js": "^1.0.1",
     "body-parser": "^1.19.0",
     "carina": "^0.11.2",
@@ -91,7 +93,7 @@
     "ng-toast": "^2.0.0",
     "ng-youtube-embed": "^1.7.16",
     "node-cache": "^4.2.1",
-    "node-hue-api": "^4.0.7",
+    "node-hue-api": "^4.0.10",
     "node-json-db": "^0.7.3",
     "parse-link-header": "^1.0.1",
     "probe-image-size": "^5.0.0",

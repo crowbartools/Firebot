@@ -2,8 +2,7 @@
 name: Feature request
 about: Suggest an idea for Firebot
 title: "[Feature Request] "
-labels: Feature Request
-assignees: ebiggz, LastMageTV
+labels: Enhancement
 
 ---
 
