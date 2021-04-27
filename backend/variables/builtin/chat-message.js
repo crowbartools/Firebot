@@ -31,7 +31,6 @@ const model = {
 
         } else if (trigger.type === EffectTrigger.EVENT) {
             // if trigger is event, build chat message from chat event data
-            console.log(trigger.metadata.eventData);
             chatMessage = trigger.metadata.chatMessage || trigger.metadata.eventData.messageText;
         }
 
