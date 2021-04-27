@@ -39,7 +39,7 @@ jobs:
         if: steps.tagged.outputs.tagged == 1 && runner.os == 'windows'
         shell: bash
         run: |
-          npm config set msvs_version 2017
+          npm config set msvs_version 2019
           npm install --quiet --global --production windows-build-tools@4.0.0
 
       - name: Build Prep for Linux
