@@ -12,6 +12,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             let service = {};
 
             let customRoles = {};
+            let teamRoles = {};
 
             service.loadCustomRoles = async function() {
                 let roles = await backendCommunicator.fireEventAsync("getCustomRoles");
@@ -45,7 +46,6 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 service.saveCustomRole(role);
             };
 
-
             service.removeUserFromRole = function(roleId, username) {
                 if (!roleId || !username) return;
 
@@ -70,6 +70,19 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
                 backendCommunicator.fireEvent("deleteCustomRole", roleId);
             };
 
+            service.loadTeamRoles = async function() {
+                const roles = await backendCommunicator.fireEventAsync("getTeamRoles");
+
+                if (roles != null) {
+                    teamRoles = roles;
+                }
+            };
+            service.loadTeamRoles();
+
+            service.getTeamRoles = function() {
+                return Object.values(teamRoles);
+            };
+
             const firebotRoles = firebotRoleConstants.getFirebotRoles();
             service.getFirebotRoles = function() {
                 return firebotRoles;
@@ -86,7 +99,7 @@ const firebotRoleConstants = require("../../shared/firebot-roles");
             };
 
             service.getAllRoles = () => {
-                return service.getTwitchRoles().concat(service.getFirebotRoles()).concat(service.getCustomRoles());
+                return service.getTwitchRoles().concat(service.getTeamRoles()).concat(service.getFirebotRoles()).concat(service.getCustomRoles());
             };
 
             service.getRoleById = function(id) {

@@ -117,6 +117,13 @@ function importSetup(setup, selectedCurrency) {
     }
     eventsAccess.triggerUiRefresh();
 
+    // events sets
+    const eventGroups = setup.components.eventGroups || [];
+    for (const eventGroup of eventGroups) {
+        eventsAccess.saveGroup(eventGroup);
+    }
+    eventsAccess.triggerUiRefresh();
+
     // hotkeys
     const hotkeys = setup.components.hotkeys || [];
     const hotkeyDb = profileManager.getJsonDbInProfile("/hotkeys");

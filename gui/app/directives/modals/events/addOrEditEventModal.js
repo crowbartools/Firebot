@@ -41,7 +41,7 @@
                     </div>
 
                     <div class="controls-fb-inline effect-setting-container">
-                        <label class="control-fb control--checkbox" ng-if="!$ctrl.isNewEvent">Enabled
+                        <label class="control-fb control--checkbox">Enabled
                             <input type="checkbox" ng-model="$ctrl.event.active" aria-label="..." checked>
                             <div class="control__indicator"></div>
                         </label>

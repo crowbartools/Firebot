@@ -6,7 +6,7 @@ const logger = require("../../logwrapper");
 const activeUserHandler = require('../../chat/chat-listeners/active-user-handler');
 const customRoleManager = require('../../roles/custom-roles-manager');
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

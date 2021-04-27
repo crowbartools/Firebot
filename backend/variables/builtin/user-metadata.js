@@ -1,6 +1,6 @@
 "use strict";
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 function isObjectOrArray(data) {
     return Array.isArray(data) || (typeof data === 'object' && !(typeof data === 'string' || data instanceof String));

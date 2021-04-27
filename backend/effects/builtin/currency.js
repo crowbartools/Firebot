@@ -92,6 +92,10 @@ const currency = {
                     <label class="control-fb control--radio">All Online Users
                         <input type="radio" ng-model="effect.target" value="allOnline"/>
                         <div class="control__indicator"></div>
+                    </label> 
+                    <label class="control-fb control--radio">All Viewers
+                        <input type="radio" ng-model="effect.target" value="allViewers"/>
+                        <div class="control__indicator"></div>
                     </label>             
                 </div>
 
@@ -184,6 +188,7 @@ const currency = {
         $scope.hasCustomRoles = viewerRolesService.getCustomRoles().length > 0;
         $scope.getCustomRoles = viewerRolesService.getCustomRoles;
         $scope.getFirebotRoles = viewerRolesService.getFirebotRoles;
+        $scope.getTeamRoles = viewerRolesService.getTeamRoles;
         $scope.getMixerRoles = viewerRolesService.getMixerRoles;
 
         $scope.isRoleChecked = function(role) {
@@ -220,9 +225,9 @@ const currency = {
             }
 
             // What should this do when triggered.
-            let userTarget = event.effect.userTarget;
-            let adjustType = event.effect.action;
-            let amount = event.effect.amount;
+            const userTarget = event.effect.userTarget;
+            const adjustType = event.effect.action;
+            const amount = event.effect.amount;
 
             if (isNaN(amount)) {
                 return resolve({
@@ -249,6 +254,15 @@ const currency = {
                 case "allOnline":
                     // Give currency to all online.
                     await currencyDatabase.addCurrencyToOnlineUsers(
+                        event.effect.currency,
+                        currency,
+                        true,
+                        adjustType
+                    );
+                    break;
+                case "allViewers":
+                    // Give currency to all viewers.
+                    await currencyDatabase.adjustCurrencyForAllUsers(
                         event.effect.currency,
                         currency,
                         true,

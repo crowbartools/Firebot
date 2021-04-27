@@ -6,7 +6,7 @@ const logger = require("../../logwrapper");
 const accountAccess = require("../../common/account-access");
 const twitchApi = require("../../twitch-api/client");
 
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

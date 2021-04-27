@@ -12,8 +12,8 @@ const { TriggerType } = require("../../common/EffectType");
 // commandaccess
 const commandManager = require("./CommandManager");
 
-// custom command exectutor
-const customCommandExecutor = require("./customCommandExectutor");
+// custom command executor
+const customCommandExecutor = require("./customCommandExecutor");
 
 const cooldownCache = new NodeCache({ stdTTL: 1, checkperiod: 1 });
 

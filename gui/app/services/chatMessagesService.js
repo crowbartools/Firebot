@@ -79,18 +79,6 @@
                 service.chatUsers = userList;
             };
 
-            // Delete Chat Message
-            service.deleteChatMessage = function(data) {
-                let arr = service.chatQueue,
-                    message = arr.find(message => message.id === data.id);
-
-                if (message) {
-                    message.deleted = true;
-                    message.eventInfo = "Deleted by " + data.moderator.user_name + '.';
-                }
-
-            };
-
             // Purge Chat Message
             service.purgeChatMessages = function(data) {
                 let chatQueue = service.chatQueue;
@@ -122,6 +110,13 @@
                 }
             };
 
+            service.highlightMessage = (username, rawText) => {
+                backendCommunicator.fireEvent("highlight-message", {
+                    username: username,
+                    chatMessage: rawText
+                });
+            };
+
             // Chat Alert Message
             service.chatAlertMessage = function(message) {
 
@@ -132,116 +127,11 @@
                 };
 
                 messageHoldingQueue.push(alertItem);
-                // let data = {
-                //     id: "System" + uuid(),
-                //     user_name: "Alert", // eslint-disable-line
-                //     user_id: "firebot-system-message", // eslint-disable-line
-                //     user_roles: [ // eslint-disable-line
-                //         "System"
-                //     ],
-                //     user_avatar: "../images/logo.png", // eslint-disable-line
-                //     message: {
-                //         message: [
-                //             {
-                //                 type: "text",
-                //                 data: message,
-                //                 firebotSubsegments: [
-                //                     {
-                //                         type: "rawText",
-                //                         text: message
-                //                     }
-                //                 ]
-                //             }
-                //         ],
-                //         meta: {
-                //             me: true
-                //         }
-                //     },
-                //     messageHTML: message,
-                //     date: new Date(),
-                //     whisper: false,
-                //     action: true,
-                //     mainColorRole: "System",
-                //     subscriber: false,
-                //     timestamp: moment(new Date()).format('h:mm A')
-                // };
             };
 
             backendCommunicator.on("chat-feed-system-message", (message) => {
                 service.chatAlertMessage(message);
             });
-
-            // Poll Update
-            // This is fired when a poll starts or is updated.
-            // Mixer fires this every second or so, but we only display chat alerts every 30 seconds.
-            service.pollUpdate = function(data) {
-                // If we aren't running a poll, display data right away. Otherwise display update every 30 seconds.
-                if (
-                    service.pollCache === false ||
-          service.pollCache >= data.duration + 30000
-                ) {
-                    let votes = data.responses,
-                        stringHolder = [],
-                        answers = [];
-
-                    // Parse vote data so we can form a string out of it.
-                    Object.keys(votes).forEach(key => {
-                        stringHolder.push(key + " (" + votes[key] + " votes)");
-                    });
-
-                    // If more than one answer, join it together into a string.
-                    if (stringHolder.length > 1) {
-                        answers = stringHolder.join(", ");
-                    } else {
-                        answers = stringHolder[0];
-                    }
-
-                    service.chatAlertMessage(
-                        data.author.user_name +
-              " is running a poll. Question: " +
-              data.q +
-              ". Answers: " +
-              answers +
-              "."
-                    );
-
-                    // Update Poll Cache
-                    service.pollCache = data.duration;
-                }
-            };
-
-            // Poll End
-            // This will find the winner(s) and output an alert to chat.
-            service.pollEnd = function(data) {
-                let answers = data.responses,
-                    winners = [],
-                    winnerVotes = 0;
-                Object.keys(answers).forEach(key => {
-                    let answerVotes = answers[key];
-                    if (answerVotes === winnerVotes) {
-                        // We have a tie, push to the winner array.
-                        winners.push(key);
-                        winnerVotes = answerVotes;
-                    } else if (answerVotes > winnerVotes) {
-                        // This one has more votes. Clear winner array so far and push this one in there.
-                        winners = [];
-                        winners.push(key);
-                        winnerVotes = answerVotes;
-                    }
-                });
-                winners = winners.join(", ");
-                service.chatAlertMessage(
-                    data.author.user_name +
-            "'s poll has ended. Question: " +
-            data.q +
-            ". Winner(s): " +
-            winners +
-            "."
-                );
-
-                // Clear poll cache.
-                service.pollCache = false;
-            };
 
             // User Update
             // This is sent when a user's roles are updated. For example, when someone is banned.
@@ -262,19 +152,9 @@
 
                     service.chatAlertMessage('Chat has been cleared by ' + data.clearer.user_name + '.');
                     break;
-                case "DeleteMessage":
-                    logger.info("Chat message deleted");
-                    service.deleteChatMessage(data);
-                    break;
                 case "PurgeMessage":
                     logger.info("Chat message purged");
                     service.purgeChatMessages(data);
-                    break;
-                case "PollStart":
-                    service.pollUpdate(data);
-                    break;
-                case "PollEnd":
-                    service.pollEnd(data);
                     break;
                 case "UserJoin":
                     logger.debug("Chat User Joined");
@@ -369,9 +249,20 @@
                 return false;
             };
 
+            function markMessageAsDeleted(messageId) {
+                const messageItem = service.chatQueue.find(i => i.type === "message" && i.data.id === messageId);
+
+                if (messageItem != null) {
+                    messageItem.data.deleted = true;
+                }
+            }
+
             service.deleteMessage = messageId => {
+                markMessageAsDeleted(messageId);
                 backendCommunicator.send("delete-message", messageId);
             };
+
+            backendCommunicator.on("twitch:chat:message:deleted", markMessageAsDeleted);
 
             service.changeModStatus = (username, shouldBeMod) => {
                 backendCommunicator.send("update-user-mod-status", {

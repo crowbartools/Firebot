@@ -1,5 +1,5 @@
 'use strict';
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 const model = {
     definition: {

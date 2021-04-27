@@ -4,7 +4,7 @@
 
 const mathjs = require('mathjs');
 const logger = require("../../logwrapper");
-const { OutputDataType, VariableCategory } = require("../../../shared/variable-contants");
+const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 const utils = require("../../utility");
 
 const model = {

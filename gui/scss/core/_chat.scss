@@ -444,7 +444,7 @@
     height:100%;
     overflow: auto;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     @media only screen and (max-width: 779px) {
         border-left: 1px solid $chatBorder;
     }
