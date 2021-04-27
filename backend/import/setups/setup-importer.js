@@ -190,6 +190,9 @@ function removeSetupComponents(components) {
                 case "events":
                     eventsAccess.removeEventFromMainEvents(id);
                     break;
+                case "eventGroups":
+                    eventsAccess.deleteGroup(id);
+                    break;
                 case "hotkeys":
                     frontendCommunicator.send("remove-hotkey", id);
                     break;
