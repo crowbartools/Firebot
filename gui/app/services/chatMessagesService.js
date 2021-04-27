@@ -113,7 +113,7 @@
             service.highlightMessage = (username, rawText) => {
                 backendCommunicator.fireEvent("highlight-message", {
                     username: username,
-                    chatMessage: rawText
+                    messageText: rawText
                 });
             };
 
