@@ -29,12 +29,6 @@ jobs:
         shell: bash
         run: git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.package.outputs.version }}" && echo "::set-output name=tagged::0" || echo "::set-output name=tagged::1"
 
-      - name: Setup Python
-        if: steps.tagged.outputs.tagged == 1
-        uses: 'actions/setup-python@v1'
-        with:
-          python-version: '2.7'
-
       - name: Setup Nodejs
         if: steps.tagged.outputs.tagged == 1
         uses: 'actions/setup-node@v1'
@@ -45,8 +39,8 @@ jobs:
         if: steps.tagged.outputs.tagged == 1 && runner.os == 'windows'
         shell: bash
         run: |
-          choco install python visualcpp-build-tools -y
           npm config set msvs_version 2017
+          npm install --quiet --global --production windows-build-tools@5.2.2
 
       - name: Build Prep for Linux
         if: steps.tagged.outputs.tagged == 1 && runner.os == 'linux'
