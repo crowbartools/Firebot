@@ -17,6 +17,7 @@
                 if (eventsService.getEventGroup(selectedTab) == null) {
                     return eventsService.getMainEvents();
                 }
+                
                 return eventsService.getEventGroup(selectedTab).events;
             };
 
