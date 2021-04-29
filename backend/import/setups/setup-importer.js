@@ -120,7 +120,7 @@ function importSetup(setup, selectedCurrency) {
     // events sets
     const eventGroups = setup.components.eventGroups || [];
     for (const eventGroup of eventGroups) {
-        eventsAccess.saveGroup(eventGroup);
+        eventsAccess.saveGroupFromImport(eventGroup);
     }
     eventsAccess.triggerUiRefresh();
 
