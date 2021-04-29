@@ -28,6 +28,10 @@ function saveGroup(group) {
     }
 }
 
+function saveGroupFromImport(group) {
+
+}
+
 function saveSortTags() {
     let eventsDb = getEventsDb();
     try {
@@ -189,6 +193,7 @@ exports.triggerUiRefresh = () => {
 
 exports.saveNewEventToMainEvents = saveNewEventToMainEvents;
 exports.saveGroup = saveGroup;
+exports.saveGroupFromImport = saveGroupFromImport;
 exports.removeEventFromMainEvents = removeEventFromMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;
