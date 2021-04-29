@@ -40,23 +40,13 @@ function saveAllGroups(groupsToSave) {
     }
 }
 
-function saveGroupFromImport(group) {
-    if (group == null) return;
-
-    // IF present, remove existing events with the same id.
-    for (let event of group.events) {
-        removeEventFromMainEvents(event.id);
-        removeEventFromGroups(event.id);
-    }
-
-    saveGroup(group);
-}
-
 function removeEventFromGroups(eventId) {
     for (let group in groups) {
-        let events = groups[group].events;
+        if (groups.hasOwnProperty(group)) {
+            let events = groups[group].events;
 
-        groups[group].events = events.filter(e => e.id !== eventId);
+            groups[group].events = events.filter(e => e.id !== eventId);
+        }
     }
 
     saveAllGroups(groups);
@@ -154,6 +144,18 @@ function saveNewEventToMainEvents(event) {
 function removeEventFromMainEvents(eventId) {
     mainEvents = mainEvents.filter(e => e.id !== eventId);
     saveMainEvents(mainEvents);
+}
+
+function saveGroupFromImport(group) {
+    if (group == null) return;
+
+    // IF present, remove existing events with the same id.
+    for (let event of group.events) {
+        removeEventFromMainEvents(event.id);
+        removeEventFromGroups(event.id);
+    }
+
+    saveGroup(group);
 }
 
 function getAllActiveEvents() {
