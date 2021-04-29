@@ -28,8 +28,38 @@ function saveGroup(group) {
     }
 }
 
-function saveGroupFromImport(group) {
+function saveAllGroups(groupsToSave) {
+    if (groupsToSave == null) return;
+    let eventsDb = getEventsDb();
+    try {
+        groups = groupsToSave;
+        eventsDb.push("/groups", groupsToSave);
+        logger.debug(`Saved all groups.`);
+    } catch (err) {
+        logger.warn(`Unable to save groups.`, err);
+    }
+}
 
+function saveGroupFromImport(group) {
+    if (group == null) return;
+
+    // IF present, remove existing events with the same id.
+    for (let event of group.events) {
+        removeEventFromMainEvents(event.id);
+        removeEventFromGroups(event.id);
+    }
+
+    saveGroup(group);
+}
+
+function removeEventFromGroups(eventId) {
+    for (let group in groups) {
+        let events = groups[group].events;
+
+        groups[group].events = events.filter(e => e.id !== eventId);
+    }
+
+    saveAllGroups(groups);
 }
 
 function saveSortTags() {
