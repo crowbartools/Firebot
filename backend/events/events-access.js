@@ -222,7 +222,6 @@ exports.triggerUiRefresh = () => {
 
 
 exports.saveNewEventToMainEvents = saveNewEventToMainEvents;
-exports.saveGroup = saveGroup;
 exports.saveGroupFromImport = saveGroupFromImport;
 exports.deleteGroup = deleteGroup;
 exports.removeEventFromMainEvents = removeEventFromMainEvents;
