@@ -33,15 +33,15 @@ const chat = {
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'system'" header="System commands" pad-top="true">
-            <dropdown-select options="systemCommandOptions" selected="effect.selectedSystemCommandId"></dropdown-select>
+            <dropdown-select options="systemCommandOptions" selected="effect.selectedCommandId""></dropdown-select>
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'custom' && hasCustomCommands && hasSortTags" header="Sort Tag" pad-top="true">
-            <dropdown-select options="customCommandSortTags" selected="effect.selectedSortTagId" ng-model="effect.sortTagSelected" ng-change="updateCustomCommandOptions()"></dropdown-select>
+            <dropdown-select options="customCommandSortTags" selected="effect.selectedSortTagId" on-update="updateCustomCommandOptions(effect.selectedSortTagId)"></dropdown-select>
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'custom' && effect.selectedSortTagId" header="Custom Command" pad-top="true">
-            <dropdown-select options="customCommandOptions" selected="effect.selectedCustomCommandId"></dropdown-select>
+            <dropdown-select options="customCommandOptions" selected="effect.selectedCommandId""></dropdown-select>
         </eos-container>
 
         <eos-container header="Toggle Action" pad-top="true">
@@ -67,28 +67,18 @@ const chat = {
             $scope.customCommandSortTags[sortTag.id] = sortTag.name;
         }
 
-        $scope.customCommandOptions = {};
+        $scope.updateCustomCommandOptions = function(sortTagId) {
+            $scope.customCommandOptions = {};
 
-        $scope.updateCustomCommandOptions = function () {
-            console.log("changed");
             for (const command of customCommands) {
-                
-                if (command.sortTags) {
-                    for (const tag of command.sortTags) {
-                        if (tag === $scope.effect.selectedCommandId) {
-                            $scope.customCommandOptions[command.id] = command.trigger;
-                        }
+                for (const tag of command.sortTags) {
+                    if (tag === sortTagId) {
+                        $scope.customCommandOptions[command.id] = command.trigger;
                     }
                 }
-                
-            }  
+            }
         }
-         
-        
-        // if ($scope.customCommandSortTags[$scope.effect.selectedSortTagId] == null) {
-        //     $scope.effect.selectedSortTagId = undefined;
-        // }
-        
+
         $scope.toggleOptions = {
             disable: "Deactivate",
             enable: "Activate"
