@@ -56,7 +56,7 @@ const chat = {
 
         $scope.hasSortTags = sortTags != null && sortTags.length > 0;
         $scope.hasCustomCommands = customCommands != null && customCommands.length > 0;
-        
+
         $scope.systemCommandOptions = {};
         for (const command of systemCommands) {
             $scope.systemCommandOptions[command.id] = command.trigger;
@@ -77,7 +77,7 @@ const chat = {
                     }
                 }
             }
-        }
+        };
 
         $scope.toggleOptions = {
             disable: "Deactivate",
