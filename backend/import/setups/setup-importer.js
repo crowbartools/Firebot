@@ -120,7 +120,7 @@ function importSetup(setup, selectedCurrency) {
     // events sets
     const eventGroups = setup.components.eventGroups || [];
     for (const eventGroup of eventGroups) {
-        eventsAccess.saveGroup(eventGroup);
+        eventsAccess.saveGroupFromImport(eventGroup);
     }
     eventsAccess.triggerUiRefresh();
 
@@ -190,6 +190,9 @@ function removeSetupComponents(components) {
                 case "events":
                     eventsAccess.removeEventFromMainEvents(id);
                     break;
+                case "eventGroups":
+                    eventsAccess.deleteGroup(id);
+                    break;
                 case "hotkeys":
                     frontendCommunicator.send("remove-hotkey", id);
                     break;
@@ -213,6 +216,8 @@ function removeSetupComponents(components) {
             } else if (componentType === "effectQueues") {
                 effectQueueManager.triggerUiRefresh();
             } else if (componentType === "events") {
+                eventsAccess.triggerUiRefresh();
+            } else if (componentType === "eventGroups") {
                 eventsAccess.triggerUiRefresh();
             } else if (componentType === "presetEffectLists") {
                 presetEffectListManager.triggerUiRefresh();

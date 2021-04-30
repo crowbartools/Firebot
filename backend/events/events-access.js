@@ -28,6 +28,30 @@ function saveGroup(group) {
     }
 }
 
+function saveAllGroups(groupsToSave) {
+    if (groupsToSave == null) return;
+    let eventsDb = getEventsDb();
+    try {
+        groups = groupsToSave;
+        eventsDb.push("/groups", groupsToSave);
+        logger.debug(`Saved all groups.`);
+    } catch (err) {
+        logger.warn(`Unable to save groups.`, err);
+    }
+}
+
+function removeEventFromGroups(eventId) {
+    for (let group in groups) {
+        if (groups.hasOwnProperty(group)) {
+            let events = groups[group].events;
+
+            groups[group].events = events.filter(e => e.id !== eventId);
+        }
+    }
+
+    saveAllGroups(groups);
+}
+
 function saveSortTags() {
     let eventsDb = getEventsDb();
     try {
@@ -122,6 +146,18 @@ function removeEventFromMainEvents(eventId) {
     saveMainEvents(mainEvents);
 }
 
+function saveGroupFromImport(group) {
+    if (group == null) return;
+
+    // IF present, remove existing events with the same id.
+    for (let event of group.events) {
+        removeEventFromMainEvents(event.id);
+        removeEventFromGroups(event.id);
+    }
+
+    saveGroup(group);
+}
+
 function getAllActiveEvents() {
     let activeEventsArray = Array.isArray(mainEvents) ? mainEvents : Object.values(mainEvents);
 
@@ -188,7 +224,8 @@ exports.triggerUiRefresh = () => {
 
 
 exports.saveNewEventToMainEvents = saveNewEventToMainEvents;
-exports.saveGroup = saveGroup;
+exports.saveGroupFromImport = saveGroupFromImport;
+exports.deleteGroup = deleteGroup;
 exports.removeEventFromMainEvents = removeEventFromMainEvents;
 exports.loadEventsAndGroups = loadEventsAndGroups;
 exports.getAllActiveEvents = getAllActiveEvents;
