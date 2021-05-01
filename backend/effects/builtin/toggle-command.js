@@ -33,7 +33,7 @@ const chat = {
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'system'" header="System Commands" pad-top="true">
-            <ui-select ng-model="effect.selectedCommandId" theme="bootstrap">
+            <ui-select ng-model="effect.commandId" theme="bootstrap" ng-click="updateSelectedCommand(systemCommands)">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in systemCommands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
@@ -42,7 +42,7 @@ const chat = {
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'custom'" header="Custom Commands" pad-top="true">
-            <ui-select ng-model="effect.selectedCommandId" theme="bootstrap">
+            <ui-select ng-model="effect.commandId" theme="bootstrap" ng-click="updateSelectedCommand(customCommands)">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in customCommands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
@@ -58,6 +58,16 @@ const chat = {
         $scope.systemCommands = commandsService.getSystemCommands();
         $scope.customCommands = commandsService.getCustomCommands();
 
+        $scope.updateSelectedCommand = commands => {
+            if ($scope.effect.commandId) {
+                for (let command of commands) {
+                    if (command.id === $scope.effect.commandId) {
+                        $scope.effect.command = command;
+                    }
+                }
+            }
+        }
+
         $scope.toggleOptions = {
             disable: "Deactivate",
             enable: "Activate"
@@ -69,29 +79,15 @@ const chat = {
     },
     optionsValidator: effect => {
         let errors = [];
-        if (effect.selectedCommandId == null) {
+        if (effect.commandId == null) {
             errors.push("Please select a command.");
         }
         return errors;
     },
     onTriggerEvent: async event => {
         const { effect } = event;
-        console.log(effect);
 
-        if (effect.commandType === 'system') {
-            let systemCommands = commandAccess.getSystemCommandOverrides();
-            let command = systemCommands[effect.selectedCommandId];
-            command.active = effect.toggleType;
-            commandAccess.saveSystemCommandOverride(command);
-            commandAccess.triggerUiRefresh();
-        }
-
-        if (effect.commandType === 'custom') {
-            let command = commandAccess.getCustomCommand(effect.selectedCommandId); 
-            command.active = effect.toggleType;
-            commandAccess.saveNewCustomCommand(command);
-            commandAccess.triggerUiRefresh();
-        }
+        commandAccess.saveCommandActiveState(effect.command, effect.toggleType === "enable");
 
         return true;
     }
