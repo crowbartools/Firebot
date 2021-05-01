@@ -19,8 +19,7 @@
         "ngSanitize",
         "ui.select",
         "ui.sortable",
-        //"ngScrollGlue",
-        "luegg.directives",
+        "ebScrollLock",
         "summernote",
         "pascalprecht.translate",
         "ngToast",
@@ -407,7 +406,7 @@
         backendCommunicator.on("setup-opened", (path) => {
             utilityService.showModal({
                 component: "importSetupModal",
-                backdrop: true,
+                backdrop: false,
                 resolveObj: {
                     setupFilePath: () => path
                 }

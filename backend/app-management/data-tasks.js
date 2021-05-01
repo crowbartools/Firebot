@@ -24,7 +24,7 @@ function ensureRequiredFoldersExist() {
     // copy over overlay wrapper
     dataAccess.copyResourceToUserData(null, "overlay.html", "");
 
-    const requiredRootDirPaths = ["/profiles", "/backups", "/clips"];
+    const requiredRootDirPaths = ["/profiles", "/backups", "/clips", "/overlay-resources"];
     for (const path of requiredRootDirPaths) {
         ensureDirExists(path);
     }
