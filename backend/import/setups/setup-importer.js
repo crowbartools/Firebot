@@ -85,7 +85,7 @@ function importSetup(setup, selectedCurrency) {
     // commands
     const commands = setup.components.commands || [];
     for (const command of commands) {
-        commandAccess.saveNewCustomCommand(command);
+        commandAccess.saveImportedCustomCommand(command);
     }
     commandAccess.triggerUiRefresh();
 
