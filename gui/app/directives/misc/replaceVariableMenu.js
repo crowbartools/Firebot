@@ -93,8 +93,6 @@
 
                             let updatedModel = insertAt(currentModel, "$" + display, insertIndex);
 
-                            debugger;
-
                             $scope.modelValue = updatedModel;
                         }
                     };
