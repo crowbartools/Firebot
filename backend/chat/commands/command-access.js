@@ -82,28 +82,6 @@ function refreshCommandCache(retry = 1) {
     }
 }
 
-function saveCommandActiveState(command, state) {
-    if (command.id == null || command.id === "") return;
-
-    let commandDb = getCommandsDb();
-
-    if (command.type === "system") {
-        command.active = state;
-        saveSystemCommandOverride(command);
-    }
-
-    if (command.type === "custom") {
-        command.active = state;
-        command.lastEditAt = moment().format();
-
-        try {
-            commandDb.push("/customCommands/" + command.id, command);
-        } catch (err) {} //eslint-disable-line no-empty
-    }
-
-    frontendCommunicator.send("custom-commands-updated");
-}
-
 function saveCustomCommand(command) {
     let commandDb = getCommandsDb();
 
@@ -123,6 +101,24 @@ function saveCustomCommand(command) {
     try {
         commandDb.push("/customCommands/" + command.id, command);
     } catch (err) {} //eslint-disable-line no-empty
+}
+
+function saveCommandActiveState(command, state) {
+    if (command.id == null || command.id === "") return;
+
+    if (command.type === "system") {
+        command.active = state;
+        saveSystemCommandOverride(command);
+    }
+
+    if (command.type === "custom") {
+        command.active = state;
+        command.lastEditAt = moment().format();
+
+        saveCustomCommand(command);
+    }
+
+    frontendCommunicator.send("custom-commands-updated");
 }
 
 function saveImportedCustomCommand(command) {
@@ -165,7 +161,6 @@ exports.refreshCommandCache = refreshCommandCache;
 exports.getSystemCommandOverrides = () => commandsCache.systemCommandOverrides;
 exports.saveSystemCommandOverride = saveSystemCommandOverride;
 exports.removeSystemCommandOverride = removeSystemCommandOverride;
-exports.saveNewCustomCommand = saveNewCustomCommand;
 exports.saveCommandActiveState = saveCommandActiveState;
 exports.saveImportedCustomCommand = saveImportedCustomCommand;
 exports.deleteCustomCommand = deleteCustomCommand;
