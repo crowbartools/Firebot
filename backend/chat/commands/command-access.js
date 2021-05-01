@@ -108,7 +108,9 @@ function saveCommandActiveState(command, state) {
 
     if (command.type === "system") {
         command.active = state;
+
         saveSystemCommandOverride(command);
+        refreshCommandCache();
     }
 
     if (command.type === "custom") {
@@ -116,9 +118,8 @@ function saveCommandActiveState(command, state) {
         command.lastEditAt = moment().format();
 
         saveCustomCommand(command);
+        frontendCommunicator.send("custom-commands-updated");
     }
-
-    frontendCommunicator.send("custom-commands-updated");
 }
 
 function saveImportedCustomCommand(command) {
