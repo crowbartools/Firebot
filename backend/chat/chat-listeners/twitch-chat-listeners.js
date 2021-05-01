@@ -97,6 +97,8 @@ exports.setupChatListeners = (streamerChatClient) => {
     streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
         const hostListener = require("../../events/twitch-events/host");
         hostListener.triggerHost(byChannel, auto, viewers);
+        const logger = require("../../logwrapper");
+        logger.debug(`Host triggered by ${byChannel}. Is auto: ${auto}`);
     });
 
     streamerChatClient.onSub((_channel, _user, subInfo, msg) => {
