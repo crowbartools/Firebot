@@ -60,7 +60,7 @@ const chat = {
 
         $scope.updateSelectedCommand = commands => {
             if ($scope.effect.commandId) {
-                for (let command of commands) {
+                for (const command of commands) {
                     if (command.id === $scope.effect.commandId) {
                         $scope.effect.command = command;
                     }
