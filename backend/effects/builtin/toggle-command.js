@@ -33,15 +33,15 @@ const chat = {
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'system'" header="System commands" pad-top="true">
-            <dropdown-select options="systemCommandOptions" selected="effect.selectedCommandId""></dropdown-select>
+            <dropdown-select options="systemCommandOptions" selected="effect.selectedCommandId" on-update="updateCommandSelection(effect.selectedCommandId)"></dropdown-select>
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'custom' && hasCustomCommands && hasSortTags" header="Sort Tag" pad-top="true">
             <dropdown-select options="customCommandSortTags" selected="effect.selectedSortTagId" on-update="updateCustomCommandOptions(effect.selectedSortTagId)"></dropdown-select>
         </eos-container>
 
-        <eos-container ng-show="effect.commandType === 'custom' && effect.selectedSortTagId" header="Custom Command" pad-top="true">
-            <dropdown-select options="customCommandOptions" selected="effect.selectedCommandId""></dropdown-select>
+        <eos-container ng-show="effect.commandType === 'custom' && hasCustomCommands" header="Custom Command" pad-top="true">
+            <dropdown-select options="customCommandOptions" selected="effect.selectedCommandId" on-update="updateCommandSelection(effect.selectedCommandId)"></dropdown-select>
         </eos-container>
 
         <eos-container header="Toggle Action" pad-top="true">
@@ -54,7 +54,7 @@ const chat = {
         const customCommands = commandsService.getCustomCommands();
         const sortTags = commandsService.getSortTags();
 
-        $scope.hasSortTags = sortTags != null && sortTags.length > 0;
+        $scope.hasSortTags = sortTags != null && sortTags.length > 1;
         $scope.hasCustomCommands = customCommands != null && customCommands.length > 0;
 
         $scope.systemCommandOptions = {};
@@ -62,20 +62,43 @@ const chat = {
             $scope.systemCommandOptions[command.id] = command.trigger;
         }
 
-        $scope.customCommandSortTags = {};
+        $scope.customCommandSortTags = {"": "No tag"};
         for (const sortTag of sortTags) {
             $scope.customCommandSortTags[sortTag.id] = sortTag.name;
+        }
+
+        $scope.customCommandOptions = {};
+        for (const command of customCommands) {
+            $scope.customCommandOptions[command.id] = command.trigger;
         }
 
         $scope.updateCustomCommandOptions = function(sortTagId) {
             $scope.customCommandOptions = {};
 
+            if ($scope.customCommandSortTags.length === 1) {
+                for (const command of customCommands) {
+                    $scope.customCommandOptions[command.id] = command.trigger;
+                }
+        
+            }
+
             for (const command of customCommands) {
+                if (command.sortTags.length === 0) return;
                 for (const tag of command.sortTags) {
                     if (tag === sortTagId) {
                         $scope.customCommandOptions[command.id] = command.trigger;
                     }
                 }
+            }
+        };
+
+        $scope.updateCommandSelection = function(selectedCommandId) {
+            if ($scope.effect.commandType === 'system') {
+                $scope.effect.command = systemCommands[selectedCommandId];
+            }
+
+            if ($scope.effect.commandType === 'custom') {
+                $scope.effect.command = customCommands[selectedCommandId];
             }
         };
 
@@ -97,8 +120,16 @@ const chat = {
     },
     onTriggerEvent: async event => {
         const { effect } = event;
+        
+        effect.command["active"] = effect.toggleType;
 
-        commandAccess.updateCommandActiveStatus(effect.selectedCommandId, effect.toggleType === "enable");
+        if (effect.commandType === 'system') {   
+            commandAccess.saveSystemCommandOverride(effect.command);
+        }
+
+        if (effect.commandType === 'custom') {
+            commandAccess.saveNewCustomCommand(effect.command);
+        }
 
         return true;
     }
