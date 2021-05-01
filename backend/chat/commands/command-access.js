@@ -82,18 +82,6 @@ function refreshCommandCache(retry = 1) {
     }
 }
 
-function saveImportedCustomCommand(command) {
-    logger.debug("Saving imported command: " + command.trigger);
-
-    if (command.id == null || command.id === "") {
-        command.createdBy = "Imported";
-    } else {
-        command.lastEditBy = "Imported";
-    }
-    
-    saveCustomCommand(command);
-}
-
 function saveCustomCommand(command) {
     let commandDb = getCommandsDb();
 
@@ -113,6 +101,18 @@ function saveCustomCommand(command) {
     try {
         commandDb.push("/customCommands/" + command.id, command);
     } catch (err) {} //eslint-disable-line no-empty
+}
+
+function saveImportedCustomCommand(command) {
+    logger.debug("Saving imported command: " + command.trigger);
+
+    if (command.id == null || command.id === "") {
+        command.createdBy = "Imported";
+    } else {
+        command.lastEditBy = "Imported";
+    }
+
+    saveCustomCommand(command);
 }
 
 function deleteCustomCommand(commandId) {
