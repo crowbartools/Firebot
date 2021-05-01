@@ -36,7 +36,7 @@
             $scope.showImportSetupModal = () => {
                 utilityService.showModal({
                     component: "importSetupModal",
-                    backdrop: true
+                    backdrop: false
                 });
             };
 

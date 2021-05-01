@@ -406,7 +406,7 @@
         backendCommunicator.on("setup-opened", (path) => {
             utilityService.showModal({
                 component: "importSetupModal",
-                backdrop: true,
+                backdrop: false,
                 resolveObj: {
                     setupFilePath: () => path
                 }
