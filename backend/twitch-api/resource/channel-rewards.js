@@ -7,6 +7,49 @@ const twitchApi = require("../client");
 const { TwitchAPICallType } = require("twitch/lib");
 const accountAccess = require("../../common/account-access");
 
+/**
+ * @typedef ImageSet
+ * @property {string} url1x
+ * @property {string} url2x
+ * @property {string} url3x
+ */
+
+/**
+ * @typedef CustomReward
+ * @property {string} broadcasterId - broadcaster id
+ * @property {string} broadcasterLogin - broadcaster login
+ * @property {string} broadcasterName - broadcaster display name
+ * @property {string} id - id of the award
+ * @property {string} title - title of reward
+ * @property {string} prompt - The prompt for the viewer when they are redeeming the reward
+ * @property {number} cost - The cost of the reward
+ * @property {ImageSet?} image - set of images, can be null if none uploaded
+ * @property {ImageSet} defaultImage - set of default images
+ * @property {string} backgroundColor - Custom background color for the reward. Format: Hex with # prefix. Example: #00E5CB.
+ * @property {boolean} isEnabled - Is the reward currently enabled, if false the reward won’t show up to viewers
+ * @property {boolean} isUserInputRequired - Does the user need to enter information when redeeming the reward
+ * @property {object} maxPerStreamSetting
+ * @property {boolean} maxPerStreamSetting.isEnabled
+ * @property {number} maxPerStreamSetting.maxPerStream
+ * @property {object} maxPerUserPerStreamSetting
+ * @property {boolean} maxPerUserPerStreamSetting.isEnabled
+ * @property {number} maxPerUserPerStreamSetting.maxPerUserPerStream
+ * @property {object} globalCooldownSetting
+ * @property {boolean} globalCooldownSetting.isEnabled
+ * @property {number} globalCooldownSetting.globalCooldownSeconds
+ * @property {boolean} isPaused - is the reward currently paused, if true viewers cant redeem
+ * @property {boolean} isInStock - Is the reward currently in stock, if false viewers can’t redeem
+ * @property {boolean} shouldRedemptionsSkipRequestQueue - Should redemptions be set to FULFILLED status immediately when redeemed and skip the request queue instead of the normal UNFULFILLED status.
+ * @property {number} redemptionsRedeemedCurrentStream - The number of redemptions redeemed during the current live stream. Counts against the max_per_stream_setting limit. Null if the broadcasters stream isn’t live or max_per_stream_setting isn’t enabled.
+ * @property {string?} cooldownExpiresAt - Timestamp of the cooldown expiration. Null if the reward isn’t on cooldown.
+ */
+
+/**
+ * Get an array of custom rewards
+ * @param {boolean} onlyManageable - only get rewards manageable by firebot
+ * @returns {Promise.<CustomReward[]>}
+ */
+
 async function getCustomChannelRewards(onlyManageable = false) {
     const client = twitchApi.getClient();
     let rewards = [];
@@ -26,6 +69,11 @@ async function getCustomChannelRewards(onlyManageable = false) {
         logger.error("Failed to get twitch custom channel rewards", err);
     }
     return rewards.map(r => camelKeys(r, { recursive: true }));
+}
+
+async function getTotalChannelRewardCount() {
+    const rewards = await getCustomChannelRewards();
+    return rewards.length;
 }
 
 async function createCustomChannelReward(reward) {
@@ -90,3 +138,4 @@ exports.createCustomChannelReward = createCustomChannelReward;
 exports.getCustomChannelRewards = getCustomChannelRewards;
 exports.updateCustomChannelReward = updateCustomChannelReward;
 exports.deleteCustomChannelReward = deleteCustomChannelReward;
+exports.getTotalChannelRewardCount = getTotalChannelRewardCount;
