@@ -110,14 +110,14 @@ exports.addCustomVariable = (name, data, ttl = 0, propertyPath = null) => {
     }
 };
 
-exports.getCustomVariable = (name, propertyPath) => {
+exports.getCustomVariable = (name, propertyPath, defaultData = null) => {
     let data = cache.get(name);
 
-    if (data === undefined) {
-        return null;
+    if (data == null) {
+        return defaultData;
     }
 
-    if (propertyPath === undefined) {
+    if (propertyPath == null) {
         return data;
     }
 
@@ -132,9 +132,9 @@ exports.getCustomVariable = (name, propertyPath) => {
             }
             data = data[node];
         }
-        return data != null ? data : null;
+        return data != null ? data : defaultData;
     } catch (error) {
         logger.debug(`error getting data from custom variable ${name} using property path ${propertyPath}`);
-        return null;
+        return defaultData;
     }
 };

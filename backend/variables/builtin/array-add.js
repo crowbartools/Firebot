@@ -28,6 +28,14 @@ const model = {
             try {
                 const array = JSON.parse(jsonArray);
                 if (Array.isArray(array)) {
+
+                    //attempt to parse newElement as json
+                    try {
+                        newElement = JSON.parse(newElement);
+                    } catch (error) {
+                        //silently fail
+                    }
+
                     if (addToFront) {
                         array.unshift(newElement);
                     } else {

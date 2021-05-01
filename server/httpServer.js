@@ -74,6 +74,8 @@ exports.start = function() {
             }
         });
     });
+    const dataAccess = require("../backend/common/data-access");
+    app.use("/overlay-resources", express.static(dataAccess.getPathInUserData("/overlay-resources")));
 
     // set up resource endpoint
     app.get("/resource/:token", function(req, res) {
