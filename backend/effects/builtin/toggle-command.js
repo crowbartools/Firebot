@@ -32,16 +32,22 @@ const chat = {
             <dropdown-select options="{ system: 'System', custom: 'Custom'}" selected="effect.commandType"></dropdown-select>
         </eos-container>
 
-        <eos-container ng-show="effect.commandType === 'system'" header="System commands" pad-top="true">
-            <dropdown-select options="systemCommandOptions" selected="effect.selectedCommandId" on-update="updateCommandSelection(effect.selectedCommandId)"></dropdown-select>
+        <eos-container ng-show="effect.commandType === 'system'" header="System Commands" pad-top="true">
+            <ui-select ng-model="effect.selectedCommandId" theme="bootstrap">
+                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
+                <ui-select-choices repeat="command.id as command in systemCommands | filter: { trigger: $select.search }" style="position:relative;">
+                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
         </eos-container>
 
-        <eos-container ng-show="effect.commandType === 'custom' && hasCustomCommands && hasSortTags" header="Sort Tag" pad-top="true">
-            <dropdown-select options="customCommandSortTags" selected="effect.selectedSortTagId" on-update="updateCustomCommandOptions(effect.selectedSortTagId)"></dropdown-select>
-        </eos-container>
-
-        <eos-container ng-show="effect.commandType === 'custom' && hasCustomCommands" header="Custom Command" pad-top="true">
-            <dropdown-select options="customCommandOptions" selected="effect.selectedCommandId" on-update="updateCommandSelection(effect.selectedCommandId)"></dropdown-select>
+        <eos-container ng-show="effect.commandType === 'custom'" header="Custom Commands" pad-top="true">
+            <ui-select ng-model="effect.selectedCommandId" theme="bootstrap">
+                <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
+                <ui-select-choices repeat="command.id as command in customCommands | filter: { trigger: $select.search }" style="position:relative;">
+                    <div ng-bind-html="command.trigger | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
         </eos-container>
 
         <eos-container header="Toggle Action" pad-top="true">
@@ -49,58 +55,8 @@ const chat = {
         </eos-container>
     `,
     optionsController: ($scope, commandsService) => {
-
-        const systemCommands = commandsService.getSystemCommands();
-        const customCommands = commandsService.getCustomCommands();
-        const sortTags = commandsService.getSortTags();
-
-        $scope.hasSortTags = sortTags != null && sortTags.length > 1;
-        $scope.hasCustomCommands = customCommands != null && customCommands.length > 0;
-
-        $scope.systemCommandOptions = {};
-        for (const command of systemCommands) {
-            $scope.systemCommandOptions[command.id] = command.trigger;
-        }
-
-        $scope.customCommandSortTags = {"": "No tag"};
-        for (const sortTag of sortTags) {
-            $scope.customCommandSortTags[sortTag.id] = sortTag.name;
-        }
-
-        $scope.customCommandOptions = {};
-        for (const command of customCommands) {
-            $scope.customCommandOptions[command.id] = command.trigger;
-        }
-
-        $scope.updateCustomCommandOptions = function(sortTagId) {
-            $scope.customCommandOptions = {};
-
-            if ($scope.customCommandSortTags.length === 1) {
-                for (const command of customCommands) {
-                    $scope.customCommandOptions[command.id] = command.trigger;
-                }
-        
-            }
-
-            for (const command of customCommands) {
-                if (command.sortTags.length === 0) return;
-                for (const tag of command.sortTags) {
-                    if (tag === sortTagId) {
-                        $scope.customCommandOptions[command.id] = command.trigger;
-                    }
-                }
-            }
-        };
-
-        $scope.updateCommandSelection = function(selectedCommandId) {
-            if ($scope.effect.commandType === 'system') {
-                $scope.effect.command = systemCommands[selectedCommandId];
-            }
-
-            if ($scope.effect.commandType === 'custom') {
-                $scope.effect.command = customCommands[selectedCommandId];
-            }
-        };
+        $scope.systemCommands = commandsService.getSystemCommands();
+        $scope.customCommands = commandsService.getCustomCommands();
 
         $scope.toggleOptions = {
             disable: "Deactivate",
@@ -120,15 +76,21 @@ const chat = {
     },
     onTriggerEvent: async event => {
         const { effect } = event;
-        
-        effect.command["active"] = effect.toggleType;
+        console.log(effect);
 
-        if (effect.commandType === 'system') {   
-            commandAccess.saveSystemCommandOverride(effect.command);
+        if (effect.commandType === 'system') {
+            let systemCommands = commandAccess.getSystemCommandOverrides();
+            let command = systemCommands[effect.selectedCommandId];
+            command.active = effect.toggleType;
+            commandAccess.saveSystemCommandOverride(command);
+            commandAccess.triggerUiRefresh();
         }
 
         if (effect.commandType === 'custom') {
-            commandAccess.saveNewCustomCommand(effect.command);
+            let command = commandAccess.getCustomCommand(effect.selectedCommandId); 
+            command.active = effect.toggleType;
+            commandAccess.saveNewCustomCommand(command);
+            commandAccess.triggerUiRefresh();
         }
 
         return true;
