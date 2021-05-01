@@ -104,17 +104,15 @@ function saveCommandActiveState(command, state) {
     frontendCommunicator.send("custom-commands-updated");
 }
 
-function saveNewCustomCommand(command) {
-    logger.debug("saving newcommand: " + command.trigger);
+function saveCustomCommand(command) {
+    let commandDb = getCommandsDb();
+
     if (command.id == null || command.id === "") {
         // generate id for new command
         const uuidv1 = require("uuid/v1");
         command.id = uuidv1();
-
-        command.createdBy = "Imported";
         command.createdAt = moment().format();
     } else {
-        command.lastEditBy = "Imported";
         command.lastEditAt = moment().format();
     }
 
@@ -122,11 +120,21 @@ function saveNewCustomCommand(command) {
         command.count = 0;
     }
 
-    let commandDb = getCommandsDb();
-
     try {
         commandDb.push("/customCommands/" + command.id, command);
     } catch (err) {} //eslint-disable-line no-empty
+}
+
+function saveImportedCustomCommand(command) {
+    logger.debug("Saving imported command: " + command.trigger);
+
+    if (command.id == null || command.id === "") {
+        command.createdBy = "Imported";
+    } else {
+        command.lastEditBy = "Imported";
+    }
+
+    saveCustomCommand(command);
 }
 
 function deleteCustomCommand(commandId) {
@@ -159,6 +167,7 @@ exports.saveSystemCommandOverride = saveSystemCommandOverride;
 exports.removeSystemCommandOverride = removeSystemCommandOverride;
 exports.saveNewCustomCommand = saveNewCustomCommand;
 exports.saveCommandActiveState = saveCommandActiveState;
+exports.saveImportedCustomCommand = saveImportedCustomCommand;
 exports.deleteCustomCommand = deleteCustomCommand;
 exports.getCustomCommands = () => commandsCache.customCommands;
 exports.getCustomCommand = id =>

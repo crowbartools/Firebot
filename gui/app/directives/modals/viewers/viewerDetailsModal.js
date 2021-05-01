@@ -25,7 +25,10 @@
                         style="width: 200px;height: 200px;border-radius: 200px;position: absolute;left: -50px;top: -50px;"/>
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
-                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
+                            <div style="font-size:40px;font-weight: 200;">
+                                <a ng-if="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" href="https://twitch.tv/{{$ctrl.viewerDetails.twitchData.displayName}}">{{$ctrl.viewerDetails.twitchData.displayName}}</a>
+                                <span ng-if="!$ctrl.viewerDetails.firebotData.twitch || !$ctrl.viewerDetails.twitchData">{{$ctrl.viewerDetails.firebotData.username}}</span>
+                            </div>
                         </div>
                         <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:7px;">              
                             <div style="margin-right: 11px;" uib-tooltip="Twitch Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.twitchData.creationDate)}}</div>                       
