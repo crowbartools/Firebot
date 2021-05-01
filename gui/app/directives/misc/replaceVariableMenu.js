@@ -85,13 +85,15 @@
                             $scope.onVariableInsert({ variable: variable});
                             $scope.toggleMenu();
                         } else {
-                            let insertIndex = $element.prop("selectionStart");
-
                             let currentModel = $scope.modelValue ? $scope.modelValue : "";
+
+                            let insertIndex = $element.prop("selectionStart") || currentModel.length - 1;
 
                             let display = variable.usage ? variable.usage : variable.handle;
 
                             let updatedModel = insertAt(currentModel, "$" + display, insertIndex);
+
+                            debugger;
 
                             $scope.modelValue = updatedModel;
                         }
