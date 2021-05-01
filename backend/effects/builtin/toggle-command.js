@@ -66,7 +66,7 @@ const chat = {
                     }
                 }
             }
-        }
+        };
 
         $scope.toggleOptions = {
             disable: "Deactivate",
