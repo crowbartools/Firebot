@@ -157,7 +157,7 @@ const effect = {
 
             <color-picker-input style="margin-top:10px" model="effect.textColor" label="Text Color"></color-picker-input>
             
-            <firebot-input style="margin-top:10px" input-title="Scale" model="effect.scale" placeholder-text="Enter number" input-type="number" disable-variables="true" />
+            <firebot-input style="margin-top:10px" input-title="Scale" model="effect.scale" placeholder-text="Enter number (ie 1, 1.25, 0.75, etc)" input-type="number" disable-variables="true" />
             
             <div style="padding-top:20px">
                 <label class="control-fb control--checkbox"> Show last game
