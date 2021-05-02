@@ -80,7 +80,9 @@
         padding: 2px 0;
         .chatEmoticon{
             position: relative;
-            max-height: 28px;
+            height: 28px;
+            width: 28px;
+            display: inline-block;
         }
     }
     .chatEventInfo{
