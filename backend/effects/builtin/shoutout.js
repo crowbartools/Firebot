@@ -156,7 +156,9 @@ const effect = {
             <color-picker-input style="margin-top:10px" model="effect.bgColor2" label="Background Color 2"></color-picker-input>
 
             <color-picker-input style="margin-top:10px" model="effect.textColor" label="Text Color"></color-picker-input>
-
+            
+            <firebot-input style="margin-top:10px" input-title="Scale" model="effect.scale" placeholder-text="Enter number" input-type="number" disable-variables="true" />
+            
             <div style="padding-top:20px">
                 <label class="control-fb control--checkbox"> Show last game
                     <input type="checkbox" ng-model="effect.showLastGame">
@@ -215,6 +217,10 @@ const effect = {
 
         if ($scope.effect.position == null) {
             $scope.effect.position = "Middle Right";
+        }
+
+        if ($scope.effect.scale == null) {
+            $scope.effect.scale = 1.0;
         }
 
         $scope.showOverlayInfoModal = function(overlayInstance) {
@@ -288,13 +294,15 @@ const effect = {
                     customCoords: data.customCoords
                 };
 
+                const scale = data.scale == null ? 1.0 : data.scale;
+
                 const uniqueId = new Date().getTime();
 
                 const fittyId = `fit-text-${uniqueId}`;
 
                 const shoutoutElement = `
                 <div>
-                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%);">
+                    <div class="firebot-shoutout-wrapper" style="background: linear-gradient(0deg, ${data.bgColor2} 0%, ${data.bgColor1} 100%); transform: scale(${scale});">
 
                         <div style="position:relative;">
                             <div class="firebot-shoutout-avatar-wrapper firebot-shoutout-padding">
