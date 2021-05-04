@@ -143,7 +143,6 @@ exports.refreshCommandCache = refreshCommandCache;
 exports.getSystemCommandOverrides = () => commandsCache.systemCommandOverrides;
 exports.saveSystemCommandOverride = saveSystemCommandOverride;
 exports.removeSystemCommandOverride = removeSystemCommandOverride;
-exports.saveCommandActiveState = saveCommandActiveState;
 exports.saveImportedCustomCommand = saveImportedCustomCommand;
 exports.deleteCustomCommand = deleteCustomCommand;
 exports.getCustomCommands = () => commandsCache.customCommands;
