@@ -1,7 +1,9 @@
 "use strict";
 
 const commandAccess = require("../../chat/commands/command-access");
+const commandManager = require("../../chat/commands/CommandManager");
 
+const moment = require("moment");
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
@@ -86,8 +88,23 @@ const chat = {
     },
     onTriggerEvent: async event => {
         const { effect } = event;
+        let command = effect.command;
+        const state = effect.toggleType === "enable";
 
-        commandAccess.saveCommandActiveState(effect.command, effect.toggleType === "enable");
+        if (command.id == null || command.id === "") return;
+            command.active = state;
+
+        if (command.type === "system") {
+            commandManager.saveSystemCommandOverride(command);
+        }
+
+        if (command.type === "custom") {
+            command.lastEditAt = moment().format();
+
+            commandManager.saveCustomCommand(command, event.trigger.metadata.username, false);
+        }
+        
+        commandAccess.triggerUiRefresh();
 
         return true;
     }

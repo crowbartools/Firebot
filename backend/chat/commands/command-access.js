@@ -103,22 +103,6 @@ function saveCustomCommand(command) {
     } catch (err) {} //eslint-disable-line no-empty
 }
 
-function saveCommandActiveState(command, state) {
-    if (command.id == null || command.id === "") return;
-    command.active = state;
-
-    if (command.type === "system") {
-        saveSystemCommandOverride(command);
-    }
-
-    if (command.type === "custom") {
-        command.lastEditAt = moment().format();
-
-        saveCustomCommand(command);
-        frontendCommunicator.send("custom-commands-updated");
-    }
-}
-
 function saveImportedCustomCommand(command) {
     logger.debug("Saving imported command: " + command.trigger);
 
