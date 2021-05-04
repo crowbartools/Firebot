@@ -173,7 +173,7 @@
             $ctrl.toggleCommandActiveState = function() {
                 $ctrl.command.active = !$ctrl.command.active;
                 commandsService.saveSystemCommandOverride($ctrl.command);
-            }
+            };
 
             $ctrl.sysCommandMenuOptions = [
                 {
