@@ -25,10 +25,16 @@
                         style="width: 200px;height: 200px;border-radius: 200px;position: absolute;left: -50px;top: -50px;"/>
                     <div style="padding-left: 150px;min-height: 125px;">
                         <div style="display:flex;align-items: center;">
-                            <div style="font-size:40px;font-weight: 200;">
-                                <a ng-if="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" href="https://twitch.tv/{{$ctrl.viewerDetails.twitchData.displayName}}">{{$ctrl.viewerDetails.twitchData.displayName}}</a>
-                                <span ng-if="!$ctrl.viewerDetails.firebotData.twitch || !$ctrl.viewerDetails.twitchData">{{$ctrl.viewerDetails.firebotData.username}}</span>
-                            </div>
+                            <div style="font-size:40px;font-weight: 200;">{{$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData ? $ctrl.viewerDetails.twitchData.displayName : $ctrl.viewerDetails.firebotData.username }}</div>
+                            <a 
+                                ng-if="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" 
+                                ng-click="$ctrl.openLink('https://twitch.tv/' + $ctrl.viewerDetails.twitchData.displayName)" 
+                                class="clickable" 
+                                style="line-height: 1;margin-left: 5px;background: #9147FF;padding: 5px;border-radius: 100%;color: white;font-size: 15px;"
+                                uib-tooltip="View Twitch Profile"
+                                tooltip-append-to-body="true">
+                                    <i class="fab fa-twitch" style="transform: translateY(2px);" />
+                            </a>
                         </div>
                         <div ng-show="$ctrl.viewerDetails.firebotData.twitch && $ctrl.viewerDetails.twitchData" style="display:flex;margin-top:7px;">              
                             <div style="margin-right: 11px;" uib-tooltip="Twitch Age"><i class="fas fa-user-circle"></i> {{$ctrl.getAccountAge($ctrl.viewerDetails.twitchData.creationDate)}}</div>                       
@@ -97,10 +103,12 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService) {
+            controller: function($rootScope, $q, backendCommunicator, viewersService, currencyService, utilityService, viewerRolesService, connectionService) {
                 let $ctrl = this;
 
                 $ctrl.loading = true;
+
+                $ctrl.openLink = $rootScope.openLinkExternally;
 
                 $ctrl.viewerDetails = {};
 

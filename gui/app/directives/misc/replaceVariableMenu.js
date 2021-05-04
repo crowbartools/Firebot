@@ -87,7 +87,7 @@
                         } else {
                             let currentModel = $scope.modelValue ? $scope.modelValue : "";
 
-                            let insertIndex = $element.prop("selectionStart") || currentModel.length - 1;
+                            let insertIndex = $element.prop("selectionStart") || currentModel.length;
 
                             let display = variable.usage ? variable.usage : variable.handle;
 

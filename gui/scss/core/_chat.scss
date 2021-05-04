@@ -34,6 +34,8 @@
 .reward-redemption {
     img {
         width: 25px; 
+        height: 25px;
+        display: inline-block;
         margin-right: 3px;
     }
     padding: 6px;
@@ -80,7 +82,9 @@
         padding: 2px 0;
         .chatEmoticon{
             position: relative;
-            max-height: 28px;
+            height: 28px;
+            width: 28px;
+            display: inline-block;
         }
     }
     .chatEventInfo{
