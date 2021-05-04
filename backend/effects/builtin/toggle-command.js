@@ -89,10 +89,9 @@ const chat = {
     onTriggerEvent: async event => {
         const { effect } = event;
         let command = effect.command;
-        const state = effect.toggleType === "enable";
+        command.active = effect.toggleType === "enable";
 
         if (command.id == null || command.id === "") return;
-            command.active = state;
 
         if (command.type === "system") {
             commandManager.saveSystemCommandOverride(command);
@@ -103,7 +102,7 @@ const chat = {
 
             commandManager.saveCustomCommand(command, event.trigger.metadata.username, false);
         }
-        
+
         commandAccess.triggerUiRefresh();
 
         return true;
