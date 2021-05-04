@@ -105,16 +105,13 @@ function saveCustomCommand(command) {
 
 function saveCommandActiveState(command, state) {
     if (command.id == null || command.id === "") return;
+    command.active = state;
 
     if (command.type === "system") {
-        command.active = state;
-
         saveSystemCommandOverride(command);
-        refreshCommandCache();
     }
 
     if (command.type === "custom") {
-        command.active = state;
         command.lastEditAt = moment().format();
 
         saveCustomCommand(command);
