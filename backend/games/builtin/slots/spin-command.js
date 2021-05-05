@@ -124,11 +124,16 @@ const spinCommand = {
                     successChance = successChancesSettings.basePercent;
 
                     const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-                    const userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
+                    const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
                     const userTwitchRoles = (userCommand.senderRoles || [])
                         .map(r => twitchRolesManager.mapTwitchRole(r))
                         .filter(r => !!r);
-                    const allRoles = userCustomRoles.concat(userTwitchRoles).concat(userTeamRoles);
+
+                    const allRoles = [
+                        ...userTwitchRoles,
+                        ...userTeamRoles,
+                        ...userCustomRoles
+                    ];
 
                     for (let role of successChancesSettings.roles) {
                         if (allRoles.some(r => r.id === role.roleId)) {

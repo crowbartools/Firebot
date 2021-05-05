@@ -65,6 +65,7 @@
             </div>
             <div style="padding-top: 10px">
               <button class="btn btn-primary" ng-click="$ctrl.openEditSystemCommandModal()">Edit</button>
+              <button class="btn btn-default" ng-click="$ctrl.toggleCommandActiveState()">Toggle Enabled</button>
             </div>  
           </div>
         </div>
@@ -167,6 +168,11 @@
                         }
                     }
                 });
+            };
+
+            $ctrl.toggleCommandActiveState = function() {
+                $ctrl.command.active = !$ctrl.command.active;
+                commandsService.saveSystemCommandOverride($ctrl.command);
             };
 
             $ctrl.sysCommandMenuOptions = [

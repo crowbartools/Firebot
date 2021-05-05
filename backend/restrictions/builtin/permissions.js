@@ -90,7 +90,7 @@ const model = {
     },
     optionsValueDisplay: (restriction, viewerRolesService) => {
         if (restriction.mode === "roles") {
-            let roleIds = restriction.roleIds;
+            const roleIds = restriction.roleIds;
             let output = "None selected";
             if (roleIds.length > 0) {
                 output = roleIds
@@ -105,33 +105,34 @@ const model = {
         return "";
     },
     predicate: (triggerData, restrictionData) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (restrictionData.mode === "roles") {
+                const username = triggerData.metadata.username;
 
-                let username = triggerData.metadata.username;
-
-                let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-                let userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
-                let userTwitchRoles = (triggerData.metadata.userTwitchRoles || [])
+                const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+                const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
+                const userTwitchRoles = (triggerData.metadata.userTwitchRoles || [])
                     .map(mr => twitchRolesManager.mapTwitchRole(mr));
 
-                let allRoles = userCustomRoles.concat(userTeamRoles).concat(userTwitchRoles).filter(r => r != null);
-
-                let expectedRoleIds = restrictionData.roleIds || [];
+                const allRoles = [
+                    ...userTwitchRoles,
+                    ...userTeamRoles,
+                    ...userCustomRoles
+                ].filter(r => r != null);
 
                 // convert any mixer roles to twitch roles
-                expectedRoleIds = expectedRoleIds.map(r => twitchRolesManager.mapMixerRoleIdToTwitchRoleId(r));
+                const expectedRoleIds = (restrictionData.roleIds || [])
+                    .map(r => twitchRolesManager.mapMixerRoleIdToTwitchRoleId(r));
 
-                let hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
+                const hasARole = allRoles.some(r => expectedRoleIds.includes(r.id));
 
                 if (hasARole) {
                     resolve();
                 } else {
                     reject("You do not have permission");
                 }
-
             } else if (restrictionData.mode === "viewer") {
-                let username = (triggerData.metadata.username || "").toLowerCase();
+                const username = (triggerData.metadata.username || "").toLowerCase();
                 if (username === restrictionData.username.toLowerCase()) {
                     resolve();
                 } else {
