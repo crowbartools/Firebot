@@ -108,7 +108,8 @@
         presetEffectListsService,
         startupScriptsService,
         effectQueuesService,
-        timerService
+        timerService,
+        channelRewardsService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -138,6 +139,8 @@
         startupScriptsService.loadStartupScripts();
 
         effectQueuesService.loadEffectQueues();
+
+        channelRewardsService.loadChannelRewards();
 
         //start notification check
         $timeout(() => {

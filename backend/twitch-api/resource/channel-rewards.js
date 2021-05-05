@@ -101,7 +101,7 @@ async function getCustomChannelRewards(onlyManageable = false) {
             url: "channel_points/custom_rewards",
             query: {
                 "broadcaster_id": accountAccess.getAccounts().streamer.userId,
-                "only_manageable_reward": onlyManageable
+                "only_manageable_rewards": onlyManageable
             }
         });
         if (response && response.data) {
@@ -116,7 +116,8 @@ async function getCustomChannelRewards(onlyManageable = false) {
 async function getUnmanageableCustomChannelRewards() {
     const allRewards = await getCustomChannelRewards();
     const onlyManageable = await getCustomChannelRewards(true);
-    return allRewards.filter(r => !onlyManageable.some(mr => mr.id === r.id));
+    const onlyUnmanageable = allRewards.filter(r => onlyManageable.every(mr => mr.id !== r.id));
+    return onlyUnmanageable;
 }
 
 async function getTotalChannelRewardCount() {

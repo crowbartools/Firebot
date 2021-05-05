@@ -59,6 +59,10 @@ exports.setupCommonListeners = () => {
         eventsManager.triggerEvent("firebot", "highlight-message", data);
     });
 
+    frontendCommunicator.onAsync("getLegacyEventAndCommandTags", async () => {
+
+    });
+
     // Front old main
 
     // restarts the app

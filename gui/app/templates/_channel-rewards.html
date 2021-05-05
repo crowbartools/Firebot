@@ -1,4 +1,144 @@
 <div style="margin-bottom: 10px">
-    <button class="btn btn-primary" ng-click="openCreateCounterModal()"><i class="fas fa-plus-circle" style="margin-right:5px;"></i> New Channel Reward</button>
-    <p class="muted" style="padding-top: 5px; font-size: 12.2px;"><b>Note:</b> Firebot can only see and manage channel rewards created by Firebot and not those created on the website or by other tools.</p>
+  <button class="btn btn-primary" ng-click="openCreateCounterModal()">
+    <i class="fas fa-plus-circle" style="margin-right: 5px"></i> New Channel
+    Reward
+  </button>
+  <p class="muted" style="padding-top: 5px; font-size: 12.2px">
+    <b>Note:</b> Firebot can only see and manage channel rewards created by
+    Firebot and not those created on the website or by other tools.
+  </p>
+</div>
+
+<div style="padding: 15px">
+  <div
+    ng-if="channelRewardsService.channelRewards.length === 0"
+    class="noselect muted"
+    style="padding-left: 13px"
+  >
+    <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
+    ><span style="margin-left: 8px"
+      >No channel rewards saved. You should make one! :)
+    </span>
+  </div>
+  <div
+    ng-if="channelRewardsService.channelRewards.length > 0 && filteredRewards && filteredRewards.length < 1"
+    class="noselect muted"
+    style="padding-left: 13px"
+  >
+    <span style="margin-left: 8px">No channel rewards found.</span>
+  </div>
+  <table
+    ng-show="channelRewardsService.channelRewards.length > 0 && (filteredRewards == null || filteredRewards.length > 0)"
+    class="fb-table"
+  >
+    <thead>
+      <tr style="font-size: 11px">
+        <th style="width: 5%"></th>
+        <th class="muted">NAME</th>
+        <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th>
+        <th class="muted"><i class="fas fa-tag"></i> TAGS</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody ui-sortable="sortableOptions" ng-model="filteredRewards">
+      <tr
+        ng-repeat="reward in channelRewardsService.channelRewards | sortTagSearch:selectedSortTag | filter:searchQuery track by reward.id"
+        context-menu="rewardMenuOptions(reward)"
+        style="width: 100%"
+      >
+        <td style="text-align: center">
+          <span
+            style="color: #2aa1c0; font-size: 20px"
+            ng-click="manuallyTriggerReward(reward.id)"
+          >
+            <i class="fas fa-play-circle clickable"></i>
+          </span>
+        </td>
+        <td>{{reward.twitchData.title}}</td>
+        <td>
+          <!-- <span
+            style="min-width: 51px; display: inline-block"
+            uib-tooltip="Global cooldown"
+          >
+            <i class="far fa-globe-americas"></i> {{command.cooldown.global ?
+            command.cooldown.global + "s" : "-" }}
+          </span>
+          <span uib-tooltip="User cooldown">
+            <i class="far fa-user"></i> {{command.cooldown.user ?
+            command.cooldown.user + "s" : "-" }}
+          </span> -->
+        </td>
+        <td style="max-width: 135px; min-width: 100px">
+          <!-- <div
+            style="
+              display: flex;
+              flex-wrap: wrap;
+              width: 100%;
+              overflow: auto;
+              max-height: 45.25px;
+            "
+          >
+            <span
+              ng-repeat="tagName in commandsService.getSortTagNames(command.sortTags)"
+              style="
+                background: gray;
+                border-radius: 15px;
+                padding: 1px 5px;
+                margin-right: 2px;
+                margin-bottom: 1px;
+                font-size: 10px;
+                line-height: 1.8;
+              "
+            >
+              {{tagName}}
+            </span>
+          </div> -->
+        </td>
+        <td>
+          <div
+            style="
+              min-width: 75px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <span
+              class="status-dot"
+              style="margin-right: 5px"
+              ng-class="{'active': reward.twitchData.isEnabled, 'notactive': !reward.twitchData.isEnabled}"
+            ></span
+            >{{reward.twitchData.isEnabled ? "Enabled" : "Disabled"}}
+          </div>
+        </td>
+        <td>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <!-- <span
+              class="dragHandle"
+              ng-click="$event.stopPropagation();"
+              ng-show="commandsService.selectedSortTag == null && (commandsService.customCommandSearch == null || commandsService.customCommandSearch.length < 1)"
+            >
+              <i class="fal fa-bars" aria-hidden="true"></i>
+            </span> -->
+            <div style="text-align: right; margin-left: auto">
+              <span
+                class="noselect clickable"
+                style="font-size: 30px"
+                context-menu="rewardMenuOptions(reward)"
+                context-menu-on="click"
+                ><i class="fal fa-ellipsis-h"></i
+              ></span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

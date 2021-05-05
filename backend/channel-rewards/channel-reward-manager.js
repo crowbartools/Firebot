@@ -44,7 +44,7 @@ async function loadChannelRewards() {
 
         /** @type {SavedChannelReward[]}*/
         const newTwitchUnmanageableRewards = twitchUnmanageableRewards
-            .filter(ur => rewards.some(r => r.id === ur.id))
+            .filter(ur => rewards.every(r => r.id !== ur.id))
             .map(ur => {
                 return {
                     id: ur.id,
@@ -137,14 +137,14 @@ function getChannelReward(channelRewardId) {
 frontendCommunicator.onAsync("getChannelRewardCount",
     twitchApi.channelRewards.getTotalChannelRewardCount);
 
-frontendCommunicator.onAsync("getChannelRewards", async () => channelRewards);
+frontendCommunicator.onAsync("getChannelRewards", async () => Object.values(channelRewards));
 
 frontendCommunicator.onAsync("saveChannelReward",
     async (/** @type {SavedChannelReward} */ channelReward) => saveChannelReward(channelReward));
 
 frontendCommunicator.onAsync("syncChannelRewards", async () => {
     await loadChannelRewards();
-    return channelRewards;
+    return Object.values(channelRewards);
 });
 
 frontendCommunicator.on("deleteChannelReward", (/** @type {string} */ channelRewardId) => {
