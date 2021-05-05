@@ -151,12 +151,19 @@ function addCurrencyToUserGroupOnlineUsers(roleIds = [], currencyId, value, igno
 
         const onlineUsers = await userDatabase.getOnlineUsers();
 
+        /** @type{ Record<string, Array<{ id: string; name: string }>> } */
+        const teamRoles = {};
+        for (const user of onlineUsers) {
+            teamRoles[user.username] = await teamRolesManager
+                .getAllTeamRolesForViewer(user.username);
+        }
+
         const userIdsInRoles = onlineUsers
             .map(u => {
                 u.allRoles = [
                     ...u.twitchRoles.map(tr => twitchRolesManager.mapTwitchRole(tr)),
                     ...customRolesManager.getAllCustomRolesForViewer(u.username),
-                    ...teamRolesManager.getAllTeamRolesForViewer(u.username),
+                    ...teamRoles[u.username],
                     ...firebotRolesManager.getAllFirebotRolesForViewer(u.username)
                 ];
                 return u;
