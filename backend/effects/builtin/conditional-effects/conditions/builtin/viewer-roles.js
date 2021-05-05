@@ -15,34 +15,21 @@ module.exports = {
     leftSideTextPlaceholder: "Enter username",
     rightSideValueType: "preset",
     getRightSidePresetValues: viewerRolesService => {
-        return viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getTwitchRoles())
-            .concat(viewerRolesService.getTeamRoles())
-            .concat(viewerRolesService.getFirebotRoles())
-            .map(r => {
-                return {
-                    value: r.id,
-                    display: r.name
-                };
-            });
+        return viewerRolesService.getAllRoles()
+            .map(r => ({
+                value: r.id,
+                display: r.name
+            }));
     },
     valueIsStillValid: (condition, viewerRolesService) => {
-        let allRoles = viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getTwitchRoles())
-            .concat(viewerRolesService.getTeamRoles())
-            .concat(viewerRolesService.getFirebotRoles());
-
-        let role = allRoles.find(r => r.id === condition.rightSideValue);
+        const role = viewerRolesService.getAllRoles()
+            .find(r => r.id === condition.rightSideValue);
 
         return role != null && role.name != null;
     },
     getRightSideValueDisplay: (condition, viewerRolesService) => {
-        let allRoles = viewerRolesService.getCustomRoles()
-            .concat(viewerRolesService.getTwitchRoles())
-            .concat(viewerRolesService.getTeamRoles())
-            .concat(viewerRolesService.getFirebotRoles());
-
-        let role = allRoles.find(r => r.id === condition.rightSideValue);
+        const role = viewerRolesService.getAllRoles()
+            .find(r => r.id === condition.rightSideValue);
 
         if (role) {
             return role.name;
@@ -52,27 +39,27 @@ module.exports = {
     },
     predicate: async (conditionSettings, trigger) => {
 
-        let { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
-        let username = leftSideValue;
+        const { comparisonType, leftSideValue, rightSideValue } = conditionSettings;
 
+        let username = leftSideValue;
         if (username == null || username === "") {
             username = trigger.metadata.username;
         }
 
-        let twitchUserRoles = null;
-        if (twitchUserRoles == null) {
-            twitchUserRoles = await twitchUsers.getUsersChatRoles(username);
-        }
+        const userTwitchRoles = (await twitchUsers.getUsersChatRoles(username))
+            .map(twitchRolesManager.mapTwitchRole);
+        const userFirebotRoles = firebotRolesManager.getAllFirebotRolesForViewer(username);
+        const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username);
+        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username);
 
-        let firebotUserRoles = firebotRolesManager.getAllFirebotRolesForViewer(username) || [];
-        let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        let userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
-        let userTwitchRoles = (twitchUserRoles || [])
-            .map(r => twitchRolesManager.mapTwitchRole(r));
+        const allRoles = [
+            ...userTwitchRoles,
+            ...userFirebotRoles,
+            ...userCustomRoles,
+            ...userTeamRoles
+        ];
 
-        let allRoles = userCustomRoles.concat(firebotUserRoles).concat(userTwitchRoles).concat(userTeamRoles);
-
-        let hasRole = allRoles.some(r => r.id === rightSideValue);
+        const hasRole = allRoles.some(r => r.id === rightSideValue);
 
         switch (comparisonType) {
         case "include":
