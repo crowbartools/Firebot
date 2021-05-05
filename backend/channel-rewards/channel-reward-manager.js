@@ -2,13 +2,14 @@
 
 const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
+const frontendCommunicator = require("../common/frontend-communicator");
 const twitchApi = require("../twitch-api/api");
-
 
 /**
  * @typedef SavedChannelReward
  * @property {string} id - the id of the preset effect list
  * @property {import('../twitch-api/resource/channel-rewards').CustomReward} twitchData - twitch data for channel reward
+ * @property {boolean} manageable - whether or not this reward is manageable by Firebot
  * @property {object} effects - the saved effects in the list
  * @property {string} effects.id - the effect list root id
  * @property {any[]} effects.list - the array of effects objects
@@ -28,16 +29,128 @@ async function loadChannelRewards() {
     logger.debug(`Attempting to load channel rewards...`);
 
     try {
+        /** @type {Object.<string, SavedChannelReward>} */
         const channelRewardsData = getChannelRewardsDb().getData("/") || {};
 
-        /**{@type } */
         const rewards = Object.values(channelRewardsData);
 
-        const twitchChannelRewards = await twitchApi.channelRewards.getCustomChannelRewards(true);
+        const twitchChannelRewards = await twitchApi.channelRewards.getCustomChannelRewards();
 
+        if (twitchChannelRewards == null) {
+            return;
+        }
+
+        const twitchUnmanageableRewards = await twitchApi.channelRewards.getUnmanageableCustomChannelRewards();
+
+        /** @type {SavedChannelReward[]}*/
+        const newTwitchUnmanageableRewards = twitchUnmanageableRewards
+            .filter(ur => rewards.some(r => r.id === ur.id))
+            .map(ur => {
+                return {
+                    id: ur.id,
+                    manageable: false,
+                    twitchData: ur
+                };
+            });
+
+        /** @type {Object.<string, SavedChannelReward>}*/
+        const syncedRewards = rewards.map(r => {
+            r.twitchData = twitchChannelRewards.find(tc => tc.id === r.id);
+            return r;
+        })
+            .filter(r => r.twitchData != null)
+            .concat(newTwitchUnmanageableRewards)
+            .reduce((acc, current) => {
+                acc[current.id] = current;
+                return acc;
+            }, {});
+
+        getChannelRewardsDb().push("/", syncedRewards);
+
+        channelRewards = syncedRewards;
 
         logger.debug(`Loaded channel rewards.`);
     } catch (err) {
         logger.warn(`There was an error reading channel rewards file.`, err);
     }
 }
+
+/**
+ * @param {SavedChannelReward} channelReward
+ */
+async function saveChannelReward(channelReward, emitUpdateEvent = false) {
+    if (channelReward == null) return null;
+
+    if (channelReward.id == null) {
+        const twitchData = await twitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
+        channelReward.twitchData = twitchData;
+        channelReward.id = twitchData.id;
+    } else {
+        await twitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
+    }
+
+
+    channelRewards[channelReward.id] = channelReward;
+
+    try {
+        const channelRewardsDb = getChannelRewardsDb();
+
+        channelRewardsDb.push("/" + channelReward.id, channelReward);
+
+        logger.debug(`Saved channel reward ${channelReward.id} to file.`);
+
+        if (emitUpdateEvent) {
+            frontendCommunicator.send("channel-reward-updated", channelReward);
+        }
+
+        return channelReward;
+    } catch (err) {
+        logger.warn(`There was an error saving a channel reward.`, err);
+        return null;
+    }
+}
+
+function deleteChannelReward(channelRewardId) {
+    if (channelRewardId == null) return;
+
+    delete channelRewards[channelRewardId];
+
+    try {
+        const channelRewardsDb = getChannelRewardsDb();
+
+        channelRewardsDb.delete("/" + channelRewards);
+
+        twitchApi.channelRewards.deleteCustomChannelReward(channelRewardId);
+
+        logger.debug(`Deleted channel reward: ${channelRewards}`);
+
+    } catch (err) {
+        logger.warn(`There was an error deleting a channel reward.`, err);
+    }
+}
+
+function getChannelReward(channelRewardId) {
+    if (channelRewardId == null) return null;
+    return channelRewards[channelRewardId];
+}
+
+frontendCommunicator.onAsync("getChannelRewardCount",
+    twitchApi.channelRewards.getTotalChannelRewardCount);
+
+frontendCommunicator.onAsync("getChannelRewards", async () => channelRewards);
+
+frontendCommunicator.onAsync("saveChannelReward",
+    async (/** @type {SavedChannelReward} */ channelReward) => saveChannelReward(channelReward));
+
+frontendCommunicator.onAsync("syncChannelRewards", async () => {
+    await loadChannelRewards();
+    return channelRewards;
+});
+
+frontendCommunicator.on("deleteChannelReward", (/** @type {string} */ channelRewardId) => {
+    deleteChannelReward(channelRewardId);
+});
+
+exports.loadChannelRewards = loadChannelRewards;
+exports.getChannelReward = getChannelReward;
+exports.saveChannelReward = saveChannelReward;
