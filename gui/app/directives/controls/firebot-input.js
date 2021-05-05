@@ -14,10 +14,11 @@
                 useTextArea: "<",
                 disableVariables: "<",
                 onInputUpdate: "&",
-                model: "="
+                model: "=",
+                style: "@"
             },
             template: `
-                <div>
+                <div style="{{$ctrl.style}}">
                     <div ng-if="$ctrl.useInputGroup" class="input-group">
                         <span class="input-group-addon" id="{{$ctrl.inputGroupId}}">{{$ctrl.inputTitle}}</span>
                         <input ng-if="!$ctrl.useTextArea" type="{{$ctrl.disableVariables ? $ctrl.inputType || 'text' : 'text'}}" class="form-control" ng-model="$ctrl.model" ng-change="$ctrl.onChange($ctrl.model)" placeholder="{{$ctrl.placeholderText}}"  replace-variables="{{$ctrl.dataType}}" disable-variable-menu="$ctrl.disableVariables">

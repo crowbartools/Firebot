@@ -18,8 +18,8 @@ const model = {
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.NUMBER, OutputDataType.TEXT]
     },
-    evaluator: (_, name, propertyPath) => {
-        let data = customVariableManager.getCustomVariable(name, propertyPath);
+    evaluator: (_, name, propertyPath, defaultData) => {
+        let data = customVariableManager.getCustomVariable(name, propertyPath, defaultData);
         if (data && isObjectOrArray(data)) {
             data = JSON.stringify(data);
         }

@@ -37,7 +37,7 @@ function mapCommands(v4Commands, activeStatus = true, incompatibilityWarnings) {
         let restrictionData = permissionMapper.mapV4Permissions(v4Command.permissionType, v4Command.permissions);
         v5Command.restrictionData = restrictionData;
 
-        commandAccess.saveNewCustomCommand(v5Command);
+        commandAccess.saveImportedCustomCommand(v5Command);
     }
 
 }
