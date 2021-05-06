@@ -109,7 +109,7 @@
     "twitch-chat-client": "^4.2.3",
     "twitch-pubsub-client": "^4.2.3",
     "ui-select": "^0.19.8",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "unzipper": "^0.9.15",
     "uuid": "^3.3.3",
     "winston": "^2.4.4",
