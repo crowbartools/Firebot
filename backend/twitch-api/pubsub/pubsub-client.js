@@ -84,6 +84,13 @@ async function createClient() {
             });
 
         listeners.push(redemptionListener);
+
+        const whisperListener = await pubSubClient.onWhisper(streamer.userId, (message) => {
+                const whisperListener = require("../../events/twitch-events/whisper");
+                whisperListener.triggerWhisper(message.senderName, message.text);
+            });
+        listeners.push(whisperListener);
+
     } catch (err) {
         logger.error("Failed to connect to Twitch PubSub!", err);
         return;
