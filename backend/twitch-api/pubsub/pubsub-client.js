@@ -75,7 +75,6 @@ async function createClient() {
     }
 
     try {
-
         const rewardRedemptionHandler =
         require("../../events/twitch-events/reward-redemption");
         const redemptionListener = await pubSubClient.onRedemption(streamer.userId,
@@ -84,6 +83,12 @@ async function createClient() {
             });
 
         listeners.push(redemptionListener);
+
+        const bitsListener = await pubSubClient.onBits(streamer.userId, (event) => {
+            const cheerListener = require("../../events/twitch-events/cheer");
+            cheerListener.triggerCheer(event.userName, event.bits, event.message);
+        });
+        listeners.push(bitsListener);
     } catch (err) {
         logger.error("Failed to connect to Twitch PubSub!", err);
         return;
