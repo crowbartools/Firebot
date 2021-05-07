@@ -62,7 +62,8 @@ const chat = {
 
         $scope.toggleOptions = {
             disable: "Deactivate",
-            enable: "Activate"
+            enable: "Activate",
+            toggle: "Toggle"
         };
 
         if ($scope.effect.toggleType == null) {
@@ -77,25 +78,34 @@ const chat = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const { effect } = event;
-        let command = effect.command;
-        command.active = effect.toggleType === "enable";
+        const { commandId, commandType, toggleType } = effect;
 
-        if (command.id == null || command.id === "") return;
+        if (commandType === "system") {
+            const systemCommand = commandManager
+                .getAllSystemCommandDefinitions().find(c => c.id === commandId);
 
-        if (command.type === "system") {
-            commandManager.saveSystemCommandOverride(command);
+            if (systemCommand == null) {
+                // command doesnt exist anymore
+                return true;
+            }
+
+            systemCommand.active = toggleType === "toggle" ? !systemCommand.active : toggleType === "enable";
+
+            commandManager.saveSystemCommandOverride(systemCommand);
+
+            frontendCommunicator.send("systemCommandsUpdated");
+        } else if (commandType === "custom") {
+            const customCommand = commandManager.getCustomCommandById(commandId);
+
+            if (customCommand == null) {
+                // command doesnt exist anymore
+                return true;
+            }
+
+            customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";
+
+            commandManager.saveCustomCommand(customCommand, "System", false);
         }
-
-        if (command.type === "custom") {
-            command.lastEditAt = moment().format();
-
-            commandManager.saveCustomCommand(command, event.trigger.metadata.username, false);
-        }
-
-        commandAccess.triggerUiRefresh();
-
-        return true;
     }
 };
 
