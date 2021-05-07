@@ -219,7 +219,7 @@ module.exports = {
             id: "whisper",
             name: "Whisper",
             description: "When someone sends you a whisper.",
-            cached: false,
+            cached: true,
             manualMetadata: {
                 username: "Firebot",
                 message: "Test whisper"
