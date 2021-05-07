@@ -214,6 +214,22 @@ module.exports = {
                     return `**${eventData.username}** redeemed **${eventData.rewardName}**${eventData.messageText && !!eventData.messageText.length ? `: *${eventData.messageText}*` : ''}`;
                 }
             }
+        },
+        {
+            id: "whisper",
+            name: "Whisper",
+            description: "When someone sends you a whisper.",
+            cached: false,
+            manualMetadata: {
+                username: "Firebot",
+                message: "Test whisper"
+            },
+            activityFeed: {
+                icon: "fad fa-comment-alt",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** sent you the following whisper: ${eventData.message}`;
+                }
+            }
         }
     ]
 };
