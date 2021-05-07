@@ -86,7 +86,7 @@ async function createClient() {
 
         const bitsListener = await pubSubClient.onBits(streamer.userId, (event) => {
             const cheerListener = require("../../events/twitch-events/cheer");
-            cheerListener.triggerCheer(event.userName, event.bits, event.message);
+            cheerListener.triggerCheer(event.userName, event.bits, event.totalBits, event.message);
         });
         listeners.push(bitsListener);
     } catch (err) {
