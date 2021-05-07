@@ -14,7 +14,7 @@
                     ng-class="{'toggled-on': $ctrl.toggleModel}"
                     ng-click="$ctrl.toggle()"
                     ng-style="$ctrl.getCustomStyles()">
-                        <i class="fad" ng-class="{'fa-toggle-on': $ctrl.toggleModel, 'fa-toggle-off': !$ctrl.toggleModel}"></i>
+                        <i class="fad" styles="display: block;" ng-class="{'fa-toggle-on': $ctrl.toggleModel, 'fa-toggle-off': !$ctrl.toggleModel}"></i>
                 </div>
             `,
             controller: function ($timeout) {

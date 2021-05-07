@@ -44,11 +44,6 @@
                     service.commandsCache.customCommands = Object.values(cmdData.customCommands);
                 }
 
-                if (cmdData.sortTags) {
-                    logger.debug("loaded sort tags");
-                    service.commandsCache.sortTags = cmdData.sortTags;
-                }
-
                 service.commandsCache.systemCommands = listenerService.fireEventSync(
                     "getAllSystemCommandDefinitions"
                 );

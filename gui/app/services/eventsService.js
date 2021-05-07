@@ -24,10 +24,6 @@ const { sort } = require("mathjs");
             if (eventData.groups) {
                 groups = eventData.groups;
             }
-
-            if (eventData.sortTags) {
-                sortTags = eventData.sortTags;
-            }
         }
         loadAllEventData();
 

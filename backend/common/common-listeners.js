@@ -1,6 +1,7 @@
 "use strict";
 const electron = require("electron");
 const { app, ipcMain, dialog, shell } = electron;
+const JsonDb = require("node-json-db");
 
 const path = require("path");
 
@@ -57,10 +58,6 @@ exports.setupCommonListeners = () => {
     frontendCommunicator.on("highlight-message", data => {
         const eventsManager = require("../events/EventManager");
         eventsManager.triggerEvent("firebot", "highlight-message", data);
-    });
-
-    frontendCommunicator.onAsync("getLegacyEventAndCommandTags", async () => {
-
     });
 
     // Front old main

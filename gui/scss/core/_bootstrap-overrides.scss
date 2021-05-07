@@ -44,7 +44,7 @@
 }
 .modal-title {
     font-weight: 100;
-    font-size: 30px;
+    font-size: 25px;
     word-wrap: break-word;
 }
 
@@ -349,10 +349,11 @@ textarea.form-control {
     color: $form-control-text;
     &:focus {
         box-shadow: none;
+        background-color: $form-control-bg - 10%;
     }
     &.input-lg {
         height: 42px;
-        font-size: 17px;
+        font-size: 16px;
     }
 }
 
@@ -365,10 +366,14 @@ textarea.form-control {
     margin-bottom: 30px;
     & .form-label {
         font-size: 14px;
-        font-weight: 300;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        font-weight: 500;
+        //text-transform: uppercase;
+        //letter-spacing: 1px;
         opacity: 0.9;
+    }
+    & .help-block {
+        font-size: 13px;
+        color: #9a9a9a;
     }
 }
 

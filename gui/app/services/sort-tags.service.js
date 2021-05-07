@@ -8,17 +8,21 @@
 
 (function() {
 
-
     angular
         .module("firebotApp")
-        .factory("quotesService", function(logger, profileManager, backendCommunicator,
-            utilityService, $q) {
+        .factory("sortTagsService", function(logger, profileManager,
+            utilityService, settingsService) {
             let service = {};
 
             /**
              * @type {Object.<string, SortTag[]>}
              */
             let sortTags = {};
+
+            /**
+             * @type {Record<string,SortTag>}
+             */
+            const selectedSortTags = {};
 
             function getSortTagsDb() {
                 return profileManager
@@ -49,17 +53,32 @@
                 } catch (err) {
                     logger.warn(`There was an error reading sort tags file.`, err);
                 }
+
+                service.getLegacyEventAndCommandTags();
             };
 
             /**
              * @param {string} context
-             * @returns SortTag[]
+             * @returns {SortTag[]}
              */
             service.getSortTags = (context) => {
                 if (sortTags[context] == null) {
                     sortTags[context] = [];
                 }
                 return sortTags[context];
+            };
+
+            /**
+             * @param {string} context
+             * @param {string[]} tagIds
+             * @returns {string[]}
+             */
+            service.getSortTagNames = (context, tagIds) => {
+                if (context == null || tagIds == null) {
+                    return [];
+                }
+                return service.getSortTags(context)
+                    .filter(st => tagIds.includes(st.id)).map(st => st.name);
             };
 
             /**
@@ -81,36 +100,76 @@
                 saveAllSortTags();
             };
 
+            /** @param {SortTag} context */
+            service.getSelectedSortTag = (context) => selectedSortTags[context];
+
+            /** @param {string} context */
+            // eslint-disable-next-line no-confusing-arrow
+            service.getSelectedSortTagDisplay = (context) => (selectedSortTags[context] != null ? selectedSortTags[context].name : `All ${context}`);
+
+            /**
+             * @param {string} context
+             * @param {SortTag} tag
+             */
+            service.setSelectedSortTag = (context, tag) => {
+                selectedSortTags[context] = tag;
+            };
+
             /**
              * This asks the backend to give us any old event and/or command tags that need to be
              * imported into the new model
              */
             service.getLegacyEventAndCommandTags = () => {
-                $q.when(backendCommunicator.fireEventAsync("getLegacyEventAndCommandTags"))
-                    .then((/**@type {Object.<string, SortTag[]>} */ legacyTags) => {
-                        if (legacyTags != null) {
 
+                if (!settingsService.legacySortTagsImported()) {
 
-                            Object.keys(legacyTags).forEach(context => {
+                    settingsService.setLegacySortTagsImported(true);
 
-                                if (sortTags[context] == null) {
-                                    sortTags[context] = [];
-                                }
+                    /**@type {Object.<string, SortTag[]>} */
+                    const legacySortTags = {
+                        commands: [],
+                        events: []
+                    };
 
-                                const tags = legacyTags[context]
-                                    .filter(t => sortTags[context].every(st => st.id !== t.id));
+                    try {
+                        const commandsDb = profileManager.getJsonDbInProfile("/chat/commands");
 
-                                if (tags.length > 0) {
-                                    sortTags[context] = [
-                                        ...sortTags[context],
-                                        ...tags
-                                    ];
-                                }
-                            });
+                        legacySortTags.commands = commandsDb.getData("/sortTags");
 
-                            saveAllSortTags();
+                        commandsDb.delete("/sortTags");
+                    } catch (err) {
+                        // silently fail
+                    }
+
+                    try {
+                        const eventsDb = profileManager.getJsonDbInProfile("/events/events");
+
+                        legacySortTags.events = eventsDb.getData("/sortTags");
+
+                        eventsDb.delete("/sortTags");
+                    } catch (err) {
+                        // silently fail
+                    }
+
+                    Object.keys(legacySortTags).forEach(context => {
+
+                        if (sortTags[context] == null) {
+                            sortTags[context] = [];
+                        }
+
+                        const tags = legacySortTags[context]
+                            .filter(t => sortTags[context].every(st => st.id !== t.id));
+
+                        if (tags.length > 0) {
+                            sortTags[context] = [
+                                ...sortTags[context],
+                                ...tags
+                            ];
                         }
                     });
+
+                    saveAllSortTags();
+                }
             };
 
             return service;

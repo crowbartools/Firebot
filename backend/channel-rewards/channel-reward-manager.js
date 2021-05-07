@@ -110,6 +110,39 @@ async function saveChannelReward(channelReward, emitUpdateEvent = false) {
     }
 }
 
+/**
+ *
+ * @param {SavedChannelReward[]} allChannelRewards
+ * @param {boolean} updateTwitch
+ */
+async function saveAllChannelRewards(allChannelRewards, updateTwitch = false) {
+    if (updateTwitch) {
+        for (const channelReward of allChannelRewards) {
+            await twitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
+        }
+    }
+
+    /** @type {Record<string,SavedChannelReward>} */
+    const rewardsObject = allChannelRewards.reduce((acc, current) => {
+        acc[current.id] = current;
+        return acc;
+    }, {});
+
+    channelRewards = rewardsObject;
+
+    try {
+        const channelRewardsDb = getChannelRewardsDb();
+
+        channelRewardsDb.push("/", channelRewards);
+
+        logger.debug(`Saved all channel rewards to file.`);
+
+    } catch (err) {
+        logger.warn(`There was an error saving all channel rewards.`, err);
+        return null;
+    }
+}
+
 function deleteChannelReward(channelRewardId) {
     if (channelRewardId == null) return;
 
@@ -141,6 +174,10 @@ frontendCommunicator.onAsync("getChannelRewards", async () => Object.values(chan
 
 frontendCommunicator.onAsync("saveChannelReward",
     async (/** @type {SavedChannelReward} */ channelReward) => saveChannelReward(channelReward));
+
+frontendCommunicator.onAsync("saveAllChannelRewards",
+    async (/** @type {{ channelRewards: SavedChannelReward[]; updateTwitch: boolean}} */ data) =>
+        saveAllChannelRewards(data.channelRewards, data.updateTwitch));
 
 frontendCommunicator.onAsync("syncChannelRewards", async () => {
     await loadChannelRewards();
