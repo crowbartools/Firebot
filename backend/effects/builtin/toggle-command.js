@@ -35,7 +35,7 @@ const chat = {
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'system'" header="System Commands" pad-top="true">
-            <ui-select ng-model="effect.commandId" theme="bootstrap" ng-click="updateSelectedCommand(systemCommands)">
+            <ui-select ng-model="effect.commandId" theme="bootstrap">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in systemCommands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
@@ -44,7 +44,7 @@ const chat = {
         </eos-container>
 
         <eos-container ng-show="effect.commandType === 'custom'" header="Custom Commands" pad-top="true">
-            <ui-select ng-model="effect.commandId" theme="bootstrap" ng-click="updateSelectedCommand(customCommands)">
+            <ui-select ng-model="effect.commandId" theme="bootstrap">
                 <ui-select-match placeholder="Select or search for a command... ">{{$select.selected.trigger}}</ui-select-match>
                 <ui-select-choices repeat="command.id as command in customCommands | filter: { trigger: $select.search }" style="position:relative;">
                     <div ng-bind-html="command.trigger | highlight: $select.search"></div>
@@ -59,16 +59,6 @@ const chat = {
     optionsController: ($scope, commandsService) => {
         $scope.systemCommands = commandsService.getSystemCommands();
         $scope.customCommands = commandsService.getCustomCommands();
-
-        $scope.updateSelectedCommand = commands => {
-            if ($scope.effect.commandId) {
-                for (const command of commands) {
-                    if (command.id === $scope.effect.commandId) {
-                        $scope.effect.command = command;
-                    }
-                }
-            }
-        };
 
         $scope.toggleOptions = {
             disable: "Deactivate",
