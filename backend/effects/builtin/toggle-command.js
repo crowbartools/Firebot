@@ -1,9 +1,8 @@
 "use strict";
 
-const commandAccess = require("../../chat/commands/command-access");
+const frontendCommunicator = require("../../common/frontend-communicator");
 const commandManager = require("../../chat/commands/CommandManager");
 
-const moment = require("moment");
 const { ControlKind, InputEvent } = require('../../interactive/constants/MixplayConstants');
 const effectModels = require("../models/effectModels");
 const { EffectTrigger } = effectModels;
@@ -78,7 +77,7 @@ const chat = {
         return errors;
     },
     onTriggerEvent: async event => {
-        const { commandId, commandType, toggleType } = effect;
+        const { commandId, commandType, toggleType } = event.effect;
 
         if (commandType === "system") {
             const systemCommand = commandManager
@@ -105,6 +104,8 @@ const chat = {
             customCommand.active = toggleType === "toggle" ? !customCommand.active : toggleType === "enable";
 
             commandManager.saveCustomCommand(customCommand, "System", false);
+
+            frontendCommunicator.send("custom-commands-updated");
         }
     }
 };
