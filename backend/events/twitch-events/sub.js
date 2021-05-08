@@ -25,6 +25,6 @@ exports.triggerSub = (subInfo) => {
         totalMonths: subInfo.months,
         streak: subInfo.streakMonths,
         isPrime: subInfo.subPlan === "Prime",
-        resub: subInfo.isResub
+        isResub: subInfo.isResub
     });
 };
