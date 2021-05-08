@@ -160,6 +160,9 @@ exports.whenReady = async () => {
     const channelAccess = require("../../../common/channel-access");
     channelAccess.refreshStreamerChannelData();
 
+    const channelRewardManager = require("../../../channel-rewards/channel-reward-manager");
+    await channelRewardManager.loadChannelRewards();
+
     // load activity feed manager
     require("../../../events/activity-feed-manager");
 

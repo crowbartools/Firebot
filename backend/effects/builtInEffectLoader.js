@@ -104,6 +104,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(setUserMetadata);
     effectManager.registerEffect(shoutout);
     effectManager.registerEffect(markAllActivityAcknowledged);
+    effectManager.registerEffect(require("./builtin/update-channel-reward"));
 
     // Deactivated for Twitch.
     const changeScene = require('./builtin/changeScene');

@@ -76,7 +76,6 @@ const toggleConnection = {
                 name: i.name
             }))
         ];
-        console.log($scope.services);
 
         if ($scope.effect.services == null) {
             $scope.effect.services = [];

@@ -9,6 +9,7 @@ const Trigger = {
     HOTKEY: "hotkey",
     TIMER: "timer",
     COUNTER: "counter",
+    CHANNEL_REWARD: "channel_reward",
     MANUAL: "manual"
 };
 
