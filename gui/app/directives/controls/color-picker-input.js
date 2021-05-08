@@ -36,8 +36,9 @@
                 $ctrl.$onInit = () => {
                     $ctrl.colorPickerOptions = {
                         swatchBootstrap: true,
+                        required: true,
                         inputClass: `form-control ${$ctrl.lgInput ? 'input-lg' : ''}`,
-                        allowEmpty: true,
+                        allowEmpty: false,
                         format: "hexString",
                         placeholder: "#ffffff",
                         case: "lower",
