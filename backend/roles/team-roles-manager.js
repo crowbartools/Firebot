@@ -3,6 +3,9 @@
 const twitchApi = require("../twitch-api/api");
 const frontendCommunicator = require("../common/frontend-communicator");
 
+/**
+ * @param {import('twitch/lib/API/Kraken/Team/Team').Team[]} teams
+ */
 function mapRoles(teams) {
     return teams
         .map(team => {
