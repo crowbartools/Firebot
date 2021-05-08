@@ -125,7 +125,8 @@ module.exports = {
             manualMetadata: {
                 username: "Firebot",
                 bits: 100,
-                totalBits: 1200
+                totalBits: 1200,
+                isAnonymous: false
             },
             activityFeed: {
                 icon: "fad fa-diamond",
