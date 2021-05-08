@@ -36,7 +36,7 @@
                 },
                 true);
 
-            $scope.getPermisisonType = command => {
+            $scope.getPermissionType = command => {
 
                 let permissions = command.restrictionData && command.restrictionData.restrictions &&
                     command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");

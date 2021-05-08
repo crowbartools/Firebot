@@ -18,7 +18,7 @@
                 <i class="far fa-user"></i> {{$ctrl.command.cooldown.user ? $ctrl.command.cooldown.user + "s" : "-" }}
             </span>
           </div>
-          <div style="width: 20%"><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType($ctrl.command)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip($ctrl.command)"></tooltip></div>
+          <div style="width: 20%"><span style="text-transform: capitalize;">{{$ctrl.getPermissionType($ctrl.command)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip($ctrl.command)"></tooltip></div>
           <div style="width: 20%">
             <div style="min-width: 75px">
                 <span class="status-dot" ng-class="{'active': $ctrl.command.active, 'notactive': !$ctrl.command.active}"></span> {{$ctrl.command.active ? "Enabled" : "Disabled"}}
@@ -58,7 +58,7 @@
                     </div>
                     <div style="display: inline-block;">
                         <div><span class="muted" style="font-size: 10px;"><i class="fas fa-lock-alt"></i> PERMISSIONS</span></div>
-                        <div><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType(subCmd, true)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd, true)"></tooltip></div>
+                        <div><span style="text-transform: capitalize;">{{$ctrl.getPermissionType(subCmd, true)}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip(subCmd, true)"></tooltip></div>
                     </div>
                 </div>-->                
               </div>
@@ -104,7 +104,7 @@
                 }
             };*/
 
-            $ctrl.getPermisisonType = (command, isSub) => {
+            $ctrl.getPermissionType = (command, isSub) => {
 
                 let permissions = command.restrictionData && command.restrictionData.restrictions &&
                   command.restrictionData.restrictions.find(r => r.type === "firebot:permissions");
