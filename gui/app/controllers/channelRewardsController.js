@@ -9,6 +9,9 @@
         ) {
             $scope.channelRewardsService = channelRewardsService;
 
+            // triggering twitch sync
+            channelRewardsService.syncChannelRewards();
+
             $scope.onRewardsUpdated = (items) => {
                 channelRewardsService.saveAllRewards(items);
             };
