@@ -67,6 +67,20 @@
                 });
             };
 
+            let currentlySyncing = false;
+            service.syncChannelRewards = () => {
+                if (currentlySyncing) return;
+                currentlySyncing = true;
+
+                $q.when(backendCommunicator.fireEventAsync("syncChannelRewards"))
+                    .then(channelRewards => {
+                        if (channelRewards) {
+                            service.channelRewards = channelRewards;
+                        }
+                        currentlySyncing = false;
+                    });
+            };
+
             backendCommunicator.on("channel-reward-updated", (channelReward) => {
                 updateChannelReward(channelReward);
             });

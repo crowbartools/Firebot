@@ -9,6 +9,7 @@
                 headers: "<",
                 sortTagContext: "@?",
                 orderable: "<",
+                addNewButtonDisabled: "<?",
                 addNewButtonText: "@",
                 onAddNewClicked: "&",
                 contextMenuOptions: "&",
@@ -21,7 +22,8 @@
                 statusField: "@?"
             },
             transclude: {
-                footer: "?fbItemTableFooter"
+                footer: "?fbItemTableFooter",
+                toolbar: "?fbItemTableToolbar"
             },
             templateUrl: "./directives/misc/firebot-item-table/firebot-item-table.html",
             controller: function($scope, sortTagsService) {

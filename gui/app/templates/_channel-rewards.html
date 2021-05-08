@@ -4,6 +4,7 @@
   headers="headers"
   sort-tag-context="channel rewards"
   orderable="true"
+  add-new-button-disabled="channelRewardsService.channelRewards.length >= 50"
   add-new-button-text="New Channel Reward"
   on-add-new-clicked="channelRewardsService.showAddOrEditRewardModal()"
   context-menu-options="rewardMenuOptions(item)"
@@ -14,6 +15,15 @@
   on-test-button-clicked="testRewardTriggered(itemId)"
   status-field="twitchData.isEnabled"
 >
+  <fb-item-table-toolbar>
+    <button
+      class="btn btn-default"
+      uib-tooltip="Twitch Sync"
+      ng-click="channelRewardsService.syncChannelRewards()"
+    >
+      <i class="fas fa-sync"></i>
+    </button>
+  </fb-item-table-toolbar>
   <fb-item-table-footer>
     <div style="padding: 15px; display: flex; align-items: center">
       <div style="flex-shrink: 0; display: flex; align-items: center">
