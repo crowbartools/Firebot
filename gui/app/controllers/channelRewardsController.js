@@ -13,10 +13,6 @@
                 channelRewardsService.saveAllRewards(items);
             };
 
-            $scope.testRewardTriggered = itemId => {
-                console.log("test trigger", itemId);
-            };
-
             $scope.headers = [
                 {
                     headerStyles: {

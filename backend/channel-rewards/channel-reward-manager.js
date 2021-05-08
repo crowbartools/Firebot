@@ -4,6 +4,7 @@ const logger = require("../logwrapper");
 const profileManager = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
 const twitchApi = require("../twitch-api/api");
+const { EffectTrigger } = require("../effects/models/effectModels");
 
 /**
  * @typedef SavedChannelReward
@@ -92,7 +93,6 @@ async function saveChannelReward(channelReward, emitUpdateEvent = false) {
         await twitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
     }
 
-
     channelRewards[channelReward.id] = channelReward;
 
     try {
@@ -170,6 +170,46 @@ function getChannelReward(channelRewardId) {
     return channelRewards[channelRewardId];
 }
 
+/**
+ *
+ * @typedef RewardRedemptionMetadata
+ * @property {string} username
+ * @property {string} messageText
+ * @property {string} redemptionId
+ * @property {string} rewardId
+ * @property {string} rewardImage
+ * @property {string} rewardName
+ * @property {string} rewardCost
+ */
+
+/**
+ *
+ * @param {string} rewardId
+ * @param {RewardRedemptionMetadata} metadata
+ */
+async function triggerChannelReward(rewardId, metadata, manual = false) {
+    const savedReward = channelRewards[rewardId];
+    if (savedReward == null || savedReward.effects == null || savedReward.effects.list == null) {
+        return;
+    }
+
+    const effectRunner = require("../common/effect-runner");
+
+    const processEffectsRequest = {
+        trigger: {
+            type: manual ? EffectTrigger.MANUAL : EffectTrigger.CHANNEL_REWARD,
+            metadata: metadata
+        },
+        effects: savedReward.effects
+    };
+
+    try {
+        return effectRunner.processEffects(processEffectsRequest);
+    } catch (reason) {
+        console.log("error when running effects: " + reason);
+    }
+}
+
 frontendCommunicator.onAsync("getChannelRewardCount",
     twitchApi.channelRewards.getTotalChannelRewardCount);
 
@@ -191,6 +231,26 @@ frontendCommunicator.on("deleteChannelReward", (/** @type {string} */ channelRew
     deleteChannelReward(channelRewardId);
 });
 
+frontendCommunicator.on("manuallyTriggerReward", (/** @type {string} */ channelRewardId) => {
+
+    const savedReward = channelRewards[channelRewardId];
+
+    if (savedReward == null) return;
+
+    const accountAccess = require("../common/account-access");
+
+    triggerChannelReward(channelRewardId, {
+        messageText: "Testing reward",
+        redemptionId: "test-redemption-id",
+        rewardId: savedReward.id,
+        rewardCost: savedReward.twitchData.cost,
+        rewardImage: savedReward.twitchData.image ? savedReward.twitchData.image.url4x : savedReward.twitchData.defaultImage.url4x,
+        rewardName: savedReward.twitchData.title,
+        username: accountAccess.getAccounts().streamer.displayName
+    }, true);
+});
+
 exports.loadChannelRewards = loadChannelRewards;
 exports.getChannelReward = getChannelReward;
 exports.saveChannelReward = saveChannelReward;
+exports.triggerChannelReward = triggerChannelReward;

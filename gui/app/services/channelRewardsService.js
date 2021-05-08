@@ -67,6 +67,11 @@
                 });
             };
 
+            service.manuallyTriggerReward = (itemId) => {
+                console.log(itemId);
+                backendCommunicator.fireEvent("manuallyTriggerReward", itemId);
+            };
+
             let currentlySyncing = false;
             service.syncChannelRewards = () => {
                 if (currentlySyncing) return;

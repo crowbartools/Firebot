@@ -42,13 +42,22 @@ exports.handleRewardRedemption = (redemptionMessage) => {
     });
 
     setTimeout(() => {
-        eventManager.triggerEvent("twitch", "channel-reward-redemption", {
+
+        const redemptionMeta = {
             username: redemptionMessage.userDisplayName,
             messageText: redemptionMessage.message,
+            redemptionId: redemptionMessage.id,
             rewardId: redemptionMessage.rewardId,
             rewardImage: imageUrl,
             rewardName: redemptionMessage.rewardName,
             rewardCost: redemptionMessage.rewardCost
-        });
-    }, 250);
+        };
+
+        const rewardManager = require("../../channel-rewards/channel-reward-manager");
+
+        rewardManager.triggerChannelReward(redemptionMessage.rewardId, redemptionMeta);
+
+        eventManager.triggerEvent("twitch", "channel-reward-redemption", redemptionMeta);
+
+    }, 100);
 };

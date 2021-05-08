@@ -12,7 +12,7 @@
   none-found-message="No channel rewards found."
   search-placeholder="Search rewards"
   test-button="true"
-  on-test-button-clicked="testRewardTriggered(itemId)"
+  on-test-button-clicked="channelRewardsService.manuallyTriggerReward(itemId)"
   status-field="twitchData.isEnabled"
 >
   <fb-item-table-toolbar>
