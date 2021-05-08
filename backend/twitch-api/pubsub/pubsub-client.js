@@ -95,6 +95,14 @@ async function createClient() {
             cheerListener.triggerCheer(event.userName, event.bits, event.totalBits, event.message);
         });
         listeners.push(bitsListener);
+
+        const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
+            if (!subInfo.isGift) {
+                const subsHandler = require("../../events/twitch-events/sub");
+                subsHandler.triggerSub(subInfo);
+            }
+        });
+        listeners.push(subsListener);
     } catch (err) {
         logger.error("Failed to connect to Twitch PubSub!", err);
         return;
