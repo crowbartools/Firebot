@@ -7,20 +7,20 @@ const {
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:cheer"];
+triggers[EffectTrigger.EVENT] = ["twitch:whisper"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "cheerTotalBits",
-        description: "The total amount of bits cheered by a viewer in the channel.",
+        handle: "whisperMessage",
+        description: "The message included with the whisper.",
         triggers: triggers,
         categories: [VariableCategory.COMMON],
-        possibleDataOutput: [OutputDataType.NUMBER]
+        possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        let totalBits = trigger.metadata.eventData.totalBits || 0;
-        return totalBits;
+        const whisperMessage = trigger.metadata.eventData.message || "";
+        return whisperMessage;
     }
 };
 
