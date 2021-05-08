@@ -10,7 +10,8 @@
             utilityService,
             listenerService,
             viewerRolesService,
-            objectCopyHelper
+            objectCopyHelper,
+            sortTagsService
         ) {
             // Cache commands on app load.
             commandsService.refreshCommands();
@@ -18,23 +19,24 @@
             $scope.activeCmdTab = 0;
 
             $scope.commandsService = commandsService;
+            $scope.sts = sortTagsService;
 
             function filterCommands() {
-                return triggerSearchFilter(sortTagSearchFilter(commandsService.getCustomCommands(), commandsService.selectedSortTag), commandsService.customCommandSearch);
+                return triggerSearchFilter(sortTagSearchFilter(commandsService.getCustomCommands(), sortTagsService.getSelectedSortTag("commands")), commandsService.customCommandSearch);
             }
 
             $scope.filteredCommands = filterCommands();
 
-            $scope.$watchGroup(
-                [
-                    'commandsService.selectedSortTag',
-                    'commandsService.customCommandSearch',
-                    'commandsService.commandsCache.customCommands'
-                ],
-                function (_newVal, _oldVal, scope) {
-                    scope.filteredCommands = filterCommands();
-                },
-                true);
+            // $scope.$watchGroup(
+            //     [
+            //         'sortTagsService.getSelectedSortTag("commands")',
+            //         'commandsService.customCommandSearch',
+            //         'commandsService.commandsCache.customCommands'
+            //     ],
+            //     function (_newVal, _oldVal, scope) {
+            //         scope.filteredCommands = filterCommands();
+            //     },
+            //     true);
 
             $scope.getPermisisonType = command => {
 
@@ -198,7 +200,7 @@
                     }
                 ];
 
-                const sortTags = commandsService.getSortTags();
+                const sortTags = sortTagsService.getSortTags("commands");
 
                 if (sortTags.length > 0) {
                     options.push({

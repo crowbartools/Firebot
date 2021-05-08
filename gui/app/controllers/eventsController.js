@@ -4,9 +4,12 @@
     // This handles the Events tab
     angular
         .module("firebotApp")
-        .controller("eventsController", function($scope, eventsService, utilityService, listenerService, objectCopyHelper) {
+        .controller("eventsController", function($scope, eventsService, utilityService,
+            listenerService, objectCopyHelper, sortTagsService) {
 
             $scope.es = eventsService;
+
+            $scope.sts = sortTagsService;
 
             $scope.getSelectedEvents = function() {
                 let selectedTab = eventsService.getSelectedTab();
@@ -392,7 +395,7 @@
                     }
                 ];
 
-                const sortTags = eventsService.getSortTags();
+                const sortTags = sortTagsService.getSortTags("events");
 
                 if (sortTags.length > 0) {
                     options.push({

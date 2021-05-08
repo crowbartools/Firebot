@@ -1,7 +1,5 @@
 "use strict";
 
-const { sort } = require("mathjs");
-
 (function() {
     //This handles events
     const uuidv1 = require("uuid/v1");
@@ -11,7 +9,6 @@ const { sort } = require("mathjs");
 
         let mainEvents = [];
         let groups = [];
-        let sortTags = [];
 
 
         function loadAllEventData() {
@@ -36,44 +33,6 @@ const { sort } = require("mathjs");
             if (index < 0) return;
             groups[index] = group;
         });
-
-        service.openManageTagsModal = () => {
-            utilityService.showModal({
-                component: "manageSortTagsModal",
-                size: "sm",
-                resolveObj: {
-                    tags: () => sortTags
-                },
-                closeCallback: tags => {
-                    sortTags = tags;
-                    backendCommunicator.fireEvent("event-sort-tags-update", sortTags);
-                    if (service.selectedSortTag && !sortTags.some(t => t.id === service.selectedSortTag.id)) {
-                        service.selectedSortTag = null;
-                    }
-                }
-            });
-        };
-
-        service.getSortTags = () => {
-            return sortTags;
-        };
-        service.selectedSortTag = null;
-        service.selectedSortTagDisplay = () => {
-            return service.selectedSortTag != null ? service.selectedSortTag.name : "All Events";
-        };
-        service.setSelectedSortTag = (tag) => {
-            service.selectedSortTag = tag;
-        };
-
-        service.getSortTagNames = (tagIds) => {
-            if (tagIds == null) {
-                return [];
-            }
-            return tagIds
-                .filter(id => sortTags.some(t => t.id === id))
-                .map(id => sortTags.find(t => t.id === id).name);
-        };
-
 
         let selectedTab = "mainevents";
         service.setSelectedTab = function(groupId) {

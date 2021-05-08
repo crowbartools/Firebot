@@ -28,60 +28,10 @@
       </div>
 
       <div style="display: flex; flex-direction: row; align-items: center">
-        <div
-          class="btn-group"
+        <sort-tag-dropdown
+          context="{{$ctrl.sortTagContext}}"
           style="margin-right: 10px"
-          uib-dropdown
-          ng-show="$ctrl.sortTagContext != null"
-        >
-          <button
-            id="single-button"
-            type="button"
-            class="btn btn-default"
-            uib-dropdown-toggle
-          >
-            {{sts.getSelectedSortTagDisplay($ctrl.sortTagContext)}}
-            <span class="caret"></span>
-          </button>
-          <ul
-            class="dropdown-menu"
-            uib-dropdown-menu
-            role="menu"
-            aria-labelledby="single-button"
-          >
-            <li
-              role="menuitem"
-              ng-click="sts.setSelectedSortTag($ctrl.sortTagContext, null)"
-            >
-              <a href>All {{$ctrl.sortTagContext}}</a>
-            </li>
-            <li
-              class="divider"
-              ng-show="sts.getSortTags($ctrl.sortTagContext).length > 0"
-            ></li>
-            <li
-              class="dropdown-header"
-              ng-show="sts.getSortTags($ctrl.sortTagContext).length > 0"
-            >
-              Sort Tags
-            </li>
-            <li
-              ng-repeat="tag in sts.getSortTags($ctrl.sortTagContext)"
-              ng-click="sts.setSelectedSortTag($ctrl.sortTagContext, tag)"
-              role="menuitem"
-            >
-              <a href>{{tag.name}}</a>
-            </li>
-            <li class="divider"></li>
-            <li
-              role="menuitem"
-              ng-click="sts.showEditSortTagsModal($ctrl.sortTagContext)"
-            >
-              <a href>Edit sort tags</a>
-            </li>
-          </ul>
-        </div>
-
+        />
         <searchbar
           ng-show="$ctrl.items.length > 0"
           placeholder-text="{{$ctrl.searchPlaceholder}}"

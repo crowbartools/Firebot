@@ -30,10 +30,10 @@
                     <filter-list event-source-id="$ctrl.event.sourceId" event-id="$ctrl.event.eventId" filter-data="$ctrl.event.filterData"></filter-list>
                 </div>
                 
-                <div class="effect-setting-container setting-padtop" ng-show="$ctrl.allSortTags != null && $ctrl.allSortTags.length > 0">
+                 <!-- <div class="effect-setting-container setting-padtop" ng-show="$ctrl.allSortTags != null && $ctrl.allSortTags.length > 0">
                     <h3>Sort Tags</h3>
                     <sort-tag-list current-tag-ids="$ctrl.event.sortTags" all-tags="$ctrl.allSortTags"></sort-tag-list>
-                </div>
+                </div> -->
 
                 <div class="other-settings setting-padtop">
                     <div class="settings-title">
@@ -67,8 +67,6 @@
         },
         controller: function($scope, utilityService, ngToast, eventsService) {
             let $ctrl = this;
-
-            $ctrl.allSortTags = eventsService.getSortTags();
 
             $ctrl.isNewEvent = true;
 
