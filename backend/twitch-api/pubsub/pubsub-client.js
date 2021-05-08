@@ -84,6 +84,12 @@ async function createClient() {
 
         listeners.push(redemptionListener);
 
+        const whisperListener = await pubSubClient.onWhisper(streamer.userId, (message) => {
+            const whisperListener = require("../../events/twitch-events/whisper");
+            whisperListener.triggerWhisper(message.senderName, message.text);
+        });
+        listeners.push(whisperListener);
+
         const bitsListener = await pubSubClient.onBits(streamer.userId, (event) => {
             const cheerListener = require("../../events/twitch-events/cheer");
             cheerListener.triggerCheer(event.userName, event.bits, event.totalBits, event.message);
