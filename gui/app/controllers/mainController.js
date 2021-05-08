@@ -19,6 +19,7 @@
         "ngSanitize",
         "ui.select",
         "ui.sortable",
+        "ui.validate",
         "ebScrollLock",
         "summernote",
         "pascalprecht.translate",

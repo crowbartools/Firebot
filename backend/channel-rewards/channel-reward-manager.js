@@ -85,7 +85,7 @@ async function saveChannelReward(channelReward, emitUpdateEvent = false) {
         const twitchData = await twitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
         channelReward.twitchData = twitchData;
         channelReward.id = twitchData.id;
-    } else {
+    } else if (channelReward.manageable) {
         await twitchApi.channelRewards.updateCustomChannelReward(channelReward.twitchData);
     }
 

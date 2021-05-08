@@ -18,6 +18,7 @@ require("angular-animate");
 require("angular-route");
 require("angular-sanitize");
 require("angular-ui-bootstrap");
+require("angular-ui-validate");
 require("angularjs-slider");
 require("../js/plugins/scroll-glue");
 require("../../node_modules/angular-ui-codemirror/src/ui-codemirror");

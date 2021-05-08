@@ -8,7 +8,9 @@
             bindings: {
                 model: "=",
                 label: "@?",
-                style: "@"
+                style: "@",
+                lgInput: "<",
+                showClear: "<"
             },
             template: `
             <div style="{{$ctrl.style}}">
@@ -29,21 +31,23 @@
             </div>
             `,
             controller: function() {
-                let $ctrl = this;
+                const $ctrl = this;
 
-                $ctrl.colorPickerOptions = {
-                    swatchBootstrap: false,
-                    inputClass: 'form-control',
-                    allowEmpty: true,
-                    format: "hexString",
-                    placeholder: "#ffffff",
-                    case: "lower",
-                    alpha: false,
-                    clear: {
-                        show: true,
-                        label: 'Clear',
-                        class: "btn btn-danger clear-btn-width"
-                    }
+                $ctrl.$onInit = () => {
+                    $ctrl.colorPickerOptions = {
+                        swatchBootstrap: true,
+                        inputClass: `form-control ${$ctrl.lgInput ? 'input-lg' : ''}`,
+                        allowEmpty: true,
+                        format: "hexString",
+                        placeholder: "#ffffff",
+                        case: "lower",
+                        alpha: false,
+                        clear: {
+                            show: $ctrl.showClear !== false,
+                            label: 'Clear',
+                            class: "btn btn-danger clear-btn-width"
+                        }
+                    };
                 };
 
                 $ctrl.colorPickerEvents = {
