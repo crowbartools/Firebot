@@ -47,6 +47,7 @@ exports.loadEffects = () => {
     const moderatorMod = require("./builtin/moderatorMod");
     const clearChat = require("./builtin/clearChat");
     const updateCounter = require("./builtin/update-counter");
+    const toggleCommand = require("./builtin/toggle-command");
     const toggleEventSet = require("./builtin/toggle-event-set");
     const cooldownCommand = require("./builtin/cooldown-command");
     const setUserMetadata = require("./builtin/set-user-metadata");
@@ -97,6 +98,7 @@ exports.loadEffects = () => {
     effectManager.registerEffect(moderatorMod);
     effectManager.registerEffect(clearChat);
     effectManager.registerEffect(updateCounter);
+    effectManager.registerEffect(toggleCommand);
     effectManager.registerEffect(toggleEventSet);
     effectManager.registerEffect(cooldownCommand);
     effectManager.registerEffect(setUserMetadata);

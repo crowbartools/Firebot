@@ -45,6 +45,10 @@ function mapMixerRoleIdToTwitchRoleId(mixerRoleId) {
 }
 
 exports.getTwitchRoles = () => twitchRoles;
+/**
+ * @param {string} role
+ * @returns {{id: string; name: string}}
+ * */
 exports.mapTwitchRole = role => {
     if (role === "founder") {
         return twitchRoles.find(r => r.id === 'sub');

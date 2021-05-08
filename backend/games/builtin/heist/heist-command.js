@@ -120,11 +120,15 @@ const heistCommand = {
 
         // get all user roles
         const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        const userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
+        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
         const userTwitchRoles = (userCommand.senderRoles || [])
             .map(r => twitchRolesManager.mapTwitchRole(r))
             .filter(r => !!r);
-        const allRoles = userCustomRoles.concat(userTwitchRoles).concat(userTeamRoles);
+        const allRoles = [
+            ...userTwitchRoles,
+            ...userTeamRoles,
+            ...userCustomRoles
+        ];
 
         // get the users success percentage
         let successChance = 50;

@@ -5,6 +5,14 @@ const profileManager = require("../common/profile-manager");
 const frontendCommunicator = require("../common/frontend-communicator");
 const twitchRoleManager = require("../../shared/twitch-roles");
 
+/**
+ * @typedef CustomRole
+ * @property {string} id
+ * @property {string} name
+ * @property {string[]} viewers
+ */
+
+/** @type {Object.<string, CustomRole>} */
 let customRoles = {};
 
 const ROLES_FOLDER = "/roles/";
