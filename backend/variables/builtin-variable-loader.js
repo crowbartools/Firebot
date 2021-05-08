@@ -19,6 +19,7 @@ exports.loadReplaceVariables = () => {
         'bot',
         'chat-message',
         'chat-messages',
+        'cheer-bits',
         'cheer-message',
         'cheer-total-bits',
         'commafy',

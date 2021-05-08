@@ -124,12 +124,13 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "Firebot",
-                totalBits: 100
+                bits: 100,
+                totalBits: 1200
             },
             activityFeed: {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** cheered **${eventData.totalBits}** bits`;
+                    return `**${eventData.username}** cheered **${eventData.bits}** bits. A total of **${eventData.totalBits}** were cheered by **${eventData.username}** in the channel.`;
                 }
             }
         },
