@@ -101,18 +101,6 @@ exports.setupChatListeners = (streamerChatClient) => {
         logger.debug(`Host triggered by ${byChannel}. Is auto: ${auto}`);
     });
 
-    streamerChatClient.onSub((_channel, _user, subInfo, msg) => {
-        const subListener = require("../../events/twitch-events/sub");
-        subListener.triggerSub(subInfo.displayName, subInfo.plan, subInfo.planName, subInfo.months,
-            subInfo.streak, subInfo.isPrime);
-    });
-
-    streamerChatClient.onResub((_channel, _username, subInfo) => {
-        const subListener = require("../../events/twitch-events/sub");
-        subListener.triggerSub(subInfo.displayName, subInfo.plan, subInfo.planName, subInfo.months,
-            subInfo.streak, subInfo.isPrime, true);
-    });
-
     streamerChatClient.onSubGift((_channel, _user, giftSubInfo, msg) => {
         const giftSubListener = require("../../events/twitch-events/gift-sub");
         giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName,
