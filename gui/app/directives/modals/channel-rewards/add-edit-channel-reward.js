@@ -194,7 +194,7 @@
                     </form>
 
                     <div style="margin-top:15px;">
-                        <effect-list effects="$ctrl.reward.effects" trigger="reward" update="$ctrl.effectListUpdated(effects)"></effect-list>
+                        <effect-list effects="$ctrl.reward.effects" trigger="channel_reward" update="$ctrl.effectListUpdated(effects)"></effect-list>
                     </div>
 
                 </div>
@@ -209,7 +209,7 @@
                 close: "&",
                 dismiss: "&"
             },
-            controller: function($scope) {
+            controller: function($scope, ngToast, channelRewardsService) {
                 const $ctrl = this;
 
                 const generateRandomColor = () => `#${Math.floor(Math.random() * 8 ** 8).toString(16)}`;
@@ -277,7 +277,14 @@
                             return;
                         }
                     }
-                    console.log("VALID FORM");
+
+                    channelRewardsService.saveChannelReward($ctrl.reward).then(successful => {
+                        if (successful) {
+                            $ctrl.dismiss();
+                        } else {
+                            ngToast.create("Failed to save channel reward. Please try again or view logs for details.");
+                        }
+                    });
                 };
             }
         });

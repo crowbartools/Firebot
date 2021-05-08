@@ -75,11 +75,11 @@ function mapCustomRewardToCreateRewardPayload(reward) {
         backgroundColor: reward.backgroundColor,
         isUserInputRequired: reward.isUserInputRequired,
         isMaxPerStreamEnabled: reward.maxPerStreamSetting.isEnabled,
-        maxPerStream: reward.maxPerStreamSetting.maxPerStream,
+        maxPerStream: reward.maxPerStreamSetting.maxPerStream || 0,
         isMaxPerUserPerStreamEnabled: reward.maxPerUserPerStreamSetting.isEnabled,
-        maxPerUserPerStream: reward.maxPerUserPerStreamSetting.maxPerUserPerStream,
+        maxPerUserPerStream: reward.maxPerUserPerStreamSetting.maxPerUserPerStream || 0,
         isGlobalCooldownEnabled: reward.globalCooldownSetting.isEnabled,
-        globalCooldownSeconds: reward.globalCooldownSetting.globalCooldownSeconds,
+        globalCooldownSeconds: reward.globalCooldownSetting.globalCooldownSeconds || 0,
         isPaused: reward.isPaused,
         shouldRedemptionsSkipRequestQueue: reward.shouldRedemptionsSkipRequestQueue
     };
@@ -131,18 +131,20 @@ async function getTotalChannelRewardCount() {
  */
 async function createCustomChannelReward(reward) {
 
+    const body = snakeKeys(mapCustomRewardToCreateRewardPayload(reward));
+
     const client = twitchApi.getClient();
     try {
-        await client.callAPI({
+        const response = await client.callAPI({
             type: TwitchAPICallType.Helix,
             url: "channel_points/custom_rewards",
             method: "POST",
             query: {
                 "broadcaster_id": accountAccess.getAccounts().streamer.userId
             },
-            body: snakeKeys(mapCustomRewardToCreateRewardPayload(reward))
+            body: body
         });
-        return true;
+        return camelKeys(response.data[0], { recursive: true });
     } catch (err) {
         logger.error("Failed to create twitch custom channel reward", err);
         return null;

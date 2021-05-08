@@ -14,6 +14,7 @@ triggers[EffectTrigger.EVENT] = true;
 triggers[EffectTrigger.MANUAL] = true;
 triggers[EffectTrigger.CUSTOM_SCRIPT] = true;
 triggers[EffectTrigger.PRESET_LIST] = true;
+triggers[EffectTrigger.CHANNEL_REWARD] = true;
 
 module.exports = {
     definition: {

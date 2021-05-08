@@ -33,8 +33,14 @@
             };
 
             service.saveChannelReward = (channelReward) => {
-                updateChannelReward(channelReward);
-                backendCommunicator.fireEvent("saveChannelReward", channelReward);
+                return $q.when(backendCommunicator.fireEventAsync("saveChannelReward", channelReward))
+                    .then(savedReward => {
+                        if (savedReward) {
+                            updateChannelReward(savedReward);
+                            return true;
+                        }
+                        return false;
+                    });
             };
 
             service.saveAllRewards = (channelRewards, updateTwitch = false) => {
@@ -45,6 +51,11 @@
                 });
             };
 
+            service.deleteChannelReward = (channelRewardId) => {
+                service.channelRewards = service.channelRewards.filter(cr => cr.id !== channelRewardId);
+                backendCommunicator.fireEvent("deleteChannelReward", channelRewardId);
+            };
+
             service.showAddOrEditRewardModal = (reward) => {
                 utilityService.showModal({
                     component: "addOrEditChannelReward",
@@ -52,18 +63,7 @@
                     resolveObj: {
                         reward: () => reward
                     },
-                    closeCallback: ({action, reward}) => {
-
-                        switch (action) {
-                        case "add":
-                        case "update":
-                            service.saveChannelReward(reward);
-                            break;
-                        case "delete":
-                            //commandsService.deleteCustomCommand(command);
-                            break;
-                        }
-                    }
+                    closeCallback: () => {}
                 });
             };
 

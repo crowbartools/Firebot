@@ -83,6 +83,9 @@ async function saveChannelReward(channelReward, emitUpdateEvent = false) {
 
     if (channelReward.id == null) {
         const twitchData = await twitchApi.channelRewards.createCustomChannelReward(channelReward.twitchData);
+        if (twitchData == null) {
+            return null;
+        }
         channelReward.twitchData = twitchData;
         channelReward.id = twitchData.id;
     } else if (channelReward.manageable) {
@@ -173,7 +176,7 @@ frontendCommunicator.onAsync("getChannelRewardCount",
 frontendCommunicator.onAsync("getChannelRewards", async () => Object.values(channelRewards));
 
 frontendCommunicator.onAsync("saveChannelReward",
-    async (/** @type {SavedChannelReward} */ channelReward) => saveChannelReward(channelReward));
+    (/** @type {SavedChannelReward} */ channelReward) => saveChannelReward(channelReward));
 
 frontendCommunicator.onAsync("saveAllChannelRewards",
     async (/** @type {{ channelRewards: SavedChannelReward[]; updateTwitch: boolean}} */ data) =>

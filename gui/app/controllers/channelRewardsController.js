@@ -4,7 +4,8 @@
         .module("firebotApp")
         .controller("channelRewardsController", function(
             $scope,
-            channelRewardsService
+            channelRewardsService,
+            utilityService
         ) {
             $scope.channelRewardsService = channelRewardsService;
 
@@ -51,7 +52,8 @@
                     {
                         html: `<a href ><i class="far fa-toggle-off" style="margin-right: 10px;"></i> Toggle Enabled</a>`,
                         click: function () {
-                            //$scope.toggleCustomCommandActiveState(command);
+                            item.twitchData.isEnabled = !item.twitchData.isEnabled;
+                            channelRewardsService.saveChannelReward(item);
                         },
                         enabled: item.manageable
                     },
@@ -65,7 +67,19 @@
                     {
                         html: `<a href style="${item.manageable ? 'color: #fb7373;' : ''}"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
                         click: function () {
-                            //$scope.deleteCustomCommand(command);
+                            utilityService
+                                .showConfirmationModal({
+                                    title: "Delete Channel Reward",
+                                    question: `Are you sure you want to delete the Channel Reward "${item.twitchData.title}"?`,
+                                    confirmLabel: "Delete",
+                                    confirmBtnType: "btn-danger"
+                                })
+                                .then(confirmed => {
+                                    if (confirmed) {
+                                        channelRewardsService.deleteChannelReward(item.id);
+                                    }
+                                });
+
                         },
                         enabled: item.manageable
                     }
