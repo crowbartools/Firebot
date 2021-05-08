@@ -14,7 +14,7 @@ module.exports = {
         const { comparisonType, value } = filterSettings;
         const { eventMeta } = eventData;
 
-        const bitsAmount = eventMeta.totalBits || 0;
+        const bitsAmount = eventMeta.bits || 0;
 
 
         switch (comparisonType) {
