@@ -53,13 +53,13 @@
                         },
                         enabled: item.manageable
                     },
-                    // {
-                    //     html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
-                    //     click: function ($itemScope) {
-                    //         //$scope.duplicateCustomCommand(command);
-                    //     },
-                    //     enabled: item.manageable
-                    // },
+                    {
+                        html: `<a href ><i class="far fa-clone" style="margin-right: 10px;"></i> Duplicate</a>`,
+                        click: function () {
+                            channelRewardsService.duplicateChannelReward(item.id);
+                        },
+                        enabled: channelRewardsService.channelRewards.length < 50
+                    },
                     {
                         html: `<a href style="${item.manageable ? 'color: #fb7373;' : ''}"><i class="far fa-trash-alt" style="margin-right: 10px;"></i> Delete</a>`,
                         click: function () {

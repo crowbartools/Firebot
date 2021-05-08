@@ -5,7 +5,7 @@
     angular
         .module("firebotApp")
         .factory("channelRewardsService", function($q, logger,
-            backendCommunicator, utilityService) {
+            backendCommunicator, utilityService, objectCopyHelper, ngToast) {
             let service = {};
 
             service.channelRewards = [];
@@ -68,8 +68,40 @@
             };
 
             service.manuallyTriggerReward = (itemId) => {
-                console.log(itemId);
                 backendCommunicator.fireEvent("manuallyTriggerReward", itemId);
+            };
+
+            service.channelRewardNameExists = (name) => {
+                return service.channelRewards.some(r => r.twitchData.title === name);
+            };
+
+            service.duplicateChannelReward = (rewardId) => {
+                if (service.channelRewards.length >= 50) return;
+                const reward = service.channelRewards.find(r => r.id === rewardId);
+                if (reward == null) {
+                    return;
+                }
+                const copiedReward = objectCopyHelper.copyObject("channel_reward", reward);
+                copiedReward.id = null;
+                copiedReward.twitchData.id = null;
+                copiedReward.manageable = true;
+
+                while (service.channelRewardNameExists(copiedReward.twitchData.title)) {
+                    copiedReward.twitchData.title += "copy";
+                }
+
+                copiedReward.twitchData.title = copiedReward.twitchData.title.substring(0, 45);
+
+                service.saveChannelReward(copiedReward).then(successful => {
+                    if (successful) {
+                        ngToast.create({
+                            className: 'success',
+                            content: 'Successfully duplicated a channel reward!'
+                        });
+                    } else {
+                        ngToast.create("Unable to duplicate channel reward.");
+                    }
+                });
             };
 
             let currentlySyncing = false;
