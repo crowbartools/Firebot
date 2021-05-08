@@ -11,7 +11,7 @@ const accountAccess = require("../../common/account-access");
  * @typedef ImageSet
  * @property {string} url1x
  * @property {string} url2x
- * @property {string} url3x
+ * @property {string} url4x
  */
 
 /**

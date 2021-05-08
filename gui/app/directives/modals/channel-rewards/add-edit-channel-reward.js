@@ -10,10 +10,17 @@
                     <h4 class="modal-title">Edit Channel Reward</h4>
                 </div>
                 <div class="modal-body" style="padding-top: 15px;">
-                    <div ng-if="!$ctrl.reward.manageable">
-                        <label class="control-label" style="opacity:0.85;">Reward Name</label>
-                        <div style="font-size:16px;">{{$ctrl.reward.twitchData.title}}</div>
-                        <p class="muted">This reward was created outside of Firebot so it's settings cannot be changed here. You can however still create effects for it. If you want to update settings for this Reward, you can do so on Twitch.</p>
+                    <div ng-if="!$ctrl.reward.manageable" style="display: flex; flex-direction: column;">
+                        <div style="font-size:30px;margin: 0 auto;">{{$ctrl.reward.twitchData.title}}</div>
+
+                        <div style="margin: 10px auto; padding: 12.5px; border-radius: 6px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center;" ng-style="{background: $ctrl.reward.twitchData.backgroundColor}">             
+                            <img 
+                                ng-src="{{$ctrl.reward.twitchData.image ? $ctrl.reward.twitchData.image.url4x : $ctrl.reward.twitchData.defaultImage.url4x}}" 
+                                style="width: 75px; height: 75px; display: block;"
+                            />
+                        </div>
+                        
+                        <p class="help-block" style="text-align: center;">This reward was created outside of Firebot so it's settings cannot be changed here. You can however still create effects for it. If you want to update settings for this Reward, you can do so on Twitch.</p>
                     </div>
                     <form ng-show="$ctrl.reward.manageable" name="rewardSettings">
                         <div class="form-group" ng-class="{'has-error': $ctrl.formFieldHasError('name')}">
@@ -171,6 +178,19 @@
                                 style="width: 50%;" 
                             />
                         </div>
+
+                        <div class="form-group">
+                            <label class="control-label" style="margin:0;">Reward Icon</label>
+                            <p class="help-block"><b>Important</b>: Reward icons can only be changed on Twitch</p>
+                            <div>
+                                <div style="display: inline-flex; align-items: center; justify-content: center;padding: 12.5px;border: 2px gray dashed;border-radius: 6px;">
+                                    <img 
+                                        ng-src="{{$ctrl.reward.twitchData.image ? $ctrl.reward.twitchData.image.url4x : $ctrl.reward.twitchData.defaultImage.url4x}}" 
+                                        style="width: 75px; height: 75px;"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </form>
 
                     <div style="margin-top:15px;">
@@ -217,6 +237,9 @@
                         isUserInputRequired: false,
                         shouldRedemptionsSkipRequestQueue: true,
                         cost: null,
+                        defaultImage: {
+                            url4x: "https://static-cdn.jtvnw.net/custom-reward-images/default-4.png"
+                        },
                         backgroundColor: generateRandomColor(),
                         globalCooldownSetting: {
                             isEnabled: false,
@@ -248,9 +271,11 @@
                 };
 
                 $ctrl.save = () => {
-                    $scope.rewardSettings.$setSubmitted();
-                    if ($scope.rewardSettings.$invalid) {
-                        return;
+                    if ($ctrl.reward.manageable) {
+                        $scope.rewardSettings.$setSubmitted();
+                        if ($scope.rewardSettings.$invalid) {
+                            return;
+                        }
                     }
                     console.log("VALID FORM");
                 };
