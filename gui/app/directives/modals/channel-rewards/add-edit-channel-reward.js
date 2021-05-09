@@ -44,7 +44,7 @@
                                 maxlength="200" 
                                 ng-model="$ctrl.reward.twitchData.prompt" 
                                 class="form-control" 
-                                style="font-size: 16px;" 
+                                style="font-size: 16px; padding: 10px 16px;" 
                                 name="text" 
                                 placeholder="Add a blurb of what you want your viewer to request" 
                                 rows="4" 
