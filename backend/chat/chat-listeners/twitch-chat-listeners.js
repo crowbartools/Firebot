@@ -56,11 +56,6 @@ exports.setupChatListeners = (streamerChatClient) => {
         const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
         viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
 
-        if (msg.isCheer) {
-            const cheerListener = require("../../events/twitch-events/cheer");
-            cheerListener.triggerCheer(msg.userInfo.displayName, msg.totalBits, msg.params.message);
-        }
-
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
             const timerManager = require("../../timers/timer-manager");
