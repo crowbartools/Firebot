@@ -4,7 +4,6 @@
 
 const path = require("path");
 
-const { NamedModulesPlugin } = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlWebpackHarddiskPlugin = require("html-webpack-harddisk-plugin");
 const TailwindCSSPlugin = require("tailwindcss")("./configs/tailwind.js");
@@ -16,12 +15,11 @@ const baseConfig = require("./base.webpack");
 module.exports = merge(baseConfig, {
     target: "web",
     entry: "./src/renderer/index.tsx",
+    optimization: {
+        moduleIds: 'named'
+    },
     module: {
         rules: [
-            {
-                test: /\.scss$/,
-                loaders: ["style-loader", "css-loader", "sass-loader"],
-            },
             {
                 test: /\.css$/,
                 loaders: [
@@ -56,7 +54,6 @@ module.exports = merge(baseConfig, {
         ],
     },
     plugins: [
-        new NamedModulesPlugin(),
         new HtmlWebpackPlugin({
             filename: "index.html",
             title: "Firebot",
