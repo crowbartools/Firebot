@@ -173,15 +173,13 @@ async function processEffects(processEffectsRequest) {
 
     runEffectsContext.effects = JSON.parse(JSON.stringify(runEffectsContext.effects));
 
-    if (processEffectsRequest.trigger.type !== EffectTrigger.MANUAL) {
-        const queueId = processEffectsRequest.effects.queue;
-        const queue = effectQueueManager.getEffectQueue(queueId);
-        if (queue != null) {
-            logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
-            effectQueueRunner.addEffectsToQueue(queue, runEffectsContext,
-                processEffectsRequest.effects.queueDuration, processEffectsRequest.effects.queuePriority);
-            return;
-        }
+    const queueId = processEffectsRequest.effects.queue;
+    const queue = effectQueueManager.getEffectQueue(queueId);
+    if (queue != null) {
+        logger.debug(`Sending effects for list ${processEffectsRequest.effects.id} to queue ${queueId}...`);
+        effectQueueRunner.addEffectsToQueue(queue, runEffectsContext,
+            processEffectsRequest.effects.queueDuration, processEffectsRequest.effects.queuePriority);
+        return;
     }
 
     return runEffects(runEffectsContext);

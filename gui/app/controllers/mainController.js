@@ -19,6 +19,7 @@
         "ngSanitize",
         "ui.select",
         "ui.sortable",
+        "ui.validate",
         "ebScrollLock",
         "summernote",
         "pascalprecht.translate",
@@ -108,7 +109,9 @@
         presetEffectListsService,
         startupScriptsService,
         effectQueuesService,
-        timerService
+        timerService,
+        channelRewardsService,
+        sortTagsService
     ) {
         // 'chatMessagesService' is included so its instantiated on app start
 
@@ -138,6 +141,10 @@
         startupScriptsService.loadStartupScripts();
 
         effectQueuesService.loadEffectQueues();
+
+        channelRewardsService.loadChannelRewards();
+
+        sortTagsService.loadSortTags();
 
         //start notification check
         $timeout(() => {

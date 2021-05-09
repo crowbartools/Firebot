@@ -13,14 +13,14 @@ triggers[EffectTrigger.MANUAL] = true;
 const model = {
     definition: {
         handle: "cheerBitsAmount",
-        description: "The total amount of bits in the cheer.",
+        description: "The amount of bits in the cheer.",
         triggers: triggers,
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.NUMBER]
     },
     evaluator: (trigger) => {
-        let totalBits = trigger.metadata.eventData.totalBits || 0;
-        return totalBits;
+        let bits = trigger.metadata.eventData.bits || 0;
+        return bits;
     }
 };
 

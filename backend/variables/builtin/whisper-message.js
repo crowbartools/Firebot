@@ -7,22 +7,20 @@ const {
 const { OutputDataType, VariableCategory } = require("../../../shared/variable-constants");
 
 let triggers = {};
-triggers[EffectTrigger.EVENT] = ["twitch:channel-reward-redemption"];
-triggers[EffectTrigger.CHANNEL_REWARD] = true;
+triggers[EffectTrigger.EVENT] = ["twitch:whisper"];
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {
     definition: {
-        handle: "rewardName",
-        description: "The name of the reward",
+        handle: "whisperMessage",
+        description: "The message included with the whisper.",
         triggers: triggers,
         categories: [VariableCategory.COMMON],
         possibleDataOutput: [OutputDataType.TEXT]
     },
     evaluator: (trigger) => {
-        return trigger.metadata.eventData ?
-            trigger.metadata.eventData.rewardName :
-            trigger.metadata.rewardName;
+        const whisperMessage = trigger.metadata.eventData.message || "";
+        return whisperMessage;
     }
 };
 

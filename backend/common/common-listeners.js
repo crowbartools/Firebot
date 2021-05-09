@@ -1,6 +1,7 @@
 "use strict";
 const electron = require("electron");
 const { app, ipcMain, dialog, shell } = electron;
+const JsonDb = require("node-json-db");
 
 const path = require("path");
 
