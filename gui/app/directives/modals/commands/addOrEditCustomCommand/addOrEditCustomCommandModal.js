@@ -17,8 +17,6 @@
         controller: function($scope, utilityService, commandsService, ngToast, settingsService) {
             let $ctrl = this;
 
-            $ctrl.allSortTags = commandsService.getSortTags();
-
             $ctrl.command = {
                 active: true,
                 simple: !settingsService.getDefaultToAdvancedCommandMode(),
