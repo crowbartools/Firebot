@@ -129,24 +129,6 @@
                     }
                     return data[$ctrl.order.field];
                 };
-
-                let headers = [
-                    {
-                        name: "USERNAME",
-                        icon: "fa-user",
-                        sortable: true,
-                        dataField: "username",
-                        headerStyles: {
-                            'min-width': '125px'
-                        },
-                        cellStyles: {
-                            'min-width': '125px'
-                        },
-                        cellTemplate: `{{data.username}}`,
-                        cellController: () => {}
-
-                    }
-                ];
             }
         });
 }());

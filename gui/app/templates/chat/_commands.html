@@ -1,130 +1,279 @@
-<div style="min-width: 500px;height:100%;width:100%;display: flex;flex-direction: column;">
-    <div class="fb-commands-tab-wrapper">
-        <ul class="nav nav-tabs fb-tabs">
-            <li role="presentation" ng-class="{'active' : activeCmdTab === 0}" ng-click="activeCmdTab = 0">
-                <a href>CUSTOM COMMANDS</a>
-            </li>
-            <li role="presentation" ng-class="{'active' : activeCmdTab === 1}" ng-click="activeCmdTab = 1">
-                <a href>SYSTEM COMMANDS</a>
-            </li>
-        </ul>
-    </div>
+<div
+  style="
+    min-width: 500px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  "
+>
+  <div class="fb-commands-tab-wrapper">
+    <ul class="nav nav-tabs fb-tabs">
+      <li
+        role="presentation"
+        ng-class="{'active' : activeCmdTab === 0}"
+        ng-click="activeCmdTab = 0"
+      >
+        <a href>CUSTOM COMMANDS</a>
+      </li>
+      <li
+        role="presentation"
+        ng-class="{'active' : activeCmdTab === 1}"
+        ng-click="activeCmdTab = 1"
+      >
+        <a href>SYSTEM COMMANDS</a>
+      </li>
+    </ul>
+  </div>
 
-    <div style="overflow-y: scroll;height:100%;"> 
-        <div ng-if="activeCmdTab === 0">
-            <scroll-sentinel element-class="custom-cmd-header"></scroll-sentinel>      
-            <div class="light-bg sticky-top custom-cmd-header" style="padding: 15px; margin: 15px 0;display: flex;flex-direction: row;justify-content: space-between;">
-                <button ng-click="openAddOrEditCustomCommandModal()" class="btn btn-primary hvr-icon-grow"><i class="fas fa-plus-circle hvr-icon" style="margin-right:5px;"></i> New Custom Command</button>
-                
-                <div style="display: flex; flex-direction: row;align-items: center;">
+  <div style="overflow-y: scroll; height: 100%">
+    <div ng-if="activeCmdTab === 0">
+      <scroll-sentinel element-class="custom-cmd-header"></scroll-sentinel>
+      <div
+        class="light-bg sticky-top custom-cmd-header"
+        style="
+          padding: 15px;
+          margin: 15px 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        "
+      >
+        <button
+          ng-click="openAddOrEditCustomCommandModal()"
+          class="btn btn-primary hvr-icon-grow"
+        >
+          <i class="fas fa-plus-circle hvr-icon" style="margin-right: 5px"></i>
+          New Custom Command
+        </button>
 
-                    <div class="btn-group" style="margin-right:10px;" uib-dropdown>
-                        <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
-                            {{commandsService.selectedSortTagDisplay()}} <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                            <li role="menuitem" ng-click="commandsService.setSelectedSortTag(null)"><a href>All Commands</a></li>
-                            <li class="divider" ng-show="commandsService.getSortTags().length > 0"></li>
-                            <li class="dropdown-header" ng-show="commandsService.getSortTags().length > 0">Sort Tags</li>
-                            <li ng-repeat="tag in commandsService.getSortTags()" ng-click="commandsService.setSelectedSortTag(tag)" role="menuitem">
-                                <a href>{{tag.name}}</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li role="menuitem" ng-click="commandsService.openManageTagsModal()"><a href>Edit sort tags</a></li>
-                        </ul>
-                    </div>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <sort-tag-dropdown context="commands" style="margin-right: 10px" />
 
-                    <searchbar ng-show="commandsService.getCustomCommands().length > 0" placeholder-text="Search commands" query="commandsService.customCommandSearch" style="flex-basis: 250px;"></searchbar>
-                </div>
-                
-            </div>
-            <div style="padding: 15px;">
-                <div ng-if="commandsService.getCustomCommands().length === 0" class="noselect muted" style="padding-left: 13px">
-                    <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span><span style="margin-left:8px">No custom commands saved. You should make one! :) </span>
-                </div>
-                <div ng-if="commandsService.getCustomCommands().length > 0 && filteredCommands && filteredCommands.length < 1" class="noselect muted" style="padding-left: 13px">
-                    <span style="margin-left:8px">No custom commands found.</span>
-                </div>
-                <table ng-show="commandsService.getCustomCommands().length > 0 && (filteredCommands == null || filteredCommands.length > 0)" class="fb-table">
-                    <thead>
-                        <tr style="font-size: 11px;">
-                            <th style="width:5%"></th> 
-                            <th class="muted"><i class="fas fa-exclamation"></i> TRIGGER</th> 
-                            <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th> 
-                            <th class="muted"><i class="fas fa-lock-alt"></i> PERMISSIONS</th>
-                            <th class="muted"><i class="fas fa-tag"></i> TAGS</th> 
-                            <th></th> 
-                            <th></th> 
-                        </tr> 
-                    </thead> 
-                    <tbody ui-sortable="sortableOptions" ng-model="filteredCommands"> 
-                        <tr ng-repeat="command in filteredCommands track by command.id" context-menu="commandMenuOptions(command)" style="width: 100%;">
-                            <td style="text-align: center;">
-                                <span style="color: #2aa1c0; font-size: 20px;" ng-click="manuallyTriggerCommand(command.id)">
-                                    <i class="fas fa-play-circle clickable"></i>
-                                </span>
-                            </td> 
-                            <td class="command-trigger-cell">
-                                <span class="trigger" uib-tooltip="{{command.trigger}}" tooltip-popup-delay="500" tooltip-append-to-body="true">{{command.trigger}}</span> <tooltip ng-if="command.triggerIsRegex" text="'Description: ' + command.regexDescription"></tooltip>
-                                <span class="muted" style="margin-left: 5px; font-size: 11px;" ng-show="command.hidden" uib-tooltip="Hidden from !commands list" tooltip-append-to-body="true">
-                                    <i class="fas fa-eye-slash"></i>
-                                </span>
-                            </td>
-                            <td>
-                                <span style="min-width: 51px; display: inline-block;" uib-tooltip="Global cooldown">
-                                    <i class="far fa-globe-americas"></i> {{command.cooldown.global ? command.cooldown.global + "s" : "-" }}
-                                </span>
-                                <span uib-tooltip="User cooldown">
-                                    <i class="far fa-user"></i> {{command.cooldown.user ? command.cooldown.user + "s" : "-" }}
-                                </span>                           
-                            </td>
-                            <td>
-                                <span style="text-transform: capitalize;">{{getPermissionType(command)}}</span> <tooltip type="info" text="getPermissionTooltip(command)"></tooltip>
-                            </td>
-                            <td style="max-width: 135px;min-width: 100px;">
-                                <div style="display: flex; flex-wrap: wrap; width: 100%; overflow: auto;max-height: 45.25px;">
-                                    <span ng-repeat="tagName in commandsService.getSortTagNames(command.sortTags)" style="background: gray; border-radius: 15px; padding: 1px 5px; margin-right:2px;margin-bottom: 1px;font-size: 10px;line-height: 1.8;">
-                                        {{tagName}}
-                                    </span>
-                                </div>
-                            </td>
-                            <td>
-                                <div style="min-width: 75px;display: flex;align-items: center;justify-content: center;">
-                                    <span class="status-dot" style="margin-right: 5px;" ng-class="{'active': command.active, 'notactive': !command.active}"></span>{{command.active ? "Enabled" : "Disabled"}}
-                                </div>                            
-                            </td>  
-                            <td>
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span class="dragHandle" ng-click="$event.stopPropagation();" ng-show="commandsService.selectedSortTag == null && (commandsService.customCommandSearch == null || commandsService.customCommandSearch.length < 1)">
-                                        <i class="fal fa-bars" aria-hidden="true"></i>
-                                    </span>
-                                    <div style="text-align: right;margin-left: auto;">
-                                        <span class="noselect clickable" style="font-size: 30px" context-menu="commandMenuOptions(command)" context-menu-on="click"><i class="fal fa-ellipsis-h"></i></span>
-                                    </div>
-                                </div>                                                 
-                            </td> 
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
+          <searchbar
+            ng-show="commandsService.getCustomCommands().length > 0"
+            placeholder-text="Search commands"
+            query="commandsService.customCommandSearch"
+            style="flex-basis: 250px"
+          ></searchbar>
         </div>
-        <div ng-if="activeCmdTab === 1">
-            <scroll-sentinel element-class="sys-cmd-header"></scroll-sentinel>     
-            <div class="light-bg sticky-top sys-cmd-header" style="padding: 15px; margin: 15px 0;display: flex;flex-direction: row;justify-content: flex-end;">
-                <searchbar placeholder-text="Search system commands" query="sysCommandSearch" style="flex-basis: 250px;"></searchbar>
-            </div>
-            <div style="padding: 15px;">
-                <div style="display:flex;font-size: 11px; font-weight: bold; padding-bottom: 10px;">
-                    <div class="muted" style="flex-basis: 25%;padding-left: 20px;"><i class="fas fa-tag"></i> NAME</div>
-                    <div class="muted" style="width: 20%"><i class="fas fa-exclamation"></i> TRIGGER</div>
-                    <div class="muted" style="width: 20%"><i class="fas fa-clock"></i> COOLDOWNS</div>
-                    <div class="muted" style="width: 20%"><i class="fas fa-lock-alt"></i> PERMISSIONS</div>
-                    <div class="muted" style="width: 20%"></div>
-                    <div class="muted" style="flex-basis:30px; flex-shrink: 0;padding-right: 20px;"></div>
-                </div>
-                <sys-command-row ng-repeat="sysCommand in commandsService.getSystemCommands() | orderBy:'name' | triggerSearch:sysCommandSearch track by sysCommand.id" command="sysCommand"></sys-command-row>
-            </div>
+      </div>
+      <div style="padding: 15px">
+        <div
+          ng-if="commandsService.getCustomCommands().length === 0"
+          class="noselect muted"
+          style="padding-left: 13px"
+        >
+          <span class="hvr-bob"><i class="fas fa-arrow-up"></i></span
+          ><span style="margin-left: 8px"
+            >No custom commands saved. You should make one! :)
+          </span>
         </div>
+        <div
+          ng-if="commandsService.getCustomCommands().length > 0 && filteredCommands && filteredCommands.length < 1"
+          class="noselect muted"
+          style="padding-left: 13px"
+        >
+          <span style="margin-left: 8px">No custom commands found.</span>
+        </div>
+        <table
+          ng-show="commandsService.getCustomCommands().length > 0 && (filteredCommands == null || filteredCommands.length > 0)"
+          class="fb-table"
+        >
+          <thead>
+            <tr style="font-size: 11px">
+              <th style="width: 5%"></th>
+              <th class="muted"><i class="fas fa-exclamation"></i> TRIGGER</th>
+              <th class="muted"><i class="fas fa-clock"></i> COOLDOWNS</th>
+              <th class="muted"><i class="fas fa-lock-alt"></i> PERMISSIONS</th>
+              <th class="muted"><i class="fas fa-tag"></i> TAGS</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody ui-sortable="sortableOptions" ng-model="filteredCommands">
+            <tr
+              ng-repeat="command in (commandsService.commandsCache.customCommands | sortTagSearch:sts.getSelectedSortTag('commands') | triggerSearch:commandsService.customCommandSearch) as filteredCommands track by command.id"
+              context-menu="commandMenuOptions(command)"
+              style="width: 100%"
+            >
+              <td style="text-align: center">
+                <span
+                  style="color: #2aa1c0; font-size: 20px"
+                  ng-click="manuallyTriggerCommand(command.id)"
+                >
+                  <i class="fas fa-play-circle clickable"></i>
+                </span>
+              </td>
+              <td class="command-trigger-cell">
+                <span
+                  class="trigger"
+                  uib-tooltip="{{command.trigger}}"
+                  tooltip-popup-delay="500"
+                  tooltip-append-to-body="true"
+                  >{{command.trigger}}</span
+                >
+                <tooltip
+                  ng-if="command.triggerIsRegex"
+                  text="'Description: ' + command.regexDescription"
+                ></tooltip>
+                <span
+                  class="muted"
+                  style="margin-left: 5px; font-size: 11px"
+                  ng-show="command.hidden"
+                  uib-tooltip="Hidden from !commands list"
+                  tooltip-append-to-body="true"
+                >
+                  <i class="fas fa-eye-slash"></i>
+                </span>
+              </td>
+              <td>
+                <span
+                  style="min-width: 51px; display: inline-block"
+                  uib-tooltip="Global cooldown"
+                >
+                  <i class="far fa-globe-americas"></i>
+                  {{command.cooldown.global ? command.cooldown.global + "s" :
+                  "-" }}
+                </span>
+                <span uib-tooltip="User cooldown">
+                  <i class="far fa-user"></i> {{command.cooldown.user ?
+                  command.cooldown.user + "s" : "-" }}
+                </span>
+              </td>
+              <td>
+                <span style="text-transform: capitalize"
+                  >{{getPermissionType(command)}}</span
+                >
+                <tooltip
+                  type="info"
+                  text="getPermissionTooltip(command)"
+                ></tooltip>
+              </td>
+              <td style="max-width: 135px; min-width: 100px">
+                <div
+                  style="
+                    display: flex;
+                    flex-wrap: wrap;
+                    width: 100%;
+                    overflow: auto;
+                    max-height: 45.25px;
+                  "
+                >
+                  <span
+                    ng-repeat="tagName in sts.getSortTagNames('commands', command.sortTags)"
+                    style="
+                      background: gray;
+                      border-radius: 15px;
+                      padding: 1px 5px;
+                      margin-right: 2px;
+                      margin-bottom: 1px;
+                      font-size: 10px;
+                      line-height: 1.8;
+                    "
+                  >
+                    {{tagName}}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <div
+                  style="
+                    min-width: 75px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <span
+                    class="status-dot"
+                    style="margin-right: 5px"
+                    ng-class="{'active': command.active, 'notactive': !command.active}"
+                  ></span
+                  >{{command.active ? "Enabled" : "Disabled"}}
+                </div>
+              </td>
+              <td>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <span
+                    class="dragHandle"
+                    ng-click="$event.stopPropagation();"
+                    ng-show="commandsService.selectedSortTag == null && (commandsService.customCommandSearch == null || commandsService.customCommandSearch.length < 1)"
+                  >
+                    <i class="fal fa-bars" aria-hidden="true"></i>
+                  </span>
+                  <div style="text-align: right; margin-left: auto">
+                    <span
+                      class="noselect clickable"
+                      style="font-size: 30px"
+                      context-menu="commandMenuOptions(command)"
+                      context-menu-on="click"
+                      ><i class="fal fa-ellipsis-h"></i
+                    ></span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+    <div ng-if="activeCmdTab === 1">
+      <scroll-sentinel element-class="sys-cmd-header"></scroll-sentinel>
+      <div
+        class="light-bg sticky-top sys-cmd-header"
+        style="
+          padding: 15px;
+          margin: 15px 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+        "
+      >
+        <searchbar
+          placeholder-text="Search system commands"
+          query="sysCommandSearch"
+          style="flex-basis: 250px"
+        ></searchbar>
+      </div>
+      <div style="padding: 15px">
+        <div
+          style="
+            display: flex;
+            font-size: 11px;
+            font-weight: bold;
+            padding-bottom: 10px;
+          "
+        >
+          <div class="muted" style="flex-basis: 25%; padding-left: 20px">
+            <i class="fas fa-tag"></i> NAME
+          </div>
+          <div class="muted" style="width: 20%">
+            <i class="fas fa-exclamation"></i> TRIGGER
+          </div>
+          <div class="muted" style="width: 20%">
+            <i class="fas fa-clock"></i> COOLDOWNS
+          </div>
+          <div class="muted" style="width: 20%">
+            <i class="fas fa-lock-alt"></i> PERMISSIONS
+          </div>
+          <div class="muted" style="width: 20%"></div>
+          <div
+            class="muted"
+            style="flex-basis: 30px; flex-shrink: 0; padding-right: 20px"
+          ></div>
+        </div>
+        <sys-command-row
+          ng-repeat="sysCommand in commandsService.getSystemCommands() | orderBy:'name' | triggerSearch:sysCommandSearch track by sysCommand.id"
+          command="sysCommand"
+        ></sys-command-row>
+      </div>
+    </div>
+  </div>
 </div>

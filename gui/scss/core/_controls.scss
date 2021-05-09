@@ -746,10 +746,11 @@ table.fb-table-alt {
 
 .toggle-button {
     cursor: pointer;
-    color: gray;
+    color: white;
     font-size: 30px;
+    line-height: 1;
     &.toggled-on {
-        color: green;
+        color: #2fbbde;
     }
     &:hover {
         opacity: 0.8;

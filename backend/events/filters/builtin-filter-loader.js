@@ -28,6 +28,8 @@ exports.loadFilters = () => {
 
     const cheerBitsAmount = require("./builtin/cheer-bits-amount");
 
+    const isAnonymous = require("./builtin/is-anonymous");
+
     filterManager.registerFilter(usernameFilter);
     filterManager.registerFilter(viewerRolesFilter);
 
@@ -51,4 +53,6 @@ exports.loadFilters = () => {
     filterManager.registerFilter(rewardName);
 
     filterManager.registerFilter(cheerBitsAmount);
+
+    filterManager.registerFilter(isAnonymous);
 };

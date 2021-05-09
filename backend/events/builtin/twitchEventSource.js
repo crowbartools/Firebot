@@ -124,6 +124,7 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "Firebot",
+                isAnonymous: false,
                 bits: 100,
                 totalBits: 1200
             },
