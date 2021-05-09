@@ -62,16 +62,16 @@
                     if (query == null || query.trim() === "") {
                         return;
                     }
-                    $http
-                        .get(`https://mixer.com/api/v1/channels?limit=6&noCount=1&scope=all&q=${query}&search=true`)
-                        .then(
-                            function (response) {
-                                $ctrl.channels = response.data;
-                            },
-                            function (response) {
-                                console.log('ERROR!!!');
-                            }
-                        );
+                    // $http
+                    //     .get(`https://mixer.com/api/v1/channels?limit=6&noCount=1&scope=all&q=${query}&search=true`)
+                    //     .then(
+                    //         function (response) {
+                    //             $ctrl.channels = response.data;
+                    //         },
+                    //         function (response) {
+                    //             console.log('ERROR!!!');
+                    //         }
+                    //     );
                 };
 
                 $ctrl.viewerSelected = function() {

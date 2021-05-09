@@ -10,8 +10,6 @@
             soundService, connectionService, $timeout, $interval, $http, backendCommunicator) {
             let service = {};
 
-            let messageHoldingQueue = [];
-
             // Chat Message Queue
             service.chatQueue = [];
 
@@ -126,7 +124,7 @@
                     data: message
                 };
 
-                messageHoldingQueue.push(alertItem);
+                service.chatQueue.push(alertItem);
             };
 
             backendCommunicator.on("chat-feed-system-message", (message) => {
@@ -197,22 +195,21 @@
             };
 
             // Prune Messages
-            // If message count is over 200, prune down
             service.pruneChatQueue = function() {
-                let arr = service.chatQueue,
+                const arr = service.chatQueue,
                     overflowChat = arr.length - service.chatMessageDisplayLimit * 2;
 
                 // Overflow chat is how many messages we need to remove to bring it back down
                 // to service.chatMessageDisplayLimit x 2.
                 if (overflowChat > 0) {
 
-                    // Recalculate to overflow over the set display limit so we arent pruning after every
+                    // Recalculate to overflow over the set display limit so we aren't pruning after every
                     // message once we hit chatMessageDisplayLimit x 2.
-                    let bufferOverflowAmmount = arr.length - service.chatMessageDisplayLimit;
+                    const bufferOverflowAmount = arr.length - service.chatMessageDisplayLimit;
 
                     // Start at 0 in the array and delete X number of messages.
                     // The oldest messages are the first ones in the array.
-                    arr.splice(0, bufferOverflowAmmount);
+                    arr.splice(0, bufferOverflowAmount);
                 }
             };
 
@@ -271,20 +268,20 @@
                 });
             };
 
-            $interval(() => {
-                if (messageHoldingQueue.length > 0) {
-                    service.chatQueue = service.chatQueue.concat(messageHoldingQueue);
-                    messageHoldingQueue = [];
+            // $interval(() => {
+            //     if (messageHoldingQueue.length > 0) {
+            //         service.chatQueue = service.chatQueue.concat(messageHoldingQueue);
+            //         messageHoldingQueue = [];
 
-                    // Trim messages.
-                    service.pruneChatQueue();
+            //         // Trim messages.
+            //         service.pruneChatQueue();
 
-                    //hacky way to ensure we stay scroll glued
-                    $timeout(() => {
-                        $rootScope.$broadcast('ngScrollGlue.scroll');
-                    }, 1);
-                }
-            }, 250);
+            //         //hacky way to ensure we stay scroll glued
+            //         $timeout(() => {
+            //             $rootScope.$broadcast('ngScrollGlue.scroll');
+            //         }, 1);
+            //     }
+            // }, 250);
 
             backendCommunicator.on("twitch:chat:rewardredemption", redemption => {
                 if (settingsService.getRealChatFeed()) {
@@ -295,20 +292,20 @@
                         data: redemption
                     };
 
-                    if (messageHoldingQueue && messageHoldingQueue.length > 0) {
-                        const lastQueueItem = messageHoldingQueue[messageHoldingQueue.length - 1];
+                    if (service.chatQueue && service.chatQueue.length > 0) {
+                        const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
                         if (!lastQueueItem.rewardMatched &&
                             lastQueueItem.type === "message" &&
                             lastQueueItem.data.customRewardId != null &&
                             lastQueueItem.data.customRewardId === redemption.reward.id &&
                             lastQueueItem.data.userId === redemption.user.id) {
                             lastQueueItem.rewardMatched = true;
-                            messageHoldingQueue.splice(-1, 0, redemptionItem);
+                            service.chatQueue.splice(-1, 0, redemptionItem);
                             return;
                         }
                     }
 
-                    messageHoldingQueue.push(redemptionItem);
+                    service.chatQueue.push(redemptionItem);
                 }
             });
 
@@ -346,9 +343,9 @@
                     };
 
                     if (chatMessage.customRewardId != null &&
-                        messageHoldingQueue &&
-                        messageHoldingQueue.length > 0) {
-                        const lastQueueItem = messageHoldingQueue[messageHoldingQueue.length - 1];
+                        service.chatQueue &&
+                        service.chatQueue.length > 0) {
+                        const lastQueueItem = service.chatQueue[service.chatQueue.length - 1];
                         if (lastQueueItem.type === "redemption" &&
                             lastQueueItem.data.reward.id === chatMessage.customRewardId &&
                             lastQueueItem.data.user.id === chatMessage.userId) {
@@ -356,7 +353,9 @@
                         }
                     }
 
-                    messageHoldingQueue.push(messageItem);
+                    service.chatQueue.push(messageItem);
+
+                    service.pruneChatQueue();
                 }
             });
 

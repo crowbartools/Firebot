@@ -197,6 +197,14 @@
                 pushDataToFile("/settings/allowQuoteCSVDownloads", enabled === true);
             };
 
+            service.legacySortTagsImported = function() {
+                return getDataFromFile("/settings/legacySortTagsImported") === true;
+            };
+
+            service.setLegacySortTagsImported = function(enabled) {
+                pushDataToFile("/settings/legacySortTagsImported", enabled === true);
+            };
+
             service.isBetaTester = function() {
                 let betaTester = getDataFromFile("/settings/beta");
                 return betaTester != null ? betaTester : "No";

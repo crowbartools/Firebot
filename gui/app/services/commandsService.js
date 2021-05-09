@@ -10,8 +10,7 @@
             logger,
             connectionService,
             listenerService,
-            backendCommunicator,
-            utilityService
+            backendCommunicator
         ) {
             let service = {};
 
@@ -23,8 +22,7 @@
             // in memory commands storage
             service.commandsCache = {
                 systemCommands: [],
-                customCommands: [],
-                sortTags: []
+                customCommands: []
             };
 
             // Refresh commands cache
@@ -44,11 +42,6 @@
                     service.commandsCache.customCommands = Object.values(cmdData.customCommands);
                 }
 
-                if (cmdData.sortTags) {
-                    logger.debug("loaded sort tags");
-                    service.commandsCache.sortTags = cmdData.sortTags;
-                }
-
                 service.commandsCache.systemCommands = listenerService.fireEventSync(
                     "getAllSystemCommandDefinitions"
                 );
@@ -56,54 +49,6 @@
                 // Refresh the command cache.
                 ipcRenderer.send("refreshCommandCache");
             };
-
-            // SORT TAGS
-            service.saveSortTags = () => {
-                try {
-                    const commandDb = getCommandsDb();
-                    commandDb.push("/sortTags", service.commandsCache.sortTags);
-                } catch (err) {} //eslint-disable-line no-empty
-            };
-
-            service.getSortTags = () => {
-                return service.commandsCache.sortTags;
-            };
-
-            service.selectedSortTag = null;
-            service.selectedSortTagDisplay = () => {
-                return service.selectedSortTag != null ? service.selectedSortTag.name : "All Commands";
-            };
-            service.setSelectedSortTag = (tag) => {
-                service.selectedSortTag = tag;
-            };
-
-            service.getSortTagNames = (tagIds) => {
-                if (tagIds == null) {
-                    return [];
-                }
-                return tagIds
-                    .filter(id => service.commandsCache.sortTags.some(t => t.id === id))
-                    .map(id => service.commandsCache.sortTags.find(t => t.id === id).name);
-            };
-
-            service.openManageTagsModal = () => {
-                utilityService.showModal({
-                    component: "manageSortTagsModal",
-                    size: "sm",
-                    resolveObj: {
-                        tags: () => service.commandsCache.sortTags
-                    },
-                    closeCallback: tags => {
-                        service.commandsCache.sortTags = tags;
-                        service.saveSortTags();
-                        if (service.selectedSortTag && !service.commandsCache.sortTags.some(t => t.id === service.selectedSortTag.id)) {
-                            service.selectedSortTag = null;
-                        }
-                    }
-                });
-            };
-
-            //END SORT TAGS
 
             backendCommunicator.on("custom-commands-updated", () => {
                 service.refreshCommands();
