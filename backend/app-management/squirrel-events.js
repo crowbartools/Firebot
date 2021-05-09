@@ -15,7 +15,7 @@ exports.handleSquirrelEvents = () => {
         new ProgId({
             description: 'Firebot Setup',
             progExt: "firebotsetup",
-            squirrel: "Firebot v5.exe",
+            squirrel: true,
             icon: './resources/firebot-setup-file-icon.ico',
             extensions: ['firebotsetup'],
             shell: [
