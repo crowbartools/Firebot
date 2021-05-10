@@ -12,6 +12,14 @@ if(typeof module === "object" && module.exports){
 (function(angular, undefined){
     'use strict';
 
+    function throttle(func, timeout = 300){
+        let timer;
+        return (...args) => {
+            if(timer) return;
+            timer = setTimeout(() => { func.apply(this, args); timer = null; }, timeout);
+        };
+    }
+
     function createActivationState($parse, attr, scope){
         function unboundState(initValue){
             var activated = initValue;
@@ -71,7 +79,7 @@ if(typeof module === "object" && module.exports){
                         activationState = createActivationState($parse, attrs[attrName], scope);
 
                     function scrollIfGlued() {
-                        if(activationState.getValue() && !direction.isAttached(el)){
+                        if(activationState.getValue()){
                             // Ensures scroll after angular template digest
                             $timeout(function() {
                               direction.scroll(el);
@@ -83,30 +91,57 @@ if(typeof module === "object" && module.exports){
                         activationState.setValue(direction.isAttached(el));
                     }
 
+                    const processScroll = throttle(() => onScroll(), 100);
+
                     $timeout(scrollIfGlued, 0, false);
 
                     if (!$el[0].hasAttribute('force-glue')) {
-                      $el.on('scroll', onScroll);
+                      $el.on('wheel', processScroll);
                     }
+                    
+                    // observe new elements getting added 
+                    const observer = new MutationObserver(function(mutationsList) {
+                        for(const mutation of mutationsList) {
+                            if(mutation.addedNodes.length) {
 
-                    var hasAnchor = false;
-                    angular.forEach($el.children(), function(child) {
-                      if (child.hasAttribute('scroll-glue-anchor')) {
-                        hasAnchor = true;
-                        scope.$watch(function() { return child.offsetHeight }, function() {
-                          scrollIfGlued();
-                        });
-                      }
+                                const child = mutation.addedNodes[0];
+                                [...child.getElementsByTagName("img")].forEach(img => {
+                                    if(!img.complete) {
+                                        img.addEventListener('load', () => {
+                                            scrollIfGlued();
+                                        })
+                                    }
+                                });
+
+                                if(child.hasAttribute("scroll-glue-anchor")) {
+                                    scope.$watch(function() { return child.offsetHeight }, 
+                                    function(newVal, oldVal) {
+                                        if(newVal !== oldVal) {
+                                            scrollIfGlued();
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        scrollIfGlued();
                     });
+                    
+                    observer.observe($el[0], {
+                        childList: true
+                    });   
 
-                    if (!hasAnchor) {
-                      scope.$watch(scrollIfGlued);
-                      $window.addEventListener('resize', scrollIfGlued, false);
-                    }
+                    $window.addEventListener('resize', scrollIfGlued, false);
+
+                    scope.$watch(() => activationState.getValue(), function(newVal) {
+                        if(newVal === true) {
+                            scrollIfGlued();
+                        }
+                    })
 
                     // Remove listeners on directive destroy
                     $el.on('$destroy', function() {
-                        $el.unbind('scroll', onScroll);
+                        $el.unbind('wheel', onScroll);
+                        observer.disconnect();
                     });
 
                     scope.$on('$destroy', function() {
