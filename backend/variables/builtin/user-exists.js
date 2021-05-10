@@ -7,6 +7,7 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 const model = {
     definition: {
         handle: "userExists",
+        usage: "userExists[username]",
         description: "Outputs 'true' if a user exists in Firebot's database, 'false' if not",
         categories: [VariableCategory.ADVANCED],
         possibleDataOutput: [OutputDataType.TEXT]
