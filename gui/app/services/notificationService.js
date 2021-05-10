@@ -223,7 +223,7 @@
 
                 externalIntervalCheck = $interval(() => {
                     loadExternalNotifications();
-                    checkMixerStatus();
+                    //scheckMixerStatus();
                 }, 5 * 60000);
             };
 

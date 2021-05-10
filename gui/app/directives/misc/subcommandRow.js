@@ -30,7 +30,7 @@
             </span>
           </div>
 
-          <div style="width: 25%"><span style="text-transform: capitalize;">{{$ctrl.getPermisisonType()}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip()"></tooltip></div>
+          <div style="width: 25%"><span style="text-transform: capitalize;">{{$ctrl.getPermissionType()}}</span> <tooltip type="info" text="$ctrl.getPermissionTooltip()"></tooltip></div>
 
           <div style="width: 25%">
             <div style="min-width: 75px">
@@ -192,7 +192,7 @@
                 $ctrl.subcommand.effects = effects;
             };
 
-            $ctrl.getPermisisonType = () => {
+            $ctrl.getPermissionType = () => {
                 let command = $ctrl.subcommand;
 
                 let permissions = command.restrictionData && command.restrictionData.restrictions &&

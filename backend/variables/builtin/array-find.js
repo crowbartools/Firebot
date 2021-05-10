@@ -57,13 +57,18 @@ const model = {
                 const array = JSON.parse(jsonArray);
                 if (Array.isArray(array)) {
                     let found;
+
+                    // propertyPath arg not specified
                     if (propertyPath == null || propertyPath === "") {
                         found = array.find(v => v === matcher);
+
+                    // property path specified
+                    } else {
+                        found = array.find(v => {
+                            const property = getPropertyAtPath(v, propertyPath);
+                            return property === matcher;
+                        });
                     }
-                    found = array.find(v => {
-                        const property = getPropertyAtPath(v, propertyPath);
-                        return property === matcher;
-                    });
                     return JSON.stringify(found != null ? found : null);
                 }
             } catch (error) {

@@ -20,6 +20,7 @@ module.exports = {
         { eventSourceId: "twitch", eventId: "host" },
         { eventSourceId: "twitch", eventId: "viewer-arrived" },
         { eventSourceId: "twitch", eventId: "chat-message" },
+        { eventSourceId: "twitch", eventId: "whisper" },
         { eventSourceId: "streamloots", eventId: "purchase" },
         { eventSourceId: "streamloots", eventId: "redemption" },
         { eventSourceId: "firebot", eventId: "view-time-update" }
@@ -67,19 +68,24 @@ module.exports = {
             return false;
         }
 
+        /** @type{string[]} */
         let twitchUserRoles = eventMeta.twitchUserRoles;
         if (twitchUserRoles == null) {
             twitchUserRoles = await twitchUsers.getUsersChatRoles(username);
         }
 
-        let userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
-        let userTeamRoles = teamRolesManager.getAllTeamRolesForViewer(username) || [];
-        let userTwitchRoles = (twitchUserRoles || [])
-            .map(r => twitchRolesManager.mapTwitchRole(r));
+        const userCustomRoles = customRolesManager.getAllCustomRolesForViewer(username) || [];
+        const userTeamRoles = await teamRolesManager.getAllTeamRolesForViewer(username) || [];
+        const userTwitchRoles = (twitchUserRoles || [])
+            .map(twitchRolesManager.mapTwitchRole);
 
-        let allRoles = userCustomRoles.concat(userTwitchRoles).concat(userTeamRoles);
+        const allRoles = [
+            ...userTwitchRoles,
+            ...userTeamRoles,
+            ...userCustomRoles
+        ];
 
-        let hasRole = allRoles.some(r => r.id === value);
+        const hasRole = allRoles.some(r => r.id === value);
 
         switch (comparisonType) {
         case "include":

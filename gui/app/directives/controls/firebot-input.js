@@ -11,6 +11,7 @@
                 inputTitle: "@",
                 placeholderText: "@",
                 inputType: "@",
+                dataType: "@?",
                 useTextArea: "<",
                 disableVariables: "<",
                 onInputUpdate: "&",
@@ -38,7 +39,6 @@
                 $ctrl.inputGroupId = uuid();
 
                 $ctrl.onChange = (model) => {
-                    console.log(model);
                     $ctrl.model = model;
                     $timeout(() => {
                         $ctrl.onInputUpdate();
@@ -47,7 +47,6 @@
 
                 $ctrl.$onInit = () => {
                     $ctrl.useInputGroup = $ctrl.inputTitle != null && $ctrl.inputTitle !== '';
-                    console.log("input type", $ctrl.inputType);
                 };
             }
         });

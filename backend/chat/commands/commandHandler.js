@@ -41,9 +41,9 @@ function UserCommand(trigger, args, commandSender, senderRoles) {
 function buildCommandRegexStr(trigger, scanWholeMessage) {
     let escapedTrigger = util.escapeRegExp(trigger);
     if (scanWholeMessage) {
-        return `(?:^|\\s)${escapedTrigger}(?:\\b|$|(?=\\s))`;
+        return `(?:^|\\s)${escapedTrigger}(?!-)(?:\\b|$|(?=\\s))`;
     }
-    return `^${escapedTrigger}(?:\\b|$|(?=\\s))`;
+    return `^${escapedTrigger}(?!-)(?:\\b|$|(?=\\s))`;
 }
 
 function checkForCommand(rawMessage) {

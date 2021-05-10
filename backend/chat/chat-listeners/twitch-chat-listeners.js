@@ -56,11 +56,6 @@ exports.setupChatListeners = (streamerChatClient) => {
         const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
         viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
 
-        if (msg.isCheer) {
-            const cheerListener = require("../../events/twitch-events/cheer");
-            cheerListener.triggerCheer(msg.userInfo.displayName, msg.totalBits, msg.params.message);
-        }
-
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
             const timerManager = require("../../timers/timer-manager");
@@ -99,18 +94,6 @@ exports.setupChatListeners = (streamerChatClient) => {
         hostListener.triggerHost(byChannel, auto, viewers);
         const logger = require("../../logwrapper");
         logger.debug(`Host triggered by ${byChannel}. Is auto: ${auto}`);
-    });
-
-    streamerChatClient.onSub((_channel, _user, subInfo, msg) => {
-        const subListener = require("../../events/twitch-events/sub");
-        subListener.triggerSub(subInfo.displayName, subInfo.plan, subInfo.planName, subInfo.months,
-            subInfo.streak, subInfo.isPrime);
-    });
-
-    streamerChatClient.onResub((_channel, _username, subInfo) => {
-        const subListener = require("../../events/twitch-events/sub");
-        subListener.triggerSub(subInfo.displayName, subInfo.plan, subInfo.planName, subInfo.months,
-            subInfo.streak, subInfo.isPrime, true);
     });
 
     streamerChatClient.onSubGift((_channel, _user, giftSubInfo, msg) => {

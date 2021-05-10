@@ -68,12 +68,12 @@ module.exports = {
                 totalMonths: 10,
                 streak: 8,
                 isPrime: false,
-                resub: false
+                isResub: false
             },
             activityFeed: {
                 icon: "fas fa-star",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** ${eventData.resub ? 'resubscribed' : 'subscribed'} for **${eventData.totalMonths} month(s)** ${eventData.subPlan === 'Prime' ?
+                    return `**${eventData.username}** ${eventData.isResub ? 'resubscribed' : 'subscribed'} for **${eventData.totalMonths} month(s)** ${eventData.subPlan === 'Prime' ?
                         "with **Twitch Prime**" : "at **Tier " + eventData.subPlan.replace("000", "") + "**"}`;
                 }
             }
@@ -124,12 +124,14 @@ module.exports = {
             cached: false,
             manualMetadata: {
                 username: "Firebot",
-                totalBits: 100
+                isAnonymous: false,
+                bits: 100,
+                totalBits: 1200
             },
             activityFeed: {
                 icon: "fad fa-diamond",
                 getMessage: (eventData) => {
-                    return `**${eventData.username}** cheered **${eventData.totalBits}** bits`;
+                    return `**${eventData.username}** cheered **${eventData.bits}** bits. A total of **${eventData.totalBits}** were cheered by **${eventData.username}** in the channel.`;
                 }
             }
         },
@@ -212,6 +214,22 @@ module.exports = {
                 icon: "fad fa-circle",
                 getMessage: (eventData) => {
                     return `**${eventData.username}** redeemed **${eventData.rewardName}**${eventData.messageText && !!eventData.messageText.length ? `: *${eventData.messageText}*` : ''}`;
+                }
+            }
+        },
+        {
+            id: "whisper",
+            name: "Whisper",
+            description: "When someone sends you a whisper.",
+            cached: true,
+            manualMetadata: {
+                username: "Firebot",
+                message: "Test whisper"
+            },
+            activityFeed: {
+                icon: "fad fa-comment-alt",
+                getMessage: (eventData) => {
+                    return `**${eventData.username}** sent you the following whisper: ${eventData.message}`;
                 }
             }
         }

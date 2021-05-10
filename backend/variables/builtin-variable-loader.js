@@ -19,6 +19,7 @@ exports.loadReplaceVariables = () => {
         'bot',
         'chat-message',
         'chat-messages',
+        'cheer-bits',
         'cheer-message',
         'cheer-total-bits',
         'commafy',
@@ -107,6 +108,7 @@ exports.loadReplaceVariables = () => {
         'top-view-time',
         'uptime',
         'user-avatar-url',
+        'user-exists',
         'user-level',
         'user-metadata',
         'user-next-level-hearts',
@@ -115,7 +117,8 @@ exports.loadReplaceVariables = () => {
         'user',
         'username',
         'usernameArray',
-        'view-time'
+        'view-time',
+        'whisper-message'
     ].forEach(filename => {
         let definition = require(`./builtin/${filename}.js`);
         replaceVariableManager.registerReplaceVariable(definition);

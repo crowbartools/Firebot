@@ -1,6 +1,6 @@
 {
   "name": "firebotv5",
-  "version": "5.37.3",
+  "version": "5.38.0",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "electron-rebuild": "^1.8.6",
     "eslint": "^5.16.0",
     "eslint-plugin-angular": "^4.0.1",
-    "grunt": "^1.1.0",
+    "grunt": "^1.4.0",
     "grunt-contrib-compress": "^1.6.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-electron-installer": "^2.1.0",
@@ -54,6 +54,7 @@
     "angular-ui-bootstrap": "^2.5.0",
     "angular-ui-codemirror": "^0.3.0",
     "angular-ui-sortable": "^0.18.0",
+    "angular-ui-validate": "^1.2.3",
     "angularjs-color-picker": "^3.4.8",
     "angularjs-scroll-glue": "^2.2.0",
     "angularjs-slider": "^6.7.0",
@@ -109,7 +110,7 @@
     "twitch-chat-client": "^4.2.3",
     "twitch-pubsub-client": "^4.2.3",
     "ui-select": "^0.19.8",
-    "underscore": "^1.9.1",
+    "underscore": "^1.13.1",
     "unzipper": "^0.9.15",
     "uuid": "^3.3.3",
     "winston": "^2.4.4",
