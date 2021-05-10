@@ -50,6 +50,7 @@ exports.handleRewardRedemption = (redemptionMessage) => {
             rewardId: redemptionMessage.rewardId,
             rewardImage: imageUrl,
             rewardName: redemptionMessage.rewardName,
+            rewardDescription: redemptionMessage.rewardPrompt,
             rewardCost: redemptionMessage.rewardCost
         };
 

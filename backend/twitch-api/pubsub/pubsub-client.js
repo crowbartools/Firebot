@@ -75,31 +75,28 @@ async function createClient() {
     }
 
     try {
-        const rewardRedemptionHandler =
-        require("../../events/twitch-events/reward-redemption");
+        const twitchEventsHandler = require('../../events/twitch-events');
+
         const redemptionListener = await pubSubClient.onRedemption(streamer.userId,
             (message) => {
-                rewardRedemptionHandler.handleRewardRedemption(message);
+                twitchEventsHandler.rewardRedemption.handleRewardRedemption(message);
             });
 
         listeners.push(redemptionListener);
 
         const whisperListener = await pubSubClient.onWhisper(streamer.userId, (message) => {
-            const whisperListener = require("../../events/twitch-events/whisper");
-            whisperListener.triggerWhisper(message.senderName, message.text);
+            twitchEventsHandler.whisper.triggerWhisper(message.senderName, message.text);
         });
         listeners.push(whisperListener);
 
         const bitsListener = await pubSubClient.onBits(streamer.userId, (event) => {
-            const cheerListener = require("../../events/twitch-events/cheer");
-            cheerListener.triggerCheer(event.userName, event.isAnonymous, event.bits, event.totalBits, event.message);
+            twitchEventsHandler.cheer.triggerCheer(event.userName, event.isAnonymous, event.bits, event.totalBits, event.message);
         });
         listeners.push(bitsListener);
 
         const subsListener = await pubSubClient.onSubscription(streamer.userId, (subInfo) => {
             if (!subInfo.isGift) {
-                const subsHandler = require("../../events/twitch-events/sub");
-                subsHandler.triggerSub(subInfo);
+                twitchEventsHandler.sub.triggerSub(subInfo);
             }
         });
         listeners.push(subsListener);
