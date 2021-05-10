@@ -14,7 +14,10 @@ function getSubType (subPlan) {
         return "Tier 3";
     }
 }
-
+/**
+ *
+ * @param {import("twitch-pubsub-client").PubSubSubscriptionMessage} subInfo
+ */
 exports.triggerSub = (subInfo) => {
     const subType = getSubType(subInfo.subPlan);
     const totalMonths = subInfo.months != null ? subInfo.months : 1;
