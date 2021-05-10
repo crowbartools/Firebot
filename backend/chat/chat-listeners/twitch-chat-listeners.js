@@ -6,6 +6,7 @@ const chatHelpers = require("../chat-helpers");
 const activeUserHandler = require("./active-user-handler");
 const accountAccess = require("../../common/account-access");
 const chatModerationManager = require("../moderation/chat-moderation-manager");
+const twitchEventsHandler = require("../../events/twitch-events");
 
 const events = require("events");
 
@@ -53,8 +54,7 @@ exports.setupChatListeners = (streamerChatClient) => {
 
         activeUserHandler.addActiveUser(msg.userInfo, true);
 
-        const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
-        viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName);
 
         const { streamer, bot } = accountAccess.getAccounts();
         if (user !== streamer.username && user !== bot.username) {
@@ -62,8 +62,7 @@ exports.setupChatListeners = (streamerChatClient) => {
             timerManager.incrementChatLineCounters();
         }
 
-        const chatMessageListener = require("../../events/twitch-events/chat-message");
-        chatMessageListener.triggerChatMessage(firebotChatMessage);
+        twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
     });
 
     streamerChatClient.onWhisper(async (_user, messageText, msg) => {
@@ -78,11 +77,9 @@ exports.setupChatListeners = (streamerChatClient) => {
         const firebotChatMessage = await chatHelpers.buildFirebotChatMessage(msg, messageText, false, true);
         frontendCommunicator.send("twitch:chat:message", firebotChatMessage);
 
-        const chatMessageListener = require("../../events/twitch-events/chat-message");
-        chatMessageListener.triggerChatMessage(firebotChatMessage);
+        twitchEventsHandler.chatMessage.triggerChatMessage(firebotChatMessage);
 
-        const viewerArrivedListener = require("../../events/twitch-events/viewer-arrived");
-        viewerArrivedListener.triggerViewerArrived(msg.userInfo.displayName);
+        twitchEventsHandler.viewerArrived.triggerViewerArrived(msg.userInfo.displayName);
     });
 
     streamerChatClient.onMessageRemove((_channel, messageId) => {
@@ -90,37 +87,31 @@ exports.setupChatListeners = (streamerChatClient) => {
     });
 
     streamerChatClient.onHosted((_, byChannel, auto, viewers) => {
-        const hostListener = require("../../events/twitch-events/host");
-        hostListener.triggerHost(byChannel, auto, viewers);
+        twitchEventsHandler.host.triggerHost(byChannel, auto, viewers);
         const logger = require("../../logwrapper");
         logger.debug(`Host triggered by ${byChannel}. Is auto: ${auto}`);
     });
 
     streamerChatClient.onSubGift((_channel, _user, giftSubInfo, msg) => {
-        const giftSubListener = require("../../events/twitch-events/gift-sub");
-        giftSubListener.triggerSubGift(giftSubInfo.gifterDisplayName,
+        twitchEventsHandler.giftSub.triggerSubGift(giftSubInfo.gifterDisplayName,
             giftSubInfo.displayName, giftSubInfo.plan, giftSubInfo.planName,
             giftSubInfo.giftDuration);
     });
 
     streamerChatClient.onCommunitySub((_channel, _user, subInfo, msg) => {
-        const giftSubListener = require("../../events/twitch-events/gift-sub");
-        giftSubListener.triggerCommunitySubGift(subInfo.gifterDisplayName,
+        twitchEventsHandler.giftSub.triggerCommunitySubGift(subInfo.gifterDisplayName,
             subInfo.plan, subInfo.count);
     });
 
     streamerChatClient.onRaid((_channel, _username, raidInfo) => {
-        const raidListener = require("../../events/twitch-events/raid");
-        raidListener.triggerRaid(raidInfo.displayName, raidInfo.viewerCount);
+        twitchEventsHandler.raid.triggerRaid(raidInfo.displayName, raidInfo.viewerCount);
     });
 
     streamerChatClient.onBan((_, username) => {
-        const bannedListener = require("../../events/twitch-events/viewer-banned");
-        bannedListener.triggerBanned(username);
+        twitchEventsHandler.viewerBanned.triggerBanned(username);
     });
 
     streamerChatClient.onTimeout((_, username, duration) => {
-        const timeoutListener = require("../../events/twitch-events/viewer-timeout");
-        timeoutListener.triggerTimeout(username, duration);
+        twitchEventsHandler.viewerTimeout.triggerTimeout(username, duration);
     });
 };
