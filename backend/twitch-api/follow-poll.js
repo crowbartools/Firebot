@@ -4,7 +4,7 @@ const accountAccess = require("../common/account-access");
 
 const twitchApi = require("./client");
 
-const followEvent = require("../events/twitch-events/follow");
+const twitchEventsHandler = require("../events/twitch-events");
 
 let followPollIntervalId;
 let lastUserId;
@@ -43,7 +43,7 @@ exports.startFollowPoll = () => {
                 }
 
                 if (follow.userId !== lastUserId) {
-                    followEvent.triggerFollow(follow.userDisplayName, follow.userId);
+                    twitchEventsHandler.follow.triggerFollow(follow.userDisplayName, follow.userId);
                 } else {
                     break;
                 }
