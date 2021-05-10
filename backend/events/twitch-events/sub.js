@@ -17,14 +17,17 @@ function getSubType (subPlan) {
 
 exports.triggerSub = (subInfo) => {
     const subType = getSubType(subInfo.subPlan);
+    const totalMonths = subInfo.months ? subInfo.months : 1;
+    const streak = subInfo.streakMonths ? subInfo.streakMonths : 1;
+    const isPrime = subInfo.subPlan === "Prime";
 
     eventManager.triggerEvent("twitch", "sub", {
         username: subInfo.userDisplayName,
         subPlan: subInfo.subPlan,
         subType: subType,
-        totalMonths: subInfo.months,
-        streak: subInfo.streakMonths,
-        isPrime: subInfo.subPlan === "Prime",
+        totalMonths: totalMonths,
+        streak: streak,
+        isPrime: isPrime,
         isResub: subInfo.isResub
     });
 };
