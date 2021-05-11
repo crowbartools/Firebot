@@ -13,10 +13,7 @@ const toggleConnection = {
         description: "Update settings for a channel reward",
         icon: "fad fa-gifts",
         categories: [EffectCategory.ADVANCED],
-        dependencies: [],
-        triggers: {
-            [EffectTrigger.CHANNEL_REWARD]: true
-        }
+        dependencies: []
     },
     globalSettings: {},
     optionsTemplate: `
