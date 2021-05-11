@@ -103,12 +103,14 @@
           type="text"
           placeholder="Message the stream"
           class="text-input-field"
+          style="height: 100%"
           ng-maxlength="360"
           ng-model="chatMessage"
           ng-change="onMessageFieldUpdate()"
           ng-keyup="onMessageFieldKeypress($event)"
           ng-disabled="!chatFeedIsEnabled()"
           uib-typeahead="command for command in commands | filter:$viewValue | limitTo:8"
+          chat-auto-complete-menu
         />
 
         <div class="chatfeed-send-btn" ng-click="submitChat()">

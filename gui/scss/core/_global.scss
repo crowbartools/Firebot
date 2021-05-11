@@ -41,6 +41,31 @@
     //border-bottom: 1px solid $effect-option-title;
 }
 
+.chat-autocomplete-menu {
+  width: calc(100% + 4px);
+  background: #44454A;
+  border: 2px solid rgba(170, 164, 164, 0.43);
+  position: absolute;
+  right: -2px;
+  bottom: 100%;
+  z-index: 3000;
+  border-radius: 4px;
+  padding: 5px;
+  transform: translateY(-5px);
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.33);
+  &.below {
+    top: 36px;
+  }
+  &.bottom {
+    bottom: 36px;
+    top: unset;
+  }
+  &.under {
+    bottom: -307px;
+    top: unset;
+  }
+}
+
 .variable-menu {
   width: 500px; 
   background: #060707; 
