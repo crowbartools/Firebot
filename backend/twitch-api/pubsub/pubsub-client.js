@@ -17,23 +17,28 @@ let listeners = [];
  */
 async function removeListeners(pubSubClient) {
     if (pubSubClient) {
+        let userListener;
         try {
-            const userListener = pubSubClient.getUserListener(
+            userListener = pubSubClient.getUserListener(
                 accountAccess.getAccounts().streamer.userId
             );
-            if (userListener) {
-                for (const listener of listeners) {
-                    userListener.removeListener(listener);
-                    listener.remove();
+        } catch (error) {
+            console.log(error);
+        }
+        if (userListener) {
+            for (const listener of listeners) {
+                try {
+                    await userListener.removeListener(listener);
+                    await listener.remove();
+                } catch (error) {
+                    console.log(error);
                 }
             }
-        } catch (error) {
-            //silently fail
         }
     } else {
         for (const listener of listeners) {
             try {
-                listener.remove();
+                await listener.remove();
             } catch (error) {
                 logger.debug("failed to remove pubsub listener without client", error);
             }
@@ -43,6 +48,7 @@ async function removeListeners(pubSubClient) {
 }
 
 async function disconnectPubSub() {
+    await removeListeners(pubSubClient);
     try {
         if (pubSubClient && pubSubClient._rootClient && pubSubClient._rootClient.isConnected) {
             pubSubClient._rootClient.disconnect();
@@ -61,18 +67,18 @@ async function createClient() {
 
     logger.info("Connecting to Twitch PubSub...");
 
-    pubSubClient = new PubSubClient(pubSubClient && pubSubClient._rootClient);
+    pubSubClient = new PubSubClient();
 
     const apiClient = twitchClient.getClient();
-
-    await removeListeners(pubSubClient);
 
     try {
         // throws error if one doesnt exist
         pubSubClient.getUserListener(streamer.userId);
     } catch (err) {
-        await pubSubClient.registerUserListener(apiClient);
+        await pubSubClient.registerUserListener(apiClient, streamer.userId);
     }
+
+    await removeListeners(pubSubClient);
 
     try {
         const twitchEventsHandler = require('../../events/twitch-events');
