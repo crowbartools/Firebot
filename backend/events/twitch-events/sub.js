@@ -20,15 +20,15 @@ function getSubType (subPlan) {
  */
 exports.triggerSub = (subInfo) => {
     const subType = getSubType(subInfo.subPlan);
-    const totalMonths = subInfo.cumulativeMonths != null ? subInfo.cumulativeMonths : 1;
-    const streak = subInfo.streakMonths != null ? subInfo.streakMonths : 1;
+    const totalMonths = subInfo._data["cumulative_months"] || 1;
+    const streak = subInfo.streakMonths || 1;
     const isPrime = subInfo.subPlan === "Prime";
 
     eventManager.triggerEvent("twitch", "sub", {
         username: subInfo.userDisplayName,
         subPlan: subInfo.subPlan,
         subType: subType,
-        totalMonths: totalMonths,
+        totalMonths: totalMonths || 1,
         streak: streak,
         isPrime: isPrime,
         isResub: subInfo.isResub
