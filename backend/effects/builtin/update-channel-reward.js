@@ -34,9 +34,9 @@ const toggleConnection = {
                     {{getToggleEnabledDisplay(effect.rewardSettings.enabled.newValue)}} <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                        <li role="menuitem" ng-click="effect.rewardSettings.newValue = true"><a href>Enable</a></li>
-                        <li role="menuitem" ng-click="effect.rewardSettings.newValue = false"><a href>Disable</a></li>
-                        <li role="menuitem" ng-click="effect.rewardSettings.newValue = 'toggle'"><a href>Toggle</a></li>
+                        <li role="menuitem" ng-click="effect.rewardSettings.enabled.newValue = true"><a href>Enable</a></li>
+                        <li role="menuitem" ng-click="effect.rewardSettings.enabled.newValue = false"><a href>Disable</a></li>
+                        <li role="menuitem" ng-click="effect.rewardSettings.enabled.newValue = 'toggle'"><a href>Toggle</a></li>
                     </ul>
                 </div>
             </div>
