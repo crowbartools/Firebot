@@ -128,17 +128,17 @@ const toggleConnection = {
         if (effect.channelRewardId == null) {
             errors.push("Please select a channel reward to update.");
         } else if (effect.rewardSettings.name.update &&
-            effect.rewardSettings.name.newValue == null ||
-            effect.rewardSettings.name.newValue === "") {
+            (effect.rewardSettings.name.newValue == null ||
+            effect.rewardSettings.name.newValue === "")) {
             errors.push("Please provide a new name for the reward.");
         } else if (effect.rewardSettings.description.update &&
-            effect.rewardSettings.description.newValue == null ||
-            effect.rewardSettings.description.newValue === "") {
+            (effect.rewardSettings.description.newValue == null ||
+            effect.rewardSettings.description.newValue === "")) {
             errors.push("Please provide a new description for the reward.");
         } else if (effect.rewardSettings.cost.update &&
-            effect.rewardSettings.cost.newValue == null ||
+            (effect.rewardSettings.cost.newValue == null ||
             effect.rewardSettings.cost.newValue === "" ||
-            effect.rewardSettings.cost.newValue < 1) {
+            effect.rewardSettings.cost.newValue < 1)) {
             errors.push("Please provide a new cost for the reward.");
         }
 
