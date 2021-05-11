@@ -88,7 +88,7 @@
     "list.js": "^1.5.0",
     "m3u8stream": "^0.2.2",
     "marked": "^0.7.0",
-    "mathjs": "^3.20.2",
+    "mathjs": "^7.5.1",
     "moment": "^2.24.0",
     "nedb": "^1.8.0",
     "nedb-promisfied": "^1.0.2",
