@@ -37,7 +37,7 @@ function createMainWindow() {
         minWidth: 300,
         minHeight: 50,
         icon: path.join(__dirname, "../../../gui/images/logo_transparent_2.png"),
-        show: true,
+        show: false,
         titleBarStyle: "hiddenInset",
         backgroundColor: "#1E2023",
         frame: false,
