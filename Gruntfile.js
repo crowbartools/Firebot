@@ -56,6 +56,7 @@ module.exports = function(grunt) {
     require('./grunt/compile.js')(grunt);
     require('./grunt/setup.js')(grunt);
     require('./grunt/secrets.js')(grunt);
+    require('./grunt/include-source')(grunt);
 
-    grunt.registerTask('build', ['scss', 'pack', 'compile']);
+    grunt.registerTask('build', ['scss', 'include-source', 'pack', 'compile']);
 };

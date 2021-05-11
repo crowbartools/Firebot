@@ -9,6 +9,7 @@ const { OutputDataType, VariableCategory } = require("../../../shared/variable-c
 let triggers = {};
 triggers[EffectTrigger.EVENT] = ["twitch:channel-reward-redemption"];
 triggers[EffectTrigger.CHANNEL_REWARD] = true;
+triggers[EffectTrigger.PRESET_LIST] = true;
 triggers[EffectTrigger.MANUAL] = true;
 
 const model = {

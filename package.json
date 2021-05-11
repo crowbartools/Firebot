@@ -1,10 +1,10 @@
 {
   "name": "firebotv5",
-  "version": "5.38.1",
+  "version": "5.38.2",
   "description": "Powerful all-in-one bot for Twitch streamers.",
   "main": "main.js",
   "scripts": {
-    "start": "grunt scss && electron . --dev --js-flags=\"--harmony\"",
+    "start": "grunt scss && grunt include-source && electron . --dev --js-flags=\"--harmony\"",
     "start:noscss": "electron . --js-flags=\"--harmony\"",
     "rebuild": "node-gyp rebuild --directory=node_modules/robotjs/ --runtime=electron --target=7.2.4 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "rebuild:new": "npm rebuild --runtime=electron --target=7.2.4 --disturl=https://atom.io/download/atom-shell --abi=83",
@@ -31,6 +31,7 @@
     "grunt-contrib-compress": "^1.6.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-electron-installer": "^2.1.0",
+    "grunt-include-source": "^1.1.0",
     "grunt-sass": "^3.1.0",
     "grunt-shell": "^3.0.1",
     "husky": "^0.14.3",

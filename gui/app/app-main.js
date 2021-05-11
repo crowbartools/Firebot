@@ -25,7 +25,6 @@
         "pascalprecht.translate",
         "ngToast",
         "agGrid",
-        "slidingPuzzle",
         'ngYoutubeEmbed',
         'countUpModule',
         'pageslide-directive',
@@ -513,6 +512,4 @@
             return input ? input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
         };
     });
-
-
 }(angular));

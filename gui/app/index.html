@@ -83,737 +83,207 @@
 
     <script src="https://unpkg.com/ag-grid@17.1.1/dist/ag-grid.min.js"></script>
 
-    <!-- Grid Webcomponent used for MixPlay scene editting -->
-    <!-- <script src="https://raw-dot-custom-elements.appspot.com/vpusher/the-grid/v1.4.0/webcomponentsjs/webcomponents-lite.js"></script>
-    <link rel="import" href="https://raw-dot-custom-elements.appspot.com/vpusher/the-grid/v1.4.0/the-grid/the-grid.html">  -->
-
     <script type="text/javascript" src="./index.js"></script>
     <script
       type="text/javascript"
       src="../../node_modules/countup.js/dist/countUp.min.js"
     ></script>
-    <script
-      type="text/javascript"
-      src="./directives/plugins/ngScrollGlue.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/slidingPuzzle.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/mainController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/controlsController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/commandsController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/effectsController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/viewerRolesController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/moderationController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/settingsController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/updatesController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/editCommandSettingsModalController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/eventsController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/chatMessagesController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/hotkeysController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/currencyController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/timersController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/viewersController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/quotesController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/countersController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/gamesController.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./controllers/channelRewardsController.js"
-    ></script>
-    <script type="text/javascript" src="./services/eventsService.js"></script>
-    <script type="text/javascript" src="./services/commandsService.js"></script>
-    <script type="text/javascript" src="./services/timerService.js"></script>
-    <script type="text/javascript" src="./services/settingsService.js"></script>
-    <script type="text/javascript" src="./services/eventLogService.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/chatMessagesService.js"
-    ></script>
-    <script type="text/javascript" src="./services/settingsService.js"></script>
-    <script type="text/javascript" src="./services/utilityService.js"></script>
-    <script type="text/javascript" src="./services/listenerService.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/sort-tags.service.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/connectionService.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/integrationService.js"
-    ></script>
-    <script type="text/javascript" src="./services/soundService.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/effectHelperService.js"
-    ></script>
-    <script type="text/javascript" src="./services/updatesService.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/websocketService.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/notificationService.js"
-    ></script>
-    <script type="text/javascript" src="./services/hotKeyService.js"></script>
-    <script type="text/javascript" src="./services/currencyService.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/connectionManager.js"
-    ></script>
-    <script type="text/javascript" src="./services/sidebarManager.js"></script>
-    <script type="text/javascript" src="./services/logger.js"></script>
-    <script type="text/javascript" src="./services/viewersService.js"></script>
-    <script type="text/javascript" src="./services/mixplayService.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/backendCommunicator.js"
-    ></script>
-    <script type="text/javascript" src="./services/gridHelper.js"></script>
-    <script type="text/javascript" src="./services/controlHelper.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/viewerRolesService.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/effectQueuesService.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/presetEffectListsService.js"
-    ></script>
-    <script type="text/javascript" src="./services/dataAccess.js"></script>
-    <script type="text/javascript" src="./services/profileManager.js"></script>
-    <script type="text/javascript" src="./services/fontManager.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/overlayUrlHelper.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/objectCopyHelper.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/chatModerationService.js"
-    ></script>
-    <script type="text/javascript" src="./services/accountAccess.js"></script>
-    <script type="text/javascript" src="./services/keyHelper.js"></script>
-    <script type="text/javascript" src="./services/quotesService.js"></script>
-    <script type="text/javascript" src="./services/ttsService.js"></script>
-    <script type="text/javascript" src="./services/countersService.js"></script>
-    <script type="text/javascript" src="./services/backupService.js"></script>
-    <script type="text/javascript" src="./services/gamesService.js"></script>
-    <script
-      type="text/javascript"
-      src="./services/channelRewardsService.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/startupScriptsService.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./services/activityFeedService.js"
-    ></script>
+
+    <script src="./app-main.js"></script>
+
+    <!-- include: "type": "js", "files": "controllers/**/*.js" -->
+    <script type="text/javascript" src="./controllers/channel-rewards.controller.js"></script>
+    <script type="text/javascript" src="./controllers/chat-messages.controller.js"></script>
+    <script type="text/javascript" src="./controllers/commands.controller.js"></script>
+    <script type="text/javascript" src="./controllers/counters.controller.js"></script>
+    <script type="text/javascript" src="./controllers/currency.controller.js"></script>
+    <script type="text/javascript" src="./controllers/edit-command-settings-modal.controller.js"></script>
+    <script type="text/javascript" src="./controllers/effects.controller.js"></script>
+    <script type="text/javascript" src="./controllers/events.controller.js"></script>
+    <script type="text/javascript" src="./controllers/games.controller.js"></script>
+    <script type="text/javascript" src="./controllers/hotkeys.controller.js"></script>
+    <script type="text/javascript" src="./controllers/moderation.controller.js"></script>
+    <script type="text/javascript" src="./controllers/quotes.controller.js"></script>
+    <script type="text/javascript" src="./controllers/settings.controller.js"></script>
+    <script type="text/javascript" src="./controllers/timers.controller.js"></script>
+    <script type="text/javascript" src="./controllers/updates.controller.js"></script>
+    <script type="text/javascript" src="./controllers/viewer-roles.controller.js"></script>
+    <script type="text/javascript" src="./controllers/viewers.controller.js"></script>
+    <!-- /include -->
+
+    <!-- include: "type": "js", "files": "services/**/*.js" -->
+    <script type="text/javascript" src="./services/account-access.service.js"></script>
+    <script type="text/javascript" src="./services/activity-feed.service.js"></script>
+    <script type="text/javascript" src="./services/backend-communicator.service.js"></script>
+    <script type="text/javascript" src="./services/backup.service.js"></script>
+    <script type="text/javascript" src="./services/channel-rewards.service.js"></script>
+    <script type="text/javascript" src="./services/chat-messages.service.js"></script>
+    <script type="text/javascript" src="./services/chat-moderation.service.js"></script>
+    <script type="text/javascript" src="./services/commands.service.js"></script>
+    <script type="text/javascript" src="./services/connection-manager.service.js"></script>
+    <script type="text/javascript" src="./services/connection.service.js"></script>
+    <script type="text/javascript" src="./services/counters.service.js"></script>
+    <script type="text/javascript" src="./services/currency.service.js"></script>
+    <script type="text/javascript" src="./services/data-access.service.js"></script>
+    <script type="text/javascript" src="./services/effect-helper.service.js"></script>
+    <script type="text/javascript" src="./services/effect-queues.service.js"></script>
+    <script type="text/javascript" src="./services/event-log.service.js"></script>
+    <script type="text/javascript" src="./services/events.service.js"></script>
+    <script type="text/javascript" src="./services/font-manager.service.js"></script>
+    <script type="text/javascript" src="./services/games.service.js"></script>
+    <script type="text/javascript" src="./services/hot-key.service.js"></script>
+    <script type="text/javascript" src="./services/integration.service.js"></script>
+    <script type="text/javascript" src="./services/key-helper.service.js"></script>
+    <script type="text/javascript" src="./services/listener.service.js"></script>
+    <script type="text/javascript" src="./services/logger.service.js"></script>
+    <script type="text/javascript" src="./services/notification.service.js"></script>
+    <script type="text/javascript" src="./services/object-copy-helper.service.js"></script>
+    <script type="text/javascript" src="./services/overlay-url-helper.service.js"></script>
+    <script type="text/javascript" src="./services/preset-effect-lists.service.js"></script>
+    <script type="text/javascript" src="./services/profile-manager.service.js"></script>
+    <script type="text/javascript" src="./services/quotes.service.js"></script>
+    <script type="text/javascript" src="./services/settings.service.js"></script>
+    <script type="text/javascript" src="./services/sidebar-manager.service.js"></script>
+    <script type="text/javascript" src="./services/sort-tags.service.js"></script>
+    <script type="text/javascript" src="./services/sound.service.js"></script>
+    <script type="text/javascript" src="./services/startup-scripts.service.js"></script>
+    <script type="text/javascript" src="./services/timer.service.js"></script>
+    <script type="text/javascript" src="./services/tts.service.js"></script>
+    <script type="text/javascript" src="./services/updates.service.js"></script>
+    <script type="text/javascript" src="./services/utility.service.js"></script>
+    <script type="text/javascript" src="./services/viewer-roles.service.js"></script>
+    <script type="text/javascript" src="./services/viewers.service.js"></script>
+    <script type="text/javascript" src="./services/websocket.service.js"></script>
+    <!-- /include -->
+
+    <!-- include: "type": "js", "files": "directives/**/*.js" -->
+    <script type="text/javascript" src="./directives/chat/chat-alert.js"></script>
+    <script type="text/javascript" src="./directives/chat/chat-message.js"></script>
+    <script type="text/javascript" src="./directives/chat/reward-redemption.js"></script>
+    <script type="text/javascript" src="./directives/commands/commandOption.js"></script>
+    <script type="text/javascript" src="./directives/commands/simple-command-options.js"></script>
+    <script type="text/javascript" src="./directives/conditional-effect/conditionDisplay.js"></script>
+    <script type="text/javascript" src="./directives/conditional-effect/conditionList.js"></script>
+    <script type="text/javascript" src="./directives/controls/chatter-select.js"></script>
+    <script type="text/javascript" src="./directives/controls/color-picker-input.js"></script>
+    <script type="text/javascript" src="./directives/controls/currency-select.js"></script>
+    <script type="text/javascript" src="./directives/controls/custom-script-settings.js"></script>
+    <script type="text/javascript" src="./directives/controls/dropdownSelect.js"></script>
+    <script type="text/javascript" src="./directives/controls/editable-list.js"></script>
+    <script type="text/javascript" src="./directives/controls/effectList.js"></script>
+    <script type="text/javascript" src="./directives/controls/fileChooser.js"></script>
+    <script type="text/javascript" src="./directives/controls/firebot-input.js"></script>
+    <script type="text/javascript" src="./directives/controls/multiselect.js"></script>
+    <script type="text/javascript" src="./directives/controls/notificationCenter.js"></script>
+    <script type="text/javascript" src="./directives/controls/role-based/role-number.js"></script>
+    <script type="text/javascript" src="./directives/controls/role-based/role-numbers.js"></script>
+    <script type="text/javascript" src="./directives/controls/role-based/role-percentage.js"></script>
+    <script type="text/javascript" src="./directives/controls/role-based/role-percentages.js"></script>
+    <script type="text/javascript" src="./directives/controls/scriptParameterOption.js"></script>
+    <script type="text/javascript" src="./directives/controls/searchableEffectDropdown.js"></script>
+    <script type="text/javascript" src="./directives/controls/searchableEventDropdown.js"></script>
+    <script type="text/javascript" src="./directives/controls/settingContainer.js"></script>
+    <script type="text/javascript" src="./directives/controls/sort-tag-dropdown.component.js"></script>
+    <script type="text/javascript" src="./directives/controls/sort-tag-list.js"></script>
+    <script type="text/javascript" src="./directives/controls/soundPlayer.js"></script>
+    <script type="text/javascript" src="./directives/controls/specialized/discord-channel-webhooks.js"></script>
+    <script type="text/javascript" src="./directives/controls/time-input.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosAudioOutputDevice.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosChatterSelect.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosCollapsablePanel.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosContainer.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosEnterExitAnimations.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayInstance.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosOverlayPosition.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosReplaceVariables.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eosReplaceVariableSection.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/eventListTextOptions.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/replaceVariableInfo.js"></script>
+    <script type="text/javascript" src="./directives/effect-option-settings/showEventsSettings.js"></script>
     <script type="text/javascript" src="./directives/effectOptions.js"></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/chat/edit-activity-events-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/dropdownSelect.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosContainer.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosEnterExitAnimations.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosOverlayInstance.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosOverlayPosition.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosAudioOutputDevice.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosChatterSelect.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosCollapsablePanel.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/showEventsSettings.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eventListTextOptions.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosReplaceVariables.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/effect-option-settings/eosReplaceVariableSection.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/scriptParameterOption.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/fileChooser.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/searchableEffectDropdown.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/searchableEventDropdown.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/effectList.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/actionList.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/role-based/role-percentage.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/role-based/role-percentages.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/role-based/role-number.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/role-based/role-numbers.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/specialized/discord-channel-webhooks.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/editable-list.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/currency-select.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/chatter-select.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/sort-tag-list.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/multiselect.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/time-input.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/color-picker-input.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/filters/filterDisplay.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/filters/filterList.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/conditional-effect/conditionDisplay.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/conditional-effect/conditionList.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/notificationCenter.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/soundPlayer.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/chat/chat-message.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/chat/reward-redemption.js"
-    ></script>
+    <script type="text/javascript" src="./directives/filters/filterDisplay.js"></script>
+    <script type="text/javascript" src="./directives/filters/filterList.js"></script>
+    <script type="text/javascript" src="./directives/misc/animationend.js"></script>
+    <script type="text/javascript" src="./directives/misc/bindPolymer.js"></script>
+    <script type="text/javascript" src="./directives/misc/collapsablePanel.js"></script>
+    <script type="text/javascript" src="./directives/misc/collapsableSection.js"></script>
+    <script type="text/javascript" src="./directives/misc/conditionSection.js"></script>
+    <script type="text/javascript" src="./directives/misc/connectionButton.js"></script>
+    <script type="text/javascript" src="./directives/misc/connectionIcon.js"></script>
+    <script type="text/javascript" src="./directives/misc/contentBlock.js"></script>
+    <script type="text/javascript" src="./directives/misc/disableAnimate.js"></script>
+    <script type="text/javascript" src="./directives/misc/draggableModal.js"></script>
+    <script type="text/javascript" src="./directives/misc/dynamicHtml.js"></script>
+    <script type="text/javascript" src="./directives/misc/firebot-item-table/firebot-item-table.js"></script>
+    <script type="text/javascript" src="./directives/misc/hotkeyCapture.js"></script>
+    <script type="text/javascript" src="./directives/misc/hover-class.directive.js"></script>
+    <script type="text/javascript" src="./directives/misc/imageonload.js"></script>
+    <script type="text/javascript" src="./directives/misc/keyCatpure.js"></script>
+    <script type="text/javascript" src="./directives/misc/messageActions.js"></script>
+    <script type="text/javascript" src="./directives/misc/replaceVariableMenu.js"></script>
+    <script type="text/javascript" src="./directives/misc/scrollSentinel.js"></script>
+    <script type="text/javascript" src="./directives/misc/searchbar.js"></script>
+    <script type="text/javascript" src="./directives/misc/sortable-table-cell.js"></script>
+    <script type="text/javascript" src="./directives/misc/sortable-table.js"></script>
+    <script type="text/javascript" src="./directives/misc/status-indicator.component.js"></script>
+    <script type="text/javascript" src="./directives/misc/subcommandRow.js"></script>
+    <script type="text/javascript" src="./directives/misc/sysCommandRow.js"></script>
+    <script type="text/javascript" src="./directives/misc/toggleButton.js"></script>
     <script type="text/javascript" src="./directives/misc/tooltip.js"></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/connectionIcon.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/contentBlock.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/hotkeyCapture.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/messageActions.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/dynamicHtml.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/searchbar.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/hover-class.directive.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/sysCommandRow.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/subcommandRow.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/replaceVariableMenu.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/bindPolymer.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/gridListener.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/animationend.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/disableAnimate.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/controlTile.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/gridSizeSelection.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/liveControlPreview.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/draggableModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/imageonload.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/connectionButton.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/toggleButton.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/sortable-table-cell.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/sortable-table.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/keyCatpure.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/scrollSentinel.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/collapsableSection.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/conditionSection.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/collapsablePanel.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/firebot-item-table/firebot-item-table.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/misc/status-indicator.component.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/firebot-input.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/sidebar/navLink.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/sidebar/navCategory.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/sidebar/sidebar.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/restrictions/restrictionItem.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/restrictions/restrictionsSection.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/restrictions/restrictionOptions.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/connectionPanelModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/aboutModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/puzzleModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/setupWizardModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/hotkeys/addOrEditHotkey/addOrEditHotkeyModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/commands/addOrEditCustomCommand/addOrEditCustomCommandModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/commands/editSystemCommand/editSystemCommandModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/viewers/editColumnsModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/viewers/viewerDetailsModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/currency/addOrEditCurrency/addOrEditCurrency.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/timers/addOrEditTimer/addOrEditTimerModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/inputModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/dateModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/errorDetailModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/fontManagementModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/patronageDetailsModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/mixplay/createControlModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/mixplay/editControlModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/mixplay/addOrEditCooldownGroupModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/mixplay/createProjectModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/filters/addOrEditFilter/addOrEditFilterModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/conditions/addOrEditConditionModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/events/addOrEditEventModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/roles/addOrEditCustomRoleModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/viewerSearchModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/selectModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/idEntryModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/editBannedWordsModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/txtFileWordImportModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/botLoginModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/copyShareCodeModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/misc/manage-sort-tags.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/effect-queues/addOrEditEffectQueueModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/quotes/addOrEditQuoteModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/effects/add-edit-preset-effect-list-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/effects/add-new-effect-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/channel-rewards/add-edit-channel-reward.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/counters/editCounter/editCounterModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/backups/restoreBackupModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/games/editGameSettingsModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/integrations/editIntegrationSettingsModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/integrations/addOrEditDiscordWebhookModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/commands/addOrEditSubcommandModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/startup-scripts/startupScriptsListModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/startup-scripts/addOrEditStartupScriptModal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/setups/create-setup-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/setups/firebot-component-list-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/setups/import-setup-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/setups/remove-setup-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/setups/add-edit-setup-question.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/viewers/purge-viewers-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/modals/viewers/preview-purge-modal.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/commands/commandOption.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/commands/simple-command-options.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/settingContainer.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/sort-tag-dropdown.component.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/controls/custom-script-settings.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="./directives/chat/chat-alert.js"
-    ></script>
+    <script type="text/javascript" src="./directives/modals/backups/restoreBackupModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/channel-rewards/add-edit-channel-reward.js"></script>
+    <script type="text/javascript" src="./directives/modals/chat/edit-activity-events-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/commands/addOrEditCustomCommand/addOrEditCustomCommandModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/commands/addOrEditSubcommandModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/commands/editSystemCommand/editSystemCommandModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/conditions/addOrEditConditionModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/counters/editCounter/editCounterModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/currency/addOrEditCurrency/addOrEditCurrency.js"></script>
+    <script type="text/javascript" src="./directives/modals/effect-queues/addOrEditEffectQueueModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/effects/add-edit-preset-effect-list-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/effects/add-new-effect-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/events/addOrEditEventModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/filters/addOrEditFilter/addOrEditFilterModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/games/editGameSettingsModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/hotkeys/addOrEditHotkey/addOrEditHotkeyModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/integrations/addOrEditDiscordWebhookModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/integrations/editIntegrationSettingsModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/aboutModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/botLoginModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/connectionPanelModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/copyShareCodeModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/dateModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/editBannedWordsModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/errorDetailModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/fontManagementModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/idEntryModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/inputModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/manage-sort-tags.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/selectModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/setupWizardModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/txtFileWordImportModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/misc/viewerSearchModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/quotes/addOrEditQuoteModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/roles/addOrEditCustomRoleModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/setups/add-edit-setup-question.js"></script>
+    <script type="text/javascript" src="./directives/modals/setups/create-setup-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/setups/firebot-component-list-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/setups/import-setup-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/setups/remove-setup-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/startup-scripts/addOrEditStartupScriptModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/startup-scripts/startupScriptsListModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/timers/addOrEditTimer/addOrEditTimerModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/viewers/editColumnsModal.js"></script>
+    <script type="text/javascript" src="./directives/modals/viewers/preview-purge-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/viewers/purge-viewers-modal.js"></script>
+    <script type="text/javascript" src="./directives/modals/viewers/viewerDetailsModal.js"></script>
+    <script type="text/javascript" src="./directives/restrictions/restrictionItem.js"></script>
+    <script type="text/javascript" src="./directives/restrictions/restrictionOptions.js"></script>
+    <script type="text/javascript" src="./directives/restrictions/restrictionsSection.js"></script>
+    <script type="text/javascript" src="./directives/sidebar/navCategory.js"></script>
+    <script type="text/javascript" src="./directives/sidebar/navLink.js"></script>
+    <script type="text/javascript" src="./directives/sidebar/sidebar.js"></script>
+    <!-- /include -->
   </head>
   <body ng-cloak>
     <toast></toast>

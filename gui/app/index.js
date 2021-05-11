@@ -36,6 +36,18 @@ require("angular-bootstrap-contextmenu");
 require("../../node_modules/tinycolor2/dist/tinycolor-min");
 require("angularjs-color-picker");
 
+const configureOpenRenderedLinksInDefaultBrowser = () => {
+    document.querySelector('body').addEventListener('click', event => {
+        if (event.target.tagName.toLowerCase() === 'a') {
+            const href = event.target.href;
+            if (href != null && href.length > 0 && href.toLowerCase().startsWith("http")) {
+                event.preventDefault();
+                shell.openExternal(href);
+            }
+        }
+    });
+};
+
 function boot() {
     angular.bootstrap(document, ["firebotApp"], {
         strictDi: false
@@ -47,6 +59,8 @@ function boot() {
         backgroundColor: Color.fromHex('#1E2023')
         //icon: "../images/logo_transparent_2.png"
     });
+
+    configureOpenRenderedLinksInDefaultBrowser();
 }
 
 document.addEventListener("DOMContentLoaded", boot);
@@ -151,21 +165,5 @@ ipcRenderer.on("logging", (event, data) => {
 // front end log feed
 logger.on("logging", (transport, level, msg, meta) => {
     printLogToBrowserConsole(transport, level, msg, meta);
-});
-
-const configureOpenRenderedLinksInDefaultBrowser = () => {
-    document.querySelector('body').addEventListener('click', event => {
-        if (event.target.tagName.toLowerCase() === 'a') {
-            const href = event.target.href;
-            if (href != null && href.length > 0 && href.toLowerCase().startsWith("http")) {
-                event.preventDefault();
-                shell.openExternal(href);
-            }
-        }
-    });
-};
-
-document.addEventListener("DOMContentLoaded", function() {
-    configureOpenRenderedLinksInDefaultBrowser();
 });
 
