@@ -437,10 +437,18 @@ const playVideo = {
                             }, videoDuration);
                         } else {
 
-                            video.onended = function(e) {
+                            const exitVideo = () => {
                                 delete startedVidCache[this.id]; // eslint-disable-line no-undef
                                 animateVideoExit(`#${wrapperId}`, exitAnimation, exitDuration, inbetweenAnimation);
                             };
+
+                            video.onended = function() {
+                                exitVideo();
+                            };
+
+                            $(`#${videoPlayerId}`).on("error", function() {
+                                exitVideo();
+                            });
                         }
                     };
 
