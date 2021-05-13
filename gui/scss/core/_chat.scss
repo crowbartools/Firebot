@@ -70,7 +70,7 @@
     }
     .chatContent{
         color: $chatTextColor;
-        line-height: 24px;
+        line-height: 2;
         font-size: 1.25em;
         word-break: break-word;
         padding: 2px 0;
@@ -86,9 +86,11 @@
         min-height: 25px;
         .chat-username {
             display: inline-flex !important;
+            vertical-align: middle;
         }
         .chatContent {
             font-size: 1.15em;
+            vertical-align: middle;
         }
     }
     .chatEventInfo{
@@ -125,7 +127,7 @@
         }
         .chat-timestamp {
             flex-shrink: 0;
-            width: 75px;
+            vertical-align: middle;
             padding-left: 0;
         }
     }
@@ -169,6 +171,8 @@
     align-items: center;
 
     .user-badges {
+        display: inline-flex;
+        justify-content: center;
         img {
             margin-right: 3px;
             max-height: 18px;
@@ -206,15 +210,14 @@
 
 .isCompact {
     & .chat-user-avatar-wrapper {
-        width: 25px; 
-        height: 25px;
+        width: 28px; 
+        height: 28px;
         display: inline-block; 
-        vertical-align: top;
         margin-right: 0;
     }
     
     & .chat-user-avatar {
-        width: 25px;
+        width: 28px;
     }
 }
 
@@ -488,8 +491,9 @@
     border: 0.5px solid;
     border-radius: 6px;
     font-size: 12px;
-    padding: 0 3px;
+    padding: 3px 3px 2px;
     margin-right: 3px;
+    line-height: 1;
 }
 
 .activity-feed-header {

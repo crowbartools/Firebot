@@ -22,9 +22,7 @@
                         context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                         context-menu-on="click"
                     >
-                        <span>
-                            <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
-                        </span>                 
+                        <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">              
                     </div>
                     <div>
 
@@ -38,23 +36,20 @@
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                             context-menu-on="click"
                         >
-                            <span>
-                                <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
-                            </span>                 
+                            <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">              
                         </div>
 
                         <div 
                             class="chat-username" 
-                            
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                             context-menu-on="click"
                         >
-                            <span ng-show="$ctrl.message.badges.length > 0" class="user-badges">
+                            <div ng-show="$ctrl.message.badges.length > 0" class="user-badges">
                                 <img ng-repeat="badge in $ctrl.message.badges" 
                                     ng-src="{{badge.url}}"
                                     uib-tooltip="{{badge.title}}" 
                                     tooltip-append-to-body="true">
-                            </span>
+                            </div>
                             <span class="pronoun" ng-show="$ctrl.message.pronoun">{{$ctrl.message.pronoun}}</span>
                             <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
                             <span 
