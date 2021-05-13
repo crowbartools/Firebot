@@ -144,13 +144,13 @@
         .chatEmoticon {
             opacity: 0;
         }
-        .chat-link {
+        .chat-link, a {
             color: transparent;
         }
         &:hover {
             background:transparent;
             color: $chatDeletedColor;
-            .chat-link {
+            .chat-link, a {
                 color: #3e87da;
                 opacity: 0.5;
             }
