@@ -233,7 +233,7 @@
                 settingsService.setViewerListPagesizeSetting(value);
                 ipcRenderer.send('setViewerListPagesizeSetting', value);
             };
-            
+
             $scope.audioOutputDevices = [{
                 label: "System Default",
                 deviceId: "default"
