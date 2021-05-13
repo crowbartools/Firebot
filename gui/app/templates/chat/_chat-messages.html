@@ -223,6 +223,7 @@
             style="margin-right: 10px"
             ng-click="afs.retriggerEvent(activity.id)"
             uib-tooltip="Retrigger event"
+            tooltip-placement="top-right"
             tooltip-append-to-body="true"
           ></i>
 
@@ -231,6 +232,7 @@
             ng-class="activity.acknowledged ? 'fa-check-square' : 'fa-square'"
             ng-click="activity.acknowledged = !activity.acknowledged"
             uib-tooltip="{{activity.acknowledged ? 'Acknowledged' : 'Acknowledge'}}"
+            tooltip-placement="top-right"
             tooltip-append-to-body="true"
           ></i>
         </div>
