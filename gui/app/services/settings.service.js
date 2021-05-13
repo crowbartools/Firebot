@@ -453,6 +453,10 @@
                 pushDataToFile("/settings/activeMixplayUsers/inactiveTimer", inactiveTimer);
             };
 
+            service.setViewerListPagesizeSetting = function(pageSize) {
+                pushDataToFile("/settings/viewerListDatabase/pageSize", pageSize);
+            };
+
             /*
             * 0 = off,
             * 1 = bugfix,

@@ -226,6 +226,14 @@
                 ipcRenderer.send('setActiveMixplayUserTimeout', value);
             };
 
+            $scope.setViewerListPagesizeSetting = (value) => {
+                if (value == null) {
+                    value = "10";
+                }
+                settingsService.setViewerListPagesizeSetting(value);
+                ipcRenderer.send('setViewerListPagesizeSetting', value);
+            };
+            
             $scope.audioOutputDevices = [{
                 label: "System Default",
                 deviceId: "default"
