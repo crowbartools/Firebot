@@ -83,7 +83,7 @@ module.exports = {
             ...userTwitchRoles,
             ...userTeamRoles,
             ...userCustomRoles
-        ];
+        ].filter(r => r != null);
 
         const hasRole = allRoles.some(r => r.id === value);
 
