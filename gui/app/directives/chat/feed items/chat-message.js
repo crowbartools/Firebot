@@ -45,7 +45,7 @@
 
                         <div 
                             class="chat-username" 
-                            ng-style="{'color': $ctrl.message.color}"
+                            
                             context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                             context-menu-on="click"
                         >
@@ -55,7 +55,8 @@
                                     uib-tooltip="{{badge.title}}" 
                                     tooltip-append-to-body="true">
                             </span>
-                            <b>{{$ctrl.message.username}}</b>
+                            <span class="pronoun" ng-show="$ctrl.message.pronoun">{{$ctrl.message.pronoun}}</span>
+                            <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
                             <span 
                                 ng-if="$ctrl.compactDisplay && !$ctrl.message.action" 
                                 style="color:white;font-weight:200;"
@@ -67,12 +68,12 @@
                         <div class="chatContent">
                             <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
-                                <span ng-if="part.type === 'text'">
-                                    <clickable-links text="part.text" />
-                                </span>
+                                <span ng-if="part.type === 'text'">{{part.text}}</span>
 
-                                <span ng-if="part.type === 'emote'" class="chatEmoticon">
-                                    <img ng-src="{{part.url}}">
+                                <a ng-if="part.type === 'link'" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
+
+                                <span ng-if="part.type === 'emote' || part.type === 'third-party-emote'" class="chatEmoticon">
+                                    <img ng-src="{{part.url}}" style="height: 100%;">
                                 </span>
 
                             </span>

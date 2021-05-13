@@ -89,9 +89,7 @@ class TwitchChat extends EventEmitter {
 
             await this._streamerChatClient.connect();
 
-            await chatHelpers.cacheBadges();
-
-            await chatHelpers.cacheStreamerEmotes();
+            await chatHelpers.handleChatConnect();
 
             twitchChatListeners.setupChatListeners(this._streamerChatClient);
 
