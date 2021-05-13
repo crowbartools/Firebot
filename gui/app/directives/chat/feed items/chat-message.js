@@ -11,18 +11,44 @@
             },
             template: `
                 <div class="chat-message"
-                    style="cursor: pointer;" 
                     ng-class="{ isAction: $ctrl.message.action, isWhisper: $ctrl.message.whisper, isDeleted: $ctrl.message.deleted, isTagged: $ctrl.message.tagged, isCompact: $ctrl.compactDisplay, spoilers: $ctrl.hideDeletedMessages, isHighlighted: $ctrl.message.isHighlighted, isCustomReward: $ctrl.message.customRewardId != null }" 
                     ng-attr-messageId="{{$ctrl.message.id}}"
                     context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
-                    context-menu-on="click,contextmenu">
-                    <div class="chat-user-avatar-wrapper">
+                    context-menu-on="contextmenu"
+                >
+                    <div 
+                        ng-if="!$ctrl.compactDisplay"
+                        class="chat-user-avatar-wrapper" 
+                        context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                        context-menu-on="click"
+                    >
                         <span>
                             <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
                         </span>                 
                     </div>
-                    <div style="padding-left: 10px">
-                        <div class="chat-username" ng-style="{'color': $ctrl.message.color}">
+                    <div>
+
+                        <span ng-if="$ctrl.compactDisplay" class="muted chat-timestamp">
+                            {{$ctrl.message.timestampDisplay}}
+                        </span>
+
+                        <div 
+                            ng-if="$ctrl.compactDisplay"
+                            class="chat-user-avatar-wrapper" 
+                            context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                            context-menu-on="click"
+                        >
+                            <span>
+                                <img class="chat-user-avatar" ng-src="{{$ctrl.message.profilePicUrl}}">
+                            </span>                 
+                        </div>
+
+                        <div 
+                            class="chat-username" 
+                            ng-style="{'color': $ctrl.message.color}"
+                            context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
+                            context-menu-on="click"
+                        >
                             <span ng-show="$ctrl.message.badges.length > 0" class="user-badges">
                                 <img ng-repeat="badge in $ctrl.message.badges" 
                                     ng-src="{{badge.url}}"
@@ -30,6 +56,10 @@
                                     tooltip-append-to-body="true">
                             </span>
                             <b>{{$ctrl.message.username}}</b>
+                            <span 
+                                ng-if="$ctrl.compactDisplay && !$ctrl.message.action" 
+                                style="color:white;font-weight:200;"
+                            >:</span>
                             <span ng-if="!$ctrl.compactDisplay" class="muted chat-timestamp">
                                 {{$ctrl.message.timestampDisplay}}
                             </span>
@@ -37,7 +67,9 @@
                         <div class="chatContent">
                             <span ng-repeat="part in $ctrl.message.parts" class="chat-content-wrap">
 
-                                <span ng-if="part.type === 'text'">{{part.text}}</span>
+                                <span ng-if="part.type === 'text'">
+                                    <clickable-links text="part.text" />
+                                </span>
 
                                 <span ng-if="part.type === 'emote'" class="chatEmoticon">
                                     <img ng-src="{{part.url}}">

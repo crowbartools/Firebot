@@ -109,13 +109,8 @@
           ng-change="onMessageFieldUpdate()"
           ng-keyup="onMessageFieldKeypress($event)"
           ng-disabled="!chatFeedIsEnabled()"
-          uib-typeahead="command for command in commands | filter:$viewValue | limitTo:8"
           chat-auto-complete-menu
         />
-
-        <div class="chatfeed-send-btn" ng-click="submitChat()">
-          <span>Send</span>
-        </div>
       </div>
       <div class="settings-btn-wrapper">
         <span

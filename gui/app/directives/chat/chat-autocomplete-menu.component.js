@@ -11,11 +11,37 @@
                     onAutocomplete: "&?",
                     menuPosition: "@"
                 },
-                controller: function($scope, $element, $q, backendCommunicator, $timeout) {
+                controller: function($scope, $element, $q, backendCommunicator, $timeout,
+                    commandsService) {
+
 
                     const insertAt = (str, sub, pos) => `${str.slice(0, pos)}${sub}${str.slice(pos)}`;
 
+
+                    const firebotCommandMenuItems = [
+                        ...commandsService.getCustomCommands(),
+                        ...commandsService.getSystemCommands()
+                    ]
+                        .filter(c => c.active)
+                        .map(c => [
+                            {
+                                display: c.trigger,
+                                description: c.description,
+                                text: c.trigger
+                            },
+                            ...(c.subCommands ? c.subCommands.map(sc => ({
+                                display: `${c.trigger} ${sc.usage ? sc.usage : sc.arg}`,
+                                description: sc.description,
+                                text: `${c.trigger} ${sc.arg}`
+                            })) : [])
+                        ]).flat();
+
                     const categories = [
+                        {
+                            onlyStart: true,
+                            token: "!",
+                            items: firebotCommandMenuItems
+                        },
                         {
                             onlyStart: true,
                             token: "/",
@@ -39,27 +65,61 @@
                         }
                     ];
 
+                    function ensureMenuItemVisible() {
+                        const autocompleteMenu = $(".chat-autocomplete-menu");
+                        const menuItem = autocompleteMenu.children()[$scope.selectedIndex];
+
+                        menuItem.scrollIntoView({
+                            block: "nearest"
+                        });
+                    }
+
+                    $scope.selectedIndex = 0;
+                    $element.bind("keyup", function (event) {
+                        if (!$scope.menuOpen) return;
+                        const key = event.key;
+                        if (key === "ArrowUp" && $scope.selectedIndex > 0) {
+                            $scope.selectedIndex -= 1;
+                            $scope.$apply();
+                            ensureMenuItemVisible();
+                        } else if (key === "ArrowDown" && $scope.selectedIndex < $scope.menuItems.length - 1) {
+                            $scope.selectedIndex += 1;
+                            $scope.$apply();
+                            ensureMenuItemVisible();
+                        } else if (key === "Enter" || key === "Tab") {
+                            console.log($scope.menuItems[$scope.selectedIndex]);
+                        }
+                        if (key === "ArrowUp" || key === "ArrowDown" || key === "Enter" || key === "Tab") {
+                            event.stopPropagation();
+                            event.preventDefault();
+                            event.stopImmediatePropagation();
+                        }
+                    });
+
                     $scope.menuOpen = false;
 
                     $scope.menuItems = [];
 
                     $scope.$watch('modelValue', function(value) {
-                        console.log(value);
                         let matchingMenuItems = [];
                         if (value) {
                             const endsInSpace = value.endsWith(" ");
-                            const isFirstWorld = !value.includes(" ");
-                            const words = value.trim().split(" ");
-                            const currentWord = words[words.length - 1];
-                            categories.forEach(c => {
-                                if (c.onlyStart && isFirstWorld &&
+                            const oneWordSoFar = !value.trim().includes(" ");
+                            if (!endsInSpace || oneWordSoFar) {
+                                const isFirstWorld = !value.includes(" ");
+                                const words = value.trim().split(" ");
+                                const currentWord = words[words.length - 1];
+                                categories.forEach(c => {
+                                    if (((c.onlyStart && isFirstWorld) || !c.onlyStart) &&
                                     currentWord.startsWith(c.token)) {
-                                    matchingMenuItems = c.items.filter(i => currentWord.startsWith(i.text));
-                                }
-                            });
+                                        matchingMenuItems = c.items.filter(i => i.text.startsWith(currentWord));
+                                    }
+                                });
+                            }
                         }
-                        $scope.setMenuOpen(false);
-
+                        $scope.menuItems = matchingMenuItems;
+                        $scope.selectedIndex = 0;
+                        $scope.setMenuOpen(!!matchingMenuItems.length);
                     });
 
                     $scope.toggleMenu = () => {
@@ -93,7 +153,10 @@
 
                     const menu = angular.element(`
                         <div class="chat-autocomplete-menu" ng-show="menuOpen" ng-class="menuPosition">
-                            hello world
+                            <div class="autocomplete-menu-item" ng-class="{ selected: selectedIndex == $index }" ng-repeat="item in menuItems track by item.text">
+                                <div class="item-display">{{item.display}}</div>
+                                <div ng-show="item.description != null" class="item-description">{{item.description}}</div>
+                            </div>
                         </div>`
                     );
                     $compile(menu)(scope);
