@@ -11,7 +11,16 @@
             },
             template: `
                 <div class="chat-message"
-                    ng-class="{ isAction: $ctrl.message.action, isWhisper: $ctrl.message.whisper, isDeleted: $ctrl.message.deleted, isTagged: $ctrl.message.tagged, isCompact: $ctrl.compactDisplay, spoilers: $ctrl.hideDeletedMessages, isHighlighted: $ctrl.message.isHighlighted, isCustomReward: $ctrl.message.customRewardId != null }" 
+                    ng-class="{ 
+                        isAction: $ctrl.message.action, 
+                        isWhisper: $ctrl.message.whisper, 
+                        isDeleted: $ctrl.message.deleted, 
+                        isTagged: $ctrl.message.tagged, 
+                        isCompact: $ctrl.compactDisplay, 
+                        spoilers: $ctrl.hideDeletedMessages, 
+                        isHighlighted: $ctrl.message.isHighlighted, 
+                        isCustomReward: $ctrl.message.customRewardId != null 
+                    }" 
                     ng-attr-messageId="{{$ctrl.message.id}}"
                     context-menu="$ctrl.getMessageContextMenu($ctrl.message)"
                     context-menu-on="contextmenu"
@@ -48,9 +57,15 @@
                                 <img ng-repeat="badge in $ctrl.message.badges" 
                                     ng-src="{{badge.url}}"
                                     uib-tooltip="{{badge.title}}" 
-                                    tooltip-append-to-body="true">
+                                    tooltip-append-to-body="true" />
                             </div>
-                            <span class="pronoun" ng-show="$ctrl.message.pronoun">{{$ctrl.message.pronoun}}</span>
+                            <span 
+                                class="pronoun" 
+                                uib-tooltip="Pronouns" 
+                                tooltip-append-to-body="true" 
+                                ng-click="$root.openLinkExternally('https://pronouns.alejo.io/')" 
+                                ng-show="$ctrl.message.pronoun"
+                            >{{$ctrl.message.pronoun}}</span>
                             <b ng-style="{'color': $ctrl.message.color}">{{$ctrl.message.username}}</b>
                             <span 
                                 ng-if="$ctrl.compactDisplay && !$ctrl.message.action" 
@@ -67,7 +82,12 @@
 
                                 <a ng-if="part.type === 'link'" ng-href="{{part.url}}" target="_blank">{{part.text}}</a>
 
-                                <span ng-if="part.type === 'emote' || part.type === 'third-party-emote'" class="chatEmoticon">
+                                <span 
+                                    ng-if="part.type === 'emote' || part.type === 'third-party-emote'" 
+                                    class="chatEmoticon"
+                                    uib-tooltip="{{part.origin}}: {{part.name}}"
+                                    tooltip-append-to-body="true"
+                                >
                                     <img ng-src="{{part.url}}" style="height: 100%;">
                                 </span>
 

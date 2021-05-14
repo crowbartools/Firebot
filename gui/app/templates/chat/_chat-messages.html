@@ -7,7 +7,7 @@
                 <b>{{currentViewers}}</b>
             </span> -->
     </div>
-    <div class="chat-users" style="height: 100%">
+    <div class="chat-users">
       <div
         class="chatUser clickable"
         ng-click="showUserDetailsModal(user.id)"
@@ -113,16 +113,17 @@
         />
       </div>
       <div class="settings-btn-wrapper">
-        <span
+        <button
           class="settings-btn"
           uib-popover-template="'userActionsPopover.html'"
           popover-append-to-body="true"
           popover-placement="auto top-right"
           popover-class="settings-popover"
           popover-trigger="'outsideClick'"
+          aria-label="Chat Settings"
         >
           <i class="fas fa-cog"></i>
-        </span>
+        </button>
       </div>
     </div>
   </div>
@@ -133,7 +134,7 @@
         <span
           ng-show="afs.unacknowledgedCount() > 0"
           uib-tooltip="Unacknowledged events"
-          tooltip-placement="bottom"
+          tooltip-append-to-body="true"
           style="
             background: rgb(119, 121, 121);
             border-radius: 30%;
@@ -185,7 +186,7 @@
         </ul>
       </div>
     </div>
-    <div class="activity-list" style="height: 100%">
+    <div class="activity-list">
       <div
         class="activity alternate-bg"
         ng-class="activity.acknowledged ? 'muted' : ''"
@@ -200,7 +201,11 @@
             margin-right: 10px;
           "
         >
-          <i class="{{activity.icon}}" style="font-size: 15px"></i>
+          <i
+            class="{{activity.icon}}"
+            uib-tooltip="{{activity.source.name}}: {{activity.event.name}}"
+            style="font-size: 15px"
+          ></i>
           <span style="font-size: 10px" class="muted"
             >{{activity.timestamp}}</span
           >

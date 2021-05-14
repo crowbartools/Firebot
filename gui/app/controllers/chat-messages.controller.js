@@ -1,10 +1,6 @@
 "use strict";
 (function() {
 
-    // const moment = require('moment'); // Not in use anymore. Leaving it like this just incase we revert.
-
-    //This handles the Settings tab
-
     angular
         .module("firebotApp")
         .controller("chatMessagesController", function(
